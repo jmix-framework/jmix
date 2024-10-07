@@ -21,6 +21,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.datatype.impl.StringDatatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.FieldConfiguration;
 import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
 import io.jmix.search.index.mapping.fieldmapper.FieldMapperProvider;
@@ -69,9 +70,16 @@ public class AutoMappingStrategy implements FieldMappingStrategy {
 
     @Override
     public FieldConfiguration createFieldConfiguration(MetaPropertyPath propertyPath, Map<String, Object> parameters) {
+        return createFieldConfiguration(propertyPath, parameters, ExtendedSearchSettings.empty());
+    }
+
+    @Override
+    public FieldConfiguration createFieldConfiguration(MetaPropertyPath propertyPath,
+                                                       Map<String, Object> parameters,
+                                                       ExtendedSearchSettings extendedSearchSettings) {
         FieldMapper fieldMapper = resolveFieldMapper(propertyPath)
                 .orElseThrow(() -> new RuntimeException("Property '" + propertyPath + "' is not supported"));
-        ObjectNode jsonConfig = fieldMapper.createJsonConfiguration(parameters);
+        ObjectNode jsonConfig = fieldMapper.createJsonConfiguration(parameters, extendedSearchSettings);
         return FieldConfiguration.create(jsonConfig);
     }
 

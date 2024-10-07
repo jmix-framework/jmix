@@ -17,6 +17,7 @@
 package io.jmix.search.index.mapping.strategy;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.FieldConfiguration;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 
@@ -52,6 +53,8 @@ public interface FieldMappingStrategy {
      * @return {@link FieldConfiguration}
      */
     FieldConfiguration createFieldConfiguration(MetaPropertyPath propertyPath, Map<String, Object> parameters);
+
+    FieldConfiguration createFieldConfiguration(MetaPropertyPath propertyPath, Map<String, Object> parameters, ExtendedSearchSettings extendedSearchSettings);
 
     /**
      * Provides {@link PropertyValueExtractor} to extract property value from entity instances

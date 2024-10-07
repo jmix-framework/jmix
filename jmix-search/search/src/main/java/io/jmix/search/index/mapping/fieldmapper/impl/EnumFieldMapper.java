@@ -31,8 +31,8 @@ public class EnumFieldMapper extends SimpleFieldMapper {
     );
 
     @Override
-    boolean isAdvancedSearchSupported() {
-        return false; //todo
+    boolean isExtendedSearchSupported() {
+        return false; //todo enable?
     }
 
     @Override

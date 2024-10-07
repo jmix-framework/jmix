@@ -16,9 +16,8 @@
 
 package io.jmix.search.index;
 
-import io.jmix.search.index.mapping.AdvancedSearchSettings;
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
-import org.springframework.lang.Nullable;
 
 import java.util.Set;
 import java.util.function.Predicate;
@@ -40,7 +39,7 @@ public class IndexConfiguration {
 
     protected final Predicate<Object> indexablePredicate;
 
-    protected final AdvancedSearchSettings advancedSearchSettings;
+    protected final ExtendedSearchSettings extendedSearchSettings;
 
     public IndexConfiguration(String entityName,
                               Class<?> entityClass,
@@ -48,14 +47,14 @@ public class IndexConfiguration {
                               IndexMappingConfiguration mapping,
                               Set<Class<?>> affectedEntityClasses,
                               Predicate<Object> indexablePredicate,
-                              @Nullable AdvancedSearchSettings advancedSearchSettings) {
+                              ExtendedSearchSettings extendedSearchSettings) {
         this.entityName = entityName;
         this.entityClass = entityClass;
         this.indexName = indexName;
         this.mapping = mapping;
         this.affectedEntityClasses = affectedEntityClasses;
         this.indexablePredicate = indexablePredicate;
-        this.advancedSearchSettings = advancedSearchSettings;
+        this.extendedSearchSettings = extendedSearchSettings;
     }
 
     /**
@@ -114,8 +113,7 @@ public class IndexConfiguration {
         return indexablePredicate;
     }
 
-    @Nullable //todo create not-null 'disabled' settings
-    public AdvancedSearchSettings getAdvancedSearchSettings() {
-        return advancedSearchSettings;
+    public ExtendedSearchSettings getExtendedSearchSettings() {
+        return extendedSearchSettings;
     }
 }

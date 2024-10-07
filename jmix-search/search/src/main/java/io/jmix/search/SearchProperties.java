@@ -115,12 +115,17 @@ public class SearchProperties {
      */
     protected final List<String> enqueueIndexAllOnStartupIndexRecreationEntities;
 
+    protected final int minPrefixSize;
+    protected final int maxPrefixSize;
+
     public SearchProperties(
             @DefaultValue("100") int searchResultPageSize,
             @DefaultValue("100") int maxSearchPageCount,
             @DefaultValue("100") int searchReloadEntitiesBatchSize,
             @DefaultValue("100") int processQueueBatchSize,
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
+            @DefaultValue("3") int minPrefixSize,
+            @DefaultValue("8") int maxPrefixSize,
             @DefaultValue("true") boolean changedEntitiesIndexingEnabled,
             @DefaultValue("true") boolean useDefaultIndexingQueueProcessingQuartzConfiguration,
             @DefaultValue("true") boolean useDefaultEnqueueingSessionProcessingQuartzConfiguration,
@@ -148,6 +153,8 @@ public class SearchProperties {
         this.enqueueIndexAllOnStartupIndexRecreationEnabled = enqueueIndexAllOnStartupIndexRecreationEnabled;
         this.enqueueIndexAllOnStartupIndexRecreationEntities = prepareStartupEnqueueingEntities(enqueueIndexAllOnStartupIndexRecreationEntities);
         this.searchIndexNamePrefix = searchIndexNamePrefix;
+        this.minPrefixSize = minPrefixSize;
+        this.maxPrefixSize = maxPrefixSize;
     }
 
     /**
@@ -183,6 +190,14 @@ public class SearchProperties {
      */
     public int getReindexEntityEnqueueBatchSize() {
         return reindexEntityEnqueueBatchSize;
+    }
+
+    public int getMinPrefixSize() {
+        return minPrefixSize;
+    }
+
+    public int getMaxPrefixSize() {
+        return maxPrefixSize;
     }
 
     /**

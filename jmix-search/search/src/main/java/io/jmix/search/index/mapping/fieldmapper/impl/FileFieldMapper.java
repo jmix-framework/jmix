@@ -16,11 +16,12 @@
 
 package io.jmix.search.index.mapping.fieldmapper.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.ParameterKeys;
+import io.jmix.search.utils.ExtendedSearchSubFieldsApplier;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -40,16 +41,23 @@ public class FileFieldMapper extends AbstractFieldMapper {
     }
 
     @Override
-    public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
+    public ObjectNode createJsonConfiguration(Map<String, Object> parameters, ExtendedSearchSettings extendedSearchSettings) {
         Map<String, Object> effectiveParameters = createEffectiveNativeParameters(parameters);
         effectiveParameters.put("type", "text");
 
-        JsonNode config = objectMapper.valueToTree(effectiveParameters);
+        ObjectNode baseInnerConfig = objectMapper.convertValue(effectiveParameters, ObjectNode.class);
+        ObjectNode resultInnerConfig = baseInnerConfig;
+        if (extendedSearchSettings.isEnabled()) {
+            resultInnerConfig = ExtendedSearchSubFieldsApplier.applyPrefixSubField(
+                    baseInnerConfig.deepCopy(),
+                    extendedSearchSettings
+            );
+        }
 
         ObjectNode root = JsonNodeFactory.instance.objectNode();
         ObjectNode properties = root.putObject("properties");
-        properties.set("_file_name", config);
-        properties.set("_content", config);
+        properties.set("_file_name", resultInnerConfig);
+        properties.set("_content", resultInnerConfig);
         return root;
     }
 }

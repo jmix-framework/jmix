@@ -16,8 +16,13 @@
 
 package io.jmix.search.index.mapping;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.common.util.Preconditions;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Contains configuration of index field.
@@ -25,9 +30,15 @@ import io.jmix.core.common.util.Preconditions;
 public class FieldConfiguration {
 
     protected ObjectNode config;
+    protected List<String> virtualFields;
 
     protected FieldConfiguration(ObjectNode config) {
+        this(config, Collections.emptyList());
+    }
+
+    protected FieldConfiguration(ObjectNode config, List<String> virtualFields) {
         this.config = config;
+        this.virtualFields = virtualFields;
     }
 
     /**
@@ -39,9 +50,26 @@ public class FieldConfiguration {
         return config.deepCopy();
     }
 
+    /**
+     * Provides inner "virtual" fields within current field.
+     * @return list of fields names
+     */
+    public List<String> getVirtualFields() {
+        return new ArrayList<>(virtualFields);
+    }
+
     public static FieldConfiguration create(ObjectNode config) {
         Preconditions.checkNotNullArgument(config);
 
-        return new FieldConfiguration(config);
+        List<String> virtualFieldsNames;
+        JsonNode fieldsNode = config.path("fields");
+        if(fieldsNode.isObject()) {
+            ObjectNode fieldsObjectNode = (ObjectNode) fieldsNode;
+            virtualFieldsNames = new ArrayList<>();
+            fieldsObjectNode.fieldNames().forEachRemaining(virtualFieldsNames::add);
+        } else {
+            virtualFieldsNames = Collections.emptyList();
+        }
+        return new FieldConfiguration(config, virtualFieldsNames);
     }
 }

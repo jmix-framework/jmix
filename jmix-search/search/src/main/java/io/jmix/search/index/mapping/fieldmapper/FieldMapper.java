@@ -17,6 +17,7 @@
 package io.jmix.search.index.mapping.fieldmapper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 
 import java.util.Map;
 
@@ -32,4 +33,6 @@ public interface FieldMapper {
      * @return json object
      */
     ObjectNode createJsonConfiguration(Map<String, Object> parameters);
+
+    ObjectNode createJsonConfiguration(Map<String, Object> parameters, ExtendedSearchSettings extendedSearchSettings);
 }

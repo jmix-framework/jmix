@@ -18,12 +18,12 @@ package io.jmix.search.index.mapping.fieldmapper.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Base class for {@link FieldMapper} implementations.
@@ -39,6 +39,11 @@ public abstract class AbstractFieldMapper implements FieldMapper {
      * @return names of supported parameters
      */
     abstract Set<String> getSupportedMappingParameters();
+
+    @Override
+    public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
+        return createJsonConfiguration(parameters, ExtendedSearchSettings.empty());
+    }
 
     /**
      * Creates map of input parameters supported by this mapper.

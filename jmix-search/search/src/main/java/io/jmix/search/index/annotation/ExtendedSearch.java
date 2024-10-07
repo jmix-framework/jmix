@@ -23,10 +23,12 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AdvancedSearch { //todo naming
-    int prefixMinSize() default 3;
-
-    int prefixMaxSize() default 8;
+public @interface ExtendedSearch {
 
     boolean enabled() default true;
+
+    String tokenizer() default "whitespace";
+
+    String[] additionalFilters() default {};
+
 }

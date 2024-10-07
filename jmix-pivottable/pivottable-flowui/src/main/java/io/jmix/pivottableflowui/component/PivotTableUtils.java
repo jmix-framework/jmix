@@ -18,15 +18,18 @@ package io.jmix.pivottableflowui.component;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.pivottableflowui.export.model.PivotData;
+import io.jmix.pivottableflowui.kit.component.model.PivotTableOptions;
 
 import java.util.function.Consumer;
 
 @Internal
 public class PivotTableUtils {
 
-    public static void requestPivotData(PivotTable<?> pivotTable,
-                                        String dateTimeParseFormat, String dateParseFormat, String timeParseFormat,
-                                        Consumer<PivotData> consumer) {
-        pivotTable.requestPivotData(dateTimeParseFormat, dateParseFormat, timeParseFormat, consumer);
+    public static void requestPivotTableData(PivotTable<?> pivotTable, Consumer<PivotData> consumer) {
+        pivotTable.requestPivotData(consumer);
+    }
+
+    public static void setPivotTableOptions(PivotTable<?> pivotTable, PivotTableOptions pivotTableOptions) {
+        pivotTable.setPivotTableOptions(pivotTableOptions);
     }
 }

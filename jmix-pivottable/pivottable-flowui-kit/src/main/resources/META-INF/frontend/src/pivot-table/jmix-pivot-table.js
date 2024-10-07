@@ -128,9 +128,8 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         this._recreatePivot();
     }
 
-    _getTableElementData(dateTimeParseFormat, dateParseFormat, timeParseFormat) {
-        return PivotTableParser.parseToJson(this, this._options.localizedStrings,
-                dateTimeParseFormat, dateParseFormat, timeParseFormat);
+    _getTableElementData() {
+        return PivotTableParser.parseToJson(this, this._options.localizedStrings);
     }
 
     _refreshHandler(pivotState) {

@@ -16,8 +16,6 @@
 
 package io.jmix.pivottableflowui.action;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -29,9 +27,9 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.view.View;
 import io.jmix.pivottableflowui.component.PivotTable;
+import io.jmix.pivottableflowui.kit.component.model.*;
 import io.jmix.pivottableflowui.view.PivotTableView;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -63,7 +61,7 @@ public class PivotTableViewBuilder {
     protected List<String> additionalProperties;
 
     protected List<Object> items;
-    protected String nativeJson;
+    protected PivotTableOptions options;
 
     protected ListDataComponent<?> target;
 
@@ -170,69 +168,6 @@ public class PivotTableViewBuilder {
     }
 
     /**
-     * @return configuration json of pivot table
-     */
-    public String getNativeJson() {
-        return nativeJson;
-    }
-
-    /**
-     * Set native json using fluent API method. Using native json you can configure pivot table with initial values.
-     * For instance, for non-editable pivot table:
-     * <pre> {@code
-     * {
-     * 	"cols": ["localized property", "localized property"],
-     * 	"rows": ["localized property"],
-     * 	"showUI": false,
-     * 	"renderer": "heatmap",
-     * 	"aggregation": {
-     * 		"mode": "sumOverSum",
-     * 		"properties": ["localized property", "localized property"]
-     *    }
-     * }
-     * }
-     * </pre>
-     * for editable pivot table:
-     * <pre> {@code
-     * {
-     * 	"cols": ["localized property"],
-     * 	"rows": ["localized property"],
-     * 	"showUI": true,
-     * 	"renderers": {
-     * 		"selectedRenderer": "barChart"
-     *    },
-     * 	"autoSortUnusedProperties": true,
-     * 	"aggregationProperties": ["localized property", "localized property"],
-     * 	"aggregations": {
-     * 		"selectedAggregation": "count",
-     * 		"aggregations": [{
-     * 			"mode": "count",
-     * 			"caption": "Count"
-     *        }, {
-     * 			"mode": "sumOverSum"
-     *        }]
-     *    }
-     * }
-     * }
-     * </pre>
-     *
-     * @param nativeJson configuration json of pivot table
-     * @return current instance of action
-     */
-    public PivotTableViewBuilder withNativeJson(String nativeJson) {
-        if (!StringUtils.equals(this.nativeJson, nativeJson)) {
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                mapper.readTree(nativeJson);
-            } catch (JsonProcessingException e) {
-                throw new IllegalStateException("Unable to parse pivot table json configuration", e);
-            }
-            this.nativeJson = nativeJson;
-        }
-        return this;
-    }
-
-    /**
      * Sets items that should be shown in PivotTable.
      *
      * @param items collection of entities
@@ -240,6 +175,346 @@ public class PivotTableViewBuilder {
      */
     public PivotTableViewBuilder withItems(Collection<?> items) {
         this.items = new ArrayList<>(items);
+
+        return this;
+    }
+
+    /**
+     * Sets a collection of attribute names to use as rows.
+     *
+     * @param rows a collection of attribute names to use as rows
+     */
+    public PivotTableViewBuilder withRows(List<String> rows) {
+        getPivotTableOptions().setRows(rows);
+
+        return this;
+    }
+
+    /**
+     * Sets a collection of attribute names to use as columns.
+     *
+     * @param columns a collection of attribute names to use as columns
+     */
+    public PivotTableViewBuilder withColumns(List<String> columns) {
+        getPivotTableOptions().setColumns(columns);
+
+        return this;
+    }
+
+    /**
+     * Original property name: {@code aggregator}.
+     * <p>
+     * Sets a descriptor of an object which will aggregate results per cell
+     * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Aggregators">documentation</a>).
+     * <p>
+     * Applies only when {@code showUI=false}.
+     *
+     * @param aggregation an object which will aggregate results per cell
+     */
+    public PivotTableViewBuilder withAggregation(Aggregation aggregation) {
+        getPivotTableOptions().setAggregation(aggregation);
+
+        return this;
+    }
+
+    /**
+     * Sets a descriptor of an object which will generate output from pivot data structure
+     * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Renderers">documentation</a>).
+     * <p>
+     * Applies only when {@code showUI=false}.
+     *
+     * @param renderer an object which will generate output from pivot data structure
+     */
+    public PivotTableViewBuilder withRenderer(Renderer renderer) {
+        getPivotTableOptions().setRenderer(renderer);
+
+        return this;
+    }
+
+    /**
+     * Original property name: {@code vals}.
+     * <p>
+     * Sets attribute names to prepopulate in vals area (gets passed to aggregator generating function).
+     * <p>
+     * Applies only when {@code showUI=true}.
+     *
+     * @param aggregationProperties attribute names to prepopulate in vals area
+     */
+    public PivotTableViewBuilder withAggregationProperties(List<String> aggregationProperties) {
+        getPivotTableOptions().setAggregationProperties(aggregationProperties);
+
+        return this;
+    }
+
+    /**
+     * Original property name: {@code aggregators}.
+     * <p>
+     * Sets an object that represents a list of generators for aggregation functions in dropdown
+     * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Aggregators">documentation</a>).
+     * <p>
+     * Applies only when {@code showUI=true}.
+     *
+     * @param aggregations an object that represents a list of generators for aggregation functions in dropdown
+     */
+    public PivotTableViewBuilder withAggregations(Aggregations aggregations) {
+        getPivotTableOptions().setAggregations(aggregations);
+
+        return this;
+    }
+
+    /**
+     * Sets an object that represents a list of rendering functions
+     * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Renderers">documentation</a>).
+     * <p>
+     * Applies only when {@code showUI=true}.
+     *
+     * @param renderers n object that represents a list of rendering functions
+     */
+    public PivotTableViewBuilder withRenderers(Renderers renderers) {
+        getPivotTableOptions().setRenderers(renderers);
+
+        return this;
+    }
+
+    /**
+     * Sets attribute names to omit from the UI.
+     * <p>
+     * Applies only when {@code showUI=true}.
+     *
+     * @param hiddenProperties attribute names to omit from the UI
+     */
+    public PivotTableViewBuilder withHiddenProperties(List<String> hiddenProperties) {
+        getPivotTableOptions().setHiddenProperties(hiddenProperties);
+
+        return this;
+    }
+
+    /**
+     * Sets attribute names to omit from the aggregation arguments dropdowns.
+     * <p>
+     * Applies only when {@code showUI=true}.
+     *
+     * @param hiddenFromAggregations attribute names to omit from the aggregation arguments dropdowns
+     */
+    public PivotTableViewBuilder withHiddenFromAggregations(List<String> hiddenFromAggregations) {
+        getPivotTableOptions().setHiddenFromAggregations(hiddenFromAggregations);
+
+        return this;
+    }
+
+    /**
+     * Sets attribute names to omit from the drag'n'drop portion of the UI.
+     * <p>
+     * Applies only when {@code showUI=true}.
+     *
+     * @param hiddenFromDragDrop attribute names to omit from the drag'n'drop portion of the UI
+     */
+    public PivotTableViewBuilder withHiddenFromDragDrop(List<String> hiddenFromDragDrop) {
+        getPivotTableOptions().setHiddenFromDragDrop(hiddenFromDragDrop);
+
+        return this;
+    }
+
+    /**
+     * Sets the order in which column data is provided to the renderer.
+     * <p>
+     * Ordering by value orders by column total.
+     *
+     * @param columnOrder the order in which column data is provided to the renderer
+     */
+    public PivotTableViewBuilder withColumnOrder(Order columnOrder) {
+        getPivotTableOptions().setColumnOrder(columnOrder);
+
+        return this;
+    }
+
+    /**
+     * Sets the order in which row data is provided to the renderer.
+     * <p>
+     * Ordering by value orders by row total.
+     *
+     * @param rowOrder the order in which row data is provided to the renderer
+     */
+    public PivotTableViewBuilder withRowOrder(Order rowOrder) {
+        getPivotTableOptions().setRowOrder(rowOrder);
+
+        return this;
+    }
+
+    /**
+     * Sets the maximum number of values to list in the double click menu.
+     * <p>
+     * Applies only when {@code showUI=true}.
+     *
+     * @param menuLimit the maximum number of values to list in the double click menu
+     */
+    public PivotTableViewBuilder withMenuLimit(Integer menuLimit) {
+        getPivotTableOptions().setMenuLimit(menuLimit);
+
+        return this;
+    }
+
+    /**
+     * Original property name: {@code autoSortUnusedAttrs}.
+     * <p>
+     * Sets whether unused attributes are kept sorted in the UI.
+     * <p>
+     * Applies only when {@code showUI=true}.
+     *
+     * @param autoSortUnusedProperties whether unused attributes are kept sorted in the UI
+     */
+    public PivotTableViewBuilder withAutoSortUnusedProperties(Boolean autoSortUnusedProperties) {
+        getPivotTableOptions().setAutoSortUnusedProperties(autoSortUnusedProperties);
+
+        return this;
+    }
+
+    /**
+     * Original property name: {@code unusedAttrsVertical}.
+     * <p>
+     * Sets whether unused attributes are shown vertically
+     * instead of the default which is horizontally. {@code true} means
+     * always vertical, {@code false} means always horizontal. If set to
+     * a number (as is the default) then if the attributes' names' combined
+     * length in characters exceeds the number then the attributes will be shown vertically.
+     * <p>
+     * Applies only when {@code showUI=true}.
+     *
+     * @param unusedPropertiesVertical whether unused attributes are shown vertically
+     */
+    public PivotTableViewBuilder withUnusedPropertiesVertical(UnusedPropertiesVertical unusedPropertiesVertical) {
+        getPivotTableOptions().setUnusedPropertiesVertical(unusedPropertiesVertical);
+
+        return this;
+    }
+
+    /**
+     * Original property name: {@code filter}.
+     * <p>
+     * Sets a filter function that is called on each record, returns {@code false} if the record
+     * is to be excluded from the input before rendering or {@code true} otherwise.
+     *
+     * @param filter a filter function that is called on each record
+     */
+    public PivotTableViewBuilder withFilterFunction(JsFunction filter) {
+        getPivotTableOptions().setFilterFunction(filter);
+
+        return this;
+    }
+
+    /**
+     * Original property name: {@code sorters}.
+     * <p>
+     * Sets a sorter function that is called with an attribute name and can return
+     * a function which can be used as an argument to {@code Array.sort} for output
+     * purposes. If no function is returned, the default sorting mechanism is a built-in
+     * "natural sort" implementation. Useful for sorting attributes like month names.
+     *
+     * @param sorters a sorter function
+     */
+    public PivotTableViewBuilder withSortersFunction(JsFunction sorters) {
+        getPivotTableOptions().setSortersFunction(sorters);
+
+        return this;
+    }
+
+    /**
+     * Sets an object that is passed through to renderer as options.
+     *
+     * @param rendererOptions an object that is passed through to renderer as options
+     */
+    public PivotTableViewBuilder withRendererOptions(RendererOptions rendererOptions) {
+        getPivotTableOptions().setRendererOptions(rendererOptions);
+
+        return this;
+    }
+
+    /**
+     * Sets a map whose keys are attribute names and values are arrays of attribute values
+     * which denote records to include in rendering; used to prepopulate the filter menus
+     * that appear on double-click (overrides {@link #withExclusions(Map)}).
+     * <p>
+     * Applies only when {@code showUI=true}.
+     *
+     * @param inclusions a map whose keys are attribute names and values are arrays of attribute values
+     * @see #withExclusions(Map)
+     */
+    public PivotTableViewBuilder withInclusions(Map<String, List<String>> inclusions) {
+        getPivotTableOptions().setInclusions(inclusions);
+
+        return this;
+    }
+
+    /**
+     * Sets a map whose keys are attribute names and values are arrays of attribute values
+     * which denote records to exclude from rendering; used to prepopulate the filter menus
+     * that appear on double-click.
+     * <p>
+     * Applies only when {@code showUI=true}.
+     *
+     * @param exclusions a map whose keys are attribute names and values are arrays of attribute values
+     * @see #withInclusions(Map)
+     */
+    public PivotTableViewBuilder withExclusions(Map<String, List<String>> exclusions) {
+        getPivotTableOptions().setExclusions(exclusions);
+
+        return this;
+    }
+
+    /**
+     * Original property name: {@code derivedAttributes}.
+     * <p>
+     * Sets an object that represents derived properties
+     * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Derived-Attributes">documentation</a>).
+     *
+     * @param derivedProperties an object that represents derived properties
+     */
+    public PivotTableViewBuilder withDerivedProperties(DerivedProperties derivedProperties) {
+        getPivotTableOptions().setDerivedProperties(derivedProperties);
+
+        return this;
+    }
+
+    /**
+     * If component doesn't have data to aggregate, the message will be displayed
+     *
+     * @param emptyDataMessage string with an empty data message
+     */
+    public PivotTableViewBuilder withEmptyDataMessage(String emptyDataMessage) {
+        getPivotTableOptions().setEmptyDataMessage(emptyDataMessage);
+
+        return this;
+    }
+
+    /**
+     * Shows or hides UI.
+     *
+     * @param showUI show UI option
+     */
+    public PivotTableViewBuilder withShowUI(Boolean showUI) {
+        getPivotTableOptions().setShowUI(showUI);
+
+        return this;
+    }
+
+    /**
+     * Shows or hides row totals. {@code true} by default.
+     *
+     * @param showRowTotals row totals option
+     */
+    public PivotTableViewBuilder withShowRowTotals(Boolean showRowTotals) {
+        getPivotTableOptions().setShowUI(showRowTotals);
+
+        return this;
+    }
+
+    /**
+     * Shows or hides col totals. {@code true} by default.
+     *
+     * @param showColumnTotals column total options
+     */
+    public PivotTableViewBuilder withShowColumnTotals(Boolean showColumnTotals) {
+        getPivotTableOptions().setShowColumnTotals(showColumnTotals);
 
         return this;
     }
@@ -259,7 +534,7 @@ public class PivotTableViewBuilder {
                 .withAfterNavigationHandler(event -> {
                     PivotTableView pivotTableView = event.getView();
                     pivotTableView.setProperties(properties);
-                    pivotTableView.setNativeJson(nativeJson);
+                    pivotTableView.setPivotTableOptions(options);
                     pivotTableView.setDataItems(items == null ? Collections.emptyList() : items);
                 })
                 .navigate();
@@ -490,5 +765,12 @@ public class PivotTableViewBuilder {
             return null;
         }
         return metadata.getClass(declaringClass);
+    }
+
+    protected PivotTableOptions getPivotTableOptions() {
+        if (options == null) {
+            options = new PivotTableOptions();
+        }
+        return options;
     }
 }

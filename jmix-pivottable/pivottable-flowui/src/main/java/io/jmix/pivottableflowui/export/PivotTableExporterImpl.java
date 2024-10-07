@@ -45,10 +45,6 @@ public class PivotTableExporterImpl implements PivotTableExporter {
     protected PivotTable<?> pivotTable;
     protected String fileName;
 
-    protected String dateTimeParseFormat;
-    protected String dateParseFormat;
-    protected String timeParseFormat;
-
     public PivotTableExporterImpl(PivotTable<?> pivotTable, PivotTableExcelExporter exporter) {
         Preconditions.checkNotNullArgument(pivotTable);
         Preconditions.checkNotNullArgument(exporter);
@@ -62,9 +58,7 @@ public class PivotTableExporterImpl implements PivotTableExporter {
     public void exportTableToXls() {
         checkSupportedRenderer();
 
-        setupParseFormats();
-
-        PivotTableUtils.requestPivotData(pivotTable, dateTimeParseFormat, dateParseFormat, timeParseFormat,
+        PivotTableUtils.requestPivotTableData(pivotTable,
                 pivotData -> excelExporter.exportPivotTable(pivotData, fileName));
     }
 
@@ -72,9 +66,7 @@ public class PivotTableExporterImpl implements PivotTableExporter {
     public void exportTableToXls(Downloader downloader) {
         checkSupportedRenderer();
 
-        setupParseFormats();
-
-        PivotTableUtils.requestPivotData(pivotTable, dateTimeParseFormat, dateParseFormat, timeParseFormat,
+        PivotTableUtils.requestPivotTableData(pivotTable,
                 pivotData -> excelExporter.exportPivotTable(pivotData, fileName, downloader));
     }
 
@@ -94,36 +86,6 @@ public class PivotTableExporterImpl implements PivotTableExporter {
     }
 
     @Override
-    public String getDateTimeParseFormat() {
-        return dateTimeParseFormat;
-    }
-
-    @Override
-    public void setDateTimeParseFormat(String dateTimeParseFormat) {
-        this.dateTimeParseFormat = dateTimeParseFormat;
-    }
-
-    @Override
-    public String getDateParseFormat() {
-        return dateParseFormat;
-    }
-
-    @Override
-    public void setDateParseFormat(String dateParseFormat) {
-        this.dateParseFormat = dateParseFormat;
-    }
-
-    @Override
-    public String getTimeParseFormat() {
-        return timeParseFormat;
-    }
-
-    @Override
-    public void setTimeParseFormat(String timeParseFormat) {
-        this.timeParseFormat = timeParseFormat;
-    }
-
-    @Override
     public boolean isRendererSupported(Renderer renderer) {
         return supportedRenderers.contains(renderer);
     }
@@ -136,14 +98,6 @@ public class PivotTableExporterImpl implements PivotTableExporter {
     @Override
     public void setExportFormat(PivotTableExcelExporter.ExportFormat exportFormat) {
         excelExporter.setExportFormat(exportFormat);
-    }
-
-    protected void setupParseFormats() {
-        if (excelExporter != null) {
-            excelExporter.setDateTimeParseFormat(dateTimeParseFormat);
-            excelExporter.setDateParseFormat(dateParseFormat);
-            excelExporter.setTimeParseFormat(timeParseFormat);
-        }
     }
 
     protected void checkSupportedRenderer() {

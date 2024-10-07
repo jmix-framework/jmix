@@ -8,11 +8,8 @@ export class PivotTableParser {
     integerFormatAggregationIds = ['count', 'countUniqueValues', 'integerSum'];
     boldClassNames = ['pvtTotal rowTotal', 'pvtTotal colTotal', 'pvtGrandTotal'];
 
-    constructor(pivotMessages, dateTimeParseFormat, dateParseFormat, timeParseFormat) {
+    constructor(pivotMessages) {
         this.pivotMessages = pivotMessages;
-        this.dateTimeParseFormat = dateTimeParseFormat;
-        this.dateParseFormat = dateParseFormat;
-        this.timeParseFormat = timeParseFormat;
     }
 
     getTable(pivotElement) {
@@ -168,8 +165,8 @@ export class PivotTableParser {
         return modelCell.value;
     }
 
-    static parseToJson(pivotElement, pivotMessages, dateTimeParseFormat, dateParseFormat, timeParseFormat) {
-        let parser = new PivotTableParser(pivotMessages, dateTimeParseFormat, dateParseFormat, timeParseFormat);
+    static parseToJson(pivotElement, pivotMessages) {
+        let parser = new PivotTableParser(pivotMessages);
 
         var resultObject = {};
 

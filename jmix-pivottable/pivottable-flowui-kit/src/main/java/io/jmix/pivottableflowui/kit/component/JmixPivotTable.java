@@ -16,8 +16,6 @@
 
 package io.jmix.pivottableflowui.kit.component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.internal.ExecutionContext;
@@ -33,7 +31,6 @@ import io.jmix.pivottableflowui.kit.data.JmixPivotTableItems;
 import io.jmix.pivottableflowui.kit.event.PivotTableCellClickEvent;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEventDetail;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -89,8 +86,9 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
      * @param listener a listener to add
      * @return subscription
      */
-    public Registration addCellClickListener(ComponentEventListener<PivotTableCellClickEvent> listener) {
-        return getEventBus().addListener(PivotTableCellClickEvent.class, listener);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Registration addCellClickListener(ComponentEventListener<PivotTableCellClickEvent<T>> listener) {
+        return getEventBus().addListener(PivotTableCellClickEvent.class, (ComponentEventListener) listener);
     }
 
     /**
@@ -718,109 +716,6 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
     }
 
     /**
-     * Set pivot table configuration params in Json format.
-     * Json property overrides component property if they match by name.
-     * Example:
-     * <pre> {@code
-     * {
-     *     "showUI": "true",
-     *     "renderer": "barChart",
-     *     "autoSortUnusedProperties": "true",
-     *     "columnOrder": "key_a_to_z",
-     *     "rowOrder": "value_z_to_a",
-     *     "emptyDataMessage": "Empty data msg",
-     *     "menuLimit": "10",
-     *     "showColumnTotals": "true",
-     *     "showRowTotals": "false",
-     *     "unusedPropertiesVertical": "true",
-     *     "renderers": {
-     *         "selected": "treemap",
-     *         "renderers": ["barChart", "table", "treemap"]
-     *     },
-     *     "derivedProperties": {
-     *         "properties": {
-     *             "fahrenheit" : "function(record){return record.temperature * 1.8 + 32;}"
-     *         }
-     *     },
-     *     "aggregation": {
-     *         "caption": "custom",
-     *         "mode": "maximum",
-     *         "custom": "true",
-     *         "function":  "function(){return $.pivotUtilities.aggregatorTemplates.count()();}"
-     *     },
-     *     "aggregationProperties": ["month"],
-     *     "aggregations": {
-     *         "selected": "lowerBound80",
-     *         "aggregations": [
-     *             {
-     *                 "caption": "MAXIMUM",
-     *                 "mode": "maximum",
-     *                 "custom": "false"
-     *             },
-     *             {
-     *                 "caption": "CUSTOM",
-     *                 "custom": "true",
-     *                 "function": "function(){return $.pivotUtilities.aggregatorTemplates.count()();}"
-     *             }
-     *         ]
-     *     },
-     *     "rendererOptions": {
-     *         "c3": {
-     *             "size": {
-     *                 "width": "200",
-     *                 "height": "300"
-     *             }
-     *         },
-     *         "heatmap": {
-     *             "colorScaleGeneratorFunction": "function(values) { return \"rgb(0, 255, 0)\"; }"
-     *         }
-     *     },
-     *     "filterFunction": "function(property) { return false; }",
-     *     "hiddenFromAggregations": ["city"],
-     *     "hiddenFromDragDrop": ["temperature"],
-     *     "hiddenProperties": ["month"],
-     *     "sortersFunction": "function(property) {if (property == \"%s\") {return $.pivotUtilities.sortAs([6,5,4,3,2,1]);}}",
-     *     "properties": {
-     *         "temperature": "Temperature",
-     *         "month" : "Month",
-     *         "city" : "City"
-     *     },
-     *     "rows": ["month"],
-     *     "columns": ["temperature"],
-     *     "inclusions": {
-     *         "month": ["December"]
-     *     },
-     *     "exclusions": {
-     *         "temperature": ["-20"]
-     *     }
-     * }}
-     * </pre>
-     *
-     * @param jsonOptions json with options as string
-     */
-    public void setJsonOptions(String jsonOptions) {
-        if (!StringUtils.equals(getNativeJson(), jsonOptions)) {
-            if (jsonOptions != null) {
-                ObjectMapper mapper = new ObjectMapper();
-                try {
-                    mapper.readTree(jsonOptions);
-                } catch (JsonProcessingException e) {
-                    throw new IllegalStateException("Unable to parse pivot table json configuration", e);
-                }
-            }
-            options.setJsonOptions(jsonOptions);
-            convertNativeJsonToOptions(jsonOptions);
-        }
-    }
-
-    /**
-     * @return string with valid json
-     */
-    public String getNativeJson() {
-        return options.getJsonOptions();
-    }
-
-    /**
      * Sets the {@link JmixPivotTableItems} instance to use as data provider.
      *
      * @param items the {@link JmixPivotTableItems} instance to use
@@ -909,51 +804,6 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
         }
         getUI().ifPresent(ui ->
                 synchronizeOptionsExecution = ui.beforeClientResponse(this, this::performUpdateOptions));
-    }
-
-    protected void convertNativeJsonToOptions(String nativeJson) {
-        PivotTableOptions deserialize = (PivotTableOptions) serializer.deserialize(
-                nativeJson, PivotTableOptions.class);
-        options.setChangedFromClient(true);
-
-        options.setShowUI(overrideOption(options.isShowUI(), deserialize.isShowUI()));
-        options.setRenderer(overrideOption(options.getRenderer(), deserialize.getRenderer()));
-        options.setAutoSortUnusedProperties(
-                overrideOption(options.getAutoSortUnusedProperties(), deserialize.getAutoSortUnusedProperties()));
-        options.setRowOrder(overrideOption(options.getRowOrder(), deserialize.getRowOrder()));
-        options.setColumnOrder(overrideOption(options.getColumnOrder(), deserialize.getColumnOrder()));
-        options.setEmptyDataMessage(overrideOption(options.getEmptyDataMessage(), deserialize.getEmptyDataMessage()));
-        options.setMenuLimit(overrideOption(options.getMenuLimit(), deserialize.getMenuLimit()));
-        options.setShowColumnTotals(overrideOption(options.isShowColumnTotals(), deserialize.isShowColumnTotals()));
-        options.setShowRowTotals(overrideOption(options.isShowRowTotals(), deserialize.isShowRowTotals()));
-        options.setUnusedPropertiesVertical(
-                overrideOption(options.getUnusedPropertiesVertical(), deserialize.getUnusedPropertiesVertical()));
-        options.setRenderers(overrideOption(options.getRenderers(), deserialize.getRenderers()));
-        options.setDerivedProperties(overrideOption(options.getDerivedProperties(), deserialize.getDerivedProperties()));
-        options.setAggregation(overrideOption(options.getAggregation(), deserialize.getAggregation()));
-        options.setAggregationProperties(overrideOption(options.getAggregationProperties(), deserialize.getAggregationProperties()));
-        options.setAggregations(overrideOption(options.getAggregations(), deserialize.getAggregations()));
-        options.setRendererOptions(overrideOption(options.getRendererOptions(), deserialize.getRendererOptions()));
-        options.setFilterFunction(overrideOption(options.getFilterFunction(), deserialize.getFilterFunction()));
-        options.setHiddenFromAggregations(overrideOption(
-                options.getHiddenFromAggregations(), deserialize.getHiddenFromAggregations()));
-        options.setHiddenFromDragDrop(
-                overrideOption(options.getHiddenFromDragDrop(), deserialize.getHiddenFromDragDrop()));
-        options.setHiddenProperties(overrideOption(options.getHiddenProperties(), deserialize.getHiddenProperties()));
-        options.setSortersFunction(overrideOption(options.getSortersFunction(), deserialize.getSortersFunction()));
-        options.setProperties(overrideOption(options.getProperties(), deserialize.getProperties()));
-        options.setRows(overrideOption(options.getRows(), deserialize.getRows()));
-        options.setColumns(overrideOption(options.getColumns(), deserialize.getColumns()));
-        options.setInclusions(overrideOption(options.getInclusions(), deserialize.getInclusions()));
-        options.setExclusions(overrideOption(options.getExclusions(), deserialize.getExclusions()));
-
-        options.setChangedFromClient(false);
-
-        requestUpdateOptions();
-    }
-
-    protected <T> T overrideOption(T current, T override) {
-        return override != null ? override : current;
     }
 
     protected void requestUpdateItems() {

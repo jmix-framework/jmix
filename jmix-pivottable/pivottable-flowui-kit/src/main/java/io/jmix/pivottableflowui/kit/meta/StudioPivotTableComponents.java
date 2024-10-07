@@ -24,7 +24,7 @@ public interface StudioPivotTableComponents {
 
     @StudioComponent(
             name = "PivotTable",
-            classFqn = "io.jmix.flowui.kit.component.pivottable.JmixPivotTable",
+            classFqn = "io.jmix.pivottableflowui.component.PivotTable",
             category = "Components",
             xmlElement = "pivotTable",
             icon = "io/jmix/flowui/kit/meta/icon/component/pivotTable.svg",

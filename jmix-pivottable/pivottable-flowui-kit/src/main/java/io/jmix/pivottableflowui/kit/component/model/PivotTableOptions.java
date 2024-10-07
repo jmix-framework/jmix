@@ -52,7 +52,6 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     protected Boolean showColumnTotals;
     protected String emptyDataMessage;
     protected Map<String, Object> localizedStrings;
-    protected String jsonOptions;
 
     @Override
     public void setPivotTableObjectChangeListener(Consumer<ObjectChangeEvent> listener) {
@@ -716,10 +715,18 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
         markAsChanged();
     }
 
+    /**
+     * @return string with an empty data message
+     */
     public String getEmptyDataMessage() {
         return emptyDataMessage;
     }
 
+    /**
+     * If component doesn't have data to aggregate, the message will be displayed
+     *
+     * @param emptyDataMessage string with an empty data message
+     */
     public void setEmptyDataMessage(String emptyDataMessage) {
         this.emptyDataMessage = emptyDataMessage;
     }
@@ -732,9 +739,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     }
 
     /**
-     * Shows or hides UI. {@code true} by default.
-     * <br>
-     * Applies only when {@code showUI=true}.
+     * Shows or hides UI
      *
      * @param showUI show UI option
      */
@@ -800,13 +805,5 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
 
     public void setLocalizedStrings(Map<String, Object> localizedStrings) {
         this.localizedStrings = localizedStrings;
-    }
-
-    public String getJsonOptions() {
-        return jsonOptions;
-    }
-
-    public void setJsonOptions(String jsonOptions) {
-        this.jsonOptions = jsonOptions;
     }
 }

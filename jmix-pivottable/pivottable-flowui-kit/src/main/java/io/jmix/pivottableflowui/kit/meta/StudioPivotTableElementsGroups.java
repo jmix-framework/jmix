@@ -27,7 +27,7 @@ public interface StudioPivotTableElementsGroups {
     @StudioElementsGroup(
             name = "Aggregations",
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.Aggregation",
-            target = {"io.jmix.pivottableflowui.component.PivotTable"},
+            target = {"io.jmix.pivottableflowui.kit.component.model.Aggregations"},
             xmlElement = "aggregations",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
@@ -37,7 +37,7 @@ public interface StudioPivotTableElementsGroups {
 
     @StudioElementsGroup(
             name = "Renderers",
-            elementClassFqn = "io.jmix.pivottableflowui.kit.meta.Renderer",
+            elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.Renderers",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "renderers",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
@@ -62,7 +62,7 @@ public interface StudioPivotTableElementsGroups {
 
     @StudioElementsGroup(
             name = "DerivedProperties",
-            elementClassFqn = "io.jmix.pivottableflowui.kit.meta.DerivedProperty",
+            elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.DerivedProperties",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "derivedProperties",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
@@ -73,7 +73,7 @@ public interface StudioPivotTableElementsGroups {
 
     @StudioElementsGroup(
             name = "Rows",
-            elementClassFqn = "io.jmix.pivottableflowui.kit.meta.Row",
+            elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.Row",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "rows",
             xmlns = "http://jmix.io/schema/pvttbl/ui",

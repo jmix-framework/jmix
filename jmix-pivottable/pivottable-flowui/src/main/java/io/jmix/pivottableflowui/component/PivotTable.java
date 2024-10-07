@@ -26,11 +26,13 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.pivottableflowui.export.model.PivotData;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
 import io.jmix.pivottableflowui.kit.component.model.AggregationMode;
+import io.jmix.pivottableflowui.kit.component.model.PivotTableOptions;
 import io.jmix.pivottableflowui.kit.component.model.Renderer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
@@ -63,14 +65,63 @@ public class PivotTable<T> extends JmixPivotTable<T> implements ApplicationConte
         initLocalization();
     }
 
-    protected void requestPivotData(String dateTimeParseFormat, String dateParseFormat, String timeParseFormat,
-                                 Consumer<PivotData> consumer) {
-        String jsFunctionParams = dateTimeParseFormat + ", " + dateParseFormat + ", " + timeParseFormat;
-        getElement().executeJs("return this._getTableElementData(" + jsFunctionParams + ");")
+    protected void requestPivotData(Consumer<PivotData> consumer) {
+        getElement().executeJs("return this._getTableElementData();")
                 .then((SerializableConsumer<JsonValue>) jsonValue -> {
                     PivotData pivotData = (PivotData) serializer.deserialize((JsonObject) jsonValue, PivotData.class);
                     consumer.accept(pivotData);
                 });
+    }
+
+    protected void setPivotTableOptions(PivotTableOptions pivotTableOptions) {
+        options.setChangedFromClient(true);
+
+        options.setShowUI(overrideOption(options.isShowUI(), pivotTableOptions.isShowUI()));
+        options.setRenderer(overrideOption(options.getRenderer(), pivotTableOptions.getRenderer()));
+        options.setAutoSortUnusedProperties(
+                overrideOption(options.getAutoSortUnusedProperties(),
+                        pivotTableOptions.getAutoSortUnusedProperties()));
+        options.setRowOrder(overrideOption(options.getRowOrder(), pivotTableOptions.getRowOrder()));
+        options.setColumnOrder(overrideOption(options.getColumnOrder(), pivotTableOptions.getColumnOrder()));
+        options.setEmptyDataMessage(
+                overrideOption(options.getEmptyDataMessage(), pivotTableOptions.getEmptyDataMessage()));
+        options.setMenuLimit(overrideOption(options.getMenuLimit(), pivotTableOptions.getMenuLimit()));
+        options.setShowColumnTotals(
+                overrideOption(options.isShowColumnTotals(), pivotTableOptions.isShowColumnTotals()));
+        options.setShowRowTotals(overrideOption(options.isShowRowTotals(), pivotTableOptions.isShowRowTotals()));
+        options.setUnusedPropertiesVertical(
+                overrideOption(options.getUnusedPropertiesVertical(), pivotTableOptions.getUnusedPropertiesVertical()));
+        options.setRenderers(overrideOption(options.getRenderers(), pivotTableOptions.getRenderers()));
+        options.setDerivedProperties(overrideOption(
+                options.getDerivedProperties(), pivotTableOptions.getDerivedProperties()));
+        options.setAggregation(overrideOption(options.getAggregation(), pivotTableOptions.getAggregation()));
+        options.setAggregationProperties(
+                overrideOption(options.getAggregationProperties(), pivotTableOptions.getAggregationProperties()));
+        options.setAggregations(overrideOption(options.getAggregations(), pivotTableOptions.getAggregations()));
+        options.setRendererOptions(
+                overrideOption(options.getRendererOptions(), pivotTableOptions.getRendererOptions()));
+        options.setFilterFunction(overrideOption(options.getFilterFunction(), pivotTableOptions.getFilterFunction()));
+        options.setHiddenFromAggregations(overrideOption(
+                options.getHiddenFromAggregations(), pivotTableOptions.getHiddenFromAggregations()));
+        options.setHiddenFromDragDrop(
+                overrideOption(options.getHiddenFromDragDrop(), pivotTableOptions.getHiddenFromDragDrop()));
+        options.setHiddenProperties(
+                overrideOption(options.getHiddenProperties(), pivotTableOptions.getHiddenProperties()));
+        options.setSortersFunction(
+                overrideOption(options.getSortersFunction(), pivotTableOptions.getSortersFunction()));
+        options.setProperties(overrideOption(options.getProperties(), pivotTableOptions.getProperties()));
+        options.setRows(overrideOption(options.getRows(), pivotTableOptions.getRows()));
+        options.setColumns(overrideOption(options.getColumns(), pivotTableOptions.getColumns()));
+        options.setInclusions(overrideOption(options.getInclusions(), pivotTableOptions.getInclusions()));
+        options.setExclusions(overrideOption(options.getExclusions(), pivotTableOptions.getExclusions()));
+
+        options.setChangedFromClient(false);
+
+        requestUpdateOptions();
+    }
+
+    protected <OPTION_TYPE> OPTION_TYPE overrideOption(OPTION_TYPE current, @Nullable OPTION_TYPE override) {
+        return override != null ? override : current;
     }
 
     protected void initLocalization() {

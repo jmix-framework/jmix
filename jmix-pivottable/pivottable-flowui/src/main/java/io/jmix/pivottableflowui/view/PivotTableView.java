@@ -23,10 +23,12 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import io.jmix.pivottableflowui.component.PivotTable;
+import io.jmix.pivottableflowui.component.PivotTableUtils;
 import io.jmix.pivottableflowui.data.ListPivotTableItems;
 import io.jmix.pivottableflowui.export.PivotTableExcelExporter;
 import io.jmix.pivottableflowui.export.PivotTableExporter;
 import io.jmix.pivottableflowui.export.PivotTableExporterImpl;
+import io.jmix.pivottableflowui.kit.component.model.PivotTableOptions;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
 import org.hibernate.validator.constraints.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,10 +68,6 @@ public class PivotTableView extends StandardView {
         pivotTable.setItems(new ListPivotTableItems("id", UUID.class, items));
     }
 
-    public void setNativeJson(String nativeJson) {
-        pivotTable.setJsonOptions(nativeJson);
-    }
-
     @Subscribe(id = "exportExcel", subject = "clickListener")
     public void exportExcel(final ClickEvent<JmixButton> event) {
         pivotTableExporter.setFileName(messages.getMessage("io.jmix.pivottableflowui.view/fileName"));
@@ -79,5 +77,9 @@ public class PivotTableView extends StandardView {
     @Subscribe(id = "pivotTable")
     protected void onPivotTableRefreshEvent(PivotTableRefreshEvent event) {
         exportExcel.setEnabled(pivotTableExporter.isRendererSupported(event.getDetail().getRenderer()));
+    }
+
+    public void setPivotTableOptions(PivotTableOptions options) {
+        PivotTableUtils.setPivotTableOptions(pivotTable, options);
     }
 }

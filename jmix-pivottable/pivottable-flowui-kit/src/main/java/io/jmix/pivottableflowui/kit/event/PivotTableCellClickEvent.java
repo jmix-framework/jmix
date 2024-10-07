@@ -31,14 +31,14 @@ import java.util.List;
  * Pivot table cell click event sent from the client.
  */
 @DomEvent(PivotTableCellClickEvent.EVENT_NAME)
-public class PivotTableCellClickEvent extends ComponentEvent<JmixPivotTable> {
+public class PivotTableCellClickEvent<T> extends ComponentEvent<JmixPivotTable<T>> {
 
     public static final String EVENT_NAME = "jmix-pivottable:cellclick";
 
     protected JsonObject detailJson;
     protected PivotTableCellClickEventDetail detail;
 
-    public PivotTableCellClickEvent(JmixPivotTable pivotTable, boolean fromClient,
+    public PivotTableCellClickEvent(JmixPivotTable<T> pivotTable, boolean fromClient,
                                     @EventData("event.detail") JsonObject detailJson) {
         super(pivotTable, fromClient);
         this.detailJson = detailJson;
@@ -50,12 +50,12 @@ public class PivotTableCellClickEvent extends ComponentEvent<JmixPivotTable> {
             detail = (PivotTableCellClickEventDetail) serializer.deserialize(
                     detailJson, PivotTableCellClickEventDetail.class);
 
-            List<Object> clickedItems = new LinkedList<>();
+            List<T> clickedItems = new LinkedList<>();
             JsonArray dataItemsKeys = detailJson.getArray("itemsKeys");
             if (dataItemsKeys != null) {
                 for (int i = 0; i < dataItemsKeys.length(); i++) {
                     String key = dataItemsKeys.get(i).asString();
-                    Object item = getSource().getItems().getItem(key);
+                    T item = getSource().getItems().getItem(key);
                     if (item != null) {
                         clickedItems.add(item);
                     }

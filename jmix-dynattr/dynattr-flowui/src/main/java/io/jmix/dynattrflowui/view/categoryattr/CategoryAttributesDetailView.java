@@ -267,9 +267,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     private boolean isRefreshing = false;
 
     @ViewComponent
-    protected TypedTextField<String> defaultStringField; //debug
-    @ViewComponent
-    protected TypedTextField<Integer> defaultIntField; //debug
+    protected TypedTextField<String> defaultStringField;
 
     private final List<String> defaultEnumValues = new ArrayList<>();
 

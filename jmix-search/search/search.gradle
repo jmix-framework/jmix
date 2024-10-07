@@ -24,6 +24,8 @@ dependencies {
     api project(':data')
     api project(':security')
 
+    api 'org.apache.lucene:lucene-queryparser:9.11.1'
+
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'

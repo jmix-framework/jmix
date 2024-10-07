@@ -16,8 +16,6 @@
 
 package io.jmix.fullcalendarflowui.component.data;
 
-import com.vaadin.flow.data.provider.AbstractDataProvider;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.event.EventBus;
 
@@ -25,13 +23,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 /**
  * Data provider that fetches events from {@link List}.
  */
-public class ListCalendarDataProvider extends AbstractDataProvider<CalendarEvent, Void>
-        implements ItemsCalendarDataProvider {
+public class ListCalendarDataProvider implements ItemsCalendarDataProvider {
 
     protected final String id;
     protected List<CalendarEvent> items = new ArrayList<>();
@@ -143,23 +139,6 @@ public class ListCalendarDataProvider extends AbstractDataProvider<CalendarEvent
     @Override
     public Registration addItemSetChangeListener(Consumer<ItemSetChangeEvent> listener) {
         return eventBus.addListener(ItemSetChangeEvent.class, listener);
-    }
-
-    @Override
-    public boolean isInMemory() {
-        return true;
-    }
-
-    @Override
-    public int size(Query<CalendarEvent, Void> query) {
-        return items.size();
-    }
-
-    @Override
-    public Stream<CalendarEvent> fetch(Query<CalendarEvent, Void> query) {
-        return items.stream()
-                .skip(query.getOffset())
-                .limit(query.getLimit());
     }
 
     protected void fireItemSetChangeEvent(DataChangeOperation operation, List<CalendarEvent> items) {

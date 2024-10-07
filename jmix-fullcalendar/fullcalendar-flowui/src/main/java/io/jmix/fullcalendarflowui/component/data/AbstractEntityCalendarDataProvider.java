@@ -1,6 +1,5 @@
 package io.jmix.fullcalendarflowui.component.data;
 
-import com.vaadin.flow.data.provider.AbstractDataProvider;
 import io.jmix.core.common.util.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.lang.Nullable;
@@ -11,11 +10,8 @@ import java.util.Objects;
 
 /**
  * Abstract class for entity based data providers.
- *
- * @param <F> type of filter object
  */
-public abstract class AbstractEntityCalendarDataProvider<F> extends AbstractDataProvider<CalendarEvent, F>
-        implements EntityCalendarDataProvider {
+public abstract class AbstractEntityCalendarDataProvider implements EntityCalendarDataProvider {
 
     protected String id;
 

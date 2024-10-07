@@ -238,8 +238,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         }
     }
 
-    protected AbstractEntityCalendarDataProvider<?> loadDataProvider(Element dataProviderElement) {
-        AbstractEntityCalendarDataProvider<?> calendarItems;
+    protected AbstractEntityCalendarDataProvider loadDataProvider(Element dataProviderElement) {
+        AbstractEntityCalendarDataProvider calendarItems;
         if (dataProviderElement.getName().equals("containerDataProvider")) {
             InstanceContainer<?> container = loadDataContainer(dataProviderElement);
             calendarItems = createCalendarItems(dataProviderElement, container);
@@ -262,7 +262,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
     }
 
     protected void loadBaseContainerProperties(Element dataProviderElement,
-                                               AbstractEntityCalendarDataProvider<?> calendarItems) {
+                                               AbstractEntityCalendarDataProvider calendarItems) {
         loadString(dataProviderElement, "groupId", calendarItems::setGroupIdProperty);
         loadString(dataProviderElement, "allDay", calendarItems::setAllDayProperty);
         loadString(dataProviderElement, "startDateTime", calendarItems::setStartDateTimeProperty);
@@ -294,7 +294,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
                 calendarItems::setRecurringEndTimeProperty);
     }
 
-    protected AbstractEntityCalendarDataProvider<?> createCalendarItems(Element dataProviderElement,
+    protected AbstractEntityCalendarDataProvider createCalendarItems(Element dataProviderElement,
                                                                         InstanceContainer<?> container) {
         String id = loadString(dataProviderElement, "id").orElse(null);
         return Strings.isNullOrEmpty(id)
@@ -302,7 +302,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
                 : new ContainerCalendarDataProvider<>(id, container);
     }
 
-    protected AbstractEntityCalendarDataProvider<?> createLazyCalendarItems(Element dataProviderElement) {
+    protected AbstractEntityCalendarDataProvider createLazyCalendarItems(Element dataProviderElement) {
         String id = loadString(dataProviderElement, "id").orElse(null);
         return Strings.isNullOrEmpty(id)
                 ? applicationContext.getBean(EntityCalendarDataRetriever.class)

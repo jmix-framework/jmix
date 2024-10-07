@@ -1,12 +1,10 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.data.provider.Query;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.fullcalendarflowui.component.data.CallbackCalendarDataProvider.ItemsFetchContext;
 import io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * Data provider for loading entities by request. It is created when calendar's XML description defines
@@ -32,7 +29,7 @@ import java.util.stream.Stream;
  */
 @Component("fcalen_CallbackCalendarDataRetriever")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class EntityCalendarDataRetriever extends AbstractEntityCalendarDataProvider<ItemsFetchContext>
+public class EntityCalendarDataRetriever extends AbstractEntityCalendarDataProvider
         implements CallbackCalendarDataProvider, ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(EntityCalendarDataRetriever.class);
@@ -149,29 +146,8 @@ public class EntityCalendarDataRetriever extends AbstractEntityCalendarDataProvi
     }
 
     @Override
-    public boolean isInMemory() {
-        return false;
-    }
-
-    @Override
-    public int size(Query<CalendarEvent, ItemsFetchContext> query) {
-        ItemsFetchContext fetchContext = query.getFilter()
-                .orElseThrow(() -> new IllegalArgumentException("Filter required"));
-
-        return load(fetchContext).size();
-    }
-
-    @Override
-    public Stream<CalendarEvent> fetch(Query<CalendarEvent, ItemsFetchContext> query) {
-        ItemsFetchContext fetchContext = query.getFilter()
-                .orElseThrow(() -> new IllegalArgumentException("Filter required"));
-
-        return load(fetchContext).stream();
-    }
-
-    @Override
     public List<CalendarEvent> onItemsFetch(ItemsFetchContext context) {
-        return fetch(new Query<>(context)).toList();
+        return load(context);
     }
 
     @Override
@@ -251,7 +227,7 @@ public class EntityCalendarDataRetriever extends AbstractEntityCalendarDataProvi
         // The value is visible range that corresponds to component's timeZone. However, this value
         // is interpreter as system default, so events that should be visible for user, won't be shown
         // in corner cases.
-        // We need to convert to LocalDateTime with component TimeZone, then transform to system.
+        // We need to convert to LocalDateTime with component's timeZone, then transform to system.
         LocalDateTime dateTime = CalendarDateTimeUtils.parseAndTransform(value.toString(), timeZone.toZoneId());
 
         return dateTimeTransformations.transformToType(dateTime, propertyType, null);

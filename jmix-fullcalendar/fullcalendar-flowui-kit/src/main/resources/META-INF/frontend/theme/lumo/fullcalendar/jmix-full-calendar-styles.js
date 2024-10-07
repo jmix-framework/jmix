@@ -57,10 +57,6 @@ jmixFullCalendarStyle.textContent = `
         outline: 0;
     }
     
-    jmix-full-calendar .fc-event:hover {
-        filter: brightness(0.9) contrast(1.2);
-    }
-    
     jmix-full-calendar .fc .fc-highlight {
         background-image: linear-gradient(var(--fc-highlight-color), var(--fc-highlight-color));
         background-repeat: repeat;
@@ -69,6 +65,26 @@ jmixFullCalendarStyle.textContent = `
     
     jmix-full-calendar .fc-more-link:hover {
         background-color: var(--lumo-contrast-10pct);
+    }
+    
+    jmix-full-calendar .fc-daygrid-day-number:focus-visible,
+    jmix-full-calendar .fc-daygrid-week-number:focus-visible {
+        border-radius: var(--lumo-border-radius-m);
+        box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+        outline: 0;
+    }
+    
+    jmix-full-calendar .fc-timegrid-event:hover,
+    jmix-full-calendar .fc-daygrid-block-event:hover {
+        cursor: var(--lumo-clickable-cursor);
+        background-color: var(--lumo-contrast-50pct);
+        border-color: var(--lumo-contrast-50pct);
+    }
+    
+    jmix-full-calendar .fc-daygrid-dot-event.fc-event-mirror,
+    jmix-full-calendar .fc-daygrid-dot-event:hover {
+        cursor: var(--lumo-clickable-cursor);
+        background-color: var(--lumo-contrast-5pct);
     }
     
     /* More link in events stack in time slots */

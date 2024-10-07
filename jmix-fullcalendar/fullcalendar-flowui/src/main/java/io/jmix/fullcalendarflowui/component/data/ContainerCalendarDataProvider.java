@@ -1,7 +1,6 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
@@ -16,14 +15,13 @@ import org.springframework.lang.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 /**
  * Data provider that loads entities from containers.
  *
  * @param <E> entity type
  */
-public class ContainerCalendarDataProvider<E> extends AbstractEntityCalendarDataProvider<Void> implements EntityDataUnit,
+public class ContainerCalendarDataProvider<E> extends AbstractEntityCalendarDataProvider implements EntityDataUnit,
         ItemsCalendarDataProvider {
 
     protected Set<CalendarEvent> itemsCache;
@@ -64,9 +62,13 @@ public class ContainerCalendarDataProvider<E> extends AbstractEntityCalendarData
     @SuppressWarnings({"unchecked"})
     protected void containerCollectionChanged(CollectionContainer.CollectionChangeEvent<E> event) {
         switch (event.getChangeType()) {
-            case ADD_ITEMS, SET_ITEM -> {
+            case ADD_ITEMS -> {
                 List<CalendarEvent> addedItems = addToCache((Collection<E>) event.getChanges());
                 fireItemSetChangeEvent(DataChangeOperation.ADD, addedItems);
+            }
+            case SET_ITEM -> {
+                List<CalendarEvent> updatedItems = updateCache((Collection<E>) event.getChanges());
+                fireItemSetChangeEvent(DataChangeOperation.UPDATE, updatedItems);
             }
             case REMOVE_ITEMS -> {
                 List<CalendarEvent> removedItems = removeFromCache((Collection<E>) event.getChanges());
@@ -110,30 +112,6 @@ public class ContainerCalendarDataProvider<E> extends AbstractEntityCalendarData
     @Override
     public Registration addStateChangeListener(Consumer<StateChangeEvent> listener) {
         return getEventBus().addListener(StateChangeEvent.class, listener);
-    }
-
-    @Override
-    public boolean isInMemory() {
-        return false;
-    }
-
-    @Override
-    public int size(Query<CalendarEvent, Void> query) {
-        if (getState() == BindingState.INACTIVE) {
-            return 0;
-        }
-        return Math.toIntExact(fetch(query).count());
-    }
-
-    @Override
-    public Stream<CalendarEvent> fetch(Query<CalendarEvent, Void> query) {
-        if (getState() == BindingState.INACTIVE) {
-            return Stream.empty();
-        }
-
-        return getItems().stream()
-                .skip(query.getOffset())
-                .limit(query.getLimit());
     }
 
     @Override
@@ -206,6 +184,20 @@ public class ContainerCalendarDataProvider<E> extends AbstractEntityCalendarData
             itemsCache.addAll(addedItems);
         }
         return (List) addedItems;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected List<CalendarEvent> updateCache(Collection<E> items) {
+        List<EntityCalendarEvent<E>> itemsToUpdate = items.stream()
+                .map(item -> new EntityCalendarEvent<>(item, this))
+                .toList();
+        if (itemsCache == null) {
+            refreshCache();
+        } else {
+            itemsToUpdate.forEach(itemsCache::remove);
+            itemsCache.addAll(itemsToUpdate);
+        }
+        return (List) itemsToUpdate;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

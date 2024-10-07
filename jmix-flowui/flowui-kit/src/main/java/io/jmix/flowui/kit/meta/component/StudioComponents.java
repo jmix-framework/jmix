@@ -2966,7 +2966,7 @@ public interface StudioComponents {
                             options = {"NO_FOCUS", "AUTO"}, defaultValue = "AUTO"),
                     @StudioProperty(xmlAttribute = "extends", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "messagesGroup", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING)
+                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
     VerticalLayout view();

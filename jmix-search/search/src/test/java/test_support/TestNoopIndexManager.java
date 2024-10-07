@@ -18,17 +18,17 @@ public class TestNoopIndexManager extends BaseIndexManager {
     }
 
     @Override
-    public boolean createIndex(IndexConfiguration indexConfiguration) {
+    public boolean createIndex(@NonNull IndexConfiguration indexConfiguration) {
         return true;
     }
 
     @Override
-    public boolean dropIndex(String indexName) {
+    public boolean dropIndex(@NonNull String indexName) {
         return true;
     }
 
     @Override
-    public boolean isIndexExist(String indexName) {
+    public boolean isIndexExist(@NonNull String indexName) {
         return true;
     }
 

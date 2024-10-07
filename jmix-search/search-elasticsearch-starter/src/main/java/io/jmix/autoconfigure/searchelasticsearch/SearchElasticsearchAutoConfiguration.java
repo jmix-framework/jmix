@@ -57,7 +57,10 @@ import javax.net.ssl.SSLContext;
 import java.util.Collection;
 
 @AutoConfiguration
-@Import({CoreConfiguration.class, DataConfiguration.class, SearchConfiguration.class, SearchElasticsearchConfiguration.class})
+@Import({CoreConfiguration.class,
+        DataConfiguration.class,
+        SearchConfiguration.class,
+        SearchElasticsearchConfiguration.class})
 public class SearchElasticsearchAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(SearchElasticsearchAutoConfiguration.class);

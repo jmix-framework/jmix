@@ -51,6 +51,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
     protected final ElasticsearchSearchStrategyProvider searchStrategyManager;
+    protected final SearchUtils searchUtils;
 
     protected final ObjectMapper objectMapper;
 
@@ -64,7 +65,8 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
                                        IdSerialization idSerialization,
                                        SecureOperations secureOperations,
                                        PolicyStore policyStore,
-                                       ElasticsearchSearchStrategyProvider searchStrategyManager) {
+                                       ElasticsearchSearchStrategyProvider searchStrategyManager,
+                                       SearchUtils searchUtils) {
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.metadata = metadata;
@@ -76,6 +78,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
         this.searchStrategyManager = searchStrategyManager;
+        this.searchUtils = searchUtils;
 
         this.objectMapper = new ObjectMapper();
     }
@@ -92,7 +95,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
 
         ElasticsearchSearchStrategy searchStrategy = resolveSearchStrategy(searchStrategyName);
         SearchResultImpl searchResult = initSearchResult(searchContext, searchStrategy);
-        List<String> targetIndexes = resolveTargetIndexes(searchContext);
+        List<String> targetIndexes = searchUtils.resolveEffectiveTargetIndexes(searchContext.getEntities());
         if (targetIndexes.isEmpty()) {
             return searchResult;
         }

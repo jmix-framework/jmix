@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 @Route(value = "search-field-settings-view", layout = DefaultMainViewParent.class)
 @ViewController("SearchFieldSettingsView")
 @ViewDescriptor("search-field-settings-view.xml")
+@DialogMode(width = "30em")
 public class SearchFieldSettingsView extends StandardView {
 
     private static final String STRATEGY_LOCALIZATION_KEY_TEMPLATE = "io.jmix.search.searchstrategy.%s.name";

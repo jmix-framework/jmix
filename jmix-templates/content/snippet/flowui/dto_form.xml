@@ -118,7 +118,11 @@ entity.attributes.each { attr ->
 	}
 }%>
 <%allForms.each {id, form ->%>
-<formLayout id="${id}" dataContainer="${form.dcId}"<% if (asideLabelsPosition) {%> labelsPosition="ASIDE"<% }%>>
+<formLayout id="${id}" dataContainer="${form.dcId}">
+	<responsiveSteps>
+		<responsiveStep minWidth="0" columns="1"<% if (asideLabelsPosition) {%> labelsPosition="ASIDE"<% }%>/>
+		<responsiveStep minWidth="40em" columns="2"<% if (asideLabelsPosition) {%> labelsPosition="ASIDE"<% }%>/>
+	</responsiveSteps>
 	<%form.fields.each {fieldId, field -> %>
 	<% if (asideLabelsPosition) {%><formItem><%}%>
 		<${field.tag} ${field.printAttrs()}<%if(field.text == null) {%>/><% } else {%>>

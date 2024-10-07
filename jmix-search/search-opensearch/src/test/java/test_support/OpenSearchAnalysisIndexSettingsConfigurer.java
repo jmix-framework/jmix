@@ -19,6 +19,7 @@ package test_support;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurationContext;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurer;
 import org.opensearch.client.opensearch.indices.IndexSettings;
+import org.opensearch.client.opensearch.indices.IndexSettingsAnalysis;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import test_support.entity.TestRootEntity;
@@ -28,26 +29,27 @@ public class OpenSearchAnalysisIndexSettingsConfigurer implements OpenSearchInde
 
     @Override
     public void configure(@NonNull OpenSearchIndexSettingsConfigurationContext context) {
-        IndexSettings.Builder commonSettingsBuilder = context.getCommonSettingsBuilder();
+        IndexSettings.Builder commonSettingsBuilder = context.getCommonIndexSettingsBuilder();
         commonSettingsBuilder
                 .maxResultWindow(15000)
-                .maxRegexLength(2000)
-                .analysis(analysisBuilder ->
-                        analysisBuilder.analyzer("customized_standard", analyzerBuilder ->
-                                analyzerBuilder.standard(stdAnalyzerBuilder ->
-                                        stdAnalyzerBuilder.maxTokenLength(100).stopwords("foo", "bar")
-                                )
-                        )
-                );
-        IndexSettings.Builder rootEntitySettingsBuilder = context.getEntitySettingsBuilder(TestRootEntity.class);
+                .maxRegexLength(2000);
+
+        IndexSettingsAnalysis.Builder commonAnalysisBuilder = context.getCommonAnalysisBuilder();
+        commonAnalysisBuilder.analyzer("customized_standard", analyzerBuilder ->
+                analyzerBuilder.standard(stdAnalyzerBuilder ->
+                        stdAnalyzerBuilder.maxTokenLength(100).stopwords("foo", "bar")
+                )
+        );
+
+        IndexSettings.Builder rootEntitySettingsBuilder = context.getEntityIndexSettingsBuilder(TestRootEntity.class);
         rootEntitySettingsBuilder
-                .maxResultWindow(15000)
-                .analysis(analysisBuilder ->
-                        analysisBuilder.analyzer("customized_standard", analyzerBuilder ->
-                                analyzerBuilder.standard(stdAnalyzerBuilder ->
-                                      stdAnalyzerBuilder.maxTokenLength(150)
-                                )
-                        )
-                );
+                .maxResultWindow(15000);
+
+        IndexSettingsAnalysis.Builder rootEntityAnalysisBuilder = context.getEntityAnalysisBuilder(TestRootEntity.class);
+        rootEntityAnalysisBuilder.analyzer("customized_standard", analyzerBuilder ->
+                analyzerBuilder.standard(stdAnalyzerBuilder ->
+                        stdAnalyzerBuilder.maxTokenLength(150)
+                )
+        );
     }
 }

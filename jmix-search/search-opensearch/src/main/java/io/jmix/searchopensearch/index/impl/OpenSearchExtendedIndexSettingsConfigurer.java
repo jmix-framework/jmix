@@ -17,25 +17,22 @@
 package io.jmix.searchopensearch.index.impl;
 
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.impl.BaseAdvancedIndexSettingsConfigurer;
-import io.jmix.search.index.mapping.AdvancedSearchSettings;
+import io.jmix.search.index.impl.BaseExtendedIndexSettingsConfigurer;
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurationContext;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurer;
-import org.opensearch.client.opensearch.indices.IndexSettings;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.opensearch.client.opensearch.indices.IndexSettingsAnalysis;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
-//@Component("search_OpenSearchAdvancedIndexSettingsConfigurer")
-public class OpenSearchAdvancedIndexSettingsConfigurer
-        extends BaseAdvancedIndexSettingsConfigurer<OpenSearchIndexSettingsConfigurationContext>
+@Component("search_OpenSearchExtendedIndexSettingsConfigurer")
+public class OpenSearchExtendedIndexSettingsConfigurer
+        extends BaseExtendedIndexSettingsConfigurer<OpenSearchIndexSettingsConfigurationContext>
         implements OpenSearchIndexSettingsConfigurer {
 
-    /*@Autowired
-    protected IndexConfigurationManager indexConfigurationManager;*/
-
-    public OpenSearchAdvancedIndexSettingsConfigurer(IndexConfigurationManager indexConfigurationManager) {
+    public OpenSearchExtendedIndexSettingsConfigurer(IndexConfigurationManager indexConfigurationManager) {
         super(indexConfigurationManager);
     }
 
@@ -52,26 +49,25 @@ public class OpenSearchAdvancedIndexSettingsConfigurer
 
     protected void configureForIndexConfiguration(OpenSearchIndexSettingsConfigurationContext context,
                                                   IndexConfiguration indexConfiguration) {
-        AdvancedSearchSettings advancedSearchSettings = indexConfiguration.getAdvancedSearchSettings();
-        if (advancedSearchSettings != null && advancedSearchSettings.isEnabled()) {
-            int edgeNGramMin = advancedSearchSettings.getEdgeNGramMin();
-            int edgeNGramMax = advancedSearchSettings.getEdgeNGramMax();
+        ExtendedSearchSettings extendedSearchSettings = indexConfiguration.getExtendedSearchSettings();
+        if (extendedSearchSettings.isEnabled()) {
+            int edgeNGramMin = extendedSearchSettings.getEdgeNGramMin();
+            int edgeNGramMax = extendedSearchSettings.getEdgeNGramMax();
 
-            String prefixFilterName = resolvePrefixFilterName();
-            String prefixAnalyzerName = resolvePrefixAnalyzerName();
-            String prefixSearchAnalyzerName = resolvePrefixSearchAnalyzerName();
-            String prefixTokenizerName = resolvePrefixTokenizerName();
+            String prefixFilterName = extendedSearchSettings.getPrefixFilter();
+            String prefixAnalyzerName = extendedSearchSettings.getPrefixAnalyzer();
+            String prefixSearchAnalyzerName = extendedSearchSettings.getPrefixSearchAnalyzer();
+            String prefixTokenizerName = extendedSearchSettings.getTokenizer();
 
-            IndexSettings.Builder builder = context.getEntitySettingsBuilder(indexConfiguration.getEntityClass());
-            builder.analysis(analysisBuilder -> analysisBuilder
+            IndexSettingsAnalysis.Builder analysisBuilder = context.getEntityAnalysisBuilder(indexConfiguration.getEntityClass());
+            analysisBuilder
                     .filter(prefixFilterName, filterBuilder ->
                             filterBuilder.definition(filterDefinitionBuilder ->
-                                    filterDefinitionBuilder.edgeNgram(edgeNGramFilterBuilder -> {
-                                        return edgeNGramFilterBuilder
-                                                .minGram(edgeNGramMin)
-                                                .maxGram(edgeNGramMax)
-                                                .preserveOriginal(true); //todo: .preserveOriginal(true) - emit original token
-                                    })
+                                    filterDefinitionBuilder.edgeNgram(edgeNGramFilterBuilder ->
+                                            edgeNGramFilterBuilder
+                                                    .minGram(edgeNGramMin)
+                                                    .maxGram(edgeNGramMax)
+                                    )
                             )
                     )
                     .analyzer(prefixAnalyzerName, analyzerBuilder ->
@@ -85,8 +81,7 @@ public class OpenSearchAdvancedIndexSettingsConfigurer
                             analyzerBuilder.custom(customAnalyzerBuilder ->
                                     customAnalyzerBuilder.tokenizer(prefixTokenizerName).filter(LOWERCASE_FILTER_NAME)
                             )
-                    )
-            );
+                    );
         }
     }
 }

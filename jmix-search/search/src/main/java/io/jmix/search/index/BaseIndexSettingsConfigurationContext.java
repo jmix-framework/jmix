@@ -24,20 +24,27 @@ import java.util.function.Supplier;
 /**
  * Allows to configure index settings (including analysis).
  * <p>
- * Settings can be configured for all search indexes ({@link BaseIndexSettingsConfigurationContext#getCommonSettingsBuilder()})
- * or for index related to specific entity ({@link BaseIndexSettingsConfigurationContext#getEntitySettingsBuilder(Class)}).
+ * Settings can be configured for all search indexes ({@link BaseIndexSettingsConfigurationContext#getCommonIndexSettingsBuilder()})
+ * or for index related to specific entity ({@link BaseIndexSettingsConfigurationContext#getEntityIndexSettingsBuilder(Class)}).
  */
-public class BaseIndexSettingsConfigurationContext<T> {
+public class BaseIndexSettingsConfigurationContext<T, A> {
 
-    private final T commonSettingsBuilder;
-    private final Map<Class<?>, T> specificSettingsBuilders;
+    protected final T commonIndexSettingsBuilder;
+    protected final A commonAnalysisBuilder;
+    protected final Map<Class<?>, T> specificIndexSettingsBuilders;
+    protected final Map<Class<?>, A> specificAnalysisBuilders;
 
-    private final Supplier<T> builderGenerator;
+    protected final Supplier<T> indexSettingsBuilderGenerator;
+    protected final Supplier<A> analysisBuilderGenerator;
 
-    public BaseIndexSettingsConfigurationContext(Supplier<T> builderGenerator) {
-        this.commonSettingsBuilder = builderGenerator.get();
-        this.specificSettingsBuilders = new HashMap<>();
-        this.builderGenerator = builderGenerator;
+    public BaseIndexSettingsConfigurationContext(Supplier<T> indexSettingsBuilderGenerator,
+                                                 Supplier<A> analysisBuilderGenerator) {
+        this.commonIndexSettingsBuilder = indexSettingsBuilderGenerator.get();
+        this.commonAnalysisBuilder = analysisBuilderGenerator.get();
+        this.specificIndexSettingsBuilders = new HashMap<>();
+        this.specificAnalysisBuilders = new HashMap<>();
+        this.indexSettingsBuilderGenerator = indexSettingsBuilderGenerator;
+        this.analysisBuilderGenerator = analysisBuilderGenerator;
     }
 
     /**
@@ -45,8 +52,12 @@ public class BaseIndexSettingsConfigurationContext<T> {
      *
      * @return Index settings builder
      */
-    public T getCommonSettingsBuilder() {
-        return commonSettingsBuilder;
+    public T getCommonIndexSettingsBuilder() {
+        return commonIndexSettingsBuilder;
+    }
+
+    public A getCommonAnalysisBuilder() {
+        return commonAnalysisBuilder;
     }
 
     /**
@@ -56,11 +67,19 @@ public class BaseIndexSettingsConfigurationContext<T> {
      * @param entityClass entity class
      * @return ES index settings builder
      */
-    public T getEntitySettingsBuilder(Class<?> entityClass) {
-        return specificSettingsBuilders.computeIfAbsent(entityClass, key -> builderGenerator.get());
+    public T getEntityIndexSettingsBuilder(Class<?> entityClass) {
+        return specificIndexSettingsBuilders.computeIfAbsent(entityClass, key -> indexSettingsBuilderGenerator.get());
     }
 
-    public Map<Class<?>, T> getAllSpecificSettingsBuilders() {
-        return new ConcurrentHashMap<>(specificSettingsBuilders);
+    public A getEntityAnalysisBuilder(Class<?> entityClass) {
+        return specificAnalysisBuilders.computeIfAbsent(entityClass, key -> analysisBuilderGenerator.get());
+    }
+
+    public Map<Class<?>, T> getAllSpecificIndexSettingsBuilders() {
+        return new ConcurrentHashMap<>(specificIndexSettingsBuilders);
+    }
+
+    public Map<Class<?>, A> getAllSpecificAnalysisBuilders() {
+        return new ConcurrentHashMap<>(specificAnalysisBuilders);
     }
 }

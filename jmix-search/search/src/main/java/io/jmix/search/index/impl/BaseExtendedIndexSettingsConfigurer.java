@@ -18,18 +18,17 @@ package io.jmix.search.index.impl;
 
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexSettingsConfigurer;
-import io.jmix.search.index.mapping.AdvancedSearchSettings;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 
 import java.util.Collection;
 
-public abstract class BaseAdvancedIndexSettingsConfigurer<TContext> implements IndexSettingsConfigurer<TContext> {
+public abstract class BaseExtendedIndexSettingsConfigurer<TContext> implements IndexSettingsConfigurer<TContext> {
 
     public static final String LOWERCASE_FILTER_NAME = "lowercase";
 
     protected final IndexConfigurationManager indexConfigurationManager;
 
-    public BaseAdvancedIndexSettingsConfigurer(IndexConfigurationManager indexConfigurationManager) {
+    public BaseExtendedIndexSettingsConfigurer(IndexConfigurationManager indexConfigurationManager) {
         this.indexConfigurationManager = indexConfigurationManager;
     }
 
@@ -40,22 +39,4 @@ public abstract class BaseAdvancedIndexSettingsConfigurer<TContext> implements I
     }
 
     protected abstract void configureForIndexConfiguration(TContext context, IndexConfiguration indexConfiguration);
-
-
-    //todo move resolveXXX methods data to AdvancedSearchSettings?
-    protected String resolvePrefixAnalyzerName() {
-        return "_jmix_prefix_analyzer";
-    }
-
-    protected String resolvePrefixSearchAnalyzerName() {
-        return "_jmix_prefix_search_analyzer";
-    }
-
-    protected String resolvePrefixTokenizerName() {
-        return "standard";
-    }
-
-    protected String resolvePrefixFilterName() {
-        return "_jmix_prefix_filter";
-    }
 }

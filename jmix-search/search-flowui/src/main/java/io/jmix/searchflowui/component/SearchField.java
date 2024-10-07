@@ -17,34 +17,41 @@
 package io.jmix.searchflowui.component;
 
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.router.QueryParameters;
 import io.jmix.core.Messages;
-import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.Notifications;
-import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.*;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.component.HasAutofocus;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
+import io.jmix.flowui.view.StandardOutcome;
+import io.jmix.flowui.view.View;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.searching.*;
+import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchResult;
 import io.jmix.searchflowui.view.result.SearchResultsView;
-import org.springframework.lang.Nullable;
+import io.jmix.searchflowui.view.settings.SearchFieldSettingsView;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -58,7 +65,9 @@ public class SearchField extends CustomField<String>
         HasHelper, HasLabel, HasSuffix, HasSize,
         HasStyle, HasTooltip, HasThemeVariant<TextFieldVariant>, HasTitle,
         InputNotifier, KeyNotifier, HasAriaLabel, HasAutofocus, HasPlaceholder {
+
     public static final String SEARCH_FIELD_STYLENAME = "jmix-search-field";
+    private static final Logger log = LoggerFactory.getLogger(SearchField.class);
 
     protected ApplicationContext applicationContext;
     protected UiComponents uiComponents;
@@ -67,17 +76,20 @@ public class SearchField extends CustomField<String>
     protected SearchProperties searchProperties;
     protected ViewNavigators viewNavigators;
     protected DialogWindows dialogWindows;
+    protected Dialogs dialogs;
     protected TypedTextField<String> root;
-    protected Icon searchIcon;
     protected String searchStrategy;
     protected List<String> entities;
     protected OpenMode openMode;
     protected int searchSize;
+
     /**
-     * allows to bind custom results handler to replace standart dialog/view opening behaviour
+     * allows to bind custom results handler to replace standard dialog/view opening behaviour
      */
     protected Consumer<SearchCompletedEvent> searchResultHandler;
     protected EntitySearcher entitySearcher;
+
+    protected Component suffixComponent;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -99,11 +111,12 @@ public class SearchField extends CustomField<String>
         searchProperties = applicationContext.getBean(SearchProperties.class);
         viewNavigators = applicationContext.getBean(ViewNavigators.class);
         dialogWindows = applicationContext.getBean(DialogWindows.class);
+        dialogs = applicationContext.getBean(Dialogs.class);
         entitySearcher = applicationContext.getBean(EntitySearcher.class);
     }
 
     protected void initComponent() {
-        createSearchIcon();
+        createSuffixComponent();
 
         root = createRootComponent();
         initRootComponent(root);
@@ -141,22 +154,76 @@ public class SearchField extends CustomField<String>
 
     protected void initRootComponent(TypedTextField<String> root) {
         root.setWidthFull();
-        root.setSuffixComponent(searchIcon);
+        root.setSuffixComponent(suffixComponent);
 
-        root.addValueChangeListener(valueChangeEvent -> {
-            if (valueChangeEvent.isFromClient()) {
-                performSearch();
-            }
-        });
+        root.addKeyPressListener(Key.ENTER, keyPressEvent -> performSearch());
     }
 
-    protected void createSearchIcon() {
-        searchIcon = new Icon(VaadinIcon.SEARCH);
+    protected void createSuffixComponent() {
+        Button searchButton = createSearchButton();
+        Button settingsButton = createSettingsButton();
+
+        HorizontalLayout hbox = uiComponents.create(HorizontalLayout.class);
+        hbox.setSpacing(false);
+        hbox.add(searchButton);
+        hbox.add(settingsButton);
+
+        this.suffixComponent = hbox;
+    }
+
+    protected Button createSearchButton() {
+        Button button = uiComponents.create(Button.class);
+        button.addThemeVariants(
+                ButtonVariant.LUMO_TERTIARY_INLINE,
+                ButtonVariant.LUMO_CONTRAST,
+                ButtonVariant.LUMO_ICON,
+                ButtonVariant.LUMO_SMALL
+        );
+        button.setIcon(new Icon(VaadinIcon.SEARCH));
+
+        button.addClickListener(clickEvent -> performSearch());
+        return button;
+    }
+
+    protected Button createSettingsButton() {
+        Button settingsButton = uiComponents.create(Button.class);
+        settingsButton.addThemeVariants(
+                ButtonVariant.LUMO_TERTIARY_INLINE,
+                ButtonVariant.LUMO_CONTRAST,
+                ButtonVariant.LUMO_ICON,
+                ButtonVariant.LUMO_SMALL
+        );
+        settingsButton.setIcon(new Icon(VaadinIcon.ELLIPSIS_DOTS_V));
+
+        settingsButton.addClickListener(clickEvent -> {
+            View<?> origin = UiComponentUtils.getView(this);
+            DialogWindow<SearchFieldSettingsView> settingsDialog = dialogWindows.view(origin, SearchFieldSettingsView.class)
+                    .withAfterOpenListener(afterOpenEvent -> {
+
+                    })
+                    .withAfterCloseListener(afterCloseEvent -> {
+                        if (afterCloseEvent.closedWith(StandardOutcome.SAVE)) {
+                            SearchFieldSettingsView view = afterCloseEvent.getView();
+                            this.searchStrategy = view.getSelectedSearchStrategy();
+                            this.searchSize = view.getSelectedSearchSize();
+                            this.entities = view.getSelectedSearchEntities();
+                        }
+                    })
+                    .build();
+
+            SearchFieldSettingsView settingsDialogView = settingsDialog.getView();
+            settingsDialogView.initSettingsValues(getSearchStrategy(), getSearchSize(), getEntities());
+
+            settingsDialog.open();
+        });
+
+        return settingsButton;
     }
 
     protected void openSearchResultsWindow(String searchText) {
         if (openMode == OpenMode.DIALOG) {
-            DialogWindow<SearchResultsView> searchResultsDialog = dialogWindows.view(UiComponentUtils.getView(this),
+            DialogWindow<SearchResultsView> searchResultsDialog = dialogWindows.view(
+                            UiComponentUtils.getView(this),
                             SearchResultsView.class)
                     .build();
 
@@ -164,7 +231,7 @@ public class SearchField extends CustomField<String>
             view.initView(new SearchFieldContext(this));
             searchResultsDialog.open();
         } else {
-            viewNavigators.view(SearchResultsView.class)
+            viewNavigators.view(UiComponentUtils.getView(this), SearchResultsView.class)
                     .withBackwardNavigation(true)
                     .withAfterNavigationHandler(event -> {
                         event.getView().initView(new SearchFieldContext(this));

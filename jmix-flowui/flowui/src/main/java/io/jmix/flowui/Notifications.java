@@ -342,8 +342,7 @@ public class Notifications {
             }
 
             if (fireOpenedChangeEvents) {
-                notification.addOpenedChangeListener(this::fireNotificationOpenedEvent);
-                notification.addOpenedChangeListener(this::fireNotificationClosedEvent);
+                notification.addOpenedChangeListener(this::fireNotificationOpenedChangeEvent);
             }
 
             return notification;
@@ -474,25 +473,17 @@ public class Notifications {
             }
         }
 
-        protected void fireNotificationOpenedEvent(Notification.OpenedChangeEvent openedChangeEvent) {
+        protected void fireNotificationOpenedChangeEvent(Notification.OpenedChangeEvent openedChangeEvent) {
             if (openedChangeEvent.isOpened()) {
-                openedChangeEvent.unregisterListener();
-
                 NotificationOpenedEvent notificationOpenedEvent = new NotificationOpenedEvent(
                         notification, text,
                         text == null ? title : null,
                         text == null ? message : null,
                         text == null && (title == null || message == null) ? component : null,
-                        type, isInternalCloseable());
+                        type);
 
                 applicationContext.publishEvent(notificationOpenedEvent);
-            }
-        }
-
-        protected void fireNotificationClosedEvent(Notification.OpenedChangeEvent openedChangeEvent) {
-            if (!openedChangeEvent.isOpened()) {
-                openedChangeEvent.unregisterListener();
-
+            } else {
                 applicationContext.publishEvent(new NotificationClosedEvent(notification));
             }
         }

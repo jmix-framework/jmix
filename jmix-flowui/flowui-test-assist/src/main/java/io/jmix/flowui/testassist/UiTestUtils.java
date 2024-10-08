@@ -29,6 +29,7 @@ import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -98,16 +99,32 @@ public final class UiTestUtils {
     }
 
     /**
-     * @return list of {@link NotificationInfo}s that opened for current {@link UI}
+     * @return list of {@link NotificationInfo} in order of opening
      */
     public static List<NotificationInfo> getOpenedNotifications() {
         return applicationContext.getBean(OpenedNotifications.class).getNotifications();
     }
 
     /**
-     * @return list of {@link DialogInfo}s that opened for current {@link UI}
+     * @return the most recent opened {@link NotificationInfo} or {@code null} if no opened notifications
+     */
+    @Nullable
+    public static NotificationInfo getLastOpenedNotification() {
+        return applicationContext.getBean(OpenedNotifications.class).getLastNotification();
+    }
+
+    /**
+     * @return list of {@link DialogInfo}s in order of opening
      */
     public static List<DialogInfo> getOpenedDialogs() {
         return applicationContext.getBean(OpenedDialogs.class).getDialogs();
+    }
+
+    /**
+     * @return the most recent opened {@link DialogInfo} or {@code null} if no opened dialogs
+     */
+    @Nullable
+    public static DialogInfo getLastOpenedDialog() {
+        return applicationContext.getBean(OpenedDialogs.class).getLastDialog();
     }
 }

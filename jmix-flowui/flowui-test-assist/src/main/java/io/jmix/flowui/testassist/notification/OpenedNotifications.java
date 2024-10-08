@@ -16,24 +16,27 @@
 
 package io.jmix.flowui.testassist.notification;
 
+import com.google.common.collect.Iterables;
 import com.vaadin.flow.component.notification.Notification;
 import io.jmix.flowui.event.notification.NotificationClosedEvent;
 import io.jmix.flowui.event.notification.NotificationOpenedEvent;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.event.EventListener;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Bean contains opened {@link Notification}s.
+ * Bean contains opened {@link Notification}s in order of opening.
  */
 @Component("ui_OpenedNotifications")
 public class OpenedNotifications {
 
-    protected Map<Notification, NotificationInfo> openedNotifications = new HashMap<>();
+    protected Map<Notification, NotificationInfo> openedNotifications = new LinkedHashMap<>();
 
     /**
      * @return list of {@link NotificationInfo}s
@@ -43,9 +46,19 @@ public class OpenedNotifications {
     }
 
     /**
-     * Closes {@link Notification}s.
+     * @return the most recent opened {@link NotificationInfo} or {@code null} if no opened notifications
      */
-    public void clearOpenedNotifications() {
+    @Nullable
+    public NotificationInfo getLastNotification() {
+        return CollectionUtils.isEmpty(openedNotifications.values())
+                ? null
+                : Iterables.getLast(openedNotifications.values());
+    }
+
+    /**
+     * Closes opened {@link Notification}s and removes them from the storage map.
+     */
+    public void closeOpenedNotifications() {
         Iterator<Notification> iterator = openedNotifications.keySet().iterator();
 
         while (iterator.hasNext()) {
@@ -73,7 +86,6 @@ public class OpenedNotifications {
                 .withTitle(event.getTitle())
                 .withMessage(event.getMessage())
                 .withComponent(event.getComponent())
-                .withType(event.getType())
-                .withCloseable(event.isCloseable());
+                .withType(event.getType());
     }
 }

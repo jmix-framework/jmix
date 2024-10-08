@@ -32,10 +32,9 @@ public class NotificationOpenedEvent extends ApplicationEvent {
     protected Component component;
 
     protected Notifications.Type type;
-    protected boolean closeable;
 
     public NotificationOpenedEvent(Notification notification, String text, String title, String message,
-                                   Component component, Notifications.Type type, boolean closeable) {
+                                   Component component, Notifications.Type type) {
         super(notification);
 
         this.text = text;
@@ -44,7 +43,6 @@ public class NotificationOpenedEvent extends ApplicationEvent {
         this.component = component;
 
         this.type = type;
-        this.closeable = closeable;
     }
 
     @Override
@@ -85,12 +83,5 @@ public class NotificationOpenedEvent extends ApplicationEvent {
      */
     public Notifications.Type getType() {
         return type;
-    }
-
-    /**
-     * @return {@code true} if {@link Notification} is closeable, {@code false} otherwise
-     */
-    public boolean isCloseable() {
-        return closeable;
     }
 }

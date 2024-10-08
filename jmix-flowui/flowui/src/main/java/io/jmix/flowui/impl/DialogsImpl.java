@@ -61,7 +61,7 @@ import java.util.function.Function;
 public class DialogsImpl implements Dialogs {
 
     protected static final String MIN_WIDTH = "25em";
-    protected static final String BUTTON_ID_POSTFIX = "-button";
+    protected static final String BUTTON_CLASS_NAMES_POSTFIX = "-button";
 
     protected Messages messages;
     protected UiViewProperties flowUiViewProperties;
@@ -108,8 +108,8 @@ public class DialogsImpl implements Dialogs {
         if (action instanceof DialogAction dialogAction) {
             DialogAction.Type type = dialogAction.getType();
 
-            button.setId(type.getId() + BUTTON_ID_POSTFIX);
-            button.addClassName(type.getId() + BUTTON_ID_POSTFIX);
+            button.setId(type.getId());
+            button.addClassName(type.getId() + BUTTON_CLASS_NAMES_POSTFIX);
             button.setText(messages.getMessage(type.getMsgKey()));
             button.setIcon(type.getVaadinIcon().create());
         }
@@ -156,8 +156,7 @@ public class DialogsImpl implements Dialogs {
             dialog.setMinWidth(MIN_WIDTH);
 
             if (applicationContext.getBean(UiComponentProperties.class).isDialogsOpenedChangeEventsEnabled()) {
-                dialog.addOpenedChangeListener(this::fireDialogOpenedEvent);
-                dialog.addOpenedChangeListener(this::fireDialogClosedEvent);
+                dialog.addOpenedChangeListener(this::fireDialogOpenedChangeEvent);
             }
         }
 
@@ -408,20 +407,13 @@ public class DialogsImpl implements Dialogs {
             return null;
         }
 
-        protected void fireDialogOpenedEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
+        protected void fireDialogOpenedChangeEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
             if (openedChangeEvent.isOpened()) {
-                openedChangeEvent.unregisterListener();
-
                 DialogOpenedEvent dialogOpenedEvent =
                         new DialogOpenedEvent(dialog, content, Collections.unmodifiableList(actionButtons));
+
                 applicationContext.publishEvent(dialogOpenedEvent);
-            }
-        }
-
-        protected void fireDialogClosedEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
-            if (!openedChangeEvent.isOpened()) {
-                openedChangeEvent.unregisterListener();
-
+            } else {
                 applicationContext.publishEvent(new DialogClosedEvent(dialog));
             }
         }
@@ -448,8 +440,7 @@ public class DialogsImpl implements Dialogs {
             dialog.setMinWidth(MIN_WIDTH);
 
             if (applicationContext.getBean(UiComponentProperties.class).isDialogsOpenedChangeEventsEnabled()) {
-                dialog.addOpenedChangeListener(this::fireDialogOpenedEvent);
-                dialog.addOpenedChangeListener(this::fireDialogClosedEvent);
+                dialog.addOpenedChangeListener(this::fireDialogOpenedChangeEvent);
             }
         }
 
@@ -662,20 +653,13 @@ public class DialogsImpl implements Dialogs {
             return dialog;
         }
 
-        protected void fireDialogOpenedEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
+        protected void fireDialogOpenedChangeEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
             if (openedChangeEvent.isOpened()) {
-                openedChangeEvent.unregisterListener();
-
                 DialogOpenedEvent dialogOpenedEvent =
                         new DialogOpenedEvent(dialog, content, Collections.singletonList(okButton));
+
                 applicationContext.publishEvent(dialogOpenedEvent);
-            }
-        }
-
-        protected void fireDialogClosedEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
-            if (!openedChangeEvent.isOpened()) {
-                openedChangeEvent.unregisterListener();
-
+            } else {
                 applicationContext.publishEvent(new DialogClosedEvent(dialog));
             }
         }
@@ -862,8 +846,7 @@ public class DialogsImpl implements Dialogs {
             dialog.setMinWidth(MIN_WIDTH);
 
             if (applicationContext.getBean(UiComponentProperties.class).isDialogsOpenedChangeEventsEnabled()) {
-                dialog.addOpenedChangeListener(this::fireDialogOpenedEvent);
-                dialog.addOpenedChangeListener(this::fireDialogClosedEvent);
+                dialog.addOpenedChangeListener(this::fireDialogOpenedChangeEvent);
             }
         }
 
@@ -1140,21 +1123,14 @@ public class DialogsImpl implements Dialogs {
             dialog.close();
         }
 
-        protected void fireDialogOpenedEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
+        protected void fireDialogOpenedChangeEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
             if (openedChangeEvent.isOpened()) {
-                openedChangeEvent.unregisterListener();
-
                 DialogOpenedEvent dialogOpenedEvent =
                         new DialogOpenedEvent(dialog, content,
                                 cancelAllowed ? Collections.singletonList(cancelButton) : Collections.emptyList());
+
                 applicationContext.publishEvent(dialogOpenedEvent);
-            }
-        }
-
-        protected void fireDialogClosedEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
-            if (!openedChangeEvent.isOpened()) {
-                openedChangeEvent.unregisterListener();
-
+            } else {
                 applicationContext.publishEvent(new DialogClosedEvent(dialog));
             }
         }

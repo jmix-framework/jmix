@@ -198,8 +198,8 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
     public void afterEach(ExtensionContext context) throws Exception {
         removeAuthentication(context);
         clearViewBasePackages(context);
-        clearOpenedNotifications(context);
-        clearOpenedDialogs(context);
+        closeOpenedNotifications(context);
+        closeOpenedDialogs(context);
     }
 
     protected void setupVaadin(ExtensionContext context) {
@@ -406,12 +406,12 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
         }
     }
 
-    protected void clearOpenedNotifications(ExtensionContext context) {
-        getApplicationContext(context).getBean(OpenedNotifications.class).clearOpenedNotifications();
+    protected void closeOpenedNotifications(ExtensionContext context) {
+        getApplicationContext(context).getBean(OpenedNotifications.class).closeOpenedNotifications();
     }
 
-    protected void clearOpenedDialogs(ExtensionContext context) {
-        getApplicationContext(context).getBean(OpenedDialogs.class).clearOpenedDialogs();
+    protected void closeOpenedDialogs(ExtensionContext context) {
+        getApplicationContext(context).getBean(OpenedDialogs.class).closeOpenedDialogs();
     }
 
     @Nullable

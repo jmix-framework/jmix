@@ -16,24 +16,27 @@
 
 package io.jmix.flowui.testassist.dialog;
 
+import com.google.common.collect.Iterables;
 import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.flowui.event.dialog.DialogClosedEvent;
 import io.jmix.flowui.event.dialog.DialogOpenedEvent;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.event.EventListener;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Bean contains opened {@link Dialog}s.
+ * Bean contains opened {@link Dialog}s in order of opening.
  */
 @Component("ui_OpenedDialogs")
 public class OpenedDialogs {
 
-    protected Map<Dialog, DialogInfo> openedDialogs = new HashMap<>();
+    protected Map<Dialog, DialogInfo> openedDialogs = new LinkedHashMap<>();
 
     /**
      * @return list of {@link DialogInfo}s
@@ -43,9 +46,19 @@ public class OpenedDialogs {
     }
 
     /**
-     * Closes {@link Dialog}s.
+     * @return the most recent opened {@link DialogInfo} or {@code null} if no opened dialogs
      */
-    public void clearOpenedDialogs() {
+    @Nullable
+    public DialogInfo getLastDialog() {
+        return CollectionUtils.isEmpty(openedDialogs.values())
+                ? null
+                : Iterables.getLast(openedDialogs.values());
+    }
+
+    /**
+     * Closes opened {@link Dialog}s and removes them from the storage map.
+     */
+    public void closeOpenedDialogs() {
         Iterator<Dialog> iterator = openedDialogs.keySet().iterator();
 
         while (iterator.hasNext()) {

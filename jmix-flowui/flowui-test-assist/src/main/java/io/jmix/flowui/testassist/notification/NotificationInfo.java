@@ -33,7 +33,6 @@ public class NotificationInfo {
     protected Component component;
 
     protected Notifications.Type type;
-    protected boolean closeable;
 
     /**
      * Creates a {@link NotificationInfo} of the passed {@link Notification}.
@@ -100,17 +99,6 @@ public class NotificationInfo {
     }
 
     /**
-     * Sets the {@code closeable} of the {@link Notification}.
-     *
-     * @param closeable closeable to set
-     * @return this
-     */
-    public NotificationInfo withCloseable(boolean closeable) {
-        this.closeable = closeable;
-        return this;
-    }
-
-    /**
      * @return {@link Notification} instance
      */
     public Notification getNotification() {
@@ -150,12 +138,5 @@ public class NotificationInfo {
      */
     public Notifications.Type getType() {
         return type;
-    }
-
-    /**
-     * @return {@code true} if {@link Notification} is closeable, {@code false} otherwise
-     */
-    public boolean isCloseable() {
-        return closeable;
     }
 }

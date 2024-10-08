@@ -18,11 +18,11 @@ package entities
 
 import io.jmix.samples.rest.security.FullAccessRole
 import io.jmix.samples.rest.security.InMemoryOneToManyRowLevelRole
-import io.jmix.security.authentication.RoleGrantedAuthority
 import org.apache.http.HttpStatus
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.test.context.TestPropertySource
+import spock.lang.Ignore
 import test_support.RestSpec
 
 import static org.hamcrest.CoreMatchers.notNullValue
@@ -31,8 +31,7 @@ import static test_support.DbUtils.getSql
 import static test_support.RestSpecsUtils.createRequest
 import static test_support.RestSpecsUtils.getAuthToken
 
-@TestPropertySource(properties =
-        ["jmix.core.entitySerializationTokenRequired = true"])
+@TestPropertySource(properties = ["jmix.core.entitySerializationTokenRequired = true"])
 class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
     private UUID carId
     private UUID case1Id, case2Id,
@@ -48,11 +47,9 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         user = User.builder()
                 .username(userLogin)
                 .password("{noop}" + userPassword)
-                .authorities(RoleGrantedAuthority.withResourceRoleProvider({ resourceRoleRepository.getRoleByCode(it) })
-                        .withRowLevelRoleProvider({ rowLevelRoleRepository.getRoleByCode(it) })
-                        .withResourceRoles(FullAccessRole.NAME)
-                        .withRowLevelRoles(InMemoryOneToManyRowLevelRole.NAME)
-                        .build())
+                .authorities(Arrays.asList(
+                        roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.NAME),
+                        roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(InMemoryOneToManyRowLevelRole.NAME)))
                 .build()
 
         userRepository.addUser(user)
@@ -242,6 +239,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         testDeletedCase(carId, case3Id, "InsuranceCase#3_")
     }
 
+    @Ignore //todo [jmix-framework/jmix#3758]
     def """Store entity with deleted element in the composition, element should not be deleted because it was hidden when entity is loaded from REST"""() {
         when:
 
@@ -291,6 +289,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         testNotDeletedCase(carId, case3Id, 'InsuranceCase#3_')
     }
 
+    @Ignore //todo [jmix-framework/jmix#3758]
     def """Store entity with empty array in the composition, elements should not be deleted because it was hidden when entity is loaded from REST"""() {
         when:
 

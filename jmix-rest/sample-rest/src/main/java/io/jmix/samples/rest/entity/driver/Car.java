@@ -24,9 +24,9 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.samples.rest.entity.StandardEntity;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
 
-import javax.persistence.*;
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 

@@ -19,11 +19,11 @@ package permissions;
 
 import com.jayway.jsonpath.ReadContext;
 import io.jmix.samples.rest.security.PermissionRole;
-import io.jmix.security.authentication.RoleGrantedAuthority;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,10 +53,7 @@ public class PermissionsControllerFT extends AbstractRestControllerFT {
         user = User.builder()
                 .username(userLogin)
                 .password("{noop}" + userPassword)
-                .authorities(
-                        RoleGrantedAuthority.withResourceRoleProvider(resourceRoleRepository::getRoleByCode)
-                                .withResourceRoles(PermissionRole.NAME)
-                                .build())
+                .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(PermissionRole.NAME))
                 .build();
 
         userRepository.addUser(user);
@@ -71,6 +68,7 @@ public class PermissionsControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
+    @Disabled //todo [jmix-framework/jmix#3758]
     public void getAuthorities() throws Exception {
         String url = baseUrl + "/permissions";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {

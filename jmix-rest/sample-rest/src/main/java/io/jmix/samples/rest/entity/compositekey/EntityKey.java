@@ -17,9 +17,9 @@
 package io.jmix.samples.rest.entity.compositekey;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable

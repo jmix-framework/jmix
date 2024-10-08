@@ -1,0 +1,12 @@
+{
+  "conditions": [
+    {
+      "property": "model",
+      "operator": "=",
+      "value": {
+        "_entityName": "ref$Model",
+        "id": "modelIdPlaceholder"
+      }
+    }
+  ]
+}

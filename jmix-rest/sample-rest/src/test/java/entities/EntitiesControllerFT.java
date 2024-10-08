@@ -182,42 +182,10 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
      * Should load an entity with attributes defined in the view
      */
     @Test
-    void loadEntityByIdWithView() throws Exception {
-        String url = baseUrl + "/entities/ref_Car/" + carUuidString;
-        Map<String, String> params = new HashMap<>();
-        params.put("view", "carEdit");
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-            assertEquals(carUuidString, ctx.read("$.id"));
-            assertEquals("VWV000", ctx.read("$.vin"));
-            assertEquals(modelUuidString, ctx.read("$.model.id"));
-            assertEquals(2, ctx.<Collection>read("$.repairs").size());
-
-            assertEquals(colourUuidString, ctx.read("$.colour.id"));
-
-            assertThrows(PathNotFoundException.class, () -> ctx.read("$.seller"));
-        }
-    }
-
-    @Test
     void loadEntityByIdWithMissingFetchPlan() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("fetchPlan", "missingViewName");
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-            assertEquals("Fetch plan not found", ctx.read("$.error"));
-            assertEquals(String.format("Fetch plan %s for entity ref_Car not found", "missingViewName"), ctx.read("$.details"));
-        }
-    }
-
-    @Test
-    void loadEntityByIdWithMissingView() throws Exception {
-        String url = baseUrl + "/entities/ref_Car/" + carUuidString;
-        Map<String, String> params = new HashMap<>();
-        params.put("view", "missingViewName");
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -267,19 +235,6 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    void loadEntityWithLobFieldByIdWithView() throws Exception {
-        String url = baseUrl + "/entities/ref$ExtDriver/" + driverUuidString;
-        Map<String, String> params = new HashMap<>();
-        params.put("view", "test1");
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-            assertEquals(driverUuidString, ctx.read("$.id"));
-            assertEquals("The notes", ctx.read("$.notes"));
-        }
-    }
-
-    @Test
     void loadEntitiesWithLobFieldWithFetchPlan() throws Exception {
         String url = baseUrl + "/entities/ref$ExtDriver";
         Map<String, String> params = new HashMap<>();
@@ -294,42 +249,10 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    void loadEntitiesWithLobFieldWithView() throws Exception {
-        String url = baseUrl + "/entities/ref$ExtDriver";
-        Map<String, String> params = new HashMap<>();
-        params.put("view", "test1");
-        params.put("sort", "createTs");
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-            assertEquals(driverUuidString, ctx.read("$[0].id"));
-            assertEquals("The notes", ctx.read("$[0].notes"));
-        }
-    }
-
-    @Test
     void loadEntityByIdWithFetchPlanAndReturnNullsOption() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("fetchPlan", "carEdit");
-        params.put("returnNulls", "true");
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-            assertEquals(carUuidString, ctx.read("$.id"));
-            assertEquals(modelUuidString, ctx.read("$.model.id"));
-            assertEquals(2, ctx.<Collection>read("$.repairs").size());
-
-            //colour property has null value and this value is in the JSON
-            assertNull(ctx.read("$.seller"));
-        }
-    }
-
-    @Test
-    void loadEntityByIdWithViewAndReturnNullsOption() throws Exception {
-        String url = baseUrl + "/entities/ref_Car/" + carUuidString;
-        Map<String, String> params = new HashMap<>();
-        params.put("view", "carEdit");
         params.put("returnNulls", "true");
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
@@ -362,8 +285,8 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_NOT_FOUND, statusCode(response));
             ReadContext ctx = parseResponse(response);
-            assertEquals("MetaClass not found", ctx.read("$.error"));
-            assertEquals("MetaClass ref$NonExistingMetaClass not found", ctx.read("$.details"));
+            assertEquals("Entity not found", ctx.read("$.error"));
+            assertEquals("Entity ref$NonExistingMetaClass not found", ctx.read("$.details"));
         }
     }
 
@@ -493,43 +416,10 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    void loadEntitiesListWithView() throws Exception {
-        String url = baseUrl + "/entities/ref_Car";
-        Map<String, String> params = new HashMap<>();
-        params.put("view", "carEdit");
-        params.put("sort", "vin");
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-            assertNotNull(ctx.read("$.[0].model.id"));
-            assertTrue(ctx.<Collection>read("$.[0].repairs").size() > 0);
-
-            assertThrows(PathNotFoundException.class, () -> ctx.read("$.[0].seller"));
-        }
-    }
-
-    @Test
     void loadEntitiesListWithFetchPlanAndReturnNulls() throws Exception {
         String url = baseUrl + "/entities/ref_Car";
         Map<String, String> params = new HashMap<>();
         params.put("fetchPlan", "carEdit");
-        params.put("sort", "vin");
-        params.put("returnNulls", "true");
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-            assertNotNull(ctx.read("$.[0].model.id"));
-            assertTrue(ctx.<Collection>read("$.[0].repairs").size() > 0);
-
-            assertNull(ctx.read("$.[0].seller"));
-        }
-    }
-
-    @Test
-    void loadEntitiesListWithViewAndReturnNulls() throws Exception {
-        String url = baseUrl + "/entities/ref_Car";
-        Map<String, String> params = new HashMap<>();
-        params.put("view", "carEdit");
         params.put("sort", "vin");
         params.put("returnNulls", "true");
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
@@ -677,40 +567,107 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
+    void loadEntitiesFilterInList() throws Exception {
+        String url = baseUrl + "/entities/ref_Car/search";
+        String json = getFileContent("entitiesFilterIn.json", null);
+        Map<String, String> params = new HashMap<>();
+        params.put("filter", json);
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.<Collection>read("$").size());
+            assertEquals("VWV002", ((String) ctx.read("$[0].vin")));
+        }
+    }
+
+    @Test
+    void loadEntitiesFilterNotInList() throws Exception {
+        String url = baseUrl + "/entities/ref_Car/search";
+        String json = getFileContent("entitiesFilterIn.json", Map.of("\"in\"", "notIn"));
+        Map<String, String> params = new HashMap<>();
+        params.put("filter", json);
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.<Collection>read("$").size());
+            assertEquals("VWV000", ((String) ctx.read("$[0].vin")));
+        }
+    }
+
+    @Test
+    void loadEntitiesFilterByEntity() throws Exception {
+        String url = baseUrl + "/entities/ref_Car/search";
+        String json = getFileContent("entitiesFilterByEntity.json",
+                Map.of("modelIdPlaceholder", modelUuidString));
+        Map<String, String> params = new HashMap<>();
+        params.put("filter", json);
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.<Collection>read("$").size());
+            assertEquals("VWV000", ((String) ctx.read("$[0].vin")));
+        }
+    }
+
+    @Test
+    void loadEntitiesFilterByEntityList() throws Exception {
+        String url = baseUrl + "/entities/ref_Car/search";
+        String json = getFileContent("entitiesFilterInEntityList.json",
+                Map.of("modelIdPlaceholder1", modelUuidString,
+                        "modelIdPlaceholder2", model2UuidString));
+        Map<String, String> params = new HashMap<>();
+        params.put("filter", json);
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.<Collection>read("$").size());
+            assertEquals("VWV000", (ctx.read("$[0].vin")));
+        }
+    }
+
+    @Test
+    void loadEntitiesFilterDateComparison() throws Exception {
+        String url = baseUrl + "/entities/ref$Repair/search";
+        String json = getFileContent("entitiesFilterComparison.json", null);
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, Map.of("filter", json))) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.<Collection>read("$").size());
+            assertEquals("2012-01-14", (ctx.read("$[0].date")));
+        }
+
+        json = getFileContent("entitiesFilterComparison.json", Map.of("\">\"", "\">=\""));
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, Map.of("filter", json, "sort", "date"))) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(2, ctx.<Collection>read("$").size());
+            assertEquals("2012-01-13", (ctx.read("$[0].date")));
+            assertEquals("2012-01-14", (ctx.read("$[1].date")));
+        }
+
+        json = getFileContent("entitiesFilterComparison.json", Map.of("\">\"", "\"<=\"", "-13", "-14"));
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, Map.of("filter", json, "sort", "date"))) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(2, ctx.<Collection>read("$").size());
+            assertEquals("2012-01-13", (ctx.read("$[0].date")));
+            assertEquals("2012-01-14", (ctx.read("$[1].date")));
+        }
+
+        json = getFileContent("entitiesFilterComparison.json", Map.of("\">\"", "\"<>\""));
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, Map.of("filter", json))) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.<Collection>read("$").size());
+            assertEquals("2012-01-14", (ctx.read("$[0].date")));
+        }
+    }
+
+
+    @Test
     void loadEntitiesFilterWithFetchPlanPost() throws Exception {
         String url = baseUrl + "/entities/ref_Car/search";
         String json = getFileContent("entitiesFilterWithFetchPlan.json", null);
-        Map<String, String> params = new HashMap<>();
-        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-            assertEquals(2, ctx.<Collection>read("$").size());
-            assertTrue(((String) ctx.read("$[0].vin")).startsWith("VW"));
-            assertEquals(colourUuidString, ctx.read("$.[0]colour.id"));
-        }
-    }
-
-    @Test
-    void loadEntitiesFilterWithViewPost() throws Exception {
-        String url = baseUrl + "/entities/ref_Car/search";
-        String json = getFileContent("entitiesFilterWithView.json", null);
-        Map<String, String> params = new HashMap<>();
-        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-            assertEquals(2, ctx.<Collection>read("$").size());
-            assertTrue(((String) ctx.read("$[0].vin")).startsWith("VW"));
-            assertEquals(colourUuidString, ctx.read("$.[0]colour.id"));
-        }
-    }
-
-    @Test
-    /**
-     * viewName is supported fo backward compatibility
-     */
-    void loadEntitiesFilterWithViewNamePost() throws Exception {
-        String url = baseUrl + "/entities/ref_Car/search";
-        String json = getFileContent("entitiesFilterWithViewName.json", null);
         Map<String, String> params = new HashMap<>();
         try (CloseableHttpResponse response = sendPost(url, oauthToken, json, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
@@ -1269,7 +1226,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    void createAndReadNewEntityFromCustomDataStoreЦшерКуызщтыуАуесрЗдфт() throws Exception {
+    void createAndReadNewEntityFromCustomDataStoreWithResponseFetchPlan() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("createMem1Customer.json", replacements);
 
@@ -1305,7 +1262,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    void createAndReadNewEntityFromCustomDataStore() throws Exception {
+    void createReadAndSearchNewEntityFromCustomDataStore() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("createMem1Customer.json", replacements);
 
@@ -2032,72 +1989,11 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    void loadEntityByIdWithTransform() throws Exception {
-        String url = baseUrl + "/entities/ref$OldCar/" + carUuidString;
-        Map<String, String> params = new HashMap<>();
-        params.put("modelVersion", "1.0");
-        params.put("view", "carBrowse");
-
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-            assertEquals(carUuidString, ctx.read("$.id"));
-            assertEquals("VWV000", ctx.read("$._instanceName"));
-            assertEquals("ref$OldCar", ctx.read("$._entityName"));
-            assertEquals("VWV000", ctx.read("$.oldVin"));
-            assertNotNull(ctx.read("$.model"));
-
-            //vin must be renamed
-            try {
-                ctx.read("$.vin");
-                fail();
-            } catch (PathNotFoundException ignored) {
-            }
-
-            //colour must be removed
-            try {
-                ctx.read("$.colour");
-                fail();
-            } catch (PathNotFoundException ignored) {
-            }
-        }
-    }
-
-    @Test
     void loadEntitiesListWithTransformAndFetchPlan() throws Exception {
         String url = baseUrl + "/entities/ref$OldCar";
         Map<String, String> params = new HashMap<>();
         params.put("modelVersion", "1.0");
         params.put("fetchPlan", "carBrowse");
-
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-
-            Map<String, Object> carFields = (Map<String, Object>) ctx.read("$[?(@.id=='" + carUuidString + "')]", List.class).get(0);
-            assertEquals(carUuidString, carFields.get("id"));
-            assertEquals("VWV000", carFields.get("_instanceName"));
-            assertEquals("ref$OldCar", carFields.get("_entityName"));
-            assertEquals("VWV000", carFields.get("oldVin"));
-
-            Map<String, Object> modelFields = (Map<String, Object>) carFields.get("model");
-            assertEquals("ref$OldModel", modelFields.get("_entityName"));
-            assertEquals(modelName, modelFields.get("oldName"));
-
-            //vin must be renamed
-            assertNull(carFields.get("vin"));
-
-            //colour must be removed
-            assertNull(carFields.get("colour"));
-        }
-    }
-
-    @Test
-    void loadEntitiesListWithTransform() throws Exception {
-        String url = baseUrl + "/entities/ref$OldCar";
-        Map<String, String> params = new HashMap<>();
-        params.put("modelVersion", "1.0");
-        params.put("view", "carBrowse");
 
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));

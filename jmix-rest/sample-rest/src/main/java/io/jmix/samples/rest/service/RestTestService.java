@@ -19,10 +19,10 @@ package io.jmix.samples.rest.service;
 import io.jmix.samples.rest.entity.ModelEntity;
 import io.jmix.samples.rest.entity.driver.Car;
 import io.jmix.samples.rest.entity.driver.NotPersistentStringIdEntity;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.text.ParseException;

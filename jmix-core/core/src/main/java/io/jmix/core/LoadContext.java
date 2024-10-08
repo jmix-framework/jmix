@@ -22,10 +22,9 @@ import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
-
-import org.springframework.lang.Nullable;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TemporalType;
+import org.springframework.lang.Nullable;
 
 import java.io.Serial;
 import java.io.Serializable;

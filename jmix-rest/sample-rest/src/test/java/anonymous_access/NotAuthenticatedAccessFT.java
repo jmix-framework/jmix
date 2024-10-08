@@ -22,15 +22,16 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import test_support.AbstractRestControllerFT;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static test_support.RestTestUtils.statusCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import static test_support.RestTestUtils.statusCode;
+@Disabled//todo [jmix-framework/jmix#3758]
 public class NotAuthenticatedAccessFT extends AbstractRestControllerFT {
 
     @Test

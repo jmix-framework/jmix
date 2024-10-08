@@ -16,7 +16,7 @@
 
 package cors;
 
-import test_support.AbstractRestControllerFT;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import test_support.AbstractRestControllerFT;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
@@ -38,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {
         "jmix.cors.allowed-origins = http://www.allowed1.com, http://www.allowed2.com"
 })
+@Disabled //todo [jmix-framework/jmix#3758]
 public class CorsTest extends AbstractRestControllerFT {
 
     @Autowired

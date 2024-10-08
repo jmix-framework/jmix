@@ -18,8 +18,7 @@ package io.jmix.samples.rest.entity.sec;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * User access group.

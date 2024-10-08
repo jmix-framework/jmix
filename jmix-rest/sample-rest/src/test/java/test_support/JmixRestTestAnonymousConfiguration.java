@@ -21,8 +21,8 @@ import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
 import io.jmix.rest.RestConfiguration;
 import io.jmix.samples.rest.security.AnonymousAccessRole;
-import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +39,9 @@ public class JmixRestTestAnonymousConfiguration {
     @Autowired
     protected ResourceRoleRepository roleRepository;
 
+    @Autowired
+    protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
+
     @Bean
     @Primary
     public UserRepository userRepository() {
@@ -48,7 +51,7 @@ public class JmixRestTestAnonymousConfiguration {
                 return User.builder()
                         .username("anonymous")
                         .password("{noop}")
-                        .authorities(RoleGrantedAuthority.ofResourceRole(roleRepository.getRoleByCode(AnonymousAccessRole.NAME)))
+                        .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(AnonymousAccessRole.NAME))
                         .build();
             }
         };

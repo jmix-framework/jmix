@@ -1,0 +1,9 @@
+{
+  "conditions": [
+    {
+      "property": "date",
+      "operator": ">",
+      "value": "2012-01-13"
+    }
+  ]
+}

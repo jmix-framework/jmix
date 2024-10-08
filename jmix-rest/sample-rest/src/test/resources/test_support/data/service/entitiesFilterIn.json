@@ -1,0 +1,9 @@
+{
+  "conditions": [
+    {
+      "property": "vin",
+      "operator": "in",
+      "value": ["VWV001","VWV002","VWV003"]
+    }
+  ]
+}

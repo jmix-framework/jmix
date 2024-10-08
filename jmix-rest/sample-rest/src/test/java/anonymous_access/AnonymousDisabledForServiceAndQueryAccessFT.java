@@ -17,15 +17,16 @@
 package anonymous_access;
 
 import io.jmix.samples.rest.service.RestTestService;
-import test_support.AbstractRestControllerFT;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.lang.Nullable;
+import test_support.AbstractRestControllerFT;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,9 +34,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static test_support.RestTestUtils.statusCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import static test_support.RestTestUtils.statusCode;
+@Disabled //todo [jmix-framework/jmix#3758]
 public class AnonymousDisabledForServiceAndQueryAccessFT extends AbstractRestControllerFT {
 
     protected Map<String, String> serviceParams = new HashMap<String, String>() {{

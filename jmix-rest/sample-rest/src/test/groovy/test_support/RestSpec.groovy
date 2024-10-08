@@ -25,12 +25,12 @@ import io.jmix.rest.RestConfiguration
 import io.jmix.samples.rest.SampleRestApplication
 import io.jmix.samples.rest.security.FullAccessRole
 import io.jmix.security.SecurityConfiguration
-import io.jmix.security.authentication.RoleGrantedAuthority
 import io.jmix.security.role.ResourceRoleRepository
+import io.jmix.security.role.RoleGrantedAuthorityUtils
 import io.jmix.security.role.RowLevelRoleRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.test.context.ContextConfiguration
@@ -61,6 +61,9 @@ class RestSpec extends Specification {
     @Autowired
     RowLevelRoleRepository rowLevelRoleRepository
 
+    @Autowired
+    protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
+
     public DataSet dirtyData = new DataSet()
     public Sql sql
 
@@ -75,7 +78,7 @@ class RestSpec extends Specification {
         admin = User.builder()
                 .username(userLogin)
                 .password("{noop}$userPassword")
-                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode(FullAccessRole.NAME)))
+                .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.NAME))
                 .build()
 
         userRepository.addUser(admin)

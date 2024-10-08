@@ -18,7 +18,6 @@ package entities
 
 import io.jmix.samples.rest.security.FullAccessRole
 import io.jmix.samples.rest.security.InMemoryOneToManyRowLevelRole
-import io.jmix.security.authentication.RoleGrantedAuthority
 import org.apache.http.HttpStatus
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
@@ -45,11 +44,9 @@ class RLS_OneToManyTest extends RestSpec {
         user = User.builder()
                 .username(userLogin)
                 .password("{noop}" + userPassword)
-                .authorities(RoleGrantedAuthority.withResourceRoleProvider({ resourceRoleRepository.getRoleByCode(it) })
-                        .withRowLevelRoleProvider({ rowLevelRoleRepository.getRoleByCode(it) })
-                        .withResourceRoles(FullAccessRole.NAME)
-                        .withRowLevelRoles(InMemoryOneToManyRowLevelRole.NAME)
-                        .build())
+                .authorities(Arrays.asList(
+                        roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.NAME),
+                        roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(InMemoryOneToManyRowLevelRole.NAME)))
                 .build()
         userRepository.addUser(user)
         carId = createCar(dirtyData, sql, '001')

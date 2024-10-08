@@ -30,13 +30,14 @@ import io.jmix.core.impl.serialization.EntitySerializationException;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.validation.EntityValidationException;
 import io.jmix.core.validation.group.RestApiChecks;
 import io.jmix.rest.RestProperties;
 import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.impl.RestControllerUtils;
 import io.jmix.rest.impl.service.filter.RestFilterParseException;
-import io.jmix.rest.impl.service.filter.RestFilterParseResult;
 import io.jmix.rest.impl.service.filter.RestFilterParser;
 import io.jmix.rest.impl.service.filter.data.EntitiesSearchResult;
 import io.jmix.rest.impl.service.filter.data.ResponseInfo;
@@ -111,6 +112,9 @@ public class EntitiesControllerManager {
     @Autowired
     protected Validator validator;
 
+    @Autowired
+    protected List<QueryStringProcessor> queryStringProcessors;
+
     public String loadEntity(String entityName,
                              String entityId,
                              @Nullable String viewName,
@@ -159,17 +163,21 @@ public class EntitiesControllerManager {
         MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
         checkCanReadEntity(metaClass);
 
-        String queryString = "select e from " + entityName + " e";
-        String json = _loadEntitiesList(queryString, viewName, limit, offset, sort, returnNulls, dynamicAttributes, modelVersion,
-                metaClass, new HashMap<>());
+        String json = loadEntitiesJson(LogicalCondition.and(),
+                viewName,
+                limit,
+                offset,
+                sort,
+                returnNulls,
+                dynamicAttributes,
+                modelVersion,
+                metaClass);
 
         json = restControllerUtils.transformJsonIfRequired(entityName, modelVersion, JsonTransformationDirection.TO_VERSION, json);
 
         Long count = null;
         if (BooleanUtils.isTrue(returnCount)) {
-            LoadContext ctx = new LoadContext(metadata.getClass(metaClass.getJavaClass()))
-                    .setQuery(new LoadContext.Query(queryString));
-            count = dataManager.getCount(ctx);
+            count = countEntities(metaClass, LogicalCondition.and());
         }
         return new EntitiesSearchResult(json, count);
 
@@ -193,35 +201,34 @@ public class EntitiesControllerManager {
         MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
         checkCanReadEntity(metaClass);
 
-        RestFilterParseResult filterParseResult;
+        Condition jmixCondition;
         try {
-            filterParseResult = restFilterParser.parse(filterJson, metaClass);
+            jmixCondition = restFilterParser.parse(filterJson, metaClass);
         } catch (RestFilterParseException e) {
             throw new RestAPIException("Cannot parse entities filter", e.getMessage(), HttpStatus.BAD_REQUEST, e);
         }
 
-        String jpqlWhere = filterParseResult.getJpqlWhere();
-        Map<String, Object> queryParameters = filterParseResult.getQueryParameters();
-
-        String queryString = "select e from " + entityName + " e";
-
-        if (jpqlWhere != null) {
-            queryString += " where " + jpqlWhere.replace("{E}", "e");
-        }
-
-        String json = _loadEntitiesList(queryString, viewName, limit, offset, sort, returnNulls,
-                dynamicAttributes, modelVersion, metaClass, queryParameters);
-        Long count = null;
-        if (BooleanUtils.isTrue(returnCount)) {
-            LoadContext ctx = new LoadContext(metadata.getClass(metaClass.getJavaClass()))
-                    .setQuery(new LoadContext.Query(queryString));
-            if (queryParameters != null) {
-                ctx.getQuery().setParameters(queryParameters);
-            }
-            count = dataManager.getCount(ctx);
-        }
-
+        String json = loadEntitiesJson(jmixCondition, viewName, limit, offset, sort, returnNulls,
+                dynamicAttributes, modelVersion, metaClass);
+        Long count = BooleanUtils.isTrue(returnCount) ?
+                countEntities(metaClass, jmixCondition)
+                : null;
         return new EntitiesSearchResult(json, count);
+    }
+
+    protected long countEntities(MetaClass metaClass, @Nullable Condition jmixCondition) {
+        String queryString = createSimpleSelect(metaClass);
+        queryString = QueryUtils.applyQueryStringProcessors(queryStringProcessors, queryString, metaClass.getJavaClass());
+
+        LoadContext<?> ctx = new LoadContext<>(metadata.getClass(metaClass.getJavaClass()))
+                .setQuery(new LoadContext.Query(queryString)
+                        .setCondition(jmixCondition));
+        return dataManager.getCount(ctx);
+    }
+
+    @Nullable
+    protected String createSimpleSelect(MetaClass metaClass) {
+        return metadataTools.isJpaEntity(metaClass) ? "select e from " + metaClass.getName() + " e" : null;
     }
 
     public Long countSearchEntities(String entityName,
@@ -235,25 +242,14 @@ public class EntitiesControllerManager {
         MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
         checkCanReadEntity(metaClass);
 
-        RestFilterParseResult filterParseResult;
+        Condition jmixCondition;
         try {
-            filterParseResult = restFilterParser.parse(filterJson, metaClass);
+            jmixCondition = restFilterParser.parse(filterJson, metaClass);
         } catch (RestFilterParseException e) {
             throw new RestAPIException("Cannot parse entities filter", e.getMessage(), HttpStatus.BAD_REQUEST, e);
         }
 
-        String jpqlWhere = filterParseResult.getJpqlWhere();
-        Map<String, Object> queryParameters = filterParseResult.getQueryParameters();
-
-        String queryString = "select count(e) from " + entityName + " e";
-
-        if (jpqlWhere != null) {
-            queryString += " where " + jpqlWhere.replace("{E}", "e");
-        }
-
-        return dataManager.loadValue(queryString, Long.class)
-                .setParameters(queryParameters)
-                .one();
+        return countEntities(metaClass, jmixCondition);
     }
 
     public EntitiesSearchResult searchEntities(String entityName, String searchRequestBody) {
@@ -287,19 +283,26 @@ public class EntitiesControllerManager {
         return countSearchEntities(entityName, searchEntitiesRequest.getFilter().toString(), searchEntitiesRequest.getModelVersion());
     }
 
-    protected String _loadEntitiesList(String queryString,
-                                       @Nullable String viewName,
-                                       @Nullable Integer limit,
-                                       @Nullable Integer offset,
-                                       @Nullable String sort,
-                                       @Nullable Boolean returnNulls,
-                                       @Nullable Boolean dynamicAttributes,
-                                       @Nullable String modelVersion,
-                                       MetaClass metaClass,
-                                       Map<String, Object> queryParameters) {
+    protected String loadEntitiesJson(Condition condition,
+                                      @Nullable String viewName,
+                                      @Nullable Integer limit,
+                                      @Nullable Integer offset,
+                                      @Nullable String sort,
+                                      @Nullable Boolean returnNulls,
+                                      @Nullable Boolean dynamicAttributes,
+                                      @Nullable String modelVersion,
+                                      MetaClass metaClass) {
         LoadContext<Object> ctx = new LoadContext<>(metaClass);
-        String orderedQueryString = addOrderBy(queryString, sort, metaClass);
-        LoadContext.Query query = new LoadContext.Query(orderedQueryString);
+
+        String queryString = createSimpleSelect(metaClass);
+        if (queryString != null) {
+            queryString = addOrderBy(queryString, sort, metaClass);
+            queryString = QueryUtils.applyQueryStringProcessors(queryStringProcessors, queryString, metaClass.getJavaClass());
+        }
+
+        LoadContext.Query query = new LoadContext.Query(queryString);
+
+        query.setCondition(condition);
 
         int limitFromProperties = restProperties.getEntityMaxFetchSize(metaClass.getName());
         if (limit != null && limit > limitFromProperties) {
@@ -312,9 +315,6 @@ public class EntitiesControllerManager {
         }
         if (offset != null) {
             query.setFirstResult(offset);
-        }
-        if (queryParameters != null) {
-            query.setParameters(queryParameters);
         }
         ctx.setQuery(query);
 

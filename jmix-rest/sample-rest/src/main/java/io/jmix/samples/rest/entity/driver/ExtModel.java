@@ -17,10 +17,9 @@
 package io.jmix.samples.rest.entity.driver;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
-
-import javax.annotation.PostConstruct;
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 @Entity(name = "ref$ExtModel")
 @JmixEntity

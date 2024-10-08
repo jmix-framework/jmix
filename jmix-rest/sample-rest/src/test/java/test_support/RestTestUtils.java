@@ -18,6 +18,7 @@ package test_support;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
+import jakarta.annotation.Nullable;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -29,7 +30,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.lang.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +43,7 @@ import static org.apache.http.HttpStatus.SC_OK;
  */
 public class RestTestUtils {
 
-    public static final String CLIENT_ID = "client";
+    public static final String CLIENT_ID = "myclient";
     public static final String CLIENT_SECRET = "secret";
 
     public static CloseableHttpResponse sendGet(String url, String token, @Nullable Map<String, String> params) throws Exception {
@@ -144,7 +144,7 @@ public class RestTestUtils {
     }
 
     public static String getAuthToken(String baseUrl, String login, String password, Map<String, String> headers) throws IOException {
-        String uri = baseUrl + "/oauth/token";
+        String uri = baseUrl + "/oauth2/token";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String encoding = Base64.getEncoder().encodeToString((CLIENT_ID + ":" + CLIENT_SECRET).getBytes());

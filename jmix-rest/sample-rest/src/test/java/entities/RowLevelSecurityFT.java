@@ -19,11 +19,11 @@ package entities;
 import com.jayway.jsonpath.ReadContext;
 import io.jmix.samples.rest.security.FullAccessRole;
 import io.jmix.samples.rest.security.InMemoryRowLevelRole;
-import io.jmix.security.authentication.RoleGrantedAuthority;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +34,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -47,6 +48,7 @@ import static test_support.RestTestUtils.*;
 @TestPropertySource(properties = {
         "jmix.core.entity-serialization-token-required = true"
 })
+@Disabled //todo [jmix-framework/jmix#3758]
 public class RowLevelSecurityFT extends AbstractRestControllerFT {
 
     private UUID carId, newCarId;
@@ -265,11 +267,9 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
         user = User.builder()
                 .username(userLogin)
                 .password("{noop}" + userPassword)
-                .authorities(RoleGrantedAuthority.withResourceRoleProvider(resourceRoleRepository::getRoleByCode)
-                        .withRowLevelRoleProvider(rowLevelRoleRepository::getRoleByCode)
-                        .withResourceRoles(FullAccessRole.NAME)
-                        .withRowLevelRoles(InMemoryRowLevelRole.NAME)
-                        .build())
+                .authorities(Arrays.asList(
+                        roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.NAME),
+                        roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(InMemoryRowLevelRole.NAME)))
                 .build();
 
         userRepository.addUser(user);

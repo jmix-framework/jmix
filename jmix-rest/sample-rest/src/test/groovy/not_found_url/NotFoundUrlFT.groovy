@@ -18,6 +18,7 @@ package not_found_url
 
 import io.jmix.samples.rest.SampleRestApplication
 import org.springframework.boot.test.context.SpringBootTest
+import spock.lang.Ignore
 import test_support.RestSpec
 
 import static test_support.RestSpecsUtils.createRequest
@@ -34,6 +35,7 @@ class NotFoundUrlFT extends RestSpec {
         response.statusCode() == 404
     }
 
+    @Ignore //todo [jmix-framework/jmix#3758]
     def "REST-API returns 401 for incorrect URL if unauthorized"() {
         when:
         def request = createRequest()

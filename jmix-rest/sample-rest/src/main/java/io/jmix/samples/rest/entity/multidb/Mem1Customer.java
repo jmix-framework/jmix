@@ -10,8 +10,8 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.annotation.Store;
+import jakarta.persistence.Id;
 
-import javax.persistence.Id;
 import java.util.UUID;
 
 @JmixEntity(name = "ref$Mem1Customer")

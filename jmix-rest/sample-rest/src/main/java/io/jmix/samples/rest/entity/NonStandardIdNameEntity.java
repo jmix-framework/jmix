@@ -18,9 +18,8 @@ package io.jmix.samples.rest.entity;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @JmixEntity
 @Table(name = "REST_NSIN_ENTITY")

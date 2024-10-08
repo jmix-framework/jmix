@@ -18,11 +18,11 @@
 package io.jmix.rest.impl.service.filter;
 
 import com.google.common.collect.ImmutableList;
-import io.jmix.core.Metadata;
 import io.jmix.core.Entity;
+import io.jmix.core.Metadata;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.time.*;
 import java.util.Date;
 import java.util.EnumSet;
@@ -38,8 +38,8 @@ public class RestFilterOpManagerImpl implements RestFilterOpManager {
     protected Metadata metadata;
 
     protected static final List<Class> DATE_TIME_CLASSES = ImmutableList.of(Date.class, LocalDate.class, LocalDateTime.class,
-            OffsetDateTime.class);
-    protected static final List<Class> TIME_CLASSES = ImmutableList.of(LocalTime.class, OffsetTime.class);
+            OffsetDateTime.class,java.sql.Date.class);
+    protected static final List<Class> TIME_CLASSES = ImmutableList.of(LocalTime.class, OffsetTime.class, java.sql.Time.class);
 
     @Override
     public EnumSet<RestFilterOp> availableOps(Class javaClass) {
@@ -47,10 +47,10 @@ public class RestFilterOpManagerImpl implements RestFilterOpManager {
             return EnumSet.of(EQUAL, IN, NOT_IN, NOT_EQUAL, CONTAINS, DOES_NOT_CONTAIN, NOT_EMPTY, STARTS_WITH, ENDS_WITH, IS_NULL);
 
         else if (DATE_TIME_CLASSES.contains(javaClass))
-            return EnumSet.of(EQUAL, IN, NOT_IN, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESSER, LESSER_OR_EQUAL, NOT_EMPTY, DATE_INTERVAL, IS_NULL);
+            return EnumSet.of(EQUAL, IN, NOT_IN, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESSER, LESSER_OR_EQUAL, NOT_EMPTY, IS_NULL);
 
         else if (TIME_CLASSES.contains(javaClass))
-            return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESSER, LESSER_OR_EQUAL, NOT_EMPTY, DATE_INTERVAL, IS_NULL);
+            return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESSER, LESSER_OR_EQUAL, NOT_EMPTY, IS_NULL);
 
         else if (Number.class.isAssignableFrom(javaClass))
             return EnumSet.of(EQUAL, IN, NOT_IN, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESSER, LESSER_OR_EQUAL, NOT_EMPTY, IS_NULL);

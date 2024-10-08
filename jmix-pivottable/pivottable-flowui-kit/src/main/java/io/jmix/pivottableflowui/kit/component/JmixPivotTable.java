@@ -32,10 +32,7 @@ import io.jmix.pivottableflowui.kit.event.PivotTableCellClickEvent;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEventDetail;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -833,7 +830,8 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
                             .stream()
                             .collect(Collectors.toMap(
                                     Map.Entry::getValue,
-                                    e -> jmixPivotTableItems.getItemValue(item, e.getKey())));
+                                    e -> Optional.ofNullable(jmixPivotTableItems.getItemValue(item, e.getKey()))
+                                            .orElse("")));
                     propertyWithValue.put(DATA_ITEM_ID_PROPERTY_NAME, jmixPivotTableItems.getItemId(item));
                     return propertyWithValue;
                 })

@@ -29,7 +29,6 @@ import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
-import io.jmix.gridexportflowui.exporter.excel.ExcelAutoColumnSizer;
 import io.jmix.pivottableflowui.component.PivotTable;
 import io.jmix.pivottableflowui.export.model.PivotData;
 import io.jmix.pivottableflowui.export.model.PivotDataCell;

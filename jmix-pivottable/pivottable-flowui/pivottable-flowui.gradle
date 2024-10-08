@@ -23,7 +23,6 @@ archivesBaseName = 'jmix-pivottable-flowui'
 dependencies {
     api project(':flowui')
     api project(':pivottable-flowui-kit')
-    api project(':gridexport-flowui')
 
     implementation('org.apache.poi:poi')
     implementation('org.apache.poi:poi-ooxml')

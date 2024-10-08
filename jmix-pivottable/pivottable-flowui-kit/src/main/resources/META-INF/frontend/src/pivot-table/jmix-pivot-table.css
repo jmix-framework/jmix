@@ -313,6 +313,11 @@ jmix-pivot-table {
         margin-right: var(--lumo-space-xs);
     }
 
+    /* Set transparent color to avoid blinking of row and column order original symbol  */
+    a.pvtRowOrder, a.pvtColOrder {
+        color: #FFFFFF00;
+    }
+
     a.pvtRowOrder::before, a.pvtColOrder::before {
         font-family: 'Vaadin-Icons';
         color: var(--lumo-primary-text-color);

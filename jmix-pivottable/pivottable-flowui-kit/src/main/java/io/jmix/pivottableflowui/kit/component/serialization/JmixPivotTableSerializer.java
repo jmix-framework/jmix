@@ -21,6 +21,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
@@ -28,6 +32,9 @@ import io.jmix.pivottableflowui.kit.component.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,6 +43,14 @@ import java.util.stream.Stream;
 public class JmixPivotTableSerializer {
 
     private static final Logger log = LoggerFactory.getLogger(JmixPivotTableSerializer.class);
+
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss.SSS";
+    public static final String DEFAULT_DATE_TIME_FORMAT = DEFAULT_DATE_FORMAT + " " + DEFAULT_TIME_FORMAT;
+
+    protected final DateFormat dateFormatter = new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
+    protected final DateTimeFormatter temporalDateFormatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+    protected final DateTimeFormatter temporalDateTimeFormatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
 
     protected ObjectMapper objectMapper = new ObjectMapper();
     protected JreJsonFactory jsonFactory = new JreJsonFactory();
@@ -66,10 +81,13 @@ public class JmixPivotTableSerializer {
         return new SimpleModule();
     }
 
-    protected List<AbstractSerializer<?>> getSerializers() {
+    protected List<StdSerializer<?>> getSerializers() {
         return Stream.of(
                 new EnumIdSerializer(),
-                new JsFunctionSerializer()
+                new JsFunctionSerializer(),
+                new LocalDateSerializer(temporalDateFormatter),
+                new LocalDateTimeSerializer(temporalDateTimeFormatter),
+                new DateSerializer(false, dateFormatter)
         ).collect(Collectors.toList());
     }
 

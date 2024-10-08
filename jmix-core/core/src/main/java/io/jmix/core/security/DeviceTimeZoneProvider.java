@@ -26,7 +26,8 @@ import java.util.TimeZone;
 public interface DeviceTimeZoneProvider {
 
     /**
-     * @return time zone provided by the browser if the browser supports this feature, {@code null} otherwise
+     * @return time zone provided by the device (e.g. by the browser if the browser supports this feature),
+     * {@code null} otherwise
      */
     @Nullable
     TimeZone getDeviceTimeZone();

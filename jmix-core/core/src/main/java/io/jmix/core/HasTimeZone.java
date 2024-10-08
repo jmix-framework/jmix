@@ -31,7 +31,8 @@ public interface HasTimeZone {
     String getTimeZoneId();
 
     /**
-     * @return whether to use the browser's time zone if the user's time zone is not explicitly set
+     * @return whether to use the auto-detected time zone (e.g. browser's time zone) if the user's time zone
+     * is not explicitly set
      */
     default boolean isAutoTimeZone() {
         return false;

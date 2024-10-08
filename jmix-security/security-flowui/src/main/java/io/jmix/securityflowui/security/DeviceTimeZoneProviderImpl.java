@@ -21,18 +21,16 @@ import com.vaadin.flow.component.page.ExtendedClientDetails;
 import io.jmix.core.security.DeviceTimeZoneProvider;
 import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.TimeZone;
 
-@Component("flowui_DeviceTimeZoneProviderImpl")
+@Component("sec_DeviceTimeZoneProviderImpl")
 public class DeviceTimeZoneProviderImpl implements DeviceTimeZoneProvider {
 
     protected ExtendedClientDetailsProvider clientDetailsProvider;
 
-    @Autowired
-    public void setClientDetailsProvider(ExtendedClientDetailsProvider clientDetailsProvider) {
+    public DeviceTimeZoneProviderImpl(ExtendedClientDetailsProvider clientDetailsProvider) {
         this.clientDetailsProvider = clientDetailsProvider;
     }
 

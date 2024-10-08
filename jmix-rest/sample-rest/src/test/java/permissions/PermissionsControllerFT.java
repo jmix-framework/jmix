@@ -68,7 +68,7 @@ public class PermissionsControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    @Disabled //todo [jmix-framework/jmix#1866]
+    @Disabled //todo [jmix-framework/jmix#3758]
     public void getAuthorities() throws Exception {
         String url = baseUrl + "/permissions";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {

@@ -39,7 +39,7 @@ public class CustomRestControllerExceptionHandler {
         if (e instanceof CustomHttpClientErrorException) {
             CustomHttpClientErrorException ex = (CustomHttpClientErrorException) e;
 
-            //todo [jmix-framework/jmix#1866]
+            //todo [jmix-framework/jmix#3758]
             //ErrorInfo errorInfo = new ErrorInfo(ex.getStatusCode().getReasonPhrase(), ex.getStatusText());
             ErrorInfo errorInfo = new ErrorInfo(ex.getMessage(), ex.getStatusText());
             return new ResponseEntity<>(errorInfo, ex.getStatusCode());

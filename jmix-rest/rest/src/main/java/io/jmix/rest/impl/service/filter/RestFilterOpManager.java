@@ -17,9 +17,9 @@
 
 package io.jmix.rest.impl.service.filter;
 
-import java.util.Set;
+import java.util.EnumSet;
 
 public interface RestFilterOpManager {
 
-    Set<String> availableOperations(Class javaClass);
+    EnumSet<RestFilterOp> availableOps(Class javaClass);
 }

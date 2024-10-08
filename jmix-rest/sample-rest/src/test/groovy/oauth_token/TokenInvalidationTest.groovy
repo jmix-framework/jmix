@@ -26,7 +26,7 @@ import spock.lang.Ignore
 import test_support.RestSpec
 
 import static test_support.RestSpecsUtils.createRequest
-@Ignore //todo [jmix-framework/jmix#1866]
+@Ignore //todo [jmix-framework/jmix#3758]
 class TokenInvalidationTest extends RestSpec {
     @Autowired
     protected SessionRegistry sessionRegistry

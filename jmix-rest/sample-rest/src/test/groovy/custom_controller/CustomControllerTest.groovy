@@ -24,7 +24,7 @@ import test_support.RestSpec
 import static test_support.RestSpecsUtils.createRequest
 
 @TestPropertySource(properties = "jmix.rest.anonymousUrlPatterns=/rest/sample/unprotectedMethod")
-@Ignore //todo [jmix-framework/jmix#1866]
+@Ignore //todo [jmix-framework/jmix#3758]
 class CustomControllerTest extends RestSpec {
 
     def "Unprotected custom controller access"() {

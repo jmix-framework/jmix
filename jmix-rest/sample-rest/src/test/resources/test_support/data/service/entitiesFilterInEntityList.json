@@ -1,0 +1,17 @@
+{
+  "conditions": [
+    {
+      "property": "model",
+      "operator": "in",
+      "value": [{
+        "_entityName": "ref$Model",
+        "id": "modelIdPlaceholder1"
+      },
+      {
+        "_entityName": "ref$Model",
+        "id": "modelIdPlaceholder2",
+        "manufacturer": "some modified value"
+      }]
+    }
+  ]
+}

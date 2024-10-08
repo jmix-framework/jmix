@@ -65,7 +65,7 @@ import static test_support.RestTestUtils.*;
         RestConfiguration.class,
         JmixRestTestConfiguration.class})
 @SpringBootTest(classes = SampleRestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Disabled //todo [jmix-framework/jmix#1866]
+@Disabled //todo [jmix-framework/jmix#3758]
 public class OAuthTokenFT {
 
     @LocalServerPort

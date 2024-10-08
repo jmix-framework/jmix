@@ -36,7 +36,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static test_support.RestTestUtils.statusCode;
-@Disabled //todo [jmix-framework/jmix#1866]
+@Disabled //todo [jmix-framework/jmix#3758]
 public class AnonymousDisabledForServiceAndQueryAccessFT extends AbstractRestControllerFT {
 
     protected Map<String, String> serviceParams = new HashMap<String, String>() {{

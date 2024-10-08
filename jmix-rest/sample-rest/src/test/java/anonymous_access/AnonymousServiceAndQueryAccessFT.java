@@ -46,7 +46,7 @@ import static test_support.RestTestUtils.*;
         "/rest/queries/sec$User/currentUser"})
 @ContextConfiguration(classes = {
         JmixRestTestAnonymousConfiguration.class})
-@Disabled //todo [jmix-framework/jmix#1866]
+@Disabled //todo [jmix-framework/jmix#3758]
 public class AnonymousServiceAndQueryAccessFT extends AbstractRestControllerFT {
 
     protected Map<String, String> serviceParams = new HashMap<String, String>() {{

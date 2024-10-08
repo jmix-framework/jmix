@@ -25,11 +25,11 @@ import org.springframework.stereotype.Component;
 
 import java.time.*;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
-import static io.jmix.core.querycondition.PropertyCondition.Operation.*;
+import static io.jmix.rest.impl.service.filter.RestFilterOp.*;
 
 @Component("rest_RestOpManager")
 public class RestFilterOpManagerImpl implements RestFilterOpManager {
@@ -38,30 +38,30 @@ public class RestFilterOpManagerImpl implements RestFilterOpManager {
     protected Metadata metadata;
 
     protected static final List<Class> DATE_TIME_CLASSES = ImmutableList.of(Date.class, LocalDate.class, LocalDateTime.class,
-            OffsetDateTime.class, java.sql.Date.class, java.sql.Time.class);
-    protected static final List<Class> TIME_CLASSES = ImmutableList.of(LocalTime.class, OffsetTime.class);
+            OffsetDateTime.class,java.sql.Date.class);
+    protected static final List<Class> TIME_CLASSES = ImmutableList.of(LocalTime.class, OffsetTime.class, java.sql.Time.class);
 
     @Override
-    public Set<String> availableOperations(Class javaClass) {
+    public EnumSet<RestFilterOp> availableOps(Class javaClass) {
         if (String.class.equals(javaClass))
-            return Set.of(EQUAL,IN_LIST, NOT_IN_LIST, NOT_EQUAL, CONTAINS, NOT_CONTAINS, IS_SET, STARTS_WITH, ENDS_WITH);
+            return EnumSet.of(EQUAL, IN, NOT_IN, NOT_EQUAL, CONTAINS, DOES_NOT_CONTAIN, NOT_EMPTY, STARTS_WITH, ENDS_WITH, IS_NULL);
 
         else if (DATE_TIME_CLASSES.contains(javaClass))
-             return Set.of(EQUAL, IN_LIST, NOT_IN_LIST, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET);
+            return EnumSet.of(EQUAL, IN, NOT_IN, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESSER, LESSER_OR_EQUAL, NOT_EMPTY, DATE_INTERVAL, IS_NULL);
 
         else if (TIME_CLASSES.contains(javaClass))
-            return Set.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET);
+            return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESSER, LESSER_OR_EQUAL, NOT_EMPTY, DATE_INTERVAL, IS_NULL);
 
         else if (Number.class.isAssignableFrom(javaClass))
-            return Set.of(EQUAL, IN_LIST, NOT_IN_LIST, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET);
+            return EnumSet.of(EQUAL, IN, NOT_IN, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESSER, LESSER_OR_EQUAL, NOT_EMPTY, IS_NULL);
 
         else if (Boolean.class.equals(javaClass))
-            return Set.of(EQUAL, NOT_EQUAL, IS_SET);
+            return EnumSet.of(EQUAL, NOT_EQUAL, NOT_EMPTY, IS_NULL);
 
         else if (UUID.class.equals(javaClass)
                 || Enum.class.isAssignableFrom(javaClass)
                 || Entity.class.isAssignableFrom(javaClass))
-            return Set.of(EQUAL, IN_LIST, NOT_IN_LIST, NOT_EQUAL, IS_SET);
+            return EnumSet.of(EQUAL, IN, NOT_IN, NOT_EQUAL, NOT_EMPTY, IS_NULL);
 
         else
             throw new UnsupportedOperationException("Unsupported java class: " + javaClass);

@@ -35,7 +35,7 @@ import static test_support.RestTestUtils.statusCode;
 public class UserSessionControllerFT extends AbstractRestControllerFT {
 
     @Test
-    @Disabled //todo [jmix-framework/jmix#1866]
+    @Disabled //todo [jmix-framework/jmix#3758]
     public void setSessionLocale() throws Exception {
         setSessionLocale(
                 "en",

@@ -116,8 +116,8 @@ includeProject('quartz-flowui-starter', 'jmix-quartz/quartz-flowui-starter')
 
 includeProject('rest', 'jmix-rest/rest')
 includeProject('rest-starter', 'jmix-rest/rest-starter')
-//todo SB3 remove sample-rest project?
-//includeProject('sample-rest', 'jmix-rest/sample-rest')
+
+includeProject('sample-rest', 'jmix-rest/sample-rest')
 
 includeProject('restds', 'jmix-restds/restds')
 includeProject('restds-starter', 'jmix-restds/restds-starter')

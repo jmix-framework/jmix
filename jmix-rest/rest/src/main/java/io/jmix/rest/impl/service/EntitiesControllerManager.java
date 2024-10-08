@@ -163,7 +163,7 @@ public class EntitiesControllerManager {
         MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
         checkCanReadEntity(metaClass);
 
-        String json = _loadEntitiesList(LogicalCondition.and(),
+        String json = loadEntitiesJson(LogicalCondition.and(),
                 viewName,
                 limit,
                 offset,
@@ -208,7 +208,7 @@ public class EntitiesControllerManager {
             throw new RestAPIException("Cannot parse entities filter", e.getMessage(), HttpStatus.BAD_REQUEST, e);
         }
 
-        String json = _loadEntitiesList(jmixCondition, viewName, limit, offset, sort, returnNulls,
+        String json = loadEntitiesJson(jmixCondition, viewName, limit, offset, sort, returnNulls,
                 dynamicAttributes, modelVersion, metaClass);
         Long count = BooleanUtils.isTrue(returnCount) ?
                 countEntities(metaClass, jmixCondition)
@@ -216,7 +216,7 @@ public class EntitiesControllerManager {
         return new EntitiesSearchResult(json, count);
     }
 
-    protected long countEntities(MetaClass metaClass,@Nullable Condition jmixCondition) {
+    protected long countEntities(MetaClass metaClass, @Nullable Condition jmixCondition) {
         String queryString = createSimpleSelect(metaClass);
         queryString = QueryUtils.applyQueryStringProcessors(queryStringProcessors, queryString, metaClass.getJavaClass());
 
@@ -226,8 +226,9 @@ public class EntitiesControllerManager {
         return dataManager.getCount(ctx);
     }
 
-    protected static String createSimpleSelect(MetaClass metaClass){
-        return "select e from " + metaClass.getName() + " e";
+    @Nullable
+    protected String createSimpleSelect(MetaClass metaClass) {
+        return metadataTools.isJpaEntity(metaClass) ? "select e from " + metaClass.getName() + " e" : null;
     }
 
     public Long countSearchEntities(String entityName,
@@ -282,21 +283,24 @@ public class EntitiesControllerManager {
         return countSearchEntities(entityName, searchEntitiesRequest.getFilter().toString(), searchEntitiesRequest.getModelVersion());
     }
 
-    protected String _loadEntitiesList(Condition condition,
-                                       @Nullable String viewName,
-                                       @Nullable Integer limit,
-                                       @Nullable Integer offset,
-                                       @Nullable String sort,
-                                       @Nullable Boolean returnNulls,
-                                       @Nullable Boolean dynamicAttributes,
-                                       @Nullable String modelVersion,
-                                       MetaClass metaClass) {
+    protected String loadEntitiesJson(Condition condition,
+                                      @Nullable String viewName,
+                                      @Nullable Integer limit,
+                                      @Nullable Integer offset,
+                                      @Nullable String sort,
+                                      @Nullable Boolean returnNulls,
+                                      @Nullable Boolean dynamicAttributes,
+                                      @Nullable String modelVersion,
+                                      MetaClass metaClass) {
         LoadContext<Object> ctx = new LoadContext<>(metaClass);
-        String orderedQueryString = addOrderBy(createSimpleSelect(metaClass), sort, metaClass);
 
-        orderedQueryString = QueryUtils.applyQueryStringProcessors(queryStringProcessors, orderedQueryString, metaClass.getJavaClass());
+        String queryString = createSimpleSelect(metaClass);
+        if (queryString != null) {
+            queryString = addOrderBy(queryString, sort, metaClass);
+            queryString = QueryUtils.applyQueryStringProcessors(queryStringProcessors, queryString, metaClass.getJavaClass());
+        }
 
-        LoadContext.Query query = new LoadContext.Query(orderedQueryString);
+        LoadContext.Query query = new LoadContext.Query(queryString);
 
         query.setCondition(condition);
 

@@ -53,7 +53,7 @@ public class MessagesControllerFT extends AbstractRestControllerFT {
         }
     }
 
-    @Disabled //todo [jmix-framework/jmix#1866]
+    @Disabled //todo [jmix-framework/jmix#3758]
     @Test
     public void testLocalizationForEntityUsingRuLanguage() throws Exception {
         String url = baseUrl + "/messages/entities/sec$User";
@@ -79,7 +79,7 @@ public class MessagesControllerFT extends AbstractRestControllerFT {
         }
     }
 
-    @Disabled //todo [jmix-framework/jmix#1866]
+    @Disabled //todo [jmix-framework/jmix#3758]
     @Test
     public void testLocalizationUsingLocaleFromLogin() throws Exception {
         String url = baseUrl + "/messages/entities/sec$User";

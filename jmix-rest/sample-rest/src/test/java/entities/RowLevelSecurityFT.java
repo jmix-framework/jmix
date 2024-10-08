@@ -48,7 +48,7 @@ import static test_support.RestTestUtils.*;
 @TestPropertySource(properties = {
         "jmix.core.entity-serialization-token-required = true"
 })
-@Disabled //todo [jmix-framework/jmix#1866]
+@Disabled //todo [jmix-framework/jmix#3758]
 public class RowLevelSecurityFT extends AbstractRestControllerFT {
 
     private UUID carId, newCarId;

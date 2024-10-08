@@ -595,6 +595,37 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
+    void loadEntitiesFilterByEntity() throws Exception {
+        String url = baseUrl + "/entities/ref_Car/search";
+        String json = getFileContent("entitiesFilterByEntity.json",
+                Map.of("modelIdPlaceholder", modelUuidString));
+        Map<String, String> params = new HashMap<>();
+        params.put("filter", json);
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.<Collection>read("$").size());
+            assertEquals("VWV000", ((String) ctx.read("$[0].vin")));
+        }
+    }
+
+    @Test
+    void loadEntitiesFilterByEntityList() throws Exception {
+        String url = baseUrl + "/entities/ref_Car/search";
+        String json = getFileContent("entitiesFilterInEntityList.json",
+                Map.of("modelIdPlaceholder1", modelUuidString,
+                        "modelIdPlaceholder2", model2UuidString));
+        Map<String, String> params = new HashMap<>();
+        params.put("filter", json);
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.<Collection>read("$").size());
+            assertEquals("VWV000", (ctx.read("$[0].vin")));
+        }
+    }
+
+    @Test
     void loadEntitiesFilterDateComparison() throws Exception {
         String url = baseUrl + "/entities/ref$Repair/search";
         String json = getFileContent("entitiesFilterComparison.json", null);
@@ -614,7 +645,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals("2012-01-14", (ctx.read("$[1].date")));
         }
 
-        json = getFileContent("entitiesFilterComparison.json", Map.of("\">\"", "\"<=\"","-13","-14"));
+        json = getFileContent("entitiesFilterComparison.json", Map.of("\">\"", "\"<=\"", "-13", "-14"));
         try (CloseableHttpResponse response = sendGet(url, oauthToken, Map.of("filter", json, "sort", "date"))) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -1195,7 +1226,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    void createAndReadNewEntityFromCustomDataStoreЦшерКуызщтыуАуесрЗдфт() throws Exception {
+    void createAndReadNewEntityFromCustomDataStoreWithResponseFetchPlan() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("createMem1Customer.json", replacements);
 
@@ -1231,7 +1262,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    void createAndReadNewEntityFromCustomDataStore() throws Exception {
+    void createReadAndSearchNewEntityFromCustomDataStore() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("createMem1Customer.json", replacements);
 

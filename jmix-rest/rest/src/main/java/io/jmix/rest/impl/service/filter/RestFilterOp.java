@@ -17,45 +17,45 @@
 
 package io.jmix.rest.impl.service.filter;
 
-import io.jmix.core.metamodel.datatype.EnumClass;
+import io.jmix.core.querycondition.PropertyCondition;
 
-public enum RestFilterOp implements EnumClass<String> {
-    CONTAINS("like"),
-    EQUAL("="),
-    IN("in"),
-    NOT_IN("not in"),
-    NOT_EQUAL("<>"),
-    GREATER(">"),
-    GREATER_OR_EQUAL(">="),
-    LESSER("<"),
-    LESSER_OR_EQUAL("<="),
-    DOES_NOT_CONTAIN("not like"),
-    NOT_EMPTY("is not null"),
-    STARTS_WITH("like"),
-    DATE_INTERVAL(""),
-    ENDS_WITH("like"),
-    IS_NULL("is null");
+public enum RestFilterOp {
 
-    private String forJpql;
+    EQUAL("=", PropertyCondition.Operation.EQUAL),
+    IN("in", PropertyCondition.Operation.IN_LIST),
+    NOT_IN("notIn", PropertyCondition.Operation.NOT_IN_LIST),
+    NOT_EQUAL("<>", PropertyCondition.Operation.NOT_EQUAL),
+    GREATER(">", PropertyCondition.Operation.GREATER),
+    GREATER_OR_EQUAL(">=", PropertyCondition.Operation.GREATER_OR_EQUAL),
+    LESSER("<", PropertyCondition.Operation.LESS),
+    LESSER_OR_EQUAL("<=", PropertyCondition.Operation.LESS_OR_EQUAL),
+    DOES_NOT_CONTAIN("doesNotContain", PropertyCondition.Operation.NOT_CONTAINS),
+    NOT_EMPTY("notEmpty", PropertyCondition.Operation.IS_SET),
+    IS_NULL("isNull", PropertyCondition.Operation.IS_SET),
+    STARTS_WITH("startsWith", PropertyCondition.Operation.STARTS_WITH),
+    CONTAINS("contains", PropertyCondition.Operation.CONTAINS),
+    ENDS_WITH("endsWith", PropertyCondition.Operation.ENDS_WITH),
+    DATE_INTERVAL("", "");
 
-    RestFilterOp(String forJpql) {
-        this.forJpql = forJpql;
+
+    private String conditionOperation;
+    private String jsonValue;
+
+    RestFilterOp(String jsonValue, String conditionOperation) {
+        this.jsonValue = jsonValue;
+        this.conditionOperation = conditionOperation;
     }
 
-    public String forJpql() {
-        return forJpql;
-    }
-
-    public static RestFilterOp fromJpqlString(String str) {
+    public static RestFilterOp fromJson(String jsonValue) throws RestFilterParseException {
         for (RestFilterOp op : values()) {
-            if (op.forJpql.equals(str))
+            if (op.jsonValue.equals(jsonValue))
                 return op;
         }
-        throw new UnsupportedOperationException("Unsupported operation: " + str);
+        throw new RestFilterParseException("Operator is not supported: " + jsonValue);
     }
 
-    @Override
-    public String getId() {
-        return name();
+
+    public String getConditionOperation(){
+        return conditionOperation;
     }
 }

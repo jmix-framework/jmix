@@ -35,7 +35,7 @@ class NotFoundUrlFT extends RestSpec {
         response.statusCode() == 404
     }
 
-    @Ignore //todo [jmix-framework/jmix#1866]
+    @Ignore //todo [jmix-framework/jmix#3758]
     def "REST-API returns 401 for incorrect URL if unauthorized"() {
         when:
         def request = createRequest()

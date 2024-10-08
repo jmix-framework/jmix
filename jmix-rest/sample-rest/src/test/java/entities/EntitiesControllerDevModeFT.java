@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static test_support.RestTestUtils.*;
 
 @TestPropertySource(properties = {"jmix.security.oauth2.dev-mode=true", "jmix.security.oauth2.dev-username=admin"})
-@Disabled//todo [jmix-framework/jmix#1866]
+@Disabled//todo [jmix-framework/jmix#3758]
 public class EntitiesControllerDevModeFT extends AbstractRestControllerFT {
     protected String carUuidString;
     protected String colourUuidString;

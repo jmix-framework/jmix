@@ -21,6 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.jmix.core.Entity;
+import io.jmix.core.EntitySerialization;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -33,14 +34,13 @@ import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.rest.exception.RestAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
-
-import static io.jmix.core.querycondition.PropertyCondition.Operation;
 
 /**
  * Class for REST API search filter JSON parsing
@@ -56,6 +56,9 @@ public class RestFilterParser {
 
     @Autowired
     protected RestFilterOpManager restFilterOpManager;
+
+    @Autowired
+    protected EntitySerialization entitySerialization;
 
     /**
      * Parses the JSON with entities filter and returns an equivalent {@link Condition}. The
@@ -120,7 +123,6 @@ public class RestFilterParser {
     }
 
 
-
     protected Condition parseJsonToCondition(JsonObject jsonConditionObject, MetaClass metaClass) throws RestFilterParseException {
         JsonElement group = jsonConditionObject.get("group");
         if (group != null) {
@@ -168,9 +170,9 @@ public class RestFilterParser {
         }
         String operator = operatorJsonElem.getAsString();
 
-        String operation = findConditionOperation(operator);
+        RestFilterOp op = RestFilterOp.fromJson(operator);
 
-        boolean isValueRequired = !Operation.IS_SET.equals(operation);
+        boolean isValueRequired = op != RestFilterOp.IS_NULL && op != RestFilterOp.NOT_EMPTY;
         JsonElement valueJsonElem = conditionJsonObject.get("value");
         if (valueJsonElem == null && isValueRequired) {
             throw new RestFilterParseException("Field 'value' is not defined for filter condition");
@@ -183,13 +185,13 @@ public class RestFilterParser {
         MetaProperty metaProperty = propertyPath.getMetaProperty();
 
 
-        Set<String> conditionOpsAvailableForJavaType = restFilterOpManager.availableOperations(metaProperty.getJavaType());
-        if (!conditionOpsAvailableForJavaType.contains(operation)) {
+        EnumSet<RestFilterOp> conditionOpsAvailableForJavaType = restFilterOpManager.availableOps(metaProperty.getJavaType());
+        if (!conditionOpsAvailableForJavaType.contains(op)) {
             throw new RestFilterParseException("Operator " + operator + " is not available for java type " +
                     metaProperty.getJavaType().getCanonicalName());
         }
 
-        if (shouldAddPkNameToPropertyPath(metaProperty, operation)) {
+        if (shouldAddPkNameToPropertyPath(metaProperty, op, valueJsonElem)) {
             MetaClass _metaClass = metadata.getClass(metaProperty.getJavaType());
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(_metaClass);
             String pkName = primaryKeyProperty.getName();
@@ -206,57 +208,56 @@ public class RestFilterParser {
 
         if (isValueRequired) {
             Object value;
-            if (operation.equals(Operation.IN_LIST) || operation.equals(Operation.NOT_IN_LIST)) {
+            if (op == RestFilterOp.IN || op == RestFilterOp.NOT_IN) {
                 if (!valueJsonElem.isJsonArray()) {
                     throw new RestFilterParseException("JSON array was expected as a value for condition with operator " + operator);
                 }
                 List<Object> parsedArrayValues = new ArrayList<>();
                 for (JsonElement arrayItemElem : valueJsonElem.getAsJsonArray()) {
-                    parsedArrayValues.add(parseValue(metaProperty, arrayItemElem.getAsString()));
+                    parsedArrayValues.add(parseValue(metaProperty, arrayItemElem.isJsonObject()
+                            ? arrayItemElem.toString()
+                            : arrayItemElem.getAsString()));
                 }
                 value = parsedArrayValues;
             } else {
-                value = parseValue(metaProperty, valueJsonElem.getAsString());
+                value = parseValue(metaProperty, valueJsonElem.isJsonObject()
+                        ? valueJsonElem.toString()
+                        : valueJsonElem.getAsString());
             }
             condition.setParameterValue(value);
         } else {
-            if ("isNull".equals(operator)) condition.setParameterValue(false);
-            if ("notEmpty".equals(operator)) condition.setParameterValue(true);
+            if (op == RestFilterOp.IS_NULL) condition.setParameterValue(false);
+            if (op == RestFilterOp.NOT_EMPTY) condition.setParameterValue(true);
         }
 
 
         condition.setProperty(propertyName);
-        condition.setOperation(operation);
+        condition.setOperation(op.getConditionOperation());
 
         condition.setParameterName(PropertyConditionUtils.generateParameterName(propertyName));
 
         return condition;
     }
 
-    protected String findConditionOperation(String stringOp) throws RestFilterParseException {
-        return switch (stringOp) {
-            case "=" -> Operation.EQUAL;
-            case ">" -> Operation.GREATER;
-            case ">=" -> Operation.GREATER_OR_EQUAL;
-            case "<" -> Operation.LESS;
-            case "<=" -> Operation.LESS_OR_EQUAL;
-            case "<>" -> Operation.NOT_EQUAL;
-            case "startsWith" -> Operation.STARTS_WITH;
-            case "endsWith" -> Operation.ENDS_WITH;
-            case "contains" -> Operation.CONTAINS;
-            case "doesNotContain" -> Operation.NOT_CONTAINS;
-            case "in" -> Operation.IN_LIST;
-            case "notIn" -> Operation.NOT_IN_LIST;
-            case "notEmpty" -> Operation.IS_SET;
-            case "isNull" -> Operation.IS_SET;
-            default -> throw new RestFilterParseException("Operator is not supported: " + stringOp);
-        };
-    }
-
-    protected boolean shouldAddPkNameToPropertyPath(MetaProperty metaProperty, String operation) {
+    protected boolean shouldAddPkNameToPropertyPath(MetaProperty metaProperty,
+                                                    RestFilterOp op,
+                                                    @Nullable JsonElement valueJsonElem) {
         return metaProperty.getRange().isClass()
                 && Entity.class.isAssignableFrom(metaProperty.getJavaType())
-                && !Operation.IS_SET.equals(operation);
+                && !containsEntity(valueJsonElem)
+                && op != RestFilterOp.IS_NULL
+                && op != RestFilterOp.NOT_EMPTY;
+    }
+
+    protected boolean containsEntity(@Nullable JsonElement valueJsonElem) {
+        if (valueJsonElem == null) return false;
+
+        if (valueJsonElem.isJsonArray()) {
+            JsonArray array = (JsonArray) valueJsonElem;
+            return !array.isEmpty() && array.iterator().next().isJsonObject();
+        }
+
+        return valueJsonElem.isJsonObject();
     }
 
     protected Object parseValue(MetaProperty metaProperty, String stringValue) throws RestFilterParseException {
@@ -272,6 +273,8 @@ public class RestFilterParser {
             } catch (IllegalArgumentException e) {
                 throw new RestFilterParseException("Cannot parse enum value: " + stringValue, e);
             }
+        } else if (metaProperty.getRange().isClass()) {
+            return entitySerialization.entityFromJson(stringValue, metaProperty.getRange().asClass());
         }
         throw new RestFilterParseException("Cannot parse the condition value: " + stringValue);
     }

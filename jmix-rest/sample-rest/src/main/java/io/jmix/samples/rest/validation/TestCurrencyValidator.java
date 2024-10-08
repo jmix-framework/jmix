@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class TestCurrencyValidator implements ConstraintValidator<TestCurrencyClassConstraint, Currency> {
 
-    @Autowired //todo [jmix-framework/jmix#1866]
+    @Autowired //todo [jmix-framework/jmix#3758]
     protected EntityStates entityStates;
 
     @Override

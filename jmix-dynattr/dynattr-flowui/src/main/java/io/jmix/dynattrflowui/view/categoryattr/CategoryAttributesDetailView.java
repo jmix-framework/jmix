@@ -221,6 +221,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     protected JmixComboBox<String> defaultEnumField;
     @ViewComponent
+    protected TypedTextField<String> defaultStringField;
+    @ViewComponent
     protected JmixComboBox<OptionsLoaderType> optionsLoaderTypeField;
     @ViewComponent
     protected JmixValuePicker<Object> defaultEntityIdField;
@@ -265,10 +267,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     private JmixButton editEnumerationBtn;
     private boolean isRefreshing = false;
-
-    @ViewComponent
-    protected TypedTextField<String> defaultStringField;
-
     private final List<String> defaultEnumValues = new ArrayList<>();
 
     @Subscribe
@@ -281,10 +279,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     private void initDefaultEnumField() {
         defaultEnumValues.addAll(getEnumValues());
         defaultEnumField.setItems(defaultEnumValues);
-        defaultEnumField.addValueChangeListener(e -> {
-            getEditedEntity().setDefaultString(e.getValue());
-        });
-
+        defaultEnumField.addValueChangeListener(e -> getEditedEntity().setDefaultString(e.getValue()));
         if (StringUtils.isNotBlank(getEditedEntity().getDefaultString())) {
             defaultEnumField.setValue(getEditedEntity().getDefaultString());
         }
@@ -308,8 +303,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe
     protected void onAfterShow(BeforeShowEvent event) {
-        if (getEditedEntity().getDataType() != null &&
-                getEditedEntity().getDataType().equals(AttributeType.ENUMERATION)) {
+        if (isDataTypeEnum()) {
             initDefaultEnumField();
         }
         initCategoryAttributeConfigurationField();
@@ -337,6 +331,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         tabSheet.addSelectedChangeListener(e -> refreshOnce());
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
+    }
+
+    private boolean isDataTypeEnum() {
+        return getEditedEntity().getDataType() != null &&
+                getEditedEntity().getDataType().equals(AttributeType.ENUMERATION);
     }
 
     @Install(to = "nameField", subject = "validator")
@@ -693,7 +692,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             component.setVisible(visible);
 
             if (!visible && component instanceof HasValue) {
-                if (component.equals(defaultStringField) && ENUMERATION.equals(attributeType) &&
+                if (component.equals(defaultStringField) &&
+                        ENUMERATION.equals(attributeType) &&
                         !defaultEnumField.isEmpty()) {
                     continue;
                 }

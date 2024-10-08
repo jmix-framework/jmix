@@ -241,6 +241,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     protected TypedTextField<String> codeField;
     @ViewComponent
+    protected TypedTextField<String> defaultStringField;
+    @ViewComponent
     protected TypedTextField<BigDecimal> defaultDecimalField;
     @ViewComponent
     protected TypedTextField<BigDecimal> minDecimalField;
@@ -265,7 +267,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     private JmixButton editEnumerationBtn;
     private boolean isRefreshing = false;
-
     private final List<String> defaultEnumValues = new ArrayList<>();
 
     @Subscribe
@@ -302,7 +303,9 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe
     protected void onAfterShow(BeforeShowEvent event) {
-        initDefaultEnumField();
+        if (isDataTypeEnum()) {
+            initDefaultEnumField();
+        }
         initCategoryAttributeConfigurationField();
         initLocalizationTab();
         initDependsOnAttributesField();
@@ -328,6 +331,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         tabSheet.addSelectedChangeListener(e -> refreshOnce());
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
+    }
+
+    private boolean isDataTypeEnum() {
+        return getEditedEntity().getDataType() != null &&
+                getEditedEntity().getDataType().equals(AttributeType.ENUMERATION);
     }
 
     @Install(to = "nameField", subject = "validator")
@@ -684,6 +692,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             component.setVisible(visible);
 
             if (!visible && component instanceof HasValue) {
+                if (component.equals(defaultStringField) &&
+                        ENUMERATION.equals(attributeType) &&
+                        !defaultEnumField.isEmpty()) {
+                    continue;
+                }
                 ((HasValue<?, ?>) component).clear();
             }
         }

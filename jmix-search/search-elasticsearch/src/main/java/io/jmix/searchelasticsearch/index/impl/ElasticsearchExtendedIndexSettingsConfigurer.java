@@ -25,7 +25,9 @@ import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsConfiguration
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsConfigurer;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Component("search_ElasticsearchExtendedIndexSettingsConfigurer")
 public class ElasticsearchExtendedIndexSettingsConfigurer
@@ -59,6 +61,12 @@ public class ElasticsearchExtendedIndexSettingsConfigurer
             String prefixSearchAnalyzerName = extendedSearchSettings.getPrefixSearchAnalyzer();
             String prefixTokenizerName = extendedSearchSettings.getTokenizer();
 
+            List<String> prefixSearchAnalyzerFilters = new ArrayList<>();
+            prefixSearchAnalyzerFilters.add(LOWERCASE_FILTER_NAME);
+            prefixSearchAnalyzerFilters.addAll(extendedSearchSettings.getAdditionalFilters());
+            List<String> prefixAnalyzerFilters = new ArrayList<>(prefixSearchAnalyzerFilters);
+            prefixAnalyzerFilters.add(prefixFilterName);
+
             IndexSettingsAnalysis.Builder analysisBuilder = context.getEntityAnalysisBuilder(indexConfiguration.getEntityClass());
             analysisBuilder
                     .filter(prefixFilterName, filterBuilder ->
@@ -74,12 +82,14 @@ public class ElasticsearchExtendedIndexSettingsConfigurer
                             analyzerBuilder.custom(customAnalyzerBuilder ->
                                     customAnalyzerBuilder
                                             .tokenizer(prefixTokenizerName)
-                                            .filter(LOWERCASE_FILTER_NAME, prefixFilterName)
+                                            .filter(prefixAnalyzerFilters)
                             )
                     )
                     .analyzer(prefixSearchAnalyzerName, analyzerBuilder ->
                             analyzerBuilder.custom(customAnalyzerBuilder ->
-                                    customAnalyzerBuilder.tokenizer(prefixTokenizerName).filter(LOWERCASE_FILTER_NAME)
+                                    customAnalyzerBuilder
+                                            .tokenizer(prefixTokenizerName)
+                                            .filter(prefixSearchAnalyzerFilters)
                             )
                     );
         }

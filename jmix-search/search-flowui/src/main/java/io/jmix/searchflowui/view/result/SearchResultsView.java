@@ -56,14 +56,17 @@ public class SearchResultsView extends StandardView {
     public static final String QUERY_PARAM_ENTITIES = "entities";
     public static final String QUERY_PARAM_STRATEGY = "strategy";
     public static final String QUERY_PARAM_SEARCH_SIZE = "searchSize";
+    public static final String QUERY_PARAM_SEARCH_BUTTON_VISIBLE = "searchButtonVisible";
+    public static final String QUERY_PARAM_SETTINGS_BUTTON_VISIBLE = "settingsButtonVisible";
 
     protected static final Map<String, String> systemFieldLabels = ImmutableMap.<String, String>builder()
             .put("_file_name", "fileName")
             .put("_content", "content")
             .build();
 
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
+
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
@@ -89,6 +92,8 @@ public class SearchResultsView extends StandardView {
     protected int searchSize;
     protected String value;
     protected SearchFieldContext searchFieldContext;
+    protected boolean searchButtonVisible;
+    protected boolean settingsButtonVisible;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -140,6 +145,16 @@ public class SearchResultsView extends StandardView {
             parameters.get(QUERY_PARAM_SEARCH_SIZE).stream()
                     .findAny()
                     .ifPresent(parameter -> searchSize = Integer.parseInt(parameter));
+        }
+        if (parameters.containsKey(QUERY_PARAM_SEARCH_BUTTON_VISIBLE)) {
+            parameters.get(QUERY_PARAM_SEARCH_BUTTON_VISIBLE).stream()
+                    .findAny()
+                    .ifPresent(parameter -> searchButtonVisible = Boolean.parseBoolean(parameter));
+        }
+        if (parameters.containsKey(QUERY_PARAM_SETTINGS_BUTTON_VISIBLE)) {
+            parameters.get(QUERY_PARAM_SETTINGS_BUTTON_VISIBLE).stream()
+                    .findAny()
+                    .ifPresent(parameter -> settingsButtonVisible = Boolean.parseBoolean(parameter));
         }
     }
 
@@ -202,6 +217,8 @@ public class SearchResultsView extends StandardView {
         searchField.setSearchSize(searchFieldContext.getSearchSize());
         searchField.setEntities(searchFieldContext.getEntities());
         searchField.setOpenMode(searchFieldContext.getOpenMode());
+        searchField.setSearchButtonVisible(searchFieldContext.isSearchButtonVisible());
+        searchField.setSettingsButtonVisible(searchFieldContext.isSettingsButtonVisible());
         searchField.setHelperText(messageBundle.formatMessage("searchResultsSize", searchResult.getSize(), searchResult.getTotalHits()));
         searchField.setWidth("100%");
         searchField.setMaxWidth("50em");

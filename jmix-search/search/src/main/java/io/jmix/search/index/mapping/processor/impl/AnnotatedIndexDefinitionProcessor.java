@@ -199,8 +199,8 @@ public class AnnotatedIndexDefinitionProcessor {
         ExtendedSearchSettings extendedSearchSettings;
         if (extendedSearchAnnotation != null) {
             extendedSearchSettings = ExtendedSearchSettings.builder()
-                    .setEdgeNGramMin(searchProperties.getMinPrefixSize())
-                    .setEdgeNGramMax(searchProperties.getMaxPrefixSize())
+                    .setEdgeNGramMin(searchProperties.getMinPrefixLength())
+                    .setEdgeNGramMax(searchProperties.getMaxPrefixLength())
                     .setEnabled(extendedSearchAnnotation.enabled())
                     .setTokenizer(extendedSearchAnnotation.tokenizer())
                     .setAdditionalFilters(extendedSearchAnnotation.additionalFilters())

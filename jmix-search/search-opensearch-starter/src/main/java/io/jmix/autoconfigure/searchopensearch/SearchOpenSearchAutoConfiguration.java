@@ -166,9 +166,10 @@ public class SearchOpenSearchAutoConfiguration {
 
     @Bean("search_OpenSearchSearchStrategyProvider")
     protected OpenSearchSearchStrategyProvider openSearchSearchStrategyProvider(
+            IndexConfigurationManager indexConfigurationManager,
             Collection<OpenSearchSearchStrategy> searchStrategies,
             SearchProperties applicationProperties) {
-        return new OpenSearchSearchStrategyProvider(searchStrategies, applicationProperties);
+        return new OpenSearchSearchStrategyProvider(indexConfigurationManager, searchStrategies, applicationProperties);
     }
 
     @Nullable

@@ -1,7 +1,9 @@
 package io.jmix.searchelasticsearch.searching.strategy;
 
 import io.jmix.search.SearchProperties;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.SearchStrategyProvider;
+import io.jmix.searchelasticsearch.searching.strategy.impl.StartsWithElasticsearchSearchStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -17,12 +19,16 @@ public class ElasticsearchSearchStrategyProvider implements SearchStrategyProvid
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchSearchStrategyProvider.class);
 
+    protected final IndexConfigurationManager indexConfigurationManager;
+
     protected final Map<String, ElasticsearchSearchStrategy> registry;
 
     protected final String defaultStrategyName;
 
-    public ElasticsearchSearchStrategyProvider(Collection<ElasticsearchSearchStrategy> searchStrategies,
+    public ElasticsearchSearchStrategyProvider(IndexConfigurationManager indexConfigurationManager,
+                                               Collection<ElasticsearchSearchStrategy> searchStrategies,
                                                SearchProperties applicationProperties) {
+        this.indexConfigurationManager = indexConfigurationManager;
         log.debug("Available search strategies: {}", searchStrategies);
         Map<String, ElasticsearchSearchStrategy> tmpRegistry = new HashMap<>();
         searchStrategies.forEach(searchStrategy -> {
@@ -32,7 +38,9 @@ public class ElasticsearchSearchStrategyProvider implements SearchStrategyProvid
                         String.format("Detected several search strategies with the same name '%s'", searchStrategy.getName())
                 );
             }
-            tmpRegistry.put(strategyName, searchStrategy);
+            if (isSupported(searchStrategy)) {
+                tmpRegistry.put(strategyName, searchStrategy);
+            }
         });
 
         String defaultSearchStrategy = applicationProperties.getDefaultSearchStrategy();
@@ -89,5 +97,14 @@ public class ElasticsearchSearchStrategyProvider implements SearchStrategyProvid
     @Nullable
     public ElasticsearchSearchStrategy findSearchStrategyByName(String strategyName) {
         return registry.get(strategyName.toLowerCase());
+    }
+
+    protected boolean isSupported(ElasticsearchSearchStrategy searchStrategy) {
+        if (searchStrategy instanceof StartsWithElasticsearchSearchStrategy) {
+            return indexConfigurationManager.getAllIndexConfigurations().stream()
+                    .anyMatch(indexConfiguration -> indexConfiguration.getExtendedSearchSettings().isEnabled());
+        } else {
+            return true;
+        }
     }
 }

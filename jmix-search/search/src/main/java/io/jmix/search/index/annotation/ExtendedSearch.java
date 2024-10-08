@@ -21,6 +21,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation to mark index definition interfaces.
+ * <p>
+ * Enables additional search functionality (such as 'Starts with' search) via modification of fields mapping
+ * and additional analysis configuration.
+ *
+ * @see io.jmix.search.index.annotation.JmixEntitySearchIndex
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExtendedSearch {
@@ -30,5 +38,4 @@ public @interface ExtendedSearch {
     String tokenizer() default "whitespace";
 
     String[] additionalFilters() default {};
-
 }

@@ -16,6 +16,8 @@
 
 package io.jmix.search.index.mapping;
 
+import java.util.List;
+
 public class ExtendedSearchSettings {
 
     protected final boolean enabled;
@@ -26,7 +28,7 @@ public class ExtendedSearchSettings {
     protected final String prefixFilter;
     protected final String prefixAnalyzer;
     protected final String prefixSearchAnalyzer;
-    protected final String[] additionalFilters;
+    protected final List<String> additionalFilters;
 
     protected ExtendedSearchSettings(Builder builder) {
         this.enabled = builder.enabled;
@@ -36,7 +38,7 @@ public class ExtendedSearchSettings {
         this.prefixAnalyzer = builder.prefixAnalyzer;
         this.prefixFilter = builder.prefixFilter;
         this.prefixSearchAnalyzer = builder.prefixSearchAnalyzer;
-        this.additionalFilters = builder.additionalFilters;
+        this.additionalFilters = List.of(builder.additionalFilters);
     }
 
     public static Builder builder() {
@@ -73,6 +75,10 @@ public class ExtendedSearchSettings {
 
     public String getPrefixSearchAnalyzer() {
         return prefixSearchAnalyzer;
+    }
+
+    public List<String> getAdditionalFilters() {
+        return additionalFilters;
     }
 
     public static class Builder {

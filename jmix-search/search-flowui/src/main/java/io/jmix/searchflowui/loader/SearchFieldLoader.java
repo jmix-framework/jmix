@@ -61,6 +61,8 @@ public class SearchFieldLoader extends AbstractComponentLoader<SearchField> {
         loadEntities(resultComponent, element);
         loadStrategy(resultComponent, element);
         loadOpenMode(resultComponent, element);
+        loadSettingsButtonVisible(resultComponent, element);
+        loadSearchButtonVisible(resultComponent, element);
     }
 
     protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {
@@ -118,5 +120,15 @@ public class SearchFieldLoader extends AbstractComponentLoader<SearchField> {
             openMode = OpenMode.valueOf(openModeName);
         }
         component.setOpenMode(openMode);
+    }
+
+    protected void loadSettingsButtonVisible(SearchField component, Element element) {
+        Boolean value = loadBoolean(element, "settingsButtonVisible").orElse(true);
+        component.setSettingsButtonVisible(value);
+    }
+
+    protected void loadSearchButtonVisible(SearchField component, Element element) {
+        Boolean value = loadBoolean(element, "searchButtonVisible").orElse(true);
+        component.setSearchButtonVisible(value);
     }
 }

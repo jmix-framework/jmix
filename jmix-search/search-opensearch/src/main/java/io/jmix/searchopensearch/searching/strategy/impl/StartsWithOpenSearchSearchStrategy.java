@@ -70,10 +70,11 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractSearchStrategy i
 
     @Override
     public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
-        int maxPrefixSize = searchProperties.getMaxPrefixSize();
-        if (isSearchTermExceedMaxPrefixSize(searchContext.getSearchText(), maxPrefixSize)) {
+        int maxPrefixSize = searchProperties.getMaxPrefixLength();
+        if (isSearchTermExceedMaxPrefixSize(searchContext.getSearchText(), maxPrefixSize)
+                && searchProperties.isWildcardPrefixQueryEnabled()) {
             Set<String> effectiveFieldsToSearch = searchUtils.resolveEffectiveSearchFields(searchContext.getEntities());
-            configureWildcardQuery(requestBuilder, searchContext, effectiveFieldsToSearch); //todo disable this case via property?
+            configureWildcardQuery(requestBuilder, searchContext, effectiveFieldsToSearch);
         } else {
             configureTermsQuery(requestBuilder, searchContext);
         }

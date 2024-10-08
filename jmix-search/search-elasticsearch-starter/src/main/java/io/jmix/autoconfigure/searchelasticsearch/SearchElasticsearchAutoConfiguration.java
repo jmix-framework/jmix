@@ -168,9 +168,10 @@ public class SearchElasticsearchAutoConfiguration {
 
     @Bean("search_ElasticsearchSearchStrategyProvider")
     protected ElasticsearchSearchStrategyProvider elasticsearchSearchStrategyProvider(
+            IndexConfigurationManager indexConfigurationManager,
             Collection<ElasticsearchSearchStrategy> searchStrategies,
             SearchProperties applicationProperties) {
-        return new ElasticsearchSearchStrategyProvider(searchStrategies, applicationProperties);
+        return new ElasticsearchSearchStrategyProvider(indexConfigurationManager, searchStrategies, applicationProperties);
     }
 
     @Nullable

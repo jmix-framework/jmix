@@ -83,6 +83,9 @@ public class SearchField extends CustomField<String>
     protected OpenMode openMode;
     protected int searchSize;
 
+    protected Button searchButton;
+    protected Button settingsButton;
+
     /**
      * allows to bind custom results handler to replace standard dialog/view opening behaviour
      */
@@ -147,7 +150,6 @@ public class SearchField extends CustomField<String>
         checkState(root != null, "Value component isn't set");
     }
 
-
     protected TypedTextField<String> createRootComponent() {
         return uiComponents.create(TypedTextField.class);
     }
@@ -160,8 +162,8 @@ public class SearchField extends CustomField<String>
     }
 
     protected void createSuffixComponent() {
-        Button searchButton = createSearchButton();
-        Button settingsButton = createSettingsButton();
+        this.searchButton = createSearchButton();
+        this.settingsButton = createSettingsButton();
 
         HorizontalLayout hbox = uiComponents.create(HorizontalLayout.class);
         hbox.setSpacing(false);
@@ -240,7 +242,11 @@ public class SearchField extends CustomField<String>
                             Map.of(QUERY_PARAM_VALUE, List.of(searchText),
                                     QUERY_PARAM_ENTITIES, this.getEntities(),
                                     QUERY_PARAM_SEARCH_SIZE, List.of(String.valueOf(this.getSearchSize())),
-                                    QUERY_PARAM_STRATEGY, List.of(this.getSearchStrategy()))))
+                                    QUERY_PARAM_STRATEGY, List.of(this.getSearchStrategy()),
+                                    QUERY_PARAM_SEARCH_BUTTON_VISIBLE, List.of(Boolean.toString(this.isSearchButtonVisible())),
+                                    QUERY_PARAM_SETTINGS_BUTTON_VISIBLE, List.of(Boolean.toString(this.isSettingsButtonVisible()))
+                            )
+                    ))
                     .navigate();
         }
     }
@@ -307,6 +313,22 @@ public class SearchField extends CustomField<String>
 
     public void setSearchSize(int searchSize) {
         this.searchSize = searchSize;
+    }
+
+    public boolean isSettingsButtonVisible() {
+        return settingsButton.isVisible();
+    }
+
+    public void setSettingsButtonVisible(boolean settingsButtonVisible) {
+        this.settingsButton.setVisible(settingsButtonVisible);
+    }
+
+    public boolean isSearchButtonVisible() {
+        return searchButton.isVisible();
+    }
+
+    public void setSearchButtonVisible(boolean searchButtonVisible) {
+        this.searchButton.setVisible(searchButtonVisible);
     }
 
     public static class SearchCompletedEvent {

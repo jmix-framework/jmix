@@ -82,6 +82,12 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         };
     }
 
+    constructor() {
+        super();
+
+        this.$jQuery = jQuery.noConflict();
+    }
+
     ready() {
         super.ready();
 
@@ -199,11 +205,11 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             "value-a-to-z": "key-a-to-z",
             "value-z-to-a": "value-a-to-z"
         };
-        $(orderElementClassName).val("").html("");
+        jQuery(orderElementClassName).val("").html("");
 
         let currentOrder = order.replace(/_/g, '-');
-        $(orderElementClassName).removeClass(nextToCurrent[currentOrder]);
-        $(orderElementClassName).addClass(currentOrder);
+        jQuery(orderElementClassName).removeClass(nextToCurrent[currentOrder]);
+        jQuery(orderElementClassName).addClass(currentOrder);
     }
 
     _onRendererChange() {
@@ -211,15 +217,15 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     }
 
     _recreatePivot() {
-        let outputDiv = $("div.pivot-table-output");
+        let outputDiv = this.$jQuery("div.pivot-table-output");
         if (this._options) {
             if (!this._dataSet || Object.keys(this._dataSet).length == 0) {
                 outputDiv.html(this._options.emptyDataMessage);
                 return;
             }
             (function(pivotTable) {
-                $.pivotUtilities.renderers = $.extend($.pivotUtilities.c3_renderers,
-                    $.extend($.pivotUtilities.d3_renderers, $.pivotUtilities.renderers));
+                pivotTable.$jQuery.pivotUtilities.renderers = pivotTable.$jQuery.extend(pivotTable.$jQuery.pivotUtilities.c3_renderers,
+                    pivotTable.$jQuery.extend(pivotTable.$jQuery.pivotUtilities.d3_renderers, pivotTable.$jQuery.pivotUtilities.renderers));
                 pivotTable._initLocale();
                 let options = pivotTable._preparePivotTableOptions();
                 let showUI = pivotTable._options.showUI;
@@ -243,10 +249,10 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
               select.disabled = disabled;
             });
 
-            $('.pvtAxisContainer').sortable('disable');
-            $('span.pvtAttr, li.ui-sortable-handle').addClass('disabled');
+            jQuery('.pvtAxisContainer').sortable('disable');
+            jQuery('span.pvtAttr, li.ui-sortable-handle').addClass('disabled');
 
-            $('a.pvtRowOrder, a.pvtColOrder').unbind("click").addClass('disabled');
+            jQuery('a.pvtRowOrder, a.pvtColOrder').unbind("click").addClass('disabled');
          }
     }
 
@@ -325,9 +331,10 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     }
 
     _initLocale() {
+
         let formatFloat, formatInt, formatPercent, numberFormat, aggregatorTemplates;
-        numberFormat = $.pivotUtilities.numberFormat;
-        aggregatorTemplates = $.pivotUtilities.aggregatorTemplates;
+        numberFormat = this.$jQuery.pivotUtilities.numberFormat;
+        aggregatorTemplates = this.$jQuery.pivotUtilities.aggregatorTemplates;
         let localizedStrings = this._options.localizedStrings;
         formatFloat = numberFormat({
             digitsAfterDecimal: localizedStrings.floatFormat.digitsAfterDecimal,
@@ -383,25 +390,25 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             aggregatorTemplates.fractionOf(aggregatorTemplates.count(), "col", formatPercent);
 
         let allRenderers = {};
-        allRenderers[localizedStrings.renderer.table] = $.pivotUtilities.renderers["Table"];
-        allRenderers[localizedStrings.renderer.tableBarchart] = $.pivotUtilities.renderers["Table Barchart"];
-        allRenderers[localizedStrings.renderer.heatmap] = $.pivotUtilities.renderers["Heatmap"];
-        allRenderers[localizedStrings.renderer.rowHeatmap] = $.pivotUtilities.renderers["Row Heatmap"];
-        allRenderers[localizedStrings.renderer.colHeatmap] = $.pivotUtilities.renderers["Col Heatmap"];
-        allRenderers[localizedStrings.renderer.lineChart] = $.pivotUtilities.c3_renderers["Line Chart"];
-        allRenderers[localizedStrings.renderer.barChart] = $.pivotUtilities.c3_renderers["Bar Chart"];
+        allRenderers[localizedStrings.renderer.table] = this.$jQuery.pivotUtilities.renderers["Table"];
+        allRenderers[localizedStrings.renderer.tableBarchart] = this.$jQuery.pivotUtilities.renderers["Table Barchart"];
+        allRenderers[localizedStrings.renderer.heatmap] = this.$jQuery.pivotUtilities.renderers["Heatmap"];
+        allRenderers[localizedStrings.renderer.rowHeatmap] = this.$jQuery.pivotUtilities.renderers["Row Heatmap"];
+        allRenderers[localizedStrings.renderer.colHeatmap] = this.$jQuery.pivotUtilities.renderers["Col Heatmap"];
+        allRenderers[localizedStrings.renderer.lineChart] = this.$jQuery.pivotUtilities.c3_renderers["Line Chart"];
+        allRenderers[localizedStrings.renderer.barChart] = this.$jQuery.pivotUtilities.c3_renderers["Bar Chart"];
         allRenderers[localizedStrings.renderer.stackedBarChart] =
-            $.pivotUtilities.c3_renderers["Stacked Bar Chart"];
+            this.$jQuery.pivotUtilities.c3_renderers["Stacked Bar Chart"];
         allRenderers[localizedStrings.renderer.horizontalBarChart] =
-            $.pivotUtilities.c3_renderers["Horizontal Bar Chart"];
+            this.$jQuery.pivotUtilities.c3_renderers["Horizontal Bar Chart"];
         allRenderers[localizedStrings.renderer.horizontalStackedBarChart] =
-            $.pivotUtilities.c3_renderers["Horizontal Stacked Bar Chart"];
-        allRenderers[localizedStrings.renderer.areaChart] = $.pivotUtilities.c3_renderers["Area Chart"];
-        allRenderers[localizedStrings.renderer.scatterChart] = $.pivotUtilities.c3_renderers["Scatter Chart"];
-        allRenderers[localizedStrings.renderer.treemap] = $.pivotUtilities.d3_renderers["Treemap"];
-        allRenderers[localizedStrings.renderer.TSVExport] = $.pivotUtilities.export_renderers["TSV Export"];
+            this.$jQuery.pivotUtilities.c3_renderers["Horizontal Stacked Bar Chart"];
+        allRenderers[localizedStrings.renderer.areaChart] = this.$jQuery.pivotUtilities.c3_renderers["Area Chart"];
+        allRenderers[localizedStrings.renderer.scatterChart] = this.$jQuery.pivotUtilities.c3_renderers["Scatter Chart"];
+        allRenderers[localizedStrings.renderer.treemap] = this.$jQuery.pivotUtilities.d3_renderers["Treemap"];
+        allRenderers[localizedStrings.renderer.TSVExport] = this.$jQuery.pivotUtilities.export_renderers["TSV Export"];
 
-        $.pivotUtilities.locales[this._options.localeCode] = {
+        this.$jQuery.pivotUtilities.locales[this._options.localeCode] = {
             localeStrings: {
                 renderError: localizedStrings.renderError,
                 computeError: localizedStrings.computeError,
@@ -424,8 +431,8 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     }
 
     _getAggregationOptions() {
-        let allAggregators = $.pivotUtilities.locales[this._options.localeCode].aggregators;
-        let localeMapping = $.pivotUtilities.locales[this._options.localeCode].aggregatorsLocaleMapping;
+        let allAggregators = this.$jQuery.pivotUtilities.locales[this._options.localeCode].aggregators;
+        let localeMapping = this.$jQuery.pivotUtilities.locales[this._options.localeCode].aggregatorsLocaleMapping;
 
         let aggregationOptions = {
             aggregatorName: null,
@@ -536,7 +543,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
 
     _getRenderOptions() {
         let localizedRendererName = this._getLocalizedRendererName();
-        let localizedRenderers = $.pivotUtilities.locales[this._options.localeCode].renderers;
+        let localizedRenderers = this.$jQuery.pivotUtilities.locales[this._options.localeCode].renderers;
         return {
             renderer: localizedRenderers[localizedRendererName],
             rendererName: localizedRendererName,
@@ -562,12 +569,12 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
 
     _getLocalizedRenderers() {
         if (!this._options.renderers || !this._options.renderers.renderers) {
-            return $.pivotUtilities.locales[this._options.localeCode].renderers;
+            return this.$jQuery.pivotUtilities.locales[this._options.localeCode].renderers;
         }
         let localizedRenderers = {};
         for (let selectedRenderer of this._options.renderers.renderers) {
             let localizedKey = this._options.localizedStrings.renderer[selectedRenderer];
-            localizedRenderers[localizedKey] = $.pivotUtilities.locales[this._options.localeCode].renderers[localizedKey];
+            localizedRenderers[localizedKey] = this.$jQuery.pivotUtilities.locales[this._options.localeCode].renderers[localizedKey];
         }
         return localizedRenderers;
     }

@@ -512,7 +512,7 @@ public class AnnotatedIndexDefinitionProcessor {
     protected DisplayedNameDescriptor createDisplayedNameDescriptor(MetaClass metaClass) {
         DisplayedNameDescriptor displayedNameDescriptor = new DisplayedNameDescriptor();
         FieldConfiguration fieldConfiguration = FieldConfiguration.create(
-                new TextFieldMapper().createJsonConfiguration(Collections.emptyMap()) //todo extended search
+                new TextFieldMapper().createJsonConfiguration(Collections.emptyMap())
         );
         displayedNameDescriptor.setFieldConfiguration(fieldConfiguration);
 

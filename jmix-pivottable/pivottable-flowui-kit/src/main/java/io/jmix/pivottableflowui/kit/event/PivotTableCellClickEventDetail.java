@@ -27,15 +27,15 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PivotTableCellClickEventDetail<T> {
 
-    private Double value;
+    private String value;
     private Map<String, String> filters;
     private List<T> items;
 
-    public Double getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

@@ -334,7 +334,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         }
 
         /**
-         * @param queryString query string for JPA entities. Only named parameters are supported.
+         * @param queryString query string. Only named parameters are supported.
          */
         public Query(@Nullable String queryString) {
             this.queryString = queryString;

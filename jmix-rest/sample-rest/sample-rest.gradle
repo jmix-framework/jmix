@@ -23,12 +23,10 @@ group = 'io.jmix.rest'
 
 dependencies {
     implementation project(':rest-starter')
-
     implementation project(':core-starter')
     implementation project(':eclipselink-starter')
     implementation project(':security-starter')
     implementation project(':security-data-starter')
-
     implementation project(':authserver-starter')
     implementation project(':localfs-starter')
     implementation project(':dynattr-starter')
@@ -40,28 +38,21 @@ dependencies {
     implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
     implementation 'org.apache.commons:commons-dbcp2'
 
-
-
-
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'org.apache.groovy:groovy-sql'
-
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework:spring-webflux'
 
     testImplementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
-
     testImplementation 'io.rest-assured:rest-assured'
-
     testImplementation 'com.jayway.jsonpath:json-path'
     testImplementation 'org.mockito:mockito-core:3.6.0'
 
     testImplementation 'org.apache.commons:commons-dbcp2'
-
+    testImplementation 'org.apache.groovy:groovy-sql'
     testImplementation 'org.apache.httpcomponents.client5:httpclient5:5.0.3'
     testImplementation 'org.apache.httpcomponents.core5:httpcore5-reactive:5.0.2'
 

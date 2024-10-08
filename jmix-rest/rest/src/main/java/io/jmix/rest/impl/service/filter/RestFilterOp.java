@@ -34,8 +34,7 @@ public enum RestFilterOp {
     IS_NULL("isNull", PropertyCondition.Operation.IS_SET),
     STARTS_WITH("startsWith", PropertyCondition.Operation.STARTS_WITH),
     CONTAINS("contains", PropertyCondition.Operation.CONTAINS),
-    ENDS_WITH("endsWith", PropertyCondition.Operation.ENDS_WITH),
-    DATE_INTERVAL("", "");
+    ENDS_WITH("endsWith", PropertyCondition.Operation.ENDS_WITH);
 
 
     private String conditionOperation;

@@ -30,10 +30,12 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.event.notification.NotificationClosedEvent;
+import io.jmix.flowui.event.notification.NotificationOpenedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 
 /**
@@ -44,10 +46,16 @@ public class Notifications {
     private static final Logger log = LoggerFactory.getLogger(Notifications.class);
 
     protected UiComponentProperties uiComponentProperties;
+    protected ApplicationContext applicationContext;
 
     @Autowired
     public Notifications(UiComponentProperties uiComponentProperties) {
         this.uiComponentProperties = uiComponentProperties;
+    }
+
+    @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -94,7 +102,8 @@ public class Notifications {
         Preconditions.checkNotNullArgument(text);
 
         return new NotificationBuilder(text)
-                .applyDefaults(uiComponentProperties);
+                .applyDefaults(uiComponentProperties)
+                .applyApplicationContext(applicationContext);
     }
 
     /**
@@ -108,7 +117,8 @@ public class Notifications {
         Preconditions.checkNotNullArgument(message);
 
         return new NotificationBuilder(title, message)
-                .applyDefaults(uiComponentProperties);
+                .applyDefaults(uiComponentProperties)
+                .applyApplicationContext(applicationContext);
     }
 
     /**
@@ -120,7 +130,8 @@ public class Notifications {
         Preconditions.checkNotNullArgument(component);
 
         return new NotificationBuilder(component)
-                .applyDefaults(uiComponentProperties);
+                .applyDefaults(uiComponentProperties)
+                .applyApplicationContext(applicationContext);
     }
 
     /**
@@ -150,6 +161,7 @@ public class Notifications {
         protected static final String COMPONENT_CONTENT_CLASS_NAME = "component-content";
 
         protected Notification notification;
+        protected ApplicationContext applicationContext;
 
         protected String text;
         protected String title;
@@ -158,6 +170,7 @@ public class Notifications {
 
         protected Notification.Position position;
         protected int duration;
+        protected boolean fireOpenedChangeEvents;
         protected Type type = Type.DEFAULT;
         protected Boolean closeable = null;
         protected NotificationVariant themeVariant;
@@ -328,6 +341,11 @@ public class Notifications {
                 notification.add(content);
             }
 
+            if (fireOpenedChangeEvents) {
+                notification.addOpenedChangeListener(this::fireNotificationOpenedEvent);
+                notification.addOpenedChangeListener(this::fireNotificationClosedEvent);
+            }
+
             return notification;
         }
 
@@ -341,6 +359,12 @@ public class Notifications {
         protected NotificationBuilder applyDefaults(UiComponentProperties properties) {
             this.duration = properties.getDefaultNotificationDuration();
             this.position = properties.getDefaultNotificationPosition();
+            this.fireOpenedChangeEvents = properties.isNotificationsOpenedChangeEventsEnabled();
+            return this;
+        }
+
+        protected NotificationBuilder applyApplicationContext(ApplicationContext applicationContext) {
+            this.applicationContext = applicationContext;
             return this;
         }
 
@@ -447,6 +471,29 @@ public class Notifications {
                     return NotificationVariant.LUMO_WARNING.getVariantName();
                 default:
                     throw new IllegalStateException("Unsupported type " + type);
+            }
+        }
+
+        protected void fireNotificationOpenedEvent(Notification.OpenedChangeEvent openedChangeEvent) {
+            if (openedChangeEvent.isOpened()) {
+                openedChangeEvent.unregisterListener();
+
+                NotificationOpenedEvent notificationOpenedEvent = new NotificationOpenedEvent(
+                        notification, text,
+                        text == null ? title : null,
+                        text == null ? message : null,
+                        text == null && (title == null || message == null) ? component : null,
+                        type, isInternalCloseable());
+
+                applicationContext.publishEvent(notificationOpenedEvent);
+            }
+        }
+
+        protected void fireNotificationClosedEvent(Notification.OpenedChangeEvent openedChangeEvent) {
+            if (!openedChangeEvent.isOpened()) {
+                openedChangeEvent.unregisterListener();
+
+                applicationContext.publishEvent(new NotificationClosedEvent(notification));
             }
         }
     }

@@ -35,6 +35,8 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.backgroundtask.BackgroundTaskManager;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.flowui.sys.event.UiEventsManager;
+import io.jmix.flowui.testassist.dialog.OpenedDialogs;
+import io.jmix.flowui.testassist.notification.OpenedNotifications;
 import io.jmix.flowui.testassist.vaadin.TestServletContext;
 import io.jmix.flowui.testassist.vaadin.TestSpringServlet;
 import io.jmix.flowui.testassist.vaadin.TestVaadinRequest;
@@ -42,19 +44,21 @@ import io.jmix.flowui.testassist.vaadin.TestVaadinSession;
 import io.jmix.flowui.testassist.view.initial.InitialView;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
+import jakarta.servlet.ServletException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.jupiter.api.extension.*;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import org.springframework.lang.Nullable;
-import jakarta.servlet.ServletException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -194,6 +198,8 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
     public void afterEach(ExtensionContext context) throws Exception {
         removeAuthentication(context);
         clearViewBasePackages(context);
+        clearOpenedNotifications(context);
+        clearOpenedDialogs(context);
     }
 
     protected void setupVaadin(ExtensionContext context) {
@@ -398,6 +404,14 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Cannot clear view packages", e);
         }
+    }
+
+    protected void clearOpenedNotifications(ExtensionContext context) {
+        getApplicationContext(context).getBean(OpenedNotifications.class).clearOpenedNotifications();
+    }
+
+    protected void clearOpenedDialogs(ExtensionContext context) {
+        getApplicationContext(context).getBean(OpenedDialogs.class).clearOpenedDialogs();
     }
 
     @Nullable

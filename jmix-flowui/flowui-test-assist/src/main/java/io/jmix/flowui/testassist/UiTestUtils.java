@@ -18,11 +18,17 @@ package io.jmix.flowui.testassist;
 
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.testassist.dialog.DialogInfo;
+import io.jmix.flowui.testassist.dialog.OpenedDialogs;
+import io.jmix.flowui.testassist.notification.NotificationInfo;
+import io.jmix.flowui.testassist.notification.OpenedNotifications;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -34,12 +40,18 @@ import java.util.List;
 public final class UiTestUtils {
 
     private static final Method VALIDATE_VIEW_METHOD = ReflectionUtils.findMethod(StandardDetailView.class, "validateView");
+    private static ApplicationContext applicationContext;
 
     static {
         ReflectionUtils.makeAccessible(VALIDATE_VIEW_METHOD);
     }
 
     private UiTestUtils() {
+    }
+
+    @Internal
+    static void setApplicationContext(ApplicationContext applicationContext) {
+        UiTestUtils.applicationContext = applicationContext;
     }
 
     /**
@@ -83,5 +95,19 @@ public final class UiTestUtils {
      */
     public static ValidationErrors validateView(StandardDetailView<?> view) {
         return (ValidationErrors) ReflectionUtils.invokeMethod(VALIDATE_VIEW_METHOD, view);
+    }
+
+    /**
+     * @return list of {@link NotificationInfo}s that opened for current {@link UI}
+     */
+    public static List<NotificationInfo> getOpenedNotifications() {
+        return applicationContext.getBean(OpenedNotifications.class).getNotifications();
+    }
+
+    /**
+     * @return list of {@link DialogInfo}s that opened for current {@link UI}
+     */
+    public static List<DialogInfo> getOpenedDialogs() {
+        return applicationContext.getBean(OpenedDialogs.class).getDialogs();
     }
 }

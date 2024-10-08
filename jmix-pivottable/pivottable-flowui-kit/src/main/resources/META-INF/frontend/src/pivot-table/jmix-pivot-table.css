@@ -1,19 +1,20 @@
 jmix-pivot-table {
     .pvtUi {
-        color: #333;
+        color: var(--lumo-body-text-color);
     }
 
     table.pvtTable {
-        font-size: 8pt;
+        font-size: var(--lumo-font-size-m);
+        font-family: var(--lumo-font-family);
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
         text-align: left;
         border-collapse: collapse;
     }
 
     table.pvtTable thead tr th,
     table.pvtTable tbody tr th {
-        background-color: #e6EEEE;
         border: 1px solid var(--lumo-contrast-20pct);
-        padding: 5px;
+        padding: var(--lumo-space-s);
     }
 
     table.pvtTable .pvtColLabel {
@@ -26,16 +27,9 @@ jmix-pivot-table {
 
     table.pvtTable tbody tr td {
         border: 1px solid var(--lumo-contrast-20pct);
-        color: #3D3D3D;
-        padding: 5px;
-        background-color: var(--lumo-base-color);
+        padding: var(--lumo-space-s);
         vertical-align: top;
         text-align: right;
-    }
-
-    .pvtTotal,
-    .pvtGrandTotal {
-        font-weight: bold;
     }
 
     .pvtVals {
@@ -46,8 +40,8 @@ jmix-pivot-table {
     .pvtRowOrder,
     .pvtColOrder {
         cursor: pointer;
-        width: 15px;
-        margin-left: 10px;
+        width: var(--lumo-space-m);
+        margin-left: var(--lumo-space-s);
         display: inline-block;
     }
 
@@ -55,9 +49,9 @@ jmix-pivot-table {
     .pvtVals {
         border: 1px solid var(--lumo-contrast-20pct);
         background: var(--lumo-base-color);
-        padding: 5px;
-        min-width: 20px;
-        min-height: 20px;
+        padding: var(--lumo-space-xs);
+        min-width: var(--lumo-space-l);
+        min-height: var(--lumo-space-l);
         user-select: none;
         -webkit-user-select: none;
         -moz-user-select: none;
@@ -66,33 +60,30 @@ jmix-pivot-table {
     }
 
     .pvtAxisContainer li {
-        padding: 8px 6px;
+        padding: var(--lumo-space-s) var(--lumo-space-xs);
         list-style-type: none;
         cursor: move;
     }
 
     .pvtAxisContainer li.pvtPlaceholder {
-        -webkit-border-radius: 5px;
-        padding: 3px 15px;
-        -moz-border-radius: 5px;
-        border-radius: 5px;
-        border: 1px dashed #aaa;
+        -webkit-border-radius: var(--lumo-space-xs);
+        padding: var(--lumo-space-xs) var(--lumo-space-m);
+        -moz-border-radius: var(--lumo-space-xs);
+        border-radius: var(--lumo-space-xs);
+        border: 1px dashed var(--lumo-contrast-20pct);
     }
 
     .pvtAxisContainer li span.pvtAttr {
         -webkit-text-size-adjust: 100%;
-        background: #F3F3F3;
-        border: 1px solid #DEDEDE;
-        padding: 2px 5px;
+        padding: 2px var(--lumo-space-xs);
         white-space: nowrap;
-        -webkit-border-radius: 5px;
-        -moz-border-radius: 5px;
-        border-radius: 5px;
+        -webkit-border-radius: var(--lumo-space-xs);
+        -moz-border-radius: var(--lumo-space-xs);
+        border-radius: var(--lumo-space-xs);
     }
 
     .pvtTriangle {
         cursor: pointer;
-        color: grey;
     }
 
     .pvtHorizList li {
@@ -105,51 +96,51 @@ jmix-pivot-table {
 
     .pvtFilterBox {
         z-index: 100;
-        width: 300px;
+        width: 18rem;
         position: absolute;
         text-align: center;
     }
 
     .pvtFilterBox h4 {
-        margin: 15px;
+        margin: var(--lumo-space-m);
     }
 
     .pvtFilterBox p {
-        margin: 10px auto;
+        margin: var(--lumo-space-s) auto;
     }
 
     .pvtFilterBox label {
-        font-weight: normal;
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
     }
 
     .pvtFilterBox input[type='checkbox'] {
-        margin-right: 10px;
-        margin-left: 10px;
+        margin-right: var(--lumo-space-s);
+        margin-left: var(--lumo-space-s);
     }
 
     .pvtFilterBox input[type='text'] {
-        width: 230px;
+        width: 14rem;
     }
 
     .pvtFilterBox .count {
-        color: gray;
-        font-weight: normal;
-        margin-left: 3px;
+        color: var(--lumo-contrast-50pct);
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
+        margin-left: var(--lumo-space-xs);
     }
 
     .pvtCheckContainer {
         text-align: left;
-        font-size: 14px;
+        font-size: var(--lumo-space-m);
         white-space: nowrap;
         overflow-y: scroll;
         width: 100%;
-        max-height: 250px;
-        border-top: 1px solid lightgrey;
-        border-bottom: 1px solid lightgrey;
+        max-height: 16rem;
+        border-top: 1px solid var(--lumo-contrast-10pct);
+        border-bottom: 1px solid var(--lumo-contrast-10pct);
     }
 
     .pvtCheckContainer p {
-        margin: 5px;
+        margin: var(--lumo-space-xs);
     }
 
     .pvtRendererArea {
@@ -160,14 +151,14 @@ jmix-pivot-table {
         appearance: none;
         -webkit-appearance: none;
         background: var(--lumo-contrast-10pct);
-        border-radius: var(--lumo-border-radius-m);
+        border-radius: var(--lumo-border-radius-s);
         border-color: transparent;
         height: var(--lumo-size-m);
         padding: var(--lumo-space-xs) var(--lumo-space-xl) var(--lumo-space-xs) var(--lumo-space-s);
         box-sizing: border-box;
         color: var(--lumo-body-text-color);
         font-size: var(--lumo-font-size-m);
-        font-weight: 500;
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
         font-family: var(--lumo-font-family);
         border: 1px solid transparent;
         background-image: url('../../../../angle-down.svg');
@@ -191,24 +182,24 @@ jmix-pivot-table {
     }
 
     th {
-        background-color: var(--lumo-contrast-20pct) !important;
+        background-color: var(--lumo-contrast-20pct);
     }
 
     .pvtAttr {
-        width: 30em !important;
-        border-color: transparent !important;
-        background-color: var(--lumo-contrast-5pct) !important;
-        border-radius: var(--lumo-border-radius-m) !important;
+        width: 30em;
+        border-color: transparent;
+        background-color: var(--lumo-contrast-5pct);
+        border-radius: var(--lumo-border-radius-m);
         padding: var(--lumo-space-xs) var(--lumo-space-s) !important;
         height: var(--lumo-size-s);
-        font-size: var(--lumo-font-size-s) !important;
-        font-weight: 500 !important;
+        font-size: var(--lumo-font-size-s) ;
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
         font-family: var(--lumo-font-family);
         color: var(--lumo-primary-text-color);
     }
 
     .pvtTriangle {
-        width: 0px !important;
+        width: 0px;
         visibility: hidden;
     }
 
@@ -231,24 +222,24 @@ jmix-pivot-table {
         -webkit-appearance: none;
         background: var(--lumo-primary-color);
         border: transparent;
-        border-radius: var(--lumo-border-radius-m) !important;
+        border-radius: var(--lumo-border-radius-m);
         height: var(--lumo-size-s);
         color: var(--lumo-primary-contrast-color);
         font-size: var(--lumo-font-size-m);
-        font-weight: 400;
+        font-weight: var(--jmix-pivot-table-font-normal, 400);
         font-family: var(--lumo-font-family);
     }
 
     .pvtFilterBox button:first-child {
         margin-right: var(--lumo-space-s);
         font-family: var(--lumo-font-family);
-        font-weight: 500;
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
     }
 
     .pvtFilterBox button:first-child::before {
         font-family: 'Vaadin-Icons';
         content: '\e75B';
-        font-weight: 400;
+        font-weight: var(--jmix-pivot-table-font-normal, 400);
         padding: 0.25em;
     }
 
@@ -256,13 +247,13 @@ jmix-pivot-table {
         background: var(--lumo-contrast-5pct);
         color: var(--lumo-primary-text-color);
         font-family: var(--lumo-font-family);
-        font-weight: 500;
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
     }
 
     .pvtFilterBox button:last-child::before {
         font-family: 'Vaadin-Icons';
         content: '\e6f7';
-        font-weight: 400;
+        font-weight: var(--jmix-pivot-table-font-normal, 400);
         padding: 0.25em;
     }
 
@@ -284,7 +275,7 @@ jmix-pivot-table {
         box-sizing: border-box;
         color: var(--lumo-body-text-color);
         font-size: var(--lumo-font-size-m);
-        font-weight: 500;
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
         font-family: var(--lumo-font-family);
         border: 1px solid transparent;
     }
@@ -307,26 +298,19 @@ jmix-pivot-table {
     }
 
     th, td {
-        color: var(--lumo-body-text-color) !important;
-        font-size: var(--lumo-font-size-m);
-        font-weight: 400;
-        font-family: var(--lumo-font-family);
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
     }
 
     td .pvtTotal {
-        font-weight: 550;
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
     }
 
     td .pvtGrandTotal {
-        font-weight: 700;
+        font-weight: var(--jmix-pivot-table-font-weight-extra-bold, 700);
     }
 
     select.pvtAttrDropdown {
         margin-right: var(--lumo-space-xs);
-    }
-
-    a.pvtRowOrder, a.pvtColOrder {
-        color: #FFFFFF00;
     }
 
     a.pvtRowOrder::before, a.pvtColOrder::before {
@@ -388,7 +372,7 @@ jmix-pivot-table {
 
 html[theme~="dark"] jmix-pivot-table {
     .c3-axis-y text, .c3-axis-x text {
-        fill: white;
+        fill: var(--lumo-body-text-color);
     }
 
     select {
@@ -397,9 +381,5 @@ html[theme~="dark"] jmix-pivot-table {
 
     select:hover {
         background-image: url('../../../../angle-down-hover-dark.svg');
-    }
-
-    select {
-      background-color: #36485F;
     }
 }

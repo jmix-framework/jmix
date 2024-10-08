@@ -353,28 +353,28 @@ public class PivotTableExcelExporter {
         cellLabelBoldStyle = wb.createCellStyle();
         cellLabelBoldStyle.setFont(boldFont);
 
-        String dateTimeFormat = messages.getMessage("pivotTable.excelExporter.dateTimeFormat");
+        String dateTimeFormat = messages.getMessage("pivottable.excelExporter.dateTimeFormat");
         cellDateTimeStyle = wb.createCellStyle();
         cellDateTimeStyle.setDataFormat(getBuiltinFormat(dateTimeFormat));
         boldCellDateTimeStyle = wb.createCellStyle();
         boldCellDateTimeStyle.setDataFormat(getBuiltinFormat(dateTimeFormat));
         boldCellDateTimeStyle.setFont(boldFont);
 
-        String dateFormat = messages.getMessage("pivotTable.excelExporter.dateFormat");
+        String dateFormat = messages.getMessage("pivottable.excelExporter.dateFormat");
         cellDateStyle = wb.createCellStyle();
         cellDateStyle.setDataFormat(getBuiltinFormat(dateFormat));
         boldCellDateStyle = wb.createCellStyle();
         boldCellDateStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat(dateFormat));
         boldCellDateStyle.setFont(boldFont);
 
-        String timeFormat = messages.getMessage("pivotTable.excelExporter.timeFormat");
+        String timeFormat = messages.getMessage("pivottable.excelExporter.timeFormat");
         cellTimeStyle = wb.createCellStyle();
         cellTimeStyle.setDataFormat(getBuiltinFormat(timeFormat));
         boldCellTimeStyle = wb.createCellStyle();
         boldCellTimeStyle.setDataFormat(getBuiltinFormat(timeFormat));
         boldCellTimeStyle.setFont(boldFont);
 
-        String integerFormat = messages.getMessage("pivotTable.excelExporter.integerFormat");
+        String integerFormat = messages.getMessage("pivottable.excelExporter.integerFormat");
         cellIntegerStyle = wb.createCellStyle();
         cellIntegerStyle.setDataFormat(getBuiltinFormat(integerFormat));
         boldCellIntegerStyle = wb.createCellStyle();
@@ -382,7 +382,7 @@ public class PivotTableExcelExporter {
         boldCellIntegerStyle.setFont(boldFont);
 
         DataFormat format = wb.createDataFormat();
-        String doubleFormat = messages.getMessage("pivotTable.excelExporter.doubleFormat");
+        String doubleFormat = messages.getMessage("pivottable.excelExporter.doubleFormat");
         cellDoubleStyle = wb.createCellStyle();
         cellDoubleStyle.setDataFormat(format.getFormat(doubleFormat));
         boldCellDoubleStyle = wb.createCellStyle();
@@ -426,7 +426,7 @@ public class PivotTableExcelExporter {
     }
 
     protected void showNoDataWarning() {
-        notifications.create(messages.getMessage("pivotTable.warningNotification.text"))
+        notifications.create(messages.getMessage("pivotTable.excelExporter.warningNotification.text"))
                 .withType(Notifications.Type.WARNING)
                 .show();
     }

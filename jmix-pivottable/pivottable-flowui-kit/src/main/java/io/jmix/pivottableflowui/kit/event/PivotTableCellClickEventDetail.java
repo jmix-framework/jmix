@@ -25,11 +25,11 @@ import java.util.Map;
  * Contains deserialized json data from {@link PivotTableCellClickEvent}
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PivotTableCellClickEventDetail {
+public class PivotTableCellClickEventDetail<T> {
 
     private Double value;
     private Map<String, String> filters;
-    private List items;
+    private List<T> items;
 
     public Double getValue() {
         return value;
@@ -47,11 +47,11 @@ public class PivotTableCellClickEventDetail {
         this.filters = filters;
     }
 
-    public List getItems() {
+    public List<T> getItems() {
         return items;
     }
 
-    public void setItems(List items) {
+    public void setItems(List<T> items) {
         this.items = items;
     }
 }

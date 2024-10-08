@@ -524,7 +524,7 @@ public class PivotTableViewBuilder {
      */
     public void show() {
         if (target == null) {
-            throw new IllegalStateException("ListDataComponent is not set");
+            throw new IllegalStateException(String.format("%s is not set", ListDataComponent.class.getSimpleName()));
         }
 
         View<?> targetView = UiComponentUtils.getView((com.vaadin.flow.component.Component) target);

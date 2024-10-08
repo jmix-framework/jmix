@@ -125,6 +125,7 @@ public class PivotTable<T> extends JmixPivotTable<T> implements ApplicationConte
     }
 
     protected void initLocalization() {
+        options.setEmptyDataMessage(messages.getMessage("pivottable.emptyDataMessage"));
         options.setLocaleCode(currentAuthentication.getLocale().getLanguage());
         options.setLocalizedStrings(getLocalizedStrings());
     }

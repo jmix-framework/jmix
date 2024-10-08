@@ -221,8 +221,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     protected JmixComboBox<String> defaultEnumField;
     @ViewComponent
-    protected TypedTextField<String> defaultStringField;
-    @ViewComponent
     protected JmixComboBox<OptionsLoaderType> optionsLoaderTypeField;
     @ViewComponent
     protected JmixValuePicker<Object> defaultEntityIdField;
@@ -242,6 +240,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected JmixTabSheet tabSheet;
     @ViewComponent
     protected TypedTextField<String> codeField;
+    @ViewComponent
+    protected TypedTextField<String> defaultStringField;
     @ViewComponent
     protected TypedTextField<BigDecimal> defaultDecimalField;
     @ViewComponent

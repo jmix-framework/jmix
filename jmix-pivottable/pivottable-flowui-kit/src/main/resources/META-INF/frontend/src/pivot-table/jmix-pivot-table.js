@@ -442,8 +442,8 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
 
         if (this._options.showUI) {
             if (this._options.aggregations) {
-                if (this._options.aggregations.selectedAggregation) {
-                    aggregationOptions.aggregatorName = localeMapping[this._options.aggregations.selectedAggregation];
+                if (this._options.aggregations.selected) {
+                    aggregationOptions.aggregatorName = localeMapping[this._options.aggregations.selected];
                 }
 
                 let aggregations = this._options.aggregations.aggregations;
@@ -528,8 +528,8 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         let localizedAggregation = this._options.localizedStrings.aggregation;
         if (this._options.showUI) {
             if (this._options.aggregations) {
-                if (this._options.aggregations.selectedAggregation) {
-                    return localizedAggregation[this._options.aggregations.selectedAggregation];
+                if (this._options.aggregations.selected) {
+                    return localizedAggregation[this._options.aggregations.selected];
                 }
             }
         }
@@ -555,8 +555,8 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         let localizedRenderers = this._options.localizedStrings.renderer;
         if (this._options.showUI) {
             if (this._options.renderers) {
-                if (this._options.renderers.selectedRenderer) {
-                    return localizedRenderers[this._options.renderers.selectedRenderer];
+                if (this._options.renderers.selected) {
+                    return localizedRenderers[this._options.renderers.selected];
                 }
             }
         }

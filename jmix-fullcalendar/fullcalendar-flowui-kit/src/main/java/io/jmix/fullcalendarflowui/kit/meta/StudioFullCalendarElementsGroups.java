@@ -73,7 +73,7 @@ public interface StudioFullCalendarElementsGroups {
             xmlElement = "businessHours",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
-            elementClassFqn = "io.jmix.fullcalendarflowui.component.model.BusinessHours",
+            elementClassFqn = "io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours",
             target = "io.jmix.fullcalendarflowui.component.FullCalendar",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg"
     )

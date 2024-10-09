@@ -287,6 +287,11 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             derivedAttributes: options.derivedProperties ? options.derivedProperties.properties : null,
             localeStrings: options.localizedStrings,
             sorters: options.sorters,
+            hiddenAttributes: options.hiddenProperties,
+            hiddenFromAggregators: options.hiddenFromAggregations,
+            hiddenFromDragDrop: options.hiddenFromDragDrop,
+            unusedAttrsVertical: options.unusedPropertiesVertical,
+            autoSortUnusedAttrs: options.autoSortUnusedProperties,
             rendererOptions: {
                 table: {
                     clickCallback: (function(pivotTable){

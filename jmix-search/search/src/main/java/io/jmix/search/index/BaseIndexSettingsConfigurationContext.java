@@ -22,10 +22,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
- * Allows to configure index settings (including analysis).
+ * Class provides logic of index settings & analysis configuration.
  * <p>
- * Settings can be configured for all search indexes ({@link BaseIndexSettingsConfigurationContext#getCommonIndexSettingsBuilder()})
- * or for index related to specific entity ({@link BaseIndexSettingsConfigurationContext#getEntityIndexSettingsBuilder(Class)}).
+ * <ul>
+ *  <li>Index settings for all indexes can be configured via {@link BaseIndexSettingsConfigurationContext#getCommonIndexSettingsBuilder()}</li>
+ *  <li>Index settings for specific index can be configured via {@link BaseIndexSettingsConfigurationContext#getEntityIndexSettingsBuilder(Class)}</li>
+ *  <li>Analysis settings for all indexes can be configured via {@link BaseIndexSettingsConfigurationContext#getCommonAnalysisBuilder()}</li>
+ *  <li>Analysis settings for specific index can be configured via {@link BaseIndexSettingsConfigurationContext#getEntityAnalysisBuilder(Class)}</li>
+ * </ul>
+ * <p>
+ * NOTE: do not call .build() method of acquired builders within your configurer.
  */
 public class BaseIndexSettingsConfigurationContext<T, A> {
 
@@ -48,7 +54,7 @@ public class BaseIndexSettingsConfigurationContext<T, A> {
     }
 
     /**
-     * Provides builder to set settings for all search indexes.
+     * Provides builder to configure index settings for all indexes.
      *
      * @return Index settings builder
      */
@@ -56,21 +62,31 @@ public class BaseIndexSettingsConfigurationContext<T, A> {
         return commonIndexSettingsBuilder;
     }
 
+    /**
+     * Provides builder to configure analysis settings for all indexes.
+     *
+     * @return Analysis settings builder
+     */
     public A getCommonAnalysisBuilder() {
         return commonAnalysisBuilder;
     }
 
     /**
-     * Provides builder to set settings for index related to provided entity.
-     * All necessary settings should be configured explicitly - they will not be merged with the common ones.
+     * Provides builder to configure index settings for index related to provided entity.
      *
      * @param entityClass entity class
-     * @return ES index settings builder
+     * @return Index settings builder
      */
     public T getEntityIndexSettingsBuilder(Class<?> entityClass) {
         return specificIndexSettingsBuilders.computeIfAbsent(entityClass, key -> indexSettingsBuilderGenerator.get());
     }
 
+    /**
+     * Provides builder to configure analysis settings for index related to provided entity.
+     *
+     * @param entityClass entity class
+     * @return Analysis settings builder
+     */
     public A getEntityAnalysisBuilder(Class<?> entityClass) {
         return specificAnalysisBuilders.computeIfAbsent(entityClass, key -> analysisBuilderGenerator.get());
     }

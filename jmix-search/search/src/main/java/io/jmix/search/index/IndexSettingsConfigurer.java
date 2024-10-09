@@ -16,10 +16,28 @@
 
 package io.jmix.search.index;
 
+/**
+ * Base interface for Index settings configurers.
+ * Platform-specific implementations should support respective configuration context.
+ *
+ * @param <TContext>
+ */
 public interface IndexSettingsConfigurer<TContext> {
 
+    /**
+     * Configures settings via builders acquired from provided context.
+     *
+     * @param context configuration context
+     */
     void configure(TContext context);
 
+    /**
+     * Defines if this configurer is system.
+     * <p>
+     * All system configurers applies before non-system.
+     *
+     * @return
+     */
     default boolean isSystem() {
         return false;
     }

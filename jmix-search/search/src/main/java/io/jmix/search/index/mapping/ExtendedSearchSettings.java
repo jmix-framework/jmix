@@ -18,6 +18,11 @@ package io.jmix.search.index.mapping;
 
 import java.util.List;
 
+/**
+ * Class contains data to build mapping and analysis within Extended search functionality.
+ *
+ * @see io.jmix.search.index.annotation.ExtendedSearch
+ */
 public class ExtendedSearchSettings {
 
     protected final boolean enabled;

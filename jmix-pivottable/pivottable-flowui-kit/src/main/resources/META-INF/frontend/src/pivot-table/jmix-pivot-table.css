@@ -1,0 +1,390 @@
+jmix-pivot-table {
+    .pvtUi {
+        color: var(--lumo-body-text-color);
+    }
+
+    table.pvtTable {
+        font-size: var(--lumo-font-size-m);
+        font-family: var(--lumo-font-family);
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
+        text-align: left;
+        border-collapse: collapse;
+    }
+
+    table.pvtTable thead tr th,
+    table.pvtTable tbody tr th {
+        border: 1px solid var(--lumo-contrast-20pct);
+        padding: var(--lumo-space-s);
+    }
+
+    table.pvtTable .pvtColLabel {
+        text-align: center;
+    }
+
+    table.pvtTable .pvtTotalLabel {
+        text-align: right;
+    }
+
+    table.pvtTable tbody tr td {
+        border: 1px solid var(--lumo-contrast-20pct);
+        padding: var(--lumo-space-s);
+        vertical-align: top;
+        text-align: right;
+    }
+
+    .pvtVals {
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .pvtRowOrder,
+    .pvtColOrder {
+        cursor: pointer;
+        width: var(--lumo-space-m);
+        margin-left: var(--lumo-space-s);
+        display: inline-block;
+    }
+
+    .pvtAxisContainer,
+    .pvtVals {
+        border: 1px solid var(--lumo-contrast-20pct);
+        background: var(--lumo-base-color);
+        padding: var(--lumo-space-xs);
+        min-width: var(--lumo-space-l);
+        min-height: var(--lumo-space-l);
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -ms-user-select: none;
+    }
+
+    .pvtAxisContainer li {
+        padding: var(--lumo-space-s) var(--lumo-space-xs);
+        list-style-type: none;
+        cursor: move;
+    }
+
+    .pvtAxisContainer li.pvtPlaceholder {
+        -webkit-border-radius: var(--lumo-space-xs);
+        padding: var(--lumo-space-xs) var(--lumo-space-m);
+        -moz-border-radius: var(--lumo-space-xs);
+        border-radius: var(--lumo-space-xs);
+        border: 1px dashed var(--lumo-contrast-20pct);
+    }
+
+    .pvtAxisContainer li span.pvtAttr {
+        -webkit-text-size-adjust: 100%;
+        padding: 2px var(--lumo-space-xs);
+        white-space: nowrap;
+        -webkit-border-radius: var(--lumo-space-xs);
+        -moz-border-radius: var(--lumo-space-xs);
+        border-radius: var(--lumo-space-xs);
+    }
+
+    .pvtTriangle {
+        cursor: pointer;
+    }
+
+    .pvtHorizList li {
+        display: inline;
+    }
+
+    .pvtVertList {
+        vertical-align: top;
+    }
+
+    .pvtFilterBox {
+        z-index: 100;
+        width: 18rem;
+        position: absolute;
+        text-align: center;
+    }
+
+    .pvtFilterBox h4 {
+        margin: var(--lumo-space-m);
+    }
+
+    .pvtFilterBox p {
+        margin: var(--lumo-space-s) auto;
+    }
+
+    .pvtFilterBox label {
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
+    }
+
+    .pvtFilterBox input[type='checkbox'] {
+        margin-right: var(--lumo-space-s);
+        margin-left: var(--lumo-space-s);
+    }
+
+    .pvtFilterBox input[type='text'] {
+        width: 14rem;
+    }
+
+    .pvtFilterBox .count {
+        color: var(--lumo-contrast-50pct);
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
+        margin-left: var(--lumo-space-xs);
+    }
+
+    .pvtCheckContainer {
+        text-align: left;
+        font-size: var(--lumo-space-m);
+        white-space: nowrap;
+        overflow-y: scroll;
+        width: 100%;
+        max-height: 16rem;
+        border-top: 1px solid var(--lumo-contrast-10pct);
+        border-bottom: 1px solid var(--lumo-contrast-10pct);
+    }
+
+    .pvtCheckContainer p {
+        margin: var(--lumo-space-xs);
+    }
+
+    .pvtRendererArea {
+        padding: 0px;
+    }
+
+    select {
+        appearance: none;
+        -webkit-appearance: none;
+        background: var(--lumo-contrast-10pct);
+        border-radius: var(--lumo-border-radius-s);
+        border-color: transparent;
+        height: var(--lumo-size-m);
+        padding: var(--lumo-space-xs) var(--lumo-space-xl) var(--lumo-space-xs) var(--lumo-space-s);
+        box-sizing: border-box;
+        color: var(--lumo-body-text-color);
+        font-size: var(--lumo-font-size-m);
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
+        font-family: var(--lumo-font-family);
+        border: 1px solid transparent;
+        background-image: url('../../../../angle-down.svg');
+        background-size: calc(var(--lumo-size-m) * 1) calc(var(--lumo-size-m) * 0.55);
+        background-position: center right;
+        background-repeat: no-repeat;
+    }
+
+    select:hover {
+        background-color: var(--lumo-contrast-20pct);
+        background-image: url('../../../../angle-down-hover.svg');
+    }
+
+    select:focus {
+        box-shadow: 0 0 0 2px var(--lumo-primary-color-50pct);
+        outline: none;
+    }
+
+    .pvtAttrDropdown {
+        margin-top: var(--lumo-space-xs);
+    }
+
+    th {
+        background-color: var(--lumo-contrast-20pct);
+    }
+
+    .pvtAttr {
+        width: 30em;
+        border-color: transparent;
+        background-color: var(--lumo-contrast-5pct);
+        border-radius: var(--lumo-border-radius-m);
+        padding: var(--lumo-space-xs) var(--lumo-space-s) !important;
+        height: var(--lumo-size-s);
+        font-size: var(--lumo-font-size-s) ;
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
+        font-family: var(--lumo-font-family);
+        color: var(--lumo-primary-text-color);
+    }
+
+    .pvtTriangle {
+        width: 0px;
+        visibility: hidden;
+    }
+
+    .pvtTriangle::after {
+        font-family: 'Vaadin-Icons';
+        color: var(--lumo-primary-text-color);
+        content: '\e7bc';
+        width: 0.3em;
+        height: 0.3em;
+        position: relative;
+        visibility: visible;
+    }
+
+    .pvtFilteredAttribute {
+        font-style: italic;
+    }
+
+    .pvtFilterBox button {
+        appearance: none;
+        -webkit-appearance: none;
+        background: var(--lumo-primary-color);
+        border: transparent;
+        border-radius: var(--lumo-border-radius-m);
+        height: var(--lumo-size-s);
+        color: var(--lumo-primary-contrast-color);
+        font-size: var(--lumo-font-size-m);
+        font-weight: var(--jmix-pivot-table-font-normal, 400);
+        font-family: var(--lumo-font-family);
+    }
+
+    .pvtFilterBox button:first-child {
+        margin-right: var(--lumo-space-s);
+        font-family: var(--lumo-font-family);
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
+    }
+
+    .pvtFilterBox button:first-child::before {
+        font-family: 'Vaadin-Icons';
+        content: '\e75B';
+        font-weight: var(--jmix-pivot-table-font-normal, 400);
+        padding: 0.25em;
+    }
+
+    .pvtFilterBox button:last-child {
+        background: var(--lumo-contrast-5pct);
+        color: var(--lumo-primary-text-color);
+        font-family: var(--lumo-font-family);
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
+    }
+
+    .pvtFilterBox button:last-child::before {
+        font-family: 'Vaadin-Icons';
+        content: '\e6f7';
+        font-weight: var(--jmix-pivot-table-font-normal, 400);
+        padding: 0.25em;
+    }
+
+    .pvtFilterBox {
+        box-shadow: var(--lumo-box-shadow-xl);
+        border-radius: calc(var(--lumo-size-xs) * 0.25);
+        background-color: var(--lumo-base-color);
+        background-image: linear-gradient(var(--lumo-tint-5pct), var(--lumo-tint-5pct));
+    }
+
+    .pvtSearch {
+        appearance: none;
+        -webkit-appearance: none;
+        background-color: var(--lumo-contrast-10pct);
+        border-radius: var(--lumo-border-radius-m);
+        border-color: transparent;
+        height: var(--lumo-size-m);
+        padding: var(--lumo-space-xs) var(--lumo-space-xl) var(--lumo-space-xs) var(--lumo-space-s);
+        box-sizing: border-box;
+        color: var(--lumo-body-text-color);
+        font-size: var(--lumo-font-size-m);
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
+        font-family: var(--lumo-font-family);
+        border: 1px solid transparent;
+    }
+
+    .pvtSearch {
+        margin-bottom: var(--lumo-space-s);
+    }
+
+    .pvtSearch:hover {
+        background-color: var(--lumo-contrast-20pct);
+    }
+
+    .pvtSearch:focus {
+        box-shadow: 0 0 0 2px var(--lumo-primary-color-50pct);
+        outline: none;
+    }
+
+    .pvtUiCell {
+        border: 1px solid var(--lumo-contrast-20pct);
+    }
+
+    th, td {
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
+    }
+
+    td .pvtTotal {
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
+    }
+
+    td .pvtGrandTotal {
+        font-weight: var(--jmix-pivot-table-font-weight-extra-bold, 700);
+    }
+
+    select.pvtAttrDropdown {
+        margin-right: var(--lumo-space-xs);
+    }
+
+    /* Set transparent color to avoid blinking of row and column order original symbol  */
+    a.pvtRowOrder, a.pvtColOrder {
+        color: #FFFFFF00;
+    }
+
+    a.pvtRowOrder::before, a.pvtColOrder::before {
+        font-family: 'Vaadin-Icons';
+        color: var(--lumo-primary-text-color);
+    }
+
+    a.pvtRowOrder.key-a-to-z::before {
+        content: '\e751';
+    }
+
+    a.pvtRowOrder.value-a-to-z::before {
+        content: '\e752';
+    }
+
+    a.pvtRowOrder.value-z-to-a::before {
+        content: '\e74f';
+    }
+
+    a.pvtColOrder.key-a-to-z::before {
+        content: '\e754';
+    }
+
+    a.pvtColOrder.value-a-to-z::before {
+        content: '\e74e';
+    }
+
+    a.pvtColOrder.value-z-to-a::before {
+        content: '\e753';
+    }
+
+    a.pvtRowOrder.disabled, a.pvtColOrder.disabled {
+        cursor: default;
+
+    }
+
+    a.pvtRowOrder.disabled::before, a.pvtColOrder.disabled::before {
+        color: var(--lumo-disabled-text-color);
+    }
+
+    .pvtRenderer {
+        min-width: 7em;
+        width: 100%;
+    }
+
+    span.pvtAttr.disabled .pvtTriangle {
+        display: none;
+    }
+
+    span.pvtAttr.disabled {
+        color: var(--lumo-disabled-text-color);
+        cursor: default;
+    }
+
+    li.ui-sortable-handle.disabled {
+        cursor:default;
+    }
+}
+
+html[theme~="dark"] jmix-pivot-table {
+    .c3-axis-y text, .c3-axis-x text {
+        fill: var(--lumo-body-text-color);
+    }
+
+    select {
+        background-image: url('../../../../angle-down-dark.svg');
+    }
+
+    select:hover {
+        background-image: url('../../../../angle-down-hover-dark.svg');
+    }
+}

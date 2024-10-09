@@ -162,6 +162,10 @@ includeProject('superset-flowui', 'jmix-superset/superset-flowui')
 includeProject('superset-flowui-kit', 'jmix-superset/superset-flowui-kit')
 includeProject('superset-flowui-starter', 'jmix-superset/superset-flowui-starter')
 
+includeProject('pivottable-flowui', 'jmix-pivottable/pivottable-flowui')
+includeProject('pivottable-flowui-kit', 'jmix-pivottable/pivottable-flowui-kit')
+includeProject('pivottable-flowui-starter', 'jmix-pivottable/pivottable-flowui-starter')
+
 void includeProject(String name, String path, boolean changeBuildFileName = true) {
     include ":$name"
     project(":$name").projectDir = new File(settingsDir, "$path")

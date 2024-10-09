@@ -205,6 +205,10 @@ dependencies {
         api "io.jmix.pessimisticlock:jmix-pessimisticlock-flowui:$freeVersion"
         api "io.jmix.pessimisticlock:jmix-pessimisticlock-flowui-starter:$freeVersion"
 
+        api "io.jmix.pivottable:jmix-pivottable-flowui:$freeVersion"
+        api "io.jmix.pivottable:jmix-pivottable-flowui-kit:$freeVersion"
+        api "io.jmix.pivottable:jmix-pivottable-flowui-starter:$freeVersion"
+
         api "io.jmix.quartz:jmix-quartz:$freeVersion"
         api "io.jmix.quartz:jmix-quartz-starter:$freeVersion"
         api "io.jmix.quartz:jmix-quartz-flowui:$freeVersion"

@@ -1,0 +1,109 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:pvttbl="http://jmix.io/schema/pvttbl/ui">
+    <data>
+        <collection id="temperatureDataDc" class="test_support.entity.TemperatureData"
+                    fetchPlan="_local">
+            <loader id="temperatureDataDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from TemperatureData e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <pvttbl:pivotTable id="temperatureDataPivotTable"
+                        dataContainer="temperatureDataDc"
+                        showUI="true"
+                        renderer="BAR_CHART"
+                        autoSortUnusedProperties="true"
+                        columnOrder="VALUES_DESCENDING"
+                        rowOrder="VALUES_ASCENDING"
+                        emptyDataMessage="Empty data msg"
+                        menuLimit="10"
+                        showColumnTotals="true"
+                        showRowTotals="false"
+                        unusedPropertiesVertical="true">
+            <pvttbl:renderers default="TREEMAP" selected="TREEMAP">
+                <pvttbl:renderer type="BAR_CHART"/>
+                <pvttbl:renderer type="TABLE"/>
+                <pvttbl:renderer type="TREEMAP"/>
+            </pvttbl:renderers>
+            <pvttbl:derivedProperties>
+                <pvttbl:derivedProperty caption="fahrenheit">
+                    <pvttbl:function><![CDATA[function(record){return record.temperature * 1.8 + 32;}]]></pvttbl:function>
+                </pvttbl:derivedProperty>
+            </pvttbl:derivedProperties>
+            <pvttbl:aggregation caption="custom" mode="MAXIMUM" custom="true">
+                <pvttbl:function><![CDATA[function(){return $.pivotUtilities.aggregatorTemplates.count()();}]]></pvttbl:function>
+            </pvttbl:aggregation>
+            <pvttbl:aggregationProperties>
+                <pvttbl:property name="month"/>
+            </pvttbl:aggregationProperties>
+            <pvttbl:aggregations selected="LOWER_BOUND_80" default="LOWER_BOUND_80">
+                <pvttbl:aggregation caption="MAXIMUM" mode="MAXIMUM" custom="false"/>
+                <pvttbl:aggregation caption="CUSTOM" custom="true">
+                    <pvttbl:function><![CDATA[function(){return $.pivotUtilities.aggregatorTemplates.count()();}]]></pvttbl:function>
+                </pvttbl:aggregation>
+            </pvttbl:aggregations>
+            <pvttbl:rendererOptions>
+                <pvttbl:c3>
+                    <pvttbl:size width="200" height="300"/>
+                </pvttbl:c3>
+                <pvttbl:heatmap>
+                    <pvttbl:colorScaleGeneratorFunction><![CDATA[function(values) { return "rgb(0, 255, 0)"; }]]></pvttbl:colorScaleGeneratorFunction>
+                </pvttbl:heatmap>
+            </pvttbl:rendererOptions>
+            <pvttbl:filterFunction><![CDATA[function(property) { return false; }]]></pvttbl:filterFunction>
+            <pvttbl:hiddenFromAggregations>
+                <pvttbl:property name="city"/>
+            </pvttbl:hiddenFromAggregations>
+            <pvttbl:hiddenFromDragDrop>
+                <pvttbl:property name="temperature"/>
+            </pvttbl:hiddenFromDragDrop>
+            <pvttbl:hiddenProperties>
+                <pvttbl:property name="month"/>
+            </pvttbl:hiddenProperties>
+            <pvttbl:sortersFunction><![CDATA[function(property) {if (property == "%s") {return $.pivotUtilities.sortAs([6,5,4,3,2,1]);}}]]></pvttbl:sortersFunction>
+            <pvttbl:properties>
+                <pvttbl:property name="temperature"/>
+                <pvttbl:property name="month"/>
+                <pvttbl:property name="city"/>
+            </pvttbl:properties>
+            <pvttbl:rows>
+                <pvttbl:row value="month"/>
+            </pvttbl:rows>
+            <pvttbl:columns>
+                <pvttbl:column value="temperature"/>
+            </pvttbl:columns>
+            <pvttbl:inclusions>
+                <pvttbl:property name="month">
+                    <pvttbl:value value="December"/>
+                </pvttbl:property>
+            </pvttbl:inclusions>
+            <pvttbl:exclusions>
+                <pvttbl:property name="temperature">
+                    <pvttbl:value value="-20"/>
+                </pvttbl:property>
+            </pvttbl:exclusions>
+        </pvttbl:pivotTable>
+    </layout>
+</view>

@@ -1,0 +1,128 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="test">
+        <createTable tableName="TEMPERATURE_DATA">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TEMPERATURE_DATA"/>
+            </column>
+            <column name="TEMPERATURE" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CITY" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MONTH" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="test">
+        <insert tableName="TEMPERATURE_DATA">
+            <column name="ID" value="123e4567-e89b-12d3-a456-426614174000"/>
+            <column name="TEMPERATURE" value="25"/>
+            <column name="CITY" value="New York"/>
+            <column name="MONTH" value="January"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3" author="test">
+        <insert tableName="TEMPERATURE_DATA">
+            <column name="ID" value="223e4567-e89b-12d3-a456-426614174000"/>
+            <column name="TEMPERATURE" value="30"/>
+            <column name="CITY" value="Los Angeles"/>
+            <column name="MONTH" value="February"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="4" author="test">
+        <insert tableName="TEMPERATURE_DATA">
+            <column name="ID" value="323e4567-e89b-12d3-a456-426614174000"/>
+            <column name="TEMPERATURE" value="20"/>
+            <column name="CITY" value="Chicago"/>
+            <column name="MONTH" value="March"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="5" author="test">
+        <insert tableName="TEMPERATURE_DATA">
+            <column name="ID" value="423e4567-e89b-12d3-a456-426614174000"/>
+            <column name="TEMPERATURE" value="28"/>
+            <column name="CITY" value="Houston"/>
+            <column name="MONTH" value="April"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="6" author="test">
+        <insert tableName="TEMPERATURE_DATA">
+            <column name="ID" value="523e4567-e89b-12d3-a456-426614174000"/>
+            <column name="TEMPERATURE" value="22"/>
+            <column name="CITY" value="Phoenix"/>
+            <column name="MONTH" value="May"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="7" author="test">
+        <insert tableName="TEMPERATURE_DATA">
+            <column name="ID" value="623e4567-e89b-12d3-a456-426614174000"/>
+            <column name="TEMPERATURE" value="26"/>
+            <column name="CITY" value="Philadelphia"/>
+            <column name="MONTH" value="June"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="8" author="test">
+        <insert tableName="TEMPERATURE_DATA">
+            <column name="ID" value="723e4567-e89b-12d3-a456-426614174000"/>
+            <column name="TEMPERATURE" value="29"/>
+            <column name="CITY" value="San Antonio"/>
+            <column name="MONTH" value="July"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="9" author="test">
+        <insert tableName="TEMPERATURE_DATA">
+            <column name="ID" value="823e4567-e89b-12d3-a456-426614174000"/>
+            <column name="TEMPERATURE" value="24"/>
+            <column name="CITY" value="San Diego"/>
+            <column name="MONTH" value="August"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="10" author="test">
+        <insert tableName="TEMPERATURE_DATA">
+            <column name="ID" value="923e4567-e89b-12d3-a456-426614174000"/>
+            <column name="TEMPERATURE" value="27"/>
+            <column name="CITY" value="Dallas"/>
+            <column name="MONTH" value="September"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="11" author="test">
+        <insert tableName="TEMPERATURE_DATA">
+            <column name="ID" value="023e4567-e89b-12d3-a456-426614174000"/>
+            <column name="TEMPERATURE" value="21"/>
+            <column name="CITY" value="San Jose"/>
+            <column name="MONTH" value="October"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

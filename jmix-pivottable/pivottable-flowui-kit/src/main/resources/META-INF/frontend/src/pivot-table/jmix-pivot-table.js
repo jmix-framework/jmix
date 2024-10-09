@@ -17,6 +17,11 @@
 import './jquery/jquery.js';
 import './jquery/jquery-ui.min.js';
 import './jquery/jquery.ui.touch-punch.min.js';
+
+// If a project contains another jQuery library, a library conflict is possible.
+// So PivotTable stores its own jQuery variable to isolate the PivotTable.js data.
+$pivotTablejQuery = jQuery.noConflict();
+
 import './plugin/d3/d3.js';
 import './plugin/c3/c3.js';
 import './plugin/c3/c3.min.css';
@@ -85,7 +90,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     constructor() {
         super();
 
-        this.$jQuery = jQuery.noConflict();
+        this.$jQuery = $pivotTablejQuery;
     }
 
     ready() {

@@ -16,12 +16,13 @@
 
 package io.jmix.search.index.mapping.fieldmapper.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.utils.Constants;
+import io.jmix.search.utils.ExtendedSearchSubFieldsApplier;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -41,13 +42,21 @@ public class ReferenceFieldMapper extends AbstractFieldMapper {
     }
 
     @Override
-    public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
-        Map<String, Object> effectiveParameters = createEffectiveParameters(parameters);
+    public ObjectNode createJsonConfiguration(Map<String, Object> parameters, ExtendedSearchSettings extendedSearchSettings) {
+        Map<String, Object> effectiveParameters = createEffectiveNativeParameters(parameters);
         effectiveParameters.put("type", "text");
 
+        ObjectNode baseInnerConfig = objectMapper.convertValue(effectiveParameters, ObjectNode.class);
+        ObjectNode resultInnerConfig = baseInnerConfig;
+        if (extendedSearchSettings.isEnabled()) {
+            resultInnerConfig = ExtendedSearchSubFieldsApplier.applyPrefixSubField(
+                    baseInnerConfig.deepCopy(),
+                    extendedSearchSettings
+            );
+        }
+
         ObjectNode root = JsonNodeFactory.instance.objectNode();
-        JsonNode config = objectMapper.valueToTree(effectiveParameters);
-        root.putObject("properties").set(Constants.INSTANCE_NAME_FIELD, config);
+        root.putObject("properties").set(Constants.INSTANCE_NAME_FIELD, resultInnerConfig);
         return root;
     }
 }

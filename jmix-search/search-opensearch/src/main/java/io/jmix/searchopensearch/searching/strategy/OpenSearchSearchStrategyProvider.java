@@ -1,7 +1,9 @@
 package io.jmix.searchopensearch.searching.strategy;
 
 import io.jmix.search.SearchProperties;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.SearchStrategyProvider;
+import io.jmix.searchopensearch.searching.strategy.impl.StartsWithOpenSearchSearchStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -17,12 +19,16 @@ public class OpenSearchSearchStrategyProvider implements SearchStrategyProvider<
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchSearchStrategyProvider.class);
 
+    protected final IndexConfigurationManager indexConfigurationManager;
+
     protected final Map<String, OpenSearchSearchStrategy> registry;
 
     protected final String defaultStrategyName;
 
-    public OpenSearchSearchStrategyProvider(Collection<OpenSearchSearchStrategy> searchStrategies,
+    public OpenSearchSearchStrategyProvider(IndexConfigurationManager indexConfigurationManager,
+                                            Collection<OpenSearchSearchStrategy> searchStrategies,
                                             SearchProperties applicationProperties) {
+        this.indexConfigurationManager = indexConfigurationManager;
         log.debug("Available search strategies: {}", searchStrategies);
         Map<String, OpenSearchSearchStrategy> tmpRegistry = new HashMap<>();
         searchStrategies.forEach(searchStrategy -> {
@@ -32,7 +38,9 @@ public class OpenSearchSearchStrategyProvider implements SearchStrategyProvider<
                         String.format("Detected several search strategies with the same name '%s'", searchStrategy.getName())
                 );
             }
-            tmpRegistry.put(strategyName, searchStrategy);
+            if (isSupported(searchStrategy)) {
+                tmpRegistry.put(strategyName, searchStrategy);
+            }
         });
 
         String defaultSearchStrategy = applicationProperties.getDefaultSearchStrategy();
@@ -89,5 +97,14 @@ public class OpenSearchSearchStrategyProvider implements SearchStrategyProvider<
     @Nullable
     public OpenSearchSearchStrategy findSearchStrategyByName(String strategyName) {
         return registry.get(strategyName.toLowerCase());
+    }
+
+    protected boolean isSupported(OpenSearchSearchStrategy searchStrategy) {
+        if (searchStrategy instanceof StartsWithOpenSearchSearchStrategy) {
+            return indexConfigurationManager.getAllIndexConfigurations().stream()
+                    .anyMatch(indexConfiguration -> indexConfiguration.getExtendedSearchSettings().isEnabled());
+        } else {
+            return true;
+        }
     }
 }

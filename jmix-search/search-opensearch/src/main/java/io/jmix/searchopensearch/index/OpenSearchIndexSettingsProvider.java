@@ -16,11 +16,26 @@
 
 package io.jmix.searchopensearch.index;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.search.index.IndexConfiguration;
+import jakarta.json.spi.JsonProvider;
+import jakarta.json.stream.JsonGenerator;
+import jakarta.json.stream.JsonParser;
+import org.opensearch.client.json.JsonpMapper;
+import org.opensearch.client.json.JsonpSerializable;
+import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.indices.IndexSettings;
+import org.opensearch.client.opensearch.indices.IndexSettingsAnalysis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,40 +43,157 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component("search_OpenSearchIndexSettingsProvider")
 public class OpenSearchIndexSettingsProvider {
 
-    protected final List<OpenSearchIndexSettingsConfigurer> configurers;
+    protected final OpenSearchClient client;
+
+    protected final List<OpenSearchIndexSettingsConfigurer> customConfigurers;
+    protected final List<OpenSearchIndexSettingsConfigurer> systemConfigurers;
 
     protected final OpenSearchIndexSettingsConfigurationContext context;
 
-    protected final IndexSettings commonSettings;
-    protected final Map<Class<?>, IndexSettings> indexSpecificSettings;
+    protected final Map<Class<?>, IndexSettings> effectiveIndexSettings;
+
+    protected final IndexSettings commonIndexSettings;
+    protected final IndexSettingsAnalysis commonAnalysisSettings;
+
+    protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    public OpenSearchIndexSettingsProvider(List<OpenSearchIndexSettingsConfigurer> configurers) {
-        this.configurers = configurers;
+    public OpenSearchIndexSettingsProvider(List<OpenSearchIndexSettingsConfigurer> configurers, OpenSearchClient client) {
+        this.client = client;
+
+        this.customConfigurers = new ArrayList<>();
+        this.systemConfigurers = new ArrayList<>();
+        prepareConfigurers(configurers);
+
         this.context = configureContext();
-        this.commonSettings = context.getCommonSettingsBuilder().build();
-        this.indexSpecificSettings = new ConcurrentHashMap<>();
+
+        this.commonIndexSettings = context.getCommonIndexSettingsBuilder().build();
+        this.commonAnalysisSettings = context.getCommonAnalysisBuilder().build();
+        this.effectiveIndexSettings = new ConcurrentHashMap<>();
     }
 
     public IndexSettings getSettingsForIndex(IndexConfiguration indexConfiguration) {
         Class<?> entityClass = indexConfiguration.getEntityClass();
-        IndexSettings indexSettings = indexSpecificSettings.get(entityClass);
-        if (indexSettings == null) {
-            Map<Class<?>, IndexSettings.Builder> allSpecificSettingsBuilders = context.getAllSpecificSettingsBuilders();
-            if (allSpecificSettingsBuilders.containsKey(entityClass)) {
-                IndexSettings.Builder entitySettingsBuilder = context.getEntitySettingsBuilder(entityClass);
-                indexSettings = entitySettingsBuilder.build();
-                indexSpecificSettings.put(entityClass, indexSettings);
+        IndexSettings effectiveIndexSettings = this.effectiveIndexSettings.get(entityClass);
+
+        if (effectiveIndexSettings == null) {
+            Map<Class<?>, IndexSettings.Builder> indexSettingsBuilders = context.getAllSpecificIndexSettingsBuilders();
+            IndexSettings indexSettings;
+            if (indexSettingsBuilders.containsKey(entityClass)) {
+                // Merge common and entity-specific index settings
+                IndexSettings.Builder indexSettingsBuilder = indexSettingsBuilders.get(entityClass);
+                indexSettings = indexSettingsBuilder.build();
+
+                ObjectNode commonIndexSettingsNode = toObjectNode(commonIndexSettings);
+                ObjectNode indexSettingsNode = toObjectNode(indexSettings);
+                ObjectNode mergedIndexSettingsNode = JsonNodeFactory.instance.objectNode();
+                mergedIndexSettingsNode.setAll(commonIndexSettingsNode);
+                indexSettingsNode.fieldNames().forEachRemaining(childName -> {
+                    JsonNode specificChildNode = indexSettingsNode.get(childName);
+                    JsonNode baseChildNode = mergedIndexSettingsNode.path(childName);
+                    if (specificChildNode.isObject()) {
+                        ObjectNode specificChildObjectNode = (ObjectNode) specificChildNode;
+                        if (baseChildNode.isObject()) {
+                            ((ObjectNode) baseChildNode).setAll(specificChildObjectNode);
+                        } else {
+                            mergedIndexSettingsNode.set(childName, specificChildObjectNode);
+                        }
+                    }
+                });
+
+                JsonpMapper jsonpMapper = client._transport().jsonpMapper();
+                JsonProvider jsonProvider = jsonpMapper.jsonProvider();
+                try (StringReader reader = new StringReader(indexSettingsNode.toString())) {
+                    JsonParser parser = jsonProvider.createParser(reader);
+                    indexSettings = IndexSettings._DESERIALIZER.deserialize(parser, jsonpMapper);
+                }
             } else {
-                indexSettings = commonSettings;
+                indexSettings = commonIndexSettings;
             }
+
+            Map<Class<?>, IndexSettingsAnalysis.Builder> analysisBuilders = context.getAllSpecificAnalysisBuilders();
+            IndexSettingsAnalysis analysisSettings;
+            if (analysisBuilders.containsKey(entityClass)) {
+                // Merge common and entity-specific analysis settings
+                ObjectNode commonAnalysisSettingsNode = toObjectNode(commonAnalysisSettings);
+                IndexSettingsAnalysis.Builder analysisBuilder = analysisBuilders.get(entityClass);
+                analysisSettings = analysisBuilder.build();
+
+                ObjectNode analysisSettingsNode = toObjectNode(analysisSettings);
+                ObjectNode mergedAnalysisNode = JsonNodeFactory.instance.objectNode();
+                mergedAnalysisNode.setAll(commonAnalysisSettingsNode);
+                analysisSettingsNode.fieldNames().forEachRemaining(childName -> {
+                    JsonNode specificChildNode = analysisSettingsNode.get(childName);
+                    JsonNode baseChildNode = mergedAnalysisNode.path(childName);
+                    if (specificChildNode.isObject()) {
+                        ObjectNode specificChildObjectNode = (ObjectNode) specificChildNode;
+                        if (baseChildNode.isObject()) {
+                            ((ObjectNode) baseChildNode).setAll(specificChildObjectNode);
+                        } else {
+                            mergedAnalysisNode.set(childName, specificChildObjectNode);
+                        }
+                    }
+                });
+
+                JsonpMapper jsonpMapper = client._transport().jsonpMapper();
+                JsonProvider jsonProvider = jsonpMapper.jsonProvider();
+                try (StringReader reader = new StringReader(mergedAnalysisNode.toString())) {
+                    JsonParser parser = jsonProvider.createParser(reader);
+                    analysisSettings = IndexSettingsAnalysis._DESERIALIZER.deserialize(parser, jsonpMapper);
+                }
+            } else {
+                analysisSettings = commonAnalysisSettings;
+            }
+
+            effectiveIndexSettings = new IndexSettings.Builder()
+                    .index(indexSettings)
+                    .analysis(analysisSettings)
+                    .build();
+
+            this.effectiveIndexSettings.put(entityClass, effectiveIndexSettings);
         }
-        return indexSettings;
+        return effectiveIndexSettings;
     }
 
     protected OpenSearchIndexSettingsConfigurationContext configureContext() {
         OpenSearchIndexSettingsConfigurationContext context = new OpenSearchIndexSettingsConfigurationContext();
-        configurers.forEach(configurer -> configurer.configure(context));
+        systemConfigurers.forEach(configurer -> configurer.configure(context));
+        customConfigurers.forEach(configurer -> configurer.configure(context));
         return context;
+    }
+
+    protected void prepareConfigurers(List<OpenSearchIndexSettingsConfigurer> configurers) {
+        configurers.forEach(configurer -> {
+            if (configurer.isSystem()) {
+                systemConfigurers.add(configurer);
+            } else {
+                customConfigurers.add(configurer);
+            }
+        });
+    }
+
+    // TODO extract to platform-specific utils
+    protected JsonNode toJsonNode(JsonpSerializable object) {
+        StringWriter stringWriter = new StringWriter();
+        JsonpMapper mapper = client._transport().jsonpMapper();
+        JsonGenerator generator = mapper.jsonProvider().createGenerator(stringWriter);
+        object.serialize(generator, mapper);
+        generator.close();
+        String stringValue = stringWriter.toString();
+
+        try {
+            return objectMapper.readTree(stringValue);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Unable to generate JsonNode", e);
+        }
+    }
+
+    protected ObjectNode toObjectNode(JsonpSerializable object) {
+        JsonNode jsonNode = toJsonNode(object);
+        if (jsonNode.isObject()) {
+            return (ObjectNode) jsonNode;
+        } else {
+            throw new RuntimeException("Unable to convert provided object to ObjectNode: JsonNode type is '" + jsonNode.getNodeType() + "'");
+        }
     }
 }

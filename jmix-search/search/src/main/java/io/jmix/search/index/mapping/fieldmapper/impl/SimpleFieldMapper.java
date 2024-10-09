@@ -17,17 +17,32 @@
 package io.jmix.search.index.mapping.fieldmapper.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 
 import java.util.Map;
 
 public abstract class SimpleFieldMapper extends AbstractFieldMapper {
 
     @Override
-    public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
-        Map<String, Object> effectiveParameters = createEffectiveParameters(parameters);
-        effectiveParameters.put("type", getSearchPlatformDatatype());
+    public ObjectNode createJsonConfiguration(Map<String, Object> parameters, ExtendedSearchSettings extendedSearchSettings) {
+        Map<String, Object> nativeParameters = createEffectiveNativeParameters(parameters);
+        nativeParameters.put("type", getSearchPlatformDatatype());
+        ObjectNode baseConfig = objectMapper.convertValue(nativeParameters, ObjectNode.class);
 
-        return objectMapper.convertValue(effectiveParameters, ObjectNode.class);
+        ObjectNode resultConfig = baseConfig;
+        if(isExtendedSearchSupported()) {
+            if (extendedSearchSettings.isEnabled()) {
+                resultConfig = applyExtendedSearch(baseConfig.deepCopy(), extendedSearchSettings);
+            }
+        }
+
+        return resultConfig;
+    }
+
+    abstract boolean isExtendedSearchSupported();
+
+    protected ObjectNode applyExtendedSearch(ObjectNode config, ExtendedSearchSettings extendedSearchSettings) {
+        return config;
     }
 
     protected abstract String getSearchPlatformDatatype();

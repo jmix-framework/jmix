@@ -17,6 +17,7 @@
 package io.jmix.search.searching;
 
 import com.google.common.base.Preconditions;
+import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -82,6 +83,10 @@ public class SearchContext {
      */
     public String getSearchText() {
         return searchText;
+    }
+
+    public String getEscapedSearchText() {
+        return QueryParserUtil.escape(searchText);
     }
 
     /**

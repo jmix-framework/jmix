@@ -1,6 +1,8 @@
 package io.jmix.searchopensearch.searching.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterables;
@@ -16,7 +18,10 @@ import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyProvider;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
+import jakarta.json.stream.JsonGenerator;
 import org.apache.commons.lang3.StringUtils;
+import org.opensearch.client.json.JsonpMapper;
+import org.opensearch.client.json.JsonpSerializable;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.opensearch.client.opensearch.core.SearchResponse;
@@ -27,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,6 +54,7 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
     protected final OpenSearchSearchStrategyProvider searchStrategyManager;
+    protected final SearchUtils searchUtils;
 
     protected final ObjectMapper objectMapper;
 
@@ -61,7 +68,8 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
                                     IdSerialization idSerialization,
                                     SecureOperations secureOperations,
                                     PolicyStore policyStore,
-                                    OpenSearchSearchStrategyProvider searchStrategyManager) {
+                                    OpenSearchSearchStrategyProvider searchStrategyManager,
+                                    SearchUtils searchUtils) {
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.metadata = metadata;
@@ -73,6 +81,7 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
         this.searchStrategyManager = searchStrategyManager;
+        this.searchUtils = searchUtils;
 
         this.objectMapper = new ObjectMapper();
     }
@@ -89,7 +98,7 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
 
         OpenSearchSearchStrategy searchStrategy = resolveSearchStrategy(searchStrategyName);
         SearchResultImpl searchResult = initSearchResult(searchContext, searchStrategy);
-        List<String> targetIndexes = resolveTargetIndexes(searchContext);
+        List<String> targetIndexes = searchUtils.resolveEffectiveTargetIndexes(searchContext.getEntities());
         if (targetIndexes.isEmpty()) {
             return searchResult;
         }
@@ -126,22 +135,6 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
 
     protected SearchResultImpl initSearchResult(SearchContext searchContext, OpenSearchSearchStrategy searchStrategy) {
         return new SearchResultImpl(searchContext, searchStrategy.getName());
-    }
-
-    protected List<String> resolveTargetIndexes(SearchContext searchContext) {
-        Collection<String> requestedEntities = searchContext.getEntities();
-        if (requestedEntities.isEmpty()) {
-            requestedEntities = indexConfigurationManager.getAllIndexedEntities();
-        }
-
-        return requestedEntities.stream()
-                .map(metadata::getClass)
-                .filter(metaClass -> secureOperations.isEntityReadPermitted(metaClass, policyStore))
-                .map(metaClass -> indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(IndexConfiguration::getIndexName)
-                .collect(Collectors.toList());
     }
 
     protected OpenSearchSearchStrategy resolveSearchStrategy(String searchStrategyName) {

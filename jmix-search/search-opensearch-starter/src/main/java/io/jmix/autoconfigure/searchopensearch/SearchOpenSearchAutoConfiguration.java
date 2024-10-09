@@ -21,11 +21,12 @@ import io.jmix.core.*;
 import io.jmix.data.DataConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.EntityIndexer;
+import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchUtils;
 import io.jmix.search.utils.SslConfigurer;
 import io.jmix.searchopensearch.SearchOpenSearchConfiguration;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsProvider;
@@ -58,7 +59,10 @@ import javax.net.ssl.SSLContext;
 import java.util.Collection;
 
 @AutoConfiguration
-@Import({CoreConfiguration.class, DataConfiguration.class, SearchConfiguration.class, SearchOpenSearchConfiguration.class})
+@Import({CoreConfiguration.class,
+        DataConfiguration.class,
+        SearchConfiguration.class,
+        SearchOpenSearchConfiguration.class})
 public class SearchOpenSearchAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(SearchOpenSearchAutoConfiguration.class);
@@ -142,7 +146,8 @@ public class SearchOpenSearchAutoConfiguration {
                                                       IdSerialization idSerialization,
                                                       SecureOperations secureOperations,
                                                       PolicyStore policyStore,
-                                                      OpenSearchSearchStrategyProvider searchStrategyManager) {
+                                                      OpenSearchSearchStrategyProvider searchStrategyManager,
+                                                      SearchUtils searchUtils) {
         return new OpenSearchEntitySearcher(
                 client,
                 indexConfigurationManager,
@@ -154,15 +159,17 @@ public class SearchOpenSearchAutoConfiguration {
                 idSerialization,
                 secureOperations,
                 policyStore,
-                searchStrategyManager
+                searchStrategyManager,
+                searchUtils
         );
     }
 
     @Bean("search_OpenSearchSearchStrategyProvider")
     protected OpenSearchSearchStrategyProvider openSearchSearchStrategyProvider(
+            IndexConfigurationManager indexConfigurationManager,
             Collection<OpenSearchSearchStrategy> searchStrategies,
             SearchProperties applicationProperties) {
-        return new OpenSearchSearchStrategyProvider(searchStrategies, applicationProperties);
+        return new OpenSearchSearchStrategyProvider(indexConfigurationManager, searchStrategies, applicationProperties);
     }
 
     @Nullable

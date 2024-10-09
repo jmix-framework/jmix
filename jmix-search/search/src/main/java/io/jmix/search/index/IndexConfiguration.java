@@ -16,6 +16,7 @@
 
 package io.jmix.search.index;
 
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 
 import java.util.Set;
@@ -38,18 +39,22 @@ public class IndexConfiguration {
 
     protected final Predicate<Object> indexablePredicate;
 
+    protected final ExtendedSearchSettings extendedSearchSettings;
+
     public IndexConfiguration(String entityName,
                               Class<?> entityClass,
                               String indexName,
                               IndexMappingConfiguration mapping,
                               Set<Class<?>> affectedEntityClasses,
-                              Predicate<Object> indexablePredicate) {
+                              Predicate<Object> indexablePredicate,
+                              ExtendedSearchSettings extendedSearchSettings) {
         this.entityName = entityName;
         this.entityClass = entityClass;
         this.indexName = indexName;
         this.mapping = mapping;
         this.affectedEntityClasses = affectedEntityClasses;
         this.indexablePredicate = indexablePredicate;
+        this.extendedSearchSettings = extendedSearchSettings;
     }
 
     /**
@@ -106,5 +111,9 @@ public class IndexConfiguration {
      */
     public Predicate<Object> getIndexablePredicate() {
         return indexablePredicate;
+    }
+
+    public ExtendedSearchSettings getExtendedSearchSettings() {
+        return extendedSearchSettings;
     }
 }

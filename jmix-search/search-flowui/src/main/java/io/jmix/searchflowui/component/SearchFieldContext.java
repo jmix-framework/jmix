@@ -26,6 +26,8 @@ public class SearchFieldContext {
     protected String value;
     protected OpenMode openMode;
     protected int searchSize;
+    protected boolean searchButtonVisible;
+    protected boolean settingsButtonVisible;
 
     public SearchFieldContext() {
     }
@@ -36,6 +38,8 @@ public class SearchFieldContext {
         this.value = searchField.getValue();
         this.openMode = searchField.getOpenMode();
         this.searchSize = searchField.getSearchSize();
+        this.searchButtonVisible = searchField.isSearchButtonVisible();
+        this.settingsButtonVisible = searchField.isSettingsButtonVisible();
     }
 
     public OpenMode getOpenMode() {
@@ -76,5 +80,21 @@ public class SearchFieldContext {
 
     public void setSearchSize(int searchSize) {
         this.searchSize = searchSize;
+    }
+
+    public boolean isSearchButtonVisible() {
+        return searchButtonVisible;
+    }
+
+    public void setSearchButtonVisible(boolean searchButtonVisible) {
+        this.searchButtonVisible = searchButtonVisible;
+    }
+
+    public boolean isSettingsButtonVisible() {
+        return settingsButtonVisible;
+    }
+
+    public void setSettingsButtonVisible(boolean settingsButtonVisible) {
+        this.settingsButtonVisible = settingsButtonVisible;
     }
 }

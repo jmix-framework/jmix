@@ -45,6 +45,8 @@
                     <xs:attribute name="openMode" type="openMode"/>
                     <xs:attribute name="searchSize" type="xs:integer"/>
                     <xs:attribute name="searchStrategy" type="searchStrategyType"/>
+                    <xs:attribute name="settingsButtonVisible" type="xs:boolean"/>
+                    <xs:attribute name="searchButtonVisible" type="xs:boolean"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -68,9 +70,8 @@
     <xs:simpleType name="searchStrategyType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="anyTermAnyField"/>
-            <xs:enumeration value="allTermsAnyField"/>
-            <xs:enumeration value="allTermsSingleField"/>
             <xs:enumeration value="phrase"/>
+            <xs:enumeration value="startsWith"/>
         </xs:restriction>
     </xs:simpleType>
 

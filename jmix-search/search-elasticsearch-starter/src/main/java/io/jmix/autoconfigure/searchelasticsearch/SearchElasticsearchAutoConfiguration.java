@@ -29,6 +29,7 @@ import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchUtils;
 import io.jmix.search.utils.SslConfigurer;
 import io.jmix.searchelasticsearch.SearchElasticsearchConfiguration;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
@@ -57,7 +58,10 @@ import javax.net.ssl.SSLContext;
 import java.util.Collection;
 
 @AutoConfiguration
-@Import({CoreConfiguration.class, DataConfiguration.class, SearchConfiguration.class, SearchElasticsearchConfiguration.class})
+@Import({CoreConfiguration.class,
+        DataConfiguration.class,
+        SearchConfiguration.class,
+        SearchElasticsearchConfiguration.class})
 public class SearchElasticsearchAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(SearchElasticsearchAutoConfiguration.class);
@@ -144,7 +148,8 @@ public class SearchElasticsearchAutoConfiguration {
                                                          IdSerialization idSerialization,
                                                          SecureOperations secureOperations,
                                                          PolicyStore policyStore,
-                                                         ElasticsearchSearchStrategyProvider searchStrategyManager) {
+                                                         ElasticsearchSearchStrategyProvider searchStrategyManager,
+                                                         SearchUtils searchUtils) {
         return new ElasticsearchEntitySearcher(
                 client,
                 indexConfigurationManager,
@@ -156,15 +161,17 @@ public class SearchElasticsearchAutoConfiguration {
                 idSerialization,
                 secureOperations,
                 policyStore,
-                searchStrategyManager
+                searchStrategyManager,
+                searchUtils
         );
     }
 
     @Bean("search_ElasticsearchSearchStrategyProvider")
     protected ElasticsearchSearchStrategyProvider elasticsearchSearchStrategyProvider(
+            IndexConfigurationManager indexConfigurationManager,
             Collection<ElasticsearchSearchStrategy> searchStrategies,
             SearchProperties applicationProperties) {
-        return new ElasticsearchSearchStrategyProvider(searchStrategies, applicationProperties);
+        return new ElasticsearchSearchStrategyProvider(indexConfigurationManager, searchStrategies, applicationProperties);
     }
 
     @Nullable

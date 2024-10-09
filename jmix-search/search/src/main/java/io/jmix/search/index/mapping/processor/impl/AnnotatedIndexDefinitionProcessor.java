@@ -16,7 +16,6 @@
 
 package io.jmix.search.index.mapping.processor.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Metadata;
@@ -29,6 +28,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.annotation.ExtendedSearch;
 import io.jmix.search.index.annotation.FieldMappingAnnotation;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.annotation.ManualMappingDefinition;
@@ -83,7 +83,6 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
     protected final SearchProperties searchProperties;
     protected final MethodArgumentsProvider methodArgumentsProvider;
-    //protected final IndexAnalysisElementsRegistry indexAnalysisElementsRegistry;
 
     @Autowired
     public AnnotatedIndexDefinitionProcessor(Metadata metadata,
@@ -94,8 +93,7 @@ public class AnnotatedIndexDefinitionProcessor {
                                              InstanceNameProvider instanceNameProvider,
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
-                                             ContextArgumentResolverComposite resolvers/*,
-                                             IndexAnalysisElementsRegistry indexAnalysisElementsRegistry*/) {
+                                             ContextArgumentResolverComposite resolvers) {
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
@@ -105,7 +103,6 @@ public class AnnotatedIndexDefinitionProcessor {
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
         this.searchProperties = searchProperties;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
-        //this.indexAnalysisElementsRegistry = indexAnalysisElementsRegistry;
     }
 
     /**
@@ -136,7 +133,8 @@ public class AnnotatedIndexDefinitionProcessor {
                 indexName,
                 indexMappingConfiguration,
                 affectedEntityClasses,
-                indexablePredicate
+                indexablePredicate,
+                indexDef.getExtendedSearchSettings()
         );
     }
 
@@ -160,6 +158,9 @@ public class AnnotatedIndexDefinitionProcessor {
         result.setEntityClass(entityClass);
         result.setMetaClass(metaClass);
         result.setIndexName(indexAnnotation.indexName());
+
+        ExtendedSearchSettings extendedSearchSettings = createExtendedSearchSettings(indexDefinitionClass);
+        result.setExtendedSearchSettings(extendedSearchSettings);
 
         Method[] methods = indexDefinitionClass.getDeclaredMethods();
         for (Method method : methods) {
@@ -193,10 +194,28 @@ public class AnnotatedIndexDefinitionProcessor {
         return indexName.toLowerCase();
     }
 
+    protected ExtendedSearchSettings createExtendedSearchSettings(Class<?> indexDefinitionClass) {
+        ExtendedSearch extendedSearchAnnotation = indexDefinitionClass.getAnnotation(ExtendedSearch.class);
+        ExtendedSearchSettings extendedSearchSettings;
+        if (extendedSearchAnnotation != null) {
+            extendedSearchSettings = ExtendedSearchSettings.builder()
+                    .setEdgeNGramMin(searchProperties.getMinPrefixLength())
+                    .setEdgeNGramMax(searchProperties.getMaxPrefixLength())
+                    .setEnabled(extendedSearchAnnotation.enabled())
+                    .setTokenizer(extendedSearchAnnotation.tokenizer())
+                    .setAdditionalFilters(extendedSearchAnnotation.additionalFilters())
+                    .build();
+        } else {
+            extendedSearchSettings = ExtendedSearchSettings.empty();
+        }
+        return extendedSearchSettings;
+    }
+
     protected IndexMappingConfiguration createIndexMappingConfig(ParsedIndexDefinition parsedIndexDefinition) {
         IndexMappingConfiguration indexMappingConfiguration;
 
         DisplayedNameDescriptor displayedNameDescriptor = createDisplayedNameDescriptor(parsedIndexDefinition.getMetaClass());
+        ExtendedSearchSettings extendedSearchSettings = parsedIndexDefinition.getExtendedSearchSettings();
         MappingDefinition mappingDefinition;
         Method mappingDefinitionImplementationMethod = parsedIndexDefinition.getMappingDefinitionImplementationMethod();
         if (mappingDefinitionImplementationMethod == null) {
@@ -217,7 +236,7 @@ public class AnnotatedIndexDefinitionProcessor {
             }
         }
         Map<String, MappingFieldDescriptor> fieldDescriptors = processMappingDefinition(
-                parsedIndexDefinition.getMetaClass(), mappingDefinition
+                parsedIndexDefinition.getMetaClass(), mappingDefinition, extendedSearchSettings
         );
         indexMappingConfiguration = new IndexMappingConfiguration(
                 parsedIndexDefinition.getMetaClass(), fieldDescriptors, displayedNameDescriptor
@@ -338,50 +357,9 @@ public class AnnotatedIndexDefinitionProcessor {
         return affectedClasses;
     }
 
-    /*protected Settings configureSettings(Class<?> entityClass, IndexMappingConfiguration mappingConfiguration) {
-        Settings.Builder settingsBuilder = Settings.builder();
-        configureAnalysisSettings(settingsBuilder, mappingConfiguration);
-        configureIndexSettings(settingsBuilder, entityClass);
-        return settingsBuilder.build();
-    }*/
-
-    /*protected void configureAnalysisSettings(Settings.Builder settingsBuilder, IndexMappingConfiguration mappingConfiguration) {
-        FieldAnalysisDetailsAggregator aggregator = new FieldAnalysisDetailsAggregator();
-        Map<String, MappingFieldDescriptor> fields = mappingConfiguration.getFields();
-        fields.values().stream()
-                .map(MappingFieldDescriptor::getFieldConfiguration)
-                .map(FieldConfiguration::asJson)
-                .forEach(aggregator::process);
-
-        Set<AnalysisElementConfiguration> analysisElementConfigurations = new HashSet<>();
-
-        Set<String> analyzers = aggregator.getAnalyzers();
-        for (String analyzerName : analyzers) {
-            Set<AnalysisElementConfiguration> configs = indexAnalysisElementsRegistry.resolveAllUsedCustomElementsForAnalyzer(analyzerName);
-            analysisElementConfigurations.addAll(configs);
-        }
-
-        Set<String> normalizers = aggregator.getNormalizers();
-        for (String normalizerName : normalizers) {
-            Set<AnalysisElementConfiguration> configs = indexAnalysisElementsRegistry.resolveAllUsedCustomElementsForNormalizer(normalizerName);
-            analysisElementConfigurations.addAll(configs);
-        }
-
-        analysisElementConfigurations.forEach(analysisElementConfig -> settingsBuilder.put(analysisElementConfig.getSettings()));
-    }*/
-
-    /*protected void configureIndexSettings(Settings.Builder settingsBuilder, Class<?> entityClass) {
-        IndexSettingsConfigurationContext context = new IndexSettingsConfigurationContext();
-        indexSettingsConfigurers.forEach(configurer -> configurer.configure(context));
-
-        Settings commonSettings = context.getCommonSettingsBuilder().build();
-        Settings entitySettings = context.getEntitySettingsBuilder(entityClass).build();
-        settingsBuilder.put(commonSettings).put(entitySettings);
-    }*/
-
-    protected Map<String, MappingFieldDescriptor> processMappingDefinition(MetaClass metaClass, MappingDefinition mappingDefinition) {
+    protected Map<String, MappingFieldDescriptor> processMappingDefinition(MetaClass metaClass, MappingDefinition mappingDefinition, ExtendedSearchSettings extendedSearchSettings) {
         return mappingDefinition.getElements().stream()
-                .map(item -> processMappingDefinitionElement(metaClass, item))
+                .map(item -> processMappingDefinitionElement(metaClass, item, extendedSearchSettings))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
                     int order1 = v1.getOrder();
@@ -393,13 +371,13 @@ public class AnnotatedIndexDefinitionProcessor {
                 }));
     }
 
-    protected List<MappingFieldDescriptor> processMappingDefinitionElement(MetaClass metaClass, MappingDefinitionElement element) {
+    protected List<MappingFieldDescriptor> processMappingDefinitionElement(MetaClass metaClass, MappingDefinitionElement element, ExtendedSearchSettings extendedSearchSettings) {
         Map<String, MetaPropertyPath> effectiveProperties = resolveEffectiveProperties(
                 metaClass, element.getIncludedProperties(), element.getExcludedProperties()
         );
 
         return effectiveProperties.values().stream()
-                .map(propertyPath -> createMappingFieldDescriptor(propertyPath, element))
+                .map(propertyPath -> createMappingFieldDescriptor(propertyPath, element, extendedSearchSettings))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
@@ -448,7 +426,7 @@ public class AnnotatedIndexDefinitionProcessor {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, MappingDefinitionElement element) {
+    protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, MappingDefinitionElement element, ExtendedSearchSettings extendedSearchSettings) {
         Optional<FieldMappingStrategy> fieldMappingStrategyOpt = resolveFieldMappingStrategy(element);
         FieldConfiguration explicitFieldConfiguration = element.getFieldConfiguration();
         PropertyValueExtractor explicitPropertyValueExtractor = element.getPropertyValueExtractor();
@@ -463,7 +441,7 @@ public class AnnotatedIndexDefinitionProcessor {
         if (fieldMappingStrategyOpt.isPresent()) {
             FieldMappingStrategy fieldMappingStrategy = fieldMappingStrategyOpt.get();
             if (fieldMappingStrategy.isSupported(propertyPath)) {
-                strategyFieldConfiguration = fieldMappingStrategy.createFieldConfiguration(propertyPath, element.getParameters());
+                strategyFieldConfiguration = fieldMappingStrategy.createFieldConfiguration(propertyPath, element.getParameters(), extendedSearchSettings);
                 strategyPropertyValueExtractor = fieldMappingStrategy.getPropertyValueExtractor(propertyPath);
             } else {
                 log.debug("Property '{}' ('{}') is not supported by field mapping strategy '{}'", propertyPath, propertyPath.getMetaClass(), fieldMappingStrategy);
@@ -583,7 +561,7 @@ public class AnnotatedIndexDefinitionProcessor {
         return fieldMappingStrategyProvider.getFieldMappingStrategyByClass(fieldMappingStrategyClass);
     }
 
-    private static class ParsedIndexDefinition {
+    protected static class ParsedIndexDefinition {
         private final Class<?> indexDefinitionClass;
         private Class<?> entityClass;
         private MetaClass metaClass;
@@ -591,6 +569,7 @@ public class AnnotatedIndexDefinitionProcessor {
         private final List<Annotation> fieldAnnotations = new ArrayList<>();
         private final List<Method> indexablePredicateMethods = new ArrayList<>();
         private Method mappingDefinitionImplementationMethod = null;
+        private ExtendedSearchSettings extendedSearchSettings;
 
         private ParsedIndexDefinition(Class<?> indexDefinitionClass) {
             this.indexDefinitionClass = indexDefinitionClass;
@@ -648,33 +627,13 @@ public class AnnotatedIndexDefinitionProcessor {
         private void setMappingDefinitionImplementationMethod(@Nullable Method mappingDefinitionImplementationMethod) {
             this.mappingDefinitionImplementationMethod = mappingDefinitionImplementationMethod;
         }
-    }
 
-    private static class FieldAnalysisDetailsAggregator {
-
-        private final Set<String> analyzers = new HashSet<>();
-        private final Set<String> normalizers = new HashSet<>();
-
-        private void process(JsonNode json) {
-            if (json.isObject()) {
-                JsonNode analyzerNode = json.path("analyzer");
-                JsonNode normalizerNode = json.path("normalizer");
-                if (analyzerNode.isTextual()) {
-                    analyzers.add(analyzerNode.textValue());
-                }
-                if (normalizerNode.isTextual()) {
-                    normalizers.add(normalizerNode.textValue());
-                }
-                json.forEach(this::process);
-            }
+        private ExtendedSearchSettings getExtendedSearchSettings() {
+            return extendedSearchSettings;
         }
 
-        private Set<String> getAnalyzers() {
-            return analyzers;
-        }
-
-        private Set<String> getNormalizers() {
-            return normalizers;
+        private void setExtendedSearchSettings(@Nullable ExtendedSearchSettings extendedSearchSettings) {
+            this.extendedSearchSettings = extendedSearchSettings;
         }
     }
 }

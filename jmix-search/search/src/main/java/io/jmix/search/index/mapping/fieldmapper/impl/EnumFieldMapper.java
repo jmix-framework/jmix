@@ -31,6 +31,11 @@ public class EnumFieldMapper extends SimpleFieldMapper {
     );
 
     @Override
+    boolean isExtendedSearchSupported() {
+        return true;
+    }
+
+    @Override
     protected String getSearchPlatformDatatype() {
         return "text";
     }

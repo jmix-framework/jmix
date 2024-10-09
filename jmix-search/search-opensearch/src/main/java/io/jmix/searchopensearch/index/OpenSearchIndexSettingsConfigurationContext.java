@@ -18,15 +18,15 @@ package io.jmix.searchopensearch.index;
 
 import io.jmix.search.index.BaseIndexSettingsConfigurationContext;
 import org.opensearch.client.opensearch.indices.IndexSettings;
-
-import java.util.Map;
+import org.opensearch.client.opensearch.indices.IndexSettingsAnalysis;
 
 /**
  * Configuration context for OpenSearch index settings
  */
-public class OpenSearchIndexSettingsConfigurationContext extends BaseIndexSettingsConfigurationContext<IndexSettings.Builder> {
+public class OpenSearchIndexSettingsConfigurationContext
+        extends BaseIndexSettingsConfigurationContext<IndexSettings.Builder, IndexSettingsAnalysis.Builder> {
 
     public OpenSearchIndexSettingsConfigurationContext() {
-        super(IndexSettings.Builder::new);
+        super(IndexSettings.Builder::new, IndexSettingsAnalysis.Builder::new);
     }
 }

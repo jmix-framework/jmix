@@ -16,8 +16,11 @@
 
 package io.jmix.search.index.mapping.fieldmapper.impl;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.ParameterKeys;
+import io.jmix.search.utils.ExtendedSearchSubFieldsApplier;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -36,6 +39,16 @@ public class TextFieldMapper extends SimpleFieldMapper {
     @Override
     public Set<String> getSupportedMappingParameters() {
         return supportedParameters;
+    }
+
+    @Override
+    boolean isExtendedSearchSupported() {
+        return true;
+    }
+
+    @Override
+    protected ObjectNode applyExtendedSearch(ObjectNode config, ExtendedSearchSettings extendedSearchSettings) {
+        return ExtendedSearchSubFieldsApplier.applyPrefixSubField(config, extendedSearchSettings);
     }
 
     @Override

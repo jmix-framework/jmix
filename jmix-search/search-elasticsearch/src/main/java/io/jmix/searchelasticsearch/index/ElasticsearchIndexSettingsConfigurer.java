@@ -16,15 +16,15 @@
 
 package io.jmix.searchelasticsearch.index;
 
+import io.jmix.search.index.IndexSettingsConfigurer;
+
 /**
  * Base interface for configurers of Elasticsearch index settings.
  * <p>
  * Create Spring Bean that implements this interface.
  * Index settings can be configured inside
  * {@link ElasticsearchIndexSettingsConfigurer#configure(ElasticsearchIndexSettingsConfigurationContext)} by using
- * settings builders.
- * <p>
- * See {@link ElasticsearchIndexSettingsConfigurationContext}.
+ * settings and analysis builders acquired from {@link ElasticsearchIndexSettingsConfigurationContext}.
  * <p>
  * Example:
  * <pre>
@@ -33,32 +33,24 @@ package io.jmix.searchelasticsearch.index;
  *
  *     &#64;Override
  *     public void configure(ElasticsearchIndexSettingsConfigurationContext context) {
- *         IndexSettings.Builder commonSettingsBuilder = context.getCommonSettingsBuilder();
- *         commonSettingsBuilder
- *                 .maxResultWindow(15000)
- *                 .analysis(analysisBuilder ->
- *                         analysisBuilder.analyzer("customized_standard", analyzerBuilder ->
- *                                 analyzerBuilder.standard(stdAnalyzerBuilder ->
- *                                         stdAnalyzerBuilder.maxTokenLength(100)
- *                                 )
- *                         )
- *                 );
+ *         context.getCommonIndexSettingsBuilder().maxResultWindow(15000);
+ *         context.getEntityIndexSettingsBuilder(Person.class).maxResultWindow(20000);
  *
- *         IndexSettings.Builder personSettingsBuilder = context.getEntitySettingsBuilder(Person.class);
- *         personSettingsBuilder
- *                 .maxResultWindow(20000)
- *                 .analysis(analysisBuilder ->
- *                         analysisBuilder.analyzer("customized_standard", analyzerBuilder ->
- *                                 analyzerBuilder.standard(stdAnalyzerBuilder ->
- *                                         stdAnalyzerBuilder.maxTokenLength(100)
- *                                 )
- *                         )
- *                 );
+ *         context.getCommonAnalysisBuilder().analyzer("customized_standard", analyzerBuilder ->
+ *                 analyzerBuilder.standard(stdAnalyzerBuilder ->
+ *                         stdAnalyzerBuilder.maxTokenLength(100)
+ *                 )
+ *         );
+ *         context.getEntityAnalysisBuilder(Person.class).analyzer("customized_standard", analyzerBuilder ->
+ *                 analyzerBuilder.standard(stdAnalyzerBuilder ->
+ *                         stdAnalyzerBuilder.maxTokenLength(150) *
+ *                 )
+ *         );
  *     }
  * }
  * </pre>
  */
-public interface ElasticsearchIndexSettingsConfigurer {
+public interface ElasticsearchIndexSettingsConfigurer extends IndexSettingsConfigurer<ElasticsearchIndexSettingsConfigurationContext> {
 
     void configure(ElasticsearchIndexSettingsConfigurationContext context);
 }

@@ -99,7 +99,7 @@ public final class UiTestUtils {
     }
 
     /**
-     * @return list of {@link NotificationInfo} in order of opening
+     * @return immutable list of {@link NotificationInfo} in order of opening
      */
     public static List<NotificationInfo> getOpenedNotifications() {
         return applicationContext.getBean(OpenedNotifications.class).getNotifications();
@@ -114,7 +114,7 @@ public final class UiTestUtils {
     }
 
     /**
-     * @return list of {@link DialogInfo}s in order of opening
+     * @return immutable list of {@link DialogInfo}s in order of opening
      */
     public static List<DialogInfo> getOpenedDialogs() {
         return applicationContext.getBean(OpenedDialogs.class).getDialogs();

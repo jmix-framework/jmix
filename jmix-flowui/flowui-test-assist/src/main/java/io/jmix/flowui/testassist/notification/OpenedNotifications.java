@@ -36,13 +36,13 @@ import java.util.Map;
 @Component("ui_OpenedNotifications")
 public class OpenedNotifications {
 
-    protected Map<Notification, NotificationInfo> openedNotifications = new LinkedHashMap<>();
+    protected static Map<Notification, NotificationInfo> openedNotifications = new LinkedHashMap<>();
 
     /**
-     * @return list of {@link NotificationInfo}s
+     * @return immutable list of {@link NotificationInfo}s
      */
     public List<NotificationInfo> getNotifications() {
-        return openedNotifications.values().stream().toList();
+        return List.copyOf(openedNotifications.values());
     }
 
     /**

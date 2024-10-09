@@ -36,13 +36,13 @@ import java.util.Map;
 @Component("ui_OpenedDialogs")
 public class OpenedDialogs {
 
-    protected Map<Dialog, DialogInfo> openedDialogs = new LinkedHashMap<>();
+    protected static Map<Dialog, DialogInfo> openedDialogs = new LinkedHashMap<>();
 
     /**
-     * @return list of {@link DialogInfo}s
+     * @return immutable list of {@link DialogInfo}s
      */
     public List<DialogInfo> getDialogs() {
-        return openedDialogs.values().stream().toList();
+        return List.copyOf(openedDialogs.values());
     }
 
     /**

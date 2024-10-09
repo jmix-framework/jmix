@@ -49,7 +49,7 @@ public class NotificationInfo {
      * @param text text to set
      * @return this
      */
-    public NotificationInfo withText(String text) {
+    protected NotificationInfo withText(String text) {
         this.text = text;
         return this;
     }
@@ -60,7 +60,7 @@ public class NotificationInfo {
      * @param title title to set
      * @return this
      */
-    public NotificationInfo withTitle(String title) {
+    protected NotificationInfo withTitle(String title) {
         this.title = title;
         return this;
     }
@@ -71,7 +71,7 @@ public class NotificationInfo {
      * @param message message to set
      * @return this
      */
-    public NotificationInfo withMessage(String message) {
+    protected NotificationInfo withMessage(String message) {
         this.message = message;
         return this;
     }
@@ -82,7 +82,7 @@ public class NotificationInfo {
      * @param component component to set
      * @return this
      */
-    public NotificationInfo withComponent(Component component) {
+    protected NotificationInfo withComponent(Component component) {
         this.component = component;
         return this;
     }
@@ -93,7 +93,7 @@ public class NotificationInfo {
      * @param type type to set
      * @return this
      */
-    public NotificationInfo withType(Notifications.Type type) {
+    protected NotificationInfo withType(Notifications.Type type) {
         this.type = type;
         return this;
     }

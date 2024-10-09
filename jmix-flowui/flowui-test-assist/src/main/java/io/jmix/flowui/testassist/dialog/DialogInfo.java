@@ -47,7 +47,7 @@ public class DialogInfo {
      * @param content content to set
      * @return this
      */
-    public DialogInfo withContent(Component content) {
+    protected DialogInfo withContent(Component content) {
         this.content = content;
         return this;
     }
@@ -58,7 +58,7 @@ public class DialogInfo {
      * @param buttons list of the buttons to set
      * @return this
      */
-    public DialogInfo withButtons(List<Button> buttons) {
+    protected DialogInfo withButtons(List<Button> buttons) {
         this.buttons = buttons;
         return this;
     }

@@ -21,15 +21,24 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import liquibase.integration.spring.SpringLiquibase;
+import org.apache.http.HttpHost;
+import org.apache.http.client.CredentialsProvider;
 import org.mockito.Mockito;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.json.jackson.JacksonJsonpMapper;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.transport.OpenSearchTransport;
+import org.opensearch.client.transport.rest_client.RestClientTransport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
+import javax.net.ssl.SSLContext;
 import javax.sql.DataSource;
 
 import static org.mockito.Mockito.anyString;
@@ -81,6 +90,15 @@ public class OpenSearchIndexingTestConfiguration {
         IndexStateRegistry mock = mock(IndexStateRegistry.class);
         Mockito.when(mock.isIndexAvailable(anyString())).thenReturn(true);
         return mock;
+    }
+
+    @Bean
+    public OpenSearchClient testOpenSearchClient(SearchProperties searchProperties) {
+        HttpHost host = HttpHost.create(searchProperties.getServerUrl());
+        RestClient restClient = RestClient.builder(host).build();
+
+        final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        return new OpenSearchClient(transport);
     }
 
     @Bean

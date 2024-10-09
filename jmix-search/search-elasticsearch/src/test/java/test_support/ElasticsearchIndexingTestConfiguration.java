@@ -17,19 +17,27 @@
 
 package test_support;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import liquibase.integration.spring.SpringLiquibase;
+import org.apache.http.HttpHost;
+import org.apache.http.client.CredentialsProvider;
+import org.elasticsearch.client.RestClient;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
+import javax.net.ssl.SSLContext;
 import javax.sql.DataSource;
 
 import static org.mockito.Mockito.anyString;
@@ -81,6 +89,15 @@ public class ElasticsearchIndexingTestConfiguration {
         IndexStateRegistry mock = mock(IndexStateRegistry.class);
         Mockito.when(mock.isIndexAvailable(anyString())).thenReturn(true);
         return mock;
+    }
+
+    @Bean
+    public ElasticsearchClient testElasticsearchClient(SearchProperties searchProperties) {
+        String url = searchProperties.getServerUrl();
+        RestClient restClient = RestClient.builder(HttpHost.create(url)).build();
+
+        RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        return new ElasticsearchClient(transport);
     }
 
     @Bean

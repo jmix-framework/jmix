@@ -61,8 +61,8 @@ public class ElasticsearchAnalysisConfigurationTest {
     public void testElasticsearchAnalysisConfiguration() {
         IndexSettings settings = configProvider.getSettingsForIndex(indexConfigurationManager.getIndexConfigurationByEntityName("test_RootEntity"));
 
-        Assert.assertTrue(settings.maxResultWindow() == 15000);
-        Assert.assertTrue(settings.maxRegexLength() == 2000);
+        Assert.assertTrue(settings.index().maxResultWindow() == 15000);
+        Assert.assertTrue(settings.index().maxRegexLength() == 2000);
         Assert.assertTrue(settings.analysis().analyzer().get("customized_standard").standard().maxTokenLength() == 150);
     }
 

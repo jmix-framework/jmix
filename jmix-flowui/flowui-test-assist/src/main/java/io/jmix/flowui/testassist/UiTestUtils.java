@@ -99,6 +99,15 @@ public final class UiTestUtils {
     }
 
     /**
+     * Gets immutable list of {@link NotificationInfo} in order of opening.
+     * <p>
+     * Example of the storage order of notifications:
+     * <ul>
+     *     <li>first opened notification has index {@code 0}</li>
+     *     <li>seconds opened notification has index {@code 1}</li>
+     *     <li>last opened notification has index {@code openedNotifications.size() - 1}</li>
+     * </ul>
+     *
      * @return immutable list of {@link NotificationInfo} in order of opening
      */
     public static List<NotificationInfo> getOpenedNotifications() {
@@ -114,6 +123,15 @@ public final class UiTestUtils {
     }
 
     /**
+     * Gets immutable list of {@link DialogInfo}s in order of opening.
+     * <p>
+     * Example of the storage order of dialogs:
+     * <ul>
+     *     <li>first opened dialog has index {@code 0}</li>
+     *     <li>seconds opened dialog has index {@code 1}</li>
+     *     <li>last opened dialog has index {@code openedDialogs.size() - 1}</li>
+     * </ul>
+     *
      * @return immutable list of {@link DialogInfo}s in order of opening
      */
     public static List<DialogInfo> getOpenedDialogs() {

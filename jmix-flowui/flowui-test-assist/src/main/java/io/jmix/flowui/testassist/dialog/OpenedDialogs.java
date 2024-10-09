@@ -32,6 +32,13 @@ import java.util.Map;
 
 /**
  * Bean contains opened {@link Dialog}s in order of opening.
+ * <p>
+ * Example of the storage order of dialogs:
+ * <ul>
+ *     <li>first opened dialog has index {@code 0}</li>
+ *     <li>seconds opened dialog has index {@code 1}</li>
+ *     <li>last opened dialog has index {@code openedDialogs.size() - 1}</li>
+ * </ul>
  */
 @Component("ui_OpenedDialogs")
 public class OpenedDialogs {

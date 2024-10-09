@@ -33,6 +33,7 @@ import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEventDetail;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -419,7 +420,6 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
      * Applies only when {@code this.isShowUI() == true}.
      *
      * @param menuLimit the maximum number of values to list in the attribute values dialog
-     * @return a reference to this object
      */
     public void setMenuLimit(Integer menuLimit) {
         options.setMenuLimit(menuLimit);
@@ -504,7 +504,6 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
      * "natural sort" implementation. Useful for sorting attributes like month names.
      *
      * @param sorters a sorter function
-     * @return a reference to this object
      */
     public void setSortersFunction(JsFunction sorters) {
         options.setSortersFunction(sorters);
@@ -824,14 +823,14 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
     protected void performUpdateItems(ExecutionContext context) {
         JsonObject resultJson = new JreJsonFactory().createObject();
         Collection<T> items = jmixPivotTableItems.getItems();
+        Function<Object, Object> itemOrEmpty = item -> item != null ? item : "";
         JsonValue dataJson = serializer.serializeItems(items.stream().map(item -> {
                     Map<String, Object> propertyWithValue = options.getProperties()
                             .entrySet()
                             .stream()
                             .collect(Collectors.toMap(
                                     Map.Entry::getValue,
-                                    e -> Optional.ofNullable(jmixPivotTableItems.getItemValue(item, e.getKey()))
-                                            .orElse("")));
+                                    e -> itemOrEmpty.apply(jmixPivotTableItems.getItemValue(item, e.getKey()))));
                     propertyWithValue.put(DATA_ITEM_ID_PROPERTY_NAME, jmixPivotTableItems.getItemId(item));
                     return propertyWithValue;
                 })

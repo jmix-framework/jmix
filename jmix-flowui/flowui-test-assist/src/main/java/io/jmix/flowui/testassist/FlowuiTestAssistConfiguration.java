@@ -35,6 +35,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 
 @Configuration
+@ComponentScan
 @Import({VaadinScopesConfig.class})
 @PropertySource(name = "io.jmix.flowui.testassist", value = "classpath:/io/jmix/flowui/testassist/module.properties")
 public class FlowuiTestAssistConfiguration {

@@ -216,7 +216,7 @@ public class EntitiesControllerManager {
         return new EntitiesSearchResult(json, count);
     }
 
-    protected long countEntities(MetaClass metaClass, @Nullable Condition jmixCondition) {
+    protected long countEntities(MetaClass metaClass, Condition jmixCondition) {
         String queryString = createSimpleSelect(metaClass);
         queryString = QueryUtils.applyQueryStringProcessors(queryStringProcessors, queryString, metaClass.getJavaClass());
 

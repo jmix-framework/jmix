@@ -23,6 +23,7 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonArray;
+import elemental.json.JsonFactory;
 import elemental.json.JsonObject;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.flowui.kit.meta.StudioIgnore;
@@ -56,7 +57,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     protected JmixFullCalendarDeserializer deserializer;
     protected JmixFullCalendarOptions options;
 
+    protected JsonFactory jsonFactory;
+
     protected CalendarDisplayMode displayMode;
+    protected LocalDate currentDate;
 
     protected Map<String, StateTree.ExecutionRegistration> itemsDataProvidersExecutionMap = new HashMap<>(2);
     protected StateTree.ExecutionRegistration synchronizeOptionsExecution;
@@ -81,6 +85,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         serializer = createSerializer();
         deserializer = createDeserializer();
         options = createOptions();
+        jsonFactory = createJsonFactory();
 
         attachCalendarOptionChangeListener();
         attachDatesSetDomEventListener();
@@ -332,6 +337,18 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      */
     public void setTimeZone(@Nullable TimeZone timeZone) {
         options.getTimeZone().setValue(timeZone != null ? timeZone : TimeZone.getDefault());
+    }
+
+    /**
+     * Returns a date for the current date of the calendar.
+     * <p>
+     * For month view, it will always be a date between the first and last day of the month. For week views,
+     * it will always be a date between the first and last day of the week.
+     *
+     * @return the current date of the calendar
+     */
+    public LocalDate getDate() {
+        return currentDate;
     }
 
     /**
@@ -2013,6 +2030,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getProgressiveEventRendering().setValue(progressiveEventRendering);
     }
 
+    protected JsonFactory createJsonFactory() {
+        return new JreJsonFactory();
+    }
+
     protected JmixFullCalendarSerializer createSerializer() {
         return new JmixFullCalendarSerializer();
     }
@@ -2224,6 +2245,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     protected void onDatesSet(DatesSetDomEvent event) {
         displayMode = getDisplayMode(event.getViewType());
+        currentDate = CalendarDateTimeUtils.parseIsoDate(event.getCurrentDate());
     }
 
     protected void onMoreLinkClick(MoreLinkClickDomEvent event) {
@@ -2275,36 +2297,42 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     @ClientCallable
     protected JsonArray fetchCalendarItems(String sourceId, String start, String end) {
         // Stub, is used in inheritors
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getMoreLinkClassNames(JsonObject jsonContext) {
         // Stub, is used in inheritors
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getDayHeaderClassNames(JsonObject jsonContext) {
         // Stub, is used in inheritors
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getDayCellClassNames(JsonObject jsonContext) {
         // Stub, is used in inheritors
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getSlotLabelClassNames(JsonObject jsonContext) {
         // Stub, is used in inheritors
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getNowIndicatorClassNames(JsonObject jsonContext) {
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
+    }
+
+    @ClientCallable
+    protected JsonObject getDayCellBottomTextInfo(JsonObject jsonContext) {
+        // Stub, is used in inheritors
+        return jsonFactory.createObject();
     }
 
     protected void addDataProvidersOnAttach() {

@@ -4730,6 +4730,8 @@
                             maxOccurs="unbounded"/>
                 <xs:element name="dataGridFilter" type="dataGridFilterUrlQueryParametersType" minOccurs="0"
                             maxOccurs="unbounded"/>
+                <!-- allow custom component parameters from any namespace -->
+                <xs:any/>
             </xs:choice>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string"/>

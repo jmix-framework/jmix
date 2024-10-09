@@ -16,10 +16,6 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model.option;
 
-import com.vaadin.flow.shared.Registration;
-
-import java.util.function.Consumer;
-
 /**
  * INTERNAL.
  */
@@ -45,6 +41,7 @@ public final class OptionUtils {
     public static final String BUSINESS_HOURS = "businessHours";
     public static final String DATE_ALIGNMENT = "dateAlignment";
     public static final String DATE_INCREMENT = "dateIncrement";
+    public static final String DAY_CELL_BOTTOM_TEXT = "dayCellBottomText";
     public static final String DAY_CELL_CLASS_NAMES = "dayCellClassNames";
     public static final String DAY_HEADER_CLASS_NAMES = "dayHeaderClassNames";
     public static final String DAY_HEADERS = "dayHeaders";

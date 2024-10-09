@@ -15,6 +15,7 @@ export const SLOT_LABEL_CLASS_NAMES = 'slotLabelClassNames';
 export const NOW_INDICATOR_CLASS_NAMES = 'nowIndicatorClassNames';
 export const NAV_LINK_DAY_CLICK = 'navLinkDayClick';
 export const NAV_LINK_WEEK_CLICK = 'navLinkWeekClick';
+export const DAY_CELL_BOTTOM_TEXT = 'dayCellBottomText';
 const EVENT_OVERLAP = 'eventOverlap';
 const SELECT_OVERLAP = 'selectOverlap';
 const EVENT_CONSTRAINT = 'eventConstraint';
@@ -131,6 +132,7 @@ class Options {
     constructor(calendar, context) {
         this.calendar = calendar;
         this.context = context;
+        this.customOptions = {};
     }
 
     addListener(optionName, listener) {
@@ -175,6 +177,8 @@ class Options {
 
             this._updateNavLinkDayClick(options);
             this._updateNavLinkWeekClick(options);
+
+            this._updateDyCellBottomText(options);
         });
     }
 
@@ -214,6 +218,13 @@ class Options {
         this.updateOptions(formatOptions);
     }
 
+    getOption(name) {
+        if (this.customOptions[name]) {
+            return this.customOptions[name];
+        }
+        return this.calendar.getOption(name);
+    }
+
     _skipOption(key) {
         return MORE_LINK_CLICK === key
             || MORE_LINK_CLASS_NAMES === key
@@ -223,6 +234,7 @@ class Options {
             || NOW_INDICATOR_CLASS_NAMES === key
             || NAV_LINK_DAY_CLICK === key
             || NAV_LINK_WEEK_CLICK === key
+            || DAY_CELL_BOTTOM_TEXT === key
             || EVENT_OVERLAP === key
             || EVENT_CONSTRAINT === key
             || BUSINESS_HOURS === key
@@ -436,6 +448,19 @@ class Options {
 
         if (utils.isNotNullUndefined(navLinkWeekClick)) {
             this.updateOption(NAV_LINK_WEEK_CLICK, navLinkWeekClick ? this._onNavLinkWeekClick.bind(this) : null);
+        }
+    }
+
+    _updateDyCellBottomText(options) {
+        const dayCellBottomText = options[DAY_CELL_BOTTOM_TEXT];
+
+        if (!dayCellBottomText) {
+            return;
+        }
+
+        this.customOptions[DAY_CELL_BOTTOM_TEXT] = {
+            textGeneratorEnabled: dayCellBottomText.textGeneratorEnabled,
+            classNamesGeneratorEnabled: dayCellBottomText.classNamesGeneratorEnabled
         }
     }
 

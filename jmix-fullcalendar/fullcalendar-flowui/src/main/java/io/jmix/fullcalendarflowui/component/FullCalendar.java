@@ -61,7 +61,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected CurrentAuthentication currentAuthentication;
     protected Messages messages;
 
-    protected JsonFactory jsonFactory;
     protected Map<String, AbstractDataProviderManager> dataProvidersMap = new HashMap<>(2);
 
     protected Function<MoreLinkClassNamesContext, List<String>> linkMoreClassNamesGenerator;
@@ -69,6 +68,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected Function<DayCellClassNamesContext, List<String>> dayCellClassNamesGenerator;
     protected Function<SlotLabelClassNamesContext, List<String>> slotLabelClassNamesGenerator;
     protected Function<NowIndicatorClassNamesContext, List<String>> nowIndicatorClassNamesGenerator;
+    protected Function<DayCellBottomTextClassNamesContext, List<String>> dayCellBottomTextClassNamesGenerator;
+    protected Function<DayCellBottomTextContext, String> dayCellBottomTextGenerator;
 
     protected Object eventConstraintGroupId;
     protected Object selectConstraintGroupId;
@@ -88,7 +89,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected void initComponent() {
-        jsonFactory = createJsonFactory();
         defaultI18n = createDefaultI18n();
 
         setupLocalization();
@@ -469,6 +469,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
      *     event.getSource().navigateToDate(event.getDate());
      * }
      * }</pre>
+     *
      * @param listener listener to add
      * @return a registration object for removing an event listener added to a component
      */
@@ -500,6 +501,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
      *     event.getSource().navigateToDate(event.getDate());
      * }
      * }</pre>
+     *
      * @param listener listener to add
      * @return a registration object for removing an event listener added to a component
      */
@@ -815,6 +817,52 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         this.nowIndicatorClassNamesGenerator = nowIndicatorClassNamesGenerator;
 
         options.getNowIndicatorClassNames().setValue(nowIndicatorClassNamesGenerator != null);
+    }
+
+    /**
+     * @return bottom text generator for day cells or {@code null} if not set
+     */
+    @Nullable
+    public Function<DayCellBottomTextContext, String> getDayCellBottomTextGenerator() {
+        return dayCellBottomTextGenerator;
+    }
+
+    /**
+     * Sets bottom text generator for day cells. It applies only for {@link CalendarDisplayModes#DAY_GRID_MONTH} and
+     * {@link CalendarDisplayModes#DAY_GRID_YEAR}.
+     * <p>
+     * Note sometimes generated text can be overlapped by events, so it is recommended to limit visible events count
+     * (e.g. {@link #setDayMaxEvents(Integer)}, etc.).
+     *
+     * @param dayCellBottomTextGenerator the generator to set
+     */
+    public void setDayCellBottomTextGenerator(
+            @Nullable Function<DayCellBottomTextContext, String> dayCellBottomTextGenerator) {
+        this.dayCellBottomTextGenerator = dayCellBottomTextGenerator;
+
+        options.getDayCellBottomText().setTextGeneratorEnabled(dayCellBottomTextGenerator != null);
+    }
+
+    /**
+     * @return bottom text class names generator or {@code null} if not set
+     */
+    @Nullable
+    public Function<DayCellBottomTextClassNamesContext, List<String>> getDayCellBottomTextClassNamesGenerator() {
+        return dayCellBottomTextClassNamesGenerator;
+    }
+
+    /**
+     * Sets bottom text class names generator. Note, the generator will be invoked only if cell's bottom text is not
+     * null.
+     *
+     * @param dayCellBottomTextClassNamesGenerator the generator to set
+     * @see #setDayCellBottomTextClassNamesGenerator(Function)
+     */
+    public void setDayCellBottomTextClassNamesGenerator(
+            @Nullable Function<DayCellBottomTextClassNamesContext, List<String>> dayCellBottomTextClassNamesGenerator) {
+        this.dayCellBottomTextClassNamesGenerator = dayCellBottomTextClassNamesGenerator;
+
+        options.getDayCellBottomText().setClassNamesGeneratorEnabled(dayCellBottomTextClassNamesGenerator != null);
     }
 
     @Override
@@ -1253,6 +1301,55 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return classNamesJson;
     }
 
+    @Override
+    protected JsonObject getDayCellBottomTextInfo(JsonObject jsonContext) {
+        if (getDayCellBottomTextGenerator() == null) {
+            return jsonFactory.createObject();
+        }
+
+        DomDayCellBottomText clientContext = deserializer.deserialize(jsonContext, DomDayCellBottomText.class);
+
+        String text = getDayCellBottomTextGenerator().apply(
+                new DayCellBottomTextContext(
+                        this,
+                        parseIsoDate(clientContext.getDate()),
+                        Objects.requireNonNull(DayOfWeek.fromId(clientContext.getDow())),
+                        clientContext.isDisabled(),
+                        clientContext.isFuture(),
+                        clientContext.isOther(),
+                        clientContext.isPast(),
+                        clientContext.isToday(),
+                        createDisplayModeInfo(clientContext.getView())));
+
+        if (text == null) {
+            return jsonFactory.createObject();
+        }
+
+        List<String> classNames = null;
+        if (getDayCellBottomTextClassNamesGenerator() != null) {
+            classNames = getDayCellBottomTextClassNamesGenerator().apply(
+                    new DayCellBottomTextClassNamesContext(
+                            this,
+                            parseIsoDate(clientContext.getDate()),
+                            Objects.requireNonNull(DayOfWeek.fromId(clientContext.getDow())),
+                            clientContext.isDisabled(),
+                            clientContext.isFuture(),
+                            clientContext.isOther(),
+                            clientContext.isPast(),
+                            clientContext.isToday(),
+                            text,
+                            createDisplayModeInfo(clientContext.getView())
+                    ));
+        }
+
+        JsonObject result = jsonFactory.createObject();
+        result.put("text", text);
+        if (classNames != null) {
+            result.put("classNames", getSerializer().toJsonArray(classNames));
+        }
+        return result;
+    }
+
     protected ItemsDataProviderManager createDataProviderManager(ItemsCalendarDataProvider dataProvider) {
         return new ItemsDataProviderManager(dataProvider, getSerializer(), this);
     }
@@ -1265,10 +1362,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         TimeZone timeZone = applicationContext.getBean(CurrentAuthentication.class).getTimeZone();
 
         setTimeZone(timeZone);
-    }
-
-    protected JsonFactory createJsonFactory() {
-        return new JreJsonFactory();
     }
 
     /**
@@ -1554,6 +1647,17 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         setDefaultWeekNumberFormat(getMessage("weekNumberFormat"));
         setDefaultSlotLabelFormat(getMessage("slotLabelFormat"));
         setDefaultEventTimeFormat(getMessage("eventTimeFormat"));
+    }
+
+    /**
+     * Method is overridden to make it available from {@link FullCalendarUtils#getDisplayMode(FullCalendar, String)}.
+     *
+     * @param id display mode id
+     * @return calendar display mode instance
+     */
+    @Override
+    protected CalendarDisplayMode getDisplayMode(String id) {
+        return super.getDisplayMode(id);
     }
 
     @Override

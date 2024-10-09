@@ -30,15 +30,18 @@ public class DatesSetDomEvent extends ComponentEvent<JmixFullCalendar> {
 
     protected final JsonObject context;
     protected final String viewType;
+    protected final String currentDate;
 
     public DatesSetDomEvent(JmixFullCalendar source,
                             boolean fromClient,
                             @EventData("event.detail.context") JsonObject context,
-                            @EventData("event.detail.context.viewType") String viewType) {
+                            @EventData("event.detail.context.viewType") String viewType,
+                            @EventData("event.detail.context.currentDate") String currentDate) {
         super(source, fromClient);
 
         this.context = context;
         this.viewType = viewType;
+        this.currentDate = currentDate;
     }
 
     public JsonObject getContext() {
@@ -47,5 +50,9 @@ public class DatesSetDomEvent extends ComponentEvent<JmixFullCalendar> {
 
     public String getViewType() {
         return viewType;
+    }
+
+    public String getCurrentDate() {
+        return currentDate;
     }
 }

@@ -77,8 +77,7 @@ jmixFullCalendarStyle.textContent = `
     jmix-full-calendar .fc-timegrid-event:hover,
     jmix-full-calendar .fc-daygrid-block-event:hover {
         cursor: var(--lumo-clickable-cursor);
-        background-color: var(--lumo-contrast-50pct);
-        border-color: var(--lumo-contrast-50pct);
+        filter: brightness(0.9) contrast(1.2);
     }
     
     jmix-full-calendar .fc-daygrid-dot-event.fc-event-mirror,
@@ -91,6 +90,15 @@ jmixFullCalendarStyle.textContent = `
     jmix-full-calendar .fc-timegrid-col-events .fc-more-link:hover {
         filter: brightness(0.9) contrast(1.2);
         background-color: var(--fc-more-link-bg-color);
+    }
+    
+    jmix-full-calendar .jmix-day-cell-bottom-text {
+        padding: var(--lumo-space-xs);
+        cursor: var(--lumo-clickable-cursor);
+    }
+    
+    jmix-full-calendar .fc-daygrid-day.jmix-has-bottom-text {
+        position: relative;
     }
 `;
 

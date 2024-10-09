@@ -9,6 +9,7 @@ import listPlugin from '@fullcalendar/list';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import interactionPlugin from '@fullcalendar/interaction';
 import momentPlugin from '@fullcalendar/moment';
+import {toMoment} from '@fullcalendar/moment';
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 
 import moment from 'moment';
@@ -21,7 +22,7 @@ import Options, {
     MORE_LINK_CLICK,
     DAY_HEADER_CLASS_NAMES,
     DAY_CELL_CLASS_NAMES,
-    SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES, NAV_LINK_DAY_CLICK, NAV_LINK_WEEK_CLICK
+    SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES, NAV_LINK_DAY_CLICK, NAV_LINK_WEEK_CLICK, DAY_CELL_BOTTOM_TEXT
 } from './Options.js';
 
 const FC_NON_BUSINESS_CLASS_NAME = 'fc-non-business';
@@ -32,6 +33,10 @@ const FC_COL_HEADER_CELL = 'fc-col-header-cell';
 const FC_TIMEGRID_SLOT_LABEL = 'fc-timegrid-slot-label';
 const FC_TIMEGRID_NOW_INDICATOR_ARROW = 'fc-timegrid-now-indicator-arrow';
 const FC_TIMEGRID_NOW_INDICATOR_LINE = 'fc-timegrid-now-indicator-line';
+const FC_POPOVER = 'fc-popover';
+
+const JMIX_DAY_CELL_BOTTOM_TEXT = 'jmix-day-cell-bottom-text';
+const JMIX_HAS_BOTTOM_TEXT = 'jmix-has-bottom-text';
 
 const DAY_GRID_DAY = "dayGridDay";
 const DAY_GRID_WEEK = "dayGridWeek";
@@ -83,7 +88,6 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.dataHolder = new DataHolder();
 
         this.calendar = new Calendar(this.calendarElement, this.getInitialOptions());
-        this.calendar.render();
 
         this.jmixOptions = new Options(this.calendar, this);
         this.jmixOptions.addListener(MORE_LINK_CLICK, this._onMoreLinkClick.bind(this));
@@ -99,7 +103,6 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         // So call it again to update locale.
         this._onI18nChange(this.i18n);
 
-        // Rerender calendar since after page refresh component layout is broken
         this.render();
     }
 
@@ -408,7 +411,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             detail: {
                 context: {
                     allDay: e.allDay,
-                    dateTime: this.formatDate(dateStr),
+                    dateTime: dateStr, // WA, do not format string, as it will be correctly parsed in the server part
                     view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
                     mouseDetails: utils.createMouseDetails(e.jsEvent),
                     allEvents: utils.segmentsToServerData(e.allSegs, this.formatDate.bind(this)),
@@ -489,6 +492,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.dispatchEvent(new CustomEvent('jmix-dates-set', {
             detail: {
                 context: {
+                    currentDate: this.formatDate(this.calendar.getDate(), true),
                     startDate: this.formatDate(e.start, true), // omit time as it always 00:00
                     endDate: this.formatDate(e.end, true),     // omit time as it always 00:00
                     view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
@@ -496,6 +500,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 }
             }
         }));
+
+        // The `_generateDayCellBottomText()` function sometime does not set 'JMIX_HAS_BOTTOM_TEXT' class (why?).
+        // We should reassign class name if day cells do not have it.
+        this._reassignHasBottomText();
     }
 
     _onDateClick(e) {
@@ -535,6 +543,80 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onDayCellDidMount(e) {
+        this._generateDayCellBottomText(e);
+        this._initContextMenuListener(e);
+    }
+
+    _generateDayCellBottomText(e) {
+        const viewType = this.calendar.view.type;
+        if (viewType !== DAY_GRID_MONTH
+            && viewType !== DAY_GRID_YEAR) {
+            return;
+        }
+        const dayCellBottomTextOption = this.jmixOptions.getOption(DAY_CELL_BOTTOM_TEXT);
+        if (!dayCellBottomTextOption) {
+            return;
+        }
+        if (e.el.classList.contains(FC_POPOVER)) {
+            return;
+        }
+        if (dayCellBottomTextOption.textGeneratorEnabled) {
+            const context = {
+                date: this.formatDate(e.date, true),
+                dow: e.dow,
+                isDisabled: e.isDisabled,
+                isFuture: e.isFuture,
+                isOther: e.isOther,
+                isPast: e.isPast,
+                isToday: e.isToday,
+                view: utils.createViewInfo(e.view, this.formatDate.bind(this))
+            };
+
+            this.$server.getDayCellBottomTextInfo(context)
+                .then((textInfo) => {
+                    if (!textInfo || !textInfo.text) {
+                        return;
+                    }
+                    e.el.appendChild(this._createDayCellBottomTextDiv(textInfo));
+                    e.el.classList.add(JMIX_HAS_BOTTOM_TEXT);
+                });
+        }
+    }
+
+    _reassignHasBottomText() {
+        const viewType = this.calendar.view.type;
+        if (viewType !== DAY_GRID_MONTH
+            && viewType !== DAY_GRID_YEAR) {
+            return;
+        }
+        const dayCellBottomTextOption = this.jmixOptions.getOption(DAY_CELL_BOTTOM_TEXT);
+        if (!dayCellBottomTextOption || !dayCellBottomTextOption.textGeneratorEnabled) {
+            return;
+        }
+        const days = this.calendarElement.getElementsByClassName(FC_DAYGRID_DAY);
+        for (const dayElement of days) {
+            if (dayElement.nodeName !== 'TD') {
+                return;
+            }
+            if (dayElement.getElementsByClassName(JMIX_DAY_CELL_BOTTOM_TEXT).length > 0) {
+                if (!dayElement.classList.contains(JMIX_HAS_BOTTOM_TEXT)) {
+                    dayElement.classList.add(JMIX_HAS_BOTTOM_TEXT)
+                }
+            }
+        }
+    }
+
+    _createDayCellBottomTextDiv(textInfo) {
+        const div = document.createElement('DIV');
+        div.className = JMIX_DAY_CELL_BOTTOM_TEXT;
+        div.innerText = textInfo.text;
+        if (textInfo.classNames) {
+            div.classList.add(textInfo.classNames);
+        }
+        return div;
+    }
+
+    _initContextMenuListener(e) {
         const viewType = this.calendar.view.type;
         if (viewType !== DAY_GRID_DAY
             && viewType !== DAY_GRID_WEEK
@@ -714,14 +796,17 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         setTimeout((e) => this.calendar.render());
     }
 
-    formatDate(dateTime, omitTime) {
+    formatDate(dateTime, omitTime = false) {
         if (!(dateTime instanceof Date)) {
             dateTime = new Date(dateTime);
         }
 
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
+        let moment = toMoment(dateTime, this.calendar);
+        if (omitTime) {
+            return moment.startOf('day').format().substring(0, 10);
+        }
 
-        return dateFormatter(dateTime, omitTime);
+        return moment.format();
     }
 }
 

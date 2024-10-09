@@ -52,16 +52,15 @@ public class DisplayModePropertiesLoader {
             return;
         }
         customDisplayModes.elements()
-                .forEach(v -> resultComponent.addCustomCalendarDisplayMode(loadCustomDisplayMode(v, resultComponent)));
+                .forEach(v -> resultComponent.addCustomCalendarDisplayMode(loadCustomDisplayMode(v)));
     }
 
-    protected CustomCalendarDisplayMode loadCustomDisplayMode(Element displayModeElement,
-                                                              FullCalendar resultComponent) {
+    protected CustomCalendarDisplayMode loadCustomDisplayMode(Element displayModeElement) {
         String id = loaderSupport.loadString(displayModeElement, "id")
-                .orElseThrow(() -> new IllegalStateException("Calendar custom display mode must have an ID"));
+                .orElseThrow(() -> new GuiDevelopmentException("Calendar custom display mode must have an ID", context));
 
         CalendarDisplayMode type = loaderSupport.loadString(displayModeElement, "type")
-                .map(t -> getDisplayMode(t, resultComponent))
+                .map(GenericCalendarDisplayModes::valueOf)
                 .orElse(GenericCalendarDisplayModes.DAY_GRID);
 
         Integer dayCount = loaderSupport.loadInteger(displayModeElement, "dayCount").orElse(null);

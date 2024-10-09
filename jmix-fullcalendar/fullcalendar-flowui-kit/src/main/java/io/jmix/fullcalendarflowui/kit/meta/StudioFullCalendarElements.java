@@ -392,7 +392,7 @@ public interface StudioFullCalendarElements {
             xmlElement = "entry",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
-            classFqn = "io.jmix.fullcalendarflowui.component.model.BusinessHours",
+            classFqn = "io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "endTime", type = StudioPropertyType.STRING),
@@ -413,8 +413,23 @@ public interface StudioFullCalendarElements {
                             options = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"}),
             },
             target = {
-                    "io.jmix.fullcalendarflowui.component.model.BusinessHours",
+                    "io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours",
             }
     )
     void day();
+
+    @StudioElement(
+            xmlElement = "calendarParameters",
+            xmlnsAlias = "calendar",
+            xmlns = "http://jmix.io/schema/fullcalendar/ui",
+            classFqn = "io.jmix.fullcalendarflowui.facet.urlqueryparameters.FullCalendarUrlQueryParametersBinder",
+            target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "calendarDisplayMode", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "calendarDate", type = StudioPropertyType.STRING),
+            }
+    )
+    void calendarParameters();
 }

@@ -53,8 +53,8 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
 
     @Override
     public boolean isSupported(Element element) {
-        return "http://jmix.io/schema/maps/ui".equals(element.getNamespaceURI())
-                && "geoMap".equals(element.getName());
+        return "http://jmix.io/schema/fullcalendar/ui".equals(element.getNamespaceURI())
+                && "calendar".equals(element.getName());
     }
 
     // Todo rp: It does not load initial properties, need to debug somehow

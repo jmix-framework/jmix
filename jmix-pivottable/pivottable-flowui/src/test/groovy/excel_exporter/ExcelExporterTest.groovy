@@ -57,7 +57,7 @@ class ExcelExporterTest extends Specification {
         exporter = new TestPivotExcelExporter(pivotTable)
 
         Messages messages = Mock()
-        messages.getMessage("pivotExcelExporter.doubleFormat") >> { String key -> "#,##0.00##############" }
+        messages.getMessage("pivottable.excelExporter.doubleFormat") >> { String key -> "#,##0.00##############" }
         exporter.setMessages(messages)
     }
 

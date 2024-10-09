@@ -20,13 +20,12 @@ import './jquery/jquery.ui.touch-punch.min.js';
 
 // If a project contains another jQuery library, a library conflict is possible.
 // So PivotTable stores its own jQuery variable to isolate the PivotTable.js data.
-$pivotTablejQuery = jQuery.noConflict();
+var $pivotTablejQuery = jQuery.noConflict();
 
 import './plugin/d3/d3.js';
 import './plugin/c3/c3.js';
 import './plugin/c3/c3.min.css';
 import './pivot/pivot.js';
-import './pivot/tips_data.min.js';
 import './pivot/c3_renderers.min.js';
 import './pivot/d3_renderers.min.js';
 import './pivot/export_renderers.min.js';

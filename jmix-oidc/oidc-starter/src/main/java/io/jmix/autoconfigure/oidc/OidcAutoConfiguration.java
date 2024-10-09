@@ -122,7 +122,10 @@ public class OidcAutoConfiguration {
                     })
                     .csrf(csrf -> csrf.disable())
                     .cors(Customizer.withDefaults());
+
             JmixHttpSecurityUtils.configureAnonymous(http);
+            JmixHttpSecurityUtils.configureFrameOptions(http);
+
             OidcResourceServerEventSecurityFilter resourceServerEventSecurityFilter =
                     new OidcResourceServerEventSecurityFilter(applicationEventPublisher);
             http.addFilterBefore(resourceServerEventSecurityFilter, AuthorizationFilter.class);

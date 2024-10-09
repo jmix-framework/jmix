@@ -62,6 +62,7 @@ public class OidcVaadinWebSecurity extends VaadinWebSecurity {
     protected void configureJmixSpecifics(HttpSecurity http) throws Exception {
         JmixHttpSecurityUtils.configureAnonymous(http);
         JmixHttpSecurityUtils.configureSessionManagement(http);
+        JmixHttpSecurityUtils.configureFrameOptions(http);
 
         http.oauth2Login(oauth2Login -> {
                     oauth2Login.userInfoEndpoint(userInfoEndpoint -> {

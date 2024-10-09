@@ -23,6 +23,7 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonArray;
+import elemental.json.JsonFactory;
 import elemental.json.JsonObject;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.flowui.kit.meta.StudioIgnore;
@@ -56,6 +57,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     protected JmixFullCalendarDeserializer deserializer;
     protected JmixFullCalendarOptions options;
 
+    protected JsonFactory jsonFactory;
+
     protected CalendarDisplayMode displayMode;
     protected LocalDate currentDate;
 
@@ -82,6 +85,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         serializer = createSerializer();
         deserializer = createDeserializer();
         options = createOptions();
+        jsonFactory = createJsonFactory();
 
         attachCalendarOptionChangeListener();
         attachDatesSetDomEventListener();
@@ -2026,6 +2030,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getProgressiveEventRendering().setValue(progressiveEventRendering);
     }
 
+    protected JsonFactory createJsonFactory() {
+        return new JreJsonFactory();
+    }
+
     protected JmixFullCalendarSerializer createSerializer() {
         return new JmixFullCalendarSerializer();
     }
@@ -2289,36 +2297,42 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     @ClientCallable
     protected JsonArray fetchCalendarItems(String sourceId, String start, String end) {
         // Stub, is used in inheritors
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getMoreLinkClassNames(JsonObject jsonContext) {
         // Stub, is used in inheritors
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getDayHeaderClassNames(JsonObject jsonContext) {
         // Stub, is used in inheritors
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getDayCellClassNames(JsonObject jsonContext) {
         // Stub, is used in inheritors
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getSlotLabelClassNames(JsonObject jsonContext) {
         // Stub, is used in inheritors
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getNowIndicatorClassNames(JsonObject jsonContext) {
-        return new JreJsonFactory().createArray();
+        return jsonFactory.createArray();
+    }
+
+    @ClientCallable
+    protected JsonObject getDayCellBottomTextInfo(JsonObject jsonContext) {
+        // Stub, is used in inheritors
+        return jsonFactory.createObject();
     }
 
     protected void addDataProvidersOnAttach() {

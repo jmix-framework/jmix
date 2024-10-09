@@ -8,3 +8,9 @@
 jmix-full-calendar a:not(:any-link) {
     color: var(--lumo-body-text-color);
 }
+
+jmix-full-calendar .jmix-day-cell-bottom-text {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}

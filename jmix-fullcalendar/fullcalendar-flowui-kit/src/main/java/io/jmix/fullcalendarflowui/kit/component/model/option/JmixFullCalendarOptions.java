@@ -64,6 +64,7 @@ public class JmixFullCalendarOptions {
         optionsMap.put(DATE_ALIGNMENT, new SimpleOption<>(DATE_ALIGNMENT, ""));
         optionsMap.put(DAY_HEADER_CLASS_NAMES, new SimpleOption<>(DAY_HEADER_CLASS_NAMES, false));
         optionsMap.put(DAY_CELL_CLASS_NAMES, new SimpleOption<>(DAY_CELL_CLASS_NAMES, false));
+        optionsMap.put(DAY_CELL_BOTTOM_TEXT, new DayCellBottomText());
         optionsMap.put(DEFAULT_ALL_DAY, new SimpleOption<>(DEFAULT_ALL_DAY, false));
         optionsMap.put(DEFAULT_ALL_DAY_EVENT_DURATION, new SimpleOption<>(DEFAULT_ALL_DAY_EVENT_DURATION, CalendarDuration.ofDays(1)));
         optionsMap.put(DRAG_REVERT_DURATION, new SimpleOption<>(DRAG_REVERT_DURATION, 500));
@@ -293,6 +294,10 @@ public class JmixFullCalendarOptions {
 
     public SimpleOption<Boolean> getDayCellClassNames() {
         return get(DAY_CELL_CLASS_NAMES);
+    }
+
+    public DayCellBottomText getDayCellBottomText() {
+        return get(DAY_CELL_BOTTOM_TEXT);
     }
 
     public SimpleOption<CalendarDuration> getSlotDuration() {

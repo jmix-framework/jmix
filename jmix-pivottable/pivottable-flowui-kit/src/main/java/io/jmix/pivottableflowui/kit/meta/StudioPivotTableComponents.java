@@ -27,7 +27,7 @@ public interface StudioPivotTableComponents {
             classFqn = "io.jmix.pivottableflowui.component.PivotTable",
             category = "Components",
             xmlElement = "pivotTable",
-            icon = "io/jmix/flowui/kit/meta/icon/component/pivotTable.svg",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/component/pivotTable.svg",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
             availableChildren = @StudioAvailableChildrenInfo(

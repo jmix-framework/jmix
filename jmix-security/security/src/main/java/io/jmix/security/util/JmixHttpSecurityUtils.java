@@ -22,6 +22,7 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.core.session.SessionProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -40,6 +41,14 @@ import java.util.stream.Stream;
  * Utility class for Jmix-specific configuration of {@link HttpSecurity}.
  */
 public class JmixHttpSecurityUtils {
+
+    /**
+     * Configures frame options to use the same origin.
+     */
+    public static void configureFrameOptions(HttpSecurity http) throws Exception {
+        http.headers(headers ->
+                headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
+    }
 
     /**
      * Configures anonymous access to the application for the given {@link HttpSecurity} instance. Anonymous user is

@@ -95,6 +95,7 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
         JmixHttpSecurityUtils.configureAnonymous(http);
         JmixHttpSecurityUtils.configureSessionManagement(http);
         JmixHttpSecurityUtils.configureRememberMe(http);
+        JmixHttpSecurityUtils.configureFrameOptions(http);
 
         http.authorizeHttpRequests(urlRegistry -> {
             //We need such request matcher here in order to permit access to login page when a query parameter is passed.

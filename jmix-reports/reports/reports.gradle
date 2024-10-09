@@ -99,20 +99,20 @@ dependencies {
     api('org.docx4j:docx4j-JAXB-ReferenceImpl') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'log4j', module: 'log4j'
-        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'org.slf4j'
         exclude group: 'com.fasterxml.jackson.core'
     }
     api('org.docx4j:docx4j-ImportXHTML') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.apache.poi', module: 'poi'
         exclude group: 'log4j', module: 'log4j'
-        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'org.slf4j'
         exclude group: 'com.fasterxml.jackson.core'
     }
     api('org.docx4j:docx4j-export-fo') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'log4j', module: 'log4j'
-        exclude group: 'org.slf4j', module: 'slf4j -log4j12'
+        exclude group: 'org.slf4j'
         exclude group: 'com.fasterxml.jackson.core'
     }
     api 'org.jsoup:jsoup'

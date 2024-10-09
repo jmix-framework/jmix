@@ -46,6 +46,13 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     @Autowired
     private CoreProperties properties;
 
+    private DeviceTimeZoneProvider deviceTimeZoneProvider;
+
+    @Autowired(required = false)
+    public void setDeviceTimeZoneProvider(DeviceTimeZoneProvider deviceTimeZoneProvider) {
+        this.deviceTimeZoneProvider = deviceTimeZoneProvider;
+    }
+
     @Override
     public Authentication getAuthentication() {
         Authentication authentication = SecurityContextHelper.getAuthentication();
@@ -114,15 +121,23 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
         Authentication authentication = getAuthentication();
         Object details = authentication.getDetails();
         Object principal = authentication.getPrincipal();
+
         TimeZone timeZone = null;
-        if (principal instanceof HasTimeZone) {
-            String timeZoneId = ((HasTimeZone) principal).getTimeZoneId();
+
+        if (principal instanceof HasTimeZone hasTimeZone) {
+            String timeZoneId = hasTimeZone.getTimeZoneId();
+
             if (!Strings.isNullOrEmpty(timeZoneId)) {
                 timeZone = TimeZone.getTimeZone(timeZoneId);
+            } else if (hasTimeZone.isAutoTimeZone() && deviceTimeZoneProvider != null) {
+                timeZone = deviceTimeZoneProvider.getDeviceTimeZone();
             }
-        } else if (details instanceof ClientDetails) {
-            timeZone = ((ClientDetails) details).getTimeZone();
         }
+
+        if (timeZone == null && details instanceof ClientDetails clientDetails) {
+            timeZone = clientDetails.getTimeZone();
+        }
+
         return timeZone == null ? TimeZone.getDefault() : timeZone;
     }
 

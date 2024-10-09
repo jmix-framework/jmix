@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.core;
+package io.jmix.core.security;
 
 import org.springframework.lang.Nullable;
 
+import java.util.TimeZone;
+
 /**
- * Provides user time zone information.
- * If User entity implements HasTimeZone, {@link io.jmix.core.security.CurrentAuthentication#getTimeZone} should use timezone from a User entity for all datetime operations.
+ * Interface for obtaining the user's device time zone.
  */
-public interface HasTimeZone {
+public interface DeviceTimeZoneProvider {
 
     /**
-     * @return time zone id of the user
+     * @return time zone provided by the device (e.g. by the browser if the browser supports this feature),
+     * {@code null} otherwise
      */
     @Nullable
-    String getTimeZoneId();
-
-    /**
-     * @return whether to use the auto-detected time zone (e.g. browser's time zone) if the user's time zone
-     * is not explicitly set
-     */
-    default boolean isAutoTimeZone() {
-        return false;
-    }
+    TimeZone getDeviceTimeZone();
 }

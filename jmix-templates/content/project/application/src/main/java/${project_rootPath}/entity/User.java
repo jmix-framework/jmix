@@ -165,6 +165,11 @@ public class User implements JmixUserDetails, HasTimeZone {
         return timeZoneId;
     }
 
+    @Override
+    public boolean isAutoTimeZone() {
+        return true;
+    }
+
     public void setTimeZoneId(final String timeZoneId) {
         this.timeZoneId = timeZoneId;
     }

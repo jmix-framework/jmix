@@ -40,7 +40,7 @@ import java.util.Map;
  *     <li>last opened dialog has index {@code openedDialogs.size() - 1}</li>
  * </ul>
  */
-@Component("ui_OpenedDialogs")
+@Component("flowui_OpenedDialogs")
 public class OpenedDialogs {
 
     protected static Map<Dialog, DialogInfo> openedDialogs = new LinkedHashMap<>();

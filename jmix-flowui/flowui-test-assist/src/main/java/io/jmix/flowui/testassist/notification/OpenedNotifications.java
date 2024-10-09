@@ -40,7 +40,7 @@ import java.util.Map;
  *     <li>last opened notification has index {@code openedNotifications.size() - 1}</li>
  * </ul>
  */
-@Component("ui_OpenedNotifications")
+@Component("flowui_OpenedNotifications")
 public class OpenedNotifications {
 
     protected static Map<Notification, NotificationInfo> openedNotifications = new LinkedHashMap<>();

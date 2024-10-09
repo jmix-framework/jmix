@@ -9,6 +9,7 @@ import listPlugin from '@fullcalendar/list';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import interactionPlugin from '@fullcalendar/interaction';
 import momentPlugin from '@fullcalendar/moment';
+import {toMoment} from '@fullcalendar/moment';
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 
 import moment from 'moment';
@@ -408,7 +409,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             detail: {
                 context: {
                     allDay: e.allDay,
-                    dateTime: this.formatDate(dateStr),
+                    dateTime: dateStr, // WA, do not format string, as it will be correctly parsed in the server part
                     view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
                     mouseDetails: utils.createMouseDetails(e.jsEvent),
                     allEvents: utils.segmentsToServerData(e.allSegs, this.formatDate.bind(this)),
@@ -489,6 +490,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.dispatchEvent(new CustomEvent('jmix-dates-set', {
             detail: {
                 context: {
+                    currentDate: this.formatDate(this.calendar.getDate(), true),
                     startDate: this.formatDate(e.start, true), // omit time as it always 00:00
                     endDate: this.formatDate(e.end, true),     // omit time as it always 00:00
                     view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
@@ -714,14 +716,17 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         setTimeout((e) => this.calendar.render());
     }
 
-    formatDate(dateTime, omitTime) {
+    formatDate(dateTime, omitTime = false) {
         if (!(dateTime instanceof Date)) {
             dateTime = new Date(dateTime);
         }
 
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
+        let moment = toMoment(dateTime, this.calendar);
+        if (omitTime) {
+            return moment.startOf('day').format().substring(0, 10);
+        }
 
-        return dateFormatter(dateTime, omitTime);
+        return moment.format();
     }
 }
 

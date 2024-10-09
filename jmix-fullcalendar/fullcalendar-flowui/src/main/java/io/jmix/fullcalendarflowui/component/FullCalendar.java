@@ -469,6 +469,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
      *     event.getSource().navigateToDate(event.getDate());
      * }
      * }</pre>
+     *
      * @param listener listener to add
      * @return a registration object for removing an event listener added to a component
      */
@@ -500,6 +501,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
      *     event.getSource().navigateToDate(event.getDate());
      * }
      * }</pre>
+     *
      * @param listener listener to add
      * @return a registration object for removing an event listener added to a component
      */
@@ -1554,6 +1556,17 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         setDefaultWeekNumberFormat(getMessage("weekNumberFormat"));
         setDefaultSlotLabelFormat(getMessage("slotLabelFormat"));
         setDefaultEventTimeFormat(getMessage("eventTimeFormat"));
+    }
+
+    /**
+     * Method is overridden to make it available from {@link FullCalendarUtils#getDisplayMode(FullCalendar, String)}.
+     *
+     * @param id display mode id
+     * @return calendar display mode instance
+     */
+    @Override
+    protected CalendarDisplayMode getDisplayMode(String id) {
+        return super.getDisplayMode(id);
     }
 
     @Override

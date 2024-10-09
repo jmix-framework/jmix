@@ -57,6 +57,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     protected JmixFullCalendarOptions options;
 
     protected CalendarDisplayMode displayMode;
+    protected LocalDate currentDate;
 
     protected Map<String, StateTree.ExecutionRegistration> itemsDataProvidersExecutionMap = new HashMap<>(2);
     protected StateTree.ExecutionRegistration synchronizeOptionsExecution;
@@ -332,6 +333,18 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      */
     public void setTimeZone(@Nullable TimeZone timeZone) {
         options.getTimeZone().setValue(timeZone != null ? timeZone : TimeZone.getDefault());
+    }
+
+    /**
+     * Returns a date for the current date of the calendar.
+     * <p>
+     * For month view, it will always be a date between the first and last day of the month. For week views,
+     * it will always be a date between the first and last day of the week.
+     *
+     * @return the current date of the calendar
+     */
+    public LocalDate getDate() {
+        return currentDate;
     }
 
     /**
@@ -2224,6 +2237,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     protected void onDatesSet(DatesSetDomEvent event) {
         displayMode = getDisplayMode(event.getViewType());
+        currentDate = CalendarDateTimeUtils.parseIsoDate(event.getCurrentDate());
     }
 
     protected void onMoreLinkClick(MoreLinkClickDomEvent event) {

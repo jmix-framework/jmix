@@ -114,6 +114,15 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    
+    <xs:element name="calendarParameters" type="calendarParametersType"/>
+
+    <xs:complexType name="calendarParametersType">
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="component" type="xs:string" use="required"/>
+        <xs:attribute name="calendarDisplayModeParam" type="xs:string"/>
+        <xs:attribute name="calendarDateParam" type="xs:string"/>
+    </xs:complexType>
 
     <xs:complexType name="customDisplayModes">
         <xs:sequence maxOccurs="unbounded">

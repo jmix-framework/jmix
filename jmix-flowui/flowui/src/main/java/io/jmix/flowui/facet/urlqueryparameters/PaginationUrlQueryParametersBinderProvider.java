@@ -28,7 +28,7 @@ import org.dom4j.Element;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-@Component("ui_PaginationUrlQueryParametersBinderProvider")
+@Component("flowui_PaginationUrlQueryParametersBinderProvider")
 public class PaginationUrlQueryParametersBinderProvider extends AbstractUrlQueryParametersBinderProvider {
 
     public PaginationUrlQueryParametersBinderProvider(UrlParamSerializer urlParamSerializer,

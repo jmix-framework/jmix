@@ -31,7 +31,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-@Component("ui_GenericFilterUrlQueryParametersBinderProvider")
+@Component("flowui_GenericFilterUrlQueryParametersBinderProvider")
 public class GenericFilterUrlQueryParametersBinderProvider extends AbstractUrlQueryParametersBinderProvider
         implements ApplicationContextAware {
 

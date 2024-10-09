@@ -67,7 +67,7 @@ public interface StudioPivotTableElementsGroups {
             xmlElement = "derivedProperties",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/properties.svg"
     )
     void derivedProperties();
 
@@ -78,7 +78,7 @@ public interface StudioPivotTableElementsGroups {
             xmlElement = "rows",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/rows.svg"
     )
     void rows();
 
@@ -89,7 +89,7 @@ public interface StudioPivotTableElementsGroups {
             xmlElement = "columns",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/columns.svg"
     )
     void columns();
 
@@ -100,7 +100,7 @@ public interface StudioPivotTableElementsGroups {
             xmlElement = "properties",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/properties.svg"
     )
     void properties();
 
@@ -111,7 +111,7 @@ public interface StudioPivotTableElementsGroups {
             xmlElement = "aggregationProperties",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/properties.svg"
     )
     void aggregationProperties();
 
@@ -122,7 +122,7 @@ public interface StudioPivotTableElementsGroups {
             xmlElement = "hiddenProperties",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/properties.svg"
     )
     void hiddenProperties();
 
@@ -133,7 +133,7 @@ public interface StudioPivotTableElementsGroups {
             xmlElement = "hiddenFromAggregations",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/properties.svg"
     )
     void hiddenFromAggregations();
 
@@ -144,7 +144,7 @@ public interface StudioPivotTableElementsGroups {
             xmlElement = "hiddenFromDragDrop",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/properties.svg"
     )
     void hiddenFromDragDrop();
 

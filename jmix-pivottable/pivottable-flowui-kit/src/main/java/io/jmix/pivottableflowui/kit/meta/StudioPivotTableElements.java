@@ -128,7 +128,7 @@ public interface StudioPivotTableElements {
             xmlElement = "row",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/row.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING)
             }
@@ -141,7 +141,7 @@ public interface StudioPivotTableElements {
             xmlElement = "column",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/column.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING)
             }
@@ -154,7 +154,7 @@ public interface StudioPivotTableElements {
             xmlElement = "property",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "localizedName", type = StudioPropertyType.LOCALIZED_STRING)
@@ -168,7 +168,7 @@ public interface StudioPivotTableElements {
             xmlElement = "property",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING)
             }

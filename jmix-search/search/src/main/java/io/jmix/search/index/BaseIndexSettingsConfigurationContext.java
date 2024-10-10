@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
- * Class provides logic of index settings & analysis configuration.
+ * Class provides logic of index settings and analysis configuration.
  * <p>
  * <ul>
  *  <li>Index settings for all indexes can be configured via {@link BaseIndexSettingsConfigurationContext#getCommonIndexSettingsBuilder()}</li>

@@ -111,7 +111,7 @@ public class LockManagerImpl implements LockManager {
         LockInfo lockInfo = new LockInfo(user.getUsername(), name, id, timeSource.currentTimestamp());
 
         Cache.ValueWrapper lockInfoWrapper = locks.putIfAbsent(key, lockInfo);
-        if(lockInfoWrapper == null) {
+        if (lockInfoWrapper == null) {
             log.debug("Locked {}/{}", name, id);
             return null;
         } else {

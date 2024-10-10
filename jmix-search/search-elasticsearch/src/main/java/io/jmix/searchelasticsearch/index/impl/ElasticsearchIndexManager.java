@@ -21,6 +21,7 @@ import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
 import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.json.JsonpMapper;
 import co.elastic.clients.json.JsonpSerializable;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.common.util.Preconditions;
@@ -133,7 +134,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
         try {
             return client
                     .indices()
-                    .putMapping(putMappingRequestBuilder.buildRequest(mapping, indexName, null))
+                    .putMapping(putMappingRequestBuilder.buildRequest(mapping, indexName, new JacksonJsonpMapper()))
                     .acknowledged();
         } catch (IOException e) {
             throw new RuntimeException("Problem with sending request to elastic search server.", e);

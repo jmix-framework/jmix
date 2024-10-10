@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 @Component("search_ElasticsearchPutMappingBuilder")
 public class ElasticsearchPutMappingRequestBuilder implements PutMappingBuilder<PutMappingRequest, JsonpMapper> {
@@ -45,7 +46,7 @@ public class ElasticsearchPutMappingRequestBuilder implements PutMappingBuilder<
         InputStream mappingBodyStream;
         try {
             String mappingBody = objectMapper.writeValueAsString(mapping);
-            mappingBodyStream = new ByteArrayInputStream(mappingBody.getBytes());
+            mappingBodyStream = new ByteArrayInputStream(mappingBody.getBytes(StandardCharsets.UTF_8));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(
                     "Unable to update index mapping'" + indexName + "': Failed to parse index mapping.",

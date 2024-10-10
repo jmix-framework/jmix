@@ -107,19 +107,18 @@ public class LockManagerImpl implements LockManager {
         }
 
         LockKey key = new LockKey(name, id);
-
-        LockInfo lockInfo = locks.get(key, LockInfo.class);
-        if (lockInfo != null) {
-            log.debug("Already locked: {}", lockInfo);
-            return lockInfo;
-        }
-
         UserDetails user = currentAuthentication.getUser();
-        lockInfo = new LockInfo(user.getUsername(), name, id, timeSource.currentTimestamp());
-        locks.put(key, lockInfo);
-        log.debug("Locked {}/{}", name, id);
+        LockInfo lockInfo = new LockInfo(user.getUsername(), name, id, timeSource.currentTimestamp());
 
-        return null;
+        Cache.ValueWrapper lockInfoWrapper = locks.putIfAbsent(key, lockInfo);
+        if (lockInfoWrapper == null) {
+            log.debug("Locked {}/{}", name, id);
+            return null;
+        } else {
+            LockInfo existingLockInfo = (LockInfo) lockInfoWrapper.get();
+            log.debug("Already locked: {}", existingLockInfo);
+            return existingLockInfo;
+        }
     }
 
     @Nullable

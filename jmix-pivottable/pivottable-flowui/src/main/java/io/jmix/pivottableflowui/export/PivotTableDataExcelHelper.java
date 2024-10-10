@@ -23,6 +23,7 @@ import io.jmix.pivottableflowui.export.model.PivotDataSeparatedCell;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -185,7 +186,7 @@ public class PivotTableDataExcelHelper {
         return result;
     }
 
-    protected List<PivotDataSeparatedCell> createRow(PivotDataRow currentRow, List<PivotDataSeparatedCell> prevRow) {
+    protected List<PivotDataSeparatedCell> createRow(PivotDataRow currentRow, @Nullable List<PivotDataSeparatedCell> prevRow) {
         List<PivotDataSeparatedCell> result = new ArrayList<>();
         int currentRowIndex = currentRow.getTableRowNumber();
 

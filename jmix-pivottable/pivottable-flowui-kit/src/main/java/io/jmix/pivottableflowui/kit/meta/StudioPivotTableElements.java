@@ -29,7 +29,6 @@ public interface StudioPivotTableElements {
     @StudioElement(
             name = "Aggregation",
             classFqn = "io.jmix.pivottableflowui.kit.component.model.Aggregation",
-            target = {"io.jmix.pivottableflowui.kit.component.model.Aggregations"},
             xmlElement = "aggregation",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
@@ -52,7 +51,6 @@ public interface StudioPivotTableElements {
     @StudioElement(
             name = "C3RendererOptions",
             classFqn = "io.jmix.pivottableflowui.kit.component.model.C3RendererOptions",
-            target = {"io.jmix.pivottableflowui.kit.component.model.RendererOptions"},
             xmlElement = "c3",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
@@ -77,7 +75,7 @@ public interface StudioPivotTableElements {
 
     @StudioElement(
             name = "DerivedProperty",
-            target = {"io.jmix.pivottableflowui.kit.component.model.meta.DerivedProperties"},
+            classFqn = "io.jmix.pivottableflowui.kit.component.model.meta.DerivedProperties",
             xmlElement = "derivedProperty",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
@@ -91,7 +89,7 @@ public interface StudioPivotTableElements {
 
     @StudioElement(
             name = "Renderer",
-            target = {"io.jmix.pivottableflowui.kit.component.model.meta.Renderers"},
+            classFqn = "io.jmix.pivottableflowui.kit.meta.Renderer",
             xmlElement = "renderer",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
@@ -178,7 +176,6 @@ public interface StudioPivotTableElements {
     @StudioElement(
             name = "NamedPropertyValue",
             classFqn = "io.jmix.pivottableflowui.kit.meta.NamedPropertyValue",
-            target = "io.jmix.pivottableflowui.kit.meta.NamedPropertyWithValues",
             xmlElement = "value",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",

@@ -38,6 +38,8 @@ import io.jmix.flowui.backgroundtask.BackgroundTaskManager
 import io.jmix.flowui.sys.ViewControllersConfiguration
 import io.jmix.flowui.sys.event.UiEventsManager
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration
+import io.jmix.flowui.testassist.dialog.OpenedDialogs
+import io.jmix.flowui.testassist.notification.OpenedNotifications
 import io.jmix.flowui.testassist.vaadin.TestServletContext
 import io.jmix.flowui.testassist.vaadin.TestSpringServlet
 import io.jmix.flowui.testassist.vaadin.TestVaadinRequest
@@ -45,6 +47,7 @@ import io.jmix.flowui.testassist.vaadin.TestVaadinSession
 import io.jmix.flowui.view.View
 import io.jmix.flowui.view.ViewRegistry
 import io.jmix.flowui.view.navigation.ViewNavigationSupport
+import jakarta.servlet.ServletException
 import org.apache.commons.lang3.ArrayUtils
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
@@ -55,9 +58,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import spock.lang.Specification
-import test_support.*
-
-import jakarta.servlet.ServletException
+import test_support.FlowuiTestConfiguration
 
 import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField
 import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE
@@ -97,6 +98,8 @@ class FlowuiTestSpecification extends Specification {
         removeAuthentication()
         resetViewRegistry()
         removeSystemUser()
+        closeOpenedNotifications()
+        closeOpenedDialogs()
     }
 
     /**
@@ -176,7 +179,7 @@ class FlowuiTestSpecification extends Specification {
      */
     protected addSystemUser() {
         def userRepository = applicationContext.getBean(UserRepository)
-        if (userRepository instanceof InMemoryUserRepository)  {
+        if (userRepository instanceof InMemoryUserRepository) {
             ((InMemoryUserRepository) userRepository).addUser(User.builder()
                     .username("system")
                     .password("")
@@ -227,7 +230,7 @@ class FlowuiTestSpecification extends Specification {
         }
 
         def views = viewRegistry.getViewInfos()
-                .findAll({ isClassInPackages(it.getControllerClass().getPackageName(), viewBasePackages)})
+                .findAll({ isClassInPackages(it.getControllerClass().getPackageName(), viewBasePackages) })
         views.forEach({
             Class<? extends View> controllerClass = it.getControllerClass()
             Route route = controllerClass.getAnnotation(Route.class)
@@ -254,7 +257,7 @@ class FlowuiTestSpecification extends Specification {
     }
 
     protected boolean isClassInPackages(String classPackage, String[] viewBasePackages) {
-        return viewBasePackages.findAll {classPackage.startsWith(it)}.size() > 0
+        return viewBasePackages.findAll { classPackage.startsWith(it) }.size() > 0
     }
 
     protected void resetViewRegistry() {
@@ -269,6 +272,14 @@ class FlowuiTestSpecification extends Specification {
                     .loadUserByUsername("system")
             ((InMemoryUserRepository) userRepository).removeUser(system)
         }
+    }
+
+    protected void closeOpenedNotifications() {
+        applicationContext.getBean(OpenedNotifications).closeOpenedNotifications()
+    }
+
+    protected void closeOpenedDialogs() {
+        applicationContext.getBean(OpenedDialogs).closeOpenedDialogs()
     }
 
     protected <T extends View> T navigateToView(Class<T> view) {

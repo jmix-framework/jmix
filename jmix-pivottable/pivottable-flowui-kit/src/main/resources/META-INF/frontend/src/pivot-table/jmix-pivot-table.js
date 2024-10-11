@@ -340,7 +340,10 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     }
 
     _initLocale() {
-
+        if (!this._options.localizedStrings) {
+            this._options.localizedStrings = this._createDefaultLocalizedStrings();
+            this._options.localeCode = "en";
+        }
         let formatFloat, formatInt, formatPercent, numberFormat, aggregatorTemplates;
         numberFormat = this.$jQuery.pivotUtilities.numberFormat;
         aggregatorTemplates = this.$jQuery.pivotUtilities.aggregatorTemplates;
@@ -437,6 +440,86 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             aggregatorsLocaleMapping: localizedStrings.aggregation,
             renderersLocaleMapping: localizedStrings.renderer
         };
+    }
+
+    _createDefaultLocalizedStrings() {
+        return {
+            "floatFormat": {
+               "decimalSep": ".",
+               "digitsAfterDecimal": "2",
+               "showZero": "false",
+               "scaler": "1",
+               "prefix": "",
+               "suffix": "",
+               "thousandsSep": ","
+           },
+           "integerFormat": {
+               "decimalSep": ".",
+               "digitsAfterDecimal": "0",
+               "showZero": "false",
+               "scaler": "1",
+               "prefix": "",
+               "suffix": "",
+               "thousandsSep": ","
+           },
+           "percentFormat": {
+               "decimalSep": ".",
+               "digitsAfterDecimal": "1",
+               "showZero": "false",
+               "scaler": "100",
+               "prefix": "",
+               "suffix": "%",
+               "thousandsSep": ","
+           },
+           "percentFormat.suffix": "%",
+           "renderError": "An error occurred rendering the PivotTable results.",
+           "computeError": "An error occurred computing the PivotTable results.",
+           "uiRenderError": "An error occurred rendering the PivotTable UI.",
+           "selectAll": "Select all",
+           "selectNone": "Select none",
+           "apply": "Apply",
+           "cancel": "Cancel",
+           "tooMany": "(too many to list)",
+           "filterResults": "Filter results",
+           "totals": "Totals",
+           "vs": "vs",
+           "by": "by",
+           "aggregation": {
+               "count": "Count",
+               "countUniqueValues": "Count unique values",
+               "listUniqueValues": "List unique values",
+               "sum": "Sum",
+               "integerSum": "Integer sum",
+               "average": "Average",
+               "minimum": "Minimum",
+               "maximum": "Maximum",
+               "sumOverSum": "Sum over sum",
+               "upperBound80": "80% Upper bound",
+               "lowerBound80": "80% Lower bound",
+               "sumAsFractionOfTotal": "Sum as fraction of total",
+               "sumAsFractionOfRows": "Sum as fraction of rows",
+               "sumAsFractionOfColumns": "Sum as fraction of columns",
+               "countAsFractionOfTotal": "Count as fraction of total",
+               "countAsFractionOfRows": "Count as fraction of rows",
+               "countAsFractionOfColumns": "Count as fraction of columns"
+           },
+           "renderer": {
+               "table": "Table",
+               "tableBarchart": "Table barchart",
+               "heatmap": "Heatmap",
+               "rowHeatmap": "Row heatmap",
+               "colHeatmap": "Col heatmap",
+               "lineChart": "Line chart",
+               "barChart": "Bar chart",
+               "stackedBarChart": "Stacked bar chart",
+               "horizontalBarChart": "Horizontal bar chart",
+               "horizontalStackedBarChart": "Horizontal stacked bar chart",
+               "areaChart": "Area chart",
+               "scatterChart": "Scatter chart",
+               "treemap": "Treemap",
+               "TSVExport": "TSV export"
+           }
+       }
     }
 
     _getAggregationOptions() {

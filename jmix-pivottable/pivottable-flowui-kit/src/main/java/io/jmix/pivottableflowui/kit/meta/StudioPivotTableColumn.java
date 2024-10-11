@@ -16,7 +16,7 @@
 
 package io.jmix.pivottableflowui.kit.meta;
 
-public interface Column {
+interface StudioPivotTableColumn {
 
     void setValue(String value);
 }

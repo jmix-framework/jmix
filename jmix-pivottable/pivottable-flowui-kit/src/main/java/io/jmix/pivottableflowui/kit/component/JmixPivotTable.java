@@ -73,7 +73,7 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
      * @param listener a listener to add
      * @return subscription
      */
-    public Registration addRefreshEventListener(ComponentEventListener<PivotTableRefreshEvent> listener) {
+    public Registration addRefreshListener(ComponentEventListener<PivotTableRefreshEvent> listener) {
         return getEventBus().addListener(PivotTableRefreshEvent.class, listener);
     }
 

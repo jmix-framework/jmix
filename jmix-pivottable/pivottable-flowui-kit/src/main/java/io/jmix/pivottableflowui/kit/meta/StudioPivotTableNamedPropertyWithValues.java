@@ -16,7 +16,7 @@
 
 package io.jmix.pivottableflowui.kit.meta;
 
-public interface Renderer {
+interface StudioPivotTableNamedPropertyWithValues {
 
-    void setType(io.jmix.pivottableflowui.kit.component.model.Renderer rendererType);
+    void setName(String name);
 }

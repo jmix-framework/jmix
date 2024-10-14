@@ -32,10 +32,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
-import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.UiViewProperties;
+import io.jmix.flowui.*;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.inputdialog.InputDialogAction;
 import io.jmix.flowui.app.inputdialog.DialogActions;
@@ -46,6 +43,8 @@ import io.jmix.flowui.backgroundtask.BackgroundTaskHandler;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.LocalizedTaskWrapper;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.event.dialog.DialogClosedEvent;
+import io.jmix.flowui.event.dialog.DialogOpenedEvent;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.DialogWindow;
@@ -54,10 +53,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -112,6 +108,7 @@ public class DialogsImpl implements Dialogs {
         if (action instanceof DialogAction dialogAction) {
             DialogAction.Type type = dialogAction.getType();
 
+            button.setId(type.getId());
             button.addClassName(type.getId() + BUTTON_CLASS_NAMES_POSTFIX);
             button.setText(messages.getMessage(type.getMsgKey()));
             button.setIcon(type.getVaadinIcon().create());
@@ -157,6 +154,10 @@ public class DialogsImpl implements Dialogs {
             dialog.setCloseOnOutsideClick(false);
             dialog.setCloseOnEsc(false);
             dialog.setMinWidth(MIN_WIDTH);
+
+            if (applicationContext.getBean(UiComponentProperties.class).isDialogsOpenedChangeEventsEnabled()) {
+                dialog.addOpenedChangeListener(this::fireDialogOpenedChangeEvent);
+            }
         }
 
         @Override
@@ -405,6 +406,17 @@ public class DialogsImpl implements Dialogs {
             }
             return null;
         }
+
+        protected void fireDialogOpenedChangeEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
+            if (openedChangeEvent.isOpened()) {
+                DialogOpenedEvent dialogOpenedEvent =
+                        new DialogOpenedEvent(dialog, content, Collections.unmodifiableList(actionButtons));
+
+                applicationContext.publishEvent(dialogOpenedEvent);
+            } else {
+                applicationContext.publishEvent(new DialogClosedEvent(dialog));
+            }
+        }
     }
 
     public class MessageDialogBuilderImpl implements MessageDialogBuilder {
@@ -426,6 +438,10 @@ public class DialogsImpl implements Dialogs {
             dialog.setDraggable(true);
             dialog.setCloseOnOutsideClick(false);
             dialog.setMinWidth(MIN_WIDTH);
+
+            if (applicationContext.getBean(UiComponentProperties.class).isDialogsOpenedChangeEventsEnabled()) {
+                dialog.addOpenedChangeListener(this::fireDialogOpenedChangeEvent);
+            }
         }
 
         @Override
@@ -636,6 +652,17 @@ public class DialogsImpl implements Dialogs {
             dialog.open();
             return dialog;
         }
+
+        protected void fireDialogOpenedChangeEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
+            if (openedChangeEvent.isOpened()) {
+                DialogOpenedEvent dialogOpenedEvent =
+                        new DialogOpenedEvent(dialog, content, Collections.singletonList(okButton));
+
+                applicationContext.publishEvent(dialogOpenedEvent);
+            } else {
+                applicationContext.publishEvent(new DialogClosedEvent(dialog));
+            }
+        }
     }
 
     public class InputDialogBuilderImpl implements InputDialogBuilder {
@@ -817,6 +844,10 @@ public class DialogsImpl implements Dialogs {
             dialog.setCloseOnOutsideClick(false);
             dialog.setCloseOnEsc(false);
             dialog.setMinWidth(MIN_WIDTH);
+
+            if (applicationContext.getBean(UiComponentProperties.class).isDialogsOpenedChangeEventsEnabled()) {
+                dialog.addOpenedChangeListener(this::fireDialogOpenedChangeEvent);
+            }
         }
 
         protected void initDialogContent(Dialog dialog) {
@@ -1090,6 +1121,18 @@ public class DialogsImpl implements Dialogs {
 
         protected void handleTaskWrapperCloseView(LocalizedTaskWrapper.CloseViewContext event) {
             dialog.close();
+        }
+
+        protected void fireDialogOpenedChangeEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
+            if (openedChangeEvent.isOpened()) {
+                DialogOpenedEvent dialogOpenedEvent =
+                        new DialogOpenedEvent(dialog, content,
+                                cancelAllowed ? Collections.singletonList(cancelButton) : Collections.emptyList());
+
+                applicationContext.publishEvent(dialogOpenedEvent);
+            } else {
+                applicationContext.publishEvent(new DialogClosedEvent(dialog));
+            }
         }
     }
 }

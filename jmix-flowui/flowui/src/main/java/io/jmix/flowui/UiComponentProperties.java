@@ -52,6 +52,16 @@ public class UiComponentProperties {
     String defaultNotificationPosition;
     int defaultNotificationDuration;
 
+    /**
+     * Whether to fire {@link Notifications} opened and closed events.
+     */
+    boolean notificationsOpenedChangeEventsEnabled;
+
+    /**
+     * Whether to fire {@link Dialogs} opened and closed events.
+     */
+    boolean dialogsOpenedChangeEventsEnabled;
+
     String pickerLookupShortcut;
     String pickerOpenShortcut;
     String pickerClearShortcut;
@@ -132,6 +142,8 @@ public class UiComponentProperties {
             @DefaultValue("false") boolean gridContextMenuShowActionIcons,
             @DefaultValue("false") boolean gridContextMenuShowActionShortcuts,
             @DefaultValue("MIDDLE") String defaultNotificationPosition,
+            @DefaultValue("false") boolean notificationsOpenedChangeEventsEnabled,
+            @DefaultValue("false") boolean dialogsOpenedChangeEventsEnabled,
             @DefaultValue("3000") int defaultNotificationDuration,
             String pickerLookupShortcut,
             String pickerOpenShortcut,
@@ -157,6 +169,9 @@ public class UiComponentProperties {
         this.gridContextMenuShowActionShortcuts = gridContextMenuShowActionShortcuts;
         this.defaultNotificationPosition = defaultNotificationPosition;
         this.defaultNotificationDuration = defaultNotificationDuration;
+
+        this.notificationsOpenedChangeEventsEnabled = notificationsOpenedChangeEventsEnabled;
+        this.dialogsOpenedChangeEventsEnabled = dialogsOpenedChangeEventsEnabled;
 
         this.pickerLookupShortcut = pickerLookupShortcut;
         this.pickerOpenShortcut = pickerOpenShortcut;
@@ -220,6 +235,20 @@ public class UiComponentProperties {
 
     public int getDefaultNotificationDuration() {
         return defaultNotificationDuration;
+    }
+
+    /**
+     * @see #notificationsOpenedChangeEventsEnabled
+     */
+    public boolean isNotificationsOpenedChangeEventsEnabled() {
+        return notificationsOpenedChangeEventsEnabled;
+    }
+
+    /**
+     * @see #dialogsOpenedChangeEventsEnabled
+     */
+    public boolean isDialogsOpenedChangeEventsEnabled() {
+        return dialogsOpenedChangeEventsEnabled;
     }
 
     public String getPickerLookupShortcut() {

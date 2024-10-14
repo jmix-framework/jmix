@@ -18,11 +18,18 @@ package io.jmix.flowui.testassist;
 
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.testassist.dialog.DialogInfo;
+import io.jmix.flowui.testassist.dialog.OpenedDialogs;
+import io.jmix.flowui.testassist.notification.NotificationInfo;
+import io.jmix.flowui.testassist.notification.OpenedNotifications;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -34,12 +41,18 @@ import java.util.List;
 public final class UiTestUtils {
 
     private static final Method VALIDATE_VIEW_METHOD = ReflectionUtils.findMethod(StandardDetailView.class, "validateView");
+    private static ApplicationContext applicationContext;
 
     static {
         ReflectionUtils.makeAccessible(VALIDATE_VIEW_METHOD);
     }
 
     private UiTestUtils() {
+    }
+
+    @Internal
+    static void setApplicationContext(ApplicationContext applicationContext) {
+        UiTestUtils.applicationContext = applicationContext;
     }
 
     /**
@@ -83,5 +96,53 @@ public final class UiTestUtils {
      */
     public static ValidationErrors validateView(StandardDetailView<?> view) {
         return (ValidationErrors) ReflectionUtils.invokeMethod(VALIDATE_VIEW_METHOD, view);
+    }
+
+    /**
+     * Gets immutable list of {@link NotificationInfo} in order of opening.
+     * <p>
+     * Example of the storage order of notifications:
+     * <ul>
+     *     <li>first opened notification has index {@code 0}</li>
+     *     <li>seconds opened notification has index {@code 1}</li>
+     *     <li>last opened notification has index {@code openedNotifications.size() - 1}</li>
+     * </ul>
+     *
+     * @return immutable list of {@link NotificationInfo} in order of opening
+     */
+    public static List<NotificationInfo> getOpenedNotifications() {
+        return applicationContext.getBean(OpenedNotifications.class).getNotifications();
+    }
+
+    /**
+     * @return the most recent opened {@link NotificationInfo} or {@code null} if no opened notifications
+     */
+    @Nullable
+    public static NotificationInfo getLastOpenedNotification() {
+        return applicationContext.getBean(OpenedNotifications.class).getLastNotification();
+    }
+
+    /**
+     * Gets immutable list of {@link DialogInfo}s in order of opening.
+     * <p>
+     * Example of the storage order of dialogs:
+     * <ul>
+     *     <li>first opened dialog has index {@code 0}</li>
+     *     <li>seconds opened dialog has index {@code 1}</li>
+     *     <li>last opened dialog has index {@code openedDialogs.size() - 1}</li>
+     * </ul>
+     *
+     * @return immutable list of {@link DialogInfo}s in order of opening
+     */
+    public static List<DialogInfo> getOpenedDialogs() {
+        return applicationContext.getBean(OpenedDialogs.class).getDialogs();
+    }
+
+    /**
+     * @return the most recent opened {@link DialogInfo} or {@code null} if no opened dialogs
+     */
+    @Nullable
+    public static DialogInfo getLastOpenedDialog() {
+        return applicationContext.getBean(OpenedDialogs.class).getLastDialog();
     }
 }

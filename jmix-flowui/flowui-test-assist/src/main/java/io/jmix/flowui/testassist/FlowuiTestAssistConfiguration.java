@@ -30,10 +30,14 @@ import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.*;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.*;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 
 @Configuration
+@ComponentScan
 @Import({VaadinScopesConfig.class})
+@PropertySource(name = "io.jmix.flowui.testassist", value = "classpath:/io/jmix/flowui/testassist/module.properties")
 public class FlowuiTestAssistConfiguration {
 
     @Bean("ui_PropagationExceptionHandler")
@@ -85,5 +89,11 @@ public class FlowuiTestAssistConfiguration {
                                                            ViewNavigationDelegate<?> navigationDelegate) {
         return new TestViewNavigationProcessor(viewSupport, viewRegistry, navigationSupport,
                 (ViewNavigationDelegate<ViewNavigator>) navigationDelegate);
+    }
+
+    @EventListener
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 10)
+    public void onApplicationContextRefresh(ContextRefreshedEvent event) {
+        UiTestUtils.setApplicationContext(event.getApplicationContext());
     }
 }

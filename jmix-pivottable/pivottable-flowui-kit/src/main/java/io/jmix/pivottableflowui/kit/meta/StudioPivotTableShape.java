@@ -16,7 +16,7 @@
 
 package io.jmix.pivottableflowui.kit.meta;
 
-public class StudioPivotTableShape {
+class StudioPivotTableShape {
 
     private Long id;
     private String shape;

@@ -16,13 +16,33 @@
 
 package io.jmix.pivottableflowui.kit.meta;
 
-import io.jmix.flowui.kit.meta.StudioElementsGroup;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.*;
+import io.jmix.pivottableflowui.kit.component.model.Aggregation;
 
 @StudioUiKit
 public interface StudioPivotTableElementsGroups {
+
+    @StudioElementsGroup(
+            name = "Aggregation",
+            elementClassFqn = "io.jmix.pivottableflowui.kit.meta.StudioPivotTableNamedProperty",
+            target = {"io.jmix.pivottableflowui.component.PivotTable"},
+            xmlElement = "aggregation",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "mode", type = StudioPropertyType.ENUMERATION,
+                            options = {"COUNT","COUNT_UNIQUE_VALUES", "LIST_UNIQUE_VALUES", "SUM", "INTEGER_SUM",
+                                    "AVERAGE", "MINIMUM", "MAXIMUM", "SUM_OVER_SUM", "UPPER_BOUND_80",
+                                    "LOWER_BOUND_80", "SUM_AS_FRACTION_OF_TOTAL", "SUM_AS_FRACTION_OF_ROWS",
+                                    "SUM_AS_FRACTION_OF_COLUMNS", "COUNT_AS_FRACTION_OF_TOTAL",
+                                    "COUNT_AS_FRACTION_OF_ROWS", "COUNT_AS_FRACTION_OF_COLUMNS"}),
+                    @StudioProperty(xmlAttribute = "caption", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "custom", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "function", type = StudioPropertyType.STRING)
+            }
+    )
+    Aggregation aggregation();
 
     @StudioElementsGroup(
             name = "Aggregations",
@@ -59,17 +79,6 @@ public interface StudioPivotTableElementsGroups {
             }
     )
     void renderers();
-
-    @StudioElementsGroup(
-            name = "RendererOptions",
-            elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.RendererOptions",
-            target = {"io.jmix.pivottableflowui.component.PivotTable"},
-            xmlElement = "rendererOptions",
-            xmlns = "http://jmix.io/schema/pvttbl/ui",
-            xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/properties.svg"
-    )
-    void rendererOptions();
 
     @StudioElementsGroup(
             name = "DerivedProperties",
@@ -160,13 +169,12 @@ public interface StudioPivotTableElementsGroups {
     void hiddenFromDragDrop();
 
     @StudioElementsGroup(
-            name = "PropertyWithValues",
+            name = "NamedPropertyWithValues",
             elementClassFqn = "io.jmix.pivottableflowui.kit.meta.StudioPivotTableNamedPropertyValue",
-            target = {"io.jmix.pivottableflowui.kit.meta.StudioPivotTableNamedPropertyWithValues"},
             xmlElement = "property",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/properties.svg"
     )
     void propertyWithValues();
 

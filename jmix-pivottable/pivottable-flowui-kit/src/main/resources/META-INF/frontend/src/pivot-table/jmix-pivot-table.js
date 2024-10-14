@@ -80,7 +80,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             },
 
             /** @private */
-            _dataSet: {
+            _items: {
                 type: Object
             }
         };
@@ -185,7 +185,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         let itemsKeys = [];
         (function(pivotTable) {
             pivotData.forEachMatchingRecord(filters, function(record) {
-                let itemIndex = pivotTable._dataSet.indexOf(record);
+                let itemIndex = pivotTable._items.indexOf(record);
                 if (itemIndex >= 0) {
                     itemsKeys.push(pivotTable.itemIds[itemIndex]);
                 }
@@ -223,7 +223,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     _recreatePivot() {
         let outputDiv = this.$jQuery("div.pivot-table-output");
         if (this._options) {
-            if (!this._dataSet || Object.keys(this._dataSet).length == 0) {
+            if (!this._items || Object.keys(this._items).length == 0) {
                 outputDiv.html(this._options.emptyDataMessage);
                 return;
             }
@@ -235,7 +235,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
                 let showUI = pivotTable._options.showUI;
                 options.showUI = showUI;
                 let showPivotFunction = showUI ? outputDiv.pivotUI : outputDiv.pivot;
-                showPivotFunction.call(outputDiv, pivotTable._dataSet,
+                showPivotFunction.call(outputDiv, pivotTable._items,
                     options,
                     true,
                     pivotTable._options.localeCode);
@@ -688,11 +688,11 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         this._recreatePivot();
     }
 
-    _updateDataSet(changes) {
-        this._dataSet = changes.dataSet;
+    _updateItems(changes) {
+        this._items = changes.items;
         this.itemIds = [];
-        if (changes.dataSet) {
-            changes.dataSet.forEach(value => {
+        if (changes.items) {
+            changes.items.forEach(value => {
                 this.itemIds.push(value.$k);
                 delete value.$k;
             });

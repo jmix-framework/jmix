@@ -835,8 +835,8 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
                     return propertyWithValue;
                 })
                 .toList());
-        resultJson.put("dataSet", dataJson);
-        callPendingJsFunction("_updateDataSet", resultJson);
+        resultJson.put("items", dataJson);
+        callPendingJsFunction("_updateItems", resultJson);
 
         synchronizeItemsExecution = null;
     }

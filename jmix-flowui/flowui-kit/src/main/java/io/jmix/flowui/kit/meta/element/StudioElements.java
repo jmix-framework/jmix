@@ -472,7 +472,7 @@ public interface StudioElements {
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/filter.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
+                    @StudioProperty(xmlAttribute = "component", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_REF,
                             componentRefTags = "genericFilter", required = true),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "configurationParam", type = StudioPropertyType.STRING),
@@ -596,7 +596,7 @@ public interface StudioElements {
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/pagination.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
+                    @StudioProperty(xmlAttribute = "component", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_REF,
                             componentRefTags = {"simplePagination"}, required = true),
                     @StudioProperty(xmlAttribute = "firstResultParam", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
@@ -612,7 +612,7 @@ public interface StudioElements {
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/filter.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
+                    @StudioProperty(xmlAttribute = "component", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_REF,
                             componentRefTags = "propertyFilter", required = true),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
@@ -626,7 +626,8 @@ public interface StudioElements {
             xmlElement = "dataGridFilter",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "component", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.COMPONENT_REF, componentRefTags = "dataGridFilter", required = true),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
             }

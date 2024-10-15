@@ -16,14 +16,32 @@
 
 package io.jmix.pivottableflowui.kit.meta;
 
-import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.*;
 import io.jmix.pivottableflowui.kit.component.model.*;
 
 @StudioUiKit
 public interface StudioPivotTableElements {
+
+    @StudioElement(
+            name = "Aggregation",
+            classFqn = "io.jmix.pivottableflowui.kit.component.model.Aggregation",
+            target = {"io.jmix.pivottableflowui.component.PivotTable"},
+            xmlElement = "aggregation",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "mode", type = StudioPropertyType.ENUMERATION,
+                            options = {"COUNT","COUNT_UNIQUE_VALUES", "LIST_UNIQUE_VALUES", "SUM", "INTEGER_SUM",
+                                    "AVERAGE", "MINIMUM", "MAXIMUM", "SUM_OVER_SUM", "UPPER_BOUND_80",
+                                    "LOWER_BOUND_80", "SUM_AS_FRACTION_OF_TOTAL", "SUM_AS_FRACTION_OF_ROWS",
+                                    "SUM_AS_FRACTION_OF_COLUMNS", "COUNT_AS_FRACTION_OF_TOTAL",
+                                    "COUNT_AS_FRACTION_OF_ROWS", "COUNT_AS_FRACTION_OF_COLUMNS"}),
+                    @StudioProperty(xmlAttribute = "caption", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "custom", type = StudioPropertyType.BOOLEAN)
+            }
+    )
+    Aggregation aggregation();
 
     @StudioElement(
             name = "RendererOptions",
@@ -36,7 +54,7 @@ public interface StudioPivotTableElements {
     )
     RendererOptions rendererOptions();
 
-    /*@StudioElement(
+    @StudioElement(
             name = "C3RendererOptions",
             classFqn = "io.jmix.pivottableflowui.kit.component.model.C3RendererOptions",
             target = {"io.jmix.pivottableflowui.kit.component.model.RendererOptions"},
@@ -45,7 +63,7 @@ public interface StudioPivotTableElements {
             xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg"
     )
-    C3RendererOptions c3();*/
+    C3RendererOptions c3();
 
     @StudioElement(
             name = "Size",
@@ -70,45 +88,21 @@ public interface StudioPivotTableElements {
             xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "caption", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "function", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "caption", type = StudioPropertyType.LOCALIZED_STRING, required = true)
             }
     )
-    StudioPivotTableDerivedProperty derivedProperty();
+    void derivedProperty();
 
     @StudioElement(
-            name = "Renderer",
-            classFqn = "io.jmix.pivottableflowui.kit.meta.StudioPivotTableRenderer",
-            target = {"io.jmix.pivottableflowui.component.PivotTable"},
-            xmlElement = "renderer",
-            xmlns = "http://jmix.io/schema/pvttbl/ui",
-            xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
-                            options = {"TABLE", "TABLE_BAR_CHART", "HEATMAP", "ROW_HEATMAP", "COL_HEATMAP",
-                                    "LINE_CHART", "BAR_CHART", "STACKED_BAR_CHART", "HORIZONTAL_BAR_CHART",
-                                    "HORIZONTAL_STACKED_BAR_CHART", "AREA_CHART", "SCATTER_CHART", "TREEMAP",
-                                    "TSV_EXPORT"
-                            })
-
-            }
-    )
-    StudioPivotTableRenderer renderer();
-
-    /*@StudioElement(
             name = "HeatmapRendererOptions",
             classFqn = "io.jmix.pivottableflowui.kit.component.model.HeatmapRendererOptions",
             target = {"io.jmix.pivottableflowui.kit.component.model.RendererOptions"},
             xmlElement = "heatmap",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "colorScaleGeneratorFunction", type = StudioPropertyType.STRING)
-            }
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg"
     )
-    HeatmapRendererOptions heatmap();*/
+    HeatmapRendererOptions heatmap();
 
     @StudioElement(
             name = "Row",
@@ -118,10 +112,10 @@ public interface StudioPivotTableElements {
             xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/element/row.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING)
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING, required = true)
             }
     )
-    StudioPivotTableRow row();
+    void row();
 
     @StudioElement(
             name = "Column",
@@ -131,10 +125,10 @@ public interface StudioPivotTableElements {
             xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/element/column.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING)
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING, required = true)
             }
     )
-    StudioPivotTableColumn column();
+    void column();
 
     @StudioElement(
             name = "Property",
@@ -148,20 +142,21 @@ public interface StudioPivotTableElements {
                     @StudioProperty(xmlAttribute = "localizedName", type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
-    StudioPivotTableProperty property();
+    void property();
 
     @StudioElement(
             name = "NamedProperty",
             classFqn = "io.jmix.pivottableflowui.kit.meta.StudioPivotTableNamedProperty",
+            target = {"io.jmix.pivottableflowui.kit.component.model.Aggregation"},
             xmlElement = "property",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING)
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING, required = true)
             }
     )
-    StudioPivotTableNamedProperty namedProperty();
+    void namedProperty();
 
     @StudioElement(
             name = "NamedPropertyValue",
@@ -169,10 +164,90 @@ public interface StudioPivotTableElements {
             xmlElement = "value",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
-            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING)
+                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true)
             }
     )
-    StudioPivotTableNamedPropertyValue namedPropertyValue();
+    void namedPropertyValue();
+
+    @StudioElement(
+            name = "Inclusions",
+            classFqn = "io.jmix.pivottableflowui.kit.meta.StudioPivotTableNamedPropertiesWithValues",
+            target = {"io.jmix.pivottableflowui.component.PivotTable"},
+            xmlElement = "inclusions",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/properties.svg"
+    )
+    void inclusions();
+
+    @StudioElement(
+            name = "Exclusions",
+            classFqn = "io.jmix.pivottableflowui.kit.meta.StudioPivotTableNamedPropertiesWithValues",
+            target = {"io.jmix.pivottableflowui.component.PivotTable"},
+            xmlElement = "exclusions",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/properties.svg"
+    )
+    void exclusions();
+
+    @StudioElement(
+            name = "FilterFunction",
+            classFqn = "io.jmix.pivottableflowui.kit.component.model.JsFunction",
+            target = {"io.jmix.pivottableflowui.component.PivotTable"},
+            xmlElement = "filterFunction",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/function.svg"
+    )
+    void filterFunction();
+
+    @StudioElement(
+            name = "SortersFunction",
+            classFqn = "io.jmix.pivottableflowui.kit.component.model.JsFunction",
+            target = {"io.jmix.pivottableflowui.component.PivotTable"},
+            xmlElement = "sortersFunction",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/function.svg"
+    )
+    void sortersFunction();
+
+    @StudioElement(
+            name = "ColorScaleGeneratorFunction",
+            classFqn = "io.jmix.pivottableflowui.kit.component.model.JsFunction",
+            target = {"io.jmix.pivottableflowui.kit.component.model.HeatmapRendererOptions"},
+            xmlElement = "colorScaleGeneratorFunction",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/function.svg"
+    )
+    void colorScaleGeneratorFunction();
+
+    @StudioElement(
+            name = "Function",
+            classFqn = "io.jmix.pivottableflowui.kit.component.model.JsFunction",
+            target = {"io.jmix.pivottableflowui.kit.meta.StudioPivotTableDerivedProperty",
+                    "io.jmix.pivottableflowui.kit.component.model.Aggregation"},
+            xmlElement = "function",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/function.svg"
+    )
+    void function();
+
+    @StudioElement(
+            name = "Renderer",
+            classFqn = "io.jmix.pivottableflowui.kit.meta.StudioPivotTableRenderer",
+            target = {"io.jmix.pivottableflowui.kit.component.model.Renderers"},
+            xmlElement = "renderer",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg"
+    )
+    void renderer();
+
+
 }

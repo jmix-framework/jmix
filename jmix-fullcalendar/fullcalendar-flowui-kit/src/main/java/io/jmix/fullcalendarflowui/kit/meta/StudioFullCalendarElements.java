@@ -425,7 +425,8 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.facet.urlqueryparameters.FullCalendarUrlQueryParametersBinder",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "component", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.COMPONENT_REF, componentRefTags = "calendar", required = true),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "calendarDisplayMode", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "calendarDate", type = StudioPropertyType.STRING),

@@ -74,85 +74,82 @@ public class ElasticsearchIndexSettingsProvider {
 
     public IndexSettings getSettingsForIndex(IndexConfiguration indexConfiguration) {
         Class<?> entityClass = indexConfiguration.getEntityClass();
-        IndexSettings effectiveIndexSettings = this.effectiveIndexSettings.get(entityClass);
-
-        if (effectiveIndexSettings == null) {
+        IndexSettings resultIndexSettings = this.effectiveIndexSettings.get(entityClass);
+        if (resultIndexSettings == null) {
             Map<Class<?>, IndexSettings.Builder> indexSettingsBuilders = context.getAllSpecificIndexSettingsBuilders();
-            IndexSettings indexSettings;
+            IndexSettings entityIndexSettings;
             if (indexSettingsBuilders.containsKey(entityClass)) {
                 // Merge common and entity-specific index settings
-                IndexSettings.Builder indexSettingsBuilder = indexSettingsBuilders.get(entityClass);
-                indexSettings = indexSettingsBuilder.build();
+                IndexSettings.Builder entityIndexSettingsBuilder = indexSettingsBuilders.get(entityClass);
+                entityIndexSettings = entityIndexSettingsBuilder.build();
 
                 ObjectNode commonIndexSettingsNode = toObjectNode(commonIndexSettings);
-                ObjectNode indexSettingsNode = toObjectNode(indexSettings);
+                ObjectNode entityIndexSettingsNode = toObjectNode(entityIndexSettings);
                 ObjectNode mergedIndexSettingsNode = JsonNodeFactory.instance.objectNode();
                 mergedIndexSettingsNode.setAll(commonIndexSettingsNode);
-                indexSettingsNode.fieldNames().forEachRemaining(childName -> {
-                    JsonNode specificChildNode = indexSettingsNode.get(childName);
-                    JsonNode baseChildNode = mergedIndexSettingsNode.path(childName);
-                    if (specificChildNode.isObject()) {
-                        ObjectNode specificChildObjectNode = (ObjectNode) specificChildNode;
-                        if (baseChildNode.isObject()) {
-                            ((ObjectNode) baseChildNode).setAll(specificChildObjectNode);
-                        } else {
-                            mergedIndexSettingsNode.set(childName, specificChildObjectNode);
-                        }
-                    }
+                entityIndexSettingsNode.fieldNames().forEachRemaining(childName -> {
+                    JsonNode specificChildNode = entityIndexSettingsNode.get(childName);
+                    mergedIndexSettingsNode.set(childName, specificChildNode);
                 });
 
-                JsonpMapper jsonpMapper = client._transport().jsonpMapper();
-                JsonProvider jsonProvider = jsonpMapper.jsonProvider();
-                try (StringReader reader = new StringReader(indexSettingsNode.toString())) {
-                    JsonParser parser = jsonProvider.createParser(reader);
-                    indexSettings = IndexSettings._DESERIALIZER.deserialize(parser, jsonpMapper);
-                }
+                entityIndexSettings = deserializeIndexSettings(mergedIndexSettingsNode.toString());
             } else {
-                indexSettings = commonIndexSettings;
+                entityIndexSettings = copyIndexSettings(commonIndexSettings);
             }
 
             Map<Class<?>, IndexSettingsAnalysis.Builder> analysisBuilders = context.getAllSpecificAnalysisBuilders();
-            IndexSettingsAnalysis analysisSettings;
+            IndexSettingsAnalysis entityAnalysisSettings;
             if (analysisBuilders.containsKey(entityClass)) {
                 // Merge common and entity-specific analysis settings
                 ObjectNode commonAnalysisSettingsNode = toObjectNode(commonAnalysisSettings);
-                IndexSettingsAnalysis.Builder analysisBuilder = analysisBuilders.get(entityClass);
-                analysisSettings = analysisBuilder.build();
+                IndexSettingsAnalysis.Builder entityAnalysisBuilder = analysisBuilders.get(entityClass);
+                entityAnalysisSettings = entityAnalysisBuilder.build();
 
-                ObjectNode analysisSettingsNode = toObjectNode(analysisSettings);
-                ObjectNode mergedAnalysisNode = JsonNodeFactory.instance.objectNode();
-                mergedAnalysisNode.setAll(commonAnalysisSettingsNode);
-                analysisSettingsNode.fieldNames().forEachRemaining(childName -> {
-                    JsonNode specificChildNode = analysisSettingsNode.get(childName);
-                    JsonNode baseChildNode = mergedAnalysisNode.path(childName);
+                ObjectNode entityAnalysisSettingsNode = toObjectNode(entityAnalysisSettings);
+                ObjectNode mergedAnalysisSettingsNode = JsonNodeFactory.instance.objectNode();
+                mergedAnalysisSettingsNode.setAll(commonAnalysisSettingsNode);
+                entityAnalysisSettingsNode.fieldNames().forEachRemaining(childName -> {
+                    JsonNode specificChildNode = entityAnalysisSettingsNode.get(childName);
+                    JsonNode baseChildNode = mergedAnalysisSettingsNode.path(childName);
                     if (specificChildNode.isObject()) {
                         ObjectNode specificChildObjectNode = (ObjectNode) specificChildNode;
                         if (baseChildNode.isObject()) {
                             ((ObjectNode) baseChildNode).setAll(specificChildObjectNode);
                         } else {
-                            mergedAnalysisNode.set(childName, specificChildObjectNode);
+                            mergedAnalysisSettingsNode.set(childName, specificChildObjectNode);
                         }
                     }
                 });
 
-                JsonpMapper jsonpMapper = client._transport().jsonpMapper();
-                JsonProvider jsonProvider = jsonpMapper.jsonProvider();
-                try (StringReader reader = new StringReader(mergedAnalysisNode.toString())) {
-                    JsonParser parser = jsonProvider.createParser(reader);
-                    analysisSettings = IndexSettingsAnalysis._DESERIALIZER.deserialize(parser, jsonpMapper);
-                }
+                entityAnalysisSettings = deserializeAnalysisSettings(mergedAnalysisSettingsNode.toString());
             } else {
-                analysisSettings = commonAnalysisSettings;
+                entityAnalysisSettings = copyAnalysisSettings(commonAnalysisSettings);
             }
 
-            effectiveIndexSettings = new IndexSettings.Builder()
-                    .index(indexSettings)
-                    .analysis(analysisSettings)
+            /*
+            Create result index settings as combination of merged index and analysis settings
+             */
+            resultIndexSettings = new IndexSettings.Builder()
+                    .index(entityIndexSettings)
+                    .analysis(entityAnalysisSettings)
                     .build();
 
-            this.effectiveIndexSettings.put(entityClass, effectiveIndexSettings);
+            /*
+            Move content of the 'index' node (index settings) to the root level.
+            Both structures are valid during creation but response for index metadata request
+            contains settings on root level. So this 'movement' simplifies following settings comparison.
+             */
+            ObjectNode resultIndexSettingsNode = toObjectNode(resultIndexSettings);
+            JsonNode indexNode = resultIndexSettingsNode.path("index");
+            if (indexNode.isObject()) {
+                resultIndexSettingsNode.setAll((ObjectNode) indexNode);
+                resultIndexSettingsNode.remove("index");
+            }
+
+            resultIndexSettings = deserializeIndexSettings(resultIndexSettingsNode.toString());
+            this.effectiveIndexSettings.put(entityClass, resultIndexSettings);
         }
-        return effectiveIndexSettings;
+        return resultIndexSettings;
     }
 
     protected ElasticsearchIndexSettingsConfigurationContext configureContext() {
@@ -170,6 +167,43 @@ public class ElasticsearchIndexSettingsProvider {
                 customConfigurers.add(configurer);
             }
         });
+    }
+
+    protected IndexSettings copyIndexSettings(IndexSettings source) {
+        String serializedSource = serializeJsonpSerializable(source);
+        return deserializeIndexSettings(serializedSource);
+    }
+
+    protected IndexSettingsAnalysis copyAnalysisSettings(IndexSettingsAnalysis source) {
+        String serializedSource = serializeJsonpSerializable(source);
+        return deserializeAnalysisSettings(serializedSource);
+    }
+
+    protected String serializeJsonpSerializable(JsonpSerializable object) {
+        StringWriter stringWriter = new StringWriter();
+        JsonpMapper mapper = client._transport().jsonpMapper();
+        JsonGenerator generator = mapper.jsonProvider().createGenerator(stringWriter);
+        object.serialize(generator, mapper);
+        generator.close();
+        return stringWriter.toString();
+    }
+
+    protected IndexSettings deserializeIndexSettings(String serializedSettings) {
+        JsonpMapper jsonpMapper = client._transport().jsonpMapper();
+        JsonProvider jsonProvider = jsonpMapper.jsonProvider();
+        try (StringReader reader = new StringReader(serializedSettings)) {
+            JsonParser parser = jsonProvider.createParser(reader);
+            return IndexSettings._DESERIALIZER.deserialize(parser, jsonpMapper);
+        }
+    }
+
+    protected IndexSettingsAnalysis deserializeAnalysisSettings(String serializedSettings) {
+        JsonpMapper jsonpMapper = client._transport().jsonpMapper();
+        JsonProvider jsonProvider = jsonpMapper.jsonProvider();
+        try (StringReader reader = new StringReader(serializedSettings)) {
+            JsonParser parser = jsonProvider.createParser(reader);
+            return IndexSettingsAnalysis._DESERIALIZER.deserialize(parser, jsonpMapper);
+        }
     }
 
     // TODO extract to platform-specific utils

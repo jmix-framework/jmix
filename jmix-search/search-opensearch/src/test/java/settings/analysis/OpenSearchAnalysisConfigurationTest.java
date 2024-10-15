@@ -60,12 +60,12 @@ public class OpenSearchAnalysisConfigurationTest {
     public void testOpenSearchAnalysisConfiguration() {
         IndexSettings rootEntitySettings = configProvider.getSettingsForIndex(indexConfigurationManager.getIndexConfigurationByEntityName("test_RootEntity"));
 
-        Assert.assertTrue(rootEntitySettings.index().maxResultWindow() == 15000);
+        Assert.assertTrue(rootEntitySettings.maxResultWindow() == 15000);
 
         Assert.assertTrue(rootEntitySettings.analysis().analyzer().get("customized_standard").standard().maxTokenLength() == 150);
 
         IndexSettings rootEntityHDSettings = configProvider.getSettingsForIndex(indexConfigurationManager.getIndexConfigurationByEntityName("test_RootEntityHD"));
-        Assert.assertTrue(rootEntityHDSettings.index().maxRegexLength() == 2000);
+        Assert.assertTrue(rootEntityHDSettings.maxRegexLength() == 2000);
     }
 
 }

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
 
-@Component("flowUI_ExtendedClientDetailsProvider")
+@Component("flowui_ExtendedClientDetailsProvider")
 public class ExtendedClientDetailsProvider {
 
     @Nullable

@@ -16,6 +16,7 @@
 
 package io.jmix.pivottableflowui.component;
 
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.vaadin.flow.function.SerializableConsumer;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
@@ -28,6 +29,8 @@ import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
 import io.jmix.pivottableflowui.kit.component.model.AggregationMode;
 import io.jmix.pivottableflowui.kit.component.model.PivotTableOptions;
 import io.jmix.pivottableflowui.kit.component.model.Renderer;
+import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer;
+import io.jmix.pivottableflowui.serialization.PivotTableBooleanSerializer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -37,6 +40,7 @@ import org.springframework.lang.Nullable;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -63,6 +67,19 @@ public class PivotTable<T> extends JmixPivotTable<T> implements ApplicationConte
         autowireDependencies();
 
         initLocalization();
+    }
+
+    @Override
+    protected JmixPivotTableSerializer createSerializer() {
+        return new JmixPivotTableSerializer() {
+
+            @Override
+            protected List<StdSerializer<?>> getItemsSerializers() {
+                List<StdSerializer<?>> serializers = super.getItemsSerializers();
+                serializers.add(new PivotTableBooleanSerializer(key -> messages.getMessage(key)));
+                return serializers;
+            }
+        };
     }
 
     protected void requestPivotData(Consumer<PivotData> consumer) {

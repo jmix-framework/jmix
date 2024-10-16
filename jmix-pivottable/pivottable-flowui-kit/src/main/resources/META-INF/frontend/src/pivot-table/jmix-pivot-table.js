@@ -209,11 +209,11 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             "value-a-to-z": "key-a-to-z",
             "value-z-to-a": "value-a-to-z"
         };
-        jQuery(orderElementClassName).val("").html("");
+        this.$jQuery(orderElementClassName).val("").html("");
 
         let currentOrder = order.replace(/_/g, '-');
-        jQuery(orderElementClassName).removeClass(nextToCurrent[currentOrder]);
-        jQuery(orderElementClassName).addClass(currentOrder);
+        this.$jQuery(orderElementClassName).removeClass(nextToCurrent[currentOrder]);
+        this.$jQuery(orderElementClassName).addClass(currentOrder);
     }
 
     _onRendererChange() {
@@ -239,6 +239,9 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
                     options,
                     true,
                     pivotTable._options.localeCode);
+                if (pivotTable.disabled) {
+                    pivotTable._disableElements();
+                }
             })(this);
         }
     }
@@ -247,17 +250,17 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         super._disabledChanged(disabled);
 
         this._recreatePivot();
+    }
 
-        if (disabled) {
-            this.querySelectorAll('select').forEach(select => {
-              select.disabled = disabled;
-            });
+    _disableElements() {
+        this.querySelectorAll('select').forEach(select => {
+          select.disabled = true;
+        });
 
-            jQuery('.pvtAxisContainer').sortable('disable');
-            jQuery('span.pvtAttr, li.ui-sortable-handle').addClass('disabled');
+        this.$jQuery('.pvtAxisContainer').sortable('disable');
+        this.$jQuery('span.pvtAttr, li.ui-sortable-handle').addClass('disabled');
 
-            jQuery('a.pvtRowOrder, a.pvtColOrder').unbind("click").addClass('disabled');
-         }
+        this.$jQuery('a.pvtRowOrder, a.pvtColOrder').unbind("click").addClass('disabled');
     }
 
     _preparePivotTableOptions() {

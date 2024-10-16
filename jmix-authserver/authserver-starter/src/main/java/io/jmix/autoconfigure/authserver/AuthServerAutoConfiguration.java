@@ -199,7 +199,7 @@ public class AuthServerAutoConfiguration {
                     .cors(Customizer.withDefaults());
             JmixHttpSecurityUtils.configureAnonymous(http);
             AsResourceServerEventSecurityFilter asResourceServerEventSecurityFilter = new AsResourceServerEventSecurityFilter(applicationEventPublisher);
-            http.addFilterBefore(asResourceServerEventSecurityFilter, AuthorizationFilter.class);
+            http.addFilterAfter(asResourceServerEventSecurityFilter, AuthorizationFilter.class);
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }

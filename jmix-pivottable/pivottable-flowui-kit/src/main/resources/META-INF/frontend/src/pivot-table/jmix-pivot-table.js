@@ -295,6 +295,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             hiddenFromDragDrop: options.hiddenFromDragDrop,
             unusedAttrsVertical: options.unusedPropertiesVertical,
             autoSortUnusedAttrs: options.autoSortUnusedProperties,
+            menuLimit: options.menuLimit,
             rendererOptions: {
                 table: {
                     clickCallback: (function(pivotTable){

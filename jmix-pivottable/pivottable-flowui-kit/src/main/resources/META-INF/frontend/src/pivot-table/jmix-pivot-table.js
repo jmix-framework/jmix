@@ -80,7 +80,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             },
 
             /** @private */
-            _dataSet: {
+            _items: {
                 type: Object
             }
         };
@@ -185,7 +185,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         let itemsKeys = [];
         (function(pivotTable) {
             pivotData.forEachMatchingRecord(filters, function(record) {
-                let itemIndex = pivotTable._dataSet.indexOf(record);
+                let itemIndex = pivotTable._items.indexOf(record);
                 if (itemIndex >= 0) {
                     itemsKeys.push(pivotTable.itemIds[itemIndex]);
                 }
@@ -209,11 +209,11 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             "value-a-to-z": "key-a-to-z",
             "value-z-to-a": "value-a-to-z"
         };
-        jQuery(orderElementClassName).val("").html("");
+        this.$jQuery(orderElementClassName).val("").html("");
 
         let currentOrder = order.replace(/_/g, '-');
-        jQuery(orderElementClassName).removeClass(nextToCurrent[currentOrder]);
-        jQuery(orderElementClassName).addClass(currentOrder);
+        this.$jQuery(orderElementClassName).removeClass(nextToCurrent[currentOrder]);
+        this.$jQuery(orderElementClassName).addClass(currentOrder);
     }
 
     _onRendererChange() {
@@ -223,7 +223,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     _recreatePivot() {
         let outputDiv = this.$jQuery("div.pivot-table-output");
         if (this._options) {
-            if (!this._dataSet || Object.keys(this._dataSet).length == 0) {
+            if (!this._items || Object.keys(this._items).length == 0) {
                 outputDiv.html(this._options.emptyDataMessage);
                 return;
             }
@@ -235,10 +235,13 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
                 let showUI = pivotTable._options.showUI;
                 options.showUI = showUI;
                 let showPivotFunction = showUI ? outputDiv.pivotUI : outputDiv.pivot;
-                showPivotFunction.call(outputDiv, pivotTable._dataSet,
+                showPivotFunction.call(outputDiv, pivotTable._items,
                     options,
                     true,
                     pivotTable._options.localeCode);
+                if (pivotTable.disabled) {
+                    pivotTable._disableElements();
+                }
             })(this);
         }
     }
@@ -247,17 +250,17 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         super._disabledChanged(disabled);
 
         this._recreatePivot();
+    }
 
-        if (disabled) {
-            this.querySelectorAll('select').forEach(select => {
-              select.disabled = disabled;
-            });
+    _disableElements() {
+        this.querySelectorAll('select').forEach(select => {
+          select.disabled = true;
+        });
 
-            jQuery('.pvtAxisContainer').sortable('disable');
-            jQuery('span.pvtAttr, li.ui-sortable-handle').addClass('disabled');
+        this.$jQuery('.pvtAxisContainer').sortable('disable');
+        this.$jQuery('span.pvtAttr, li.ui-sortable-handle').addClass('disabled');
 
-            jQuery('a.pvtRowOrder, a.pvtColOrder').unbind("click").addClass('disabled');
-         }
+        this.$jQuery('a.pvtRowOrder, a.pvtColOrder').unbind("click").addClass('disabled');
     }
 
     _preparePivotTableOptions() {
@@ -292,6 +295,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             hiddenFromDragDrop: options.hiddenFromDragDrop,
             unusedAttrsVertical: options.unusedPropertiesVertical,
             autoSortUnusedAttrs: options.autoSortUnusedProperties,
+            menuLimit: options.menuLimit,
             rendererOptions: {
                 table: {
                     clickCallback: (function(pivotTable){
@@ -340,7 +344,10 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     }
 
     _initLocale() {
-
+        if (!this._options.localizedStrings) {
+            this._options.localizedStrings = this._createDefaultLocalizedStrings();
+            this._options.localeCode = "en";
+        }
         let formatFloat, formatInt, formatPercent, numberFormat, aggregatorTemplates;
         numberFormat = this.$jQuery.pivotUtilities.numberFormat;
         aggregatorTemplates = this.$jQuery.pivotUtilities.aggregatorTemplates;
@@ -437,6 +444,86 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             aggregatorsLocaleMapping: localizedStrings.aggregation,
             renderersLocaleMapping: localizedStrings.renderer
         };
+    }
+
+    _createDefaultLocalizedStrings() {
+        return {
+            "floatFormat": {
+               "decimalSep": ".",
+               "digitsAfterDecimal": "2",
+               "showZero": "false",
+               "scaler": "1",
+               "prefix": "",
+               "suffix": "",
+               "thousandsSep": ","
+           },
+           "integerFormat": {
+               "decimalSep": ".",
+               "digitsAfterDecimal": "0",
+               "showZero": "false",
+               "scaler": "1",
+               "prefix": "",
+               "suffix": "",
+               "thousandsSep": ","
+           },
+           "percentFormat": {
+               "decimalSep": ".",
+               "digitsAfterDecimal": "1",
+               "showZero": "false",
+               "scaler": "100",
+               "prefix": "",
+               "suffix": "%",
+               "thousandsSep": ","
+           },
+           "percentFormat.suffix": "%",
+           "renderError": "An error occurred rendering the PivotTable results.",
+           "computeError": "An error occurred computing the PivotTable results.",
+           "uiRenderError": "An error occurred rendering the PivotTable UI.",
+           "selectAll": "Select all",
+           "selectNone": "Select none",
+           "apply": "Apply",
+           "cancel": "Cancel",
+           "tooMany": "(too many to list)",
+           "filterResults": "Filter results",
+           "totals": "Totals",
+           "vs": "vs",
+           "by": "by",
+           "aggregation": {
+               "count": "Count",
+               "countUniqueValues": "Count unique values",
+               "listUniqueValues": "List unique values",
+               "sum": "Sum",
+               "integerSum": "Integer sum",
+               "average": "Average",
+               "minimum": "Minimum",
+               "maximum": "Maximum",
+               "sumOverSum": "Sum over sum",
+               "upperBound80": "80% Upper bound",
+               "lowerBound80": "80% Lower bound",
+               "sumAsFractionOfTotal": "Sum as fraction of total",
+               "sumAsFractionOfRows": "Sum as fraction of rows",
+               "sumAsFractionOfColumns": "Sum as fraction of columns",
+               "countAsFractionOfTotal": "Count as fraction of total",
+               "countAsFractionOfRows": "Count as fraction of rows",
+               "countAsFractionOfColumns": "Count as fraction of columns"
+           },
+           "renderer": {
+               "table": "Table",
+               "tableBarchart": "Table barchart",
+               "heatmap": "Heatmap",
+               "rowHeatmap": "Row heatmap",
+               "colHeatmap": "Col heatmap",
+               "lineChart": "Line chart",
+               "barChart": "Bar chart",
+               "stackedBarChart": "Stacked bar chart",
+               "horizontalBarChart": "Horizontal bar chart",
+               "horizontalStackedBarChart": "Horizontal stacked bar chart",
+               "areaChart": "Area chart",
+               "scatterChart": "Scatter chart",
+               "treemap": "Treemap",
+               "TSVExport": "TSV export"
+           }
+       }
     }
 
     _getAggregationOptions() {
@@ -605,11 +692,11 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         this._recreatePivot();
     }
 
-    _updateDataSet(changes) {
-        this._dataSet = changes.dataSet;
+    _updateItems(changes) {
+        this._items = changes.items;
         this.itemIds = [];
-        if (changes.dataSet) {
-            changes.dataSet.forEach(value => {
+        if (changes.items) {
+            changes.items.forEach(value => {
                 this.itemIds.push(value.$k);
                 delete value.$k;
             });

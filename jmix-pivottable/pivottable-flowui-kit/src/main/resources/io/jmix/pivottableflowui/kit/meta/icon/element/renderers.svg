@@ -1,0 +1,6 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="3" y1="14" x2="3" y2="6" stroke="#9AA7B0" stroke-width="2"/>
+    <line x1="12" y1="14" x2="12" y2="4" stroke="#9AA7B0" stroke-width="2"/>
+    <path d="M9 14V10" stroke="#9AA7B0" stroke-width="2"/>
+    <line x1="6" y1="14" x2="6" y2="2" stroke="#9AA7B0" stroke-width="2"/>
+</svg>

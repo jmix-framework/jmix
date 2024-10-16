@@ -16,7 +16,9 @@
 
 package io.jmix.pivottableflowui.kit.meta;
 
-public interface NamedPropertyValue {
+interface StudioPivotTableProperty {
 
-    void setValue(String value);
+    void setName(String name);
+
+    void setLocalizedName(String localizedName);
 }

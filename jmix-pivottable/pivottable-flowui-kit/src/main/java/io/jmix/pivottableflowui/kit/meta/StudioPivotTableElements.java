@@ -112,7 +112,7 @@ public interface StudioPivotTableElements {
             xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/element/row.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING, required = true)
+                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.LOCALIZED_STRING, required = true)
             }
     )
     void row();
@@ -125,7 +125,7 @@ public interface StudioPivotTableElements {
             xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/element/column.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING, required = true)
+                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.LOCALIZED_STRING, required = true)
             }
     )
     void column();

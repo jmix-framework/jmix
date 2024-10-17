@@ -129,10 +129,16 @@ public class ElasticsearchIndexSettingsProvider {
             /*
             Create result index settings as combination of merged index and analysis settings
              */
-            resultIndexSettings = new IndexSettings.Builder()
-                    .index(entityIndexSettings)
-                    .analysis(entityAnalysisSettings)
-                    .build();
+            IndexSettings.Builder resultBuilder = new IndexSettings.Builder().index(entityIndexSettings);
+
+            /*
+            Do not add analysis if they are empty.
+            */
+            if (!toObjectNode(entityAnalysisSettings).isEmpty()) {
+                resultBuilder.analysis(entityAnalysisSettings);
+            }
+
+            resultIndexSettings = resultBuilder.build();
 
             /*
             Move content of the 'index' node (index settings) to the root level.

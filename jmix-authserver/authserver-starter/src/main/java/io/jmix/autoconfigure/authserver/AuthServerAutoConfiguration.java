@@ -197,7 +197,10 @@ public class AuthServerAutoConfiguration {
                                     .introspector(opaqueTokenIntrospector)))
                     .csrf(csrf -> csrf.disable())
                     .cors(Customizer.withDefaults());
+
             JmixHttpSecurityUtils.configureAnonymous(http);
+            JmixHttpSecurityUtils.configureFrameOptions(http);
+
             AsResourceServerEventSecurityFilter asResourceServerEventSecurityFilter = new AsResourceServerEventSecurityFilter(applicationEventPublisher);
             http.addFilterAfter(asResourceServerEventSecurityFilter, AuthorizationFilter.class);
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);

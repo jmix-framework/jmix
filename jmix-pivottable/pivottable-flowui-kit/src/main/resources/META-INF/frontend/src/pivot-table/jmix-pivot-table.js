@@ -165,15 +165,43 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             aggregation = this._options.aggregation.mode;
         }
 
+        
+        let reflectedProperties = {};
+        if (this._options.properties) {
+            for (let property in this._options.properties) {
+                reflectedProperties[this._options.properties[property]] = property;
+            }
+        }
+
+        function reflectProperties(properties, reflectedProperties) {
+            let result = [];
+            if (properties) {
+                for (let i = 0; i < properties.length; i++) {
+                    result[i] = reflectedProperties[properties[i]];
+                }
+            }
+            return result;                    
+        };
+        
+        function reflectMapProperties(properties, reflectedProperties) {
+            let result = {};
+            if (properties) {
+                for (let property in properties) {
+                    result[reflectedProperties[property]] = properties[property];
+                }
+            }
+            return result;
+        };
+
         const customEvent = new CustomEvent('jmix-pivottable:refresh', {
             detail: {
-                rows: pivotState.rows,
-                columns: pivotState.cols,
+                rows: reflectProperties(pivotState.rows, reflectedProperties),
+                columns: reflectProperties(pivotState.cols, reflectedProperties),
                 renderer: renderer,
                 aggregationMode: aggregation,
-                aggregationProperties: pivotState.vals,
-                inclusions: pivotState.inclusions,
-                exclusions: pivotState.exclusions,
+                aggregationProperties: reflectProperties(pivotState.vals, reflectedProperties),
+                inclusions: reflectMapProperties(pivotState.inclusions, reflectedProperties),
+                exclusions: reflectMapProperties(pivotState.exclusions, reflectedProperties),
                 rowOrder: pivotState.rowOrder,
                 columnOrder: pivotState.colOrder
             }
@@ -274,16 +302,16 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
                 };
             })(this),
             showUI: options.showUI,
-            rows: options.rows,
-            cols: options.columns,
+            rows: this._localizeProperties(options.rows),
+            cols: this._localizeProperties(options.columns),
             colOrder: options.columnOrder,
             rowOrder: options.rowOrder,
             aggregatorName: aggregationOptions.aggregatorName,
             aggregator: aggregationOptions.aggregator,
             aggregators: aggregationOptions.aggregators,
-            vals: options.aggregationProperties,
-            exclusions: options.exclusions,
-            inclusions: options.inclusions,
+            vals: this._localizeProperties(options.aggregationProperties),
+            exclusions: this._localizeMapProperties(options.exclusions),
+            inclusions: this._localizeMapProperties(options.inclusions),
             rendererName: renderOptions.rendererName,
             renderers: renderOptions.renderers,
             renderer: renderOptions.renderer,
@@ -579,7 +607,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
                 } else {
                     let aggregator = allAggregators[localeMapping[this._options.aggregation.mode]];
                     if (this._options.aggregation.properties) {
-                        aggregator = aggregator(this._options.aggregation.properties);
+                        aggregator = aggregator(this._localizeProperties(this._options.aggregation.properties));
                     } else {
                         aggregator = aggregator();
                     }
@@ -601,6 +629,31 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         }
 
         return aggregationOptions;
+    }
+
+    _localizeProperties(properties) {
+        let localizedProperties = [];
+        if (properties) {
+            for (let i = 0; i < properties.length; i++) {
+                localizedProperties[i] = this._options.properties != null && this._options.properties.hasOwnProperty(properties[i]) 
+                    ? this._options.properties[properties[i]] 
+                    : properties[i];
+            }
+        }
+        return localizedProperties;
+    }
+
+    _localizeMapProperties(properties) {
+        let localizedProperties = {};
+        if (properties) {
+            for (let property in properties) {
+                let localizedProperty = this._options.properties != null && this._options.properties.hasOwnProperty(property) 
+                    ? this._options.properties[property] 
+                    : property;
+                localizedProperties[localizedProperty] = properties[property];
+            }
+        }
+        return localizedProperties;
     }
 
     _getLocalizedAttributes(attributes) {

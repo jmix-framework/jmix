@@ -25,16 +25,13 @@ import io.jmix.pivottableflowui.kit.component.model.Aggregation;
 import io.jmix.pivottableflowui.kit.component.model.AggregationMode;
 import io.jmix.pivottableflowui.kit.component.model.Order;
 import io.jmix.pivottableflowui.kit.component.model.Renderer;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.lang.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("pvttbl_PivotTableSettingsBinder")
-public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTable, PivotTableSettings> {
+public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTable<?>, PivotTableSettings> {
 
     @Override
     public Class<? extends Component> getComponentClass() {
@@ -51,14 +48,9 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
     }
 
     @Override
-    public void applySettings(PivotTable component, PivotTableSettings settings) {
-        if (CollectionUtils.isNotEmpty(settings.getRows())) {
-            component.setRows(getLocalizedPropertiesByNames(settings.getRows(), component.getProperties()));
-        }
-
-        if (CollectionUtils.isNotEmpty(settings.getCols())) {
-            component.setColumns(getLocalizedPropertiesByNames(settings.getCols(), component.getProperties()));
-        }
+    public void applySettings(PivotTable<?> component, PivotTableSettings settings) {
+        component.setRows(settings.getRows());
+        component.setColumns(settings.getCols());
 
         if (!Strings.isNullOrEmpty(settings.getRendererName())) {
             if (component.getRenderers() != null) {
@@ -82,52 +74,26 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
             }
         }
 
-        if (CollectionUtils.isNotEmpty(settings.getAggregationProperties())) {
-            component.setAggregationProperties(getLocalizedPropertiesByNames(
-                    settings.getAggregationProperties(), component.getProperties()));
-        }
-
-        if (settings.getInclusions() != null && !settings.getInclusions().isEmpty()) {
-            component.setInclusions(changePropertiesToLocalizedNamesWithValues(
-                    settings.getInclusions(), component.getProperties()));
-        }
-
-        if (settings.getExclusions() != null && !settings.getExclusions().isEmpty()) {
-            component.setExclusions(changePropertiesToLocalizedNamesWithValues(
-                    settings.getExclusions(), component.getProperties()));
-        }
+        component.setAggregationProperties(settings.getAggregationProperties());
+        component.setInclusions(settings.getInclusions());
+        component.setExclusions(settings.getExclusions());
 
         component.setRowOrder(Order.fromId(settings.getRowOrder()));
         component.setColumnOrder(Order.fromId(settings.getColOrder()));
     }
 
-    @Nullable
-    private List<String> getLocalizedPropertiesByNames(@Nullable List<String> propertiesNames,
-                                                       Map<String, String> propertyToLocalizedName) {
-        return propertiesNames != null ? propertiesNames.stream().map(propertyToLocalizedName::get).toList() : null;
-    }
-
-    @Nullable
-    private List<String> getPropertiesByLocalizedNames(@Nullable List<String> localizedProperties,
-                                                       Map<String, String> localizedNameToProperty) {
-        return localizedProperties != null
-                ? localizedProperties.stream().map(localizedNameToProperty::get).toList()
-                : null;
-    }
-
     @Override
-    public boolean saveSettings(PivotTable component, PivotTableSettings settings) {
-        Map<String, String> localizedNameToProperty = reflectProperties(component.getProperties());
+    public boolean saveSettings(PivotTable<?> component, PivotTableSettings settings) {
         boolean changed = false;
 
-        List<String> rowProperties = getPropertiesByLocalizedNames(component.getRows(), localizedNameToProperty);
-        if (!listsEqual(rowProperties, settings.getRows())) {
+        List<String> rowProperties = component.getRows();
+        if (listsNotEqual(rowProperties, settings.getRows())) {
             settings.setRows(rowProperties);
             changed = true;
         }
 
-        List<String> colProperties = getPropertiesByLocalizedNames(component.getColumns(), localizedNameToProperty);
-        if (!listsEqual(colProperties, settings.getCols())) {
+        List<String> colProperties = component.getColumns();
+        if (listsNotEqual(colProperties, settings.getCols())) {
             settings.setCols(colProperties);
             changed = true;
         }
@@ -156,23 +122,20 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
             changed = true;
         }
 
-        List<String> aggregationProperties = getPropertiesByLocalizedNames(
-                component.getAggregationProperties(), localizedNameToProperty);
-        if (!listsEqual(aggregationProperties, settings.getAggregationProperties())) {
+        List<String> aggregationProperties = component.getAggregationProperties();
+        if (listsNotEqual(aggregationProperties, settings.getAggregationProperties())) {
             settings.setAggregationProperties(aggregationProperties);
             changed = true;
         }
 
-        Map<String, List<String>> inclusions = changeLocalizedNamesToPropertiesWithValues(
-                component.getInclusions(), localizedNameToProperty);
-        if (!mapsEqual(inclusions, settings.getInclusions())) {
+        Map<String, List<String>> inclusions = component.getInclusions();
+        if (mapsNotEqual(inclusions, settings.getInclusions())) {
             settings.setInclusions(inclusions);
             changed = true;
         }
 
-        Map<String, List<String>> exclusions = changeLocalizedNamesToPropertiesWithValues(
-                component.getExclusions(), localizedNameToProperty);
-        if (!mapsEqual(exclusions, settings.getExclusions())) {
+        Map<String, List<String>> exclusions = component.getExclusions();
+        if (mapsNotEqual(exclusions, settings.getExclusions())) {
             settings.setExclusions(exclusions);
             changed = true;
         }
@@ -190,70 +153,34 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
         return changed;
     }
 
-    private Map<String, String> reflectProperties(Map<String, String> properties) {
-        return properties.entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (key1, key2) -> {
-                    throw new IllegalStateException("Duplicate localized name with keys: " + key1 + ", " + key2);
-                }));
-    }
-
-    @Nullable
-    private Map<String, List<String>> changeLocalizedNamesToPropertiesWithValues(
-            @Nullable Map<String, List<String>> localizedPropertyToValues,
-            Map<String, String> localizedNameToProperty) {
-        if (localizedPropertyToValues == null) {
-            return null;
-        }
-        Map<String, List<String>> propertyToValues = new HashMap<>();
-        for (Map.Entry<String, List<String>> localizedEntry : localizedPropertyToValues.entrySet()) {
-            propertyToValues.put(localizedNameToProperty.get(localizedEntry.getKey()), localizedEntry.getValue());
-        }
-        return propertyToValues;
-    }
-
-    @Nullable
-    private Map<String, List<String>> changePropertiesToLocalizedNamesWithValues(
-            @Nullable Map<String, List<String>> propertyWithValues, Map<String, String> propertyToLocalizedName) {
-        if (propertyWithValues == null) {
-            return null;
-        }
-
-        Map<String, List<String>> propertyToValues = new HashMap<>();
-        for (Map.Entry<String, List<String>> localizedEntry : propertyWithValues.entrySet()) {
-            propertyToValues.put(propertyToLocalizedName.get(localizedEntry.getKey()), localizedEntry.getValue());
-        }
-        return propertyToValues;
-    }
-
-    protected boolean listsEqual(@Nullable List<String> componentProperties,
-                                 @Nullable List<String> settingsProperties) {
+    protected boolean listsNotEqual(@Nullable List<String> componentProperties,
+                                    @Nullable List<String> settingsProperties) {
         if (componentProperties == null && settingsProperties == null) {
-            return true;
+            return false;
         } else if (componentProperties != null) {
-            return componentProperties.equals(settingsProperties);
+            return !componentProperties.equals(settingsProperties);
         }
-        return false;
+        return true;
     }
 
-    protected boolean mapsEqual(@Nullable Map<String, List<String>> componentProperties,
-                                @Nullable Map<String, List<String>> settingsProperties) {
+    protected boolean mapsNotEqual(@Nullable Map<String, List<String>> componentProperties,
+                                   @Nullable Map<String, List<String>> settingsProperties) {
         if (componentProperties == null && settingsProperties == null) {
-            return true;
+            return false;
         } else if (componentProperties != null && settingsProperties != null &&
                 componentProperties.keySet().equals(settingsProperties.keySet())) {
             for (Map.Entry<String, List<String>> entry : componentProperties.entrySet()) {
-                if (entry.getValue() != null && !listsEqual(entry.getValue(), settingsProperties.get(entry.getKey()))) {
-                    return false;
+                if (entry.getValue() != null && listsNotEqual(entry.getValue(), settingsProperties.get(entry.getKey()))) {
+                    return true;
                 }
             }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     @Override
-    public PivotTableSettings getSettings(PivotTable component) {
+    public PivotTableSettings getSettings(PivotTable<?> component) {
         PivotTableSettings settings = createSettings();
         settings.setId(component.getId().orElse(null));
 

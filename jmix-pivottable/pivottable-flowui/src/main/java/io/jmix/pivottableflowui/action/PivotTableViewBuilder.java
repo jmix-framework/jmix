@@ -529,12 +529,12 @@ public class PivotTableViewBuilder {
 
         View<?> targetView = UiComponentUtils.getView((com.vaadin.flow.component.Component) target);
 
-        Map<String, String> properties = getPropertiesWithLocale();
+        PivotTableOptions pivotTableOptions = getPivotTableOptions();
+        pivotTableOptions.setProperties(getPropertiesWithLocale());
         viewNavigators.view(targetView, PivotTableView.class)
                 .withAfterNavigationHandler(event -> {
                     PivotTableView pivotTableView = event.getView();
-                    pivotTableView.setProperties(properties);
-                    pivotTableView.setPivotTableOptions(options);
+                    pivotTableView.setPivotTableOptions(pivotTableOptions);
                     pivotTableView.setDataItems(items == null ? Collections.emptyList() : items);
                 })
                 .navigate();

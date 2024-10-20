@@ -17,7 +17,6 @@
 package io.jmix.pivottableflowui.action;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.action.ActionType;
@@ -40,7 +39,7 @@ import java.util.*;
  * When the action executes, the pivot table shows data from the component that implements {@link ListDataComponent}.
  */
 @ActionType(ShowPivotTableAction.ID)
-public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTableAction, Entity>
+public class ShowPivotTableAction<E> extends ListDataComponentAction<ShowPivotTableAction<E>, E>
         implements ApplicationContextAware {
 
     public static final String ID = "pvttbl_showPivotTable";

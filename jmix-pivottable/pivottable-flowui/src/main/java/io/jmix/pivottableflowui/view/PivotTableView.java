@@ -34,21 +34,21 @@ import org.hibernate.validator.constraints.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Map;
 
 @Route(value = "pivot-table-view")
 @ViewController("PivotTableView")
 @ViewDescriptor("pivot-table-view.xml")
 public class PivotTableView extends StandardView {
 
-    @ViewComponent
-    protected PivotTable<?> pivotTable;
-    @ViewComponent
-    protected JmixButton exportExcel;
     @Autowired
     protected Downloader downloader;
     @Autowired
     protected Messages messages;
+
+    @ViewComponent
+    protected PivotTable<Object> pivotTable;
+    @ViewComponent
+    protected JmixButton exportExcel;
 
     protected PivotTableExporter pivotTableExporter;
 
@@ -58,14 +58,8 @@ public class PivotTableView extends StandardView {
         pivotTableExporter = new PivotTableExporterImpl(pivotTable, excelExporter);
     }
 
-    public void setProperties(Map<String, String> properties) {
-        pivotTable.addProperties(properties);
-
-        pivotTable.addColumns(properties.values().toArray(new String[0]));
-    }
-
     public void setDataItems(List<Object> items) {
-        pivotTable.setItems(new ListPivotTableItems("id", UUID.class, items));
+        pivotTable.setItems(new ListPivotTableItems<>("id", UUID.class, items));
     }
 
     @Subscribe(id = "exportExcel", subject = "clickListener")

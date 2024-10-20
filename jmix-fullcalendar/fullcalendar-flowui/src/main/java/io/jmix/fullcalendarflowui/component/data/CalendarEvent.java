@@ -326,7 +326,7 @@ public interface CalendarEvent {
     Map<String, Object> getAdditionalProperties();
 
     /**
-     * Specifies the days of the week this event repeats. If omitted, the event is assumed to repeat every day.
+     * Specifies the days of the week on which this event repeats. If omitted, the event is assumed to repeat every day.
      *
      * @return the days of the week this event repeats or {@code null} if not set
      */

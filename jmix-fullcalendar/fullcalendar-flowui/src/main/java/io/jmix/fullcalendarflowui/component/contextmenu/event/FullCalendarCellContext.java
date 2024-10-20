@@ -42,8 +42,9 @@ public class FullCalendarCellContext {
      * @return calendar event if context menu is invoked from an event
      */
     @Nullable
-    public CalendarEvent getCalendarEvent() {
-        return calendarEvent;
+    @SuppressWarnings("unchecked")
+    public <T extends CalendarEvent> T getCalendarEvent() {
+        return (T) calendarEvent;
     }
 
     /**

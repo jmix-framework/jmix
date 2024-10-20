@@ -27,10 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.transformToZDT;
 
@@ -132,13 +129,14 @@ public class JmixFullCalendarSerializer extends AbstractFullCalendarSerializer {
         return jsonArray;
     }
 
+    /**
+     * Serializes local date-time without time zone. It is considered that local date-time instances
+     * are already in component's time zone.
+     *
+     * @param dateTime date-time to serialize
+     * @return ISO representation of date-time
+     */
     public String serializeDateTime(LocalDateTime dateTime) {
-        String rawDateTime;
-        try {
-            rawDateTime = objectMapper.writeValueAsString(transformToZDT(dateTime, null));
-        } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Cannot serialize date time value: " + dateTime, e);
-        }
-        return rawDateTime.replaceAll("\"", "");
+        return Objects.requireNonNull(dateTime).toString();
     }
 }

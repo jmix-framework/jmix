@@ -22,6 +22,7 @@ import jakarta.annotation.Nullable;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.*;
 
@@ -128,6 +129,12 @@ public class JmixFullCalendarOptions {
 
     public Collection<CalendarOption> getInitialOptions() {
         return initialOptionsMap.values();
+    }
+
+    public Collection<CalendarOption> getAllOptions() {
+        return Stream.of(getInitialOptions(), getUpdatableOptions())
+                .flatMap(Collection::stream)
+                .toList();
     }
 
     public List<CalendarOption> getDirtyOptions() {

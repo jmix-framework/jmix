@@ -7,13 +7,13 @@ import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonArray;
-import elemental.json.JsonFactory;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.fullcalendarflowui.component.contextmenu.FullCalendarContextMenu;
 import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.model.Display;
 import io.jmix.fullcalendarflowui.component.data.*;
@@ -62,6 +62,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected Messages messages;
 
     protected Map<String, AbstractDataProviderManager> dataProvidersMap = new HashMap<>(2);
+    protected Set<AbstractDataProviderManager> pendingDataProviders = new HashSet<>(2);
 
     protected Function<MoreLinkClassNamesContext, List<String>> linkMoreClassNamesGenerator;
     protected Function<DayHeaderClassNamesContext, List<String>> dayHeaderClassNamesGenerator;
@@ -76,6 +77,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     protected FullCalendarI18n defaultI18n;
     protected FullCalendarI18n explicitI18n;
+
+    protected FullCalendarContextMenu contextMenu;
 
     @Override
     public void afterPropertiesSet() {
@@ -148,6 +151,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         if (initialized) {
             addDataProviderInternal(dataProviderManager);
+        } else {
+            pendingDataProviders.add(dataProviderManager);
         }
     }
 
@@ -171,10 +176,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         if (initialized) {
             addDataProviderInternal(dataProviderManager);
-
-            if (dataProvider.getItems().isEmpty()) {
-                requestUpdateItemDataProvider(dataProvider.getId());
-            }
+        } else {
+            pendingDataProviders.add(dataProviderManager);
         }
     }
 
@@ -853,7 +856,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     /**
      * Sets bottom text class names generator. Note, the generator will be invoked only if cell's bottom text is not
-     * null.
+     * {@code null}.
      *
      * @param dayCellBottomTextClassNamesGenerator the generator to set
      * @see #setDayCellBottomTextClassNamesGenerator(Function)
@@ -863,6 +866,16 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         this.dayCellBottomTextClassNamesGenerator = dayCellBottomTextClassNamesGenerator;
 
         options.getDayCellBottomText().setClassNamesGeneratorEnabled(dayCellBottomTextClassNamesGenerator != null);
+    }
+
+    /**
+     * @return context menu instance attached to the component
+     */
+    public FullCalendarContextMenu getContextMenu() {
+        if (contextMenu == null) {
+            contextMenu = new FullCalendarContextMenu(this);
+        }
+        return contextMenu;
     }
 
     @Override
@@ -919,6 +932,13 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         log.debug("Perform add data provider");
 
         getElement().callJsFunction(dataProviderManager.getJsFunctionName(), dataProviderManager.getSourceId());
+
+        if (dataProviderManager instanceof ItemsDataProviderManager itemsDataProviderManager) {
+            ItemsCalendarDataProvider dataProvider = itemsDataProviderManager.getDataProvider();
+            if (!dataProvider.getItems().isEmpty()) {
+                requestUpdateItemDataProvider(dataProvider.getId());
+            }
+        }
     }
 
     protected void onItemSetChangeListener(ItemsCalendarDataProvider.ItemSetChangeEvent event) {
@@ -1661,17 +1681,23 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     @Override
-    protected void addDataProvidersOnAttach() {
-        // Add all data providers using beforeClientResponse to respect the
-        // order of calling requests from onAttach.
-        getUI().ifPresent(ui ->
-                ui.beforeClientResponse(this, (context) ->
-                        dataProvidersMap.values().forEach(this::addDataProviderInternal)));
+    protected void onCompleteInitialization() {
+        super.onCompleteInitialization();
 
-        dataProvidersMap.values().forEach(dataProviderManager -> {
-            if (dataProviderManager instanceof ItemsDataProviderManager) {
-                requestUpdateItemDataProvider(dataProviderManager.getDataProvider().getId());
-            }
+        // If data providers were added in period after calling onAttach()
+        // and before onCompleteInitialization(). For instance, in ReadyEvent of View.
+        if (!pendingDataProviders.isEmpty()) {
+            pendingDataProviders.forEach(this::addDataProviderInternal);
+            pendingDataProviders.clear();
+        }
+    }
+
+    @Override
+    protected void addDataProvidersOnAttach() {
+        getUI().ifPresent(ui -> {
+            ui.beforeClientResponse(this, (context) -> {
+                dataProvidersMap.values().forEach(this::addDataProviderInternal);
+            });
         });
     }
 }

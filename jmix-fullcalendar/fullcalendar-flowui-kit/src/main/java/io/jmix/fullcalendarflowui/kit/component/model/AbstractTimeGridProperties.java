@@ -235,7 +235,7 @@ public abstract class AbstractTimeGridProperties extends AbstractCalendarDisplay
     }
 
     /**
-     * Determines if timed events should visually overlap.
+     * Determines if timed events should visually overlap each other.
      * <p>
      * The default value is {@code true}.
      *

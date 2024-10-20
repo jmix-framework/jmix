@@ -28,7 +28,7 @@ import java.util.TimeZone;
  * The {@link #onItemsFetch(ItemsFetchContext)} is called in the following cases:
  * <ul>
  *     <li>
- *         When the user switches to the calendar display mode that has wider date range than previous one.
+ *         When the user switches to a calendar display mode that has wider date range than the previous one.
  *     </li>
  *     <li>
  *         When {@link FullCalendar}'s navigation methods are invoked, e.g. {@link FullCalendar#navigateToNext()}.
@@ -95,6 +95,9 @@ public interface CallbackCalendarDataProvider extends CalendarDataProvider {
         /**
          * The return date is the right border of the visible range in the component. This date corresponds to the
          * component's time zone {@link FullCalendar#getTimeZone()}, as if it were a date-time object with zero time.
+         * <p>
+         * Note that this value is exclusive. For instance, if the visible range is {@code 2024-09-29 - 2024-11-09} the
+         * end date will be {@code 2024-11-10}.
          *
          * @return right border of visible range in calendar
          */

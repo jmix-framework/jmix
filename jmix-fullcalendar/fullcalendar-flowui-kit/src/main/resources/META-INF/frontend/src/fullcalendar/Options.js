@@ -27,112 +27,19 @@ const DAY_MAX_EVENT_ROWS = 'dayMaxEventRows';
 const DAY_MAX_EVENTS = 'dayMaxEvents';
 const EVENT_ORDER = 'eventOrder';
 
-export function processInitialOptions(serverOptions) {
-    const options = serverOptions;
-    if (!serverOptions) {
-        return {};
-    }
-
-    const views = serverOptions[VIEWS];
-    if (views) {
-        options[VIEWS] = processViews(views);
-    }
-    const unselectCancel = serverOptions[UNSELECT_CANCEL];
-    if (!unselectCancel) {
-        delete options[UNSELECT_CANCEL];
-    }
-
-    for (const property in options) {
-        const value = options[property];
-        if (value === null || value === undefined) {
-            delete options[property];
-        }
-    }
-
-    return options;
-}
-
-function processViews(viewsObject) {
-    for (let view in viewsObject) {
-        if (view === 'customCalendarDisplayModes') {
-            continue;
-        }
-        if (view === 'listDay'
-            || view === 'listWeek'
-            || view === 'listMonth'
-            || view === 'listYear') {
-            viewsObject[view] = processListView(viewsObject[view]);
-            continue;
-        }
-        if (view === 'timeGridDay'
-            || view === 'timeGridWeek') {
-            viewsObject[view] = processTimeGrid(viewsObject[view]);
-            continue;
-        }
-        viewsObject[view] = {...viewsObject[view], ...viewsObject[view].properties && {...viewsObject[view].properties}};
-        viewsObject[view] = utils.deleteNullProperties(viewsObject[view]);
-        delete viewsObject[view].properties;
-    }
-
-    if (viewsObject.customCalendarDisplayModes) {
-        for (const view of viewsObject.customCalendarDisplayModes) {
-            viewsObject[view.displayMode] = {
-                type: view.baseDisplayMode,
-                ...(view.dayCount) && {dayCount: view.dayCount},
-                ...(view.duration) && {duration: view.duration},
-                ...view.properties && {...view.properties}
-            };
-        }
-    }
-    delete viewsObject.customCalendarDisplayModes;
-
-    return viewsObject;
-}
-
-function processListView(listView) {
-    let newListView = {...listView, ...listView.properties && {...listView.properties}};
-
-    // Delete null properties and 'properties' property
-    newListView = utils.deleteNullProperties(newListView);
-    delete newListView.properties;
-
-    // Handle listDayFormat
-    if (newListView.listDayVisible === false) {
-        newListView.listDayFormat = false;
-        delete newListView.listDayVisible;
-    }
-
-    // Handle listDaySideFormat
-    if (newListView.listDaySideVisible === false) {
-        newListView.listDaySideFormat = false;
-        delete newListView.listDaySideVisible;
-    }
-
-    return newListView;
-}
-
-function processTimeGrid(timeGridView) {
-    let newTimeGridView = {...timeGridView, ...timeGridView.properties && {...timeGridView.properties}};
-
-    // Delete null properties and 'properties' property
-    newTimeGridView = utils.deleteNullProperties(newTimeGridView);
-    delete newTimeGridView.properties;
-
-    // Handle allDaySlot
-    if (utils.isNotNullUndefined(newTimeGridView.allDaySlotVisible)) {
-        newTimeGridView.allDaySlot = newTimeGridView.allDaySlotVisible;
-        delete newTimeGridView.allDaySlotVisible;
-    }
-
-    return newTimeGridView;
-}
+const COMPLEX_OPTIONS = [MORE_LINK_CLICK, MORE_LINK_CLASS_NAMES, UNSELECT_CANCEL, DAY_HEADER_CLASS_NAMES,
+    DAY_CELL_CLASS_NAMES, SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES, NAV_LINK_DAY_CLICK, NAV_LINK_WEEK_CLICK,
+    DAY_CELL_BOTTOM_TEXT, EVENT_OVERLAP, SELECT_OVERLAP, EVENT_CONSTRAINT, BUSINESS_HOURS, SELECT_CONSTRAINT,
+    SELECT_ALLOW, VIEWS, DAY_MAX_EVENT_ROWS, DAY_MAX_EVENTS, EVENT_ORDER];
 
 class Options {
 
-    constructor(calendar, context) {
-        this.calendar = calendar;
-        this.context = context;
+    constructor() {
         this.customOptions = {};
+    }
+
+    set calendar(calendar) {
+        this._calendar = calendar;
     }
 
     addListener(optionName, listener) {
@@ -149,7 +56,7 @@ class Options {
         if (!options) {
             return;
         }
-        this.calendar.batchRendering(() => {
+        this._calendar.batchRendering(() => {
             for (const key in options) {
                 if (!this._skipOption(key)) {
                     this.updateOption(key, options[key]);
@@ -182,14 +89,31 @@ class Options {
         });
     }
 
+    getOption(name) {
+        if (this.customOptions[name]) {
+            return this.customOptions[name];
+        }
+        return this._calendar.getOption(name);
+    }
+
     updateOption(key, value) {
-        let oldValue = this.calendar.getOption(key);
+        let oldValue = this._calendar.getOption(key);
         if (oldValue !== value) {
-            this.calendar.setOption(key, value);
+            this._calendar.setOption(key, value);
         }
     }
 
     updateLocale(jmixI18n) {
+        if (!jmixI18n) {
+            return;
+        }
+        // Every instance of JmixFullCalendar should have unique locale
+        // suffix for moment.js. When FullCalendar uses momentPlugin the
+        // localisation of months, days, etc. is configured by moment.js locale.
+        // However, moment.js instance is a global for a web page. And if we change
+        // for English locale names of month, it can affect all usages of moment.js
+        // in the web page. To avoid this, add suffix for locales. Thus, it creates
+        // new locale, that won't affect usages of moment.js.
         const createMomentLocale = !this.localeSuffix
         if (createMomentLocale) {
             this.localeSuffix = 'u-' + window.crypto.randomUUID().split('-').join('').substring(0, 6);
@@ -218,32 +142,173 @@ class Options {
         this.updateOptions(formatOptions);
     }
 
-    getOption(name) {
-        if (this.customOptions[name]) {
-            return this.customOptions[name];
+    processInitialOptions(serverOptions) {
+        const options = serverOptions;
+        if (!serverOptions) {
+            return {};
         }
-        return this.calendar.getOption(name);
+
+        const views = serverOptions[VIEWS];
+        if (views) {
+            options[VIEWS] = this._processViews(views);
+        }
+
+        const unselectCancel = serverOptions[UNSELECT_CANCEL];
+        if (!unselectCancel) {
+            delete options[UNSELECT_CANCEL];
+        }
+
+        for (const property in options) {
+            const value = options[property];
+            if (value === null || value === undefined) {
+                delete options[property];
+            }
+        }
+
+        if (options[MORE_LINK_CLICK]) {
+            options[MORE_LINK_CLICK] = this._getMoreLinkClick(options);
+        }
+        if (options[MORE_LINK_CLASS_NAMES]) {
+            options[MORE_LINK_CLASS_NAMES] = this._getMoreLinkClassNames(options);
+        }
+        if (options[EVENT_OVERLAP]) {
+            options[EVENT_OVERLAP] = this._getEventOverlap(options);
+        }
+        if (options[EVENT_CONSTRAINT]) {
+            options[EVENT_CONSTRAINT] = this._getEventConstraint(options);
+        }
+        if (options[BUSINESS_HOURS]) {
+            options[BUSINESS_HOURS] = this._getBusinessHours(options);
+        }
+        if (options[SELECT_OVERLAP]) {
+            options[SELECT_OVERLAP] = this._getSelectOverlap(options);
+        }
+        if (options[SELECT_CONSTRAINT]) {
+            options[SELECT_CONSTRAINT] = this._getSelectConstraint(options);
+        }
+
+        const selectAllow = this._getSelectAllow(options)
+        if (selectAllow) {
+            options[SELECT_ALLOW] = selectAllow;
+        }
+
+        if (options[DAY_MAX_EVENT_ROWS]) {
+            options[DAY_MAX_EVENT_ROWS] = this._getDayMaxEventRows(options);
+        }
+        if (options[DAY_MAX_EVENTS]) {
+            options[DAY_MAX_EVENTS] = this._getDayMaxEvents(options);
+        }
+        if (options[DAY_HEADER_CLASS_NAMES]) {
+            options[DAY_HEADER_CLASS_NAMES] = this._getDayHeaderClassNames(options);
+        }
+        if (options[DAY_CELL_CLASS_NAMES]) {
+            options[DAY_CELL_CLASS_NAMES] = this._getDayCellClassNames(options);
+        }
+        if (options[SLOT_LABEL_CLASS_NAMES]) {
+            options[SLOT_LABEL_CLASS_NAMES] = this._getSlotLabelClassNames(options);
+        }
+        if (options[NOW_INDICATOR_CLASS_NAMES]) {
+            options[NOW_INDICATOR_CLASS_NAMES] = this._getNowIndicatorClassNames(options);
+        }
+        if (options[EVENT_ORDER]) {
+            options[EVENT_ORDER] = this._getEventOrder(options);
+        }
+        if (options[NAV_LINK_DAY_CLICK]) {
+            options[NAV_LINK_DAY_CLICK] = this._getNavLinkDayClick(options);
+        }
+        if (options[NAV_LINK_WEEK_CLICK]) {
+            options[NAV_LINK_WEEK_CLICK] = this._getNavLinkWeekClick(options);
+        }
+
+        this._updateDyCellBottomText(options);
+        delete options.dayCellBottomText;
+
+        return options;
+    }
+
+    _processViews(viewsObject) {
+        for (let view in viewsObject) {
+            if (view === 'customCalendarDisplayModes') {
+                continue;
+            }
+            if (view === 'listDay' || view === 'listWeek' || view === 'listMonth' || view === 'listYear') {
+                viewsObject[view] = this._processListView(viewsObject[view]);
+                continue;
+            }
+            if (view === 'timeGridDay' || view === 'timeGridWeek') {
+                viewsObject[view] = this._processTimeGrid(viewsObject[view]);
+                continue;
+            }
+            if (view === 'dayGridDay' || view === 'dayGridWeek' || view === 'dayGridMonth' || view === 'dayGridYear') {
+                viewsObject[view] = {...viewsObject[view], ...(viewsObject[view].properties) && {...viewsObject[view].properties}};
+                viewsObject[view] = utils.deleteNullProperties(viewsObject[view]);
+                delete viewsObject[view].properties;
+            }
+        }
+
+        if (viewsObject.customCalendarDisplayModes) {
+            for (const view of viewsObject.customCalendarDisplayModes) {
+                viewsObject[view.displayMode] = {
+                    type: view.baseDisplayMode,
+                    ...(view.dayCount) && {dayCount: view.dayCount},
+                    ...(view.duration) && {duration: view.duration},
+                    ...view.properties && {...view.properties}
+                };
+            }
+        }
+        delete viewsObject.customCalendarDisplayModes;
+
+        return viewsObject;
+    }
+
+    _processListView(listView) {
+        let newListView = {...listView, ...listView.properties && {...listView.properties}};
+
+        // Delete null properties and 'properties' property
+        newListView = utils.deleteNullProperties(newListView);
+        delete newListView.properties;
+
+        // Handle listDayFormat
+        if (newListView.listDayVisible === false) {
+            newListView.listDayFormat = false;
+            delete newListView.listDayVisible;
+        }
+        // Handle listDaySideFormat
+        if (newListView.listDaySideVisible === false) {
+            newListView.listDaySideFormat = false;
+            delete newListView.listDaySideVisible;
+        }
+        return newListView;
+    }
+
+    _processTimeGrid(timeGridView) {
+        let newTimeGridView = {...timeGridView, ...timeGridView.properties && {...timeGridView.properties}};
+
+        // Delete null properties and 'properties' property
+        newTimeGridView = utils.deleteNullProperties(newTimeGridView);
+        delete newTimeGridView.properties;
+
+        // Handle allDaySlot
+        if (utils.isNotNullUndefined(newTimeGridView.allDaySlotVisible)) {
+            newTimeGridView.allDaySlot = newTimeGridView.allDaySlotVisible;
+            delete newTimeGridView.allDaySlotVisible;
+        }
+        return newTimeGridView;
     }
 
     _skipOption(key) {
-        return MORE_LINK_CLICK === key
-            || MORE_LINK_CLASS_NAMES === key
-            || DAY_HEADER_CLASS_NAMES === key
-            || DAY_CELL_CLASS_NAMES === key
-            || SLOT_LABEL_CLASS_NAMES === key
-            || NOW_INDICATOR_CLASS_NAMES === key
-            || NAV_LINK_DAY_CLICK === key
-            || NAV_LINK_WEEK_CLICK === key
-            || DAY_CELL_BOTTOM_TEXT === key
-            || EVENT_OVERLAP === key
-            || EVENT_CONSTRAINT === key
-            || BUSINESS_HOURS === key
-            || SELECT_OVERLAP === key
-            || SELECT_CONSTRAINT === key
-            || SELECT_ALLOW === key
-            || DAY_MAX_EVENT_ROWS === key
-            || DAY_MAX_EVENTS === key
-            || EVENT_ORDER === key
+        return COMPLEX_OPTIONS.includes(key);
+    }
+
+    _getMoreLinkClick(options) {
+        const moreLinkClick = options[MORE_LINK_CLICK]
+
+        if (moreLinkClick) {
+            if (moreLinkClick.functionEnabled) {
+                return this._onMoreLinkClick.bind(this);
+            }
+            return moreLinkClick.calendarView;
+        }
     }
 
     _updateMoreLinkClick(options) {
@@ -255,6 +320,17 @@ class Options {
             if (moreLinkClick.functionEnabled) {
                 this.updateOption('moreLinkClick', this._onMoreLinkClick.bind(this));
             }
+        }
+    }
+
+    _getMoreLinkClassNames(options) {
+        const moreLinkClassNames = options[MORE_LINK_CLASS_NAMES];
+
+        if (moreLinkClassNames) {
+            if (moreLinkClassNames.functionEnabled) {
+                return this._onMoreLinkClassNames.bind(this);
+            }
+            return moreLinkClassNames.classNames;
         }
     }
 
@@ -270,6 +346,20 @@ class Options {
         }
     }
 
+    _getEventOverlap(options) {
+        const eventOverlap = options[EVENT_OVERLAP];
+
+        if (eventOverlap) {
+            if (eventOverlap.jsFunction) {
+                const jsFunction = utils.parseJavaScriptFunction(eventOverlap['jsFunction']);
+                if (jsFunction) {
+                    return jsFunction;
+                }
+            }
+            return eventOverlap.enabled;
+        }
+    }
+
     _updateEventOverlap(options) {
         const eventOverlap = options[EVENT_OVERLAP];
 
@@ -282,6 +372,22 @@ class Options {
                     this.updateOption(EVENT_OVERLAP, jsFunction);
                 }
             }
+        }
+    }
+
+    _getEventConstraint(options) {
+        const eventConstraint = options[EVENT_CONSTRAINT];
+
+        if (eventConstraint) {
+            const bHours = eventConstraint.businessHours;
+            if (bHours && (Array.isArray(bHours) && bHours.length > 0)) {
+                return bHours;
+            }
+            if (eventConstraint.groupId) {
+                return eventConstraint.groupId;
+            }
+
+            return eventConstraint.businessHoursEnabled ? "businessHours" : undefined;
         }
     }
 
@@ -303,6 +409,18 @@ class Options {
         }
     }
 
+    _getBusinessHours(options) {
+        const businessHours = options[BUSINESS_HOURS];
+
+        if (businessHours) {
+            const bHours = businessHours.businessHours;
+            if (bHours && (Array.isArray(bHours) && bHours.length > 0)) {
+                return bHours;
+            }
+            return businessHours.enabled;
+        }
+    }
+
     _updateBusinessHours(options) {
         const businessHours = options[BUSINESS_HOURS];
 
@@ -313,6 +431,20 @@ class Options {
             if (bHours && (Array.isArray(bHours) && bHours.length > 0)) {
                 this.updateOption(BUSINESS_HOURS, bHours);
             }
+        }
+    }
+
+    _getSelectOverlap(options) {
+        const selectOverlap = options[SELECT_OVERLAP];
+
+        if (selectOverlap) {
+            if (selectOverlap.jsFunction) {
+                const jsFunction = utils.parseJavaScriptFunction(selectOverlap.jsFunction);
+                if (jsFunction) {
+                    return jsFunction;
+                }
+            }
+            return selectOverlap.enabled;
         }
     }
 
@@ -328,6 +460,21 @@ class Options {
                     this.updateOption(SELECT_OVERLAP, jsFunction);
                 }
             }
+        }
+    }
+
+    _getSelectConstraint(options) {
+        const selectConstraint = options[SELECT_CONSTRAINT];
+
+        if (selectConstraint) {
+            const bHours = selectConstraint.businessHours;
+            if (bHours && (Array.isArray(bHours) && bHours.length > 0)) {
+                return bHours;
+            }
+            if (selectConstraint.groupId) {
+                return selectConstraint.groupId;
+            }
+            return selectConstraint.businessHoursEnabled ? "businessHours" : undefined;
         }
     }
 
@@ -349,6 +496,21 @@ class Options {
         }
     }
 
+    _getSelectAllow(options) {
+        const selectAllow = options[SELECT_ALLOW];
+        if (selectAllow === undefined) {
+            return;
+        }
+        if (selectAllow === null) {
+            return selectAllow;
+        } else {
+            const jsFunction = utils.parseJavaScriptFunction(selectAllow);
+            if (jsFunction) {
+                return jsFunction;
+            }
+        }
+    }
+
     _updateSelectAllow(options) {
         const selectAllow = options[SELECT_ALLOW];
         if (selectAllow === undefined) {
@@ -364,6 +526,17 @@ class Options {
         }
     }
 
+    _getDayMaxEventRows(options) {
+        const dayMaxEventRows = options[DAY_MAX_EVENT_ROWS];
+
+        if (dayMaxEventRows) {
+            if (dayMaxEventRows.max) {
+                return dayMaxEventRows.max;
+            }
+            return dayMaxEventRows.defaultEnabled;
+        }
+    }
+
     _updateDayMaxEventRows(options) {
         const dayMaxEventRows = options[DAY_MAX_EVENT_ROWS];
 
@@ -373,6 +546,17 @@ class Options {
             if (dayMaxEventRows.max) {
                 this.updateOption(DAY_MAX_EVENT_ROWS, dayMaxEventRows.max);
             }
+        }
+    }
+
+    _getDayMaxEvents(options) {
+        const dayMaxEvents = options[DAY_MAX_EVENTS];
+
+        if (dayMaxEvents) {
+            if (dayMaxEvents.max) {
+                return dayMaxEvents.max;
+            }
+            return dayMaxEvents.defaultEnabled;
         }
     }
 
@@ -388,12 +572,24 @@ class Options {
         }
     }
 
+    _getDayHeaderClassNames(options) {
+        const dayHeaderClassNames = options[DAY_HEADER_CLASS_NAMES];
+
+        return dayHeaderClassNames ? this._onDayHeaderClassNames.bind(this) : null;
+    }
+
     _updateDayHeaderClassNames(options) {
         const dayHeaderClassNames = options[DAY_HEADER_CLASS_NAMES];
 
         if (utils.isNotNullUndefined(dayHeaderClassNames)) {
             this.updateOption(DAY_HEADER_CLASS_NAMES, dayHeaderClassNames ? this._onDayHeaderClassNames.bind(this) : null);
         }
+    }
+
+    _getDayCellClassNames(options) {
+        const dyCellClassNames = options[DAY_CELL_CLASS_NAMES];
+
+        return dyCellClassNames ? this._onDayCellClassNames.bind(this) : null;
     }
 
     _updateDayCellClassNames(options) {
@@ -404,6 +600,12 @@ class Options {
         }
     }
 
+    _getSlotLabelClassNames(options) {
+        const slotLabelClassNames = options[SLOT_LABEL_CLASS_NAMES];
+
+        return slotLabelClassNames ? this._onSlotLabelClassNames.bind(this) : null;
+    }
+
     _updateSlotLabelClassNames(options) {
         const slotLabelClassNames = options[SLOT_LABEL_CLASS_NAMES];
 
@@ -412,11 +614,31 @@ class Options {
         }
     }
 
+    _getNowIndicatorClassNames(options) {
+        const nowIndicatorClassNames = options[NOW_INDICATOR_CLASS_NAMES];
+
+        return nowIndicatorClassNames ? this._onNowIndicatorClassNames.bind(this) : null;
+    }
+
     _updateNowIndicatorClassNames(options) {
         const nowIndicatorClassNames = options[NOW_INDICATOR_CLASS_NAMES];
 
         if (utils.isNotNullUndefined(nowIndicatorClassNames)) {
             this.updateOption(NOW_INDICATOR_CLASS_NAMES, nowIndicatorClassNames ? this._onNowIndicatorClassNames.bind(this) : null);
+        }
+    }
+
+    _getEventOrder(options) {
+        const eventOrder = options[EVENT_ORDER];
+
+        if (eventOrder) {
+            if (eventOrder.jsFunction) {
+                const jsFunction = utils.parseJavaScriptFunction(eventOrder.jsFunction);
+                if (jsFunction) {
+                    return jsFunction;
+                }
+            }
+            return eventOrder.serializedEventOrder;
         }
     }
 
@@ -435,12 +657,24 @@ class Options {
         }
     }
 
+    _getNavLinkDayClick(options) {
+        const navLinkDayClick = options[NAV_LINK_DAY_CLICK];
+
+        return navLinkDayClick ? this._onNavLinkDayClick.bind(this) : null;
+    }
+
     _updateNavLinkDayClick(options) {
         const navLinkDayClick = options[NAV_LINK_DAY_CLICK];
 
         if (utils.isNotNullUndefined(navLinkDayClick)) {
             this.updateOption(NAV_LINK_DAY_CLICK, navLinkDayClick ? this._onNavLinkDayClick.bind(this) : null);
         }
+    }
+
+    _getNavLinkWeekClick(options) {
+        const navLinkWeekClick = options[NAV_LINK_WEEK_CLICK];
+
+        return navLinkWeekClick ? this._onNavLinkWeekClick.bind(this) : null;
     }
 
     _updateNavLinkWeekClick(options) {

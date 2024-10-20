@@ -57,90 +57,104 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
                 && "calendar".equals(element.getName());
     }
 
-    // Todo rp: It does not load initial properties, need to debug somehow
-
     @Nullable
     @Override
     public Component load(Element element, Element viewElement) {
         JmixFullCalendar resultComponent = new JmixFullCalendar();
         resultComponent.addAttachListener(event -> loadOnAttach(element, resultComponent));
 
+        loadBoolean(element, "visible", resultComponent::setVisible);
         loadSizeAttributes(resultComponent, element);
         loadClassNames(resultComponent, element);
+
+        loadBoolean(element, "allDayMaintainDurationEnabled",
+                resultComponent::setAllDayMaintainDurationEnabled);
+        loadBoolean(element, "dayHeadersVisible", resultComponent::setDayHeadersVisible);
+        loadInteger(element, "dayMaxEvents", resultComponent::setDayMaxEvents);
+        loadInteger(element, "dayMaxEventRows", resultComponent::setDayMaxEventRows);
+        loadString(element, "dateAlignment", resultComponent::setDateAlignment);
+        loadBoolean(element, "defaultAllDay", resultComponent::setDefaultAllDay);
+        loadDuration(element, "defaultAllDayEventDuration", resultComponent::setDefaultAllDayEventDuration);
+        // Ignore defaultDayHeaderFormat
+        loadBoolean(element, "defaultDayMaxEventRowsEnabled",
+                resultComponent::setDefaultDayMaxEventRowsEnabled);
+        loadBoolean(element, "defaultDayMaxEventsEnabled",
+                resultComponent::setDefaultDayMaxEventsEnabled);
+        // Ignore defaultDayPopoverFormat
+        // See    loadDefaultBusinessHoursEnabled(element, resultComponent);
+        // Ignore defaultEventTimeFormat
+        // Ignore defaultSlotLabelFormat
+        loadDuration(element, "defaultTimedEventDuration", resultComponent::setDefaultTimedEventDuration);
+        // Ignore defaultWeekNumberFormat
+        loadBoolean(element, "displayEventTime", resultComponent::setDisplayEventTime);
+        loadInteger(element, "dragRevertDuration", resultComponent::setDragRevertDuration);
+        loadBoolean(element, "dragScroll", resultComponent::setDragScroll);
+
+        loadString(element, "eventBackgroundColor", resultComponent::setEventBackgroundColor);
+        loadString(element, "eventBorderColor", resultComponent::setEventBorderColor);
+        // Ignore eventConstraintGroupId
+        // Ignore eventConstraintBusinessHoursEnabled
+        // Ignore eventDisplay
+        loadInteger(element, "eventDragMinDistance", resultComponent::setEventDragMinDistance);
+        loadBoolean(element, "eventDurationEditable", resultComponent::setEventDurationEditable);
+        loadBoolean(element, "eventInteractive", resultComponent::setEventInteractive);
+        loadInteger(element, "eventLongPressDelay", resultComponent::setEventLongPressDelay);
+        loadInteger(element, "eventMaxStack", resultComponent::setEventMaxStack);
+        loadStringList(element, "eventOrder", resultComponent::setEventOrder);
+        loadBoolean(element, "eventOrderStrict", resultComponent::setEventOrderStrict);
+        loadBoolean(element, "eventOverlap", resultComponent::setEventOverlap);
+        loadBoolean(element, "eventResizableFromStart", resultComponent::setEventResizableFromStart);
+        loadBoolean(element, "eventStartEditable", resultComponent::setEventStartEditable);
+        loadString(element, "eventTextColor", resultComponent::setEventTextColor);
+        loadBoolean(element, "expandRows", resultComponent::setExpandRows);
+
+        loadBoolean(element, "forceEventDuration", resultComponent::setForceEventDuration);
+
+        loadString(element, "initialDate", (s) -> resultComponent.setInitialDate(LocalDate.parse(s)));
+
+        loadStringList(element, "moreLinkClassNames", resultComponent::setMoreLinkClassNames);
+        loadMoreLinkDisplayMode(element, resultComponent::setMoreLinkCalendarDisplayMode);
+
+        loadBoolean(element, "navigationLinksEnabled", resultComponent::setNavigationLinksEnabled);
+        loadDuration(element, "nextDayThreshold", resultComponent::setNextDayThreshold);
+        loadBoolean(element, "nowIndicatorVisible", resultComponent::setNowIndicatorVisible);
+
+        loadBoolean(element, "progressiveEventRendering", resultComponent::setProgressiveEventRendering);
+
+        loadDuration(element, "scrollTime", resultComponent::setScrollTime);
+        loadBoolean(element, "scrollTimeReset", resultComponent::setScrollTimeReset);
+        // Ignore selectConstraintGroupId
+        // Ignore selectConstraintBusinessHoursEnabled
+        loadBoolean(element, "selectionEnabled", resultComponent::setSelectionEnabled);
+        loadInteger(element, "selectLongPressDelay", resultComponent::setSelectLongPressDelay);
+        loadInteger(element, "selectMinDistance", resultComponent::setSelectMinDistance);
+        loadBoolean(element, "selectMirror", resultComponent::setSelectMirror);
+        loadBoolean(element, "selectOverlap", resultComponent::setSelectOverlap);
+        loadDuration(element, "slotDuration", resultComponent::setSlotDuration);
+        loadDuration(element, "slotLabelInterval", resultComponent::setSlotLabelInterval);
+        loadDuration(element, "slotMaxTime", resultComponent::setSlotMaxTime);
+        loadDuration(element, "slotMinTime", resultComponent::setSlotMinTime);
+        loadDuration(element, "snapDuration", resultComponent::setSnapDuration);
+
+        loadBoolean(element, "unselectAuto", resultComponent::setUnselectAuto);
+        loadString(element, "unselectCancelSelector", resultComponent::setUnselectCancelSelector);
+
+        loadBoolean(element, "weekendsVisible", resultComponent::setWeekendsVisible);
+        loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
+        loadInteger(element, "windowResizeDelay", resultComponent::setWindowResizeDelay);
 
         displayModeProperties().loadCalendarDisplayModeProperties(element, resultComponent);
         displayModeProperties().loadCustomCalendarDisplayModes(element, resultComponent);
         loadInitialDisplayMode(element, resultComponent);
 
-        loadBoolean(element, "navigationLinksEnabled", resultComponent::setNavigationLinksEnabled);
-        loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
-        loadBoolean(element, "defaultDayMaxEventRowsEnabled", resultComponent::setDefaultDayMaxEventRowsEnabled);
-        loadInteger(element, "dayMaxEventRows", resultComponent::setDayMaxEventRows);
-        loadBoolean(element, "defaultDayMaxEventsEnabled", resultComponent::setDefaultDayMaxEventsEnabled);
-        loadInteger(element, "dayMaxEvents", resultComponent::setDayMaxEvents);
-        loadInteger(element, "eventMaxStack", resultComponent::setEventMaxStack);
-
-        loadMoreLinkDisplayMode(element, resultComponent::setMoreLinkCalendarDisplayMode);
-        loadStringList(element, "moreLinkClassNames", resultComponent::setMoreLinkClassNames);
-
-        loadBoolean(element, "eventStartEditable", resultComponent::setEventStartEditable);
-        loadBoolean(element, "eventDurationEditable", resultComponent::setEventDurationEditable);
-        loadBoolean(element, "eventResizableFromStart", resultComponent::setEventResizableFromStart);
-        loadInteger(element, "eventDragMinDistance", resultComponent::setEventDragMinDistance);
-        loadBoolean(element, "eventOverlap", resultComponent::setEventOverlap);
-
-        loadInteger(element, "dragRevertDuration", resultComponent::setDragRevertDuration);
-        loadBoolean(element, "dragScroll", resultComponent::setDragScroll);
-
-        loadBoolean(element, "allDayMaintainDurationEnabled",
-                resultComponent::setAllDayMaintainDurationEnabled);
-        loadDuration(element, "snapDuration", resultComponent::setSnapDuration);
-
-        loadBoolean(element, "selectionEnabled", resultComponent::setSelectionEnabled);
-        loadBoolean(element, "selectMirror", resultComponent::setSelectMirror);
-        loadBoolean(element, "unselectAuto", resultComponent::setUnselectAuto);
-        loadString(element, "unselectCancelSelector", resultComponent::setUnselectCancelSelector);
-        loadBoolean(element, "selectOverlap", resultComponent::setSelectOverlap);
-
-        loadInteger(element, "selectMinDistance", resultComponent::setSelectMinDistance);
-
-        loadBoolean(element, "weekendsVisible", resultComponent::setWeekendsVisible);
-        loadBoolean(element, "dayHeadersVisible", resultComponent::setDayHeadersVisible);
-
-        loadDuration(element, "slotDuration", resultComponent::setSlotDuration);
-        loadDuration(element, "slotLabelInterval", resultComponent::setSlotLabelInterval);
-        loadDuration(element, "slotMinTime", resultComponent::setSlotMinTime);
-        loadDuration(element, "slotMaxTime", resultComponent::setSlotMaxTime);
-        loadDuration(element, "scrollTime", resultComponent::setScrollTime);
-        loadBoolean(element, "scrollTimeReset", resultComponent::setScrollTimeReset);
-
-        loadBoolean(element, "defaultAllDay", resultComponent::setDefaultAllDay);
-        loadDuration(element, "defaultAllDayEventDuration", resultComponent::setDefaultAllDayEventDuration);
-        loadDuration(element, "defaultTimedEventDuration", resultComponent::setDefaultTimedEventDuration);
-        loadBoolean(element, "forceEventDuration", resultComponent::setForceEventDuration);
-
-        loadString(element, "initialDate", (s) -> resultComponent.setInitialDate(LocalDate.parse(s)));
-        loadString(element, "dateAlignment", resultComponent::setDateAlignment);
-
-        loadBoolean(element, "expandRows", resultComponent::setExpandRows);
-        loadInteger(element, "windowResizeDelay", resultComponent::setWindowResizeDelay);
-
-        loadBoolean(element, "eventInteractive", resultComponent::setEventInteractive);
-
-        loadInteger(element, "longPressDelay", resultComponent::setEventLongPressDelay);
-        loadInteger(element, "selectLongPressDelay", resultComponent::setSelectLongPressDelay);
-
-        loadBoolean(element, "nowIndicatorVisible", resultComponent::setNowIndicatorVisible);
-
         return resultComponent;
     }
 
-    // Todo rp: Are not applied, need to debug somehow
     protected void loadOnAttach(Element element, JmixFullCalendar resultComponent) {
-        loadHiddenDays(element, resultComponent);
-        loadFirstDayOfWeek(element, resultComponent);
         loadDefaultBusinessHoursEnabled(element, resultComponent);
+        loadHiddenDays(element, resultComponent);
         loadBusinessHours(element, resultComponent);
+        loadFirstDayOfWeek(element, resultComponent);
     }
 
     protected void loadDuration(Element element, String attribute, Consumer<CalendarDuration> setter) {
@@ -185,7 +199,8 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
     protected void loadFirstDayOfWeek(Element element, JmixFullCalendar resultComponent) {
         loadString(element, "firstDayOfWeek")
                 .ifPresent(n -> {
-                    resultComponent.getElement().callJsFunction("updateOption", daysOfWeek.get(n));
+                    resultComponent.getElement()
+                            .callJsFunction("updateOption", "firstDay", daysOfWeek.get(n));
                 });
     }
 
@@ -258,10 +273,10 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
     @Nullable
     protected NoOpBusinessHours loadBusinessHoursEntry(Element element) {
         LocalTime startTime = loadString(element, "startTime")
-                .map(LocalTime::parse)
+                .map(s -> LocalTime.ofSecondOfDay(Duration.parse(s).toSeconds()))
                 .orElse(null);
         LocalTime endTime = loadString(element, "endTime")
-                .map(LocalTime::parse)
+                .map(s -> LocalTime.ofSecondOfDay(Duration.parse(s).toSeconds()))
                 .orElse(null);
 
         List<Integer> businessDays = new ArrayList<>();
@@ -270,10 +285,19 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
                     loadString(e, "name")
                             .ifPresent(n -> businessDays.add(daysOfWeek.get(n)));
                 });
-        if (startTime == null && endTime == null && businessDays.isEmpty()) {
-            return null;
+        if (startTime == null) {
+            return businessDays.isEmpty()
+                    ? null
+                    : NoOpBusinessHours.of(businessDays.toArray(new Integer[0]));
         }
-        return NoOpBusinessHours.of(startTime, endTime, businessDays.toArray(new Integer[0]));
+        if (endTime == null) {
+            return businessDays.isEmpty()
+                    ? NoOpBusinessHours.of(startTime)
+                    : NoOpBusinessHours.of(startTime, businessDays.toArray(new Integer[0]));
+        }
+        return businessDays.isEmpty()
+                ? NoOpBusinessHours.of(startTime, endTime)
+                : NoOpBusinessHours.of(startTime, endTime, businessDays.toArray(new Integer[0]));
     }
 
     protected StudioDisplayModePropertiesLoader displayModeProperties() {

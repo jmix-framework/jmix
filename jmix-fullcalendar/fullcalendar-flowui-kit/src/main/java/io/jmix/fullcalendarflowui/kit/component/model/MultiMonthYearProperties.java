@@ -75,7 +75,7 @@ public class MultiMonthYearProperties extends AbstractCalendarDisplayModePropert
     }
 
     /**
-     * Sets thw minimum width of each mini-month. The component will not allow mini-month to be become smaller
+     * Sets the minimum width of each mini-month. The component will not allow mini-month to be become smaller
      * than this value.
      * <p>
      * If the available width requires each mini-month to become smaller than this pixel value, the mini-months

@@ -54,6 +54,9 @@ public class SelectEvent extends ComponentEvent<FullCalendar> {
     /**
      * Returns date-time as is from component without transformation. It means that value corresponds component's
      * TimeZone.
+     * <p>
+     * Note that end date-time is exclusive. For instance, if the selection is all-day and the last date value is
+     * {@code 2024-10-15}, the value of this property will be equal to {@code 2024-10-16}.
      *
      * @return end date-time of selection
      */

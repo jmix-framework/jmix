@@ -4,12 +4,10 @@ import jakarta.annotation.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class NoOpBusinessHours implements Serializable {
+    private static final Integer[] ALL_DAYS = {0, 1, 2, 3, 4, 5, 6};
 
     protected Set<Integer> daysOfWeek;
 
@@ -31,9 +29,27 @@ public class NoOpBusinessHours implements Serializable {
         return new NoOpBusinessHours(startTime, endTime, daysOfWeek);
     }
 
-    public static NoOpBusinessHours of(@Nullable LocalTime startTime, @Nullable LocalTime endTime,
-                                       @Nullable Integer... daysOfWeek) {
-        return create(startTime, endTime, daysOfWeek);
+    public static NoOpBusinessHours of(Integer... daysOfWeek) {
+        return create(null, null, Objects.requireNonNull(daysOfWeek));
+    }
+
+    public static NoOpBusinessHours of(LocalTime startTime) {
+        return create(Objects.requireNonNull(startTime), null, ALL_DAYS);
+    }
+
+    public static NoOpBusinessHours of(LocalTime startTime, LocalTime endTime) {
+        return create(Objects.requireNonNull(startTime), Objects.requireNonNull(endTime), ALL_DAYS);
+    }
+
+    public static NoOpBusinessHours of(LocalTime startTime, Integer... daysOfWeek) {
+        return create(Objects.requireNonNull(startTime), null, Objects.requireNonNull(daysOfWeek));
+    }
+
+    public static NoOpBusinessHours of(LocalTime startTime, LocalTime endTime, Integer... daysOfWeek) {
+        return create(
+                Objects.requireNonNull(startTime),
+                Objects.requireNonNull(endTime),
+                Objects.requireNonNull(daysOfWeek));
     }
 
     @Nullable

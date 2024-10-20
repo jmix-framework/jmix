@@ -544,6 +544,22 @@ public class SimpleCalendarEvent implements CalendarEvent {
         }
 
         /**
+         * Sets start date-time.
+         * <p>
+         * See full description here: {@link CalendarEvent#setStartDateTime}.
+         *
+         * @param date start date
+         * @param time start time
+         * @return current instance of builder
+         */
+        public Builder withStartDateTime(LocalDate date, LocalTime time) {
+            Preconditions.checkNotNullArgument(date);
+            Preconditions.checkNotNullArgument(time);
+            event.startDateTime = LocalDateTime.of(date, time);
+            return this;
+        }
+
+        /**
          * See full description here: {@link CalendarEvent#getEndDateTime()}.
          *
          * @return end date-time or {@code null} if not set
@@ -563,6 +579,22 @@ public class SimpleCalendarEvent implements CalendarEvent {
          */
         public Builder withEndDateTime(@Nullable LocalDateTime end) {
             event.endDateTime = end;
+            return this;
+        }
+
+        /**
+         * Sets end date-time.
+         * <p>
+         * See full description here: {@link CalendarEvent#setEndDateTime(LocalDateTime)}.
+         *
+         * @param date start date
+         * @param time start time
+         * @return current instance of builder
+         */
+        public Builder withEndDateTime(LocalDate date, LocalTime time) {
+            Preconditions.checkNotNullArgument(date);
+            Preconditions.checkNotNullArgument(time);
+            event.endDateTime = LocalDateTime.of(date, time);
             return this;
         }
 

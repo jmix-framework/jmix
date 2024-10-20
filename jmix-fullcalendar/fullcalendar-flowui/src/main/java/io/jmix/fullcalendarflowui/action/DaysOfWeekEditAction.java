@@ -52,7 +52,7 @@ import java.util.*;
 public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, PickerComponent<DaysOfWeek>, DaysOfWeek>
         implements InitializingBean {
 
-    public static final String ID = "fullcalendar_daysOfWeekEdit";
+    public static final String ID = "fcalen_daysOfWeekEdit";
 
     protected Messages messages;
     protected FullCalendarProperties calendarFlowuiProperties;

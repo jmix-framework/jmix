@@ -106,7 +106,7 @@ public interface StudioFullCalendarElements {
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             unlimitedCount = false,
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
-            target = "io.jmix.fullcalendarflowui.component.data.LazyEntityCalendarEventRetriever",
+            target = "io.jmix.fullcalendarflowui.component.data.EntityCalendarDataRetriever",
             properties = {
                     @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS, required = true),
                     @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY),
@@ -231,8 +231,8 @@ public interface StudioFullCalendarElements {
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "listDayVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
 
             }
@@ -249,8 +249,8 @@ public interface StudioFullCalendarElements {
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "listDayVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
             }
     )
@@ -266,8 +266,8 @@ public interface StudioFullCalendarElements {
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "listDayVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
             }
     )
@@ -283,8 +283,8 @@ public interface StudioFullCalendarElements {
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "listDayVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
             }
     )
@@ -304,7 +304,7 @@ public interface StudioFullCalendarElements {
                     @StudioProperty(xmlAttribute = "weekNumberFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "eventTimeFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "slotLabelFormat", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "eventMinHeight", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "eventMinHeight", type = StudioPropertyType.INTEGER, defaultValue = "15"),
                     @StudioProperty(xmlAttribute = "eventShortHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "slotEventOverlap", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "allDaySlotVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
@@ -327,10 +327,10 @@ public interface StudioFullCalendarElements {
                     @StudioProperty(xmlAttribute = "weekNumberFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "eventTimeFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "slotLabelFormat", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "eventMinHeight", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "eventMinHeight", type = StudioPropertyType.INTEGER, defaultValue = "15"),
                     @StudioProperty(xmlAttribute = "eventShortHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "slotEventOverlap", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "allDaySlot", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "allDaySlotVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "displayEventEnd", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
             }
     )
@@ -345,8 +345,8 @@ public interface StudioFullCalendarElements {
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "multiMonthMaxColumns", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "multiMonthMinWidth", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "multiMonthMaxColumns", type = StudioPropertyType.INTEGER, defaultValue = "3"),
+                    @StudioProperty(xmlAttribute = "multiMonthMinWidth", type = StudioPropertyType.INTEGER, defaultValue = "350"),
                     @StudioProperty(xmlAttribute = "multiMonthTitleFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "fixedWeekCount", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "showNonCurrentDates", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),

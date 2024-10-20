@@ -17,7 +17,6 @@ import moment from 'moment';
 import * as utils from './jmix-full-calendar-utils.js';
 import DataHolder from './DataHolder.js';
 import Options, {
-    processInitialOptions,
     MORE_LINK_CLASS_NAMES,
     MORE_LINK_CLICK,
     DAY_HEADER_CLASS_NAMES,
@@ -42,6 +41,7 @@ const DAY_GRID_DAY = "dayGridDay";
 const DAY_GRID_WEEK = "dayGridWeek";
 const DAY_GRID_MONTH = "dayGridMonth";
 const DAY_GRID_YEAR = "dayGridYear";
+const MULTI_MONTH_YEAR = "multiMonthYear";
 
 class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     static get template() {
@@ -87,9 +87,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
 
         this.dataHolder = new DataHolder();
 
-        this.calendar = new Calendar(this.calendarElement, this.getInitialOptions());
-
-        this.jmixOptions = new Options(this.calendar, this);
+        this.jmixOptions = new Options();
         this.jmixOptions.addListener(MORE_LINK_CLICK, this._onMoreLinkClick.bind(this));
         this.jmixOptions.addListener(MORE_LINK_CLASS_NAMES, this._onMoreLinkClassNames.bind(this));
         this.jmixOptions.addListener(DAY_HEADER_CLASS_NAMES, this._onDayHeaderClassNames.bind(this));
@@ -99,11 +97,32 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.jmixOptions.addListener(NAV_LINK_DAY_CLICK, this._onNavLinkDayClick.bind(this));
         this.jmixOptions.addListener(NAV_LINK_WEEK_CLICK, this._onNavLinkWeekClick.bind(this));
 
+        this.calendar = new Calendar(this.calendarElement, this.getInitialOptions());
+
+        this.jmixOptions.calendar = this.calendar;
+
         // First call of `_onI18nChange` was ignored since jmixOptions was undefined.
         // So call it again to update locale.
         this._onI18nChange(this.i18n);
 
         this.render();
+
+        this._setupResizeListener();
+    }
+
+    _setupResizeListener() {
+        let timeoutId;
+        function onResize() {
+            if (timeoutId) {
+                return;
+            }
+            timeoutId = setTimeout(() => {
+                this.calendar.updateSize();
+                timeoutId = null;
+            }, 250);
+        }
+
+        new ResizeObserver(onResize.bind(this)).observe(this.calendarElement);
     }
 
     /**
@@ -117,7 +136,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     getInitialOptions() {
-        const initialOptions = processInitialOptions(this.initialOptions);
+        const initialOptions = this.jmixOptions.processInitialOptions(this.initialOptions);
         return {
             headerToolbar: false,
             height: "100%",
@@ -229,9 +248,12 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _addEventSource(sourceId, lazySource) {
-        if (lazySource) {
-            this.dataHolder.set(sourceId, {compContext: this});
+        if (this.calendar.getEventSourceById(sourceId)) {
+            return;
         }
+
+        this.dataHolder.set(sourceId, lazySource ? {compContext: this} : []);
+
         this.calendar.addEventSource(this._createEventSource(sourceId, lazySource));
     }
 
@@ -621,7 +643,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         if (viewType !== DAY_GRID_DAY
             && viewType !== DAY_GRID_WEEK
             && viewType !== DAY_GRID_MONTH
-            && viewType !== DAY_GRID_YEAR) {
+            && viewType !== DAY_GRID_YEAR
+            && viewType !== MULTI_MONTH_YEAR) {
             return;
         }
         e.el.addEventListener("contextmenu", (jsEvent) => {

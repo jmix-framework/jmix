@@ -504,6 +504,27 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
+     * Selects the date range of all-day cells.
+     *
+     * @param start start date of selection
+     * @param end   end date of selection
+     */
+    public void select(LocalDate start, LocalDate end) {
+        select(start, end, true);
+    }
+
+    /**
+     * Selects the date range. If all-day is {@code true} the all-day cell(s) will be selected.
+     *
+     * @param start  start date of selection
+     * @param end    end date of selection
+     * @param allDay whether to select all-day cell(s)
+     */
+    public void select(LocalDate start, LocalDate end, boolean allDay) {
+        select(LocalDateTime.of(start, LocalTime.MIDNIGHT), LocalDateTime.of(end, LocalTime.MIDNIGHT), allDay);
+    }
+
+    /**
      * Clears the current selection.
      */
     public void unselect() {
@@ -1094,7 +1115,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *         function(selectionInfo) {
      *             const currentDate = new Date();
      *             currentDate.setHours(0, 0, 0, 0);
-     *             return currentDate < selectionInfo.end;
+     *             return selectionInfo.start >= currentDate && currentDate < selectionInfo.end;
      *         }
      *         """)
      * }</pre>
@@ -1151,7 +1172,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * specify the format, thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
-     * we should follow the moment.js formatting rules:
+     * you should follow the moment.js formatting rules:
      * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>. For instance,
      * the {@code "MMM D, YY"} produces {@code Sep 9, 24}.
      * <p>
@@ -1180,7 +1201,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * specify the format, thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
-     * we should follow the moment.js formatting rules:
+     * you should follow the moment.js formatting rules:
      * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>. For instance,
      * the {@code "dd"} produces {@code Mo}.
      * <p>
@@ -1209,7 +1230,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * specify the format, thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
-     * we should follow the moment.js formatting rules:
+     * you should follow the moment.js formatting rules:
      * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>. For instance,
      * the {@code "[Week] w"} produces {@code Week 1} (1, 2, ... 52, 53).
      * <p>
@@ -1238,7 +1259,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * specify the format, thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
-     * we should follow the moment.js formatting rules:
+     * you should follow the moment.js formatting rules:
      * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>. For instance,
      * the {@code "ha"} produces {@code 1 am} (1, 2, ... 12 am/pm).
      * <p>
@@ -1267,7 +1288,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * specify the format, thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
-     * we should follow the moment.js formatting rules:
+     * you should follow the moment.js formatting rules:
      * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>. For instance,
      * the {@code "HH:mm"} produces {@code 00:00} (01, 2, ... 23 : 01, 02 ... 59).
      * <p>
@@ -1894,9 +1915,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *     </li>
      * </ul>
      * <p>
-     * So, the event spans to another day, but it will be rendered as a one-day event, because we specified the
-     * {@code nextDayThreshold} property. However, If the event has end date - {@code 2024-09-02T10:00:00}, it will be
-     * rendered as two-day event.
+     * So, the event spans to another day, but it will be rendered as a one-day event, because the
+     * {@code nextDayThreshold} property is specified. However, If the event has end date - {@code 2024-09-02T10:00:00},
+     * it will be rendered as two-day event.
      * <p>
      * Only affects timed events that appear on whole-days cells. Whole-day cells occur in day-grid display modes and
      * the all-day slots in the time-grid display modes.
@@ -2082,11 +2103,16 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         getUI().ifPresent(ui ->
                 ui.beforeClientResponse(this, (context) ->
                         getElement().callJsFunction("_onCompleteInit")
-                                .then((__) -> initialized = true)));
+                                .then((__) -> onCompleteInitialization())));
+    }
+
+    protected void onCompleteInitialization() {
+        initialized = true;
     }
 
     protected void updateInitialOptions() {
-        JsonObject json = serializer.serializeOptions(options.getInitialOptions());
+        // Before the component is fully initialized, consider all options as initial
+        JsonObject json = serializer.serializeOptions(options.getAllOptions());
         getElement().setPropertyJson("initialOptions", json);
     }
 
@@ -2345,13 +2371,16 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         // since the component is not attached. Thus, in onAttach we should
         // call them again.
         // Also, if a component was reattached, it looses all configuration
-        // on a client-side, so we should restore it.
+        // on a client side, so we should restore it.
         updateInitialOptions();
-
-        requestUpdateOptions(false);
 
         addDataProvidersOnAttach();
 
         performCompleteInit();
+    }
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent) {
+        initialized = false;
     }
 }

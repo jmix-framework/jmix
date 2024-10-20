@@ -27,7 +27,6 @@ jmixFullCalendarStyle.textContent = `
        --fc-event-border-color: var(--lumo-primary-color-50pct);
        --fc-event-text-color: var(--lumo-primary-contrast-color);
        --fc-event-selected-overlay-color: var(--lumo-primary-color-10pct);;
-       /*var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct);*/
        
        /* TimeGrid events stack "show more" background-color */
        --fc-more-link-bg-color: #a6a6a6;

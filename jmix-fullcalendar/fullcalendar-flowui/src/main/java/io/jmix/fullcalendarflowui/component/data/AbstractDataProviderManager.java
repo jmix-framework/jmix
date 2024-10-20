@@ -23,6 +23,8 @@ import io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer
 import io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer.FullCalendarDataSerializer;
 import org.springframework.lang.Nullable;
 
+import java.util.Objects;
+
 /**
  * INTERNAL.
  * <p>
@@ -83,5 +85,19 @@ public abstract class AbstractDataProviderManager {
 
     protected String generateSourceId(CalendarDataProvider dataProvider) {
         return dataProvider.getId() + "-" + DataProviderUtils.generateId();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        return obj instanceof AbstractDataProviderManager mngr
+                && mngr.sourceId.equals(this.sourceId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(sourceId);
     }
 }

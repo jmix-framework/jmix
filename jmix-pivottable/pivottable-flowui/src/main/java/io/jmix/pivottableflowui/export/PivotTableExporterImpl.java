@@ -103,9 +103,11 @@ public class PivotTableExporterImpl implements PivotTableExporter {
     protected void checkSupportedRenderer() {
         boolean showUI = pivotTable.isEnabled() && (pivotTable.isShowUI() == null || pivotTable.isShowUI());
         if (showUI) {
-            checkRenderer(pivotTable.getRenderers() != null ? pivotTable.getRenderers().getSelectedRenderer() : null);
+            checkRenderer(pivotTable.getRenderers() != null && pivotTable.getRenderers().getSelectedRenderer() != null
+                    ? pivotTable.getRenderers().getSelectedRenderer()
+                    : Renderer.TABLE);
         } else {
-            checkRenderer(pivotTable.getRenderer());
+            checkRenderer(pivotTable.getRenderer() != null ? pivotTable.getRenderer() : Renderer.TABLE);
         }
     }
 

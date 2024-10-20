@@ -49,6 +49,12 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
 
     @Override
     public void applySettings(PivotTable<?> component, PivotTableSettings settings) {
+
+        // Don't apply settings if they are empty
+        if (settings.getRowOrder() == null && settings.getColOrder() == null) {
+            return;
+        }
+
         component.setRows(settings.getRows());
         component.setColumns(settings.getCols());
 

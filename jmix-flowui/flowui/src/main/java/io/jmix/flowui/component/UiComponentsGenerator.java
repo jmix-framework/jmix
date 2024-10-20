@@ -26,9 +26,8 @@ import java.util.List;
  *
  * @see io.jmix.flowui.UiComponents
  */
-@org.springframework.stereotype.Component(UiComponentsGenerator.NAME)
+@org.springframework.stereotype.Component("flowui_UiComponentsGenerator")
 public class UiComponentsGenerator {
-    public static final String NAME = "flowui_UiComponentsGenerator";
 
     protected final List<ComponentGenerationStrategy> componentGenerationStrategies;
 

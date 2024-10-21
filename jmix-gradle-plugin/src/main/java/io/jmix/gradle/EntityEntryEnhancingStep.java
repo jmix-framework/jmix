@@ -16,10 +16,10 @@
 
 package io.jmix.gradle;
 
+import jakarta.annotation.Nullable;
 import javassist.*;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

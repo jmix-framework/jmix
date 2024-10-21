@@ -17,6 +17,7 @@
 package io.jmix.gradle;
 
 import com.google.common.base.Strings;
+import jakarta.annotation.Nullable;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
@@ -30,7 +31,6 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

@@ -16,6 +16,7 @@
 
 package io.jmix.gradle;
 
+import jakarta.annotation.Nullable;
 import javassist.*;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
@@ -24,7 +25,6 @@ import javassist.bytecode.annotation.ClassMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class MetaModelUtil {

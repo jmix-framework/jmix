@@ -35,8 +35,8 @@ import io.jmix.pivottableflowui.kit.component.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.dom4j.Element;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class PivotTableLoader extends AbstractComponentLoader<PivotTable<?>> {

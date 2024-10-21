@@ -17,11 +17,11 @@
 package io.jmix.flowui.kit.meta.component.preview;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import jakarta.annotation.Nullable;
 import org.dom4j.Element;
 
 // TODO: minimal support for generic component preview?

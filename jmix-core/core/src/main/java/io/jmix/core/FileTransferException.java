@@ -16,8 +16,8 @@
 
 package io.jmix.core;
 
-import io.micrometer.core.lang.Nullable;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 
 /**
  * This exception can occur while uploading/downloading files using {@link FileTransferService}.

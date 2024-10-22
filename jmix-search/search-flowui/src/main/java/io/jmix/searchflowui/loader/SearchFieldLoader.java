@@ -100,7 +100,7 @@ public class SearchFieldLoader extends AbstractComponentLoader<SearchField> {
     }
 
     protected void loadStrategy(SearchField component, Element element) {
-        String strategyAttributeValue = element.attributeValue("strategy");
+        String strategyAttributeValue = element.attributeValue("searchStrategy");
         SearchProperties searchProperties = applicationContext.getBean(SearchProperties.class);
         String strategy;
         if (Strings.isNullOrEmpty(strategyAttributeValue)) {

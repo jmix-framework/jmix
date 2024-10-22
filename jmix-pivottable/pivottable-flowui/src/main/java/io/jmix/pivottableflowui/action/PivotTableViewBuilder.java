@@ -503,7 +503,7 @@ public class PivotTableViewBuilder {
      * @param showRowTotals row totals option
      */
     public PivotTableViewBuilder withShowRowTotals(Boolean showRowTotals) {
-        getPivotTableOptions().setShowUI(showRowTotals);
+        getPivotTableOptions().setShowRowTotals(showRowTotals);
 
         return this;
     }

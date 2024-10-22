@@ -27,7 +27,6 @@ import io.jmix.pivottableflowui.component.PivotTableUtils;
 import io.jmix.pivottableflowui.data.ListPivotTableItems;
 import io.jmix.pivottableflowui.export.PivotTableExcelExporter;
 import io.jmix.pivottableflowui.export.PivotTableExporter;
-import io.jmix.pivottableflowui.export.PivotTableExporterImpl;
 import io.jmix.pivottableflowui.kit.component.model.PivotTableOptions;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
 import org.hibernate.validator.constraints.UUID;
@@ -36,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @Route(value = "pivot-table-view")
-@ViewController("PivotTableView")
+@ViewController("pvttbl_PivotTableView")
 @ViewDescriptor("pivot-table-view.xml")
 public class PivotTableView extends StandardView {
 
@@ -55,7 +54,7 @@ public class PivotTableView extends StandardView {
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         PivotTableExcelExporter excelExporter = getApplicationContext().getBean(PivotTableExcelExporter.class);
-        pivotTableExporter = new PivotTableExporterImpl(pivotTable, excelExporter);
+        pivotTableExporter = getApplicationContext().getBean(PivotTableExporter.class, pivotTable, excelExporter);
     }
 
     public void setDataItems(List<Object> items) {

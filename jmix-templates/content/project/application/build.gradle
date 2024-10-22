@@ -21,11 +21,6 @@ repositories {
 ${additionalRepository}<%}}%>
 }
 
-configurations.implementation {
-    exclude group: 'com.vaadin', module: 'hilla'
-    exclude group: 'com.vaadin', module: 'hilla-dev'
-}
-
 dependencies {
     implementation 'io.jmix.core:jmix-core-starter'
     implementation 'io.jmix.data:jmix-eclipselink-starter'
@@ -47,6 +42,11 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
+}
+
+configurations.implementation {
+    exclude group: 'com.vaadin', module: 'hilla'
+    exclude group: 'com.vaadin', module: 'hilla-dev'
 }
 
 test {

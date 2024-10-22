@@ -72,7 +72,7 @@ public class SearchFieldSettingsView extends StandardView {
 
         List<String> allIndexedEntities = indexConfigurationManager.getAllIndexedEntities().stream().toList();
         searchEntitiesComboBox.setItems(allIndexedEntities);
-        searchEntitiesComboBox.setPlaceholder("All entities");
+        searchEntitiesComboBox.setPlaceholder(messages.getMessage(getClass(), "searchFieldSettingsView.entitiesPlaceholder"));
     }
 
     public void initSettingsValues(String initialSearchStrategy,

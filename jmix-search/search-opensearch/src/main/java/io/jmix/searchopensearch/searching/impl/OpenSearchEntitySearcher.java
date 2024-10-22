@@ -1,15 +1,12 @@
 package io.jmix.searchopensearch.searching.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterables;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.*;
 import io.jmix.search.searching.impl.SearchResultImpl;
@@ -18,10 +15,7 @@ import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyProvider;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
-import jakarta.json.stream.JsonGenerator;
 import org.apache.commons.lang3.StringUtils;
-import org.opensearch.client.json.JsonpMapper;
-import org.opensearch.client.json.JsonpSerializable;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.opensearch.client.opensearch.core.SearchResponse;
@@ -32,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -110,7 +103,9 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
             );
             SearchResponse<ObjectNode> searchResponse;
             try {
-                log.debug("Search Request: {}", searchRequest);
+                if (log.isDebugEnabled()) {
+                    log.debug("Search Request: {}", searchRequest.toJsonString());
+                }
                 searchResponse = client.search(searchRequest, ObjectNode.class);
             } catch (IOException e) {
                 throw new RuntimeException("Search failed", e);

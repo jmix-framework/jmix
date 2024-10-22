@@ -130,11 +130,6 @@ public class SearchProperties {
     protected final int maxPrefixLength;
 
     /**
-     * Whether the additional search strategy provided by Extended search is visible if there are no index definitions with enabled Extended search.
-     */
-    protected final boolean unsupportedSearchStrategyVisible;
-
-    /**
      * Whether the wildcard query will be used if input search word is longer than prefix maximum length.
      *
      * @see #maxPrefixLength
@@ -153,7 +148,6 @@ public class SearchProperties {
             @DefaultValue("true") boolean useDefaultIndexingQueueProcessingQuartzConfiguration,
             @DefaultValue("true") boolean useDefaultEnqueueingSessionProcessingQuartzConfiguration,
             @DefaultValue("true") boolean enqueueIndexAllOnStartupIndexRecreationEnabled,
-            @DefaultValue("false") boolean unsupportedSearchStrategyVisible,
             @DefaultValue("true") boolean wildcardPrefixQueryEnabled,
             @DefaultValue("") String enqueueIndexAllOnStartupIndexRecreationEntities,
             @DefaultValue("search_index_") String searchIndexNamePrefix,
@@ -180,7 +174,6 @@ public class SearchProperties {
         this.searchIndexNamePrefix = searchIndexNamePrefix;
         this.minPrefixLength = minPrefixLength;
         this.maxPrefixLength = maxPrefixLength;
-        this.unsupportedSearchStrategyVisible = unsupportedSearchStrategyVisible;
         this.wildcardPrefixQueryEnabled = wildcardPrefixQueryEnabled;
     }
 
@@ -225,10 +218,6 @@ public class SearchProperties {
 
     public int getMaxPrefixLength() {
         return maxPrefixLength;
-    }
-
-    public boolean isUnsupportedSearchStrategyVisible() {
-        return unsupportedSearchStrategyVisible;
     }
 
     public boolean isWildcardPrefixQueryEnabled() {

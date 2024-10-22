@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Route(value = "search-field-settings-view", layout = DefaultMainViewParent.class)
@@ -41,6 +42,8 @@ import java.util.stream.Collectors;
 public class SearchFieldSettingsView extends StandardView {
 
     private static final String STRATEGY_LOCALIZATION_KEY_TEMPLATE = "io.jmix.search.searchstrategy.%s.name";
+
+    private static final Set<String> DEPRECATED_SEARCH_STRATEGIES = Set.of("allTermsAnyField", "allTermsSingleField");
 
     @ViewComponent
     protected JmixMultiSelectComboBox<String> searchEntitiesComboBox;
@@ -62,6 +65,7 @@ public class SearchFieldSettingsView extends StandardView {
     public void onInit(final InitEvent event) {
         Collection<? extends SearchStrategy> searchStrategies = searchStrategyProvider.getAllSearchStrategies();
         availableSearchStrategyNames = searchStrategies.stream()
+                .filter(this::isSearchStrategyVisible)
                 .map(SearchStrategy::getName)
                 .collect(Collectors.toList());
         searchStrategySelector.setItems(availableSearchStrategyNames);
@@ -113,5 +117,9 @@ public class SearchFieldSettingsView extends StandardView {
     protected String getLocalizedStrategyName(String strategyName) {
         String key = STRATEGY_LOCALIZATION_KEY_TEMPLATE.formatted(strategyName);
         return messages.getMessage(key);
+    }
+
+    protected boolean isSearchStrategyVisible(SearchStrategy searchStrategy) {
+        return !DEPRECATED_SEARCH_STRATEGIES.contains(searchStrategy.getName());
     }
 }

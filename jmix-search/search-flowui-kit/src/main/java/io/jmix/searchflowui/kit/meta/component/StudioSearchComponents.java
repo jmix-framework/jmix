@@ -58,7 +58,7 @@ public interface StudioSearchComponents {
                     @StudioProperty(xmlAttribute = "searchSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "searchStrategy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.search.searching.SearchStrategy",
-                            options = {"anyTermAnyField", "allTermsAnyField", "allTermsSingleField", "phrase"}),
+                            options = {"anyTermAnyField", "startsWith", "phrase"}),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,

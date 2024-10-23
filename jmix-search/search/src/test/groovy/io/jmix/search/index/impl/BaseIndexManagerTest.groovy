@@ -19,6 +19,8 @@ package io.jmix.search.index.impl
 import io.jmix.search.SearchProperties
 import io.jmix.search.index.IndexConfiguration
 import io.jmix.search.index.IndexSynchronizationStatus
+import io.jmix.search.index.IndexValidationStatus
+import io.jmix.search.index.mapping.IndexConfigurationManager
 import io.jmix.search.index.mapping.IndexMappingConfiguration
 import spock.lang.Specification
 
@@ -220,6 +222,58 @@ class BaseIndexManagerTest extends Specification {
         strategy           | isMappingUpdateRequired
         CREATE_OR_UPDATE   | false
         CREATE_OR_RECREATE | false
+    }
+
+    def "getIndexValidationStatus work if index not exists"() {
+        given:
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(
+                Mock(IndexConfigurationManager),
+                Mock(IndexStateRegistry),
+                Mock(SearchProperties),
+                Mock(IndexConfigurationComparator),
+                Mock(IndexStateResolver))
+
+        when:
+        def validationStatus = indexManager.getIndexValidationStatus(
+                Mock(IndexConfiguration),
+                false)
+
+        then:
+        validationStatus == IndexValidationStatus.MISSING
+    }
+
+    def "getIndexValidationStatus work if index exists"() {
+        given:
+        def indexConfigurationMock = Mock(IndexConfiguration)
+
+        and:
+        def indexConfigurationComparatorMock = Mock(IndexConfigurationComparator)
+        indexConfigurationComparatorMock.compareConfigurations(indexConfigurationMock)
+                >> new ConfigurationComparingResult(mappingComparingResult, settingsComparingResult)
+
+        and:
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(
+                Mock(IndexConfigurationManager),
+                Mock(IndexStateRegistry),
+                Mock(SearchProperties),
+                indexConfigurationComparatorMock,
+                Mock(IndexStateResolver))
+
+
+        when:
+        def validationStatus = indexManager.getIndexValidationStatus(
+                indexConfigurationMock,
+                true)
+
+        then:
+        validationStatus == status
+
+        where:
+        settingsComparingResult                | mappingComparingResult                || status
+        SettingsComparingResult.EQUAL          | MappingComparingResult.EQUAL          || IndexValidationStatus.ACTUAL
+        SettingsComparingResult.NOT_COMPATIBLE | MappingComparingResult.EQUAL          || IndexValidationStatus.IRRELEVANT
+        SettingsComparingResult.EQUAL          | MappingComparingResult.UPDATABLE      || IndexValidationStatus.IRRELEVANT
+        SettingsComparingResult.EQUAL          | MappingComparingResult.NOT_COMPATIBLE || IndexValidationStatus.IRRELEVANT
     }
 
 }

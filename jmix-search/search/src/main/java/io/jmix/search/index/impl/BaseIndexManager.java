@@ -5,6 +5,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -242,4 +243,6 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
             return IndexSynchronizationStatus.IRRELEVANT;
         }
     }
+
+    protected abstract boolean putMapping(String indexName, IndexMappingConfiguration mapping);
 }

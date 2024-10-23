@@ -38,7 +38,7 @@ public class TestNoopIndexManager extends BaseIndexManager {
     }
 
     @Override
-    public boolean putMapping(String indexName, IndexMappingConfiguration mapping) {
+    public boolean putMapping(@NonNull String indexName, @NonNull IndexMappingConfiguration mapping) {
         return false;
     }
 }

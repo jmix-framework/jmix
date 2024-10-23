@@ -34,9 +34,9 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
 
     protected final E entity;
     protected final Object id;
-    protected AbstractEntityCalendarDataProvider dataProvider;
+    protected EntityCalendarDataProvider dataProvider;
 
-    public EntityCalendarEvent(E entity, AbstractEntityCalendarDataProvider dataProvider) {
+    public EntityCalendarEvent(E entity, EntityCalendarDataProvider dataProvider) {
         Preconditions.checkNotNullArgument(entity);
         Preconditions.checkNotNullArgument(dataProvider);
         this.entity = entity;

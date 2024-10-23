@@ -75,9 +75,9 @@
                     <xs:attribute name="firstDayOfWeek" type="dayOfWeekType"/>
                     <xs:attribute name="forceEventDuration" type="xs:boolean"/>
                     <xs:attribute name="initialDate" type="xs:string"/>
-                    <xs:attribute name="initialDisplayMode" type="calendarDisplayModeType"/>
+                    <xs:attribute name="initialDisplayMode" type="allCalendarDisplayModes"/>
                     <xs:attribute name="moreLinkClassNames" type="xs:string"/>
-                    <xs:attribute name="moreLinkDisplayMode" type="calendarDisplayModeType"/>
+                    <xs:attribute name="moreLinkDisplayMode" type="calendarDisplayModes"/>
                     <xs:attribute name="moreLinkHint" type="layout:resourceString"/>
                     <xs:attribute name="moreLinkText" type="layout:resourceString"/>
                     <xs:attribute name="navigationLinksEnabled" type="xs:boolean"/>
@@ -241,7 +241,7 @@
                     <xs:element name="duration" type="calendarDurationType"/>
                 </xs:choice>
                 <xs:attribute name="id" type="xs:string" use="required"/>
-                <xs:attribute name="type" type="customCalendarDisplayModeType"/>
+                <xs:attribute name="type" type="genericCalendarDisplayModes"/>
                 <xs:attribute name="dayCount" type="xs:integer"/>
             </xs:extension>
         </xs:complexContent>
@@ -306,7 +306,7 @@
         <xs:attribute name="milliseconds" type="xs:integer"/>
     </xs:complexType>
 
-    <xs:simpleType name="customCalendarDisplayModeType">
+    <xs:simpleType name="genericCalendarDisplayModes">
         <xs:restriction>
             <xs:enumeration value="DAY_GRID"/>
             <xs:enumeration value="TIME_GRID"/>
@@ -445,7 +445,11 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="calendarDisplayModeType">
+    <xs:simpleType name="allCalendarDisplayModes">
+        <xs:union memberTypes="calendarDisplayModes genericCalendarDisplayModes"/>
+    </xs:simpleType>
+    
+    <xs:simpleType name="calendarDisplayModes">
         <xs:restriction base="xs:string">
             <xs:enumeration value="DAY_GRID_DAY"/>
             <xs:enumeration value="DAY_GRID_WEEK"/>

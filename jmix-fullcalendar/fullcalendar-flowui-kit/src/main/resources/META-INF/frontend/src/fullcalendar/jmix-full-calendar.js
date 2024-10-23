@@ -153,6 +153,9 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             unselect: (e) => this._onUnselect(e),
             dayCellDidMount: (e) => this._onDayCellDidMount(e),
             eventDidMount: (e) => this._onEventDidMount(e),
+            // If eventStartEditable is enabled, add fixedMirrorParent with the outer element. This helps
+            // avoid distortion of the event draggable preview if the component is placed in the SplitPanel.
+            ...(initialOptions && initialOptions.eventStartEditable) && {fixedMirrorParent: document.body},
             ...initialOptions,
         };
     }

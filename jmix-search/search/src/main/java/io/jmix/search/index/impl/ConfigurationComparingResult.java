@@ -48,4 +48,8 @@ public class ConfigurationComparingResult {
     public boolean isConfigurationUpdateRequired() {
         return isMappingUpdateRequired() || isSettingsUpdateRequired();
     }
+
+    public boolean isEqual() {
+        return mappingComparingResult == MappingComparingResult.EQUAL && settingsComparingResult == SettingsComparingResult.EQUAL;
+    }
 }

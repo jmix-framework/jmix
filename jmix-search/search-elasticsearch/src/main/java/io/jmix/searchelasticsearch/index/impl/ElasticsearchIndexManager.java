@@ -91,6 +91,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
         }
 
         boolean acknowledged = Boolean.TRUE.equals(response.acknowledged());
+        //TODO consider the possibility of this marking removing
         if (acknowledged) {
             indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
         }

@@ -96,24 +96,32 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
     public IndexValidationStatus validateIndex(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
-        IndexValidationStatus status;
-        if (isIndexExist(indexConfiguration.getIndexName())) {
-            ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
-            if (result.isIndexRecreatingRequired()) {
-                status = IndexValidationStatus.IRRELEVANT;
-                indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
-            } else {
-                status = IndexValidationStatus.ACTUAL;
-                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-            }
+        boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
+
+        IndexValidationStatus status = getIndexValidationStatus(indexConfiguration, indexExist);
+
+        if (status == IndexValidationStatus.ACTUAL) {
+            indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
         } else {
-            status = IndexValidationStatus.MISSING;
             indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
         }
 
         log.info("Validation status of search index '{}' (entity '{}'): {}",
                 indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), status);
         return status;
+    }
+
+    protected IndexValidationStatus getIndexValidationStatus(IndexConfiguration indexConfiguration, boolean indexExist) {
+        if (indexExist) {
+            ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
+            if (result.isEqual()) {
+                return IndexValidationStatus.ACTUAL;
+            } else {
+                return IndexValidationStatus.IRRELEVANT;
+            }
+        } else {
+            return IndexValidationStatus.MISSING;
+        }
     }
 
     @Override

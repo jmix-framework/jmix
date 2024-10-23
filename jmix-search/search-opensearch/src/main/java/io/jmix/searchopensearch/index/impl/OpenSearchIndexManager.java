@@ -89,6 +89,7 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
         }
 
         boolean acknowledged = Boolean.TRUE.equals(response.acknowledged());
+        //TODO consider the possibility of this marking removing
         if (acknowledged) {
             indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
         }

@@ -17,6 +17,8 @@ package io.jmix.core.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.apache.commons.io.IOUtils;
@@ -247,6 +249,10 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     protected FetchPlan deployDefaultFetchPlan(MetaClass metaClass, String name, Set<FetchPlanLoader.FetchPlanInfo> visited) {
+        if (metaClass instanceof KeyValueMetaClass keyValueMetaClass) {
+            return createKeyValueFetchPlan(keyValueMetaClass, name);
+        }
+
         Class<?> javaClass = metaClass.getJavaClass();
 
         FetchPlanLoader.FetchPlanInfo info = new FetchPlanLoader.FetchPlanInfo(metaClass, name);
@@ -271,6 +277,11 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         storeFetchPlan(metaClass, fetchPlan);
 
         return fetchPlan;
+    }
+
+    protected FetchPlan createKeyValueFetchPlan(KeyValueMetaClass metaClass, String name) {
+        // TODO consider adding properties of the given KeyValueMetaClass instance
+        return fetchPlans.builder(KeyValueEntity.class).name(name).build();
     }
 
     protected void addAttributesToLocalFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder) {

@@ -17,7 +17,6 @@
 package io.jmix.search.index;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.jmix.search.index.mapping.IndexMappingConfiguration;
 
 import java.util.Collection;
 import java.util.Map;

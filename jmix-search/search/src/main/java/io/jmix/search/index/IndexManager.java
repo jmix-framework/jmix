@@ -134,15 +134,4 @@ public interface IndexManager {
      * @return {@link IndexSynchronizationStatus}
      */
     IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration);
-
-
-    /**
-     * Saves mapping to index on the search server or servers cluster.
-     *
-     * @param indexName name of the index for saving mapping
-     * @param mapping   mapping for saving to configuration of the specified index
-     * @return true if saving process was performed successfully.
-     */
-    boolean putMapping(String indexName, IndexMappingConfiguration mapping);
-
 }

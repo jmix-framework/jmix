@@ -321,7 +321,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             hiddenAttributes: this._localizeProperties(options.hiddenProperties),
             hiddenFromAggregators: this._localizeProperties(options.hiddenFromAggregations),
             hiddenFromDragDrop: this._localizeProperties(options.hiddenFromDragDrop),
-            unusedAttrsVertical: options.unusedPropertiesVertical,
+            unusedAttrsVertical: this._getUnusedPropertiesVertical(options.unusedPropertiesVertical),
             autoSortUnusedAttrs: options.autoSortUnusedProperties,
             menuLimit: options.menuLimit,
             rendererOptions: {
@@ -348,6 +348,16 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         };
 
         return resultOptions;
+    }
+
+    _getUnusedPropertiesVertical(unusedPropertiesVertical) {
+        if (unusedPropertiesVertical) {
+            if (unusedPropertiesVertical.intVal) {
+                return unusedPropertiesVertical.intVal;
+            }
+            return unusedPropertiesVertical.boolVal;
+        }
+        return null;
     }
 
     _getColorScaleGenerator(rendererOptions) {

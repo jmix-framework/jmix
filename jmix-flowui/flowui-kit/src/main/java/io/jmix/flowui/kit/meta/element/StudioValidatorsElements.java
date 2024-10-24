@@ -283,9 +283,7 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
-                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
-                    "io.jmix.flowui.component.combobox.EntityComboBox",
-                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -320,9 +318,7 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
-                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
-                    "io.jmix.flowui.component.combobox.EntityComboBox",
-                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -548,9 +544,7 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
-                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
-                    "io.jmix.flowui.component.combobox.EntityComboBox",
-                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {
@@ -585,9 +579,7 @@ public interface StudioValidatorsElements {
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
-                    "io.jmix.flowui.kit.component.valuepicker.ValuePickerBase",
-                    "io.jmix.flowui.component.combobox.EntityComboBox",
-                    "io.jmix.flowui.component.valuepicker.EntityPicker",
+                    "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
             properties = {

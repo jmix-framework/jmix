@@ -17,6 +17,7 @@
 package io.jmix.localfs;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.localfs")
 public class LocalFileStorageProperties {
@@ -26,9 +27,16 @@ public class LocalFileStorageProperties {
      */
     String storageDir;
 
+    /**
+     * Disables checking whether requested file is located inside the storage directory.
+     */
+    boolean disablePathCheck;
+
     public LocalFileStorageProperties(
-            String storageDir) {
+            String storageDir,
+            @DefaultValue("false") boolean disablePathCheck) {
         this.storageDir = storageDir;
+        this.disablePathCheck = disablePathCheck;
     }
 
     /**
@@ -36,5 +44,12 @@ public class LocalFileStorageProperties {
      */
     public String getStorageDir() {
         return storageDir;
+    }
+
+    /**
+     * @see #disablePathCheck
+     */
+    public boolean isDisablePathCheck() {
+        return disablePathCheck;
     }
 }

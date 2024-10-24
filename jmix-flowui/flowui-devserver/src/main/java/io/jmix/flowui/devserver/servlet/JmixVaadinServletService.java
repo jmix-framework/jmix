@@ -17,6 +17,7 @@
 package io.jmix.flowui.devserver.servlet;
 
 import com.vaadin.flow.function.DeploymentConfiguration;
+import com.vaadin.flow.router.Router;
 import com.vaadin.flow.server.RequestHandler;
 import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.VaadinRequest;
@@ -25,6 +26,7 @@ import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinServletService;
 import com.vaadin.flow.server.communication.IndexHtmlRequestHandler;
 import com.vaadin.flow.server.communication.JavaScriptBootstrapHandler;
+import io.jmix.flowui.devserver.JmixRouter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +37,22 @@ public class JmixVaadinServletService extends VaadinServletService {
 
     private static final Logger log = LoggerFactory.getLogger(JmixVaadinServletService.class);
 
+    private Router router;
+
     public JmixVaadinServletService(VaadinServlet servlet, DeploymentConfiguration deploymentConfiguration) {
         super(servlet, deploymentConfiguration);
+    }
+
+    @Override
+    public Router getRouter() {
+        if (router != null) {
+            return router;
+        }
+
+        Router original = super.getRouter();
+        router = new JmixRouter(original.getRegistry());
+
+        return router;
     }
 
     @Override

@@ -17,11 +17,16 @@
 package io.jmix.rest.impl.controller;
 
 import io.jmix.core.AccessManager;
-import io.jmix.core.FileTransferService;
 import io.jmix.core.FileRef;
+import io.jmix.core.FileTransferService;
 import io.jmix.core.Metadata;
+import io.jmix.rest.RestProperties;
 import io.jmix.rest.accesscontext.RestFileDownloadContext;
 import io.jmix.rest.exception.RestAPIException;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.Set;
 
 /**
  * REST API controller that is used for downloading files
@@ -48,6 +53,8 @@ public class FileDownloadController {
     protected AccessManager accessManager;
     @Autowired
     protected FileTransferService fileTransferService;
+    @Autowired
+    protected RestProperties restProperties;
 
     @GetMapping
     public void downloadFile(@RequestParam String fileRef,
@@ -58,6 +65,7 @@ public class FileDownloadController {
         try {
             FileRef fileReference;
             fileReference = FileRef.fromString(fileRef);
+            attachment = resolveAttachmentValue(attachment, fileReference);
             fileTransferService.downloadAndWriteResponse(fileReference, fileReference.getStorageName(), attachment, response);
         } catch (IllegalArgumentException e) {
             throw new RestAPIException("Invalid file reference",
@@ -73,6 +81,23 @@ public class FileDownloadController {
 
         if (!downloadContext.isPermitted()) {
             throw new RestAPIException("File download failed", "File download is not permitted", HttpStatus.FORBIDDEN);
+        }
+    }
+
+    protected boolean resolveAttachmentValue(Boolean attachmentRequestParameterValue, FileRef fileRef) {
+        if (BooleanUtils.isTrue(attachmentRequestParameterValue)) {
+            return true;
+        }
+
+        String fileName = fileRef.getFileName();
+        String extension = FilenameUtils.getExtension(fileName);
+        if (StringUtils.isEmpty(extension)) {
+            // No extension - just download
+            return true;
+        } else {
+            // Check if file is allowed to be opened inline
+            Set<String> viewFileExtensions = restProperties.getViewFileExtensions();
+            return !viewFileExtensions.contains(StringUtils.lowerCase(extension));
         }
     }
 }

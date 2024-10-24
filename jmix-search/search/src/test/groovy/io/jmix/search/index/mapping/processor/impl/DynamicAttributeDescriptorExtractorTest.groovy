@@ -24,6 +24,18 @@ import spock.lang.Specification
 
 
 class DynamicAttributeDescriptorExtractorTest extends Specification {
+
+    def "the annotation is absent"() {
+        given:
+        DynamicAttributeDescriptorExtractor extractor = new DynamicAttributeDescriptorExtractor()
+
+        when:
+        def extractedDescriptor = extractor.extract(Configuration)
+
+        then:
+        extractedDescriptor == null
+    }
+
     def "regular extraction"() {
         given:
         DynamicAttributeDescriptorExtractor extractor = new DynamicAttributeDescriptorExtractor()
@@ -45,7 +57,6 @@ class DynamicAttributeDescriptorExtractorTest extends Specification {
 
         where:
         descriptorClass | isOn | referenceMode      | excludedCategories | excludedFields       | analizer   | fileContentIndexing
-//        Configuration   | false | NONE               | []                 | []                   | []
         Configuration2  | true | INSTANCE_NAME_ONLY | []                 | []                   | ""         | true
         Configuration3  | true | INSTANCE_NAME_ONLY | ["ex1", "ex2"]     | []                   | ""         | true
         Configuration4  | true | INSTANCE_NAME_ONLY | ["ex1", "ex2"]     | ["field3", "field4"] | ""         | true

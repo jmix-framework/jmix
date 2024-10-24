@@ -19,14 +19,19 @@ package io.jmix.fullcalendarflowui.component.serialization;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.google.common.base.Splitter;
 import com.vaadin.flow.data.provider.KeyMapper;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer.getRawGroupIdOrConstraint;
 import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.transformToZDT;
@@ -88,7 +93,8 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         serializeNullableValue("borderColor", value.getBorderColor(), gen, provider);
         serializeNullableValue("textColor", value.getTextColor(), gen, provider);
 
-        serializeNullableValue("extendedProps", value.getAdditionalProperties(), gen, provider);
+        Map<String, Object> additionalProperties = processAdditionalProperties(value.getAdditionalProperties());
+        serializeNullableValue("extendedProps", additionalProperties, gen, provider);
         serializeNullableValue("daysOfWeek", value.getRecurringDaysOfWeek(), gen, provider);
 
         serializeNullableValue("startRecur", value.getRecurringStartDate(), gen, provider);
@@ -120,5 +126,27 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
             return;
         }
         provider.defaultSerializeField(property, value, gen);
+    }
+
+    @Nullable
+    protected Map<String, Object> processAdditionalProperties(@Nullable Map<String, Object> additionalProperties) {
+        if (additionalProperties == null) {
+            return Map.of();
+        }
+        return additionalProperties.entrySet().stream()
+                .collect(Collectors.toMap(e -> formatAdditionalPropertiesKey(e.getKey()), Map.Entry::getValue));
+    }
+
+    protected String formatAdditionalPropertiesKey(String key) {
+        List<String> parts = Splitter.on(".")
+                .omitEmptyStrings()
+                .trimResults()
+                .splitToList(key);
+        if (parts.size() > 1) {
+            StringBuilder sb = new StringBuilder();
+            parts.forEach(p -> sb.append(StringUtils.capitalize(p)));
+            return StringUtils.uncapitalize(sb.toString());
+        }
+        return parts.get(0);
     }
 }

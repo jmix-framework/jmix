@@ -19,6 +19,10 @@ package io.jmix.core.impl;
 import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.core.common.util.URLEncodeUtils;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,16 +32,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import org.springframework.lang.Nullable;
-import jakarta.servlet.ServletInputStream;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Objects;
@@ -51,6 +51,8 @@ public class FileTransferServiceImpl implements FileTransferService {
 
     @Autowired
     private FileStorageLocator fileStorageLocator;
+    @Autowired
+    private CoreProperties coreProperties;
 
     @Override
     public void downloadAndWriteResponse(FileRef fileReference,
@@ -200,6 +202,12 @@ public class FileTransferServiceImpl implements FileTransferService {
             try {
                 size = Long.parseLong(contentLength);
             } catch (NumberFormatException ignored) {
+            }
+
+            if (size > coreProperties.getMaxFsFileSize().toBytes()) {
+                log.debug("File is too big: {} B while max allowed size is {} B", size, coreProperties.getMaxFsFileSize().toBytes());
+                throw new FileTransferException("File is too big", "Max allowed file size is "
+                        + coreProperties.getMaxFsFileSize().toBytes()+" B", HttpStatus.PAYLOAD_TOO_LARGE);
             }
 
             ServletInputStream is = request.getInputStream();

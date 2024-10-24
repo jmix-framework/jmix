@@ -19,6 +19,7 @@ package io.jmix.core;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.lang.Nullable;
+import org.springframework.util.unit.DataSize;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -106,6 +107,12 @@ public class CoreProperties {
      */
     boolean skipNullOrEmptyConditionsByDefault;
 
+
+    /**
+     * {@link FileStorage} maximum allowable file size.
+     */
+    DataSize maxFsFileSize;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -126,7 +133,8 @@ public class CoreProperties {
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
             @DefaultValue("true") boolean roundDecimalValueByFormat,
-            @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault) {
+            @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault,
+            @DefaultValue("100MB") DataSize maxFsFileSize) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -156,6 +164,7 @@ public class CoreProperties {
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
         this.roundDecimalValueByFormat = roundDecimalValueByFormat;
         this.skipNullOrEmptyConditionsByDefault = skipNullOrEmptyConditionsByDefault;
+        this.maxFsFileSize = maxFsFileSize;
     }
 
     public String getWebHostName() {
@@ -265,5 +274,12 @@ public class CoreProperties {
      */
     public boolean isSkipNullOrEmptyConditionsByDefault() {
         return skipNullOrEmptyConditionsByDefault;
+    }
+
+    /**
+     * @see #maxFsFileSize
+     */
+    public DataSize getMaxFsFileSize() {
+        return maxFsFileSize;
     }
 }

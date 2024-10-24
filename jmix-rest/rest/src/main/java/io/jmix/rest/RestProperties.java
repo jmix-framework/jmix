@@ -22,6 +22,7 @@ import org.springframework.lang.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 @ConfigurationProperties(prefix = "jmix.rest")
 public class RestProperties {
@@ -38,15 +39,22 @@ public class RestProperties {
     private final int defaultMaxFetchSize;
     private final Map<String, Integer> entityMaxFetchSize;
 
+    /**
+     * File extensions that can be opened for viewing in a browser.
+     */
+    protected Set<String> viewFileExtensions;
+
     public RestProperties(
             @DefaultValue("false") boolean optimisticLockingEnabled,
             @DefaultValue("true") boolean responseFetchPlanEnabled,
             @DefaultValue("10000") int defaultMaxFetchSize,
+            @DefaultValue({"jpg", "png", "jpeg", "pdf"}) Set<String> viewFileExtensions,
             @Nullable Map<String, Integer> entityMaxFetchSize) {
         this.optimisticLockingEnabled = optimisticLockingEnabled;
         this.responseFetchPlanEnabled = responseFetchPlanEnabled;
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
+        this.viewFileExtensions = viewFileExtensions;
     }
 
     /**
@@ -61,6 +69,13 @@ public class RestProperties {
      */
     public boolean isResponseFetchPlanEnabled() {
         return responseFetchPlanEnabled;
+    }
+
+    /**
+     * @see #viewFileExtensions
+     */
+    public Set<String> getViewFileExtensions() {
+        return viewFileExtensions;
     }
 
     public int getEntityMaxFetchSize(String entityName) {

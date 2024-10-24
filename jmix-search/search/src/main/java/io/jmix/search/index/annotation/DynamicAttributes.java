@@ -26,19 +26,18 @@ import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*;
 @Retention(RetentionPolicy.RUNTIME)
 @FieldMappingAnnotation
 public @interface DynamicAttributes {
-    @Nullable
-    String[] includeCategories() default {};
 
     @Nullable
     String[] excludeCategories() default {};
-
-    @Nullable
-    String[] includeFields() default {};
 
     @Nullable
     String[] excludeFields() default {};
 
     @Nullable
     ReferenceFieldsIndexingMode referenceFieldsIndexingMode() default INSTANCE_NAME_ONLY;
+
+    String analyzer() default "";
+
+    boolean indexFileContent() default true;
 
 }

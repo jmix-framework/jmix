@@ -24,9 +24,8 @@ import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.NONE;
 @JmixEntitySearchIndex(entity = TestEntity.class)
 @DynamicAttributes(
         referenceFieldsIndexingMode = NONE,
-        includeCategories = {"category1", "c2"},
         excludeCategories = {"ex1", "ex2"},
-        includeFields = {"field1", "field2"},
-        excludeFields = {"field3", "field4"})
+        excludeFields = {"field3", "field4"},
+        analyzer = "standard")
 public interface Configuration5 {
 }

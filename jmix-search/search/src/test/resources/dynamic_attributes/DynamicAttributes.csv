@@ -1,6 +1,0 @@
-﻿mode;referenceMode;include fields;excluded fields;class name
-NONE;NONE;;;TestIndexConfiguration
-ALL_CATEGORIES_INDEXING;NONE;;;TestIndexConfiguration2
-ALL_FIELDS_INDEXING_WITH_EXCEPTIONS;NONE;;;TestIndexConfiguration
-EXACT_FIELDS_INDEXING;NONE;;field1|field2;TestIndexConfiguration2
-ALL_CATEGORIES_INDEXING;INSTANCE_NAME_ONLY;field1|field2|field3;;TestIndexConfiguration

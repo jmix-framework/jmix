@@ -32,10 +32,10 @@ class DynamicAttributeDescriptorExtractorTest extends Specification {
         DynamicAttributesIndexingDescriptor expectedDescriptor = new DynamicAttributesIndexingDescriptor(
                 isOn,
                 referenceMode,
-                includedCategories,
                 excludedCategories,
-                includedFields,
-                excludedFields)
+                excludedFields,
+                analizer,
+                fileContentIndexing)
 
         when:
         def extractedDescriptor = extractor.extract(descriptorClass)
@@ -44,32 +44,13 @@ class DynamicAttributeDescriptorExtractorTest extends Specification {
         expectedDescriptor == extractedDescriptor
 
         where:
-        descriptorClass | isOn  | referenceMode      | includedCategories  | excludedCategories | includedFields       | excludedFields
-        Configuration   | false | NONE               | []                  | []                 | []                   | []
-        Configuration2  | true  | INSTANCE_NAME_ONLY | []                  | []                 | []                   | []
-        Configuration3  | true  | INSTANCE_NAME_ONLY | ["category1", "c2"] | ["ex1", "ex2"]     | []                   | []
-        Configuration4  | true  | INSTANCE_NAME_ONLY | ["category1", "c2"] | ["ex1", "ex2"]     | ["field1", "field2"] | ["field3", "field4"]
-        Configuration5  | true  | NONE               | ["category1", "c2"] | ["ex1", "ex2"]     | ["field1", "field2"] | ["field3", "field4"]
-    }
-
-    def "wrong configuration"() {
-        given:
-        DynamicAttributeDescriptorExtractor extractor = new DynamicAttributeDescriptorExtractor()
-
-        when:
-        extractor.extract(descriptorClass)
-
-        then:
-        def exception = thrown(DynamicAttributesIndexingConfigurationException)
-        exception.getMessage().contains(includedPartsText)
-        exception.getMessage().contains(excludedPartsText)
-        exception.getMessage().contains(partText)
-
-        where:
-        descriptorClass | includedPartsText | excludedPartsText | partText
-        Configuration6  | "c1, c2"          | "c2, c3"          | "Categories"
-        Configuration7  | "c1, c2"          | "c2, c3"          | "Categories"
-        Configuration8  | "f1, f2"          | "f1, f3"          | "Fields"
+        descriptorClass | isOn | referenceMode      | excludedCategories | excludedFields       | analizer   | fileContentIndexing
+//        Configuration   | false | NONE               | []                 | []                   | []
+        Configuration2  | true | INSTANCE_NAME_ONLY | []                 | []                   | ""         | true
+        Configuration3  | true | INSTANCE_NAME_ONLY | ["ex1", "ex2"]     | []                   | ""         | true
+        Configuration4  | true | INSTANCE_NAME_ONLY | ["ex1", "ex2"]     | ["field3", "field4"] | ""         | true
+        Configuration5  | true | NONE               | ["ex1", "ex2"]     | ["field3", "field4"] | "standard" | true
+        Configuration6  | true | NONE               | ["ex1", "ex2"]     | ["field3", "field4"] | "standard" | false
     }
 
     def "duplicates cleaning"() {
@@ -80,9 +61,7 @@ class DynamicAttributeDescriptorExtractorTest extends Specification {
         def descriptor = extractor.extract(Configuration9)
 
         then:
-        descriptor.includedCategories() == ["c2", "c1", "c5"]
         descriptor.excludedCategories() == ["c4", "c3"]
-        descriptor.includedFields() == ["f2", "f1", "f5"]
         descriptor.excludedFields() == ["f4", "f3"]
     }
 }

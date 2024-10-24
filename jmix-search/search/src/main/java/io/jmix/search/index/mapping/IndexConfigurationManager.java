@@ -58,8 +58,6 @@ public class IndexConfigurationManager {
         Registry registry = new Registry(instanceNameProvider, metadataTools);
         classNames.stream()
                 .map(indexDefinitionProcessor::createIndexConfiguration)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
                 .forEach(registry::registerIndexConfiguration);
         this.registry = registry;
     }

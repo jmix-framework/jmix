@@ -115,7 +115,7 @@ public class AnnotatedIndexDefinitionProcessor {
      * @param className full name of index definition interface
      * @return {@link IndexConfiguration}
      */
-    public Optional<IndexConfiguration> createIndexConfiguration(String className) {
+    public IndexConfiguration createIndexConfiguration(String className) {
         log.debug("Create Index Definition for class {}", className);
 
         Class<?> indexDefClass = resolveClass(className);
@@ -130,22 +130,16 @@ public class AnnotatedIndexDefinitionProcessor {
 
         Predicate<Object> indexablePredicate = createIndexablePredicate(indexDef);
 
-        try {
-            return Optional.of(new IndexConfiguration(
-                    indexDef.getMetaClass().getName(),
-                    indexDef.getEntityClass(),
-                    indexName,
-                    indexMappingConfiguration,
-                    affectedEntityClasses,
-                    indexablePredicate,
-                    indexDef.getExtendedSearchSettings(),
-                    dynamicAttributeDescriptorExtractor.extract(indexDefClass)
-            ));
-        } catch (DynamicAttributesIndexingConfigurationException e) {
-            //TODO document it
-            log.warn(e.getMessage());
-        }
-        return Optional.empty();
+        return new IndexConfiguration(
+                indexDef.getMetaClass().getName(),
+                indexDef.getEntityClass(),
+                indexName,
+                indexMappingConfiguration,
+                affectedEntityClasses,
+                indexablePredicate,
+                indexDef.getExtendedSearchSettings(),
+                dynamicAttributeDescriptorExtractor.extract(indexDefClass)
+        );
     }
 
     protected Class<?> resolveClass(String className) {

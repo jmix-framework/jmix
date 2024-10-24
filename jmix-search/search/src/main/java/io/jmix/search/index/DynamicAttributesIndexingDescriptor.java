@@ -22,9 +22,9 @@ import java.util.List;
 
 public record DynamicAttributesIndexingDescriptor(boolean dynamicAttributesIndexing,
                                                   ReferenceFieldsIndexingMode referenceFieldsIndexingMode,
-                                                  List<String> includedCategories,
                                                   List<String> excludedCategories,
-                                                  List<String> includedFields,
-                                                  List<String> excludedFields) {
+                                                  List<String> excludedFields,
+                                                  String analyzer,
+                                                  boolean indexFileContent) {
 
 }

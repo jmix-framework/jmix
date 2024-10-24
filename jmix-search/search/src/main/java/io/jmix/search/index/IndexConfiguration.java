@@ -120,6 +120,4 @@ public class IndexConfiguration {
     public DynamicAttributesIndexingDescriptor getDynamicAttributesIndexingDescriptor() {
         return dynamicAttributesIndexingDescriptor;
     }
-
-
 }

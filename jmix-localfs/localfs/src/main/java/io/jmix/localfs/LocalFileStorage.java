@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -65,6 +66,9 @@ public class LocalFileStorage implements FileStorage {
 
     @Autowired
     protected TimeSource timeSource;
+
+    @Value("${jmix.localfs.disable-path-check:false}")
+    protected Boolean disablePathCheck;
 
     protected boolean isImmutableFileStorage;
 
@@ -157,7 +161,7 @@ public class LocalFileStorage implements FileStorage {
         checkFileExists(path);
 
         long size;
-        long maxAllowedSize = coreProperties.getMaxFsFileSize().toBytes();
+        long maxAllowedSize = properties.getMaxFileSize().toBytes();
         try (OutputStream outputStream = Files.newOutputStream(path, CREATE_NEW)) {
             size = IOUtils.copyLarge(inputStream, outputStream, 0, maxAllowedSize);
 
@@ -169,7 +173,7 @@ public class LocalFileStorage implements FileStorage {
                     throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
                             String.format("File is too large: '%s'. Max file size = %s MB is exceeded but there are unread bytes left.",
                                     path.toAbsolutePath(),
-                                    coreProperties.getMaxFsFileSize().toMegabytes()));
+                                    properties.getMaxFileSize().toMegabytes()));
                 }
             }
             outputStream.flush();
@@ -233,7 +237,7 @@ public class LocalFileStorage implements FileStorage {
             }
 
             try {
-                if (!properties.isDisablePathCheck() && !path.toRealPath().startsWith(root.toRealPath())) {
+                if (!Boolean.TRUE.equals(disablePathCheck) && !path.toRealPath().startsWith(root.toRealPath())) {
                     log.error("File '{}' is outside of root dir '{}': ", path, root);
                     continue;
                 }

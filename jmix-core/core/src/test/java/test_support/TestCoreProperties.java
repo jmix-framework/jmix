@@ -43,14 +43,13 @@ public class TestCoreProperties extends CoreProperties {
                               boolean triggerFilesEnabled,
                               Duration triggerFilesProcessInterval,
                               boolean roundDecimalValueByFormat,
-                              boolean skipNullOrEmptyConditionsByDefault,
-                              DataSize maxFsFileSize) {
+                              boolean skipNullOrEmptyConditionsByDefault) {
         super(webHostName, webPort, confDir, workDir, tempDir, dbDir, availableLocales,
                 crossDataStoreReferenceLoadingBatchSize, idGenerationForEntitiesInAdditionalDataStoresEnabled,
                 dom4jMaxPoolSize, dom4jMaxBorrowWaitMillis, anonymousAuthenticationTokenKey, defaultFileStorage,
                 entitySerializationTokenRequired, entitySerializationTokenEncryptionKey,
                 legacyFetchPlanSerializationAttributeName, triggerFilesEnabled, triggerFilesProcessInterval,
-                roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault, maxFsFileSize);
+                roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault);
     }
 
     public static Builder builder() {
@@ -201,8 +200,7 @@ public class TestCoreProperties extends CoreProperties {
                     this.triggerFilesEnabled,
                     this.triggerFilesProcessInterval,
                     this.roundDecimalValueByFormat,
-                    this.skipNullOrEmptyConditionsByDefault,
-                    this.maxFsFileSize);
+                    this.skipNullOrEmptyConditionsByDefault);
         }
     }
 }

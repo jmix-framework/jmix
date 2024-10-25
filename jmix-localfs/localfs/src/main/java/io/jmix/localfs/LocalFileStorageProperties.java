@@ -18,6 +18,7 @@ package io.jmix.localfs;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.util.unit.DataSize;
 
 @ConfigurationProperties(prefix = "jmix.localfs")
 public class LocalFileStorageProperties {
@@ -28,15 +29,15 @@ public class LocalFileStorageProperties {
     String storageDir;
 
     /**
-     * Disables checking whether requested file is located inside the storage directory.
+     * Maximum allowable file size.
      */
-    boolean disablePathCheck;
+    DataSize maxFileSize;
 
     public LocalFileStorageProperties(
             String storageDir,
-            @DefaultValue("false") boolean disablePathCheck) {
+            @DefaultValue("100MB") DataSize maxFileSize) {
         this.storageDir = storageDir;
-        this.disablePathCheck = disablePathCheck;
+        this.maxFileSize = maxFileSize;
     }
 
     /**
@@ -47,9 +48,9 @@ public class LocalFileStorageProperties {
     }
 
     /**
-     * @see #disablePathCheck
+     * @see #maxFileSize
      */
-    public boolean isDisablePathCheck() {
-        return disablePathCheck;
+    public DataSize getMaxFileSize() {
+        return maxFileSize;
     }
 }

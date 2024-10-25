@@ -204,12 +204,6 @@ public class FileTransferServiceImpl implements FileTransferService {
             } catch (NumberFormatException ignored) {
             }
 
-            if (size > coreProperties.getMaxFsFileSize().toBytes()) {
-                log.debug("File is too big: {} B while max allowed size is {} B", size, coreProperties.getMaxFsFileSize().toBytes());
-                throw new FileTransferException("File is too big", "Max allowed file size is "
-                        + coreProperties.getMaxFsFileSize().toBytes()+" B", HttpStatus.PAYLOAD_TOO_LARGE);
-            }
-
             ServletInputStream is = request.getInputStream();
             name = Objects.toString(name, "");
             FileStorage fileStorage = getFileStorageByNameOrDefault(fileStorageName);

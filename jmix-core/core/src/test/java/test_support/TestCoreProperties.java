@@ -17,7 +17,6 @@
 package test_support;
 
 import io.jmix.core.CoreProperties;
-import org.springframework.util.unit.DataSize;
 
 import java.time.Duration;
 import java.util.List;
@@ -77,7 +76,6 @@ public class TestCoreProperties extends CoreProperties {
         Duration triggerFilesProcessInterval = Duration.ofSeconds(5000);
         boolean roundDecimalValueByFormat = true;
         boolean skipNullOrEmptyConditionsByDefault = false;
-        DataSize maxFsFileSize = DataSize.ofMegabytes(100);
 
         public Builder setWebHostName(String webHostName) {
             this.webHostName = webHostName;

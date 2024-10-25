@@ -19,6 +19,7 @@ package io.jmix.core.impl;
 import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.core.common.util.URLEncodeUtils;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
@@ -51,8 +51,6 @@ public class FileTransferServiceImpl implements FileTransferService {
 
     @Autowired
     private FileStorageLocator fileStorageLocator;
-    @Autowired
-    private CoreProperties coreProperties;
 
     @Override
     public void downloadAndWriteResponse(FileRef fileReference,

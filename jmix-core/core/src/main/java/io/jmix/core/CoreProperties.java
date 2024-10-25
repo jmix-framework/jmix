@@ -106,9 +106,6 @@ public class CoreProperties {
      */
     boolean skipNullOrEmptyConditionsByDefault;
 
-
-
-
     public CoreProperties(
             String webHostName,
             String webPort,

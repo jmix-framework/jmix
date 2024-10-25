@@ -17,6 +17,8 @@
 package io.jmix.localfs;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.util.unit.DataSize;
 
 @ConfigurationProperties(prefix = "jmix.localfs")
 public class LocalFileStorageProperties {
@@ -26,9 +28,16 @@ public class LocalFileStorageProperties {
      */
     String storageDir;
 
+    /**
+     * Maximum allowable file size.
+     */
+    DataSize maxFileSize;
+
     public LocalFileStorageProperties(
-            String storageDir) {
+            String storageDir,
+            @DefaultValue("100MB") DataSize maxFileSize) {
         this.storageDir = storageDir;
+        this.maxFileSize = maxFileSize;
     }
 
     /**
@@ -36,5 +45,12 @@ public class LocalFileStorageProperties {
      */
     public String getStorageDir() {
         return storageDir;
+    }
+
+    /**
+     * @see #maxFileSize
+     */
+    public DataSize getMaxFileSize() {
+        return maxFileSize;
     }
 }

@@ -18,14 +18,14 @@ package io.jmix.fullcalendarflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.*;
 
-@StudioUiKit(studioClassloaderDependencies = "io.jmix.fullcalendar:jmix-fullcalendar-flowui-kit")
+@StudioUiKit
 public interface StudioFullCalendarActions {
 
     @StudioAction(
             type = "fcalen_daysOfWeekEdit",
             description = "Displays a dialog window with days of week to select",
             classFqn = "io.jmix.fullcalendarflowui.action.DaysOfWeekEditAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/action/action.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

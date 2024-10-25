@@ -96,8 +96,8 @@ public class FileDownloadController {
             return true;
         } else {
             // Check if file is allowed to be opened inline
-            Set<String> viewFileExtensions = restProperties.getViewFileExtensions();
-            return !viewFileExtensions.contains(StringUtils.lowerCase(extension));
+            Set<String> inlineEnabledFileExtensions = restProperties.getInlineEnabledFileExtensions();
+            return !inlineEnabledFileExtensions.contains(StringUtils.lowerCase(extension));
         }
     }
 }

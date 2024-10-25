@@ -40,21 +40,21 @@ public class RestProperties {
     private final Map<String, Integer> entityMaxFetchSize;
 
     /**
-     * File extensions that can be opened for viewing in a browser.
+     * File extensions that can be opened for viewing in a browser by replying with 'Content-Disposition=inline' header.
      */
-    protected Set<String> viewFileExtensions;
+    protected Set<String> inlineEnabledFileExtensions;
 
     public RestProperties(
             @DefaultValue("false") boolean optimisticLockingEnabled,
             @DefaultValue("true") boolean responseFetchPlanEnabled,
             @DefaultValue("10000") int defaultMaxFetchSize,
-            @DefaultValue({"jpg", "png", "jpeg", "pdf"}) Set<String> viewFileExtensions,
+            @DefaultValue({"jpg", "png", "jpeg", "pdf"}) Set<String> inlineEnabledFileExtensions,
             @Nullable Map<String, Integer> entityMaxFetchSize) {
         this.optimisticLockingEnabled = optimisticLockingEnabled;
         this.responseFetchPlanEnabled = responseFetchPlanEnabled;
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
-        this.viewFileExtensions = viewFileExtensions;
+        this.inlineEnabledFileExtensions = inlineEnabledFileExtensions;
     }
 
     /**
@@ -72,10 +72,10 @@ public class RestProperties {
     }
 
     /**
-     * @see #viewFileExtensions
+     * @see #inlineEnabledFileExtensions
      */
-    public Set<String> getViewFileExtensions() {
-        return viewFileExtensions;
+    public Set<String> getInlineEnabledFileExtensions() {
+        return inlineEnabledFileExtensions;
     }
 
     public int getEntityMaxFetchSize(String entityName) {

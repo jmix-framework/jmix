@@ -266,5 +266,4 @@ public class CoreProperties {
     public boolean isSkipNullOrEmptyConditionsByDefault() {
         return skipNullOrEmptyConditionsByDefault;
     }
-
 }

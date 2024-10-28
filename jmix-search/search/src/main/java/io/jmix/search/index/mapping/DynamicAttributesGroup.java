@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +32,8 @@ import java.util.Map;
  * Describes details of mapping for entity property or group of properties.
  * Equivalent of single field-mapping annotation.
  */
-@Deprecated
-public class MappingDefinitionElement {
-    protected final String[] includedProperties;
+public class DynamicAttributesGroup {
+    private final String[] excludedCategories;
     protected final String[] excludedProperties;
     protected final Class<? extends FieldMappingStrategy> fieldMappingStrategyClass;
     protected final FieldMappingStrategy fieldMappingStrategy;
@@ -43,8 +42,8 @@ public class MappingDefinitionElement {
     protected final Integer order;
     protected final Map<String, Object> parameters;
 
-    protected MappingDefinitionElement(DynamicAttributeGroupBuilder builder) {
-        this.includedProperties = builder.includedProperties;
+    protected DynamicAttributesGroup(DynamicAttributeGroupDefinitionBuilder builder) {
+        this.excludedCategories = builder.excludedCategories;
         this.excludedProperties = builder.excludedProperties;
         this.fieldMappingStrategyClass = builder.fieldMappingStrategyClass;
         this.fieldMappingStrategy = builder.fieldMappingStrategy;
@@ -52,15 +51,6 @@ public class MappingDefinitionElement {
         this.propertyValueExtractor = builder.propertyValueExtractor;
         this.order = builder.order;
         this.parameters = builder.parameters == null ? Collections.emptyMap() : builder.parameters;
-    }
-
-    /**
-     * Provides full names of properties that should be indexed.
-     *
-     * @return property names
-     */
-    public String[] getIncludedProperties() {
-        return includedProperties;
     }
 
     /**
@@ -91,7 +81,7 @@ public class MappingDefinitionElement {
      * Can be null if strategy is defined as class (see {@link #getFieldMappingStrategyClass()})
      * or configuration is specified explicitly (see {@link #getFieldConfiguration()})
      * <p>
-     * {@link MappingDefinitionElement#getFieldMappingStrategyClass()} is ignored if this instance is set.
+     * {@link DynamicAttributesGroup#getFieldMappingStrategyClass()} is ignored if this instance is set.
      *
      * @return {@link FieldMappingStrategy} instance
      */
@@ -155,15 +145,24 @@ public class MappingDefinitionElement {
         return parameters;
     }
 
-    public static DynamicAttributeGroupBuilder builder() {
-        return new DynamicAttributeGroupBuilder();
+    public static DynamicAttributeGroupDefinitionBuilder builder() {
+        return new DynamicAttributeGroupDefinitionBuilder();
     }
 
-    public static class DynamicAttributeGroupBuilder {
+    /**
+     * todo
+     *
+     * @return
+     */
+    public String[] getExcludedCategories() {
+        return excludedCategories;
+    }
+
+    public static class DynamicAttributeGroupDefinitionBuilder {
 
         private static final ObjectMapper mapper = new ObjectMapper();
 
-        private String[] includedProperties = new String[0];
+        private String[] excludedCategories = new String[0];
         private String[] excludedProperties = new String[0];
         private Class<? extends FieldMappingStrategy> fieldMappingStrategyClass;
         private FieldMappingStrategy fieldMappingStrategy;
@@ -172,21 +171,11 @@ public class MappingDefinitionElement {
         private Integer order = null;
         private Map<String, Object> parameters = null;
 
-        private DynamicAttributeGroupBuilder() {
+        private DynamicAttributeGroupDefinitionBuilder() {
         }
 
-        /**
-         * Defines entity properties that should be indexed.
-         * <p>
-         * Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").
-         * <p>
-         * Wildcard is allowed at the last level of multilevel properties ("*", "refPropertyName.*").
-         *
-         * @param properties property names
-         * @return builder
-         */
-        public DynamicAttributeGroupBuilder includeProperties(String... properties) {
-            this.includedProperties = properties;
+        public DynamicAttributeGroupDefinitionBuilder excludeCategories(String... categories) {
+            this.excludedCategories = categories;
             return this;
         }
 
@@ -200,7 +189,7 @@ public class MappingDefinitionElement {
          * @param properties property names
          * @return builder
          */
-        public DynamicAttributeGroupBuilder excludeProperties(String... properties) {
+        public DynamicAttributeGroupDefinitionBuilder excludeProperties(String... properties) {
             this.excludedProperties = properties;
             return this;
         }
@@ -227,7 +216,7 @@ public class MappingDefinitionElement {
          * @see #withFieldConfiguration(String)
          * @see #withFieldConfiguration(ObjectNode)
          */
-        public DynamicAttributeGroupBuilder withFieldMappingStrategyClass(Class<? extends FieldMappingStrategy> fieldMappingStrategyClass) {
+        public DynamicAttributeGroupDefinitionBuilder withFieldMappingStrategyClass(Class<? extends FieldMappingStrategy> fieldMappingStrategyClass) {
             this.fieldMappingStrategyClass = fieldMappingStrategyClass;
             return this;
         }
@@ -254,7 +243,7 @@ public class MappingDefinitionElement {
          * @see #withFieldConfiguration(String)
          * @see #withFieldConfiguration(ObjectNode)
          */
-        public DynamicAttributeGroupBuilder withFieldMappingStrategy(FieldMappingStrategy fieldMappingStrategy) {
+        public DynamicAttributeGroupDefinitionBuilder withFieldMappingStrategy(FieldMappingStrategy fieldMappingStrategy) {
             this.fieldMappingStrategy = fieldMappingStrategy;
             return this;
         }
@@ -262,12 +251,12 @@ public class MappingDefinitionElement {
         /**
          * Defines parameters map.
          * <p>
-         * See {@link MappingDefinitionElement#getParameters()}.
+         * See {@link DynamicAttributesGroup#getParameters()}.
          *
          * @param parameters parameters
          * @return builder
          */
-        public DynamicAttributeGroupBuilder withParameters(Map<String, Object> parameters) {
+        public DynamicAttributeGroupDefinitionBuilder withParameters(Map<String, Object> parameters) {
             this.parameters = new HashMap<>(parameters);
             return this;
         }
@@ -275,13 +264,13 @@ public class MappingDefinitionElement {
         /**
          * Adds new parameter to parameters map.
          * <p>
-         * See {@link MappingDefinitionElement#getParameters()}.
+         * See {@link DynamicAttributesGroup#getParameters()}.
          *
          * @param parameterName  parameter name
          * @param parameterValue parameter value
          * @return builder
          */
-        public DynamicAttributeGroupBuilder addParameter(String parameterName, Object parameterValue) {
+        public DynamicAttributeGroupDefinitionBuilder addParameter(String parameterName, Object parameterValue) {
             if (this.parameters == null) {
                 this.parameters = new HashMap<>();
             }
@@ -321,7 +310,7 @@ public class MappingDefinitionElement {
          * @see #withFieldMappingStrategy
          * @see #withFieldConfiguration(ObjectNode)
          */
-        public DynamicAttributeGroupBuilder withFieldConfiguration(String configuration) {
+        public DynamicAttributeGroupDefinitionBuilder withFieldConfiguration(String configuration) {
             try {
                 ObjectNode configNode = mapper.readValue(configuration, ObjectNode.class);
                 return withFieldConfiguration(configNode);
@@ -361,7 +350,7 @@ public class MappingDefinitionElement {
          * @see #withFieldMappingStrategy
          * @see #withFieldConfiguration(String)
          */
-        public DynamicAttributeGroupBuilder withFieldConfiguration(ObjectNode configuration) {
+        public DynamicAttributeGroupDefinitionBuilder withFieldConfiguration(ObjectNode configuration) {
             this.fieldConfiguration = FieldConfiguration.create(configuration);
             return this;
         }
@@ -379,7 +368,7 @@ public class MappingDefinitionElement {
          * @see #withFieldConfiguration(String)
          * @see #withFieldConfiguration(ObjectNode)
          */
-        public DynamicAttributeGroupBuilder withPropertyValueExtractor(PropertyValueExtractor propertyValueExtractor) {
+        public DynamicAttributeGroupDefinitionBuilder withPropertyValueExtractor(PropertyValueExtractor propertyValueExtractor) {
             this.propertyValueExtractor = propertyValueExtractor;
             return this;
         }
@@ -391,13 +380,13 @@ public class MappingDefinitionElement {
          * @param order order
          * @return builder
          */
-        public DynamicAttributeGroupBuilder withOrder(int order) {
+        public DynamicAttributeGroupDefinitionBuilder withOrder(int order) {
             this.order = order;
             return this;
         }
 
-        public MappingDefinitionElement build() {
-            return new MappingDefinitionElement(this);
+        public DynamicAttributesGroup build() {
+            return new DynamicAttributesGroup(this);
         }
     }
 }

@@ -90,9 +90,11 @@ import java.util.List;
 public class MappingDefinition {
 
     protected List<MappingDefinitionElement> elements;
+    protected List<DynamicAttributesGroup> dynamicGroups;
 
     protected MappingDefinition(MappingDefinitionBuilder builder) {
         this.elements = builder.elements;
+        this.dynamicGroups = builder.dynamicGroups;
     }
 
     /**
@@ -109,10 +111,23 @@ public class MappingDefinition {
     }
 
     public static class MappingDefinitionBuilder {
-        private final List<MappingDefinitionElement> elements = new ArrayList<>();
 
+        private final List<MappingDefinitionElement> elements = new ArrayList<>();
+        private final List<DynamicAttributesGroup> dynamicGroups = new ArrayList<>();
+
+        @Deprecated
         public MappingDefinitionBuilder addElement(MappingDefinitionElement element) {
             elements.add(element);
+            return this;
+        }
+
+        public MappingDefinitionBuilder addStaticAttributesGroup(StaticAttributesGroup group) {
+            elements.add(group);
+            return this;
+        }
+
+        public MappingDefinitionBuilder addDynamicAttributesGroup(DynamicAttributesGroup group) {
+            dynamicGroups.add(group);
             return this;
         }
 

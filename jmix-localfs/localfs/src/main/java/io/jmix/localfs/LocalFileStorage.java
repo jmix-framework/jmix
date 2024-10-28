@@ -168,7 +168,13 @@ public class LocalFileStorage implements FileStorage {
             if (size >= maxAllowedSize) {
                 if (inputStream.read() != IOUtils.EOF) {
                     outputStream.close();
-                    if (path.toFile().exists()) path.toFile().delete();
+                    if (path.toFile().exists()){
+                        if(!path.toFile().delete()){
+                            log.warn("Failed to delete an incorrectly uploaded file '{}'. " +
+                                            "File was to large and has been rejected but already loaded part was not deleted.",
+                                    path.toAbsolutePath());
+                        };
+                    }
 
                     throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
                             String.format("File is too large: '%s'. Max file size = %s MB is exceeded but there are unread bytes left.",

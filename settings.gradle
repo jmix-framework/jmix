@@ -96,6 +96,12 @@ includeProject('ldap-starter', 'jmix-ldap/ldap-starter')
 includeProject('localfs', 'jmix-localfs/localfs')
 includeProject('localfs-starter', 'jmix-localfs/localfs-starter')
 
+includeProject('messagetemplates', 'jmix-messagetemplates/messagetemplates')
+includeProject('messagetemplates-flowui', 'jmix-messagetemplates/messagetemplates-flowui')
+includeProject('messagetemplates-flowui-kit', 'jmix-messagetemplates/messagetemplates-flowui-kit')
+includeProject('messagetemplates-starter', 'jmix-messagetemplates/messagetemplates-starter')
+includeProject('messagetemplates-flowui-starter', 'jmix-messagetemplates/messagetemplates-flowui-starter')
+
 includeProject('multitenancy', 'jmix-multitenancy/multitenancy')
 includeProject('multitenancy-starter', 'jmix-multitenancy/multitenancy-starter')
 includeProject('multitenancy-flowui', 'jmix-multitenancy/multitenancy-flowui')

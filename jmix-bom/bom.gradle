@@ -180,6 +180,10 @@ dependencies {
         api "io.jmix.localfs:jmix-localfs:$freeVersion"
         api "io.jmix.localfs:jmix-localfs-starter:$freeVersion"
 
+        api "io.jmix.messagetemplates:jmix-messagetemplates-flowui-kit:$freeVersion"
+        api "io.jmix.messagetemplates:jmix-messagetemplates-flowui:$freeVersion"
+        api "io.jmix.messagetemplates:jmix-messagetemplates-flowui-starter:$freeVersion"
+
         api "io.jmix.maps:jmix-maps:$premiumVersion"
         api "io.jmix.maps:jmix-maps-starter:$premiumVersion"
         api "io.jmix.maps:jmix-maps-flowui:$premiumVersion"

@@ -1,0 +1,92 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema targetNamespace="http://jmix.io/schema/messagetemplates/ui"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:layout="http://jmix.io/schema/flowui/layout"
+           xmlns="http://jmix.io/schema/messagetemplates/ui"
+           elementFormDefault="qualified">
+
+    <xs:element name="grapesJs">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="layout:baseComponent">
+                    <xs:sequence minOccurs="0">
+                        <xs:element name="plugins" type="pluginsType"/>
+                        <xs:element name="blocks" type="blocksType"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="pluginsType">
+        <xs:sequence>
+            <xs:element name="plugin" type="pluginType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="blocksType">
+        <xs:sequence>
+            <xs:element name="block" type="blockType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="pluginType">
+        <xs:attribute name="name" type="pluginNameType"/>
+    </xs:complexType>
+
+    <xs:complexType name="blockType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="content">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+            <xs:element name="attributes">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="label" type="layout:resourceString"/>
+        <xs:attribute name="category" type="layout:resourceString"/>
+
+        <xs:attribute name="content" type="xs:string"/>
+        <xs:attribute name="attributes" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:simpleType name="pluginNameType">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="grapesjs-blocks-basic"/>
+                    <xs:enumeration value="grapesjs-blocks-flexbox"/>
+                    <xs:enumeration value="grapesjs-custom-code"/>
+                    <xs:enumeration value="grapesjs-plugin-forms"/>
+                    <xs:enumeration value="grapesjs-preset-newsletter"/>
+                    <xs:enumeration value="grapesjs-parser-postcss"/>
+                    <xs:enumeration value="grapesjs-style-filter"/>
+                    <xs:enumeration value="grapesjs-tabs"/>
+                    <xs:enumeration value="grapesjs-tooltip"/>
+                    <xs:enumeration value="grapesjs-tui-image-editor"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+</xs:schema>

@@ -16,7 +16,6 @@
 
 package io.jmix.search.utils;
 
-import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -24,7 +23,6 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.Transient;
@@ -38,10 +36,11 @@ public class PropertyTools {
 
     private static final Logger log = LoggerFactory.getLogger(PropertyTools.class);
 
-    @Autowired
     protected MetadataTools metadataTools;
-    @Autowired
-    protected Metadata metadata;
+
+    public PropertyTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
 
     /**
      * Finds properties of entity by provided path string. Path string supports wildcard '*'.
@@ -51,11 +50,20 @@ public class PropertyTools {
      * @return map with effective property path as a key and property itself as a value
      */
     public Map<String, MetaPropertyPath> findPropertiesByPath(MetaClass metaClass, String pathString) {
+        return findPropertiesByPaths(metaClass, pathString, false);
+    }
+
+    public Map<String, MetaPropertyPath> findPropertiesByPaths(MetaClass metaClass, String pathString, boolean useDynamicAttributes) {
         log.debug("Find properties by path: MetaClass={}, PathString={}", metaClass, pathString);
         if (hasWildcard(pathString)) {
             return findPropertiesByWildcardPath(metaClass, pathString);
         } else {
-            MetaPropertyPath propertyPath = metaClass.getPropertyPath(pathString);
+            MetaPropertyPath propertyPath;
+            if(useDynamicAttributes){
+                propertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, pathString);
+            } else {
+                propertyPath = metaClass.getPropertyPath(pathString);
+            }
             if (propertyPath != null && isPropertyPathSuitableToDirectDeclaration(propertyPath)) {
                 return Collections.singletonMap(pathString, propertyPath);
             } else {
@@ -97,7 +105,7 @@ public class PropertyTools {
                         .map(property -> createPropertyPath(parentPath, property))
                         .collect(Collectors.toMap(MetaPropertyPath::toPathString, Function.identity()));
             } else {
-                MetaProperty property = metaClass.findProperty(pathItem);
+                MetaProperty property = metadataTools.resolveMetaPropertyPathOrNull(metaClass, pathItem).getMetaProperty();
                 if (property != null && isPropertySuitableToDirectDeclaration(property)) {
                     result = new HashMap<>();
                     MetaPropertyPath newPath = createPropertyPath(parentPath, property);
@@ -127,7 +135,7 @@ public class PropertyTools {
                 }
 
             } else {
-                MetaProperty property = metaClass.findProperty(pathItem);
+                MetaProperty property = metadataTools.resolveMetaPropertyPathOrNull(metaClass, pathItem).getMetaProperty();
                 if (property != null
                         && isPropertySuitableToDirectDeclaration(property)
                         && isReferenceProperty(property)) {
@@ -151,8 +159,8 @@ public class PropertyTools {
     }
 
     protected List<MetaProperty> findLocalPropertiesByPattern(MetaClass metaClass, Pattern pattern) {
-        Collection<MetaProperty> allLocalProperties = metaClass.getProperties();
-        return allLocalProperties.stream()
+        Collection<MetaPropertyPath> allLocalProperties = metadataTools.getPropertyPaths(metaClass);
+        return allLocalProperties.stream().map(MetaPropertyPath::getMetaProperty)
                 .filter((property) -> pattern.matcher(property.getName()).matches())
                 .collect(Collectors.toList());
     }

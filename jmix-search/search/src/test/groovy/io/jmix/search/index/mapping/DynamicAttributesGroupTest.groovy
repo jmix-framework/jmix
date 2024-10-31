@@ -48,7 +48,6 @@ class DynamicAttributesGroupTest extends Specification {
                 .addParameter(ANALYZER, SOME_ANALYZER)
                 .withFieldMappingStrategyClass(AutoMappingStrategy)
                 .withPropertyValueExtractor(propertyValueExtractorMock)
-                .withOrder(10)
                 .build()
 
         then:
@@ -60,7 +59,6 @@ class DynamicAttributesGroupTest extends Specification {
                 ANALYZER, SOME_ANALYZER)
         dynamicAttributesGroup.getPropertyValueExtractor() == propertyValueExtractorMock
         dynamicAttributesGroup.getFieldMappingStrategyClass() == AutoMappingStrategy
-        dynamicAttributesGroup.getOrder() == 10
 
     }
 
@@ -80,7 +78,6 @@ class DynamicAttributesGroupTest extends Specification {
                 .withFieldMappingStrategy(fieldMappingStrategyMock)
                 .withFieldMappingStrategyClass(AutoMappingStrategy)
                 .withPropertyValueExtractor(propertyValueExtractorMock)
-                .withOrder(10)
                 .build()
 
         then:
@@ -107,7 +104,6 @@ class DynamicAttributesGroupTest extends Specification {
                 .withFieldMappingStrategyClass(AutoMappingStrategy)
                 .withPropertyValueExtractor(propertyValueExtractorMock)
                 .withFieldConfiguration(SAMPLE_JSON_TEXT)
-                .withOrder(10)
                 .build()
 
         then:
@@ -133,7 +129,6 @@ class DynamicAttributesGroupTest extends Specification {
                 .withFieldMappingStrategyClass(AutoMappingStrategy)
                 .withPropertyValueExtractor(propertyValueExtractorMock)
                 .withFieldConfiguration(SAMPLE_JSON_TEXT)
-                .withOrder(10)
                 .build()
 
         then:
@@ -160,7 +155,6 @@ class DynamicAttributesGroupTest extends Specification {
                 .withPropertyValueExtractor(propertyValueExtractorMock)
                 .withFieldConfiguration(fieldConfigurationNode)
                 .withFieldConfiguration(SAMPLE_JSON_TEXT)
-                .withOrder(10)
                 .build()
 
 

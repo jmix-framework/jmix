@@ -39,7 +39,6 @@ public class DynamicAttributesGroup {
     protected final FieldMappingStrategy fieldMappingStrategy;
     protected final FieldConfiguration fieldConfiguration;
     protected final PropertyValueExtractor propertyValueExtractor;
-    protected final Integer order;
     protected final Map<String, Object> parameters;
 
     protected DynamicAttributesGroup(DynamicAttributeGroupDefinitionBuilder builder) {
@@ -49,7 +48,6 @@ public class DynamicAttributesGroup {
         this.fieldMappingStrategy = builder.fieldMappingStrategy;
         this.fieldConfiguration = builder.fieldConfiguration;
         this.propertyValueExtractor = builder.propertyValueExtractor;
-        this.order = builder.order;
         this.parameters = builder.parameters == null ? Collections.emptyMap() : builder.parameters;
     }
 
@@ -122,18 +120,6 @@ public class DynamicAttributesGroup {
     }
 
     /**
-     * Provides explicit order.
-     * <p>
-     * See {@link FieldMappingStrategy#getOrder()}
-     *
-     * @return order
-     */
-    @Nullable
-    public Integer getOrder() {
-        return order;
-    }
-
-    /**
      * Provides additional parameters related to this element.
      * <p>
      * Parameters are used by {@link FieldMapper} during mapping generation within {@link FieldMappingStrategy}
@@ -168,7 +154,6 @@ public class DynamicAttributesGroup {
         private FieldMappingStrategy fieldMappingStrategy;
         private FieldConfiguration fieldConfiguration;
         private PropertyValueExtractor propertyValueExtractor;
-        private Integer order = null;
         private Map<String, Object> parameters = null;
 
         private DynamicAttributeGroupDefinitionBuilder() {
@@ -370,18 +355,6 @@ public class DynamicAttributesGroup {
          */
         public DynamicAttributeGroupDefinitionBuilder withPropertyValueExtractor(PropertyValueExtractor propertyValueExtractor) {
             this.propertyValueExtractor = propertyValueExtractor;
-            return this;
-        }
-
-        /**
-         * Defines explicit order.
-         * It overrides order on strategy - {@link FieldMappingStrategy#getOrder()}.
-         *
-         * @param order order
-         * @return builder
-         */
-        public DynamicAttributeGroupDefinitionBuilder withOrder(int order) {
-            this.order = order;
             return this;
         }
 

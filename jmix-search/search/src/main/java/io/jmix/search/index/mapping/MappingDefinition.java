@@ -105,6 +105,9 @@ public class MappingDefinition {
     public List<MappingDefinitionElement> getElements() {
         return elements;
     }
+    public List<DynamicAttributesGroup> getDynamicGroups() {
+        return dynamicGroups;
+    }
 
     public static MappingDefinitionBuilder builder() {
         return new MappingDefinitionBuilder();

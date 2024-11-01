@@ -27,8 +27,18 @@ import jakarta.annotation.Nullable;
  */
 public interface HasShortcutCombination {
 
+    /**
+     * @return object that stores information about keys, modifiers and additional
+     * settings that describe shortcut combinations or {@code null} if not set
+     */
     @Nullable
     KeyCombination getShortcutCombination();
 
+    /**
+     * Sets object that stores information about keys, modifiers and additional
+     * settings that describe shortcut combinations.
+     *
+     * @param shortcutCombination key combination to set or {@code null} to remove
+     */
     void setShortcutCombination(@Nullable KeyCombination shortcutCombination);
 }

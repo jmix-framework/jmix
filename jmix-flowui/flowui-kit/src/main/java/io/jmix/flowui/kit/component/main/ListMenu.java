@@ -41,6 +41,9 @@ import java.beans.PropertyChangeSupport;
 import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ * listMenu is a component for displaying a vertical menu with a collapsible drop-down sub-menus.
+ */
 public class ListMenu extends Composite<UnorderedList> implements HasSize, HasStyle, HasThemeVariant<ListMenuVariant> {
 
     protected static final String TEXT_SMALL_CLASS_NAME = "text-s";

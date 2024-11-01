@@ -18,14 +18,31 @@ package io.jmix.flowui.kit.component;
 
 import com.vaadin.flow.component.HasElement;
 
+/**
+ * Interface to be implemented by UI components that can automatically receive focus when the page is loaded.
+ */
 public interface HasAutofocus extends HasElement {
 
+    /**
+     * The 'autofocus' property name.
+     */
     String AUTOFOCUS_PROPERTY_NAME = "autofocus";
 
+    /**
+     * Returns whether this component should have input focus when the page loads.
+     *
+     * @return the {@code autofocus} property value
+     */
     default boolean isAutofocus() {
         return getElement().getProperty(AUTOFOCUS_PROPERTY_NAME, false);
     }
 
+    /**
+     * Sets whether the component should automatically receive focus when
+     * the page loads. Defaults to {@code false}.
+     *
+     * @param autofocus {@code true} component should automatically receive focus
+     */
     default void setAutofocus(boolean autofocus) {
         getElement().setProperty(AUTOFOCUS_PROPERTY_NAME, autofocus);
     }

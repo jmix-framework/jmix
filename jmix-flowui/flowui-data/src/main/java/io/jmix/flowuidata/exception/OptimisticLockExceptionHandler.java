@@ -26,9 +26,14 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Handles database {@link org.eclipse.persistence.exceptions.OptimisticLockException}.
+ * Determines the exception type by searching a special marker string in the messages of all exceptions in the chain.
+ */
 @Component("flowui_OptimisticLockExceptionHandler")
 @Order(JmixOrder.HIGHEST_PRECEDENCE + 50)
 public class OptimisticLockExceptionHandler extends AbstractUiExceptionHandler {

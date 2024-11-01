@@ -20,8 +20,9 @@ import jakarta.annotation.Nullable;
 import java.util.function.Function;
 
 /**
- * Marker interface to indicate that the implementing class can be used as a formatter.
+ * A functional interface for formatting component value to a string.
  */
+@FunctionalInterface
 public interface Formatter<V> extends Function<V, String> {
 
     /**

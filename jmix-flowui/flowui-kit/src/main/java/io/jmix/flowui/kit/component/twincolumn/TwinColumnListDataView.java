@@ -24,7 +24,14 @@ import com.vaadin.flow.function.SerializableComparator;
 import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.function.SerializableSupplier;
 
+/**
+ * Data view implementation for {@link JmixTwinColumn} with in-memory list data.
+ * Provides information on the data and allows operations on it.
+ *
+ * @param <V> data type
+ */
 public class TwinColumnListDataView<V> extends AbstractListDataView<V> {
+
     public TwinColumnListDataView(SerializableSupplier<? extends DataProvider<V, ?>> dataProviderSupplier,
                                   Component component,
                                   SerializableBiConsumer<SerializablePredicate<V>, SerializableComparator<V>> filterOrSortingChangedCallback) {

@@ -44,6 +44,14 @@ public class GenericFilterConfigurationConverter {
         this.filterComponents = filterComponents;
     }
 
+    /**
+     * Configures passed entity representing filter configuration
+     * using passed filter {@link Configuration} object.
+     *
+     * @param configuration      filter configuration to convert
+     * @param configurationModel existing entity representing filter configuration
+     * @return entity representing filter configuration
+     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public FilterConfiguration toConfigurationModel(Configuration configuration,
                                                     FilterConfiguration configurationModel) {
@@ -61,6 +69,13 @@ public class GenericFilterConfigurationConverter {
         return configurationModel;
     }
 
+    /**
+     * Converts passed entity representing filter configuration to filter {@link Configuration}.
+     *
+     * @param configurationModel entity to convert
+     * @param filter             filter component
+     * @return filter {@link Configuration} object
+     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public Configuration toConfiguration(FilterConfiguration configurationModel, GenericFilter filter) {
         String id = configurationModel.getConfigurationId();

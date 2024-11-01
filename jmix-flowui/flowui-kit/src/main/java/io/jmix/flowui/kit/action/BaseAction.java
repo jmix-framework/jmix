@@ -26,6 +26,9 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 
+/**
+ * Base implementation of {@link Action}.
+ */
 public class BaseAction extends AbstractAction {
 
     protected boolean enabledExplicitly = true;
@@ -68,51 +71,135 @@ public class BaseAction extends AbstractAction {
         }
     }
 
-    @SuppressWarnings("unused") // called on declarative events registration
+    /**
+     * Adds a listener to be notified when action is performed.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener
+     */
+    @SuppressWarnings("UnusedReturnValue")
     public Registration addActionPerformedListener(Consumer<ActionPerformedEvent> listener) {
         return getEventBus().addListener(ActionPerformedEvent.class, listener);
     }
 
+    /**
+     * Sets the text property value of an action. May be used by components
+     * to initialize their appearance.
+     *
+     * @param text text to set or {@code null} to remove
+     * @return this object
+     */
     public BaseAction withText(@Nullable String text) {
         setText(text);
         return this;
     }
 
+    /**
+     * Sets the enabled property value of an action. May be used by components
+     * to initialize their appearance.
+     *
+     * @param enabled whether the action is currently enabled
+     * @return this object
+     */
     public BaseAction withEnabled(boolean enabled) {
         setEnabled(enabled);
         return this;
     }
 
+    /**
+     * Sets the visible property value of an action. May be used by components
+     * to initialize their appearance.
+     *
+     * @param visible whether the action is currently visible
+     * @return this object
+     */
     public BaseAction withVisible(boolean visible) {
         setVisible(visible);
         return this;
     }
 
+    /**
+     * Sets the icon property value of an action. May be used by components
+     * to initialize their appearance.
+     *
+     * @param icon icon to set or {@code null} to remove
+     * @return this object
+     */
     public BaseAction withIcon(@Nullable Icon icon) {
         setIcon(icon);
         return this;
     }
 
+    /**
+     * Sets the icon property value of an action. May be used by components
+     * to initialize their appearance.
+     *
+     * @param icon icon to set or {@code null} to remove
+     * @return this object
+     * @deprecated use {@link #withIcon(Icon)} or {@link #setIcon(Icon)} instead
+     */
+    @Deprecated(since = "2.4", forRemoval = true)
     public BaseAction withIcon(@Nullable VaadinIcon icon) {
         setIcon(ComponentUtils.convertToIcon(icon));
         return this;
     }
 
+    /**
+     * Sets the description property value of an action. May be used by components
+     * to initialize their appearance.
+     *
+     * @param description description to set or {@code null} to remove
+     * @return this object
+     */
+    public BaseAction withDescription(@Nullable String description) {
+        setDescription(description);
+        return this;
+    }
+
+    /**
+     * Sets the description property value of an action. May be used by components
+     * to initialize their appearance.
+     *
+     * @param title description to set or {@code null} to remove
+     * @return this object
+     * @deprecated use {@link #withDescription(String)} or {@link #setDescription(String)} instead
+     */
+    @Deprecated(since = "2.5", forRemoval = true)
     public BaseAction withTitle(@Nullable String title) {
         setDescription(title);
         return this;
     }
 
-    public BaseAction withVariant(ActionVariant actionVariant) {
-        setVariant(actionVariant);
+    /**
+     * Sets the variant property value of an action. May be used by components
+     * to initialize their appearance.
+     *
+     * @param variant variant to set
+     * @return this object
+     */
+    public BaseAction withVariant(ActionVariant variant) {
+        setVariant(variant);
         return this;
     }
 
+    /**
+     * Sets object that stores information about keys, modifiers and additional
+     * settings that describe shortcut combinations.
+     *
+     * @param shortcutCombination key combination to set or {@code null} to remove
+     * @return this object
+     */
     public BaseAction withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
         setShortcutCombination(shortcutCombination);
         return this;
     }
 
+    /**
+     * Adds a listener to be notified when action is performed.
+     *
+     * @param handler listener to add or {@code null} to remove all
+     * @return this object
+     */
     public BaseAction withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
         if (handler == null) {
             if (getEventBus().hasListener(ActionPerformedEvent.class)) {

@@ -19,6 +19,9 @@ import jakarta.annotation.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Class that represents color theme preset of {@link JmixCodeEditor}.
+ */
 public enum CodeEditorTheme {
 
     AMBIANCE("ambiance"),

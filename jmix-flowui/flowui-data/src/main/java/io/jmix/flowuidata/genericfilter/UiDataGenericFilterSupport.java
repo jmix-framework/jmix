@@ -60,6 +60,9 @@ import java.util.*;
 
 import static io.jmix.flowui.component.genericfilter.FilterUtils.generateFilterPath;
 
+/**
+ * Support bean that provides helper methods to work with {@link GenericFilter}.
+ */
 @Internal
 public class UiDataGenericFilterSupport extends GenericFilterSupport {
 
@@ -164,6 +167,15 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
         return resultConfiguration;
     }
 
+    /**
+     * Saves filter configuration to the database.
+     * <p>
+     * If passed {@link FilterConfiguration} object is null, creates a new one from
+     * passed {@link Configuration} object.
+     *
+     * @param configuration      filter configuration
+     * @param configurationModel entity representing filter configuration to save to the database
+     */
     public void saveConfigurationModel(Configuration configuration, @Nullable FilterConfiguration configurationModel) {
         if (configurationModel == null) {
             configurationModel = createFilterConfigurationModel(configuration);

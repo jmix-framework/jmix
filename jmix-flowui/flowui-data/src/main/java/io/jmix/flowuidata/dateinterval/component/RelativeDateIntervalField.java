@@ -43,6 +43,10 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * RelativeDateIntervalField allows users to choose relative date interval
+ * from list of options presented in an overlay.
+ */
 @Internal
 public class RelativeDateIntervalField extends CustomField<RelativeDateInterval>
         implements SupportsValidation<RelativeDateInterval>, ApplicationContextAware, InitializingBean {
@@ -136,8 +140,15 @@ public class RelativeDateIntervalField extends CustomField<RelativeDateInterval>
         return select;
     }
 
-    public void setDateTimeSelectItemsMap(Map<Enum<?>, String> localizationMap) {
-        ComponentUtils.setItemsMap(relativeDateTimeSelect, localizationMap);
+    /**
+     * Sets key set from passed {@link Map} as relative date time field's items and
+     * values as visual representation of corresponding item, effectively defining
+     * {@link com.vaadin.flow.component.ItemLabelGenerator}.
+     *
+     * @param itemsMap map to set
+     */
+    public void setDateTimeSelectItemsMap(Map<Enum<?>, String> itemsMap) {
+        ComponentUtils.setItemsMap(relativeDateTimeSelect, itemsMap);
     }
 
     @Override

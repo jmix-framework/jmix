@@ -31,10 +31,16 @@ public class RelativeDateInterval implements BaseDateInterval {
         this.relativeDateTimeMomentName = relativeDateMomentName;
     }
 
+    /**
+     * @return operation type to apply for relative date and time moment
+     */
     public Operation getOperation() {
         return operation;
     }
 
+    /**
+     * @return name of relative date and time moment
+     */
     public String getRelativeDateTimeMomentName() {
         return relativeDateTimeMomentName;
     }

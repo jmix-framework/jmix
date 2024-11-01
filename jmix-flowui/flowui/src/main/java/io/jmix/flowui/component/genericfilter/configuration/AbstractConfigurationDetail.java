@@ -36,6 +36,9 @@ import org.springframework.context.ApplicationContextAware;
 
 import static io.jmix.flowui.component.genericfilter.FilterUtils.generateConfigurationId;
 
+/**
+ * Base UI component class that provides UI for filter's configuration save dialog.
+ */
 public abstract class AbstractConfigurationDetail extends Composite<FormLayout>
         implements ApplicationContextAware, InitializingBean, SupportsValidation {
 

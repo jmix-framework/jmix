@@ -17,10 +17,19 @@
 package io.jmix.flowui.kit.component.loginform;
 
 import com.google.common.base.Preconditions;
+import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
 
+/**
+ * Internationalization object for customizing the component UI texts. An
+ * instance with the default messages can be obtained using
+ * {@link LoginI18n#createDefault()}
+ *
+ * @see LoginForm#setI18n(LoginI18n)
+ */
 public class JmixLoginI18n extends LoginI18n {
-    private JmixForm form;
+
+    protected JmixForm form;
 
     public static JmixLoginI18n createDefault() {
         JmixLoginI18n jmixLoginI18n = new JmixLoginI18n();

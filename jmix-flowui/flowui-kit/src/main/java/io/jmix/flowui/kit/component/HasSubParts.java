@@ -20,11 +20,17 @@ package io.jmix.flowui.kit.component;
 import jakarta.annotation.Nullable;
 
 /**
- * Interface for UI components that provide additional objects for framework as part of component API.
- *
+ * Interface to be implemented by UI components that provide additional
+ * objects for framework as part of component API.
  */
 public interface HasSubParts {
 
+    /**
+     * Returns a sub part object by its name.
+     *
+     * @param name sub part name, e.g. component id
+     * @return a sub part object by its name, or {@code null} if not found
+     */
     @Nullable
     Object getSubPart(String name);
 }

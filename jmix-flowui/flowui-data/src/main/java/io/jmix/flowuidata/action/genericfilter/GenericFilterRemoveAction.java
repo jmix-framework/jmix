@@ -33,6 +33,9 @@ import io.jmix.flowuidata.entity.FilterConfiguration;
 import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Action to remove current run-time filter configuration.
+ */
 @ActionType(GenericFilterRemoveAction.ID)
 public class GenericFilterRemoveAction extends GenericFilterAction<GenericFilterRemoveAction> {
 

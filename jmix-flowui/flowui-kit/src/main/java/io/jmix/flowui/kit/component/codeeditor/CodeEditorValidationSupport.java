@@ -21,7 +21,9 @@ import com.vaadin.flow.data.binder.ValidationResult;
 import java.io.Serializable;
 
 public class CodeEditorValidationSupport implements Serializable {
+
     private final JmixCodeEditor field;
+
     private boolean required;
 
     CodeEditorValidationSupport(JmixCodeEditor field) {

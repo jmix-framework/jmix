@@ -32,30 +32,64 @@ public class JmixTimer extends Component {
     protected static final String REPEATING_PROPERTY_NAME = "repeating";
     protected static final String AUTOSTART_PROPERTY_NAME = "autostart";
 
-    public void setRepeating(boolean repeating) {
-        getElement().setProperty(REPEATING_PROPERTY_NAME, repeating);
-    }
-
+    /**
+     * @return {@code true} if repeated executions are enabled, {@code false} otherwise
+     */
     public boolean isRepeating() {
         return getElement().getProperty(REPEATING_PROPERTY_NAME, false);
     }
 
+    /**
+     * Sets whether repeated executions of the timer are turned on. If the attribute
+     * is set to {@code true}, the timer runs in cycles at equal intervals defined
+     * in the {@code delay} attribute. Otherwise, the timer runs only once after the
+     * timeout specified in the {@code delay} attribute after the timer start.
+     * The Default value is {@code false}.
+     *
+     * @param repeating {@code true} to enable repeated executions, {@code false} otherwise
+     */
+    public void setRepeating(boolean repeating) {
+        getElement().setProperty(REPEATING_PROPERTY_NAME, repeating);
+    }
+
+    /**
+     * @return timer interval in milliseconds
+     */
     public int getDelay() {
         return getElement().getProperty(DELAY_PROPERTY_NAME, 0);
     }
 
+    /**
+     * Sets timer interval in milliseconds.
+     *
+     * @param delay timer interval in milliseconds
+     */
     public void setDelay(int delay) {
         getElement().setProperty(DELAY_PROPERTY_NAME, delay);
     }
 
-    public void setAutostart(boolean autostart) {
-        getElement().setProperty(AUTOSTART_PROPERTY_NAME, autostart);
-    }
-
+    /**
+     * @return whether the timer starts automatically
+     */
     public boolean isAutostart() {
         return getElement().getProperty(AUTOSTART_PROPERTY_NAME, false);
     }
 
+    /**
+     * Sets whether to start the timer automatically. When it is set to {@code true},
+     * the timer starts immediately after the view opening. The default value is
+     * {@code false}, which means that the timer will start only when its {@link #start()}
+     * method is invoked.
+     *
+     * @param autostart whether to start the timer automatically
+     */
+    public void setAutostart(boolean autostart) {
+        getElement().setProperty(AUTOSTART_PROPERTY_NAME, autostart);
+    }
+
+    /**
+     * Starts the timer if it is not running.
+     */
     public void start() {
         if (getDelay() <= 0) {
             throw new IllegalStateException("Undefined delay for timer");
@@ -63,18 +97,38 @@ public class JmixTimer extends Component {
         getElement().callJsFunction("start");
     }
 
+    /**
+     * Stops timer if it is running.
+     */
     public void stop() {
         getElement().callJsFunction("stop");
     }
 
+    /**
+     * Adds an action listener.
+     *
+     * @param listener a listener to add
+     * @return a registration handle to remove the listener
+     */
     public Registration addActionListener(ComponentEventListener<JmixTimerTickEvent> listener) {
         return getEventBus().addListener(JmixTimerTickEvent.class, listener);
     }
 
+    /**
+     * Adds timer stop listener.
+     *
+     * @param listener a listener to add
+     * @return a registration handle to remove the listener
+     */
     public Registration addStopListener(ComponentEventListener<JmixTimerStopEvent> listener) {
         return getEventBus().addListener(JmixTimerStopEvent.class, listener);
     }
 
+    /**
+     * Event that is sent after the specified time interval in the {@code delay} attribute
+     * has passed since the timer started. If the {@code repeating} attribute is set
+     * to {@code true}, this event is sent periodically, until the timer is stopped.
+     */
     @DomEvent("jmix-timer-tick")
     public static class JmixTimerTickEvent extends ComponentEvent<JmixTimer> {
 
@@ -83,6 +137,9 @@ public class JmixTimer extends Component {
         }
     }
 
+    /**
+     * Event that is sent when the timer is stopped by invoking the {@link #stop()} method.
+     */
     @DomEvent("jmix-timer-stop")
     public static class JmixTimerStopEvent extends ComponentEvent<JmixTimer> {
 

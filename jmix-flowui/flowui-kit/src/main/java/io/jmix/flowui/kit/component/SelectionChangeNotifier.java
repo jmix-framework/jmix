@@ -17,10 +17,27 @@
 package io.jmix.flowui.kit.component;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridMultiSelectionModel;
+import com.vaadin.flow.component.grid.GridSingleSelectionModel;
+import com.vaadin.flow.data.selection.MultiSelectionListener;
 import com.vaadin.flow.data.selection.SelectionListener;
+import com.vaadin.flow.data.selection.SingleSelectionListener;
 import com.vaadin.flow.shared.Registration;
 
+/**
+ * Interface to be implemented by UI components that support adding items selection listeners.
+ *
+ * @param <C> the component type
+ * @param <T> the type of the items to select
+ */
 public interface SelectionChangeNotifier<C extends Component, T> {
 
+    /**
+     * Adds a selection listener to the component.
+     *
+     * @param listener the listener to add
+     * @return a registration handle to remove the listener
+     */
     Registration addSelectionListener(SelectionListener<C, T> listener);
 }

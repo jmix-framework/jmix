@@ -36,6 +36,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+/**
+ * Support bean that provides helper methods to work with {@link GenericFilter}.
+ */
 @Internal
 @Component("flowui_GenericFilterSupport")
 public class GenericFilterSupport {

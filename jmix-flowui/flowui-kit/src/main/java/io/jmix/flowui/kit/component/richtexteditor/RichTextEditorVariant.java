@@ -18,9 +18,19 @@ package io.jmix.flowui.kit.component.richtexteditor;
 
 import com.vaadin.flow.component.shared.ThemeVariant;
 
+/**
+ * Set of theme variants applicable for {@link JmixRichTextEditor} component.
+ */
 public enum RichTextEditorVariant implements ThemeVariant {
 
+    /**
+     * Removes Rich Text Editor’s border.
+     */
     NO_BORDER("no-border"),
+
+    /**
+     * Makes the toolbar more compact.
+     */
     COMPACT("compact");
 
     private final String variant;

@@ -27,6 +27,9 @@ import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
 import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Action to save changes to current filter configuration using the values in filter components as default values.
+ */
 @ActionType(GenericFilterSaveWithValuesAction.ID)
 public class GenericFilterSaveWithValuesAction
         extends AbstractGenericFilterSaveAction<GenericFilterSaveWithValuesAction> {

@@ -29,6 +29,9 @@ import jakarta.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 
+/**
+ * Delegate that handles action set to {@link JmixButton}.
+ */
 public class JmixButtonActionSupport {
 
     protected final JmixButton button;
@@ -42,6 +45,25 @@ public class JmixButtonActionSupport {
         this.button = button;
     }
 
+    /**
+     * Sets the action to the component. If {@code overrideComponentProperties} is
+     * {@code true} then the action properties will override component's properties,
+     * otherwise the component's properties will be overridden if they are {@code null}.
+     * <p>
+     * List of properties that the action and the component have and which can be overridden:
+     * <ul>
+     *     <li>{@code text}</li>
+     *     <li>{@code description}</li>
+     *     <li>{@code shortcutCombination}</li>
+     *     <li>{@code enabled}</li>
+     *     <li>{@code visible}</li>
+     *     <li>{@code icon}</li>
+     *     <li>{@code variant}</li>
+     * </ul>
+     *
+     * @param action                      an action to set
+     * @param overrideComponentProperties whether action properties override component properties
+     */
     public void setAction(@Nullable Action action, boolean overrideComponentProperties) {
         if (Objects.equals(this.action, action)) {
             return;
@@ -66,6 +88,9 @@ public class JmixButtonActionSupport {
         }
     }
 
+    /**
+     * @return an action or {@code null}
+     */
     @Nullable
     public Action getAction() {
         return action;

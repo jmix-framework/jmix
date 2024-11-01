@@ -34,6 +34,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
+/**
+ * UI component class that provides UI for filter's configuration save dialog.
+ */
 public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail {
 
     protected static final String DEFAULT_FOR_ME_FIELD_ID = "defaultForMeField";
@@ -63,26 +66,48 @@ public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail
         messageTools = applicationContext.getBean(MessageTools.class);
     }
 
+    /**
+     * @return {@link InstanceContainer} that stores filter configuration entity
+     */
     public InstanceContainer<FilterConfiguration> getConfigurationDc() {
         return configurationDc;
     }
 
+    /**
+     * Sets {@link InstanceContainer} that stores filter configuration entity.
+     *
+     * @param configurationDc container to set
+     */
     public void setConfigurationDc(InstanceContainer<FilterConfiguration> configurationDc) {
         this.configurationDc = configurationDc;
     }
 
+    /**
+     * Sets whether defaultForMeField is visible.
+     *
+     * @param visible the component visibility value
+     */
     public void setDefaultForMeFieldVisible(boolean visible) {
         defaultForMeFieldVisible = visible;
     }
 
+    /**
+     * @return {@code true} if defaultForMeField is visible, {@code false} otherwise
+     */
     public boolean isDefaultForMeFieldVisible() {
         return defaultForMeFieldVisible;
     }
 
+    /**
+     * @return {@code true} if view in read-only mode, {@code false} otherwise
+     */
     public boolean isViewReadOnly() {
         return viewReadOnly;
     }
 
+    /**
+     * Initializes username field.
+     */
     public void initUsername() {
         FilterConfiguration editedConfigurationModel = configurationDc.getItem();
 
@@ -93,11 +118,17 @@ public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail
         }
     }
 
+    /**
+     * Initializes layout.
+     */
     public void init() {
         initFields();
         initOriginalConfigurationId();
     }
 
+    /**
+     * Initializes fields.
+     */
     @Override
     public void initFields() {
         createFields();

@@ -20,11 +20,17 @@ import com.vaadin.flow.component.HasValue;
 
 import jakarta.annotation.Nullable;
 
+/**
+ * Interface to be implemented by UI components, which provide an API that pretends
+ * that the action was invoked by the user on the client side.
+ *
+ * @param <V> the component value type
+ */
 public interface SupportsUserAction<V> {
 
     /**
-     * Sets the value of this component as if the user had set it.
-     * The user originated attribute is only used for the {@link HasValue.ValueChangeEvent}.
+     * Sets the value of this component as if the user had set it,
+     * i.e. {@link HasValue.ValueChangeEvent#isFromClient()} returns {@code true}.
      *
      * @param value the new value
      */

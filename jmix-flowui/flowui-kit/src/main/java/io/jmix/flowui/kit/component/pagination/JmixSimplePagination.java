@@ -23,6 +23,10 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
+/**
+ * SimplePagination is a component used to load data by pages. It is designed to be used together
+ * with {@link com.vaadin.flow.component.grid.Grid}, and {@link com.vaadin.flow.component.treegrid.TreeGrid} components.
+ */
 public class JmixSimplePagination extends AbstractPagination {
 
     public static final String SIMPLE_PAGINATION_CLASS_NAME = "jmix-simple-pagination";

@@ -20,14 +20,27 @@ import com.vaadin.flow.component.Component;
 
 import java.util.EventObject;
 
+/**
+ * Event sent when the {@link Action} is performed.
+ */
 public class ActionPerformedEvent extends EventObject {
+
     protected final Component component;
 
+    /**
+     * Constructs an ActionPerformedEvent.
+     *
+     * @param source    the action on which the Event initially occurred
+     * @param component {@link Component} that triggered action
+     */
     public ActionPerformedEvent(Action source, Component component) {
         super(source);
         this.component = component;
     }
 
+    /**
+     * @return {@link Component} that triggered this action.
+     */
     public Component getComponent() {
         return component;
     }

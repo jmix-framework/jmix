@@ -26,6 +26,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * An event bus for any object.
+ * <p>
+ * Handles adding and removing event listeners, and firing events of type any type.
+ */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class EventBus implements Serializable {
 
@@ -35,6 +40,14 @@ public class EventBus implements Serializable {
 
     protected Map<Class<?>, Consumer[]> events;
 
+    /**
+     * Adds a listener for the given event type.
+     *
+     * @param eventType the event type for which to call the listener
+     * @param listener  the listener to call when the event occurs
+     * @param <E>       the event type
+     * @return an object which can be used to remove the event listener
+     */
     public <E extends EventObject> Registration addListener(Class<E> eventType, Consumer<E> listener) {
         Objects.requireNonNull(eventType, "Event type cannot be null");
         Objects.requireNonNull(listener, "Listener cannot be null");
@@ -59,6 +72,13 @@ public class EventBus implements Serializable {
         return Registration.once(() -> removeListener(eventType, listener));
     }
 
+    /**
+     * Checks if there is at least one listener registered for the given event type.
+     *
+     * @param eventType the component event type
+     * @param <E>       the event type
+     * @return {@code true} if at least one listener is registered, {@code false} otherwise
+     */
     public <E extends EventObject> boolean hasListener(Class<E> eventType) {
         Objects.requireNonNull(eventType, "Event type cannot be null");
 
@@ -69,6 +89,11 @@ public class EventBus implements Serializable {
         return events.get(eventType) != null;
     }
 
+    /**
+     * Dispatches the event to all listeners registered for the event type.
+     *
+     * @param event the event to fire
+     */
     public <E extends EventObject> void fireEvent(E event) {
         Objects.requireNonNull(event, "Event cannot be null");
         Class<E> eventType = (Class<E>) event.getClass();
@@ -84,6 +109,13 @@ public class EventBus implements Serializable {
         }
     }
 
+    /**
+     * Removes the given listener for the given event type.
+     *
+     * @param eventType the component event type
+     * @param listener  the listener to remove
+     * @param <E>       the event type
+     */
     public <E extends EventObject> void removeListener(Class<E> eventType, Consumer<E> listener) {
         Objects.requireNonNull(eventType, "Event type cannot be null");
         Objects.requireNonNull(listener, "Listener cannot be null");
@@ -112,6 +144,12 @@ public class EventBus implements Serializable {
         }
     }
 
+    /**
+     * Removes all listeners for the given event type.
+     *
+     * @param eventType the component event type
+     * @param <E>       the event type
+     */
     public <E extends EventObject> void removeListener(Class<E> eventType) {
         Objects.requireNonNull(eventType, "Event type cannot be null");
 

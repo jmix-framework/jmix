@@ -91,6 +91,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     /**
      * Setting <code>true</code> keeps original items order in both columns.
      * Setting <code>false</code> organize items in order of their selection or deselection.
+     *
      * @param reorderable keep original order or not
      */
     public void setReorderable(Boolean reorderable) {
@@ -116,7 +117,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     public void setSelectAllButtonsVisible(Boolean selectAllButtonsVisible) {
         if (selectAllButtonsVisible) {
             if (selectAllItems == null) {
-                selectAllItems  = createButton(
+                selectAllItems = createButton(
                         "jmix-twin-column-select-all-items-action",
                         new Icon(VaadinIcon.ANGLE_DOUBLE_RIGHT),
                         (ComponentEventListener<ClickEvent<Button>>) event ->
@@ -289,7 +290,8 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
 
     @Override
     public TwinColumnListDataView<V> getListDataView() {
-        return new TwinColumnListDataView<>(this::getDataProvider, this, (filter, sorting) -> {});
+        return new TwinColumnListDataView<>(this::getDataProvider, this, (filter, sorting) -> {
+        });
     }
 
     public void setItemLabelGenerator(ItemLabelGenerator<V> itemLabelGenerator) {
@@ -467,7 +469,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
             to.getListDataView().addItems(selectedItems);
             to.select(selectedItems);
 
-            setModelValue(this.selectedItems.getListDataView().getItems().collect(Collectors.toList()),false);
+            setModelValue(this.selectedItems.getListDataView().getItems().collect(Collectors.toList()), false);
 
             updateColumnsListeners();
 
@@ -548,7 +550,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
                                             MultiSelectListBox<V> to,
                                             Map<Element, Integer> doubleClickListeners) {
         int itemIndex = 0;
-        for (Component child : from.getChildren().toList())  {
+        for (Component child : from.getChildren().toList()) {
             doubleClickListeners.put(child.getElement(), itemIndex++);
 
             child.getElement().addEventListener("dblclick", (DomEventListener) event ->

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.component;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
@@ -28,6 +29,9 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Stores information about key, modifiers and additional settings that describe shortcut combinations.
+ */
 public class KeyCombination {
 
     protected static final String KEY_FIELD_PREFIX = "KEY";
@@ -42,10 +46,16 @@ public class KeyCombination {
         this.keyModifiers = keyModifiers;
     }
 
+    /**
+     * @return keyboard key
+     */
     public Key getKey() {
         return key;
     }
 
+    /**
+     * @return modifier keys
+     */
     @Nullable
     public KeyModifier[] getKeyModifiers() {
         return keyModifiers;
@@ -71,18 +81,27 @@ public class KeyCombination {
      * receive focus again before a shortcut is triggered for this key combination. This ensures any
      * pending input value change events for that focused element are submitted before a shortcut is activated.<br/>
      * The resetFocusOnActiveElement is {@code false} by default.
+     *
      * @param resetFocusOnActiveElement whether to reset focus
      */
     public void setResetFocusOnActiveElement(boolean resetFocusOnActiveElement) {
         this.resetFocusOnActiveElement = resetFocusOnActiveElement;
     }
 
+    /**
+     * Creates a new {@link KeyCombination} instance from passed {@link Key} and modifiers.
+     *
+     * @param key          primary Key used to trigger the shortcut
+     * @param keyModifiers {@link KeyModifier KeyModifiers} that need to be pressed along
+     *                     with the {@code key} for the shortcut to trigger
+     * @return new instance
+     */
     public static KeyCombination create(Key key, KeyModifier... keyModifiers) {
         return new KeyCombination(key, keyModifiers);
     }
 
     /**
-     * Creates a new <code>KeyCombination</code> instance from a string representation.
+     * Creates a new {@link KeyCombination} instance from a string representation.
      *
      * @param keyString string of type "Modifiers-Key", e.g. "Alt-N". Case-insensitive.
      * @return new instance
@@ -121,16 +140,19 @@ public class KeyCombination {
     }
 
     /**
-     * Creates a new <code>KeyCombination</code> instance from a string representation.
+     * Creates a new {@link KeyCombination} instance from a string representation.
      *
      * @param keyString          string of type "Modifiers-Key", e.g. "Alt-N". Case-insensitive.
-     * @param listenOnComponents {@code Component}s onto which the shortcut listeners are
+     * @param listenOnComponents {@link Component Components} onto which the shortcut listeners are
      *                           bound. Must not be null. Must not contain null. Must not have
      *                           duplicate components.
      * @return new instance
      */
     @Nullable
     public static KeyCombination create(@Nullable String keyString, Component... listenOnComponents) {
+        Preconditions.checkArgument(listenOnComponents != null,
+                "Components onto which the shortcut listeners are bound cannot be null");
+
         KeyCombination keyCombination = create(keyString);
         if (keyCombination != null) {
             keyCombination.listenOnComponents = listenOnComponents;
@@ -139,6 +161,12 @@ public class KeyCombination {
         return keyCombination;
     }
 
+    /**
+     * Parses a new {@link Key} from a string representation.
+     *
+     * @param keyString a string representing {@link Key} object, e.g. "Alt", "L"
+     * @return a {@link Key} representing passed string
+     */
     public static Key valueOf(String keyString) {
         Field keyField = Arrays.stream(Key.class.getDeclaredFields())
                 .filter(field ->
@@ -158,6 +186,9 @@ public class KeyCombination {
         throw new IllegalArgumentException("No keyboard key " + keyString);
     }
 
+    /**
+     * @return a string representation of this {@link KeyCombination}, e.g. {@code Alt+L}
+     */
     public String format() {
         StringBuilder sb = new StringBuilder();
         if (ArrayUtils.isNotEmpty(keyModifiers)) {
@@ -195,5 +226,10 @@ public class KeyCombination {
         int result = Objects.hash(key);
         result = 31 * result + Arrays.hashCode(keyModifiers);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return format();
     }
 }

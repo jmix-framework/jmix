@@ -18,6 +18,9 @@ package io.jmix.flowuidata.accesscontext;
 
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
+/**
+ * Specific operation access context to check whether a user has permission to modify global filter configurations.
+ */
 public class UiGenericFilterModifyGlobalConfigurationContext extends SpecificOperationAccessContext {
 
     public static final String NAME = "ui.genericfilter.modifyGlobalConfiguration";

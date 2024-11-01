@@ -26,8 +26,17 @@ import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 
 import jakarta.annotation.Nullable;
+
 import java.util.Collection;
 
+/**
+ * Combo Box Picker allows the user to choose a value from a filterable list of options
+ * presented in an overlay.
+ * <p>
+ * ComboBox supports {@link Action Actions}.
+ *
+ * @param <V> the type of the items to be selectable from the combo box
+ */
 @Tag("jmix-combo-box-picker")
 @JsModule("./src/combo-box-picker/jmix-combo-box-picker.js")
 public class ComboBoxPicker<V> extends ComboBox<V>

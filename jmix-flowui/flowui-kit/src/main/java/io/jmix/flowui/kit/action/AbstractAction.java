@@ -23,11 +23,15 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.event.EventBus;
 
 import jakarta.annotation.Nullable;
+
 import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * Abstract class for {@link Action}s.
+ */
 public abstract class AbstractAction implements Action {
 
     protected final String id;

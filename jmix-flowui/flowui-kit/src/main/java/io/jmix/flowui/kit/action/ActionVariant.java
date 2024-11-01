@@ -16,9 +16,30 @@
 
 package io.jmix.flowui.kit.action;
 
+/**
+ * Set of variants applicable to {@link Action}. This can be used to assign
+ * a special visual style to a component that represents the action, for example,
+ * by setting a suitable {@link com.vaadin.flow.component.shared.ThemeVariant}.
+ */
 public enum ActionVariant {
+
+    /**
+     * The default action variant.
+     */
     DEFAULT,
+
+    /**
+     * A variant of important actions or ones you want to highlight.
+     */
     PRIMARY,
+
+    /**
+     * A variant of actions related to dangerous operations, such as removing data.
+     */
     DANGER,
+
+    /**
+     * A variant of actions related to safe operations or simply providing a different style to {@link #DEFAULT}.
+     */
     SUCCESS
 }

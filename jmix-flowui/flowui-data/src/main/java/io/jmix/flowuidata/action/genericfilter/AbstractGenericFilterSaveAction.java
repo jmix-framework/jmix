@@ -60,6 +60,11 @@ import static io.jmix.flowui.app.inputdialog.InputParameter.booleanParameter;
 import static io.jmix.flowui.app.inputdialog.InputParameter.stringParameter;
 import static io.jmix.flowui.component.genericfilter.FilterUtils.generateConfigurationId;
 
+/**
+ * Base action for saving filter configurations.
+ *
+ * @param <A> action type
+ */
 public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericFilterSaveAction<A>>
         extends GenericFilterAction<A> {
 

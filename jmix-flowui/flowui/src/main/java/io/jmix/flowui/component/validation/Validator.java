@@ -20,10 +20,11 @@ import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 /**
- * Marker interface to indicate that the implementing class can be used as a validator.
+ * A functional interface for validating user input or other potentially invalid data.
  *
  * @param <T> value type
  */
+@FunctionalInterface
 public interface Validator<T> extends Consumer<T> {
 
     /**

@@ -21,7 +21,13 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.function.SerializableSupplier;
 
+/**
+ * Implementation of generic data view for {@link JmixTwinColumn}.
+ *
+ * @param <V> the item type
+ */
 public class TwinColumnDataView<V> extends AbstractDataView<V> {
+
     public TwinColumnDataView(
             SerializableSupplier<? extends DataProvider<V, ?>> dataProviderSupplier,
             JmixTwinColumn<V> twinColumn) {

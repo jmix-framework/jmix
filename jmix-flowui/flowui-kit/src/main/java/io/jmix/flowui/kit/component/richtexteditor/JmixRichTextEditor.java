@@ -28,6 +28,11 @@ import elemental.json.JsonObject;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * An area to input text with rich formatting. It supports a variety of formatting
+ * options such as bold, italics, underlining, text alignment along with adding links,
+ * images, code blocks and more, to make text visually appealing and well-structured.
+ */
 @Tag("jmix-rich-text-editor")
 @JsModule("./src/rich-text-editor/jmix-rich-text-editor.js")
 public class JmixRichTextEditor extends AbstractSinglePropertyField<JmixRichTextEditor, String>

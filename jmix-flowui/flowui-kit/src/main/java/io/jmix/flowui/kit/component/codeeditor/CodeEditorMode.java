@@ -19,6 +19,9 @@ import jakarta.annotation.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Class that represents syntax highlight mode.
+ */
 public enum CodeEditorMode {
 
     ABAP("abap"),

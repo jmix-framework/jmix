@@ -26,6 +26,10 @@ import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.HasTitle;
 
+/**
+ * Code Editor is a multi-line text area to display and enter source code featured
+ * with code highlighting and optional print margin and gutter with line numbers.
+ */
 @Tag("jmix-code-editor")
 @NpmPackage(
         value = "ace-builds",
@@ -353,6 +357,9 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
         return validationSupport;
     }
 
+    /**
+     * An event fired when the value of a {@link JmixCodeEditor} changes.
+     */
     @DomEvent(CODE_EDITOR_VALUE_CHANGED_EVENT)
     public static class JmixCodeEditorValueChangedEvent extends ComponentEvent<JmixCodeEditor> {
 
@@ -364,6 +371,11 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
             this.value = value;
         }
 
+        /**
+         * Returns the new value that triggered this value change event.
+         *
+         * @return the new value
+         */
         public String getValue() {
             return value;
         }

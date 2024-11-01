@@ -25,8 +25,14 @@ import io.jmix.flowui.kit.component.formatter.Formatter;
 
 import jakarta.annotation.Nullable;
 
-public class UserIndicator<V> extends Composite<Div> implements SupportsFormatter<V>, HasTitle, HasStyle, HasSize,
-        HasEnabled {
+/**
+ * Displays information about the current user. If the user substitution is set up,
+ * a dropdown list of users available for substitution is displayed.
+ *
+ * @param <V> value type
+ */
+public class UserIndicator<V> extends Composite<Div> implements SupportsFormatter<V>,
+        HasTitle, HasStyle, HasSize, HasEnabled {
 
     protected static final String USER_INDICATOR_CLASS_NAME = "jmix-user-indicator";
     protected static final String USER_INDICATOR_LABEL_CLASS_NAME = "jmix-user-indicator-label";
@@ -41,6 +47,9 @@ public class UserIndicator<V> extends Composite<Div> implements SupportsFormatte
         return root;
     }
 
+    /**
+     * Updates user information displayed by the component.
+     */
     public void refreshUser() {
         getContent().removeAll();
 

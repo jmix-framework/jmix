@@ -21,6 +21,9 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Action to saves current filter configuration with a new id and name.
+ */
 @ActionType(GenericFilterSaveAsAction.ID)
 public class GenericFilterSaveAsAction extends AbstractGenericFilterSaveAction<GenericFilterSaveAsAction> {
 

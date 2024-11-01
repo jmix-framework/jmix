@@ -28,15 +28,14 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.annotation.ExtendedSearch;
-import io.jmix.search.index.annotation.FieldMappingAnnotation;
-import io.jmix.search.index.annotation.JmixEntitySearchIndex;
-import io.jmix.search.index.annotation.ManualMappingDefinition;
+import io.jmix.search.index.annotation.*;
 import io.jmix.search.index.mapping.*;
 import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.fieldmapper.impl.TextFieldMapper;
 import io.jmix.search.index.mapping.processor.FieldAnnotationProcessor;
 import io.jmix.search.index.mapping.processor.MappingFieldAnnotationProcessorsRegistry;
+import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesAnnotationParser;
+import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesMapper;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractorProvider;
 import io.jmix.search.index.mapping.propertyvalue.impl.DisplayedNameValueExtractor;
@@ -84,6 +83,8 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final SearchProperties searchProperties;
     protected final MethodArgumentsProvider methodArgumentsProvider;
     protected final DynamicAttributeDescriptorExtractor dynamicAttributeDescriptorExtractor;
+    protected final DynamicAttributesMapper dynamicAttributesMapper;
+    protected final DynamicAttributesAnnotationParser dynamicAttributesAnnotationParser;
 
     @Autowired
     public AnnotatedIndexDefinitionProcessor(Metadata metadata,
@@ -95,7 +96,9 @@ public class AnnotatedIndexDefinitionProcessor {
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
                                              ContextArgumentResolverComposite resolvers,
-                                             DynamicAttributeDescriptorExtractor dynamicAttributeDescriptorExtractor) {
+                                             DynamicAttributeDescriptorExtractor dynamicAttributeDescriptorExtractor,
+                                             DynamicAttributesMapper dynamicAttributesMapper,
+                                             DynamicAttributesAnnotationParser dynamicAttributesAnnotationParser) {
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
@@ -106,6 +109,8 @@ public class AnnotatedIndexDefinitionProcessor {
         this.searchProperties = searchProperties;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
         this.dynamicAttributeDescriptorExtractor = dynamicAttributeDescriptorExtractor;
+        this.dynamicAttributesMapper = dynamicAttributesMapper;
+        this.dynamicAttributesAnnotationParser = dynamicAttributesAnnotationParser;
     }
 
     /**
@@ -167,6 +172,11 @@ public class AnnotatedIndexDefinitionProcessor {
         result.setExtendedSearchSettings(extendedSearchSettings);
 
         Method[] methods = indexDefinitionClass.getDeclaredMethods();
+
+        if(indexDefinitionClass.isAnnotationPresent(DynamicAttributes.class)){
+            result.setDynamicAttributesAnnotation(indexDefinitionClass.getAnnotation(DynamicAttributes.class));
+        }
+
         for (Method method : methods) {
             if (isIndexablePredicateMethod(method)) {
                 result.addIndexablePredicateMethod(method);
@@ -218,15 +228,23 @@ public class AnnotatedIndexDefinitionProcessor {
     protected IndexMappingConfiguration createIndexMappingConfig(ParsedIndexDefinition parsedIndexDefinition) {
         IndexMappingConfiguration indexMappingConfiguration;
 
-        DisplayedNameDescriptor displayedNameDescriptor = createDisplayedNameDescriptor(parsedIndexDefinition.getMetaClass());
+        MetaClass parsedIndexDefinitionMetaClass = parsedIndexDefinition.getMetaClass();
+        DisplayedNameDescriptor displayedNameDescriptor = createDisplayedNameDescriptor(parsedIndexDefinitionMetaClass);
         ExtendedSearchSettings extendedSearchSettings = parsedIndexDefinition.getExtendedSearchSettings();
         MappingDefinition mappingDefinition;
         Method mappingDefinitionImplementationMethod = parsedIndexDefinition.getMappingDefinitionImplementationMethod();
         if (mappingDefinitionImplementationMethod == null) {
             MappingDefinitionBuilder builder = MappingDefinition.builder();
             parsedIndexDefinition.getFieldAnnotations().forEach(annotation -> processAnnotation(
-                    builder, annotation, parsedIndexDefinition.getMetaClass()
+                    builder, annotation, parsedIndexDefinitionMetaClass
             ));
+
+            if(parsedIndexDefinition.dynamicAttributesAnnotation != null){
+                builder.addDynamicAttributesGroup(
+                        dynamicAttributesAnnotationParser.createDefinition(parsedIndexDefinition.dynamicAttributesAnnotation)
+                );
+            }
+
             mappingDefinition = builder.build();
         } else {
             Class<?> returnType = mappingDefinitionImplementationMethod.getReturnType();
@@ -240,10 +258,10 @@ public class AnnotatedIndexDefinitionProcessor {
             }
         }
         Map<String, MappingFieldDescriptor> fieldDescriptors = processMappingDefinition(
-                parsedIndexDefinition.getMetaClass(), mappingDefinition, extendedSearchSettings
+                parsedIndexDefinitionMetaClass, mappingDefinition, extendedSearchSettings
         );
         indexMappingConfiguration = new IndexMappingConfiguration(
-                parsedIndexDefinition.getMetaClass(), fieldDescriptors, displayedNameDescriptor
+                parsedIndexDefinitionMetaClass, fieldDescriptors, displayedNameDescriptor
         );
         return indexMappingConfiguration;
     }
@@ -570,6 +588,7 @@ public class AnnotatedIndexDefinitionProcessor {
         private Class<?> entityClass;
         private MetaClass metaClass;
         private String indexName;
+        private DynamicAttributes dynamicAttributesAnnotation;
         private final List<Annotation> fieldAnnotations = new ArrayList<>();
         private final List<Method> indexablePredicateMethods = new ArrayList<>();
         private Method mappingDefinitionImplementationMethod = null;
@@ -638,6 +657,14 @@ public class AnnotatedIndexDefinitionProcessor {
 
         private void setExtendedSearchSettings(@Nullable ExtendedSearchSettings extendedSearchSettings) {
             this.extendedSearchSettings = extendedSearchSettings;
+        }
+
+        public DynamicAttributes getDynamicAttributesAnnotation() {
+            return dynamicAttributesAnnotation;
+        }
+
+        public void setDynamicAttributesAnnotation(@Nullable DynamicAttributes dynamicAttributesAnnotation) {
+            this.dynamicAttributesAnnotation = dynamicAttributesAnnotation;
         }
     }
 }

@@ -24,7 +24,6 @@ import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@FieldMappingAnnotation
 public @interface DynamicAttributes {
 
     @Nullable

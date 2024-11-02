@@ -22,10 +22,12 @@ import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.NONE;
 
 @JmixEntitySearchIndex(entity = TestEntity.class)
-@DynamicAttributes(
-        referenceFieldsIndexingMode = NONE,
-        excludeCategories = {"ex1", "ex2"},
-        excludeFields = {"field3", "field4"},
-        analyzer = "standard")
+
 public interface Configuration5 {
+    @DynamicAttributes(
+            referenceFieldsIndexingMode = NONE,
+            excludeCategories = {"ex1", "ex2"},
+            excludeFields = {"field3", "field4"},
+            analyzer = "standard")
+    void method();
 }

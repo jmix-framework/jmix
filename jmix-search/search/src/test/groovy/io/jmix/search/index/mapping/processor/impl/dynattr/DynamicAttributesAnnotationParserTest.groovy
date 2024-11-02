@@ -34,7 +34,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
-        parser.createDefinition(null)
+        parser.createDefinitions(null)
 
         then:
         thrown(NullPointerException)
@@ -46,7 +46,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
-        DynamicAttributesGroup definition = parser.createDefinition(extractAnnotation(IndexDefinitionSimple))
+        DynamicAttributesGroup definition = parser.createDefinitions(extractAnnotation(IndexDefinitionSimple))
 
         then:
         definition.getFieldMappingStrategyClass() == AutoMappingStrategy
@@ -68,7 +68,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
-        DynamicAttributesGroup definition = parser.createDefinition(extractAnnotation(IndexDefinitionWithExcludes))
+        DynamicAttributesGroup definition = parser.createDefinitions(extractAnnotation(IndexDefinitionWithExcludes))
 
         then:
         definition.getExcludedCategories() == new String[]{"cat1", "cat2", "cat3"}
@@ -81,7 +81,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
 
         when:
         Map<String, Object> parameters
-                = parser.createDefinition(extractAnnotation(IndexDefinitionWithParameters)).getParameters()
+                = parser.createDefinitions(extractAnnotation(IndexDefinitionWithParameters)).getParameters()
 
         then:
         parameters.get(ParameterKeys.ANALYZER) == SOME_ANALYZER
@@ -90,29 +90,108 @@ class DynamicAttributesAnnotationParserTest extends Specification {
                 == ReferenceFieldsIndexingMode.NONE
     }
 
+    def "extract from class. simple"() {
+        given:
+        def parser = new DynamicAttributesAnnotationParser()
+
+        when:
+        def annotations = parser.extractAnnotations(aClass)
+
+        then:
+        annotations.size() == size
+
+        where:
+        aClass                               | size
+        IndexDefinitionEmpty                 | 0
+        IndexDefinitionEmptyToo              | 0
+        IndexDefinitionSimple                | 1
+        IndexDefinitionSimpleWithEmptyMethod | 1
+        IndexDefinitionSomeOnOneMethod       | 2
+        IndexDefinitionSomeInSomeMethods     | 5
+    }
+
+    def "extract from class. content check"() {
+        given:
+        def parser = new DynamicAttributesAnnotationParser()
+
+        when:
+        def annotations = parser.extractAnnotations(IndexDefinitionSomeInSomeMethods)
+
+        then:
+        containsAnnotationsWithExcludedCategory(annotations, category)
+
+        where:
+        category << ["cat1", "cat2", "cat3", "cat4", "cat5"]
+    }
+
 
     private static DynamicAttributes extractAnnotation(Class<?> aClass) {
         return aClass.getAnnotation(DynamicAttributes);
 
     }
 
-    @DynamicAttributes
-    private static class IndexDefinitionSimple {
+    boolean containsAnnotationsWithExcludedCategory(Set<DynamicAttributes> annotations, String categoryToFind) {
+        annotations
+                .stream()
+                .filter { annotation -> annotation.excludeCategories().size() == 1 }
+                .filter { annotation -> (annotation.excludeCategories()[0] == categoryToFind) }
+                .count() == 1
+    }
+
+    private interface IndexDefinitionWithExcludes {
+        @DynamicAttributes(excludeCategories = ["cat1", "cat2", "cat3"], excludeFields = ["field1", "field2"])
+        void method();
 
     }
 
-    @DynamicAttributes(excludeCategories = ["cat1", "cat2", "cat3"], excludeFields = ["field1", "field2"])
-    private static class IndexDefinitionWithExcludes {
+    private interface IndexDefinitionWithParameters {
+        @DynamicAttributes(
+                referenceFieldsIndexingMode = ReferenceFieldsIndexingMode.NONE,
+                analyzer = SOME_ANALYZER,
+                indexFileContent = false
+        )
+        void method();
 
     }
 
-    @DynamicAttributes(
-            referenceFieldsIndexingMode = ReferenceFieldsIndexingMode.NONE,
-            analyzer = SOME_ANALYZER,
-            indexFileContent = false
-    )
-    private static class IndexDefinitionWithParameters {
+    private interface IndexDefinitionSimple {
+        @DynamicAttributes
+        void method();
 
+    }
+
+    private interface IndexDefinitionEmpty {
+        void method();
+    }
+
+    private interface IndexDefinitionEmptyToo {
+        void method();
+    }
+
+    private interface IndexDefinitionSimpleWithEmptyMethod {
+        @DynamicAttributes
+        void method();
+
+        void method2();
+    }
+
+    private interface IndexDefinitionSomeOnOneMethod {
+        @DynamicAttributes
+        @DynamicAttributes(excludeCategories = ["cat1", "cat2", "cat3"], excludeFields = ["field1", "field2"])
+        void method();
+
+        void method2();
+    }
+
+    private interface IndexDefinitionSomeInSomeMethods {
+        @DynamicAttributes(excludeCategories = ["cat1"])
+        @DynamicAttributes(excludeCategories = ["cat2"])
+        void method();
+
+        @DynamicAttributes(excludeCategories = ["cat3"])
+        @DynamicAttributes(excludeCategories = ["cat4"])
+        @DynamicAttributes(excludeCategories = ["cat5"])
+        void method2();
     }
 
 }

@@ -20,8 +20,9 @@ import io.jmix.search.index.annotation.DynamicAttributes;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 
 @JmixEntitySearchIndex(entity = TestEntity.class)
-@DynamicAttributes(
-        excludeCategories = {"c4", "c3", "c3", "c4"},
-        excludeFields = {"f4", "f3", "f3", "f4"})
 public interface Configuration9 {
+    @DynamicAttributes(
+            excludeCategories = {"c4", "c3", "c3", "c4"},
+            excludeFields = {"f4", "f3", "f3", "f4"})
+    void method();
 }

@@ -20,6 +20,7 @@ import io.jmix.search.index.annotation.DynamicAttributes;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 
 @JmixEntitySearchIndex(entity = TestEntity.class)
-@DynamicAttributes
 public interface Configuration2 {
+    @DynamicAttributes
+    void method();
 }

@@ -22,8 +22,9 @@ import java.lang.annotation.*;
 
 import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*;
 
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(DynamicAttributes.Container.class)
 public @interface DynamicAttributes {
 
     @Nullable
@@ -39,4 +40,10 @@ public @interface DynamicAttributes {
 
     boolean indexFileContent() default true;
 
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Container {
+
+        DynamicAttributes[] value();
+    }
 }

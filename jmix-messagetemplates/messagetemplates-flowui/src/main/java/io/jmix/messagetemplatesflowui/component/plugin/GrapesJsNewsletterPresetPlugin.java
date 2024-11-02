@@ -17,8 +17,15 @@
 package io.jmix.messagetemplatesflowui.component.plugin;
 
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
+import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
 import org.springframework.stereotype.Component;
 
+/**
+ * The preset plugin configures {@link JmixGrapesJs} to be used as a <b>Newsletter Builder</b> with some unique
+ * features and blocks composed specifically for being rendered correctly inside all major email clients.
+ *
+ * @see <a href="https://github.com/GrapesJS/preset-newsletter">GrapesJS Preset Newsletter GitHub</a>
+ */
 @Component("msgtmp_GrapesJsNewsletterPresetPlugin")
 public class GrapesJsNewsletterPresetPlugin extends GrapesJsPlugin {
 

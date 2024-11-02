@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
+import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Serializes various parameters for the {@link JmixGrapesJs} into JSON for subsequent sending it to the client-side.
+ */
 public class JmixGrapesJsSerializer {
 
     private static final Logger log = LoggerFactory.getLogger(JmixGrapesJsSerializer.class);
@@ -69,6 +73,16 @@ public class JmixGrapesJsSerializer {
                 .collect(Collectors.toList());
     }
 
+    protected JsonValue parseRawJson(String rawJson) {
+        return jsonFactory.parse(rawJson);
+    }
+
+    /**
+     * Serializes the passed object into JSON.
+     *
+     * @param object object to serialize
+     * @return {@link JsonValue} of the passed object
+     */
     public JsonValue serialize(Object object) {
         String rawJson;
 
@@ -81,9 +95,5 @@ public class JmixGrapesJsSerializer {
         log.debug("Serialized {}", rawJson);
 
         return parseRawJson(rawJson);
-    }
-
-    public JsonValue parseRawJson(String rawJson) {
-        return jsonFactory.parse(rawJson);
     }
 }

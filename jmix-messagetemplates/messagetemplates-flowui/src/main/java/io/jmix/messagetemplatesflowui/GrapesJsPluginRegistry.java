@@ -19,13 +19,38 @@ package io.jmix.messagetemplatesflowui;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
 import org.springframework.lang.Nullable;
 
+/**
+ * Registry for {@link GrapesJsPlugin}s.
+ */
 public interface GrapesJsPluginRegistry {
 
+    /**
+     * Gets plugin instance by its unique name.
+     *
+     * @param name name of the plugin
+     * @param <T>  type of the plugin
+     * @return plugin instance
+     * @throws IllegalArgumentException if no plugin with the passed name found
+     */
     <T extends GrapesJsPlugin> T get(String name);
 
+    /**
+     * Gets plugin instance by its unique name.
+     *
+     * @param name name of the plugin
+     * @param <T>  type of the plugin
+     * @return plugin instance or {@code null} if not found
+     */
     @Nullable
     <T extends GrapesJsPlugin> T find(String name);
 
+    /**
+     * Registers a plugin instance in the registry.
+     *
+     * @param plugin plugin to register
+     * @param name   unique registration name
+     * @param <T>    type of the plugin
+     */
     @Nullable
     <T extends GrapesJsPlugin> void register(T plugin, String name);
 }

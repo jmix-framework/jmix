@@ -19,6 +19,15 @@ package io.jmix.messagetemplatesflowui.component.plugin;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
 import org.springframework.stereotype.Component;
 
+/**
+ * The plugin adds a new filter built-in style property which can be used for CSS properties like {@code filter} and
+ * {@code backdrop-filter}.
+ * <p>
+ * <b>Note: </b> incompatible with {@link GrapesJsNewsletterPresetPlugin}.
+ * </p>
+ *
+ * @see <a href="https://github.com/GrapesJS/style-filter">GrapesJS Style Filter GitHub</a>
+ */
 @Component("msgtmp_GrapesJsStyleFilterPlugin")
 public class GrapesJsStyleFilterPlugin extends GrapesJsPlugin {
 

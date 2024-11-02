@@ -21,6 +21,9 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
 
+/**
+ * The DOM event is fired at the moment of updating the {@link JmixGrapesJs} template on the client-side.
+ */
 @DomEvent("value-changed")
 public class GrapesJsValueChangedDomEvent extends ComponentEvent<JmixGrapesJs> {
 
@@ -32,6 +35,9 @@ public class GrapesJsValueChangedDomEvent extends ComponentEvent<JmixGrapesJs> {
         this.value = value;
     }
 
+    /**
+     * @return updated GrapesJs template value
+     */
     public String getValue() {
         return value;
     }

@@ -19,6 +19,11 @@ package io.jmix.messagetemplatesflowui.component.plugin;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
 import org.springframework.stereotype.Component;
 
+/**
+ * The plugin adds the possibility to embed custom code as a block.
+ *
+ * @see <a href="https://github.com/GrapesJS/components-custom-code">GrapesJS Custom Code GitHub</a>
+ */
 @Component("msgtmp_GrapesJsCustomCodePlugin")
 public class GrapesJsCustomCodePlugin extends GrapesJsPlugin {
 

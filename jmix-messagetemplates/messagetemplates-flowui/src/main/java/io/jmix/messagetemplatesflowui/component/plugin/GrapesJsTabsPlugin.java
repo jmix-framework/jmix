@@ -17,8 +17,14 @@
 package io.jmix.messagetemplatesflowui.component.plugin;
 
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
+import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
 import org.springframework.stereotype.Component;
 
+/**
+ * The plugin adds simple {@code tabs} component as a block for {@link JmixGrapesJs}.
+ *
+ * @see <a href="https://github.com/GrapesJS/components-tabs">GrapesJS Tabs GitHub</a>
+ */
 @Component("msgtmp_GrapesJsTabsPlugin")
 public class GrapesJsTabsPlugin extends GrapesJsPlugin {
 

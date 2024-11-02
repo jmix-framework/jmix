@@ -74,14 +74,14 @@ public class GrapesJsLoader extends AbstractComponentLoader<JmixGrapesJs> {
     }
 
     protected void loadBlock(JmixGrapesJs resultComponent, Element element) {
-        String name = loadString(element, "name")
+        String id = loadString(element, "id")
                 .orElseThrow(
                         () -> new GuiDevelopmentException(
-                                "Name is required for %s".formatted(GrapesJsBlock.class.getSimpleName()), context
+                                "ID is required for %s".formatted(GrapesJsBlock.class.getSimpleName()), context
                         )
                 );
 
-        GrapesJsBlock block = new GrapesJsBlock(name);
+        GrapesJsBlock block = new GrapesJsBlock(id);
 
         loadResourceString(element, "label", getContext().getMessageGroup(), block::setLabel);
         loadResourceString(element, "category", getContext().getMessageGroup(), block::setCategory);

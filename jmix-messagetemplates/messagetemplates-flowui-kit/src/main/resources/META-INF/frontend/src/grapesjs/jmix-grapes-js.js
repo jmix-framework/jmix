@@ -187,7 +187,7 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
             });
         } else {
             blocks.forEach(block => {
-                this._editor.BlockManager.add(block.name, {
+                this._editor.BlockManager.add(block.id, {
                     label: block.label,
                     content: block.content,
                     category: block.category,
@@ -197,6 +197,19 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
         }
     }
 
+    removeBlock(blockId) {
+        if (this._editor === undefined) {
+            const blockToRemove = this._blocksFromServer.find(block => blockId === block.id);
+            this._blocksFromServer.removeBlock(blockToRemove);
+        } else {
+            this._editor.BlockManager.remove(blockId)
+        }
+    }
+
+    removeBlocks(blocks) {
+        blocks.forEach(block => this.removeBlock(block));
+    }
+
     /** @private */
     getHtml(editor) {
         if (this._inlineCssEnabled) {
@@ -204,6 +217,22 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
         }
 
         return editor.getHtml() + `<style>${editor.getCss()}</style>`;
+    }
+
+    runCommand(command) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        return this._editor.runCommand(command);
+    }
+
+    stopCommand(command) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        return this._editor.stopCommand(command);
     }
 
     /** @private */

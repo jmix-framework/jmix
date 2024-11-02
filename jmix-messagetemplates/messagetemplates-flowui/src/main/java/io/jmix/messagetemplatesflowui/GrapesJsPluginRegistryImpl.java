@@ -31,7 +31,6 @@ public class GrapesJsPluginRegistryImpl implements GrapesJsPluginRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(GrapesJsPluginRegistryImpl.class);
 
-    protected Map<Class<? extends GrapesJsPlugin>, GrapesJsPlugin> pluginByClass = new HashMap<>();
     protected Map<String, GrapesJsPlugin> pluginByName = new HashMap<>();
 
     public GrapesJsPluginRegistryImpl(List<GrapesJsPlugin> plugins) {
@@ -60,7 +59,6 @@ public class GrapesJsPluginRegistryImpl implements GrapesJsPluginRegistry {
 
         log.trace("Register GrapesJsPlugin: {}, name: {},", plugin.getClass().getSimpleName(), name);
 
-        pluginByClass.put(plugin.getClass(), plugin);
         pluginByName.put(name, plugin);
     }
 }

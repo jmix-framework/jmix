@@ -19,6 +19,11 @@ package io.jmix.messagetemplatesflowui.component.plugin;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
 import org.springframework.stereotype.Component;
 
+/**
+ * The plugin adds the Flexbox block which allows creating easily flexible and responsive columns.
+ *
+ * @see <a href="https://github.com/GrapesJS/blocks-flexbox">GrapesJS Blocks Flexbox GitHub</a>
+ */
 @Component("msgtmp_GrapesJsBlocksFlexboxPlugin")
 public class GrapesJsBlocksFlexboxPlugin extends GrapesJsPlugin {
 

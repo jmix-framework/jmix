@@ -19,6 +19,13 @@ package io.jmix.messagetemplatesflowui.component.plugin;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
 import org.springframework.stereotype.Component;
 
+/**
+ * The plugin enables custom CSS parser via <a href="https://github.com/postcss/postcss">PostCSS</a>.
+ * If you import templates from HTML/CSS or embed custom codes (e.g. by using {@link GrapesJsCustomCodePlugin})
+ * you definitely need to use this one to avoid issues with styles.
+ *
+ * @see <a href="https://github.com/GrapesJS/parser-postcss">GrapesJS Parser PostCSS GitHub</a>
+ */
 @Component("msgtmp_GrapesJsPostcssParserPlugin")
 public class GrapesJsPostcssParserPlugin extends GrapesJsPlugin {
 

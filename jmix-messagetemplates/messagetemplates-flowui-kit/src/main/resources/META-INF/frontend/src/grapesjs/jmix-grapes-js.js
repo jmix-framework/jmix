@@ -219,20 +219,24 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
         return editor.getHtml() + `<style>${editor.getCss()}</style>`;
     }
 
-    runCommand(command) {
+    runCommand(command, params) {
         if (this._editor === undefined) {
             return;
         }
 
-        return this._editor.runCommand(command);
+        return params === undefined
+            ? this._editor.runCommand(command)
+            : this._editor.runCommand(command, JSON.parse(params));
     }
 
-    stopCommand(command) {
+    stopCommand(command, params) {
         if (this._editor === undefined) {
             return;
         }
 
-        return this._editor.stopCommand(command);
+        return params === undefined
+            ? this._editor.stopCommand(command)
+            : this._editor.stopCommand(command, JSON.parse(params));
     }
 
     /** @private */

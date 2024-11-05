@@ -28,6 +28,9 @@
                         <xs:element name="plugins" type="pluginsType"/>
                         <xs:element name="blocks" type="blocksType"/>
                     </xs:sequence>
+
+                    <xs:attributeGroup ref="layout:hasClassNames"/>
+                    <xs:attributeGroup ref="layout:hasSize"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

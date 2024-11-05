@@ -73,7 +73,6 @@ public class JmixGrapesJs extends Component implements HasSize, HasStyle {
     protected StateTree.ExecutionRegistration synchronizeValueUpdateExecution;
 
     protected String internalValue = getEmptyValue();
-    protected Registration valueChangedDomRegistration;
 
     /**
      * Creates new instance of GrapesJS editor.
@@ -84,6 +83,8 @@ public class JmixGrapesJs extends Component implements HasSize, HasStyle {
 
     protected void initComponent() {
         serializer = createSerializer();
+
+        addListener(GrapesJsValueChangedDomEvent.class, this::onValueChangedDomEvent);
     }
 
     /**
@@ -219,28 +220,57 @@ public class JmixGrapesJs extends Component implements HasSize, HasStyle {
         return internalValue;
     }
 
+    /**
+     * Adds a value change listener. The listener is called when the value of GrapesJS is changed either by the user
+     * on the client-side or programmatically.
+     *
+     * @param listener the value change listener, not null
+     * @return a registration for the listener
+     */
     public Registration addValueChangeEventListener(ComponentEventListener<GrapesJsValueChangedEvent> listener) {
-        // TODO: kd, rework, doesn't update value from client side
-        attachValueChangedEventListener();
-
-        Registration registration = addListener(GrapesJsValueChangedEvent.class, listener);
-
-        return () -> {
-            registration.remove();
-
-            if (!hasListener(GrapesJsValueChangedEvent.class) && valueChangedDomRegistration != null) {
-                valueChangedDomRegistration.remove();
-                valueChangedDomRegistration = null;
-            }
-        };
+        return addListener(GrapesJsValueChangedEvent.class, listener);
     }
 
+    /**
+     * Execute command for GrapesJS editor.
+     *
+     * @param command command to execute
+     * @see <a href="https://grapesjs.com/docs/api/editor.html#runcommand">GrapesJS Docs - runCommand</a>
+     */
     public void runCommand(String command) {
         callJsFunction("runCommand", command);
     }
 
+    /**
+     * Execute command for GrapesJS editor.
+     *
+     * @param command    command to execute
+     * @param parameters parameters for command as a JSON string
+     * @see <a href="https://grapesjs.com/docs/api/editor.html#runcommand">GrapesJS Docs - runCommand</a>
+     */
+    public void runCommand(String command, String parameters) {
+        callJsFunction("runCommand", command, parameters);
+    }
+
+    /**
+     * Stop the command for GrapesJS editor if stop method was provided.
+     *
+     * @param command command to stop
+     * @see <a href="https://grapesjs.com/docs/api/editor.html#stopcommand">GrapesJS Docs - stopCommand</a>
+     */
     public void stopCommand(String command) {
         callJsFunction("stopCommand", command);
+    }
+
+    /**
+     * Stop the command for GrapesJS editor if stop method was provided.
+     *
+     * @param command    command to stop
+     * @param parameters parameters for command as a JSON string
+     * @see <a href="https://grapesjs.com/docs/api/editor.html#stopcommand">GrapesJS Docs - stopCommand</a>
+     */
+    public void stopCommand(String command, String parameters) {
+        callJsFunction("stopCommand", command, parameters);
     }
 
     @ClientCallable
@@ -264,12 +294,6 @@ public class JmixGrapesJs extends Component implements HasSize, HasStyle {
 
         GrapesJsValueChangedEvent valueChangedEvent = createValueChangedEvent(oldValue, fromClient);
         ComponentUtil.fireEvent(this, valueChangedEvent);
-    }
-
-    protected void attachValueChangedEventListener() {
-        if (valueChangedDomRegistration == null) {
-            valueChangedDomRegistration = addListener(GrapesJsValueChangedDomEvent.class, this::onValueChangedDomEvent);
-        }
     }
 
     protected void onValueChangedDomEvent(GrapesJsValueChangedDomEvent event) {
@@ -349,14 +373,14 @@ public class JmixGrapesJs extends Component implements HasSize, HasStyle {
         }
 
         /**
-         * @return updated GrapesJs template value
+         * @return updated GrapesJS template value
          */
         public String getValue() {
             return value;
         }
 
         /**
-         * @return previous GrapesJs template value
+         * @return previous GrapesJS template value
          */
         @Nullable
         public String getOldValue() {

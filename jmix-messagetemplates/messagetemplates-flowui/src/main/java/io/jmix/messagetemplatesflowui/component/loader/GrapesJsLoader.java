@@ -20,20 +20,20 @@ import com.google.common.base.Strings;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.messagetemplatesflowui.GrapesJsPluginRegistry;
+import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsBlock;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
-import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
 import org.dom4j.Element;
 
 import java.util.function.Consumer;
 
-public class GrapesJsLoader extends AbstractComponentLoader<JmixGrapesJs> {
+public class GrapesJsLoader extends AbstractComponentLoader<GrapesJs> {
 
     protected GrapesJsPluginRegistry grapesJsPluginRegistry;
 
     @Override
-    protected JmixGrapesJs createComponent() {
-        return factory.create(JmixGrapesJs.class);
+    protected GrapesJs createComponent() {
+        return factory.create(GrapesJs.class);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class GrapesJsLoader extends AbstractComponentLoader<JmixGrapesJs> {
         loadBlocks(resultComponent, element);
     }
 
-    protected void loadPlugins(JmixGrapesJs resultComponent, Element element) {
+    protected void loadPlugins(GrapesJs resultComponent, Element element) {
         Element plugins = element.element("plugins");
         if (plugins == null) {
             return;
@@ -62,7 +62,7 @@ public class GrapesJsLoader extends AbstractComponentLoader<JmixGrapesJs> {
         }
     }
 
-    protected void loadBlocks(JmixGrapesJs resultComponent, Element element) {
+    protected void loadBlocks(GrapesJs resultComponent, Element element) {
         Element blocks = element.element("blocks");
         if (blocks == null) {
             return;
@@ -73,7 +73,7 @@ public class GrapesJsLoader extends AbstractComponentLoader<JmixGrapesJs> {
         }
     }
 
-    protected void loadBlock(JmixGrapesJs resultComponent, Element element) {
+    protected void loadBlock(GrapesJs resultComponent, Element element) {
         String id = loadString(element, "id")
                 .orElseThrow(
                         () -> new GuiDevelopmentException(
@@ -102,7 +102,7 @@ public class GrapesJsLoader extends AbstractComponentLoader<JmixGrapesJs> {
                         String.format("'%s' element cannot be empty", attributeName), context);
             }
 
-            setter.accept(text);
+            setter.accept(text.trim());
             return;
         }
 

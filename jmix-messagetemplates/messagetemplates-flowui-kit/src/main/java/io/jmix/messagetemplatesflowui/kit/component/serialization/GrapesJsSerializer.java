@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
-import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
+import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,16 +33,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Serializes various parameters for the {@link JmixGrapesJs} into JSON for subsequent sending it to the client-side.
+ * Serializes various parameters for the {@link GrapesJs} into JSON for subsequent sending it to the client-side.
  */
-public class JmixGrapesJsSerializer {
+public class GrapesJsSerializer {
 
-    private static final Logger log = LoggerFactory.getLogger(JmixGrapesJsSerializer.class);
+    private static final Logger log = LoggerFactory.getLogger(GrapesJsSerializer.class);
 
     protected ObjectMapper objectMapper = new ObjectMapper();
     protected JreJsonFactory jsonFactory = new JreJsonFactory();
 
-    public JmixGrapesJsSerializer() {
+    public GrapesJsSerializer() {
         initSerializer();
     }
 

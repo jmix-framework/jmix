@@ -20,5 +20,5 @@ group = 'io.jmix.messagetemplates'
 archivesBaseName = 'jmix-messagetemplates'
 
 dependencies {
-    api project(':core')
+    api project(':data')
 }

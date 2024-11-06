@@ -19,7 +19,7 @@ package io.jmix.messagetemplatesflowui.kit.component;
 import java.io.Serializable;
 
 /**
- * Embeddable plugin for the {@link JmixGrapesJs} component. The plugin can provide additional functionality,
+ * Embeddable plugin for the {@link GrapesJs} component. The plugin can provide additional functionality,
  * such as new HTML blocks, actions in the control panel, etc.
  */
 public abstract class GrapesJsPlugin implements Serializable {

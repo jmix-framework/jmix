@@ -49,7 +49,7 @@
     </xs:complexType>
 
     <xs:complexType name="pluginType">
-        <xs:attribute name="name" type="pluginNameType"/>
+        <xs:attribute name="name" type="pluginNameType" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="blockType">

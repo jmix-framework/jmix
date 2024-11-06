@@ -20,7 +20,9 @@ group = 'io.jmix.messagetemplates'
 archivesBaseName = 'jmix-messagetemplates-flowui'
 
 dependencies {
-//    api project(':messagetemplates')
+    api project(':messagetemplates')
     api project(':messagetemplates-flowui-kit')
     api project(':flowui')
+
+    testImplementation project(':flowui-test-assist')
 }

@@ -18,23 +18,39 @@ package io.jmix.messagetemplatesflowui;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.flowui.sys.registration.ComponentRegistration;
 import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
 import io.jmix.messagetemplatesflowui.component.loader.GrapesJsLoader;
-import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
+import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
+import java.util.Collections;
 
 @Configuration
 @ComponentScan
 @JmixModule(dependsOn = {CoreConfiguration.class, FlowuiConfiguration.class})
+@PropertySource(name = "io.jmix.messagetemplatesflowui", value = "classpath:/io/jmix/messagetemplatesflowui/module.properties")
 public class MessageTemplatesFlowuiConfiguration {
+
+    @Bean("msgtmp_ViewControllersConfiguration")
+    public ViewControllersConfiguration views(ApplicationContext applicationContext,
+                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ViewControllersConfiguration viewControllers
+                = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
+        viewControllers.setBasePackages(Collections.singletonList("io.jmix.messagetemplatesflowui.view"));
+        return viewControllers;
+    }
 
     @Bean
     public ComponentRegistration grapesJs() {
-        return ComponentRegistrationBuilder.create(JmixGrapesJs.class)
+        return ComponentRegistrationBuilder.create(GrapesJs.class)
                 .withComponentLoader("grapesJs", GrapesJsLoader.class)
                 .build();
     }

@@ -26,16 +26,13 @@ import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonValue;
 import io.jmix.messagetemplatesflowui.kit.component.event.dom.GrapesJsValueChangedDomEvent;
-import io.jmix.messagetemplatesflowui.kit.component.serialization.JmixGrapesJsSerializer;
+import io.jmix.messagetemplatesflowui.kit.component.serialization.GrapesJsSerializer;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * GrapesJS component is used to create HTML templates using a web editor. This implementation is based on
@@ -60,14 +57,14 @@ import java.util.Objects;
 @JsModule("./src/grapesjs/jmix-grapes-js.js")
 @CssImport("grapesjs/dist/css/grapes.min.css")
 @CssImport("./src/grapesjs/jmix-grapes-js.css")
-public class JmixGrapesJs extends Component implements HasSize, HasStyle {
+public class GrapesJs extends Component implements HasSize, HasStyle {
 
-    private static final Logger log = LoggerFactory.getLogger(JmixGrapesJs.class);
+    private static final Logger log = LoggerFactory.getLogger(GrapesJs.class);
 
-    protected JmixGrapesJsSerializer serializer;
+    protected GrapesJsSerializer serializer;
 
-    protected Collection<GrapesJsPlugin> plugins = new ArrayList<>();
-    protected Collection<GrapesJsBlock> blocks = new ArrayList<>();
+    protected List<GrapesJsPlugin> plugins = new ArrayList<>();
+    protected List<GrapesJsBlock> blocks = new ArrayList<>();
 
     protected StateTree.ExecutionRegistration synchronizeBlocksUpdateExecution;
     protected StateTree.ExecutionRegistration synchronizeValueUpdateExecution;
@@ -77,7 +74,7 @@ public class JmixGrapesJs extends Component implements HasSize, HasStyle {
     /**
      * Creates new instance of GrapesJS editor.
      */
-    public JmixGrapesJs() {
+    public GrapesJs() {
         initComponent();
     }
 
@@ -85,6 +82,13 @@ public class JmixGrapesJs extends Component implements HasSize, HasStyle {
         serializer = createSerializer();
 
         addListener(GrapesJsValueChangedDomEvent.class, this::onValueChangedDomEvent);
+    }
+
+    /**
+     * @return list of added plugins
+     */
+    public List<GrapesJsPlugin> getPlugins() {
+        return Collections.unmodifiableList(plugins);
     }
 
     /**
@@ -122,6 +126,13 @@ public class JmixGrapesJs extends Component implements HasSize, HasStyle {
     public void addPlugins(GrapesJsPlugin... plugins) {
         Preconditions.checkArgument(plugins != null, "Null reference passed as parameter");
         addPlugins(List.of(plugins));
+    }
+
+    /**
+     * @return list of added blocks
+     */
+    public List<GrapesJsBlock> getBlocks() {
+        return Collections.unmodifiableList(blocks);
     }
 
     /**
@@ -344,8 +355,8 @@ public class JmixGrapesJs extends Component implements HasSize, HasStyle {
         return new GrapesJsValueChangedEvent(this, fromClient, getValue(), oldValue);
     }
 
-    protected JmixGrapesJsSerializer createSerializer() {
-        return new JmixGrapesJsSerializer();
+    protected GrapesJsSerializer createSerializer() {
+        return new GrapesJsSerializer();
     }
 
     protected String nullToEmptyValue(@Nullable String value) {
@@ -357,14 +368,14 @@ public class JmixGrapesJs extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Event is fired at the moment of updating the value of the {@link JmixGrapesJs} template.
+     * Event is fired at the moment of updating the value of the {@link GrapesJs} template.
      */
-    public static class GrapesJsValueChangedEvent extends ComponentEvent<JmixGrapesJs> {
+    public static class GrapesJsValueChangedEvent extends ComponentEvent<GrapesJs> {
 
         protected final String value;
         protected final String oldValue;
 
-        public GrapesJsValueChangedEvent(JmixGrapesJs source, boolean fromClient,
+        public GrapesJsValueChangedEvent(GrapesJs source, boolean fromClient,
                                          String value, String oldValue) {
             super(source, fromClient);
 

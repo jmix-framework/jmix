@@ -95,7 +95,7 @@ public class GrapesJsBlock implements Serializable {
     }
 
     /**
-     * Sets the HTML content for the block. The content will be rendered in the {@link JmixGrapesJs} template
+     * Sets the HTML content for the block. The content will be rendered in the {@link GrapesJs} template
      * when you drag-n-drop a block into the template.
      *
      * @param content HTML content to set
@@ -192,7 +192,7 @@ public class GrapesJsBlock implements Serializable {
         }
 
         /**
-         * Sets the HTML content for the block. The content will be rendered in the {@link JmixGrapesJs} template
+         * Sets the HTML content for the block. The content will be rendered in the {@link GrapesJs} template
          * when you drag-n-drop a block into the template.
          *
          * @param content HTML content to set

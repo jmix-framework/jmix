@@ -17,11 +17,11 @@
 package io.jmix.messagetemplatesflowui.component.plugin;
 
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
-import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
+import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 import org.springframework.stereotype.Component;
 
 /**
- * The plugin adds simple {@code tabs} component as a block for {@link JmixGrapesJs}.
+ * The plugin adds simple {@code tabs} component as a block for {@link GrapesJs}.
  *
  * @see <a href="https://github.com/GrapesJS/components-tabs">GrapesJS Tabs GitHub</a>
  */

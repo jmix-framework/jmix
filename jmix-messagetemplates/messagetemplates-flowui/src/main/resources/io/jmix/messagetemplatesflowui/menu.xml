@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="1200">
+
+    <menu id="messagetemplates" title="msg://io.jmix.messagetemplatesflowui/menu.messagetemplates.title">
+        <item view="msgtmp_MessageTemplate.list" title="msg://io.jmix.messagetemplatesflowui.view.messagetemplate/MessageTemplateListView.title"/>
+        <item view="msgtmp_MessageTemplateGroup.list" title="msg://io.jmix.messagetemplatesflowui.view.messagetemplategroup/MessageTemplateGroupListView.title"/>
+    </menu>
+
+</menu-config>

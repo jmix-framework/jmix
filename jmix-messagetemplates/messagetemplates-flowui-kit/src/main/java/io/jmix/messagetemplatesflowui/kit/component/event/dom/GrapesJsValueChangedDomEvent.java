@@ -19,17 +19,17 @@ package io.jmix.messagetemplatesflowui.kit.component.event.dom;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
+import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 
 /**
- * The DOM event is fired at the moment of updating the {@link JmixGrapesJs} template on the client-side.
+ * The DOM event is fired at the moment of updating the {@link GrapesJs} template on the client-side.
  */
 @DomEvent("value-changed")
-public class GrapesJsValueChangedDomEvent extends ComponentEvent<JmixGrapesJs> {
+public class GrapesJsValueChangedDomEvent extends ComponentEvent<GrapesJs> {
 
     protected final String value;
 
-    public GrapesJsValueChangedDomEvent(JmixGrapesJs source, boolean fromClient,
+    public GrapesJsValueChangedDomEvent(GrapesJs source, boolean fromClient,
                                         @EventData("event.detail.value") String value) {
         super(source, fromClient);
         this.value = value;

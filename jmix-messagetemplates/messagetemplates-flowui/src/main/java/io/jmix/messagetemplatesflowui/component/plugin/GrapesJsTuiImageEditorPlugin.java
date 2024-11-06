@@ -17,11 +17,11 @@
 package io.jmix.messagetemplatesflowui.component.plugin;
 
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
-import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
+import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 import org.springframework.stereotype.Component;
 
 /**
- * The plugin adds the <a href="https://ui.toast.com/tui-image-editor/">TOAST UI Image Editor</a> on Image Components in {@link JmixGrapesJs}.
+ * The plugin adds the <a href="https://ui.toast.com/tui-image-editor/">TOAST UI Image Editor</a> on Image Components in {@link GrapesJs}.
  *
  * @see <a href="https://github.com/GrapesJS/tui-image-editor">GrapesJS TOAST UI Image Editor GitHub</a>
  */

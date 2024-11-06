@@ -20,14 +20,14 @@ import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
-import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
+import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 
 @StudioUiKit(studioClassloaderDependencies = "io.jmix.messagetemplates:jmix-messagetemplates-flowui-kit")
 public interface StudioGrapesJsComponents {
 
     @StudioComponent(
             name = "GrapesJs",
-            classFqn = "io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs",
+            classFqn = "io.jmix.messagetemplatesflowui.kit.component.GrapesJs",
             category = "Components",
             xmlElement = "grapesJs",
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
@@ -65,5 +65,5 @@ public interface StudioGrapesJsComponents {
             }
 
     )
-    JmixGrapesJs grapesJs();
+    GrapesJs grapesJs();
 }

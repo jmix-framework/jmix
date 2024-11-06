@@ -16,12 +16,12 @@
 
 package io.jmix.messagetemplatesflowui.kit.meta.stub;
 
-import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
+import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 
 /**
  * Used in Studio. <br/>
  * Marker interface for collecting <code>plugin</code> elements into <code>plugins</code> elements group
- * in {@link JmixGrapesJs} component.
+ * in {@link GrapesJs} component.
  */
 final class StudioGrapesJsPluginElement {
 }

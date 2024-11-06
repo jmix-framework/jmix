@@ -17,12 +17,12 @@
 package io.jmix.messagetemplatesflowui.component.plugin;
 
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
-import io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs;
+import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 import org.springframework.stereotype.Component;
 
 /**
  * The plugin adds some basic blocks ({@code text}, {@code link}, {@code image}, etc.)
- * to the {@link JmixGrapesJs} editor.
+ * to the {@link GrapesJs} editor.
  *
  * @see <a href="https://github.com/GrapesJS/blocks-basic">GrapesJS Basic Blocks GitHub</a>
  */

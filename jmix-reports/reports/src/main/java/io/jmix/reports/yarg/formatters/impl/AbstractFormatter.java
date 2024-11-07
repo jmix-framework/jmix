@@ -17,12 +17,12 @@ package io.jmix.reports.yarg.formatters.impl;
 
 import com.google.common.base.Preconditions;
 import io.jmix.reports.libintegration.GroovyScriptParametersProvider;
-import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
 import io.jmix.reports.yarg.exception.ReportFormattingException;
 import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.exception.ReportingInterruptedException;
 import io.jmix.reports.yarg.formatters.ReportFormatter;
 import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
+import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportFieldFormat;
 import io.jmix.reports.yarg.structure.ReportOutputType;
@@ -184,6 +184,11 @@ public abstract class AbstractFormatter implements ReportFormatter {
             }
         }
         return formatString;
+    }
+
+    protected boolean hasFormat(BandData bandData, String parameterName) {
+        String format = getFormatString(parameterName, getFullParameterName(bandData, parameterName));
+        return format != null;
     }
 
     protected Boolean isGroovyScript(String parameterName, String fullParameterName) {

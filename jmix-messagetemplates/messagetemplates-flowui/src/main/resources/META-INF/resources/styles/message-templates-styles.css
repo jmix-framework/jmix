@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-jmix-grapes-js {
-    width: 100%;
-    height: 100%;
-}
-
-:root {
-    --gjs-primary-color: var(--lumo-base-color);
-    --gjs-secondary-color: var(--lumo-contrast-60pct);
-    --gjs-tertiary-color: var(--lumo-primary-text-color);
-    --gjs-quaternary-color: var(--lumo-primary-text-color);
+.message-templates-grid-layout {
+    grid-gap: 1em;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(25em, 1fr));
 }

@@ -62,6 +62,8 @@
             </actions>
             <columns resizable="true">
                 <column property="name"/>
+                <column property="code"/>
+                <column property="group"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

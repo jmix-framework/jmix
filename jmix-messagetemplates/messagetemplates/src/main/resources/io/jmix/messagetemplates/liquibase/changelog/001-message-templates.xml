@@ -52,12 +52,23 @@
             <column name="GROUP_ID" type="${uuid.type}"/>
         </createTable>
 
+        <createIndex indexName="IDX_MESSAGE_TEMPLATE_GROUP"
+                     tableName="MSGTMP_MESSAGE_TEMPLATE">
+            <column name="GROUP_ID"/>
+        </createIndex>
+
         <addForeignKeyConstraint baseColumnNames="GROUP_ID"
                                  baseTableName="MSGTMP_MESSAGE_TEMPLATE"
                                  constraintName="FK_MSGTMP_MESSAGE_TEMPLATE_ON_GROUP"
                                  onDelete="SET NULL"
                                  referencedColumnNames="ID"
                                  referencedTableName="MSGTMP_MESSAGE_TEMPLATE_GROUP"/>
+
+        <createIndex indexName="IDX_MESSAGE_TEMPLATE_UNQ_CODE"
+                     tableName="MSGTMP_MESSAGE_TEMPLATE"
+                     unique="true">
+            <column name="CODE"/>
+        </createIndex>
     </changeSet>
 
 </databaseChangeLog>

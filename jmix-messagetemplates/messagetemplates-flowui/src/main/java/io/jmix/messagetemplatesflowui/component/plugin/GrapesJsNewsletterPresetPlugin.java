@@ -43,6 +43,7 @@ public class GrapesJsNewsletterPresetPlugin extends GrapesJsPlugin {
                     "modalLabelImport": "Paste all your code here below and click import",
                     "modalLabelExport": "Copy the code and use it wherever you want",
                     "categoryLabel": "Basic",
+                    "useCustomTheme": false,
                     "cellStyle": {
                         "font-size": "12px",
                         "font-weight": 300,

@@ -29,7 +29,10 @@ import java.util.UUID;
 
 @Entity(name = "msgtmp_MessageTemplate")
 @JmixEntity
-@Table(name = "MSGTMP_MESSAGE_TEMPLATE")
+@Table(name = "MSGTMP_MESSAGE_TEMPLATE", indexes = {
+        @Index(name = "IDX_MESSAGE_TEMPLATE_UNQ_CODE", columnList = "CODE", unique = true),
+        @Index(name = "IDX_MESSAGE_TEMPLATE_GROUP", columnList = "GROUP_ID")
+})
 public class MessageTemplate {
 
     @Id

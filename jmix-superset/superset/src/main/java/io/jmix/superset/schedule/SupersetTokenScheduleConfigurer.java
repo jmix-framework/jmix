@@ -16,6 +16,7 @@
 
 package io.jmix.superset.schedule;
 
+import com.google.common.base.Strings;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.SupersetTokenManager;
 import org.slf4j.Logger;
@@ -48,6 +49,11 @@ public class SupersetTokenScheduleConfigurer {
 
     @EventListener
     public void onContextRefreshedEvent(ContextRefreshedEvent event) {
+        if (!isConnectionPropertiesDefined()) {
+            log.warn("Superset URL or credentials are not configured. The Superset token scheduler won't start.");
+            return;
+        }
+
         startAccessTokenScheduler();
         startCsrfTokenScheduler();
     }
@@ -72,5 +78,11 @@ public class SupersetTokenScheduleConfigurer {
                 supersetProperties.getCsrfTokenRefreshSchedule());
 
         log.debug("CSRF token scheduler started");
+    }
+
+    private boolean isConnectionPropertiesDefined() {
+        return !Strings.isNullOrEmpty(supersetProperties.getUrl())
+                && !Strings.isNullOrEmpty(supersetProperties.getUsername())
+                && !Strings.isNullOrEmpty(supersetProperties.getPassword());
     }
 }

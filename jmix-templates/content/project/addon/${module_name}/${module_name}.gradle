@@ -14,6 +14,11 @@ dependencies {
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }
 
+configurations.implementation {
+    exclude group: 'com.vaadin', module: 'hilla'
+    exclude group: 'com.vaadin', module: 'hilla-dev'
+}
+
 test {
     useJUnitPlatform()
 }

@@ -125,6 +125,8 @@ public class SearchResultsView extends StandardView {
         searchFieldContext.setSearchSize(searchSize);
         //only happens when opened in navigation mode
         searchFieldContext.setOpenMode(OpenMode.NAVIGATION);
+        searchFieldContext.setSearchButtonVisible(searchButtonVisible);
+        searchFieldContext.setSettingsButtonVisible(settingsButtonVisible);
     }
 
     protected void parseQueryParameters(Map<String, List<String>> parameters) {

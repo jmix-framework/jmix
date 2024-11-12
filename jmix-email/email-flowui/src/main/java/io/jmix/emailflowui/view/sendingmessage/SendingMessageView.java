@@ -42,9 +42,16 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.upload.TemporaryStorage;
 import io.jmix.flowui.view.*;
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
@@ -55,6 +62,8 @@ import java.util.UUID;
 @DialogMode(width = "80em", height = "65em", resizable = true)
 public class SendingMessageView extends StandardView {
 
+    private static final Logger log = LoggerFactory.getLogger(SendingMessageView.class);
+
     @ViewComponent
     protected DataGrid<SendingMessage> sendingMessageDataGrid;
     @ViewComponent
@@ -63,6 +72,8 @@ public class SendingMessageView extends StandardView {
     protected TypedTextField<String> bodyContentTypeField;
     @ViewComponent
     protected JmixButton showContentBtn;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected EmailerProperties emailerProperties;
@@ -85,13 +96,17 @@ public class SendingMessageView extends StandardView {
     @Autowired
     protected DataManager dataManager;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected Downloader downloader;
 
     @Subscribe(id = "sendingMessagesDc", target = Target.DATA_CONTAINER)
     public void onSendingMessagesDcItemChange(CollectionContainer.ItemChangeEvent<SendingMessage> event) {
         SendingMessage selectedItem = event.getItem();
+
+        if (selectedItem != null
+                && Strings.isNullOrEmpty(selectedItem.getContentText())
+                && selectedItem.getContentTextFile() != null) {
+            selectedItem.setContentText(readContentTextFile(selectedItem));
+        }
 
         showContentBtn.setEnabled(selectedItem != null && !Strings.isNullOrEmpty(selectedItem.getContentText()));
     }
@@ -191,5 +206,18 @@ public class SendingMessageView extends StandardView {
     protected FileRef getNewReference(SendingAttachment attachment) {
         UUID uuid = temporaryStorage.saveFile(attachment.getContent());
         return temporaryStorage.putFileIntoStorage(uuid, attachment.getName());
+    }
+
+    @Nullable
+    protected String readContentTextFile(SendingMessage sendingMessage) {
+        FileStorage fileStorage = fileStorageLocator.getDefault();
+        if (fileStorage.fileExists(sendingMessage.getContentTextFile())) {
+            try (InputStream inputStream = fileStorage.openStream(sendingMessage.getContentTextFile())) {
+                return IOUtils.toString(inputStream, Charset.defaultCharset());
+            } catch (IOException e) {
+                log.warn("Cannot read message content from file.", e);
+            }
+        }
+        return null;
     }
 }

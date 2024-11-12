@@ -166,7 +166,7 @@ class JmixPlugin implements Plugin<Project> {
 
                     def confDir = resolveConfDir(project, mainProperties)
 
-                    println("Delete directory = ${confDir}")
+                    project.logger.lifecycle("Delete directory: {}",  confDir)
                     delete "${confDir}"
                 } else {
                     return
@@ -186,13 +186,13 @@ class JmixPlugin implements Plugin<Project> {
         def confDir = null
         if (!profilesList.isEmpty()) {
             for (def profileName : profilesList) {
-                println("Check profile: " + profileName)
+                project.logger.debug("Check profile: {}", profileName)
                 def profilePropertyFilePath = "src/main/resources/application-%s.properties".formatted(profileName)
                 def profilePropertiesFile = project.file(profilePropertyFilePath)
                 if (profilePropertiesFile.exists()) {
                     def profileProps = new Properties()
                     project.file(profilePropertyFilePath).withInputStream { profileProps.load(it) }
-                    confDir = profileProps.getProperty("jmix.core.work-dir") ?: profileProps.getProperty("jmix.core.workDir") ?: null
+                    confDir = profileProps.getProperty("jmix.core.conf-dir") ?: profileProps.getProperty("jmix.core.confDir") ?: null
                     if (confDir != null) {
                         break
                     }
@@ -201,7 +201,7 @@ class JmixPlugin implements Plugin<Project> {
         }
 
         if (confDir == null) {
-            confDir = mainProperties.getProperty("jmix.core.work-dir") ?: mainProperties.getProperty("jmix.core.workDir") ?: "${project.rootDir}/.jmix/conf"
+            confDir = mainProperties.getProperty("jmix.core.conf-dir") ?: mainProperties.getProperty("jmix.core.confDir") ?: "${project.rootDir}/.jmix/conf"
         }
 
         return confDir

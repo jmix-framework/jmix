@@ -210,9 +210,13 @@ public class SendingMessageView extends StandardView {
 
     @Nullable
     protected String readContentTextFile(SendingMessage sendingMessage) {
+        FileRef fileRef = sendingMessage.getContentTextFile();
+        if (fileRef == null) {
+            return null;
+        }
         FileStorage fileStorage = fileStorageLocator.getDefault();
-        if (fileStorage.fileExists(sendingMessage.getContentTextFile())) {
-            try (InputStream inputStream = fileStorage.openStream(sendingMessage.getContentTextFile())) {
+        if (fileStorage.fileExists(fileRef)) {
+            try (InputStream inputStream = fileStorage.openStream(fileRef)) {
                 return IOUtils.toString(inputStream, Charset.defaultCharset());
             } catch (IOException e) {
                 log.warn("Cannot read message content from file.", e);

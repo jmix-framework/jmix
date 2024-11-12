@@ -116,7 +116,7 @@ class Options {
         // new locale, that won't affect usages of moment.js.
         const createMomentLocale = !this.localeSuffix
         if (createMomentLocale) {
-            this.localeSuffix = 'u-' + window.crypto.randomUUID().split('-').join('').substring(0, 6);
+            this.localeSuffix = this._generateLocaleSuffix();
         }
 
         // Create FullCalendar locale
@@ -845,6 +845,21 @@ class Options {
         }
 
         return resultI18n;
+    }
+
+    _generateLocaleSuffix() {
+        const charactersLength = 6;
+        const result = 'u-';
+        if (window.crypto.randomUUID) {
+            return result + window.crypto.randomUUID().split('-').join('').substring(0, charactersLength);
+        }
+        let suffix = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < charactersLength; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            suffix += characters.charAt(randomIndex);
+        }
+        return result + suffix;
     }
 
     /**

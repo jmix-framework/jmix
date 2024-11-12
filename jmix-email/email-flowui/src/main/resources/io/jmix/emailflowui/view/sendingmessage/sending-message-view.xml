@@ -41,7 +41,7 @@
                 <property name="headers"/>
                 <property name="attachments" fetchPlan="_local"/>
             </fetchPlan>
-            <loader id="sendingMessagesDl">
+            <loader id="sendingMessagesDl" readOnly="true">
                 <query>
                     <![CDATA[select sm from email_SendingMessage sm order by sm.createTs desc]]>
                 </query>

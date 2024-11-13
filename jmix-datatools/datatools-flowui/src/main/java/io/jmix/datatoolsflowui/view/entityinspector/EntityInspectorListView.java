@@ -563,6 +563,10 @@ public class EntityInspectorListView extends StandardListView<Object> {
                 String importFailedMessage = messages.formatMessage(EntityInspectorListView.class, "importFailedMessage",
                         fileName, nullToEmpty(e.getMessage()));
 
+                importFailedMessage = createMultiRowText(importFailedMessage,
+                        messages.getMessage(EntityInspectorListView.class, "importFailedMessage").length()
+                                + fileName.length() + 20);
+
                 notifications.create(importFailedHeader, importFailedMessage)
                         .withType(Notifications.Type.ERROR)
                         .show();
@@ -589,6 +593,26 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
         SimplePagination pagination = createPagination();
         buttonsPanel.add(pagination);
+    }
+
+    protected String createMultiRowText(String text, int rowLength) {
+        String[] parts = text.split(" ");
+        StringBuilder sb = new StringBuilder();
+        int currentRowLength = 0;
+
+        for (int i = 0; i < parts.length; i++) {
+            if (currentRowLength + parts[i].length() > rowLength) {
+                sb.append("\n");
+                currentRowLength = 0;
+            }
+            sb.append(parts[i]);
+            currentRowLength += parts[i].length();
+            if (i != parts.length - 1) {
+                sb.append(" ");
+                currentRowLength++;
+            }
+        }
+        return sb.toString();
     }
 
     protected void initExcelExportAction(DataGrid<Object> dataGrid, Consumer<Component> addMethod) {

@@ -37,27 +37,4 @@
                name="reportExecution.view"
                extends="_local">
     </fetchPlan>
-
-    <fetchPlan entity="report_Report" name="report.edit" extends="_local">
-        <property name="templates" fetchPlan="template.edit"/>
-        <property name="defaultTemplate" fetchPlan="template.edit"/>
-        <property name="group" fetchPlan="_local"/>
-    </fetchPlan>
-
-    <fetchPlan entity="report_ReportTemplate" name="template.edit" extends="_local">
-        <property name="report">
-            <property name="xml"/>
-            <property name="name"/>
-            <property name="localeNames"/>
-        </property>
-    </fetchPlan>
-
-    <fetchPlan entity="report_Report" name="report.run" extends="_base">
-        <property name="templates" fetchPlan="_base"/>
-        <property name="defaultTemplate" fetchPlan="_base"/>
-    </fetchPlan>
-
-    <fetchPlan entity="report_Report" name="report.withTemplates" extends="_instance_name">
-        <property name="templates" fetchPlan="_instance_name"/>
-    </fetchPlan>
 </fetchPlans>

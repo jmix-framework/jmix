@@ -37,27 +37,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.CoreProperties;
-import io.jmix.core.DataManager;
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanProperty;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.FetchPlans;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.SaveContext;
-import io.jmix.core.Sort;
-import io.jmix.core.Stores;
-import io.jmix.core.UuidProvider;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.Notifications;
-import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.UiProperties;
+import io.jmix.flowui.*;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
@@ -75,46 +59,14 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
-import io.jmix.flowui.model.CollectionChangeType;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionPropertyContainer;
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.RemoveOperation;
-import io.jmix.flowui.view.DefaultMainViewParent;
-import io.jmix.flowui.view.DialogWindow;
-import io.jmix.flowui.view.EditedEntityContainer;
-import io.jmix.flowui.view.Install;
-import io.jmix.flowui.view.MessageBundle;
-import io.jmix.flowui.view.StandardDetailView;
-import io.jmix.flowui.view.StandardOutcome;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.Target;
-import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
-import io.jmix.flowui.view.ViewInfo;
-import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.flowui.view.ViewValidation;
+import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.app.EntityTree;
-import io.jmix.reports.entity.BandDefinition;
-import io.jmix.reports.entity.DataSet;
-import io.jmix.reports.entity.DataSetType;
-import io.jmix.reports.entity.JsonSourceType;
-import io.jmix.reports.entity.Orientation;
-import io.jmix.reports.entity.ParameterType;
-import io.jmix.reports.entity.Report;
-import io.jmix.reports.entity.ReportInputParameter;
-import io.jmix.reports.entity.ReportOutputType;
-import io.jmix.reports.entity.ReportRole;
-import io.jmix.reports.entity.ReportScreen;
-import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reports.entity.ReportType;
-import io.jmix.reports.entity.ReportValueFormat;
+import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reports.util.DataSetFactory;
@@ -138,16 +90,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Route(value = "reports/:id", layout = DefaultMainViewParent.class)
@@ -1262,11 +1205,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
                     break;
             }
 
-            switch (dataSet.getType()) {
-                case SQL -> dataSetScriptCodeEditor.setMode(CodeEditorMode.SQL);
-                case GROOVY -> dataSetScriptCodeEditor.setMode(CodeEditorMode.GROOVY);
-                default -> dataSetScriptCodeEditor.setMode(CodeEditorMode.TEXT);
-            }
+            CodeEditorMode codeEditorMode = getCodeEditorMode(dataSet);
+            dataSetScriptCodeEditor.setMode(codeEditorMode);
+
             dataSetScriptCodeEditorHelpBtn.setVisible(CodeEditorMode.GROOVY.equals(dataSetScriptCodeEditor.getMode()));
         }
     }
@@ -1404,13 +1345,19 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected void onDataSetScriptFieldExpandIconClick() {
-        reportScriptEditor.create(this)
+        DataSet dataSet = dataSetsDc.getItem();
+        CodeEditorMode codeEditorMode = getCodeEditorMode(dataSet);
+        ReportScriptEditor.Builder reportScriptEditorBuilder = reportScriptEditor.create(this)
                 .withTitle(getScriptEditorDialogCaption())
-                .withValue(dataSetsDc.getItem().getText())
-                .withEditorMode(CodeEditorMode.GROOVY)
-                .withCloseOnClick(value -> dataSetsDc.getItem().setText(value))
-                .withHelpOnClick(this::onJsonGroovyCodeEditorHelpIconClick)
-                .open();
+                .withValue(dataSet.getText())
+                .withEditorMode(codeEditorMode)
+                .withCloseOnClick(dataSet::setText);
+
+        if (codeEditorMode == CodeEditorMode.GROOVY) {
+            reportScriptEditorBuilder.withHelpOnClick(this::onJsonGroovyCodeEditorHelpIconClick);
+        }
+
+        reportScriptEditorBuilder.open();
     }
 
     protected void initJsonPathQueryTextAreaField() {
@@ -1441,7 +1388,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         reportScriptEditor.create(this)
                 .withTitle(getScriptEditorDialogCaption())
                 .withValue(dataSetsDc.getItem().getJsonSourceText())
-                .withEditorMode(CodeEditorMode.GROOVY)
+                .withEditorMode(CodeEditorMode.JSON)
                 .withCloseOnClick(value -> dataSetsDc.getItem().setJsonSourceText(value))
                 .withHelpOnClick(this::onJsonGroovyCodeEditorHelpIconClick)
                 .open();
@@ -1777,6 +1724,14 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         templatesDataGrid.focus();
         templatesDataGrid.getDataProvider().refreshAll();
+    }
+
+    protected CodeEditorMode getCodeEditorMode(DataSet dataSet) {
+        return switch (dataSet.getType()) {
+            case SQL -> CodeEditorMode.SQL;
+            case GROOVY -> CodeEditorMode.GROOVY;
+            default -> CodeEditorMode.TEXT;
+        };
     }
 
 

@@ -100,6 +100,8 @@ public class ReportScriptEditor {
 
             if (helpRunnable != null) {
                 scriptEditorView.setHelpBtnClickListener(helpRunnable);
+            } else {
+                scriptEditorView.setHelpBtnVisible(false);
             }
 
             scriptEditorViewDialogWindow.open();

@@ -50,6 +50,10 @@ public class ScriptEditorView extends StandardView {
         this.helpBtnClickListener = helpBtnClickListener;
     }
 
+    public void setHelpBtnVisible(boolean visible) {
+        codeEditorHelpBtn.setVisible(visible);
+    }
+
     @Subscribe
     public void onInit(final InitEvent event) {
         codeEditorHelpBtn.addClickListener(listener -> helpBtnClickListener.run());

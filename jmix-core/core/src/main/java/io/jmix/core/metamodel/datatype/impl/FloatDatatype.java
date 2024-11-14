@@ -104,6 +104,15 @@ public class FloatDatatype extends NumberDatatype implements Datatype<Float> {
         return result;
     }
 
+    @Override
+    protected java.text.NumberFormat createFormat() {
+        java.text.NumberFormat format = super.createFormat();
+        if (format instanceof DecimalFormat) {
+            ((DecimalFormat) format).setParseBigDecimal(true);
+        }
+        return format;
+    }
+
     protected boolean isInFloatRange(BigDecimal result) {
         return result.compareTo(FLOAT_MAX_VALUE) <= 0 && result.compareTo(FLOAT_MIN_VALUE) >= 0;
     }

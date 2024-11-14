@@ -20,11 +20,13 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.ContainerDataUnit;
+import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.pivottableflowui.component.PivotTable;
 import io.jmix.pivottableflowui.kit.component.model.*;
@@ -55,6 +57,7 @@ public class PivotTableViewBuilder {
     protected Messages messages;
     protected MessageTools messageTools;
     protected AccessManager accessManager;
+    protected DialogWindows dialogWindows;
 
     protected List<String> includedProperties;
     protected List<String> excludedProperties;
@@ -102,6 +105,11 @@ public class PivotTableViewBuilder {
     @Autowired
     public void setMessageTools(MessageTools messageTools) {
         this.messageTools = messageTools;
+    }
+
+    @Autowired
+    public void setDialogWindows(DialogWindows dialogWindows) {
+        this.dialogWindows = dialogWindows;
     }
 
     /**
@@ -523,6 +531,16 @@ public class PivotTableViewBuilder {
      * Navigate to {@link PivotTableView} and show {@link PivotTable} component with the set parameters
      */
     public void show() {
+        show(OpenMode.NAVIGATION);
+    }
+
+    /**
+     * Navigate to {@link PivotTableView} or open it in dialog mode and
+     * show {@link PivotTable} component with the set parameters
+     *
+     * @param openMode view opening method
+     */
+    public void show(@Nullable OpenMode openMode) {
         if (target == null) {
             throw new IllegalStateException(String.format("%s is not set", ListDataComponent.class.getSimpleName()));
         }
@@ -531,13 +549,24 @@ public class PivotTableViewBuilder {
 
         PivotTableOptions pivotTableOptions = getPivotTableOptions();
         pivotTableOptions.setProperties(getPropertiesWithLocale());
-        viewNavigators.view(targetView, PivotTableView.class)
-                .withAfterNavigationHandler(event -> {
-                    PivotTableView pivotTableView = event.getView();
-                    pivotTableView.setPivotTableOptions(pivotTableOptions);
-                    pivotTableView.setDataItems(items == null ? Collections.emptyList() : items);
-                })
-                .navigate();
+
+        if (openMode == OpenMode.DIALOG) {
+            dialogWindows.view(targetView, PivotTableView.class)
+                    .withAfterOpenListener(event -> {
+                        PivotTableView pivotTableView = event.getView();
+                        pivotTableView.setPivotTableOptions(pivotTableOptions);
+                        pivotTableView.setDataItems(items == null ? Collections.emptyList() : items);
+                    })
+                    .open();
+        } else {
+            viewNavigators.view(targetView, PivotTableView.class)
+                    .withAfterNavigationHandler(event -> {
+                        PivotTableView pivotTableView = event.getView();
+                        pivotTableView.setPivotTableOptions(pivotTableOptions);
+                        pivotTableView.setDataItems(items == null ? Collections.emptyList() : items);
+                    })
+                    .navigate();
+        }
     }
 
     protected Map<String, String> getPropertiesWithLocale() {

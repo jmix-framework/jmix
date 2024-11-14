@@ -22,17 +22,27 @@ import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.SecuredBaseAction;
+import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.sys.ActionViewInitializer;
+import io.jmix.flowui.view.DialogWindow;
+import io.jmix.flowui.view.OpenMode;
+import io.jmix.flowui.view.View;
 import io.jmix.pivottableflowui.component.PivotTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Jmix action to show {@link PivotTable} component.
@@ -40,13 +50,16 @@ import java.util.*;
  */
 @ActionType(ShowPivotTableAction.ID)
 public class ShowPivotTableAction<E> extends ListDataComponentAction<ShowPivotTableAction<E>, E>
-        implements ApplicationContextAware {
+        implements ApplicationContextAware, ViewOpeningAction {
 
     public static final String ID = "pvttbl_showPivotTable";
 
     protected ApplicationContext applicationContext;
     protected Messages messages;
     protected Dialogs dialogs;
+
+    protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
+    protected OpenMode openMode;
 
     protected String includedProperties;
     protected String excludedProperties;
@@ -75,6 +88,84 @@ public class ShowPivotTableAction<E> extends ListDataComponentAction<ShowPivotTa
     @Autowired
     public void setDialogs(Dialogs dialogs) {
         this.dialogs = dialogs;
+    }
+
+    @Nullable
+    @Override
+    public OpenMode getOpenMode() {
+        return openMode;
+    }
+
+    @Override
+    public void setOpenMode(@Nullable OpenMode openMode) {
+        this.openMode = openMode;
+    }
+
+    @Nullable
+    @Override
+    public String getViewId() {
+        return viewInitializer.getViewId();
+    }
+
+    @Override
+    public void setViewId(@Nullable String viewId) {
+        viewInitializer.setViewId(viewId);
+    }
+
+    @Nullable
+    @Override
+    public Class<? extends View> getViewClass() {
+        return viewInitializer.getViewClass();
+    }
+
+    @Override
+    public void setViewClass(@Nullable Class<? extends View> viewClass) {
+        viewInitializer.setViewClass(viewClass);
+    }
+
+    @Nullable
+    @Override
+    public RouteParametersProvider getRouteParametersProvider() {
+        return viewInitializer.getRouteParametersProvider();
+    }
+
+    @Override
+    public void setRouteParametersProvider(@Nullable RouteParametersProvider routeParameters) {
+        viewInitializer.setRouteParametersProvider(routeParameters);
+    }
+
+    @Nullable
+    @Override
+    public QueryParametersProvider getQueryParametersProvider() {
+        return viewInitializer.getQueryParametersProvider();
+    }
+
+    @Override
+    public void setQueryParametersProvider(@Nullable QueryParametersProvider queryParameters) {
+        viewInitializer.setQueryParametersProvider(queryParameters);
+    }
+
+    @Override
+    public <V extends View<?>> void setAfterCloseHandler(
+            @Nullable Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler) {
+        viewInitializer.setAfterCloseHandler(afterCloseHandler);
+    }
+
+    @Nullable
+    @Override
+    public <V extends View<?>> Consumer<DialogWindow.AfterCloseEvent<V>> getAfterCloseHandler() {
+        return viewInitializer.getAfterCloseHandler();
+    }
+
+    @Override
+    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
+    @Nullable
+    @Override
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return viewInitializer.getViewConfigurer();
     }
 
     /**
@@ -199,6 +290,6 @@ public class ShowPivotTableAction<E> extends ListDataComponentAction<ShowPivotTa
         showPivotManager.withItems(items)
                 .withIncludedProperties(parseProperties(includedProperties))
                 .withExcludedProperties(parseProperties(excludedProperties))
-                .show();
+                .show(openMode);
     }
 }

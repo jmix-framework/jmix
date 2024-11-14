@@ -57,8 +57,12 @@ public class FullTextFilterConditionDetailView extends FilterConditionDetailView
     }
 
     @Subscribe
-    public void onBeforeShow(BeforeShowEvent event) {
+    public void onInit(final InitEvent event) {
         initSearchStrategyNameItems();
+    }
+
+    @Subscribe
+    public void onBeforeShow(BeforeShowEvent event) {
         initLabel();
 
         generateRandomParameterName();

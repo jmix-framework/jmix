@@ -103,9 +103,7 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
         if (primaryKeyName == null) {
             throw new RuntimeException("Cannot find a primary key for a meta class " + entityMetaClass.getName());
         }
-        sort = sort != null ? sort : Sort.by(primaryKeyName);
-
-        query.setSort(sort);
+        query.setSort(Sort.by(primaryKeyName));
 
         Condition condition = loadContext.getQuery().getCondition();
 

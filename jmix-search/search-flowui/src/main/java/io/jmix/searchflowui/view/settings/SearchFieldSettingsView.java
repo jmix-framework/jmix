@@ -27,12 +27,12 @@ import io.jmix.flowui.view.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyProvider;
+import io.jmix.searchflowui.utils.SearchStrategyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Route(value = "search-field-settings-view", layout = DefaultMainViewParent.class)
@@ -40,10 +40,6 @@ import java.util.stream.Collectors;
 @ViewDescriptor("search-field-settings-view.xml")
 @DialogMode(width = "30em")
 public class SearchFieldSettingsView extends StandardView {
-
-    private static final String STRATEGY_LOCALIZATION_KEY_TEMPLATE = "io.jmix.search.searchstrategy.%s.name";
-
-    private static final Set<String> DEPRECATED_SEARCH_STRATEGIES = Set.of("allTermsAnyField", "allTermsSingleField");
 
     @ViewComponent
     protected JmixMultiSelectComboBox<String> searchEntitiesComboBox;
@@ -58,6 +54,8 @@ public class SearchFieldSettingsView extends StandardView {
     protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected SearchStrategyUtils searchStrategyUtils;
 
     protected List<String> availableSearchStrategyNames = new ArrayList<>();
 
@@ -115,11 +113,10 @@ public class SearchFieldSettingsView extends StandardView {
     }
 
     protected String getLocalizedStrategyName(String strategyName) {
-        String key = STRATEGY_LOCALIZATION_KEY_TEMPLATE.formatted(strategyName);
-        return messages.getMessage(key);
+        return searchStrategyUtils.getLocalizedStrategyName(strategyName);
     }
 
     protected boolean isSearchStrategyVisible(SearchStrategy searchStrategy) {
-        return !DEPRECATED_SEARCH_STRATEGIES.contains(searchStrategy.getName());
+        return searchStrategyUtils.isSearchStrategyVisible(searchStrategy);
     }
 }

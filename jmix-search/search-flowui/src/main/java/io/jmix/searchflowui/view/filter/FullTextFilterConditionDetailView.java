@@ -25,6 +25,7 @@ import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyProvider;
 import io.jmix.searchflowui.entity.FullTextFilterCondition;
 import io.jmix.searchflowui.utils.FullTextFilterUtils;
+import io.jmix.searchflowui.utils.SearchStrategyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,11 +43,13 @@ public class FullTextFilterConditionDetailView extends FilterConditionDetailView
     protected InstanceContainer<FullTextFilterCondition> filterConditionDc;
     @ViewComponent
     protected JmixComboBox<String> searchStrategyNameField;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected SearchStrategyProvider<? extends SearchStrategy> searchStrategyProvider;
+    @Autowired
+    protected SearchStrategyUtils searchStrategyUtils;
 
     @Override
     public InstanceContainer<FullTextFilterCondition> getInstanceContainer() {
@@ -80,6 +83,7 @@ public class FullTextFilterConditionDetailView extends FilterConditionDetailView
     private void initSearchStrategyNameItems() {
         Collection<? extends SearchStrategy> searchStrategies = searchStrategyProvider.getAllSearchStrategies();
         List<String> searchStrategyNames = searchStrategies.stream()
+                .filter(searchStrategyUtils::isSearchStrategyVisible)
                 .map(SearchStrategy::getName)
                 .collect(Collectors.toList());
         searchStrategyNameField.setItems(searchStrategyNames);
@@ -87,5 +91,10 @@ public class FullTextFilterConditionDetailView extends FilterConditionDetailView
 
     private void generateRandomParameterName() {
         getEditedEntity().setParameterName(FullTextFilterUtils.generateParameterName());
+    }
+
+    @Install(to = "searchStrategyNameField", subject = "itemLabelGenerator")
+    private Object searchStrategyNameFieldItemLabelGenerator(final String strategyName) {
+        return searchStrategyUtils.getLocalizedStrategyName(strategyName);
     }
 }

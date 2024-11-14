@@ -127,6 +127,19 @@ public final class ViewControllerUtils {
         return view.addQueryParametersChangeListener(listener);
     }
 
+    /**
+     * Adds {@link View.RestoreComponentsStateEvent} listener.
+     *
+     * @param listener the listened to add, not {@code null}
+     * @return a registration object that can be used for removing the listener
+     */
+    public static Registration addRestoreComponentsStateEventListener(
+            View<?> view,
+            ComponentEventListener<View.RestoreComponentsStateEvent> listener
+    ) {
+        return view.addRestoreComponentsStateEventListener(listener);
+    }
+
     public static <T> Registration addInitEntityEventListener(StandardDetailView<T> view, ComponentEventListener<StandardDetailView.InitEntityEvent<T>> listener) {
         return view.addInitEntityListener(listener);
     }
@@ -149,15 +162,15 @@ public final class ViewControllerUtils {
 
     /**
      * @deprecated use {@link ViewControllerUtils#addInitEntityEventListener(StandardDetailView, ComponentEventListener)} instead
-     * */
+     */
     @Deprecated(since = "2.2", forRemoval = true)
     public static <T> Registration addInitEntityEvent(StandardDetailView<T> view, ComponentEventListener<StandardDetailView.InitEntityEvent<T>> listener) {
         return view.addInitEntityListener(listener);
     }
 
     /**
-    * @deprecated use {@link ViewControllerUtils#addBeforeShowEventListener(View, ComponentEventListener)} instead
-    * */
+     * @deprecated use {@link ViewControllerUtils#addBeforeShowEventListener(View, ComponentEventListener)} instead
+     */
     @Deprecated(since = "2.2", forRemoval = true)
     public static Registration addBeforeShowEvent(View<?> view, ComponentEventListener<View.BeforeShowEvent> listener) {
         return view.addBeforeShowListener(listener);

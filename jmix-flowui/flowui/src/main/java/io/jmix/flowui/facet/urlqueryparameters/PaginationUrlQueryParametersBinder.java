@@ -30,7 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder
+        implements HasInitialState {
 
     public static final String NAME = "pagination";
 
@@ -41,6 +42,8 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
 
     protected String firstResultParam;
     protected String maxResultsParam;
+
+    protected InitialState initialState;
 
     protected UrlParamSerializer urlParamSerializer;
 
@@ -56,6 +59,13 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
         pagination.addAfterRefreshListener(this::onAfterRefresh);
     }
 
+    @Override
+    public void saveInitialState() {
+        getPaginationLoader().ifPresent(loader ->
+                initialState = new InitialState(loader.getFirstResult(), loader.getMaxResults())
+        );
+    }
+
     protected void onAfterRefresh(PaginationComponent.AfterRefreshEvent<?> event) {
         getPaginationLoader().ifPresent(paginationLoader -> {
             QueryParameters queryParameters = QueryParameters.simple(serializeQueryParameters(paginationLoader));
@@ -69,6 +79,14 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
                 getFirstResultParam(), urlParamSerializer.serialize(paginationLoader.getFirstResult()),
                 getMaxResultsParam(), urlParamSerializer.serialize(paginationLoader.getMaxResults())
         );
+    }
+
+    @Override
+    public void applyInitialState() {
+        getPaginationLoader().ifPresent(loader -> {
+            loader.setFirstResult(initialState.firstResult);
+            loader.setMaxResults(initialState.maxResults);
+        });
     }
 
     @Override
@@ -116,5 +134,14 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
             return component;
         }
         return null;
+    }
+
+    /**
+     * A POJO class for storing properties of the {@link PaginationComponent}'s initial state.
+     *
+     * @param firstResult the value of {@code firstResult} at initialization
+     * @param maxResults  the value of {@code maxResult} at initialization
+     */
+    protected record InitialState(int firstResult, int maxResults) {
     }
 }

@@ -99,6 +99,8 @@ public class PaginationUrlQueryParametersBinderProvider extends AbstractUrlQuery
             binder.setMaxResultsParam(maxResultsParam);
 
             facet.registerBinder(binder);
+
+            context.addInitTask((context1, view) -> binder.saveInitialState());
         }
     }
 }

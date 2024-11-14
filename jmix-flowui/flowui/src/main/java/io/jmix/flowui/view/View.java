@@ -178,6 +178,11 @@ public class View<T extends Component> extends Composite<T>
                 ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
                 applicationContext.publishEvent(viewClosedEvent);
             }
+
+            // for cases when the navigation to the same view with different query parameters
+            if (event.getNavigationTarget().equals(getClass())) {
+                fireEvent(new RestoreComponentsStateEvent(this));
+            }
         }
 
         closeActionPerformed = false;
@@ -441,6 +446,18 @@ public class View<T extends Component> extends Composite<T>
     }
 
     /**
+     * Adds {@link View.RestoreComponentsStateEvent} listener.
+     *
+     * @param listener the listened to add, not {@code null}
+     * @return a registration object that can be used for removing the listener
+     */
+    protected Registration addRestoreComponentsStateEventListener(
+            ComponentEventListener<RestoreComponentsStateEvent> listener
+    ) {
+        return getEventBus().addListener(RestoreComponentsStateEvent.class, listener);
+    }
+
+    /**
      * The first event in the view opening process.
      * <p>
      * The view and all its declaratively defined components are created, and dependency injection is completed.
@@ -676,6 +693,18 @@ public class View<T extends Component> extends Composite<T>
          */
         public QueryParameters getQueryParameters() {
             return queryParameters;
+        }
+    }
+
+    /**
+     * An event informs that the state of components that are bounded with the query parameters should be restored.
+     *
+     * @see #addRestoreComponentsStateEventListener(ComponentEventListener)
+     */
+    public static class RestoreComponentsStateEvent extends ComponentEvent<View<?>> {
+
+        public RestoreComponentsStateEvent(View<?> source) {
+            super(source, true);
         }
     }
 }

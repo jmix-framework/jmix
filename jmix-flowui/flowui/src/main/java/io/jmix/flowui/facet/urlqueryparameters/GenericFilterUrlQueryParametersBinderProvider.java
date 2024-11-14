@@ -114,6 +114,8 @@ public class GenericFilterUrlQueryParametersBinderProvider extends AbstractUrlQu
             binder.setConditionParam(conditionParam);
 
             facet.registerBinder(binder);
+
+            context.addInitTask((context1, view) -> binder.saveInitialState());
         }
     }
 }

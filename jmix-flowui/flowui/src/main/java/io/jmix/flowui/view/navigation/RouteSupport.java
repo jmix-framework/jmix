@@ -156,15 +156,12 @@ public class RouteSupport {
      */
     public void setQueryParameters(UI ui, QueryParameters queryParameters) {
         Page page = ui.getPage();
-        page.fetchCurrentURL(url -> {
-            log.debug("Fetched URL: {}", url.toString());
 
-            String locationString = resolveLocationString(url);
-            Location newLocation = new Location(locationString, queryParameters);
+        String locationString = getActiveViewLocation(ui).getPath();
+        Location newLocation = new Location(locationString, queryParameters);
 
-            log.debug("Replace URL state with new location: {}", newLocation.getPathWithQueryParameters());
-            page.getHistory().replaceState(null, newLocation, false);
-        });
+        log.debug("Replace URL state with new location: {}", newLocation.getPathWithQueryParameters());
+        page.getHistory().replaceState(null, newLocation);
     }
 
     /**

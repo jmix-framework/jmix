@@ -25,7 +25,6 @@ import io.jmix.flowui.view.*;
 import io.jmix.pivottableflowui.component.PivotTable;
 import io.jmix.pivottableflowui.component.PivotTableUtils;
 import io.jmix.pivottableflowui.data.ListPivotTableItems;
-import io.jmix.pivottableflowui.export.PivotTableExcelExporter;
 import io.jmix.pivottableflowui.export.PivotTableExporter;
 import io.jmix.pivottableflowui.kit.component.model.PivotTableOptions;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
@@ -53,8 +52,7 @@ public class PivotTableView extends StandardView {
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        PivotTableExcelExporter excelExporter = getApplicationContext().getBean(PivotTableExcelExporter.class);
-        pivotTableExporter = getApplicationContext().getBean(PivotTableExporter.class, pivotTable, excelExporter);
+        pivotTableExporter = getApplicationContext().getBean(PivotTableExporter.class, pivotTable);
     }
 
     public void setDataItems(List<Object> items) {

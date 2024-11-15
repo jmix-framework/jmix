@@ -76,8 +76,7 @@ public class PivotTableExporterImpl implements PivotTableExporter, ApplicationCo
 
     @Override
     public void afterPropertiesSet() {
-
-        //todo remove this condition with release 3.0
+        // remove this condition with release 3.0
         if (this.excelExporter == null) {
             this.excelExporter = applicationContext.getBean(PivotTableExcelExporter.class, pivotTable);
         }

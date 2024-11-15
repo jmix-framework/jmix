@@ -56,6 +56,19 @@ public class PivotTableExporterImpl implements PivotTableExporter, ApplicationCo
         this.pivotTable = pivotTable;
     }
 
+    /**
+     * @deprecated use {@link #PivotTableExporterImpl(PivotTable)}
+     */
+    @Deprecated(since = "2.4.1", forRemoval = true)
+    public PivotTableExporterImpl(PivotTable<?> pivotTable, PivotTableExcelExporter exporter) {
+        Preconditions.checkNotNullArgument(pivotTable);
+        Preconditions.checkNotNullArgument(exporter);
+
+        this.pivotTable = pivotTable;
+        this.excelExporter = exporter;
+        this.excelExporter.init(pivotTable);
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -63,7 +76,11 @@ public class PivotTableExporterImpl implements PivotTableExporter, ApplicationCo
 
     @Override
     public void afterPropertiesSet() {
-        this.excelExporter = applicationContext.getBean(PivotTableExcelExporter.class, pivotTable);
+
+        //todo remove this condition with release 3.0
+        if (this.excelExporter == null) {
+            this.excelExporter = applicationContext.getBean(PivotTableExcelExporter.class, pivotTable);
+        }
     }
 
     @Override

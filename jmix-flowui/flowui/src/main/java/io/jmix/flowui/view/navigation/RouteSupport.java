@@ -138,8 +138,9 @@ public class RouteSupport {
 
         ui.beforeClientResponse(ui, __ -> {
             Location location = getActiveViewLocation(ui);
-            QueryParameters resultQueryParameters = updater.apply(location.getQueryParameters(), name, values);
+            log.debug("Original URL: {}", location.getPathWithQueryParameters());
 
+            QueryParameters resultQueryParameters = updater.apply(location.getQueryParameters(), name, values);
             Location newLocation = new Location(location.getPath(), resultQueryParameters);
 
             log.debug("Replace URL state with new location: {}", newLocation.getPathWithQueryParameters());
@@ -157,7 +158,10 @@ public class RouteSupport {
         Page page = ui.getPage();
 
         ui.beforeClientResponse(ui, __ -> {
-            String locationString = getActiveViewLocation(ui).getPath();
+            Location location = getActiveViewLocation(ui);
+            log.debug("Original URL: {}", location.getPathWithQueryParameters());
+
+            String locationString = location.getPath();
             Location newLocation = new Location(locationString, queryParameters);
 
             log.debug("Replace URL state with new location: {}", newLocation.getPathWithQueryParameters());

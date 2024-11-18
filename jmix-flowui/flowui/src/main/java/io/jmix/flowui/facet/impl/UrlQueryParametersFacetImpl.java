@@ -22,6 +22,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
+import io.jmix.flowui.facet.urlqueryparameters.HasInitialState;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
@@ -38,6 +39,7 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
 
     protected List<Binder> binders = new ArrayList<>();
     protected Registration queryParametersChangeRegistration;
+    protected Registration initialComponentsStateRegistration;
 
     public UrlQueryParametersFacetImpl(RouteSupport routeSupport) {
         this.routeSupport = routeSupport;
@@ -52,9 +54,18 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
             queryParametersChangeRegistration = null;
         }
 
+        if (initialComponentsStateRegistration != null) {
+            initialComponentsStateRegistration.remove();
+            initialComponentsStateRegistration = null;
+        }
+
         if (owner != null) {
             queryParametersChangeRegistration =
                     ViewControllerUtils.addQueryParametersChangeListener(owner, this::onViewQueryParametersChanged);
+            initialComponentsStateRegistration =
+                    ViewControllerUtils.addRestoreComponentsStateEventListener(owner,
+                            this::onRestoreInitialComponentsState
+                    );
         }
     }
 
@@ -65,6 +76,18 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
 
         for (Binder binder : binders) {
             binder.updateState(event.getQueryParameters());
+        }
+    }
+
+    protected void onRestoreInitialComponentsState(View.RestoreComponentsStateEvent event) {
+        if (UiComponentUtils.isComponentAttachedToDialog(owner)) {
+            return;
+        }
+
+        for (Binder binder : binders) {
+            if (binder instanceof HasInitialState hasInitialState) {
+                hasInitialState.applyInitialState();
+            }
         }
     }
 

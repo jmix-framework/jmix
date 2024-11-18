@@ -34,13 +34,15 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 
-public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder
+        implements HasInitialState {
 
     private static final Logger log = LoggerFactory.getLogger(DataGridFilterUrlQueryParametersBinder.class);
 
@@ -54,6 +56,8 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     protected UrlParamSerializer urlParamSerializer;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
     protected RouteSupport routeSupport;
+
+    protected List<InitialState> initialStates = new ArrayList<>();
 
     public DataGridFilterUrlQueryParametersBinder(Grid<?> grid,
                                                   UrlParamSerializer urlParamSerializer,
@@ -76,6 +80,26 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
             if (column instanceof DataGridColumn<?> dataGridColumn
                     && dataGridColumn.isFilterable()) {
                 setupColumn(dataGridColumn);
+            }
+        }
+    }
+
+    @Override
+    public void saveInitialState() {
+        for (Grid.Column<?> column : grid.getColumns()) {
+            if (column instanceof DataGridColumn<?> dataGridColumn
+                    && dataGridColumn.isFilterable()
+                    && dataGridColumn.getHeaderComponent() instanceof DataGridHeaderFilter headerFilter) {
+                PropertyFilter<?> propertyFilter = headerFilter.getPropertyFilter();
+
+                initialStates.add(
+                        new InitialState(
+                                dataGridColumn.getKey(),
+                                Objects.requireNonNull(propertyFilter.getProperty()),
+                                propertyFilter.getOperation(),
+                                propertyFilter.getValue()
+                        )
+                );
             }
         }
     }
@@ -119,6 +143,25 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
                 property + SEPARATOR +
                 operation + SEPARATOR +
                 parameterValue;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    public void applyInitialState() {
+        for (InitialState initialState : initialStates) {
+            Grid.Column<?> column = grid.getColumnByKey(initialState.key);
+
+            if (column instanceof DataGridColumn<?> dataGridColumn
+                    && dataGridColumn.isFilterable()
+                    && dataGridColumn.getHeaderComponent() instanceof DataGridHeaderFilter headerFilter
+                    && initialState.property.equals(headerFilter.getPropertyFilter().getProperty())) {
+                PropertyFilter propertyFilter = headerFilter.getPropertyFilter();
+
+                propertyFilter.setOperation(initialState.operation);
+                propertyFilter.setValue(initialState.value);
+                headerFilter.apply();
+            }
+        }
     }
 
     @Override
@@ -270,5 +313,16 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     @Override
     public Component getComponent() {
         return grid;
+    }
+
+    /**
+     * A POJO class for storing properties of the {@link DataGridHeaderFilter}'s initial state.
+     *
+     * @param key       the value of {@code key} of the filter
+     * @param property  the value of {@code property} of the filter
+     * @param operation the value of {@code operation} at initialization
+     * @param value     the value of {@code value} at initialization
+     */
+    protected record InitialState(String key, String property, PropertyFilter.Operation operation, Object value) {
     }
 }

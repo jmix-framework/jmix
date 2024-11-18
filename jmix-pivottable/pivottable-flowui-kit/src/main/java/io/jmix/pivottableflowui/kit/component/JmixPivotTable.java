@@ -825,12 +825,14 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
         Collection<T> items = jmixPivotTableItems.getItems();
         Function<Object, Object> itemOrEmpty = item -> item != null ? item : "";
         JsonValue dataJson = serializer.serializeItems(items.stream().map(item -> {
-                    Map<String, Object> propertyWithValue = options.getProperties()
-                            .entrySet()
-                            .stream()
-                            .collect(Collectors.toMap(
-                                    Map.Entry::getValue,
-                                    e -> itemOrEmpty.apply(jmixPivotTableItems.getItemValue(item, e.getKey()))));
+                    Map<String, Object> propertyWithValue = options.getProperties() != null
+                            ? options.getProperties()
+                                    .entrySet()
+                                    .stream()
+                                    .collect(Collectors.toMap(
+                                            Map.Entry::getValue,
+                                            e -> itemOrEmpty.apply(jmixPivotTableItems.getItemValue(item, e.getKey()))))
+                            : new HashMap<>();
                     propertyWithValue.put(DATA_ITEM_ID_PROPERTY_NAME, jmixPivotTableItems.getItemId(item));
                     return propertyWithValue;
                 })

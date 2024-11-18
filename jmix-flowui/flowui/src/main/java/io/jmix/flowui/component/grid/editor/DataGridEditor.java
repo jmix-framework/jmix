@@ -22,8 +22,8 @@ import com.vaadin.flow.component.grid.editor.Editor;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.ValueSource;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -64,8 +64,7 @@ public interface DataGridEditor<T> extends Editor<T> {
      * Sets a function that returns the column editor component. To bound an editor component
      * to the passed entity's property, the function implementation should use
      * {@link EditComponentGenerationContext#getValueSourceProvider} to obtain an instance
-     * of {@link ValueSource}. To find the column it's assumed that the column key is equal
-     * to the property.
+     * of {@link ValueSource}.
      *
      * @param property  an entity attribute for which the edit component is created
      * @param generator a callback function that is used to create an edit component

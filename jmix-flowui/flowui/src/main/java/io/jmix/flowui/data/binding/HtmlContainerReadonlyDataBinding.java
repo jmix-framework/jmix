@@ -17,6 +17,7 @@
 package io.jmix.flowui.data.binding;
 
 import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
@@ -30,32 +31,32 @@ public interface HtmlContainerReadonlyDataBinding {
     /**
      * Binds {@link HtmlContainer} with {@link ValueSource} to show {@link ValueSource#getValue()}
      * as a text value in html container
+     *
      * @param htmlContainer html container
-     * @param valueSource data component holding a typed value
+     * @param valueSource   data component holding a typed value
+     * @return a registration object for removing an event listener
      */
-    void bind(HtmlContainer htmlContainer, ValueSource<?> valueSource);
+    Registration bind(HtmlContainer htmlContainer, ValueSource<?> valueSource);
 
     /**
      * Binds {@link HtmlContainer} with {@link InstanceContainer} to show {@link InstanceContainer#getItem()} property
      * as a text value in html container
+     *
      * @param htmlContainer html container
      * @param dataContainer instance container
-     * @param property name of an entity property whose value is showed in html container
+     * @param property      name of an entity property whose value is shown in html container
+     * @return a registration object for removing an event listener
      */
-    void bind(HtmlContainer htmlContainer, InstanceContainer<?> dataContainer, String property);
+    Registration bind(HtmlContainer htmlContainer, InstanceContainer<?> dataContainer, String property);
 
     /**
      * Binds {@link HtmlContainer} with {@link CollectionContainer} to show {@link CollectionContainer#getItem()} property
      * as a text value in html container
+     *
      * @param htmlContainer html container
      * @param dataContainer collection container
-     * @param property name of an entity property whose value is showed in html container
+     * @param property      name of an entity property whose value is shown in html container
+     * @return a registration object for removing an event listener
      */
-    void bind(HtmlContainer htmlContainer, CollectionContainer<?> dataContainer, String property);
-
-    /**
-     * Remove data binding fom html container
-     * @param htmlContainer html container
-     */
-    void unbind(HtmlContainer htmlContainer);
+    Registration bind(HtmlContainer htmlContainer, CollectionContainer<?> dataContainer, String property);
 }

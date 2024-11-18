@@ -23,6 +23,7 @@ import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.beans.BeansException;
@@ -110,6 +111,13 @@ public class DataGridFilterUrlQueryParametersBinderProvider extends AbstractUrlQ
             binder.setParameter(parameter);
 
             facet.registerBinder(binder);
+
+            context.addInitTask(new AbstractInitTask() {
+                @Override
+                public void execute(ComponentLoader.Context context) {
+                    binder.saveInitialState();
+                }
+            });
         }
     }
 }

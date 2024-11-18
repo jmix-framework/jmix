@@ -29,27 +29,31 @@ import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-
 import org.springframework.lang.Nullable;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 
-public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder
+        implements HasInitialState {
 
     private static final Logger log = LoggerFactory.getLogger(PropertyFilterUrlQueryParametersBinder.class);
 
     public static final String NAME = "propertyFilter";
 
-    protected PropertyFilter<?> filter;
+    @SuppressWarnings("rawtypes")
+    protected PropertyFilter filter;
 
     protected String parameter;
 
     protected ApplicationContext applicationContext;
     protected UrlParamSerializer urlParamSerializer;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
+
+    protected InitialState initialState;
 
     public PropertyFilterUrlQueryParametersBinder(PropertyFilter<?> filter,
                                                   UrlParamSerializer urlParamSerializer,
@@ -69,6 +73,11 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     protected void initComponent(PropertyFilter<?> filter) {
         filter.addValueChangeListener(this::onValueChange);
         filter.addOperationChangeListener(this::onOperationChange);
+    }
+
+    @Override
+    public void saveInitialState() {
+        initialState = new InitialState(filter.getOperation(), filter.getValue());
     }
 
     @SuppressWarnings("rawtypes")
@@ -92,6 +101,13 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
                 .simple(ImmutableMap.of(getParameter(), paramValue));
 
         fireQueryParametersChanged(new UrlQueryParametersChangeEvent(this, queryParameters));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void applyInitialState() {
+        filter.setOperation(initialState.operation);
+        filter.setValue(initialState.value);
     }
 
     @Override
@@ -147,5 +163,14 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     @Override
     public Component getComponent() {
         return filter;
+    }
+
+    /**
+     * A POJO class for storing properties of the {@link PropertyFilter}'s initial state.
+     *
+     * @param operation the value of {@code operation} at initialization
+     * @param value     the value of {@code value} at initialization
+     */
+    protected record InitialState(Operation operation, Object value) {
     }
 }

@@ -61,7 +61,8 @@ import java.util.function.Predicate;
 import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 import static java.util.Objects.requireNonNull;
 
-public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder
+        implements HasInitialState {
 
     private static final Logger log = LoggerFactory.getLogger(GenericFilterUrlQueryParametersBinder.class);
 
@@ -86,6 +87,8 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     protected Registration filterComponentsChangeRegistration;
 
+    protected InitialState initialState;
+
     public GenericFilterUrlQueryParametersBinder(GenericFilter filter,
                                                  UrlParamSerializer urlParamSerializer,
                                                  ApplicationContext applicationContext) {
@@ -107,6 +110,11 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         filter.addConfigurationChangeListener(this::onConfigurationChanged);
         bindFilterComponentsChangeListener(filter);
         bindDataLoaderListener(filter);
+    }
+
+    @Override
+    public void saveInitialState() {
+        initialState = new InitialState(filter.getCurrentConfiguration());
     }
 
     protected void bindDataLoaderListener(GenericFilter filter) {
@@ -182,6 +190,15 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
                 property + SEPARATOR +
                 operation + SEPARATOR +
                 parameterValue;
+    }
+
+    @Override
+    public void applyInitialState() {
+        if (initialState.configuration instanceof RunTimeConfiguration runTimeConfiguration) {
+            runTimeConfiguration.getRootLogicalFilterComponent().removeAll();
+        }
+
+        filter.setCurrentConfiguration(initialState.configuration);
     }
 
     @Override
@@ -451,5 +468,13 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     @Override
     public Component getComponent() {
         return filter;
+    }
+
+    /**
+     * A POJO class for storing configuration of the {@link GenericFilter}'s initial state.
+     *
+     * @param configuration the value of {@code configuration} at initialization
+     */
+    protected record InitialState(Configuration configuration) {
     }
 }

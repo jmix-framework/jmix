@@ -28,7 +28,6 @@ import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -163,6 +162,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixButton fetchPlanEditButton;
     @ViewComponent
+    protected Div jsonGroovyCodeEditorBox;
+    @ViewComponent
     protected JmixCheckbox isUseExistingFetchPlanField;
     @ViewComponent
     protected JmixComboBox<JsonSourceType> jsonSourceTypeField;
@@ -171,7 +172,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixTextArea jsonSourceURLTextArea;
     @ViewComponent
-    protected FormLayout jsonQueryParameterForm;
+    protected EntityComboBox<ReportInputParameter> jsonQueryParameterField;
     @ViewComponent
     protected CodeEditor jsonGroovyCodeEditor;
     @ViewComponent
@@ -1272,7 +1273,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         switch (dataSet.getJsonSourceType()) {
             case GROOVY_SCRIPT:
-                jsonGroovyCodeEditor.setVisible(true);
+                jsonGroovyCodeEditorBox.setVisible(true);
                 jsonDataSetTypeVBox.expand(jsonGroovyCodeEditor);
                 break;
             case URL:
@@ -1280,7 +1281,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 jsonDataSetTypeVBox.expand(jsonSourceURLTextArea);
                 break;
             case PARAMETER:
-                jsonQueryParameterForm.setVisible(true);
+                jsonQueryParameterField.setVisible(true);
                 break;
         }
     }
@@ -1289,8 +1290,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
         jsonSourceTypeField.setVisible(visible);
         jsonPathQueryTextAreaField.setVisible(visible);
         jsonSourceURLTextArea.setVisible(visible);
-        jsonQueryParameterForm.setVisible(visible);
-        jsonGroovyCodeEditor.setVisible(visible);
+        jsonQueryParameterField.setVisible(visible);
+        jsonGroovyCodeEditorBox.setVisible(visible);
     }
 
     protected void initDataStoreField() {
@@ -1339,8 +1340,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
         onJsonGroovyCodeEditorHelpIconClick();
     }
 
-    @Subscribe("jsonGroovyCodeCodeEditorHelpBtn")
-    protected void onJsonGroovyCodeCodeEditorHelpBtnClick(ClickEvent<Button> event) {
+    @Subscribe("jsonGroovyCodeEditorHelpBtn")
+    protected void onJsonGroovyCodeEditorHelpBtnClick(ClickEvent<Button> event) {
         onJsonGroovyCodeEditorHelpIconClick();
     }
 

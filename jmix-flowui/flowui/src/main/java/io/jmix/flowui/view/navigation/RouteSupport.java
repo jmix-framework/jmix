@@ -135,16 +135,16 @@ public class RouteSupport {
     protected void updateQueryParameters(UI ui, String name, List<Object> values,
                                          TriFunction<QueryParameters, String, List<Object>, QueryParameters> updater) {
         Page page = ui.getPage();
-        page.fetchCurrentURL(url -> {
-            log.debug("Fetched URL: {}", url.toString());
 
-            String locationString = resolveLocationString(url);
-            QueryParameters resultQueryParameters =
-                    updater.apply(resolveQueryParameters(url), name, values);
-            Location newLocation = new Location(locationString, resultQueryParameters);
+        ui.beforeClientResponse(ui, __ -> {
+            Location location = getActiveViewLocation(ui);
+            log.debug("Original URL: {}", location.getPathWithQueryParameters());
+
+            QueryParameters resultQueryParameters = updater.apply(location.getQueryParameters(), name, values);
+            Location newLocation = new Location(location.getPath(), resultQueryParameters);
 
             log.debug("Replace URL state with new location: {}", newLocation.getPathWithQueryParameters());
-            page.getHistory().replaceState(null, newLocation, false);
+            page.getHistory().replaceState(null, newLocation);
         });
     }
 
@@ -156,14 +156,16 @@ public class RouteSupport {
      */
     public void setQueryParameters(UI ui, QueryParameters queryParameters) {
         Page page = ui.getPage();
-        page.fetchCurrentURL(url -> {
-            log.debug("Fetched URL: {}", url.toString());
 
-            String locationString = resolveLocationString(url);
+        ui.beforeClientResponse(ui, __ -> {
+            Location location = getActiveViewLocation(ui);
+            log.debug("Original URL: {}", location.getPathWithQueryParameters());
+
+            String locationString = location.getPath();
             Location newLocation = new Location(locationString, queryParameters);
 
             log.debug("Replace URL state with new location: {}", newLocation.getPathWithQueryParameters());
-            page.getHistory().replaceState(null, newLocation, false);
+            page.getHistory().replaceState(null, newLocation);
         });
     }
 

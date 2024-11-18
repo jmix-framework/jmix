@@ -433,7 +433,7 @@ public interface StudioLayouts {
                     @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
                             options = {"icon-on-top", "centered", "small", "minimal",
-                                    "hide-scroll-buttons", "equal-width-tabs", "bordered"}),
+                                    "hide-scroll-buttons", "equal-width-tabs", "bordered", "no-padding"}),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})

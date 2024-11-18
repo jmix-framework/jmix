@@ -21,7 +21,7 @@ import { ComboBoxPlaceholder } from '@vaadin/combo-box/src/vaadin-combo-box-plac
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.4.4]
+// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.5.4]
 class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBoxMixin(ThemableMixin(PolymerElement))) {
     static get is() {
         return 'jmix-multi-select-combo-box-internal';
@@ -398,6 +398,10 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
         }
 
         if (this.opened) {
+            // Store filter value for checking if user input is matching
+            // an item which is already selected, to not un-select it.
+            this.lastFilter = this.filter;
+
             this.dispatchEvent(
                 new CustomEvent('combo-box-item-selected', {
                     detail: {

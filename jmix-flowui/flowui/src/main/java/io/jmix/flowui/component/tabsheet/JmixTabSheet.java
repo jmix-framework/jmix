@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [last update Vaadin 24.4.4]
+// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [last update Vaadin 24.5.4]
 @Tag("jmix-tabsheet")
 @JsModule("./src/tabsheet/jmix-tabsheet.js")
 public class JmixTabSheet extends Component
@@ -242,6 +242,15 @@ public class JmixTabSheet extends Component
      */
     public void setSelectedTab(Tab selectedTab) {
         tabs.setSelectedTab(selectedTab);
+    }
+
+    /**
+     * Gets the number of tabs.
+     *
+     * @return the number of tabs
+     */
+    public int getTabCount() {
+        return tabs.getTabCount();
     }
 
     /**

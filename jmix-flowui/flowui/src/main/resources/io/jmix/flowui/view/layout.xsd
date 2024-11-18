@@ -2054,6 +2054,7 @@
                     <xs:enumeration value="hide-scroll-buttons"/>
                     <xs:enumeration value="equal-width-tabs"/>
                     <xs:enumeration value="bordered"/>
+                    <xs:enumeration value="no-padding"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

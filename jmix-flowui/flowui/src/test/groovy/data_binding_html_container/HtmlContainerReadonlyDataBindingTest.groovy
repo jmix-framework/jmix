@@ -17,6 +17,7 @@
 package data_binding_html_container
 
 import com.vaadin.flow.component.html.Div
+import com.vaadin.flow.shared.Registration
 import data_binding_html_container.view.DataBindingHtmlContainerView
 import io.jmix.core.DataManager
 import io.jmix.core.MetadataTools
@@ -79,7 +80,7 @@ class HtmlContainerReadonlyDataBindingTest extends FlowuiTestSpecification {
 
         zoo.setCity(city)
         saveContext.saving(zoo)
-        animals.forEach {animal -> animal.setZoo(zoo)}
+        animals.forEach { animal -> animal.setZoo(zoo) }
         saveContext.saving(animals)
         dataManager.save(saveContext)
     }
@@ -168,14 +169,14 @@ class HtmlContainerReadonlyDataBindingTest extends FlowuiTestSpecification {
 
         def zooNameValueSource = new ContainerValueSource<>(dataBindingHtmlContainerView.zooDc, "name")
         zooNameValueSource.setApplicationContext(applicationContext)
-        htmlContainerReadonlyDataBinding.bind(zooName, zooNameValueSource)
+        def registration = htmlContainerReadonlyDataBinding.bind(zooName, zooNameValueSource)
         zooNameValueSource.value = "Zoo Zoo"
 
         then: "Div text should be equal to textField value"
         zooName.text == "Zoo Zoo"
 
         when: "Unbind value source and set new value to textField"
-        htmlContainerReadonlyDataBinding.unbind(zooName)
+        registration.remove()
         zooNameValueSource.value = "Zoo Zoo Zoo"
 
         then: "Div should have old value"

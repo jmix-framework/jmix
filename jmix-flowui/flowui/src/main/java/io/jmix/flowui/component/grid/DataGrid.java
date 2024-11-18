@@ -204,6 +204,11 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         return gridDelegate.getColumnMetaPropertyPath(column);
     }
 
+    @Override
+    public DataGridColumn<E> getColumnByMetaPropertyPath(MetaPropertyPath metaPropertyPath) {
+        return gridDelegate.getColumnByMetaPropertyPath(metaPropertyPath);
+    }
+
     /**
      * Adds column by the meta property path.
      *

@@ -549,6 +549,19 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         return propertyColumns.get(column);
     }
 
+    /**
+     * @param propertyPath {@link MetaPropertyPath} that refers to the column
+     * @return {@link DataGridColumn} that is bound to the passed {@code propertyPath}
+     */
+    @Nullable
+    public DataGridColumn<E> getColumnByMetaPropertyPath(MetaPropertyPath propertyPath) {
+        return (DataGridColumn<E>) propertyColumns.entrySet().stream()
+                .filter(entry -> propertyPath.equals(entry.getValue()))
+                .map(Map.Entry::getKey)
+                .findAny()
+                .orElse(null);
+    }
+
     public DataGridColumn<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         Grid.Column<E> column = addColumnInternal(key, metaPropertyPath);
         propertyColumns.put(column, metaPropertyPath);

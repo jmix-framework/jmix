@@ -28,13 +28,16 @@ import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonObject;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.SupportsStatusChangeHandler.StatusContext;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
+import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.kit.component.HasTitle;
@@ -47,8 +50,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -409,11 +412,22 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
         setColumnEditorComponent(property, new DefaultEditComponentGenerator(property));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void setColumnEditorComponent(String property,
                                          Function<EditComponentGenerationContext<T>, Component> generator) {
-        Grid.Column<T> column = getGrid().getColumnByKey(property);
-        setColumnEditorComponent(column, property, generator);
+        if (getGrid() instanceof EnhancedDataGrid<?> enhancedDataGrid) {
+            MetaPropertyPath metaPropertyPath =
+                    getMetadataTools().resolveMetaPropertyPath(getEntityMetaClass(), property);
+
+            Grid.Column<T> column = (Grid.Column<T>) enhancedDataGrid.getColumnByMetaPropertyPath(metaPropertyPath);
+            Preconditions.checkNotNullArgument(column);
+
+            setColumnEditorComponent(column, property, generator);
+        } else {
+            throw new IllegalStateException("%s doesn't implement %s"
+                    .formatted(getGrid().getClass().getSimpleName(), EnhancedDataGrid.class.getSimpleName()));
+        }
     }
 
     @Override
@@ -558,6 +572,10 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
 
     protected UiComponentsGenerator getUiComponentsGenerator() {
         return applicationContext.getBean(UiComponentsGenerator.class);
+    }
+
+    protected MetadataTools getMetadataTools() {
+        return applicationContext.getBean(MetadataTools.class);
     }
 
     protected ViewValidation getViewValidation() {

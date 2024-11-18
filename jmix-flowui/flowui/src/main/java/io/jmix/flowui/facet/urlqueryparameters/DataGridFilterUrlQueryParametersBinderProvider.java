@@ -110,6 +110,8 @@ public class DataGridFilterUrlQueryParametersBinderProvider extends AbstractUrlQ
             binder.setParameter(parameter);
 
             facet.registerBinder(binder);
+
+            context.addInitTask((context1, view) -> binder.saveInitialState());
         }
     }
 }

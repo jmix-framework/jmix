@@ -109,6 +109,8 @@ public class PropertyFilterUrlQueryParametersBinderProvider extends AbstractUrlQ
             binder.setParameter(parameter);
 
             facet.registerBinder(binder);
+
+            context.addInitTask((context1, view) -> binder.saveInitialState());
         }
     }
 }

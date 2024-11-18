@@ -279,7 +279,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     private void initDefaultEnumField() {
         defaultEnumValues.addAll(getEnumValues());
         defaultEnumField.setItems(defaultEnumValues);
-        defaultEnumField.addValueChangeListener(e -> getEditedEntity().setDefaultString(e.getValue()));
         if (StringUtils.isNotBlank(getEditedEntity().getDefaultString())) {
             defaultEnumField.setValue(getEditedEntity().getDefaultString());
         }
@@ -303,6 +302,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe
     protected void onAfterShow(BeforeShowEvent event) {
+        initDefaultEnumFieldChangeListener();
         if (isDataTypeEnum()) {
             initDefaultEnumField();
         }
@@ -331,6 +331,10 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         tabSheet.addSelectedChangeListener(e -> refreshOnce());
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
+    }
+
+    protected void initDefaultEnumFieldChangeListener() {
+        defaultEnumField.addValueChangeListener(e -> getEditedEntity().setDefaultString(e.getValue()));
     }
 
     private boolean isDataTypeEnum() {
@@ -425,6 +429,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
                         defaultEnumValues.clear();
                         defaultEnumValues.addAll(getEnumValues());
+                        defaultEnumField.setItems(defaultEnumValues);
                         clearEnumValueIfCurrentItemAbsentOnEnum();
                         defaultEnumField.getDataProvider().refreshAll();
                     }

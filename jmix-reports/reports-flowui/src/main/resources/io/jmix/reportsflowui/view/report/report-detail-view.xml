@@ -67,11 +67,14 @@
                                         itemsContainer="groupsDc"/>
                         <textField id="codeField" property="code"/>
                         <hbox padding="false" alignItems="BASELINE">
-                            <checkbox id="systemField" label="msg://io.jmix.reports.entity/Report.system" property="system"/>
-                            <checkbox id="restAccessField" label="msg://io.jmix.reports.entity/Report.restAccess" property="restAccess"/>
+                            <checkbox id="systemField" label="msg://io.jmix.reports.entity/Report.system"
+                                      property="system"/>
+                            <checkbox id="restAccessField" label="msg://io.jmix.reports.entity/Report.restAccess"
+                                      property="restAccess"/>
                         </hbox>
                         <textArea id="descriptionField" property="description" minHeight="9.5em"/>
-                        <textArea id="localeTextField" property="localeNames" label="msg://nameLocale" minHeight="9.5em"/>
+                        <textArea id="localeTextField" property="localeNames" label="msg://nameLocale"
+                                  minHeight="9.5em"/>
                     </formLayout>
                 </vbox>
             </tab>
@@ -125,13 +128,13 @@
                                     <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptCodeEditor"
                                           spacing="false"
                                           height="100%">
-                                        <div width="100%" classNames="flex, justify-end">
+                                        <div width="100%" classNames="flex, justify-between">
+                                            <nativeLabel text="msg://report.groovyScript.title" setFor="jsonGroovyCodeEditor"/>
                                             <button id="dataSetScriptFullScreenBtn" text="msg:///fullScreenBtn.title"
                                                     themeNames="tertiary-inline"/>
                                         </div>
                                         <div width="100%" classNames="flex, items-start">
                                             <codeEditor id="dataSetScriptCodeEditor"
-                                                        label="msg://bandsTab.dataSetTypeLayout.dataSetScriptField.label"
                                                         width="100%"
                                                         height="13em"
                                                         dataContainer="dataSetsDc"
@@ -196,32 +199,6 @@
                                                       dataContainer="dataSetsDc"
                                                       label="msg://bandsTab.dataSetTypeLayout.jsonSourceTypeField.label"
                                                       property="jsonSourceType"/>
-                                            <responsiveSteps>
-                                                <responsiveStep minWidth="0" columns="1"/>
-                                                <responsiveStep minWidth="30em" columns="2"/>
-                                            </responsiveSteps>
-                                        </formLayout>
-                                        <div width="100%" classNames="flex, justify-end">
-                                            <button id="jsonGroovyCodeEditorFullScreenBtn"
-                                                    text="msg:///fullScreenBtn.title"
-                                                    themeNames="tertiary-inline"/>
-                                        </div>
-                                        <div width="100%" classNames="flex, items-start">
-                                            <codeEditor id="jsonGroovyCodeEditor"
-                                                        width="100%"
-                                                        dataContainer="dataSetsDc"
-                                                        mode="GROOVY"
-                                                        property="jsonSourceText"/>
-                                            <button id="jsonGroovyCodeCodeEditorHelpBtn"
-                                                    themeNames="icon, tertiary-inline"
-                                                    icon="QUESTION_CIRCLE"/>
-                                        </div>
-                                        <textArea id="jsonSourceURLTextArea" width="100%"
-                                                  dataContainer="dataSetsDc"
-                                                  label="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.label"
-                                                  property="jsonSourceText" required="true"
-                                                  requiredMessage="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.requiredMessage"/>
-                                        <formLayout id="jsonQueryParameterForm">
                                             <entityComboBox id="jsonQueryParameterField"
                                                             dataContainer="dataSetsDc"
                                                             label="msg://bandsTab.dataSetTypeLayout.jsonQueryParameterField.label"
@@ -232,6 +209,29 @@
                                                 <responsiveStep minWidth="30em" columns="2"/>
                                             </responsiveSteps>
                                         </formLayout>
+                                        <div id="jsonGroovyCodeEditorBox" width="100%">
+                                            <div width="100%" classNames="flex, justify-between">
+                                                <nativeLabel text="msg://report.groovyScript.title" setFor="jsonGroovyCodeEditor"/>
+                                                <button id="jsonGroovyCodeEditorFullScreenBtn"
+                                                        text="msg:///fullScreenBtn.title"
+                                                        themeNames="tertiary-inline"/>
+                                            </div>
+                                            <div width="100%" classNames="flex, items-start">
+                                                <codeEditor id="jsonGroovyCodeEditor"
+                                                            width="100%"
+                                                            dataContainer="dataSetsDc"
+                                                            mode="GROOVY"
+                                                            property="jsonSourceText"/>
+                                                <button id="jsonGroovyCodeEditorHelpBtn"
+                                                        themeNames="icon, tertiary-inline"
+                                                        icon="QUESTION_CIRCLE"/>
+                                            </div>
+                                        </div>
+                                        <textArea id="jsonSourceURLTextArea" width="100%"
+                                                  dataContainer="dataSetsDc"
+                                                  label="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.label"
+                                                  property="jsonSourceText" required="true"
+                                                  requiredMessage="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.requiredMessage"/>
                                     </vbox>
                                 </div>
                             </div>

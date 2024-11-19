@@ -67,7 +67,9 @@
                              themeNames="small, align-center"
                              title="titleString"
                              visible="true"
-                             width="100px">
+                             width="100px"
+                             overlayClass="overlayClassName"
+                             overlayWidth="300px">
             <tooltip text="tooltipText"
                      focusDelay="1"
                      hideDelay="2"
@@ -109,7 +111,9 @@
                                    themeNames="small, align-center"
                                    title="titleString"
                                    visible="true"
-                                   width="100px">
+                                   width="100px"
+                                   overlayClass="overlayClassName"
+                                   overlayWidth="300px">
             <tooltip text="tooltipText"
                      focusDelay="1"
                      hideDelay="2"

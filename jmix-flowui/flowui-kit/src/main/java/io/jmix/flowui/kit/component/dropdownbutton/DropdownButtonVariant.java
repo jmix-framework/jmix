@@ -25,6 +25,7 @@ public enum DropdownButtonVariant {
     LUMO_PRIMARY("primary"),
     LUMO_ERROR("error"),
     LUMO_SUCCESS("success"),
+    LUMO_WARNING("warning"),
     LUMO_CONTRAST("contrast"),
     LUMO_ICON("icon"),
     MATERIAL_CONTAINED("contained"),

@@ -396,6 +396,7 @@ public interface StudioLayouts {
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "labelWidth", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "labelsPosition", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.formlayout.FormLayout$ResponsiveStep$LabelsPosition",
                             options = {"ASIDE", "TOP"}),

@@ -23,7 +23,7 @@
         </formLayout>
 
         <formLayout id="formLayoutCustomLabelPosition"
-                    labelsPosition="ASIDE">
+                    labelsPosition="ASIDE" labelWidth="300px">
             <formItem>
                 <textField/>
             </formItem>

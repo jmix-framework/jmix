@@ -291,4 +291,28 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             width == "100px"
         }
     }
+
+    def "Load fieldSetId from XML"() {
+        when: "Open the HtmlView"
+        def htmlView = navigateToView(HtmlView.class)
+
+        then: "FieldSetId attributes will be loaded"
+        verifyAll(htmlView.fieldSetIdId) {
+            id.get() == "fieldSetId"
+            ariaLabel.get() == "ariaLabelString"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
+            enabled
+            height == "50px"
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            visible
+            width == "100px"
+            legendText == "Legend Text"
+            content.count() == 2
+            content.findAny().orElseThrow().getId().get().contains("nestedInput")
+        }
+    }
 }

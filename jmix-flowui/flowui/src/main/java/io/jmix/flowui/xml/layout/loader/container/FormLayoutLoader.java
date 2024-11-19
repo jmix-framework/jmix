@@ -65,6 +65,8 @@ public class FormLayoutLoader extends AbstractComponentLoader<JmixFormLayout> {
 
         loadData(resultComponent, element);
         loadLabelPosition(element);
+        loadString(element, "labelWidth", resultComponent::setLabelWidth);
+
         loadSubComponents();
     }
 

@@ -48,6 +48,8 @@ public class SelectLoader extends AbstractComponentLoader<JmixSelect<?>> {
         loadResourceString(element, "emptySelectionCaption", context.getMessageGroup(),
                 resultComponent::setEmptySelectionCaption);
         loadBoolean(element, "emptySelectionAllowed", resultComponent::setEmptySelectionAllowed);
+        loadBoolean(element, "noVerticalOverlap", resultComponent::setNoVerticalOverlap);
+        loadString(element, "overlayWidth", resultComponent::setOverlayWidth);
 
         componentLoader().loadPlaceholder(resultComponent, element);
         componentLoader().loadLabel(resultComponent, element);

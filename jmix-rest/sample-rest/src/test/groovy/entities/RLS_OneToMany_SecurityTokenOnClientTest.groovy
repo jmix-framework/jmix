@@ -74,7 +74,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'carWithInsuranceCases')
+                .param('fetchPlan', 'carWithInsuranceCases')
         def response = request.with().get("/entities/ref_Car/$carId")
 
         then:
@@ -108,7 +108,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'carWithInsuranceCases')
+                .param('fetchPlan', 'carWithInsuranceCases')
         def response = request.with().get("/entities/ref_Car/$carId")
 
         then:
@@ -143,7 +143,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'carWithInsuranceCases')
+                .param('fetchPlan', 'carWithInsuranceCases')
         def response = request.with().get("/entities/ref_Car/$carId")
 
         then:
@@ -177,7 +177,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'carWithInsuranceCases')
+                .param('fetchPlan', 'carWithInsuranceCases')
         def response = request.with().get("/entities/ref_Car/$carId")
 
         then:
@@ -210,7 +210,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'carWithInsuranceCases')
+                .param('fetchPlan', 'carWithInsuranceCases')
         def response = request.with().get("/entities/ref_Car/$carId")
 
         then:
@@ -239,7 +239,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         testDeletedCase(carId, case3Id, "InsuranceCase#3_")
     }
 
-    @Ignore //todo [jmix-framework/jmix#3758]
+
     def """Store entity with deleted element in the composition, element should not be deleted because it was hidden when entity is loaded from REST"""() {
         when:
 
@@ -252,7 +252,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'carWithInsuranceCases')
+                .param('fetchPlan', 'carWithInsuranceCases')
         def response = request.with().get("/entities/ref_Car/$carId")
 
         then:
@@ -289,7 +289,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         testNotDeletedCase(carId, case3Id, 'InsuranceCase#3_')
     }
 
-    @Ignore //todo [jmix-framework/jmix#3758]
+
     def """Store entity with empty array in the composition, elements should not be deleted because it was hidden when entity is loaded from REST"""() {
         when:
 
@@ -304,7 +304,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'carWithInsuranceCases')
+                .param('fetchPlan', 'carWithInsuranceCases')
         def response = request.with().get("/entities/ref_Car/$carId")
 
         then:

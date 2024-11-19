@@ -48,10 +48,10 @@ import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
+import io.jmix.dynattr.utils.DynAttrStringUtils;
 import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
 import io.jmix.dynattrflowui.utils.DataProviderUtils;
-import io.jmix.dynattr.utils.DynAttrStringUtils;
 import io.jmix.dynattrflowui.utils.DynAttrUiHelper;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.*;
@@ -99,6 +99,7 @@ import static java.lang.String.format;
 @EditedEntityContainer("categoryAttributeDc")
 @DialogMode(minWidth = "60em", maxWidth = "80%", resizable = true)
 public class CategoryAttributesDetailView extends StandardDetailView<CategoryAttribute> {
+
     protected static final String DATA_TYPE_PROPERTY = "dataType";
     protected static final String DEFAULT_DATE_IS_CURRENT_PROPERTY = "defaultDateIsCurrent";
     protected static final String ENTITY_CLASS_PROPERTY = "entityClass";
@@ -279,6 +280,12 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     private void initDefaultEnumField() {
         defaultEnumValues.addAll(getEnumValues());
         defaultEnumField.setItems(defaultEnumValues);
+        defaultEnumField.addValueChangeListener(e -> {
+            getEditedEntity().setDefaultString(e.getValue());
+        });
+    }
+
+    protected void initDefaultEnumFieldValue() {
         if (StringUtils.isNotBlank(getEditedEntity().getDefaultString())) {
             defaultEnumField.setValue(getEditedEntity().getDefaultString());
         }
@@ -302,9 +309,9 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe
     protected void onAfterShow(BeforeShowEvent event) {
-        initDefaultEnumFieldChangeListener();
+        initDefaultEnumField();
         if (isDataTypeEnum()) {
-            initDefaultEnumField();
+            initDefaultEnumFieldValue();
         }
         initCategoryAttributeConfigurationField();
         initLocalizationTab();
@@ -333,10 +340,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         loadTargetViews();
     }
 
-    protected void initDefaultEnumFieldChangeListener() {
-        defaultEnumField.addValueChangeListener(e -> getEditedEntity().setDefaultString(e.getValue()));
-    }
-
     private boolean isDataTypeEnum() {
         return getEditedEntity().getDataType() != null &&
                 getEditedEntity().getDataType().equals(AttributeType.ENUMERATION);
@@ -355,7 +358,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected void validateUniqueStringOnAttribute(String value,
                                                    Function<CategoryAttribute, String> mapper,
                                                    String messageKey) {
-        if(categoryAttributeDc.getItem().getCategory() == null ||
+        if (categoryAttributeDc.getItem().getCategory() == null ||
                 categoryAttributeDc.getItem().getCategory().getCategoryAttrs() == null) {
             return;
         }
@@ -429,7 +432,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
                         defaultEnumValues.clear();
                         defaultEnumValues.addAll(getEnumValues());
-                        defaultEnumField.setItems(defaultEnumValues);
                         clearEnumValueIfCurrentItemAbsentOnEnum();
                         defaultEnumField.getDataProvider().refreshAll();
                     }

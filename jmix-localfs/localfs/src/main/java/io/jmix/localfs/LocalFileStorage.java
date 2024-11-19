@@ -17,12 +17,7 @@
 package io.jmix.localfs;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import io.jmix.core.CoreProperties;
-import io.jmix.core.FileRef;
-import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageException;
-import io.jmix.core.TimeSource;
-import io.jmix.core.UuidProvider;
+import io.jmix.core.*;
 import io.jmix.core.annotation.Internal;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -31,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
@@ -68,6 +64,9 @@ public class LocalFileStorage implements FileStorage {
 
     @Autowired
     protected TimeSource timeSource;
+
+    @Value("${jmix.localfs.disable-path-check:false}")
+    protected Boolean disablePathCheck;
 
     protected boolean isImmutableFileStorage;
 
@@ -160,10 +159,28 @@ public class LocalFileStorage implements FileStorage {
         checkFileExists(path);
 
         long size;
+        long maxAllowedSize = properties.getMaxFileSize().toBytes();
         try (OutputStream outputStream = Files.newOutputStream(path, CREATE_NEW)) {
-            size = IOUtils.copyLarge(inputStream, outputStream);
+            size = IOUtils.copyLarge(inputStream, outputStream, 0, maxAllowedSize);
+
+            if (size >= maxAllowedSize) {
+                if (inputStream.read() != IOUtils.EOF) {
+                    outputStream.close();
+                    if (path.toFile().exists()) {
+                        if (!path.toFile().delete()) {
+                            log.warn("Failed to delete an incorrectly uploaded file '{}'. " +
+                                            "File was to large and has been rejected but already loaded part was not deleted.",
+                                    path.toAbsolutePath());
+                        }
+                    }
+                    throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
+                            String.format("File is too large: '%s'. Max file size = %s MB is exceeded but there are unread bytes left.",
+                                    path.toAbsolutePath(),
+                                    properties.getMaxFileSize().toMegabytes()));
+                }
+            }
             outputStream.flush();
-//            writeLog(path, false);
+            //writeLog(path, false);
         } catch (IOException e) {
             FileUtils.deleteQuietly(path.toFile());
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, path.toAbsolutePath().toString(), e);
@@ -222,6 +239,11 @@ public class LocalFileStorage implements FileStorage {
             }
 
             try {
+                if (!Boolean.TRUE.equals(disablePathCheck) && !path.toRealPath().startsWith(root.toRealPath())) {
+                    log.error("File '{}' is outside of root dir '{}': ", path, root);
+                    continue;
+                }
+
                 inputStream = Files.newInputStream(path);
             } catch (IOException e) {
                 log.error("Error opening input stream for " + path, e);

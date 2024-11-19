@@ -24,6 +24,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 @ConfigurationProperties(prefix = "jmix.rest")
 @ConstructorBinding
@@ -47,18 +48,24 @@ public class RestProperties {
     private final boolean responseFetchPlanEnabled;
     private final int defaultMaxFetchSize;
     private final Map<String, Integer> entityMaxFetchSize;
+    /**
+     * File extensions that can be opened for viewing in a browser by replying with 'Content-Disposition=inline' header.
+     */
+    protected Set<String> inlineEnabledFileExtensions;
 
     public RestProperties(
             @DefaultValue("*") String[] allowedOrigins,
             @DefaultValue("false") boolean optimisticLockingEnabled,
             @DefaultValue("true") boolean responseFetchPlanEnabled,
             @DefaultValue("10000") int defaultMaxFetchSize,
+            @DefaultValue({"jpg", "png", "jpeg", "pdf"}) Set<String> inlineEnabledFileExtensions,
             @Nullable Map<String, Integer> entityMaxFetchSize) {
         this.allowedOrigins = allowedOrigins;
         this.optimisticLockingEnabled = optimisticLockingEnabled;
         this.responseFetchPlanEnabled = responseFetchPlanEnabled;
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
+        this.inlineEnabledFileExtensions = inlineEnabledFileExtensions;
     }
 
     /**
@@ -83,6 +90,13 @@ public class RestProperties {
     @Deprecated
     public String[] getAllowedOrigins() {
         return allowedOrigins;
+    }
+
+    /**
+     * @see #inlineEnabledFileExtensions
+     */
+    public Set<String> getInlineEnabledFileExtensions() {
+        return inlineEnabledFileExtensions;
     }
 
     public int getEntityMaxFetchSize(String entityName) {

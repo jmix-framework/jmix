@@ -18,6 +18,8 @@ package io.jmix.pessimisticlockflowui.view.pessimisticlock;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
@@ -62,12 +64,6 @@ public class PessimisticLockListView extends StandardView {
 
     @Subscribe
     public void onInit(InitEvent event) {
-        Grid.Column<LockInfo> objectTypeColumn = locksTable.addColumn(this::lockNameValueProvider)
-                .setKey("objectTypeColumn")
-                .setHeader(messageBundle.getMessage("lockListView.objectType"))
-                .setSortable(true);
-        locksTable.setColumnPosition(objectTypeColumn, 0);
-
         refresh();
     }
 
@@ -96,6 +92,11 @@ public class PessimisticLockListView extends StandardView {
                         .show();
             }
         }
+    }
+
+    @Supply(to = "locksTable.objectTypeColumn", subject = "renderer")
+    protected Renderer<LockInfo> locksTableObjectTypeRenderer() {
+        return new TextRenderer<>(this::lockNameValueProvider);
     }
 
     public String lockNameValueProvider(LockInfo value) {

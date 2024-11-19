@@ -83,6 +83,7 @@
         </collection>
     </data>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
             <pagination component="paginationEntityLog"/>
@@ -139,13 +140,18 @@
                                 <column property="username"/>
                                 <column property="type"/>
                                 <column property="entityInstanceName"/>
+                                <column property="entity" header="msg://entity"/>
+                                <column key="entityId" header="msg://entityId"/>
                             </columns>
                         </dataGrid>
 
                         <dataGrid id="entityLogAttrTable" width="100%" dataContainer="entityLogAttrDc"
                                   columnReorderingAllowed="true">
                             <columns resizable="true">
+                                <column key="attribute" header="msg://attribute"/>
+                                <column property="value" header="msg://newValue"/>
                                 <column property="valueId"/>
+                                <column property="oldValue" header="msg://oldValue"/>
                                 <column property="oldValueId"/>
                             </columns>
                         </dataGrid>

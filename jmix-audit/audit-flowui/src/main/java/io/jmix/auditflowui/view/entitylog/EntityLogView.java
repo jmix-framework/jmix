@@ -30,6 +30,8 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.audit.EntityLog;
@@ -117,11 +119,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected ValuePicker<Object> instancePicker;
     @ViewComponent
-    protected DataGrid<EntityLogItem> entityLogTable;
-    @ViewComponent
     protected DataGrid<LoggedEntity> loggedEntityTable;
-    @ViewComponent
-    protected DataGrid<EntityLogAttr> entityLogAttrTable;
     @ViewComponent
     protected HorizontalLayout actionsPaneLayout;
     @ViewComponent
@@ -238,37 +236,6 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         disableControls();
         setDateFieldTime();
 
-        entityLogTable.addColumn(this::generateEntityInstanceNameColumn)
-                .setHeader(messages.getMessage(this.getClass(), "entity"))
-                .setSortable(true);
-
-        entityLogTable.addColumn(this::generateEntityIdColumn)
-                .setHeader(messages.getMessage(this.getClass(), "entityId"))
-                .setResizable(true)
-                .setSortable(true);
-
-        entityLogAttrTable.addColumn(entityLogAttr ->
-                        evaluateEntityLogItemAttrDisplayValue(entityLogAttr, entityLogAttr.getOldValue()))
-                .setHeader(messages.getMessage(this.getClass(), "oldValue"))
-                .setResizable(true).setKey("oldValue").setSortable(true);
-        entityLogAttrTable.addColumn(entityLogAttr ->
-                        evaluateEntityLogItemAttrDisplayValue(entityLogAttr, entityLogAttr.getValue()))
-                .setHeader(messages.getMessage(this.getClass(), "newValue"))
-                .setResizable(true).setKey("newValue").setSortable(true);
-
-        entityLogAttrTable.addColumn(this::generateAttributeColumn)
-                .setHeader(messages.getMessage(this.getClass(), "attribute"))
-                .setResizable(true).setKey("attribute").setSortable(true);
-
-        List<Grid.Column<EntityLogAttr>> columnsOrder = new ArrayList<>(Arrays.asList(
-                entityLogAttrTable.getColumnByKey("attribute"),
-                entityLogAttrTable.getColumnByKey("newValue"),
-                entityLogAttrTable.getColumnByKey("valueId"),
-                entityLogAttrTable.getColumnByKey("oldValue"),
-                entityLogAttrTable.getColumnByKey("oldValueId")
-        ));
-        entityLogAttrTable.setColumnOrder(columnsOrder);
-
         setupWrapper.setColspan(loggedEntityTableBox, 2);
     }
 
@@ -287,7 +254,30 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                 : Stream.empty();
     }
 
-    protected Object generateAttributeColumn(EntityLogAttr entityLogAttr) {
+    @Supply(to = "entityLogAttrTable.oldValue", subject = "renderer")
+    protected Renderer<EntityLogAttr> entityLogAttrTableOldValueRenderer() {
+        return new TextRenderer<>(this::generateOldValueDisplayName);
+    }
+
+    protected String generateOldValueDisplayName(EntityLogAttr entityLogAttr) {
+        return evaluateEntityLogItemAttrDisplayValue(entityLogAttr, entityLogAttr.getOldValue());
+    }
+
+    @Supply(to = "entityLogAttrTable.value", subject = "renderer")
+    protected Renderer<EntityLogAttr> entityLogAttrTableNewValueRenderer() {
+        return new TextRenderer<>(this::generateNewValueDisplayValue);
+    }
+
+    protected String generateNewValueDisplayValue(EntityLogAttr entityLogAttr) {
+        return evaluateEntityLogItemAttrDisplayValue(entityLogAttr, entityLogAttr.getValue());
+    }
+
+    @Supply(to = "entityLogAttrTable.attribute", subject = "renderer")
+    protected Renderer<EntityLogAttr> entityLogAttrTableAttributeRenderer() {
+        return new TextRenderer<>(this::generateAttributeColumn);
+    }
+
+    protected String generateAttributeColumn(EntityLogAttr entityLogAttr) {
         String entityName = entityLogAttr.getLogItem().getEntity();
         MetaClass metaClass = getClassFromEntityName(entityName);
         if (metaClass != null) {
@@ -297,15 +287,22 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         }
     }
 
-    protected Object generateEntityInstanceNameColumn(EntityLogItem entityLogItem) {
-        String entityName = evaluateEntityLogItemDisplayedEntityName(entityLogItem);
-        if (entityName != null) {
-            return entityName;
-        }
-        return null;
+    @Supply(to = "entityLogTable.entity", subject = "renderer")
+    protected Renderer<EntityLogItem> entityLogTableEntityRenderer() {
+        return new TextRenderer<>(this::generateEntityInstanceNameColumn);
     }
 
-    protected Object generateEntityIdColumn(EntityLogItem entityLogItem) {
+    protected String generateEntityInstanceNameColumn(EntityLogItem entityLogItem) {
+        String entityName = evaluateEntityLogItemDisplayedEntityName(entityLogItem);
+        return Strings.nullToEmpty(entityName);
+    }
+
+    @Supply(to = "entityLogTable.entityId", subject = "renderer")
+    protected Renderer<EntityLogItem> entityLogTableEntityIdRenderer() {
+        return new TextRenderer<>(this::generateEntityIdColumn);
+    }
+
+    protected String generateEntityIdColumn(EntityLogItem entityLogItem) {
         if (entityLogItem.getEntityRef().getObjectEntityId() != null) {
             return entityLogItem.getEntityRef().getObjectEntityId().toString();
         }

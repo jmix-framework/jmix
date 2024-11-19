@@ -21,9 +21,8 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Metadata;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.details.JmixDetails;
@@ -62,10 +61,6 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
 
     @Autowired
     protected JmxControl jmxControl;
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected MessageTools messageTools;
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
@@ -125,7 +120,6 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
 
         initMbeanFormLayout();
         initOperationsLayout();
-        initDataGridColumns();
         initSearchField();
     }
 
@@ -152,13 +146,8 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
         }
     }
 
-    protected void initDataGridColumns() {
-        attributesDataGrid.addColumn(createStatusComponentRenderer())
-                .setHeader(messageTools.getPropertyCaption(
-                        metadata.getClass(ManagedBeanAttribute.class), "readableWriteable"));
-    }
-
-    protected ComponentRenderer<Span, ManagedBeanAttribute> createStatusComponentRenderer() {
+    @Supply(to = "attributesDataGrid.access", subject = "renderer")
+    protected Renderer<ManagedBeanAttribute> createStatusComponentRenderer() {
         return new ComponentRenderer<>(this::createReadableWritableComponent, this::readableWritableComponentUpdater);
     }
 

@@ -21,15 +21,18 @@
         <collection id="infoDc"
                     class="io.jmix.datatoolsflowui.view.entityinfo.model.InfoValue"/>
     </data>
+    <facets>
+        <settings auto="true"/>
+    </facets>
     <layout>
         <dataGrid id="infoDataGrid"
                   dataContainer="infoDc"
-                  columnReorderingAllowed="false"
+                  columnReorderingAllowed="true"
                   width="100%"
                   height="15.5em">
-            <columns>
-                <column property="key"/>
-                <column property="value"/>
+            <columns resizable="true">
+                <column property="key" header="msg://entityInfo.name"/>
+                <column property="value" header="msg://entityInfo.value"/>
             </columns>
         </dataGrid>
     </layout>

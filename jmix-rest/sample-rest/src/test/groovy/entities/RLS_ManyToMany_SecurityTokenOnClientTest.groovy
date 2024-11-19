@@ -22,7 +22,7 @@ import org.apache.http.HttpStatus
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.test.context.TestPropertySource
-import spock.lang.Ignore
+
 import test_support.RestSpec
 
 import static org.hamcrest.CoreMatchers.notNullValue
@@ -79,7 +79,7 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'plantWithModels')
+                .param('fetchPlan', 'plantWithModels')
         def response = request.with().get("/entities/ref\$Plant/$plantId")
 
         then:
@@ -119,7 +119,7 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'plantWithModels')
+                .param('fetchPlan', 'plantWithModels')
         def response = request.with().get("/entities/ref\$Plant/$plantId")
 
         then:
@@ -160,7 +160,7 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'plantWithModels')
+                .param('fetchPlan', 'plantWithModels')
         def response = request.with().get("/entities/ref\$Plant/$plantId")
 
         then:
@@ -198,7 +198,7 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'plantWithModels')
+                .param('fetchPlan', 'plantWithModels')
         def response = request.with().get("/entities/ref\$Plant/$plantId")
 
         then:
@@ -232,7 +232,7 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'plantWithModels')
+                .param('fetchPlan', 'plantWithModels')
         def response = request.with().get("/entities/ref\$Plant/$plantId")
 
         then:
@@ -264,7 +264,6 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         assertModelNames_notChanged()
     }
 
-    @Ignore //todo [jmix-framework/jmix#3758]
     def """Store entity with deleted element in the collection, element should not be deleted because it was hidden when entity is loaded from REST"""() {
         when:
 
@@ -277,7 +276,7 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'plantWithModels')
+                .param('fetchPlan', 'plantWithModels')
         def response = request.with().get("/entities/ref\$Plant/$plantId")
 
         then:
@@ -317,7 +316,7 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         assertModelLinkExists(plantId, model5Id)
         assertModelNames_notChanged()
     }
-    @Ignore //todo [jmix-framework/jmix#3758]
+
     def """Store entity with null element in the collection, element should not be deleted because it was hidden when entity is loaded from REST"""() {
         when:
 
@@ -332,7 +331,7 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         when:
 
         def request = createRequest(userToken)
-                .param('view', 'plantWithModels')
+                .param('fetchPlan', 'plantWithModels')
         def response = request.with().get("/entities/ref\$Plant/$plantId")
 
         then:

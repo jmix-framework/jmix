@@ -141,7 +141,6 @@
                                                         property="text"/>
                                             <button id="dataSetScriptCodeEditorHelpBtn"
                                                     themeNames="icon, tertiary-inline"
-                                                    classNames="mt-xl"
                                                     icon="QUESTION_CIRCLE"/>
                                         </div>
                                         <formLayout id="textParamsForm" dataContainer="dataSetsDc" width="100%">

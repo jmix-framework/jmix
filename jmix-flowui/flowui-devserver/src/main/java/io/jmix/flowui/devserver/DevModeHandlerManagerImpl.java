@@ -18,6 +18,7 @@ package io.jmix.flowui.devserver;
 
 import com.vaadin.flow.internal.DevModeHandler;
 import com.vaadin.flow.internal.DevModeHandlerManager;
+import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.Mode;
 import com.vaadin.flow.server.VaadinContext;
@@ -184,6 +185,16 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
     @Override
     public void launchBrowserInDevelopmentMode(String url) {
         // browserLauncher.launchBrowserInDevelopmentMode(url);
+    }
+
+    @Override
+    public void setApplicationUrl(String applicationUrl) {
+        // TODO: implement
+    }
+
+    @Override
+    public void registerShutdownCommand(Command command) {
+        // TODO: implement
     }
 
     private void setDevModeStarted(VaadinContext context) {

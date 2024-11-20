@@ -297,7 +297,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
         def htmlView = navigateToView(HtmlView.class)
 
         then: "FieldSetId attributes will be loaded"
-        verifyAll(htmlView.fieldSetIdId) {
+        verifyAll(htmlView.fieldSetId) {
             id.get() == "fieldSetId"
             ariaLabel.get() == "ariaLabelString"
             classNames.containsAll(["cssClassName1", "cssClassName2"])

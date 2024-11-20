@@ -208,6 +208,7 @@ public class AttributeChanges {
      * @param entityClass   class of the attribute
      * @return collection of Ids
      */
+    @Nullable
     public <E> Collection<Id<E>> getOldCollection(String attributeName, Class<E> entityClass) {
         return getOldValue(attributeName);
     }

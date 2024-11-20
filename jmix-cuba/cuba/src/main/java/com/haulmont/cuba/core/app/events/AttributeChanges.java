@@ -110,6 +110,7 @@ public class AttributeChanges {
      * @param entityClass   class of the attribute
      * @return collection of Ids
      */
+    @Nullable
     public <E extends Entity, K> Collection<Id<E, K>> getOldCollection(String attributeName, Class<E> entityClass) {
         Collection<io.jmix.core.Id<E>> oldCollection = changes.getOldCollection(attributeName, entityClass);
         if (oldCollection != null) {

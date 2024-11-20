@@ -39,6 +39,10 @@ const tabsheet = css`
     align-items: center;
     justify-content: center;
   }
+
+  :host([theme~='no-padding']) [part='content'] {
+    padding: 0;
+  }
 `;
 
 registerStyles('jmix-tabsheet', [tabsheet, loader], {

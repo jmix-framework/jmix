@@ -129,6 +129,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("listItem", ListItemLoader.class);
         loaders.put("unorderedList", UnorderedListLoader.class);
         loaders.put("orderedList", OrderedListLoader.class);
+        loaders.put("fieldSet", FieldSetLoader.class);
 
         loaders.put("descriptionList", DescriptionListLoader.class);
         loaders.put("term", DescriptionListLoader.TermLoader.class);

@@ -48,7 +48,7 @@ import { TabSheetMixin } from '@vaadin/tabsheet/src/vaadin-tabsheet-mixin.js';
  * `loading` | Set when a tab without associated content is selected
  * `overflow`   | Set to `top`, `bottom`, `start`, `end`, all of them, or none.
  *
- * See [Styling Components](hhttps://vaadin.com/docs/latest/components/ds-resources/customization/styling-components) documentation.
+ * See [Styling Components](https://vaadin.com/docs/latest/styling/styling-components) documentation.
  *
  * @fires {CustomEvent} items-changed - Fired when the `items` property changes.
  * @fires {CustomEvent} selected-changed - Fired when the `selected` property changes.
@@ -60,7 +60,7 @@ import { TabSheetMixin } from '@vaadin/tabsheet/src/vaadin-tabsheet-mixin.js';
  * @mixes ThemableMixin
  * @mixes ControllerMixin
  */
-// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.4.4]
+// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.5.4]
 class JmixTabSheet extends TabSheetMixin(ThemableMixin(ElementMixin(ControllerMixin(PolymerElement)))) {
     static get template() {
         return html`

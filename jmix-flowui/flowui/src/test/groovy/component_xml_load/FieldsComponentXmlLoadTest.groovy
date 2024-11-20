@@ -159,6 +159,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             value == order.number
             visible
             width == "100px"
+            overlayClassName.contains("overlayClassName")
 
             tooltip.text == "tooltipText"
             tooltip.focusDelay == 1
@@ -382,6 +383,8 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             value == order.number
             visible
             width == "100px"
+            overlayClassName.contains("overlayClassName")
+            noVerticalOverlap
 
             tooltip.text == "tooltipText"
             tooltip.focusDelay == 1

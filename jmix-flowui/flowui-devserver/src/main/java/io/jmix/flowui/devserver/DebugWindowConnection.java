@@ -352,6 +352,11 @@ public class DebugWindowConnection implements BrowserLiveReload {
         }
     }
 
+    @Override
+    public void sendHmrEvent(String event, JsonObject eventData) {
+        // TODO: implement
+    }
+
     private static Logger getLogger() {
         return LoggerFactory.getLogger(DebugWindowConnection.class.getName());
     }

@@ -1775,6 +1775,7 @@
                     <xs:enumeration value="badge"/>
                     <xs:enumeration value="normal"/>
                     <xs:enumeration value="success"/>
+                    <xs:enumeration value="warning"/>
                     <xs:enumeration value="error"/>
                     <xs:enumeration value="contrast"/>
                     <xs:enumeration value="primary"/>
@@ -1914,6 +1915,7 @@
                     <xs:enumeration value="tertiary-inline"/>
                     <xs:enumeration value="primary"/>
                     <xs:enumeration value="error"/>
+                    <xs:enumeration value="warning"/>
                     <xs:enumeration value="success"/>
                     <xs:enumeration value="contrast"/>
                     <xs:enumeration value="icon"/>
@@ -2054,6 +2056,7 @@
                     <xs:enumeration value="hide-scroll-buttons"/>
                     <xs:enumeration value="equal-width-tabs"/>
                     <xs:enumeration value="bordered"/>
+                    <xs:enumeration value="no-padding"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2072,6 +2075,7 @@
                     <xs:enumeration value="tertiary-inline"/>
                     <xs:enumeration value="primary"/>
                     <xs:enumeration value="success"/>
+                    <xs:enumeration value="warning"/>
                     <xs:enumeration value="error"/>
                     <xs:enumeration value="contrast"/>
                     <xs:enumeration value="icon"/>
@@ -2111,6 +2115,7 @@
                     <xs:enumeration value="tertiary-inline"/>
                     <xs:enumeration value="primary"/>
                     <xs:enumeration value="success"/>
+                    <xs:enumeration value="warning"/>
                     <xs:enumeration value="error"/>
                     <xs:enumeration value="contrast"/>
                     <xs:enumeration value="icon"/>
@@ -3790,6 +3795,7 @@
                 <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="datatype" type="fieldDatatypeEnum"/>
                 <xs:attribute name="themeNames" type="selectThemeNames"/>
+                <xs:attribute name="noVerticalOverlap" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
@@ -3797,6 +3803,7 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasOverlayClass"/>
+                <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasValidation"/>
@@ -3869,6 +3876,7 @@
 
                 <xs:attribute name="dataContainer" type="xs:string"/>
                 <xs:attribute name="labelsPosition" type="formLabelsPosition"/>
+                <xs:attribute name="labelWidth" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
@@ -4409,6 +4417,25 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- FieldSet-->
+    <xs:complexType name="fieldSetHtmlComponent">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:group ref="layoutOrComponent"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+
+                <xs:attribute name="legendText" type="resourceString"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- NativeDetails -->
+
     <xs:complexType name="nativeDetailsComponent">
         <xs:complexContent>
             <xs:extension base="baseHtmlComponent">
@@ -4423,6 +4450,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <!-- RangeInput -->
 
     <xs:complexType name="rangeInputComponent">
         <xs:complexContent>
@@ -4823,6 +4852,7 @@
                 <xs:element name="descriptionList" type="baseClickableHtmlContainer"/>
                 <xs:element name="term" type="baseClickableHtmlContainer"/>
                 <xs:element name="description" type="baseClickableHtmlContainer"/>
+                <xs:element name="fieldSet" type="fieldSetHtmlComponent"/>
 
                 <!-- Layout -->
                 <xs:element name="vbox" type="componentLayout"/>

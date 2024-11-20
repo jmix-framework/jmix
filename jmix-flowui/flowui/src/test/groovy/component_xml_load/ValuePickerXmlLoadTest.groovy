@@ -285,6 +285,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             visible
             width == "100px"
             value == customer
+            overlayClassName.contains("overlayClassName")
 
             tooltip.text == "tooltipText"
             tooltip.focusDelay == 1

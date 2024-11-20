@@ -610,5 +610,22 @@
                     valueChangeTimeout="50"
                     visible="true"
                     width="100px"/>
+
+        <fieldSet id="fieldSetId"
+                  ariaLabel="ariaLabelString"
+                  classNames="cssClassName1, cssClassName2"
+                  css="color: red;"
+                  enabled="true"
+                  height="50px"
+                  maxHeight="55px"
+                  maxWidth="120px"
+                  minHeight="40px"
+                  minWidth="80px"
+                  visible="true"
+                  width="100px"
+                  legendText="Legend Text">
+            <input id="nestedInput1"/>
+            <input id="nestedInput2"/>
+        </fieldSet>
     </layout>
 </view>

@@ -104,6 +104,7 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             (it as HasTitle).getTitle() == "titleString"
             visible
             width == "100px"
+            overlayClassName.contains("overlayClassName")
 
             getSelectedItems().size() == getValue().size()
             productTagsDc.getItems().containsAll(multiSelectComboBox.getGenericDataView().getItems().toArray())

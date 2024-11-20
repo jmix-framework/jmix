@@ -131,4 +131,7 @@ public class HtmlView extends StandardView {
 
     @ViewComponent
     public RangeInput rangeInputId;
+
+    @ViewComponent
+    public FieldSet fieldSetId;
 }

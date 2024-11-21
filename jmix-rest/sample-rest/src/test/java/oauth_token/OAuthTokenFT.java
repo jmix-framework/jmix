@@ -65,7 +65,7 @@ import static test_support.RestTestUtils.*;
         RestConfiguration.class,
         JmixRestTestConfiguration.class})
 @SpringBootTest(classes = SampleRestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Disabled //todo [jmix-framework/jmix#3758]
+@Disabled //todo [session&tokens][jmix-framework/jmix#3758]
 public class OAuthTokenFT {
 
     @LocalServerPort
@@ -114,7 +114,7 @@ public class OAuthTokenFT {
 
     @Test
     public void requestTokenWithoutAuthentication() throws Exception {
-        String uri = oauthUrl + "/oauth/token";
+        String uri = oauthUrl + "/oauth2/token";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(uri);
@@ -160,7 +160,7 @@ public class OAuthTokenFT {
 
     @Test
     public void requestTokenWithInvalidUserCredentials() throws Exception {
-        String uri = oauthUrl + "/oauth/token";
+        String uri = oauthUrl + "/oauth2/token";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String encoding = Base64.getEncoder().encodeToString(("cuba:cuba").getBytes());
@@ -190,7 +190,7 @@ public class OAuthTokenFT {
             assertEquals(SC_OK, statusCode(response));
         }
 
-        String revokeUrl = oauthUrl + "/oauth/revoke";
+        String revokeUrl = oauthUrl + "/oauth2/revoke";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String encoding = Base64.getEncoder().encodeToString((CLIENT_ID + ":" + CLIENT_SECRET).getBytes());
@@ -220,7 +220,7 @@ public class OAuthTokenFT {
             assertEquals(SC_OK, statusCode(response));
         }
 
-        String revokeUrl = oauthUrl + "/oauth/revoke";
+        String revokeUrl = oauthUrl + "/oauth2/revoke";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPostRevoke = new HttpPost(revokeUrl);

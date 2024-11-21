@@ -70,7 +70,7 @@ tags:
   - name: Documentation
     description: OpenAPI documentation
 paths:
-  /oauth/token:
+  /oauth2/token:
     post:
       tags:
         - OAuth

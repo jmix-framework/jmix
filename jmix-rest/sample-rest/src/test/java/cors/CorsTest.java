@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import test_support.AbstractRestControllerFT;
+import test_support.RestTestUtils;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
@@ -39,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {
         "jmix.cors.allowed-origins = http://www.allowed1.com, http://www.allowed2.com"
 })
-@Disabled //todo [jmix-framework/jmix#3758]
+
 public class CorsTest extends AbstractRestControllerFT {
 
     @Autowired
@@ -70,10 +71,10 @@ public class CorsTest extends AbstractRestControllerFT {
         params.add("username", "admin");
         params.add("password", "admin123");
 
-        mockMvc.perform(post("/oauth/token")
+        mockMvc.perform(post("/oauth2/token")
                 .params(params)
                 .header("Origin", "http://www.allowed1.com")
-                .with(httpBasic("client", "secret"))
+                .with(httpBasic(RestTestUtils.CLIENT_ID, RestTestUtils.CLIENT_SECRET))
                 .accept("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"));
@@ -88,16 +89,15 @@ public class CorsTest extends AbstractRestControllerFT {
                 .andExpect(status().isForbidden());
     }
 
-    //todo move to helper class
     public static String obtainAccessToken(String username, String password, MockMvc mockMvc) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
         params.add("username", username);
         params.add("password", password);
 
-        ResultActions result = mockMvc.perform(post("/oauth/token")
+        ResultActions result = mockMvc.perform(post("/oauth2/token")
                 .params(params)
-                .with(httpBasic("client", "secret"))
+                .with(httpBasic(RestTestUtils.CLIENT_ID, RestTestUtils.CLIENT_SECRET))
                 .accept("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"));

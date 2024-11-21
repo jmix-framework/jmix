@@ -53,8 +53,8 @@ public class MessagesControllerFT extends AbstractRestControllerFT {
         }
     }
 
-    @Disabled //todo [jmix-framework/jmix#3758]
     @Test
+    @Disabled //todo [jmix-framework/jmix#3868]
     public void testLocalizationForEntityUsingRuLanguage() throws Exception {
         String url = baseUrl + "/messages/entities/sec$User";
         Map<String, String> headers = new HashMap<>();
@@ -79,8 +79,8 @@ public class MessagesControllerFT extends AbstractRestControllerFT {
         }
     }
 
-    @Disabled //todo [jmix-framework/jmix#3758]
     @Test
+    @Disabled //todo [jmix-framework/jmix#3868]
     public void testLocalizationUsingLocaleFromLogin() throws Exception {
         String url = baseUrl + "/messages/entities/sec$User";
 

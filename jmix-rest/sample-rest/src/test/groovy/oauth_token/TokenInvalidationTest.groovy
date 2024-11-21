@@ -17,6 +17,7 @@
 package oauth_token
 
 import io.jmix.core.security.event.UserDisabledEvent
+import io.restassured.filter.session.SessionFilter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.core.session.SessionRegistry
@@ -26,7 +27,8 @@ import spock.lang.Ignore
 import test_support.RestSpec
 
 import static test_support.RestSpecsUtils.createRequest
-@Ignore //todo [jmix-framework/jmix#3758]
+
+@Ignore //todo [jmix-framework/jmix#3915]
 class TokenInvalidationTest extends RestSpec {
     @Autowired
     protected SessionRegistry sessionRegistry
@@ -34,9 +36,12 @@ class TokenInvalidationTest extends RestSpec {
     protected ApplicationEventPublisher eventPublisher
 
     def "session associated with access token is expired"() {
+        setup:
+        //SessionFilter sessionFilter = new SessionFilter(); //todo [jmix-framework/jmix#3915]
         when:
         def response = createRequest(userToken)
-                .when()
+                //.filter(sessionFilter)
+                .when().filter(sessionFilter)
                 .get('/userInfo')
 
         then:
@@ -47,6 +52,7 @@ class TokenInvalidationTest extends RestSpec {
         killSession('admin')
 
         response = createRequest(userToken)
+                //.filter(sessionFilter)
                 .when()
                 .get('/userInfo')
 
@@ -57,6 +63,7 @@ class TokenInvalidationTest extends RestSpec {
         when:
 
         response = createRequest(userToken)
+                //.filter(sessionFilter)
                 .when()
                 .get('/userInfo')
 
@@ -86,9 +93,9 @@ class TokenInvalidationTest extends RestSpec {
     }
 
     protected void killSession(String username) {
-        User principal = sessionRegistry.getAllPrincipals().stream()
-                .filter({ it instanceof User })
-                .map({ (User) it })
+        UserDetails principal = sessionRegistry.getAllPrincipals().stream()
+                .filter({ it instanceof UserDetails })
+                .map({ (UserDetails) it })
                 .filter({ it.getUsername() == username })
                 .findFirst()
                 .orElseThrow({ new RuntimeException("Unable to find principal") })

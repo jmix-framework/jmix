@@ -48,7 +48,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {
         "jmix.cors.allowed-origins = http://www.allowed1.com"
 })
-@Disabled //todo [jmix-framework/jmix#3758]
 public class CorsTokenTest {
 
     @Autowired
@@ -57,7 +56,7 @@ public class CorsTokenTest {
     @Test
     public void testAccessTokenFromPermittedOrigin() throws Exception {
         String origin = "http://www.allowed1.com";
-        mockMvc.perform(options("/oauth/token")
+        mockMvc.perform(options("/oauth2/token")
                         .header("Origin", origin)
                         .header("Access-Control-Request-Method", "POST"))
                 .andExpect(status().isOk());
@@ -66,7 +65,7 @@ public class CorsTokenTest {
     @Test
     public void testAccessTokenFromForbiddenOrigin() throws Exception {
         String origin = "http://www.forbidden.com";
-        mockMvc.perform(options("/oauth/token")
+        mockMvc.perform(options("/oauth2/token")
                         .header("Origin", origin)
                         .header("Access-Control-Request-Method", "POST"))
                 .andExpect(status().isForbidden());

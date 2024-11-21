@@ -48,7 +48,6 @@ import static test_support.RestTestUtils.*;
 @TestPropertySource(properties = {
         "jmix.core.entity-serialization-token-required = true"
 })
-@Disabled //todo [jmix-framework/jmix#3758]
 public class RowLevelSecurityFT extends AbstractRestControllerFT {
 
     private UUID carId, newCarId;
@@ -82,6 +81,7 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
     }
 
     @Test
+    @Disabled //todo [TBD:trailing slash][jmix-framework/jmix#3758] https://www.baeldung.com/spring-boot-3-url-matching#spring-mvc-and-webflux-url-matching-changes
     public void testCreateAndUpdateCarWithToken() throws Exception {
         newCarId = dirtyData.createCarUuid();
 
@@ -89,7 +89,7 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
         replacements.put("$CAR_ID$", newCarId.toString());
 
         String createJson = getFileContent("rowLevelSecCreateCar.json", replacements);
-        String createUrl = baseUrl + "/entities/ref_Car/";
+        String createUrl = baseUrl + "/entities/ref_Car";
         try (CloseableHttpResponse response = sendPost(createUrl, userToken, createJson, null)) {
             assertEquals(HttpStatus.SC_CREATED, statusCode(response));
         }
@@ -124,7 +124,7 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
     public void testOneToManyComposition() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carId.toString();
         Map<String, String> params = new HashMap<>();
-        params.put("view", "carWithInsuranceCases");
+        params.put("fetchPlan", "carWithInsuranceCases");
         String securityToken;
         try (CloseableHttpResponse response = sendGet(url, userToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
@@ -187,7 +187,7 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
     public void testOneToManyCompositionWithoutSecurityToken() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carId.toString();
         Map<String, String> params = new HashMap<>();
-        params.put("view", "carWithInsuranceCases");
+        params.put("fetchPlan", "carWithInsuranceCases");
         String securityToken;
         try (CloseableHttpResponse response = sendGet(url, userToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
@@ -220,7 +220,7 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
     public void testManyToMany() throws Exception {
         String url = baseUrl + "/entities/ref$Plant/" + plantId;
         Map<String, String> params = new HashMap<>();
-        params.put("view", "plantWithModels");
+        params.put("fetchPlan", "plantWithModels");
         String securityToken;
         try (CloseableHttpResponse response = sendGet(url, userToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));

@@ -68,14 +68,14 @@ public class PermissionsControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    @Disabled //todo [jmix-framework/jmix#3758]
+    @Disabled //todo [TBD][jmix-framework/jmix#3758]
     public void getAuthorities() throws Exception {
         String url = baseUrl + "/permissions";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(1, ctx.read("$.authorities", Collection.class).size());
-            assertEquals("permission-role", ctx.read("$.authorities[0]", String.class));
+            assertEquals( "ROLE_permission-role", ctx.read("$.authorities[0]", String.class));//todo is it correct? "ROLE_permission-role" instead of permission-role
         }
     }
 

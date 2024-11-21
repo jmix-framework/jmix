@@ -23,7 +23,6 @@ import static test_support.RestSpecsUtils.createRequest
 
 class ServicesExceptionTest extends RestSpec {
 
-    @Ignore //todo [jmix-framework/jmix#3758]
     def "GET-request for the call service with a custom exception"() {
         when:
         def response = createRequest(userToken)

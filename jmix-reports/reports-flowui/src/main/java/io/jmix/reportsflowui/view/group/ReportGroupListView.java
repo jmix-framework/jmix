@@ -1,10 +1,9 @@
 package io.jmix.reportsflowui.view.group;
 
-import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.list.RemoveAction;
@@ -15,9 +14,6 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @Route(value = "reports/groups", layout = DefaultMainViewParent.class)
@@ -34,30 +30,11 @@ public class ReportGroupListView extends StandardListView<ReportGroup> {
     @Autowired
     protected DataManager dataManager;
     @Autowired
-    protected Metadata metadata;
-    @Autowired
     protected Notifications notifications;
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
-    protected FetchPlanRepository fetchPlanRepository;
-    @Autowired
     protected MetadataTools metadataTools;
-
-    @Subscribe
-    public void onInit(InitEvent event) {
-        reportGroupsDataGrid.addColumn(reportGroup -> metadataTools.getInstanceName(reportGroup))
-                .setHeader(messageBundle.getMessage("title"))
-                .setKey("title")
-                .setResizable(true)
-                .setSortable(true);
-
-        List<Grid.Column<ReportGroup>> columnsOrder = new ArrayList<>(Arrays.asList(
-                reportGroupsDataGrid.getColumnByKey("title"),
-                reportGroupsDataGrid.getColumnByKey("systemFlag")
-        ));
-        reportGroupsDataGrid.setColumnOrder(columnsOrder);
-    }
 
     @Subscribe("reportGroupsDataGrid.remove")
     public void onReportGroupsDataGridRemove(final ActionPerformedEvent event) {
@@ -89,5 +66,10 @@ public class ReportGroupListView extends StandardListView<ReportGroup> {
                 removeAction.execute();
             }
         }
+    }
+
+    @Supply(to = "reportGroupsDataGrid.title", subject = "renderer")
+    protected Renderer<ReportGroup> reportGroupsDataGridTitleRenderer() {
+        return new TextRenderer<>(metadataTools::getInstanceName);
     }
 }

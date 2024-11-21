@@ -9,7 +9,7 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <settings id="settings" auto="true"/>
+        <settings auto="true"/>
         <urlQueryParameters id="urlQueryParameters"/>
     </facets>
     <actions>
@@ -71,12 +71,15 @@
                 <action id="deactivate" type="list_itemTracking" text="msg://pauseJob" icon="PAUSE"/>
             </actions>
             <columns resizable="true">
-                <column property="jobName" resizable="true" autoWidth="true"/>
-                <column property="jobGroup" resizable="true" autoWidth="true"/>
-                <column property="jobClass" resizable="true" width="15em"/>
-                <column property="jobState" resizable="true" autoWidth="true"/>
-                <column property="jobSource" resizable="true" autoWidth="true"/>
-                <column property="description" resizable="true" width="20%"/>
+                <column property="jobName"/>
+                <column property="jobGroup"/>
+                <column property="jobClass"/>
+                <column property="jobState"/>
+                <column property="jobSource"/>
+                <column key="jobScheduleDescription" header="msg://column.jobScheduleDescription.header"/>
+                <column property="description"/>
+                <column key="lastFireDate" header="msg://io.jmix.quartz.model/JobModel.lastFireDate"/>
+                <column key="nextFireDate" header="msg://io.jmix.quartz.model/JobModel.nextFireDate"/>
             </columns>
         </dataGrid>
 

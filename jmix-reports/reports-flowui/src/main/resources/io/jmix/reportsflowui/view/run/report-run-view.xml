@@ -42,9 +42,7 @@
 
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <settings>
-            <component id="reportDataGrid"/>
-        </settings>
+        <settings auto="true"/>
     </facets>
 
     <layout>

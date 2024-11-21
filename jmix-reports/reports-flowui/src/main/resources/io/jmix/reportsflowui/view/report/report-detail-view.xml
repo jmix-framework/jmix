@@ -43,6 +43,7 @@
         </collection>
     </data>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
@@ -99,7 +100,7 @@
                                 <action id="downBand" type="list_itemTracking" icon="ARROW_DOWN"
                                         description="msg://bandsTab.downBand.tooltipText"/>
                             </actions>
-                            <columns>
+                            <columns sortable="false">
                                 <column property="name"/>
                             </columns>
                         </treeDataGrid>
@@ -129,7 +130,8 @@
                                           spacing="false"
                                           height="100%">
                                         <div width="100%" classNames="flex, justify-between">
-                                            <nativeLabel text="msg://report.groovyScript.title" setFor="jsonGroovyCodeEditor"/>
+                                            <nativeLabel text="msg://report.groovyScript.title"
+                                                         setFor="jsonGroovyCodeEditor"/>
                                             <button id="dataSetScriptFullScreenBtn" text="msg:///fullScreenBtn.title"
                                                     themeNames="tertiary-inline"/>
                                         </div>
@@ -210,7 +212,8 @@
                                         </formLayout>
                                         <div id="jsonGroovyCodeEditorBox" width="100%">
                                             <div width="100%" classNames="flex, justify-between">
-                                                <nativeLabel text="msg://report.groovyScript.title" setFor="jsonGroovyCodeEditor"/>
+                                                <nativeLabel text="msg://report.groovyScript.title"
+                                                             setFor="jsonGroovyCodeEditor"/>
                                                 <button id="jsonGroovyCodeEditorFullScreenBtn"
                                                         text="msg:///fullScreenBtn.title"
                                                         themeNames="tertiary-inline"/>
@@ -287,10 +290,14 @@
                                 <action id="up" type="list_itemTracking" icon="ARROW_UP"/>
                                 <action id="down" type="list_itemTracking" icon="ARROW_DOWN"/>
                             </actions>
-                            <columns resizable="true">
+                            <columns resizable="true" sortable="false">
                                 <column property="name"/>
                                 <column property="alias"/>
                                 <column property="type"/>
+                                <column key="required"
+                                        header="msg://parametersTab.inputParameterDataGrid.required"/>
+                                <column key="validationOn"
+                                        header="msg://parametersTab.inputParameterDataGrid.validationOn"/>
                             </columns>
                         </dataGrid>
                     </vbox>
@@ -344,7 +351,7 @@
                             </action>
                             <action id="removeValueFormat" type="list_remove"/>
                         </actions>
-                        <columns>
+                        <columns resizable="true">
                             <column property="valueName"/>
                             <column property="formatString"/>
                         </columns>
@@ -375,6 +382,10 @@
                             <column property="code" flexGrow="0" sortable="false"/>
                             <column property="reportOutputType" flexGrow="1" sortable="false"/>
                             <column property="customDefinition" flexGrow="1" sortable="false"/>
+                            <column key="alterable" header="msg://templatesTab.templatesDataGrid.alterable"
+                                    sortable="false"/>
+                            <column key="default" header="msg://templatesTab.templatesDataGrid.default"
+                                    sortable="false"/>
                         </columns>
                     </dataGrid>
                 </vbox>
@@ -396,7 +407,7 @@
                                 <action id="add" type="list_add"/>
                                 <action id="exclude" type="list_remove" icon="CLOSE"/>
                             </actions>
-                            <columns>
+                            <columns resizable="true">
                                 <column property="roleName"/>
                                 <column property="roleCode"/>
                             </columns>
@@ -417,7 +428,7 @@
                                 <action id="add" type="list_add"/>
                                 <action id="remove" type="list_remove" icon="CLOSE"/>
                             </actions>
-                            <columns>
+                            <columns resizable="true">
                                 <column property="screenId"/>
                             </columns>
                         </dataGrid>

@@ -52,7 +52,7 @@
                     <action id="upItemAction" type="list_itemTracking" icon="ARROW_UP"/>
                     <action id="downItemAction" type="list_itemTracking" icon="ARROW_DOWN"/>
                 </actions>
-                <columns>
+                <columns sortable="false">
                     <column property="hierarchicalLocalizedName" header="msg://hierarchicalLocalizedName.header"/>
                 </columns>
             </dataGrid>

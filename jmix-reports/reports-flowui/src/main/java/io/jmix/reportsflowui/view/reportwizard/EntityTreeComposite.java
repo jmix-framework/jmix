@@ -133,7 +133,8 @@ public class EntityTreeComposite extends Composite<FormLayout>
         entityTree.setDataProvider(new ContainerTreeDataGridItems<>(reportEntityTreeNodeDc, "parent"));
         MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metadata.getClass(EntityTreeNode.class), "localizedName");
         entityTree.addHierarchyColumn("localizedName", metaPropertyPath)
-                .setHeader(messages.getMessage(getClass(), "entityTreeNode.name.header"));
+                .setHeader(messages.getMessage(getClass(), "entityTreeNode.name.header"))
+                .setSortable(false);
         entityTree.setId("treeDataGrid");
         entityTree.addValueProvider("name", EntityTreeNode::getLocalizedName);
         formLayout = uiComponents.create(FormLayout.class);

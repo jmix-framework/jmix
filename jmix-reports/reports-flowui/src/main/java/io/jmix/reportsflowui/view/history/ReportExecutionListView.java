@@ -17,8 +17,8 @@
 package io.jmix.reportsflowui.view.history;
 
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.FileRef;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -29,6 +29,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -55,25 +56,20 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
 
     protected List<Report> filterByReports;
 
-    @Subscribe
-    protected void onInit(InitEvent event) {
-        executionsDataGrid.addColumn(reportExecution -> durationFormatter.apply(reportExecution.getExecutionTimeSec()))
-                .setHeader(messageBundle.getMessage("history.executionTimeSec.header"))
-                .setKey("executionTimeSec")
-                .setSortable(true)
-                .setResizable(true);
-
-        executionsDataGrid.addColumn(reportExecution ->
-                        reportExecution.getOutputDocument() != null
-                                ? reportExecution.getOutputDocument().getFileName()
-                                : ""
-                )
-                .setHeader(messageBundle.getMessage("history.outputDocument.header"))
-                .setKey("outputDocument")
-                .setSortable(true)
-                .setResizable(true);
+    @Supply(to = "executionsDataGrid.executionTimeSec", subject = "renderer")
+    protected Renderer<ReportExecution> executionsDataGridExecutionTimeRenderer() {
+        return new TextRenderer<>(reportExecution ->
+                durationFormatter.apply(reportExecution.getExecutionTimeSec()));
     }
 
+    @Supply(to = "executionsDataGrid.outputDocument", subject = "renderer")
+    protected Renderer<ReportExecution> executionsDataGridOutputDocumentRenderer() {
+        return new TextRenderer<>(reportExecution ->
+                reportExecution.getOutputDocument() != null
+                        ? reportExecution.getOutputDocument().getFileName()
+                        : StringUtils.EMPTY
+        );
+    }
 
     @Subscribe("executionsDataGrid.download")
     public void onDownloadClick(final ActionPerformedEvent event) {

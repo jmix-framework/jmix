@@ -17,12 +17,14 @@
 package io.jmix.quartzflowui.view.jobs;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
@@ -36,7 +38,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.grid.DataGrid;
-import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
@@ -52,12 +53,14 @@ import io.jmix.quartz.model.JobState;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,36 +113,33 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     @Subscribe
     protected void onInit(InitEvent event) {
-        initTable();
         initUrlParameters();
+    }
+
+    @Supply(to = "jobModelsTable.nextFireDate", subject = "renderer")
+    protected Renderer<JobModel> jobModelNextFireDateRenderer() {
+        return new TextRenderer<>(jobModel -> getFormattedDate(jobModel::getNextFireDate));
+    }
+
+    @Supply(to = "jobModelsTable.lastFireDate", subject = "renderer")
+    protected Renderer<JobModel> jobModelTableLastFireDateRenderer() {
+        return new TextRenderer<>(jobModel -> getFormattedDate(jobModel::getLastFireDate));
+    }
+
+    @Supply(to = "jobModelsTable.jobScheduleDescription", subject = "renderer")
+    protected Renderer<JobModel> jobModelTableSceduleDescriptionRenderer() {
+        return new TextRenderer<>(scheduleDescriptionProvider::getScheduleDescription);
+    }
+
+    protected String getFormattedDate(Supplier<Date> dateSupplier) {
+        return dateSupplier.get() != null
+                ? new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds")).format(dateSupplier.get())
+                : StringUtils.EMPTY;
     }
 
     @Install(to = "jobModelsDl", target = Target.DATA_LOADER)
     private List<JobModel> jobModelsDlLoadDelegate(final LoadContext<JobModel> loadContext) {
         return loadJobsData();
-    }
-
-    protected void initTable() {
-        DataGridColumn<JobModel> triggerDescriptionColumn = jobModelsTable.addColumn(new TextRenderer<>(job -> scheduleDescriptionProvider.getScheduleDescription(job)));
-        triggerDescriptionColumn
-                .setKey("jobScheduleDescription")
-                .setHeader(messageBundle.getMessage("column.jobScheduleDescription.header"));
-        jobModelsTable.setColumnPosition(triggerDescriptionColumn, 5);
-        triggerDescriptionColumn.setResizable(true).setWidth("20%");
-
-        jobModelsTable.addColumn(entity -> entity.getLastFireDate() != null ?
-                        new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getLastFireDate()) : "").setResizable(false)
-                .setKey("lastFireDate")
-                .setHeader(getHeaderForPropertyColumn("lastFireDate"))
-                .setAutoWidth(true);
-
-        jobModelsTable.addColumn(entity -> entity.getNextFireDate() != null ?
-                        new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getNextFireDate()) : "").setResizable(false)
-                .setKey("nextFireDate")
-                .setHeader(getHeaderForPropertyColumn("nextFireDate"))
-                .setAutoWidth(true);
     }
 
     @Install(to = "jobModelsTable.jobState", subject = "partNameGenerator")
@@ -148,10 +148,6 @@ public class JobModelListView extends StandardListView<JobModel> {
             return "quartz-job-invalid";
         }
         return null;
-    }
-
-    private String getHeaderForPropertyColumn(String propertyName) {
-        return messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), propertyName);
     }
 
     protected void initUrlParameters() {

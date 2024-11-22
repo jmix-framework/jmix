@@ -36,7 +36,6 @@ class CustomControllerTest extends RestSpec {
         response.body.asString() == 'unprotectedMethod'
     }
 
-
     def "Unprotected custom controller access from public path"() {
         when:
         def request = createRequest()

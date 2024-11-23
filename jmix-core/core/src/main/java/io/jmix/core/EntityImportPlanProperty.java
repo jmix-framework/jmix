@@ -16,8 +16,12 @@
 
 package io.jmix.core;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
+/**
+ * @see EntityImportPlan
+ */
 public class EntityImportPlanProperty implements Serializable {
 
     protected String name;
@@ -62,6 +66,7 @@ public class EntityImportPlanProperty implements Serializable {
         this.name = name;
     }
 
+    @Nullable
     public EntityImportPlan getPlan() {
         return plan;
     }

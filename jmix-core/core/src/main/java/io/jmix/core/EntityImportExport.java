@@ -31,7 +31,7 @@ public interface EntityImportExport {
      * @param entities a collection of entities to export
      * @return a byte array of zipped JSON file
      */
-    byte[] exportEntitiesToZIP(Collection<Object> entities);
+    byte[] exportEntitiesToZIP(Collection<?> entities);
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}
@@ -43,7 +43,7 @@ public interface EntityImportExport {
      * @param fetchPlan before serialization to JSON entities will be reloaded with this fetch plan
      * @return a byte array of zipped JSON file
      */
-    byte[] exportEntitiesToZIP(Collection<Object> entities, FetchPlan fetchPlan);
+    byte[] exportEntitiesToZIP(Collection<?> entities, FetchPlan fetchPlan);
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}.
@@ -54,7 +54,7 @@ public interface EntityImportExport {
      * @param fetchPlan before serialization to JSON entities will be reloaded with this fetch plan
      * @return a JSON string
      */
-    String exportEntitiesToJSON(Collection<Object> entities, FetchPlan fetchPlan);
+    String exportEntitiesToJSON(Collection<?> entities, FetchPlan fetchPlan);
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}.</p>
@@ -64,7 +64,7 @@ public interface EntityImportExport {
      * @param entities a collection of entities to export
      * @return a JSON string
      */
-    String exportEntitiesToJSON(Collection<Object> entities);
+    String exportEntitiesToJSON(Collection<?> entities);
 
     /**
      * Deserializes the JSON and persists deserialized entities according to the rules, described by the {@code
@@ -94,7 +94,7 @@ public interface EntityImportExport {
      * See {@link #importEntities(Collection, EntityImportPlan, boolean)}. The current method doesn't perform bean
      * validation
      */
-    Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan);
+    Collection<Object> importEntities(Collection<?> entities, EntityImportPlan importPlan);
 
     /**
      * Persists entities according to the rules, described by the {@code importPlan} parameter. If the entity is not
@@ -109,7 +109,7 @@ public interface EntityImportExport {
      *                   entities are persisted
      * @return a collection of entities that have been imported
      */
-    Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan, boolean validate);
+    Collection<Object> importEntities(Collection<?> entities, EntityImportPlan importPlan, boolean validate);
 
     /**
      * Persists entities according to the rules, described by the {@code importPlan} parameter. If the entity is not
@@ -126,9 +126,9 @@ public interface EntityImportExport {
      * @param optimisticLocking whether the passed entities versions should be validated before entities are persisted
      * @return a collection of entities that have been imported
      */
-    Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking);
+    Collection<Object> importEntities(Collection<?> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking);
 
-    Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking, boolean additionComposition);
+    Collection<Object> importEntities(Collection<?> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking, boolean additionComposition);
 
     void importEntityIntoSaveContext(SaveContext saveContext, Object srcEntity, EntityImportPlan importPlan, boolean validate);
 

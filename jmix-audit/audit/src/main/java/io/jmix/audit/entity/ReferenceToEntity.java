@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.data.entity;
+package io.jmix.audit.entity;
 
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+
 import java.io.Serializable;
 import java.util.UUID;
 
 @Embeddable
-@JmixEntity(name = "data_ReferenceToEntity")
+@JmixEntity(name = "audit_ReferenceToEntity")
 @SystemLevel
 public class ReferenceToEntity implements Serializable {
     private static final long serialVersionUID = -3667689055952380345L;

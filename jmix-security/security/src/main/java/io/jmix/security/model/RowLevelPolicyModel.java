@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.securityflowui.model;
+package io.jmix.security.model;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-import io.jmix.security.model.RowLevelPolicyAction;
-import io.jmix.security.model.RowLevelPolicyType;
 
 import jakarta.persistence.Id;
 import java.util.HashMap;

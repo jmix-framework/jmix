@@ -14,29 +14,41 @@
  * limitations under the License.
  */
 
-package io.jmix.securityflowui.model;
+package io.jmix.security.model;
 
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
- * Non-persistent entity used to display roles in UI
+ * Non-persistent entity used to display resource roles in UI
  */
-@JmixEntity(name = "sec_RowLevelRoleModel")
-public class RowLevelRoleModel extends BaseRoleModel {
+@JmixEntity(name = "sec_ResourceRoleModel")
+public class ResourceRoleModel extends BaseRoleModel {
 
     @Composition
     @JmixProperty
-    private Collection<RowLevelPolicyModel> rowLevelPolicies;
+    private Collection<ResourcePolicyModel> resourcePolicies;
 
-    public Collection<RowLevelPolicyModel> getRowLevelPolicies() {
-        return rowLevelPolicies;
+    @JmixProperty
+    private Set<String> scopes;
+
+    public Collection<ResourcePolicyModel> getResourcePolicies() {
+        return resourcePolicies;
     }
 
-    public void setRowLevelPolicies(Collection<RowLevelPolicyModel> rowLevelPolicies) {
-        this.rowLevelPolicies = rowLevelPolicies;
+    public void setResourcePolicies(Collection<ResourcePolicyModel> resourcePolicies) {
+        this.resourcePolicies = resourcePolicies;
+    }
+
+    public Set<String> getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(Set<String> scopes) {
+        this.scopes = scopes;
     }
 }

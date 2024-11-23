@@ -18,7 +18,6 @@ package io.jmix.autoconfigure.securityflowui;
 
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.core.CoreConfiguration;
-import io.jmix.data.DataConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securityflowui.SecurityFlowuiConfiguration;
 import io.jmix.securityflowui.security.FlowuiVaadinWebSecurity;
@@ -35,7 +34,7 @@ import org.springframework.security.web.context.RequestAttributeSecurityContextR
 import org.springframework.security.web.context.SecurityContextRepository;
 
 @AutoConfiguration
-@Import({CoreConfiguration.class, DataConfiguration.class, SecurityConfiguration.class, SecurityFlowuiConfiguration.class})
+@Import({CoreConfiguration.class, SecurityConfiguration.class, SecurityFlowuiConfiguration.class})
 public class SecurityFlowuiAutoConfiguration {
 
     @EnableWebSecurity

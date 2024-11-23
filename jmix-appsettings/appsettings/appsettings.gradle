@@ -23,6 +23,7 @@ apply plugin: 'io.jmix'
 dependencies {
     api project(':core')
     api project(':data')
+    api project(':eclipselink')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

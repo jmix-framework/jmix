@@ -1,14 +1,9 @@
 package io.jmix.securityflowui.view.rowlevelpolicy;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
@@ -18,10 +13,6 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.QueryTransformer;
-import io.jmix.data.QueryTransformerFactory;
-import io.jmix.data.impl.jpql.ErrorRec;
-import io.jmix.data.impl.jpql.JpqlSyntaxException;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.combobox.JmixComboBox;
@@ -29,18 +20,12 @@ import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.InstanceContainer.ItemPropertyChangeEvent;
 import io.jmix.flowui.view.*;
-import io.jmix.security.model.RowLevelBiPredicate;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPolicyType;
-import io.jmix.securitydata.impl.role.provider.DatabaseRowLevelRoleProvider;
-import io.jmix.securityflowui.model.RowLevelPolicyModel;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import io.jmix.security.model.RowLevelPolicyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.scripting.ScriptCompilationException;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -85,10 +70,10 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
     private DataManager dataManager;
     @Autowired
     private MetadataTools metadataTools;
-    @Autowired
-    private QueryTransformerFactory queryTransformerFactory;
-    @Autowired
-    private DatabaseRowLevelRoleProvider databaseRowLevelRoleProvider;
+//    @Autowired
+//    private QueryTransformerFactory queryTransformerFactory;
+//    @Autowired
+//    private DatabaseRowLevelRoleProvider databaseRowLevelRoleProvider;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -166,87 +151,89 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
         }
     }
 
-    @Subscribe("checkSyntaxBtn")
-    public void onCheckSyntaxBtnClick(ClickEvent<Button> event) {
-        RowLevelPolicyType type = getEditedEntity().getType();
-        switch (type) {
-            case JPQL:
-                checkJpqlSyntax();
-                break;
-            case PREDICATE:
-                checkPredicateSyntax();
-                break;
-            default:
-                throw new IllegalStateException("Unknown type: " + type);
-        }
-    }
+// TODO KK restore checks
 
-    private void checkJpqlSyntax() {
-        String entityName = getEditedEntity().getEntityName();
-        String whereClause = getEditedEntity().getWhereClause();
-
-        if (Strings.isNullOrEmpty(entityName) || Strings.isNullOrEmpty(whereClause)) {
-            return;
-        }
-
-        String baseQueryString = "select e from " + entityName + " e";
-        try {
-            QueryTransformer transformer = queryTransformerFactory.transformer(baseQueryString);
-            if (StringUtils.isNotBlank(joinClauseField.getValue())) {
-                transformer.addJoinAndWhere(joinClauseField.getValue(), whereClause);
-            } else {
-                transformer.addWhere(whereClause);
-            }
-
-            String jpql = transformer.getResult();
-            dataManager.load(metadata.getClass(entityName).getJavaClass())
-                    .query(jpql)
-                    .maxResults(0)
-                    .list();
-
-            showTestPassedNotification();
-        } catch (JpqlSyntaxException e) {
-            Div content = new Div();
-            for (ErrorRec rec : e.getErrorRecs()) {
-                content.add(new Paragraph(rec.toString()));
-            }
-
-            showTestFailedNotification(content);
-        } catch (Exception e) {
-            Throwable rootCause = ExceptionUtils.getRootCause(e);
-            if (rootCause == null) {
-                rootCause = e;
-            }
-
-            showTestFailedNotification(new Span(rootCause.toString()));
-        }
-    }
-
-    private void checkPredicateSyntax() {
-        String entityName = getEditedEntity().getEntityName();
-        String script = getEditedEntity().getScript();
-
-        if (Strings.isNullOrEmpty(entityName) || Strings.isNullOrEmpty(script)) {
-            return;
-        }
-
-        RowLevelBiPredicate<Object, ApplicationContext> predicate = databaseRowLevelRoleProvider.createPredicateFromScript(script);
-        Object entity = metadata.create(entityName);
-        try {
-            predicate.test(entity, getApplicationContext());
-            showTestPassedNotification();
-        } catch (ScriptCompilationException e) {
-            Throwable rootCause = ExceptionUtils.getRootCause(e);
-            if (rootCause == null) {
-                rootCause = e;
-            }
-            String message = Strings.nullToEmpty(rootCause.getMessage());
-            showTestFailedNotification(new Span(message));
-        } catch (Exception e) {
-            log.info("Groovy script error: {}", e.getMessage());
-            showTestPassedNotification();
-        }
-    }
+//    @Subscribe("checkSyntaxBtn")
+//    public void onCheckSyntaxBtnClick(ClickEvent<Button> event) {
+//        RowLevelPolicyType type = getEditedEntity().getType();
+//        switch (type) {
+//            case JPQL:
+//                checkJpqlSyntax();
+//                break;
+//            case PREDICATE:
+//                checkPredicateSyntax();
+//                break;
+//            default:
+//                throw new IllegalStateException("Unknown type: " + type);
+//        }
+//    }
+//
+//    private void checkJpqlSyntax() {
+//        String entityName = getEditedEntity().getEntityName();
+//        String whereClause = getEditedEntity().getWhereClause();
+//
+//        if (Strings.isNullOrEmpty(entityName) || Strings.isNullOrEmpty(whereClause)) {
+//            return;
+//        }
+//
+//        String baseQueryString = "select e from " + entityName + " e";
+//        try {
+//            QueryTransformer transformer = queryTransformerFactory.transformer(baseQueryString);
+//            if (StringUtils.isNotBlank(joinClauseField.getValue())) {
+//                transformer.addJoinAndWhere(joinClauseField.getValue(), whereClause);
+//            } else {
+//                transformer.addWhere(whereClause);
+//            }
+//
+//            String jpql = transformer.getResult();
+//            dataManager.load(metadata.getClass(entityName).getJavaClass())
+//                    .query(jpql)
+//                    .maxResults(0)
+//                    .list();
+//
+//            showTestPassedNotification();
+//        } catch (JpqlSyntaxException e) {
+//            Div content = new Div();
+//            for (ErrorRec rec : e.getErrorRecs()) {
+//                content.add(new Paragraph(rec.toString()));
+//            }
+//
+//            showTestFailedNotification(content);
+//        } catch (Exception e) {
+//            Throwable rootCause = ExceptionUtils.getRootCause(e);
+//            if (rootCause == null) {
+//                rootCause = e;
+//            }
+//
+//            showTestFailedNotification(new Span(rootCause.toString()));
+//        }
+//    }
+//
+//    private void checkPredicateSyntax() {
+//        String entityName = getEditedEntity().getEntityName();
+//        String script = getEditedEntity().getScript();
+//
+//        if (Strings.isNullOrEmpty(entityName) || Strings.isNullOrEmpty(script)) {
+//            return;
+//        }
+//
+//        RowLevelBiPredicate<Object, ApplicationContext> predicate = databaseRowLevelRoleProvider.createPredicateFromScript(script);
+//        Object entity = metadata.create(entityName);
+//        try {
+//            predicate.test(entity, getApplicationContext());
+//            showTestPassedNotification();
+//        } catch (ScriptCompilationException e) {
+//            Throwable rootCause = ExceptionUtils.getRootCause(e);
+//            if (rootCause == null) {
+//                rootCause = e;
+//            }
+//            String message = Strings.nullToEmpty(rootCause.getMessage());
+//            showTestFailedNotification(new Span(message));
+//        } catch (Exception e) {
+//            log.info("Groovy script error: {}", e.getMessage());
+//            showTestPassedNotification();
+//        }
+//    }
 
     protected void initJoinClauseFieldHelperText() {
         String joinHelperMessage = messageBundle.getMessage("joinClauseField.helperText");

@@ -19,7 +19,7 @@ package io.jmix.securityflowui.view.resourcerole;
 import com.google.common.io.Files;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
-import io.jmix.core.*;
+import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -29,32 +29,26 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import io.jmix.security.model.ResourceRoleModel;
+import io.jmix.security.model.RoleModelConverter;
 import io.jmix.security.role.ResourceRoleRepository;
-import io.jmix.securitydata.entity.ResourcePolicyEntity;
-import io.jmix.securitydata.entity.ResourceRoleEntity;
-import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import io.jmix.security.role.RolePersistence;
 import io.jmix.securityflowui.component.rolefilter.RoleFilter;
 import io.jmix.securityflowui.component.rolefilter.RoleFilterChangeEvent;
-import io.jmix.securityflowui.model.BaseRoleModel;
-import io.jmix.securityflowui.model.ResourceRoleModel;
-import io.jmix.securityflowui.model.RoleModelConverter;
-import io.jmix.securityflowui.util.RemoveRoleConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import org.springframework.lang.Nullable;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
-import static io.jmix.securityflowui.model.RoleSource.DATABASE;
+import static io.jmix.security.model.RoleSourceEnum.DATABASE;
 
 @Route(value = "sec/resourcerolemodels", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.list")
@@ -74,13 +68,9 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     @Autowired
     private Messages messages;
     @Autowired
-    private DataManager dataManager;
-    @Autowired
     private UiComponents uiComponents;
     @Autowired
     private Notifications notifications;
-    @Autowired
-    private RemoveOperation removeOperation;
     @Autowired
     private RoleModelConverter roleModelConverter;
     @Autowired
@@ -88,13 +78,9 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     @Autowired
     private UrlParamSerializer urlParamSerializer;
     @Autowired
-    private EntityImportExport entityImportExport;
-    @Autowired
-    private EntityImportPlans entityImportPlans;
-    @Autowired
     private Downloader downloader;
-    @Autowired
-    private FetchPlans fetchPlans;
+    @Autowired(required = false)
+    private RolePersistence rolePersistence;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -142,21 +128,9 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
         return null;
     }
 
-    @Subscribe("roleModelsTable.remove")
-    public void onRoleModelsTableRemove(ActionPerformedEvent event) {
-        removeOperation.builder(roleModelsTable)
-                .withConfirmation(true)
-                .beforeActionPerformed(new RemoveRoleConsumer<>(roleRepository, notifications, messages))
-                .afterActionPerformed((afterActionConsumer) -> {
-                    List<RoleAssignmentEntity> roleAssignmentEntities = dataManager.load(RoleAssignmentEntity.class)
-                            .query("e.roleCode IN :codes")
-                            .parameter("codes", afterActionConsumer.getItems().stream()
-                                    .map(BaseRoleModel::getCode)
-                                    .collect(Collectors.toList()))
-                            .list();
-                    dataManager.remove(roleAssignmentEntities);
-                })
-                .remove();
+    @Install(to = "roleModelsTable.remove", subject = "delegate")
+    private void roleModelsTableRemoveDelegate(final Collection<ResourceRoleModel> collection) {
+        getRolePersistence().removeRoles(collection);
     }
 
     @Install(to = "roleModelsTable.remove", subject = "enabledRule")
@@ -185,7 +159,7 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     }
 
     protected void export(DownloadFormat downloadFormat) {
-        List<Object> dbResourceRoles = getExportEntityList();
+        List<ResourceRoleModel> dbResourceRoles = getExportEntityList();
 
         if (dbResourceRoles.isEmpty()) {
             notifications.create(messages.getMessage(ResourceRoleModelListView.class, "nothingToExport"))
@@ -195,9 +169,8 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
         }
 
         try {
-            byte[] data = downloadFormat == JSON ?
-                    entityImportExport.exportEntitiesToJSON(dbResourceRoles, buildExportFetchPlan()).getBytes(StandardCharsets.UTF_8) :
-                    entityImportExport.exportEntitiesToZIP(dbResourceRoles, buildExportFetchPlan());
+            byte[] data = getRolePersistence().exportResourceRoles(dbResourceRoles, downloadFormat.equals(ZIP));
+
             downloader.download(data, String.format("ResourceRoles.%s", downloadFormat.getFileExt()), downloadFormat);
 
         } catch (Exception e) {
@@ -208,7 +181,7 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
         }
     }
 
-    protected List<Object> getExportEntityList() {
+    protected List<ResourceRoleModel> getExportEntityList() {
         Collection<ResourceRoleModel> selected = roleModelsTable.getSelectedItems();
         if (selected.isEmpty() && roleModelsTable.getItems() != null) {
             selected = roleModelsDc.getItems();
@@ -223,20 +196,16 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
                 .collect(Collectors.toList());
     }
 
-    protected FetchPlan buildExportFetchPlan() {
-        return fetchPlans.builder(ResourceRoleEntity.class)
-                .addFetchPlan(FetchPlan.BASE)
-                .add("resourcePolicies", FetchPlan.BASE)
-                .build();
-    }
-
     @Subscribe("importField")
     public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
         try {
             byte[] bytes = importField.getValue();
             Assert.notNull(bytes, "Uploaded file does not contains data");
 
-            List<Object> importedEntities = getImportedEntityList(event.getFileName(), bytes);
+            List<Object> importedEntities = getRolePersistence().importResourceRoles(
+                    bytes,
+                    ZIP.getFileExt().equals(Files.getFileExtension(event.getFileName()))
+            );
 
             if (importedEntities.size() > 0) {
                 loadRoles(null);
@@ -252,24 +221,10 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
         }
     }
 
-    protected List<Object> getImportedEntityList(String fileName, byte[] fileContent) {
-        Collection<Object> importedEntities;
-        if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
-            importedEntities = entityImportExport.importEntitiesFromJson(new String(fileContent, StandardCharsets.UTF_8), createEntityImportPlan());
-        } else {
-            importedEntities = entityImportExport.importEntitiesFromZIP(fileContent, createEntityImportPlan());
+    private RolePersistence getRolePersistence() {
+        if (rolePersistence == null) {
+            throw new IllegalStateException("RolePersistence is not available");
         }
-        return new ArrayList<>(importedEntities);
-    }
-
-    protected EntityImportPlan createEntityImportPlan() {
-        return entityImportPlans.builder(ResourceRoleEntity.class)
-                .addLocalProperties()
-                .addProperty(new EntityImportPlanProperty(
-                        "resourcePolicies",
-                        entityImportPlans.builder(ResourcePolicyEntity.class).addLocalProperties().build(),
-                        CollectionImportPolicy.KEEP_ABSENT_ITEMS)
-                )
-                .build();
+        return rolePersistence;
     }
 }

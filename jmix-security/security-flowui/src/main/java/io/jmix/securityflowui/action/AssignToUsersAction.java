@@ -18,9 +18,7 @@ package io.jmix.securityflowui.action;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import io.jmix.core.DataManager;
 import io.jmix.core.Messages;
-import io.jmix.core.SaveContext;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.security.UserRepository;
 import io.jmix.flowui.DialogWindows;
@@ -34,11 +32,12 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport;
+import io.jmix.security.model.BaseRoleModel;
+import io.jmix.security.model.ResourceRoleModel;
+import io.jmix.security.model.RowLevelRoleModel;
+import io.jmix.security.role.assignment.RoleAssignment;
+import io.jmix.security.role.assignment.RoleAssignmentPersistence;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
-import io.jmix.securitydata.entity.RoleAssignmentEntity;
-import io.jmix.securityflowui.model.BaseRoleModel;
-import io.jmix.securityflowui.model.ResourceRoleModel;
-import io.jmix.securityflowui.model.RowLevelRoleModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -52,15 +51,13 @@ public class AssignToUsersAction<E extends BaseRoleModel>
 
     public static final String ID = "sec_assignToUsers";
 
-    protected static final String ROLE_CODE_PROPERTY = "roleCode";
     protected static final String USERNAME_PROPERTY = "username";
 
     protected DialogWindows dialogWindows;
     protected Notifications notifications;
     protected Messages messages;
 
-    protected DataManager dataManager;
-
+    protected RoleAssignmentPersistence roleAssignmentPersistence;
     protected UserRepository userRepository;
 
     protected E selectedItem;
@@ -97,13 +94,13 @@ public class AssignToUsersAction<E extends BaseRoleModel>
     }
 
     @Autowired
-    public void setDataManager(DataManager dataManager) {
-        this.dataManager = dataManager;
-    }
-
-    @Autowired
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Autowired(required = false)
+    public void setRoleAssignmentPersistence(RoleAssignmentPersistence roleAssignmentPersistence) {
+        this.roleAssignmentPersistence = roleAssignmentPersistence;
     }
 
     @Override
@@ -160,12 +157,7 @@ public class AssignToUsersAction<E extends BaseRoleModel>
     }
 
     protected void configureViewLoader(DataLoader loader) {
-        List<String> excludedUsernames = dataManager.load(RoleAssignmentEntity.class)
-                .condition(PropertyCondition.equal(ROLE_CODE_PROPERTY, selectedItem.getCode()).skipNullOrEmpty())
-                .list()
-                .stream()
-                .map(RoleAssignmentEntity::getUsername)
-                .collect(Collectors.toUnmodifiableList());
+        List<String> excludedUsernames = getRoleAssignmentPersistence().getExcludedUsernames(selectedItem.getCode());
 
         loader.setCondition(PropertyCondition.notInList(USERNAME_PROPERTY, excludedUsernames).skipNullOrEmpty());
     }
@@ -194,19 +186,14 @@ public class AssignToUsersAction<E extends BaseRoleModel>
     }
 
     protected void selectHandler(Collection<?> userDetails) {
-        SaveContext saveContext = new SaveContext();
-
-        userDetails.stream()
-                .map(user -> {
-                    RoleAssignmentEntity roleAssignmentEntity = metadata.create(RoleAssignmentEntity.class);
-                    roleAssignmentEntity.setRoleCode(selectedItem.getCode());
-                    roleAssignmentEntity.setUsername(((UserDetails) user).getUsername());
-                    roleAssignmentEntity.setRoleType(getRoleType(selectedItem));
-                    return roleAssignmentEntity;
-                })
-                .forEach(saveContext::saving);
-
-        dataManager.save(saveContext);
+        List<RoleAssignment> roleAssignments = userDetails.stream()
+                .map(user -> new RoleAssignment(
+                        ((UserDetails) user).getUsername(),
+                        selectedItem.getCode(),
+                        getRoleType(selectedItem)
+                ))
+                .toList();
+        getRoleAssignmentPersistence().save(roleAssignments);
     }
 
     protected void showNotification(DialogWindow.AfterCloseEvent<View<?>> viewAfterCloseEvent) {
@@ -244,5 +231,12 @@ public class AssignToUsersAction<E extends BaseRoleModel>
                     )
             );
         }
+    }
+
+    protected RoleAssignmentPersistence getRoleAssignmentPersistence() {
+        if (roleAssignmentPersistence == null) {
+            throw new IllegalStateException("RoleAssignmentPersistence is not available");
+        }
+        return roleAssignmentPersistence;
     }
 }

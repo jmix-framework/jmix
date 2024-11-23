@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.securityflowui.model;
+package io.jmix.security.model;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
 import org.springframework.lang.Nullable;
 
 
-public enum RoleSource implements EnumClass<String> {
+public enum RoleSourceEnum implements EnumClass<String> {
 
     ANNOTATED_CLASS(io.jmix.security.model.RoleSource.ANNOTATED_CLASS),
     DATABASE(io.jmix.security.model.RoleSource.DATABASE);
 
     private String id;
 
-    RoleSource(String value) {
+    RoleSourceEnum(String value) {
         this.id = value;
     }
 
@@ -37,8 +37,8 @@ public enum RoleSource implements EnumClass<String> {
     }
 
     @Nullable
-    public static RoleSource fromId(String id) {
-        for (RoleSource at : RoleSource.values()) {
+    public static RoleSourceEnum fromId(String id) {
+        for (RoleSourceEnum at : RoleSourceEnum.values()) {
             if (at.getId().equals(id)) {
                 return at;
             }

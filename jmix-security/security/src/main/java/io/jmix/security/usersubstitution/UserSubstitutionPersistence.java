@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl.jta;
+package io.jmix.security.usersubstitution;
 
-import org.eclipse.persistence.platform.server.ServerPlatformBase;
-import org.eclipse.persistence.sessions.DatabaseSession;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
-public class JmixJtaServerPlatform extends ServerPlatformBase {
+public interface UserSubstitutionPersistence {
 
-    public JmixJtaServerPlatform(DatabaseSession newDatabaseSession) {
-        super(newDatabaseSession);
-    }
+    boolean isViewPermitted();
 
-    @Override
-    public Class getExternalTransactionControllerClass() {
-        return JmixJtaTransactionController.class;
-    }
+    List<UserSubstitutionModel> loadSubstitutionsOf(String username);
 
+    void remove(Collection<UserSubstitutionModel> userSubstitutionModels);
+
+    UserSubstitutionModel load(UUID id);
+
+    UserSubstitutionModel save(UserSubstitutionModel userSubstitutionModel);
 }

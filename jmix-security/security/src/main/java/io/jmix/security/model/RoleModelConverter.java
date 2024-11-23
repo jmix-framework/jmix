@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.securityflowui.model;
+package io.jmix.security.model;
 
 import com.google.common.base.Strings;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
-import io.jmix.security.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
@@ -71,10 +71,14 @@ public class RoleModelConverter {
     }
 
     protected void initBaseParameters(BaseRoleModel roleModel, BaseRole role) {
+        String databaseId = role.getCustomProperties().get("databaseId");
+        if (databaseId != null) {
+            roleModel.setId(UUID.fromString(databaseId));
+        }
         roleModel.setCode(role.getCode());
         roleModel.setDescription(role.getDescription());
         roleModel.setName(role.getName());
-        roleModel.setSource(RoleSource.fromId(role.getSource()));
+        roleModel.setSource(RoleSourceEnum.fromId(role.getSource()));
         roleModel.setChildRoles(role.getChildRoles());
         roleModel.setCustomProperties(role.getCustomProperties());
     }
@@ -83,6 +87,10 @@ public class RoleModelConverter {
         return resourcePolicies.stream()
                 .map(resourcePolicy -> {
                     ResourcePolicyModel model = metadata.create(ResourcePolicyModel.class);
+                    String databaseId = resourcePolicy.getCustomProperties().get("databaseId");
+                    if (databaseId != null) {
+                        model.setId(UUID.fromString(databaseId));
+                    }
                     model.setType(resourcePolicy.getType());
                     model.setResource(resourcePolicy.getResource());
                     model.setAction(resourcePolicy.getAction());
@@ -98,10 +106,14 @@ public class RoleModelConverter {
                 .collect(Collectors.toList());
     }
 
-    protected List<RowLevelPolicyModel> createRowLevelPolicyModels(Collection<RowLevelPolicy> resourcePolicies) {
-        return resourcePolicies.stream()
+    protected List<RowLevelPolicyModel> createRowLevelPolicyModels(Collection<RowLevelPolicy> rowLevelPolicies) {
+        return rowLevelPolicies.stream()
                 .map(rowLevelPolicy -> {
                     RowLevelPolicyModel model = metadata.create(RowLevelPolicyModel.class);
+                    String databaseId = rowLevelPolicy.getCustomProperties().get("databaseId");
+                    if (databaseId != null) {
+                        model.setId(UUID.fromString(databaseId));
+                    }
                     model.setType(rowLevelPolicy.getType());
                     model.setAction(rowLevelPolicy.getAction());
                     model.setEntityName(rowLevelPolicy.getEntityName());

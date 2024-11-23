@@ -18,7 +18,6 @@ package io.jmix.data.impl;
 
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
-import io.jmix.data.impl.jta.JmixJtaServerPlatform;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 
@@ -46,7 +45,7 @@ public class JmixJtaEntityManagerFactoryBean extends JmixBaseEntityManagerFactor
     @Override
     protected void setupJpaProperties() {
         super.setupJpaProperties();
-        getJpaPropertyMap().put("eclipselink.target-server", JmixJtaServerPlatform.class.getName());
+        getJpaPropertyMap().put("eclipselink.target-server", "io.jmix.eclipselink.impl.jta.JmixJtaServerPlatform");
         getJpaPropertyMap().put("jakarta.persistence.transactionType", "JTA");
     }
 }

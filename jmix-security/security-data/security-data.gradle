@@ -24,6 +24,7 @@ dependencies {
     api project(':security')
 
     api project(':data')
+    api project(':eclipselink')
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'

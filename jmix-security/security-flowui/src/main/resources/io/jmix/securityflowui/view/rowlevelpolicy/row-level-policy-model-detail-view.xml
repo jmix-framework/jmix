@@ -4,7 +4,7 @@
       focusComponent="form">
     <data>
         <instance id="rowLevelPolicyModelDc"
-                  class="io.jmix.securityflowui.model.RowLevelPolicyModel">
+                  class="io.jmix.security.model.RowLevelPolicyModel">
         </instance>
     </data>
     <actions>

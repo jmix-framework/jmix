@@ -20,8 +20,8 @@
       focusComponent="form">
     <data>
         <instance id="userSubstitutionDc"
-                  class="io.jmix.securitydata.entity.UserSubstitutionEntity">
-            <loader/>
+                  class="io.jmix.security.usersubstitution.UserSubstitutionModel">
+            <loader id="userSubstitutionDl"/>
         </instance>
     </data>
     <facets>

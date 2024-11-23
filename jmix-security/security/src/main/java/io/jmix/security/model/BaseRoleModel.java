@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.securityflowui.model;
+package io.jmix.security.model;
 
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -45,7 +45,7 @@ public abstract class BaseRoleModel {
     protected String description;
 
     @JmixProperty
-    private RoleSource source;
+    private RoleSourceEnum source;
 
     @JmixProperty
     private Map<String, String> customProperties = new HashMap<>();
@@ -65,11 +65,11 @@ public abstract class BaseRoleModel {
         this.id = id;
     }
 
-    public RoleSource getSource() {
+    public RoleSourceEnum getSource() {
         return source;
     }
 
-    public void setSource(RoleSource source) {
+    public void setSource(RoleSourceEnum source) {
         this.source = source;
     }
 

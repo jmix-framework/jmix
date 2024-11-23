@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl.jta;
+package io.jmix.eclipselink.impl.jta;
 
 import org.eclipse.persistence.transaction.JTATransactionController;
 import org.springframework.beans.BeansException;

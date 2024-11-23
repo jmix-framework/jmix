@@ -17,7 +17,7 @@
             <comboBox id="entityField"
                       label="msg://entityResourcePolicyModelCreateView.entityField.label"/>
             <textField id="policyGroupField"
-                       label="msg://io.jmix.securityflowui.model/ResourcePolicyModel.policyGroup"/>
+                       label="msg://io.jmix.security.model/ResourcePolicyModel.policyGroup"/>
         </formLayout>
 
         <h4 text="msg://entityAttributeResourcePolicyModelCreateView.attributes"/>

@@ -10,7 +10,7 @@
             <comboBox id="viewField"
                       label="msg://viewResourcePolicyModelCreateView.viewField.label"/>
             <textField id="policyGroupField"
-                       label="msg://io.jmix.securityflowui.model/ResourcePolicyModel.policyGroup"/>
+                       label="msg://io.jmix.security.model/ResourcePolicyModel.policyGroup"/>
             <textArea id="menuItemField"
                       label="msg://viewResourcePolicyModelCreateView.menuItemField.label"
                       readOnly="true"/>

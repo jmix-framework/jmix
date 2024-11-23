@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,25 @@
  * limitations under the License.
  */
 
-@Internal
-package io.jmix.data.entity;
+package io.jmix.eclipselink.impl;
 
-import io.jmix.core.annotation.Internal;
+import io.jmix.core.LoadContext;
+
+import java.util.List;
+
+/**
+ * Supports functionality that allows queries from previously selected results.
+ *
+ */
+public interface QueryResultsManager {
+
+    void savePreviousQueryResults(LoadContext loadContext);
+
+    void insert(int queryKey, List idList);
+
+    void delete(int queryKey);
+
+    void deleteForCurrentSession();
+
+    void deleteForInactiveSessions();
+}

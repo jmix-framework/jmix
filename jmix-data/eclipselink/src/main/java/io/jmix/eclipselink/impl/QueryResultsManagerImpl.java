@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl;
+package io.jmix.eclipselink.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.*;
+import io.jmix.data.impl.JpqlQueryBuilder;
+import io.jmix.data.impl.QueryHolder;
 import io.jmix.data.persistence.DbTypeConverter;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.slf4j.Logger;

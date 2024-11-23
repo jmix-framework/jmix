@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl;
+package io.jmix.security.role.assignment;
 
-import io.jmix.core.LoadContext;
-
+import java.util.Collection;
 import java.util.List;
 
-/**
- * Supports functionality that allows queries from previously selected results.
- *
- */
-public interface QueryResultsManager {
+public interface RoleAssignmentPersistence {
 
-    void savePreviousQueryResults(LoadContext loadContext);
+    List<String> getExcludedUsernames(String roleCode);
 
-    void insert(int queryKey, List idList);
+    void save(List<RoleAssignment> roleAssignments);
 
-    void delete(int queryKey);
+    void save(Collection<RoleAssignmentModel> toSave, Collection<RoleAssignmentModel> toRemove);
 
-    void deleteForCurrentSession();
-
-    void deleteForInactiveSessions();
+    List<RoleAssignmentModel> loadRoleAssignments(String username, String roleType);
 }

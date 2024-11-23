@@ -17,8 +17,8 @@
 package io.jmix.audit.snapshot.model;
 
 import io.jmix.audit.entity.EntitySnapshot;
+import io.jmix.audit.entity.ReferenceToEntity;
 import io.jmix.core.Metadata;
-import io.jmix.data.entity.ReferenceToEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

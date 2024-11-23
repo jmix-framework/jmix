@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.securityflowui.model;
+package io.jmix.security.model;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;

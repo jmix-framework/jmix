@@ -21,7 +21,7 @@ import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.ResourcePolicyEffect;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.securityflowui.model.DefaultResourcePolicyGroupResolver;
-import io.jmix.securityflowui.model.ResourcePolicyModel;
+import io.jmix.security.model.ResourcePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 

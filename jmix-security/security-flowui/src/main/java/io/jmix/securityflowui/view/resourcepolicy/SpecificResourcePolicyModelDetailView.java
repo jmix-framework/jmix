@@ -5,7 +5,7 @@ import com.vaadin.flow.component.combobox.ComboBoxBase.CustomValueSetEvent;
 import io.jmix.core.security.SpecificPolicyInfoRegistry;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.view.*;
-import io.jmix.securityflowui.model.ResourcePolicyModel;
+import io.jmix.security.model.ResourcePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

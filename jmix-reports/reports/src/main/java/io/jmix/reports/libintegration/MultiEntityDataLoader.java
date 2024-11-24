@@ -55,11 +55,12 @@ public class MultiEntityDataLoader extends AbstractEntityDataLoader {
             entities = params.get(paramName);
         } else if (hasNestedCollection && params.containsKey(entityParameterName)) {
             Entity entity = (Entity) params.get(entityParameterName);
-            List<Entity> nestedCollection = EntityValues.getValueEx(entity, nestedCollectionName);
             entities = EntityValues.getValueEx(entity, nestedCollectionName);
 
+            Collection<Entity> nestedCollection = (Collection<Entity>) entities;
             if (dataSet instanceof DataSet && nestedCollection != null && !nestedCollection.isEmpty()) {
-                nestedCollectionFetchPLan = getFetchPlan(nestedCollection.get(0), (DataSet) dataSet);
+                Entity firstElement = nestedCollection.iterator().next();
+                nestedCollectionFetchPLan = getFetchPlan(firstElement, (DataSet) dataSet);
             }
         }
 

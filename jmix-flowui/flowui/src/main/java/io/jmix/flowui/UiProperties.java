@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,14 @@ public class UiProperties {
     List<String> viewFileExtensions;
 
     /**
+     * Sets the maximum time in seconds during which the file will be considered relevant.
+     * Makes sense for using the built-in PDF viewer in the Chrome browser.
+     *
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#response_directives">Cache-Control HTTP | MDN</a>
+     */
+    int fileDownloaderCacheMaxAge;
+
+    /**
      * Threshold in bytes on which downloaded through {@code ByteArrayDownloadDataProvider} byte arrays will be saved to
      * temporary files to prevent HTTP session memory leaks. Default is 100 KB.
      */
@@ -84,6 +93,7 @@ public class UiProperties {
                         @DefaultValue("50") Integer defaultPageSize,
                         @Nullable Map<String, Integer> entityPageSize,
                         @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
+                        @DefaultValue("3600") int fileDownloaderCacheMaxAge,
                         @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
                         @DefaultValue("true") boolean useSessionFixationProtection,
                         @DefaultValue("false") boolean websocketRequestSecurityContextProvided
@@ -97,6 +107,7 @@ public class UiProperties {
         this.defaultPageSize = defaultPageSize;
         this.entityPageSize = entityPageSize == null ? Collections.emptyMap() : entityPageSize;
         this.viewFileExtensions = viewFileExtensions;
+        this.fileDownloaderCacheMaxAge = fileDownloaderCacheMaxAge;
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.useSessionFixationProtection = useSessionFixationProtection;
         this.websocketRequestSecurityContextProvided = websocketRequestSecurityContextProvided;
@@ -158,6 +169,13 @@ public class UiProperties {
      */
     public List<String> getViewFileExtensions() {
         return viewFileExtensions;
+    }
+
+    /**
+     * @return #fileDownloaderCacheMaxAge
+     */
+    public int getFileDownloaderCacheMaxAge() {
+        return fileDownloaderCacheMaxAge;
     }
 
     /**

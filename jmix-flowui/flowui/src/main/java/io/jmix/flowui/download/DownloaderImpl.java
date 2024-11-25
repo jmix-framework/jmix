@@ -28,6 +28,7 @@ import io.jmix.core.FileStorageLocator;
 import io.jmix.core.FileTypesHelper;
 import io.jmix.core.Messages;
 import io.jmix.flowui.UiProperties;
+import io.jmix.flowui.asynctask.UiAsyncTasks;
 import io.jmix.flowui.component.filedownloader.JmixFileDownloader;
 import io.jmix.flowui.exception.IllegalConcurrentAccessException;
 import org.apache.commons.io.FilenameUtils;
@@ -43,6 +44,7 @@ import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
@@ -59,6 +61,7 @@ public class DownloaderImpl implements Downloader {
     protected CoreProperties coreProperties;
 
     protected Messages messages;
+    protected UiAsyncTasks uiAsyncTasks;
 
     protected FileStorageLocator fileStorageLocator;
     protected FileStorage fileStorage;
@@ -103,6 +106,11 @@ public class DownloaderImpl implements Downloader {
     @Autowired
     public void setFileStorageLocator(FileStorageLocator fileStorageLocator) {
         this.fileStorageLocator = fileStorageLocator;
+    }
+
+    @Autowired
+    public void setUiAsyncTasks(UiAsyncTasks uiAsyncTasks) {
+        this.uiAsyncTasks = uiAsyncTasks;
     }
 
     @Override
@@ -173,6 +181,8 @@ public class DownloaderImpl implements Downloader {
         log.debug("added {} in {}", JmixFileDownloader.class.getSimpleName(), ui);
 
         fileDownloader.setFileName(resourceName);
+        fileDownloader.setCacheMaxAge(uiProperties.getFileDownloaderCacheMaxAge());
+        fileDownloader.addDownloadFinishedListener(this::fileDownloaderRemoveHandler);
         fileDownloader.setFileNotFoundExceptionHandler(this::handleFileNotFoundException);
 
         StreamResource resource = new StreamResource(resourceName, dataProvider::getStream);
@@ -242,6 +252,20 @@ public class DownloaderImpl implements Downloader {
         if (vaadinSession == null || !vaadinSession.hasLock()) {
             throw new IllegalConcurrentAccessException();
         }
+    }
+
+    protected void fileDownloaderRemoveHandler(JmixFileDownloader.DownloadFinishedEvent event) {
+        uiAsyncTasks.runnableConfigurer(() -> {
+                    try {
+                        // timer
+                        TimeUnit.SECONDS.sleep(60);
+                    } catch (InterruptedException e) {
+                        log.debug("{} exception in background task", e.getClass().getName(), e);
+                    }
+                })
+                .withResultHandler(event.getSource()::removeFromParent)
+                .withTimeout(62, TimeUnit.SECONDS)
+                .runAsync();
     }
 
     protected boolean handleFileNotFoundException(JmixFileDownloader.FileNotFoundContext fileNotFoundEvent) {

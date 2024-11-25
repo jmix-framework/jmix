@@ -41,13 +41,9 @@ public class JmixFileDownloader extends Composite<Anchor> {
 
     protected static final String DOWNLOAD_RESOURCE_PREFIX = "download/";
     protected static final String CLICK_EXPRESSION = "this.click()";
-    protected static final String SELF_REMOVE_EXPRESSION =
-            "setTimeout((element) => {" +
-                    " console.debug(element, 'has been removed');" +
-                    " element.remove(); " +
-                    "}, 60 * 1000, this)";
 
     protected String fileName;
+    protected int cacheMaxAge;
 
     protected RequestHandler requestHandler;
 
@@ -59,6 +55,10 @@ public class JmixFileDownloader extends Composite<Anchor> {
 
     public JmixFileDownloader() {
         runBeforeClientResponse(this::beforeClientResponseDownloadHandler);
+    }
+
+    public void setCacheMaxAge(int cacheMaxAge) {
+        this.cacheMaxAge = cacheMaxAge;
     }
 
     public void setFileName(String fileName) {
@@ -125,8 +125,6 @@ public class JmixFileDownloader extends Composite<Anchor> {
             }
         };
 
-        addDownloadFinishedListener(event -> getElement().executeJs(SELF_REMOVE_EXPRESSION));
-
         execute();
     }
 
@@ -149,6 +147,7 @@ public class JmixFileDownloader extends Composite<Anchor> {
                                 .filename(getFileName(session, request), StandardCharsets.UTF_8)
                                 .build()
                                 .toString());
+                response.setHeader("Cache-Control", "private, max-age=%s".formatted(cacheMaxAge));
 
                 if (isViewDocumentRequest && Strings.isNotEmpty(contentType)) {
                     response.setContentType(contentType);

@@ -38,6 +38,9 @@
     <facets>
         <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
     </facets>
 
     <layout>

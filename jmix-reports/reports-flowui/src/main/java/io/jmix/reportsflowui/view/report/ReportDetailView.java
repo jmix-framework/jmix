@@ -34,6 +34,8 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
@@ -255,11 +257,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         hideAllDataSetEditComponents();
 
-        initParametersDataGrid();
-
         initBandsTreeDataGrid();
         initDataSetsDataGrid();
-        initTemplateDataGrid();
 
         initDataStoreField();
         initJsonPathQueryTextAreaField();
@@ -275,32 +274,25 @@ public class ReportDetailView extends StandardDetailView<Report> {
         initScreenIdField();
     }
 
-    private void initTemplateDataGrid() {
-        templatesDataGrid.addComponentColumn(template -> createCheckbox(template.getAlterable()))
-                .setHeader(messageBundle.getMessage("templatesTab.templatesDataGrid.alterable"))
-                .setKey("alterable")
-                .setSortable(false)
-                .setResizable(true);
-
-        templatesDataGrid.addComponentColumn(template -> createCheckbox(template.equals(reportDc.getItem().getDefaultTemplate())))
-                .setHeader(messageBundle.getMessage("templatesTab.templatesDataGrid.default"))
-                .setKey("default")
-                .setSortable(false)
-                .setResizable(true);
+    @Supply(to = "templatesDataGrid.alterable", subject = "renderer")
+    protected Renderer<ReportTemplate> templatesDataGridAlterableRenderer() {
+        return new ComponentRenderer<>(template -> createCheckbox(template.getAlterable()));
     }
 
-    protected void initParametersDataGrid() {
-        inputParametersDataGrid.addComponentColumn(parameter -> createCheckbox(parameter.getRequired()))
-                .setHeader(messageBundle.getMessage("parametersTab.inputParameterDataGrid.required"))
-                .setKey("required")
-                .setResizable(true)
-                .setSortable(true);
+    @Supply(to = "templatesDataGrid.default", subject = "renderer")
+    protected Renderer<ReportTemplate> templatesDataGridDefaultRenderer() {
+        return new ComponentRenderer<>(template ->
+                createCheckbox(template.equals(reportDc.getItem().getDefaultTemplate())));
+    }
 
-        inputParametersDataGrid.addComponentColumn(parameter -> createCheckbox(parameter.getValidationOn()))
-                .setHeader(messageBundle.getMessage("parametersTab.inputParameterDataGrid.validationOn"))
-                .setKey("validationOn")
-                .setResizable(true)
-                .setSortable(true);
+    @Supply(to = "inputParametersDataGrid.required", subject = "renderer")
+    protected Renderer<ReportInputParameter> inputParametersDataGridRequiredRenderer() {
+        return new ComponentRenderer<>(parameter -> createCheckbox(parameter.getRequired()));
+    }
+
+    @Supply(to = "inputParametersDataGrid.validationOn", subject = "renderer")
+    protected Renderer<ReportInputParameter> inputParametersDataGridValidationOnRenderer() {
+        return new ComponentRenderer<>(parameter -> createCheckbox(parameter.getValidationOn()));
     }
 
     protected Checkbox createCheckbox(Boolean value) {

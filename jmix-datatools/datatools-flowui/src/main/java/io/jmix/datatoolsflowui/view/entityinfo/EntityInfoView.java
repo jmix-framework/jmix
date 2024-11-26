@@ -16,31 +16,16 @@
 
 package io.jmix.datatoolsflowui.view.entityinfo;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlans;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.PersistenceHints;
-import io.jmix.datatools.EntitySqlGenerationService;
 import io.jmix.datatoolsflowui.view.entityinfo.model.InfoValue;
-import io.jmix.flowui.Notifications;
-import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.view.DialogMode;
-import io.jmix.flowui.view.MessageBundle;
-import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
+import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -51,22 +36,14 @@ import java.util.function.Function;
 public class EntityInfoView extends StandardView {
 
     @ViewComponent
-    protected DataGrid<InfoValue> infoDataGrid;
-    @ViewComponent
     protected CollectionContainer<InfoValue> infoDc;
 
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected UiComponents uiComponents;
-    @Autowired
     protected MetadataTools metadataTools;
     @Autowired
     protected MessageBundle messageBundle;
-    @Autowired
-    protected Notifications notifications;
-    @Autowired(required = false)
-    protected EntitySqlGenerationService sqlGenerationService;
 
     protected Object entity;
 
@@ -79,23 +56,12 @@ public class EntityInfoView extends StandardView {
     }
 
     @Subscribe
-    public void onInit(InitEvent event) {
-        initGrid();
-    }
-
-    @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         if (entity == null) {
             throw new IllegalStateException("Entity is not passed. Can't collect system info");
         }
 
         collectEntityInfo();
-    }
-
-    protected void initGrid() {
-        infoDataGrid.removeAllActions();
-        infoDataGrid.getColumnByKey("key").setHeader(messageBundle.getMessage("entityInfo.name"));
-        infoDataGrid.getColumnByKey("value").setHeader(messageBundle.getMessage("entityInfo.value"));
     }
 
     protected void collectEntityInfo() {

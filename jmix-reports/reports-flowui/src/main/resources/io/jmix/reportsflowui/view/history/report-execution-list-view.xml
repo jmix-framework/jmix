@@ -36,6 +36,7 @@
     </data>
 
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
@@ -65,6 +66,8 @@
                 <column property="cancelled"/>
                 <column property="params"/>
                 <column property="errorMessage"/>
+                <column key="executionTimeSec" header="msg://history.executionTimeSec.header"/>
+                <column key="outputDocument" header="msg://history.outputDocument.header"/>
             </columns>
         </dataGrid>
     </layout>

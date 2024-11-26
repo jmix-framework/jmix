@@ -23,6 +23,9 @@
                     class="io.jmix.security.model.RowLevelRoleModel">
         </collection>
     </data>
+    <facets>
+        <settings auto="true"/>
+    </facets>
     <actions>
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>

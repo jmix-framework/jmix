@@ -49,10 +49,8 @@
         </collection>
     </data>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
-        <settings>
-            <component id="sendingMessageDataGrid"/>
-        </settings>
     </facets>
     <layout>
         <split width="100%" height="100%" splitterPosition="70" themeNames="splitter-spacing">
@@ -76,7 +74,7 @@
                                 type="list_itemTracking" icon="lumo:reload"/>
                     </actions>
                     <columns resizable="true">
-                        <column property="address" autoWidth="true" sortable="false"/>
+                        <column property="address" autoWidth="true"/>
                         <column property="cc" autoWidth="true"/>
                         <column property="bcc" autoWidth="true"/>
                         <column property="from" autoWidth="true"/>
@@ -86,7 +84,7 @@
                         <column property="createTs" autoWidth="true"/>
                         <column property="dateSent" autoWidth="true"/>
                         <column property="updateTs" autoWidth="true"/>
-                        <column property="attachmentsName" autoWidth="true" sortable="false"/>
+                        <column property="attachmentsName" autoWidth="true"/>
                         <column property="attemptsLimit" autoWidth="true"/>
                         <column property="deadline" autoWidth="true"/>
                         <column property="attemptsMade" autoWidth="true"/>

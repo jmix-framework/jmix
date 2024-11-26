@@ -16,7 +16,6 @@
 
 package io.jmix.reportsflowui.view.report;
 
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
@@ -52,7 +51,9 @@ import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 
 import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredByTemplates;
 
@@ -112,7 +113,6 @@ public class ReportListView extends StandardListView<Report> {
 
     @Subscribe
     protected void onInit(InitEvent event) {
-        initColumnDataGrid();
         initReportsDataGridCreate();
     }
 
@@ -120,22 +120,9 @@ public class ReportListView extends StandardListView<Report> {
         reportsDataGridCreate.setIcon(null);
     }
 
-    private void initColumnDataGrid() {
-
-        List<Grid.Column<Report>> columnList = Arrays.asList(
-                reportsDataGrid.getColumnByKey("name"),
-                reportsDataGrid.getColumnByKey("group"),
-                reportsDataGrid.getColumnByKey("description"),
-                reportsDataGrid.getColumnByKey("code")
-        );
-
-        reportsDataGrid.setColumnOrder(columnList);
-    }
-
     @Supply(to = "reportsDataGrid.name", subject = "renderer")
     private Renderer<Report> nameCellRenderer() {
-        return new TextRenderer<>(report ->
-                metadataTools.getInstanceName(report));
+        return new TextRenderer<>(metadataTools::getInstanceName);
     }
 
     @Subscribe("reportsDataGrid.runReport")

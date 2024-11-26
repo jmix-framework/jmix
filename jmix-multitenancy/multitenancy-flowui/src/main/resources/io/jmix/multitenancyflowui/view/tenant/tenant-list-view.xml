@@ -36,6 +36,7 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
             <pagination component="pagination"/>

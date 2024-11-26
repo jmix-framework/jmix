@@ -1,6 +1,7 @@
 package io.jmix.securityflowui.view.roleassignment;
 
-import com.vaadin.flow.function.ValueProvider;
+import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
@@ -25,6 +26,10 @@ import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentModel;
 import io.jmix.security.role.assignment.RoleAssignmentPersistence;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import io.jmix.securityflowui.model.ResourceRoleModel;
+import io.jmix.securityflowui.model.RowLevelRoleModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -76,35 +81,30 @@ public class RoleAssignmentView extends StandardView {
 
     private UserDetails user;
 
-    @Subscribe
-    public void onInit(InitEvent event) {
-        addColumns();
+    @Supply(to = "resourceRoleAssignmentsTable.roleName", subject = "renderer")
+    protected Renderer<RoleAssignmentEntity> resourceRoleAssignmentsTableRoleNameRenderer() {
+        return new TextRenderer<>(roleAssignmentEntity -> {
+            BaseRole role = resourceRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
+            return role != null ? role.getName() : StringUtils.EMPTY;
+        });
     }
 
-    private void addColumns() {
-        resourceRoleAssignmentsTable.addColumn(
-                (ValueProvider<RoleAssignmentModel, String>) roleAssignmentEntity -> {
-                    BaseRole role = resourceRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
-                    return role != null ? role.getName() : "";
-                })
-                .setHeader(messageBundle.getMessage("column.roleName.header"))
-                .setResizable(true);
+    @Supply(to = "resourceRoleAssignmentsTable.roleScopes", subject = "renderer")
+    protected Renderer<RoleAssignmentEntity> resourceRoleAssignmentsTableRoleScopesRenderer() {
+        return new TextRenderer<>(roleAssignmentEntity -> {
+            ResourceRole role = resourceRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
+            return role != null
+                    ? String.join(", ", role.getScopes())
+                    : StringUtils.EMPTY;
+        });
+    }
 
-        resourceRoleAssignmentsTable.addColumn(
-                (ValueProvider<RoleAssignmentModel, String>) roleAssignmentEntity -> {
-                    ResourceRole role = resourceRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
-                    return role != null ? String.join(", ", role.getScopes()) : "";
-                })
-                .setHeader(messageBundle.getMessage("column.roleScopes.header"))
-                .setResizable(true)
-                .setFlexGrow(0);
-
-
-        rowLevelRoleAssignmentsTable.addColumn(
-                (ValueProvider<RoleAssignmentModel, String>) roleAssignmentEntity -> {
-                    BaseRole role = rowLevelRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
-                    return role != null ? role.getName() : "";
-                }).setHeader(messageBundle.getMessage("column.roleName.header"));
+    @Supply(to = "rowLevelRoleAssignmentsTable.roleName", subject = "renderer")
+    protected Renderer<RoleAssignmentEntity> rowLevelRoleAssignmentsTableRoleNameRenderer() {
+        return new TextRenderer<>(roleAssignmentEntity -> {
+            BaseRole role = rowLevelRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
+            return role != null ? role.getName() : StringUtils.EMPTY;
+        });
     }
 
     @Override

@@ -9,6 +9,7 @@
         </instance>
     </data>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
@@ -46,9 +47,14 @@
                             <action id="remove" type="list_remove"/>
                         </actions>
                         <columns resizable="true">
-                            <column property="triggerName" resizable="true" autoWidth="true"/>
-                            <column property="triggerGroup" resizable="true" autoWidth="true"/>
-                            <column property="scheduleType" resizable="true" autoWidth="true"/>
+                            <column property="triggerName"/>
+                            <column property="triggerGroup"/>
+                            <column property="scheduleType"/>
+                            <column key="triggerDescription" header="msg://column.triggerScheduleDescription.header"/>
+                            <column key="startDate" header="msg://column.startDate.header"/>
+                            <column key="lastFireDate" header="msg://column.lastFireDate.header"/>
+                            <column key="nextFireDate" header="msg://column.nextFireDate.header"/>
+                            <column key="endDate" header="msg://column.endDate.header"/>
                         </columns>
                     </dataGrid>
                 </vbox>
@@ -77,7 +83,7 @@
                             <column property="key" editable="true"/>
                             <column property="value" editable="true"/>
 
-                            <editorActionsColumn width="8em" flexGrow="0">
+                            <editorActionsColumn width="12em" flexGrow="0">
                                 <editButton icon="PENCIL"/>
 
                                 <saveButton icon="CHECK" themeNames="success"/>

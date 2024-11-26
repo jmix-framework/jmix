@@ -20,6 +20,9 @@
     <data>
         <collection id="locksDc" class="io.jmix.pessimisticlock.entity.LockInfo"/>
     </data>
+    <facets>
+        <settings auto="true"/>
+    </facets>
     <layout>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button action="locksTable.refresh"/>
@@ -35,6 +38,7 @@
                         icon="UNLOCK" actionVariant="PRIMARY"/>
             </actions>
             <columns resizable="true">
+                <column key="objectTypeColumn" header="msg://lockListView.objectType"/>
                 <column key="objectIdColumn" property="objectId" header="msg://lockListView.objectId"/>
                 <column key="usernameColumn" property="username" header="msg://lockListView.username"/>
                 <column key="sinceColumn" property="since" header="msg://lockListView.since"/>

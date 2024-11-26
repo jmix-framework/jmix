@@ -22,6 +22,7 @@
         </instance>
     </data>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
@@ -46,6 +47,7 @@
                 <column property="description"/>
                 <column property="type"/>
                 <column property="valueString"/>
+                <column key="access" header="msg://io.jmix.jmxconsole.model/ManagedBeanAttribute.readableWriteable"/>
             </columns>
         </dataGrid>
         <vbox margin="false" padding="false" width="100%">

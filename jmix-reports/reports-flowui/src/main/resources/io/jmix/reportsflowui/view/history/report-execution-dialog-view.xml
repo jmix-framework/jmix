@@ -33,6 +33,10 @@
         </collection>
     </data>
 
+    <facets>
+        <settings auto="true"/>
+    </facets>
+
     <actions>
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>
@@ -76,6 +80,7 @@
                   width="100%">
             <columns resizable="true">
                 <column property="group"/>
+                <column key="name" header="msg://history.name.header"/>
                 <column property="description"/>
                 <column property="code"/>
                 <column property="updateTs"/>

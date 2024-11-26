@@ -5,6 +5,9 @@
         <collection id="attributesDc"
                     class="io.jmix.securityflowui.view.resourcepolicy.AttributeResourceModel"/>
     </data>
+    <facets>
+        <settings auto="true"/>
+    </facets>
     <actions>
         <action id="saveAction"/>
         <action id="closeAction" type="view_close"/>
@@ -23,8 +26,12 @@
                   dataContainer="attributesDc"
                   selectionMode="NONE"
                   width="100%">
-            <columns>
+            <columns resizable="true">
                 <column property="caption"/>
+                <column key="view"
+                        header="msg://io.jmix.securityflowui.view.resourcepolicy/AttributeResourceModel.view"/>
+                <column key="modify"
+                        header="msg://io.jmix.securityflowui.view.resourcepolicy/AttributeResourceModel.modify"/>
             </columns>
         </dataGrid>
 

@@ -25,6 +25,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
@@ -138,13 +139,6 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     @Subscribe
     public void onInitEvent(InitEvent event) {
         sortCategoryAttrsGridByOrderNo();
-        categoryAttrsGrid
-                .addColumn(createCategoryAttrsGridDataTypeRenderer())
-                .setHeader(messageTools.getPropertyCaption(metadata.getClass(CategoryAttribute.class), "dataType"));
-
-        categoryAttrsGrid
-                .addColumn(createCategoryAttrsGridDefaultValueRenderer())
-                .setHeader(messages.getMessage(getClass(), "categoryAttrsGrid.defaultValue"));
     }
 
     @Subscribe
@@ -239,7 +233,8 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         }
     }
 
-    protected ComponentRenderer<Span, CategoryAttribute> createCategoryAttrsGridDefaultValueRenderer() {
+    @Supply(to = "categoryAttrsGrid.defaultValue", subject = "renderer")
+    protected Renderer<CategoryAttribute> createCategoryAttrsGridDefaultValueRenderer() {
         return new ComponentRenderer<>(this::categoryAttrsGridDefaultValueColumnComponent,
                 this::categoryAttrsGridDefaultValueColumnUpdater);
     }
@@ -325,7 +320,8 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         defaultValueLabel.setText(defaultValue);
     }
 
-    protected ComponentRenderer<Text, CategoryAttribute> createCategoryAttrsGridDataTypeRenderer() {
+    @Supply(to = "categoryAttrsGrid.dataType", subject = "renderer")
+    protected Renderer<CategoryAttribute> createCategoryAttrsGridDataTypeRenderer() {
         return new ComponentRenderer<>(this::categoryAttrsGridDataTypeComponent,
                 this::categoryAttrsGridDataTypeUpdater);
     }

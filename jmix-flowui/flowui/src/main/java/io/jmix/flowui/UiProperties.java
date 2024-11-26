@@ -66,7 +66,7 @@ public class UiProperties {
      *
      * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#response_directives">Cache-Control HTTP | MDN</a>
      */
-    int fileDownloaderCacheMaxAge;
+    int fileDownloaderCacheMaxAgeSec;
 
     /**
      * Threshold in bytes on which downloaded through {@code ByteArrayDownloadDataProvider} byte arrays will be saved to
@@ -93,7 +93,7 @@ public class UiProperties {
                         @DefaultValue("50") Integer defaultPageSize,
                         @Nullable Map<String, Integer> entityPageSize,
                         @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
-                        @DefaultValue("3600") int fileDownloaderCacheMaxAge,
+                        @DefaultValue("3600") int fileDownloaderCacheMaxAgeSec,
                         @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
                         @DefaultValue("true") boolean useSessionFixationProtection,
                         @DefaultValue("false") boolean websocketRequestSecurityContextProvided
@@ -107,7 +107,7 @@ public class UiProperties {
         this.defaultPageSize = defaultPageSize;
         this.entityPageSize = entityPageSize == null ? Collections.emptyMap() : entityPageSize;
         this.viewFileExtensions = viewFileExtensions;
-        this.fileDownloaderCacheMaxAge = fileDownloaderCacheMaxAge;
+        this.fileDownloaderCacheMaxAgeSec = fileDownloaderCacheMaxAgeSec;
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.useSessionFixationProtection = useSessionFixationProtection;
         this.websocketRequestSecurityContextProvided = websocketRequestSecurityContextProvided;
@@ -172,10 +172,10 @@ public class UiProperties {
     }
 
     /**
-     * @return #fileDownloaderCacheMaxAge
+     * @see #fileDownloaderCacheMaxAgeSec
      */
-    public int getFileDownloaderCacheMaxAge() {
-        return fileDownloaderCacheMaxAge;
+    public int getFileDownloaderCacheMaxAgeSec() {
+        return fileDownloaderCacheMaxAgeSec;
     }
 
     /**

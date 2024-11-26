@@ -181,7 +181,7 @@ public class DownloaderImpl implements Downloader {
         log.debug("added {} in {}", JmixFileDownloader.class.getSimpleName(), ui);
 
         fileDownloader.setFileName(resourceName);
-        fileDownloader.setCacheMaxAge(uiProperties.getFileDownloaderCacheMaxAge());
+        fileDownloader.setCacheMaxAgeSec(uiProperties.getFileDownloaderCacheMaxAgeSec());
         fileDownloader.addDownloadFinishedListener(this::fileDownloaderRemoveHandler);
         fileDownloader.setFileNotFoundExceptionHandler(this::handleFileNotFoundException);
 

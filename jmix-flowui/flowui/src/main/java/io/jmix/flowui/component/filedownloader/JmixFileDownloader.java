@@ -43,7 +43,7 @@ public class JmixFileDownloader extends Composite<Anchor> {
     protected static final String CLICK_EXPRESSION = "this.click()";
 
     protected String fileName;
-    protected int cacheMaxAge;
+    protected int cacheMaxAgeSec;
 
     protected RequestHandler requestHandler;
 
@@ -57,8 +57,15 @@ public class JmixFileDownloader extends Composite<Anchor> {
         runBeforeClientResponse(this::beforeClientResponseDownloadHandler);
     }
 
-    public void setCacheMaxAge(int cacheMaxAge) {
-        this.cacheMaxAge = cacheMaxAge;
+    /**
+     * Sets the maximum time in seconds during which the file will be considered relevant.
+     * Makes sense for using the built-in PDF viewer in the Chrome browser.
+     *
+     * @param cacheMaxAgeSec the maximum time in seconds during which the file will be considered relevant
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#response_directives">Cache-Control HTTP | MDN</a>
+     */
+    public void setCacheMaxAgeSec(int cacheMaxAgeSec) {
+        this.cacheMaxAgeSec = cacheMaxAgeSec;
     }
 
     public void setFileName(String fileName) {
@@ -147,7 +154,7 @@ public class JmixFileDownloader extends Composite<Anchor> {
                                 .filename(getFileName(session, request), StandardCharsets.UTF_8)
                                 .build()
                                 .toString());
-                response.setHeader("Cache-Control", "private, max-age=%s".formatted(cacheMaxAge));
+                response.setHeader("Cache-Control", "private, max-age=%s".formatted(cacheMaxAgeSec));
 
                 if (isViewDocumentRequest && Strings.isNotEmpty(contentType)) {
                     response.setContentType(contentType);

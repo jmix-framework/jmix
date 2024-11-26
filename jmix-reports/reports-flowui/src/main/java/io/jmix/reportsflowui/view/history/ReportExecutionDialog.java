@@ -18,14 +18,14 @@ package io.jmix.reportsflowui.view.history;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
@@ -45,8 +45,6 @@ import java.util.stream.Collectors;
 @LookupComponent("reportsDataGrid")
 public class ReportExecutionDialog extends StandardListView<Report> {
 
-    @ViewComponent
-    protected DataGrid<Report> reportsDataGrid;
     @ViewComponent
     protected TypedTextField<String> filterName;
     @ViewComponent
@@ -70,22 +68,9 @@ public class ReportExecutionDialog extends StandardListView<Report> {
     protected MetaClass metaClassParameter;
     protected String screenParameter;
 
-    @Subscribe
-    public void onInit(InitEvent event) {
-        reportsDataGrid.addColumn(report -> metadataTools.getInstanceName(report))
-                .setHeader(messageBundle.getMessage("history.name.header"))
-                .setKey("name")
-                .setSortable(true)
-                .setResizable(true);
-
-        List<Grid.Column<Report>> columns = List.of(
-                reportsDataGrid.getColumnByKey("group"),
-                reportsDataGrid.getColumnByKey("name"),
-                reportsDataGrid.getColumnByKey("description"),
-                reportsDataGrid.getColumnByKey("code"),
-                reportsDataGrid.getColumnByKey("updateTs")
-        );
-        reportsDataGrid.setColumnOrder(columns);
+    @Supply(to = "reportsDataGrid.name", subject = "renderer")
+    protected Renderer<Report> reportsDataGridNameRenderer() {
+        return new TextRenderer<>(metadataTools::getInstanceName);
     }
 
     @Install(to = "reportsDl", target = Target.DATA_LOADER)

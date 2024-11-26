@@ -17,12 +17,14 @@
 package io.jmix.quartzflowui.view.jobs;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Supplier;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.ComboBoxBase;
 import com.vaadin.flow.component.grid.editor.EditorCancelEvent;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.UnconstrainedDataManager;
@@ -32,13 +34,15 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.*;
-import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
+import io.jmix.quartz.util.ScheduleDescriptionProvider;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -90,7 +94,6 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
 
     @Subscribe
     protected void onInit(View.InitEvent event) {
-        initModelTable();
 
         jobGroupNames = quartzService.getJobGroupNames();
         jobGroupField.setItems(jobGroupNames);
@@ -109,35 +112,35 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
         }
     }
 
-    protected void initModelTable() {
-        triggerModelTable.addColumn(new TextRenderer<>(trigger -> scheduleDescriptionProvider.getScheduleDescription(trigger)))
-                .setHeader(messageBundle.getMessage("column.triggerScheduleDescription.header"))
-                .setResizable(true)
-                .setAutoWidth(true);
-        triggerModelTable.addColumn(entity -> entity.getStartDate() != null ?
-                        new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getStartDate()) : "")
-                .setResizable(false)
-                .setHeader(messageBundle.getMessage("column.startDate.header"))
-                .setAutoWidth(true);
-        triggerModelTable.addColumn(entity -> entity.getLastFireDate() != null ?
-                        new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getLastFireDate()) : "")
-                .setResizable(false)
-                .setHeader(messageBundle.getMessage("column.lastFireDate.header"))
-                .setAutoWidth(true);
-        triggerModelTable.addColumn(entity -> entity.getNextFireDate() != null ?
-                        new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getNextFireDate()) : "")
-                .setResizable(false)
-                .setHeader(messageBundle.getMessage("column.nextFireDate.header"))
-                .setAutoWidth(true);
-        triggerModelTable.addColumn(entity -> entity.getEndDate() != null ?
-                        new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getEndDate()) : "")
-                .setResizable(false)
-                .setHeader(messageBundle.getMessage("column.endDate.header"))
-                .setAutoWidth(true);
+    @Supply(to = "triggerModelTable.triggerDescription", subject = "renderer")
+    protected Renderer<TriggerModel> triggerModelTableTriggerDescriptionRenderer() {
+        return new TextRenderer<>(scheduleDescriptionProvider::getScheduleDescription);
+    }
+
+    @Supply(to = "triggerModelTable.startDate", subject = "renderer")
+    protected Renderer<TriggerModel> triggerModelTableStartDateRenderer() {
+        return new TextRenderer<>(triggerModel -> getFormattedDate(triggerModel::getStartDate));
+    }
+
+    @Supply(to = "triggerModelTable.lastFireDate", subject = "renderer")
+    protected Renderer<TriggerModel> triggerModelTableLastFireDateRenderer() {
+        return new TextRenderer<>(triggerModel -> getFormattedDate(triggerModel::getLastFireDate));
+    }
+
+    @Supply(to = "triggerModelTable.nextFireDate", subject = "renderer")
+    protected Renderer<TriggerModel> triggerModelTableNextFireDateRenderer() {
+        return new TextRenderer<>(triggerModel -> getFormattedDate(triggerModel::getNextFireDate));
+    }
+
+    @Supply(to = "triggerModelTable.endDate", subject = "renderer")
+    protected Renderer<TriggerModel> triggerModelTableEndDateRenderer() {
+        return new TextRenderer<>(triggerModel -> getFormattedDate(triggerModel::getEndDate));
+    }
+
+    protected String getFormattedDate(Supplier<Date> dateSupplier) {
+        return dateSupplier.get() != null
+                ? new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds")).format(dateSupplier.get())
+                : StringUtils.EMPTY;
     }
 
     @Subscribe("jobGroupField")

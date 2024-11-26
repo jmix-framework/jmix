@@ -341,7 +341,6 @@ public class ReportTableView extends StandardView {
         dataGrid.setItems(new ContainerDataGridItems<>(container));
         dataGrid.setWidth("100%");
         dataGrid.setMultiSelect(true);
-        dataGrid.setColumnReorderingAllowed(false);
         return dataGrid;
     }
 

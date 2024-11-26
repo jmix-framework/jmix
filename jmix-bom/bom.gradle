@@ -390,6 +390,7 @@ dependencies {
         def jasperVersion = '6.20.5'
         api "net.sf.jasperreports:jasperreports:$jasperVersion"
         api "net.sf.jasperreports:jasperreports-fonts:$jasperVersion"
+        api "net.sf.jasperreports:jasperreports-functions:$jasperVersion"
 
         api 'org.apache.tika:tika-parsers:1.28.5'
 

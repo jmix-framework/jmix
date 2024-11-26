@@ -19,7 +19,7 @@ package io.jmix.reports.app;
 import java.io.Serializable;
 
 /**
- * That class is used in report wizard creator cause that wizard need info about entity attributes
+ * This class is used in report wizard creator because the wizard requires info about entity attributes
  */
 public class EntityTreeStructureInfo implements Serializable {
     private static final long serialVersionUID = -7636338880001636048L;

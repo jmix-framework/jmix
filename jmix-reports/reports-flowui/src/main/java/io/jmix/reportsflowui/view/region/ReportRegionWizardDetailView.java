@@ -17,6 +17,7 @@ import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionPropertyContainer;
+import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
@@ -48,6 +49,8 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     protected FormLayout treePanel;
     @ViewComponent
     protected DataGrid<RegionProperty> propertiesDataGrid;
+    @ViewComponent
+    private DataContext dataContext;
 
     @Autowired
     protected UiComponents uiComponents;
@@ -79,6 +82,7 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         initComponents();
+        dataContext.clear();
     }
 
     @Install(to = "propertiesDataGrid.upItemAction", subject = "enabledRule")

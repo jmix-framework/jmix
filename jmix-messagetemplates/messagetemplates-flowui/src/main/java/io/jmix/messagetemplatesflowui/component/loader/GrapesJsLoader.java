@@ -85,6 +85,7 @@ public class GrapesJsLoader extends AbstractComponentLoader<GrapesJs> {
 
         loadResourceString(element, "label", getContext().getMessageGroup(), block::setLabel);
         loadResourceString(element, "category", getContext().getMessageGroup(), block::setCategory);
+        loadString(element, "icon", block::setIcon);
         loadStringText(element, "content", block::setContent);
         loadStringText(element, "attributes", block::setAttributes);
 

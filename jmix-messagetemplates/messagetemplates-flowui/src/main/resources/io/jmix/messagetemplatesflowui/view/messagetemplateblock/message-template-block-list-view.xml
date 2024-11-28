@@ -15,15 +15,15 @@
   ~ limitations under the License.
   -->
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://MessageTemplateListView.title"
-      focusComponent="messageTemplatesDataGrid">
+      title="msg://MessageTemplateBlockListView.title"
+      focusComponent="messageTemplateBlocksDataGrid">
     <data>
-        <collection id="messageTemplatesDc"
-                    class="io.jmix.messagetemplates.entity.MessageTemplate">
+        <collection id="messageTemplateBlocksDc"
+                    class="io.jmix.messagetemplates.entity.MessageTemplateBlock">
             <fetchPlan extends="_base"/>
-            <loader id="messageTemplatesDl" readOnly="true">
+            <loader id="messageTemplateBlocksDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from msgtmp_MessageTemplate e]]>
+                    <![CDATA[select e from msgtmp_MessageTemplateBlock e]]>
                 </query>
             </loader>
         </collection>
@@ -42,20 +42,20 @@
     </facets>
     <layout>
         <genericFilter id="genericFilter"
-                       dataLoader="messageTemplatesDl">
+                       dataLoader="messageTemplateBlocksDl">
             <properties include=".*"/>
         </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="messageTemplatesDataGrid.create"/>
-            <button id="editButton" action="messageTemplatesDataGrid.edit"/>
-            <button id="removeButton" action="messageTemplatesDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="messageTemplatesDl"/>
+            <button id="createButton" action="messageTemplateBlocksDataGrid.create"/>
+            <button id="editButton" action="messageTemplateBlocksDataGrid.edit"/>
+            <button id="removeButton" action="messageTemplateBlocksDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="messageTemplateBlocksDl"/>
         </hbox>
-        <dataGrid id="messageTemplatesDataGrid"
+        <dataGrid id="messageTemplateBlocksDataGrid"
                   width="100%"
                   columnReorderingAllowed="true"
                   minHeight="20em"
-                  dataContainer="messageTemplatesDc">
+                  dataContainer="messageTemplateBlocksDc">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
@@ -63,8 +63,8 @@
             </actions>
             <columns resizable="true">
                 <column property="name"/>
-                <column property="code"/>
-                <column property="group"/>
+                <column property="label"/>
+                <column property="category"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

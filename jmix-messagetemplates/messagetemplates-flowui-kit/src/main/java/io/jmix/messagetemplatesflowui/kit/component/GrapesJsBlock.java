@@ -34,6 +34,8 @@ public class GrapesJsBlock implements Serializable {
 
     protected String attributes;
 
+    protected String icon;
+
     public GrapesJsBlock(String id) {
         this.id = id;
     }
@@ -128,6 +130,23 @@ public class GrapesJsBlock implements Serializable {
      */
     public void setAttributes(String attributes) {
         this.attributes = attributes;
+    }
+
+    /**
+     * @return icon of the block in the block section
+     */
+    public String getIcon() {
+        return icon;
+    }
+
+    /**
+     * Sets icon for the block in the block section. The {@code icon} must be from an existing
+     * icon set (e.g. {@code vaadin:picture}).
+     *
+     * @param icon the icon name with collection prefix
+     */
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     /**
@@ -228,6 +247,17 @@ public class GrapesJsBlock implements Serializable {
          */
         public Builder withAttributes(String attributes) {
             block.setAttributes(attributes);
+            return this;
+        }
+
+        /**
+         * Sets icon for the block in the block section. The {@code icon} must be from an existing
+         * icon set (e.g. {@code vaadin:picture}).
+         *
+         * @param icon the icon name with collection prefix
+         */
+        public Builder withIcon(String icon) {
+            block.setIcon(icon);
             return this;
         }
 

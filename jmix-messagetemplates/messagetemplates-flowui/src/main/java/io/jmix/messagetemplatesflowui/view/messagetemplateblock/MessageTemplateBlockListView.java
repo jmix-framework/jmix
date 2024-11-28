@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.messagetemplatesflowui.view.messagetemplateblock;
 
-group = 'io.jmix.messagetemplates'
-archivesBaseName = 'jmix-messagetemplates'
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.view.*;
+import io.jmix.messagetemplates.entity.MessageTemplateBlock;
 
-dependencies {
-    api project(':data')
-    api project(':eclipselink')
+@Route(value = "msgtmp/messagetemplateblock", layout = DefaultMainViewParent.class)
+@ViewController("msgtmp_MessageTemplateBlock.list")
+@ViewDescriptor("message-template-block-list-view.xml")
+@LookupComponent("messageTemplateBlocksDataGrid")
+@DialogMode(width = "64em")
+public class MessageTemplateBlockListView extends StandardListView<MessageTemplateBlock> {
 }

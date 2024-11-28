@@ -33,6 +33,25 @@
             </column>
         </createTable>
 
+        <createTable tableName="MSGTMP_MESSAGE_TEMPLATE_BLOCK">
+            <column name="ID"
+                    type="${uuid.type}">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="PK_MSGTMP_MESSAGE_TEMPLATE_BLOCK"/>
+            </column>
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LABEL" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CATEGORY" type="VARCHAR(255)"/>
+            <column name="CONTENT" type="clob"/>
+            <column name="ATTRIBUTES" type="clob"/>
+            <column name="ICON" type="VARCHAR(255)"/>
+        </createTable>
+
         <createTable tableName="MSGTMP_MESSAGE_TEMPLATE">
             <column name="ID"
                     type="${uuid.type}">
@@ -55,6 +74,12 @@
         <createIndex indexName="IDX_MESSAGE_TEMPLATE_GROUP"
                      tableName="MSGTMP_MESSAGE_TEMPLATE">
             <column name="GROUP_ID"/>
+        </createIndex>
+
+        <createIndex indexName="IDX_MESSAGE_TEMPLATE_BLOCK_UNQ_NAME"
+                     tableName="MSGTMP_MESSAGE_TEMPLATE_BLOCK"
+                     unique="true">
+            <column name="NAME"/>
         </createIndex>
 
         <addForeignKeyConstraint baseColumnNames="GROUP_ID"

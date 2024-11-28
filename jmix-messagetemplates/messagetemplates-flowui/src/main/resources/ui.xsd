@@ -65,6 +65,7 @@
         <xs:attribute name="id" type="xs:string" use="required"/>
         <xs:attribute name="label" type="layout:resourceString"/>
         <xs:attribute name="category" type="layout:resourceString"/>
+        <xs:attribute name="icon" type="xs:string"/>
 
         <xs:attribute name="content" type="xs:string"/>
         <xs:attribute name="attributes" type="xs:string"/>

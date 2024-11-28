@@ -4,6 +4,7 @@
     <menu id="messagetemplates" title="msg://io.jmix.messagetemplatesflowui/menu.messagetemplates.title">
         <item view="msgtmp_MessageTemplate.list" title="msg://io.jmix.messagetemplatesflowui.view.messagetemplate/MessageTemplateListView.title"/>
         <item view="msgtmp_MessageTemplateGroup.list" title="msg://io.jmix.messagetemplatesflowui.view.messagetemplategroup/MessageTemplateGroupListView.title"/>
+        <item view="msgtmp_MessageTemplateBlock.list" title="msg://io.jmix.messagetemplatesflowui.view.messagetemplateblock/MessageTemplateBlockListView.title"/>
     </menu>
 
 </menu-config>

@@ -20,6 +20,7 @@ import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ResizeMixin} from '@vaadin/component-base/src/resize-mixin.js';
 import {PolymerElement} from '@polymer/polymer/polymer-element.js';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {Iconset} from '@vaadin/icon/vaadin-iconset.js';
 
 class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement))) {
 
@@ -178,11 +179,14 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
     updateBlocks(blocks) {
         if (this._editor === undefined) {
             this._blocksFromServer = blocks.map(block => {
-                if (block.attributes === undefined) {
-                    return block;
+                if (block.attributes !== undefined) {
+                    block.attributes = JSON.parse(block.attributes);
                 }
 
-                block.attributes = JSON.parse(block.attributes);
+                if (block.icon !== undefined) {
+                    block.media = this.getSvgIcon(block.icon);
+                }
+
                 return block;
             });
         } else {
@@ -191,7 +195,8 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
                     label: block.label,
                     content: block.content,
                     category: block.category,
-                    attributes: block.attributes !== undefined ? JSON.parse(block.attributes) : undefined
+                    attributes: block.attributes !== undefined ? JSON.parse(block.attributes) : undefined,
+                    media: block.icon !== undefined ? this.getSvgIcon(block.icon) : undefined
                 });
             });
         }
@@ -252,6 +257,18 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
         }
 
         return optionMap;
+    }
+
+    /** @private */
+    getSvgIcon(iconName) {
+        const iconSvg = Iconset.getIconSvg(iconName);
+        if (typeof iconSvg.svg == 'symbol') {
+            return undefined;
+        }
+
+        return `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                    ${iconSvg.svg.values[0].values[0]}
+                    </svg>`;
     }
 }
 

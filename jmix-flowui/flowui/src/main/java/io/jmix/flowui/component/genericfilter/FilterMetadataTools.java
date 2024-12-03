@@ -123,10 +123,10 @@ public class FilterMetadataTools {
     protected boolean isMetaPropertyPathAllowedJpaAware(MetaPropertyPath propertyPath, String query) {
         return metadataTools.isJpa(propertyPath)
                 || isKeyValueMetaClass(propertyPath)
-                && isKeyValueQueryAllowed(propertyPath, query)
+                    && isKeyValueQueryAllowed(propertyPath, query)
                 || isCrossDataStoreReferenceAllowed(propertyPath)
                 || componentProperties.isFilterShowNonJpaProperties()
-                && !belongToCrossDataStoreReference(propertyPath, query);
+                    && !isNestedInCrossDataStoreReference(propertyPath);
     }
 
     protected boolean isKeyValueQueryAllowed(MetaPropertyPath propertyPath, String query) {
@@ -136,6 +136,7 @@ public class FilterMetadataTools {
 
     protected boolean isCrossDataStoreReferenceAllowed(MetaPropertyPath propertyPath) {
         return isCrossDataStoreReference(propertyPath.getMetaProperty())
+                && propertyPath.getMetaProperty().getDomain().equals(propertyPath.getMetaClass())
                 && !isKeyValueMetaClass(propertyPath);
     }
 
@@ -150,14 +151,17 @@ public class FilterMetadataTools {
                 metaProperty) != null;
     }
 
-    protected boolean belongToCrossDataStoreReference(MetaPropertyPath propertyPath, String query) {
-        MetaClass mainFromMetaClass = getMainFromMetaClass(query);
-        MetaProperty metaProperty = propertyPath.getMetaProperty();
-
-        return metaProperty.getStore().getDescriptor().isJpa() &&
-                !mainFromMetaClass.getStore().getName().equals(metaProperty.getStore().getName());
+    protected boolean isNestedInCrossDataStoreReference(MetaPropertyPath propertyPath) {
+        for (int i = 0; i < propertyPath.getMetaProperties().length - 1; i++) {
+            MetaProperty parentMetaProperty = propertyPath.getMetaProperties()[i];
+            if (isCrossDataStoreReference(parentMetaProperty)) {
+                return true;
+            }
+        }
+        return false;
     }
 
+    // TODO KK: consider removing this method because cross-data-store references cannot be used in key-value queries
     protected boolean isKeyValueCrossDataStoreReferenceAllowed(MetaPropertyPath propertyPath, String query) {
         MetaClass filterMetaClass = propertyPath.getMetaClass();
         if (!(filterMetaClass instanceof KeyValueMetaClass) || Strings.isNullOrEmpty(query)) {
@@ -173,20 +177,16 @@ public class FilterMetadataTools {
             return propertyMetaClass == null
                     || domainMetaClass.getStore().getName().equals(propertyMetaClass.getStore().getName());
         } else if (propertyMetaClass != null) {
-            MetaClass mainFromMetaClass = getMainFromMetaClass(query);
+            String entityName = query.substring(query.indexOf("from") + 4)
+                    .trim()
+                    .split(" ")[0];
+
+            MetaClass mainFromMetaClass = metadata.getClass(entityName);
             return mainFromMetaClass.getStore().getName().equals(propertyMetaClass.getStore().getName())
                     || propertyMetaClass instanceof KeyValueMetaClass;
         } else {
             return true;
         }
-    }
-
-    protected MetaClass getMainFromMetaClass(String query) {
-        String entityName = query.substring(query.indexOf("from") + 4)
-                .trim()
-                .split(" ")[0];
-
-        return metadata.getClass(entityName);
     }
 
     protected boolean isKeyValueMetaClass(MetaPropertyPath propertyPath) {

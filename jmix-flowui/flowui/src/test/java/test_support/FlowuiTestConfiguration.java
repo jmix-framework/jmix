@@ -16,7 +16,10 @@
 
 package test_support;
 
-import io.jmix.core.*;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.core.JmixModules;
+import io.jmix.core.Resources;
+import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
@@ -27,22 +30,28 @@ import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
+import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.testassist.vaadin.TestServletContext;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.servlet.ServletContext;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.servlet.ServletContext;
 import javax.sql.DataSource;
 
 @Configuration
@@ -92,6 +101,39 @@ public class FlowuiTestConfiguration {
     @Primary
     TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
         return new TransactionTemplate(transactionManager);
+    }
+
+    @Bean
+    DataSource db1DataSource() {
+        return new EmbeddedDatabaseBuilder()
+                .generateUniqueName(true)
+                .setType(EmbeddedDatabaseType.HSQL)
+                .build();
+    }
+
+    @Bean
+    LocalContainerEntityManagerFactoryBean db1EntityManagerFactory(JpaVendorAdapter jpaVendorAdapter,
+                                                                   DbmsSpecifics dbmsSpecifics,
+                                                                   JmixModules jmixModules,
+                                                                   Resources resources) {
+        return new JmixEntityManagerFactoryBean("db1", db1DataSource(), jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
+    }
+
+    @Bean
+    JpaTransactionManager db1TransactionManager(
+            @Qualifier("db1EntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+        return new JmixEclipselinkTransactionManager("db1", entityManagerFactory);
+    }
+
+    @Bean(name = "test_InMemoryStoreDescriptor")
+    TestInMemoryStoreDescriptor inMemoryStoreDescriptor() {
+        return new TestInMemoryStoreDescriptor();
+    }
+
+    @Bean(name = "test_InMemoryDataStore")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    TestInMemoryDataStore inMemoryDataStore() {
+        return new TestInMemoryDataStore();
     }
 
     @Bean

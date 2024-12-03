@@ -40,7 +40,8 @@ import test_support.entity.soft_delete.sd_restore.Student
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 
-import static org.assertj.core.api.Assertions.assertThat
+import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertNotEquals
 
 class SoftDeleteTest extends DataSpec {
 
@@ -119,7 +120,7 @@ class SoftDeleteTest extends DataSpec {
         try {
             var studentsBefore = dataManager.load(Student.class).all().list()
 
-            assertThat(studentsBefore.size()).isEqualTo(1)
+            assertEquals(1, studentsBefore.size())
 
             dataManager.load(Student).all().hint(PersistenceHints.SOFT_DELETION, false).list()
             checkSoftDeletionState()
@@ -133,20 +134,21 @@ class SoftDeleteTest extends DataSpec {
             var names = dataManager.loadValues("select e.name from testsd_Student e")
                     .hint(PersistenceHints.SOFT_DELETION, false)
                     .list()
-            assertThat(names.size()).isEqualTo(2)
+            assertEquals(2, names.size())
             checkSoftDeletionState()
 
             var vlc = new ValueLoadContext().setHint(PersistenceHints.SOFT_DELETION, false)
             vlc.setQueryString("select e.name from testsd_Student e")
-            assertThat(dataManager.getCount(vlc)).isEqualTo(2L)
+            assertEquals(2L, dataManager.getCount(vlc))
             checkSoftDeletionState()
 
             dataManager.save(new SaveContext().removing(dummyGroup).setHint(PersistenceHints.SOFT_DELETION, false))
             checkSoftDeletionState()
 
-            transactionManager.commit(tx);
+            transactionManager.commit(tx)
         } catch (Exception e) {
-            transactionManager.rollback(tx);
+            transactionManager.rollback(tx)
+            throw e
         }
 
         then:
@@ -158,10 +160,10 @@ class SoftDeleteTest extends DataSpec {
     }
 
     private void checkSoftDeletionState() {
-        assertThat(entityManager.getProperties().get(PersistenceHints.SOFT_DELETION)).isNotEqualTo(false)
+        assertNotEquals(false, entityManager.getProperties().get(PersistenceHints.SOFT_DELETION))
 
         var studentsAfter = entityManager.createQuery("select e from testsd_Student e", Student.class)
                 .getResultList();
-        assertThat(studentsAfter.size()).isEqualTo(1)
+        assertEquals(1, studentsAfter.size())
     }
 }

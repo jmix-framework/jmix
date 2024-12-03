@@ -138,14 +138,18 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     @Override
     protected Object loadOne(LoadContext<?> context) {
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
+        boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
+        try {
+            em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
-        em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
+            Query query = createQuery(em, context, false);
 
-        Query query = createQuery(em, context, false);
+            List<Object> resultList = executeQuery(query, isSingleResult(context));
 
-        List<Object> resultList = executeQuery(query, isSingleResult(context));
-
-        return resultList.isEmpty() ? null : resultList.get(0);
+            return resultList.isEmpty() ? null : resultList.get(0);
+        } finally {
+            em.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBefore);
+        }
     }
 
     @Override
@@ -156,17 +160,22 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         queryResultsManager.savePreviousQueryResults(context);
 
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
-        em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
+        boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
+        try {
+            em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
-        if (!context.getIds().isEmpty()) {
-            if (metadataTools.hasCompositePrimaryKey(metaClass)) {
-                return loadAllByIds(context, em);
+            if (!context.getIds().isEmpty()) {
+                if (metadataTools.hasCompositePrimaryKey(metaClass)) {
+                    return loadAllByIds(context, em);
+                } else {
+                    return loadAllByIdBatches(context, em);
+                }
             } else {
-                return loadAllByIdBatches(context, em);
+                Query query = createQuery(em, context, false);
+                return executeQuery(query, false);
             }
-        } else {
-            Query query = createQuery(em, context, false);
-            return executeQuery(query, false);
+        } finally {
+            em.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBefore);
         }
     }
 
@@ -212,12 +221,18 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         queryResultsManager.savePreviousQueryResults(context);
 
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
-        em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
-        Query query = createQuery(em, context, true);
-        Number result = (Number) query.getSingleResult();
+        boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
+        try {
+            em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
-        return result.longValue();
+            Query query = createQuery(em, context, true);
+            Number result = (Number) query.getSingleResult();
+
+            return result.longValue();
+        } finally {
+            em.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBefore);
+        }
     }
 
 
@@ -336,21 +351,32 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     @Override
     protected List<Object> loadAllValues(ValueLoadContext context) {
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
-        em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
+        boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
+        try {
+            em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
-        Query query = createLoadQuery(em, context, false);
-        return executeQuery(query, false);
+            Query query = createLoadQuery(em, context, false);
+            return executeQuery(query, false);
+        } finally {
+            em.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBefore);
+        }
     }
 
     @Override
     protected long countAllValues(ValueLoadContext context) {
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
-        em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
-        Query query = createLoadQuery(em, context, true);
-        Number result = (Number) query.getSingleResult();
+        boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
+        try {
+            em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
-        return result.longValue();
+            Query query = createLoadQuery(em, context, true);
+            Number result = (Number) query.getSingleResult();
+
+            return result.longValue();
+        } finally {
+            em.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBefore);
+        }
     }
 
     @Override

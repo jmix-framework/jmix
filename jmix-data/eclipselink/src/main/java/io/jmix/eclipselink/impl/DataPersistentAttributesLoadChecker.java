@@ -17,6 +17,7 @@
 package io.jmix.eclipselink.impl;
 
 import io.jmix.core.Entity;
+import io.jmix.core.EntityEntry;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.NoValueCollection;
 import io.jmix.core.impl.CorePersistentAttributesLoadChecker;
@@ -64,7 +65,7 @@ public class DataPersistentAttributesLoadChecker extends CorePersistentAttribute
     @Override
     protected boolean isLoadedSpecificCheck(Object entity, String property, MetaClass metaClass, MetaProperty metaProperty) {
         if (metadataTools.isJpaEmbeddable(metaClass)
-                || entity instanceof Entity && getEntityEntry(entity).isNew()) {
+                || entity instanceof Entity && entityIsNewOrPatch(entity)) {
             // this is a workaround for unexpected EclipseLink behaviour when PersistenceUnitUtil.isLoaded
             // throws exception if embedded entity refers to persistent entity
             return checkIsLoadedWithGetter(entity, property);
@@ -84,5 +85,10 @@ public class DataPersistentAttributesLoadChecker extends CorePersistentAttribute
 
         EntityManagerFactory emf = storeAwareLocator.getEntityManagerFactory(metaClass.getStore().getName());
         return emf.getPersistenceUnitUtil().isLoaded(entity, property);
+    }
+
+    private boolean entityIsNewOrPatch(Object entity) {
+        EntityEntry entityEntry = getEntityEntry(entity);
+        return entityEntry.isNew() || (!entityEntry.isNew() && !entityEntry.isDetached() && !entityEntry.isManaged());
     }
 }

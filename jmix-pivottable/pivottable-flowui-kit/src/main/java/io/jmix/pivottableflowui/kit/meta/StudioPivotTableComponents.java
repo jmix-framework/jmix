@@ -82,5 +82,5 @@ public interface StudioPivotTableComponents {
                             category = StudioProperty.Category.SIZE)
             }
     )
-    JmixPivotTable<?> pivotTable();
+    JmixPivotTable pivotTable();
 }

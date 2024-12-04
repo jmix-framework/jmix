@@ -966,6 +966,7 @@ public class Options implements Serializable {
     public boolean isCompressBundle() {
         return compressBundle;
     }
+
     public boolean isReactEnabled() {
         return reactEnable;
     }

@@ -9,10 +9,9 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { createHash } from 'crypto';
 import * as net from 'net';
 
-import { processThemeResources } from '#buildFolder#/plugins/application-theme-plugin/theme-handle.js';
-import { rewriteCssUrls } from '#buildFolder#/plugins/theme-loader/theme-loader-utils.js';
-import { addFunctionComponentSourceLocationBabel } from '#buildFolder#/plugins/react-function-location-plugin/react-function-location-plugin.js';
-import settings from '#settingsImport#';
+import { processThemeResources } from './build/plugins/application-theme-plugin/theme-handle.js';
+import { rewriteCssUrls } from './build/plugins/theme-loader/theme-loader-utils.js';
+import settings from './build/vaadin-dev-server-settings.json';
 import {
   AssetInfo,
   ChunkInfo,
@@ -29,14 +28,11 @@ import * as rollup from 'rollup';
 import brotli from 'rollup-plugin-brotli';
 import replace from '@rollup/plugin-replace';
 import checker from 'vite-plugin-checker';
-import postcssLit from '#buildFolder#/plugins/rollup-plugin-postcss-lit-custom/rollup-plugin-postcss-lit.js';
+import postcssLit from './build/plugins/rollup-plugin-postcss-lit-custom/rollup-plugin-postcss-lit.js';
 
 import { createRequire } from 'module';
 
 import { visualizer } from 'rollup-plugin-visualizer';
-import reactPlugin from '@vitejs/plugin-react';
-
-//#vitePluginFileSystemRouterImport#
 
 // Make `require` compatible with ES modules
 const require = createRequire(import.meta.url);
@@ -57,7 +53,7 @@ const statsFolder = path.resolve(__dirname, devBundle ? settings.devBundleStatsO
 const statsFile = path.resolve(statsFolder, 'stats.json');
 const bundleSizeFile = path.resolve(statsFolder, 'bundle-size.html');
 const nodeModulesFolder = path.resolve(__dirname, 'node_modules');
-const webComponentTags = '#webComponentTags#';
+const webComponentTags = '';
 
 const projectIndexHtml = path.resolve(frontendFolder, 'index.html');
 
@@ -78,8 +74,8 @@ const themeOptions = {
   themeResourceFolder: path.resolve(themeResourceFolder, settings.themeFolder),
   themeProjectFolders: themeProjectFolders,
   projectStaticAssetsOutputFolder: devBundle
-    ? path.resolve(devBundleFolder, '../assets')
-    : path.resolve(__dirname, settings.staticOutput),
+      ? path.resolve(devBundleFolder, '../assets')
+      : path.resolve(__dirname, settings.staticOutput),
   frontendGeneratedFolder: path.resolve(frontendFolder, settings.generatedFolder)
 };
 
@@ -142,13 +138,13 @@ function buildSWPlugin(opts): PluginOption {
     };
     plugins.unshift(resolvePlugin); // Put resolve first
     plugins.push(
-      replace({
-        values: {
-          'process.env.NODE_ENV': JSON.stringify(config.mode),
-          ...config.define
-        },
-        preventAssignment: true
-      })
+        replace({
+          values: {
+            'process.env.NODE_ENV': JSON.stringify(config.mode),
+            ...config.define
+          },
+          preventAssignment: true
+        })
     );
     if (additionalPlugins) {
       plugins.push(...additionalPlugins);
@@ -195,9 +191,7 @@ function buildSWPlugin(opts): PluginOption {
       }
     },
     async closeBundle() {
-      if (!devMode) {
-        await build('write', [injectManifestToSWPlugin(), brotli()]);
-      }
+      await build('write', [injectManifestToSWPlugin(), brotli()]);
     }
   };
 }
@@ -221,34 +215,34 @@ function statsExtracterPlugin(): PluginOption {
     async writeBundle(options: OutputOptions, bundle: { [fileName: string]: AssetInfo | ChunkInfo }) {
       const modules = Object.values(bundle).flatMap((b) => (b.modules ? Object.keys(b.modules) : []));
       const nodeModulesFolders = modules
-        .map((id) => id.replace(/\\/g, '/'))
-        .filter((id) => id.startsWith(nodeModulesFolder.replace(/\\/g, '/')))
-        .map((id) => id.substring(nodeModulesFolder.length + 1));
+          .map((id) => id.replace(/\\/g, '/'))
+          .filter((id) => id.startsWith(nodeModulesFolder.replace(/\\/g, '/')))
+          .map((id) => id.substring(nodeModulesFolder.length + 1));
       const npmModules = nodeModulesFolders
-        .map((id) => id.replace(/\\/g, '/'))
-        .map((id) => {
-          const parts = id.split('/');
-          if (id.startsWith('@')) {
-            return parts[0] + '/' + parts[1];
-          } else {
-            return parts[0];
-          }
-        })
-        .sort()
-        .filter((value, index, self) => self.indexOf(value) === index);
+          .map((id) => id.replace(/\\/g, '/'))
+          .map((id) => {
+            const parts = id.split('/');
+            if (id.startsWith('@')) {
+              return parts[0] + '/' + parts[1];
+            } else {
+              return parts[0];
+            }
+          })
+          .sort()
+          .filter((value, index, self) => self.indexOf(value) === index);
       const npmModuleAndVersion = Object.fromEntries(npmModules.map((module) => [module, getVersion(module)]));
       const cvdls = Object.fromEntries(
-        npmModules
-          .filter((module) => getCvdlName(module) != null)
-          .map((module) => [module, { name: getCvdlName(module), version: getVersion(module) }])
+          npmModules
+              .filter((module) => getCvdlName(module) != null)
+              .map((module) => [module, { name: getCvdlName(module), version: getVersion(module) }])
       );
 
       mkdirSync(path.dirname(statsFile), { recursive: true });
       const projectPackageJson = JSON.parse(readFileSync(projectPackageJsonFile, { encoding: 'utf-8' }));
 
       const entryScripts = Object.values(bundle)
-        .filter((bundle) => bundle.isEntry)
-        .map((bundle) => bundle.fileName);
+          .filter((bundle) => bundle.isEntry)
+          .map((bundle) => bundle.fileName);
 
       const generatedIndexHtml = path.resolve(buildOutputFolder, 'index.html');
       const customIndexData: string = readFileSync(projectIndexHtml, { encoding: 'utf-8' });
@@ -272,14 +266,14 @@ function statsExtracterPlugin(): PluginOption {
         const content: string = readFileSync(filename, { encoding: 'utf-8' });
         const lines = content.split('\n');
         const staticImports = lines
-          .filter((line) => line.startsWith('import '))
-          .map((line) => line.substring(line.indexOf("'") + 1, line.lastIndexOf("'")))
-          .map((line) => (line.includes('?') ? line.substring(0, line.lastIndexOf('?')) : line));
+            .filter((line) => line.startsWith('import '))
+            .map((line) => line.substring(line.indexOf("'") + 1, line.lastIndexOf("'")))
+            .map((line) => (line.includes('?') ? line.substring(0, line.lastIndexOf('?')) : line));
         const dynamicImports = lines
-          .filter((line) => line.includes('import('))
-          .map((line) => line.replace(/.*import\(/, ''))
-          .map((line) => line.split(/'/)[1])
-          .map((line) => (line.includes('?') ? line.substring(0, line.lastIndexOf('?')) : line));
+            .filter((line) => line.includes('import('))
+            .map((line) => line.replace(/.*import\(/, ''))
+            .map((line) => line.split(/'/)[1])
+            .map((line) => (line.includes('?') ? line.substring(0, line.lastIndexOf('?')) : line));
 
         staticImports.forEach((staticImport) => result.add(staticImport));
 
@@ -291,8 +285,8 @@ function statsExtracterPlugin(): PluginOption {
 
       const generatedImportsSet = new Set<string>();
       parseImports(
-        path.resolve(themeOptions.frontendGeneratedFolder, 'flow', 'generated-flow-imports.js'),
-        generatedImportsSet
+          path.resolve(themeOptions.frontendGeneratedFolder, 'flow', 'generated-flow-imports.js'),
+          generatedImportsSet
       );
       const generatedImports = Array.from(generatedImportsSet).sort();
 
@@ -300,74 +294,43 @@ function statsExtracterPlugin(): PluginOption {
 
       const projectFileExtensions = ['.js', '.js.map', '.ts', '.ts.map', '.tsx', '.tsx.map', '.css', '.css.map'];
 
-      const isThemeComponentsResource = (id: string) =>
-          id.startsWith(themeOptions.frontendGeneratedFolder.replace(/\\/g, '/'))
-              && id.match(/.*\/jar-resources\/themes\/[^\/]+\/components\//);
-
-      const isGeneratedWebComponentResource = (id: string) =>
-          id.startsWith(themeOptions.frontendGeneratedFolder.replace(/\\/g, '/'))
-              && id.match(/.*\/flow\/web-components\//);
-
-      const isFrontendResourceCollected = (id: string) =>
-          !id.startsWith(themeOptions.frontendGeneratedFolder.replace(/\\/g, '/'))
-          || isThemeComponentsResource(id)
-          || isGeneratedWebComponentResource(id);
-
       // collects project's frontend resources in frontend folder, excluding
-      // 'generated' sub-folder, except for legacy shadow DOM stylesheets
-      // packaged in `theme/components/` folder
-      // and generated web component resources in `flow/web-components` folder.
+      // 'generated' sub-folder
       modules
-        .map((id) => id.replace(/\\/g, '/'))
-        .filter((id) => id.startsWith(frontendFolder.replace(/\\/g, '/')))
-        .filter(isFrontendResourceCollected)
-        .map((id) => id.substring(frontendFolder.length + 1))
-        .map((line: string) => (line.includes('?') ? line.substring(0, line.lastIndexOf('?')) : line))
-        .forEach((line: string) => {
-          // \r\n from windows made files may be used so change to \n
-          const filePath = path.resolve(frontendFolder, line);
-          if (projectFileExtensions.includes(path.extname(filePath))) {
-            const fileBuffer = readFileSync(filePath, { encoding: 'utf-8' }).replace(/\r\n/g, '\n');
-            frontendFiles[line] = createHash('sha256').update(fileBuffer, 'utf8').digest('hex');
-          }
-        });
+          .map((id) => id.replace(/\\/g, '/'))
+          .filter((id) => id.startsWith(frontendFolder.replace(/\\/g, '/')))
+          .filter((id) => !id.startsWith(themeOptions.frontendGeneratedFolder.replace(/\\/g, '/')))
+          .map((id) => id.substring(frontendFolder.length + 1))
+          .map((line: string) => (line.includes('?') ? line.substring(0, line.lastIndexOf('?')) : line))
+          .forEach((line: string) => {
+            // \r\n from windows made files may be used so change to \n
+            const filePath = path.resolve(frontendFolder, line);
+            if (projectFileExtensions.includes(path.extname(filePath))) {
+              const fileBuffer = readFileSync(filePath, { encoding: 'utf-8' }).replace(/\r\n/g, '\n');
+              frontendFiles[line] = createHash('sha256').update(fileBuffer, 'utf8').digest('hex');
+            }
+          });
 
       // collects frontend resources from the JARs
       generatedImports
-        .filter((line: string) => line.includes('generated/jar-resources'))
-        .forEach((line: string) => {
-          let filename = line.substring(line.indexOf('generated'));
-          // \r\n from windows made files may be used ro remove to be only \n
-          const fileBuffer = readFileSync(path.resolve(frontendFolder, filename), { encoding: 'utf-8' }).replace(
-            /\r\n/g,
-            '\n'
-          );
-          const hash = createHash('sha256').update(fileBuffer, 'utf8').digest('hex');
+          .filter((line: string) => line.includes('generated/jar-resources'))
+          .forEach((line: string) => {
+            let filename = line.substring(line.indexOf('generated'));
+            // \r\n from windows made files may be used ro remove to be only \n
+            const fileBuffer = readFileSync(path.resolve(frontendFolder, filename), { encoding: 'utf-8' }).replace(
+                /\r\n/g,
+                '\n'
+            );
+            const hash = createHash('sha256').update(fileBuffer, 'utf8').digest('hex');
 
-          const fileKey = line.substring(line.indexOf('jar-resources/') + 14);
-          frontendFiles[fileKey] = hash;
-        });
-      // collects and hash rest of the Frontend resources excluding files in /generated/ and /themes/
-      // and files already in frontendFiles.
-      let frontendFolderAlias = "Frontend";
-      generatedImports
-        .filter((line: string) => line.startsWith(frontendFolderAlias + '/'))
-        .filter((line: string) => !line.startsWith(frontendFolderAlias + '/generated/'))
-        .filter((line: string) => !line.startsWith(frontendFolderAlias + '/themes/'))
-        .map((line) => line.substring(frontendFolderAlias.length + 1))
-        .filter((line: string) => !frontendFiles[line])
-        .forEach((line: string) => {
-          const filePath = path.resolve(frontendFolder, line);
-          if (projectFileExtensions.includes(path.extname(filePath)) && existsSync(filePath)) {
-            const fileBuffer = readFileSync(filePath, { encoding: 'utf-8' }).replace(/\r\n/g, '\n');
-            frontendFiles[line] = createHash('sha256').update(fileBuffer, 'utf8').digest('hex');
-          }
-        });
+            const fileKey = line.substring(line.indexOf('jar-resources/') + 14);
+            frontendFiles[fileKey] = hash;
+          });
       // If a index.ts exists hash it to be able to see if it changes.
       if (existsSync(path.resolve(frontendFolder, 'index.ts'))) {
         const fileBuffer = readFileSync(path.resolve(frontendFolder, 'index.ts'), { encoding: 'utf-8' }).replace(
-          /\r\n/g,
-          '\n'
+            /\r\n/g,
+            '\n'
         );
         frontendFiles[`index.ts`] = createHash('sha256').update(fileBuffer, 'utf8').digest('hex');
       }
@@ -379,8 +342,8 @@ function statsExtracterPlugin(): PluginOption {
           const themeJson = path.resolve(themesFolder, themeFolder, 'theme.json');
           if (existsSync(themeJson)) {
             themeJsonContents[path.basename(themeFolder)] = readFileSync(themeJson, { encoding: 'utf-8' }).replace(
-              /\r\n/g,
-              '\n'
+                /\r\n/g,
+                '\n'
             );
           }
         });
@@ -411,11 +374,11 @@ function statsExtracterPlugin(): PluginOption {
 }
 function vaadinBundlesPlugin(): PluginOption {
   type ExportInfo =
-    | string
-    | {
-        namespace?: string;
-        source: string;
-      };
+      | string
+      | {
+    namespace?: string;
+    source: string;
+  };
 
   type ExposeInfo = {
     exports: ExportInfo[];
@@ -531,17 +494,17 @@ function vaadinBundlesPlugin(): PluginOption {
     },
     async config(config) {
       return mergeConfig(
-        {
-          optimizeDeps: {
-            exclude: [
-              // Vaadin bundle
-              '@vaadin/bundles',
-              ...Object.keys(vaadinBundleJson.packages),
-              '@vaadin/vaadin-material-styles'
-            ]
-          }
-        },
-        config
+          {
+            optimizeDeps: {
+              exclude: [
+                // Vaadin bundle
+                '@vaadin/bundles',
+                ...Object.keys(vaadinBundleJson.packages),
+                '@vaadin/vaadin-material-styles'
+              ]
+            }
+          },
+          config
       );
     },
     load(rawId) {
@@ -599,8 +562,8 @@ function themePlugin(opts): PluginOption {
       // this may happen for example during Java hot reload when updating
       // @Theme annotation value
       if (
-        path.resolve(themeOptions.frontendGeneratedFolder, 'theme.js') === importer &&
-        !existsSync(path.resolve(themeOptions.frontendGeneratedFolder, id))
+          path.resolve(themeOptions.frontendGeneratedFolder, 'theme.js') === importer &&
+          !existsSync(path.resolve(themeOptions.frontendGeneratedFolder, id))
       ) {
         console.debug('Generate theme file ' + id + ' not existing. Processing theme resource');
         processThemeResources(fullThemeOptions, console);
@@ -609,6 +572,7 @@ function themePlugin(opts): PluginOption {
       if (!id.startsWith(settings.themeFolder)) {
         return;
       }
+
       for (const location of [themeResourceFolder, frontendFolder]) {
         const result = await this.resolve(path.resolve(location, id));
         if (result) {
@@ -620,14 +584,13 @@ function themePlugin(opts): PluginOption {
       // rewrite urls for the application theme css files
       const [bareId, query] = id.split('?');
       if (
-        (!bareId?.startsWith(themeFolder) && !bareId?.startsWith(themeOptions.themeResourceFolder)) ||
-        !bareId?.endsWith('.css')
+          (!bareId?.startsWith(themeFolder) && !bareId?.startsWith(themeOptions.themeResourceFolder)) ||
+          !bareId?.endsWith('.css')
       ) {
         return;
       }
-      const resourceThemeFolder = bareId.startsWith(themeFolder) ? themeFolder : themeOptions.themeResourceFolder;
-      const [themeName] =  bareId.substring(resourceThemeFolder.length + 1).split('/');
-      return rewriteCssUrls(raw, path.dirname(bareId), path.resolve(resourceThemeFolder, themeName), console, opts);
+      const [themeName] = bareId.substring(themeFolder.length + 1).split('/');
+      return rewriteCssUrls(raw, path.dirname(bareId), path.resolve(themeFolder, themeName), console, opts);
     }
   };
 }
@@ -647,6 +610,8 @@ function runWatchDog(watchDogPort, watchDogHost) {
 
   client.connect(watchDogPort, watchDogHost || 'localhost');
 }
+
+let spaMiddlewareForceRemoved = false;
 
 const allowedFrontendFolders = [frontendFolder, nodeModulesFolder];
 
@@ -687,7 +652,6 @@ function preserveUsageStats() {
 
 export const vaadinConfig: UserConfigFn = (env) => {
   const devMode = env.mode === 'development';
-  const productionMode = !devMode && !devBundle
 
   if (devMode && process.env.watchDogPort) {
     // Open a connection with the Java dev-mode handler in order to finish
@@ -698,7 +662,6 @@ export const vaadinConfig: UserConfigFn = (env) => {
   return {
     root: frontendFolder,
     base: '',
-    publicDir: false,
     resolve: {
       alias: {
         '@vaadin/flow-frontend': jarResourcesFolder,
@@ -718,11 +681,9 @@ export const vaadinConfig: UserConfigFn = (env) => {
       }
     },
     build: {
-      minify: productionMode,
       outDir: buildOutputFolder,
       emptyOutDir: devBundle,
       assetsDir: 'VAADIN/build',
-      target: ["esnext", "safari15"],
       rollupOptions: {
         input: {
           indexhtml: projectIndexHtml,
@@ -758,7 +719,7 @@ export const vaadinConfig: UserConfigFn = (env) => {
       ]
     },
     plugins: [
-      productionMode && brotli(),
+      !devMode && !devBundle && brotli(),
       devMode && vaadinBundlesPlugin(),
       devMode && showRecompileReason(),
       settings.offlineEnabled && buildSWPlugin({ devMode }),
@@ -775,35 +736,26 @@ export const vaadinConfig: UserConfigFn = (env) => {
           new RegExp('.*/.*\\?html-proxy.*')
         ]
       }),
-      // The React plugin provides fast refresh and debug source info
-      reactPlugin({
-        include: '**/*.tsx',
-        babel: {
-          // We need to use babel to provide the source information for it to be correct
-          // (otherwise Babel will slightly rewrite the source file and esbuild generate source info for the modified file)
-          presets: [['@babel/preset-react', { runtime: 'automatic', development: !productionMode }]],
-          // React writes the source location for where components are used, this writes for where they are defined
-          plugins: [
-            !productionMode && addFunctionComponentSourceLocationBabel()
-          ].filter(Boolean)
-        }
-      }),
       {
         name: 'vaadin:force-remove-html-middleware',
-        configureServer(server) {
-          return () => {
-            server.middlewares.stack = server.middlewares.stack.filter((mw) => {
-              const handleName = `${mw.handle}`;
-              return !handleName.includes('viteHtmlFallbackMiddleware');
-            });
-          };
-        },
+        transformIndexHtml: {
+          enforce: 'pre',
+          transform(_html, { server }) {
+            if (server && !spaMiddlewareForceRemoved) {
+              server.middlewares.stack = server.middlewares.stack.filter((mw) => {
+                const handleName = '' + mw.handle;
+                return !handleName.includes('viteHtmlFallbackMiddleware');
+              });
+              spaMiddlewareForceRemoved = true;
+            }
+          }
+        }
       },
       hasExportedWebComponents && {
         name: 'vaadin:inject-entrypoints-to-web-component-html',
         transformIndexHtml: {
-          order: 'pre',
-          handler(_html, { path, server }) {
+          enforce: 'pre',
+          transform(_html, { path, server }) {
             if (path !== '/web-component.html') {
               return;
             }
@@ -821,8 +773,8 @@ export const vaadinConfig: UserConfigFn = (env) => {
       {
         name: 'vaadin:inject-entrypoints-to-index-html',
         transformIndexHtml: {
-          order: 'pre',
-          handler(_html, { path, server }) {
+          enforce: 'pre',
+          transform(_html, { path, server }) {
             if (path !== '/index.html') {
               return;
             }
@@ -848,8 +800,7 @@ export const vaadinConfig: UserConfigFn = (env) => {
       checker({
         typescript: true
       }),
-      productionMode && visualizer({ brotliSize: true, filename: bundleSizeFile })
-      //#vitePluginFileSystemRouter#
+      !devMode && visualizer({ brotliSize: true, filename: bundleSizeFile })
     ]
   };
 };

@@ -67,14 +67,16 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
      *
      * Addresses the issue https://github.com/vaadin/spring/issues/502
      */
-    private static final class DevModeHandlerAlreadyStartedAttribute
-            implements Serializable {
+    private static final class DevModeHandlerAlreadyStartedAttribute implements Serializable {
     }
 
     private static final Logger log = LoggerFactory.getLogger(DevModeHandlerManagerImpl.class);
     private DevModeHandler devModeHandler;
     private ThemeFilesSynchronizer projectThemeFilesWatcher;
-    final private Set<Closeable> watchers = new HashSet<>();
+    final private Set<Command> shutdownCommands = new HashSet<>();
+
+    private String applicationUrl;
+    private boolean fullyStarted = false;
 
     @Override
     public Class<?>[] getHandlesTypes() {
@@ -115,6 +117,7 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
 
             startWatchingAndSyncThemesFolder(context);
             watchExternalDependencies(context, config);
+            setFullyStarted(true);
         });
         setDevModeStarted(context);
         // this.browserLauncher = new BrowserLauncher(context);
@@ -125,7 +128,7 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
         File frontendFolder = FrontendUtils.getProjectFrontendDir(config);
         File jarFrontendResourcesFolder = FrontendUtils
                 .getJarResourcesFolder(frontendFolder);
-        watchers.add(new ExternalDependencyWatcher(context,
+        registerWatcherShutdownCommand(new ExternalDependencyWatcher(context,
                 jarFrontendResourcesFolder));
 
     }
@@ -150,7 +153,8 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
             for (String themeName : activeThemes) {
                 File themeFolder = ThemeUtils.getThemeFolder(
                         FrontendUtils.getProjectFrontendDir(config), themeName);
-                watchers.add(new ThemeLiveUpdater(themeFolder, context));
+                registerWatcherShutdownCommand(
+                        new ThemeLiveUpdater(themeFolder, context));
             }
         } catch (Exception e) {
             log.error("Failed to start live-reload for theme files", e);
@@ -170,16 +174,17 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
             log.warn("Exception when stopping projectThemeFilesWatcher", e);
         }
 
-        for (Closeable watcher : watchers) {
+        for (Command shutdownCommand : shutdownCommands) {
             try {
-                watcher.close();
-            } catch (IOException e) {
-                String message = "Failed to stop theme files watcher";
-                FrontendUtils.console(FrontendUtils.RED, message + Arrays.toString(e.getStackTrace()));
-                log.error(message, e);
+                shutdownCommand.execute();
+            } catch (Exception e) {
+                String msg = "Failed to execute shut down command %s"
+                        .formatted(shutdownCommand.getClass().getName());
+                FrontendUtils.console(FrontendUtils.RED, msg);
+                log.error(msg, e);
             }
         }
-        watchers.clear();
+        shutdownCommands.clear();
     }
 
     @Override
@@ -189,17 +194,40 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
 
     @Override
     public void setApplicationUrl(String applicationUrl) {
-        // TODO: implement
+        this.applicationUrl = applicationUrl;
+        reportApplicationUrl();
     }
 
-    @Override
-    public void registerShutdownCommand(Command command) {
-        // TODO: implement
+    private void setFullyStarted(boolean fullyStarted) {
+        this.fullyStarted = fullyStarted;
+        reportApplicationUrl();
+    }
+
+    private void reportApplicationUrl() {
+        if (fullyStarted && applicationUrl != null) {
+            log.info("Application running at {}", applicationUrl);
+        }
     }
 
     private void setDevModeStarted(VaadinContext context) {
         context.setAttribute(DevModeHandlerAlreadyStartedAttribute.class,
                 new DevModeHandlerAlreadyStartedAttribute());
+    }
+
+    private void registerWatcherShutdownCommand(Closeable watcher) {
+        registerShutdownCommand(() -> {
+            try {
+                watcher.close();
+            } catch (Exception e) {
+                log.error("Failed to stop watcher {}",
+                        watcher.getClass().getName(), e);
+            }
+        });
+    }
+
+    @Override
+    public void registerShutdownCommand(Command command) {
+        shutdownCommands.add(command);
     }
 
     /**

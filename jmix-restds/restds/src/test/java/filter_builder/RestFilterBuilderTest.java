@@ -29,6 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.TestRestDsConfiguration;
 import test_support.entity.Customer;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -284,6 +285,84 @@ class RestFilterBuilderTest {
                         "firstName": "John",
                         "lastName": "Doe"
                       }
+                    }
+                  ]
+                }""");
+    }
+
+    @Test
+    void testQueryWithInOperation() throws JsonProcessingException {
+        String query = """
+                {
+                  "property": "field1",
+                  "operator": "in",
+                  "parameterName": "param1"
+                }""";
+
+        String result = builder.build(query, null, Map.of("param1", List.of("v1", "v2")));
+
+        assertThatJsonEquals(result, """
+                {
+                  "conditions": [
+                    {
+                      "property": "field1",
+                      "operator": "in",
+                      "value": ["v1", "v2"]
+                    }
+                  ]
+                }""");
+    }
+
+    @Test
+    void testConditionWithEntityParameter() throws JsonProcessingException {
+
+        Customer customer = new Customer();
+        customer.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+        customer.setFirstName("John");
+        customer.setLastName("Doe");
+        customer.setEmail("john@example.com");
+
+        PropertyCondition propertyCondition = PropertyCondition.createWithParameterName("field1", PropertyCondition.Operation.EQUAL, "param1");
+        propertyCondition.setParameterValue(customer);
+        LogicalCondition condition = LogicalCondition.and(propertyCondition);
+
+        String result = builder.build(null, condition, null);
+
+        assertThatJsonEquals(result, """
+                {
+                  "group": "and",
+                  "conditions": [
+                    {
+                      "property": "field1",
+                      "operator": "=",
+                      "value": {
+                        "_entityName": "Customer",
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "firstName": "John",
+                        "lastName": "Doe"
+                      }
+                    }
+                  ]
+                }""");
+    }
+
+    @Test
+    void testConditionWithInOperation() throws JsonProcessingException {
+
+        PropertyCondition propertyCondition = PropertyCondition.createWithParameterName("field1", PropertyCondition.Operation.IN_LIST, "param1");
+        propertyCondition.setParameterValue(List.of("v1", "v2"));
+        LogicalCondition condition = LogicalCondition.and(propertyCondition);
+
+        String result = builder.build(null, condition, null);
+
+        assertThatJsonEquals(result, """
+                {
+                  "group": "and",
+                  "conditions": [
+                    {
+                      "property": "field1",
+                      "operator": "in",
+                      "value": ["v1", "v2"]
                     }
                   ]
                 }""");

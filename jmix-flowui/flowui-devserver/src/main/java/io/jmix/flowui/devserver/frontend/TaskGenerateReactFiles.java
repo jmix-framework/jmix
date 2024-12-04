@@ -56,7 +56,7 @@ import static org.apache.commons.io.FileCleaner.track;
 public class TaskGenerateReactFiles
         extends AbstractFileGeneratorFallibleCommand {
 
-    public static final String CLASS_PACKAGE = "com/vaadin/flow/server/frontend/%s";
+    public static final String CLASS_PACKAGE = "io/jmix/flowui/devserver/%s";
     private Options options;
     protected static String NO_IMPORT = """
             Faulty configuration of server-side routes.

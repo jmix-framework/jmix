@@ -114,7 +114,7 @@ function writeThemeFiles(themeFolder, themeName, themeProperties, options) {
   let variable = camelCase(filename);
 
   /* LUMO */
-  const lumoImports = themeProperties.lumoImports || ['color', 'typography'];
+  const lumoImports = themeProperties.lumoImports || ['typography', 'color', 'spacing', 'badge', 'utility'] ;
   if (lumoImports) {
     lumoImports.forEach((lumoImport) => {
       imports.push(`import { ${lumoImport} } from '@vaadin/vaadin-lumo-styles/${lumoImport}.js';\n`);
@@ -133,8 +133,8 @@ function writeThemeFiles(themeFolder, themeName, themeProperties, options) {
   }
 
   /* Theme */
+  globalFileContent.push(parentThemeGlobalImport);
   if (useDevServerOrInProductionMode) {
-    globalFileContent.push(parentThemeGlobalImport);
     globalFileContent.push(`import 'themes/${themeName}/${filename}';\n`);
 
     imports.push(`import ${variable} from 'themes/${themeName}/${filename}?inline';\n`);

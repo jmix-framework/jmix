@@ -321,13 +321,17 @@ public abstract class NodeUpdater implements FallibleCommand {
             Map<String, String> map = new HashMap<>();
             JsonObject dependencies = readPackageJson(id)
                     .getObject(packageJsonKey);
+            if (dependencies == null) {
+                log().warn("Unable to find " + packageJsonKey + " from '" + id + "'");
+                return new HashMap<>();
+            }
             for (String key : dependencies.keys()) {
                 map.put(key, dependencies.getString(key));
             }
 
             return map;
         } catch (IOException e) {
-            LoggerFactory.getLogger(NodeUpdater.class).error(
+            log().error(
                     "Unable to read " + packageJsonKey + " from '" + id + "'",
                     e);
             return new HashMap<>();

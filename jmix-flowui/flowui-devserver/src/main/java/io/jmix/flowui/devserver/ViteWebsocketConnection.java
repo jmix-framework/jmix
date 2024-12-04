@@ -26,6 +26,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
+import io.jmix.flowui.devserver.frontend.FrontendUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +38,12 @@ import jakarta.websocket.CloseReason.CloseCodes;
 public class ViteWebsocketConnection implements Listener {
 
     private final Consumer<String> onMessage;
-    private final WebSocket clientWebSocket;
     private final Runnable onClose;
-    private List<CharSequence> parts = new ArrayList<>();
+    private final CompletableFuture<WebSocket> clientWebsocket;
+    private final List<CharSequence> parts = new ArrayList<>();
 
-    private Logger getLogger() {
-        return LoggerFactory.getLogger(getClass());
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(ViteWebsocketConnection.class);
     }
 
     /**
@@ -60,22 +61,26 @@ public class ViteWebsocketConnection implements Listener {
      * @param onClose
      *            a callback to invoke if the connection to Vite is closed
      *
-     * @throws InterruptedException
-     *             if there is a problem with the connection
-     * @throws ExecutionException
-     *             if there is a problem with the connection
      */
     public ViteWebsocketConnection(int port, String path, String subProtocol,
-                                   Consumer<String> onMessage, Runnable onClose)
-            throws InterruptedException, ExecutionException {
+            Consumer<String> onMessage, Runnable onClose,
+            Consumer<Throwable> onConnectionFailure) {
         this.onMessage = onMessage;
         this.onClose = onClose;
         String wsHost = ViteHandler.DEV_SERVER_HOST.replace("http://", "ws://");
         URI uri = URI.create(wsHost + ":" + port + path);
-        clientWebSocket = HttpClient.newHttpClient().newWebSocketBuilder()
-                .subprotocols(subProtocol).buildAsync(uri, this).get();
-        getLogger().debug("Connecting to {} using the {} protocol", uri,
-                clientWebSocket.getSubprotocol());
+        clientWebsocket = HttpClient.newHttpClient().newWebSocketBuilder()
+                .subprotocols(subProtocol).buildAsync(uri, this)
+                .whenComplete(((webSocket, failure) -> {
+                    if (failure == null) {
+                        getLogger().debug(
+                                "Connection to {} using the {} protocol established",
+                                uri, webSocket.getSubprotocol());
+                    } else {
+                        getLogger().warn("Failed to connect to {}", uri);
+                        onConnectionFailure.accept(failure);
+                    }
+                }));
     }
 
     @Override
@@ -124,8 +129,8 @@ public class ViteWebsocketConnection implements Listener {
      */
     public void send(String message)
             throws InterruptedException, ExecutionException {
-        CompletableFuture<WebSocket> send = clientWebSocket.sendText(message,
-                false);
+        CompletableFuture<WebSocket> send = clientWebsocket.get()
+                .sendText(message, false);
         send.get();
     }
 
@@ -139,8 +144,14 @@ public class ViteWebsocketConnection implements Listener {
      */
     public void close() throws InterruptedException, ExecutionException {
         getLogger().debug("Closing the connection");
-        CompletableFuture<WebSocket> closeRequest = clientWebSocket
+        CompletableFuture<WebSocket> closeRequest = clientWebsocket.get()
                 .sendClose(CloseCodes.NORMAL_CLOSURE.getCode(), "");
         closeRequest.get();
+    }
+
+    @Override
+    public void onError(WebSocket webSocket, Throwable error) {
+        getLogger().debug("Error from Vite websocket connection", error);
+        Listener.super.onError(webSocket, error);
     }
 }

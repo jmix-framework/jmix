@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -52,6 +53,9 @@ public class CrossDataStoreReferenceLoader {
 
     @Autowired
     private CoreProperties properties;
+
+    @Autowired
+    private EntityStates entityStates;
 
     private MetaClass metaClass;
 
@@ -93,16 +97,34 @@ public class CrossDataStoreReferenceLoader {
                         log.warn("More than 1 property is defined for attribute {} in DependsOnProperty annotation, skip handling cross-datastore reference", metaProperty);
                         continue;
                     }
-                    List<CrossDataStoreProperty> crossProperties = crossPropertiesMap.computeIfAbsent(entityClass, k -> new ArrayList<>());
-                    if (crossProperties.stream().noneMatch(aProp -> aProp.property == metaProperty))
-                        crossProperties.add(new CrossDataStoreProperty(metaProperty, fetchPlanProperty));
+                    addCrossProperty(crossPropertiesMap, entityClass, metaProperty,
+                            new CrossDataStoreProperty(metaProperty, fetchPlanProperty));
                 }
                 FetchPlan propertyFetchPlan = fetchPlanProperty.getFetchPlan();
                 if (propertyFetchPlan != null) {
                     traverseFetchPlan(propertyFetchPlan, crossPropertiesMap, visited);
                 }
+            } else {
+                MetaProperty refProperty = (MetaProperty) metaProperty.getAnnotations().get("jmix.crossDataStoreRef");
+                if (refProperty != null && !fetchPlanContainsProperty(fetchPlan, refProperty.getName())) {
+                    addCrossProperty(crossPropertiesMap, entityClass, refProperty,
+                            new CrossDataStoreProperty(refProperty, null));
+                }
             }
         }
+    }
+
+    private boolean fetchPlanContainsProperty(FetchPlan fetchPlan, String propertyName) {
+        return fetchPlan.getProperties().stream().anyMatch(fpp -> fpp.getName().equals(propertyName));
+    }
+
+    private void addCrossProperty(Map<Class<?>, List<CrossDataStoreProperty>> crossPropertiesMap,
+                                  Class<?> entityClass,
+                                  MetaProperty metaProperty,
+                                  CrossDataStoreProperty crossDataStoreProperty) {
+        List<CrossDataStoreProperty> crossProperties = crossPropertiesMap.computeIfAbsent(entityClass, k -> new ArrayList<>());
+        if (crossProperties.stream().noneMatch(aProp -> aProp.property == metaProperty))
+            crossProperties.add(crossDataStoreProperty);
     }
 
     public void processEntities(Collection entities) {
@@ -135,6 +157,7 @@ public class CrossDataStoreReferenceLoader {
                                             Map<Class<?>, List<CrossDataStoreProperty>> crossPropertiesMap) {
         Set<Object> resultSet = new HashSet<>();
         for (Object entity : entities) {
+            // add entities that have loaded IDs of CDS properties specified in fetch plan
             metadataTools.traverseAttributesByFetchPlan(fetchPlan, entity, new EntityAttributeVisitor() {
                 @Override
                 public void visit(Object entity, MetaProperty property) {
@@ -155,6 +178,14 @@ public class CrossDataStoreReferenceLoader {
                     return !property.getRange().isClass();
                 }
             });
+
+            // add entities that have loaded IDs of CDS properties _not_ specified in fetch plan
+            List<CrossDataStoreProperty> crossProperties = crossPropertiesMap.get(entity.getClass());
+            for (CrossDataStoreProperty crossProperty : crossProperties) {
+                if (crossProperty.needsFakeInstance() && EntityValues.getValue(entity, crossProperty.relatedPropertyName) != null) {
+                    resultSet.add(entity);
+                }
+            }
         }
         return resultSet;
     }
@@ -164,13 +195,22 @@ public class CrossDataStoreReferenceLoader {
         CrossDataStoreProperty aProp = entityCrossDataStoreProperty.crossProp;
         Object id = EntityValues.getValue(entity, aProp.relatedPropertyName);
 
-        LoadContext<?> loadContext = new LoadContext<>(aProp.property.getRange().asClass())
-                .setId(id);
-        if (aProp.fetchPlanProperty.getFetchPlan() != null)
-            loadContext.setFetchPlan(aProp.fetchPlanProperty.getFetchPlan());
-        loadContext.setJoinTransaction(joinTransaction);
-        Object relatedEntity = dataManager.load(loadContext);
-        EntityValues.setValue(entity, aProp.property.getName(), relatedEntity);
+        if (aProp.needsFakeInstance()) {
+            Object fakeInstance = metadata.create(aProp.property.getRange().asClass(), id);
+            entityStates.makePatch(fakeInstance);
+            EntityValues.setValue(entity, aProp.property.getName(), fakeInstance);
+
+        } else {
+            LoadContext<?> loadContext = new LoadContext<>(aProp.property.getRange().asClass())
+                    .setId(id);
+            assert aProp.fetchPlanProperty != null;
+            if (aProp.fetchPlanProperty.getFetchPlan() != null)
+                loadContext.setFetchPlan(aProp.fetchPlanProperty.getFetchPlan());
+            loadContext.setJoinTransaction(joinTransaction);
+            Object relatedEntity = dataManager.load(loadContext);
+            EntityValues.setValue(entity, aProp.property.getName(), relatedEntity);
+        }
+
     }
 
     private void loadMany(CrossDataStoreProperty crossDataStoreProperty, List<Object> entities) {
@@ -197,59 +237,73 @@ public class CrossDataStoreReferenceLoader {
             return;
 
         MetaClass cdsrMetaClass = crossDataStoreProperty.property.getRange().asClass();
-        LoadContext<?> loadContext = new LoadContext<>(cdsrMetaClass);
 
-        if (metadataTools.isJpa(crossDataStoreProperty.property)) {
-            // Don't use standard loading by ids for JPA entities because AbstractDataStore throws exception
-            // if not all requested entities are loaded, see checkAndReorderLoadedEntities()
-            MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(cdsrMetaClass);
-            if (primaryKeyProperty == null || !primaryKeyProperty.getRange().isClass()) {
-                String queryString = String.format(
-                        "select e from %s e where e.%s in :idList", cdsrMetaClass, crossDataStoreProperty.primaryKeyName);
-                loadContext.setQuery(new LoadContext.Query(queryString).setParameter("idList", idList));
-            } else {
-                // composite key entity
-                StringBuilder sb = new StringBuilder("select e from ");
-                sb.append(cdsrMetaClass).append(" e where ");
+        if (crossDataStoreProperty.needsFakeInstance()) {
+            for (Object entity : entities) {
+                Object id = EntityValues.getValue(entity, crossDataStoreProperty.relatedPropertyName);
+                if (id != null) {
+                    Object fakeInstance = metadata.create(cdsrMetaClass, id);
+                    entityStates.makePatch(fakeInstance);
 
-                MetaClass idMetaClass = primaryKeyProperty.getRange().asClass();
-                for (Iterator<MetaProperty> it = idMetaClass.getProperties().iterator(); it.hasNext(); ) {
-                    MetaProperty property = it.next();
-                    sb.append("e.").append(crossDataStoreProperty.primaryKeyName).append(".").append(property.getName());
-                    sb.append(" in :list_").append(property.getName());
-                    if (it.hasNext())
-                        sb.append(" and ");
+                    EntityValues.setValue(entity, crossDataStoreProperty.property.getName(), fakeInstance);
                 }
-                LoadContext.Query query = new LoadContext.Query(sb.toString());
-                for (MetaProperty property : idMetaClass.getProperties()) {
-                    List<Object> propList = idList.stream()
-                            .map(o -> EntityValues.getValue(o, property.getName()))
-                            .collect(Collectors.toList());
-                    query.setParameter("list_" + property.getName(), propList);
-                }
-                loadContext.setQuery(query);
             }
         } else {
-            // A custom datastore based on AbstractDataStore can override checkAndReorderLoadedEntities() if needed
-            loadContext.setIds(idList);
-        }
+            LoadContext<?> loadContext = new LoadContext<>(cdsrMetaClass);
 
-        loadContext.setFetchPlan(crossDataStoreProperty.fetchPlanProperty.getFetchPlan());
-        loadContext.setJoinTransaction(joinTransaction);
+            if (metadataTools.isJpa(crossDataStoreProperty.property)) {
+                // Don't use standard loading by ids for JPA entities because AbstractDataStore throws exception
+                // if not all requested entities are loaded, see checkAndReorderLoadedEntities()
+                MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(cdsrMetaClass);
+                if (primaryKeyProperty == null || !primaryKeyProperty.getRange().isClass()) {
+                    String queryString = String.format(
+                            "select e from %s e where e.%s in :idList", cdsrMetaClass, crossDataStoreProperty.primaryKeyName);
+                    loadContext.setQuery(new LoadContext.Query(queryString).setParameter("idList", idList));
+                } else {
+                    // composite key entity
+                    StringBuilder sb = new StringBuilder("select e from ");
+                    sb.append(cdsrMetaClass).append(" e where ");
 
-        List<?> loadedEntities = dataManager.loadList(loadContext);
+                    MetaClass idMetaClass = primaryKeyProperty.getRange().asClass();
+                    for (Iterator<MetaProperty> it = idMetaClass.getProperties().iterator(); it.hasNext(); ) {
+                        MetaProperty property = it.next();
+                        sb.append("e.").append(crossDataStoreProperty.primaryKeyName).append(".").append(property.getName());
+                        sb.append(" in :list_").append(property.getName());
+                        if (it.hasNext())
+                            sb.append(" and ");
+                    }
+                    LoadContext.Query query = new LoadContext.Query(sb.toString());
+                    for (MetaProperty property : idMetaClass.getProperties()) {
+                        List<Object> propList = idList.stream()
+                                .map(o -> EntityValues.getValue(o, property.getName()))
+                                .collect(Collectors.toList());
+                        query.setParameter("list_" + property.getName(), propList);
+                    }
+                    loadContext.setQuery(query);
+                }
+            } else {
+                // A custom datastore based on AbstractDataStore can override checkAndReorderLoadedEntities() if needed
+                loadContext.setIds(idList);
+            }
 
-        for (Object entity : entities) {
-            Object relatedPropertyValue = EntityValues.getValue(entity, crossDataStoreProperty.relatedPropertyName);
-            loadedEntities.stream()
-                    .filter(e -> {
-                        Object id = EntityValues.getId(e);
-                        assert id != null;
-                        return id.equals(relatedPropertyValue);
-                    })
-                    .findAny()
-                    .ifPresent(e -> EntityValues.setValue(entity, crossDataStoreProperty.property.getName(), e)
-                    );
+            assert crossDataStoreProperty.fetchPlanProperty != null;
+            loadContext.setFetchPlan(crossDataStoreProperty.fetchPlanProperty.getFetchPlan());
+            loadContext.setJoinTransaction(joinTransaction);
+
+            List<?> loadedEntities = dataManager.loadList(loadContext);
+
+            for (Object entity : entities) {
+                Object relatedPropertyValue = EntityValues.getValue(entity, crossDataStoreProperty.relatedPropertyName);
+                loadedEntities.stream()
+                        .filter(e -> {
+                            Object id = EntityValues.getId(e);
+                            assert id != null;
+                            return id.equals(relatedPropertyValue);
+                        })
+                        .findAny()
+                        .ifPresent(e -> EntityValues.setValue(entity, crossDataStoreProperty.property.getName(), e)
+                        );
+            }
         }
     }
 
@@ -276,11 +330,12 @@ public class CrossDataStoreReferenceLoader {
     public class CrossDataStoreProperty {
 
         public final MetaProperty property;
+        @Nullable
         public final FetchPlanProperty fetchPlanProperty;
         public final String relatedPropertyName;
         public final String primaryKeyName;
 
-        public CrossDataStoreProperty(MetaProperty metaProperty, FetchPlanProperty fetchPlanProperty) {
+        public CrossDataStoreProperty(MetaProperty metaProperty, @Nullable FetchPlanProperty fetchPlanProperty) {
             this.property = metaProperty;
             this.fetchPlanProperty = fetchPlanProperty;
 
@@ -291,6 +346,13 @@ public class CrossDataStoreReferenceLoader {
             primaryKeyName = pkName != null
                     ? pkName
                     : "id"; // sensible default for non-persistent entities
+        }
+
+        /**
+         * Indicates that an empty instance is needed instead of loading the real entity from its datastore.
+         */
+        public boolean needsFakeInstance() {
+            return fetchPlanProperty == null;
         }
 
         @Override

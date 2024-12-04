@@ -240,4 +240,31 @@ class MultiDbDataManagerTest extends DataSpec {
         results.get(reloadedHolder).getMainReport().getDb1Order().getCustomer().name == "next"
     }
 
+    void testCrossDatastoreReferenceIsNotCleared() {
+        Db1Order order = metadata.create(Db1Order)
+        order.setOrderDate(new Date())
+        dataManager.save(order)
+
+        MainReport report = metadata.create(MainReport)
+        report.setDb1Order(order)
+        report.setName("test")
+        report = dataManager.save(report)
+
+        when: "loading entity without reference and then saving changes"
+        def report1 = dataManager.load(MainReport)
+                .id(report.id)
+                .fetchPlan(FetchPlan.BASE)
+                .one()
+
+        report1.setName('changed')
+        dataManager.save(report1)
+
+        then: "the reference is not cleared"
+        def report2 = dataManager.load(MainReport)
+                .id(report.id)
+                .fetchPlan({ builder -> builder.addFetchPlan(FetchPlan.BASE).add('db1Order') })
+                .one()
+
+        report2.db1Order != null
+    }
 }

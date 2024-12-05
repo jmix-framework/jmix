@@ -14,4 +14,15 @@
  * limitations under the License.
  */
 
-/* todo to be removed */
+package io.jmix.messagetemplates;
+
+import io.jmix.messagetemplates.entity.MessageTemplate;
+
+import java.util.Map;
+
+public interface MessageTemplates {
+
+    String generateMessage(MessageTemplate template, Map<String, Object> parameters);
+
+    String generateMessage(String templateCode, Map<String, Object> parameters);
+}

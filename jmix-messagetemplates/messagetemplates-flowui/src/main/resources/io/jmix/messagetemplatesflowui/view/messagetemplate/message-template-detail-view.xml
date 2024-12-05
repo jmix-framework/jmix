@@ -22,6 +22,7 @@
         <instance id="messageTemplateDc"
                   class="io.jmix.messagetemplates.entity.MessageTemplate">
             <fetchPlan extends="_base"/>
+            <collection id="parametersDc" property="parameters"/>
             <loader/>
         </instance>
         <collection id="messageTemplateGroupsDc"
@@ -66,17 +67,39 @@
                 </split>
             </tab>
             <tab id="parametersTab" label="msg://mainTabSheet.parametersTab.label">
-                <div classNames="message-templates-grid-layout" width="100%" height="100%">
-                    <vbox classNames="flex-grow" css="flex-basis: 45em;" padding="false">
-                        <hbox>
-                            <button action="inputParametersDataGrid.createParameter"/>
-                            <button action="inputParametersDataGrid.editParameter"/>
-                            <button action="inputParametersDataGrid.removeParameter"/>
-                            <button action="inputParametersDataGrid.up"/>
-                            <button action="inputParametersDataGrid.down"/>
-                        </hbox>
-                    </vbox>
-                </div>
+                <vbox width="100%" height="100%" padding="false">
+                    <hbox>
+                        <button action="parametersDataGrid.create"/>
+                        <button action="parametersDataGrid.edit"/>
+                        <button action="parametersDataGrid.remove"/>
+                        <!--                            <button action="inputParametersDataGrid.up"/>-->
+                        <!--                            <button action="inputParametersDataGrid.down"/>-->
+                    </hbox>
+                    <dataGrid id="parametersDataGrid" dataContainer="parametersDc"
+                              minHeight="20em"
+                              width="100%"
+                              columnReorderingAllowed="true">
+                        <actions>
+                            <action id="create" type="list_create">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="edit" type="list_edit">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="remove" type="list_remove"/>
+                        </actions>
+                        <columns resizable="true">
+                            <column property="name"/>
+                            <column property="alias"/>
+                            <column property="type"/>
+                            <column property="required"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
             </tab>
         </tabSheet>
         <hbox id="detailActions">

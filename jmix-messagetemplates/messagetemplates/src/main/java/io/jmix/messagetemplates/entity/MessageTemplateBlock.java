@@ -27,7 +27,7 @@ import java.util.UUID;
 @Entity(name = "msgtmp_MessageTemplateBlock")
 @JmixEntity
 @Table(name = "MSGTMP_MESSAGE_TEMPLATE_BLOCK", indexes = {
-        @Index(name = "IDX_MESSAGE_TEMPLATE_BLOCK_UNQ_NAME", columnList = "NAME", unique = true)
+        @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_BLOCK_UNQ_NAME", columnList = "NAME", unique = true)
 })
 public class MessageTemplateBlock {
 

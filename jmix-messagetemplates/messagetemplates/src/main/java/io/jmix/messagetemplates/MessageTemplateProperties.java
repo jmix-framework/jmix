@@ -16,15 +16,20 @@
 
 package io.jmix.messagetemplates;
 
-import io.jmix.core.annotation.JmixModule;
-import io.jmix.data.DataConfiguration;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import freemarker.template.Version;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
-@Configuration
-@ComponentScan
-@ConfigurationPropertiesScan
-@JmixModule(dependsOn = DataConfiguration.class)
-public class MessageTemplatesConfiguration {
+@ConfigurationProperties(prefix = "jmix.messagetemplates")
+public class MessageTemplateProperties {
+
+    Version freemarkerVersion;
+
+    public MessageTemplateProperties(@DefaultValue("2.3.33") String freemarkerVersion) {
+        this.freemarkerVersion = new Version(freemarkerVersion);
+    }
+
+    public Version getFreemarkerVersion() {
+        return freemarkerVersion;
+    }
 }

@@ -29,6 +29,7 @@ archivesBaseName = 'jmix-flowui-devserver'
 dependencies {
     api(project(":flowui-kit")) {
         exclude group: "com.vaadin", module: "flow-react"
+        exclude group: "com.vaadin", module: "copilot"
     }
 
     api("org.eclipse.jetty.ee10:jetty-ee10-webapp")

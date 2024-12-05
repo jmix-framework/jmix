@@ -179,12 +179,12 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
     updateBlocks(blocks) {
         if (this._editor === undefined) {
             this._blocksFromServer = blocks.map(block => {
-                if (block.attributes !== undefined) {
-                    block.attributes = JSON.parse(block.attributes);
+                if (block.attributes) {
+                    block.attributes = this.parseAttributes(block.attributes);
                 }
 
-                if (block.icon !== undefined) {
-                    block.media = this.getSvgIcon(block.icon);
+                if (block.icon) {
+                    block.media = this.parseIcon(block.icon);
                 }
 
                 return block;
@@ -195,8 +195,8 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
                     label: block.label,
                     content: block.content,
                     category: block.category,
-                    attributes: block.attributes !== undefined ? JSON.parse(block.attributes) : undefined,
-                    media: block.icon !== undefined ? this.getSvgIcon(block.icon) : undefined
+                    attributes: block.attributes ? this.parseAttributes(block.attributes) : undefined,
+                    media: block.icon ? this.parseIcon(block.icon) : undefined
                 });
             });
         }
@@ -269,6 +269,26 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
         return `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
                     ${iconSvg.svg.values[0].values[0]}
                     </svg>`;
+    }
+
+    parseAttributes(attributes) {
+        try {
+            return JSON.parse(attributes);
+        } catch (e) {
+            console.error(`Cannot parse block attributes JSON: ${e}`);
+        }
+
+        return undefined;
+    }
+
+    parseIcon(icon) {
+        try {
+            return this.getSvgIcon(icon);
+        } catch (e) {
+            console.error(`Cannot parse block icon: ${e}`)
+        }
+
+        return undefined;
     }
 }
 

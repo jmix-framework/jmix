@@ -14,4 +14,7 @@
  * limitations under the License.
  */
 
-/* todo to be removed */
+@NonNullApi
+package io.jmix.messagetemplatesflowui.view.messagetemplate;
+
+import org.springframework.lang.NonNullApi;

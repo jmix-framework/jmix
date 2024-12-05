@@ -46,10 +46,47 @@
             <column name="LABEL" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="CATEGORY" type="VARCHAR(255)"/>
+            <column name="CATEGORY" type="varchar(255)"/>
             <column name="CONTENT" type="clob"/>
             <column name="ATTRIBUTES" type="clob"/>
-            <column name="ICON" type="VARCHAR(255)"/>
+            <column name="ICON" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="MSGTMP_MESSAGE_TEMPLATE_PARAMETER">
+            <column name="ID"
+                    type="${uuid.type}">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="PK_MSGTMP_MESSAGE_TEMPLATE_PARAMETER"/>
+            </column>
+            <column name="TYPE_"
+                    type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME"
+                    type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ALIAS"
+                    type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REQUIRED"
+                    type="boolean"/>
+            <column name="HIDDEN"
+                    type="boolean"/>
+            <column name="ENTITY_META_CLASS"
+                    type="varchar(255)"/>
+            <column name="ENUMERATION_CLASS"
+                    type="varchar(255)"/>
+            <column name="VIEW_ID"
+                    type="varchar(255)"/>
+            <column name="DEFAULT_VALUE"
+                    type="varchar(255)"/>
+            <column name="TEMPLATE_ID"
+                    type="${uuid.type}">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <createTable tableName="MSGTMP_MESSAGE_TEMPLATE">
@@ -60,7 +97,7 @@
                              primaryKeyName="PK_MSGTMP_MESSAGE_TEMPLATE"/>
             </column>
             <column name="NAME"
-                    type="VARCHAR(255)">
+                    type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="CODE" type="varchar(255)">
@@ -71,15 +108,26 @@
             <column name="GROUP_ID" type="${uuid.type}"/>
         </createTable>
 
-        <createIndex indexName="IDX_MESSAGE_TEMPLATE_GROUP"
+        <createIndex indexName="IDX_MSGTMP_MESSAGE_TEMPLATE_GROUP"
                      tableName="MSGTMP_MESSAGE_TEMPLATE">
             <column name="GROUP_ID"/>
         </createIndex>
 
-        <createIndex indexName="IDX_MESSAGE_TEMPLATE_BLOCK_UNQ_NAME"
+        <createIndex indexName="IDX_MSGTMP_MESSAGE_TEMPLATE_BLOCK_UNQ_NAME"
                      tableName="MSGTMP_MESSAGE_TEMPLATE_BLOCK"
                      unique="true">
             <column name="NAME"/>
+        </createIndex>
+
+        <createIndex indexName="IDX_MSGTMP_MESSAGE_TEMPLATE_PARAMETER_TEMPLATE"
+                     tableName="MSGTMP_MESSAGE_TEMPLATE_PARAMETER">
+            <column name="TEMPLATE_ID"/>
+        </createIndex>
+
+        <createIndex indexName="IDX_MSGTMP_MESSAGE_TEMPLATE_UNQ_CODE"
+                     tableName="MSGTMP_MESSAGE_TEMPLATE"
+                     unique="true">
+            <column name="CODE"/>
         </createIndex>
 
         <addForeignKeyConstraint baseColumnNames="GROUP_ID"
@@ -89,11 +137,11 @@
                                  referencedColumnNames="ID"
                                  referencedTableName="MSGTMP_MESSAGE_TEMPLATE_GROUP"/>
 
-        <createIndex indexName="IDX_MESSAGE_TEMPLATE_UNQ_CODE"
-                     tableName="MSGTMP_MESSAGE_TEMPLATE"
-                     unique="true">
-            <column name="CODE"/>
-        </createIndex>
+        <addForeignKeyConstraint baseColumnNames="TEMPLATE_ID"
+                                 baseTableName="MSGTMP_MESSAGE_TEMPLATE_PARAMETER"
+                                 constraintName="FK_MSGTMP_MESSAGE_TEMPLATE_PARAMETER_ON_TEMPLATE"
+                                 referencedTableName="MSGTMP_MESSAGE_TEMPLATE"
+                                 referencedColumnNames="ID"/>
     </changeSet>
 
 </databaseChangeLog>

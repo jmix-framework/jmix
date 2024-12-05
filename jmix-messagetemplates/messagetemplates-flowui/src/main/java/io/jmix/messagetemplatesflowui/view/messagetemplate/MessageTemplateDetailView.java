@@ -42,8 +42,18 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
+        initBlocks();
+        initGrapesJsEditor();
+    }
+
+    protected void initBlocks() {
         List<GrapesJsBlock> grapesJsBlocks = loadBlocks();
         grapesJsEditor.addBlocks(grapesJsBlocks);
+    }
+
+    protected void initGrapesJsEditor() {
+        grapesJsEditor.setValue(getEditedEntity().getHtml());
+        grapesJsEditor.addValueChangeEventListener(this::onGrapesJsValueChange);
     }
 
     protected List<GrapesJsBlock> loadBlocks() {
@@ -64,5 +74,9 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
                 .withAttributes(block.getAttributes())
                 .withIcon(block.getIcon())
                 .build();
+    }
+
+    protected void onGrapesJsValueChange(GrapesJs.GrapesJsValueChangedEvent event) {
+        getEditedEntity().setHtml(event.getValue());
     }
 }

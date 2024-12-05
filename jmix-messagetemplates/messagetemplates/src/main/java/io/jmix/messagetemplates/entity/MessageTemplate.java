@@ -19,19 +19,21 @@ package io.jmix.messagetemplates.entity;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "msgtmp_MessageTemplate")
 @JmixEntity
 @Table(name = "MSGTMP_MESSAGE_TEMPLATE", indexes = {
-        @Index(name = "IDX_MESSAGE_TEMPLATE_UNQ_CODE", columnList = "CODE", unique = true),
-        @Index(name = "IDX_MESSAGE_TEMPLATE_GROUP", columnList = "GROUP_ID")
+        @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_UNQ_CODE", columnList = "CODE", unique = true),
+        @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_GROUP", columnList = "GROUP_ID")
 })
 public class MessageTemplate {
 
@@ -56,6 +58,10 @@ public class MessageTemplate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GROUP_ID")
     protected MessageTemplateGroup group;
+
+    @Composition
+    @OneToMany(mappedBy = "template")
+    private List<MessageTemplateParameter> parameters;
 
     public UUID getId() {
         return id;
@@ -95,6 +101,14 @@ public class MessageTemplate {
 
     public void setGroup(MessageTemplateGroup group) {
         this.group = group;
+    }
+
+    public List<MessageTemplateParameter> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<MessageTemplateParameter> parameters) {
+        this.parameters = parameters;
     }
 
     @InstanceName

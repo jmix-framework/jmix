@@ -22,4 +22,6 @@ archivesBaseName = 'jmix-messagetemplates'
 dependencies {
     api project(':data')
     api project(':eclipselink')
+
+    api 'org.freemarker:freemarker'
 }

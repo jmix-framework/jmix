@@ -78,6 +78,16 @@ def initDefaultFieldAttrs(attr) {
 		fieldAttrs['fileNameVisible'] = "true"
 	}
 
+	if (attr.isDeepInheritor('io.jmix.fullcalendarflowui.component.model.DaysOfWeek')) {
+		field.tag = 'valuePicker'
+		StringBuilder builder = new StringBuilder()
+		builder.append("<actions>")
+		builder.append("<action id=\"select\" type=\"fcalen_daysOfWeekEdit\"/>")
+		builder.append("<action id=\"clear\" type=\"value_clear\"/>")
+		builder.append("</actions>")
+		field.text = builder.toString()
+	}
+
 	if(lookupActions) {
 		def actions = attr.getLookupActions()
 		if(!actions.isEmpty()) {

@@ -17,7 +17,7 @@
 package test_support;
 
 import io.jmix.flowui.settings.UserSettingsService;
-import io.jmix.flowuidata.settings.UserSettingsCacheImpl;
+import io.jmix.flowui.settings.UserSettingsCacheImpl;
 
 import java.util.Map;
 import java.util.Optional;

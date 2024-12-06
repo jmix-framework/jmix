@@ -16,10 +16,21 @@
 
 package io.jmix.securitydata.impl.role;
 
+import com.google.common.base.Strings;
 import io.jmix.core.*;
+import io.jmix.data.QueryTransformer;
+import io.jmix.data.QueryTransformerFactory;
+import io.jmix.data.impl.jpql.ErrorRec;
+import io.jmix.data.impl.jpql.JpqlSyntaxException;
 import io.jmix.security.model.*;
 import io.jmix.security.role.RolePersistence;
 import io.jmix.securitydata.entity.*;
+import io.jmix.securitydata.impl.role.provider.DatabaseRowLevelRoleProvider;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
+import org.springframework.scripting.ScriptCompilationException;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -30,19 +41,30 @@ import java.util.stream.Collectors;
 @Component("sec_DatabaseRolePersistence")
 public class DatabaseRolePersistence implements RolePersistence {
 
+    private final ApplicationContext applicationContext;
+    private final Metadata metadata;
     private final EntityStates entityStates;
     private final DataManager dataManager;
     private final FetchPlans fetchPlans;
     private final EntityImportExport entityImportExport;
     private final EntityImportPlans entityImportPlans;
+    private final QueryTransformerFactory queryTransformerFactory;
+    private final DatabaseRowLevelRoleProvider databaseRowLevelRoleProvider;
 
-    public DatabaseRolePersistence(EntityStates entityStates, DataManager dataManager, FetchPlans fetchPlans,
-                                   EntityImportExport entityImportExport, EntityImportPlans entityImportPlans) {
+    public DatabaseRolePersistence(ApplicationContext applicationContext, Metadata metadata,
+                                   EntityStates entityStates, DataManager dataManager, FetchPlans fetchPlans,
+                                   EntityImportExport entityImportExport, EntityImportPlans entityImportPlans,
+                                   QueryTransformerFactory queryTransformerFactory,
+                                   DatabaseRowLevelRoleProvider databaseRowLevelRoleProvider) {
+        this.applicationContext = applicationContext;
+        this.metadata = metadata;
         this.entityStates = entityStates;
         this.dataManager = dataManager;
         this.fetchPlans = fetchPlans;
         this.entityImportExport = entityImportExport;
         this.entityImportPlans = entityImportPlans;
+        this.queryTransformerFactory = queryTransformerFactory;
+        this.databaseRowLevelRoleProvider = databaseRowLevelRoleProvider;
     }
 
     @Override
@@ -202,6 +224,54 @@ public class DatabaseRolePersistence implements RolePersistence {
             importedEntities = entityImportExport.importEntitiesFromJson(new String(data, StandardCharsets.UTF_8), createRowLevelRoleEntityImportPlan());
         }
         return new ArrayList<>(importedEntities);
+    }
+
+    @Override
+    public List<String> checkRowLevelJpqlPolicySyntax(String entityName, String joinClause, String whereClause) {
+        String baseQueryString = "select e from " + entityName + " e";
+        try {
+            QueryTransformer transformer = queryTransformerFactory.transformer(baseQueryString);
+            if (StringUtils.isNotBlank(joinClause)) {
+                transformer.addJoinAndWhere(joinClause, whereClause);
+            } else {
+                transformer.addWhere(whereClause);
+            }
+
+            String jpql = transformer.getResult();
+            dataManager.load(metadata.getClass(entityName).getJavaClass())
+                    .query(jpql)
+                    .maxResults(0)
+                    .list();
+
+            return List.of();
+        } catch (JpqlSyntaxException e) {
+            return e.getErrorRecs().stream().map(ErrorRec::toString).toList();
+        } catch (Exception e) {
+            Throwable rootCause = ExceptionUtils.getRootCause(e);
+            if (rootCause == null) {
+                rootCause = e;
+            }
+            return List.of(rootCause.toString());
+        }
+    }
+
+    @Override
+    @Nullable
+    public String checkRowLevelPredicatePolicySyntax(String entityName, String script) {
+        RowLevelBiPredicate<Object, ApplicationContext> predicate = databaseRowLevelRoleProvider.createPredicateFromScript(script);
+        Object entity = metadata.create(entityName);
+        try {
+            predicate.test(entity, applicationContext);
+            return null;
+        } catch (ScriptCompilationException e) {
+            Throwable rootCause = ExceptionUtils.getRootCause(e);
+            if (rootCause == null) {
+                rootCause = e;
+            }
+            return rootCause.getMessage();
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
     private FetchPlan createResourceRoleExportFetchPlan() {

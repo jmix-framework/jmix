@@ -1,17 +1,20 @@
 package io.jmix.securityflowui.view.rowlevelpolicy;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
-import io.jmix.core.DataManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
@@ -21,12 +24,14 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.InstanceContainer.ItemPropertyChangeEvent;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.RowLevelPolicyAction;
-import io.jmix.security.model.RowLevelPolicyType;
 import io.jmix.security.model.RowLevelPolicyModel;
+import io.jmix.security.model.RowLevelPolicyType;
+import io.jmix.security.role.RolePersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -55,25 +60,19 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
     private Anchor docsLink;
     @ViewComponent
     private HorizontalLayout detailActions;
+    @ViewComponent
+    private MessageBundle messageBundle;
 
     @Autowired
     private Dialogs dialogs;
-    @Autowired
-    private MessageBundle messageBundle;
     @Autowired
     private MessageTools messageTools;
     @Autowired
     private Notifications notifications;
     @Autowired
     private Metadata metadata;
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private MetadataTools metadataTools;
-//    @Autowired
-//    private QueryTransformerFactory queryTransformerFactory;
-//    @Autowired
-//    private DatabaseRowLevelRoleProvider databaseRowLevelRoleProvider;
+    @Autowired(required = false)
+    private RolePersistence rolePersistence;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -151,89 +150,57 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
         }
     }
 
-// TODO KK restore checks
+    @Subscribe("checkSyntaxBtn")
+    public void onCheckSyntaxBtnClick(ClickEvent<Button> event) {
+        RowLevelPolicyType type = getEditedEntity().getType();
+        switch (type) {
+            case JPQL:
+                checkJpqlSyntax();
+                break;
+            case PREDICATE:
+                checkPredicateSyntax();
+                break;
+            default:
+                throw new IllegalStateException("Unknown type: " + type);
+        }
+    }
 
-//    @Subscribe("checkSyntaxBtn")
-//    public void onCheckSyntaxBtnClick(ClickEvent<Button> event) {
-//        RowLevelPolicyType type = getEditedEntity().getType();
-//        switch (type) {
-//            case JPQL:
-//                checkJpqlSyntax();
-//                break;
-//            case PREDICATE:
-//                checkPredicateSyntax();
-//                break;
-//            default:
-//                throw new IllegalStateException("Unknown type: " + type);
-//        }
-//    }
-//
-//    private void checkJpqlSyntax() {
-//        String entityName = getEditedEntity().getEntityName();
-//        String whereClause = getEditedEntity().getWhereClause();
-//
-//        if (Strings.isNullOrEmpty(entityName) || Strings.isNullOrEmpty(whereClause)) {
-//            return;
-//        }
-//
-//        String baseQueryString = "select e from " + entityName + " e";
-//        try {
-//            QueryTransformer transformer = queryTransformerFactory.transformer(baseQueryString);
-//            if (StringUtils.isNotBlank(joinClauseField.getValue())) {
-//                transformer.addJoinAndWhere(joinClauseField.getValue(), whereClause);
-//            } else {
-//                transformer.addWhere(whereClause);
-//            }
-//
-//            String jpql = transformer.getResult();
-//            dataManager.load(metadata.getClass(entityName).getJavaClass())
-//                    .query(jpql)
-//                    .maxResults(0)
-//                    .list();
-//
-//            showTestPassedNotification();
-//        } catch (JpqlSyntaxException e) {
-//            Div content = new Div();
-//            for (ErrorRec rec : e.getErrorRecs()) {
-//                content.add(new Paragraph(rec.toString()));
-//            }
-//
-//            showTestFailedNotification(content);
-//        } catch (Exception e) {
-//            Throwable rootCause = ExceptionUtils.getRootCause(e);
-//            if (rootCause == null) {
-//                rootCause = e;
-//            }
-//
-//            showTestFailedNotification(new Span(rootCause.toString()));
-//        }
-//    }
-//
-//    private void checkPredicateSyntax() {
-//        String entityName = getEditedEntity().getEntityName();
-//        String script = getEditedEntity().getScript();
-//
-//        if (Strings.isNullOrEmpty(entityName) || Strings.isNullOrEmpty(script)) {
-//            return;
-//        }
-//
-//        RowLevelBiPredicate<Object, ApplicationContext> predicate = databaseRowLevelRoleProvider.createPredicateFromScript(script);
-//        Object entity = metadata.create(entityName);
-//        try {
-//            predicate.test(entity, getApplicationContext());
-//            showTestPassedNotification();
-//        } catch (ScriptCompilationException e) {
-//            Throwable rootCause = ExceptionUtils.getRootCause(e);
-//            if (rootCause == null) {
-//                rootCause = e;
-//            }
-//            String message = Strings.nullToEmpty(rootCause.getMessage());
-//            showTestFailedNotification(new Span(message));
-//        } catch (Exception e) {
-//            log.info("Groovy script error: {}", e.getMessage());
-//            showTestPassedNotification();
-//        }
-//    }
+    private void checkJpqlSyntax() {
+        String entityName = getEditedEntity().getEntityName();
+        String whereClause = getEditedEntity().getWhereClause();
+
+        if (Strings.isNullOrEmpty(entityName) || Strings.isNullOrEmpty(whereClause)) {
+            return;
+        }
+
+        List<String> errors = getRolePersistence().checkRowLevelJpqlPolicySyntax(
+                entityName, joinClauseField.getValue(), whereClause);
+        if (errors.isEmpty()) {
+            showTestPassedNotification();
+        } else {
+            Div content = new Div();
+            for (String rec : errors) {
+                content.add(new Paragraph(rec.toString()));
+            }
+            showTestFailedNotification(content);
+        }
+    }
+
+    private void checkPredicateSyntax() {
+        String entityName = getEditedEntity().getEntityName();
+        String script = getEditedEntity().getScript();
+
+        if (Strings.isNullOrEmpty(entityName) || Strings.isNullOrEmpty(script)) {
+            return;
+        }
+
+        String error = getRolePersistence().checkRowLevelPredicatePolicySyntax(entityName, script);
+        if (error == null) {
+            showTestPassedNotification();
+        } else {
+            showTestFailedNotification(new Span(error));
+        }
+    }
 
     protected void initJoinClauseFieldHelperText() {
         String joinHelperMessage = messageBundle.getMessage("joinClauseField.helperText");
@@ -267,5 +234,12 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
 
     protected String throwDuplicateException(String v1, String v2) {
         throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));
+    }
+
+    private RolePersistence getRolePersistence() {
+        if (rolePersistence == null) {
+            throw new IllegalStateException("RolePersistence is not available");
+        }
+        return rolePersistence;
     }
 }

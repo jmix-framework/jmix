@@ -19,6 +19,7 @@ package io.jmix.security.role;
 import io.jmix.security.model.BaseRoleModel;
 import io.jmix.security.model.ResourceRoleModel;
 import io.jmix.security.model.RowLevelRoleModel;
+import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -41,4 +42,9 @@ public interface RolePersistence {
     List<Object> importResourceRoles(byte[] data, boolean zip);
 
     List<Object> importRowLevelRoles(byte[] data, boolean zip);
+
+    List<String> checkRowLevelJpqlPolicySyntax(String entityName, String joinClause, String whereClause);
+
+    @Nullable
+    String checkRowLevelPredicatePolicySyntax(String entityName, String script);
 }

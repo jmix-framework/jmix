@@ -409,7 +409,7 @@
                             <button id="addReportScreenBtn" action="screenDataGrid.add"
                                     text="msg://views.add"/>
                         </hbox>
-                        <button action="screenDataGrid.remove" icon="font-icon:REMOVE"/>
+                        <button action="screenDataGrid.remove"/>
                         <dataGrid id="screenDataGrid"
                                   dataContainer="reportScreensDc"
                                   columnReorderingAllowed="false" detailsVisibleOnClick="false">

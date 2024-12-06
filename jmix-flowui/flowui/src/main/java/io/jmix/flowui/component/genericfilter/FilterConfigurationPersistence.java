@@ -21,6 +21,9 @@ import org.springframework.lang.Nullable;
 
 import java.util.List;
 
+/**
+ * Interface to be implemented by beans that store {@code FilterConfigurationModel} in a persistent storage.
+ */
 public interface FilterConfigurationPersistence {
 
     void remove(FilterConfigurationModel configurationModel);

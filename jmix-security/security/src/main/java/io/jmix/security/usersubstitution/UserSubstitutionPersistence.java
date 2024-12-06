@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Interface to be implemented by beans that store {@code UserSubstitutionModel} in a persistent storage.
+ */
 public interface UserSubstitutionPersistence {
 
     boolean isViewPermitted();

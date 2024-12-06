@@ -23,6 +23,9 @@ import io.jmix.security.model.RowLevelRoleModel;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Interface to be implemented by beans that store roles in a persistent storage.
+ */
 public interface RolePersistence {
 
     void save(ResourceRoleModel roleModel);

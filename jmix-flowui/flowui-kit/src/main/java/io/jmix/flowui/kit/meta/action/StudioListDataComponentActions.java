@@ -29,7 +29,6 @@ public interface StudioListDataComponentActions {
             type = "list_create",
             description = "Creates an entity instance using its detail view",
             classFqn = "io.jmix.flowui.action.list.CreateAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_create",
             availableInViewWizard = true,
             properties = {
@@ -61,7 +60,6 @@ public interface StudioListDataComponentActions {
             type = "list_edit",
             description = "Edits an entity instance using its detail view",
             classFqn = "io.jmix.flowui.action.list.EditAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_edit",
             availableInViewWizard = true,
             properties = {
@@ -94,7 +92,6 @@ public interface StudioListDataComponentActions {
             type = "list_remove",
             description = "Removes an entity instance from the list and from the database",
             classFqn = "io.jmix.flowui.action.list.RemoveAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_remove",
             availableInViewWizard = true,
             properties = {
@@ -125,7 +122,6 @@ public interface StudioListDataComponentActions {
             type = "list_add",
             description = "Adds entities to the list using a lookup view",
             classFqn = "io.jmix.flowui.action.list.AddAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_add",
             availableInViewWizard = true,
             properties = {
@@ -154,7 +150,6 @@ public interface StudioListDataComponentActions {
             type = "list_exclude",
             description = "Excludes entities from the list. The excluded entities are not deleted.",
             classFqn = "io.jmix.flowui.action.list.ExcludeAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_exclude",
             availableInViewWizard = true,
             properties = {
@@ -185,7 +180,6 @@ public interface StudioListDataComponentActions {
             type = "list_read",
             description = "Opens a detail view for an entity instance in read-only mode",
             classFqn = "io.jmix.flowui.action.list.ReadAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_read",
             availableInViewWizard = true,
             properties = {
@@ -218,7 +212,6 @@ public interface StudioListDataComponentActions {
             type = "list_refresh",
             description = "Reloads a list of entities from the database",
             classFqn = "io.jmix.flowui.action.list.RefreshAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_refresh",
             availableInViewWizard = true,
             properties = {
@@ -243,7 +236,6 @@ public interface StudioListDataComponentActions {
             type = "list_itemTracking",
             description = "Tracks the selected item from the bound ListDataComponent",
             classFqn = "io.jmix.flowui.action.list.ItemTrackingAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

@@ -25,7 +25,7 @@ public interface StudioReportsActions {
                 type = "report_runReport",
                 description = "A standard action that displays the list of all available reports.",
                 classFqn = "io.jmix.reportsflowui.action.RunReportAction",
-                icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+
                 target = {"io.jmix.flowui.action.list.ListDataComponentAction"},
                 properties = {
                         @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
@@ -49,7 +49,7 @@ public interface StudioReportsActions {
             type = "report_runSingleEntityReport",
             description = "A standard action for printing reports for entity instance.",
             classFqn = "io.jmix.reportsflowui.action.RunSingleEntityReportAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+
             target = {"io.jmix.flowui.action.view.OperationResultViewAction"},
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
@@ -73,7 +73,7 @@ public interface StudioReportsActions {
             type = "report_runListEntityReport",
             description = "A standard action for printing reports for entity instances associated with a list component (Table, DataGrid, etc.).",
             classFqn = "io.jmix.reportsflowui.action.RunListEntityReportAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+
             target = {"io.jmix.flowui.action.list.ListDataComponentAction"},
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
@@ -96,7 +96,7 @@ public interface StudioReportsActions {
             type = "report_showExecutionReportHistory",
             description = "A standard action for displaying the report execution history.",
             classFqn = "io.jmix.reportsflowui.action.ShowExecutionReportHistoryAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+
             target = {"io.jmix.flowui.action.list.ListDataComponentAction"},
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,

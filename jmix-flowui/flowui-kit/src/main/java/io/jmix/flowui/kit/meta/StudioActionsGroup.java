@@ -55,7 +55,7 @@ public @interface StudioActionsGroup {
     /**
      * @see StudioComponent#xmlElement
      */
-    String xmlElement() default "";
+    String xmlElement() default "actions";
 
     /**
      * @see StudioComponent#xmlns

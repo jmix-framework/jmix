@@ -27,8 +27,6 @@ public interface StudioActionsGroups {
     @StudioActionsGroup(
             name = "Actions",
             actionClassFqn = "io.jmix.flowui.action.valuepicker.PickerAction",
-            xmlElement = "actions",
-            icon = "io/jmix/flowui/kit/meta/icon/actionsgroup/actions.svg",
             target = {"io.jmix.flowui.component.PickerComponent"}
     )
     void pickerActions();
@@ -36,8 +34,6 @@ public interface StudioActionsGroups {
     @StudioActionsGroup(
             name = "Actions",
             actionClassFqn = "io.jmix.flowui.action.view.ViewAction",
-            xmlElement = "actions",
-            icon = "io/jmix/flowui/kit/meta/icon/actionsgroup/actions.svg",
             target = {"io.jmix.flowui.view.View"},
             unsupportedTarget = {"io.jmix.flowui.app.main.StandardMainView"}
     )
@@ -45,9 +41,7 @@ public interface StudioActionsGroups {
 
     @StudioActionsGroup(
             name = "Actions",
-            actionClassFqn = "io.jmix.flowui.action.security.LogoutAction",
-            xmlElement = "actions",
-            icon = "io/jmix/flowui/kit/meta/icon/actionsgroup/actions.svg",
+            actionClassFqn = "io.jmix.flowui.kit.action.BaseAction",
             target = {"io.jmix.flowui.app.main.StandardMainView"}
     )
     void mainViewActions();
@@ -55,8 +49,6 @@ public interface StudioActionsGroups {
     @StudioActionsGroup(
             name = "Actions",
             actionClassFqn = "io.jmix.flowui.action.list.ListDataComponentAction",
-            xmlElement = "actions",
-            icon = "io/jmix/flowui/kit/meta/icon/actionsgroup/actions.svg",
             target = {"io.jmix.flowui.component.ListDataComponent"},
             properties = {
                     @StudioProperty(
@@ -71,8 +63,6 @@ public interface StudioActionsGroups {
     @StudioActionsGroup(
             name = "Actions",
             actionClassFqn = "io.jmix.flowui.action.genericfilter.GenericFilterAction",
-            xmlElement = "actions",
-            icon = "io/jmix/flowui/kit/meta/icon/actionsgroup/actions.svg",
             target = {"io.jmix.flowui.component.genericfilter.GenericFilter"}
     )
     void genericFilterActions();
@@ -80,8 +70,6 @@ public interface StudioActionsGroups {
     @StudioActionsGroup(
             name = "Actions",
             actionClassFqn = "io.jmix.flowui.fragment.FragmentAction",
-            xmlElement = "actions",
-            icon = "io/jmix/flowui/kit/meta/icon/actionsgroup/actions.svg",
             target = {"io.jmix.flowui.fragment.Fragment"}
     )
     void fragmentActions();

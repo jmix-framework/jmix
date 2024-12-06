@@ -25,7 +25,6 @@ public interface StudioDataToolsActions {
             type = "datatl_showEntityInfo",
             description = "Displays a dialog window with detailed information about the selected entity",
             classFqn = "io.jmix.datatoolsflowui.action.ShowEntityInfoAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/data-tools/entity-info-action.html",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,

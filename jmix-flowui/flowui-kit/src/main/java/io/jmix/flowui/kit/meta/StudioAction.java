@@ -40,7 +40,7 @@ public @interface StudioAction {
     /**
      * @see StudioComponent#classFqn
      */
-    String icon() default "";
+    String icon() default "io/jmix/flowui/kit/meta/icon/action/action.svg";
 
     /**
      * Action description.
@@ -56,7 +56,7 @@ public @interface StudioAction {
     /**
      * @see StudioActionsGroup#unsupportedTarget
      */
-    String[] unsupportedTarget() default {};
+    String[] unsupportedTarget() default {"io.jmix.flowui.app.main.StandardMainView"};
 
     /**
      * Specifies whether the action should be displayed in the view creation wizard.

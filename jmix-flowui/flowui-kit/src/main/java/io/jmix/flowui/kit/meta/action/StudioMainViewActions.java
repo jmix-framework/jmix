@@ -28,7 +28,6 @@ public interface StudioMainViewActions {
             type = "logout",
             description = "Logouts from application",
             classFqn = "io.jmix.flowui.action.security.LogoutAction",
-            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -43,7 +42,8 @@ public interface StudioMainViewActions {
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.logout.description"),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            }
+            },
+            unsupportedTarget = {}
     )
     void logoutAction();
 }

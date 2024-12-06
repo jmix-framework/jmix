@@ -40,7 +40,7 @@ public class CurrentLocaleQueryParamValueProvider implements QueryParamValueProv
 
     @Override
     public boolean supports(String paramName) {
-        return paramName.startsWith(CURRENT_LOCALE_PARAM);
+        return CURRENT_LOCALE_PARAM.equals(paramName);
     }
 
     @Nullable

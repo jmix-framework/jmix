@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
  * Parameter name must be {@code current_locale}
  */
 @Component("sec_CurrentLocaleQueryParamValueProvider")
-@Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 300)
 public class CurrentLocaleQueryParamValueProvider implements QueryParamValueProvider {
 
     public static final String CURRENT_LOCALE_PARAM = "current_locale";

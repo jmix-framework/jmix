@@ -132,6 +132,7 @@ dependencies {
         exclude group: 'org.codehaus.castor', module: 'castor-xml'
     }
     api 'net.sf.jasperreports:jasperreports-fonts'
+    api 'net.sf.jasperreports:jasperreports-functions'
 
     api 'jakarta.xml.bind:jakarta.xml.bind-api'
 

@@ -387,9 +387,10 @@ dependencies {
         api 'com.opencsv:opencsv:5.7.1'
         api 'org.olap4j:olap4j:1.2.0'
 
-        def jasperVersion = '6.20.5'
+        def jasperVersion = '6.20.6'
         api "net.sf.jasperreports:jasperreports:$jasperVersion"
         api "net.sf.jasperreports:jasperreports-fonts:$jasperVersion"
+        api "net.sf.jasperreports:jasperreports-functions:$jasperVersion"
 
         api 'org.apache.tika:tika-parsers:1.28.5'
 

@@ -26,7 +26,9 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
@@ -65,6 +67,8 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
     @ViewComponent
     private CollectionContainer<RowLevelRoleModel> roleModelsDc;
     @ViewComponent
+    private DropdownButton exportBtn;
+    @ViewComponent
     private FileUploadField importField;
 
     @Autowired
@@ -87,6 +91,7 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
     @Subscribe
     public void onInit(InitEvent event) {
         initFilter();
+        initActions();
     }
 
     private void initFilter() {
@@ -98,6 +103,18 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
 
     private void onRoleFilterChange(RoleFilterChangeEvent event) {
         loadRoles(event);
+    }
+
+    private void initActions() {
+        if (rolePersistence == null) {
+            for (Action action : roleModelsTable.getActions()) {
+                if (!action.getId().equals("edit")) {
+                    action.setVisible(false);
+                }
+            }
+            exportBtn.setVisible(false);
+            importField.setVisible(false);
+        }
     }
 
     @Subscribe
@@ -144,7 +161,7 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
         Set<RowLevelRoleModel> selected = roleModelsTable.getSelectedItems();
         if (selected.size() == 1) {
             RowLevelRoleModel roleModel = selected.iterator().next();
-            return RoleSourceEnum.DATABASE.equals(roleModel.getSource());
+            return DATABASE.equals(roleModel.getSource());
         }
 
         return false;

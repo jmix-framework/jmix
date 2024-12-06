@@ -26,7 +26,9 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
@@ -61,6 +63,8 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     @ViewComponent
     private DataGrid<ResourceRoleModel> roleModelsTable;
     @ViewComponent
+    private DropdownButton exportBtn;
+    @ViewComponent
     private FileUploadField importField;
     @ViewComponent
     private CollectionContainer<ResourceRoleModel> roleModelsDc;
@@ -85,6 +89,7 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     @Subscribe
     public void onInit(InitEvent event) {
         initFilter();
+        initActions();
     }
 
     private void initFilter() {
@@ -96,6 +101,18 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
 
     private void onRoleFilterChange(RoleFilterChangeEvent event) {
         loadRoles(event);
+    }
+
+    private void initActions() {
+        if (rolePersistence == null) {
+            for (Action action : roleModelsTable.getActions()) {
+                if (!action.getId().equals("edit")) {
+                    action.setVisible(false);
+                }
+            }
+            exportBtn.setVisible(false);
+            importField.setVisible(false);
+        }
     }
 
     @Subscribe

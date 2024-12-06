@@ -53,10 +53,12 @@ public class DatabaseRolePersistence implements RolePersistence {
             ResourceRoleEntity roleEntity = resourceRoleModelToEntity(roleModel);
             saveContext.saving(roleEntity);
 
-            for (ResourcePolicyModel policyModel : roleModel.getResourcePolicies()) {
-                ResourcePolicyEntity policyEntity = resourcePolicyModelToEntity(policyModel);
-                policyEntity.setRole(roleEntity);
-                saveContext.saving(policyEntity);
+            if (roleEntity.getResourcePolicies() != null) {
+                for (ResourcePolicyModel policyModel : roleModel.getResourcePolicies()) {
+                    ResourcePolicyEntity policyEntity = resourcePolicyModelToEntity(policyModel);
+                    policyEntity.setRole(roleEntity);
+                    saveContext.saving(policyEntity);
+                }
             }
 
         } else {
@@ -102,10 +104,12 @@ public class DatabaseRolePersistence implements RolePersistence {
             RowLevelRoleEntity roleEntity = rowLevelRoleModelToEntity(roleModel);
             saveContext.saving(roleEntity);
 
-            for (RowLevelPolicyModel policyModel : roleModel.getRowLevelPolicies()) {
-                RowLevelPolicyEntity policyEntity = rowLevelPolicyModelToEntity(policyModel);
-                policyEntity.setRole(roleEntity);
-                saveContext.saving(policyEntity);
+            if (roleEntity.getRowLevelPolicies() != null) {
+                for (RowLevelPolicyModel policyModel : roleModel.getRowLevelPolicies()) {
+                    RowLevelPolicyEntity policyEntity = rowLevelPolicyModelToEntity(policyModel);
+                    policyEntity.setRole(roleEntity);
+                    saveContext.saving(policyEntity);
+                }
             }
 
         } else {

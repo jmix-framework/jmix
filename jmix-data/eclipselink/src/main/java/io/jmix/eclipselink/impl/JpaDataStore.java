@@ -34,7 +34,6 @@ import io.jmix.data.exception.UniqueConstraintViolationException;
 import io.jmix.data.impl.EntityChangedEventInfo;
 import io.jmix.data.impl.EntityEventManager;
 import io.jmix.data.impl.JpqlQueryBuilder;
-import io.jmix.data.impl.QueryResultsManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.impl.lazyloading.LazyLoadingContext;
 import jakarta.persistence.NoResultException;

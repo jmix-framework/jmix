@@ -18,21 +18,26 @@ package io.jmix.securityflowui.view.usersubstitution;
 
 import com.vaadin.flow.data.provider.Query;
 import io.jmix.core.EntityStates;
+import io.jmix.core.LoadContext;
+import io.jmix.core.SaveContext;
 import io.jmix.core.security.UserRepository;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.view.*;
-import io.jmix.securitydata.entity.UserSubstitutionEntity;
+import io.jmix.security.usersubstitution.UserSubstitutionModel;
+import io.jmix.security.usersubstitution.UserSubstitutionPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @ViewController("sec_UserSubstitution.detail")
 @ViewDescriptor("user-substitution-detail-view.xml")
 @EditedEntityContainer("userSubstitutionDc")
 @DialogMode(width = "37.5em")
-public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitutionEntity> {
+public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitutionModel> {
 
     @ViewComponent
     protected JmixComboBox<String> substitutedUsernameField;
@@ -43,6 +48,8 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
     protected UserRepository userRepository;
     @Autowired
     protected MessageBundle messagesBundle;
+    @Autowired(required = false)
+    protected UserSubstitutionPersistence userSubstitutionPersistence;
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -69,5 +76,23 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
         if (startDate != null && endDate != null && startDate.after(endDate)) {
             event.getErrors().add(messagesBundle.getMessage("userSubstitutionDetailView.dateOrderError"));
         }
+    }
+
+    @Install(to = "userSubstitutionDl", target = Target.DATA_LOADER)
+    protected UserSubstitutionModel userSubstitutionDlLoadDelegate(final LoadContext<UserSubstitutionModel> loadContext) {
+        return getUserSubstitutionService().load((UUID) loadContext.getId());
+    }
+
+    @Install(target = Target.DATA_CONTEXT)
+    protected Set<Object> saveDelegate(final SaveContext saveContext) {
+        UserSubstitutionModel saved = getUserSubstitutionService().save(getEditedEntity());
+        return Set.of(saved);
+    }
+
+    protected UserSubstitutionPersistence getUserSubstitutionService() {
+        if (userSubstitutionPersistence == null) {
+            throw new IllegalStateException("UserSubstitutionPersistence is not available");
+        }
+        return userSubstitutionPersistence;
     }
 }

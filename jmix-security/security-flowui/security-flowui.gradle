@@ -21,7 +21,7 @@ group = 'io.jmix.security'
 archivesBaseName = 'jmix-security-flowui'
 
 dependencies {
-    api project(':security-data')
+    api project(':security')
 
     api project(':flowui')
 

@@ -1347,13 +1347,10 @@ public class MetadataTools {
     }
 
     /**
-     * Returns all additional properties which are providing classes implement MetadataExtension interface
-     *
-     * @param metaClass instance MetaClass for getting additional properties
-     * @return all additional properties
+     * Returns all additional properties of the given MetaClass provided by {@link MetadataExtension}s.
      */
     public Set<MetaProperty> getAdditionalProperties(MetaClass metaClass) {
-        if (metadataExtensions == null) {
+        if (metadataExtensions == null || metadataExtensions.isEmpty()) {
             return Collections.emptySet();
         }
         return metadataExtensions.stream()
@@ -1362,11 +1359,10 @@ public class MetadataTools {
     }
 
     /**
-     * @param metaClass
-     * @param propertyName
+     * Returns true if the given MetaClass has an additional property with the given name.
      */
     public boolean isAdditionalProperty(MetaClass metaClass, String propertyName) {
-        if (metadataExtensions == null)
+        if (metadataExtensions == null || metadataExtensions.isEmpty())
             return false;
 
         for (MetadataExtension extension : metadataExtensions) {

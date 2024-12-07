@@ -23,12 +23,14 @@ import io.jmix.flowui.facet.impl.SettingsFacetImpl;
 import io.jmix.flowui.facet.settings.SettingsFacetUrlQueryParametersHelper;
 import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
 import io.jmix.flowui.settings.UserSettingsCache;
+import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,17 +46,21 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
     protected ReflectionCacheManager reflectionCacheManager;
     protected ViewSettingsComponentManager settingsManager;
     protected UserSettingsCache userSettingsCache;
+    @Nullable
+    private final UserSettingsService userSettingsService;
 
     public SettingsFacetProvider(LoaderSupport loaderSupport,
                                  SettingsFacetUrlQueryParametersHelper settingsHelper,
                                  ReflectionCacheManager reflectionCacheManager,
-                                 @Autowired(required = false) UserSettingsCache userSettingsCache,
-                                 @Autowired(required = false) ViewSettingsComponentManager settingsManager) {
+                                 UserSettingsCache userSettingsCache,
+                                 ViewSettingsComponentManager settingsManager,
+                                 @Nullable UserSettingsService userSettingsService) {
         this.loaderSupport = loaderSupport;
         this.settingsHelper = settingsHelper;
         this.reflectionCacheManager = reflectionCacheManager;
         this.settingsManager = settingsManager;
         this.userSettingsCache = userSettingsCache;
+        this.userSettingsService = userSettingsService;
     }
 
     @Override
@@ -64,7 +70,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
 
     @Override
     public SettingsFacet create() {
-        return new SettingsFacetImpl(settingsHelper, reflectionCacheManager, userSettingsCache, settingsManager);
+        return new SettingsFacetImpl(settingsHelper, reflectionCacheManager, userSettingsCache, settingsManager, userSettingsService);
     }
 
     @Override

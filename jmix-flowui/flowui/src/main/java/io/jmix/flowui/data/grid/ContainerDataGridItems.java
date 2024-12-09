@@ -27,6 +27,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.event.EventBus;
+import io.jmix.flowui.model.BaseCollectionLoader;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.HasLoader;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -103,9 +105,8 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
         if (container.getSorter() != null) {
             if (suppressSorting
                     && container instanceof HasLoader
-                    && ((HasLoader) container).getLoader() instanceof CollectionLoader) {
-                ((CollectionLoader<?>) ((HasLoader) container).getLoader())
-                        .setSort(createSort(propertyId, ascending));
+                    && ((HasLoader) container).getLoader() instanceof BaseCollectionLoader loader) {
+                loader.setSort(createSort(propertyId, ascending));
             } else {
                 container.getSorter().sort(createSort(propertyId, ascending));
             }

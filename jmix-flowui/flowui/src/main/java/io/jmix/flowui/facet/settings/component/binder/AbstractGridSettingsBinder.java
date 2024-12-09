@@ -22,8 +22,8 @@ import com.vaadin.flow.data.provider.SortDirection;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.facet.settings.component.DataGridSettings;
+import io.jmix.flowui.model.BaseCollectionLoader;
 import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.HasLoader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
                     column.setFlexGrow(sColumn.getFlexGrow() > 0 && !"100px".equals(sColumn.getWidth())
                             ? 0
                             : sColumn.getFlexGrow());
-                            
+
                     column.setWidth(sColumn.getWidth());
                 }
                 if (sColumn.getVisible() != null) {
@@ -166,7 +166,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         if (items instanceof ContainerDataUnit) {
             CollectionContainer<?> container = ((ContainerDataUnit<?>) items).getContainer();
             return container instanceof HasLoader
-                    && ((HasLoader) container).getLoader() instanceof CollectionLoader;
+                    && ((HasLoader) container).getLoader() instanceof BaseCollectionLoader;
         }
         return false;
     }

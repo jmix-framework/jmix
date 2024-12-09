@@ -80,7 +80,14 @@ dependencies {
     constraints {
 
         // community add-ons
-
+        api "gr.netmechanics.jmix:azurefs:2.3.0"
+        api "gr.netmechanics.jmix:azurefs-starter:2.3.0"
+        api "gr.netmechanics.jmix:jmix-tinymce:1.4.1"
+        api "gr.netmechanics.jmix:jmix-tinymce-starter:1.4.1"
+        api "gr.netmechanics.jmix:duration-field:2.0.0"
+        api "gr.netmechanics.jmix:duration-field-starter:2.0.0"
+        api "gr.netmechanics.jmix:jmix-multilingual-field:1.0.0"
+        api "gr.netmechanics.jmix:jmix-multilingual-field-starter:1.0.0"
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

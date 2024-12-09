@@ -23,19 +23,17 @@ import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.querycondition.PropertyCondition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import test_support.*;
+import test_support.BaseRestDsIntegrationTest;
+import test_support.SampleServiceConnection;
+import test_support.TestSupport;
 import test_support.entity.Country;
 import test_support.entity.Customer;
 import test_support.entity.CustomerRegionDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -123,6 +121,24 @@ public class RestDataStoreTest extends BaseRestDsIntegrationTest {
 
         assertThat(customers).size().isEqualTo(1);
         assertThat(customers.get(0)).isEqualTo(customer2);
+    }
+
+    @Test
+    void testLoadOneWithCondition() {
+        Customer customer1 = createCustomer(null, "testCondition-cust-1-" + now);
+        Customer customer2 = createCustomer(null, "testCondition-cust-2-" + now);
+
+        Customer customer = dataManager.load(Customer.class)
+                .condition(PropertyCondition.equal("lastName", customer2.getLastName()))
+                .one();
+
+        assertThat(customer).isEqualTo(customer2);
+
+        Optional<Customer> optionalCustomer = dataManager.load(Customer.class)
+                .condition(PropertyCondition.equal("lastName", "non-existent name"))
+                .optional();
+
+        assertThat(optionalCustomer).isEqualTo(Optional.empty());
     }
 
     @Test

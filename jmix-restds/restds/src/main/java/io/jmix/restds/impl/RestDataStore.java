@@ -70,17 +70,27 @@ public class RestDataStore extends AbstractDataStore {
     @Nullable
     protected Object loadOne(LoadContext<?> context) {
         Object id = context.getId();
-        if (id == null) {
-            throw new IllegalArgumentException("Id is null");
-        }
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
         String entityName = getEntityName(context.getEntityMetaClass());
         String fetchPlan = getFetchPlan(context);
-
-        RestInvoker.LoadParams params = new RestInvoker.LoadParams(entityName, id, fetchPlan);
-        String json = restInvoker.load(params);
-        Object entity = restSerialization.fromJson(json, entityClass);
-
+        Object entity = null;
+        if (id != null) {
+            RestInvoker.LoadParams params = new RestInvoker.LoadParams(entityName, id, fetchPlan);
+            String json = restInvoker.load(params);
+            entity = restSerialization.fromJson(json, entityClass);
+        } else {
+            RestInvoker.LoadListParams params = new RestInvoker.LoadListParams(entityName,
+                    1,
+                    getFirstResult(context.getQuery()),
+                    createRestSort(context.getQuery()),
+                    createRestFilter(context),
+                    fetchPlan);
+            String json = restInvoker.loadList(params);
+            List<Object> entities = restSerialization.fromJsonCollection(json, entityClass);
+            if (!entities.isEmpty()) {
+                entity = entities.get(0);
+            }
+        }
         if (entity != null) {
             updateEntityState(entity, fetchPlan);
             entityEventManager.publishEntityLoadingEvent(entity);

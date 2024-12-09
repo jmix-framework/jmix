@@ -521,6 +521,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         exportJsonAction.setDataGrid(dataGrid);
         exportJsonAction.setMetaClass(selectedMeta);
         exportJsonAction.setIcon(VaadinIcon.FILE_CODE.create());
+        exportJsonAction.setMetadata(metadata);
         exportDropdownButton.addItem("exportJson", exportJsonAction);
 
         ExportAction exportZipAction = new ExportAction("exportZIP");
@@ -528,6 +529,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         exportZipAction.setDataGrid(dataGrid);
         exportZipAction.setMetaClass(selectedMeta);
         exportZipAction.setIcon(VaadinIcon.FILE_ZIP.create());
+        exportZipAction.setMetadata(metadata);
         exportDropdownButton.addItem("exportZip", exportZipAction);
 
         FileUploadField importUpload = uiComponents.create(FileUploadField.class);
@@ -1040,6 +1042,11 @@ public class EntityInspectorListView extends StandardListView<Object> {
         }
 
         @Override
+        protected void setMetadata(Metadata metadata) {
+            this.metadata = metadata;
+        }
+
+        @Override
         public void execute() {
             Collection<Object> selected = dataGrid.getSelectedItems();
             if (selected.isEmpty()
@@ -1052,8 +1059,10 @@ public class EntityInspectorListView extends StandardListView<Object> {
             String tempDir = coreProperties.getTempDir();
 
             try {
+                Collection entities = reloadEntities(selected, createEntityExportPlan(selectedMeta));
+
                 if (format == ZIP) {
-                    byte[] data = entityImportExport.exportEntitiesToZIP(selected, createEntityExportPlan(selectedMeta));
+                    byte[] data = entityImportExport.exportEntitiesToZIP(entities);
                     String resourceName = metaClass.getJavaClass().getSimpleName() + ".zip";
                     ByteArrayDownloadDataProvider dataProvider =
                             new ByteArrayDownloadDataProvider(data, saveExportedByteArrayDataThresholdBytes, tempDir);
@@ -1061,7 +1070,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
                     downloader.download(dataProvider, resourceName, ZIP);
 
                 } else if (format == JSON) {
-                    byte[] data = entityImportExport.exportEntitiesToJSON(selected, createEntityExportPlan(selectedMeta))
+                    byte[] data = entityImportExport.exportEntitiesToJSON(entities)
                             .getBytes(StandardCharsets.UTF_8);
                     String resourceName = metaClass.getJavaClass().getSimpleName() + ".json";
                     ByteArrayDownloadDataProvider dataProvider =
@@ -1076,6 +1085,23 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
                 log.error("Entities export failed", e);
             }
+        }
+
+        protected Collection reloadEntities(Collection<Object> entities, FetchPlan fetchPlan) {
+            List ids = new ArrayList(entities.size());
+            for (Object entity : entities) {
+                ids.add(EntityValues.getId(entity));
+            }
+
+            MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
+            LoadContext.Query query = new LoadContext.Query("select e from " + metaClass.getName() + " e where e.id in :ids")
+                    .setParameter("ids", ids);
+            LoadContext<?> ctx = new LoadContext(metadata.getClass(fetchPlan.getEntityClass()))
+                    .setHint("jmix.softDeletion", false)
+                    .setQuery(query)
+                    .setFetchPlan(fetchPlan);
+
+            return dataManager.loadList(ctx);
         }
     }
 

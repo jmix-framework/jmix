@@ -151,7 +151,6 @@ public class EntityImportExportImpl implements EntityImportExport {
         // to reload and export JPA-counterparts of DTO entities, e.g. in security roles
         MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
         LoadContext<?> ctx = new LoadContext<>(metaClass)
-                .setHint("jmix.softDeletion", false)
                 .setIds(ids)
                 .setFetchPlan(fetchPlan);
 

@@ -23,6 +23,7 @@ dependencies {
     api project(':flowui')
 
     api project(':data')
+    api project(':eclipselink')
 
     implementation 'com.google.code.gson:gson'
 

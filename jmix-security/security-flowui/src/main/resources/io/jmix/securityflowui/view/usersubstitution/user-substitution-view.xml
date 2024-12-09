@@ -19,8 +19,8 @@
       focusComponent="substitutionDataGrid">
     <data>
         <collection id="userSubstitutionsDc"
-                    class="io.jmix.securitydata.entity.UserSubstitutionEntity">
-            <loader id="userSubstitutionsDl">
+                    class="io.jmix.security.usersubstitution.UserSubstitutionModel">
+            <loader id="userSubstitutionsDl" readOnly="true">
                 <query>
                     <![CDATA[select s from sec_UserSubstitutionEntity s where s.username = :username]]>
                 </query>

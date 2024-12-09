@@ -1,7 +1,7 @@
 package io.jmix.securityflowui.view.resourcepolicy;
 
 import io.jmix.flowui.view.*;
-import io.jmix.securityflowui.model.ResourcePolicyModel;
+import io.jmix.security.model.ResourcePolicyModel;
 
 @ViewController("sec_ResourcePolicyModel.detail")
 @ViewDescriptor("resource-policy-model-detail-view.xml")

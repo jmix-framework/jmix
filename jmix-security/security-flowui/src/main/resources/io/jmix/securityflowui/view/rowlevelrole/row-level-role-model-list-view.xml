@@ -20,7 +20,7 @@
       focusComponent="roleModelsTable">
     <data readOnly="true">
         <collection id="roleModelsDc"
-                    class="io.jmix.securityflowui.model.RowLevelRoleModel">
+                    class="io.jmix.security.model.RowLevelRoleModel">
         </collection>
     </data>
     <facets>

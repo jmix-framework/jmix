@@ -5,7 +5,7 @@ import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.InstanceContainer.ItemPropertyChangeEvent;
 import io.jmix.flowui.view.*;
 import io.jmix.securityflowui.model.DefaultResourcePolicyGroupResolver;
-import io.jmix.securityflowui.model.ResourcePolicyModel;
+import io.jmix.security.model.ResourcePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ViewController("sec_ViewResourcePolicyModel.detail")

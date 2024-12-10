@@ -229,7 +229,16 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     }
 
     public void setStatusChangeHandler(@Nullable Consumer<StatusContext<C>> statusChangeHandler) {
-        this.statusChangeHandler = statusChangeHandler;
+        if (this.statusChangeHandler != statusChangeHandler) {
+            String currentErrorMessage = getErrorMessage();
+            // Clear previous error message renderer
+            setErrorMessage(null);
+
+            this.statusChangeHandler = statusChangeHandler;
+
+            // Set the error message to the current error message renderer
+            setErrorMessage(currentErrorMessage);
+        }
     }
 
     public boolean isInvalid() {

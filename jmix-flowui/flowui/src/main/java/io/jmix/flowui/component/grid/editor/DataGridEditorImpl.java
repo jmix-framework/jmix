@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.grid.editor;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.grid.Grid;
@@ -468,6 +469,8 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
         Component component = statusContext.getComponent();
         if (component instanceof HasTitle) {
             ((HasTitle) component).setTitle(statusContext.getDescription());
+        } else {
+            component.getElement().setProperty("title", Strings.nullToEmpty(statusContext.getDescription()));
         }
     }
 

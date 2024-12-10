@@ -4,10 +4,14 @@ import ${entity.fqn}<%if (!api.jmixProjectModule.isApplication() || routeLayout 
 import io.jmix.flowui.view.DefaultMainViewParent<%} else {%>
 import ${routeLayout.getControllerFqn()}<%}%>
 import com.vaadin.flow.router.Route
+import io.jmix.core.Copier
+import io.jmix.core.EntityStates
 import io.jmix.core.LoadContext
 import io.jmix.core.SaveContext
-import io.jmix.flowui.view.*
+import io.jmix.core.entity.EntityValues
 import io.jmix.flowui.view.Target
+import io.jmix.flowui.view.*
+import org.springframework.beans.factory.annotation.Autowired
 
 <%if (classComment) {%>
 ${classComment}
@@ -17,6 +21,11 @@ ${classComment}
 @EditedEntityContainer("${dcId}")
 class ${detailControllerName} : StandardDetailView<${entity.className}>() {
 <%if (generateDelegates) {%>
+    @Autowired
+    private lateinit var copier: Copier
+    @Autowired
+    private lateinit var entityStates: EntityStates
+
     @Install(to = "${dlId}", target = Target.DATA_LOADER)
     private fun ${dlId}LoadDelegate(loadContext: LoadContext<${entity.className}>): ${entity.className}? {
         val id = loadContext.id
@@ -27,11 +36,21 @@ class ${detailControllerName} : StandardDetailView<${entity.className}>() {
 
     @Install(target = Target.DATA_CONTEXT)
     private fun saveDelegate(saveContext: SaveContext): MutableSet<Any> {
-        // Here you can save the entity to an external storage and return the saved instance.
-        // Set the returned entity to the not-new state using EntityStates.setNew(entity, false).
-        // If the new entity ID is assigned by the storage, set the ID to the original instance too 
+        val entity = editedEntity
+        // Make a copy and save it. Copying isolates the view from possible changes of the saved entity.
+        val saved = save(copier.copy(entity))
+        // If the new entity ID is assigned by the storage, set the ID to the original entity instance
         // to let the framework match the saved instance with the original one.
-        val savedEntity = editedEntity
-        return mutableSetOf(savedEntity)
+        if (EntityValues.getId(entity) == null) {
+            EntityValues.setId(entity, EntityValues.getId(saved))
+        }
+        // Set the returned entity to the not-new state.
+        entityStates.setNew(saved, false)
+        return mutableSetOf(saved)
+    }
+
+    private fun save(entity: Alpha): Alpha {
+        // Here you can save the entity to an external storage and return the saved instance.
+        return entity
     }<%}%>
 }

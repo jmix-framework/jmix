@@ -33,6 +33,10 @@
   background-color: var(--lumo-primary-color-10pct);
 }
 
+.jmix-horizontal-menu vaadin-menu-bar-button.jmix-horizontal-menu-item-wrapper[focus-ring] {
+  box-shadow: inset 0 0 0 var(--_focus-ring-width) var(--_focus-ring-color)
+}
+
 vaadin-menu-bar .jmix-horizontal-menu-item-wrapper {
   margin: 0;
   padding: 0;

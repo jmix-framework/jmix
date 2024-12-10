@@ -21,10 +21,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinService;
-import com.vaadin.flow.server.VaadinServletRequest;
-import com.vaadin.flow.server.VaadinServletResponse;
+import com.vaadin.flow.server.*;
 import com.vaadin.flow.server.auth.NavigationAccessControl;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
@@ -308,7 +305,12 @@ public class LoginViewSupport {
                 //and RouteConfiguration.getRoute(String) doesn't support full URLs
                 //like one returned from savedRequest.getRedirectUrl()
                 QueryParameters queryParameters = QueryParameters.fromString(defaultSavedRequest.getQueryString());
-                return new Location(defaultSavedRequest.getServletPath(), queryParameters);
+                String servletPath = defaultSavedRequest.getServletPath();
+
+                if (getRouteConfiguration().isPathAvailable(removeLeadingSlash(servletPath))) {
+                    return new Location(servletPath, queryParameters);
+                }
+                return null;
             } else {
                 return new Location(savedRequest.getRedirectUrl());
             }
@@ -387,6 +389,18 @@ public class LoginViewSupport {
     @Nullable
     protected TimeZone getDeviceTimeZone() {
         return deviceTimeZoneProvider.getDeviceTimeZone();
+    }
+
+    protected RouteConfiguration getRouteConfiguration() {
+        return viewRegistry.getRouteConfiguration();
+    }
+
+    @Nullable
+    protected String removeLeadingSlash(@Nullable String path) {
+        if (Strings.isNullOrEmpty(path)) {
+            return path;
+        }
+        return path.startsWith("/") ? path.substring(1) : path;
     }
 
     protected AppCookies getCookies() {

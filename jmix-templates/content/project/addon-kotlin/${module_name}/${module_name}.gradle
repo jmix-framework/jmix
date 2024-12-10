@@ -17,6 +17,7 @@ dependencies {
 configurations.implementation {
     exclude group: 'com.vaadin', module: 'hilla'
     exclude group: 'com.vaadin', module: 'hilla-dev'
+    exclude group: 'com.vaadin', module: 'copilot'
 }
 
 test {

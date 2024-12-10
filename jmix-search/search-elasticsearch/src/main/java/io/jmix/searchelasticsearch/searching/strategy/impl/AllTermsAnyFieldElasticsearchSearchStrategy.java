@@ -20,10 +20,13 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
-
+import io.jmix.search.searching.SearchUtils;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Describes {@link SearchStrategy} that searches documents with fields match all input terms in any order.
@@ -34,6 +37,12 @@ import org.springframework.stereotype.Component;
 public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractSearchStrategy
         implements ElasticsearchSearchStrategy {
 
+    protected final SearchUtils searchUtils;
+
+    public AllTermsAnyFieldElasticsearchSearchStrategy(SearchUtils searchUtils) {
+        this.searchUtils = searchUtils;
+    }
+
     @Override
     public String getName() {
         return "allTermsAnyField";
@@ -41,10 +50,11 @@ public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractSearchS
 
     @Override
     public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+        Set<String> effectiveFieldsToSearch = searchUtils.resolveEffectiveSearchFields(searchContext.getEntities());
         requestBuilder.query(queryBuilder ->
                 queryBuilder.simpleQueryString(simpleQueryStringQueryBuilder ->
-                        simpleQueryStringQueryBuilder.fields("*")
-                                .query(searchContext.getSearchText())
+                        simpleQueryStringQueryBuilder.fields(new ArrayList<>(effectiveFieldsToSearch))
+                                .query(searchContext.getEscapedSearchText())
                                 .defaultOperator(Operator.And)
                 )
         );

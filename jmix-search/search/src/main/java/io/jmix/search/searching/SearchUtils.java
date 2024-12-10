@@ -17,7 +17,10 @@
 package io.jmix.search.searching;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
@@ -81,9 +84,29 @@ public class SearchUtils {
             IndexMappingConfiguration mapping = indexConfiguration.getMapping();
             Map<String, MappingFieldDescriptor> fields = mapping.getFields();
             Set<String> fieldNames = fields.keySet();
-            effectiveFieldsToSearch.addAll(fieldNames);
+
+            for (String fieldName : fieldNames) {
+                MappingFieldDescriptor mappingFieldDescriptor = fields.get(fieldName);
+                MetaPropertyPath metaPropertyPath = mappingFieldDescriptor.getMetaPropertyPath();
+                if (isFileRefProperty(metaPropertyPath)) {
+                    // Add nested fields created by FileFieldMapper
+                    effectiveFieldsToSearch.add(fieldName + "._file_name");
+                    effectiveFieldsToSearch.add(fieldName + "._content");
+                } else {
+                    effectiveFieldsToSearch.add(fieldName);
+                }
+            }
         }
 
         return effectiveFieldsToSearch;
+    }
+
+    protected boolean isFileRefProperty(MetaPropertyPath propertyPath) {
+        if (propertyPath.getRange().isDatatype()) {
+            Datatype<?> datatype = propertyPath.getRange().asDatatype();
+            return datatype instanceof FileRefDatatype;
+        } else {
+            return false;
+        }
     }
 }

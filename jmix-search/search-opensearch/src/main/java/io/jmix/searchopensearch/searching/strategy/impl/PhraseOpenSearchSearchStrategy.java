@@ -36,7 +36,7 @@ public class PhraseOpenSearchSearchStrategy extends AbstractSearchStrategy imple
         requestBuilder.query(queryBuilder ->
                 queryBuilder.multiMatch(multiMatchQueryBuilder ->
                         multiMatchQueryBuilder.fields(new ArrayList<>(effectiveFieldsToSearch))
-                                .query(searchContext.getSearchText())
+                                .query(searchContext.getEscapedSearchText())
                                 .type(TextQueryType.Phrase)
                 )
         );

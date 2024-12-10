@@ -288,7 +288,8 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
                 .withHeader(getMessage("exportConfirmationDialog.header"))
                 .withText(getMessage("exportConfirmationDialog.message"))
                 .withActions(actions.toArray(new Action[0]))
-                .withWidth("32em")
+                .withMinWidth("32em")
+                .withMaxWidth("50em")
                 .open();
     }
 

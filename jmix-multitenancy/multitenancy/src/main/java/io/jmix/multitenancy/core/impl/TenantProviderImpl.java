@@ -19,6 +19,7 @@ package io.jmix.multitenancy.core.impl;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.multitenancy.core.TenantProvider;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,9 +34,12 @@ import java.lang.reflect.Field;
 public class TenantProviderImpl implements TenantProvider {
 
     private final CurrentAuthentication currentAuthentication;
+    private final CurrentUserSubstitution currentUserSubstitution;
 
-    public TenantProviderImpl(CurrentAuthentication currentAuthentication) {
+    public TenantProviderImpl(CurrentAuthentication currentAuthentication,
+                              CurrentUserSubstitution currentUserSubstitution) {
         this.currentAuthentication = currentAuthentication;
+        this.currentUserSubstitution = currentUserSubstitution;
     }
 
     /**
@@ -53,7 +57,7 @@ public class TenantProviderImpl implements TenantProvider {
             return TenantProvider.NO_TENANT;
         }
 
-        UserDetails userDetails = currentAuthentication.getUser();
+        UserDetails userDetails = currentUserSubstitution.getEffectiveUser();
         String tenantIdFieldName = getTenantIdFieldName(userDetails.getClass());
 
         if (tenantIdFieldName == null) {

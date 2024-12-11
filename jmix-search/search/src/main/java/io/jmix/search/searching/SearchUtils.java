@@ -83,10 +83,10 @@ public class SearchUtils {
             IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(targetEntity);
             IndexMappingConfiguration mapping = indexConfiguration.getMapping();
             Map<String, MappingFieldDescriptor> fields = mapping.getFields();
-            Set<String> fieldNames = fields.keySet();
 
-            for (String fieldName : fieldNames) {
-                MappingFieldDescriptor mappingFieldDescriptor = fields.get(fieldName);
+            for (Map.Entry<String, MappingFieldDescriptor> entry : fields.entrySet()) {
+                String fieldName = entry.getKey();
+                MappingFieldDescriptor mappingFieldDescriptor = entry.getValue();
                 MetaPropertyPath metaPropertyPath = mappingFieldDescriptor.getMetaPropertyPath();
                 if (isFileRefProperty(metaPropertyPath)) {
                     // Add nested fields created by FileFieldMapper

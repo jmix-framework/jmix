@@ -23,8 +23,8 @@ import io.jmix.flowui.view.*;
 import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.securityflowui.component.rolefilter.RoleFilter;
 import io.jmix.securityflowui.component.rolefilter.RoleFilterChangeEvent;
-import io.jmix.securityflowui.model.RoleModelConverter;
-import io.jmix.securityflowui.model.RowLevelRoleModel;
+import io.jmix.security.model.RoleModelConverter;
+import io.jmix.security.model.RowLevelRoleModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;

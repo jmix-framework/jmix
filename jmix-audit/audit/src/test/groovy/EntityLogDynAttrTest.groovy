@@ -21,7 +21,6 @@ import io.jmix.core.*
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.DataConfiguration
 import io.jmix.data.PersistenceHints
-import io.jmix.data.entity.ReferenceToEntity
 import io.jmix.dynattr.AttributeType
 import io.jmix.dynattr.DynAttrConfiguration
 import io.jmix.dynattr.DynAttrMetadata
@@ -131,7 +130,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         firstAttribute.dataType = AttributeType.STRING
         firstAttribute.categoryEntityType = 'dynaudit$FirstEntity'
         firstAttribute.category = firstCategory
-        firstAttribute.defaultEntity = new ReferenceToEntity()
+        firstAttribute.defaultEntity = new io.jmix.dynattr.model.ReferenceToEntity()
 
         notLoggedAttribute = metadata.create(CategoryAttribute)
         notLoggedAttribute.name = 'Not Logged Attribute'
@@ -139,7 +138,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         notLoggedAttribute.dataType = AttributeType.STRING
         notLoggedAttribute.categoryEntityType = 'dynaudit$FirstEntity'
         notLoggedAttribute.category = firstCategory
-        notLoggedAttribute.defaultEntity = new ReferenceToEntity()
+        notLoggedAttribute.defaultEntity = new io.jmix.dynattr.model.ReferenceToEntity()
     }
 
     private void createSecondEntityAttributes() {
@@ -150,7 +149,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         entityAttribute.categoryEntityType = 'dynaudit$SecondEntity'
         entityAttribute.category = secondCategory
         entityAttribute.entityClass = 'test_support.testmodel.dynattr.AdditionalEntity'
-        entityAttribute.defaultEntity = new ReferenceToEntity()
+        entityAttribute.defaultEntity = new io.jmix.dynattr.model.ReferenceToEntity()
 
         entityCollectionAttribute = metadata.create(CategoryAttribute)
         entityCollectionAttribute.name = 'Entity Collection Attribute'
@@ -160,7 +159,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         entityCollectionAttribute.category = secondCategory
         entityCollectionAttribute.entityClass = 'test_support.testmodel.dynattr.AdditionalEntity'
         entityCollectionAttribute.isCollection = true
-        entityCollectionAttribute.defaultEntity = new ReferenceToEntity()
+        entityCollectionAttribute.defaultEntity = new io.jmix.dynattr.model.ReferenceToEntity()
     }
 
     def "test dynamic only by operation types"() {

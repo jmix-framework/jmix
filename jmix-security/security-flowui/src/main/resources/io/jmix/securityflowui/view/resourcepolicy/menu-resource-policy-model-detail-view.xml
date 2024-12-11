@@ -3,7 +3,7 @@
       focusComponent="form">
     <data>
         <instance id="resourcePolicyModelDc"
-                  class="io.jmix.securityflowui.model.ResourcePolicyModel">
+                  class="io.jmix.security.model.ResourcePolicyModel">
         </instance>
     </data>
     <actions>

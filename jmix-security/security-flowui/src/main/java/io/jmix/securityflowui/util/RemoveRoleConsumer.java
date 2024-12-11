@@ -20,7 +20,7 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.security.role.RoleRepository;
-import io.jmix.securityflowui.model.BaseRoleModel;
+import io.jmix.security.model.BaseRoleModel;
 
 import java.util.function.Consumer;
 

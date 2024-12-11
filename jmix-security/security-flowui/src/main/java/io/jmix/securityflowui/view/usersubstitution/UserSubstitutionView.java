@@ -20,6 +20,7 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
+import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
@@ -27,10 +28,14 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.*;
-import io.jmix.securitydata.entity.UserSubstitutionEntity;
+import io.jmix.security.usersubstitution.UserSubstitutionModel;
+import io.jmix.security.usersubstitution.UserSubstitutionPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.Collection;
+import java.util.List;
 
 @Route(value = "sec/usersubstitution/:username", layout = DefaultMainViewParent.class)
 @ViewController("sec_UserSubstitution.view")
@@ -41,7 +46,7 @@ public class UserSubstitutionView extends StandardView {
     public static final String ROUTE_PARAM_NAME = "username";
 
     @ViewComponent
-    protected CollectionLoader<UserSubstitutionEntity> userSubstitutionsDl;
+    protected CollectionLoader<UserSubstitutionModel> userSubstitutionsDl;
 
     @Autowired
     protected MessageBundle messageBundle;
@@ -51,6 +56,8 @@ public class UserSubstitutionView extends StandardView {
     protected UserRepository userRepository;
     @Autowired
     protected ViewValidation viewValidation;
+    @Autowired(required = false)
+    protected UserSubstitutionPersistence userSubstitutionPersistence;
 
     protected String username;
 
@@ -89,12 +96,12 @@ public class UserSubstitutionView extends StandardView {
     }
 
     @Install(to = "substitutionDataGrid.create", subject = "initializer")
-    protected void substitutionDataGridCreateInitializer(UserSubstitutionEntity userSubstitution) {
+    protected void substitutionDataGridCreateInitializer(UserSubstitutionModel userSubstitution) {
         userSubstitution.setUsername(username);
     }
 
     @Supply(to = "substitutionDataGrid.substitutedUsername", subject = "renderer")
-    protected Renderer<UserSubstitutionEntity> substitutedUsernameRenderer() {
+    protected Renderer<UserSubstitutionModel> substitutedUsernameRenderer() {
         return new TextRenderer<>(substitution -> {
             String userRepresentation;
             try {
@@ -112,5 +119,22 @@ public class UserSubstitutionView extends StandardView {
     public void onPostSave(DataContext.PostSaveEvent postCommitEvent) {
         UserSubstitutionsChangedEvent event = new UserSubstitutionsChangedEvent(username);
         getApplicationContext().publishEvent(event);
+    }
+
+    @Install(to = "userSubstitutionsDl", target = Target.DATA_LOADER)
+    protected List<UserSubstitutionModel> userSubstitutionsDlLoadDelegate(final LoadContext<UserSubstitutionModel> loadContext) {
+        return getUserSubstitutionService().loadSubstitutionsOf(username);
+    }
+
+    @Install(to = "substitutionDataGrid.remove", subject = "delegate")
+    protected void substitutionDataGridRemoveDelegate(final Collection<UserSubstitutionModel> collection) {
+        getUserSubstitutionService().remove(collection);
+    }
+
+    protected UserSubstitutionPersistence getUserSubstitutionService() {
+        if (userSubstitutionPersistence == null) {
+            throw new IllegalStateException("UserSubstitutionPersistence is not available");
+        }
+        return userSubstitutionPersistence;
     }
 }

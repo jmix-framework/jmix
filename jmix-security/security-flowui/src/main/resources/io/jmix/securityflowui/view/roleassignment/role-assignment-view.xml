@@ -17,17 +17,13 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view">
     <data>
-        <collection id="resourceRoleAssignmentEntitiesDc"
-                    class="io.jmix.securitydata.entity.RoleAssignmentEntity">
-            <loader id="resourceRoleAssignmentEntitiesDl">
-                <query>
-                    <![CDATA[select e from sec_RoleAssignmentEntity e where e.username = :username and e.roleType = :roleType]]>
-                </query>
-            </loader>
+        <collection id="resourceRoleAssignmentsDc"
+                    class="io.jmix.security.role.assignment.RoleAssignmentModel">
+            <loader id="resourceRoleAssignmentsDl"/>
         </collection>
-        <collection id="rowLevelRoleAssignmentEntitiesDc"
-                    class="io.jmix.securitydata.entity.RoleAssignmentEntity">
-            <loader id="rowLevelRoleAssignmentEntitiesDl">
+        <collection id="rowLevelRoleAssignmentsDc"
+                    class="io.jmix.security.role.assignment.RoleAssignmentModel">
+            <loader id="rowLevelRoleAssignmentsDl">
                 <query>
                     <![CDATA[select e from sec_RoleAssignmentEntity e where e.username = :username and e.roleType = :roleType]]>
                 </query>
@@ -62,7 +58,7 @@
                             action="resourceRoleAssignmentsTable.remove"/>
                 </hbox>
                 <dataGrid id="resourceRoleAssignmentsTable"
-                          dataContainer="resourceRoleAssignmentEntitiesDc"
+                          dataContainer="resourceRoleAssignmentsDc"
                           columnReorderingAllowed="true"
                           minHeight="20em"
                           selectionMode="MULTI">
@@ -92,7 +88,7 @@
                             action="rowLevelRoleAssignmentsTable.remove"/>
                 </hbox>
                 <dataGrid id="rowLevelRoleAssignmentsTable"
-                          dataContainer="rowLevelRoleAssignmentEntitiesDc"
+                          dataContainer="rowLevelRoleAssignmentsDc"
                           columnReorderingAllowed="true"
                           minHeight="20em"
                           selectionMode="MULTI">

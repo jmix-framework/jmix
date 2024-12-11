@@ -17,15 +17,13 @@
 package io.jmix.flowuidata.settings;
 
 import io.jmix.core.AccessManager;
+import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.data.impl.EntityEventManager;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowuidata.entity.UserSettingsItem;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -45,22 +43,18 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     protected CurrentAuthentication authentication;
     protected Metadata metadata;
     protected AccessManager accessManager;
-    protected EntityEventManager entityEventManager;
-
-    @PersistenceContext
-    protected EntityManager entityManager;
-
+    protected DataManager dataManager;
     protected TransactionTemplate transaction;
 
     public UserSettingsServiceImpl(CurrentAuthentication authentication,
                                    Metadata metadata,
                                    AccessManager accessManager,
-                                   EntityEventManager entityEventManager,
+                                   DataManager dataManager,
                                    PlatformTransactionManager transactionManager) {
         this.authentication = authentication;
         this.metadata = metadata;
         this.accessManager = accessManager;
-        this.entityEventManager = entityEventManager;
+        this.dataManager = dataManager;
 
         transaction = new TransactionTemplate(transactionManager);
         transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
@@ -101,11 +95,10 @@ public class UserSettingsServiceImpl implements UserSettingsService {
                 us.setUsername(authentication.getUser().getUsername());
                 us.setKey(key);
                 us.setValue(value);
-                entityEventManager.publishEntitySavingEvent(us, true); //workaround for jmix-framework/jmix#1069
-                entityManager.persist(us);
             } else {
                 us.setValue(value);
             }
+            dataManager.save(us);
         });
     }
 
@@ -121,7 +114,7 @@ public class UserSettingsServiceImpl implements UserSettingsService {
         transaction.executeWithoutResult(status -> {
             UserSettingsItem us = findUserSettings(key);
             if (us != null) {
-                entityManager.remove(us);
+                dataManager.remove(us);
             }
         });
     }
@@ -131,38 +124,33 @@ public class UserSettingsServiceImpl implements UserSettingsService {
         Preconditions.checkNotNullArgument(fromUsername);
         Preconditions.checkNotNullArgument(toUsername);
 
-        transaction.executeWithoutResult(status ->
-                entityManager.createQuery("delete from flowui_UserSettingsItem s where s.username = ?1")
-                        .setParameter(1, toUsername)
-                        .executeUpdate());
+        transaction.executeWithoutResult(status -> {
+             dataManager.load(UserSettingsItem.class)
+                     .query("e.username = ?1", toUsername)
+                     .optional()
+                     .ifPresent(userSettingsItem -> dataManager.remove(userSettingsItem));
+        });
 
         transaction.executeWithoutResult(status -> {
-            List<UserSettingsItem> fromUserSettings =
-                    entityManager.createQuery("select s from flowui_UserSettingsItem s where s.username = ?1", UserSettingsItem.class)
-                            .setParameter(1, fromUsername)
-                            .getResultList();
+            List<UserSettingsItem> fromUserSettings = dataManager.load(UserSettingsItem.class)
+                    .query("e.username = ?1", fromUsername)
+                    .list();
 
             for (UserSettingsItem currSetting : fromUserSettings) {
                 UserSettingsItem newSetting = metadata.create(UserSettingsItem.class);
                 newSetting.setUsername(toUsername);
                 newSetting.setKey(currSetting.getKey());
                 newSetting.setValue(currSetting.getValue());
-
-                entityEventManager.publishEntitySavingEvent(newSetting, true); //workaround for jmix-framework/jmix#1069
-                entityManager.persist(newSetting);
+                dataManager.save(newSetting);
             }
         });
     }
 
     @Nullable
     protected UserSettingsItem findUserSettings(String key) {
-        List<UserSettingsItem> result = entityManager.createQuery(
-                        "select s from flowui_UserSettingsItem s where s.username = ?1 and s.key =?2",
-                        UserSettingsItem.class)
-                .setParameter(1, authentication.getUser().getUsername())
-                .setParameter(2, key)
-                .getResultList();
-
+        List<UserSettingsItem> result = dataManager.load(UserSettingsItem.class)
+                .query("e.username = ?1 and e.key =?2", authentication.getUser().getUsername(), key)
+                .list();
         return result.isEmpty() ? null : result.get(0);
     }
 

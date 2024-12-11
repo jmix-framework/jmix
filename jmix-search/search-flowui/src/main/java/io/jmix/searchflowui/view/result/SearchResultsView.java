@@ -161,11 +161,9 @@ public class SearchResultsView extends StandardView {
     }
 
     public void initView(SearchFieldContext searchFieldContext) {
-        if (this.searchFieldContext == null) {
-            this.searchFieldContext = searchFieldContext;
-            searchResult = entitySearcher.search(createSearchContext(searchFieldContext), searchFieldContext.getSearchStrategy());
-            handleSearchResult(searchResult);
-        }
+        this.searchFieldContext = searchFieldContext;
+        searchResult = entitySearcher.search(createSearchContext(searchFieldContext), searchFieldContext.getSearchStrategy());
+        handleSearchResult(searchResult);
     }
 
     protected void handleSearchResult(SearchResult searchResult) {

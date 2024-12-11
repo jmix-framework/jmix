@@ -21,7 +21,6 @@ import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.*;
-import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -69,7 +68,7 @@ public class DataContextImpl implements DataContextInternal {
     protected EntityReferencesNormalizer entityReferencesNormalizer;
 
     @Autowired
-    protected StandardSerialization standardSerialization;
+    protected Copier copier;
 
     protected EventHub events = new EventHub();
 
@@ -735,7 +734,7 @@ public class DataContextImpl implements DataContextInternal {
     @SuppressWarnings("unchecked")
     public Collection<Object> isolate(List entities) {
         // re-serialize the whole collection to preserve links between objects
-        List isolatedEntities = (List) standardSerialization.deserialize(standardSerialization.serialize(entities));
+        List<Object> isolatedEntities = copier.copy(entities);
         for (int i = 0; i < isolatedEntities.size(); i++) {
             Object isolatedEntity = isolatedEntities.get(i);
             Object entity = entities.get(i);

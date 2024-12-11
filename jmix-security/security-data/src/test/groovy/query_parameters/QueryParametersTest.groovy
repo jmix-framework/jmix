@@ -16,9 +16,15 @@
 
 package query_parameters
 
+
+import io.jmix.core.security.ClientDetails
+import io.jmix.core.security.SystemAuthenticationToken
 import io.jmix.core.security.SystemAuthenticator
+import io.jmix.securitydata.impl.CurrentLocaleQueryParamValueProvider
 import io.jmix.securitydata.impl.CurrentUserQueryParamValueProvider
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.core.context.SecurityContextHolder
 import test_support.SecurityDataSpecification
 
 class QueryParametersTest extends SecurityDataSpecification {
@@ -27,7 +33,13 @@ class QueryParametersTest extends SecurityDataSpecification {
     SystemAuthenticator authenticator
 
     @Autowired
+    AuthenticationManager authenticationManager
+
+    @Autowired
     CurrentUserQueryParamValueProvider currentUserQueryParamValueProvider
+
+    @Autowired
+    CurrentLocaleQueryParamValueProvider currentLocaleQueryParamValueProvider
 
     def "test UserDetails attributes"() {
         when:
@@ -45,5 +57,21 @@ class QueryParametersTest extends SecurityDataSpecification {
 
         then:
         value == true
+    }
+
+    def "test locale attribute"() {
+        when:
+        def token = new SystemAuthenticationToken(null)
+        def authentication = authenticationManager.authenticate(token) as SystemAuthenticationToken
+        authentication.details = ClientDetails.builder().locale(Locale.of("ru")).build()
+
+        SecurityContextHolder.getContext().setAuthentication(authentication)
+
+        def value = currentLocaleQueryParamValueProvider.getValue('current_locale')
+
+        SecurityContextHolder.getContext().setAuthentication(null)
+
+        then:
+        value == 'ru'
     }
 }

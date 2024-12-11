@@ -224,14 +224,20 @@ public class SearchField extends CustomField<String>
 
     protected void openSearchResultsWindow(String searchText) {
         if (openMode == OpenMode.DIALOG) {
-            DialogWindow<SearchResultsView> searchResultsDialog = dialogWindows.view(
-                            UiComponentUtils.getView(this),
-                            SearchResultsView.class)
-                    .build();
+            View<?> originView = UiComponentUtils.getView(this);
+            if (UiComponentUtils.isComponentAttachedToDialog(this)
+                    && originView instanceof SearchResultsView targetView) {
+                targetView.initView(new SearchFieldContext(this));
+            } else {
+                DialogWindow<SearchResultsView> searchResultsDialog = dialogWindows.view(
+                                originView,
+                                SearchResultsView.class)
+                        .build();
 
-            SearchResultsView view = searchResultsDialog.getView();
-            view.initView(new SearchFieldContext(this));
-            searchResultsDialog.open();
+                SearchResultsView targetView = searchResultsDialog.getView();
+                targetView.initView(new SearchFieldContext(this));
+                searchResultsDialog.open();
+            }
         } else {
             viewNavigators.view(UiComponentUtils.getView(this), SearchResultsView.class)
                     .withBackwardNavigation(true)

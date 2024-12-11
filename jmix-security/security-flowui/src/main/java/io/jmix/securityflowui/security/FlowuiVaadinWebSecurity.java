@@ -21,6 +21,7 @@ import com.vaadin.flow.internal.AnnotationReader;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.internal.RouteUtil;
 import com.vaadin.flow.server.VaadinServletContext;
+import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
@@ -34,17 +35,24 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
  * Provides default Vaadin and Jmix FlowUI security to the project.
  */
 public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
+
+    /**
+     * Regexp matches all requests that end with ".png" or ".jpe?g".
+     */
+    protected static final String IMAGE_REQUEST_REGEXP = ".*(\\.png|\\.jpe?g)$";
 
     private static Logger log = LoggerFactory.getLogger(FlowuiVaadinWebSecurity.class);
 
@@ -77,6 +85,16 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     @Autowired
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
+    }
+
+    @Autowired
+    public void setVaadinDefaultRequestCache(VaadinDefaultRequestCache vaadinDefaultRequestCache) {
+        // Configure request cache to do not save image resource requests
+        // as they are not valid redirect routes.
+        HttpSessionRequestCache cache = new HttpSessionRequestCache();
+        cache.setRequestMatcher(new NegatedRequestMatcher(
+                new RegexRequestMatcher(IMAGE_REQUEST_REGEXP, null, true)));
+        vaadinDefaultRequestCache.setDelegateRequestCache(cache);
     }
 
     @Override

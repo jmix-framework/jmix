@@ -168,21 +168,23 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
 
     @Nullable
     protected Object processAccordingToReturnType(LoadContext<?> loadContext, Object[] parameters) {
+        Pageable pageable = null;
+
+        if (pageableIndex != -1) {
+            pageable = (Pageable) parameters[pageableIndex];
+            LoaderHelper.applyPageableForLoadContext(loadContext, pageable);
+        }
+
         Class<?> returnType = method.getReturnType();
         if (Slice.class.isAssignableFrom(returnType)) {
-            if (pageableIndex == -1) {
+            if (pageable == null) {
                 throw new DevelopmentException(String.format("Pageable parameter should be provided for method returns instance of Slice: %s", formatMethod(method)));
             }
-
-            Pageable pageable = (Pageable) parameters[pageableIndex];
-
-            LoaderHelper.applyPageableForLoadContext(loadContext, pageable);
 
             if (Page.class.isAssignableFrom(returnType)) {
                 long count = dataManager.getCount(loadContext.copy());
                 return new PageImpl<>(dataManager.loadList(loadContext), pageable, count);
             } else {
-
                 if (pageable.isPaged())
                     loadContext.getQuery().setMaxResults(pageable.getPageSize() + 1);// have to load additional one to know whether next results present
 

@@ -88,6 +88,9 @@ public interface OrderRepository extends JmixDataRepository<SalesOrder, UUID> {
     @FetchPlan("SalesOrder.full")
     List<SalesOrder> findByCustomerNotNullOrderByCustomerAddressCityDescDateDesc();
 
+    List<SalesOrder> findAllByNumberLikeAndCount(String number, Integer count, Pageable pageable, io.jmix.core.FetchPlan fetchPlan);
+
+
     default SalesOrder getByExtractedNumber(String searchSource){
         String conditionString  = searchSource.replaceAll("[A-Za-z ]","");
         return getDataManager().load(SalesOrder.class)

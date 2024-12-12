@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static io.jmix.data.QueryTransformer.ALIAS_PLACEHOLDER;
+
 /**
  * Defines an authorization point for modifying JPQL queries by adding JOIN and WHERE clauses.
  */
@@ -85,13 +87,19 @@ public class ReadEntityQueryContext implements AccessContext {
             QueryTransformer transformer = queryTransformerFactory.transformer(originalQuery.getQueryString());
             boolean hasJoins = false;
 
+            QueryParser parser = queryTransformerFactory.parser(originalQuery.getQueryString());
+            String actualEntityName = parser.getOriginalEntityName();
+            String actualEntityPath = parser.getOriginalEntityPath();
+
             for (Condition condition : conditions) {
                 try {
                     if (!Strings.isNullOrEmpty(condition.join)) {
                         hasJoins = true;
-                        transformer.addJoinAndWhere(condition.join, condition.where);
+                        transformer.addJoinAndWhere(
+                                actualizePlaceholder(condition.join, actualEntityName, actualEntityPath),
+                                actualizePlaceholder(condition.where, actualEntityName, actualEntityPath));
                     } else {
-                        transformer.addWhere(condition.where);
+                        transformer.addWhere(actualizePlaceholder(condition.where, actualEntityName, actualEntityPath));
                     }
                 } catch (Exception e) {
                     log.error("Error applying row-level policy to entity {}. Join clause {}, where clause {}",
@@ -111,6 +119,24 @@ public class ReadEntityQueryContext implements AccessContext {
                 log.trace("Query with row-level policies applied: {}", printQuery(originalQuery.getQueryString()));
             }
         }
+    }
+
+    /**
+     * Replaces {@link QueryTransformer#ALIAS_PLACEHOLDER} with actual entity path if query returns nested entity instead of the one specified in from clause.
+     * <p>
+     * Example: {@code select u.group from sec$User u} <br/>
+     * {@code u.group} should be used instead of {@code {E}}. Otherwise, constraint will be applied to the user instead of the group.
+     *
+     * @param queryPart to actualize
+     * @param actualEntityName nested entity or null if query return type is the same as type in from clause
+     * @param actualEntityPath query return entity path
+     * @return queryPart with replaced placeholder if needed
+     */
+    protected String actualizePlaceholder(String queryPart, String actualEntityName, String actualEntityPath) {
+        return (actualEntityName != null && !Strings.isNullOrEmpty(queryPart) && queryPart.contains(ALIAS_PLACEHOLDER))
+                ? queryPart.replace(ALIAS_PLACEHOLDER, actualEntityPath)
+                : queryPart;
+
     }
 
     protected static String printQuery(String query) {

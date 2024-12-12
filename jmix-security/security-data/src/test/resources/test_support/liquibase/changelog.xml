@@ -115,6 +115,16 @@
             </column>
         </createTable>
 
+        <createTable tableName="TEST_ISSUE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ORDER_INFO_ID" type="${uuid.type}">
+                <constraints foreignKeyName="TEST_ISSUE_ORDER_INFO" references="TEST_ORDER_INFO(ID)"/>
+            </column>
+            <column name="DETAILS" type="varchar2(32)"/>
+        </createTable>
+
     </changeSet>
 
 </databaseChangeLog>

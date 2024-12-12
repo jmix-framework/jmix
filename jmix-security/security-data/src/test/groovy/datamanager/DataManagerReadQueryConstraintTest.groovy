@@ -22,13 +22,14 @@ import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.role.RoleGrantedAuthorityUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import test_support.SecurityDataSpecification
+import test_support.entity.Issue
+import test_support.entity.OrderInfo
 import test_support.entity.TestOrder
 import test_support.role.TestDataManagerReadQueryRole
 
@@ -61,6 +62,8 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
 
     UserDetails user1
     TestOrder orderDenied1, orderDenied2, orderAllowed
+    OrderInfo orderInfo1, orderInfo2
+    Issue orderIssue1, orderIssue2
 
     Authentication systemAuthentication
 
@@ -86,7 +89,19 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
         orderAllowed = metadata.create(TestOrder)
         orderAllowed.number = 'allowed_3'
 
-        unsafeDataManager.save(orderDenied1, orderDenied2, orderAllowed)
+        orderInfo1 = metadata.create(OrderInfo)
+        orderInfo1.order = orderAllowed
+
+        orderInfo2 = metadata.create(OrderInfo)
+        orderInfo2.order = orderDenied1
+
+        orderIssue1 = metadata.create(Issue)
+        orderIssue1.orderInfo = orderInfo1
+
+        orderIssue2 = metadata.create(Issue)
+        orderIssue2.orderInfo = orderInfo2
+
+        unsafeDataManager.save(orderDenied1, orderDenied2, orderAllowed, orderInfo1, orderInfo2, orderIssue1, orderIssue2)
 
         systemAuthentication = SecurityContextHelper.getAuthentication()
     }
@@ -96,7 +111,9 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
 
         userRepository.removeUser(user1)
 
-        new JdbcTemplate(dataSource).execute('delete from TEST_ORDER')
+        jdbcTemplate.execute('delete from TEST_ISSUE')
+        jdbcTemplate.execute('delete from TEST_ORDER_INFO')
+        jdbcTemplate.execute('delete from TEST_ORDER')
     }
 
 
@@ -220,6 +237,34 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
         result.size() == 1
         result.get(0).getValue('number') == 'allowed_3'
     }
+
+    def "load constraints for nested entity"() {
+        setup:
+        authenticate('user1')
+        when:
+
+        var result = dataManager.load(TestOrder)
+                .query("select e.order from test_OrderInfo e")
+                .list()
+        then:
+        result.size() == 1
+        result[0].number == 'allowed_3'
+    }
+
+    def "load constraints for nested entity with join"() {
+        setup:
+        authenticate('user1')
+
+        when:
+        var infosByIssues = dataManager.load(OrderInfo)
+                .query("select i.orderInfo from test_Issue i")
+                .list()
+
+        then:
+        infosByIssues.size() == 1
+        infosByIssues[0].order.number == 'allowed_3'
+    }
+
 
     protected void authenticate(String username) {
         Authentication authentication = authenticationManager.authenticate(

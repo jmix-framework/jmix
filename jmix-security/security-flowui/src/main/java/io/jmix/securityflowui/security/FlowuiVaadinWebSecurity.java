@@ -36,6 +36,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.*;
 import org.springframework.web.context.WebApplicationContext;
@@ -89,12 +90,9 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
 
     @Autowired
     public void setVaadinDefaultRequestCache(VaadinDefaultRequestCache vaadinDefaultRequestCache) {
-        // Configure request cache to do not save image resource requests
-        // as they are not valid redirect routes.
-        HttpSessionRequestCache cache = new HttpSessionRequestCache();
-        cache.setRequestMatcher(new NegatedRequestMatcher(
-                new RegexRequestMatcher(IMAGE_REQUEST_REGEXP, null, true)));
-        vaadinDefaultRequestCache.setDelegateRequestCache(cache);
+        // Configure request cache to do not save image resource
+        // requests as they are not valid redirect routes.
+        vaadinDefaultRequestCache.setDelegateRequestCache(getDelegateRequestCache());
     }
 
     @Override
@@ -187,5 +185,12 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     protected void configure(WebSecurity web) throws Exception {
         super.configure(web);
         web.ignoring().requestMatchers(new AntPathRequestMatcher("/VAADIN/push/**"));
+    }
+
+    protected RequestCache getDelegateRequestCache() {
+        HttpSessionRequestCache cache = new HttpSessionRequestCache();
+        cache.setRequestMatcher(new NegatedRequestMatcher(
+                new RegexRequestMatcher(IMAGE_REQUEST_REGEXP, null, true)));
+        return cache;
     }
 }

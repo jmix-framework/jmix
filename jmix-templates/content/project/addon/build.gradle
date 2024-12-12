@@ -65,4 +65,8 @@ subprojects {
     tasks.withType(GenerateModuleMetadata) {
         enabled = false
     }
+
+    project.tasks.withType(JavaCompile).configureEach {
+        options.compilerArgs.add("-parameters")
+    }
 }

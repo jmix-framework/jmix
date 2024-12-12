@@ -44,6 +44,9 @@ public class QueryParserAstBased implements QueryParser {
     protected QueryTree queryTree;
     protected QueryTreeAnalyzer queryAnalyzer;
 
+    protected boolean originalEntityChecked;
+    protected EntityNameAndPath originalEntityNameAndPath;
+
     protected static class EntityNameAndPath {
         String entityName;
         String entityPath;
@@ -217,51 +220,58 @@ public class QueryParserAstBased implements QueryParser {
     }
 
     protected EntityNameAndPath getOriginEntityNameAndPath() {
-        PathNode pathNode = getAnalyzer().getMainSelectedPathNode();
-        IdentificationVariableNode identificationVariable = getAnalyzer().getMainIdentificationVariableNode();
+        if (!originalEntityChecked) {
+            PathNode pathNode = getAnalyzer().getMainSelectedPathNode();
+            IdentificationVariableNode identificationVariable = getAnalyzer().getMainIdentificationVariableNode();
 
-        if (pathNode == null) {
-            return null;
-        }
-
-        QueryVariableContext variableContext = getTree().getQueryVariableContext();
-        if (queryAnalyzer.isVariablePathNode(pathNode)) {
-            JpqlEntityModel entity = variableContext.getEntityByVariableName(pathNode.getEntityVariableName());
-            if (entity != null && entity.getName() != null && identificationVariable != null) {
-                if (!StringUtils.equalsIgnoreCase(pathNode.getEntityVariableName(), identificationVariable.getVariableName())) {
-                    return new EntityNameAndPath(entity.getName(), pathNode.getEntityVariableName());
-                }
-            }
-            return null;
-        }
-
-        JpqlEntityModel entity;
-        String entityPath;
-        boolean collectionSelect = false;
-        try {
-            entity = variableContext.getEntityByVariableName(pathNode.getEntityVariableName());
-            if (entity != null) {
-                entityPath = pathNode.asPathString();
-
-                for (int i = 0; i < pathNode.getChildCount(); i++) {
-                    String fieldName = pathNode.getChild(i).toString();
-                    Attribute entityAttribute = entity.getAttributeByName(fieldName);
-                    if (entityAttribute != null && entityAttribute.isEntityReferenceAttribute()) {
-                        entity = model.getEntityByName(entityAttribute.getReferencedEntityName());
-                        if (!collectionSelect) {
-                            collectionSelect = entityAttribute.isCollection();
-                        }
-                    } else {
-                        return null;
-                    }
-                }
-            } else {
+            if (pathNode == null) {
                 return null;
             }
-        } catch (UnknownEntityNameException e) {
-            throw new RuntimeException(format("Unable to find entity by name %s", e.getEntityName()), e);
+
+            QueryVariableContext variableContext = getTree().getQueryVariableContext();
+            if (queryAnalyzer.isVariablePathNode(pathNode)) {
+                JpqlEntityModel entity = variableContext.getEntityByVariableName(pathNode.getEntityVariableName());
+                if (entity != null && entity.getName() != null && identificationVariable != null) {
+                    if (!StringUtils.equalsIgnoreCase(pathNode.getEntityVariableName(), identificationVariable.getVariableName())) {
+                        return new EntityNameAndPath(entity.getName(), pathNode.getEntityVariableName());
+                    }
+                }
+                return null;
+            }
+
+            JpqlEntityModel entity;
+            String entityPath;
+            boolean collectionSelect = false;
+            try {
+                entity = variableContext.getEntityByVariableName(pathNode.getEntityVariableName());
+                if (entity != null) {
+                    entityPath = pathNode.asPathString();
+
+                    for (int i = 0; i < pathNode.getChildCount(); i++) {
+                        String fieldName = pathNode.getChild(i).toString();
+                        Attribute entityAttribute = entity.getAttributeByName(fieldName);
+                        if (entityAttribute != null && entityAttribute.isEntityReferenceAttribute()) {
+                            entity = model.getEntityByName(entityAttribute.getReferencedEntityName());
+                            if (!collectionSelect) {
+                                collectionSelect = entityAttribute.isCollection();
+                            }
+                        } else {
+                            return null;
+                        }
+                    }
+                } else {
+                    return null;
+                }
+            } catch (UnknownEntityNameException e) {
+                throw new RuntimeException(format("Unable to find entity by name %s", e.getEntityName()), e);
+            }
+
+            originalEntityChecked = true;
+            originalEntityNameAndPath = entity != null && entity.getName() != null
+                    ? new EntityNameAndPath(entity.getName(), entityPath, collectionSelect)
+                    : null;
         }
 
-        return entity != null && entity.getName() != null ? new EntityNameAndPath(entity.getName(), entityPath, collectionSelect) : null;
+        return originalEntityNameAndPath;
     }
 }

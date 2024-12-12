@@ -19,6 +19,8 @@ package test_support.role;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.*;
+import test_support.entity.Issue;
+import test_support.entity.OrderInfo;
 import test_support.entity.TestOrder;
 
 @ResourceRole(name = TestDataManagerReadQueryRole.NAME, code = TestDataManagerReadQueryRole.NAME)
@@ -32,4 +34,11 @@ public interface TestDataManagerReadQueryRole {
            action = EntityAttributePolicyAction.MODIFY)
     @JpqlRowLevelPolicy(entityClass = TestOrder.class, where = "{E}.number like 'allowed_%'")
     void order();
+
+    @EntityPolicy(entityClass = OrderInfo.class,
+            actions = {EntityPolicyAction.READ})
+    @EntityAttributePolicy(entityClass = OrderInfo.class, attributes = "*",
+            action = EntityAttributePolicyAction.MODIFY)
+    @JpqlRowLevelPolicy(entityClass = OrderInfo.class, join = "{E}.order o", where = "o.number like 'allowed_%'")
+    void orderInfo();
 }

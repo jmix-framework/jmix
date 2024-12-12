@@ -19,7 +19,6 @@ package io.jmix.securitydata.impl;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.QueryParamValueProvider;
 import io.jmix.core.security.CurrentAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -35,8 +34,11 @@ public class CurrentLocaleQueryParamValueProvider implements QueryParamValueProv
 
     public static final String CURRENT_LOCALE_PARAM = "current_locale";
 
-    @Autowired
-    private CurrentAuthentication currentAuthentication;
+    protected final CurrentAuthentication currentAuthentication;
+
+    public CurrentLocaleQueryParamValueProvider(CurrentAuthentication currentAuthentication) {
+        this.currentAuthentication = currentAuthentication;
+    }
 
     @Override
     public boolean supports(String paramName) {

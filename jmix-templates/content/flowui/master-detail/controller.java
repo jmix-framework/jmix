@@ -1,4 +1,5 @@
 <%
+        def isDataGridTable = tableType.getXmlName().equals("dataGrid")
         def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
         def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
     %>
@@ -16,7 +17,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
+import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.UiComponentUtils;
+import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%} else {%> : io.jmix.flowui.component.grid.TreeDataGrid <%}%>;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.*;
@@ -59,10 +63,22 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     private VerticalLayout listLayout;
 
     @ViewComponent
+    private <%if (isDataGridTable) {%> DataGrid<%} else {%> TreeDataGrid<%}%><${entity.className}> ${tableId};
+
+    @ViewComponent
     private FormLayout form;
 
     @ViewComponent
     private HorizontalLayout detailActions;
+
+    @Subscribe
+    public void onInit(final InitEvent event) {
+        ${tableId}.getActions().forEach(action -> {
+            if (action instanceof SecuredBaseAction secured) {
+                secured.addEnabledRule(() -> listLayout.isEnabled());
+            }
+        });
+    }
 
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
@@ -137,6 +153,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
         detailActions.setVisible(editing);
         listLayout.setEnabled(!editing);
+        ${tableId}.getActions().forEach(Action::refreshState);
     }
 
     private ViewValidation getViewValidation() {

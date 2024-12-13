@@ -19,6 +19,7 @@ package io.jmix.securityflowui.authentication;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Location;
+import com.vaadin.flow.router.LocationUtil;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.*;
@@ -305,10 +306,8 @@ public class LoginViewSupport {
                 //and RouteConfiguration.getRoute(String) doesn't support full URLs
                 //like one returned from savedRequest.getRedirectUrl()
                 QueryParameters queryParameters = QueryParameters.fromString(defaultSavedRequest.getQueryString());
-                String servletPath = defaultSavedRequest.getServletPath();
-
-                if (getRouteConfiguration().isPathAvailable(removeLeadingSlash(servletPath))) {
-                    return new Location(servletPath, queryParameters);
+                if (isPathAvailable(defaultSavedRequest.getServletPath())) {
+                    return new Location(defaultSavedRequest.getServletPath(), queryParameters);
                 }
                 return null;
             } else {
@@ -395,12 +394,8 @@ public class LoginViewSupport {
         return viewRegistry.getRouteConfiguration();
     }
 
-    @Nullable
-    protected String removeLeadingSlash(@Nullable String path) {
-        if (Strings.isNullOrEmpty(path)) {
-            return path;
-        }
-        return path.startsWith("/") ? path.substring(1) : path;
+    protected boolean isPathAvailable(@Nullable String path) {
+        return getRouteConfiguration().isPathAvailable(LocationUtil.ensureRelativeNonNull(path));
     }
 
     protected AppCookies getCookies() {

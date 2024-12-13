@@ -42,7 +42,6 @@ import org.springframework.security.web.util.matcher.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -51,9 +50,9 @@ import java.util.Optional;
 public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
 
     /**
-     * Regexp matches all requests that end with ".png" or ".jpe?g".
+     * Regexp matches all requests that end with ".png", ".jpe?g", ".svg", ".gif" or ".pdf".
      */
-    protected static final String IMAGE_REQUEST_REGEXP = ".*(\\.png|\\.jpe?g)$";
+    protected static final String RESOURCE_REQUEST_REGEXP = ".*(\\.png|\\.jpe?g|\\.svg|\\.pdf|\\.gif)$";
 
     private static Logger log = LoggerFactory.getLogger(FlowuiVaadinWebSecurity.class);
 
@@ -90,7 +89,7 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
 
     @Autowired
     public void setVaadinDefaultRequestCache(VaadinDefaultRequestCache vaadinDefaultRequestCache) {
-        // Configure request cache to do not save image resource
+        // Configure request cache to do not save resource
         // requests as they are not valid redirect routes.
         vaadinDefaultRequestCache.setDelegateRequestCache(getDelegateRequestCache());
     }
@@ -190,7 +189,7 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     protected RequestCache getDelegateRequestCache() {
         HttpSessionRequestCache cache = new HttpSessionRequestCache();
         cache.setRequestMatcher(new NegatedRequestMatcher(
-                new RegexRequestMatcher(IMAGE_REQUEST_REGEXP, null, true)));
+                new RegexRequestMatcher(RESOURCE_REQUEST_REGEXP, null, true)));
         return cache;
     }
 }

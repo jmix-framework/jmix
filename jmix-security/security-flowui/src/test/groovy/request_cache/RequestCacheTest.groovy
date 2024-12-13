@@ -24,9 +24,9 @@ import spock.lang.Specification
 
 class RequestCacheTest extends Specification {
 
-    def "Image request should not be cached" (String uri, boolean cached) {
+    def "Image request should not be cached"(String uri, boolean cached) {
         given:
-        var matcher = new NegatedRequestMatcher(new RegexRequestMatcher(FlowuiVaadinWebSecurity.IMAGE_REQUEST_REGEXP, null, true));
+        var matcher = new NegatedRequestMatcher(new RegexRequestMatcher(FlowuiVaadinWebSecurity.RESOURCE_REQUEST_REGEXP, null, true));
         var request = new MockHttpServletRequest();
         request.setServletPath(uri)
 
@@ -41,6 +41,12 @@ class RequestCacheTest extends Specification {
         "/frontend/icons/add_stream.JPG"  | false
         "/frontend/icons/add_stream.jpeg" | false
         "/frontend/icons/add_stream.JPEG" | false
+        "/frontend/icons/add_stream.svg"  | false
+        "/frontend/icons/add_stream.SVG"  | false
+        "/frontend/icons/add_stream.gif"  | false
+        "/frontend/icons/add_stream.GIF"  | false
+        "/frontend/icons/add_stream.pdf"  | false
+        "/frontend/icons/add_stream.PDF"  | false
         "/sec/resourceroles/"             | true
         "/test/"                          | true
         "/"                               | true

@@ -49,11 +49,6 @@ import java.util.Optional;
  */
 public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
 
-    /**
-     * Regexp matches all requests that end with ".png", ".jpe?g", ".svg", ".gif" or ".pdf".
-     */
-    protected static final String RESOURCE_REQUEST_REGEXP = ".*(\\.png|\\.jpe?g|\\.svg|\\.pdf|\\.gif)$";
-
     private static Logger log = LoggerFactory.getLogger(FlowuiVaadinWebSecurity.class);
 
     protected UiProperties uiProperties;
@@ -188,8 +183,11 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
 
     protected RequestCache getDelegateRequestCache() {
         HttpSessionRequestCache cache = new HttpSessionRequestCache();
-        cache.setRequestMatcher(new NegatedRequestMatcher(
-                new RegexRequestMatcher(RESOURCE_REQUEST_REGEXP, null, true)));
+        cache.setRequestMatcher(createJmixViewPathRequestMatcher(viewRegistry));
         return cache;
+    }
+
+    protected JmixViewPathRequestMatcher createJmixViewPathRequestMatcher(ViewRegistry viewRegistry) {
+        return new JmixViewPathRequestMatcher(viewRegistry);
     }
 }

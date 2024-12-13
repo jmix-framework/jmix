@@ -138,7 +138,7 @@ public interface StudioPivotTableElements {
             xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "localizedName", type = StudioPropertyType.LOCALIZED_STRING)
             }
     )

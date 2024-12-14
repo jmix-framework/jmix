@@ -16,13 +16,17 @@
 
 package io.jmix.samples.rest.entity.driver;
 
+import io.jmix.core.DataManager;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.validation.group.RestApiChecks;
+import io.jmix.samples.rest.entity.ModelEntity;
 import io.jmix.samples.rest.validation.TestCurrencyClassConstraint;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -84,6 +88,20 @@ public class Currency {
     @Size(min = 2, message = "Epic fail")
     @NotNull
     protected String name;
+
+    @Transient
+    @JmixProperty
+    protected ModelEntity testModelEntity;
+
+    @JmixProperty
+    public ModelEntity getMethodBasedReferenceProperty() {
+        return testModelEntity;
+    }
+
+    @PostConstruct
+    protected void postConstruct(DataManager dataManager) {
+        testModelEntity = dataManager.create(ModelEntity.class);
+    }
 
     public String getId() {
         return code;

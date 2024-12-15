@@ -48,7 +48,7 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
     protected transient Collection<WeakReference<EntityPropertyChangeListener>> weakPropertyChangeListeners;
     protected Collection<EntityPropertyChangeListener> propertyChangeListeners;
     protected Entity source;
-    protected Set<String> loadedProperties;
+    protected LoadedPropertiesInfo loadedPropertiesInfo;
     protected Map<Class<?>, EntityEntryExtraState> extraStateMap;
     protected Map<Class<?>, EntityValuesProvider> entityValuesProviders;
 
@@ -151,12 +151,13 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
 
     @Nullable
     @Override
-    public Set<String> getLoadedProperties() {
-        return loadedProperties;
+    public LoadedPropertiesInfo getLoadedPropertiesInfo() {
+        return loadedPropertiesInfo;
     }
 
-    public void setLoadedProperties(@Nullable Set<String> loadedProperties) {
-        this.loadedProperties = loadedProperties;
+    @Override
+    public void setLoadedPropertiesInfo(@Nullable LoadedPropertiesInfo loadedPropertiesInfo) {
+        this.loadedPropertiesInfo = loadedPropertiesInfo;
     }
 
     @NonNull
@@ -263,7 +264,7 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
             setManaged(entry.isManaged());
             setRemoved(entry.isRemoved());
 
-            loadedProperties = entry.getLoadedProperties();
+            loadedPropertiesInfo = entry.getLoadedPropertiesInfo();
 
             if (entry instanceof BaseEntityEntry baseEntityEntry && baseEntityEntry.propertyChangeListeners != null) {
                 for (EntityPropertyChangeListener listener : baseEntityEntry.propertyChangeListeners) {

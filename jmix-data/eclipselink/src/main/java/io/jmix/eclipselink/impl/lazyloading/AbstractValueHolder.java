@@ -20,7 +20,9 @@ import io.jmix.core.FetchPlans;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.LoadedPropertiesInfo;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.eclipse.persistence.indirection.WeavedAttributeValueHolderInterface;
@@ -276,6 +278,7 @@ public abstract class AbstractValueHolder extends UnitOfWorkValueHolder implemen
                 synchronized (this) {
                     value = loadValue();
                     afterLoadValue(value);
+                    registerLoadedProperty();
                 }
             }
             isInstantiated = true;
@@ -286,6 +289,13 @@ public abstract class AbstractValueHolder extends UnitOfWorkValueHolder implemen
     protected abstract Object loadValue();
 
     protected abstract void afterLoadValue(Object value);
+
+    protected void registerLoadedProperty() {
+        LoadedPropertiesInfo loadedPropertiesInfo = EntitySystemAccess.getEntityEntry(getOwner()).getLoadedPropertiesInfo();
+        if (loadedPropertiesInfo != null) {
+            loadedPropertiesInfo.registerProperty(getPropertyInfo().getName(), true);
+        }
+    }
 
     @Override
     public void setValue(Object value) {

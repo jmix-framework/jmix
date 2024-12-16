@@ -202,6 +202,13 @@ class TenantTest extends Specification {
         "tenantId" == metaProperty.getName()
     }
 
+    def "get tenant property for entity with parent"() {
+        when:
+        MetaProperty metaProperty = tenantEntityOperation.findTenantProperty(SimpleUser.class);
+        then:
+        "tenantId" == metaProperty.getName()
+    }
+
     def "get tenant property for tenant entity"() {
         when:
         MetaProperty metaProperty = tenantEntityOperation.findTenantProperty(Tenant.class);

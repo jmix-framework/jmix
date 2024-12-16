@@ -21,6 +21,7 @@ import com.vaadin.flow.internal.AnnotationReader;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.internal.RouteUtil;
 import com.vaadin.flow.server.VaadinServletContext;
+import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
@@ -34,8 +35,10 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
@@ -77,6 +80,13 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     @Autowired
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
+    }
+
+    @Autowired
+    public void setVaadinDefaultRequestCache(VaadinDefaultRequestCache vaadinDefaultRequestCache) {
+        // Configure request cache to do not save resource
+        // requests as they are not valid redirect routes.
+        vaadinDefaultRequestCache.setDelegateRequestCache(getDelegateRequestCache());
     }
 
     @Override
@@ -169,5 +179,15 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     protected void configure(WebSecurity web) throws Exception {
         super.configure(web);
         web.ignoring().requestMatchers(new AntPathRequestMatcher("/VAADIN/push/**"));
+    }
+
+    protected RequestCache getDelegateRequestCache() {
+        HttpSessionRequestCache cache = new HttpSessionRequestCache();
+        cache.setRequestMatcher(createViewPathRequestMatcher(viewRegistry));
+        return cache;
+    }
+
+    protected RequestMatcher createViewPathRequestMatcher(ViewRegistry viewRegistry) {
+        return new JmixViewPathRequestMatcher(viewRegistry);
     }
 }

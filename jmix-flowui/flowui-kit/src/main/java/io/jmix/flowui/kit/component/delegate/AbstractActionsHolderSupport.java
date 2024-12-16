@@ -87,8 +87,6 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
             Component[] listenOnComponents = keyCombination.getListenOnComponents();
             if (listenOnComponents != null) {
                 shortcutRegistration.listenOn(listenOnComponents);
-            } else {
-                shortcutRegistration.listenOn(getDefaultListenOnComponent());
             }
 
             getActionShortcutBinding().put(action, shortcutRegistration);
@@ -96,12 +94,6 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
     }
 
     protected Component getShortcutLifecycleOwner() {
-        return component instanceof Composite<?> composite
-                ? composite.getContent()
-                : component;
-    }
-
-    protected Component getDefaultListenOnComponent() {
         return component instanceof Composite<?> composite
                 ? composite.getContent()
                 : component;

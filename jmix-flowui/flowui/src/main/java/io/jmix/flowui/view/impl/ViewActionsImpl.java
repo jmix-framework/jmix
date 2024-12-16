@@ -132,8 +132,7 @@ public class ViewActionsImpl implements ViewActions {
                                                                                                    ShortcutEventListener shortcutEventListener,
                                                                                                    KeyCombination keyCombination) {
         ShortcutRegistration shortcutRegistration = Shortcuts.addShortcutListener(viewLayout, shortcutEventListener,
-                        keyCombination.getKey(), keyCombination.getKeyModifiers())
-                .listenOn(viewLayout);
+                        keyCombination.getKey(), keyCombination.getKeyModifiers());
         shortcutRegistration.setResetFocusOnActiveElement(keyCombination.isResetFocusOnActiveElement());
         return shortcutRegistration;
     }
@@ -173,8 +172,6 @@ public class ViewActionsImpl implements ViewActions {
             com.vaadin.flow.component.Component[] listenOnComponents = keyCombination.getListenOnComponents();
             if (listenOnComponents != null) {
                 shortcutRegistration.listenOn(listenOnComponents);
-            } else {
-                shortcutRegistration.listenOn(viewLayout);
             }
 
             getActionShortcutBinding().put(action, shortcutRegistration);

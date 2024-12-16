@@ -29,6 +29,7 @@ import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.*;
 import io.jmix.data.impl.EntityFetcher;
+import io.jmix.data.impl.JpaLoadedPropertiesCreator;
 import io.jmix.data.impl.QueryConstantHandler;
 import io.jmix.data.impl.QueryMacroHandler;
 import io.jmix.data.persistence.DbmsFeatures;
@@ -84,6 +85,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
     protected Collection<QueryConstantHandler> constantHandlers;
     protected List<AdditionalCriteriaProvider> additionalCriteriaProviders;
     protected QueryParamValuesManager queryParamValuesManager;
+    protected JpaLoadedPropertiesCreator loadedPropertiesCreator;
 
     protected JpaQuery query;
     protected boolean isNative;
@@ -124,6 +126,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         constantHandlers = beanFactory.getBeanProvider(QueryConstantHandler.class).stream().collect(Collectors.toList());
         additionalCriteriaProviders = beanFactory.getBeanProvider(AdditionalCriteriaProvider.class).stream().collect(Collectors.toList());
         queryParamValuesManager = beanFactory.getBean(QueryParamValuesManager.class);
+        loadedPropertiesCreator = beanFactory.getBean(JpaLoadedPropertiesCreator.class);
     }
 
     @Override
@@ -138,11 +141,12 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         @SuppressWarnings("unchecked")
         List<E> resultList = (List<E>) getResultFromCache(query, false, obj -> {
             for (Object item : (List) obj) {
-                if (item instanceof Entity) {
-                    for (FetchPlan fetchPlan : fetchPlans) {
-                        entityFetcher.fetch((Entity) item, fetchPlan);
-                    }
+                if (!(item instanceof Entity)) // can be a scalar value
+                    continue;
+                for (FetchPlan fetchPlan : fetchPlans) {
+                    entityFetcher.fetch(item, fetchPlan);
                 }
+                loadedPropertiesCreator.fillLoadedProperties(item, entityManager.getEntityManagerFactory());
             }
         });
         return resultList;
@@ -159,10 +163,11 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
 
         @SuppressWarnings("unchecked")
         E result = (E) getResultFromCache(jpaQuery, true, obj -> {
-            if (obj instanceof Entity) {
+            if (obj instanceof Entity) { // can be a scalar value
                 for (FetchPlan fetchPlan : fetchPlans) {
-                    entityFetcher.fetch((Entity) obj, fetchPlan);
+                    entityFetcher.fetch(obj, fetchPlan);
                 }
+                loadedPropertiesCreator.fillLoadedProperties(obj, entityManager.getEntityManagerFactory());
             }
         });
         return result;
@@ -411,6 +416,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
                         for (FetchPlan fetchPlan : fetchPlans) {
                             entityFetcher.fetch((Entity) item, fetchPlan);
                         }
+                        loadedPropertiesCreator.fillLoadedProperties(item, entityManager.getEntityManagerFactory());
                     }
                 }
             });

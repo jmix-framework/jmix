@@ -34,6 +34,7 @@ public class Pet extends BaseEntity {
     private String name;
 
     @JmixProperty
+    @Transient
     private String nick;
 
     @JmixProperty

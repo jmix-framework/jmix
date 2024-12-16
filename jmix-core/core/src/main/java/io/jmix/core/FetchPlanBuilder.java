@@ -112,7 +112,7 @@ public class FetchPlanBuilder {
         if (metaProperty.getRange().isClass()) {
             if (!builders.containsKey(propName)) {
                 Class<?> refClass = metaProperty.getRange().asClass().getJavaClass();
-                builders.put(propName, fetchPlans.builder(refClass));
+                builders.put(propName, fetchPlans.builder(refClass).partial(loadPartialEntities));
             }
         }
         if (parts.length > 1) {

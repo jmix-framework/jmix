@@ -17,6 +17,7 @@
 package io.jmix.core.metamodel.model.impl;
 
 import io.jmix.core.metamodel.model.*;
+import org.springframework.lang.Nullable;
 
 import java.util.*;
 
@@ -84,6 +85,7 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
     }
 
     @Override
+    @Nullable
     public MetaProperty findProperty(String name) {
 		return propertyByName.get(name);
 	}

@@ -48,6 +48,10 @@ public class MainReport {
     @Column(name = "DB1_ORDER_ID")
     private Long db1OrderId;
 
+    @Transient
+    @JmixProperty
+    private String alpha;
+
     public UUID getId() {
         return id;
     }
@@ -78,5 +82,13 @@ public class MainReport {
 
     public void setDb1OrderId(Long db1OrderId) {
         this.db1OrderId = db1OrderId;
+    }
+
+    public String getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(String alpha) {
+        this.alpha = alpha;
     }
 }

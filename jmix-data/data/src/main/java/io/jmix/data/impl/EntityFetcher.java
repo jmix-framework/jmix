@@ -58,6 +58,9 @@ public class EntityFetcher {
     @Autowired
     protected StoreAwareLocator storeAwareLocator;
 
+    @Autowired
+    protected JpaLoadedPropertiesCreator loadedPropertiesCreator;
+
     /**
      * Fetch instance by fetch plan.
      *
@@ -126,6 +129,9 @@ public class EntityFetcher {
         MetaClass metaClass = metadata.getClass(entity);
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
+
+            loadedPropertiesCreator.addProperty(entity, metaProperty.getName());
+
             if (!metaProperty.getRange().isClass() && !isLazyFetchedLocalAttribute(metaProperty)
                     || !metadataTools.isJpa(metaProperty))
                 continue;

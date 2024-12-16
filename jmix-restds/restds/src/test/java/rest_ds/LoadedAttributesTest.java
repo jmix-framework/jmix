@@ -53,7 +53,6 @@ public class LoadedAttributesTest extends BaseRestDsIntegrationTest {
         assertThatLocalAttributesAreLoaded(customer);
         assertThat(entityStates.isLoaded(customer, "region")).isFalse();
         assertThat(entityStates.isLoaded(customer, "contacts")).isFalse();
-        assertThat(entityStates.isLoaded(customer, "nonExistingProperty")).isFalse();
 
         customer = dataManager.load(Customer.class).id(TestSupport.UUID_1).fetchPlan("customer-with-region").one();
 
@@ -92,7 +91,6 @@ public class LoadedAttributesTest extends BaseRestDsIntegrationTest {
         assertThatLocalAttributesAreLoaded(customer);
         assertThat(entityStates.isLoaded(customer, "region")).isFalse();
         assertThat(entityStates.isLoaded(customer, "contacts")).isFalse();
-        assertThat(entityStates.isLoaded(customer, "nonExistingProperty")).isFalse();
     }
 
     @Test

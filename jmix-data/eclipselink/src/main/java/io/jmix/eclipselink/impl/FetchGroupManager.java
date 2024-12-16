@@ -519,7 +519,9 @@ public class FetchGroupManager {
             String propertyName = property.getName();
             MetaProperty metaProperty = entityMetaClass.getProperty(propertyName);
 
-            if (metadataTools.isJpa(metaProperty) && (metaProperty.getRange().isClass() || useFetchGroup)) {
+            if (metadataTools.isJpa(metaProperty)
+                    && metaProperty.getStore().equals(entityMetaClass.getStore())
+                    && (metaProperty.getRange().isClass() || useFetchGroup)) {
                 FetchGroupField field = createFetchGroupField(entityClass, parentField, propertyName, property.getFetchMode());
                 fetchGroupFields.add(field);
                 if (property.getFetchPlan() != null) {
@@ -558,7 +560,9 @@ public class FetchGroupManager {
 
         if (useFetchGroup) {
             for (MetaProperty metaProperty : entityMetaClass.getProperties()) {
-                if (metaProperty.getRange().isClass() && metadataTools.isJpa(metaProperty)
+                if (metaProperty.getRange().isClass()
+                        && metadataTools.isJpa(metaProperty)
+                        && metaProperty.getStore().equals(entityMetaClass.getStore())
                         && !metadataTools.isEmbedded(metaProperty)
                         && !fetchPlan.containsProperty(metaProperty.getName())) {
                     fetchGroupFields.add(createFetchGroupField(entityClass, parentField, metaProperty.getName(), FetchMode.AUTO, true));

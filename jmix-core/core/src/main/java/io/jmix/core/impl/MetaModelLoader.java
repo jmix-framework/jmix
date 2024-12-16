@@ -597,7 +597,7 @@ public class MetaModelLoader {
     protected void assignStore(MetaProperty metaProperty) {
         Store classStore = metaProperty.getDomain().getStore();
         if (hasJpaAnnotation(metaProperty.getDomain().getJavaClass())
-                && !hasJpaAnnotation(metaProperty.getAnnotatedElement())) {
+                && isTransient(metaProperty)) {
             ((MetaPropertyImpl) metaProperty).setStore(stores.get(Stores.UNDEFINED));
         } else {
             ((MetaPropertyImpl) metaProperty).setStore(classStore);
@@ -747,6 +747,12 @@ public class MetaModelLoader {
         return javaClass.isAnnotationPresent(jakarta.persistence.Entity.class)
                 || javaClass.isAnnotationPresent(Embeddable.class)
                 || javaClass.isAnnotationPresent(MappedSuperclass.class);
+    }
+
+    protected boolean isTransient(MetaProperty metaProperty) {
+        return metaProperty.getAnnotatedElement().isAnnotationPresent(Transient.class)
+                || metaProperty.getAnnotatedElement() instanceof Method
+                || (metaProperty.getAnnotatedElement() instanceof Field field && Modifier.isTransient(field.getModifiers()));
     }
 
     protected boolean isCollection(Field field) {

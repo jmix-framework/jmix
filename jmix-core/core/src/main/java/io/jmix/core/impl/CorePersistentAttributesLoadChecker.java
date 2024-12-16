@@ -16,10 +16,8 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.Entity;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.PersistentAttributesLoadChecker;
+import io.jmix.core.*;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -49,16 +47,8 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
 
     @Override
     public boolean isLoaded(Object entity, String property) {
-        if (entity instanceof KeyValueEntity) {
-            KeyValueEntity keyValue = (KeyValueEntity) entity;
-            return keyValue.getInstanceMetaClass() != null && keyValue.getInstanceMetaClass().findProperty(property) != null;
-        }
-
-        if (entity instanceof Entity e) {
-            Set<String> loadedProperties = e.__getEntityEntry().getLoadedProperties();
-            if (loadedProperties != null) {
-                return loadedProperties.contains(property);
-            }
+        if (entity instanceof KeyValueEntity kve) {
+            return kve.getInstanceMetaClass() != null && kve.getInstanceMetaClass().findProperty(property) != null;
         }
 
         MetaClass metaClass = metadata.getClass(entity);
@@ -69,23 +59,26 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
 
         MetaProperty metaProperty = metaClass.getProperty(property);
 
-        if (!metadataTools.isJpa(metaProperty)) {
-            List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
-            if (dependsOnProperties.isEmpty()) {
-                return true;
-            } else {
-                boolean fullFetchingOfAllPropertiesGuaranteed = true;
-                for (String relatedPropertyName : dependsOnProperties) {
-                    MetaProperty relatedProperty = metaClass.getProperty(relatedPropertyName);
-                    if (relatedProperty.getRange().isClass()) {
-                        fullFetchingOfAllPropertiesGuaranteed = false;
-                    }
-                    if (!isLoaded(entity, relatedPropertyName))
-                        return false;
+        List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
+        if (!dependsOnProperties.isEmpty()) {
+            boolean fullFetchingOfAllPropertiesGuaranteed = true;
+            for (String relatedPropertyName : dependsOnProperties) {
+                MetaProperty relatedProperty = metaClass.getProperty(relatedPropertyName);
+                if (relatedProperty.getRange().isClass()) {
+                    fullFetchingOfAllPropertiesGuaranteed = false;
                 }
-
-                return fullFetchingOfAllPropertiesGuaranteed || checkIsLoadedWithGetter(entity, property);
+                if (!isLoaded(entity, relatedPropertyName))
+                    return false;
             }
+            return fullFetchingOfAllPropertiesGuaranteed || checkIsLoadedWithGetter(entity, property);
+
+        } else if (metaProperty.getStore().getName().equals(Stores.NOOP) || metaProperty.getStore().getName().equals(Stores.UNDEFINED)) {
+            return true;
+        }
+
+        Set<String> loadedProperties = EntitySystemAccess.getEntityEntry(entity).getLoadedProperties();
+        if (loadedProperties != null) {
+            return loadedProperties.contains(property);
         }
 
         PropertyLoadedState isLoaded = isLoadedCommonCheck(entity, property);

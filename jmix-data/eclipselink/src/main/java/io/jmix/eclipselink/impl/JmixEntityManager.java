@@ -22,6 +22,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.data.impl.JpaLoadedPropertiesCreator;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.AuditInfoProvider;
@@ -66,6 +67,7 @@ public class JmixEntityManager implements EntityManager {
     private TimeSource timeSource;
     private AuditInfoProvider auditInfoProvider;
     private AuditConversionService auditConverter;
+    private JpaLoadedPropertiesCreator loadedPropertiesCreator;
 
     private static final Logger log = LoggerFactory.getLogger(JmixEntityManager.class);
 
@@ -83,6 +85,7 @@ public class JmixEntityManager implements EntityManager {
         timeSource = beanFactory.getBean(TimeSource.class);
         auditInfoProvider = beanFactory.getBean(AuditInfoProvider.class);
         auditConverter = beanFactory.getBean(AuditConversionService.class);
+        loadedPropertiesCreator = beanFactory.getBean(JpaLoadedPropertiesCreator.class);
 
         setAdditionalProperties();
     }
@@ -413,6 +416,9 @@ public class JmixEntityManager implements EntityManager {
 
     private void internalPersist(Object entity) {
         delegate.persist(entity);
+
+        loadedPropertiesCreator.fillLoadedProperties(entity, this.getEntityManagerFactory());
+
         if (entity instanceof Entity) {
             support.registerInstance((Entity) entity, this);
         }
@@ -450,8 +456,12 @@ public class JmixEntityManager implements EntityManager {
         if (entity != null && EntityValues.isSoftDeleted((Entity) entity)
                 && isSoftDeletion(properties))
             return null; // in case of entity cache
-        else
+        else {
+            if (entity != null) {
+                loadedPropertiesCreator.fillLoadedProperties(entity, this.getEntityManagerFactory());
+            }
             return entity;
+        }
     }
 
     private <T> T findPartial(MetaClass metaClass, Object id, Collection<FetchPlan> fetchPlans) {
@@ -477,6 +487,8 @@ public class JmixEntityManager implements EntityManager {
             JmixUtil.setOriginalSoftDeletion(false);
 
             T merged = delegate.merge(entity);
+
+            loadedPropertiesCreator.fillLoadedProperties(entity, this.getEntityManagerFactory());
 
             // copy non-persistent attributes to the resulting merged instance
             for (MetaProperty property : metadata.getClass(entity).getProperties()) {

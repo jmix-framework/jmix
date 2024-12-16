@@ -1,4 +1,5 @@
 <%
+        def isDataGridTable = tableType.getXmlName().equals("dataGrid")
         def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
         def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
         %>
@@ -16,7 +17,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.Route
 import io.jmix.flowui.component.validation.ValidationErrors
 import io.jmix.core.validation.group.UiCrossFieldChecks
+import io.jmix.flowui.action.SecuredBaseAction
 import io.jmix.flowui.component.UiComponentUtils
+import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%} else {%> : io.jmix.flowui.component.grid.TreeDataGrid <%}%>;
+import io.jmix.flowui.kit.action.Action
 import io.jmix.flowui.kit.action.ActionPerformedEvent
 import io.jmix.flowui.kit.component.button.JmixButton
 import io.jmix.flowui.model.*
@@ -51,10 +55,22 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     private lateinit var listLayout: VerticalLayout
 
     @ViewComponent
+    private lateinit var ${tableId}: <%if (isDataGridTable) {%> DataGrid<%} else {%> TreeDataGrid<%}%><${entity.className}>
+
+    @ViewComponent
     private lateinit var form: FormLayout
 
     @ViewComponent
     private lateinit var detailActions: HorizontalLayout
+
+    @Subscribe
+    fun onInit(event: InitEvent) {
+        ${tableId}.getActions().forEach { action ->
+            if (action is SecuredBaseAction) {
+                action.addEnabledRule { listLayout.isEnabled }
+            }
+        }
+    }
 
     @Subscribe
     fun onBeforeShow(event: BeforeShowEvent) {
@@ -128,6 +144,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         }
         detailActions.isVisible = editing
         listLayout.isEnabled = !editing
+        ${tableId}.getActions().forEach(Action::refreshState);
     }
 
     private fun getViewValidation(): ViewValidation {

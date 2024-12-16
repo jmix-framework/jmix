@@ -12,7 +12,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.data.items.EnumDataProvider;
 import io.jmix.security.model.BaseRoleModel;
-import io.jmix.security.model.RoleSourceEnum;
+import io.jmix.security.model.RoleSourceType;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,7 +21,7 @@ public class RoleFilter extends Composite<Details> implements InitializingBean {
     private FormLayout layout;
     private TextField nameFilter;
     private TextField codeFilter;
-    private JmixSelect<RoleSourceEnum> sourceFilter;
+    private JmixSelect<RoleSourceType> sourceFilter;
 
     protected Messages messages;
     protected UiComponents uiComponents;
@@ -62,7 +62,7 @@ public class RoleFilter extends Composite<Details> implements InitializingBean {
         sourceFilter = uiComponents.create(JmixSelect.class);
         sourceFilter.setLabel(messages.getMessage(BaseRoleModel.class, "BaseRoleModel.source"));
         sourceFilter.setEmptySelectionAllowed(true);
-        sourceFilter.setItems(new EnumDataProvider<>(RoleSourceEnum.class));
+        sourceFilter.setItems(new EnumDataProvider<>(RoleSourceType.class));
         sourceFilter.addValueChangeListener(this::onFilterFieldValueChange);
     }
 

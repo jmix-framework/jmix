@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 
 import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
-import static io.jmix.security.model.RoleSourceEnum.DATABASE;
+import static io.jmix.security.model.RoleSourceType.DATABASE;
 
 @Route(value = "sec/resourcerolemodels", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.list")

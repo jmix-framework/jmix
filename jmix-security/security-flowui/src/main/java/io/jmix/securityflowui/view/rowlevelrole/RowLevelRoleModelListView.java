@@ -34,7 +34,6 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.model.RoleModelConverter;
-import io.jmix.security.model.RoleSourceEnum;
 import io.jmix.security.model.RowLevelRoleModel;
 import io.jmix.security.role.RolePersistence;
 import io.jmix.security.role.RowLevelRoleRepository;
@@ -51,7 +50,7 @@ import java.util.stream.Collectors;
 
 import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
-import static io.jmix.security.model.RoleSourceEnum.DATABASE;
+import static io.jmix.security.model.RoleSourceType.DATABASE;
 
 @Route(value = "sec/rowlevelrolemodels", layout = DefaultMainViewParent.class)
 @ViewController("sec_RowLevelRoleModel.list")

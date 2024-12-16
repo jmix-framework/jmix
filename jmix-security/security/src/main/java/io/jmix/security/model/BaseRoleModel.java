@@ -45,7 +45,7 @@ public abstract class BaseRoleModel {
     protected String description;
 
     @JmixProperty
-    private RoleSourceEnum source;
+    private RoleSourceType source;
 
     @JmixProperty
     private Map<String, String> customProperties = new HashMap<>();
@@ -65,11 +65,11 @@ public abstract class BaseRoleModel {
         this.id = id;
     }
 
-    public RoleSourceEnum getSource() {
+    public RoleSourceType getSource() {
         return source;
     }
 
-    public void setSource(RoleSourceEnum source) {
+    public void setSource(RoleSourceType source) {
         this.source = source;
     }
 

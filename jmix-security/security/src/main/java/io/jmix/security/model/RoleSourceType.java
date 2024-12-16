@@ -21,14 +21,14 @@ import io.jmix.core.metamodel.datatype.EnumClass;
 import org.springframework.lang.Nullable;
 
 
-public enum RoleSourceEnum implements EnumClass<String> {
+public enum RoleSourceType implements EnumClass<String> {
 
     ANNOTATED_CLASS(io.jmix.security.model.RoleSource.ANNOTATED_CLASS),
     DATABASE(io.jmix.security.model.RoleSource.DATABASE);
 
     private String id;
 
-    RoleSourceEnum(String value) {
+    RoleSourceType(String value) {
         this.id = value;
     }
 
@@ -37,8 +37,8 @@ public enum RoleSourceEnum implements EnumClass<String> {
     }
 
     @Nullable
-    public static RoleSourceEnum fromId(String id) {
-        for (RoleSourceEnum at : RoleSourceEnum.values()) {
+    public static RoleSourceType fromId(String id) {
+        for (RoleSourceType at : RoleSourceType.values()) {
             if (at.getId().equals(id)) {
                 return at;
             }

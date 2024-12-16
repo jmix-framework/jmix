@@ -83,7 +83,7 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
         codeField.setReadOnly(false);
 
         RowLevelRoleModel entity = event.getEntity();
-        entity.setSource(RoleSourceEnum.DATABASE);
+        entity.setSource(RoleSourceType.DATABASE);
     }
 
     @Override
@@ -206,7 +206,7 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     }
 
     private boolean isDatabaseSource() {
-        return RoleSourceEnum.DATABASE.equals(getEditedEntity().getSource());
+        return RoleSourceType.DATABASE.equals(getEditedEntity().getSource());
     }
 
     private RolePersistence getRolePersistence() {

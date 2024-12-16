@@ -109,7 +109,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         codeField.setReadOnly(false);
 
         ResourceRoleModel entity = event.getEntity();
-        entity.setSource(RoleSourceEnum.DATABASE);
+        entity.setSource(RoleSourceType.DATABASE);
         entity.setScopes(Sets.newHashSet(SecurityScope.UI));
     }
 
@@ -439,7 +439,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     }
 
     private boolean isDatabaseSource() {
-        return RoleSourceEnum.DATABASE.equals(getEditedEntity().getSource());
+        return RoleSourceType.DATABASE.equals(getEditedEntity().getSource());
     }
 
     private RolePersistence getRolePersistence() {

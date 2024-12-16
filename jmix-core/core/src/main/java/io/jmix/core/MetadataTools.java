@@ -1185,6 +1185,8 @@ public class MetadataTools {
 
     /**
      * Makes a deep copy of the source entity. All referenced entities and collections will be copied as well.
+     *
+     * @see Copier
      */
     @SuppressWarnings("unchecked")
     public <T> T deepCopy(T source) {

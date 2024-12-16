@@ -18,11 +18,18 @@ package io.jmix.core;
 
 /**
  * Creates copies of objects.
+ * <p>
+ * This interface provides the {@link #copy(Object)} method similar by semantics to {@link MetadataTools#deepCopy(Object)}
+ * but different in that it doesn't rely on metadata and copies all object's state using a low-level mechanism
+ * like Java serialization.
  */
 public interface Copier {
 
     /**
      * Creates a deep copy of the passed object.
+     *
+     * @param source source object
+     * @return deep copy of the source object
      */
     <T> T copy(T source);
 }

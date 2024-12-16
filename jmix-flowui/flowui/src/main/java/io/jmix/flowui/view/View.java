@@ -25,6 +25,7 @@ import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
 import io.jmix.flowui.fragment.FragmentOwner;
+import io.jmix.flowui.kit.meta.StudioIgnore;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.sys.event.UiEventsManager;
@@ -451,6 +452,7 @@ public class View<T extends Component> extends Composite<T>
      * @param listener the listened to add, not {@code null}
      * @return a registration object that can be used for removing the listener
      */
+    @StudioIgnore
     protected Registration addRestoreComponentsStateEventListener(
             ComponentEventListener<RestoreComponentsStateEvent> listener
     ) {

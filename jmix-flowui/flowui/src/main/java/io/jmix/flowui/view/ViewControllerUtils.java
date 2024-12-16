@@ -160,6 +160,15 @@ public final class ViewControllerUtils {
         return view.addValidationEventListener(listener);
     }
 
+    public static Registration addReadyListener(View<?> view, ComponentEventListener<View.ReadyEvent> listener) {
+        return view.addReadyListener(listener);
+    }
+
+    public static Registration addPostReadyListener(View<?> view,
+                                                    ComponentEventListener<View.PostReadyEvent> listener) {
+        return view.getEventBus().addListener(View.PostReadyEvent.class, listener);
+    }
+
     /**
      * @deprecated use {@link ViewControllerUtils#addInitEntityEventListener(StandardDetailView, ComponentEventListener)} instead
      */

@@ -128,6 +128,8 @@ public class View<T extends Component> extends Composite<T>
         // Run operation after all lifecycle events of a view
         executeAfterNavigationHandler();
         afterNavigationProcessed = true;
+
+        fireEvent(new PostReadyEvent(this));
     }
 
     @Internal
@@ -552,6 +554,18 @@ public class View<T extends Component> extends Composite<T>
     }
 
     /**
+     * Internal event that is fired after {@link ReadyEvent}. In this event listener,
+     * you can make final configuration after all lifecycle events.
+     */
+    @Internal
+    public static class PostReadyEvent extends ComponentEvent<View<?>> {
+
+        public PostReadyEvent(View<?> source) {
+            super(source, false);
+        }
+    }
+
+    /**
      * The first event in the view closing process.
      * The view is still displayed and fully functional.
      * <p>
@@ -708,5 +722,10 @@ public class View<T extends Component> extends Composite<T>
         public RestoreComponentsStateEvent(View<?> source) {
             super(source, true);
         }
+    }
+
+    @Override
+    protected ComponentEventBus getEventBus() {
+        return super.getEventBus();
     }
 }

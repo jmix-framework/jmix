@@ -146,9 +146,9 @@ public class KeyCombination {
      * @param keyString          string of type "Modifiers-Key", e.g. "Alt-N". Case-insensitive.
      * @param listenOnComponents {@link Component Components} onto which the shortcut listeners are
      *                           bound. Must not be {@code null}. Must not contain {@code null}. Must not have
-     *                           duplicate components. Must be {@link Focusable}, or
-     *                           its descendants must be {@link Focusable}. For components that do not support focus,
-     *                           the {@link KeyCombination} will only fire if its descendants have focus.
+     *                           duplicate components. Must be {@link Focusable}, or its nested components
+     *                           must be {@link Focusable}. For components that do not support focus,
+     *                           the {@link KeyCombination} will only fire if its nested components have focus.
      * @return new instance
      */
     @Nullable

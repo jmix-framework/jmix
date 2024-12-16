@@ -211,11 +211,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     _applyTheme() {
         const currentTheme = this._getCurrentApplicationTheme();
 
-        if (currentTheme === "dark") {
-            this.theme = "nord_dark";
-        } else if (currentTheme === "") {
-            this.theme = "textmate";
-        }
+        this.theme = currentTheme === 'dark' ? 'nord_dark' : 'textmate';
     }
 
     /**

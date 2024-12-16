@@ -116,11 +116,7 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
     _applyTheme() {
         const currentTheme = this._getCurrentApplicationTheme();
 
-        if (currentTheme === "dark") {
-            this.theme = "dark";
-        } else if (currentTheme === "" || currentTheme === null) {
-            this.theme = null;
-        }
+        this.theme = currentTheme === 'dark' ? 'dark' : null;
     }
 
     _onThemeChange() {

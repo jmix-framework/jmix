@@ -183,11 +183,11 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
 
     protected RequestCache getDelegateRequestCache() {
         HttpSessionRequestCache cache = new HttpSessionRequestCache();
-        cache.setRequestMatcher(createJmixViewPathRequestMatcher(viewRegistry));
+        cache.setRequestMatcher(createViewPathRequestMatcher(viewRegistry));
         return cache;
     }
 
-    protected JmixViewPathRequestMatcher createJmixViewPathRequestMatcher(ViewRegistry viewRegistry) {
+    protected RequestMatcher createViewPathRequestMatcher(ViewRegistry viewRegistry) {
         return new JmixViewPathRequestMatcher(viewRegistry);
     }
 }

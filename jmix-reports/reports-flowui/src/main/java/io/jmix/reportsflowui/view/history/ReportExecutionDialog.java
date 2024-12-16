@@ -111,12 +111,12 @@ public class ReportExecutionDialog extends StandardListView<Report> {
         ReportGroup groupFilterValue = filterGroup.getValue();
         Date dateFilterValue = filterUpdatedDate.getTypedValue();
 
-        if (filterNameValue != null
+        if (StringUtils.isNoneEmpty(filterNameValue)
                 && !report.getName().toLowerCase().contains(filterNameValue)) {
             return false;
         }
 
-        if (filterCodeValue != null) {
+        if (StringUtils.isNoneEmpty(filterCodeValue)) {
             if (report.getCode() == null
                     || (report.getCode() != null
                     && !report.getCode().toLowerCase().contains(filterCodeValue))) {

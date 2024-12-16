@@ -22,6 +22,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
+import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.Entity;
 import io.jmix.core.Id;
 import io.jmix.core.common.util.Preconditions;
@@ -29,6 +30,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -63,9 +65,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.text.ParseException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -111,13 +111,19 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
     protected GridExportProperties gridExportProperties;
     protected Notifications notifications;
     protected AllEntitiesLoaderFactory allEntitiesLoaderFactory;
+    protected CurrentAuthentication currentAuthentication;
+    protected DateTimeTransformations dateTimeTransformations;
 
     public ExcelExporter(GridExportProperties gridExportProperties,
                          Notifications notifications,
-                         AllEntitiesLoaderFactory allEntitiesLoaderFactory) {
+                         AllEntitiesLoaderFactory allEntitiesLoaderFactory,
+                         CurrentAuthentication currentAuthentication,
+                         DateTimeTransformations dateTimeTransformations) {
         this.gridExportProperties = gridExportProperties;
         this.notifications = notifications;
         this.allEntitiesLoaderFactory = allEntitiesLoaderFactory;
+        this.currentAuthentication = currentAuthentication;
+        this.dateTimeTransformations = dateTimeTransformations;
     }
 
     protected void createWorkbookWithSheet() {
@@ -540,6 +546,28 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             }
         } else if (cellValue instanceof LocalDateTime) {
             LocalDateTime dateTime = (LocalDateTime) cellValue;
+
+            cell.setCellValue(dateTime);
+            cell.setCellStyle(dateTimeFormatCellStyle);
+
+            if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
+                String str = datatypeRegistry.get(LocalDateTime.class).format(dateTime);
+                sizers[sizersIndex].notifyCellValue(str, stdFont);
+            }
+        } else if (cellValue instanceof OffsetTime offsetTime) {
+            LocalTime time = dateTimeTransformations.transformToLocalTime(offsetTime);
+
+            cell.setCellValue(Time.valueOf(time));
+            cell.setCellStyle(timeFormatCellStyle);
+
+            if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
+                String str = datatypeRegistry.get(LocalTime.class).format(time);
+                sizers[sizersIndex].notifyCellValue(str, stdFont);
+            }
+        } else if (cellValue instanceof OffsetDateTime offsetDateTime) {
+            LocalDateTime dateTime = (LocalDateTime) dateTimeTransformations.transformToType(offsetDateTime,
+                    LocalDateTime.class,
+                    currentAuthentication.getTimeZone().toZoneId());
 
             cell.setCellValue(dateTime);
             cell.setCellStyle(dateTimeFormatCellStyle);

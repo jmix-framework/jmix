@@ -63,7 +63,7 @@ class QueryParametersTest extends SecurityDataSpecification {
         when:
         def token = new SystemAuthenticationToken(null)
         def authentication = authenticationManager.authenticate(token) as SystemAuthenticationToken
-        authentication.details = ClientDetails.builder().locale(Locale.of("ru")).build()
+        authentication.details = ClientDetails.builder().locale(Locale.forLanguageTag("ru")).build()
 
         SecurityContextHolder.getContext().setAuthentication(authentication)
 

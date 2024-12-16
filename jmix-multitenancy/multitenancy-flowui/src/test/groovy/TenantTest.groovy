@@ -35,6 +35,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import test_support.MultitenancyFlowuiTestConfiguration
+import test_support.entity.SimpleUser
 import test_support.entity.TestTenantEntity
 import test_support.entity.User
 
@@ -72,6 +73,7 @@ class TenantTest extends Specification {
     TestTenantEntity testTenantEntityA
     TestTenantEntity testTenantEntityB
     TestTenantEntity testTenantEntity
+    SimpleUser simpleUser
 
     void setup() {
 
@@ -110,6 +112,12 @@ class TenantTest extends Specification {
         tenantUserB.setTenantId("tenantB")
         userRepository.addUser(tenantUserB)
 
+        simpleUser = metadata.create(SimpleUser)
+        simpleUser.setUsername("simpleUser")
+        simpleUser.setPassword("{noop}simpleUser")
+        simpleUser.setTenantId("simpleUser")
+        userRepository.addUser(simpleUser)
+
         testTenantEntityA = metadata.create(TestTenantEntity.class)
         testTenantEntityA.setIdForTenant("tenantA")
         testTenantEntityA.setName("A")
@@ -122,7 +130,7 @@ class TenantTest extends Specification {
         testTenantEntity.setName("without tenant")
 
         def saveContext = new SaveContext()
-        saveContext.saving(tenantA, tenantB, testTenantEntityA, testTenantEntityB, testTenantEntity)
+        saveContext.saving(tenantA, tenantB, testTenantEntityA, testTenantEntityB, testTenantEntity, simpleUser)
 
         unconstrainedDataManager.save(saveContext)
     }
@@ -133,6 +141,7 @@ class TenantTest extends Specification {
                         tenantUserB,
                         tenantAdminA,
                         tenantAdminB,
+                        simpleUser,
                         tenantA,
                         tenantB,
                         testTenantEntity,
@@ -172,9 +181,30 @@ class TenantTest extends Specification {
         tenantA.getTenantId() == userFromAuthentication.getTenantId()
     }
 
+    def "test user login with tenant in parent class"() {
+        when:
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken("simpleUser", "simpleUser");
+        Authentication authentication = authenticationManager.authenticate(authenticationToken)
+
+        then:
+        authentication != null
+        SimpleUser userFromAuthentication = authentication.getPrincipal() as SimpleUser
+        userFromAuthentication != null
+        userFromAuthentication.getTenantId() != null
+        simpleUser.getTenantId() == userFromAuthentication.getTenantId()
+    }
+
     def "get tenant property for user entity"() {
         when:
         MetaProperty metaProperty = tenantEntityOperation.findTenantProperty(User.class);
+        then:
+        "tenantId" == metaProperty.getName()
+    }
+
+    def "get tenant property for entity with parent"() {
+        when:
+        MetaProperty metaProperty = tenantEntityOperation.findTenantProperty(SimpleUser.class);
         then:
         "tenantId" == metaProperty.getName()
     }

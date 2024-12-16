@@ -26,12 +26,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.WeakHashMap;
 
 /**
  * Implementation of {@link TenantProvider} based on {@link CurrentAuthentication}.
  */
 @Component("mten_TenantProvider")
 public class TenantProviderImpl implements TenantProvider {
+
+    protected WeakHashMap<Class<?>, String> fieldsCache = new WeakHashMap<>();
 
     private final CurrentAuthentication currentAuthentication;
     private final CurrentUserSubstitution currentUserSubstitution;
@@ -71,11 +74,18 @@ public class TenantProviderImpl implements TenantProvider {
 
     @Nullable
     protected String getTenantIdFieldName(Class<?> clazz) {
-        Field[] declaredFields = clazz.getDeclaredFields();
+        String tenantField = fieldsCache.get(clazz);
+        if (tenantField != null) {
+            return tenantField;
+        }
 
-        for (Field field : declaredFields) {
-            if (field.isAnnotationPresent(TenantId.class)) {
-                return field.getName();
+        for (Class<?> type = clazz; type != null; type = type.getSuperclass()) {
+            Field[] declaredFields = type.getDeclaredFields();
+            for (Field field : declaredFields) {
+                if (field.isAnnotationPresent(TenantId.class)) {
+                    fieldsCache.put(clazz, field.getName());
+                    return field.getName();
+                }
             }
         }
 

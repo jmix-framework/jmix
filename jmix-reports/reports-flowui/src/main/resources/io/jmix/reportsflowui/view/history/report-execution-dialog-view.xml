@@ -38,6 +38,10 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
 
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
     <layout>
         <formLayout id="gridFilter">
             <responsiveSteps>
@@ -70,7 +74,6 @@
         <dataGrid id="reportsDataGrid"
                   dataContainer="reportsDc"
                   selectionMode="MULTI"
-                  enabled="false"
                   columnReorderingAllowed="true"
                   minHeight="20em"
                   width="100%">

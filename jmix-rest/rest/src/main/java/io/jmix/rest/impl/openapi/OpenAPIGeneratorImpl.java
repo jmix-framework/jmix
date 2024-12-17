@@ -393,12 +393,19 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                     .schema(new StringSchema().description("JSON with filter definition")));
             operation.getParameters().addAll(createEntityOptionalParams(false));
         } else {
+            Map<String, Schema> jsonParameters = new HashMap<>();
+            jsonParameters.put("filter", new StringSchema().description("JSON with filter definition"));
+            for (Parameter parameter : createEntityOptionalParams(false)) {
+                jsonParameters.put(parameter.getName(), parameter.getSchema().description(parameter.getDescription()));
+            }
+
             operation.requestBody(new RequestBody()
                     .description("JSON with filter definition")
                     .content(new Content()
-                            .addMediaType(APPLICATION_JSON_VALUE, new MediaType().schema(new StringSchema())))
+                            .addMediaType(APPLICATION_JSON_VALUE,
+                                    new MediaType().schema(new JsonSchema()
+                                            .properties(jsonParameters))))
                     .required(true));
-            operation.parameters(createEntityOptionalParams(false));
         }
 
         return operation;
@@ -417,7 +424,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                 new QueryParameter()
                         .name("fetchPlan")
                         .description("Name of the fetchPlan which is used for loading the entity.")
-                        .schema(new BooleanSchema())
+                        .schema(new StringSchema())
         );
 
         if (singleEntityOperation) {

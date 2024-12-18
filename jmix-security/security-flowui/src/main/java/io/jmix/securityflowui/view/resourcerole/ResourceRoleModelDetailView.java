@@ -16,12 +16,13 @@
 
 package io.jmix.securityflowui.view.resourcerole;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.*;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
+import io.jmix.core.SaveContext;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
@@ -33,15 +34,11 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.*;
-import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
-import io.jmix.securitydata.entity.ResourcePolicyEntity;
-import io.jmix.securitydata.entity.ResourceRoleEntity;
-import io.jmix.securityflowui.model.RoleSource;
-import io.jmix.securityflowui.model.*;
+import io.jmix.security.role.RolePersistence;
 import io.jmix.securityflowui.view.resourcepolicy.*;
 import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -51,7 +48,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Route(value = "sec/resourcerolemodels/:code", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.detail")
@@ -75,6 +71,8 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     private DropdownButton createDropdownButton;
 
     @ViewComponent
+    private DataContext dataContext;
+    @ViewComponent
     private InstanceContainer<ResourceRoleModel> roleModelDc;
     @ViewComponent
     private CollectionContainer<ResourceRoleModel> childRolesDc;
@@ -87,10 +85,8 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     private MessageTools messageTools;
     @Autowired
     private MessageBundle messageBundle;
-    @Autowired
-    private Metadata metadata;
-    @Autowired
-    private DataManager dataManager;
+    @Autowired(required = false)
+    private RolePersistence rolePersistence;
     @Autowired
     private DialogWindows dialogWindows;
     @Autowired
@@ -102,25 +98,18 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     @Autowired(required = false)
     private List<ResourcePolicyTypeProvider> resourcePolicyTypeProviders;
 
-    private boolean openedByCreateAction = false;
-    private final Set<UUID> forRemove = new HashSet<>();
-
     @Subscribe
     public void onInit(InitEvent event) {
-        // we need to set items (i.e. options) before the value is set,
-        // otherwise it will be cleared
         initScopesField();
         initResourcePoliciesTable();
     }
 
     @Subscribe
     public void onInitNewEntity(InitEntityEvent<ResourceRoleModel> event) {
-        openedByCreateAction = true;
-
         codeField.setReadOnly(false);
 
         ResourceRoleModel entity = event.getEntity();
-        entity.setSource(RoleSource.DATABASE);
+        entity.setSource(RoleSourceType.DATABASE);
         entity.setScopes(Sets.newHashSet(SecurityScope.UI));
     }
 
@@ -135,28 +124,35 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         ResourceRole roleByCode = roleRepository.findRoleByCode(code);
 
         ResourceRoleModel resourceRoleModel = roleModelConverter.createResourceRoleModel(roleByCode);
-        roleModelDc.setItem(resourceRoleModel);
+
+        childRolesDc.mute();
+        childRolesDc.setItems(loadChildRoleModels(resourceRoleModel));
+        childRolesDc.unmute();
+
+        ResourceRoleModel merged = dataContext.merge(resourceRoleModel);
+        roleModelDc.setItem(merged);
+    }
+
+    protected List<ResourceRoleModel> loadChildRoleModels(ResourceRoleModel editedRoleModel) {
+        if (editedRoleModel.getChildRoles() == null || editedRoleModel.getChildRoles().isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<ResourceRoleModel> childRoleModels = new ArrayList<>();
+        for (String code : editedRoleModel.getChildRoles()) {
+            ResourceRole child = roleRepository.findRoleByCode(code);
+            if (child != null) {
+                childRoleModels.add(roleModelConverter.createResourceRoleModel(child));
+            } else {
+                log.warn("Role {} was not found while collecting child roles for aggregated role {}",
+                        editedRoleModel.getCode(), code);
+            }
+        }
+        return childRoleModels;
     }
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        //non-persistent entities are automatically marked as modified. If isNew is not set, we must remove
-        //all entities from dataContext.modifiedInstances collection
-        if (!openedByCreateAction) {
-            Set<Object> modified = new HashSet<>(getDataContext().getModified());
-            for (Object entity : modified) {
-                getDataContext().setModified(entity, false);
-            }
-        }
-
-        boolean isDatabaseSource = isDatabaseSource();
-        setupRoleReadOnlyMode(isDatabaseSource);
-
-        Action createGraphQLPolicyAction = resourcePoliciesTable.getAction("createGraphQLPolicy");
-        if (createGraphQLPolicyAction != null) {
-            createGraphQLPolicyAction.setVisible(isGraphQLEnabled());
-        }
-
+        setupRoleReadOnlyMode(isDatabaseSource());
         initAdditionalResourcePolicyTypes();
     }
 
@@ -201,25 +197,6 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         for (Action action : childRolesActions) {
             action.setEnabled(isDatabaseSource);
         }
-    }
-
-    @Install(to = "childRolesDl", target = Target.DATA_LOADER)
-    private List<ResourceRoleModel> childRolesDlLoadDelegate(LoadContext<ResourceRoleModel> loadContext) {
-        ResourceRoleModel editedRoleModel = getEditedEntity();
-        if (editedRoleModel.getChildRoles() == null || editedRoleModel.getChildRoles().isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<ResourceRoleModel> childRoleModels = new ArrayList<>();
-        for (String code : editedRoleModel.getChildRoles()) {
-            ResourceRole child = roleRepository.findRoleByCode(code);
-            if (child != null) {
-                childRoleModels.add(roleModelConverter.createResourceRoleModel(child));
-            } else {
-                log.warn("Role {} was not found while collecting child roles for aggregated role {}",
-                        editedRoleModel.getCode(), code);
-            }
-        }
-        return childRoleModels;
     }
 
     @Subscribe("childRolesTable.add")
@@ -326,27 +303,11 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                         );
 
                 if (!policyExists) {
-                    ResourcePolicyModel mergedResourcePolicyModel = getDataContext().merge(resourcePolicyModel);
+                    ResourcePolicyModel mergedResourcePolicyModel = dataContext.merge(resourcePolicyModel);
                     resourcePoliciesDc.getMutableItems().add(mergedResourcePolicyModel);
                 }
             }
         }
-    }
-
-    @Subscribe("resourcePoliciesTable.createGraphQLPolicy")
-    private void onGraphQLPoliciesTableCreateGraphQLPolicy(ActionPerformedEvent event) {
-        DialogWindow<GraphQLResourcePolicyModelDetailView> dialog = dialogWindows.detail(resourcePoliciesTable)
-                .withViewClass(GraphQLResourcePolicyModelDetailView.class)
-                .newEntity()
-                .withInitializer(resourcePolicyModel -> {
-                    resourcePolicyModel.setType(ResourcePolicyType.GRAPHQL);
-                    resourcePolicyModel.setAction(ResourcePolicy.DEFAULT_ACTION);
-                    resourcePolicyModel.setEffect(ResourcePolicyEffect.ALLOW);
-                })
-                .build();
-
-        dialog.getView().setShowSaveNotification(false);
-        dialog.open();
     }
 
     @Subscribe("resourcePoliciesTable.createSpecificPolicy")
@@ -433,18 +394,6 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     }
 
-    @Install(to = "resourcePoliciesTable.remove", subject = "afterActionPerformedHandler")
-    private void resourcePoliciesTableRemoveAfterActionPerformedHandler(AfterActionPerformedEvent<ResourcePolicyModel> event) {
-        List<ResourcePolicyModel> policyModels = event.getItems();
-        Set<UUID> databaseIds = policyModels.stream()
-                .map(resourcePolicyModel -> resourcePolicyModel.getCustomProperties().get("databaseId"))
-                .filter(Objects::nonNull)
-                .map(UUID::fromString)
-                .collect(Collectors.toSet());
-
-        forRemove.addAll(databaseIds);
-    }
-
     @Subscribe(id = "resourcePoliciesDc", target = Target.DATA_CONTAINER)
     private void onResourcePoliciesDcCollectionChange(CollectionContainer.CollectionChangeEvent<ResourcePolicyModel> event) {
         if (event.getChangeType() == CollectionChangeType.ADD_ITEMS) {
@@ -469,96 +418,34 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         resourcePoliciesDc.getMutableItems().removeAll(forRemove);
     }
 
-    @Subscribe(target = Target.DATA_CONTEXT)
-    public void onPreSave(DataContext.PreSaveEvent event) {
+    @Install(target = Target.DATA_CONTEXT)
+    private Set<Object> saveDelegate(final SaveContext saveContext) {
         if (isDatabaseSource()) {
-            saveRoleEntityToDatabase(event.getModifiedInstances());
+            getRolePersistence().save(getEditedEntity());
+            return Set.of(getEditedEntity());
+        } else {
+            return Set.of();
         }
     }
 
-    private void saveRoleEntityToDatabase(Collection<?> modifiedInstances) {
-        ResourceRoleModel roleModel = getEditedEntity();
-        String roleDatabaseId = roleModel.getCustomProperties().get("databaseId");
-        ResourceRoleEntity roleEntity;
-        if (!Strings.isNullOrEmpty(roleDatabaseId)) {
-            UUID roleEntityId = UUID.fromString(roleDatabaseId);
-            roleEntity = dataManager.load(ResourceRoleEntity.class).id(roleEntityId).one();
-        } else {
-            roleEntity = metadata.create(ResourceRoleEntity.class);
-        }
-        roleEntity = getDataContext().merge(roleEntity);
-        roleEntity.setName(roleModel.getName());
-        roleEntity.setCode(roleModel.getCode());
-        roleEntity.setDescription(roleModel.getDescription());
-        roleEntity.setScopes(roleModel.getScopes());
-
-        boolean roleModelModified = modifiedInstances.stream()
-                .anyMatch(entity -> entity instanceof ResourceRoleModel);
-
-        if (roleModelModified) {
-            roleEntity = getDataContext().merge(roleEntity);
-        }
-
-        List<ResourcePolicyModel> resourcePolicyModels = modifiedInstances.stream()
-                .filter(entity -> entity instanceof ResourcePolicyModel)
-                .map(entity -> (ResourcePolicyModel) entity)
-                //modifiedInstances may contain resource policies from just added child role. We should not analyze them here
-                .filter(entity -> resourcePoliciesDc.containsItem(entity.getId()))
-                .collect(Collectors.toList());
-
-        for (ResourcePolicyModel policyModel : resourcePolicyModels) {
-            String databaseId = policyModel.getCustomProperties().get("databaseId");
-            ResourcePolicyEntity policyEntity;
-            if (!Strings.isNullOrEmpty(databaseId)) {
-                UUID entityId = UUID.fromString(databaseId);
-                policyEntity = dataManager.load(ResourcePolicyEntity.class)
-                        .id(entityId)
-                        .one();
-            } else {
-                policyEntity = metadata.create(ResourcePolicyEntity.class);
-                policyEntity.setRole(roleEntity);
-            }
-            policyEntity = getDataContext().merge(policyEntity);
-            policyEntity.setType(policyModel.getType());
-            policyEntity.setResource(policyModel.getResource());
-            policyEntity.setAction(policyModel.getAction());
-            policyEntity.setEffect(policyModel.getEffect());
-            policyEntity.setPolicyGroup(policyModel.getPolicyGroup());
-        }
-
-        for (UUID databaseId : forRemove) {
-            dataManager.remove(Id.of(databaseId, ResourcePolicyEntity.class));
-        }
-
+    @Subscribe(id = "childRolesDc", target = Target.DATA_CONTAINER)
+    public void onChildRolesDcCollectionChange(
+            final CollectionContainer.CollectionChangeEvent<ResourceRoleModel> event) {
         Set<String> childRoles = childRolesDc.getItems().stream()
                 .map(BaseRoleModel::getCode)
                 .collect(Collectors.toSet());
 
-        roleModel.setChildRoles(childRoles);
-        roleEntity.setChildRoles(childRoles);
-    }
-
-    private Stream<Action> getCreatePolicyActions() {
-        return resourcePoliciesTable.getActions()
-                .stream()
-                .filter(action -> action.getId().contains("Policy"));
+        getEditedEntity().setChildRoles(childRoles);
     }
 
     private boolean isDatabaseSource() {
-        return RoleSource.DATABASE.equals(getEditedEntity().getSource());
+        return RoleSourceType.DATABASE.equals(getEditedEntity().getSource());
     }
 
-    private boolean isGraphQLEnabled() {
-        try {
-            // TODO: 11.08.2022 is it applicable?
-            Class.forName("io.jmix.graphql.security.GraphQLAuthorizedUrlsProvider");
-            return true;
-        } catch (ClassNotFoundException ignored) {
+    private RolePersistence getRolePersistence() {
+        if (rolePersistence == null) {
+            throw new IllegalStateException("RolePersistence is not available");
         }
-        return false;
-    }
-
-    private DataContext getDataContext() {
-        return getViewData().getDataContext();
+        return rolePersistence;
     }
 }

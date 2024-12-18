@@ -17,6 +17,7 @@
 package io.jmix.core.impl;
 
 import com.google.common.base.Splitter;
+import io.jmix.core.MetadataPostProcessor;
 import io.jmix.core.entity.annotation.*;
 import io.jmix.core.impl.scanning.EntityDetector;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
@@ -50,7 +51,9 @@ public class MetadataLoader {
     protected Session session;
 
     @Autowired
-    public MetadataLoader(JmixModulesClasspathScanner classpathScanner, MetaModelLoader metaModelLoader) {
+    public MetadataLoader(JmixModulesClasspathScanner classpathScanner,
+                          MetaModelLoader metaModelLoader,
+                          List<MetadataPostProcessor> postProcessors) {
         this.session = new SessionImpl();
 
         log.trace("Initializing metadata");
@@ -64,6 +67,10 @@ public class MetadataLoader {
         }
 
         initExtensionMetaAnnotations();
+
+        for (MetadataPostProcessor postProcessor : postProcessors) {
+            postProcessor.process(session);
+        }
 
         log.info("Metadata initialized in {} ms", System.currentTimeMillis() - startTime);
     }

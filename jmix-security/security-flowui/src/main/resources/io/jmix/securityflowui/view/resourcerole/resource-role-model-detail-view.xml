@@ -20,12 +20,10 @@
       focusComponent="form">
     <data>
         <instance id="roleModelDc"
-                  class="io.jmix.securityflowui.model.ResourceRoleModel">
+                  class="io.jmix.security.model.ResourceRoleModel">
             <collection id="resourcePoliciesDc" property="resourcePolicies"/>
         </instance>
-        <collection id="childRolesDc" class="io.jmix.securityflowui.model.ResourceRoleModel">
-            <loader id="childRolesDl"/>
-        </collection>
+        <collection id="childRolesDc" class="io.jmix.security.model.ResourceRoleModel"/>
     </data>
     <facets>
         <settings auto="true"/>
@@ -49,7 +47,7 @@
 
             <tabSheet id="tabSheet" width="100%" minHeight="30em">
                 <tab id="resourcePoliciesTab"
-                     label="msg://io.jmix.securityflowui.model/ResourceRoleModel.resourcePolicies">
+                     label="msg://io.jmix.security.model/ResourceRoleModel.resourcePolicies">
                     <vbox id="resourcePoliciesWrapper" padding="false" height="100%">
                         <hbox id="resourcePoliciesButtonsPanel" classNames="buttons-panel">
                             <dropdownButton id="createDropdownButton" text="msg:///actions.Create" themeNames="primary"
@@ -63,8 +61,6 @@
                                                 ref="resourcePoliciesTable.createEntityPolicy"/>
                                     <actionItem id="createEntityAttributePolicy"
                                                 ref="resourcePoliciesTable.createEntityAttributePolicy"/>
-                                    <actionItem id="createGraphQLPolicy"
-                                                ref="resourcePoliciesTable.createGraphQLPolicy"/>
                                     <actionItem id="createSpecificPolicy"
                                                 ref="resourcePoliciesTable.createSpecificPolicy"/>
                                 </items>
@@ -83,7 +79,6 @@
                                 <action id="createViewPolicy" text="msg://actions.viewPolicy.text"/>
                                 <action id="createEntityPolicy" text="msg://actions.entityPolicy.text"/>
                                 <action id="createEntityAttributePolicy" text="msg://actions.entityAttributePolicy.text"/>
-                                <action id="createGraphQLPolicy" text="msg://actions.graphQLPolicy.text"/>
                                 <action id="createSpecificPolicy" text="msg://actions.specificPolicy.text"/>
 
                                 <action id="edit" type="list_edit"/>
@@ -99,7 +94,7 @@
                     </vbox>
                 </tab>
                 <tab id="childRolesTab"
-                     label="msg://io.jmix.securityflowui.model/ResourceRoleModel.childRoles">
+                     label="msg://io.jmix.security.model/ResourceRoleModel.childRoles">
                     <vbox id="childRolesWrapper" padding="false" height="100%">
                         <hbox id="childRolesButtonsPanel" classNames="buttons-panel">
                             <button action="childRolesTable.add"/>

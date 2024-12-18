@@ -28,7 +28,7 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
-import io.jmix.securityflowui.model.ResourcePolicyModel;
+import io.jmix.security.model.ResourcePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

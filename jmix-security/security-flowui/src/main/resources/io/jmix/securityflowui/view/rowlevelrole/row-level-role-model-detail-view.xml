@@ -20,10 +20,10 @@
       focusComponent="form">
     <data>
         <instance id="roleModelDc"
-                  class="io.jmix.securityflowui.model.RowLevelRoleModel">
+                  class="io.jmix.security.model.RowLevelRoleModel">
             <collection id="rowLevelPoliciesDc" property="rowLevelPolicies"/>
         </instance>
-        <collection id="childRolesDc" class="io.jmix.securityflowui.model.RowLevelRoleModel">
+        <collection id="childRolesDc" class="io.jmix.security.model.RowLevelRoleModel">
             <loader id="childRolesDl"/>
         </collection>
     </data>
@@ -48,7 +48,7 @@
 
             <tabSheet id="tabSheet" width="100%" minHeight="30em">
                 <tab id="rowLevelPoliciesTab"
-                     label="msg://io.jmix.securityflowui.model/RowLevelRoleModel.rowLevelPolicies">
+                     label="msg://io.jmix.security.model/RowLevelRoleModel.rowLevelPolicies">
                     <vbox id="rowLevelPoliciesWrapper" padding="false" height="100%">
                         <hbox id="rowLevelPoliciesButtonsPanel" classNames="buttons-panel">
                             <button action="rowLevelPoliciesTable.create"/>
@@ -90,7 +90,7 @@
                     </vbox>
                 </tab>
                 <tab id="childRolesTab"
-                     label="msg://io.jmix.securityflowui.model/RowLevelRoleModel.childRoles">
+                     label="msg://io.jmix.security.model/RowLevelRoleModel.childRoles">
                     <vbox id="childRolesWrapper" padding="false" height="100%">
                         <hbox id="childRolesButtonsPanel" classNames="buttons-panel">
                             <button action="childRolesTable.add"/>

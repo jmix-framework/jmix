@@ -28,6 +28,7 @@ import io.jmix.core.impl.serialization.EntityTokenException;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.validation.EntityValidationException;
 import io.jmix.core.validation.group.RestApiChecks;
 import jakarta.validation.ConstraintViolation;
@@ -752,6 +753,9 @@ public class EntityImportExportImpl implements EntityImportExport {
     @Nullable
     protected Object findReferenceEntity(Object entity, EntityImportPlanProperty importPlanProperty, SaveContext saveContext,
                                          Set<Object> loadedEntities) {
+        if (!isStored(entity)) {
+            return entity;
+        }
         Object result = Stream.concat(loadedEntities.stream(), saveContext.getEntitiesToSave().stream())
                 .filter(item -> item.equals(entity))
                 .findFirst().orElse(null);
@@ -773,6 +777,11 @@ public class EntityImportExportImpl implements EntityImportExport {
             }
         }
         return result;
+    }
+
+    private boolean isStored(Object entity) {
+        Store store = metadata.getClass(entity).getStore();
+        return !store.getName().equals(Stores.NOOP) && !store.getName().equals(Stores.UNDEFINED);
     }
 
     protected void assertToken(Object entity, FetchPlan fetchPlan) {

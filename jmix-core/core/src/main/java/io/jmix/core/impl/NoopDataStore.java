@@ -21,6 +21,8 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
 import io.jmix.core.ValueLoadContext;
 import io.jmix.core.entity.KeyValueEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,7 @@ import java.util.Set;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NoopDataStore implements DataStore {
 
+    private static final Logger log = LoggerFactory.getLogger(NoopDataStore.class);
     protected String name;
 
     @Override
@@ -54,21 +57,25 @@ public class NoopDataStore implements DataStore {
     @Nullable
     @Override
     public Object load(LoadContext<?> context) {
+        log.warn("Invoked load() for {} that doesn't belong to any data store", context.getEntityMetaClass().getName());
         return null;
     }
 
     @Override
     public List<Object> loadList(LoadContext<?> context) {
+        log.warn("Invoked loadList() for {} that doesn't belong to any data store", context.getEntityMetaClass().getName());
         return Collections.emptyList();
     }
 
     @Override
     public long getCount(LoadContext<?> context) {
+        log.warn("Invoked getCount() for {} that doesn't belong to any data store", context.getEntityMetaClass().getName());
         return 0;
     }
 
     @Override
     public Set<?> save(SaveContext context) {
+        log.warn("Invoked save() for {} that doesn't belong to any data store", List.of(context.getEntitiesToSave(), context.getEntitiesToRemove()));
         Set<Object> set = new HashSet<>();
         set.addAll(context.getEntitiesToSave());
         set.addAll(context.getEntitiesToRemove());
@@ -77,11 +84,13 @@ public class NoopDataStore implements DataStore {
 
     @Override
     public List<KeyValueEntity> loadValues(ValueLoadContext context) {
+        log.warn("Invoked loadValues() for ValueLoadContext");
         return Collections.emptyList();
     }
 
     @Override
     public long getCount(ValueLoadContext context) {
+        log.warn("Invoked getCount() ValueLoadContext");
         return 0;
     }
 }

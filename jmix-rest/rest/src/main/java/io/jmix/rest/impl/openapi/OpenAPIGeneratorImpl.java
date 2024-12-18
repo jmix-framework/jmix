@@ -378,8 +378,6 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         Operation operation = new Operation()
                 .addTagsItem(entityName)
                 .summary("Find entities by filter conditions: " + entityName)
-                .description("Finds entities by filter conditions. The filter is defined by JSON object " +
-                        "that is passed as in URL parameter.")
                 .responses(new ApiResponses()
                         .addApiResponse("200", createEntityArrayResponse("Success. Entities that conforms filter conditions are returned in the response body.", entityName))
                         .addApiResponse("400", createErrorResponse("Bad request. For example, the condition value cannot be parsed."))
@@ -387,18 +385,29 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                         .addApiResponse("404", createErrorResponse("Not found. MetaClass for the entity with the given name not found.")));
 
         if (RequestMethod.GET == method) {
+            operation.description("Finds entities by filter conditions. The filter is defined by JSON object " +
+                        "that is passed as URL parameter.");
             operation.addParametersItem(new QueryParameter()
                     .name("filter")
                     .required(true)
                     .schema(new StringSchema().description("JSON with filter definition")));
             operation.getParameters().addAll(createEntityOptionalParams(false));
         } else {
+            Map<String, Schema> jsonParameters = new HashMap<>();
+            jsonParameters.put("filter", new StringSchema().description("JSON with filter definition"));
+            for (Parameter parameter : createEntityOptionalParams(false)) {
+                jsonParameters.put(parameter.getName(), parameter.getSchema().description(parameter.getDescription()));
+            }
+
+            operation.description("Finds entities by filter conditions. The filter is defined by JSON object " +
+                        "that is passed in body.");
             operation.requestBody(new RequestBody()
-                    .description("JSON with filter definition")
+                    .description("JSON with search parameters")
                     .content(new Content()
-                            .addMediaType(APPLICATION_JSON_VALUE, new MediaType().schema(new StringSchema())))
+                            .addMediaType(APPLICATION_JSON_VALUE,
+                                    new MediaType().schema(new JsonSchema()
+                                            .properties(jsonParameters))))
                     .required(true));
-            operation.parameters(createEntityOptionalParams(false));
         }
 
         return operation;
@@ -417,7 +426,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                 new QueryParameter()
                         .name("fetchPlan")
                         .description("Name of the fetchPlan which is used for loading the entity.")
-                        .schema(new BooleanSchema())
+                        .schema(new StringSchema())
         );
 
         if (singleEntityOperation) {

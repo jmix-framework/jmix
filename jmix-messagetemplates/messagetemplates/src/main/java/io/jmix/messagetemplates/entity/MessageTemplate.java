@@ -50,9 +50,13 @@ public class MessageTemplate {
     @Column(name = "CODE", nullable = false, unique = true)
     protected String code;
 
+    @NotNull
+    @Column(name = "TYPE_", nullable = false)
+    protected Integer type;
+
     @Lob
-    @Column(name = "HTML")
-    protected String html;
+    @Column(name = "CONTENT")
+    protected String content;
 
     @OnDeleteInverse(DeletePolicy.UNLINK)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,7 +65,7 @@ public class MessageTemplate {
 
     @Composition
     @OneToMany(mappedBy = "template")
-    private List<MessageTemplateParameter> parameters;
+    protected List<MessageTemplateParameter> parameters;
 
     public UUID getId() {
         return id;
@@ -87,12 +91,20 @@ public class MessageTemplate {
         this.code = code;
     }
 
-    public String getHtml() {
-        return html;
+    public TemplateType getType() {
+        return type == null ? null : TemplateType.fromId(type);
     }
 
-    public void setHtml(String html) {
-        this.html = html;
+    public void setType(TemplateType type) {
+        this.type = type == null ? null : type.getId();
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public MessageTemplateGroup getGroup() {

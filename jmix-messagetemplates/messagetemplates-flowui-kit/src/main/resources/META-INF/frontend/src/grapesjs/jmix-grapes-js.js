@@ -61,6 +61,8 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
                             .set('active', 1);
                         this._editor.Panels.getButton('views', 'open-blocks')
                             .set('active', 1);
+                        this._editor.Panels.removeButton('options', 'export-template');
+                        this._editor.Panels.removeButton('options', 'gjs-open-import-template')
 
                         this._editor.on('update', () => {
                             if (this._pendingValueFromServer) {
@@ -217,11 +219,19 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
 
     /** @private */
     getHtml(editor) {
+        let result;
+
         if (this._inlineCssEnabled) {
-            return editor.runCommand('gjs-get-inlined-html');
+            result = editor.runCommand('gjs-get-inlined-html');
+        } else {
+            result = editor.getHtml() + `<style>${editor.getCss()}</style>`;
         }
 
-        return editor.getHtml() + `<style>${editor.getCss()}</style>`;
+        return result.replace('&amp;', '&')
+            .replace('&lt;', '<')
+            .replace('&gt;', '>',)
+            .replace('&quot;', '\"',)
+            .replace('&#039;', '\'',);
     }
 
     runCommand(command, params) {

@@ -64,6 +64,7 @@
             <columns resizable="true">
                 <column property="name"/>
                 <column property="code"/>
+                <column property="type"/>
                 <column property="group"/>
             </columns>
         </dataGrid>

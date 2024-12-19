@@ -103,7 +103,11 @@
             <column name="CODE" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="HTML"
+            <column name="TYPE_"
+                    type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CONTENT"
                     type="clob"/>
             <column name="GROUP_ID" type="${uuid.type}"/>
         </createTable>

@@ -50,20 +50,45 @@
                     <formLayout dataContainer="messageTemplateDc">
                         <textField id="nameField" property="name"/>
                         <textField id="codeField" property="code"/>
+                        <radioButtonGroup id="typeField" property="type"/>
                         <entityComboBox id="groupField" property="group"
-                                        itemsContainer="messageTemplateGroupsDc"/>
+                                        itemsContainer="messageTemplateGroupsDc">
+                            <actions>
+                                <action id="lookup" type="entity_lookup"/>
+                                <action id="clear" type="entity_clear"/>
+                            </actions>
+                        </entityComboBox>
                     </formLayout>
-                    <msgtmp:grapesJs id="grapesJsEditor" width="100%" height="100%">
-                        <msgtmp:plugins>
-                            <msgtmp:plugin name="grapesjs-blocks-basic"/>
-                            <msgtmp:plugin name="grapesjs-preset-newsletter"/>
-                            <msgtmp:plugin name="grapesjs-plugin-forms"/>
-                            <msgtmp:plugin name="grapesjs-blocks-flexbox"/>
-                            <msgtmp:plugin name="grapesjs-tui-image-editor"/>
-                            <msgtmp:plugin name="grapesjs-custom-code"/>
-                            <msgtmp:plugin name="grapesjs-parser-postcss"/>
-                        </msgtmp:plugins>
-                    </msgtmp:grapesJs>
+                    <vbox padding="false">
+                        <vbox id="plainTextAreaLayout" expand="plainTextArea"
+                              width="100%" height="100%"
+                              padding="false" visible="false">
+                            <h4 text="msg://plainTextArea.header"/>
+                            <textArea id="plainTextArea" width="100%"
+                                      dataContainer="messageTemplateDc" property="content"/>
+                        </vbox>
+                        <vbox id="grapesJsEditorLayout" expand="grapesJsEditor"
+                              width="100%" height="100%"
+                              padding="false">
+                            <hbox id="htmlTemplateControlsPanel" classNames="buttons-panel">
+                                <fileUploadField id="importTemplateField" uploadIcon="UPLOAD"
+                                                 acceptedFileTypes=".html"/>
+                                <button id="editCodeBtn" icon="CODE" title="msg://editCodeBtn.title"/>
+                                <button id="viewBtn" icon="EYE" title="msg://viewBtn.title"/>
+                            </hbox>
+                            <msgtmp:grapesJs id="grapesJsEditor" width="100%">
+                                <msgtmp:plugins>
+                                    <msgtmp:plugin name="grapesjs-blocks-basic"/>
+                                    <msgtmp:plugin name="grapesjs-preset-newsletter"/>
+                                    <msgtmp:plugin name="grapesjs-plugin-forms"/>
+                                    <msgtmp:plugin name="grapesjs-blocks-flexbox"/>
+                                    <msgtmp:plugin name="grapesjs-tui-image-editor"/>
+                                    <msgtmp:plugin name="grapesjs-custom-code"/>
+                                    <msgtmp:plugin name="grapesjs-parser-postcss"/>
+                                </msgtmp:plugins>
+                            </msgtmp:grapesJs>
+                        </vbox>
+                    </vbox>
                 </split>
             </tab>
             <tab id="parametersTab" label="msg://mainTabSheet.parametersTab.label">

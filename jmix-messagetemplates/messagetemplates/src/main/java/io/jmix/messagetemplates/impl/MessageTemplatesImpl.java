@@ -73,15 +73,19 @@ public class MessageTemplatesImpl implements MessageTemplates, InitializingBean 
         checkNotNullArgument(parameters);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Template htmlTemplate= getHtmlTemplate(template);
+        Template htmlTemplate = getHtmlTemplate(template);
 
-        // TODO: kd, handle exceptions
         try (Writer htmlWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
             htmlTemplate.process(parameters, htmlWriter);
         } catch (TemplateException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(
+                    "Unable to generate %s with '%s' code".formatted(
+                            MessageTemplate.class.getSimpleName(), template.getCode()), e
+            );
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(
+                    "Unable to write message template with '%s'".formatted(template.getCode()), e
+            );
         }
 
         return outputStream.toString(StandardCharsets.UTF_8);
@@ -102,10 +106,11 @@ public class MessageTemplatesImpl implements MessageTemplates, InitializingBean 
     protected Template getHtmlTemplate(MessageTemplate template) {
         StringTemplateLoader stringTemplateLoader = new StringTemplateLoader();
         String templateName = template.getName();
-        stringTemplateLoader.putTemplate(templateName, template.getHtml());
+        stringTemplateLoader.putTemplate(templateName, template.getContent());
 
         Configuration configuration = new Configuration(version);
         configuration.setTemplateLoader(stringTemplateLoader);
+        // TODO: kd, add default formatters from app props
         configuration.setDefaultEncoding("UTF-8");
 
         Template htmlTemplate;

@@ -16,17 +16,36 @@
 
 package io.jmix.messagetemplatesflowui.view.messagetemplate;
 
+import com.google.common.base.Strings;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.DataManager;
 import io.jmix.core.Sort;
+import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.UiProperties;
+import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
+import io.jmix.flowui.download.DownloadFormat;
+import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
+import io.jmix.flowui.model.InstanceContainer.ItemPropertyChangeEvent;
 import io.jmix.flowui.view.*;
 import io.jmix.messagetemplates.entity.MessageTemplate;
 import io.jmix.messagetemplates.entity.MessageTemplateBlock;
+import io.jmix.messagetemplates.entity.TemplateType;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsBlock;
+import io.jmix.messagetemplatesflowui.view.htmleditor.HtmlEditorView;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Route(value = "msgtmp/messagetemplate/:id", layout = DefaultMainViewParent.class)
 @ViewController("msgtmp_MessageTemplate.detail")
@@ -36,14 +55,45 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
 
     @ViewComponent
     protected GrapesJs grapesJsEditor;
+    @ViewComponent
+    protected FileUploadField importTemplateField;
+    @ViewComponent
+    protected VerticalLayout plainTextAreaLayout;
+    @ViewComponent
+    protected VerticalLayout grapesJsEditorLayout;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected DataManager dataManager;
+    @Autowired
+    protected DialogWindows dialogWindows;
+    @Autowired
+    protected Downloader downloader;
+
+    @Autowired
+    protected UiProperties uiProperties;
+    @Autowired
+    protected CoreProperties coreProperties;
+
+    @Subscribe
+    public void onInitEntity(InitEntityEvent<MessageTemplate> event) {
+        event.getEntity().setType(TemplateType.HTML);
+    }
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
+        initComponents();
         initBlocks();
         initGrapesJsEditor();
+
+        updateContentAwareComponents();
+    }
+
+    protected void initComponents() {
+        // to make it look like a button
+        importTemplateField.setUploadText("");
+        importTemplateField.getElement().setProperty("title", messageBundle.getMessage("importTemplateField.title"));
     }
 
     protected void initBlocks() {
@@ -52,7 +102,7 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
     }
 
     protected void initGrapesJsEditor() {
-        grapesJsEditor.setValue(getEditedEntity().getHtml());
+        grapesJsEditor.setValue(getEditedEntity().getContent());
         grapesJsEditor.addValueChangeEventListener(this::onGrapesJsValueChange);
     }
 
@@ -77,6 +127,61 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
     }
 
     protected void onGrapesJsValueChange(GrapesJs.GrapesJsValueChangedEvent event) {
-        getEditedEntity().setHtml(event.getValue());
+        getEditedEntity().setContent(event.getValue());
+    }
+
+    @Subscribe("importTemplateField")
+    public void onImportTemplateFieldUpload(FileUploadSucceededEvent<FileUploadField> event) {
+        if (event.getContentLength() > 0 && event.getSource().getValue() != null) {
+            String templateValue = new String(event.getSource().getValue(), UTF_8);
+            grapesJsEditor.setValue(templateValue);
+        }
+    }
+
+    @Subscribe("editCodeBtn")
+    public void onEditCodeBtnClick(ClickEvent<JmixButton> event) {
+        dialogWindows.view(this, HtmlEditorView.class)
+                .withViewConfigurer(this::htmlEditorViewConfigurer)
+                .withAfterCloseListener(this::htmlEditorAfterCloseListener)
+                .open();
+    }
+
+    protected void htmlEditorAfterCloseListener(DialogWindow.AfterCloseEvent<HtmlEditorView> event) {
+        if (event.closedWith(StandardOutcome.SAVE)) {
+            String html = event.getView().getHtml();
+            grapesJsEditor.setValue(html);
+        }
+    }
+
+    protected void htmlEditorViewConfigurer(HtmlEditorView view) {
+        view.setHtml(getEditedEntity().getContent());
+    }
+
+    @Subscribe("viewBtn")
+    public void onViewBtnClick(ClickEvent<JmixButton> event) {
+        ByteArrayDownloadDataProvider htmlDataProvider = new ByteArrayDownloadDataProvider(
+                Strings.nullToEmpty(getEditedEntity().getContent()).getBytes(StandardCharsets.UTF_8),
+                uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                coreProperties.getTempDir()
+        );
+
+        String filename = "%s.html"
+                .formatted(Objects.requireNonNullElse(getEditedEntity().getName(), "template"));
+
+        downloader.download(htmlDataProvider, filename, DownloadFormat.HTML);
+    }
+
+    @Subscribe(id = "messageTemplateDc", target = Target.DATA_CONTAINER)
+    public void onMessageTemplateDcItemPropertyChange(ItemPropertyChangeEvent<MessageTemplate> event) {
+        if ("type".equals(event.getProperty())) {
+            updateContentAwareComponents();
+        }
+    }
+
+    protected void updateContentAwareComponents() {
+        boolean isHtmlType = TemplateType.HTML.equals(getEditedEntity().getType());
+
+        plainTextAreaLayout.setVisible(!isHtmlType);
+        grapesJsEditorLayout.setVisible(isHtmlType);
     }
 }

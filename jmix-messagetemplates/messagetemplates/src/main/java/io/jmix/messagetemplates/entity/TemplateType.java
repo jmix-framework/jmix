@@ -18,21 +18,14 @@ package io.jmix.messagetemplates.entity;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
-public enum ParameterType implements EnumClass<Integer> {
+public enum TemplateType implements EnumClass<Integer> {
 
-    BOOLEAN(10),
-    NUMERIC(20),
-    TEXT(30),
-    DATE(40),
-    TIME(50),
-    DATETIME(60),
-    ENUMERATION(70),
-    ENTITY_LIST(80),
-    ENTITY(90);
+    HTML(10),
+    PLAIN(20);
 
     private final Integer id;
 
-    ParameterType(Integer id) {
+    TemplateType(Integer id) {
         this.id = id;
     }
 
@@ -41,10 +34,10 @@ public enum ParameterType implements EnumClass<Integer> {
         return id;
     }
 
-    public static ParameterType fromId(Integer id) {
-        for (ParameterType type : ParameterType.values()) {
-            if (type.getId().equals(id)) {
-                return type;
+    public static TemplateType fromId(Integer id) {
+        for (TemplateType templateType : TemplateType.values()) {
+            if (templateType.getId().equals(id)) {
+                return templateType;
             }
         }
         return null;

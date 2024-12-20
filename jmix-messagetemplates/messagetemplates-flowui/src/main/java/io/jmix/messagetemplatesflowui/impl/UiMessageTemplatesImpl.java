@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.messagetemplates;
+package io.jmix.messagetemplatesflowui.impl;
 
 import io.jmix.messagetemplates.entity.MessageTemplate;
+import io.jmix.messagetemplatesflowui.UiMessageTemplates;
 
-import java.util.List;
-import java.util.Map;
+public class UiMessageTemplatesImpl implements UiMessageTemplates {
 
-public interface MessageTemplates {
+    @Override
+    public String generateMessage(String templateCode) {
+        return "";
+    }
 
-    String generateMessage(MessageTemplate template, Map<String, Object> parameters);
-
-    String generateMessage(String templateCode, Map<String, Object> parameters);
-
-    List<String> generateMessages(Map<String, Object> parameters, MessageTemplate... templates);
-
-    List<String> generateMessages(Map<String, Object> parameters, String... templateCodes);
+    @Override
+    public String generateMessage(MessageTemplate template) {
+        return "";
+    }
 }

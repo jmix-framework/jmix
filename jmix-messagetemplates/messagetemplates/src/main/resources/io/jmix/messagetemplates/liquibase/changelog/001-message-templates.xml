@@ -79,10 +79,10 @@
                     type="varchar(255)"/>
             <column name="ENUMERATION_CLASS"
                     type="varchar(255)"/>
-            <column name="VIEW_ID"
-                    type="varchar(255)"/>
             <column name="DEFAULT_VALUE"
                     type="varchar(255)"/>
+            <column name="DEFAULT_DATE_IS_CURRENT"
+                    type="boolean"/>
             <column name="TEMPLATE_ID"
                     type="${uuid.type}">
                 <constraints nullable="false"/>

@@ -43,10 +43,9 @@
                       visible="false" required="true"/>
             <comboBox id="enumerationField" property="enumerationClass"
                       visible="false" required="true"/>
-            <comboBox id="viewField" property="viewId"
+            <checkbox id="defaultDateIsCurrentField" property="defaultDateIsCurrent"
                       visible="false"/>
-            <hbox id="defaultValuePlaceholder"
-                  visible="false"/>
+            <hbox id="defaultValuePlaceholder"/>
         </formLayout>
         <hbox id="detailActions">
             <button id="saveAndCloseButton" action="saveAction"/>

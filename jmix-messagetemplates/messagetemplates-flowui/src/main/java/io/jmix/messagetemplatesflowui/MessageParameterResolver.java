@@ -18,6 +18,8 @@ package io.jmix.messagetemplatesflowui;
 
 import io.jmix.core.ClassManager;
 import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
 import io.jmix.messagetemplates.entity.ParameterType;
@@ -25,27 +27,31 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
 
-@Component("msgtmp_ParameterClassResolver")
-public class ParameterClassResolver {
+@Component("msgtmp_MessageParameterResolver")
+public class MessageParameterResolver {
 
     protected Map<ParameterType, Class<?>> primitiveParameterTypeMap = Map.of(
             ParameterType.BOOLEAN, Boolean.class,
-            ParameterType.DATE, Date.class,
-            ParameterType.DATETIME, Date.class,
+            ParameterType.DATE, LocalDate.class,
+            ParameterType.DATETIME, LocalDateTime.class,
             ParameterType.TEXT, String.class,
             ParameterType.NUMERIC, Double.class,
-            ParameterType.TIME, Date.class
+            ParameterType.TIME, LocalTime.class
     );
 
     protected ClassManager classManager;
     protected Metadata metadata;
+    protected DatatypeRegistry datatypeRegistry;
 
-    public ParameterClassResolver(ClassManager classManager, Metadata metadata) {
+    public MessageParameterResolver(ClassManager classManager, Metadata metadata, DatatypeRegistry datatypeRegistry) {
         this.classManager = classManager;
         this.metadata = metadata;
+        this.datatypeRegistry = datatypeRegistry;
     }
 
     @Nullable
@@ -65,6 +71,17 @@ public class ParameterClassResolver {
 
         if (type == ParameterType.ENUMERATION && StringUtils.isNotBlank(parameter.getEnumerationClass())) {
             return classManager.loadClass(parameter.getEnumerationClass());
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public Datatype<?> resolveDatatype(MessageTemplateParameter parameter) {
+        Class<?> parameterClass = primitiveParameterTypeMap.get(parameter.getType());
+
+        if (parameterClass != null) {
+            return datatypeRegistry.get(parameterClass);
         }
 
         return null;

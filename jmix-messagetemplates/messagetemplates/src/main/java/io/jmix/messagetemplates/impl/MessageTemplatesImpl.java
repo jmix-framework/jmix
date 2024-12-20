@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -95,6 +97,20 @@ public class MessageTemplatesImpl implements MessageTemplates, InitializingBean 
     public String generateMessage(String templateCode, Map<String, Object> parameters) {
         MessageTemplate template = getMessageTemplateByCode(templateCode);
         return generateMessage(template, parameters);
+    }
+
+    @Override
+    public List<String> generateMessages(Map<String, Object> parameters, MessageTemplate... templates) {
+        return Arrays.stream(templates)
+                .map(template -> generateMessage(template, parameters))
+                .toList();
+    }
+
+    @Override
+    public List<String> generateMessages(Map<String, Object> parameters, String... templateCodes) {
+        return Arrays.stream(templateCodes)
+                .map(templateCode -> generateMessage(templateCode, parameters))
+                .toList();
     }
 
     protected MessageTemplate getMessageTemplateByCode(String templateCode) {

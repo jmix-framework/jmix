@@ -23,6 +23,7 @@ import io.jmix.core.common.util.StackTrace;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.event.EntityChangedEvent;
+import io.jmix.core.impl.LoadedPropertiesInfoFactory;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.AttributeChangesProvider;
@@ -100,6 +101,9 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
 
     @Autowired
     protected ObjectProvider<DeletePolicyProcessor> deletePolicyProcessorProvider;
+
+    @Autowired
+    protected LoadedPropertiesInfoFactory loadedPropertiesInfoFactory;
 
     protected List<BeforeCommitTransactionListener> beforeCommitTxListeners;
 
@@ -353,6 +357,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
         if (instance instanceof ChangeTracker) {
             ((ChangeTracker) instance)._persistence_setPropertyChangeListener(null);
         }
+        getUncheckedEntityEntry(instance).setLoadedPropertiesInfo(loadedPropertiesInfoFactory.create());
     }
 
     protected void fireFlush(String storeName) {

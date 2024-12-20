@@ -19,7 +19,9 @@ package io.jmix.core;
 import com.google.common.collect.Sets;
 import io.jmix.core.common.util.StackTrace;
 import io.jmix.core.entity.EntityPreconditions;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.LoadedPropertiesInfo;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
@@ -124,8 +126,8 @@ public class EntityStates {
     }
 
     /**
-     * Checks if the property is loaded from DB.
-     * <p>Non-persistent attributes are considered loaded if they do not have related properties, or all related
+     * Checks if the property is loaded from the data store.
+     * <p>Non-stored attributes are considered loaded if they do not have related properties, or all related
      * properties are loaded.
      *
      * @param entity   entity
@@ -133,11 +135,18 @@ public class EntityStates {
      * @return true if loaded
      */
     public boolean isLoaded(Object entity, String property) {
-        return checker.isLoaded(entity, property);
+        log.trace("Checking is loaded {}.{}", entity, property);
+
+        LoadedPropertiesInfo loadedPropertiesInfo = EntitySystemAccess.getEntityEntry(entity).getLoadedPropertiesInfo();
+        if (loadedPropertiesInfo != null) {
+            return loadedPropertiesInfo.isLoaded(entity, property, checker);
+        } else {
+            return checker.isLoaded(entity, property);
+        }
     }
 
     /**
-     * Check that entity has all specified properties loaded from DB.
+     * Check that entity has all specified properties loaded from the data store.
      * Throw exception if property is not loaded.
      *
      * @param entity     entity
@@ -199,7 +208,7 @@ public class EntityStates {
     }
 
     /**
-     * Check that all properties of the fetch plan are loaded from DB for the passed entity.
+     * Check that all properties of the fetch plan are loaded from the data store for the passed entity.
      * Throws exception if some property is not loaded.
      *
      * @param entity    entity
@@ -214,7 +223,7 @@ public class EntityStates {
     }
 
     /**
-     * Check that all properties of the fetch plan are loaded from DB for the passed entity.
+     * Check that all properties of the fetch plan are loaded from the data store for the passed entity.
      * Throws exception if some property is not loaded.
      *
      * @param entity        entity

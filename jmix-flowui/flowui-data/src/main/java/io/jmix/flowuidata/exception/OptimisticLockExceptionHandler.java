@@ -31,7 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Handles database {@link org.eclipse.persistence.exceptions.OptimisticLockException}.
+ * Handles database OptimisticLockException.
  * Determines the exception type by searching a special marker string in the messages of all exceptions in the chain.
  */
 @Component("flowui_OptimisticLockExceptionHandler")
@@ -44,7 +44,7 @@ public class OptimisticLockExceptionHandler extends AbstractUiExceptionHandler {
     Notifications notifications;
 
     public OptimisticLockExceptionHandler(Messages messages, Notifications notifications) {
-        super(org.eclipse.persistence.exceptions.OptimisticLockException.class.getName(),
+        super("org.eclipse.persistence.exceptions.OptimisticLockException",
                 jakarta.persistence.OptimisticLockException.class.getName());
         this.messages = messages;
         this.notifications = notifications;

@@ -7,7 +7,7 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.*;
-import io.jmix.securityflowui.model.ResourcePolicyModel;
+import io.jmix.security.model.ResourcePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;

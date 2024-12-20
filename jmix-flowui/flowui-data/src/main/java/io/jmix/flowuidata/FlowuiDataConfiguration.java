@@ -17,26 +17,18 @@
 package io.jmix.flowuidata;
 
 import io.jmix.core.AccessManager;
-import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
-import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.QueryTransformerFactory;
-import io.jmix.flowui.Actions;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.UiComponentProperties;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.genericfilter.FilterMetadataTools;
-import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
-import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
-import io.jmix.flowuidata.genericfilter.GenericFilterConfigurationConverter;
 import io.jmix.flowuidata.genericfilter.UiDataFilterMetadataTools;
-import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -67,19 +59,6 @@ public class FlowuiDataConfiguration {
                 = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
         viewControllers.setBasePackages(Collections.singletonList("io.jmix.flowuidata.view"));
         return viewControllers;
-    }
-
-    @Bean("flowui_UiDataGenericFilterSupport")
-    @Primary
-    public GenericFilterSupport genericFilterSupport(Actions actions,
-                                                     UiComponents uiComponents,
-                                                     DataManager dataManager,
-                                                     GenericFilterConfigurationConverter genericFilterConfigurationConverter,
-                                                     CurrentUserSubstitution currentUserSubstitution,
-                                                     DataComponents dataComponents,
-                                                     Metadata metadata) {
-        return new UiDataGenericFilterSupport(actions, uiComponents, dataManager,
-                genericFilterConfigurationConverter, currentUserSubstitution, dataComponents, metadata);
     }
 
     @Bean("flowui_UiDataFilterMetadataTools")

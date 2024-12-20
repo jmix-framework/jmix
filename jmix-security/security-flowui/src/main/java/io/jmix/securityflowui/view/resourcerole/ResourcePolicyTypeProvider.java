@@ -17,7 +17,7 @@
 package io.jmix.securityflowui.view.resourcerole;
 
 import io.jmix.flowui.view.StandardDetailView;
-import io.jmix.securityflowui.model.ResourcePolicyModel;
+import io.jmix.security.model.ResourcePolicyModel;
 import io.jmix.securityflowui.view.resourcepolicy.MultipleResourcePolicyModelCreateView;
 
 /**

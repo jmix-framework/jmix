@@ -26,11 +26,10 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.RouteSupport;
-import io.jmix.securitydata.entity.UserSubstitutionEntity;
+import io.jmix.security.usersubstitution.UserSubstitutionPersistence;
 import io.jmix.securityflowui.view.usersubstitution.UserSubstitutionView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,6 +50,7 @@ public class ShowUserSubstitutionsAction<E extends UserDetails>
 
     protected ViewNavigators viewNavigators;
     protected RouteSupport routeSupport;
+    protected UserSubstitutionPersistence userSubstitutionPersistence;
 
     public ShowUserSubstitutionsAction() {
         this(ID);
@@ -75,6 +75,11 @@ public class ShowUserSubstitutionsAction<E extends UserDetails>
         this.text = messages.getMessage("actions.showUserSubstitutions");
     }
 
+    @Autowired(required = false)
+    public void setUserSubstitutionService(UserSubstitutionPersistence userSubstitutionPersistence) {
+        this.userSubstitutionPersistence = userSubstitutionPersistence;
+    }
+
     @Override
     protected boolean isPermitted() {
         if (target == null || !(target.getItems() instanceof EntityDataUnit entityDataUnitItems)) {
@@ -89,11 +94,12 @@ public class ShowUserSubstitutionsAction<E extends UserDetails>
             return false;
         }
 
-        UiEntityContext userSubstitutionContext = new UiEntityContext(metadata.getClass(UserSubstitutionEntity.class));
-        accessManager.applyRegisteredConstraints(userSubstitutionContext);
-
-        if (!userSubstitutionContext.isViewPermitted()) {
+        if (userSubstitutionPersistence == null) {
             return false;
+        } else {
+            if (!userSubstitutionPersistence.isViewPermitted()) {
+                return false;
+            }
         }
 
         return super.isPermitted();

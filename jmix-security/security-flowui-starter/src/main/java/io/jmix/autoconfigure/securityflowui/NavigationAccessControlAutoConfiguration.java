@@ -19,7 +19,6 @@ package io.jmix.autoconfigure.securityflowui;
 import com.vaadin.flow.spring.SpringSecurityAutoConfiguration;
 import com.vaadin.flow.spring.security.NavigationAccessControlConfigurer;
 import io.jmix.core.CoreConfiguration;
-import io.jmix.data.DataConfiguration;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securityflowui.SecurityFlowuiConfiguration;
@@ -36,7 +35,7 @@ import org.springframework.context.annotation.Import;
  * {@link SpringSecurityAutoConfiguration} from Vaadin.
  */
 @AutoConfiguration
-@Import({CoreConfiguration.class, DataConfiguration.class, SecurityConfiguration.class, SecurityFlowuiConfiguration.class})
+@Import({CoreConfiguration.class, SecurityConfiguration.class, SecurityFlowuiConfiguration.class})
 @AutoConfigureBefore(SpringSecurityAutoConfiguration.class)
 public class NavigationAccessControlAutoConfiguration {
 

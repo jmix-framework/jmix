@@ -15,7 +15,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyEffect;
 import io.jmix.securityflowui.model.DefaultResourcePolicyGroupResolver;
-import io.jmix.securityflowui.model.ResourcePolicyModel;
+import io.jmix.security.model.ResourcePolicyModel;
 import io.jmix.security.model.ResourcePolicyType;
 import org.springframework.beans.factory.annotation.Autowired;
 

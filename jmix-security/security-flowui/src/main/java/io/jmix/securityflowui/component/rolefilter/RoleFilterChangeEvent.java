@@ -2,7 +2,7 @@ package io.jmix.securityflowui.component.rolefilter;
 
 import com.vaadin.flow.component.ComponentEvent;
 import io.jmix.security.model.BaseRole;
-import io.jmix.securityflowui.model.RoleSource;
+import io.jmix.security.model.RoleSourceType;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.lang.Nullable;
@@ -11,14 +11,14 @@ public class RoleFilterChangeEvent extends ComponentEvent<RoleFilter> {
 
     private String name;
     private String code;
-    private RoleSource source;
+    private RoleSourceType source;
 
     public RoleFilterChangeEvent(RoleFilter filter) {
         this(filter, null, null, null);
     }
 
     public RoleFilterChangeEvent(RoleFilter filter,
-                                 @Nullable String name, @Nullable String code, @Nullable RoleSource source) {
+                                 @Nullable String name, @Nullable String code, @Nullable RoleSourceType source) {
         super(filter, true);
 
         this.name = name;
@@ -37,7 +37,7 @@ public class RoleFilterChangeEvent extends ComponentEvent<RoleFilter> {
     }
 
     @Nullable
-    public RoleSource getSourceValue() {
+    public RoleSourceType getSourceValue() {
         return source;
     }
 

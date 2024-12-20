@@ -18,6 +18,7 @@ package io.jmix.audit;
 
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = DataConfiguration.class)
+@JmixModule(dependsOn = {DataConfiguration.class, EclipselinkConfiguration.class})
 @EnableTransactionManagement
 public class AuditConfiguration {
 }

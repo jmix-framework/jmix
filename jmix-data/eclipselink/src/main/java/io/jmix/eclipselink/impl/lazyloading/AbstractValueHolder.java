@@ -278,7 +278,7 @@ public abstract class AbstractValueHolder extends UnitOfWorkValueHolder implemen
                 synchronized (this) {
                     value = loadValue();
                     afterLoadValue(value);
-                    registerLoadedProperty();
+                    registerLoadedProperty(getOwner(), getPropertyInfo().getName());
                 }
             }
             isInstantiated = true;
@@ -290,10 +290,10 @@ public abstract class AbstractValueHolder extends UnitOfWorkValueHolder implemen
 
     protected abstract void afterLoadValue(Object value);
 
-    protected void registerLoadedProperty() {
-        LoadedPropertiesInfo loadedPropertiesInfo = EntitySystemAccess.getEntityEntry(getOwner()).getLoadedPropertiesInfo();
+    protected void registerLoadedProperty(Object entity, String property) {
+        LoadedPropertiesInfo loadedPropertiesInfo = EntitySystemAccess.getEntityEntry(entity).getLoadedPropertiesInfo();
         if (loadedPropertiesInfo != null) {
-            loadedPropertiesInfo.registerProperty(getPropertyInfo().getName(), true);
+            loadedPropertiesInfo.registerProperty(property, true);
         }
     }
 
@@ -326,23 +326,22 @@ public abstract class AbstractValueHolder extends UnitOfWorkValueHolder implemen
         if (property.getRange().getCardinality().isMany()) {
             Object valueHolder = ValueHoldersSupport.getCollectionValueHolder(entity, property.getName());
 
-            if (valueHolder instanceof CollectionValuePropertyHolder) {
-                CollectionValuePropertyHolder casted = (CollectionValuePropertyHolder) valueHolder;
-                casted.setRootEntity(owner);
+            if (valueHolder instanceof CollectionValuePropertyHolder holder) {
+                holder.setRootEntity(owner);
             }
         } else {
             Object valueHolder = ValueHoldersSupport.getSingleValueHolder(entity, property.getName());
 
-            if (valueHolder instanceof SingleValueMappedByPropertyHolder) {
-                SingleValueMappedByPropertyHolder casted = (SingleValueMappedByPropertyHolder) valueHolder;
-                if (Objects.equals(casted.getOwner(), value)
+            if (valueHolder instanceof SingleValueMappedByPropertyHolder holder) {
+                if (Objects.equals(holder.getOwner(), value)
                         && property.getName().equals(getPropertyInfo().getInversePropertyName())) {
-                    casted.setValue(owner);
+                    holder.setValue(owner);
+                    registerLoadedProperty(entity, property.getName());
                 }
-            } else if (valueHolder instanceof SingleValueOwningPropertyHolder) {
-                SingleValueOwningPropertyHolder casted = (SingleValueOwningPropertyHolder) valueHolder;
-                if (Objects.equals(casted.getEntityId(), EntityValues.getId(owner))) {
-                    casted.setValue(owner);
+            } else if (valueHolder instanceof SingleValueOwningPropertyHolder holder) {
+                if (Objects.equals(holder.getEntityId(), EntityValues.getId(owner))) {
+                    holder.setValue(owner);
+                    registerLoadedProperty(entity, property.getName());
                 }
             }
         }

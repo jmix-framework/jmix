@@ -36,8 +36,10 @@ class EntityStatesIsLoadedTest extends DataSpec {
 
     private Customer customer
     private Order order
+    private Order anotherOrder
     private OrderLineA line1
     private OrderLineB line2
+    private OrderLineA anotherOrderLine
     private Product product1
     private Product product2
 
@@ -74,6 +76,19 @@ class EntityStatesIsLoadedTest extends DataSpec {
         line2.quantity = 2
         line2.param2 = 'value2'
         dataManager.save(line2)
+
+        anotherOrder = dataManager.create(Order)
+        anotherOrder.customer = this.customer
+        anotherOrder.number = '2'
+        dataManager.save(anotherOrder)
+
+        anotherOrderLine = dataManager.create(OrderLineA)
+        anotherOrderLine.order = anotherOrder
+        anotherOrderLine.secondOrder = anotherOrder
+        anotherOrderLine.product = product1
+        anotherOrderLine.secondProduct = product1
+        anotherOrderLine.quantity = 1
+        dataManager.save(anotherOrderLine)
     }
 
     def "test load single entity"() {
@@ -207,6 +222,24 @@ class EntityStatesIsLoadedTest extends DataSpec {
         ['id', 'version', 'deleteTs', 'deletedBy', 'updateTs', 'updatedBy', 'createTs', 'createdBy', 'quantity'].each {
             assert entityStates.isLoaded(orderLines.find({ it instanceof OrderLineB }), it)
         }
+    }
+
+    def "test lazy loading reference replacement"() {
+        when:
+        def order = dataManager.load(Order).id(this.anotherOrder.id).one()
+        def orderLines = order.orderLines
+        def firstLine = orderLines[0]
+        def product = firstLine.product
+
+        then:
+        // these fields are actually loaded because ValueHolder has set them as back- or existing references
+        ['order', 'secondOrder'].each {
+            assert entityStates.isLoaded(firstLine, it)
+        }
+
+        entityStates.isLoaded(firstLine, 'product')
+        // while it has equal value, it is not loaded because it's not a back reference
+        !entityStates.isLoaded(firstLine, 'secondProduct')
     }
 
     def "test fetching in managed state"() {

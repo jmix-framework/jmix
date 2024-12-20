@@ -70,11 +70,11 @@ public class MessageTemplateParameter {
     @Column(name = "ENUMERATION_CLASS")
     protected String enumerationClass;
 
-    @Column(name = "VIEW_ID")
-    protected String viewId;
-
     @Column(name = "DEFAULT_VALUE")
     protected String defaultValue;
+
+    @Column(name = "DEFAULT_DATE_IS_CURRENT")
+    protected Boolean defaultDateIsCurrent;
 
     public UUID getId() {
         return id;
@@ -148,19 +148,19 @@ public class MessageTemplateParameter {
         this.enumerationClass = enumerationClass;
     }
 
-    public String getViewId() {
-        return viewId;
-    }
-
-    public void setViewId(String viewId) {
-        this.viewId = viewId;
-    }
-
     public String getDefaultValue() {
         return defaultValue;
     }
 
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public Boolean getDefaultDateIsCurrent() {
+        return defaultDateIsCurrent;
+    }
+
+    public void setDefaultDateIsCurrent(Boolean defaultDateIsCurrent) {
+        this.defaultDateIsCurrent = defaultDateIsCurrent;
     }
 }

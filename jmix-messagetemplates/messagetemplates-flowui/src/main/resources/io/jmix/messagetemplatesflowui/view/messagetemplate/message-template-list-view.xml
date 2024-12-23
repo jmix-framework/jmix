@@ -15,6 +15,7 @@
   ~ limitations under the License.
   -->
 <view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="msg://MessageTemplateListView.title"
       focusComponent="messageTemplatesDataGrid">
     <data>
@@ -24,6 +25,13 @@
             <loader id="messageTemplatesDl" readOnly="true">
                 <query>
                     <![CDATA[select e from msgtmp_MessageTemplate e]]>
+                    <condition>
+                        <and>
+                            <c:jpql>
+                                <c:where>e.type = :templateType</c:where>
+                            </c:jpql>
+                        </and>
+                    </condition>
                 </query>
             </loader>
         </collection>

@@ -20,8 +20,8 @@ import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum TemplateType implements EnumClass<Integer> {
 
-    HTML(10),
-    PLAIN(20);
+    PLAIN(10),
+    HTML(20);
 
     private final Integer id;
 

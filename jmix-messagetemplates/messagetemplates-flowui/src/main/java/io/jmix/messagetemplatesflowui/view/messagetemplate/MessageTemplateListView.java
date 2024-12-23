@@ -17,8 +17,10 @@
 package io.jmix.messagetemplatesflowui.view.messagetemplate;
 
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.messagetemplates.entity.MessageTemplate;
+import io.jmix.messagetemplates.entity.TemplateType;
 
 @Route(value = "msgtmp/messagetemplate", layout = DefaultMainViewParent.class)
 @ViewController("msgtmp_MessageTemplate.list")
@@ -26,4 +28,11 @@ import io.jmix.messagetemplates.entity.MessageTemplate;
 @LookupComponent("messageTemplatesDataGrid")
 @DialogMode(width = "64em")
 public class MessageTemplateListView extends StandardListView<MessageTemplate> {
+
+    @ViewComponent
+    protected CollectionLoader<MessageTemplate> messageTemplatesDl;
+
+    public void setTemplateType(String templateType) {
+        messageTemplatesDl.setParameter("templateType", TemplateType.valueOf(templateType));
+    }
 }

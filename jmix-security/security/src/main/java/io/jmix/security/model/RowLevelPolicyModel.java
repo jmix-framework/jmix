@@ -21,6 +21,8 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import jakarta.persistence.Id;
+import org.springframework.lang.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -84,7 +86,7 @@ public class RowLevelPolicyModel {
         return whereClause;
     }
 
-    public void setWhereClause(String whereClause) {
+    public void setWhereClause(@Nullable String whereClause) {
         this.whereClause = whereClause;
     }
 
@@ -92,7 +94,7 @@ public class RowLevelPolicyModel {
         return joinClause;
     }
 
-    public void setJoinClause(String joinClause) {
+    public void setJoinClause(@Nullable String joinClause) {
         this.joinClause = joinClause;
     }
 
@@ -108,7 +110,7 @@ public class RowLevelPolicyModel {
         return script;
     }
 
-    public void setScript(String script) {
+    public void setScript(@Nullable String script) {
         this.script = script;
     }
 

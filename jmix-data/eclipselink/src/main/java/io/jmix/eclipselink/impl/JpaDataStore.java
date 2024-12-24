@@ -629,7 +629,8 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             if (e.getCause() instanceof QueryException
                     && e.getMessage() != null
                     && e.getMessage().contains("Fetch group cannot be set on report query")) {
-                throw new DevelopmentException("DataManager cannot execute query for single attributes");
+                throw new DevelopmentException("Cannot execute query for scalar values in a method that loads entities. " +
+                        "Use loadValues() and loadValue() methods instead.");
             } else {
                 throw e;
             }

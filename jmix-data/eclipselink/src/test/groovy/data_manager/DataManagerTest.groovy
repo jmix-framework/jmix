@@ -370,4 +370,12 @@ class DataManagerTest extends DataSpec {
         list1 == [line1]
     }
 
+    def "query error message"() {
+        when:
+        dataManager.load(Product).query("select p.name, p.quantity from sales_Product p").list()
+
+        then:
+        def ex = thrown(DevelopmentException)
+        ex.message == 'Cannot execute query for scalar values in a method that loads entities. Use loadValues() and loadValue() methods instead.'
+    }
 }

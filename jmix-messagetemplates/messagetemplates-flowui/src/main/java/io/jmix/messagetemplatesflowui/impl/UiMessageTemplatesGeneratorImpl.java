@@ -18,11 +18,15 @@ package io.jmix.messagetemplatesflowui.impl;
 
 import io.jmix.messagetemplates.MessageTemplatesGenerator;
 import io.jmix.messagetemplates.entity.MessageTemplate;
+import io.jmix.messagetemplates.entity.MessageTemplateParameter;
 import io.jmix.messagetemplatesflowui.UiMessageTemplatesGenerator;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
+// TODO: kd, to be removed
 @Component("msgtmp_UiMessageTemplatesImpl")
 public class UiMessageTemplatesGeneratorImpl implements UiMessageTemplatesGenerator {
 
@@ -34,13 +38,22 @@ public class UiMessageTemplatesGeneratorImpl implements UiMessageTemplatesGenera
 
     @Override
     public String generateMessage(String templateCode) {
-        // TODO: kd, open dialog, request parameters
 
         return messageTemplatesGenerator.generateMessage(templateCode, Map.of());
     }
 
     @Override
     public String generateMessage(MessageTemplate template) {
+        if (isAnyParameterVisible(template.getParameters())) {
+
+        }
+
         return messageTemplatesGenerator.generateMessage(template, Map.of());
+    }
+
+    protected boolean isAnyParameterVisible(List<MessageTemplateParameter> parameters) {
+        return CollectionUtils.isNotEmpty(parameters)
+                && parameters.stream()
+                .anyMatch(param -> Boolean.FALSE.equals(param.getHidden()));
     }
 }

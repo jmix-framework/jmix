@@ -17,10 +17,7 @@
 package io.jmix.messagetemplatesflowui.component.factory;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.core.JmixOrder;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -29,6 +26,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
 import io.jmix.flowui.component.ComponentGenerationContext;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
@@ -44,6 +42,10 @@ import io.jmix.messagetemplatesflowui.MessageParameterResolver;
 import org.springframework.core.Ordered;
 import org.springframework.lang.Nullable;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @org.springframework.stereotype.Component("msgtmp_MessageTemplateParameterGenerationStrategy")
 public class MessageTemplateParameterGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
 
@@ -56,7 +58,8 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
                                                       DatatypeRegistry datatypeRegistry,
                                                       Messages messages,
                                                       EntityFieldCreationSupport entityFieldCreationSupport,
-                                                      MessageParameterResolver messageParameterResolver) {
+                                                      MessageParameterResolver messageParameterResolver,
+                                                      TimeSource timeSource) {
         super(uiComponents, metadata, metadataTools, actions, datatypeRegistry, messages, entityFieldCreationSupport);
 
         this.messageParameterResolver = messageParameterResolver;
@@ -80,10 +83,10 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
 
         return switch (parameter.getType()) {
             case BOOLEAN -> createBooleanField();
-            case NUMERIC, TEXT -> createTextField(messageParameterResolver.resolveDatatype(parameter));
-            case DATE -> createDateField(messageParameterResolver.resolveDatatype(parameter));
-            case TIME -> createTimeField(messageParameterResolver.resolveDatatype(parameter));
-            case DATETIME -> createDateTimeField(messageParameterResolver.resolveDatatype(parameter));
+            case NUMERIC, TEXT -> createTextField(parameter);
+            case DATE -> createDateField(parameter);
+            case TIME -> createTimeField(parameter);
+            case DATETIME -> createDateTimeField(parameter);
             case ENUMERATION -> parameter.getEnumerationClass() != null ? createEnumField(context) : null;
             case ENTITY_LIST -> parameter.getEntityMetaClass() != null ? createEntityCollectionField(context) : null;
             case ENTITY -> parameter.getEntityMetaClass() != null ? createEntityField(context) : null;
@@ -91,41 +94,61 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Component createTextField(@Nullable Datatype<?> datatype) {
+    protected Component createTextField(MessageTemplateParameter parameter) {
         TypedTextField field = uiComponents.create(TypedTextField.class);
 
         field.setWidthFull();
+
+        Datatype<?> datatype = messageParameterResolver.resolveDatatype(parameter);
         field.setDatatype(datatype);
 
         return field;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Component createDateTimeField(@Nullable Datatype<?> datatype) {
+    protected Component createDateTimeField(MessageTemplateParameter parameter) {
         TypedDateTimePicker dateTimeField = uiComponents.create(TypedDateTimePicker.class);
 
-        dateTimeField.setWidthFull();
+        Datatype<?> datatype = messageParameterResolver.resolveDatatype(parameter);
         dateTimeField.setDatatype(datatype);
+        dateTimeField.setWidthFull();
+
+        if (parameter.getDefaultDateIsCurrent()) {
+            LocalDateTime now = LocalDateTime.now();
+            UiComponentUtils.setValue(dateTimeField, now);
+        }
 
         return dateTimeField;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Component createDateField(@Nullable Datatype<?> datatype) {
+    protected Component createDateField(MessageTemplateParameter parameter) {
         TypedDatePicker dateField = uiComponents.create(TypedDatePicker.class);
 
-        dateField.setWidthFull();
+        Datatype<?> datatype = messageParameterResolver.resolveDatatype(parameter);
         dateField.setDatatype(datatype);
+        dateField.setWidthFull();
+
+        if (parameter.getDefaultDateIsCurrent()) {
+            LocalDate now = LocalDate.now();
+            UiComponentUtils.setValue(dateField, now);
+        }
 
         return dateField;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Component createTimeField(@Nullable Datatype<?> datatype) {
+    protected Component createTimeField(MessageTemplateParameter parameter) {
         TypedTimePicker timeField = uiComponents.create(TypedTimePicker.class);
 
-        timeField.setWidthFull();
+        Datatype<?> datatype = messageParameterResolver.resolveDatatype(parameter);
         timeField.setDatatype(datatype);
+        timeField.setWidthFull();
+
+        if (parameter.getDefaultDateIsCurrent()) {
+            LocalTime now = LocalTime.now();
+            UiComponentUtils.setValue(timeField, now);
+        }
 
         return timeField;
     }

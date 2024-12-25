@@ -24,13 +24,9 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
-import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.text.ParseException;
 
 @Component("msgtmp_ObjectToStringConverter")
@@ -115,24 +111,5 @@ public class ObjectToStringConverter {
         }
 
         return convertFromString(objectClass, objectString);
-    }
-
-    protected Object convertFromStringUnresolved(Class<?> parameterClass, String paramValueStr) {
-        try {
-            Constructor<?> constructor = ConstructorUtils.getAccessibleConstructor(parameterClass, String.class);
-            if (constructor != null) {
-                return constructor.newInstance(paramValueStr);
-            } else {
-                Method valueOf = MethodUtils.getAccessibleMethod(parameterClass, "valueOf", String.class);
-                if (valueOf != null) {
-                    return valueOf.invoke(null, paramValueStr);
-                }
-            }
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalArgumentException("Couldn't instantiate object with class [%s] from [%s] string"
-                    .formatted(parameterClass.getCanonicalName(), paramValueStr));
-        }
-
-        return paramValueStr;
     }
 }

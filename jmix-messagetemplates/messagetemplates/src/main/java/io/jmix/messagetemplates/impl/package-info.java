@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.messagetemplatesflowui;
+@NonNullApi
+package io.jmix.messagetemplates.impl;
 
-import io.jmix.messagetemplates.entity.MessageTemplate;
-
-public interface UiMessageTemplates {
-
-    String generateMessage(String templateCode);
-
-    String generateMessage(MessageTemplate template);
-}
+import org.springframework.lang.NonNullApi;

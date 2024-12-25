@@ -16,31 +16,31 @@
 
 package io.jmix.messagetemplatesflowui.impl;
 
-import io.jmix.messagetemplates.MessageTemplates;
+import io.jmix.messagetemplates.MessageTemplatesGenerator;
 import io.jmix.messagetemplates.entity.MessageTemplate;
-import io.jmix.messagetemplatesflowui.UiMessageTemplates;
+import io.jmix.messagetemplatesflowui.UiMessageTemplatesGenerator;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component("msgtmp_UiMessageTemplatesImpl")
-public class UiMessageTemplatesImpl implements UiMessageTemplates {
+public class UiMessageTemplatesGeneratorImpl implements UiMessageTemplatesGenerator {
 
-    protected MessageTemplates messageTemplates;
+    protected MessageTemplatesGenerator messageTemplatesGenerator;
 
-    public UiMessageTemplatesImpl(MessageTemplates messageTemplates) {
-        this.messageTemplates = messageTemplates;
+    public UiMessageTemplatesGeneratorImpl(MessageTemplatesGenerator messageTemplatesGenerator) {
+        this.messageTemplatesGenerator = messageTemplatesGenerator;
     }
 
     @Override
     public String generateMessage(String templateCode) {
         // TODO: kd, open dialog, request parameters
 
-        return messageTemplates.generateMessage(templateCode, Map.of());
+        return messageTemplatesGenerator.generateMessage(templateCode, Map.of());
     }
 
     @Override
     public String generateMessage(MessageTemplate template) {
-        return messageTemplates.generateMessage(template, Map.of());
+        return messageTemplatesGenerator.generateMessage(template, Map.of());
     }
 }

@@ -14,24 +14,7 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+@NonNullApi
+package io.jmix.messagetemplates;
 
-group = 'io.jmix.messagetemplates'
-archivesBaseName = 'jmix-messagetemplates'
-
-dependencies {
-    api project(':data')
-    api project(':eclipselink')
-
-    api 'org.freemarker:freemarker'
-
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'org.springframework.boot:spring-boot-test'
-
-    testImplementation 'io.jmix.data:jmix-eclipselink-starter'
-
-    testImplementation 'org.apache.commons:commons-dbcp2'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
-}
+import org.springframework.lang.NonNullApi;

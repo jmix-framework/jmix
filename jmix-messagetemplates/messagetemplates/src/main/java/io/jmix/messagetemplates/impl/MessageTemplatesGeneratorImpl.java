@@ -22,9 +22,10 @@ import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.MapModel;
 import freemarker.template.*;
 import io.jmix.core.DataManager;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.messagetemplates.MessageTemplateProperties;
-import io.jmix.messagetemplates.MessageTemplates;
+import io.jmix.messagetemplates.MessageTemplatesGenerator;
 import io.jmix.messagetemplates.entity.MessageTemplate;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
@@ -34,20 +35,18 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Component("msgtmp_MessageTemplatesImpl")
-public class MessageTemplatesImpl implements MessageTemplates, InitializingBean {
+public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator, InitializingBean {
 
     protected DataManager dataManager;
     protected Version version;
     protected ObjectWrapper wrapper;
 
-    public MessageTemplatesImpl(DataManager dataManager, MessageTemplateProperties messageTemplateProperties) {
+    public MessageTemplatesGeneratorImpl(DataManager dataManager, MessageTemplateProperties messageTemplateProperties) {
         this.dataManager = dataManager;
         this.version = messageTemplateProperties.getFreemarkerVersion();
     }
@@ -67,6 +66,21 @@ public class MessageTemplatesImpl implements MessageTemplates, InitializingBean 
                 return super.wrap(obj);
             }
         };
+    }
+
+    @Override
+    public SingleTemplateGenerator generateSingleTemplate() {
+        return new SingleTemplateGeneratorImpl();
+    }
+
+    @Override
+    public MultiTemplateGenerator generateMultiTemplate() {
+        return new MultiTemplateGeneratorImpl();
+    }
+
+    @Override
+    public MultiParamTemplateGenerator generateMultiParamTemplate() {
+        return new MultiParamTemplateGeneratorImpl();
     }
 
     @Override
@@ -99,16 +113,16 @@ public class MessageTemplatesImpl implements MessageTemplates, InitializingBean 
         return generateMessage(template, parameters);
     }
 
-    @Override
-    public List<String> generateMessages(Map<String, Object> parameters, MessageTemplate... templates) {
-        return Arrays.stream(templates)
+    protected List<String> generateMessagesByTemplates(Collection<MessageTemplate> templates,
+                                                       Map<String, Object> parameters) {
+        return templates.stream()
                 .map(template -> generateMessage(template, parameters))
                 .toList();
     }
 
-    @Override
-    public List<String> generateMessages(Map<String, Object> parameters, String... templateCodes) {
-        return Arrays.stream(templateCodes)
+    protected List<String> generateMessagesByTemplateCodes(Collection<String> templateCodes,
+                                                           Map<String, Object> parameters) {
+        return templateCodes.stream()
                 .map(templateCode -> generateMessage(templateCode, parameters))
                 .toList();
     }
@@ -121,7 +135,7 @@ public class MessageTemplatesImpl implements MessageTemplates, InitializingBean 
 
     protected Template getHtmlTemplate(MessageTemplate template) {
         StringTemplateLoader stringTemplateLoader = new StringTemplateLoader();
-        String templateName = template.getName();
+        String templateName = template.getCode();
         stringTemplateLoader.putTemplate(templateName, template.getContent());
 
         Configuration configuration = new Configuration(version);
@@ -145,5 +159,116 @@ public class MessageTemplatesImpl implements MessageTemplates, InitializingBean 
 
         htmlTemplate.setObjectWrapper(wrapper);
         return htmlTemplate;
+    }
+
+    public class SingleTemplateGeneratorImpl implements SingleTemplateGenerator {
+
+        protected MessageTemplate template;
+        protected Map<String, Object> params = new HashMap<>();
+
+        @Override
+        public SingleTemplateGenerator withTemplate(MessageTemplate template) {
+            this.template = template;
+            return this;
+        }
+
+        @Override
+        public SingleTemplateGenerator withTemplateCode(String templateCode) {
+            template = getMessageTemplateByCode(templateCode);
+            return this;
+        }
+
+        @Override
+        public SingleTemplateGenerator withParams(Map<String, Object> params) {
+            this.params = params;
+            return this;
+        }
+
+        @Override
+        public SingleTemplateGenerator addParam(String alias, Object value) {
+            this.params.put(alias, value);
+            return this;
+        }
+
+        @Override
+        public String generate() {
+            Preconditions.checkNotNullArgument(template);
+            return generateMessage(template, params);
+        }
+    }
+
+    public class MultiTemplateGeneratorImpl implements MultiTemplateGenerator {
+
+        protected Collection<MessageTemplate> templates;
+        protected Map<String, Object> params = new HashMap<>();
+
+        @Override
+        public MultiTemplateGenerator withTemplates(MessageTemplate... templates) {
+            this.templates = List.of(templates);
+            return this;
+        }
+
+        @Override
+        public MultiTemplateGenerator withTemplateCodes(String... templateCodes) {
+            this.templates = Arrays.stream(templateCodes)
+                    .map(MessageTemplatesGeneratorImpl.this::getMessageTemplateByCode)
+                    .toList();
+
+            return this;
+        }
+
+        @Override
+        public MultiTemplateGenerator withParams(Map<String, Object> params) {
+            this.params.putAll(params);
+            return this;
+        }
+
+        @Override
+        public MultiTemplateGenerator addParam(String alias, Object value) {
+            this.params.put(alias, value);
+            return this;
+        }
+
+        @Override
+        public List<String> generate() {
+            Preconditions.checkNotNullArgument(templates);
+            if (!templates.isEmpty()) {
+                return generateMessagesByTemplates(templates, params);
+            }
+
+            return Collections.emptyList();
+        }
+    }
+
+    public class MultiParamTemplateGeneratorImpl implements MultiParamTemplateGenerator {
+
+        protected MessageTemplate template;
+        protected Collection<Map<String, Object>> params = new ArrayList<>();
+
+        @Override
+        public MultiParamTemplateGenerator withTemplate(MessageTemplate template) {
+            this.template = template;
+            return this;
+        }
+
+        @Override
+        public MultiParamTemplateGenerator withTemplateCode(String templateCode) {
+            this.template = getMessageTemplateByCode(templateCode);
+            return this;
+        }
+
+        @Override
+        public MultiParamTemplateGenerator addParams(Map<String, Object> params) {
+            this.params.add(params);
+            return this;
+        }
+
+        @Override
+        public List<String> generate() {
+            Preconditions.checkNotNullArgument(template);
+            return params.stream()
+                    .map(params -> generateMessage(template, params))
+                    .toList();
+        }
     }
 }

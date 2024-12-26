@@ -18,8 +18,6 @@ package io.jmix.security.model;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
-import org.springframework.lang.Nullable;
-
 
 public enum RoleSourceType implements EnumClass<String> {
 
@@ -36,7 +34,6 @@ public enum RoleSourceType implements EnumClass<String> {
         return id;
     }
 
-    @Nullable
     public static RoleSourceType fromId(String id) {
         for (RoleSourceType at : RoleSourceType.values()) {
             if (at.getId().equals(id)) {

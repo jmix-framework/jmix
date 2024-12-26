@@ -18,7 +18,6 @@ package io.jmix.security.model;
 
 import org.springframework.context.ApplicationContext;
 
-import org.springframework.lang.Nullable;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,11 +46,11 @@ public class RowLevelPolicy implements Serializable {
 
     private Map<String, String> customProperties = new HashMap<>();
 
-    public RowLevelPolicy(String entityName, String whereClause, @Nullable String joinClause) {
+    public RowLevelPolicy(String entityName, String whereClause, String joinClause) {
         this(entityName, whereClause, joinClause, Collections.emptyMap());
     }
 
-    public RowLevelPolicy(String entityName, String whereClause, @Nullable String joinClause,
+    public RowLevelPolicy(String entityName, String whereClause, String joinClause,
                           Map<String, String> customProperties) {
         this.entityName = entityName;
         this.whereClause = whereClause;
@@ -101,7 +100,6 @@ public class RowLevelPolicy implements Serializable {
      *
      * @return a predicate
      */
-    @Nullable
     public RowLevelBiPredicate<Object, ApplicationContext> getBiPredicate() {
         return biPredicate;
     }
@@ -111,7 +109,6 @@ public class RowLevelPolicy implements Serializable {
      *
      * @return a script
      */
-    @Nullable
     public String getScript() {
         return script;
     }

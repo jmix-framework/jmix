@@ -18,7 +18,6 @@ package io.jmix.security.model;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
-import org.springframework.lang.Nullable;
 import java.util.Objects;
 
 public enum RowLevelPolicyAction implements EnumClass<String> {
@@ -38,7 +37,6 @@ public enum RowLevelPolicyAction implements EnumClass<String> {
         return id;
     }
 
-    @Nullable
     public static RowLevelPolicyAction fromId(String id) {
         for (RowLevelPolicyAction value : RowLevelPolicyAction.values()) {
             if (Objects.equals(id, value.getId())) return value;

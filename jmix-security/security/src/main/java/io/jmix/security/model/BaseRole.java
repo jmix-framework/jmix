@@ -16,8 +16,6 @@
 
 package io.jmix.security.model;
 
-import org.springframework.lang.Nullable;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +66,6 @@ public abstract class BaseRole implements Serializable {
         this.description = description;
     }
 
-    @Nullable
     public Set<String> getChildRoles() {
         return childRoles;
     }

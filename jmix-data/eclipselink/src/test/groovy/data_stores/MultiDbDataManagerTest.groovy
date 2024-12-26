@@ -238,6 +238,19 @@ class MultiDbDataManagerTest extends DataSpec {
 
         then: "cross-datastore nested entities merge cascaded"
         results.get(reloadedHolder).getMainReport().getDb1Order().getCustomer().name == "next"
+
+        // the following condition fails, see https://github.com/jmix-framework/jmix/issues/4027
+//        when:
+//        def report1 = dataManager.load(MainReport)
+//                .id(report.id)
+//                .fetchPlan {
+//                    it.addAll('db1OrderId', 'db1Order')
+//                }
+//                .one()
+//
+//        then:
+//        report1.db1OrderId == order.id
+//        report1.db1Order == order
     }
 
     void testCrossDatastoreReferenceIsNotCleared() {

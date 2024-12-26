@@ -181,9 +181,11 @@ public class CrossDataStoreReferenceLoader {
 
             // add entities that have loaded IDs of CDS properties _not_ specified in fetch plan
             List<CrossDataStoreProperty> crossProperties = crossPropertiesMap.get(entity.getClass());
-            for (CrossDataStoreProperty crossProperty : crossProperties) {
-                if (crossProperty.needsFakeInstance() && EntityValues.getValue(entity, crossProperty.relatedPropertyName) != null) {
-                    resultSet.add(entity);
+            if (crossProperties != null) {
+                for (CrossDataStoreProperty crossProperty : crossProperties) {
+                    if (crossProperty.needsFakeInstance() && EntityValues.getValue(entity, crossProperty.relatedPropertyName) != null) {
+                        resultSet.add(entity);
+                    }
                 }
             }
         }

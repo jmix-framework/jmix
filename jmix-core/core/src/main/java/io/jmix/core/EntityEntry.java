@@ -16,10 +16,7 @@
 
 package io.jmix.core;
 
-import io.jmix.core.entity.BaseEntityEntry;
-import io.jmix.core.entity.EntityPropertyChangeListener;
-import io.jmix.core.entity.NullableIdEntityEntry;
-import io.jmix.core.entity.SecurityState;
+import io.jmix.core.entity.*;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.impl.EntityInternals;
@@ -101,12 +98,17 @@ public interface EntityEntry extends Serializable {
     void setRemoved(boolean removed);
 
     /**
-     * Optional set of names of properties loaded from data store.
+     * @return {@link LoadedPropertiesInfo} which is set for this entity instance or null
      */
     @Nullable
-    Set<String> getLoadedProperties();
+    LoadedPropertiesInfo getLoadedPropertiesInfo();
 
-    void setLoadedProperties(@Nullable Set<String> loadedProperties);
+    /**
+     * Sets a {@link LoadedPropertiesInfo} for this entity instance.
+     *
+     * @param loadedPropertiesInfo {@link LoadedPropertiesInfo} implementation
+     */
+    void setLoadedPropertiesInfo(@Nullable LoadedPropertiesInfo loadedPropertiesInfo);
 
     SecurityState getSecurityState();
 

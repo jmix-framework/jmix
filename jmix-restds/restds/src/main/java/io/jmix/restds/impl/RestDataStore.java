@@ -18,10 +18,7 @@ package io.jmix.restds.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.datastore.AbstractDataStore;
-import io.jmix.core.entity.EntityPropertyChangeEvent;
-import io.jmix.core.entity.EntityPropertyChangeListener;
-import io.jmix.core.entity.EntitySystemAccess;
-import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.restds.annotation.RestDataStoreEntity;
@@ -33,7 +30,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("UnnecessaryLocalVariable")
@@ -47,19 +47,22 @@ public class RestDataStore extends AbstractDataStore {
     private final RestEntityEventManager entityEventManager;
     private final RestSaveContextProcessor saveContextProcessor;
     private final FetchPlanRepository fetchPlanRepository;
+    private final RestDsLoadedPropertiesInfoFactory loadedPropertiesInfoFactory;
 
     protected String storeName;
 
     private RestInvoker restInvoker;
 
     public RestDataStore(ApplicationContext applicationContext, RestSerialization restSerialization, RestFilterBuilder restFilterBuilder,
-                         RestEntityEventManager entityEventManager, RestSaveContextProcessor saveContextProcessor, FetchPlanRepository fetchPlanRepository) {
+                         RestEntityEventManager entityEventManager, RestSaveContextProcessor saveContextProcessor, FetchPlanRepository fetchPlanRepository,
+                         RestDsLoadedPropertiesInfoFactory loadedPropertiesInfoFactory) {
         this.applicationContext = applicationContext;
         this.restSerialization = restSerialization;
         this.restFilterBuilder = restFilterBuilder;
         this.entityEventManager = entityEventManager;
         this.saveContextProcessor = saveContextProcessor;
         this.fetchPlanRepository = fetchPlanRepository;
+        this.loadedPropertiesInfoFactory = loadedPropertiesInfoFactory;
     }
 
     public RestInvoker getRestInvoker() {
@@ -146,11 +149,12 @@ public class RestDataStore extends AbstractDataStore {
         MetaClass metaClass = metadata.getClass(entity);
 
         if (fetchPlan != null) {
-            Set<String> loadedProperties = fetchPlan.getProperties().stream()
-                    .map(FetchPlanProperty::getName)
-                    .collect(Collectors.toCollection(HashSet::new));
+            LoadedPropertiesInfo loadedPropertiesInfo = loadedPropertiesInfoFactory.create();
+            for (FetchPlanProperty fetchPlanProperty : fetchPlan.getProperties()) {
+                loadedPropertiesInfo.registerProperty(fetchPlanProperty.getName(), true);
+            }
             EntityEntry entityEntry = EntitySystemAccess.getEntityEntry(entity);
-            entityEntry.setLoadedProperties(loadedProperties);
+            entityEntry.setLoadedPropertiesInfo(loadedPropertiesInfo);
             entityEntry.addPropertyChangeListener(new UpdatingLoadedPropertiesListener(), false);
         }
 
@@ -337,9 +341,9 @@ public class RestDataStore extends AbstractDataStore {
         @Override
         public void propertyChanged(EntityPropertyChangeEvent event) {
             String property = event.getProperty();
-            Set<String> loadedProperties = EntitySystemAccess.getEntityEntry(event.getItem()).getLoadedProperties();
-            if (loadedProperties != null) {
-                loadedProperties.add(property);
+            LoadedPropertiesInfo loadedPropertiesInfo = EntitySystemAccess.getEntityEntry(event.getItem()).getLoadedPropertiesInfo();
+            if (loadedPropertiesInfo != null) {
+                loadedPropertiesInfo.registerProperty(property, true);
             }
         }
     }

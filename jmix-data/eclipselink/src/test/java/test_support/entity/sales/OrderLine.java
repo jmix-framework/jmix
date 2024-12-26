@@ -42,6 +42,14 @@ public class OrderLine extends BaseEntity {
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SECOND_ORDER_ID")
+    protected Order secondOrder;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SECOND_PRODUCT_ID")
+    protected Product secondProduct;
+
     @InstanceName
     public String getCaption() {
         return getProduct().getName() + " " + getQuantity();
@@ -69,5 +77,21 @@ public class OrderLine extends BaseEntity {
 
     public Integer getQuantity() {
         return quantity;
+    }
+
+    public Order getSecondOrder() {
+        return secondOrder;
+    }
+
+    public void setSecondOrder(Order secondOrder) {
+        this.secondOrder = secondOrder;
+    }
+
+    public Product getSecondProduct() {
+        return secondProduct;
+    }
+
+    public void setSecondProduct(Product secondProduct) {
+        this.secondProduct = secondProduct;
     }
 }

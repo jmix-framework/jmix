@@ -66,16 +66,16 @@ public class QueryKey implements Serializable {
         List<String> names = jpaQuery.getParameters().stream()
                 .map(Parameter::getName)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .sorted()
+                .toList();
 
         if (names.isEmpty()) return null;
 
-        return names.stream()
-                .sorted()
-                .collect(Collectors.toMap(Function.identity(),
-                        jpaQuery::getParameterValue,
-                        (o, o2) -> o,
-                        LinkedHashMap::new));
+        Map<String, Object> result = new LinkedHashMap<>();
+        for (String name : names) {
+            result.put(name, jpaQuery.getParameterValue(name));
+        }
+        return result;
     }
 
     private static Object[] getPositionalParameters(Query jpaQuery) {

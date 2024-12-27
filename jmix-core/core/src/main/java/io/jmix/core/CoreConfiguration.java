@@ -24,10 +24,17 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import jakarta.validation.MessageInterpolator;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.validation.ValidationConfigurationCustomizer;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
@@ -68,11 +75,15 @@ public class CoreConfiguration {
 
     @Bean("core_Validator")
     public static LocalValidatorFactoryBean validator(ValidationTraversableResolver traversableResolver,
-                                                      MessageInterpolator messageInterpolator) {
+                                                      MessageInterpolator messageInterpolator,
+                                                      ObjectProvider<ValidationConfigurationCustomizer> customizers) {
         JmixLocalValidatorFactoryBean validatorFactory = new JmixLocalValidatorFactoryBean();
 
         validatorFactory.setTraversableResolver(traversableResolver);
         validatorFactory.setJmixMessageInterpolator(messageInterpolator);
+        validatorFactory.setConfigurationInitializer(configuration ->
+                customizers.orderedStream().forEach(customizer -> customizer.customize(configuration))
+        );
 
         return validatorFactory;
     }

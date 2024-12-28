@@ -57,6 +57,9 @@
                                 <c:where>e.username = :user</c:where>
                             </c:jpql>
                             <c:jpql>
+                                <c:where>e.substitutedUsername = :substitutedUser</c:where>
+                            </c:jpql>
+                            <c:jpql>
                                 <c:where><![CDATA[e.eventTs >= :fromDate]]></c:where>
                             </c:jpql>
                             <c:jpql>
@@ -93,15 +96,16 @@
     <layout>
         <tabSheet id="tabsheet" width="100%">
             <tab id="view" label="msg://view">
-                <vbox id="viewWrapper" padding="false" width="100%">
+                <vbox id="viewWrapper" padding="false" width="100%" themeNames="spacing-s">
                     <details opened="true" width="100%" summaryText="msg://filterParameters">
                         <formLayout>
                             <responsiveSteps>
                                 <responsiveStep minWidth="0" columns="1"/>
                                 <responsiveStep minWidth="32em" columns="2"/>
-                                <responsiveStep minWidth="50em" columns="3"/>
+                                <responsiveStep minWidth="50em" columns="4"/>
                             </responsiveSteps>
                             <comboBox id="userField" label="msg://user" autoOpen="true"/>
+                            <comboBox id="substitutedUserField" label="msg://substitutedUser" autoOpen="true"/>
                             <select id="changeTypeField" label="msg://changeType"/>
                             <div classNames="datetime-picker-container">
                                 <datePicker id="fromDateField" datatype="localDate"
@@ -123,7 +127,7 @@
                             </div>
 
                         </formLayout>
-                        <hbox>
+                        <hbox classNames="mt-s">
                             <button id="searchBtn" icon="SEARCH" themeNames="primary" text="msg://search"/>
                             <button id="clearEntityLogTableBtn" icon="ERASER" text="msg://clear"/>
                             <simplePagination id="paginationEntityLog" dataLoader="entityLogDl"/>
@@ -132,12 +136,13 @@
                     <formLayout>
                         <responsiveSteps>
                             <responsiveStep minWidth="0" columns="1"/>
-                            <responsiveStep minWidth="80em" columns="2"/>
+                            <responsiveStep minWidth="90em" columns="2"/>
                         </responsiveSteps>
-                        <dataGrid id="entityLogTable" dataContainer="entityLogDc" columnReorderingAllowed="true">
+                        <dataGrid id="entityLogTable" dataContainer="entityLogDc" columnReorderingAllowed="true" classNames="mt-s">
                             <columns resizable="true">
                                 <column property="eventTs"/>
                                 <column property="username"/>
+                                <column property="substitutedUsername"/>
                                 <column property="type"/>
                                 <column property="entityInstanceName"/>
                                 <column property="entity" header="msg://entity"/>
@@ -146,7 +151,7 @@
                         </dataGrid>
 
                         <dataGrid id="entityLogAttrTable" width="100%" dataContainer="entityLogAttrDc"
-                                  columnReorderingAllowed="true">
+                                  columnReorderingAllowed="true" classNames="mt-s">
                             <columns resizable="true">
                                 <column key="attribute" header="msg://attribute"/>
                                 <column property="value" header="msg://newValue"/>

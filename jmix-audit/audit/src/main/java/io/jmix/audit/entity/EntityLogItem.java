@@ -98,6 +98,9 @@ public class EntityLogItem implements Serializable {
     @Column(name = "USERNAME")
     private String username;
 
+    @Column(name = "SUBSTITUTED_USERNAME")
+    private String substitutedUsername;
+
     @Column(name = "CHANGE_TYPE", length = 1)
     private String type;
 
@@ -236,5 +239,13 @@ public class EntityLogItem implements Serializable {
 
     public void setSysTenantId(String sysTenantId) {
         this.sysTenantId = sysTenantId;
+    }
+
+    public String getSubstitutedUsername() {
+        return substitutedUsername;
+    }
+
+    public void setSubstitutedUsername(String substitutedUsername) {
+        this.substitutedUsername = substitutedUsername;
     }
 }

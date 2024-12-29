@@ -37,6 +37,7 @@ import io.jmix.core.validation.group.RestApiChecks;
 import io.jmix.rest.RestProperties;
 import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.impl.RestControllerUtils;
+import io.jmix.rest.impl.controller.EntitiesController;
 import io.jmix.rest.impl.service.filter.RestFilterParseException;
 import io.jmix.rest.impl.service.filter.RestFilterParser;
 import io.jmix.rest.impl.service.filter.data.EntitiesSearchResult;
@@ -64,7 +65,7 @@ import java.util.stream.Collectors;
 import static io.jmix.core.EntitySerializationOption.*;
 
 /**
- * Class that executes business logic required by the {@link io.jmix.rest.impl.controller.EntitiesController}. It
+ * Class that executes business logic required by the {@link EntitiesController}. It
  * performs CRUD operations with entities
  */
 @Component("rest_EntitiesControllerManager")
@@ -104,6 +105,9 @@ public class EntitiesControllerManager {
     protected FetchPlanRepository fetchPlanRepository;
 
     @Autowired
+    private FetchPlanSerialization fetchPlanSerialization;
+
+    @Autowired
     protected MetadataTools metadataTools;
 
     @Autowired
@@ -117,7 +121,7 @@ public class EntitiesControllerManager {
 
     public String loadEntity(String entityName,
                              String entityId,
-                             @Nullable String viewName,
+                             @Nullable String fetchPlanNameOrJson,
                              @Nullable Boolean returnNulls,
                              @Nullable Boolean dynamicAttributes,
                              @Nullable String modelVersion) {
@@ -130,9 +134,9 @@ public class EntitiesControllerManager {
         Object id = getIdFromString(entityId, metaClass);
         ctx.setId(id);
 
-        if (!Strings.isNullOrEmpty(viewName)) {
-            FetchPlan view = restControllerUtils.getView(metaClass, viewName);
-            ctx.setFetchPlan(view);
+        FetchPlan fetchPlan = restControllerUtils.getFetchPlanByNameOrJson(metaClass, fetchPlanNameOrJson);
+        if (fetchPlan != null) {
+            ctx.setFetchPlan(fetchPlan);
         }
 
         ctx.setHint("jmix.dynattr", BooleanUtils.isTrue(dynamicAttributes));
@@ -151,7 +155,7 @@ public class EntitiesControllerManager {
     }
 
     public EntitiesSearchResult loadEntitiesList(String entityName,
-                                                 @Nullable String viewName,
+                                                 @Nullable String fetchPlanNameOrJson,
                                                  @Nullable Integer limit,
                                                  @Nullable Integer offset,
                                                  @Nullable String sort,
@@ -163,8 +167,10 @@ public class EntitiesControllerManager {
         MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
         checkCanReadEntity(metaClass);
 
+        FetchPlan fetchPlan = restControllerUtils.getFetchPlanByNameOrJson(metaClass, fetchPlanNameOrJson);
+
         String json = loadEntitiesJson(LogicalCondition.and(),
-                viewName,
+                fetchPlan,
                 limit,
                 offset,
                 sort,
@@ -185,7 +191,31 @@ public class EntitiesControllerManager {
 
     public EntitiesSearchResult searchEntities(String entityName,
                                                String filterJson,
-                                               @Nullable String viewName,
+                                               @Nullable String fetchPlanNameOrJson,
+                                               @Nullable Integer limit,
+                                               @Nullable Integer offset,
+                                               @Nullable String sort,
+                                               @Nullable Boolean returnNulls,
+                                               @Nullable Boolean returnCount,
+                                               @Nullable Boolean dynamicAttributes,
+                                               @Nullable String modelVersion) {
+        MetaClass metaClass = getMetaClass(entityName, modelVersion);
+        FetchPlan fetchPlan = restControllerUtils.getFetchPlanByNameOrJson(metaClass, fetchPlanNameOrJson);
+        return searchEntities(entityName,
+                filterJson,
+                fetchPlan,
+                limit,
+                offset,
+                sort,
+                returnNulls,
+                returnCount,
+                dynamicAttributes,
+                modelVersion);
+    }
+
+    public EntitiesSearchResult searchEntities(String entityName,
+                                               String filterJson,
+                                               @Nullable FetchPlan fetchPlan,
                                                @Nullable Integer limit,
                                                @Nullable Integer offset,
                                                @Nullable String sort,
@@ -197,8 +227,7 @@ public class EntitiesControllerManager {
             throw new RestAPIException("Cannot parse entities filter", "Entities filter cannot be null", HttpStatus.BAD_REQUEST);
         }
 
-        entityName = restControllerUtils.transformEntityNameIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION);
-        MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
+        MetaClass metaClass = getMetaClass(entityName, modelVersion);
         checkCanReadEntity(metaClass);
 
         Condition jmixCondition;
@@ -208,12 +237,17 @@ public class EntitiesControllerManager {
             throw new RestAPIException("Cannot parse entities filter", e.getMessage(), HttpStatus.BAD_REQUEST, e);
         }
 
-        String json = loadEntitiesJson(jmixCondition, viewName, limit, offset, sort, returnNulls,
+        String json = loadEntitiesJson(jmixCondition, fetchPlan, limit, offset, sort, returnNulls,
                 dynamicAttributes, modelVersion, metaClass);
         Long count = BooleanUtils.isTrue(returnCount) ?
                 countEntities(metaClass, jmixCondition)
                 : null;
         return new EntitiesSearchResult(json, count);
+    }
+
+    protected MetaClass getMetaClass(String entityName, @Nullable String modelVersion) {
+        entityName = restControllerUtils.transformEntityNameIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION);
+        return restControllerUtils.getMetaClass(entityName);
     }
 
     protected long countEntities(MetaClass metaClass, Condition jmixCondition) {
@@ -260,9 +294,22 @@ public class EntitiesControllerManager {
             throw new RestAPIException("Cannot parse entities filter", "Entities filter cannot be null", HttpStatus.BAD_REQUEST);
         }
 
+        FetchPlan fetchPlan = null;
+        if (searchEntitiesRequest.getFetchPlan() != null) {
+            JsonElement jsonElement = searchEntitiesRequest.getFetchPlan();
+            if (jsonElement.isJsonObject()) {
+                fetchPlan = fetchPlanSerialization.fromJson(jsonElement.toString());
+            } else if (jsonElement.isJsonPrimitive()) {
+                MetaClass metaClass = getMetaClass(entityName, searchEntitiesRequest.getModelVersion());
+                fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, jsonElement.getAsString());
+            } else
+                throw new RestAPIException("Invalid FetchPlan definition", jsonElement.toString(), HttpStatus.BAD_REQUEST);
+        }
+
+
         return searchEntities(entityName,
                 searchEntitiesRequest.getFilter().toString(),
-                searchEntitiesRequest.getFetchPlan(),
+                fetchPlan,
                 searchEntitiesRequest.getLimit(),
                 searchEntitiesRequest.getOffset(),
                 searchEntitiesRequest.getSort(),
@@ -284,7 +331,7 @@ public class EntitiesControllerManager {
     }
 
     protected String loadEntitiesJson(Condition condition,
-                                      @Nullable String viewName,
+                                      @Nullable FetchPlan fetchPlan,
                                       @Nullable Integer limit,
                                       @Nullable Integer offset,
                                       @Nullable String sort,
@@ -318,10 +365,8 @@ public class EntitiesControllerManager {
         }
         ctx.setQuery(query);
 
-        FetchPlan view = null;
-        if (!Strings.isNullOrEmpty(viewName)) {
-            view = restControllerUtils.getView(metaClass, viewName);
-            ctx.setFetchPlan(view);
+        if (fetchPlan != null) {
+            ctx.setFetchPlan(fetchPlan);
         }
 
         ctx.setHint("jmix.dynattr", BooleanUtils.isTrue(dynamicAttributes));
@@ -331,9 +376,9 @@ public class EntitiesControllerManager {
         List<EntitySerializationOption> serializationOptions = new ArrayList<>();
         serializationOptions.add(SERIALIZE_INSTANCE_NAME);
         serializationOptions.add(DO_NOT_SERIALIZE_DENIED_PROPERTY);
-        if (BooleanUtils.isTrue(returnNulls)) serializationOptions.add(EntitySerializationOption.SERIALIZE_NULLS);
+        if (BooleanUtils.isTrue(returnNulls)) serializationOptions.add(SERIALIZE_NULLS);
 
-        String json = entitySerialization.toJson(entities, view, serializationOptions.toArray(new EntitySerializationOption[0]));
+        String json = entitySerialization.toJson(entities, fetchPlan, serializationOptions.toArray(new EntitySerializationOption[0]));
         json = restControllerUtils.transformJsonIfRequired(metaClass.getName(), modelVersion, JsonTransformationDirection.TO_VERSION, json);
         return json;
     }
@@ -401,7 +446,7 @@ public class EntitiesControllerManager {
 
     public ResponseInfo createEntity(String entityJson,
                                      String entityName,
-                                     String responseView,
+                                     String responseFetchPlanNameOrJson,
                                      String modelVersion,
                                      HttpServletRequest request) {
 
@@ -414,9 +459,9 @@ public class EntitiesControllerManager {
 
         ResponseInfo responseInfo;
         if (jsonElement.isJsonArray()) {
-            responseInfo = createResponseInfoEntities(request, entityJson, entityName, responseView, modelVersion);
+            responseInfo = createResponseInfoEntities(request, entityJson, entityName, responseFetchPlanNameOrJson, modelVersion);
         } else {
-            responseInfo = createResponseInfoEntity(request, entityJson, entityName, responseView, modelVersion);
+            responseInfo = createResponseInfoEntity(request, entityJson, entityName, responseFetchPlanNameOrJson, modelVersion);
         }
         return responseInfo;
     }
@@ -424,16 +469,13 @@ public class EntitiesControllerManager {
     protected ResponseInfo createResponseInfoEntity(HttpServletRequest request,
                                                     String entityJson,
                                                     String entityName,
-                                                    String responseView,
+                                                    @Nullable String responseFetchPlanNameOrJson,
                                                     String modelVersion) {
         String transformedEntityName = restControllerUtils.transformEntityNameIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION);
         MetaClass metaClass = restControllerUtils.getMetaClass(transformedEntityName);
         checkCanCreateEntity(metaClass);
 
-        FetchPlan responseFetchPlan = null;
-        if (responseView != null) {
-            responseFetchPlan = restControllerUtils.getView(metaClass, responseView);
-        }
+        FetchPlan responseFetchPlan = restControllerUtils.getFetchPlanByNameOrJson(metaClass, responseFetchPlanNameOrJson);
 
         entityJson = restControllerUtils.transformJsonIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION, entityJson);
 
@@ -448,23 +490,20 @@ public class EntitiesControllerManager {
             loadContext.setId(EntityValues.getId(entity));
             entity = dataManager.load(loadContext);
         }
-        String bodyJson = createEntityJson(entity, metaClass, responseView, modelVersion);
+        String bodyJson = createEntityJson(entity, metaClass, responseFetchPlan, modelVersion);
         return new ResponseInfo(uriComponents.toUri(), bodyJson);
     }
 
     protected ResponseInfo createResponseInfoEntities(HttpServletRequest request,
                                                       String entitiesJson,
                                                       String entityName,
-                                                      String responseView,
+                                                      String responseFetchPlanNameOrJson,
                                                       String modelVersion) {
         String transformedEntityName = restControllerUtils.transformEntityNameIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION);
         MetaClass metaClass = restControllerUtils.getMetaClass(transformedEntityName);
         checkCanCreateEntity(metaClass);
 
-        FetchPlan responseFetchPlan = null;
-        if (responseView != null) {
-            responseFetchPlan = restControllerUtils.getView(metaClass, responseView);
-        }
+        FetchPlan responseFetchPlan = restControllerUtils.getFetchPlanByNameOrJson(metaClass, responseFetchPlanNameOrJson);
 
         entitiesJson = restControllerUtils.transformJsonIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION, entitiesJson);
 
@@ -483,7 +522,7 @@ public class EntitiesControllerManager {
         }
 
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString()).buildAndExpand();
-        String bodyJson = createEntitiesJson(mainCollectionEntity, metaClass, responseView, modelVersion);
+        String bodyJson = createEntitiesJson(mainCollectionEntity, metaClass, responseFetchPlan, modelVersion);
 
         return new ResponseInfo(uriComponents.toUri(), bodyJson);
     }
@@ -590,16 +629,13 @@ public class EntitiesControllerManager {
     public ResponseInfo updateEntity(String entityJson,
                                      String entityName,
                                      String entityId,
-                                     String responseView,
+                                     String responseFetchPlanNameOrJson,
                                      String modelVersion) {
         String transformedEntityName = restControllerUtils.transformEntityNameIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION);
         MetaClass metaClass = restControllerUtils.getMetaClass(transformedEntityName);
         checkCanUpdateEntity(metaClass);
 
-        FetchPlan responseFetchPlan = null;
-        if (responseView != null) {
-            responseFetchPlan = restControllerUtils.getView(metaClass, responseView);
-        }
+        FetchPlan responseFetchPlan = restControllerUtils.getFetchPlanByNameOrJson(metaClass, responseFetchPlanNameOrJson);
 
         //there may be multiple entities in importedEntities (because of @Composition references), so we must find
         // the main entity that will be returned
@@ -609,19 +645,19 @@ public class EntitiesControllerManager {
             loadContext.setId(EntityValues.getId(entity));
             entity = dataManager.load(loadContext);
         }
-        String bodyJson = createEntityJson(entity, metaClass, responseView, modelVersion);
+        String bodyJson = createEntityJson(entity, metaClass, responseFetchPlan, modelVersion);
         return new ResponseInfo(null, bodyJson);
     }
 
     public ResponseInfo updateEntities(String entitiesJson,
                                        String entityName,
-                                       String responseView,
+                                       String responseFetchPlanName,
                                        String modelVersion) {
         String transformedEntityName = restControllerUtils.transformEntityNameIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION);
         MetaClass metaClass = restControllerUtils.getMetaClass(transformedEntityName);
         checkCanUpdateEntity(metaClass);
 
-        FetchPlan responseFetchPlan = responseView == null ? null : restControllerUtils.getView(metaClass, responseView);
+        FetchPlan responseFetchPlan = restControllerUtils.getFetchPlanByNameOrJson(metaClass, responseFetchPlanName);
 
         JsonElement entitiesJsonElement = new JsonParser().parse(entitiesJson);
         if (!entitiesJsonElement.isJsonArray()) {
@@ -644,7 +680,7 @@ public class EntitiesControllerManager {
                 }
             }).collect(Collectors.toList());
         }
-        String bodyJson = createEntitiesJson(updatedEntities, metaClass, responseView, modelVersion);
+        String bodyJson = createEntitiesJson(updatedEntities, metaClass, responseFetchPlan, modelVersion);
         return new ResponseInfo(null, bodyJson);
     }
 
@@ -873,23 +909,23 @@ public class EntitiesControllerManager {
      * annotation. We do this because such methods may use other entities properties (references to other entities) and
      * as a result we get an UnfetchedAttributeException while producing the JSON for response
      */
-    protected String createEntityJson(Object entity, MetaClass metaClass, String responseView, String version) {
+    protected String createEntityJson(Object entity, MetaClass metaClass, @Nullable FetchPlan responseFetchPlan, String version) {
         Preconditions.checkNotNullArgument(entity);
 
         String json;
         if (restProperties.isResponseFetchPlanEnabled()) {
-            FetchPlan view = findOrCreateResponseView(metaClass, responseView);
-            json = entitySerialization.toJson(entity, view, SERIALIZE_INSTANCE_NAME);
+            FetchPlan fetchPlan = responseFetchPlan != null ? responseFetchPlan : createResponseFetchPlan(metaClass);
+            json = entitySerialization.toJson(entity, fetchPlan, SERIALIZE_INSTANCE_NAME);
         } else {
             json = entitySerialization.toJson(entity, null, DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES);
         }
         return restControllerUtils.transformJsonIfRequired(metaClass.getName(), version, JsonTransformationDirection.TO_VERSION, json);
     }
 
-    protected String createEntitiesJson(Collection<Object> entities, MetaClass metaClass, String responseView, String version) {
+    protected String createEntitiesJson(Collection<Object> entities, MetaClass metaClass, @Nullable FetchPlan responseFetchPlan, String version) {
         String json;
         if (restProperties.isResponseFetchPlanEnabled()) {
-            FetchPlan view = findOrCreateResponseView(metaClass, responseView);
+            FetchPlan view = responseFetchPlan != null ? responseFetchPlan : createResponseFetchPlan(metaClass);
             json = entitySerialization.toJson(entities, view, SERIALIZE_INSTANCE_NAME,
                     DO_NOT_SERIALIZE_DENIED_PROPERTY);
         } else {
@@ -900,22 +936,10 @@ public class EntitiesControllerManager {
         return json;
     }
 
-    protected FetchPlan findOrCreateResponseView(MetaClass metaClass, String responseView) {
-        if (StringUtils.isEmpty(responseView)) {
-            //noinspection ConstantConditions
-            return fetchPlans.builder(metaClass.getJavaClass())
-                    .add(metadataTools.getPrimaryKeyName(metaClass))
-                    .build();
-        }
-
-        FetchPlan view = fetchPlanRepository.findFetchPlan(metaClass, responseView);
-
-        if (view == null) {
-            throw new RestAPIException("Fetch plan not found",
-                    String.format("Fetch plan '%s' not found for entity '%s'", responseView, metaClass.getName()),
-                    HttpStatus.NOT_FOUND);
-        }
-        return view;
+    protected FetchPlan createResponseFetchPlan(MetaClass metaClass) {
+        return fetchPlans.builder(metaClass.getJavaClass())
+                .add(metadataTools.getPrimaryKeyName(metaClass))
+                .build();
     }
 
     protected static class ValidatedList {
@@ -937,7 +961,7 @@ public class EntitiesControllerManager {
 
     protected class SearchEntitiesRequestDTO {
         protected JsonObject filter;
-        protected String fetchPlan;
+        protected JsonElement fetchPlan;
         protected Integer limit;
         protected Integer offset;
         protected String sort;
@@ -953,7 +977,8 @@ public class EntitiesControllerManager {
             return filter;
         }
 
-        public String getFetchPlan() {
+        @Nullable
+        public JsonElement getFetchPlan() {
             return fetchPlan;
         }
 
@@ -989,7 +1014,7 @@ public class EntitiesControllerManager {
             this.filter = filter;
         }
 
-        public void setFetchPlan(String fetchPlan) {
+        public void setFetchPlan(JsonElement fetchPlan) {
             this.fetchPlan = fetchPlan;
         }
 

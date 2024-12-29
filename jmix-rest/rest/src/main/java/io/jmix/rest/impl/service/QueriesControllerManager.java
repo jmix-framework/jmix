@@ -124,9 +124,10 @@ public class QueriesControllerManager {
         ctx.setHint("jmix.dynattr", BooleanUtils.isTrue(dynamicAttributes));
 
         //override default view defined in queries config
-        if (!Strings.isNullOrEmpty(viewName)) {
-            MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
-            ctx.setFetchPlan(restControllerUtils.getView(metaClass, viewName));
+        MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
+        FetchPlan fetchPlan = restControllerUtils.getFetchPlan(metaClass, viewName);
+        if (fetchPlan != null) {
+            ctx.setFetchPlan(fetchPlan);
         }
         List<?> entities = dataManager.loadList(ctx);
 
@@ -241,7 +242,10 @@ public class QueriesControllerManager {
 
         query.setCacheable(queryInfo.isCacheable());
         ctx.setQuery(query);
-        ctx.setFetchPlan(restControllerUtils.getView(metaClass, queryInfo.getViewName()));
+        FetchPlan fetchPlan = restControllerUtils.getFetchPlan(metaClass,
+                queryInfo.getFetchPlanName() != null ? queryInfo.getFetchPlanName() : queryInfo.getViewName());
+        if (fetchPlan != null)
+            ctx.setFetchPlan(fetchPlan);
         return ctx;
     }
 

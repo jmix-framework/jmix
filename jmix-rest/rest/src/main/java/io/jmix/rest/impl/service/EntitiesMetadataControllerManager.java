@@ -54,10 +54,10 @@ public class EntitiesMetadataControllerManager {
     protected RestControllerUtils restControllersUtils;
 
     @Autowired
-    protected FetchPlanSerialization viewSerializationAPI;
+    protected FetchPlanSerialization fetchPlanSerialization;
 
     @Autowired
-    protected FetchPlanRepository viewRepository;
+    protected FetchPlanRepository fetchPlanRepository;
 
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
@@ -80,27 +80,27 @@ public class EntitiesMetadataControllerManager {
                 .collect(Collectors.toList());
     }
 
-    public String getFetchPlan(String entityName, String viewName) {
+    public String getFetchPlan(String entityName, String fetchPlanName) {
         MetaClass metaClass = restControllersUtils.getMetaClass(entityName);
-        FetchPlan view = viewRepository.findFetchPlan(metaClass, viewName);
-        if (view == null) {
+        FetchPlan fetchPlan = fetchPlanRepository.findFetchPlan(metaClass, fetchPlanName);
+        if (fetchPlan == null) {
             throw new RestAPIException("Fetch plan not found",
-                    String.format("View %s for metaClass %s not found", viewName, entityName),
+                    String.format("View %s for metaClass %s not found", fetchPlanName, entityName),
                     HttpStatus.NOT_FOUND);
         }
-        return viewSerializationAPI.toJson(view);
+        return fetchPlanSerialization.toJson(fetchPlan);
     }
 
     public String getAllFetchPlansForMetaClass(String entityName) {
         MetaClass metaClass = restControllersUtils.getMetaClass(entityName);
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        List<String> jsonViews = new ArrayList<>();
-        for (String viewName : viewRepository.getFetchPlanNames(metaClass)) {
-            FetchPlan view = viewRepository.getFetchPlan(metaClass, viewName);
-            jsonViews.add(viewSerializationAPI.toJson(view));
+        List<String> jsonFetchPlans = new ArrayList<>();
+        for (String viewName : fetchPlanRepository.getFetchPlanNames(metaClass)) {
+            FetchPlan view = fetchPlanRepository.getFetchPlan(metaClass, viewName);
+            jsonFetchPlans.add(fetchPlanSerialization.toJson(view));
         }
-        sb.append(Joiner.on(",").join(jsonViews));
+        sb.append(Joiner.on(",").join(jsonFetchPlans));
         sb.append("]");
         return sb.toString();
     }

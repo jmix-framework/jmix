@@ -20,17 +20,19 @@ import com.google.gson.*;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetadataObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 import static io.jmix.core.FetchMode.AUTO;
 import static io.jmix.core.FetchPlanSerializationOption.COMPACT_FORMAT;
@@ -49,26 +51,35 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
     @Autowired
     protected CoreProperties coreProperties;
 
+    protected final Function<MetaClass, String> defaultEntityNameExtractor = MetadataObject::getName;
+
     private static final Logger log = LoggerFactory.getLogger(FetchPlanSerializationImpl.class);
 
     @Override
     public FetchPlan fromJson(String json) {
-        return createGson().fromJson(json, FetchPlan.class);
+        return createGson(defaultEntityNameExtractor).fromJson(json, FetchPlan.class);
     }
 
     @Override
     public String toJson(FetchPlan fetchPlan, FetchPlanSerializationOption... options) {
-        return createGson(options).toJson(fetchPlan);
+        return createGson(defaultEntityNameExtractor, options).toJson(fetchPlan);
     }
 
-    protected Gson createGson(FetchPlanSerializationOption... options) {
+    @Override
+    public String toJson(FetchPlan fetchPlan, Function<MetaClass, String> entityNameExtractor, FetchPlanSerializationOption... options) {
+        return createGson(entityNameExtractor, options).toJson(fetchPlan);
+    }
+
+    protected Gson createGson(Function<MetaClass, String> entityNameExtractor, FetchPlanSerializationOption... options) {
         return new GsonBuilder()
-                .registerTypeHierarchyAdapter(FetchPlan.class, new FetchPlanSerializer(options))
+                .registerTypeHierarchyAdapter(FetchPlan.class, new FetchPlanSerializer(entityNameExtractor, options))
                 .registerTypeHierarchyAdapter(FetchPlan.class, new FetchPlanDeserializer())
                 .create();
     }
 
     protected class FetchPlanSerializer implements JsonSerializer<FetchPlan> {
+
+        protected Function<MetaClass, String> entityNameExtractor;
 
         protected boolean compactFormat = false;
 
@@ -78,7 +89,8 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
 
         protected List<FetchPlan> processedFetchPlans = new ArrayList<>();
 
-        public FetchPlanSerializer(FetchPlanSerializationOption[] options) {
+        public FetchPlanSerializer(Function<MetaClass, String> entityNameExtractor, FetchPlanSerializationOption[] options) {
+            this.entityNameExtractor = entityNameExtractor;
             for (FetchPlanSerializationOption option : options) {
                 if (option == COMPACT_FORMAT) {
                     compactFormat = true;
@@ -101,7 +113,7 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("name", fetchPlan.getName());
             MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
-            jsonObject.addProperty("entity", metaClass.getName());
+            jsonObject.addProperty("entity", entityNameExtractor.apply(metaClass));
             jsonObject.add("properties", createJsonArrayOfFetchPlanProperties(fetchPlan));
             return jsonObject;
         }
@@ -178,7 +190,7 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
             String fetchPlanName = jsonObject.getAsJsonPrimitive("name").getAsString();
             String entityName = jsonObject.getAsJsonPrimitive("entity").getAsString();
             JsonArray properties = jsonObject.getAsJsonArray("properties");
-            MetaClass metaClass = metadata.getClass(entityName);
+            MetaClass metaClass = metadata.findClass(entityName);
             if (metaClass == null) {
                 throw new FetchPlanSerializationException(String.format("Entity with name %s not found", entityName));
             }
@@ -192,7 +204,11 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                 //there may be a primitive or json object inside the properties array
                 if (propertyElement.isJsonPrimitive()) {
                     String propertyName = propertyElement.getAsJsonPrimitive().getAsString();
-                    builder.add(propertyName);
+                    try {
+                        builder.add(propertyName);
+                    } catch (IllegalArgumentException e) {
+                        logNonExistentProperty(fetchPlanMetaClass, propertyName);
+                    }
                 } else {
                     JsonObject fetchPlanPropertyObj = propertyElement.getAsJsonObject();
 
@@ -213,10 +229,9 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                         builder.add(propertyName, b -> {
                         }, fetchMode);
                     } else {
-                        MetaProperty metaProperty = fetchPlanMetaClass.getProperty(propertyName);
+                        MetaProperty metaProperty = fetchPlanMetaClass.findProperty(propertyName);
                         if (metaProperty == null) {
-                            log.warn("Cannot deserialize fetchPlan property. Property {} of entity {} doesn't exist",
-                                    propertyName, fetchPlanMetaClass.getName());
+                            logNonExistentProperty(fetchPlanMetaClass, propertyName);
                             continue;
                         }
 
@@ -248,6 +263,11 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                     }
                 }
             }
+        }
+
+        protected void logNonExistentProperty(MetaClass metaClass, String propertyName) {
+            log.debug("Cannot deserialize fetchPlan property. Property {} of entity {} doesn't exist",
+                    propertyName, metaClass.getName());
         }
     }
 

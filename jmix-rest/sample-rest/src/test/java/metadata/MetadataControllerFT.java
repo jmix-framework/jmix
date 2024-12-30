@@ -17,6 +17,7 @@
 package metadata;
 
 import com.jayway.jsonpath.ReadContext;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Test;
 import test_support.AbstractRestControllerFT;
@@ -28,8 +29,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static test_support.RestTestUtils.parseResponse;
-import static test_support.RestTestUtils.sendGet;
+import static test_support.RestTestUtils.*;
 
 /**
  *
@@ -139,6 +139,16 @@ public class MetadataControllerFT extends AbstractRestControllerFT {
             ReadContext ctx = parseResponse(response);
             assertTrue(ctx.read("$.length()", Integer.class) > 1);
             assertEquals(1, ctx.read("$[?(@.name == 'carEdit')]", List.class).size());
+        }
+    }
+
+    @Test
+    public void getCapabilities() throws Exception {
+        String url = baseUrl + "/metadata/capabilities";
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertTrue(ctx.read("$.inlineFetchPlans", Boolean.class));
         }
     }
 }

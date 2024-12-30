@@ -293,6 +293,19 @@ public class RestInvoker implements InitializingBean {
         }
     }
 
+    public String capabilities() {
+        try {
+            String resultJson = restClient.get()
+                    .uri("/rest/metadata/capabilities")
+                    .retrieve()
+                    .body(String.class);
+
+            return resultJson;
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
+        }
+    }
+
     public RestAuthenticator getAuthenticator() {
         return authenticator;
     }

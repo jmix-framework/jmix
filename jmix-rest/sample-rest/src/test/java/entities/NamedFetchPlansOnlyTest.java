@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static test_support.RestTestUtils.*;
 
 @TestPropertySource(properties = "jmix.rest.inline-fetch-plan-enabled=false")
@@ -56,6 +56,16 @@ public class NamedFetchPlansOnlyTest extends AbstractRestControllerFT {
             ReadContext ctx = parseResponse(response);
             assertEquals("Inline fetch plans are disabled", ctx.read("$.error"));
             assertEquals("Inline fetch plans are disabled. Use only named fetch plans.", ctx.read("$.details"));
+        }
+    }
+
+    @Test
+    public void capabilities_inlineFetchPlans_false() throws Exception {
+        String url = baseUrl + "/metadata/capabilities";
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertFalse(ctx.read("$.inlineFetchPlans", Boolean.class));
         }
     }
 }

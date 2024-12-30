@@ -54,6 +54,8 @@ public class RestDataStore extends AbstractDataStore {
 
     private RestInvoker restInvoker;
 
+    private RestCapabilities restCapabilities;
+
     public RestDataStore(ApplicationContext applicationContext, RestSerialization restSerialization, RestFilterBuilder restFilterBuilder,
                          RestEntityEventManager entityEventManager, RestSaveContextProcessor saveContextProcessor, FetchPlanRepository fetchPlanRepository,
                          RestDsLoadedPropertiesInfoFactory loadedPropertiesInfoFactory, FetchPlanSerialization fetchPlanSerialization) {
@@ -184,12 +186,16 @@ public class RestDataStore extends AbstractDataStore {
         if (fetchPlan == null)
             return null;
         else if (Strings.isNullOrEmpty(fetchPlan.getName())) {
-            // optimize URL for frequent case with _base fetch plan
-            FetchPlan baseFetchPlan = fetchPlanRepository.getFetchPlan(fetchPlan.getEntityClass(), FetchPlan.BASE);
-            if (fetchPlan.contentEquals(baseFetchPlan))
-                return FetchPlan.BASE;
-            else
-                return fetchPlanSerialization.toJson(fetchPlan, this::getEntityName);
+            if (restCapabilities.isInlineFetchPlanEnabled()) {
+                // optimize URL for frequent case with _base fetch plan
+                FetchPlan baseFetchPlan = fetchPlanRepository.getFetchPlan(fetchPlan.getEntityClass(), FetchPlan.BASE);
+                if (fetchPlan.contentEquals(baseFetchPlan))
+                    return FetchPlan.BASE;
+                else
+                    return fetchPlanSerialization.toJson(fetchPlan, this::getEntityName);
+
+            } else
+                return null;
         } else {
             return fetchPlan.getName();
         }
@@ -334,6 +340,7 @@ public class RestDataStore extends AbstractDataStore {
     public void setName(String name) {
         storeName = name;
         restInvoker = applicationContext.getBean(RestInvoker.class, storeName);
+        restCapabilities = new RestCapabilities(restInvoker);
     }
 
     protected static class DummyTransactionContextState implements TransactionContextState {

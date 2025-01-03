@@ -16,6 +16,8 @@
 
 package rest_invoker;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.Metadata;
 import io.jmix.restds.impl.RestInvoker;
 import io.jmix.restds.impl.RestSerialization;
@@ -39,6 +41,8 @@ class RestInvokerTest extends BaseRestDsIntegrationTest {
     Metadata metadata;
     @Autowired
     RestSerialization restSerialization;
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     RestInvoker restInvoker;
 
@@ -181,5 +185,20 @@ class RestInvokerTest extends BaseRestDsIntegrationTest {
 
         assertThat(customers).size().isEqualTo(1);
         assertThat(customers.get(0)).isEqualTo(customer2);
+    }
+
+    @Test
+    void testCapabilities() throws JsonProcessingException {
+        String capabilities = restInvoker.capabilities();
+
+        assertThatJsonEquals(capabilities, """
+                {
+                    "inlineFetchPlans": true
+                }
+                """);
+    }
+
+    private void assertThatJsonEquals(String actual, String expected) throws JsonProcessingException {
+        assertThat(objectMapper.readTree(actual)).isEqualTo(objectMapper.readTree(expected));
     }
 }

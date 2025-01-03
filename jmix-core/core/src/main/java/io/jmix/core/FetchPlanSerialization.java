@@ -16,6 +16,10 @@
 
 package io.jmix.core;
 
+import io.jmix.core.metamodel.model.MetaClass;
+
+import java.util.function.Function;
+
 /**
  * Class that is used for serialization and deserialization of fetch plan to JSON.
  */
@@ -38,4 +42,14 @@ public interface FetchPlanSerialization {
      * @return a string that represents a JSON object
      */
     String toJson(FetchPlan fetchPlan, FetchPlanSerializationOption... options);
+
+    /**
+     * Serializes a fetch plan to JSON string.
+     *
+     * @param fetchPlan a fetchPlan
+     * @param entityNameExtractor a function that returns an entity name by MetaClass
+     * @param options   options specifying how a JSON object graph should be serialized
+     * @return a string that represents a JSON object
+     */
+    String toJson(FetchPlan fetchPlan, Function<MetaClass, String> entityNameExtractor, FetchPlanSerializationOption... options);
 }

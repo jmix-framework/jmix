@@ -78,6 +78,19 @@ public class FetchPlanProperty implements Serializable {
         return name.equals(that.name) && Objects.equals(fetchPlan, that.fetchPlan) && fetchMode == that.fetchMode;
     }
 
+    /**
+     * @param that other property
+     * @return true if the properties have the same name and their fetch plans {@link FetchPlan#contentEquals(FetchPlan)}
+     * method returns true
+     */
+    public boolean contentEquals(@Nullable FetchPlanProperty that) {
+        if (this == that) return true;
+        if (that == null) return false;
+        return name != null && name.equals(that.name)
+                && fetchMode == that.fetchMode
+                && (fetchPlan == null ? that.fetchPlan == null : fetchPlan.contentEquals(that.fetchPlan));
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(name, fetchPlan, fetchMode);

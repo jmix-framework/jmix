@@ -110,6 +110,36 @@ public class FetchPlan implements Serializable {
     }
 
     /**
+     * @param that other fetch plan
+     * @return true if the fetch plans are equal ignoring names
+     */
+    public boolean contentEquals(@Nullable FetchPlan that) {
+        if (this == that) return true;
+        if (that == null) return false;
+
+        if (!(entityClass.equals(that.entityClass)
+                && loadPartialEntities == that.loadPartialEntities))
+            return false;
+
+        if (properties.size() != that.properties.size())
+            return false;
+
+        for (Map.Entry<String, FetchPlanProperty> e : properties.entrySet()) {
+            String key = e.getKey();
+            FetchPlanProperty value = e.getValue();
+            if (value == null) {
+                if (!(that.properties.get(key) == null && that.properties.containsKey(key)))
+                    return false;
+            } else {
+                if (!value.contentEquals(that.properties.get(key)))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * @return whether this fetch plan contains all attributes of {@code fetchPlan} including nested plans attributes
      */
     public boolean isSupersetOf(FetchPlan fetchPlan) {

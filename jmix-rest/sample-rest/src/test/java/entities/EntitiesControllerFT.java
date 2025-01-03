@@ -20,6 +20,7 @@ package entities;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import io.jmix.core.Id;
+import io.jmix.samples.rest.entity.driver.Car;
 import io.jmix.samples.rest.entity.driver.Model;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
@@ -164,6 +165,26 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("fetchPlan", "carEdit");
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(carUuidString, ctx.read("$.id"));
+            assertEquals("VWV000", ctx.read("$.vin"));
+            assertEquals(modelUuidString, ctx.read("$.model.id"));
+            assertEquals(2, ctx.<Collection>read("$.repairs").size());
+
+            assertEquals(colourUuidString, ctx.read("$.colour.id"));
+
+            assertThrows(PathNotFoundException.class, () -> ctx.read("$.seller"));
+        }
+    }
+
+    @Test
+    void loadEntityByIdWithInlineFetchPlan() throws Exception {
+        String url = baseUrl + "/entities/ref_Car/" + carUuidString;
+        Map<String, String> params = new HashMap<>();
+        String fpJson = fetchPlanSerialization.toJson(fetchPlanRepository.getFetchPlan(Car.class, "carEdit"));
+        params.put("fetchPlan", fpJson);
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -404,6 +425,23 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         String url = baseUrl + "/entities/ref_Car";
         Map<String, String> params = new HashMap<>();
         params.put("fetchPlan", "carEdit");
+        params.put("sort", "vin");
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertNotNull(ctx.read("$.[0].model.id"));
+            assertTrue(ctx.<Collection>read("$.[0].repairs").size() > 0);
+
+            assertThrows(PathNotFoundException.class, () -> ctx.read("$.[0].seller"));
+        }
+    }
+
+    @Test
+    void loadEntitiesListWithInlineFetchPlan() throws Exception {
+        String url = baseUrl + "/entities/ref_Car";
+        Map<String, String> params = new HashMap<>();
+        String fpJson = fetchPlanSerialization.toJson(fetchPlanRepository.getFetchPlan(Car.class, "carEdit"));
+        params.put("fetchPlan", fpJson);
         params.put("sort", "vin");
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
@@ -679,6 +717,21 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
+    void loadEntitiesFilterWithInlineFetchPlanPost() throws Exception {
+        String url = baseUrl + "/entities/ref_Car/search";
+        String fpJson = fetchPlanSerialization.toJson(fetchPlanRepository.getFetchPlan(Car.class, "car-with-colour"));
+        String json = getFileContent("entitiesFilterWithInlineFetchPlan.json", Map.of("$FP$", fpJson));
+        Map<String, String> params = new HashMap<>();
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(2, ctx.<Collection<?>>read("$").size());
+            assertTrue(((String) ctx.read("$[0].vin")).startsWith("VW"));
+            assertEquals(colourUuidString, ctx.read("$.[0]colour.id"));
+        }
+    }
+
+    @Test
     void createNewEntityWithFetchPlan() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$MODEL_ID$", modelUuidString);
@@ -717,30 +770,50 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             }
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select VIN, MODEL_ID from REF_CAR where ID = ?")) {
-            stmt.setObject(1, carId);
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String vin = rs.getString("VIN");
-            assertEquals("123", vin);
-            Object modelId = rs.getObject("MODEL_ID");
-            assertEquals(modelUuidString, modelId);
+        checkCreatedCarAndRepair(carId);
+    }
+
+    @Test
+    void createNewEntityWithInlineFetchPlan() throws Exception {
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("$MODEL_ID$", modelUuidString);
+        String json = getFileContent("car.json", replacements);
+
+        UUID carId;
+        String url = baseUrl + "/entities/ref_Car";
+
+        Map<String, String> params = new HashMap<>();
+        String fpJson = fetchPlanSerialization.toJson(fetchPlanRepository.getFetchPlan(Car.class, "carWithTransform"));
+        params.put("responseFetchPlan", fpJson);
+
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, params)) {
+            assertEquals(HttpStatus.SC_CREATED, statusCode(response));
+            Header[] locationHeaders = response.getHeaders("Location");
+            assertEquals(1, locationHeaders.length);
+            String location = locationHeaders[0].getValue();
+            assertTrue(location.startsWith("http://localhost:" + port + "/rest/entities/ref_Car"));
+            String idString = location.substring(location.lastIndexOf("/") + 1);
+            carId = UUID.fromString(idString);
+
+            ReadContext ctx = parseResponse(response);
+            assertEquals("ref_Car", ctx.read("$._entityName"));
+            assertEquals(carId.toString(), ctx.read("$.id"));
+            assertEquals(2, (int) ctx.read("$.repairs.length()"));
+            assertNotNull(ctx.read("$.createTs"));
+            assertNotNull(ctx.read("$.version"));
+
+            //to delete the created objects in the @After method
+            dirtyData.addCarId(carId);
+            try (PreparedStatement stmt = conn.prepareStatement("select ID from REF_REPAIR where CAR_ID = ?")) {
+                stmt.setObject(1, carId);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    dirtyData.addRepairId((UUID.fromString(rs.getString("ID"))));
+                }
+            }
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select DESCRIPTION, REPAIR_DATE from REF_REPAIR where CAR_ID = ? order by DESCRIPTION")) {
-            stmt.setObject(1, carId);
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String description1 = rs.getString("DESCRIPTION");
-            assertEquals("Repair 1", description1);
-            Date date1 = rs.getDate("REPAIR_DATE");
-            assertEquals("2016-06-08", sdf.format(date1));
-            assertTrue(rs.next());
-            String description2 = rs.getString("DESCRIPTION");
-            assertEquals("Repair 2", description2);
-            Date date2 = rs.getDate("REPAIR_DATE");
-            assertEquals("2016-06-20", sdf.format(date2));
-        }
+        checkCreatedCarAndRepair(carId);
     }
 
     @Test
@@ -782,30 +855,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             }
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select VIN, MODEL_ID from REF_CAR where ID = ?")) {
-            stmt.setObject(1, carId);
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String vin = rs.getString("VIN");
-            assertEquals("123", vin);
-            Object modelId = rs.getObject("MODEL_ID");
-            assertEquals(modelUuidString, modelId);
-        }
-
-        try (PreparedStatement stmt = conn.prepareStatement("select DESCRIPTION, REPAIR_DATE from REF_REPAIR where CAR_ID = ? order by DESCRIPTION")) {
-            stmt.setObject(1, carId);
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String description1 = rs.getString("DESCRIPTION");
-            assertEquals("Repair 1", description1);
-            Date date1 = rs.getDate("REPAIR_DATE");
-            assertEquals("2016-06-08", sdf.format(date1));
-            assertTrue(rs.next());
-            String description2 = rs.getString("DESCRIPTION");
-            assertEquals("Repair 2", description2);
-            Date date2 = rs.getDate("REPAIR_DATE");
-            assertEquals("2016-06-20", sdf.format(date2));
-        }
+        checkCreatedCarAndRepair(carId);
     }
 
     @Test
@@ -1321,15 +1371,35 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
 
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select VIN, MODEL_ID from REF_CAR where ID = ?")) {
-            stmt.setObject(1, UUID.fromString(carUuidString));
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String vin = rs.getString("VIN");
-            assertEquals("Modified vin", vin);
-            Object modelId = rs.getObject("MODEL_ID");
-            assertEquals(model2UuidString, modelId);
+        checkUpdatedCar();
+    }
+
+    @Test
+    void updateCarWithInlineResponseFetchPlan() throws Exception {
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("$CAR_ID$", carUuidString);
+        replacements.put("$MODEL_ID$", model2UuidString);
+        String json = getFileContent("updateCar.json", replacements);
+
+        String url = baseUrl + "/entities/ref_Car/" + carUuidString;
+
+        Map<String, String> params = new HashMap<>();
+        String fpJson = fetchPlanSerialization.toJson(fetchPlanRepository.getFetchPlan(Car.class, "carWithModel"));
+        params.put("responseFetchPlan", fpJson);
+
+        try (CloseableHttpResponse response = sendPut(url, oauthToken, json, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+
+            ReadContext ctx = parseResponse(response);
+            assertEquals("ref_Car", ctx.read("$._entityName"));
+            assertEquals(carUuidString, ctx.read("$.id"));
+            assertEquals(model2UuidString, ctx.read("$.model.id"));
+            assertNotNull(ctx.read("$.updateTs"));
+            assertNotNull(ctx.read("$.version"));
+
         }
+
+        checkUpdatedCar();
     }
 
     @Test
@@ -1356,15 +1426,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
 
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select VIN, MODEL_ID from REF_CAR where ID = ?")) {
-            stmt.setObject(1, UUID.fromString(carUuidString));
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String vin = rs.getString("VIN");
-            assertEquals("Modified vin", vin);
-            Object modelId = rs.getObject("MODEL_ID");
-            assertEquals(model2UuidString, modelId);
-        }
+        checkUpdatedCar();
     }
 
     @Test
@@ -2059,30 +2121,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             }
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select VIN, MODEL_ID from REF_CAR where ID = ?")) {
-            stmt.setObject(1, carId);
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String vin = rs.getString("VIN");
-            assertEquals("123", vin);
-            Object modelId = rs.getObject("MODEL_ID");
-            assertEquals(modelUuidString, modelId);
-        }
-
-        try (PreparedStatement stmt = conn.prepareStatement("select DESCRIPTION, REPAIR_DATE from REF_REPAIR where CAR_ID = ? order by DESCRIPTION")) {
-            stmt.setObject(1, carId);
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String description1 = rs.getString("DESCRIPTION");
-            assertEquals("Repair 1", description1);
-            Date date1 = rs.getDate("REPAIR_DATE");
-            assertEquals("2016-06-08", sdf.format(date1));
-            assertTrue(rs.next());
-            String description2 = rs.getString("DESCRIPTION");
-            assertEquals("Repair 2", description2);
-            Date date2 = rs.getDate("REPAIR_DATE");
-            assertEquals("2016-06-20", sdf.format(date2));
-        }
+        checkCreatedCarAndRepair(carId);
     }
 
     @Test
@@ -2127,30 +2166,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             }
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select VIN, MODEL_ID from REF_CAR where ID = ?")) {
-            stmt.setObject(1, carId);
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String vin = rs.getString("VIN");
-            assertEquals("123", vin);
-            Object modelId = rs.getObject("MODEL_ID");
-            assertEquals(modelUuidString, modelId);
-        }
-
-        try (PreparedStatement stmt = conn.prepareStatement("select DESCRIPTION, REPAIR_DATE from REF_REPAIR where CAR_ID = ? order by DESCRIPTION")) {
-            stmt.setObject(1, carId);
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String description1 = rs.getString("DESCRIPTION");
-            assertEquals("Repair 1", description1);
-            Date date1 = rs.getDate("REPAIR_DATE");
-            assertEquals("2016-06-08", sdf.format(date1));
-            assertTrue(rs.next());
-            String description2 = rs.getString("DESCRIPTION");
-            assertEquals("Repair 2", description2);
-            Date date2 = rs.getDate("REPAIR_DATE");
-            assertEquals("2016-06-20", sdf.format(date2));
-        }
+        checkCreatedCarAndRepair(carId);
     }
 
     @Test
@@ -2177,15 +2193,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             assertNotNull(ctx.read("$.version"));
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select VIN, MODEL_ID from REF_CAR where ID = ?")) {
-            stmt.setObject(1, UUID.fromString(carUuidString));
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String vin = rs.getString("VIN");
-            assertEquals("Modified vin", vin);
-            Object modelId = rs.getObject("MODEL_ID");
-            assertEquals(model2UuidString, modelId);
-        }
+        checkUpdatedCar();
     }
 
     @Test
@@ -2212,15 +2220,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             assertNotNull(ctx.read("$.version"));
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select VIN, MODEL_ID from REF_CAR where ID = ?")) {
-            stmt.setObject(1, UUID.fromString(carUuidString));
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next());
-            String vin = rs.getString("VIN");
-            assertEquals("Modified vin", vin);
-            Object modelId = rs.getObject("MODEL_ID");
-            assertEquals(model2UuidString, modelId);
-        }
+        checkUpdatedCar();
     }
 
     @Test
@@ -2529,5 +2529,44 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
                 "entity-without-id-property");
 
         dynAttrMetadata.reload();
+    }
+
+    private void checkCreatedCarAndRepair(UUID carId) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement("select VIN, MODEL_ID from REF_CAR where ID = ?")) {
+            stmt.setObject(1, carId);
+            ResultSet rs = stmt.executeQuery();
+            assertTrue(rs.next());
+            String vin = rs.getString("VIN");
+            assertEquals("123", vin);
+            Object modelId = rs.getObject("MODEL_ID");
+            assertEquals(modelUuidString, modelId);
+        }
+
+        try (PreparedStatement stmt = conn.prepareStatement("select DESCRIPTION, REPAIR_DATE from REF_REPAIR where CAR_ID = ? order by DESCRIPTION")) {
+            stmt.setObject(1, carId);
+            ResultSet rs = stmt.executeQuery();
+            assertTrue(rs.next());
+            String description1 = rs.getString("DESCRIPTION");
+            assertEquals("Repair 1", description1);
+            Date date1 = rs.getDate("REPAIR_DATE");
+            assertEquals("2016-06-08", sdf.format(date1));
+            assertTrue(rs.next());
+            String description2 = rs.getString("DESCRIPTION");
+            assertEquals("Repair 2", description2);
+            Date date2 = rs.getDate("REPAIR_DATE");
+            assertEquals("2016-06-20", sdf.format(date2));
+        }
+    }
+
+    private void checkUpdatedCar() throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement("select VIN, MODEL_ID from REF_CAR where ID = ?")) {
+            stmt.setObject(1, UUID.fromString(carUuidString));
+            ResultSet rs = stmt.executeQuery();
+            assertTrue(rs.next());
+            String vin = rs.getString("VIN");
+            assertEquals("Modified vin", vin);
+            Object modelId = rs.getObject("MODEL_ID");
+            assertEquals(model2UuidString, modelId);
+        }
     }
 }

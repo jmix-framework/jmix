@@ -17,6 +17,8 @@
 package test_support;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.FetchPlanSerialization;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.data.DataConfiguration;
@@ -73,6 +75,12 @@ public abstract class AbstractRestControllerFT {
 
     @Autowired
     protected UnconstrainedDataManager dataManager;
+
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
+
+    @Autowired
+    protected FetchPlanSerialization fetchPlanSerialization;
 
     @Autowired
     protected DynAttrMetadata dynAttrMetadata;

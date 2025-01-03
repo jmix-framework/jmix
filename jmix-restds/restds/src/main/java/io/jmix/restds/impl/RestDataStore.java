@@ -16,13 +16,14 @@
 
 package io.jmix.restds.impl;
 
+import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.core.datastore.AbstractDataStore;
 import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.restds.annotation.RestDataStoreEntity;
-import org.apache.commons.lang3.StringUtils;
+import io.jmix.restds.exception.InvalidFetchPlanException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -48,14 +49,17 @@ public class RestDataStore extends AbstractDataStore {
     private final RestSaveContextProcessor saveContextProcessor;
     private final FetchPlanRepository fetchPlanRepository;
     private final RestDsLoadedPropertiesInfoFactory loadedPropertiesInfoFactory;
+    private final FetchPlanSerialization fetchPlanSerialization;
 
     protected String storeName;
 
     private RestInvoker restInvoker;
 
+    private RestCapabilities restCapabilities;
+
     public RestDataStore(ApplicationContext applicationContext, RestSerialization restSerialization, RestFilterBuilder restFilterBuilder,
                          RestEntityEventManager entityEventManager, RestSaveContextProcessor saveContextProcessor, FetchPlanRepository fetchPlanRepository,
-                         RestDsLoadedPropertiesInfoFactory loadedPropertiesInfoFactory) {
+                         RestDsLoadedPropertiesInfoFactory loadedPropertiesInfoFactory, FetchPlanSerialization fetchPlanSerialization) {
         this.applicationContext = applicationContext;
         this.restSerialization = restSerialization;
         this.restFilterBuilder = restFilterBuilder;
@@ -63,6 +67,7 @@ public class RestDataStore extends AbstractDataStore {
         this.saveContextProcessor = saveContextProcessor;
         this.fetchPlanRepository = fetchPlanRepository;
         this.loadedPropertiesInfoFactory = loadedPropertiesInfoFactory;
+        this.fetchPlanSerialization = fetchPlanSerialization;
     }
 
     public RestInvoker getRestInvoker() {
@@ -75,7 +80,7 @@ public class RestDataStore extends AbstractDataStore {
         Object id = context.getId();
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
         String entityName = getEntityName(context.getEntityMetaClass());
-        String fetchPlan = getFetchPlan(context);
+        String fetchPlan = getFetchPlanNameOrJson(context.getFetchPlan());
         Object entity = null;
         if (id != null) {
             RestInvoker.LoadParams params = new RestInvoker.LoadParams(entityName, id, fetchPlan);
@@ -95,7 +100,7 @@ public class RestDataStore extends AbstractDataStore {
             }
         }
         if (entity != null) {
-            updateEntityState(entity, fetchPlan);
+            updateEntityState(entity, context.getFetchPlan());
             entityEventManager.publishEntityLoadingEvent(entity);
         }
         return entity;
@@ -105,7 +110,7 @@ public class RestDataStore extends AbstractDataStore {
     protected List<Object> loadAll(LoadContext<?> context) {
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
         String entityName = getEntityName(context.getEntityMetaClass());
-        String fetchPlan = getFetchPlan(context);
+        String fetchPlan = getFetchPlanNameOrJson(context.getFetchPlan());
 
         RestInvoker.LoadListParams params = new RestInvoker.LoadListParams(entityName,
                 getMaxResults(context.getQuery()),
@@ -117,19 +122,10 @@ public class RestDataStore extends AbstractDataStore {
         List<Object> entities = restSerialization.fromJsonCollection(json, entityClass);
 
         for (Object entity : entities) {
-            updateEntityState(entity, fetchPlan);
+            updateEntityState(entity, context.getFetchPlan());
             entityEventManager.publishEntityLoadingEvent(entity);
         }
         return entities;
-    }
-
-    private void updateEntityState(Object entity, @Nullable String fetchPlanName) {
-        MetaClass metaClass = metadata.getClass(entity);
-        FetchPlan fetchPlan = fetchPlanName == null ?
-            fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE) :
-            fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName);
-
-        updateEntityStateRecursive(entity, fetchPlan, new HashSet<>());
     }
 
     private void updateEntityState(Object entity, @Nullable FetchPlan fetchPlan) {
@@ -187,10 +183,22 @@ public class RestDataStore extends AbstractDataStore {
     }
 
     @Nullable
-    private String getFetchPlan(LoadContext<?> context) {
-        String fetchPlan = context.getFetchPlan() == null ?
-                null : StringUtils.defaultIfEmpty(context.getFetchPlan().getName(), null);
-        return fetchPlan;
+    private String getFetchPlanNameOrJson(@Nullable FetchPlan fetchPlan) {
+        if (fetchPlan == null)
+            return null;
+        else if (Strings.isNullOrEmpty(fetchPlan.getName())) {
+            if (restCapabilities.isInlineFetchPlanEnabled()) {
+                // optimize URL for frequent case with _base fetch plan
+                FetchPlan baseFetchPlan = fetchPlanRepository.getFetchPlan(fetchPlan.getEntityClass(), FetchPlan.BASE);
+                if (fetchPlan.contentEquals(baseFetchPlan))
+                    return FetchPlan.BASE;
+                else
+                    return fetchPlanSerialization.toJson(fetchPlan, this::getEntityName);
+            } else
+                throw new InvalidFetchPlanException(storeName);
+        } else {
+            return fetchPlan.getName();
+        }
     }
 
     private int getMaxResults(@Nullable LoadContext.Query query) {
@@ -332,6 +340,7 @@ public class RestDataStore extends AbstractDataStore {
     public void setName(String name) {
         storeName = name;
         restInvoker = applicationContext.getBean(RestInvoker.class, storeName);
+        restCapabilities = new RestCapabilities(restInvoker);
     }
 
     protected static class DummyTransactionContextState implements TransactionContextState {

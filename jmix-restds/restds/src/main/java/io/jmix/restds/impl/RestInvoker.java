@@ -171,7 +171,7 @@ public class RestInvoker implements InitializingBean {
             }
             rootNode.put("offset", params.offset());
             if (params.fetchPlan() != null) {
-                if (params.fetchPlan().startsWith("{")) {
+                if (isJsonObject(params.fetchPlan())) {
                     rootNode.set("fetchPlan", objectMapper.readTree(params.fetchPlan()));
                 } else {
                     rootNode.put("fetchPlan", params.fetchPlan());
@@ -308,6 +308,11 @@ public class RestInvoker implements InitializingBean {
 
     public RestAuthenticator getAuthenticator() {
         return authenticator;
+    }
+
+    private boolean isJsonObject(String s) {
+        String trimmed = s.trim();
+        return trimmed.startsWith("{") && trimmed.endsWith("}");
     }
 
     private static class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {

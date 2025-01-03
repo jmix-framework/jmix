@@ -65,6 +65,8 @@ public class RestControllerUtils {
     }
 
     /**
+     * Returns a fetch plan by name.
+     *
      * @param metaClass entity MetaClass
      * @param name fetch plan name (nullable)
      * @return a fetch plan by name, or null if name is null
@@ -85,6 +87,8 @@ public class RestControllerUtils {
     }
 
     /**
+     * Returns a fetch plan by name or deserializes it from JSON.
+     *
      * @param metaClass entity MetaClass
      * @param fetchPlanNameOrJson fetch plan name or JSON representation (nullable)
      * @return a fetch plan by name, or null if name is null
@@ -96,7 +100,7 @@ public class RestControllerUtils {
     public FetchPlan getFetchPlanByNameOrJson(MetaClass metaClass, @Nullable String fetchPlanNameOrJson) {
         if (fetchPlanNameOrJson == null)
             return null;
-        if (fetchPlanNameOrJson.trim().startsWith("{")) {
+        if (isJsonObject(fetchPlanNameOrJson)) {
             if (!restProperties.isInlineFetchPlanEnabled()) {
                 throw new RestAPIException("Inline fetch plans are disabled",
                         "Inline fetch plans are disabled. Use only named fetch plans.",
@@ -116,6 +120,11 @@ public class RestControllerUtils {
     public String transformJsonIfRequired(String entityName, @Nullable String modelVersion, JsonTransformationDirection direction, String json) {
         return Strings.isNullOrEmpty(modelVersion) ? json :
                 restJsonTransformations.getTransformer(entityName, modelVersion, direction).transformJson(json);
+    }
+
+    private boolean isJsonObject(String s) {
+        String trimmed = s.trim();
+        return trimmed.startsWith("{") && trimmed.endsWith("}");
     }
 }
 

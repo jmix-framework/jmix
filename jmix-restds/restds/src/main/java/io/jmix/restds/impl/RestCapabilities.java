@@ -23,6 +23,9 @@ import io.jmix.restds.exception.RestDataStoreAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Provides information about REST capabilities for a particular REST data store.
+ */
 public class RestCapabilities {
 
     private static final Logger log = LoggerFactory.getLogger(RestCapabilities.class);

@@ -23,6 +23,7 @@ import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.restds.annotation.RestDataStoreEntity;
+import io.jmix.restds.exception.InvalidFetchPlanException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -193,9 +194,8 @@ public class RestDataStore extends AbstractDataStore {
                     return FetchPlan.BASE;
                 else
                     return fetchPlanSerialization.toJson(fetchPlan, this::getEntityName);
-
             } else
-                return null;
+                throw new InvalidFetchPlanException(storeName);
         } else {
             return fetchPlan.getName();
         }

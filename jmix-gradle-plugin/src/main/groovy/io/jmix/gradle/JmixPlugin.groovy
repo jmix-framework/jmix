@@ -21,6 +21,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.tasks.Delete
 
 import java.util.jar.Manifest
 
@@ -97,6 +98,8 @@ class JmixPlugin implements Plugin<Project> {
         }
 
         project.task([type: ZipProject], 'zipProject')
+
+        registerCleanConfTask(project)
     }
 
     /**
@@ -151,5 +154,72 @@ class JmixPlugin implements Plugin<Project> {
             }
         }
         return result ?: 'unspecified'
+    }
+
+    private static void registerCleanConfTask(Project project) {
+        project.tasks.register('cleanConf', Delete) {
+            doFirst {
+                def resources = project.file("src/main/resources/")
+                if (resources.exists() && resources.isDirectory()) {
+                    def mainProperties = new Properties()
+                    project.file("src/main/resources/application.properties").withInputStream { mainProperties.load(it) }
+
+                    def confDir = resolveConfDir(project, mainProperties)
+
+                    project.logger.lifecycle("Delete directory: {}",  confDir)
+                    delete "${confDir}"
+                } else {
+                    return
+                }
+            }
+        }
+        project.pluginManager.withPlugin("org.springframework.boot") {
+            project.tasks.named("bootRun") {
+                dependsOn("cleanConf")
+            }
+        }
+    }
+
+    private static String resolveConfDir(Project project, Properties mainProperties) {
+        def profilesList = resolveActiveProfiles(project, mainProperties)
+
+        def confDir = null
+        if (!profilesList.isEmpty()) {
+            for (def profileName : profilesList) {
+                project.logger.debug("Check profile: {}", profileName)
+                def profilePropertyFilePath = "src/main/resources/application-%s.properties".formatted(profileName)
+                def profilePropertiesFile = project.file(profilePropertyFilePath)
+                if (profilePropertiesFile.exists()) {
+                    def profileProps = new Properties()
+                    project.file(profilePropertyFilePath).withInputStream { profileProps.load(it) }
+                    confDir = profileProps.getProperty("jmix.core.conf-dir") ?: profileProps.getProperty("jmix.core.confDir") ?: null
+                    if (confDir != null) {
+                        break
+                    }
+                }
+            }
+        }
+
+        if (confDir == null) {
+            confDir = mainProperties.getProperty("jmix.core.conf-dir") ?: mainProperties.getProperty("jmix.core.confDir") ?: "${project.rootDir}/.jmix/conf"
+        }
+
+        return confDir
+    }
+
+    private static List<String> resolveActiveProfiles(Project project, Properties mainProperties) {
+        String profiles
+        if (project.hasProperty("spring.profiles.active")) {
+            profiles = project.property("spring.profiles.active")
+        } else {
+            profiles = mainProperties.getProperty("spring.profiles.active") ?: null
+        }
+
+        def profilesList = []
+        if (profiles != null) {
+            def split = profiles.split(",")
+            profilesList = Arrays.stream(split).map { s -> s.trim().toLowerCase() }.toList().reverse()
+        }
+        return profilesList
     }
 }

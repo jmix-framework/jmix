@@ -159,17 +159,21 @@ class JmixPlugin implements Plugin<Project> {
     private static void registerCleanConfTask(Project project) {
         project.tasks.register('cleanConf', Delete) {
             doFirst {
-                def resources = project.file("src/main/resources/")
-                if (resources.exists() && resources.isDirectory()) {
-                    def mainProperties = new Properties()
-                    project.file("src/main/resources/application.properties").withInputStream { mainProperties.load(it) }
+                if (project.jmix.confDirCleanupEnabled) {
+                    def resources = project.file("src/main/resources/")
+                    if (resources.exists() && resources.isDirectory()) {
+                        def mainProperties = new Properties()
+                        project.file("src/main/resources/application.properties").withInputStream { mainProperties.load(it) }
 
-                    def confDir = resolveConfDir(project, mainProperties)
+                        def confDir = resolveConfDir(project, mainProperties)
 
-                    project.logger.lifecycle("Delete directory: {}",  confDir)
-                    delete "${confDir}"
+                        project.logger.lifecycle("Delete directory: {}", confDir)
+                        delete "${confDir}"
+                    } else {
+                        return
+                    }
                 } else {
-                    return
+                    project.logger.lifecycle("'conf' directory cleanup is disabled")
                 }
             }
         }

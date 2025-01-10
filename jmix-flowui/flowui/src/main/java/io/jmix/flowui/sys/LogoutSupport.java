@@ -43,15 +43,17 @@ public class LogoutSupport {
     }
 
     public void logout() {
-        if (authenticationContext != null) {
-            authenticationContext.logout();
-        } else {
-            // window's 'beforeunload' event is triggered by changing Page's location,
-            // so we need to remove 'beforeunload' event listener, because logout happens
-            // anyway, even if a user stops browser tab closing, as a result it breaks app
-            WebBrowserTools.allowBrowserTabClosing(UI.getCurrent())
-                    .then(jsonValue -> doLogout());
-        }
+        // window's 'beforeunload' event is triggered by changing Page's location,
+        // so we need to remove 'beforeunload' event listener, because logout happens
+        // anyway, even if a user stops browser tab closing, as a result it breaks app
+        WebBrowserTools.allowBrowserTabClosing(UI.getCurrent())
+                .then(jsonValue -> {
+                    if (authenticationContext != null) {
+                        authenticationContext.logout();
+                    } else {
+                        doLogout();
+                    }
+                });
     }
 
     protected void doLogout() {

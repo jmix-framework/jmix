@@ -107,7 +107,10 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     protected void onFilterValueChanged(ComponentValueChangeEvent<CustomField<V>, V> event) {
         updateQueryCondition(event.getValue());
-        apply();
+
+        if (event.isFromClient()) {
+            apply();
+        }
     }
 
     protected HorizontalLayout createRootComponent() {

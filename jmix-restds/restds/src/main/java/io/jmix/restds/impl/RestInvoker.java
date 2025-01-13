@@ -33,6 +33,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -101,6 +102,8 @@ public class RestInvoker implements InitializingBean {
 
         restClient = RestClient.builder()
                 .baseUrl(baseUrl)
+                .messageConverters(converters ->
+                        converters.add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8)))
                 .requestInterceptor(authenticator.getAuthenticationInterceptor())
                 .requestInterceptor(new LoggingClientHttpRequestInterceptor())
                 .build();

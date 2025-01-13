@@ -17,7 +17,6 @@
 package io.jmix.messagetemplates.impl;
 
 import freemarker.cache.StringTemplateLoader;
-import freemarker.core.ParseException;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.MapModel;
 import freemarker.template.*;
@@ -46,7 +45,10 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
     protected Version version;
     protected ObjectWrapper wrapper;
 
-    public MessageTemplatesGeneratorImpl(DataManager dataManager, MessageTemplateProperties messageTemplateProperties) {
+    protected Configuration defaultConfiguration;
+
+    public MessageTemplatesGeneratorImpl(DataManager dataManager,
+                                         MessageTemplateProperties messageTemplateProperties) {
         this.dataManager = dataManager;
         this.version = messageTemplateProperties.getFreemarkerVersion();
     }
@@ -66,6 +68,9 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
                 return super.wrap(obj);
             }
         };
+
+        defaultConfiguration = new Configuration(version);
+        defaultConfiguration.setDefaultEncoding("UTF-8");
     }
 
     @Override
@@ -85,11 +90,20 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
 
     @Override
     public String generateMessage(MessageTemplate template, Map<String, Object> parameters) {
+        return generateMessageInternal(template, parameters, defaultConfiguration);
+    }
+
+    protected String generateMessageInternal(MessageTemplate template, Map<String, Object> parameters,
+                                             Configuration configuration) {
         checkNotNullArgument(template);
         checkNotNullArgument(parameters);
+        com.google.common.base.Preconditions.checkState(
+                version.equals(configuration.getIncompatibleImprovements()),
+                "Incompatible version found for %s".formatted(configuration.getClass().getSimpleName())
+        );
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Template htmlTemplate = getHtmlTemplate(template);
+        Template htmlTemplate = getHtmlTemplate(template, configuration);
 
         try (Writer htmlWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
             htmlTemplate.process(parameters, htmlWriter);
@@ -114,16 +128,9 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
     }
 
     protected List<String> generateMessagesByTemplates(Collection<MessageTemplate> templates,
-                                                       Map<String, Object> parameters) {
+                                                       Map<String, Object> parameters, Configuration configuration) {
         return templates.stream()
-                .map(template -> generateMessage(template, parameters))
-                .toList();
-    }
-
-    protected List<String> generateMessagesByTemplateCodes(Collection<String> templateCodes,
-                                                           Map<String, Object> parameters) {
-        return templateCodes.stream()
-                .map(templateCode -> generateMessage(templateCode, parameters))
+                .map(template -> generateMessageInternal(template, parameters, configuration))
                 .toList();
     }
 
@@ -133,28 +140,18 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
                 .one();
     }
 
-    protected Template getHtmlTemplate(MessageTemplate template) {
+    protected Template getHtmlTemplate(MessageTemplate template, Configuration configuration) {
         StringTemplateLoader stringTemplateLoader = new StringTemplateLoader();
-        String templateName = template.getCode();
-        stringTemplateLoader.putTemplate(templateName, template.getContent());
+        String templateCode = template.getCode();
+        stringTemplateLoader.putTemplate(templateCode, template.getContent());
 
-        Configuration configuration = new Configuration(version);
         configuration.setTemplateLoader(stringTemplateLoader);
-        // TODO: kd, add default formatters from app props
-        configuration.setDefaultEncoding("UTF-8");
 
         Template htmlTemplate;
-        // TODO: kd, handle exceptions
         try {
-            htmlTemplate = configuration.getTemplate(templateName);
-        } catch (TemplateNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        } catch (MalformedTemplateNameException e) {
-            throw new RuntimeException(e);
+            htmlTemplate = configuration.getTemplate(templateCode);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Unable to load message template with code '%s'".formatted(templateCode));
         }
 
         htmlTemplate.setObjectWrapper(wrapper);
@@ -165,6 +162,7 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
 
         protected MessageTemplate template;
         protected Map<String, Object> params = new HashMap<>();
+        protected Configuration configuration = defaultConfiguration;
 
         @Override
         public SingleTemplateGenerator withTemplate(MessageTemplate template) {
@@ -175,6 +173,12 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
         @Override
         public SingleTemplateGenerator withTemplateCode(String templateCode) {
             template = getMessageTemplateByCode(templateCode);
+            return this;
+        }
+
+        @Override
+        public SingleTemplateGenerator withConfiguration(Configuration configuration) {
+            this.configuration = configuration;
             return this;
         }
 
@@ -193,7 +197,7 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
         @Override
         public String generate() {
             Preconditions.checkNotNullArgument(template);
-            return generateMessage(template, params);
+            return generateMessageInternal(template, params, configuration);
         }
     }
 
@@ -201,6 +205,7 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
 
         protected Collection<MessageTemplate> templates;
         protected Map<String, Object> params = new HashMap<>();
+        protected Configuration configuration = defaultConfiguration;
 
         @Override
         public MultiTemplateGenerator withTemplates(MessageTemplate... templates) {
@@ -214,6 +219,12 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
                     .map(MessageTemplatesGeneratorImpl.this::getMessageTemplateByCode)
                     .toList();
 
+            return this;
+        }
+
+        @Override
+        public MultiTemplateGenerator withConfiguration(Configuration configuration) {
+            this.configuration = configuration;
             return this;
         }
 
@@ -233,7 +244,7 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
         public List<String> generate() {
             Preconditions.checkNotNullArgument(templates);
             if (!templates.isEmpty()) {
-                return generateMessagesByTemplates(templates, params);
+                return generateMessagesByTemplates(templates, params, configuration);
             }
 
             return Collections.emptyList();
@@ -244,6 +255,7 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
 
         protected MessageTemplate template;
         protected Collection<Map<String, Object>> params = new ArrayList<>();
+        protected Configuration configuration = defaultConfiguration;
 
         @Override
         public MultiParamTemplateGenerator withTemplate(MessageTemplate template) {
@@ -258,6 +270,12 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
         }
 
         @Override
+        public MultiParamTemplateGenerator withConfiguration(Configuration configuration) {
+            this.configuration = configuration;
+            return this;
+        }
+
+        @Override
         public MultiParamTemplateGenerator addParams(Map<String, Object> params) {
             this.params.add(params);
             return this;
@@ -267,7 +285,7 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
         public List<String> generate() {
             Preconditions.checkNotNullArgument(template);
             return params.stream()
-                    .map(params -> generateMessage(template, params))
+                    .map(params -> generateMessageInternal(template, params, configuration))
                     .toList();
         }
     }

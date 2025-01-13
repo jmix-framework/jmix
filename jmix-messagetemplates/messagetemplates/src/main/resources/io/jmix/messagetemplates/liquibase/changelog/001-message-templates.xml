@@ -47,7 +47,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="CATEGORY" type="varchar(255)"/>
-            <column name="CONTENT" type="clob"/>
+            <column name="CONTENT" type="clob">
+                <constraints nullable="false"/>
+            </column>
             <column name="ATTRIBUTES" type="clob"/>
             <column name="ICON" type="varchar(255)"/>
         </createTable>

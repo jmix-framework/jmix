@@ -55,7 +55,7 @@ public class MessageTemplate {
     protected Integer type;
 
     @Lob
-    @Column(name = "CONTENT")
+    @Column(name = "CONTENT", nullable = false)
     protected String content;
 
     @OnDeleteInverse(DeletePolicy.UNLINK)

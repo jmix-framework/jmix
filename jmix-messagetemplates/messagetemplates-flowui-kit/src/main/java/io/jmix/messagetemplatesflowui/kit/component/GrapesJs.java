@@ -37,8 +37,8 @@ import java.util.*;
 /**
  * GrapesJS component is used to create HTML templates using a web editor. This implementation is based on
  * <a href="https://github.com/GrapesJS/grapesjs">GrapesJS JavaScript library</a>. <br/>
- * The component uses {@link GrapesJsBlock}s to build a template that can be reused. <br/>
- * The component supports {@link GrapesJsPlugin}s that can provide additional functionality such
+ * The component uses {@link GrapesJsBlock GrapesJsBlocks} to build a template that can be reused. <br/>
+ * The component supports {@link GrapesJsPlugin GrapesJsPlugins} that can provide additional functionality such
  * as additional settings, visual appearance or blocks.
  */
 @Tag("jmix-grapes-js")
@@ -111,7 +111,7 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
         Preconditions.checkArgument(plugins != null, "Null reference passed as parameter");
 
         if (plugins.isEmpty()) {
-            log.info("An empty collection is passed for adding {} to the {}",
+            log.debug("An empty collection is passed for adding {} to the {}",
                     GrapesJsPlugin.class.getSimpleName(), getClass().getSimpleName());
             return;
         }
@@ -156,7 +156,7 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
         Preconditions.checkArgument(blocks != null, "Null reference passed as parameter");
 
         if (blocks.isEmpty()) {
-            log.info("An empty collection is provided for adding {} to the {}",
+            log.debug("An empty collection is provided for adding {} to the {}",
                     GrapesJsBlock.class.getSimpleName(), getClass().getSimpleName());
             return;
         }
@@ -195,7 +195,7 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
     public void removeBlocks(Collection<String> blockIds) {
         Preconditions.checkArgument(blockIds != null, "Null reference passed as parameter");
         if (blocks.isEmpty()) {
-            log.info("An empty collection is provided for removing {} to the {}",
+            log.debug("An empty collection is provided for removing {} to the {}",
                     GrapesJsBlock.class.getSimpleName(), getClass().getSimpleName());
             return;
         }

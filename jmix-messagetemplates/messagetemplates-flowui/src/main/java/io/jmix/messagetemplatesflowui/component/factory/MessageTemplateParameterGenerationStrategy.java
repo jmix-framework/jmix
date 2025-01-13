@@ -47,7 +47,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @org.springframework.stereotype.Component("msgtmp_MessageTemplateParameterGenerationStrategy")
-public class MessageTemplateParameterGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
+public class MessageTemplateParameterGenerationStrategy extends AbstractComponentGenerationStrategy
+        implements Ordered {
 
     protected MessageParameterResolver messageParameterResolver;
 
@@ -113,7 +114,7 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
         dateTimeField.setDatatype(datatype);
         dateTimeField.setWidthFull();
 
-        if (parameter.getDefaultDateIsCurrent()) {
+        if (Boolean.TRUE.equals(parameter.getDefaultDateIsCurrent())) {
             LocalDateTime now = LocalDateTime.now();
             UiComponentUtils.setValue(dateTimeField, now);
         }
@@ -129,7 +130,7 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
         dateField.setDatatype(datatype);
         dateField.setWidthFull();
 
-        if (parameter.getDefaultDateIsCurrent()) {
+        if (Boolean.TRUE.equals(parameter.getDefaultDateIsCurrent())) {
             LocalDate now = LocalDate.now();
             UiComponentUtils.setValue(dateField, now);
         }
@@ -145,7 +146,7 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
         timeField.setDatatype(datatype);
         timeField.setWidthFull();
 
-        if (parameter.getDefaultDateIsCurrent()) {
+        if (Boolean.TRUE.equals(parameter.getDefaultDateIsCurrent())) {
             LocalTime now = LocalTime.now();
             UiComponentUtils.setValue(timeField, now);
         }

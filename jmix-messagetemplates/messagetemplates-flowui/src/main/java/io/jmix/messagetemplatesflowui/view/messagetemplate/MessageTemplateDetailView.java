@@ -26,6 +26,7 @@ import io.jmix.core.Sort;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
@@ -175,6 +176,15 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
     public void onMessageTemplateDcItemPropertyChange(ItemPropertyChangeEvent<MessageTemplate> event) {
         if ("type".equals(event.getProperty())) {
             updateContentAwareComponents();
+        }
+    }
+
+    @Subscribe
+    public void onValidation(ValidationEvent event) {
+        if (getEditedEntity().getContent() == null) {
+            event.addErrors(ValidationErrors.of(
+                    messageBundle.getMessage("emptyContentValidationMessage")
+            ));
         }
     }
 

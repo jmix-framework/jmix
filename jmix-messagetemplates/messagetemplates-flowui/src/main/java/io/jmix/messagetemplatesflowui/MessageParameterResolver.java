@@ -27,9 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.Date;
 import java.util.Map;
 
 @Component("msgtmp_MessageParameterResolver")
@@ -37,11 +35,11 @@ public class MessageParameterResolver {
 
     protected Map<ParameterType, Class<?>> primitiveParameterTypeMap = Map.of(
             ParameterType.BOOLEAN, Boolean.class,
-            ParameterType.DATE, LocalDate.class,
-            ParameterType.DATETIME, LocalDateTime.class,
+            ParameterType.DATE, Date.class,
+            ParameterType.DATETIME, Date.class,
             ParameterType.TEXT, String.class,
             ParameterType.NUMERIC, Double.class,
-            ParameterType.TIME, LocalTime.class
+            ParameterType.TIME, Date.class
     );
 
     protected ClassManager classManager;

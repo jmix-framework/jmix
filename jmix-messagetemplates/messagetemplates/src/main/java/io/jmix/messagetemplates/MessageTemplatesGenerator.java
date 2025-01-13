@@ -16,6 +16,7 @@
 
 package io.jmix.messagetemplates;
 
+import freemarker.template.Configuration;
 import io.jmix.messagetemplates.entity.MessageTemplate;
 
 import java.util.List;
@@ -135,6 +136,14 @@ public interface MessageTemplatesGenerator {
         SingleTemplateGenerator withTemplateCode(String templateCode);
 
         /**
+         * Sets the {@link Configuration} for message generation.
+         *
+         * @param configuration configuration for generating the message
+         * @return this
+         */
+        SingleTemplateGenerator withConfiguration(Configuration configuration);
+
+        /**
          * Sets the parameters for filling the template.
          *
          * @param params parameters map
@@ -182,6 +191,14 @@ public interface MessageTemplatesGenerator {
         MultiTemplateGenerator withTemplateCodes(String... templateCodes);
 
         /**
+         * Sets the {@link Configuration} for message generation.
+         *
+         * @param configuration configuration for generating the message
+         * @return this
+         */
+        MultiTemplateGenerator withConfiguration(Configuration configuration);
+
+        /**
          * Sets the parameters for filling the templates.
          *
          * @param params parameters map
@@ -227,6 +244,14 @@ public interface MessageTemplatesGenerator {
          * @return this
          */
         MultiParamTemplateGenerator withTemplateCode(String templateCode);
+
+        /**
+         * Sets the {@link Configuration} for message generation.
+         *
+         * @param configuration configuration for generating the message
+         * @return this
+         */
+        MultiParamTemplateGenerator withConfiguration(Configuration configuration);
 
         /**
          * Adds a parameter map to the collection of parameters for generating the messages.

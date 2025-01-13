@@ -300,6 +300,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(htmlView.fieldSetId) {
             id.get() == "fieldSetId"
             ariaLabel.get() == "ariaLabelString"
+            ariaLabelledBy.get() == "self"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
             enabled
@@ -308,7 +309,10 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             maxWidth == "120px"
             minHeight == "40px"
             minWidth == "80px"
+            element.themeList.containsAll(["badge", "primary", "small"])
+            title.get() == "ariaLabelTitle"
             visible
+            whiteSpace == HasText.WhiteSpace.PRE
             width == "100px"
             legendText == "Legend Text"
             content.count() == 2

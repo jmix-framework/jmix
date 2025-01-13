@@ -613,6 +613,7 @@
 
         <fieldSet id="fieldSetId"
                   ariaLabel="ariaLabelString"
+                  ariaLabelledBy="self"
                   classNames="cssClassName1, cssClassName2"
                   css="color: red;"
                   enabled="true"
@@ -621,7 +622,10 @@
                   maxWidth="120px"
                   minHeight="40px"
                   minWidth="80px"
+                  themeNames="badge, primary, small"
+                  title="ariaLabelTitle"
                   visible="true"
+                  whiteSpace="PRE"
                   width="100px"
                   legendText="Legend Text">
             <input id="nestedInput1"/>

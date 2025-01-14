@@ -43,10 +43,10 @@ import io.jmix.flowui.component.formatter.FormatterLoadFactory;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.validation.ValidatorLoadFactory;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.fragmentrenderer.FragmentRenderer;
 import io.jmix.flowui.kit.component.*;
 import io.jmix.flowui.kit.component.formatter.Formatter;
-import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.loader.PropertiesLoaderSupport;
 import io.jmix.flowui.xml.layout.loader.PropertyShortcutCombinationLoader;
@@ -554,7 +554,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                     // in this case, if you use the loader, required initializations and injections
                     // will not be performed
                     FragmentRenderer fragment = applicationContext.getBean(Fragments.class).create(
-                            ((ComponentLoader.ComponentContext) context).getView(),
+                            ((FragmentOwner) context.getOrigin()),
                             fragmentRendererClass.asSubclass(FragmentRenderer.class)
                     );
 

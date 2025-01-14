@@ -185,7 +185,6 @@ public class GenericFilterSupport {
                 SingleFilterComponentBase singleFilterComponent = ((SingleFilterComponentBase<?>) filterComponent);
                 String parameterName = singleFilterComponent.getParameterName();
                 valuesMap.put(parameterName, singleFilterComponent.getValue());
-                singleFilterComponent.setValue(configuration.getFilterComponentDefaultValue(parameterName));
             }
         }
 

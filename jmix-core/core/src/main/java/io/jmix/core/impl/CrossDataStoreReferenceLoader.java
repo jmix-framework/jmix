@@ -81,22 +81,12 @@ public class CrossDataStoreReferenceLoader {
             return;
         visited.add(fetchPlan);
 
-        String storeName = metaClass.getStore().getName();
-
         Class<?> entityClass = fetchPlan.getEntityClass();
         for (FetchPlanProperty fetchPlanProperty : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metadata.getClass(entityClass).getProperty(fetchPlanProperty.getName());
             if (metaProperty.getRange().isClass()) {
-                MetaClass propertyMetaClass = metaProperty.getRange().asClass();
-                if (!Objects.equals(propertyMetaClass.getStore().getName(), storeName)) {
-                    List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
-                    if (dependsOnProperties.size() == 0) {
-                        continue;
-                    }
-                    if (dependsOnProperties.size() > 1) {
-                        log.warn("More than 1 property is defined for attribute {} in DependsOnProperty annotation, skip handling cross-datastore reference", metaProperty);
-                        continue;
-                    }
+                MetaProperty cdsIdProperty = (MetaProperty) metaProperty.getAnnotations().get("jmix.crossDataStoreRefId");
+                if (cdsIdProperty != null) {
                     addCrossProperty(crossPropertiesMap, entityClass, metaProperty,
                             new CrossDataStoreProperty(metaProperty, fetchPlanProperty));
                 }

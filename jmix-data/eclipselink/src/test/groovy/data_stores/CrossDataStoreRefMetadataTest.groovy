@@ -26,7 +26,7 @@ class CrossDataStoreRefMetadataTest extends DataSpec {
     @Autowired
     Metadata metadata
 
-    def "test"() {
+    def "test CDS reference property meta-annotations"() {
         def metaClass = metadata.getClass(MainReport)
 
         when:
@@ -36,5 +36,35 @@ class CrossDataStoreRefMetadataTest extends DataSpec {
         then:
         cdsrProperty.getAnnotations().get("jmix.crossDataStoreRefId") == cdsrIdProperty
         cdsrIdProperty.getAnnotations().get("jmix.crossDataStoreRef") == cdsrProperty
+    }
+
+    def "test DTO reference property is not a CDS reference"() {
+        def metaClass = metadata.getClass(MainReport)
+
+        when:
+        def dtoProperty = metaClass.getProperty('testUuidDto')
+
+        then:
+        dtoProperty.getAnnotations().get("jmix.crossDataStoreRefId") == null
+    }
+
+    def "test method-based DTO reference property is not a CDS reference"() {
+        def metaClass = metadata.getClass(MainReport)
+
+        when:
+        def dtoProperty = metaClass.getProperty('methodBasedTestUuidDto')
+
+        then:
+        dtoProperty.getAnnotations().get("jmix.crossDataStoreRefId") == null
+    }
+
+    def "test method-based DTO reference property with DependsOn is not a CDS reference"() {
+        def metaClass = metadata.getClass(MainReport)
+
+        when:
+        def dtoProperty = metaClass.getProperty('methodBasedTestUuidDtoWithDependsOn')
+
+        then:
+        dtoProperty.getAnnotations().get("jmix.crossDataStoreRefId") == null
     }
 }

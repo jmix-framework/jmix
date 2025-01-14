@@ -17,6 +17,7 @@
 package io.jmix.core.impl;
 
 import com.google.common.base.Splitter;
+import io.jmix.core.Stores;
 import io.jmix.core.entity.annotation.*;
 import io.jmix.core.impl.scanning.EntityDetector;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
@@ -112,7 +113,10 @@ public class MetadataLoader {
         }
 
         // init cross-datastore references
-        if (metaProperty.getRange().isClass() && !Objects.equals(metaProperty.getStore().getName(), metaClass.getStore().getName())) {
+        if (metaProperty.getRange().isClass() &&
+                !Objects.equals(metaProperty.getStore().getName(), metaClass.getStore().getName())
+                && !Stores.NOOP.equals(metaProperty.getRange().asClass().getStore().getName())
+        ) {
             String dependsOnPropertiesStr = (String) metaProperty.getAnnotations().get("dependsOnProperties");
             if (dependsOnPropertiesStr != null) {
                 List<String> dependsOnProperties = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(dependsOnPropertiesStr);

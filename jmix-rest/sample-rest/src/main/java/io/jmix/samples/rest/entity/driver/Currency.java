@@ -20,6 +20,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
@@ -34,6 +35,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.UUID;
@@ -94,8 +96,9 @@ public class Currency {
     protected ModelEntity testModelEntity;
 
     @JmixProperty
+    @DependsOnProperties("name")
     public ModelEntity getMethodBasedReferenceProperty() {
-        return testModelEntity;
+        return ObjectUtils.isEmpty(name) ? null : testModelEntity;
     }
 
     @PostConstruct

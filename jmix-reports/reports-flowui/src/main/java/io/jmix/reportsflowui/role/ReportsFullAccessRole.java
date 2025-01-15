@@ -98,6 +98,7 @@ public interface ReportsFullAccessRole {
 	@EntityPolicy(entityClass = ReportInputParameter.class, actions = EntityPolicyAction.ALL)
 	@EntityPolicy(entityClass = ReportScreen.class, actions = EntityPolicyAction.ALL)
 	@EntityPolicy(entityClass = ReportValueFormat.class, actions = EntityPolicyAction.ALL)
+	@EntityPolicy(entityClass = ReportRole.class, actions = EntityPolicyAction.ALL)
 	void entityPolicy();
 
 	@EntityAttributePolicy(entityClass = Report.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
@@ -122,5 +123,6 @@ public interface ReportsFullAccessRole {
 	@EntityAttributePolicy(entityClass = ReportInputParameter.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	@EntityAttributePolicy(entityClass = ReportScreen.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	@EntityAttributePolicy(entityClass = ReportValueFormat.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+	@EntityAttributePolicy(entityClass = ReportRole.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	void entityAttributePolicy();
 }

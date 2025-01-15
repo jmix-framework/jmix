@@ -106,7 +106,8 @@ public final class UiComponentUtils {
         } else if (component instanceof Fragment<?> fragment) {
             return FragmentUtils.findComponent(fragment, id);
         } else if (UiComponentUtils.isContainer(component)) {
-            return UiComponentUtils.findComponent(component, id, UiComponentUtils::sameId);
+            return UiComponentUtils.findComponent(component, id,
+                    findFragment(component) == null ? UiComponentUtils::sameId : FragmentUtils::sameId);
         }
         return Optional.empty();
     }
@@ -499,6 +500,40 @@ public final class UiComponentUtils {
 
         Optional<Component> parent = component.getParent();
         return parent.map(UiComponentUtils::findView).orElse(null);
+    }
+
+    /**
+     * Returns a fragment which the passed component is attached.
+     *
+     * @param component the component to find a parent fragment
+     * @return a fragment to which the passed component is attached
+     * @throws IllegalStateException if a component isn't attached to a fragment
+     */
+    public static Fragment<?> getFragment(Component component) {
+        Fragment<?> fragment = findFragment(component);
+
+        if (fragment == null) {
+            throw new IllegalStateException("A component '%s' is not attached to a fragment"
+                    .formatted(component.getClass().getSimpleName()));
+        }
+
+        return fragment;
+    }
+
+    /**
+     * Returns a fragment to which the passed component is attached, {@code null} otherwise.
+     *
+     * @param component the component ti find a parent fragment
+     * @return a fragment to which the passed component is attached, {@code null} otherwise
+     */
+    @Nullable
+    public static Fragment<?> findFragment(Component component) {
+        if (component instanceof Fragment) {
+            return (Fragment<?>) component;
+        }
+
+        Optional<Component> parent = component.getParent();
+        return parent.map(UiComponentUtils::findFragment).orElse(null);
     }
 
     /**

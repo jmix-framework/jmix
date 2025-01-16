@@ -25,6 +25,7 @@ import io.jmix.core.cluster.ClusterApplicationEvent;
 import io.jmix.core.cluster.ClusterApplicationEventPublisher;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.sys.SessionHolder;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.view.View;
@@ -35,10 +36,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Sends application events that should be handled in the components (e.g. views). To enable handling
@@ -65,17 +63,21 @@ public class UiEventPublisher {
     private static final Logger log = LoggerFactory.getLogger(UiEventPublisher.class);
 
     protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
     protected SystemAuthenticator systemAuthenticator;
     protected ClusterApplicationEventPublisher clusterApplicationEventPublisher;
     protected SessionHolder sessionHolder;
 
     public UiEventPublisher(SystemAuthenticator systemAuthenticator,
                             ClusterApplicationEventPublisher clusterApplicationEventPublisher,
-                            SessionHolder sessionHolder, CurrentAuthentication currentAuthentication) {
+                            SessionHolder sessionHolder,
+                            CurrentAuthentication currentAuthentication,
+                            CurrentUserSubstitution currentUserSubstitution) {
         this.systemAuthenticator = systemAuthenticator;
         this.clusterApplicationEventPublisher = clusterApplicationEventPublisher;
         this.sessionHolder = sessionHolder;
         this.currentAuthentication = currentAuthentication;
+        this.currentUserSubstitution = currentUserSubstitution;
     }
 
     @EventListener
@@ -84,6 +86,8 @@ public class UiEventPublisher {
     }
 
     protected void publishEventForUsersInternal(ApplicationEvent event, @Nullable Collection<String> usernames) {
+        usernames = addCurrentUserIfNecessary(usernames);
+
         Map<String, List<VaadinSession>> userSessions = sessionHolder.getActiveSessionsForUsernames(usernames);
         sendEventToUserSessions(event, userSessions);
     }
@@ -161,6 +165,28 @@ public class UiEventPublisher {
     public void publishEventForUsers(ApplicationEvent event, @Nullable Collection<String> usernames) {
         UiUserEvent uiUserEvent = new UiUserEvent(this, event, usernames);
         clusterApplicationEventPublisher.publish(uiUserEvent);
+    }
+
+    @Nullable
+    protected Collection<String> addCurrentUserIfNecessary(@Nullable Collection<String> usernames) {
+        if (usernames == null || currentUserSubstitution.getSubstitutedUser() == null) {
+            return usernames;
+        }
+
+        String substitutedUsername = currentUserSubstitution.getSubstitutedUser().getUsername();
+        if (!usernames.contains(substitutedUsername)) {
+            return usernames;
+        }
+
+        // If substituted user in list, we should also send the event to the user who substitutes.
+        String currentUsername = currentAuthentication.getUser().getUsername();
+        if (!usernames.contains(currentUsername)) {
+            List<String> updatedUsernames = new ArrayList<>(usernames);
+            updatedUsernames.add(currentUsername);
+            return updatedUsernames;
+        }
+
+        return usernames;
     }
 
     /**

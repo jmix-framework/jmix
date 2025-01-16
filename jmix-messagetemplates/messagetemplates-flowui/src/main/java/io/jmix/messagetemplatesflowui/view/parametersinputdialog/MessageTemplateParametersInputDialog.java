@@ -91,6 +91,8 @@ public class MessageTemplateParametersInputDialog extends StandardView {
                 hasRequiredComponent.setRequired(true);
             }
 
+            defaultValueComponent.setVisible(!Boolean.TRUE.equals(parameter.getHidden()));
+
             if (defaultValueComponent instanceof HasLabel hasLabelComponent) {
                 hasLabelComponent.setLabel(parameter.getName());
             }

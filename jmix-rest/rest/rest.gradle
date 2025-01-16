@@ -43,6 +43,8 @@ dependencies {
     implementation 'io.swagger.core.v3:swagger-models-jakarta'
     implementation 'io.swagger.core.v3:swagger-core-jakarta'
 
+    testImplementation project(':oidc')
+    testImplementation project(':authserver')
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

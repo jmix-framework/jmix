@@ -73,10 +73,11 @@ public class RestOidcResourceServerBeforeInvocationEventListener {
 
     protected boolean shouldCheckRequest(ServletRequest request) {
         String requestURI = ((HttpServletRequest) request).getRequestURI();
+        String contextPath = ((HttpServletRequest) request).getContextPath();
         AntPathMatcher antPathMatcher = new AntPathMatcher();
 
         for (String urlPattern : REST_AUTHORIZED_URLS) {
-            if (antPathMatcher.match(urlPattern, requestURI)) {
+            if (antPathMatcher.match(contextPath + urlPattern, requestURI)) {
                 return true;
             }
         }

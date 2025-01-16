@@ -615,6 +615,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Subscribe
     protected void onValidation(ValidationEvent event) {
         validateBands(event.getErrors());
+        validateTemplate(event.getErrors());
     }
 
     @Subscribe
@@ -894,9 +895,15 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
     }
 
+    protected void validateTemplate(ValidationErrors validationErrors) {
+        if (getEditedEntity().getDefaultTemplate() == null) {
+            validationErrors.add(messageBundle.getMessage("validation.error.defaultTemplateNull"));
+        }
+    }
+
     protected void validateBands(ValidationErrors validationErrors) {
         if (getEditedEntity().getRootBand() == null) {
-            validationErrors.add(messageBundle.getMessage("error.rootBandNull"));
+            validationErrors.add(messageBundle.getMessage("validation.error.rootBandNull"));
         }
         if (CollectionUtils.isNotEmpty(getEditedEntity().getRootBandDefinition().getChildrenBandDefinitions())) {
             Multimap<String, BandDefinition> names = ArrayListMultimap.create();

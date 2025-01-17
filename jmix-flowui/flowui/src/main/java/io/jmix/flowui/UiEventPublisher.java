@@ -167,6 +167,18 @@ public class UiEventPublisher {
         clusterApplicationEventPublisher.publish(uiUserEvent);
     }
 
+    /**
+     * Adds the current user if the substituted user is in the list for event sending.
+     * <p>
+     * For instance, userA substitutes userB. UserA works on behalf of userB and sends a UI event (e.g.,
+     * marks as read an in-app notification from the add-on). The target user to receive this event is userB;
+     * however, userB does not have a user session because they are not logged in. UserA should receive this
+     * event, since they substitute userB and work on behalf of userB.
+     *
+     * @param usernames username list to send an event
+     * @return {@code null} if the provider collection is {@code null}, or a new collection with the current user
+     * or the same collection if no user was added
+     */
     @Nullable
     protected Collection<String> addCurrentUserIfNecessary(@Nullable Collection<String> usernames) {
         if (usernames == null || currentUserSubstitution.getSubstitutedUser() == null) {

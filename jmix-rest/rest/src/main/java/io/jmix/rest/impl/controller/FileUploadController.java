@@ -39,7 +39,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * REST API controller that is used for uploading files
  */
 @RestController("rest_FileUploadController")
-@RequestMapping(path = "/rest/files")
+@RequestMapping(path = "${jmix.rest.base-path}${jmix.rest.files-path}")
 public class FileUploadController {
 
     private static final Logger log = LoggerFactory.getLogger(FileUploadController.class);

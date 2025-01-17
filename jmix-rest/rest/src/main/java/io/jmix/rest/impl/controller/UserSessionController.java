@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController("rest_UserSessionController")
-@RequestMapping(path = "/rest/user-session")
+@RequestMapping(path = "${jmix.rest.base-path}${jmix.rest.user-session-path}")
 public class UserSessionController {
 
     @Autowired

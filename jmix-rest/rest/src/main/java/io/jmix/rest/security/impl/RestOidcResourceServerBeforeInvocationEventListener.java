@@ -21,23 +21,15 @@ import io.jmix.core.Messages;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.oidc.resourceserver.OidcResourceServerBeforeInvocationEvent;
 import io.jmix.rest.accesscontext.RestAccessContext;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.util.AntPathMatcher;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * A copy of {@link RestAsResourceServerBeforeInvocationEventListener} that works with OIDC add-on events.
  *
  * @see RestAsResourceServerBeforeInvocationEventListener
- *
- * TODO get rid of code duplication
  */
 public class RestOidcResourceServerBeforeInvocationEventListener {
 
@@ -45,15 +37,12 @@ public class RestOidcResourceServerBeforeInvocationEventListener {
     protected AccessManager accessManager;
     @Autowired
     protected Messages messages;
-
-    private static final Collection<String> REST_AUTHORIZED_URLS = Arrays.asList(
-            "/rest/entities/**", "/rest/services/**", "/rest/queries/**",
-            "/rest/messages/**", "/rest/metadata/**", "/rest/files/**",
-            "/rest/userInfo", "/rest/permissions", "/rest/user-session/locale");
+    @Autowired
+    protected RestAuthorizedUrlsRequestMatcher matcher;
 
     @EventListener(OidcResourceServerBeforeInvocationEvent.class)
     public void doListen(OidcResourceServerBeforeInvocationEvent event) {
-        if (shouldCheckRequest(event.getRequest())) {
+        if (matcher.isAuthorizedUrl(event.getRequest())) {
             RestAccessContext restAccessContext = new RestAccessContext();
             Authentication currentAuthentication = SecurityContextHelper.getAuthentication();
             try {
@@ -69,19 +58,5 @@ public class RestOidcResourceServerBeforeInvocationEventListener {
                 event.setErrorMessage(messages.getMessage("io.jmix.rest/restApiAccessDenied"));
             }
         }
-    }
-
-    protected boolean shouldCheckRequest(ServletRequest request) {
-        String requestURI = ((HttpServletRequest) request).getRequestURI();
-        String contextPath = ((HttpServletRequest) request).getContextPath();
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-
-        for (String urlPattern : REST_AUTHORIZED_URLS) {
-            if (antPathMatcher.match(contextPath + urlPattern, requestURI)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

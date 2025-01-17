@@ -30,7 +30,7 @@ import java.util.Map;
  * Controller that is used for service method invocations with the REST API
  */
 @RestController("rest_ServicesController")
-@RequestMapping(value = "/rest/services")
+@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.services-path}")
 public class ServicesController {
 
     @Autowired

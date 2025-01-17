@@ -1645,10 +1645,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected void templatesDataGridCreateAfterSaveHandler(DialogWindow.AfterCloseEvent<ReportTemplateDetailView> event) {
-        Report report = reportDc.getItem();
-        ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
-        if (defaultTemplate == null) {
-            report.setDefaultTemplate(event.getView().getEditedEntity());
+        if (event.closedWith(StandardOutcome.SAVE)) {
+            Report report = reportDc.getItem();
+            ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
+
+            if (defaultTemplate == null) {
+                report.setDefaultTemplate(event.getView().getEditedEntity());
+            }
         }
     }
 

@@ -16,7 +16,7 @@
 
 package io.jmix.securityflowui.impl.role.extractor;
 
-import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.security.impl.role.builder.extractor.ResourcePolicyExtractor;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
@@ -46,8 +46,7 @@ public class ViewPolicyExtractor implements ResourcePolicyExtractor {
                 resourcePolicies.add(resourcePolicy);
             }
             for (Class<?> viewClass : viewPolicyAnnotation.viewClasses()) {
-                ViewController viewControllerAnnotation = viewClass.getAnnotation(ViewController.class);
-                String viewId = viewControllerAnnotation.value();
+                String viewId = ViewDescriptorUtils.getInferredViewId(viewClass);
                 ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.SCREEN, viewId)
                         .withPolicyGroup(method.getName())
                         .build();

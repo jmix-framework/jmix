@@ -2,55 +2,16 @@ openapi: 3.0.1
 info:
   title: Jmix Generic REST API
   description: |2
-
-    ## Overview
-
-    Jmix Generic REST API provides the following functionality:
-
-    * Entities CRUD operations
-    * Execution of predefined JPQL queries
-    * Execution of exposed service methods
-    * Getting metadata (entities, fetch plans, enumerations, datatypes)
-    * Getting localized messages
-    * Getting current user permissions (roles, access to entities and attributes, specific policies)
-    * Getting attributes of the current user
-    * Working with files
-
-    The REST API is available at the `/rest/` URL, e.g. `http://localhost:8080/rest/entities/Order`
-
-    ## Authentication
-
-    ### Authentication using the OAuth 2.1 protocol
-
-    Jmix REST API uses the OAuth 2.1 authorization framework to protect the endpoints (https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-08).
+    The Jmix generic REST API provides access to data model entities and business services without writing REST controllers on the backend.
     
-    The authorization is implemented in the Authorization server add-on that supports authorization code grant, client credential grant and refresh token grant. See details in Jmix documentation.
-
-    Before accessing a protected resource, a user must get an authentication token. The obtained token must be provided with all subsequent requests in the `Authorization` header of the `Bearer` type, e.g.:
-
-    ```
-    GET /rest/entities/Order
-         Host: example.com
-         Authorization: Bearer 2YotnFZFEjr1zCsicMWpAA
-    ```
-
-    ### Anonymous access
-
-    If the request to a protected resource doesn't contain the `Authentication` header then the user will be authenticated with the anonymous session.
-    By default, anonymous access is forbidden. To enable it for a specific URL, add the URL pattern to the `jmix.rest.anonymous-url-patterns` application property.
-    Read more about the anonymous sessions in the Jmix documentation.
+    See <https://docs.jmix.io/jmix/rest> for more information.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: "2.1"
+  version: "2.4"
 servers:
   - url: /rest
-security:
-  - oauth2:
-      - rest-api
 tags:
-  - name: OAuth
-    description: Working with authentication tokens
   - name: Entities
     description: CRUD operations with entities
   - name: Queries
@@ -70,91 +31,6 @@ tags:
   - name: Documentation
     description: OpenAPI documentation
 paths:
-  /oauth2/token:
-    post:
-      tags:
-        - OAuth
-      summary: Get an authentication token
-      description: |
-        Gets an authentication token.
-
-        The endpoint is protected with the basic authentication. The request must contain an `Authorization`
-        header for basic authentication with REST API client credentials. Please note that client credentials 
-        are not the same as the user credentials. Client means an application that uses the REST API.
-        The default client credentials are defined by the following application properties: `jmix.rest.client.id` and `jmix.rest.client.secret`.
-        User credentials must be passed in the request body. The request format must be `application/x-www-form-urlencoded`.
-
-        To disable refresh tokens for the client, set `password,external` value to the
-        `jmix.security.oauth2.client-authorized-grant-types` application property.
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              properties:
-                grant_type:
-                  type: string
-                  description: OAuth grant type. Should be set to "password"
-                  default: password
-                username:
-                  type: string
-                  description: Jmix user login
-                  default: admin
-                password:
-                  type: string
-                  description: Jmix user password
-                  default: admin
-      responses:
-        200:
-          description: Successfully authenticated.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/token'
-        400:
-          description: Authentication failed, e.g. because of invalid username
-            or password
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/oauthError'
-        401:
-          description: Basic authentcation failed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/oauthError'
-      security:
-        - tokenEndpointBasic: []
-  /oauth/revoke:
-    post:
-      tags:
-        - OAuth
-      summary: Revoke an authentication token
-      description: |
-        Revokes an authentication token. The endpoint is protected with the basic authentication. The request must
-        contain an `Authorization` header for basic authentication with REST API client credentials. See the `/oauth/token`
-        endpoint documentation for more details.
-        When the refresh token is revoked, the correspondig access token is also revoked.
-        When the access token is revoked, the correspondding refresh token is also revoked.
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              properties:
-                token:
-                  type: string
-                  description: The token to be revoked.
-                token_type_hint:
-                  type: string
-                  description: |
-                    A hint about the type of the token submitted for revocation. May be access_token or refresh_token.
-                    The parameter is optional.
-      responses:
-        200:
-          description: Success
-          content: {}
-      security:
-        - tokenEndpointBasic: []
   /entities/{entityName}:
     get:
       tags:
@@ -1773,14 +1649,3 @@ components:
           schema:
             $ref: '#/components/schemas/entity'
       required: false
-  securitySchemes:
-    oauth2:
-      type: oauth2
-      flows:
-        password:
-          tokenUrl: http://localhost:8080/rest/oauth/token
-          scopes:
-            rest-api: use REST API
-    tokenEndpointBasic:
-      type: http
-      scheme: basic

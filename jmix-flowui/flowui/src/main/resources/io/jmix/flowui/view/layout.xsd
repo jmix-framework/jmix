@@ -3143,6 +3143,7 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasClickNotifierAttributes"/>
                 <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

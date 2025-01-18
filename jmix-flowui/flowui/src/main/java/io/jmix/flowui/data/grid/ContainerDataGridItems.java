@@ -241,4 +241,10 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
 
         return eventBus;
     }
+
+    @Nullable
+    @Override
+    public Object getId(T item) {
+        return EntityValues.getId(item);
+    }
 }

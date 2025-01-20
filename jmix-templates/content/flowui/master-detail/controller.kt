@@ -108,6 +108,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     @Subscribe("cancelButton")
     fun onCancelButtonClick(event: ClickEvent<JmixButton>) {
         dataContext.clear()
+        ${detailDc}.setItem(null)
         ${detailDl}.load()
         updateControls(false)
     }

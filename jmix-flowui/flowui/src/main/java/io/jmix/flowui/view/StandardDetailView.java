@@ -26,6 +26,7 @@ import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
@@ -41,6 +42,7 @@ import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.model.*;
+import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.navigation.RouteSupport;
@@ -92,12 +94,17 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      */
     @Internal
     public StandardDetailView() {
+        addRestoreComponentsStateEventListener(this::onRestoreComponentsState);
         addBeforeShowListener(this::onBeforeShow);
         addReadyListener(this::onReady);
         addBeforeCloseListener(this::onBeforeClose);
         addAfterCloseListener(this::onAfterClose);
 
         setPreventBrowserTabClosing(true);
+    }
+
+    private void onRestoreComponentsState(RestoreComponentsStateEvent event) {
+        enableApplicationListeners();
     }
 
     private void onBeforeShow(BeforeShowEvent event) {
@@ -114,7 +121,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     private void onAfterClose(AfterCloseEvent event) {
-        removeApplicationListeners();
+        disableApplicationListeners();
         removeViewAttributes();
         unregisterBackNavigation();
     }
@@ -815,6 +822,20 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private void setModifiedAfterOpen(boolean entityModified) {
         this.modifiedAfterOpen = entityModified;
+    }
+
+    private void disableApplicationListeners() {
+        VaadinSession session = VaadinSession.getCurrent();
+        if (session != null) {
+            session.getAttribute(UiEventsManager.class).disableApplicationListenersFor(this);
+        }
+    }
+
+    private void enableApplicationListeners() {
+        VaadinSession session = VaadinSession.getCurrent();
+        if (session != null) {
+            session.getAttribute(UiEventsManager.class).enableApplicationListenersFor(this);
+        }
     }
 
     /**

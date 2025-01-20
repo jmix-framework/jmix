@@ -191,7 +191,10 @@ public class AppSettingsEntityView extends StandardView {
                 viewValidation.showSaveConfirmationDialog(this)
                         .onSave(() -> result.resume(navigateWithSave(navigationAction)))
                         .onDiscard(() -> result.resume(navigateWithDiscard(navigationAction)))
-                        .onCancel(result::fail);
+                        .onCancel(() -> {
+                            navigationAction.cancel();
+                            result.fail();
+                        });
             }
 
             event.preventClose(result);

@@ -427,11 +427,17 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                     getViewValidation().showSaveConfirmationDialog(this)
                             .onSave(() -> result.resume(navigateWithSave(navigationAction)))
                             .onDiscard(() -> result.resume(navigateWithDiscard(navigationAction)))
-                            .onCancel(result::fail);
+                            .onCancel(() -> {
+                                result.otherwise(() -> cancelNavigation(navigationAction));
+                                result.fail();
+                            });
                 } else {
                     getViewValidation().showUnsavedChangesDialog(this)
                             .onDiscard(() -> result.resume(navigateWithDiscard(navigationAction)))
-                            .onCancel(result::fail);
+                            .onCancel(() -> {
+                                result.otherwise(() -> cancelNavigation(navigationAction));
+                                result.fail();
+                            });
                 }
             } else {
                 if (useSaveConfirmation) {
@@ -457,6 +463,13 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     private OperationResult navigateWithSave(ContinueNavigationAction navigationAction) {
         return saveChanges(reloadSaved)
                 .compose(() -> navigate(navigationAction, StandardOutcome.SAVE.getCloseAction()));
+    }
+
+    private void cancelNavigation(ContinueNavigationAction navigationAction) {
+        // Because of using React Router, we need to call
+        // 'BeforeLeaveEvent.ContinueNavigationAction.cancel'
+        // explicitly, otherwise navigation process hangs
+        navigationAction.cancel();
     }
 
     private OperationResult navigate(ContinueNavigationAction navigationAction,

@@ -30,6 +30,17 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
         return 'jmix-grapes-js';
     }
 
+    static get properties() {
+        return {
+            readonly: {
+                type: Boolean,
+                observer: '_onReadOnlyChange',
+                value: false,
+                notify: true
+            }
+        }
+    }
+
     /** @private */
     _layout() {
         const container = document.createElement('div');
@@ -40,6 +51,23 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
         `;
 
         return container;
+    }
+
+    /** private */
+    _onReadOnlyChange(readonly) {
+        if (this._editor !== undefined) {
+            this._updateReadOnlyMode(this._editor);
+        }
+    }
+
+    /** private */
+    _updateReadOnlyMode(editor) {
+        const previewButton = editor.Panels.getButton('options', 'preview');
+
+        previewButton.set('active', this.readonly);
+        if (this.readonly) {
+            editor.getContainer().getElementsByClassName("gjs-off-prv")[0].style = "display: none";
+        }
     }
 
     /** @protected */
@@ -65,6 +93,10 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
                         this._editor.Panels.removeButton('options', 'gjs-open-import-template')
 
                         this._editor.on('update', () => {
+                            if (this.readonly) {
+                                return;
+                            }
+
                             if (this._pendingValueFromServer) {
                                 this._pendingValueFromServer = false;
                                 return;
@@ -77,6 +109,13 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
                             this.dispatchEvent(customEvent);
                         });
                     });
+            })
+            .then(() => {
+                this._editor.onReady(() => {
+                    if (this.readonly) {
+                        this._updateReadOnlyMode(this._editor);
+                    }
+                });
             });
     }
 
@@ -229,9 +268,9 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
 
         return result.replace('&amp;', '&')
             .replace('&lt;', '<')
-            .replace('&gt;', '>',)
-            .replace('&quot;', '\"',)
-            .replace('&#039;', '\'',);
+            .replace('&gt;', '>')
+            .replace('&quot;', '\"')
+            .replace('&#039;', '\'');
     }
 
     runCommand(command, params) {

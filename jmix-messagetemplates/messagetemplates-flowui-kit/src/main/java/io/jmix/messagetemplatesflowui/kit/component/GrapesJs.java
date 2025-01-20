@@ -284,6 +284,33 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
         callJsFunction("stopCommand", command, parameters);
     }
 
+    /**
+     * Sets the read-only mode of this {@code GrapesJs} to given mode. The user
+     * can't change the value when in read-only mode.
+     * <p>
+     * A {@code GrapesJs} with a visual component in read-only mode typically
+     * looks visually different to signal to the user that the value cannot be
+     * edited.
+     *
+     * @param readOnly a boolean value specifying whether the component is put
+     *                 read-only mode or not
+     */
+    public void setReadOnly(boolean readOnly) {
+        // TODO: kd, component attribute workflow -> xml load, xsd, studio
+        // TODO: kd, apply security constraints to grapes js for message templates detail view
+        getElement().setProperty("readonly", readOnly);
+    }
+
+    /**
+     * Returns whether this {@code GrapesJs} is in read-only mode or not.
+     *
+     * @return {@code false} if the user can modify the value, {@code true} if
+     * not.
+     */
+    boolean isReadOnly() {
+        return getElement().getProperty("readonly", false);
+    }
+
     @ClientCallable
     protected JsonValue requestPlugins() {
         return serializer.serialize(plugins);

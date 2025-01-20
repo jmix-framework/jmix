@@ -17,14 +17,13 @@
 package io.jmix.messagetemplatesflowui.view.messagetemplateparameter;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.UiComponentsGenerator;
@@ -74,6 +73,8 @@ public class MessageTemplateParameterDetailView extends StandardDetailView<Messa
     protected MessageTools messageTools;
     @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
+    @Autowired
+    protected AccessManager accessManager;
 
     @Autowired
     protected ObjectToStringConverter objectToStringConverter;
@@ -186,7 +187,21 @@ public class MessageTemplateParameterDetailView extends StandardDetailView<Messa
         }
 
         defaultValuePlaceholder.add(defaultValueComponent);
-        // TODO: kd, do we need secure check to change default value?
+        MetaClass metaClass = metadata.getClass(MessageTemplateParameter.class);
+
+        UiEntityContext uiEntityContext = new UiEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(uiEntityContext);
+
+        defaultValuePlaceholder.setVisible(uiEntityContext.isViewPermitted());
+        boolean editPermitted = uiEntityContext.isEditPermitted();
+
+        if (defaultValueComponent instanceof HasValue<?, ?> hasValueComponent) {
+            hasValueComponent.setReadOnly(!editPermitted);
+        } else if (defaultValueComponent instanceof HasEnabled hasEnabledComponent) {
+            hasEnabledComponent.setEnabled(editPermitted);
+        } else {
+            defaultValueComponent.setVisible(editPermitted);
+        }
     }
 
     protected void onDefaultValueComponentValueChanged(HasValue.ValueChangeEvent<?> event) {

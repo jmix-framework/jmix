@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,7 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+@NonNullApi
+package io.jmix.messagetemplatesflowui.role;
 
-group = 'io.jmix.messagetemplates'
-archivesBaseName = 'jmix-messagetemplates-flowui'
-
-dependencies {
-    api project(':messagetemplates')
-    api project(':messagetemplates-flowui-kit')
-    api project(':flowui')
-
-    compileOnly project(':security-flowui')
-
-    testImplementation project(':flowui-test-assist')
-}
+import org.springframework.lang.NonNullApi;

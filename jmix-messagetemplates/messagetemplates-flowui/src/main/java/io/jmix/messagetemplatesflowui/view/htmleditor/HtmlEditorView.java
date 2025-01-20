@@ -28,6 +28,8 @@ public class HtmlEditorView extends StandardView {
 
     @ViewComponent
     protected CodeEditor codeEditor;
+    @ViewComponent
+    protected JmixButton saveButton;
 
     public void setHtml(String html) {
         codeEditor.setValue(html);
@@ -35,6 +37,11 @@ public class HtmlEditorView extends StandardView {
 
     public String getHtml() {
         return codeEditor.getValue();
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        codeEditor.setReadOnly(readOnly);
+        saveButton.setEnabled(!readOnly);
     }
 
     @Subscribe("saveButton")

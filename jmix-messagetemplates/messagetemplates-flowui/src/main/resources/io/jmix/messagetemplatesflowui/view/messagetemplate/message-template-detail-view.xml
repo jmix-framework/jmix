@@ -97,8 +97,6 @@
                         <button action="parametersDataGrid.create"/>
                         <button action="parametersDataGrid.edit"/>
                         <button action="parametersDataGrid.remove"/>
-                        <!--                            <button action="inputParametersDataGrid.up"/>-->
-                        <!--                            <button action="inputParametersDataGrid.down"/>-->
                     </hbox>
                     <dataGrid id="parametersDataGrid" dataContainer="parametersDc"
                               minHeight="20em"

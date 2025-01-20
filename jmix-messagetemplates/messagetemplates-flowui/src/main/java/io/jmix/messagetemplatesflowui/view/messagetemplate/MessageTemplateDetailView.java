@@ -20,11 +20,11 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.CoreProperties;
-import io.jmix.core.DataManager;
-import io.jmix.core.Sort;
+import io.jmix.core.*;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiProperties;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
@@ -52,6 +52,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @ViewController("msgtmp_MessageTemplate.detail")
 @ViewDescriptor("message-template-detail-view.xml")
 @EditedEntityContainer("messageTemplateDc")
+@DialogMode(minWidth = "20em")
 public class MessageTemplateDetailView extends StandardDetailView<MessageTemplate> {
 
     @ViewComponent
@@ -71,11 +72,22 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
     protected DialogWindows dialogWindows;
     @Autowired
     protected Downloader downloader;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected AccessManager accessManager;
 
     @Autowired
     protected UiProperties uiProperties;
     @Autowired
     protected CoreProperties coreProperties;
+
+    protected boolean isEditPermitted;
+
+    @Subscribe
+    public void onInit(InitEvent event) {
+        applySecurityConstraints();
+    }
 
     @Subscribe
     public void onInitEntity(InitEntityEvent<MessageTemplate> event) {
@@ -89,6 +101,16 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
         initGrapesJsEditor();
 
         updateContentAwareComponents();
+    }
+
+    protected void applySecurityConstraints() {
+        MetaClass metaClass = metadata.getClass(MessageTemplate.class);
+
+        UiEntityContext uiEntityContext = new UiEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(uiEntityContext);
+
+        isEditPermitted = uiEntityContext.isEditPermitted();
+        importTemplateField.setEnabled(isEditPermitted);
     }
 
     protected void initComponents() {
@@ -156,6 +178,7 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
 
     protected void htmlEditorViewConfigurer(HtmlEditorView view) {
         view.setHtml(getEditedEntity().getContent());
+        view.setReadOnly(!isEditPermitted);
     }
 
     @Subscribe("viewBtn")

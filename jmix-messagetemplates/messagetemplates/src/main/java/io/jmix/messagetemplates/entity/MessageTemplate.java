@@ -17,12 +17,15 @@
 package io.jmix.messagetemplates.entity;
 
 import io.jmix.core.DeletePolicy;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.data.DdlGeneration;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -32,7 +35,7 @@ import java.util.UUID;
 @Entity(name = "msgtmp_MessageTemplate")
 @JmixEntity
 @Table(name = "MSGTMP_MESSAGE_TEMPLATE", indexes = {
-        @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_UNQ_CODE", columnList = "CODE", unique = true),
+        @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_UNQ_CODE", columnList = "CODE, SYS_TENANT_ID", unique = true),
         @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_GROUP", columnList = "GROUP_ID")
 })
 public class MessageTemplate {
@@ -47,7 +50,7 @@ public class MessageTemplate {
     protected String name;
 
     @NotNull
-    @Column(name = "CODE", nullable = false, unique = true)
+    @Column(name = "CODE", nullable = false)
     protected String code;
 
     @NotNull
@@ -66,6 +69,11 @@ public class MessageTemplate {
     @Composition
     @OneToMany(mappedBy = "template")
     protected List<MessageTemplateParameter> parameters;
+
+    @SystemLevel
+    @Column(name = "SYS_TENANT_ID")
+    @TenantId
+    protected String sysTenantId;
 
     public UUID getId() {
         return id;
@@ -121,6 +129,14 @@ public class MessageTemplate {
 
     public void setParameters(List<MessageTemplateParameter> parameters) {
         this.parameters = parameters;
+    }
+
+    public String getSysTenantId() {
+        return sysTenantId;
+    }
+
+    public void setSysTenantId(String sysTenantId) {
+        this.sysTenantId = sysTenantId;
     }
 
     @InstanceName

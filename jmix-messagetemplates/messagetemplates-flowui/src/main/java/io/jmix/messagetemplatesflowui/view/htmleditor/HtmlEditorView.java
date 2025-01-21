@@ -24,12 +24,14 @@ import io.jmix.flowui.view.*;
 @ViewController("msgtmp_HtmlEditorView")
 @ViewDescriptor("html-editor-view.xml")
 @DialogMode(width = "75em", height = "45em", resizable = true)
-public class HtmlEditorView extends StandardView {
+public class HtmlEditorView extends StandardView implements ReadOnlyAwareView {
 
     @ViewComponent
     protected CodeEditor codeEditor;
     @ViewComponent
     protected JmixButton saveButton;
+
+    protected boolean readOnly;
 
     public void setHtml(String html) {
         codeEditor.setValue(html);
@@ -39,9 +41,18 @@ public class HtmlEditorView extends StandardView {
         return codeEditor.getValue();
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
     public void setReadOnly(boolean readOnly) {
-        codeEditor.setReadOnly(readOnly);
-        saveButton.setEnabled(!readOnly);
+        if (this.readOnly != readOnly) {
+            this.readOnly = readOnly;
+
+            codeEditor.setReadOnly(readOnly);
+            saveButton.setEnabled(!readOnly);
+        }
     }
 
     @Subscribe("saveButton")

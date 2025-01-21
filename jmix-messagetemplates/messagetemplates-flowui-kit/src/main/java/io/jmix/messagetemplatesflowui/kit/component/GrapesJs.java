@@ -296,8 +296,6 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
      *                 read-only mode or not
      */
     public void setReadOnly(boolean readOnly) {
-        // TODO: kd, component attribute workflow -> xml load, xsd, studio
-        // TODO: kd, apply security constraints to grapes js for message templates detail view
         getElement().setProperty("readonly", readOnly);
     }
 

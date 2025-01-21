@@ -16,20 +16,21 @@
 
 package io.jmix.messagetemplates.entity;
 
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 @Entity(name = "msgtmp_MessageTemplateGroup")
 @JmixEntity
-@Table(name = "MSGTMP_MESSAGE_TEMPLATE_GROUP")
+@Table(name = "MSGTMP_MESSAGE_TEMPLATE_GROUP", indexes = {
+        @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_GROUP_UNQ_NAME", columnList = "NAME, SYS_TENANT_ID", unique = true)
+})
 public class MessageTemplateGroup {
 
     @Id
@@ -41,6 +42,11 @@ public class MessageTemplateGroup {
     @Column(name = "NAME", nullable = false)
     @InstanceName
     protected String name;
+
+    @SystemLevel
+    @Column(name = "SYS_TENANT_ID")
+    @TenantId
+    protected String sysTenantId;
 
     public UUID getId() {
         return id;
@@ -56,5 +62,13 @@ public class MessageTemplateGroup {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSysTenantId() {
+        return sysTenantId;
+    }
+
+    public void setSysTenantId(String sysTenantId) {
+        this.sysTenantId = sysTenantId;
     }
 }

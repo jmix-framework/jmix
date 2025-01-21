@@ -41,6 +41,8 @@ public class GrapesJsLoader extends AbstractComponentLoader<GrapesJs> {
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
 
+        loadBoolean(element, "readOnly", resultComponent::setReadOnly);
+
         loadPlugins(resultComponent, element);
         loadBlocks(resultComponent, element);
     }

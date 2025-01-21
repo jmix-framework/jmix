@@ -45,7 +45,7 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
     _layout() {
         const container = document.createElement('div');
         container.className = 'jmix-grapes-js-container';
-        container.style = 'height: 100%'
+        container.style = 'height: 100%';
         container.innerHTML = `
             <div part="content"></div>
         `;
@@ -53,14 +53,14 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
         return container;
     }
 
-    /** private */
+    /** @private */
     _onReadOnlyChange(readonly) {
         if (this._editor !== undefined) {
             this._updateReadOnlyMode(this._editor);
         }
     }
 
-    /** private */
+    /** @private */
     _updateReadOnlyMode(editor) {
         const previewButton = editor.Panels.getButton('options', 'preview');
 
@@ -77,46 +77,48 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
         this.appendChild(this._layout());
 
         this.$server.requestPlugins()
-            .then(plugins => {
-                this.loadPlugins(plugins)
-                    .then(() => {
-                        this._editor = this._initEditor({
-                            plugins: this.getPluginInstances(),
-                            pluginsOpts: this.getPluginOpts()
-                        });
+            .then(plugins => this.loadPlugins(plugins))
+            .then(() => this._createEditor());
+    }
 
-                        this._editor.Panels.getButton('options', 'sw-visibility')
-                            .set('active', 1);
-                        this._editor.Panels.getButton('views', 'open-blocks')
-                            .set('active', 1);
-                        this._editor.Panels.removeButton('options', 'export-template');
-                        this._editor.Panels.removeButton('options', 'gjs-open-import-template')
+    /** @private */
+    _createEditor() {
+        this._editor = this._initEditor({
+            plugins: this.getPluginInstances(),
+            pluginsOpts: this.getPluginOpts()
+        });
 
-                        this._editor.on('update', () => {
-                            if (this.readonly) {
-                                return;
-                            }
+        this._editor.Panels.getButton('options', 'sw-visibility')
+            .set('active', 1);
+        this._editor.Panels.getButton('views', 'open-blocks')
+            .set('active', 1);
+        this._editor.Panels.removeButton('options', 'export-template');
+        this._editor.Panels.removeButton('options', 'gjs-open-import-template');
 
-                            if (this._pendingValueFromServer) {
-                                this._pendingValueFromServer = false;
-                                return;
-                            }
+        this._editor.on('update', () => {
+            if (this.readonly) {
+                return;
+            }
 
-                            const customEvent = new CustomEvent('value-changed',
-                                {detail: {value: this.getHtml(this._editor)}}
-                            );
+            if (this._pendingValueFromServer) {
+                this._pendingValueFromServer = false;
+                return;
+            }
 
-                            this.dispatchEvent(customEvent);
-                        });
-                    });
-            })
-            .then(() => {
-                this._editor.onReady(() => {
-                    if (this.readonly) {
-                        this._updateReadOnlyMode(this._editor);
-                    }
-                });
-            });
+            const customEvent = new CustomEvent('value-changed',
+                {detail: {value: this.getHtml(this._editor)}}
+            );
+
+            this.dispatchEvent(customEvent);
+        });
+
+        // delayed update of readonly state
+        // (otherwise state change error before initialization)
+        this._editor.onReady(() => {
+            if (this.readonly) {
+                this._updateReadOnlyMode(this._editor);
+            }
+        });
     }
 
     /** @private */
@@ -146,6 +148,7 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
         });
     }
 
+    /** @private */
     async loadPlugins(plugins) {
         for (let plugin of plugins) {
             let loadedPlugin = await this.loadPlugin(plugin.name);

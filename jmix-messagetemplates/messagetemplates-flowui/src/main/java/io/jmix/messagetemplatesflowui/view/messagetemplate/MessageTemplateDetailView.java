@@ -211,6 +211,13 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
         }
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        grapesJsEditor.setReadOnly(readOnly);
+    }
+
     protected void updateContentAwareComponents() {
         boolean isHtmlType = TemplateType.HTML.equals(getEditedEntity().getType());
 

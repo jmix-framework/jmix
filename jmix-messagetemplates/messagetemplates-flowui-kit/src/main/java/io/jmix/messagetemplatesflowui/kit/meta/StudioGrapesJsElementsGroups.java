@@ -29,7 +29,7 @@ public interface StudioGrapesJsElementsGroups {
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/elementsgroup/plugins.svg",
-            target = {"io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs"}
+            target = {"io.jmix.messagetemplatesflowui.kit.component.GrapesJs"}
     )
     void plugins();
 
@@ -40,7 +40,7 @@ public interface StudioGrapesJsElementsGroups {
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/elementsgroup/blocks.svg",
-            target = {"io.jmix.messagetemplatesflowui.kit.component.JmixGrapesJs"}
+            target = {"io.jmix.messagetemplatesflowui.kit.component.GrapesJs"}
     )
     void blocks();
 }

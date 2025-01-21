@@ -29,6 +29,8 @@
                         <xs:element name="blocks" type="blocksType"/>
                     </xs:sequence>
 
+                    <xs:attribute name="readOnly" type="xs:boolean"/>
+
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
                 </xs:extension>

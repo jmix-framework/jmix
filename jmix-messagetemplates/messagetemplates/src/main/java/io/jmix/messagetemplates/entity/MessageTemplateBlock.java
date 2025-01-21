@@ -16,7 +16,9 @@
 
 package io.jmix.messagetemplates.entity;
 
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
@@ -27,7 +29,7 @@ import java.util.UUID;
 @Entity(name = "msgtmp_MessageTemplateBlock")
 @JmixEntity
 @Table(name = "MSGTMP_MESSAGE_TEMPLATE_BLOCK", indexes = {
-        @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_BLOCK_UNQ_NAME", columnList = "NAME", unique = true)
+        @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_BLOCK_UNQ_NAME", columnList = "NAME, SYS_TENANT_ID", unique = true)
 })
 public class MessageTemplateBlock {
 
@@ -38,7 +40,7 @@ public class MessageTemplateBlock {
 
     @InstanceName
     @NotNull
-    @Column(name = "NAME", nullable = false, unique = true)
+    @Column(name = "NAME", nullable = false)
     protected String name;
 
     @NotNull
@@ -58,6 +60,11 @@ public class MessageTemplateBlock {
 
     @Column(name = "ICON")
     protected String icon;
+
+    @SystemLevel
+    @Column(name = "SYS_TENANT_ID")
+    @TenantId
+    protected String sysTenantId;
 
     public UUID getId() {
         return id;
@@ -113,5 +120,13 @@ public class MessageTemplateBlock {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public String getSysTenantId() {
+        return sysTenantId;
+    }
+
+    public void setSysTenantId(String sysTenantId) {
+        this.sysTenantId = sysTenantId;
     }
 }

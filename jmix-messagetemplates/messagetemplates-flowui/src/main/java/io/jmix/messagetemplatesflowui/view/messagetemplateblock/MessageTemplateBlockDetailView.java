@@ -25,6 +25,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.view.*;
 import io.jmix.messagetemplates.entity.MessageTemplateBlock;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
@@ -40,6 +41,8 @@ public class MessageTemplateBlockDetailView extends StandardDetailView<MessageTe
 
     @ViewComponent
     protected GrapesJs grapesJsEditor;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
@@ -92,5 +95,14 @@ public class MessageTemplateBlockDetailView extends StandardDetailView<MessageTe
         String name = icon.name().toLowerCase(Locale.ENGLISH)
                 .replace('_', '-');
         return "vaadin:%s".formatted(name);
+    }
+
+    @Subscribe
+    public void onValidation(ValidationEvent event) {
+        if (getEditedEntity().getContent() == null) {
+            event.addErrors(ValidationErrors.of(
+                    messageBundle.getMessage("emptyContentValidationMessage")
+            ));
+        }
     }
 }

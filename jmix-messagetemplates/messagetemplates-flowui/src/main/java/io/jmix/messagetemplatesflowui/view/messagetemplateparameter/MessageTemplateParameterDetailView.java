@@ -16,35 +16,44 @@
 
 package io.jmix.messagetemplatesflowui.view.messagetemplateparameter;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasEnabled;
-import com.vaadin.flow.component.HasLabel;
-import com.vaadin.flow.component.HasValue;
+import com.google.common.base.Strings;
+import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.grid.editor.EditorCloseEvent;
+import com.vaadin.flow.component.grid.editor.EditorOpenEvent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.Notifications;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.UiComponentsGenerator;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.editor.EditComponentGenerationContext;
+import io.jmix.flowui.component.tabsheet.JmixTabSheet;
+import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer.ItemPropertyChangeEvent;
 import io.jmix.flowui.view.*;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
 import io.jmix.messagetemplates.entity.ParameterType;
+import io.jmix.messagetemplatesflowui.MessageParameterLocalizationSupport;
 import io.jmix.messagetemplatesflowui.MessageParameterResolver;
 import io.jmix.messagetemplatesflowui.ObjectToStringConverter;
 import io.jmix.messagetemplatesflowui.component.factory.MessageTemplateParameterGenerationContext;
+import io.jmix.messagetemplatesflowui.view.messagetemplateparameter.model.MessageTemplateParameterLocalization;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @ViewController("msgtmp_MessageTemplateParameter.detail")
 @ViewDescriptor("message-template-parameter-detail-view.xml")
@@ -61,7 +70,14 @@ public class MessageTemplateParameterDetailView extends StandardDetailView<Messa
     @ViewComponent
     protected HorizontalLayout defaultValuePlaceholder;
     @ViewComponent
+    protected JmixTabSheet mainTabSheet;
+    @ViewComponent
     protected MessageBundle messageBundle;
+
+    @ViewComponent
+    protected DataGrid<MessageTemplateParameterLocalization> localizationDataGrid;
+    @ViewComponent
+    protected CollectionContainer<MessageTemplateParameterLocalization> parameterLocalizationDc;
 
     @Autowired
     protected Metadata metadata;
@@ -75,21 +91,43 @@ public class MessageTemplateParameterDetailView extends StandardDetailView<Messa
     protected UiComponentsGenerator uiComponentsGenerator;
     @Autowired
     protected AccessManager accessManager;
+    @Autowired
+    protected Notifications notifications;
+    @Autowired
+    protected UiComponents uiComponents;
+    @Autowired
+    protected ViewValidation viewValidation;
 
     @Autowired
     protected ObjectToStringConverter objectToStringConverter;
     @Autowired
     protected MessageParameterResolver messageParameterResolver;
+    @Autowired
+    protected MessageParameterLocalizationSupport messageParameterLocalizationSupport;
 
     @Subscribe
     public void onInit(InitEvent event) {
         initMetaClassField();
         initEnumerationField();
+        initLocalizationDataGrid();
     }
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         updateLayoutByParameterType(getEditedEntity().getType());
+        setupParameterLocalization();
+    }
+
+    protected void setupParameterLocalization() {
+        if (Strings.isNullOrEmpty(getEditedEntity().getLocalization())) {
+            return;
+        }
+
+        List<MessageTemplateParameterLocalization> localization =
+                messageParameterLocalizationSupport.convertLocalizationsToLocalizationEntities(getEditedEntity().getLocalization());
+
+        parameterLocalizationDc.setItems(localization);
+        localizationDataGrid.getActions().forEach(Action::refreshState);
     }
 
     @Subscribe
@@ -243,5 +281,147 @@ public class MessageTemplateParameterDetailView extends StandardDetailView<Messa
                                 || ParameterType.DATETIME.equals(type)
                                 || ParameterType.TIME.equals(type))
                 .orElse(false);
+    }
+
+    protected void initLocalizationDataGrid() {
+        Shortcuts.addShortcutListener(localizationDataGrid, this::handleGridEnterPress, Key.ENTER)
+                .listenOn(localizationDataGrid)
+                .allowBrowserDefault();
+        Shortcuts.addShortcutListener(localizationDataGrid, this::handleGridEscapePress, Key.ESCAPE)
+                .listenOn(localizationDataGrid)
+                .allowBrowserDefault();
+
+        localizationDataGrid.getActions().forEach(this::resetActionText);
+        localizationDataGrid.getEditor().setColumnEditorComponent("locale", this::generateLocaleComponent);
+    }
+
+    protected void handleGridEnterPress() {
+        if (localizationDataGrid.getEditor().isOpen()) {
+            localizationDataGrid.getEditor().save();
+        }
+    }
+
+    protected void handleGridEscapePress() {
+        if (localizationDataGrid.getEditor().isOpen()) {
+            localizationDataGrid.getEditor().cancel();
+        }
+    }
+
+    protected void resetActionText(Action action) {
+        action.setDescription(action.getText());
+        action.setText(null);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected Component generateLocaleComponent(
+            EditComponentGenerationContext<MessageTemplateParameterLocalization> context) {
+        JmixComboBox localesComboBox = uiComponents.create(JmixComboBox.class);
+
+        List<String> filteredLocales =
+                messageParameterLocalizationSupport.getUnselectedLocales(parameterLocalizationDc.getItems());
+        localesComboBox.setItems(filteredLocales);
+
+        localesComboBox.setWidthFull();
+        localesComboBox.setStatusChangeHandler(context.getStatusHandler());
+        localesComboBox.setValueSource(context.getValueSourceProvider().getValueSource("locale"));
+
+        return localesComboBox;
+    }
+
+    @Subscribe("localizationDataGrid.create")
+    public void onLocalizationDataGridCreate(ActionPerformedEvent event) {
+        MessageTemplateParameterLocalization entity = metadata.create(MessageTemplateParameterLocalization.class);
+        parameterLocalizationDc.getMutableItems().add(entity);
+        localizationDataGrid.select(entity);
+        localizationDataGrid.getEditor().editItem(entity);
+    }
+
+    @Subscribe("localizationDataGrid.edit")
+    protected void onLocalizationDataGridEdit(ActionPerformedEvent event) {
+        MessageTemplateParameterLocalization entity = localizationDataGrid.getSingleSelectedItem();
+
+        if (entity != null && !localizationDataGrid.getEditor().isOpen()) {
+            localizationDataGrid.getEditor().editItem(entity);
+        }
+    }
+
+    @Install(to = "localizationDataGrid.create", subject = "enabledRule")
+    public boolean localizationDataGridCreateEnabledRule() {
+        return parameterLocalizationDc.getItems().size()
+                != messageParameterLocalizationSupport.getAvailableLocalesCount()
+                && !localizationDataGrid.getEditor().isOpen();
+    }
+
+    @Install(to = "localizationDataGrid.edit", subject = "enabledRule")
+    public boolean localizationDataGridEditEnabledRule() {
+        return !localizationDataGrid.getEditor().isOpen();
+    }
+
+    @Install(to = "localizationDataGrid.remove", subject = "enabledRule")
+    public boolean localizationDataGridRemoveEnabledRule() {
+        return !localizationDataGrid.getEditor().isOpen();
+    }
+
+    @Install(to = "localizationDataGrid.@editor", subject = "openListener")
+    public void localizationDataGridEditorOpenListener(
+            EditorOpenEvent<MessageTemplateParameterLocalization> event) {
+        localizationDataGrid.getActions().forEach(Action::refreshState);
+    }
+
+    @Install(to = "localizationDataGrid.@editor", subject = "closeListener")
+    public void localizationDataGridEditorCloseListener(
+            EditorCloseEvent<MessageTemplateParameterLocalization> event) {
+        MessageTemplateParameterLocalization item = event.getItem();
+
+        if (Strings.isNullOrEmpty(item.getLocale()) || Strings.isNullOrEmpty(item.getName())
+                || isLocaleAlreadyDefined(item.getLocale())) {
+            parameterLocalizationDc.getMutableItems().remove(item);
+        }
+
+        localizationDataGrid.getActions().forEach(Action::refreshState);
+    }
+
+    protected boolean isLocaleAlreadyDefined(String currentLocale) {
+        return parameterLocalizationDc.getItems().stream()
+                .filter(locale -> locale.getLocale().equals(currentLocale))
+                .count() > 1;
+    }
+
+    @Subscribe
+    public void onValidation(ValidationEvent event) {
+        if (localizationDataGrid.getEditor().isOpen()) {
+            localizationDataGrid.getEditor().cancel();
+        }
+
+        if (mainTabSheet.getSelectedIndex() == 0) {
+            return;
+        }
+
+        mainTabSheet.setSelectedIndex(0);
+
+        ValidationErrors validationErrors = viewValidation.validateUiComponents(getContent());
+        if (!validationErrors.isEmpty()) {
+            event.addErrors(validationErrors);
+        }
+    }
+
+    @Subscribe
+    public void onBeforeSave(BeforeSaveEvent event) {
+        if (parameterLocalizationDc.getItems().isEmpty()) {
+            return;
+        }
+
+        String localization = parameterLocalizationDc.getItems().stream()
+                .map(messageParameterLocalizationSupport::convertLocalizationEntityToStringMapper)
+                .collect(Collectors.joining("\n"));
+
+        getEditedEntity().setLocalization(localization);
+    }
+
+    protected void showWarningNotification(String message) {
+        notifications.create(message)
+                .withType(Notifications.Type.WARNING)
+                .withCloseable(false)
+                .show();
     }
 }

@@ -28,10 +28,10 @@ import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
+import io.jmix.messagetemplatesflowui.MessageParameterLocalizationSupport;
 import io.jmix.messagetemplatesflowui.MessageParameterResolver;
 import io.jmix.messagetemplatesflowui.ObjectToStringConverter;
 import io.jmix.messagetemplatesflowui.component.factory.MessageTemplateParameterGenerationContext;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,6 +53,8 @@ public class MessageTemplateParametersInputDialog extends StandardView {
     protected ObjectToStringConverter objectToStringConverter;
     @Autowired
     protected MessageParameterResolver messageParameterResolver;
+    @Autowired
+    protected MessageParameterLocalizationSupport messageParameterLocalizationSupport;
     @Autowired
     protected ViewValidation viewValidation;
 
@@ -94,7 +96,8 @@ public class MessageTemplateParametersInputDialog extends StandardView {
             defaultValueComponent.setVisible(!Boolean.TRUE.equals(parameter.getHidden()));
 
             if (defaultValueComponent instanceof HasLabel hasLabelComponent) {
-                hasLabelComponent.setLabel(parameter.getName());
+                String localizedName = messageParameterLocalizationSupport.getLocalizedName(parameter);
+                hasLabelComponent.setLabel(localizedName);
             }
 
             if (MapUtils.isNotEmpty(parameters)

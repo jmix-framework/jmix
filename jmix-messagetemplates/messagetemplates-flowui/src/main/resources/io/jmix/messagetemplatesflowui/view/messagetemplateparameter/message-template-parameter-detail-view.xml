@@ -23,30 +23,61 @@
             <fetchPlan extends="_base"/>
             <loader/>
         </instance>
+        <collection id="parameterLocalizationDc"
+                    class="io.jmix.messagetemplatesflowui.view.messagetemplateparameter.model.MessageTemplateParameterLocalization"/>
     </data>
     <actions>
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
-        <formLayout id="form" dataContainer="messageTemplateParameterDc">
-            <textField id="nameField" property="name"/>
-            <textField id="aliasField" property="alias"/>
-            <select id="typeSelect" property="type"
-                    itemsEnum="io.jmix.messagetemplates.entity.ParameterType"/>
-            <checkbox id="hiddenCheckbox" property="hidden"/>
-            <checkbox id="requiredCheckbox" property="required"/>
-            <comboBox id="metaClassField" property="entityMetaClass"
-                      visible="false" required="true"/>
-            <comboBox id="enumerationField" property="enumerationClass"
-                      visible="false" required="true"/>
-            <checkbox id="defaultDateIsCurrentField" property="defaultDateIsCurrent"
-                      visible="false"/>
-            <hbox id="defaultValuePlaceholder"/>
-        </formLayout>
+        <tabSheet id="mainTabSheet" width="100%" minHeight="25em">
+            <tab id="generalTab" label="msg://mainTabSheet.detailsTab.label">
+                <formLayout id="form" dataContainer="messageTemplateParameterDc">
+                    <textField id="nameField" property="name"/>
+                    <textField id="aliasField" property="alias"/>
+                    <select id="typeSelect" property="type"
+                            itemsEnum="io.jmix.messagetemplates.entity.ParameterType"/>
+                    <checkbox id="hiddenCheckbox" property="hidden"/>
+                    <checkbox id="requiredCheckbox" property="required"/>
+                    <comboBox id="metaClassField" property="entityMetaClass"
+                              visible="false" required="true"/>
+                    <comboBox id="enumerationField" property="enumerationClass"
+                              visible="false" required="true"/>
+                    <checkbox id="defaultDateIsCurrentField" property="defaultDateIsCurrent"
+                              visible="false"/>
+                    <hbox id="defaultValuePlaceholder"/>
+                </formLayout>
+            </tab>
+            <tab id="localizationTab" label="msg://mainTabSheet.localizationTab.label">
+                <vbox padding="false" height="100%">
+                    <hbox classNames="buttons-panel">
+                        <button id="createBtn" action="localizationDataGrid.create"/>
+                        <button id="editBtn" action="localizationDataGrid.edit"/>
+                        <button id="removeBtn" action="localizationDataGrid.remove"/>
+                    </hbox>
+                    <dataGrid id="localizationDataGrid"
+                              dataContainer="parameterLocalizationDc"
+                              editorBuffered="true"
+                              width="100%"
+                              minWidth="20em">
+                        <actions>
+                            <action id="create" type="list_create"/>
+                            <action id="edit" type="list_edit"/>
+                            <action id="remove" type="list_remove"/>
+                        </actions>
+                        <columns resizable="true" sortable="false">
+                            <column property="locale" editable="true"/>
+                            <column property="name" editable="true"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+        </tabSheet>
         <hbox id="detailActions">
             <button id="saveAndCloseButton" action="saveAction"/>
             <button id="closeButton" action="closeAction"/>

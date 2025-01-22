@@ -76,6 +76,9 @@ public class MessageTemplateParameter {
     @Column(name = "DEFAULT_DATE_IS_CURRENT")
     protected Boolean defaultDateIsCurrent;
 
+    @Column(name = "LOCALIZATION")
+    protected String localization;
+
     public UUID getId() {
         return id;
     }
@@ -162,5 +165,13 @@ public class MessageTemplateParameter {
 
     public void setDefaultDateIsCurrent(Boolean defaultDateIsCurrent) {
         this.defaultDateIsCurrent = defaultDateIsCurrent;
+    }
+
+    public String getLocalization() {
+        return localization;
+    }
+
+    public void setLocalization(String localization) {
+        this.localization = localization;
     }
 }

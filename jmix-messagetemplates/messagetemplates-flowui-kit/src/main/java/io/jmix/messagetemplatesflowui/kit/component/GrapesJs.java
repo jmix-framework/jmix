@@ -305,7 +305,7 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
      * @return {@code false} if the user can modify the value, {@code true} if
      * not.
      */
-    boolean isReadOnly() {
+    public boolean isReadOnly() {
         return getElement().getProperty("readonly", false);
     }
 

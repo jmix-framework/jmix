@@ -19,6 +19,7 @@ package io.jmix.messagetemplatesflowui.role;
 import io.jmix.messagetemplates.entity.MessageTemplate;
 import io.jmix.messagetemplates.entity.MessageTemplateBlock;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
+import io.jmix.messagetemplatesflowui.view.messagetemplateparameter.model.MessageTemplateParameterLocalization;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
@@ -50,6 +51,7 @@ public interface MessageTemplatesMinimalAccessRole {
     @EntityPolicy(entityClass = MessageTemplate.class, actions = EntityPolicyAction.READ)
     @EntityPolicy(entityClass = MessageTemplateBlock.class, actions = EntityPolicyAction.READ)
     @EntityPolicy(entityClass = MessageTemplateParameter.class, actions = EntityPolicyAction.READ)
+    @EntityPolicy(entityClass = MessageTemplateParameterLocalization.class, actions = EntityPolicyAction.READ)
     void entityPolicy();
 
     @EntityAttributePolicy(entityClass = MessageTemplate.class,
@@ -58,6 +60,8 @@ public interface MessageTemplatesMinimalAccessRole {
     @EntityAttributePolicy(entityClass = MessageTemplateBlock.class, attributes = "*",
             action = EntityAttributePolicyAction.VIEW)
     @EntityAttributePolicy(entityClass = MessageTemplateParameter.class, attributes = "*",
+            action = EntityAttributePolicyAction.VIEW)
+    @EntityAttributePolicy(entityClass = MessageTemplateParameterLocalization.class, attributes = "*",
             action = EntityAttributePolicyAction.VIEW)
     void entityAttributePolicy();
 }

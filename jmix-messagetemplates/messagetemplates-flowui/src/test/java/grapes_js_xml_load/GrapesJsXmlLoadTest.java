@@ -61,6 +61,7 @@ public class GrapesJsXmlLoadTest {
         assertEquals("40px", grapesJs.getMinHeight());
         assertEquals("80px", grapesJs.getMinWidth());
         assertTrue(grapesJs.isVisible());
+        assertTrue(grapesJs.isReadOnly());
         assertEquals("100px", grapesJs.getWidth());
 
         List<GrapesJsPlugin> plugins = grapesJs.getPlugins();

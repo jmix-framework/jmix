@@ -20,6 +20,7 @@ import io.jmix.messagetemplates.entity.MessageTemplate;
 import io.jmix.messagetemplates.entity.MessageTemplateBlock;
 import io.jmix.messagetemplates.entity.MessageTemplateGroup;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
+import io.jmix.messagetemplatesflowui.view.messagetemplateparameter.model.MessageTemplateParameterLocalization;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
@@ -56,6 +57,7 @@ public interface MessageTemplatesFullAccessRole {
     @EntityPolicy(entityClass = MessageTemplateGroup.class, actions = EntityPolicyAction.ALL)
     @EntityPolicy(entityClass = MessageTemplateBlock.class, actions = EntityPolicyAction.ALL)
     @EntityPolicy(entityClass = MessageTemplateParameter.class, actions = EntityPolicyAction.ALL)
+    @EntityPolicy(entityClass = MessageTemplateParameterLocalization.class, actions = EntityPolicyAction.ALL)
     void entityPolicy();
 
     @EntityAttributePolicy(entityClass = MessageTemplate.class, attributes = "*",
@@ -65,6 +67,8 @@ public interface MessageTemplatesFullAccessRole {
     @EntityAttributePolicy(entityClass = MessageTemplateBlock.class, attributes = "*",
             action = EntityAttributePolicyAction.MODIFY)
     @EntityAttributePolicy(entityClass = MessageTemplateParameter.class, attributes = "*",
+            action = EntityAttributePolicyAction.MODIFY)
+    @EntityAttributePolicy(entityClass = MessageTemplateParameterLocalization.class, attributes = "*",
             action = EntityAttributePolicyAction.MODIFY)
     void entityAttributePolicy();
 }

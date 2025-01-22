@@ -42,7 +42,7 @@ import java.util.Set;
  * REST API controller that is used for downloading files
  */
 @RestController("rest_FileDownloadController")
-@RequestMapping("/rest/files")
+@RequestMapping("${jmix.rest.base-path}${jmix.rest.files-path}")
 public class FileDownloadController {
 
     private static final Logger log = LoggerFactory.getLogger(FileDownloadController.class);

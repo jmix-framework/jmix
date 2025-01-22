@@ -25,12 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.util.AntPathMatcher;
-
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * A listener for {@link AsResourceServerBeforeInvocationEvent} that checks "rest.enabled" specific permission for
@@ -42,15 +36,12 @@ public class RestAsResourceServerBeforeInvocationEventListener {
     protected AccessManager accessManager;
     @Autowired
     protected Messages messages;
-
-    private static final Collection<String> REST_AUTHORIZED_URLS = Arrays.asList(
-            "/rest/entities/**", "/rest/services/**", "/rest/queries/**",
-            "/rest/messages/**", "/rest/metadata/**", "/rest/files/**",
-            "/rest/userInfo", "/rest/permissions", "/rest/user-session/locale");
+    @Autowired
+    protected RestAuthorizedUrlsRequestMatcher matcher;
 
     @EventListener(AsResourceServerBeforeInvocationEvent.class)
     public void doListen(AsResourceServerBeforeInvocationEvent event) {
-        if (shouldCheckRequest(event.getRequest())) {
+        if (matcher.isAuthorizedUrl(event.getRequest())) {
             RestAccessContext restAccessContext = new RestAccessContext();
             Authentication currentAuthentication = SecurityContextHelper.getAuthentication();
             try {
@@ -66,19 +57,5 @@ public class RestAsResourceServerBeforeInvocationEventListener {
                 event.setErrorMessage(messages.getMessage("io.jmix.rest/restApiAccessDenied"));
             }
         }
-    }
-
-    protected boolean shouldCheckRequest(ServletRequest request) {
-        String requestURI = ((HttpServletRequest) request).getRequestURI();
-        String contextPath = ((HttpServletRequest) request).getContextPath();
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-
-        for (String urlPattern : REST_AUTHORIZED_URLS) {
-            if (antPathMatcher.match(contextPath + urlPattern, requestURI)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

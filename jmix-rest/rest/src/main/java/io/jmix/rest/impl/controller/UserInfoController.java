@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  * REST controller that is used for getting an information about the current user
  */
 @RestController("rest_UserInfoController")
-@RequestMapping(value = "/rest/userInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.user-info-path}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class UserInfoController {
     @Autowired
     protected UserInfoControllerManager userInfoControllerManager;

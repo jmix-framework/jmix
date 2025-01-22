@@ -35,7 +35,7 @@ public class PermissionsController {
     @Autowired
     protected PermissionsControllerManager permissionsControllerManager;
 
-    @GetMapping("/rest/permissions")
+    @GetMapping("${jmix.rest.base-path}${jmix.rest.permissions-path}")
     public PermissionsInfo getPermissions() {
         return permissionsControllerManager.getPermissions();
     }

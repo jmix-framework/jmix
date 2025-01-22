@@ -925,8 +925,8 @@ public class EntitiesControllerManager {
     protected String createEntitiesJson(Collection<Object> entities, MetaClass metaClass, @Nullable FetchPlan responseFetchPlan, String version) {
         String json;
         if (restProperties.isResponseFetchPlanEnabled()) {
-            FetchPlan view = responseFetchPlan != null ? responseFetchPlan : createResponseFetchPlan(metaClass);
-            json = entitySerialization.toJson(entities, view, SERIALIZE_INSTANCE_NAME,
+            FetchPlan fetchPlan = responseFetchPlan != null ? responseFetchPlan : createResponseFetchPlan(metaClass);
+            json = entitySerialization.toJson(entities, fetchPlan, SERIALIZE_INSTANCE_NAME,
                     DO_NOT_SERIALIZE_DENIED_PROPERTY);
         } else {
             json = entitySerialization.toJson(entities, null,

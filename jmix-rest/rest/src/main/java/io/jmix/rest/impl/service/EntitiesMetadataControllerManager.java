@@ -85,7 +85,7 @@ public class EntitiesMetadataControllerManager {
         FetchPlan fetchPlan = fetchPlanRepository.findFetchPlan(metaClass, fetchPlanName);
         if (fetchPlan == null) {
             throw new RestAPIException("Fetch plan not found",
-                    String.format("View %s for metaClass %s not found", fetchPlanName, entityName),
+                    String.format("Fetch plan %s for metaClass %s not found", fetchPlanName, entityName),
                     HttpStatus.NOT_FOUND);
         }
         return fetchPlanSerialization.toJson(fetchPlan);
@@ -96,9 +96,9 @@ public class EntitiesMetadataControllerManager {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         List<String> jsonFetchPlans = new ArrayList<>();
-        for (String viewName : fetchPlanRepository.getFetchPlanNames(metaClass)) {
-            FetchPlan view = fetchPlanRepository.getFetchPlan(metaClass, viewName);
-            jsonFetchPlans.add(fetchPlanSerialization.toJson(view));
+        for (String fetchPlanName : fetchPlanRepository.getFetchPlanNames(metaClass)) {
+            FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName);
+            jsonFetchPlans.add(fetchPlanSerialization.toJson(fetchPlan));
         }
         sb.append(Joiner.on(",").join(jsonFetchPlans));
         sb.append("]");

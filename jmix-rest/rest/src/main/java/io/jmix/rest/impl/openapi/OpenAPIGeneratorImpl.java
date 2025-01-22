@@ -626,7 +626,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                 new QueryParameter()
                         .name("fetchPlan")
                         .description("Name of the fetch plan which is used for loading the entity. Specify this parameter " +
-                                "if you want to extract entities with the view other than it is defined in the REST " +
+                                "if you want to extract entities with the fetch plan other than it is defined in the REST " +
                                 "queries configuration file.")
                         .schema(new StringSchema()),
                 new QueryParameter()

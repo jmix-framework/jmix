@@ -144,7 +144,7 @@ public class MetadataControllerFT extends AbstractRestControllerFT {
 
     @Test
     public void getCapabilities() throws Exception {
-        String url = baseUrl + "/metadata/capabilities";
+        String url = baseUrl + "/capabilities";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);

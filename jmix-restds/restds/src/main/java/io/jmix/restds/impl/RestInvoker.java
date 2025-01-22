@@ -296,7 +296,7 @@ public class RestInvoker implements InitializingBean {
     public String capabilities() {
         try {
             String resultJson = restClient.get()
-                    .uri("/rest/metadata/capabilities")
+                    .uri("/rest/capabilities")
                     .retrieve()
                     .body(String.class);
 

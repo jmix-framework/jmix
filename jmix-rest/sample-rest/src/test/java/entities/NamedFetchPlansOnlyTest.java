@@ -61,7 +61,7 @@ public class NamedFetchPlansOnlyTest extends AbstractRestControllerFT {
 
     @Test
     public void capabilities_inlineFetchPlans_false() throws Exception {
-        String url = baseUrl + "/metadata/capabilities";
+        String url = baseUrl + "/capabilities";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);

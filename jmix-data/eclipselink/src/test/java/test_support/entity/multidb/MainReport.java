@@ -26,6 +26,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
+import test_support.entity.dto.TestUuidDto;
+
 import java.util.UUID;
 
 
@@ -47,6 +49,24 @@ public class MainReport {
 
     @Column(name = "DB1_ORDER_ID")
     private Long db1OrderId;
+
+    @Transient
+    @JmixProperty
+    private TestUuidDto testUuidDto;
+
+    @JmixProperty
+    public TestUuidDto getMethodBasedTestUuidDto() {
+        return testUuidDto;
+    }
+
+    @JmixProperty
+    @DependsOnProperties("name")
+    public TestUuidDto getMethodBasedTestUuidDtoWithDependsOn() {
+        TestUuidDto dto = new TestUuidDto();
+        dto.setId(UUID.randomUUID());
+        dto.setName(name);
+        return dto;
+    }
 
     public UUID getId() {
         return id;
@@ -78,5 +98,13 @@ public class MainReport {
 
     public void setDb1OrderId(Long db1OrderId) {
         this.db1OrderId = db1OrderId;
+    }
+
+    public TestUuidDto getTestUuidDto() {
+        return testUuidDto;
+    }
+
+    public void setTestUuidDto(TestUuidDto testUuidDto) {
+        this.testUuidDto = testUuidDto;
     }
 }

@@ -7,7 +7,9 @@ package data_stores
 
 import io.jmix.core.*
 import io.jmix.core.impl.DataStoreFactory
+import io.jmix.core.impl.NoopDataStore
 import io.jmix.data.StoreAwareLocator
+import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
@@ -279,5 +281,29 @@ class MultiDbDataManagerTest extends DataSpec {
                 .one()
 
         report2.db1Order != null
+    }
+
+    @SpringBean
+    NoopDataStore noopDataStore = Stub() {
+        save(_) >> { throw new RuntimeException("Invoked NoopDataStore save()") }
+        load(_) >> { throw new RuntimeException("Invoked NoopDataStore load()") }
+        loadList(_) >> { throw new RuntimeException("Invoked NoopDataStore loadList()") }
+        getCount(_) >> { throw new RuntimeException("Invoked NoopDataStore getCount()") }
+    }
+
+    def testMethodBasedDtoWithDependsOn() {
+        MainReport report = metadata.create(MainReport)
+        report.setName("test")
+        report = dataManager.save(report)
+
+        when:
+        def report1 = dataManager.load(MainReport)
+                .id(report.id)
+                .fetchPlan({ builder -> builder.addFetchPlan(FetchPlan.BASE).add('methodBasedTestUuidDtoWithDependsOn') })
+                .one()
+
+        then:
+        noExceptionThrown()
+        report1.methodBasedTestUuidDtoWithDependsOn != null
     }
 }

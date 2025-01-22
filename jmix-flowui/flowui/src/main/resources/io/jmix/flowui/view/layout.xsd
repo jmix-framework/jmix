@@ -4420,16 +4420,10 @@
     <!-- FieldSet-->
     <xs:complexType name="fieldSetHtmlComponent">
         <xs:complexContent>
-            <xs:extension base="baseHtmlComponent">
-                <xs:sequence minOccurs="0">
-                    <xs:group ref="layoutOrComponent"/>
-                </xs:sequence>
-
-                <xs:attributeGroup ref="hasText"/>
-                <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasAriaLabel"/>
-
+            <xs:extension base="baseHtmlContainer">
                 <xs:attribute name="legendText" type="resourceString"/>
+
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

@@ -17,6 +17,7 @@
 package rest_ds;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.Id;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.KeyValueEntity;
@@ -319,6 +320,21 @@ public class RestDataStoreTest extends BaseRestDsIntegrationTest {
         Country deletedCountry = dataManager.load(Country.class).id(country.getCode()).optional().orElse(null);
 
         assertThat(deletedCountry).isNull();
+    }
+
+    @Test
+    void testUtf8() {
+        Customer customer = metadata.create(Customer.class);
+        customer.setFirstName("Hà nội");
+        customer.setLastName("Việt nam");
+        customer.setEmail("test@mail.com");
+        Customer savedCustomer = dataManager.save(customer);
+
+        assertThat(savedCustomer.getFirstName()).isEqualTo("Hà nội");
+
+        Customer loadedCustomer = dataManager.load(Id.of(customer)).one();
+
+        assertThat(loadedCustomer.getFirstName()).isEqualTo("Hà nội");
     }
 
     private Customer createCustomer(String firstName, String lastName) {

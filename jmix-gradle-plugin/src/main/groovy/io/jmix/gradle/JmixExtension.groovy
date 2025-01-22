@@ -45,6 +45,11 @@ class JmixExtension {
      */
     EntitiesEnhancing entitiesEnhancing
 
+    /**
+     * If true, 'conf' directory will be removed before application start.
+     */
+    boolean confDirCleanupEnabled = true
+
     JmixExtension(Project project) {
         this.project = project
         entitiesEnhancing = new EntitiesEnhancing()

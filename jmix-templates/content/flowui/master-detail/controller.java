@@ -116,6 +116,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Subscribe("cancelButton")
     public void onCancelButtonClick(final ClickEvent<JmixButton> event) {
         dataContext.clear();
+        ${detailDc}.setItem(null);
         ${detailDl}.load();
         updateControls(false);
     }

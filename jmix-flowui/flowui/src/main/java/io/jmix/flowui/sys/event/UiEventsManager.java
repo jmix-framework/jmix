@@ -87,6 +87,30 @@ public class UiEventsManager {
     }
 
     /**
+     * Disables all application listeners for the provided component. These listeners can be enabled later.
+     *
+     * @param component the component that contains listener definitions to disable
+     */
+    public void disableApplicationListenersFor(Component component) {
+        listeners.stream()
+                .filter(cs -> cs.getComponent().equals(component))
+                .findFirst()
+                .ifPresent(cs -> cs.setEnabled(false));
+    }
+
+    /**
+     * Enables all application listeners for the provided component.
+     *
+     * @param component the component that contains listener definitions to enable
+     */
+    public void enableApplicationListenersFor(Component component) {
+        listeners.stream()
+                .filter(cs -> cs.getComponent().equals(component))
+                .findFirst()
+                .ifPresent(cs -> cs.setEnabled(true));
+    }
+
+    /**
      * Removes all application listeners that have definition in the given component.
      *
      * @param component component
@@ -156,6 +180,10 @@ public class UiEventsManager {
         List<ApplicationListener<?>> filtered = new ArrayList<>();
 
         for (ComponentListeners componentListeners : listeners) {
+            if (!componentListeners.isEnabled()) {
+                continue;
+            }
+
             UI ui = componentListeners.getComponent().getUI().orElse(null);
             if (uis.isEmpty()
                     || (ui != null && uis.contains(ui))) {
@@ -183,6 +211,7 @@ public class UiEventsManager {
 
     protected static class ComponentListeners {
 
+        protected boolean enabled = true;
         protected Component component;
         protected List<ApplicationListener<?>> listeners;
 
@@ -226,7 +255,11 @@ public class UiEventsManager {
         }
 
         public boolean isEnabled() {
-            return component.getUI().isPresent();
+            return enabled && component.getUI().isPresent();
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
     }
 }

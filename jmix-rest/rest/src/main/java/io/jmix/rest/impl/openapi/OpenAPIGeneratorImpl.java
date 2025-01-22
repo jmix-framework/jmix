@@ -25,6 +25,7 @@ import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetadataObject;
+import io.jmix.rest.RestProperties;
 import io.jmix.rest.impl.config.RestQueriesConfiguration;
 import io.jmix.rest.impl.config.RestQueriesConfiguration.QueryInfo;
 import io.jmix.rest.impl.config.RestServicesConfiguration;
@@ -89,6 +90,8 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     protected RestQueriesConfiguration queriesConfiguration;
     @Autowired
     protected RestServicesConfiguration servicesConfiguration;
+    @Autowired
+    protected RestProperties restProperties;
 
     protected OpenAPI openAPI = null;
     protected Collection<MetaClass> entityMetaClass = null;
@@ -156,7 +159,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
             url.append(contextPath);
         }
 
-        url.append("/rest");
+        url.append(restProperties.getBasePath());
 
         openAPI.addServersItem(new Server().url(url.toString()));
     }
@@ -191,7 +194,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
 
         List<Tag> queryTags = queriesConfiguration.getQueries()
                 .stream()
-                .map(RestQueriesConfiguration.QueryInfo::getEntityName)
+                .map(QueryInfo::getEntityName)
                 .distinct()
                 .sorted(String::compareTo)
                 .map(queryEntity -> new Tag()
@@ -202,7 +205,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
 
         List<Tag> serviceTags = servicesConfiguration.getServiceInfos()
                 .stream()
-                .sorted(Comparator.comparing(RestServicesConfiguration.RestServiceInfo::getName))
+                .sorted(Comparator.comparing(RestServiceInfo::getName))
                 .map(serviceInfo -> new Tag()
                         .name(serviceInfo.getName())
                         .description("Middleware services execution"))

@@ -67,6 +67,7 @@ public class EventListenerDependencyInjector implements DependencyInjector {
 
 
             UiEventsManager eventsMulticaster = VaadinSession.getCurrent().getAttribute(UiEventsManager.class);
+            eventsMulticaster.removeApplicationListeners(composite);
             for (ApplicationListener<?> listener : listeners) {
                 eventsMulticaster.addApplicationListener(composite, listener);
             }

@@ -162,7 +162,9 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             }
         });
 
-        Shortcuts.addShortcutListener(component, this::handleEnterPress, Key.ENTER);
+        Shortcuts.addShortcutListener(component, this::handleEnterPress, Key.ENTER)
+                .listenOn(component)
+                .allowBrowserDefault();
     }
 
     @Nullable
@@ -819,6 +821,10 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected void handleDoubleClickAction(@Nullable E item) {
+        if (component.getEditor().isOpen()) {
+            return;
+        }
+
         if (item != null) {
             // have to select clicked item to make action work, otherwise
             // consecutive clicks on the same item deselect it

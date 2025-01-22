@@ -57,6 +57,7 @@
             <button id="createButton" action="messageTemplatesDataGrid.create"/>
             <button id="editButton" action="messageTemplatesDataGrid.edit"/>
             <button id="removeButton" action="messageTemplatesDataGrid.remove"/>
+            <button id="copyButton" action="messageTemplatesDataGrid.copy"/>
             <simplePagination id="pagination" dataLoader="messageTemplatesDl"/>
         </hbox>
         <dataGrid id="messageTemplatesDataGrid"
@@ -68,6 +69,8 @@
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
                 <action id="remove" type="list_remove"/>
+                <action id="copy" type="list_itemTracking" icon="COPY"
+                        text="msg://messageTemplatesDataGrid.copyAction.text"/>
             </actions>
             <columns resizable="true">
                 <column property="name"/>

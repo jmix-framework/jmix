@@ -59,6 +59,7 @@ public class RestPasswordAuthenticator implements RestAuthenticator {
     private String dataStoreName;
     private String clientId;
     private String clientSecret;
+    private String tokenPath;
 
     @Autowired
     private RestTokenHolder tokenHolder;
@@ -77,6 +78,8 @@ public class RestPasswordAuthenticator implements RestAuthenticator {
         String baseUrl = environment.getRequiredProperty(dataStoreName + ".baseUrl");
         clientId = environment.getRequiredProperty(dataStoreName + ".clientId");
         clientSecret = environment.getRequiredProperty(dataStoreName + ".clientSecret");
+
+        tokenPath = environment.getProperty(dataStoreName + ".tokenPath", "/oauth2/token");
 
         client = RestClient.builder()
                 .baseUrl(baseUrl)
@@ -98,7 +101,7 @@ public class RestPasswordAuthenticator implements RestAuthenticator {
         ResponseEntity<String> authResponse;
         try {
             authResponse = client.post()
-                    .uri("/oauth2/token")
+                    .uri(tokenPath)
                     .headers(httpHeaders -> {
                         httpHeaders.setBasicAuth(clientId, clientSecret);
                         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -133,7 +136,7 @@ public class RestPasswordAuthenticator implements RestAuthenticator {
         ResponseEntity<String> authResponse;
         try {
             authResponse = client.post()
-                    .uri("/oauth2/token")
+                    .uri(tokenPath)
                     .headers(httpHeaders -> {
                         httpHeaders.setBasicAuth(clientId, clientSecret);
                         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

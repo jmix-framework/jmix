@@ -53,6 +53,8 @@ public class RestClientCredentialsAuthenticator implements RestAuthenticator {
     private String dataStoreName;
     private String clientId;
     private String clientSecret;
+    private String tokenPath;
+    private String revokePath;
 
     private String authToken;
 
@@ -71,6 +73,9 @@ public class RestClientCredentialsAuthenticator implements RestAuthenticator {
         String baseUrl = environment.getRequiredProperty(dataStoreName + ".baseUrl");
         clientId = environment.getRequiredProperty(dataStoreName + ".clientId");
         clientSecret = environment.getRequiredProperty(dataStoreName + ".clientSecret");
+
+        tokenPath = environment.getProperty(dataStoreName + ".tokenPath", "/oauth2/token");
+        revokePath = environment.getProperty(dataStoreName + ".revokePath", "/oauth2/revoke");
 
         client = RestClient.builder()
                 .baseUrl(baseUrl)
@@ -117,7 +122,7 @@ public class RestClientCredentialsAuthenticator implements RestAuthenticator {
         ResponseEntity<String> authResponse = null;
         try {
             authResponse = client.post()
-                    .uri("/oauth2/token")
+                    .uri(tokenPath)
                     .headers(httpHeaders -> {
                         httpHeaders.setBasicAuth(clientId, clientSecret);
                         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -144,7 +149,7 @@ public class RestClientCredentialsAuthenticator implements RestAuthenticator {
                 return;
             }
             client.post()
-                    .uri("/oauth2/revoke")
+                    .uri(revokePath)
                     .headers(httpHeaders -> {
                         httpHeaders.setBasicAuth(clientId, clientSecret);
                         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

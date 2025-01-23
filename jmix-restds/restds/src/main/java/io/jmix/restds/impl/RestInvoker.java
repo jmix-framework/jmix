@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
@@ -62,8 +63,15 @@ public class RestInvoker implements InitializingBean {
 
     private RestClient restClient;
 
+    private String basePath;
+    private String entitiesPath;
+    private String userInfoPath;
+    private String permissionsPath;
+    private String capabilitiesPath;
+
     @Autowired
     private ApplicationContext applicationContext;
+
 
     public record LoadParams(String entityName,
                                  Object id,
@@ -92,13 +100,21 @@ public class RestInvoker implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        String authenticatorBeanName = applicationContext.getEnvironment().getProperty(
+        Environment environment = applicationContext.getEnvironment();
+
+        String authenticatorBeanName = environment.getProperty(
                 dataStoreName + ".authenticator", DEFAULT_AUTHENTICATOR);
 
         authenticator = (RestAuthenticator) applicationContext.getBean(authenticatorBeanName);
         authenticator.setDataStoreName(dataStoreName);
 
-        String baseUrl = applicationContext.getEnvironment().getRequiredProperty(dataStoreName + ".baseUrl");
+        String baseUrl = environment.getRequiredProperty(dataStoreName + ".baseUrl");
+
+        basePath = environment.getProperty(dataStoreName + ".basePath", "/rest");
+        entitiesPath = environment.getProperty(dataStoreName + ".entitiesPath", "/entities");
+        userInfoPath = environment.getProperty(dataStoreName + ".userInfoPath", "/userInfo");
+        permissionsPath = environment.getProperty(dataStoreName + ".permissionsPath", "/permissions");
+        capabilitiesPath = environment.getProperty(dataStoreName + ".capabilitiesPath", "/capabilities");
 
         restClient = RestClient.builder()
                 .baseUrl(baseUrl)
@@ -130,7 +146,7 @@ public class RestInvoker implements InitializingBean {
     }
 
     private URI createLoadUri(UriBuilder uriBuilder, LoadParams params) {
-        uriBuilder.path("/rest/entities/{entityName}/{id}");
+        uriBuilder.path(basePath + entitiesPath + "/{entityName}/{id}");
         if (params.fetchPlan() != null) {
             uriBuilder.queryParam("fetchPlan", "{fetchPlan}");
         }
@@ -148,7 +164,7 @@ public class RestInvoker implements InitializingBean {
                         .body(String.class);
             } else {
                 resultJson = restClient.post()
-                        .uri("/rest/entities/{entityName}/search", params.entityName())
+                        .uri(basePath + entitiesPath + "/{entityName}/search", params.entityName())
                         .body(createSearchPostBody(params, false))
                         .retrieve()
                         .body(String.class);
@@ -191,7 +207,7 @@ public class RestInvoker implements InitializingBean {
     }
 
     private URI createLoadListUri(UriBuilder uriBuilder, LoadListParams params, boolean returnCount) {
-        uriBuilder.path("/rest/entities/{entityName}");
+        uriBuilder.path(basePath + entitiesPath + "/{entityName}");
         if (params.sort() != null) {
             uriBuilder.queryParam("sort", params.sort());
         }
@@ -219,7 +235,7 @@ public class RestInvoker implements InitializingBean {
                         .toBodilessEntity();
             } else {
                 response = restClient.post()
-                        .uri("/rest/entities/{entityName}/search", entityName)
+                        .uri(basePath + entitiesPath + "/{entityName}/search", entityName)
                         .body(createSearchPostBody(new LoadListParams(entityName, filter), true))
                         .retrieve()
                         .toBodilessEntity();
@@ -234,7 +250,7 @@ public class RestInvoker implements InitializingBean {
     public String create(String entityName, String entityJson) {
         try {
             String resultJson = restClient.post()
-                    .uri("/rest/entities/{entityName}?responseFetchPlan=_base", entityName)
+                    .uri(basePath + entitiesPath + "/{entityName}?responseFetchPlan=_base", entityName)
                     .body(entityJson)
                     .retrieve()
                     .body(String.class);
@@ -248,7 +264,7 @@ public class RestInvoker implements InitializingBean {
     public String update(String entityName, String entityId, String entityJson) {
         try {
             String resultJson = restClient.put()
-                    .uri("/rest/entities/{entityName}/{id}?responseFetchPlan=_base", entityName, entityId)
+                    .uri(basePath + entitiesPath + "/{entityName}/{id}?responseFetchPlan=_base", entityName, entityId)
                     .body(entityJson)
                     .retrieve()
                     .body(String.class);
@@ -262,7 +278,7 @@ public class RestInvoker implements InitializingBean {
     public void delete(String entityName, String entityId) {
         try {
             restClient.delete()
-                    .uri("/rest/entities/{entityName}/{id}", entityName, entityId)
+                    .uri(basePath + entitiesPath + "/{entityName}/{id}", entityName, entityId)
                     .retrieve()
                     .toBodilessEntity();
         } catch (ResourceAccessException e) {
@@ -273,7 +289,7 @@ public class RestInvoker implements InitializingBean {
     public String userInfo() {
         try {
             String resultJson = restClient.get()
-                    .uri("/rest/userInfo")
+                    .uri(basePath + userInfoPath)
                     .retrieve()
                     .body(String.class);
 
@@ -286,7 +302,7 @@ public class RestInvoker implements InitializingBean {
     public String permissions() {
         try {
             String resultJson = restClient.get()
-                    .uri("/rest/permissions")
+                    .uri(basePath + permissionsPath)
                     .retrieve()
                     .body(String.class);
 
@@ -299,7 +315,7 @@ public class RestInvoker implements InitializingBean {
     public String capabilities() {
         try {
             String resultJson = restClient.get()
-                    .uri("/rest/capabilities")
+                    .uri(basePath + capabilitiesPath)
                     .retrieve()
                     .body(String.class);
 

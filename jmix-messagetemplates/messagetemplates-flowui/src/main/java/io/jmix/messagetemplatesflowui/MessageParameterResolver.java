@@ -30,6 +30,9 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * Support class for resolving JavaClass for {@link MessageTemplateParameter}.
+ */
 @Component("msgtmp_MessageParameterResolver")
 public class MessageParameterResolver {
 
@@ -52,6 +55,12 @@ public class MessageParameterResolver {
         this.datatypeRegistry = datatypeRegistry;
     }
 
+    /**
+     * Resolves the {@link Class JavaClass} for the passed {@link MessageTemplateParameter}.
+     *
+     * @param parameter parameter to resolve the {@link Class JavaClass}
+     * @return the {@link Class JavaClass} for the passed parameter
+     */
     @Nullable
     public Class<?> resolveClass(MessageTemplateParameter parameter) {
         ParameterType type = parameter.getType();
@@ -74,6 +83,12 @@ public class MessageParameterResolver {
         return null;
     }
 
+    /**
+     * Resolves the {@link Datatype} for the passed {@link MessageTemplateParameter}.
+     *
+     * @param parameter parameter to resolve the {@link Datatype}
+     * @return the {@link Datatype} for the passed parameter
+     */
     @Nullable
     public Datatype<?> resolveDatatype(MessageTemplateParameter parameter) {
         Class<?> parameterClass = primitiveParameterTypeMap.get(parameter.getType());

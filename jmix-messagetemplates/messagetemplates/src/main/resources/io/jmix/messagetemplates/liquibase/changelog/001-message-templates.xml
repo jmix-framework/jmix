@@ -139,6 +139,7 @@
         <addForeignKeyConstraint baseColumnNames="TEMPLATE_ID"
                                  baseTableName="MSGTMP_MESSAGE_TEMPLATE_PARAMETER"
                                  constraintName="FK_MSGTMP_MESSAGE_TEMPLATE_PARAMETER_ON_TEMPLATE"
+                                 onDelete="CASCADE"
                                  referencedTableName="MSGTMP_MESSAGE_TEMPLATE"
                                  referencedColumnNames="ID"/>
     </changeSet>

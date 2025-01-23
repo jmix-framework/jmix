@@ -16,11 +16,12 @@
 
 package io.jmix.autoconfigure.messagetemplatesflowui;
 
+import io.jmix.messagetemplates.MessageTemplatesConfiguration;
 import io.jmix.messagetemplatesflowui.MessageTemplatesFlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
-@Import(MessageTemplatesFlowuiConfiguration.class)
+@Import({MessageTemplatesConfiguration.class, MessageTemplatesFlowuiConfiguration.class})
 public class MessageTemplatesFlowuiAutoConfiguration {
 }

@@ -24,11 +24,20 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.messagetemplates.entity.MessageTemplateParameter;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.text.ParseException;
 
+/**
+ * Helper class that converts objects to strings and vice versa. Mainly used to serialize default value for
+ * a {@link MessageTemplateParameter}.
+ */
 @Component("msgtmp_ObjectToStringConverter")
 public class ObjectToStringConverter {
 
@@ -44,6 +53,12 @@ public class ObjectToStringConverter {
         this.dataManager = dataManager;
     }
 
+    /**
+     * Serialized the passed object to a string depending on its class type.
+     *
+     * @param object object to be serialized
+     * @return the serialized object, or {@code null} if the passed object is {@code null}
+     */
     @Nullable
     public String convertToString(@Nullable Object object) {
         if (object == null) {
@@ -62,6 +77,14 @@ public class ObjectToStringConverter {
         return String.valueOf(object);
     }
 
+    /**
+     * Deserialized the passed string into an object of the specified {@code objectClass} type.
+     *
+     * @param objectClass  {@link Class JavaClass} for the deserialization result object
+     * @param objectString the string to deserialize
+     * @param <T>          the type of object to deserialize
+     * @return the deserialized object of the required type
+     */
     @SuppressWarnings("unchecked")
     @Nullable
     public <T> T convertFromString(Class<T> objectClass, @Nullable String objectString) {
@@ -110,6 +133,27 @@ public class ObjectToStringConverter {
             }
         }
 
-        return convertFromString(objectClass, objectString);
+        return convertFromStringUnresolved(objectClass, objectString);
+    }
+
+    protected <T> T convertFromStringUnresolved(Class<T> parameterClass, String objectString) {
+        try {
+            Constructor<T> constructor = ConstructorUtils.getAccessibleConstructor(parameterClass, String.class);
+            if (constructor != null) {
+                return constructor.newInstance(objectString);
+            } else {
+                Method valueOf = MethodUtils.getAccessibleMethod(parameterClass, "valueOf", String.class);
+                if (valueOf != null) {
+                    //noinspection unchecked
+                    return ((T) valueOf.invoke(null, objectString));
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalArgumentException("Couldn't read value [%s] with class [%s]"
+                    .formatted(objectString, parameterClass.getSimpleName()));
+        }
+
+        throw new IllegalArgumentException("Unable to deserialize [%s] with class [%s]"
+                .formatted(objectString, parameterClass.getSimpleName()));
     }
 }

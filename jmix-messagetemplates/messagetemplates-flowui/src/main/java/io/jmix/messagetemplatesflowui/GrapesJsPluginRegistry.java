@@ -20,7 +20,7 @@ import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
 import org.springframework.lang.Nullable;
 
 /**
- * Registry for {@link GrapesJsPlugin}s.
+ * Registry for {@link GrapesJsPlugin GrapesJsPlugins}.
  */
 public interface GrapesJsPluginRegistry {
 

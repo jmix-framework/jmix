@@ -122,7 +122,7 @@ public interface MessageTemplatesGenerator {
         /**
          * Sets the template for generating the message.
          *
-         * @param template template for generating the message.
+         * @param template template for generating the message
          * @return this
          */
         SingleTemplateGenerator withTemplate(MessageTemplate template);
@@ -185,7 +185,7 @@ public interface MessageTemplatesGenerator {
         /**
          * Sets the template codes for generating the messages.
          *
-         * @param templateCodes array of {@link MessageTemplate} codes for generating the message.
+         * @param templateCodes array of {@link MessageTemplate} codes for generating the message
          * @return this
          */
         MultiTemplateGenerator withTemplateCodes(String... templateCodes);
@@ -232,7 +232,7 @@ public interface MessageTemplatesGenerator {
         /**
          * Sets the template for generating the messages.
          *
-         * @param template template for generating the messages.
+         * @param template template for generating the messages
          * @return this
          */
         MultiParamTemplateGenerator withTemplate(MessageTemplate template);

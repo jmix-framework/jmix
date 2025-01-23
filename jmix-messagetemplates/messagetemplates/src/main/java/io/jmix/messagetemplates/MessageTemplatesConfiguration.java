@@ -16,6 +16,7 @@
 
 package io.jmix.messagetemplates;
 
+import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -25,6 +26,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = DataConfiguration.class)
+@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
 public class MessageTemplatesConfiguration {
 }

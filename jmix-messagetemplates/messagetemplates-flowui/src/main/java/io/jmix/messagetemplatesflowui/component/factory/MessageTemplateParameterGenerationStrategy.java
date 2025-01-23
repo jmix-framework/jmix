@@ -46,6 +46,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+/**
+ * Strategy for generating visual components for a {@link MessageTemplateParameter}.
+ * The generation process uses information from the {@link MessageTemplateParameterGenerationContext}.
+ *
+ * @see MessageTemplateParameterGenerationContext
+ */
 @org.springframework.stereotype.Component("msgtmp_MessageTemplateParameterGenerationStrategy")
 public class MessageTemplateParameterGenerationStrategy extends AbstractComponentGenerationStrategy
         implements Ordered {

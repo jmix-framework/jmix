@@ -19,6 +19,12 @@ package io.jmix.messagetemplatesflowui.component.factory;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
 
+/**
+ * The generation context that is used in {@link MessageTemplateParameterGenerationStrategy}.
+ * Used to generate UI component for a {@link MessageTemplateParameter}.
+ *
+ * @see MessageTemplateParameterGenerationStrategy
+ */
 public class MessageTemplateParameterGenerationContext extends ComponentGenerationContext {
 
     protected final MessageTemplateParameter messageTemplateParameter;
@@ -28,6 +34,9 @@ public class MessageTemplateParameterGenerationContext extends ComponentGenerati
         this.messageTemplateParameter = messageTemplateParameter;
     }
 
+    /**
+     * @return the parameter for which this context is defined
+     */
     public MessageTemplateParameter getMessageTemplateParameter() {
         return messageTemplateParameter;
     }

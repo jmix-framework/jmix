@@ -17,6 +17,7 @@
 package io.jmix.messagetemplatesflowui.component.factory;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.data.provider.Query;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -45,6 +46,7 @@ import org.springframework.lang.Nullable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.stream.Stream;
 
 /**
  * Strategy for generating visual components for a {@link MessageTemplateParameter}.
@@ -57,6 +59,7 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
         implements Ordered {
 
     protected MessageParameterResolver messageParameterResolver;
+    protected DataManager dataManager;
 
     public MessageTemplateParameterGenerationStrategy(UiComponents uiComponents,
                                                       Metadata metadata,
@@ -66,10 +69,11 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
                                                       Messages messages,
                                                       EntityFieldCreationSupport entityFieldCreationSupport,
                                                       MessageParameterResolver messageParameterResolver,
-                                                      TimeSource timeSource) {
+                                                      DataManager dataManager) {
         super(uiComponents, metadata, metadataTools, actions, datatypeRegistry, messages, entityFieldCreationSupport);
 
         this.messageParameterResolver = messageParameterResolver;
+        this.dataManager = dataManager;
     }
 
     @Nullable
@@ -188,6 +192,8 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
         JmixMultiSelectComboBoxPicker<?> multiSelectComboBoxPicker =
                 uiComponents.create(JmixMultiSelectComboBoxPicker.class);
 
+        multiSelectComboBoxPicker.setItemsFetchCallback(
+                query -> getItemsByQuery(query, metaClass.getJavaClass()));
         multiSelectComboBoxPicker.setMetaClass(metaClass);
         multiSelectComboBoxPicker.setWidthFull();
 
@@ -216,6 +222,22 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
         }
 
         return enumField;
+    }
+
+    protected <T> Stream<T> getItemsByQuery(Query<T, String> query, Class<T> entityClass) {
+        return dataManager.load(entityClass)
+                .all()
+                .firstResult(query.getOffset())
+                .maxResults(query.getLimit())
+                .list()
+                .stream()
+                .filter(entity -> metadataTools.getInstanceName(entity)
+                        .toLowerCase()
+                        .contains(
+                                query.getFilter()
+                                        .orElse("")
+                                        .toLowerCase()
+                        ));
     }
 
     @Override

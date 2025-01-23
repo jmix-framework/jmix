@@ -42,6 +42,7 @@ import java.util.Map;
 
 @ViewController("msgtmp_MessageTemplateParametersInputDialogView")
 @ViewDescriptor("message-template-parameters-input-dialog.xml")
+@DialogMode(width = "35em")
 public class MessageTemplateParametersInputDialog extends StandardView {
 
     @ViewComponent

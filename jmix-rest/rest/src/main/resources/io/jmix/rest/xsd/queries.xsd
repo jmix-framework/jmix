@@ -37,7 +37,6 @@
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="entity" type="xs:string" use="required"/>
         <xs:attribute name="fetchPlan" type="xs:string" use="required"/>
-        <xs:attribute name="view" type="xs:string"/>
         <xs:attribute name="cacheable" type="xs:boolean"/>
         <xs:attribute name="offset" type="xs:integer"/>
         <xs:attribute name="limit" type="xs:integer"/>

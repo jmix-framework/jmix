@@ -16,21 +16,20 @@
 
 package rest_ds;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.SaveContext;
+import io.jmix.core.*;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import test_support.BaseRestDsIntegrationTest;
+import test_support.SampleServiceConnection;
 import test_support.entity.Customer;
 import test_support.entity.CustomerRegionDto;
 import test_support.entity.Order;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +44,9 @@ public class FetchPlanTest extends BaseRestDsIntegrationTest {
 
     @Autowired
     FetchPlanRepository fetchPlanRepository;
+
+    @Autowired
+    FetchPlans fetchPlans;
 
     @Test
     void testWithoutFetchPlan() {
@@ -82,6 +84,53 @@ public class FetchPlanTest extends BaseRestDsIntegrationTest {
         customer = dataManager.load(Customer.class)
                 .id(customer.getId())
                 .fetchPlan("customer-with-region")
+                .one();
+
+        assertThat(customer.getRegion()).isNotNull();
+        assertThat(entityStates.isNew(customer.getRegion())).isFalse();
+    }
+
+    @Test
+    void testWithInlineFetchPlan() {
+        // all
+        List<Customer> customers = dataManager.load(Customer.class)
+                .all()
+                .fetchPlan(fpb ->
+                        fpb.addFetchPlan(FetchPlan.BASE).add("region", FetchPlan.BASE)
+                )
+                .list();
+
+        assertThat(customers).isNotEmpty();
+
+        Customer customer = customers.stream().filter(c -> c.getRegion() != null).findAny().orElseThrow();
+
+        assertThat(entityStates.isNew(customer.getRegion())).isFalse();
+
+        // by conditions
+        Condition condition = LogicalCondition.and(
+                PropertyCondition.equal("firstName", "Robert"),
+                PropertyCondition.equal("lastName", "Taylor")
+        );
+        customers = dataManager.load(Customer.class)
+                .condition(condition)
+                .fetchPlan(fpb ->
+                        fpb.addFetchPlan(FetchPlan.BASE).add("region", FetchPlan.BASE)
+                )
+                .list();
+
+        assertThat(customers).size().isEqualTo(1);
+
+        customer = customers.get(0);
+
+        assertThat(customer.getRegion()).isNotNull();
+        assertThat(entityStates.isNew(customer.getRegion())).isFalse();
+
+        // by id
+        customer = dataManager.load(Customer.class)
+                .id(customer.getId())
+                .fetchPlan(fpb ->
+                        fpb.addFetchPlan(FetchPlan.BASE).add("region", FetchPlan.BASE)
+                )
                 .one();
 
         assertThat(customer.getRegion()).isNotNull();
@@ -185,4 +234,60 @@ public class FetchPlanTest extends BaseRestDsIntegrationTest {
         assertThat(loadedOrder.getCustomer().getRegion().getName()).isEqualTo("Region 1");
     }
 
+    @Test
+    void testCreateUpdateWithInlineFetchPlan() {
+        CustomerRegionDto region = dataManager.create(CustomerRegionDto.class);
+        region.setName("region-" + LocalDateTime.now());
+
+        Customer customer = dataManager.create(Customer.class);
+        String newName = "new-cust-" + LocalDateTime.now();
+        customer.setLastName(newName);
+        customer.setEmail("test@mail.com");
+        customer.setRegion(region);
+
+        SaveContext saveContext = new SaveContext()
+                .saving(region)
+                .saving(customer, fetchPlans.builder(Customer.class)
+                        .addFetchPlan(FetchPlan.BASE)
+                        .add("region", FetchPlan.BASE)
+                        .build()
+                );
+
+        EntitySet saved = dataManager.save(saveContext);
+        Customer createdCustomer = saved.get(customer);
+
+        assertThat(createdCustomer).isNotNull();
+        assertThat(createdCustomer.getLastName()).isEqualTo(newName);
+        assertThat(createdCustomer.getEmail()).isEqualTo(customer.getEmail());
+        assertThat(createdCustomer.getCreatedBy()).isEqualTo(SampleServiceConnection.CLIENT_ID);
+        assertThat(createdCustomer.getCreatedDate()).isNotNull();
+        assertThat(createdCustomer.getLastModifiedBy()).isNull();
+        assertThat(createdCustomer.getLastModifiedDate()).isNotNull();
+
+        CustomerRegionDto createdRegion = createdCustomer.getRegion();
+        assertThat(createdRegion).isNotNull();
+        assertThat(createdRegion.getName()).isEqualTo(region.getName());
+
+        createdCustomer.setLastName("updated-cust-" + LocalDateTime.now());
+
+        saveContext = new SaveContext()
+                .saving(createdCustomer, fetchPlans.builder(Customer.class)
+                        .addFetchPlan(FetchPlan.BASE)
+                        .add("region", FetchPlan.BASE)
+                        .build()
+                );
+
+        saved = dataManager.save(saveContext);
+
+        Customer updatedCustomer = saved.get(createdCustomer);
+
+        assertThat(updatedCustomer).isNotNull();
+        assertThat(updatedCustomer.getLastName()).isEqualTo(createdCustomer.getLastName());
+        assertThat(updatedCustomer.getEmail()).isEqualTo(createdCustomer.getEmail());
+        assertThat(updatedCustomer.getLastModifiedBy()).isEqualTo(SampleServiceConnection.CLIENT_ID);
+
+        CustomerRegionDto updatedRegion = updatedCustomer.getRegion();
+        assertThat(updatedRegion).isNotNull();
+        assertThat(updatedRegion.getName()).isEqualTo(region.getName());
+    }
 }

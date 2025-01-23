@@ -17,19 +17,16 @@
 package io.jmix.rest.impl;
 
 import com.google.common.base.Strings;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanNotFoundException;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.rest.impl.config.RestJsonTransformations;
+import io.jmix.rest.RestProperties;
 import io.jmix.rest.exception.RestAPIException;
+import io.jmix.rest.impl.config.RestJsonTransformations;
 import io.jmix.rest.transform.JsonTransformationDirection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -45,7 +42,13 @@ public class RestControllerUtils {
     protected RestJsonTransformations restJsonTransformations;
 
     @Autowired
-    protected FetchPlanRepository viewRepository;
+    protected FetchPlanRepository fetchPlanRepository;
+
+    @Autowired
+    protected FetchPlanSerialization fetchPlanSerialization;
+
+    @Autowired
+    protected RestProperties restProperties;
 
     /**
      * Finds metaClass by entityName. Throws a RestAPIException if metaClass not found
@@ -62,15 +65,50 @@ public class RestControllerUtils {
     }
 
     /**
-     * Finds a view for a given metaClass. Throws a RestAPIException if Fetch plan not found
+     * Returns a fetch plan by name.
+     *
+     * @param metaClass entity MetaClass
+     * @param name fetch plan name (nullable)
+     * @return a fetch plan by name, or null if name is null
+     *
+     * @throws RestAPIException if the fetch plan is not found
      */
-    public FetchPlan getView(MetaClass metaClass, String viewName) {
+    @Nullable
+    public FetchPlan getFetchPlan(MetaClass metaClass, @Nullable String name) {
+        if (name == null)
+            return null;
         try {
-            return viewRepository.getFetchPlan(metaClass, viewName);
+            return fetchPlanRepository.getFetchPlan(metaClass, name);
         } catch (FetchPlanNotFoundException e) {
             throw new RestAPIException("Fetch plan not found",
-                    String.format("Fetch plan %s for entity %s not found", viewName, metaClass.getName()),
+                    String.format("Fetch plan %s for entity %s not found", name, metaClass.getName()),
                     HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Returns a fetch plan by name or deserializes it from JSON.
+     *
+     * @param metaClass entity MetaClass
+     * @param fetchPlanNameOrJson fetch plan name or JSON representation (nullable)
+     * @return a fetch plan by name, or null if name is null
+     *
+     * @throws RestAPIException if the provided fetch plan is a name, and it's not found in repository. Also, if
+     * inline fetch plans are disabled by {@link RestProperties#isInlineFetchPlanEnabled()}.
+     */
+    @Nullable
+    public FetchPlan getFetchPlanByNameOrJson(MetaClass metaClass, @Nullable String fetchPlanNameOrJson) {
+        if (fetchPlanNameOrJson == null)
+            return null;
+        if (isJsonObject(fetchPlanNameOrJson)) {
+            if (!restProperties.isInlineFetchPlanEnabled()) {
+                throw new RestAPIException("Inline fetch plans are disabled",
+                        "Inline fetch plans are disabled. Use only named fetch plans.",
+                        HttpStatus.BAD_REQUEST);
+            }
+            return fetchPlanSerialization.fromJson(fetchPlanNameOrJson);
+        } else {
+            return getFetchPlan(metaClass, fetchPlanNameOrJson);
         }
     }
 
@@ -82,6 +120,11 @@ public class RestControllerUtils {
     public String transformJsonIfRequired(String entityName, @Nullable String modelVersion, JsonTransformationDirection direction, String json) {
         return Strings.isNullOrEmpty(modelVersion) ? json :
                 restJsonTransformations.getTransformer(entityName, modelVersion, direction).transformJson(json);
+    }
+
+    private boolean isJsonObject(String s) {
+        String trimmed = s.trim();
+        return trimmed.startsWith("{") && trimmed.endsWith("}");
     }
 }
 

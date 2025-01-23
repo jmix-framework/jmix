@@ -1276,6 +1276,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/userInfo'
+  /capabilities:
+    get:
+      tags:
+        - Capabilities
+      summary: Get REST capabilities
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/capabilitiesInfo'
   /docs/openapi.{format}:
     get:
       tags:
@@ -1573,6 +1585,13 @@ components:
             - login
           items:
             type: string
+    capabilitiesInfo:
+      type: object
+      properties:
+        inlineFetchPlans:
+          type: boolean
+          description: |
+            Whether the /entities endpoints support inline fetch plans.
   responses:
     metaClassNotFoundResponse:
       description: Not found. MetaClass for the entity with the given name not found

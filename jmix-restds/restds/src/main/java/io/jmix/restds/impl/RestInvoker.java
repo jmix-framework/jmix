@@ -67,7 +67,7 @@ public class RestInvoker implements InitializingBean {
 
     public record LoadParams(String entityName,
                                  Object id,
-                                 @Nullable String fetchPlanName) {
+                                 @Nullable String fetchPlan) {
 
         public LoadParams(String entityName, Object id) {
             this(entityName, id, null);
@@ -79,7 +79,7 @@ public class RestInvoker implements InitializingBean {
                                  int offset,
                                  @Nullable String sort,
                                  @Nullable String filter,
-                                 @Nullable String fetchPlanName) {
+                                 @Nullable String fetchPlan) {
 
         public LoadListParams(String entityName, @Nullable String filter) {
             this(entityName, 1, 0, null, filter, null);
@@ -131,10 +131,10 @@ public class RestInvoker implements InitializingBean {
 
     private URI createLoadUri(UriBuilder uriBuilder, LoadParams params) {
         uriBuilder.path("/rest/entities/{entityName}/{id}");
-        if (params.fetchPlanName() != null) {
-            uriBuilder.queryParam("fetchPlan", params.fetchPlanName());
+        if (params.fetchPlan() != null) {
+            uriBuilder.queryParam("fetchPlan", "{fetchPlan}");
         }
-        return uriBuilder.build(params.entityName(), params.id());
+        return uriBuilder.build(params.entityName(), params.id(), params.fetchPlan());
     }
 
     public String loadList(LoadListParams params) {
@@ -173,8 +173,12 @@ public class RestInvoker implements InitializingBean {
                 rootNode.put("limit", params.limit());
             }
             rootNode.put("offset", params.offset());
-            if (params.fetchPlanName() != null) {
-                rootNode.put("fetchPlan", params.fetchPlanName());
+            if (params.fetchPlan() != null) {
+                if (isJsonObject(params.fetchPlan())) {
+                    rootNode.set("fetchPlan", objectMapper.readTree(params.fetchPlan()));
+                } else {
+                    rootNode.put("fetchPlan", params.fetchPlan());
+                }
             }
             if (returnCount) {
                 rootNode.put("returnCount", true);
@@ -195,13 +199,13 @@ public class RestInvoker implements InitializingBean {
             uriBuilder.queryParam("limit", params.limit());
         }
         uriBuilder.queryParam("offset", params.offset());
-        if (params.fetchPlanName() != null) {
-            uriBuilder.queryParam("fetchPlan", params.fetchPlanName());
+        if (params.fetchPlan() != null) {
+            uriBuilder.queryParam("fetchPlan", "{fetchPlan}");
         }
         if (returnCount) {
             uriBuilder.queryParam("returnCount", true);
         }
-        return uriBuilder.build(params.entityName());
+        return uriBuilder.build(params.entityName(), params.fetchPlan());
     }
 
     public long count(String entityName, @Nullable String filter) {
@@ -292,8 +296,26 @@ public class RestInvoker implements InitializingBean {
         }
     }
 
+    public String capabilities() {
+        try {
+            String resultJson = restClient.get()
+                    .uri("/rest/capabilities")
+                    .retrieve()
+                    .body(String.class);
+
+            return resultJson;
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
+        }
+    }
+
     public RestAuthenticator getAuthenticator() {
         return authenticator;
+    }
+
+    private boolean isJsonObject(String s) {
+        String trimmed = s.trim();
+        return trimmed.startsWith("{") && trimmed.endsWith("}");
     }
 
     private static class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {

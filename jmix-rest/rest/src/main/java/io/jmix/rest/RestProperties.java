@@ -92,8 +92,14 @@ public class RestProperties {
      * Whether "responseView" param is required.
      */
     private final boolean responseFetchPlanEnabled;
+
     private final int defaultMaxFetchSize;
     private final Map<String, Integer> entityMaxFetchSize;
+
+    /**
+     * Whether inline fetch plans are enabled in entities and queries endpoints (true by default).
+     */
+    private final boolean inlineFetchPlanEnabled;
 
     /**
      * File extensions that can be opened for viewing in a browser by replying with 'Content-Disposition=inline' header.
@@ -116,7 +122,8 @@ public class RestProperties {
             @DefaultValue("true") boolean responseFetchPlanEnabled,
             @DefaultValue("10000") int defaultMaxFetchSize,
             @DefaultValue({"jpg", "png", "jpeg", "pdf"}) Set<String> inlineEnabledFileExtensions,
-            @Nullable Map<String, Integer> entityMaxFetchSize) {
+            @Nullable Map<String, Integer> entityMaxFetchSize,
+            @DefaultValue("true") boolean inlineFetchPlanEnabled) {
         this.basePath = checkPath("jmix.rest.base-path", basePath);
         this.entitiesPath = checkPath("jmix.rest.entities-path", entitiesPath);
         this.docsPath = checkPath("jmix.rest.docs-path", docsPath);
@@ -133,6 +140,7 @@ public class RestProperties {
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
         this.inlineEnabledFileExtensions = inlineEnabledFileExtensions;
+        this.inlineFetchPlanEnabled = inlineFetchPlanEnabled;
     }
 
     private String checkPath(String property, @Nullable String value) {
@@ -243,5 +251,12 @@ public class RestProperties {
 
     public int getEntityMaxFetchSize(String entityName) {
         return entityMaxFetchSize.getOrDefault(entityName, defaultMaxFetchSize);
+    }
+
+    /**
+     * @see #inlineFetchPlanEnabled
+     */
+    public boolean isInlineFetchPlanEnabled() {
+        return inlineFetchPlanEnabled;
     }
 }

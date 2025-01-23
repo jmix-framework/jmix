@@ -84,32 +84,32 @@ public class QueriesControllerManager {
                                   String queryName,
                                   @Nullable Integer limit,
                                   @Nullable Integer offset,
-                                  @Nullable String viewName,
+                                  @Nullable String fetchPlanName,
                                   @Nullable Boolean returnNulls,
                                   @Nullable Boolean dynamicAttributes,
                                   @Nullable String version,
                                   Map<String, String> params) {
-        return _executeQuery(entityName, queryName, limit, offset, viewName, returnNulls, dynamicAttributes, version, params);
+        return _executeQuery(entityName, queryName, limit, offset, fetchPlanName, returnNulls, dynamicAttributes, version, params);
     }
 
     public String executeQueryPost(String entityName,
                                    String queryName,
                                    @Nullable Integer limit,
                                    @Nullable Integer offset,
-                                   @Nullable String viewName,
+                                   @Nullable String fetchPlanName,
                                    @Nullable Boolean returnNulls,
                                    @Nullable Boolean dynamicAttributes,
                                    @Nullable String version,
                                    String paramsJson) {
         Map<String, String> paramsMap = restParseUtils.parseParamsJson(paramsJson);
-        return _executeQuery(entityName, queryName, limit, offset, viewName, returnNulls, dynamicAttributes, version, paramsMap);
+        return _executeQuery(entityName, queryName, limit, offset, fetchPlanName, returnNulls, dynamicAttributes, version, paramsMap);
     }
 
     protected String _executeQuery(String entityName,
                                    String queryName,
                                    @Nullable Integer limit,
                                    @Nullable Integer offset,
-                                   @Nullable String viewName,
+                                   @Nullable String fetchPlanName,
                                    @Nullable Boolean returnNulls,
                                    @Nullable Boolean dynamicAttributes,
                                    @Nullable String version,
@@ -123,10 +123,11 @@ public class QueriesControllerManager {
         }
         ctx.setHint("jmix.dynattr", BooleanUtils.isTrue(dynamicAttributes));
 
-        //override default view defined in queries config
-        if (!Strings.isNullOrEmpty(viewName)) {
-            MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
-            ctx.setFetchPlan(restControllerUtils.getView(metaClass, viewName));
+        //override default fetch plan defined in queries config
+        MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
+        FetchPlan fetchPlan = restControllerUtils.getFetchPlan(metaClass, fetchPlanName);
+        if (fetchPlan != null) {
+            ctx.setFetchPlan(fetchPlan);
         }
         List<?> entities = dataManager.loadList(ctx);
 
@@ -241,7 +242,10 @@ public class QueriesControllerManager {
 
         query.setCacheable(queryInfo.isCacheable());
         ctx.setQuery(query);
-        ctx.setFetchPlan(restControllerUtils.getView(metaClass, queryInfo.getViewName()));
+        FetchPlan fetchPlan = restControllerUtils.getFetchPlan(metaClass,
+                queryInfo.getFetchPlanName() != null ? queryInfo.getFetchPlanName() : queryInfo.getViewName());
+        if (fetchPlan != null)
+            ctx.setFetchPlan(fetchPlan);
         return ctx;
     }
 

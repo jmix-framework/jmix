@@ -47,6 +47,7 @@ public class EntitiesMetadataController {
         return controllerManager.getAllMetaClassesInfo();
     }
 
+    @Deprecated(forRemoval = true)
     @GetMapping("/entities/{entityName}/views/{viewName}")
     public String getView(@PathVariable String entityName,
                           @PathVariable String viewName) {

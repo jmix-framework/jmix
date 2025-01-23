@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.messagetemplatesflowui.component.factory;
+package io.jmix.messagetemplatesflowui.view.messagetemplateparameter.model;
 
 import org.springframework.lang.NonNullApi;

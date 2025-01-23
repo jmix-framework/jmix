@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.messagetemplatesflowui.component.factory;
+package io.jmix.autoconfigure.messagetemplates;
 
 import org.springframework.lang.NonNullApi;

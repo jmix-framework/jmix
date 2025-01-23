@@ -17,8 +17,8 @@
 package io.jmix.flowuidata.settings;
 
 import io.jmix.core.AccessManager;
-import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
@@ -43,13 +43,13 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     protected CurrentAuthentication authentication;
     protected Metadata metadata;
     protected AccessManager accessManager;
-    protected DataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
     protected TransactionTemplate transaction;
 
     public UserSettingsServiceImpl(CurrentAuthentication authentication,
                                    Metadata metadata,
                                    AccessManager accessManager,
-                                   DataManager dataManager,
+                                   UnconstrainedDataManager dataManager,
                                    PlatformTransactionManager transactionManager) {
         this.authentication = authentication;
         this.metadata = metadata;

@@ -23,7 +23,9 @@ import spock.lang.Specification
 
 class RestAuthorizedUrlsRequestMatcherTest extends Specification {
 
-    def restProperties = new RestProperties('/rest', '/entities', '/docs', '/metadata', '/files', '/messages', '/permissions', '/queries', '/services', '/userInfo', '/user-session', false, true, 1000, null, null)
+    def restProperties = new RestProperties('/rest', '/entities', '/docs', '/metadata', '/files', '/messages',
+            '/permissions', '/queries', '/services', '/userInfo', '/user-session', '/capabilities',
+            false, true, 1000, null, null, true)
 
     def "test without servlet context"() {
         def matcher = new RestAuthorizedUrlsRequestMatcher(restProperties)

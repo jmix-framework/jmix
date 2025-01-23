@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * REST controller that is used for getting an information about REST capabilities.
  */
 @RestController("rest_CapabilitiesController")
-@RequestMapping(path = "/rest/capabilities", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "${jmix.rest.base-path}${jmix.rest.capabilities-path}", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CapabilitiesController {
 
     @Autowired

@@ -82,6 +82,10 @@ public class RestProperties {
      */
     private final String userSessionPath;
 
+    /**
+     * Capabilities endpoint path, '/capabilities' by default.
+     */
+    private final String capabilitiesPath;
 
     /**
      * Whether the passed entities versions should be validated before entities are persisted.
@@ -118,6 +122,7 @@ public class RestProperties {
             @DefaultValue("/services") String servicesPath,
             @DefaultValue("/userInfo") String userInfoPath,
             @DefaultValue("/user-session") String userSessionPath,
+            @DefaultValue("/capabilities") String capabilitiesPath,
             @DefaultValue("false") boolean optimisticLockingEnabled,
             @DefaultValue("true") boolean responseFetchPlanEnabled,
             @DefaultValue("10000") int defaultMaxFetchSize,
@@ -135,6 +140,7 @@ public class RestProperties {
         this.servicesPath = checkPath("jmix.rest.services-path", servicesPath);
         this.userInfoPath = checkPath("jmix.rest.user-info-path", userInfoPath);
         this.userSessionPath = checkPath("jmix.rest.user-session-path", userSessionPath);
+        this.capabilitiesPath = checkPath("jmix.rest.capabilities-path", capabilitiesPath);
         this.optimisticLockingEnabled = optimisticLockingEnabled;
         this.responseFetchPlanEnabled = responseFetchPlanEnabled;
         this.defaultMaxFetchSize = defaultMaxFetchSize;
@@ -226,6 +232,13 @@ public class RestProperties {
      */
     public String getUserSessionPath() {
         return userSessionPath;
+    }
+
+    /**
+     * @see #capabilitiesPath
+     */
+    public String getCapabilitiesPath() {
+        return capabilitiesPath;
     }
 
     /**

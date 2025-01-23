@@ -447,18 +447,10 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
         }
     }
 
+    @Nullable
     protected String findSubstitutedUsername() {
-        UserDetails effectiveUser = currentUserSubstitution.getEffectiveUser();
-        if (effectiveUser != null) {
-            return effectiveUser.getUsername();
-        } else {
-            String username = properties.getSystemUsername();
-            if (username != null) {
-                return username;
-            } else {
-                throw new RuntimeException("The user '" + username + "' specified in jmix.audit.systemUsername does not exist");
-            }
-        }
+        UserDetails substitutedUser = currentUserSubstitution.getSubstitutedUser();
+        return substitutedUser != null ? substitutedUser.getUsername() : null;
     }
 
     protected void enqueueItem(EntityLogItem item, String storeName) {

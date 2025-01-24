@@ -1,0 +1,20 @@
+{
+  "groups": [
+    {
+      "name": "jmix.resource-server",
+      "sourceType": "io.jmix.securityresourceserver.SecurityResourceServerProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jmix.resource-server.authenticated-url-patterns",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of URL patterns that require a bearer token"
+    },
+    {
+      "name": "jmix.resource-server.anonymous-url-patterns",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of URL patterns that should be accessed without token"
+    }
+  ]
+}

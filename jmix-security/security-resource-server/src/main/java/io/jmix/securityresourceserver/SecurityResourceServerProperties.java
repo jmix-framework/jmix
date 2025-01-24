@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.securityresourceserver;
 
-group = 'io.jmix.security'
-archivesBaseName = 'jmix-security-resource-server'
-
-dependencies {
-    api project(':core')
-}
-
-tasks.named('compileJava') {
-    inputs.files(tasks.named('processResources'))
+/**
+ * This class exists solely to satisfy code completion of properties defined in
+ * {@code META-INF/additional-spring-configuration-metadata.json}
+ */
+public class SecurityResourceServerProperties {
 }

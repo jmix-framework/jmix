@@ -110,6 +110,16 @@ public class RestProperties {
      */
     protected Set<String> inlineEnabledFileExtensions;
 
+    /**
+     * Path to Services API config file.
+     */
+    private final String servicesConfig;
+
+    /**
+     * Path to Queries API config file.
+     */
+    private final String queriesConfig;
+
     public RestProperties(
             @DefaultValue("/rest") String basePath,
             @DefaultValue("/entities") String entitiesPath,
@@ -128,7 +138,9 @@ public class RestProperties {
             @DefaultValue("10000") int defaultMaxFetchSize,
             @DefaultValue({"jpg", "png", "jpeg", "pdf"}) Set<String> inlineEnabledFileExtensions,
             @Nullable Map<String, Integer> entityMaxFetchSize,
-            @DefaultValue("true") boolean inlineFetchPlanEnabled) {
+            @DefaultValue("true") boolean inlineFetchPlanEnabled,
+            String servicesConfig,
+            String queriesConfig) {
         this.basePath = checkPath("jmix.rest.base-path", basePath);
         this.entitiesPath = checkPath("jmix.rest.entities-path", entitiesPath);
         this.docsPath = checkPath("jmix.rest.docs-path", docsPath);
@@ -147,6 +159,8 @@ public class RestProperties {
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
         this.inlineEnabledFileExtensions = inlineEnabledFileExtensions;
         this.inlineFetchPlanEnabled = inlineFetchPlanEnabled;
+        this.servicesConfig = servicesConfig;
+        this.queriesConfig = queriesConfig;
     }
 
     private String checkPath(String property, @Nullable String value) {
@@ -271,5 +285,19 @@ public class RestProperties {
      */
     public boolean isInlineFetchPlanEnabled() {
         return inlineFetchPlanEnabled;
+    }
+
+    /**
+     * @see #servicesPath
+     */
+    public String getServicesConfig() {
+        return servicesConfig;
+    }
+
+    /**
+     * @see #queriesPath
+     */
+    public String getQueriesConfig() {
+        return queriesConfig;
     }
 }

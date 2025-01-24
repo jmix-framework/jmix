@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.jmix.core.Resources;
 import io.jmix.core.common.util.Dom4j;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
+import io.jmix.rest.RestProperties;
 import io.jmix.rest.annotation.RestHttpMethod;
 import io.jmix.rest.annotation.RestMethod;
 import io.jmix.rest.annotation.RestService;
@@ -67,6 +68,10 @@ public class RestServicesConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(RestServicesConfiguration.class);
 
+    /**
+     * @deprecated Use {@link RestProperties#getServicesConfig()}
+     */
+    @Deprecated(forRemoval = true)
     public static final String JMIX_REST_SERVICES_CONFIG_PROP_NAME = "jmix.rest.services-config";
 
     protected Map<String, RestServiceInfo> serviceInfosMap = new ConcurrentHashMap<>();
@@ -79,7 +84,7 @@ public class RestServicesConfiguration {
     protected Resources resources;
 
     @Autowired
-    protected Environment environment;
+    protected RestProperties restProperties;
 
     @Autowired
     protected BeanFactory beanFactory;
@@ -148,7 +153,7 @@ public class RestServicesConfiguration {
     }
 
     protected void loadConfig() {
-        String configName = environment.getProperty(JMIX_REST_SERVICES_CONFIG_PROP_NAME);
+        String configName = restProperties.getServicesConfig();
         StringTokenizer tokenizer = new StringTokenizer(configName);
         for (String location : tokenizer.getTokenArray()) {
             Resource resource = resources.getResource(location);

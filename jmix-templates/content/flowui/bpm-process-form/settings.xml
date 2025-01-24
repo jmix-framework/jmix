@@ -1,12 +1,12 @@
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_blank.svg"
           order="1000"
-          name="BPMN process form">
+          name="BPM: process form">
     <tags>
         <tag>BPM</tag>
     </tags>
     <description>
-        <![CDATA[<html>BPMN process form.</html>]]>
+        <![CDATA[<html>BPM: process form.</html>]]>
     </description>
     <locMessages key="title" expressionKey="${studioUtils.decapitalize(controllerName)}.title">
         <message lang="default">

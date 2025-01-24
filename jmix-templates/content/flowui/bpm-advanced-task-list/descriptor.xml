@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="${messageKeys['viewTitle']}"
+      focusComponent="tasksDataGrid">
+    <data>
+        <collection id="tasksDc"
+                    class="io.jmix.bpm.entity.TaskData">
+            <loader id="tasksDl"/>
+        </collection>
+        <collection id="processDefinitionsDc"
+                    class="io.jmix.bpm.entity.ProcessDefinitionData">
+            <loader id="processDefinitionsDl"/>
+        </collection>
+    </data>
+    <facets>
+        <urlQueryParameters>
+            <pagination component="tasksPagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="applyFilter" icon="SEARCH" text="msg:///actions.Apply"/>
+        <action id="resetFilter" icon="ERASER" text="${messageKeys['resetTaskFilterText']}"/>
+    </actions>
+    <layout>
+        <hbox width="100%" height="100%" expand="tasksDataGridBox" themeNames="spacing-s">
+            <!-- The root component of the user task filter panel -->
+            <vbox id="filterContainer" width="25em" height="100%" spacing="false"
+                  classNames="border rounded-l gap-m shadow-m border-contrast-20">
+                <hbox width="100%" padding="false" alignItems="CENTER" themeNames="spacing-xs"
+                      expand="taskFilterHeader">
+                    <h4 id="taskFilterHeader" text="${messageKeys['taskFilterHeaderText']}"/>
+                    <!-- Buttons to apply or reset task filter values -->
+                    <hbox alignSelf="END" justifyContent="END" themeNames="spacing-s">
+                        <button id="applyFilterBtn" action="applyFilter" themeNames="tertiary-inline"/>
+                        <button id="resetFilterBtn" action="resetFilter" themeNames="error tertiary-inline"/>
+                    </hbox>
+                </hbox>
+                <!-- A container with input components for filters that will be applied to the current user's tasks -->
+                <formLayout id="filterFormLayout">
+                    <responsiveSteps>
+                        <responsiveStep minWidth="0" columns="1"/>
+                    </responsiveSteps>
+                    <details id="generalFilters" width="100%" themeNames="reverse small" opened="true">
+                        <textField id="taskNameField" label="${messageKeys['taskFilterTaskNameLabel']}"
+                                   classNames="pt-xs"
+                                   clearButtonVisible="true" width="100%"/>
+                        <textField id="processNameField" label="${messageKeys['taskFilterProcessNameLabel']}"
+                                   classNames="pt-xs"
+                                   clearButtonVisible="true" width="100%"/>
+                    </details>
+                    <details id="assignmentFilters" width="100%" themeNames="reverse small" opened="true">
+                        <radioButtonGroup id="assignmentTypeField" themeNames="vertical" classNames="pt-xs"
+                                          itemsEnum="${packageName}.${controllerName}\$MyTaskAssignmentType"/>
+                    </details>
+                </formLayout>
+            </vbox>
+
+            <!-- A container with a data grid displaying the current user's tasks with filters applied -->
+            <vbox id="tasksDataGridBox" height="100%" themeNames="spacing-s" padding="false">
+                <hbox id="buttonsPanel" classNames="buttons-panel">
+                    <!-- A button that opens and hides a task filter panel.
+                        This button also shows a number of applied filters to the user tasks.
+                    -->
+                    <div id="filterBtnContainer" classNames="relative inline-flex items-start">
+                        <button id="filterBtn" icon="FILTER" themeNames="primary"/>
+                        <span id="appliedFiltersCount" themeNames="badge contrast primary small"
+                              css="border-radius: 50%; left: -0.75em" classNames="relative z-10" visible="false"/>
+                    </div>
+                    <button id="refreshBtn" action="tasksDataGrid.refresh" themeNames="primary success"/>
+                    <button id="openTaskFormBtn" action="tasksDataGrid.openTaskForm"/>
+                    <simplePagination id="tasksPagination" dataLoader="tasksDl"/>
+                </hbox>
+
+                <dataGrid id="tasksDataGrid" width="100%" minHeight="20em" dataContainer="tasksDc"
+                          columnReorderingAllowed="true">
+                    <actions>
+                        <action id="refresh" type="list_refresh"/>
+                        <action id="openTaskForm"
+                                icon="PENCIL"
+                                text="${messageKeys['openTaskFormActionText']}"
+                                type="list_itemTracking"/>
+                    </actions>
+                    <columns resizable="true">
+                        <column property="name"/>
+                        <column key="process" header="${messageKeys['processColumnHeader']}" sortable="false"/>
+                        <column property="createTime" autoWidth="true"/>
+                        <column property="dueDate" autoWidth="true"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
+        </hbox>
+    </layout>
+</view>

@@ -25,6 +25,7 @@
                         maxWidth="40em"
                         maxHeight="20em"
                         classNames="cssClassName1, cssClassName2"
+                        tabNavigation="true"
                         loadMenuConfig="true"
                         css="color: red;"
                         visible="true"/>

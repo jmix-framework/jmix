@@ -16,8 +16,8 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.flowui.component.horizontalmenu.MenuConfigHorizontalMenuItemProvider;
 import io.jmix.flowui.component.horizontalmenu.HorizontalMenu;
+import io.jmix.flowui.component.horizontalmenu.MenuConfigHorizontalMenuItemProvider;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 
 public class HorizontalMenuLoader extends AbstractComponentLoader<HorizontalMenu> {
@@ -29,6 +29,8 @@ public class HorizontalMenuLoader extends AbstractComponentLoader<HorizontalMenu
 
     @Override
     public void loadComponent() {
+        loadBoolean(element, "tabNavigation", resultComponent::setTabNavigation);
+
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
 

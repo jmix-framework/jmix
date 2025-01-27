@@ -20,6 +20,7 @@
                     <nav id="navigation"
                          classNames="jmix-main-view-top-menu-navigation">
                         <horizontalMenu id="horizontalMenu"
+                                        tabNavigation="true"
                                         width="100%"/>
                     </nav>
                     <hbox id="userHeaderBox"

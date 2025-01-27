@@ -4221,6 +4221,8 @@
             <xs:extension base="baseComponent">
                 <xs:attribute name="loadMenuConfig" type="xs:boolean"/>
 
+                <xs:attribute name="tabNavigation" type="xs:boolean"/>
+
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>

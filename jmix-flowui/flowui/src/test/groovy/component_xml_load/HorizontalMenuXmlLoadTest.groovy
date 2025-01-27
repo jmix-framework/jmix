@@ -51,6 +51,7 @@ class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "20em"
             visible
             width == "30em"
+            tabNavigation
 
             getMenuItems().size() == 2
         }

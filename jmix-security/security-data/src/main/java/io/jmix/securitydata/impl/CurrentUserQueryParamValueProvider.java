@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -38,7 +39,7 @@ import java.util.Arrays;
  * an attribute of the user object.
  */
 @Component("sec_CurrentUserQueryParamValueProvider")
-@Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 100)
 public class CurrentUserQueryParamValueProvider implements QueryParamValueProvider {
 
     public static final String CURRENT_USER_PREFIX = "current_user_";

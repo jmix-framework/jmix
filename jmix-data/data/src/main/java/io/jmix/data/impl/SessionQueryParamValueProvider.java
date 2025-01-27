@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
  * Parameter names must be in the form {@code session_ATTRIBUTE} where {@code ATTRIBUTE} is the name of a session attribute.
  */
 @Component("data_SessionQueryParamValueProvider")
-@Order(JmixOrder.HIGHEST_PRECEDENCE - 100)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 200)
 public class SessionQueryParamValueProvider implements QueryParamValueProvider {
 
     public static final String SESSION_PREFIX = "session_";

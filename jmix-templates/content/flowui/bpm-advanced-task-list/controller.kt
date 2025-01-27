@@ -315,15 +315,15 @@ class ${controllerName} : StandardListView<TaskData>() {
             } else {
                 taskQuery.taskCandidateOrAssigned(currentUserName)
             }
-            if (bpmTenantProvider != null && bpmTenantProvider?.isMultitenancyActive == true) {
-                taskQuery.taskTenantId(bpmTenantProvider!!.currentUserTenantId)
-            }
 
             if (userGroupCodes?.isNotEmpty() == true) {
                 taskQuery.taskCandidateGroupIn(userGroupCodes)
             }
 
             taskQuery.endOr()
+        }
+        if (bpmTenantProvider != null && bpmTenantProvider?.isMultitenancyActive == true) {
+            taskQuery.taskTenantId(bpmTenantProvider!!.currentUserTenantId)
         }
     }
 

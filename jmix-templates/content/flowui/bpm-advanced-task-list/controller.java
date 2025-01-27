@@ -305,15 +305,15 @@ public class ${controllerName} extends StandardListView<TaskData> {
             } else {
                 taskQuery.taskCandidateOrAssigned(currentUserName);
             }
-            if (bpmTenantProvider != null && bpmTenantProvider.isMultitenancyActive()) {
-                taskQuery.taskTenantId(bpmTenantProvider.getCurrentUserTenantId());
-            }
 
             if (CollectionUtils.isNotEmpty(userGroupCodes)) {
                 taskQuery.taskCandidateGroupIn(userGroupCodes);
             }
 
             taskQuery.endOr();
+        }
+        if (bpmTenantProvider != null && bpmTenantProvider.isMultitenancyActive()) {
+            taskQuery.taskTenantId(bpmTenantProvider.getCurrentUserTenantId());
         }
     }
 

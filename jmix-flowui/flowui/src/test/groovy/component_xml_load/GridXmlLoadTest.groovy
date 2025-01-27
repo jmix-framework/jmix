@@ -92,6 +92,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             nestedNullBehavior == Grid.NestedNullBehavior.THROW
             pageSize == 20
             rowsDraggable
+            emptyStateText == "emptyStateText"
             tabIndex == 3
             themeNames.containsAll(["column-borders", "compact"])
             visible
@@ -198,6 +199,24 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
         //separator
         contextMenu.getChildren().toList().get(1) instanceof Hr
+    }
+
+    def "Load DataGrid with custom empty state component"() {
+        given: "View with a dataGrid"
+        def gridView = navigateToView(GridView.class)
+
+        when: "dataGrid is loaded"
+        def dataGrid = gridView.dataGridWithCustomEmptyStateComponent
+
+        then: "emptyStateComponent is loaded"
+        gridView.emptyStateButton != null
+        !dataGrid.items.items
+
+        when: "emptyStateComponent is clicked"
+        gridView.emptyStateButton.click()
+
+        then: "dataGrid items will be loaded"
+        dataGrid.items.items
     }
 
     def "Load treeDataGrid component from XML"() {

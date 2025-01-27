@@ -49,6 +49,7 @@
                   nestedNullBehavior="THROW"
                   pageSize="20"
                   rowsDraggable="true"
+                  emptyStateText="emptyStateText"
                   selectionMode="MULTI"
                   tabIndex="3"
                   themeNames="column-borders, compact"
@@ -120,6 +121,15 @@
                 <item id="item3"
                       text="Item 3"/>
             </contextMenu>
+        </dataGrid>
+
+        <dataGrid id="dataGridWithCustomEmptyStateComponent" dataContainer="ordersDc">
+            <columns>
+                <column property="date"/>
+            </columns>
+            <emptyStateComponent>
+                <button id="emptyStateButton" text="Empty state button"/>
+            </emptyStateComponent>
         </dataGrid>
 
         <treeDataGrid id="treeDataGrid"

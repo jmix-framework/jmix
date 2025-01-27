@@ -52,6 +52,7 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
+import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.component.datagrid.RendererProvider;
@@ -89,6 +90,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     public void loadComponent() {
         loadInteger(element, "pageSize", resultComponent::setPageSize);
         loadBoolean(element, "rowsDraggable", resultComponent::setRowsDraggable);
+        loadResourceString(element, "emptyStateText", context.getMessageGroup(),
+                resultComponent::setEmptyStateText);
         loadBoolean(element, "allRowsVisible", resultComponent::setAllRowsVisible);
         loadEnum(element, GridDropMode.class, "dropMode", resultComponent::setDropMode);
         loadBoolean(element, "detailsVisibleOnClick", resultComponent::setDetailsVisibleOnClick);
@@ -111,6 +114,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadMultiSort();
 
         loadContextMenu();
+        loadEmptyStateComponent();
         loadActions();
     }
 
@@ -718,6 +722,29 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         for (Element childItemElement : contextMenuElement.elements()) {
             addContextMenuItem(contextMenu::addItem, contextMenu::add, childItemElement);
         }
+    }
+
+    protected void loadEmptyStateComponent() {
+        Element emptyStateComponentElement = element.element("emptyStateComponent");
+        if (emptyStateComponentElement == null) {
+            return;
+        }
+
+        if (emptyStateComponentElement.elements().size() != 1) {
+            String message = "%s with '%s' ID should have a single 'emptyStateComponent' element"
+                    .formatted(resultComponent.getClass().getSimpleName(), resultComponent.getId().orElse(null));
+
+            throw new GuiDevelopmentException(message, context);
+        }
+
+        Element subElement = emptyStateComponentElement.elements().get(0);
+        ComponentLoader<?> componentLoader = getLayoutLoader().createComponentLoader(subElement);
+
+        componentLoader.initComponent();
+        componentLoader.loadComponent();
+
+        Component emptyStateComponent = componentLoader.getResultComponent();
+        resultComponent.setEmptyStateComponent(emptyStateComponent);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

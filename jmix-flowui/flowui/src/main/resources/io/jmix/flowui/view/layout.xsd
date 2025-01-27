@@ -2985,12 +2985,18 @@
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="contextMenu" minOccurs="0" type="contextMenuType"/>
+                    <xs:element name="emptyStateComponent" minOccurs="0">
+                        <xs:complexType>
+                            <xs:group ref="layoutOrComponent"/>
+                        </xs:complexType>
+                    </xs:element>
                 </xs:all>
 
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="dropMode" type="gridDropMode"/>
                 <xs:attribute name="rowsDraggable" type="xs:boolean"/>
+                <xs:attribute name="emptyStateText" type="resourceString"/>
                 <xs:attribute name="themeNames" type="gridThemeNames"/>
                 <xs:attribute name="dataContainer" type="xs:string"/>
                 <xs:attribute name="allRowsVisible" type="xs:boolean"/>

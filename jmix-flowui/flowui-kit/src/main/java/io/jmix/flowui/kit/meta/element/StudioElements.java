@@ -1005,6 +1005,21 @@ public interface StudioElements {
     void gridContextMenu();
 
     @StudioElement(
+            name = "EmptyStateComponent",
+            xmlElement = "emptyStateComponent",
+            target = {"io.jmix.flowui.component.grid.DataGrid",
+                    "io.jmix.flowui.component.grid.TreeDataGrid"},
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            )
+    )
+    void gridEmptyStateComponent();
+
+    @StudioElement(
             name = "Item",
             icon = "io/jmix/flowui/kit/meta/icon/element/contextMenuItem.svg",
             xmlElement = "item",

@@ -1310,6 +1310,8 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "dropMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.grid.dnd.GridDropMode", options = {"BETWEEN", "ON_TOP",
                             "ON_TOP_OR_BETWEEN", "ON_GRID"}),
+                    @StudioProperty(xmlAttribute = "emptyStateText", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),

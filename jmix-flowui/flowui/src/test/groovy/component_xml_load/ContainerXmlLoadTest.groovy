@@ -60,6 +60,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             padding
             themeList.contains("spacing-xs")
+            wrap
             width == "100px"
             (getChildren().find { it instanceof TypedTextField<?> } as TypedTextField<?>).id.get() == "expanded"
             (getChildren().find { it instanceof JmixButton } as JmixButton).text == "${container}Child"

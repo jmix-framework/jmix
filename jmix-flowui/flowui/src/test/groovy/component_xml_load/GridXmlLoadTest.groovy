@@ -75,6 +75,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             aggregatable
             aggregationPosition == EnhancedDataGrid.AggregationPosition.BOTTOM
             allRowsVisible
+            ariaLabel.orElse(null) == "testAriaLabel"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
             columnReorderingAllowed
@@ -234,6 +235,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             aggregatable
             aggregationPosition == EnhancedDataGrid.AggregationPosition.BOTTOM
             allRowsVisible
+            ariaLabel.orElse(null) == "testAriaLabel"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
             columnReorderingAllowed

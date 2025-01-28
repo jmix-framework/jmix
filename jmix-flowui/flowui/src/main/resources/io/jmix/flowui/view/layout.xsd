@@ -2992,6 +2992,7 @@
                     </xs:element>
                 </xs:all>
 
+                <xs:attribute name="ariaLabel" type="resourceString"/>
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="dropMode" type="gridDropMode"/>
@@ -3559,6 +3560,8 @@
                 <xs:attribute name="themeNames" type="textAreaThemeNames"/>
                 <xs:attribute name="maxLength" type="xs:integer"/>
                 <xs:attribute name="minLength" type="xs:integer"/>
+                <xs:attribute name="minRows" type="xs:integer"/>
+                <xs:attribute name="maxRows" type="xs:integer"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
@@ -3999,6 +4002,7 @@
                 <xs:attribute name="receiverFqn" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasSize"/>
             </xs:extension>
         </xs:complexContent>
@@ -4969,6 +4973,7 @@
                 <xs:attribute name="alignSelf" type="alignEnum"/>
                 <xs:attribute name="css" type="xs:string"/>
                 <xs:attribute name="themeNames" type="spacingThemeNames"/>
+                <xs:attribute name="wrap" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>

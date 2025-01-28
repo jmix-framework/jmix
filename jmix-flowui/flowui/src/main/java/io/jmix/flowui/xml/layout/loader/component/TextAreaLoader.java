@@ -50,6 +50,8 @@ public class TextAreaLoader extends AbstractComponentLoader<JmixTextArea> {
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadInteger(element, "maxLength", resultComponent::setMaxLength);
         loadInteger(element, "minLength", resultComponent::setMinLength);
+        loadInteger(element, "minRows", resultComponent::setMinRows);
+        loadInteger(element, "maxRows", resultComponent::setMaxRows);
 
         componentLoader().loadPlaceholder(resultComponent, element);
         componentLoader().loadLabel(resultComponent, element);

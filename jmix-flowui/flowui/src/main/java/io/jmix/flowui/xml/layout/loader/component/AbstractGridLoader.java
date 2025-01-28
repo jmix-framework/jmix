@@ -92,6 +92,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadBoolean(element, "rowsDraggable", resultComponent::setRowsDraggable);
         loadResourceString(element, "emptyStateText", context.getMessageGroup(),
                 resultComponent::setEmptyStateText);
+        loadResourceString(element, "ariaLabel", context.getMessageGroup(), resultComponent::setAriaLabel);
         loadBoolean(element, "allRowsVisible", resultComponent::setAllRowsVisible);
         loadEnum(element, GridDropMode.class, "dropMode", resultComponent::setDropMode);
         loadBoolean(element, "detailsVisibleOnClick", resultComponent::setDetailsVisibleOnClick);

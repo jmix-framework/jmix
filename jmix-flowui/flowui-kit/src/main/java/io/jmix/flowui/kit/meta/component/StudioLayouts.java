@@ -133,7 +133,9 @@ public interface StudioLayouts {
                             options = {"spacing-xs", "spacing-s", "spacing", "spacing-l", "spacing-xl"}),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "wrap", category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.BOOLEAN, defaultValue = "false")
             }
     )
     HorizontalLayout hbox();
@@ -195,7 +197,9 @@ public interface StudioLayouts {
                             options = {"spacing-xs", "spacing-s", "spacing", "spacing-l", "spacing-xl"}),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "100%")
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "100%"),
+                    @StudioProperty(xmlAttribute = "wrap", category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.BOOLEAN, defaultValue = "false")
             }
     )
     VerticalLayout vbox();

@@ -21,7 +21,7 @@ import { ComboBoxPlaceholder } from '@vaadin/combo-box/src/vaadin-combo-box-plac
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.5.4]
+// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.6.3]
 class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBoxMixin(ThemableMixin(PolymerElement))) {
     static get is() {
         return 'jmix-multi-select-combo-box-internal';

@@ -78,9 +78,11 @@ class TextAreaXmlLoadTest extends FlowuiTestSpecification {
             maxHeight == "55px"
             maxLength == 50
             maxWidth == "120px"
+            maxRows == 10
             minHeight == "40px"
             minLength == 2
             minWidth == "80px"
+            minRows == 5
             pattern == "patternString"
             placeholder == "placeholderString"
             readOnly

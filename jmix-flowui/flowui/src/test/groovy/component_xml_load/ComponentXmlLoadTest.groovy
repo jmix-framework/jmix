@@ -324,6 +324,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (dropLabel as HasText).getText() == "dropLabelString"
             dropLabelIcon.element.getAttribute("icon") ==
                     VaadinIcon.UPLOAD.create().element.getAttribute("icon")
+            enabled
             height == "50px"
             maxFiles == 5
             maxFileSize == 10480000

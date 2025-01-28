@@ -37,6 +37,7 @@ public abstract class AbstractLayoutLoader<T extends Component & ThemableLayout 
 
     @Override
     public void loadComponent() {
+        loadBoolean(element, "wrap", resultComponent::setWrap);
         componentLoader().loadThemableAttributes(resultComponent, element);
         componentLoader().loadFlexibleAttributes(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);

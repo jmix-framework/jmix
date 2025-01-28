@@ -57,6 +57,7 @@ public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
         loadInteger(element, "maxFileSize", resultComponent::setMaxFileSize);
 
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
     }
 

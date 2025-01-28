@@ -47,7 +47,7 @@ import {LoginForm} from '@vaadin/login/src/vaadin-login-form.js';
  * @fires {CustomEvent} remember-me-changed - Fired when "rememberMeCheckbox" is checked or unchecked.
  * @fires {CustomEvent} locale-selection-changed - Fired when selection in "localesSelect" is changed
  */
-// CAUTION: copied from @vaadin/login [last update Vaadin 24.5.4]
+// CAUTION: copied from @vaadin/login [last update Vaadin 24.6.3]
 class JmixLoginForm extends LoginForm {
     static get template() {
         return html`
@@ -71,6 +71,7 @@ class JmixLoginForm extends LoginForm {
                             spellcheck="false"
                             autocomplete="username"
                             value="[[username]]"
+                            manual-validation
                     >
                         <input type="text" slot="input" on-keyup="_handleInputKeyup"/>
                     </vaadin-text-field>
@@ -85,6 +86,7 @@ class JmixLoginForm extends LoginForm {
                             spellcheck="false"
                             autocomplete="current-password"
                             value="[[password]]"
+                            manual-validation
                     >
                         <input type="password" slot="input" on-keyup="_handleInputKeyup"/>
                     </vaadin-password-field>

@@ -24,7 +24,7 @@ registerStyles('jmix-combo-box-picker', [],{
     moduleId: 'jmix-combo-box-picker-styles'
 });
 
-// CAUTION: copied from @vaadin/combo-box [last update Vaadin 24.5.4]
+// CAUTION: copied from @vaadin/combo-box [last update Vaadin 24.6.3]
 class JmixComboBoxPicker extends ComboBox {
 
     static get is() {
@@ -85,7 +85,6 @@ class JmixComboBoxPicker extends ComboBox {
                     theme$="[[_theme]]"
                     position-target="[[_positionTarget]]"
                     no-vertical-overlap
-                    restore-focus-node="[[inputElement]]"
             ></vaadin-combo-box-overlay>
 
             <slot name="tooltip"></slot>

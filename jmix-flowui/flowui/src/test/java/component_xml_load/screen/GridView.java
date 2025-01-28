@@ -47,6 +47,9 @@ public class GridView extends StandardView {
     public TreeDataGrid<?> treeDataGrid;
 
     @ViewComponent
+    public TreeDataGrid<?> treeDataGridWithCustomEmptyStateComponent;
+
+    @ViewComponent
     public TreeDataGrid<?> anotherTreeDataGrid;
 
     @ViewComponent
@@ -58,12 +61,20 @@ public class GridView extends StandardView {
     @ViewComponent
     public JmixButton emptyStateButton;
 
+    @ViewComponent
+    public JmixButton treeDataGridEmptyStateButton;
+
     public void loadData() {
         getViewData().loadAll();
     }
 
     @Subscribe("emptyStateButton")
     public void onEmptyStateButtonClick(ClickEvent<JmixButton> event) {
+        loadData();
+    }
+
+    @Subscribe("treeDataGridEmptyStateButton")
+    public void onTreeDataGridEmptyStateButtonClick(ClickEvent<JmixButton> event) {
         loadData();
     }
 }

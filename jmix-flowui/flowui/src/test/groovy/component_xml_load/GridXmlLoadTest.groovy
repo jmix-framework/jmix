@@ -210,6 +210,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
         then: "emptyStateComponent is loaded"
         gridView.emptyStateButton != null
+        gridView.emptyStateButton == dataGrid.emptyStateComponent
         !dataGrid.items.items
 
         when: "emptyStateComponent is clicked"
@@ -250,6 +251,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             nestedNullBehavior == Grid.NestedNullBehavior.THROW
             pageSize == 20
             rowsDraggable
+            emptyStateText == "emptyStateText"
             tabIndex == 3
             themeNames.containsAll(["column-borders", "compact"])
             visible
@@ -283,6 +285,25 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
         then: "metaClassTreeDataGrid attributes are loaded"
         metaClassTreeDataGrid.columns.size() == 2
+    }
+
+    def "Load TreeDataGrid with custom empty state component"() {
+        given: "View with a treeDataGrid"
+        def gridView = navigateToView(GridView.class)
+
+        when: "treeDataGrid is loaded"
+        def treeDataGrid = gridView.treeDataGridWithCustomEmptyStateComponent
+
+        then: "emptyStateComponent is loaded"
+        gridView.treeDataGridEmptyStateButton != null
+        gridView.treeDataGridEmptyStateButton == treeDataGrid.emptyStateComponent.getChildren().findAny().orElse(null)
+        !treeDataGrid.items.items
+
+        when: "treeDataGridEmptyStateComponent is clicked"
+        gridView.treeDataGridEmptyStateButton.click()
+
+        then: "treeDataGrid items will be loaded"
+        treeDataGrid.items.items
     }
 
     def "Load TreeDataGrid with custom context menu"() {

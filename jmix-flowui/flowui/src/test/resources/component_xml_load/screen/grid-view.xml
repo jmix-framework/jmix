@@ -153,6 +153,7 @@
                       nestedNullBehavior="THROW"
                       pageSize="20"
                       rowsDraggable="true"
+                      emptyStateText="emptyStateText"
                       selectionMode="MULTI"
                       themeNames="column-borders, compact"
                       tabIndex="3"
@@ -162,6 +163,18 @@
                       dataContainer="ordersDc" hierarchyProperty="number">
             <columns includeAll="true" exclude="number, amount, date, description">
             </columns>
+        </treeDataGrid>
+
+        <treeDataGrid id="treeDataGridWithCustomEmptyStateComponent" dataContainer="ordersDc"
+                      hierarchyProperty="number">
+            <columns>
+                <column property="date"/>
+            </columns>
+            <emptyStateComponent>
+                <hbox>
+                    <button id="treeDataGridEmptyStateButton" text="Empty state button"/>
+                </hbox>
+            </emptyStateComponent>
         </treeDataGrid>
 
         <treeDataGrid id="anotherTreeDataGrid" dataContainer="ordersDc" hierarchyProperty="number">

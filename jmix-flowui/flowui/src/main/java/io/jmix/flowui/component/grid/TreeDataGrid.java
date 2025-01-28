@@ -40,6 +40,7 @@ import io.jmix.flowui.component.delegate.TreeGridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
 import io.jmix.flowui.data.grid.TreeDataGridItems;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
@@ -49,10 +50,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -453,13 +451,30 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         if (column != null) {
             return column;
         }
+
+        BiFunction<Component, String, Boolean> sameIdComparator = UiComponentUtils.findFragment(this) == null
+                ? UiComponentUtils::sameId
+                : FragmentUtils::sameId;
+
+        if (getEmptyStateComponent() != null) {
+            if (sameIdComparator.apply(getEmptyStateComponent(), name)) {
+                return getEmptyStateComponent();
+            }
+
+            Optional<Component> emptyStateComponent = UiComponentUtils.findComponent(getEmptyStateComponent(), name);
+            if (emptyStateComponent.isPresent()) {
+                return emptyStateComponent.get();
+            }
+        }
+
         if (contextMenu != null) {
-            if (UiComponentUtils.sameId(contextMenu, name)) {
+            if (sameIdComparator.apply(contextMenu, name)) {
                 return contextMenu;
             } else {
                 return contextMenu.getSubPart(name);
             }
         }
+
         return null;
     }
 }

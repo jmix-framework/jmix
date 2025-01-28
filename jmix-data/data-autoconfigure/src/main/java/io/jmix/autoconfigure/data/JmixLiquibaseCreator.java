@@ -18,6 +18,8 @@ package io.jmix.autoconfigure.data;
 
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 
@@ -32,7 +34,9 @@ public class JmixLiquibaseCreator {
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog(properties.getChangeLog());
         liquibase.setClearCheckSums(properties.isClearChecksums());
-        liquibase.setContexts(properties.getContexts());
+        if (!CollectionUtils.isEmpty(properties.getContexts())) {
+            liquibase.setContexts(StringUtils.collectionToCommaDelimitedString(properties.getContexts()));
+        }
         liquibase.setDefaultSchema(properties.getDefaultSchema());
         liquibase.setLiquibaseSchema(properties.getLiquibaseSchema());
         liquibase.setLiquibaseTablespace(properties.getLiquibaseTablespace());
@@ -40,7 +44,9 @@ public class JmixLiquibaseCreator {
         liquibase.setDatabaseChangeLogLockTable(properties.getDatabaseChangeLogLockTable());
         liquibase.setDropFirst(properties.isDropFirst());
         liquibase.setShouldRun(properties.isEnabled());
-        liquibase.setLabelFilter(properties.getLabelFilter());
+        if (!CollectionUtils.isEmpty(properties.getLabelFilter())) {
+            liquibase.setLabelFilter(StringUtils.collectionToCommaDelimitedString(properties.getLabelFilter()));
+        }
         liquibase.setChangeLogParameters(properties.getParameters());
         liquibase.setRollbackFile(properties.getRollbackFile());
         liquibase.setTestRollbackOnUpdate(properties.isTestRollbackOnUpdate());

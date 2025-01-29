@@ -67,7 +67,7 @@ public class FileStorageTest extends BaseRestDsIntegrationTest {
         assertThat(fileRef.getFileName()).isEqualTo("doc1.txt");
 
         try (InputStream downloadStream = fileStorage.openStream(fileRef)) {
-            assertThat(downloadStream).isNotNull();
+            assertThat(downloadStream).isInstanceOf(RestFileStorage.ResponseInputStream.class);
             String content = IOUtils.toString(downloadStream, StandardCharsets.UTF_8);
             assertThat(content).isEqualTo("Some content: " + now);
         }
@@ -91,7 +91,7 @@ public class FileStorageTest extends BaseRestDsIntegrationTest {
     }
 
     @Test
-    void test() {
+    void testSaveFileRefAttribute() {
         FileStorage fileStorage = fileStorageLocator.getByName("restService1-fs");
 
         // Upload file
@@ -110,5 +110,17 @@ public class FileStorageTest extends BaseRestDsIntegrationTest {
         // File ref in the loaded entity is the same and points to RestFileStorage
         Customer loadedCustomer = dataManager.load(Customer.class).id(customer.getId()).one();
         assertThat(loadedCustomer.getDocument()).isEqualTo(fileRef);
+    }
+
+    @Test
+    void testFileExists() {
+        FileStorage fileStorage = fileStorageLocator.getByName("restService1-fs");
+
+        Customer customer = dataManager.load(Customer.class).id(TestSupport.UUID_1).one();
+        FileRef fileRef = customer.getDocument();
+        assertThat(fileStorage.fileExists(fileRef)).isTrue();
+
+        FileRef nonExistentFileRef = new FileRef(fileStorage.getStorageName(), "/aaa/bbb.txt", "bbb.txt");
+        assertThat(fileStorage.fileExists(nonExistentFileRef)).isFalse();
     }
 }

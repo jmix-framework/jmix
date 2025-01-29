@@ -42,6 +42,7 @@ import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
+import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.action.ExportAction;
@@ -217,9 +218,13 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
                 }
 
             } else if (exportMode == ExportMode.CURRENT_PAGE) {
-                if (dataGrid instanceof TreeDataGrid) {
-                    TreeDataGrid treeDataGrid = (TreeDataGrid) dataGrid;
-                    List<Object> items = dataGridSource.getContainer().getItems();
+                if (dataGrid instanceof TreeDataGrid treeDataGrid
+                        && dataGridSource instanceof ContainerTreeDataGridItems containerTreeDataGridItems) {
+
+                    // only top level items
+                    List<Object> items = containerTreeDataGridItems.getContainer().getItems().stream()
+                            .filter(entity -> containerTreeDataGridItems.getLevel(entity) == 0)
+                            .toList();
 
                     for (Object item : items) {
                         if (checkIsRowNumberExceed(r)) {
@@ -315,7 +320,14 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     @Nullable
     protected String getDefaultHeaderText(Grid.Column<?> column) {
-        HeaderRow defaultHeaderRow = ((JmixGrid<?>) column.getGrid()).getDefaultHeaderRow();
+        HeaderRow defaultHeaderRow = null;
+
+        if (column.getGrid() instanceof JmixGrid<?> jmixGrid) {
+            defaultHeaderRow = jmixGrid.getDefaultHeaderRow();
+        } else if (column.getGrid() instanceof JmixTreeGrid<?> jmixTreeGrid) {
+            defaultHeaderRow = jmixTreeGrid.getDefaultHeaderRow();
+        }
+
         return defaultHeaderRow == null
                 ? null
                 : defaultHeaderRow.getCell(column).getText();
@@ -323,7 +335,14 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     @Nullable
     protected com.vaadin.flow.component.Component getDefaultHeaderComponent(DataGrid.Column<?> column) {
-        HeaderRow defaultHeaderRow = ((JmixGrid<?>) column.getGrid()).getDefaultHeaderRow();
+        HeaderRow defaultHeaderRow = null;
+
+        if (column.getGrid() instanceof JmixGrid<?> jmixGrid) {
+            defaultHeaderRow = jmixGrid.getDefaultHeaderRow();
+        } else if (column.getGrid() instanceof JmixTreeGrid<?> jmixTreeGrid) {
+            defaultHeaderRow = jmixTreeGrid.getDefaultHeaderRow();
+        }
+
         return defaultHeaderRow == null
                 ? null
                 : defaultHeaderRow.getCell(column).getComponent();
@@ -335,7 +354,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         if (!checkIsRowNumberExceed(rowNumber)) {
             createDataGridRow(dataGrid, columns, startColumn, ++rowNumber, Id.of(item).getValue());
 
-            Collection<Object> children = treeDataGridItems.getChildren(item).collect(Collectors.toList());
+            Collection<Object> children = treeDataGridItems.getChildren(item).toList();
             for (Object child : children) {
                 rowNumber = createDataGridHierarchicalRow(dataGrid, treeDataGridItems, columns, startColumn, rowNumber, child);
             }

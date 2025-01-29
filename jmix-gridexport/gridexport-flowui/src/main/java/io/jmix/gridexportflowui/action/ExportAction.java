@@ -25,7 +25,6 @@ import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.ListDataComponent;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
@@ -304,8 +303,8 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected void doExport(ExportMode exportMode, Predicate<Grid.Column<Object>> primaryFilterPredicate) {
-        if (getTarget() instanceof Grid) {
-            dataGridExporter.exportDataGrid(downloader, (DataGrid) getTarget(), exportMode, primaryFilterPredicate);
+        if (getTarget() instanceof Grid grid) {
+            dataGridExporter.exportDataGrid(downloader, grid, exportMode, primaryFilterPredicate);
         } else {
             throw new UnsupportedOperationException("Unsupported component for export");
         }

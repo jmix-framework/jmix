@@ -21,7 +21,7 @@
         <instance id="messageTemplateParameterDc"
                   class="io.jmix.messagetemplates.entity.MessageTemplateParameter">
             <fetchPlan extends="_base"/>
-            <loader/>
+            <loader id="messageTemplateParameterDl"/>
         </instance>
         <collection id="parameterLocalizationDc"
                     class="io.jmix.messagetemplatesflowui.view.messagetemplateparameter.model.MessageTemplateParameterLocalization"/>

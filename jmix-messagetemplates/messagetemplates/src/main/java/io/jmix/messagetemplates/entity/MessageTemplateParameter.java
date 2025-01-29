@@ -31,7 +31,9 @@ import java.util.UUID;
 @JmixEntity
 @SystemLevel
 @Table(name = "MSGTMP_MESSAGE_TEMPLATE_PARAMETER", indexes = {
-        @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_PARAMETER_TEMPLATE", columnList = "TEMPLATE_ID")
+        @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_PARAMETER_TEMPLATE", columnList = "TEMPLATE_ID"),
+        @Index(name = "IDX_MSGTMP_MESSAGE_TEMPLATE_PARAMETER_UNQ_ALIAS", columnList = "CODE, TEMPLATE_ID",
+                unique = true),
 })
 public class MessageTemplateParameter {
 

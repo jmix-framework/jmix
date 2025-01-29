@@ -21,7 +21,9 @@
     <data>
         <instance id="messageTemplateDc"
                   class="io.jmix.messagetemplates.entity.MessageTemplate">
-            <fetchPlan extends="_base"/>
+            <fetchPlan extends="_base">
+                <property name="parameters" fetchPlan="_base"/>
+            </fetchPlan>
             <collection id="parametersDc" property="parameters"/>
             <loader/>
         </instance>

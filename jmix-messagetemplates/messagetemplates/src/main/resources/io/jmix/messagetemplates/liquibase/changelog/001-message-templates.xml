@@ -129,6 +129,13 @@
             <column name="TEMPLATE_ID"/>
         </createIndex>
 
+        <createIndex indexName="IDX_MSGTMP_MESSAGE_TEMPLATE_PARAMETER_UNQ_ALIAS"
+                     tableName="MSGTMP_MESSAGE_TEMPLATE_PARAMETER"
+                     unique="true">
+            <column name="TEMPLATE_ID"/>
+            <column name="ALIAS"/>
+        </createIndex>
+
         <addForeignKeyConstraint baseColumnNames="GROUP_ID"
                                  baseTableName="MSGTMP_MESSAGE_TEMPLATE"
                                  constraintName="FK_MSGTMP_MESSAGE_TEMPLATE_ON_GROUP"

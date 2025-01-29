@@ -40,6 +40,7 @@ import io.jmix.messagetemplates.entity.TemplateType;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsBlock;
 import io.jmix.messagetemplatesflowui.view.htmleditor.HtmlEditorView;
+import io.jmix.messagetemplatesflowui.view.messagetemplateparameter.MessageTemplateParameterDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.charset.StandardCharsets;
@@ -223,5 +224,15 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
 
         plainTextAreaLayout.setVisible(!isHtmlType);
         grapesJsEditorLayout.setVisible(isHtmlType);
+    }
+
+    @Install(to = "parametersDataGrid.create", subject = "viewConfigurer")
+    public void parametersDataGridCreateViewConfigurer(MessageTemplateParameterDetailView detailView) {
+        detailView.setParentTemplateParameters(getEditedEntity().getParameters());
+    }
+
+    @Install(to = "parametersDataGrid.edit", subject = "viewConfigurer")
+    public void parametersDataGridEditViewConfigurer(MessageTemplateParameterDetailView detailView) {
+        detailView.setParentTemplateParameters(getEditedEntity().getParameters());
     }
 }

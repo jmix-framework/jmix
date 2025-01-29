@@ -35,6 +35,7 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.editor.EditComponentGenerationContext;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -48,6 +49,7 @@ import io.jmix.messagetemplatesflowui.MessageParameterResolver;
 import io.jmix.messagetemplatesflowui.ObjectToStringConverter;
 import io.jmix.messagetemplatesflowui.component.factory.MessageTemplateParameterGenerationContext;
 import io.jmix.messagetemplatesflowui.view.messagetemplateparameter.model.MessageTemplateParameterLocalization;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -104,6 +106,8 @@ public class MessageTemplateParameterDetailView extends StandardDetailView<Messa
     protected MessageParameterResolver messageParameterResolver;
     @Autowired
     protected MessageParameterLocalizationSupport messageParameterLocalizationSupport;
+
+    protected List<MessageTemplateParameter> parentTemplateParameters;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -385,6 +389,31 @@ public class MessageTemplateParameterDetailView extends StandardDetailView<Messa
         return parameterLocalizationDc.getItems().stream()
                 .filter(locale -> locale.getLocale().equals(currentLocale))
                 .count() > 1;
+    }
+
+    @Install(to = "aliasField", subject = "validator")
+    public void aliasFieldValidator(String alias) {
+        if (Strings.isNullOrEmpty(alias)) {
+            return;
+        }
+
+        List<MessageTemplateParameter> parentTemplateParameters = getParentTemplateParameters();
+        if (!parentTemplateParameters.isEmpty()
+                && parentTemplateParameters.stream()
+                .anyMatch(parameter -> alias.equals(parameter.getAlias()))
+        ) {
+            throw new ValidationException(messageBundle.getMessage("uniqueAliasValidationMessage"));
+        }
+    }
+
+    protected List<MessageTemplateParameter> getParentTemplateParameters() {
+        return CollectionUtils.emptyIfNull(parentTemplateParameters).stream()
+                .filter(parameter -> !getEditedEntity().equals(parameter))
+                .toList();
+    }
+
+    public void setParentTemplateParameters(List<MessageTemplateParameter> parentTemplateParameters) {
+        this.parentTemplateParameters = parentTemplateParameters;
     }
 
     @Subscribe

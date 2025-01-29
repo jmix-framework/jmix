@@ -16,7 +16,9 @@
 
 package io.jmix.restds.impl;
 
+import io.jmix.core.FileRef;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.SaveContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -34,9 +36,11 @@ public class RestSaveContextProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(RestSaveContextProcessor.class);
     private final Metadata metadata;
+    private final MetadataTools metadataTools;
 
-    public RestSaveContextProcessor(Metadata metadata) {
+    public RestSaveContextProcessor(Metadata metadata, MetadataTools metadataTools) {
         this.metadata = metadata;
+        this.metadataTools = metadataTools;
     }
 
     /**
@@ -44,41 +48,50 @@ public class RestSaveContextProcessor {
      * managed by the aggregate root entities also present in entitiesToSave.
      * <p>
      * Assigns root entity to inverse properties of composition items.
+     * <p>
+     * Looks for FileRef objects down to the object graphs and returns them.
      */
-    public void normalizeCompositionItems(SaveContext saveContext) {
+    public Set<FileRef> process(SaveContext saveContext) {
         Set<Object> compositionItems = new HashSet<>();
+        Set<FileRef> fileRefs = new HashSet<>();
 
         for (Object rootEntity : saveContext.getEntitiesToSave()) {
-            findAndUpdateCompositionItems(rootEntity, compositionItems, new HashSet<>());
+            metadataTools.traverseAttributes(rootEntity, (entity, property) -> {
+                updateCompositionItems(entity, property, compositionItems);
+                collectFileRefs(entity, property, fileRefs);
+            });
         }
 
         saveContext.getEntitiesToSave().removeAll(compositionItems);
 
         saveContext.getEntitiesToRemove().removeIf(entity ->
                 isClassContainedInCompositions(saveContext.getEntitiesToSave(), entity));
+
+        return fileRefs;
     }
 
-    private void findAndUpdateCompositionItems(Object entity, Set<Object> compositionItems, HashSet<Object> visited) {
-        if (visited.contains(entity))
-            return;
-        visited.add(entity);
-
-        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
-            if (property.getRange().isClass() && property.getType() == MetaProperty.Type.COMPOSITION) {
-                Object value = EntityValues.getValue(entity, property.getName());
-                if (value != null) {
-                    if (value instanceof Collection) {
-                        for (Object item : ((Collection<?>) value)) {
-                            updateInverseProperty(entity, property, item);
-                            compositionItems.add(item);
-                            findAndUpdateCompositionItems(item, compositionItems, visited);
-                        }
-                    } else {
-                        updateInverseProperty(entity, property, value);
-                        compositionItems.add(value);
-                        findAndUpdateCompositionItems(value, compositionItems, visited);
+    private void updateCompositionItems(Object entity, MetaProperty property, Set<Object> compositionItems) {
+        if (property.getRange().isClass() && property.getType() == MetaProperty.Type.COMPOSITION) {
+            Object value = EntityValues.getValue(entity, property.getName());
+            if (value != null) {
+                if (value instanceof Collection) {
+                    for (Object item : ((Collection<?>) value)) {
+                        updateInverseProperty(entity, property, item);
+                        compositionItems.add(item);
                     }
+                } else {
+                    updateInverseProperty(entity, property, value);
+                    compositionItems.add(value);
                 }
+            }
+        }
+    }
+
+    private void collectFileRefs(Object entity, MetaProperty property, Set<FileRef> fileRefs) {
+        if (property.getRange().isDatatype() && FileRef.class.isAssignableFrom(property.getRange().asDatatype().getJavaClass())) {
+            FileRef value = EntityValues.getValue(entity, property.getName());
+            if (value != null) {
+                fileRefs.add(value);
             }
         }
     }

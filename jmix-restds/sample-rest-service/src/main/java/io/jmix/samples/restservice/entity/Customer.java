@@ -1,5 +1,6 @@
 package io.jmix.samples.restservice.entity;
 
+import io.jmix.core.FileRef;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -74,6 +75,17 @@ public class Customer {
             @AttributeOverride(name = "addressLine", column = @Column(name = "ADDRESS_ADDRESS_LINE"))
     })
     private CustomerAddress address;
+
+    @Column(name = "DOCUMENT", length = 1024)
+    private FileRef document;
+
+    public FileRef getDocument() {
+        return document;
+    }
+
+    public void setDocument(FileRef document) {
+        this.document = document;
+    }
 
     public CustomerAddress getAddress() {
         return address;

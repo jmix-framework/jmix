@@ -26,6 +26,7 @@
                     type="VARCHAR(255)"/>
             <column name="ADDRESS_ZIP"
                     type="VARCHAR(255)"/>
+            <column name="DOCUMENT" type="VARCHAR(1024)"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

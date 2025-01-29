@@ -1,6 +1,8 @@
 package io.jmix.samples.restservice.app;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.FileRef;
+import io.jmix.core.FileStorage;
 import io.jmix.core.security.Authenticated;
 import io.jmix.samples.restservice.entity.ContactType;
 import io.jmix.samples.restservice.entity.Customer;
@@ -12,6 +14,8 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,9 +24,11 @@ public class SampleDataInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(SampleDataInitializer.class);
     private final DataManager dataManager;
+    private final FileStorage fileStorage;
 
-    public SampleDataInitializer(DataManager dataManager) {
+    public SampleDataInitializer(DataManager dataManager, FileStorage fileStorage) {
         this.dataManager = dataManager;
+        this.fileStorage = fileStorage;
     }
 
     @EventListener(ApplicationStartedEvent.class)
@@ -56,6 +62,7 @@ public class SampleDataInitializer {
         customer.setLastName("Taylor");
         customer.setEmail("robert@example.com");
         customer.setRegion(regions.get(0));
+        customer.setDocument(uploadDocument("doc.txt" , "Initial content\nLine 1\nLine 2"));
 
         // create and save two customer contacts
         CustomerContact contact1 = dataManager.create(CustomerContact.class);
@@ -75,4 +82,10 @@ public class SampleDataInitializer {
 
         log.info("Customers created");
     }
+
+    private FileRef uploadDocument(String name, String content) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+        return fileStorage.saveStream(name, inputStream);
+    }
+
 }

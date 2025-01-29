@@ -19,10 +19,11 @@ package io.jmix.core.impl;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
@@ -88,5 +89,10 @@ public class FileStorageLocatorImpl implements FileStorageLocator {
                         "set 'jmix.core.default-file-storage' property");
             }
         }
+    }
+
+    @Override
+    public Collection<? extends FileStorage> getAll() {
+        return Collections.unmodifiableCollection(storagesByNames.values());
     }
 }

@@ -19,7 +19,8 @@ package io.jmix.flowui.themes;
 /**
  * Contains the definition for all the CSS utility classes provided by Jmix Lumo.
  */
-@ThemeUtilityClasses(name = "Jmix Lumo Classes")
+@SuppressWarnings("unused")
+@ThemeUtilityClasses(name = "Jmix Lumo")
 public final class JmixLumoUtility {
 
     private JmixLumoUtility() {

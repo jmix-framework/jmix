@@ -22,7 +22,7 @@ import java.lang.annotation.*;
  * Indicates that the annotated class contains a definition for the CSS utility
  * classes so that Studio can suggest them.
  * <p>
- * NOTE: only {@code static final} fields are considered as CSS class names.
+ * NOTE: only {@code public static final} fields are considered as CSS class names.
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

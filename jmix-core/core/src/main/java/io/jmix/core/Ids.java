@@ -58,7 +58,7 @@ public final class Ids<T> extends ArrayList<Id<T>> {
      * @param <T>         entity type
      * @return list of ids of the passed entities
      */
-    public static <T> Ids<T> of(Class<T> entityClass, Collection values) {
+    public static <T> Ids<T> of(Class<T> entityClass, Collection<?> values) {
         Ids<T> ids = new Ids<>();
 
         for (Object value : values) {
@@ -73,7 +73,7 @@ public final class Ids<T> extends ArrayList<Id<T>> {
      *
      * @return list of id values
      */
-    public List getValues() {
+    public List<?> getValues() {
         return stream()
                 .map(Id::getValue)
                 .collect(Collectors.toList());
@@ -86,7 +86,7 @@ public final class Ids<T> extends ArrayList<Id<T>> {
      * @param <T> type of entity
      * @return list of entity keys
      */
-    public static <T> List getValues(List<Id<T>> ids) {
+    public static <T> List<?> getValues(List<Id<T>> ids) {
         return ids.stream()
                 .map(Id::getValue)
                 .collect(Collectors.toList());

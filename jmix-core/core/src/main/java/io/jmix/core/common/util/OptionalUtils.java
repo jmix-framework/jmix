@@ -19,6 +19,10 @@ package io.jmix.core.common.util;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+/**
+ * @deprecated unused
+ */
+@Deprecated(forRemoval = true)
 public final class OptionalUtils {
     private OptionalUtils() {
     }

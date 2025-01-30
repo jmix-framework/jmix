@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+@SuppressWarnings("rawtypes")
 public class EnumerationImpl<T extends Enum> implements Enumeration<T> {
 
     private Class<T> javaClass;

@@ -50,7 +50,7 @@ public interface Messages {
      * @param key    message key
      * @return localized message or the key if the message not found
      */
-    String getMessage(Class caller, String key);
+    String getMessage(Class<?> caller, String key);
 
     /**
      * Returns localized message.
@@ -60,7 +60,7 @@ public interface Messages {
      * @param locale message locale
      * @return localized message or the key if the message not found
      */
-    String getMessage(Class caller, String key, Locale locale);
+    String getMessage(Class<?> caller, String key, Locale locale);
 
     /**
      * Returns localized message.<br>
@@ -73,7 +73,7 @@ public interface Messages {
      *               </ul>
      * @return localized message or the key if the message not found
      */
-    String getMessage(Enum caller);
+    String getMessage(Enum<?> caller);
 
     /**
      * Returns localized message.
@@ -86,7 +86,7 @@ public interface Messages {
      * @param locale message locale
      * @return localized message or the key if the message not found
      */
-    String getMessage(Enum caller, Locale locale);
+    String getMessage(Enum<?> caller, Locale locale);
 
     /**
      * Returns localized message.
@@ -117,7 +117,7 @@ public interface Messages {
      * @param params parameter values
      * @return formatted string or the key in case of IllegalFormatException
      */
-    String formatMessage(Class caller, String key, Object... params);
+    String formatMessage(Class<?> caller, String key, Object... params);
 
     /**
      * Get localized message and use it as a format string for parameters provided
@@ -128,7 +128,7 @@ public interface Messages {
      * @param params parameter values
      * @return formatted string or the key in case of IllegalFormatException
      */
-    String formatMessage(Class caller, String key, Locale locale, Object... params);
+    String formatMessage(Class<?> caller, String key, Locale locale, Object... params);
 
     /**
      * Get localized message and use it as a format string for parameters provided.<br>

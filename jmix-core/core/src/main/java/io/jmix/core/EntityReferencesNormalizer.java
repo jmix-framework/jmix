@@ -70,7 +70,7 @@ public class EntityReferencesNormalizer {
                 continue;
             if (entityStates.isLoaded(entity, property.getName())) {
                 if (property.getRange().getCardinality().isMany()) {
-                    Collection<?> collection = EntityValues.getValue(entity, property.getName());
+                    Collection<Object> collection = EntityValues.getValue(entity, property.getName());
                     if (collection != null) {
                         for (Object obj : new ArrayList<>(collection)) {
                             Object itemEntity = obj;
@@ -97,10 +97,8 @@ public class EntityReferencesNormalizer {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Object updateCollection(Collection collection, Object itemEntity, Object refEntity) {
-        if (collection instanceof List) {
-            List list = (List) collection;
+    private Object updateCollection(Collection<Object> collection, Object itemEntity, Object refEntity) {
+        if (collection instanceof List<Object> list) {
             int i = list.indexOf(itemEntity);
             list.set(i, refEntity);
         } else {

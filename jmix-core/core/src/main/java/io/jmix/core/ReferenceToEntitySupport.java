@@ -77,7 +77,7 @@ public class ReferenceToEntitySupport {
         MetaProperty primaryKey = metadataTools.getPrimaryKeyProperty(metaClass);
 
         if (primaryKey != null) {
-            Class type = primaryKey.getJavaType();
+            Class<?> type = primaryKey.getJavaType();
             if (UUID.class.equals(type)) {
                 return "entityId";
             } else if (Long.class.equals(type)) {

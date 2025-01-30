@@ -34,7 +34,7 @@ public class DateTimeTransformations {
      * @param zoneId   the zone ID to use or {@code null} to use default system timezone
      * @return the date object converted to the passed java type, not {@code null}
      */
-    public Object transformToType(Object date, Class javaType, @Nullable ZoneId zoneId) {
+    public Object transformToType(Object date, Class<?> javaType, @Nullable ZoneId zoneId) {
         Preconditions.checkNotNull(date);
         Preconditions.checkNotNull(javaType);
 
@@ -78,13 +78,13 @@ public class DateTimeTransformations {
      * @param javaType date type to transformation from ZonedDateTime
      * @return the date object, not null
      */
-    public Object transformFromZDT(ZonedDateTime zonedDateTime, Class javaType) {
+    public Object transformFromZDT(ZonedDateTime zonedDateTime, Class<?> javaType) {
         Preconditions.checkNotNull(zonedDateTime);
         zonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.systemDefault());
         return transformFromZdtInternal(zonedDateTime, javaType);
     }
 
-    protected Object transformFromZdtInternal(ZonedDateTime zonedDateTime, Class javaType) {
+    protected Object transformFromZdtInternal(ZonedDateTime zonedDateTime, Class<?> javaType) {
         if (java.sql.Date.class.equals(javaType)) {
             return java.sql.Date.valueOf(zonedDateTime.toLocalDate());
         } else if (Date.class.equals(javaType)) {
@@ -132,7 +132,7 @@ public class DateTimeTransformations {
      * @param javaType date type to transformation from LocalTime
      * @return the date object, not null
      */
-    public Object transformFromLocalTime(LocalTime localTime, Class javaType) {
+    public Object transformFromLocalTime(LocalTime localTime, Class<?> javaType) {
         if (java.sql.Time.class.equals(javaType)) {
             return java.sql.Time.valueOf(localTime);
         } else if (Date.class.equals(javaType)) {
@@ -154,11 +154,11 @@ public class DateTimeTransformations {
      * @param javaType - date type
      * @return true - if date type supports timezones
      */
-    public boolean isDateTypeSupportsTimeZones(Class javaType) {
+    public boolean isDateTypeSupportsTimeZones(Class<?> javaType) {
         return Date.class.equals(javaType) || OffsetDateTime.class.equals(javaType);
     }
 
-    private static RuntimeException newUnsupportedTypeException(Class javaType) {
+    private static RuntimeException newUnsupportedTypeException(Class<?> javaType) {
         throw new IllegalArgumentException(String.format("Unsupported date type %s", javaType));
     }
 }

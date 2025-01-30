@@ -21,22 +21,22 @@ import io.jmix.core.metamodel.datatype.Datatype;
 
 public class DatatypeDefUtils {
 
-    public static boolean isDefaultForClass(Datatype datatype) {
+    public static boolean isDefaultForClass(Datatype<?> datatype) {
         DatatypeDef annotation = getAnnotation(datatype);
         return annotation.defaultForClass();
     }
 
-    public static String getId(Datatype datatype) {
+    public static String getId(Datatype<?> datatype) {
         DatatypeDef annotation = getAnnotation(datatype);
         return annotation.id();
     }
 
-    public static Class getJavaClass(Datatype datatype) {
+    public static Class<?> getJavaClass(Datatype<?> datatype) {
         DatatypeDef annotation = getAnnotation(datatype);
         return annotation.javaClass();
     }
 
-    private static DatatypeDef getAnnotation(Datatype datatype) {
+    private static DatatypeDef getAnnotation(Datatype<?> datatype) {
         DatatypeDef annotation = datatype.getClass().getAnnotation(DatatypeDef.class);
         if (annotation == null)
             throw new IllegalStateException("Datatype " + datatype + " is not annotated with @DatatypeDef");

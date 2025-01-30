@@ -201,7 +201,7 @@ public class MessageTools {
      * @return localized name
      */
     public String getPropertyCaption(MetaClass metaClass, String propertyName, @Nullable Locale locale) {
-        Class originalClass = extendedEntities.getOriginalClass(metaClass);
+        Class<?> originalClass = extendedEntities.getOriginalClass(metaClass);
         Class<?> ownClass = originalClass != null ? originalClass : metaClass.getJavaClass();
         String className = ownClass.getSimpleName();
 

@@ -33,7 +33,7 @@ public class EventRouter {
 
     // Map with listener classes and listener lists
     // Lists are created on demand
-    private Map<Class, List<Object>> events = null;
+    private Map<Class<?>, List<Object>> events = null;
 
     public <L, E> void fireEvent(Class<L> listenerClass, BiConsumer<L, E> invoker, E event) {
         if (events != null) {

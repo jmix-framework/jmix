@@ -164,7 +164,7 @@ public class EntityStates {
         }
     }
 
-    protected void checkLoadedWithFetchPlan(Object entity, FetchPlan fetchPlan, Set visited) {
+    protected void checkLoadedWithFetchPlan(Object entity, FetchPlan fetchPlan, Set<Object> visited) {
         if (visited.contains(entity)) {
             return;
         }
@@ -191,9 +191,7 @@ public class EntityStates {
                         if (!metaProperty.getRange().getCardinality().isMany()) {
                             checkLoadedWithFetchPlan(value, propertyFetchPlan, visited);
                         } else {
-                            @SuppressWarnings("unchecked")
-                            Collection collection = (Collection) value;
-
+                            Collection<?> collection = (Collection<?>) value;
                             for (Object item : collection) {
                                 checkLoadedWithFetchPlan(item, propertyFetchPlan, visited);
                             }
@@ -236,7 +234,7 @@ public class EntityStates {
         checkLoadedWithFetchPlan(entity, fetchPlanRepository.getFetchPlan(metadata.getClass(entity), fetchPlanName));
     }
 
-    protected boolean isLoadedWithFetchPlan(Object entity, FetchPlan fetchPlan, Set visited) {
+    protected boolean isLoadedWithFetchPlan(Object entity, FetchPlan fetchPlan, Set<Object> visited) {
         if (visited.contains(entity)) {
             return true;
         }
@@ -263,9 +261,7 @@ public class EntityStates {
                                 return false;
                             }
                         } else {
-                            @SuppressWarnings("unchecked")
-                            Collection collection = (Collection) value;
-
+                            Collection<?> collection = (Collection<?>) value;
                             for (Object item : collection) {
                                 if (!isLoadedWithFetchPlan(item, propertyFetchPlan, visited)) {
                                     return false;

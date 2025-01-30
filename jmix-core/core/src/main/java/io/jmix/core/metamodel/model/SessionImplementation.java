@@ -23,6 +23,6 @@ public interface SessionImplementation extends Session {
 
     void registerClass(MetaClass metaClass);
 
-    void registerClass(String name, Class javaClass, MetaClass metaClass);
+    void registerClass(String name, Class<?> javaClass, MetaClass metaClass);
 
 }

@@ -16,16 +16,18 @@
 
 package io.jmix.core.common.util;
 
+import javax.annotation.Nullable;
+
 /**
  *
  */
 public class Numbers {
 
-    public static int nullToZero(Integer value) {
+    public static int nullToZero(@Nullable Integer value) {
         return value == null ? 0 : value;
     }
 
-    public static long nullToZero(Long value) {
+    public static long nullToZero(@Nullable Long value) {
         return value == null ? 0 : value;
     }
 }

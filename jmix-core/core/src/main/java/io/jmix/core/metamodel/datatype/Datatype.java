@@ -47,6 +47,7 @@ public interface Datatype<T> {
     }
 
     /** Java class representing this Datatype */
+    @SuppressWarnings("rawtypes")
     default Class getJavaClass() {
         return DatatypeDefUtils.getJavaClass(this);
     }

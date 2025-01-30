@@ -46,7 +46,7 @@ public class ExtendedEntities {
 
     protected Metadata metadata;
 
-    protected Map<Class, MetaClass> replacedMetaClasses = new HashMap<>();
+    protected Map<Class<?>, MetaClass> replacedMetaClasses = new HashMap<>();
 
     @Autowired
     public ExtendedEntities(Metadata metadata) {
@@ -68,7 +68,7 @@ public class ExtendedEntities {
                 MetaPropertyImpl propertyImpl = (MetaPropertyImpl) metaProperty;
 
                 // replace domain
-                Class effectiveDomainClass = getEffectiveClass(metaProperty.getDomain());
+                Class<?> effectiveDomainClass = getEffectiveClass(metaProperty.getDomain());
                 MetaClass effectiveDomainMeta = session.getClass(effectiveDomainClass);
                 if (metaProperty.getDomain() != effectiveDomainMeta) {
                     propertyImpl.setDomain(effectiveDomainMeta);
@@ -78,7 +78,7 @@ public class ExtendedEntities {
                     // replace range class
                     ClassRange range = (ClassRange) metaProperty.getRange();
 
-                    Class effectiveRangeClass = getEffectiveClass(range.asClass());
+                    Class<?> effectiveRangeClass = getEffectiveClass(range.asClass());
                     MetaClass effectiveRangeMeta = session.getClass(effectiveRangeClass);
                     if (effectiveRangeMeta != range.asClass()) {
                         ClassRange newRange = new ClassRange(effectiveRangeMeta);
@@ -106,8 +106,8 @@ public class ExtendedEntities {
      * @param originalMetaClass original entity
      * @return extended or original entity
      */
-    public Class getEffectiveClass(MetaClass originalMetaClass) {
-        Class extClass = getExtendedClass(originalMetaClass);
+    public Class<?> getEffectiveClass(MetaClass originalMetaClass) {
+        Class<?> extClass = getExtendedClass(originalMetaClass);
         return extClass == null ? originalMetaClass.getJavaClass() : extClass;
     }
 
@@ -117,7 +117,7 @@ public class ExtendedEntities {
      * @param originalClass original entity
      * @return extended or original entity
      */
-    public Class getEffectiveClass(Class originalClass) {
+    public Class<?> getEffectiveClass(Class<?> originalClass) {
         return getEffectiveClass(metadata.getSession().getClass(originalClass));
     }
 
@@ -127,7 +127,7 @@ public class ExtendedEntities {
      * @param entityName original entity
      * @return extended or original entity
      */
-    public Class getEffectiveClass(String entityName) {
+    public Class<?> getEffectiveClass(String entityName) {
         return getEffectiveClass(metadata.getSession().getClass(entityName));
     }
 
@@ -149,7 +149,7 @@ public class ExtendedEntities {
      * @param originalClass original entity
      * @return extended or original entity
      */
-    public MetaClass getEffectiveMetaClass(Class originalClass) {
+    public MetaClass getEffectiveMetaClass(Class<?> originalClass) {
         return metadata.getSession().getClass(getEffectiveClass(originalClass));
     }
 
@@ -170,8 +170,8 @@ public class ExtendedEntities {
      * @return extended entity or null if the provided entity has no extension
      */
     @Nullable
-    public Class getExtendedClass(MetaClass originalMetaClass) {
-        return (Class) originalMetaClass.getAnnotations().get(ReplacedByEntity.class.getName());
+    public Class<?> getExtendedClass(MetaClass originalMetaClass) {
+        return (Class<?>) originalMetaClass.getAnnotations().get(ReplacedByEntity.class.getName());
     }
 
     /**
@@ -181,8 +181,8 @@ public class ExtendedEntities {
      * @return original entity or null if the provided entity is not an extension
      */
     @Nullable
-    public Class getOriginalClass(MetaClass extendedMetaClass) {
-        return (Class) extendedMetaClass.getAnnotations().get(ReplaceEntity.class.getName());
+    public Class<?> getOriginalClass(MetaClass extendedMetaClass) {
+        return (Class<?>) extendedMetaClass.getAnnotations().get(ReplaceEntity.class.getName());
     }
 
     /**
@@ -193,7 +193,7 @@ public class ExtendedEntities {
      */
     @Nullable
     public MetaClass getOriginalMetaClass(MetaClass extendedMetaClass) {
-        Class originalClass = getOriginalClass(extendedMetaClass);
+        Class<?> originalClass = getOriginalClass(extendedMetaClass);
         if (originalClass == null) {
             return null;
         }

@@ -27,9 +27,9 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 
 /**
- * Serializable, unmodifiable collection view for {@link LinkedMap}. <br>
- * Use this collection view instead of {@link LinkedMap#values()} to have ability to serialize collection.
+ * @deprecated unused
  */
+@Deprecated(forRemoval = true)
 public class ReadOnlyLinkedMapValuesView extends AbstractCollection implements Serializable {
     private final LinkedMap parent;
 

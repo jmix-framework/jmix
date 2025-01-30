@@ -179,7 +179,7 @@ public class JmixEntityManager implements EntityManager {
     @Override
     public <T> T getReference(Class<T> entityClass, Object primaryKey) {
         //noinspection unchecked
-        Class<T> effectiveClass = extendedEntities.getEffectiveClass(entityClass);
+        Class<T> effectiveClass = (Class<T>) extendedEntities.getEffectiveClass(entityClass);
 
         T reference = delegate.getReference(effectiveClass, primaryKey);
         ((Entity) reference).__getEntityEntry().setNew(false);

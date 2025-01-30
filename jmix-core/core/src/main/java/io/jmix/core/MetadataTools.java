@@ -167,9 +167,9 @@ public class MetadataTools {
 //        }
 
         if (range.isEnum()) {
-            return messages.getMessage((Enum) value);
+            return messages.getMessage((Enum<?>) value);
         } else if (value instanceof Entity) {
-            return getInstanceName((Entity) value);
+            return getInstanceName(value);
         } else if (value instanceof Collection) {
             @SuppressWarnings("unchecked")
             Collection<Object> collection = (Collection<Object>) value;
@@ -177,7 +177,7 @@ public class MetadataTools {
                     .map(this::format)
                     .collect(Collectors.joining(", "));
         } else if (range.isDatatype()) {
-            Datatype datatype = range.asDatatype();
+            Datatype<?> datatype = range.asDatatype();
             if (datatype instanceof TimeZoneAwareDatatype) {
                 Boolean ignoreUserTimeZone = getMetaAnnotationValue(property, IgnoreUserTimeZone.class);
                 if (!Boolean.TRUE.equals(ignoreUserTimeZone)) {
@@ -201,9 +201,9 @@ public class MetadataTools {
         if (value == null) {
             return "";
         } else if (value instanceof Entity) {
-            return getInstanceName((Entity) value);
+            return getInstanceName(value);
         } else if (value instanceof Enum) {
-            return messages.getMessage((Enum) value, currentAuthentication.getLocale());
+            return messages.getMessage((Enum<?>) value, currentAuthentication.getLocale());
         } else if (value instanceof Collection) {
             @SuppressWarnings("unchecked")
             Collection<Object> collection = (Collection<Object>) value;
@@ -211,7 +211,7 @@ public class MetadataTools {
                     .map(this::format)
                     .collect(Collectors.joining(", "));
         } else {
-            Datatype datatype = datatypeRegistry.find(value.getClass());
+            Datatype<?> datatype = datatypeRegistry.find(value.getClass());
             if (datatype != null) {
                 return datatype.format(value, currentAuthentication.getLocale());
             }
@@ -501,9 +501,9 @@ public class MetadataTools {
         return Boolean.TRUE.equals(metaProperty.getAnnotatedElement().isAnnotationPresent(Secret.class));
     }
 
-    public Map<String, Object> getMetaAnnotationAttributes(Map<String, Object> metaAnnotations, Class metaAnnotationClass) {
+    public Map<String, Object> getMetaAnnotationAttributes(Map<String, Object> metaAnnotations, Class<?> metaAnnotationClass) {
         @SuppressWarnings("unchecked")
-        Map<String, Object> map = (Map) metaAnnotations.get(metaAnnotationClass.getName());
+        Map<String, Object> map = (Map<String, Object>) metaAnnotations.get(metaAnnotationClass.getName());
         return map != null ? map : Collections.emptyMap();
     }
 
@@ -547,13 +547,13 @@ public class MetadataTools {
      * @param annotationClass annotation class
      * @return true if the annotation is present
      */
-    public boolean isAnnotationPresent(Class javaClass, String property, Class<? extends Annotation> annotationClass) {
+    public boolean isAnnotationPresent(Class<?> javaClass, String property, Class<? extends Annotation> annotationClass) {
         Field field;
         try {
             field = javaClass.getDeclaredField(property);
             return field.isAnnotationPresent(annotationClass);
         } catch (NoSuchFieldException e) {
-            Class superclass = javaClass.getSuperclass();
+            Class<?> superclass = javaClass.getSuperclass();
             while (superclass != null) {
                 try {
                     field = superclass.getDeclaredField(property);
@@ -1019,7 +1019,7 @@ public class MetadataTools {
         checkNotNullArgument(visitor, "visitor is null");
         EntityPreconditions.checkEntityType(entity);
 
-        internalTraverseAttributesByFetchPlan(fetchPlan, (Entity) entity, visitor, new HashMap<>(), false);
+        internalTraverseAttributesByFetchPlan(fetchPlan, entity, visitor, new HashMap<>(), false);
     }
 
     /**
@@ -1037,7 +1037,7 @@ public class MetadataTools {
         checkNotNullArgument(visitor, "visitor is null");
         EntityPreconditions.checkEntityType(entity);
 
-        internalTraverseAttributesByFetchPlan(fetchPlan, (Entity) entity, visitor, new HashMap<>(), checkLoaded);
+        internalTraverseAttributesByFetchPlan(fetchPlan, entity, visitor, new HashMap<>(), checkLoaded);
     }
 
     /**
@@ -1274,7 +1274,7 @@ public class MetadataTools {
                     Object value = EntityValues.getValue(entity, property.getName());
                     if (value != null) {
                         if (value instanceof Collection) {
-                            for (Object item : ((Collection) value)) {
+                            for (Object item : ((Collection<?>) value)) {
                                 internalTraverseAttributes((Entity) item, visitor, visited);
                             }
                         } else {
@@ -1316,7 +1316,7 @@ public class MetadataTools {
 
             if (value != null && propertyFetchPlan != null) {
                 if (value instanceof Collection) {
-                    for (Object item : ((Collection) value)) {
+                    for (Object item : ((Collection<?>) value)) {
                         if (item instanceof Entity)
                             internalTraverseAttributesByFetchPlan(propertyFetchPlan, item, visitor, visited, checkLoaded);
                     }
@@ -1335,7 +1335,6 @@ public class MetadataTools {
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected static Object createInstanceWithId(Class<?> entityClass, Object id) {
         Object entity = createInstance(entityClass);
         EntityValues.setId(entity, id);

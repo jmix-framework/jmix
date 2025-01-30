@@ -174,7 +174,7 @@ public class FluentLoader<E> {
      * Entities in the result list have the same order as provided identifiers. If an instance from the list
      * cannot be loaded for some reason, the whole operation fails with {@code EntityAccessException}.
      */
-    public ByIds<E> ids(Collection ids) {
+    public ByIds<E> ids(Collection<?> ids) {
         return new ByIds<>(this, ids);
     }
 
@@ -358,6 +358,7 @@ public class FluentLoader<E> {
         /**
          * Adds registered access constraints that are subclasses of the given class.
          */
+        @SuppressWarnings("rawtypes")
         public ById<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
             loader.accessConstraints.addAll(loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass));
             return this;
@@ -383,9 +384,9 @@ public class FluentLoader<E> {
     public static class ByIds<E> {
 
         private FluentLoader<E> loader;
-        private Collection ids;
+        private Collection<?> ids;
 
-        protected ByIds(FluentLoader<E> loader, Collection ids) {
+        protected ByIds(FluentLoader<E> loader, Collection<?> ids) {
             this.loader = loader;
             this.ids = ids;
         }
@@ -486,6 +487,7 @@ public class FluentLoader<E> {
         /**
          * Adds registered access constraints that are subclasses of the given class.
          */
+        @SuppressWarnings("rawtypes")
         public ByIds<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
             loader.accessConstraints.addAll(loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass));
             return this;
@@ -738,6 +740,7 @@ public class FluentLoader<E> {
         /**
          * Adds registered access constraints that are subclasses of the given class.
          */
+        @SuppressWarnings("rawtypes")
         public ByQuery<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
             loader.accessConstraints.addAll(loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass));
             return this;
@@ -980,6 +983,7 @@ public class FluentLoader<E> {
         /**
          * Adds registered access constraints that are subclasses of the given class.
          */
+        @SuppressWarnings("rawtypes")
         public ByCondition<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
             loader.accessConstraints.addAll(loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass));
             return this;

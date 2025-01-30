@@ -32,9 +32,9 @@ import java.util.function.Consumer;
 public class EventHub {
     protected static final int EVENTS_MAP_EXPECTED_MAX_SIZE = 4;
 
-    protected static final Consumer[] EMPTY_LISTENERS_ARRAY = new Consumer[0];
+    protected static final Consumer<?>[] EMPTY_LISTENERS_ARRAY = new Consumer[0];
 
-    protected Map<Class<?>, Consumer[]> events;
+    protected Map<Class<?>, Consumer<?>[]> events;
 
     /**
      * Add an event listener for event with type E.
@@ -56,14 +56,14 @@ public class EventHub {
             events = new IdentityHashMap<>(EVENTS_MAP_EXPECTED_MAX_SIZE);
         }
 
-        Consumer[] array = events.get(eventType);
+        Consumer<?>[] array = events.get(eventType);
 
         if (array == null || !ArrayUtils.contains(array, listener)) {
             int size = (array != null)
                     ? array.length
                     : 0;
 
-            Consumer[] clone = newListenersArray(size + 1);
+            Consumer<?>[] clone = newListenersArray(size + 1);
             clone[size] = listener;
             if (array != null) {
                 System.arraycopy(array, 0, clone, 0, size);
@@ -91,13 +91,13 @@ public class EventHub {
         }
 
         if (events != null) {
-            Consumer[] array = this.events.get(eventType);
+            Consumer<?>[] array = this.events.get(eventType);
             if (array != null) {
                 for (int i = 0; i < array.length; i++) {
                     if (listener.equals(array[i])) {
                         int size = array.length - 1;
                         if (size > 0) {
-                            Consumer[] clone = newListenersArray(size);
+                            Consumer<?>[] clone = newListenersArray(size);
                             System.arraycopy(array, 0, clone, 0, i);
                             System.arraycopy(array, i + 1, clone, i, size - i);
                             events.put(eventType, clone);
@@ -165,7 +165,7 @@ public class EventHub {
         }
 
         if (events != null) {
-            Consumer[] eventListeners = events.get(eventType);
+            Consumer<?>[] eventListeners = events.get(eventType);
 
             if (eventListeners != null) {
                 for (Consumer listener : eventListeners) {
@@ -180,7 +180,7 @@ public class EventHub {
         }
     }
 
-    protected Consumer[] newListenersArray(int length) {
+    protected Consumer<?>[] newListenersArray(int length) {
         return (0 < length)
                 ? new Consumer[length]
                 : EMPTY_LISTENERS_ARRAY;

@@ -18,6 +18,7 @@ package io.jmix.core.metamodel.datatype;
 
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 public interface Enumeration<T extends Enum> extends Datatype<T> {
     List<Enum> getValues();
 }

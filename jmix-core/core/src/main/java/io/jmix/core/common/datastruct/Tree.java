@@ -22,8 +22,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @param <T> type of tree node data
+ * @deprecated unused
  */
+@Deprecated(forRemoval = true)
 public class Tree<T> implements Serializable {
     private static final long serialVersionUID = 701368293843044209L;
 

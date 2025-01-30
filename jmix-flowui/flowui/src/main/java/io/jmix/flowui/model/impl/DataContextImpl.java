@@ -608,6 +608,12 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     @Override
+    public void clearChanges() {
+        modifiedInstances.clear();
+        removedInstances.clear();
+    }
+
+    @Override
     public boolean isModified(Object entity) {
         return modifiedInstances.contains(entity);
     }

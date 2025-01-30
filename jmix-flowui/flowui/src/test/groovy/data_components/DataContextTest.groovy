@@ -711,6 +711,49 @@ class DataContextTest extends DataContextSpec {
         !modified.contains(order)
     }
 
+    def "clear changes"() {
+        DataContext context = factory.createDataContext()
+
+        Order order1 = new Order(number: '1')
+        makeDetached(order1)
+        def mergedOrder1 = context.merge(order1)
+
+        Order order2 = new Order(number: '2')
+        makeDetached(order2)
+        def mergedOrder2 = context.merge(order2)
+
+        Order order3 = new Order(number: '3')
+        makeDetached(order3)
+        def mergedOrder3 = context.merge(order3)
+
+        Order order4 = new Order(number: '4')
+        makeDetached(order4)
+        def mergedOrder4 = context.merge(order4)
+
+        when:
+
+        mergedOrder1.number = '11'
+        mergedOrder2.number = '22'
+        context.remove(mergedOrder3)
+        context.remove(mergedOrder4)
+
+        then:
+
+        context.hasChanges()
+        context.getModified().containsAll(order1, order2)
+        context.getRemoved().containsAll(order3, order4)
+
+        when:
+
+        context.clearChanges()
+
+        then:
+
+        !context.hasChanges()
+        context.getModified().isEmpty()
+        context.getRemoved().isEmpty()
+    }
+
     void "copy generated id"() {
         DataContext context = factory.createDataContext()
         when:

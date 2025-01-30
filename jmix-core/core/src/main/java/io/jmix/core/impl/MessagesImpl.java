@@ -49,6 +49,12 @@ public class MessagesImpl implements Messages {
     public String getMessage(String key, Locale locale) {
         checkNotNullArgument(key, "key is null");
         checkNotNullArgument(locale, "locale is null");
+
+        if (messageSource instanceof JmixMessageSource jmixMessageSource) {
+            String message = jmixMessageSource.getMessageOrNull(key, null, locale);
+            return message != null ? message : fallbackMessageOrKey(null, key, locale);
+        }
+
         try {
             return messageSource.getMessage(key, null, locale);
         } catch (NoSuchMessageException e) {
@@ -66,6 +72,12 @@ public class MessagesImpl implements Messages {
         checkNotNullArgument(caller, "caller is null");
         checkNotNullArgument(key, "key is null");
         checkNotNullArgument(locale, "locale is null");
+
+        if (messageSource instanceof JmixMessageSource jmixMessageSource) {
+            String message = jmixMessageSource.getMessageOrNull(getCode(getGroup(caller), key), null, locale);
+            return message != null ? message : fallbackMessageOrKey(getGroup(caller), key, locale);
+        }
+
         try {
             return messageSource.getMessage(getCode(getGroup(caller), key), null, locale);
         } catch (NoSuchMessageException e) {
@@ -105,6 +117,12 @@ public class MessagesImpl implements Messages {
         checkNotNullArgument(group, "group is null");
         checkNotNullArgument(key, "key is null");
         checkNotNullArgument(locale, "locale is null");
+
+        if (messageSource instanceof JmixMessageSource jmixMessageSource) {
+            String message = jmixMessageSource.getMessageOrNull(getCode(group, key), null, locale);
+            return message != null ? message : fallbackMessageOrKey(group, key, locale);
+        }
+
         try {
             return messageSource.getMessage(getCode(group, key), null, locale);
         } catch (NoSuchMessageException e) {
@@ -156,6 +174,10 @@ public class MessagesImpl implements Messages {
         if (locale == null)
             locale = getUserLocale();
 
+        if (messageSource instanceof JmixMessageSource jmixMessageSource) {
+            return jmixMessageSource.getMessageOrNull(key, null, locale);
+        }
+
         try {
             return messageSource.getMessage(key, null, locale);
         } catch (NoSuchMessageException e) {
@@ -171,6 +193,10 @@ public class MessagesImpl implements Messages {
 
         if (locale == null)
             locale = getUserLocale();
+
+        if (messageSource instanceof JmixMessageSource jmixMessageSource) {
+            return jmixMessageSource.getMessageOrNull(getCode(group, key), null, locale);
+        }
 
         try {
             return messageSource.getMessage(getCode(group, key), null, locale);

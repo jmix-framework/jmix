@@ -23,6 +23,7 @@ import io.jmix.core.Resources;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -62,5 +63,10 @@ public class JmixMessageSource extends ReloadableResourceBundleMessageSource {
             result.add(0, basename + '_' + LocaleResolver.localeToString(locale));
         }
         return result;
+    }
+
+    @Nullable
+    public String getMessageOrNull(String code, @Nullable Object[] args, Locale locale) {
+        return getMessageInternal(code, args, locale);
     }
 }

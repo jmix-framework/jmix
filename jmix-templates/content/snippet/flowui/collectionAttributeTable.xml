@@ -39,38 +39,38 @@ def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim(
 <h4 text="msg://${ownerEntity.packageName}/${ownerEntity.className}.${nestedDcProperty}"/>
 <hbox id="buttonsPanel" classNames="buttons-panel">
     <% if (isManyToMany) {%>
-    <button action="${nestedDcProperty}DataGrid.add"/>
-    <button action="${nestedDcProperty}DataGrid.exclude"/>
+    <button action="${nestedDcProperty}DataGrid.addAction"/>
+    <button action="${nestedDcProperty}DataGrid.excludeAction"/>
     <%} else {%>
-    <button action="${nestedDcProperty}DataGrid.create"/>
+    <button action="${nestedDcProperty}DataGrid.createAction"/>
     <% if (isOneToMany) {%>
-    <button action="${nestedDcProperty}DataGrid.edit"/>
+    <button action="${nestedDcProperty}DataGrid.editAction"/>
     <%}%>
-    <button action="${nestedDcProperty}DataGrid.remove"/>
+    <button action="${nestedDcProperty}DataGrid.removeAction"/>
     <%}%>
 </hbox>
 <% }%>
 <dataGrid id="${nestedDcProperty}DataGrid" dataContainer="${nestedDcProperty}Dc" width="100%" minHeight="20em">
 <% if (isManyToMany && isOwnerAttr) {%>
     <actions>
-        <action id="add" type="list_add"/>
-        <action id="exclude" type="list_exclude"/>
+        <action id="addAction" type="list_add"/>
+        <action id="excludeAction" type="list_exclude"/>
     </actions>
 <%} else if (!isManyToMany || isOwnerAttr) {%>
     <actions>
-        <action id="create" type="list_create">
+        <action id="createAction" type="list_create">
             <properties>
                 <property name="openMode" value="DIALOG"/>
             </properties>
         </action>
         <% if (isOneToMany) {%>
-        <action id="edit" type="list_edit">
+        <action id="editAction" type="list_edit">
             <properties>
                 <property name="openMode" value="DIALOG"/>
             </properties>
         </action>
         <%}%>
-        <action id="remove" type="list_remove"/>
+        <action id="removeAction" type="list_remove"/>
     </actions>
 <%}%>
     <columns>

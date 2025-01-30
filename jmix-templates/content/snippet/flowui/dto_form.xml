@@ -85,7 +85,7 @@ def initDefaultFieldAttrs(attr) {
 			builder.append("<actions>")
 			for(String action: attr.getLookupActions()) {
 				if (['entity_open', 'entity_lookup', 'entity_clear', 'entity_openComposition'].contains(action)) {
-					builder.append("<action id=\"${api.camelCase(action)}\" type=\"$action\"/>")
+					builder.append("<action id=\"${api.camelCase(action)}Action\" type=\"$action\"/>")
 				}
 			}
 			builder.append("</actions>")

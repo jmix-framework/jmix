@@ -30,15 +30,15 @@
             <properties include=".*"/>
         </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="usersDataGrid.create"/>
-            <button id="editButton" action="usersDataGrid.edit"/>
-            <button id="removeButton" action="usersDataGrid.remove"/>
-            <button id="showRoleAssignmentsButton" action="usersDataGrid.showRoleAssignments"/>
+            <button id="createButton" action="usersDataGrid.createAction"/>
+            <button id="editButton" action="usersDataGrid.editAction"/>
+            <button id="removeButton" action="usersDataGrid.removeAction"/>
+            <button id="showRoleAssignmentsButton" action="usersDataGrid.showRoleAssignmentsAction"/>
             <dropdownButton id="additionalButton" text="msg://additionalMenu" icon="COG">
                 <items>
-                    <actionItem id="changePasswordItem" ref="usersDataGrid.changePassword"/>
-                    <actionItem id="resetPasswordItem" ref="usersDataGrid.resetPassword"/>
-                    <actionItem id="showUserSubstitutionsItem" ref="usersDataGrid.showUserSubstitutions"/>
+                    <actionItem id="changePasswordItem" ref="usersDataGrid.changePasswordAction"/>
+                    <actionItem id="resetPasswordItem" ref="usersDataGrid.resetPasswordAction"/>
+                    <actionItem id="showUserSubstitutionsItem" ref="usersDataGrid.showUserSubstitutionsAction"/>
                 </items>
             </dropdownButton>
             <simplePagination id="pagination" dataLoader="usersDl"/>
@@ -49,13 +49,13 @@
                   minHeight="20em"
                   dataContainer="usersDc">
             <actions>
-                <action id="create" type="list_create"/>
-                <action id="edit" type="list_edit"/>
-                <action id="remove" type="list_remove"/>
-                <action id="showRoleAssignments" type="sec_showRoleAssignments"/>
-                <action id="changePassword" type="sec_changePassword"/>
-                <action id="resetPassword" type="sec_resetPassword"/>
-                <action id="showUserSubstitutions" type="sec_showUserSubstitutions"/>
+                <action id="createAction" type="list_create"/>
+                <action id="editAction" type="list_edit"/>
+                <action id="removeAction" type="list_remove"/>
+                <action id="showRoleAssignmentsAction" type="sec_showRoleAssignments"/>
+                <action id="changePasswordAction" type="sec_changePassword"/>
+                <action id="resetPasswordAction" type="sec_resetPassword"/>
+                <action id="showUserSubstitutionsAction" type="sec_showUserSubstitutions"/>
             </actions>
             <columns resizable="true">
                 <column property="username"/>

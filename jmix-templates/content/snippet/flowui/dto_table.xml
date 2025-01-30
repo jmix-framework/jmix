@@ -20,7 +20,7 @@ entity.attributes.each { attr ->
 %>
 <hbox id="buttonsPanel" classNames="buttons-panel">
 <%tableActions.each { actionId ->%>
-<button id="${actionId}Button" action="${tableId}.${actionId}"/>
+<button id="${actionId}Button" action="${tableId}.${actionId}Action"/>
 <%}%>
 <simplePagination id="pagination" dataLoader="${tableDl}"/>
 </hbox>
@@ -34,9 +34,9 @@ entity.attributes.each { attr ->
 if (actionSearch != null && jmixProjectModule != null) {
 def actionDescription = actionSearch.getActionDescriptionBy(actionId, jmixProjectModule)
 %>
-<action id="${actionDescription.getId()}" type="${actionDescription.getType()}"/>
+<action id="${actionDescription.getId()}Action" type="${actionDescription.getType()}"/>
 <%} else {%>
-<action id="${actionId}" type="list_${actionId}"/>
+<action id="${actionId}Action" type="list_${actionId}"/>
 <%}%>
 <%}%>
 </actions>

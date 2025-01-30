@@ -85,16 +85,16 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         updateControls(false);
     }<%if (tableActions.contains("create")) {%>
 
-    @Subscribe("${tableId}.create")
-    public void on${tableId.capitalize()}Create(final ActionPerformedEvent event) {
+    @Subscribe("${tableId}.createAction")
+    public void on${tableId.capitalize()}CreateAction(final ActionPerformedEvent event) {
         dataContext.clear();
         ${entity.className} entity = dataContext.create(${entity.className}.class);
         ${detailDc}.setItem(entity);
         updateControls(true);
     }<%}%><%if (tableActions.contains("edit")) {%>
 
-    @Subscribe("${tableId}.edit")
-    public void on${tableId.capitalize()}Edit(final ActionPerformedEvent event) {
+    @Subscribe("${tableId}.editAction")
+    public void on${tableId.capitalize()}EditAction(final ActionPerformedEvent event) {
         updateControls(true);
     }<%}%>
 

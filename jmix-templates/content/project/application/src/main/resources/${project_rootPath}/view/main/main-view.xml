@@ -2,7 +2,7 @@
 <mainView xmlns="http://jmix.io/schema/flowui/main-view"
           title="msg://MainView.title">
     <actions>
-        <action id="logout" type="logout"/>
+        <action id="logoutAction" type="logout"/>
     </actions>
     <appLayout>
         <navigationBar>

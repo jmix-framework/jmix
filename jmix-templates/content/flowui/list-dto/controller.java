@@ -26,8 +26,8 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         return List.of();
     }<%if (tableActions.contains("remove")) {%>
 
-    @Install(to = "${tableId}.remove", subject = "delegate")
-    private void ${tableId}RemoveDelegate(final Collection<${entity.className}> collection) {
+    @Install(to = "${tableId}.removeAction", subject = "delegate")
+    private void ${tableId}RemoveActionDelegate(final Collection<${entity.className}> collection) {
         for (${entity.className} entity : collection) {
             // Here you can remove entities from an external storage
         }

@@ -73,8 +73,8 @@ def createTag(variable) {
 
         StringBuilder builder = new StringBuilder()
         builder.append("<actions>")
-        builder.append("<action id=\"entityLookup\" type=\"entity_lookup\"/>")
-        builder.append("<action id=\"entityClear\" type=\"entity_clear\"/>")
+        builder.append("<action id=\"entityLookupAction\" type=\"entity_lookup\"/>")
+        builder.append("<action id=\"entityClearAction\" type=\"entity_clear\"/>")
         builder.append("</actions>")
 
         field.text = builder.toString()

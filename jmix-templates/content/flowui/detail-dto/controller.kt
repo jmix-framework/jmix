@@ -49,7 +49,7 @@ class ${detailControllerName} : StandardDetailView<${entity.className}>() {
         return mutableSetOf(saved)
     }
 
-    private fun save(entity: Alpha): Alpha {
+    private fun save(entity: ${entity.className}): ${entity.className} {
         // Here you can save the entity to an external storage and return the saved instance.
         return entity
     }<%}%>

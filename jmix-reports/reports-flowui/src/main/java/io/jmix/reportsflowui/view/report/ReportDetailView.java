@@ -246,6 +246,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected FetchPlans fetchPlans;
     @Autowired
     protected DataManager dataManager;
+    @Autowired
+    private EntityUuidGenerator entityUuidGenerator;
 
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
@@ -1677,7 +1679,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (template != null) {
 
             ReportTemplate copy = metadataTools.copy(template);
-            copy.setId(UuidProvider.createUuid());
+            copy.setId(entityUuidGenerator.generate());
             copy.setVersion(null);
 
             String copyNamingPattern = messageBundle.getMessage("template.copyNamingPattern");

@@ -15,6 +15,8 @@
  */
 package io.jmix.core;
 
+import com.github.f4b6a3.uuid.UuidCreator;
+
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -27,11 +29,18 @@ public final class UuidProvider {
     }
 
     /**
-     * @return new UUID
+     * @return new random UUID
      */
     public static UUID createUuid() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         return new UUID(random.nextLong(), random.nextLong());
+    }
+
+    /**
+     * @return new UUID v7
+     */
+    public static UUID createUuidV7() {
+        return UuidCreator.getTimeOrderedEpoch();
     }
 
     /**

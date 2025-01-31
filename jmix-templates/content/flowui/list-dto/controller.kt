@@ -24,8 +24,8 @@ class ${viewControllerName} : StandardListView<${entity.className}>() {
         return mutableListOf()
     }<%if (tableActions.contains("remove")) {%>
 
-    @Install(to = "${tableId}.remove", subject = "delegate")
-    fun ${tableId}RemoveDelegate(entities: Collection<${entity.className}>) {
+    @Install(to = "${tableId}.removeAction", subject = "delegate")
+    fun ${tableId}RemoveActionDelegate(entities: Collection<${entity.className}>) {
         // Here you can remove entities from an external storage
     }<%}%><%}%>
 }

@@ -77,16 +77,16 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         updateControls(false)
     }<%if (tableActions.contains("create")) {%>
 
-    @Subscribe("${tableId}.create")
-    fun on${tableId.capitalize()}Create(event: ActionPerformedEvent) {
+    @Subscribe("${tableId}.createAction")
+    fun on${tableId.capitalize()}CreateAction(event: ActionPerformedEvent) {
         dataContext.clear()
         val entity: ${entity.className} = dataContext.create(${entity.className}::class.java)
         ${detailDc}.item = entity
         updateControls(true)
     }<%}%><%if (tableActions.contains("edit")) {%>
 
-    @Subscribe("${tableId}.edit")
-    fun on${tableId.capitalize()}Edit(event: ActionPerformedEvent) {
+    @Subscribe("${tableId}.editAction")
+    fun on${tableId.capitalize()}EditAction(event: ActionPerformedEvent) {
         updateControls(true)
     }<%}%>
 

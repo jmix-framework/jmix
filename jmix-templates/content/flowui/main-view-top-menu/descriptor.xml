@@ -27,7 +27,7 @@
                           classNames="jmix-main-view-top-menu-user-box">
                         <userIndicator id="userIndicator"/>
                         <button id="logoutButton"
-                                action="logout"
+                                action="logoutAction"
                                 classNames="jmix-logout-button"/>
                     </hbox>
                 </header>

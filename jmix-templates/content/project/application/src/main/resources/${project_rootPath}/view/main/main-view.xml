@@ -31,7 +31,7 @@
                 <footer id="footer" classNames="jmix-main-view-footer">
                     <userIndicator id="userIndicator"/>
                     <button id="logoutButton"
-                            action="logout"
+                            action="logoutAction"
                             classNames="jmix-logout-button"/>
                 </footer>
             </section>

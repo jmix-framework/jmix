@@ -175,6 +175,7 @@ public class Notifications {
         protected Boolean closeable = null;
         protected NotificationVariant themeVariant;
         protected String className;
+        protected boolean assertive;
 
         /**
          * @param text notification text
@@ -262,6 +263,18 @@ public class Notifications {
             return this;
         }
 
+        /**
+         * Sets {@code aria-live} attribute of the notification card web-component to {@code assertive} instead
+         * of {@code polite}. This makes screen readers announce the notification content immediately when it appears.
+         *
+         * @param assertive whether to set {@code aria-live} attribute to {@code assertive}
+         * @return {@code this}
+         */
+        public NotificationBuilder withAssertive(boolean assertive) {
+            this.assertive = assertive;
+            return this;
+        }
+
         public Notification.Position getPosition() {
             return position;
         }
@@ -303,6 +316,14 @@ public class Notifications {
             return className;
         }
 
+        /**
+         * @return {@code true} if screen readers announce the notification content immediately when it appears,
+         * {@code false} otherwise
+         */
+        public boolean isAssertive() {
+            return assertive;
+        }
+
         @Nullable
         public Component getComponent() {
             return component;
@@ -317,6 +338,9 @@ public class Notifications {
             notification = createNotification();
             notification.setDuration(duration);
             notification.addThemeName(convertTypeToThemeName(type));
+
+            // force setting assertive if type error
+            notification.setAssertive(assertive || type == Type.ERROR);
 
             if (themeVariant != null) {
                 notification.addThemeVariants(themeVariant);

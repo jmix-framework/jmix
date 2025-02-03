@@ -59,7 +59,7 @@ public class RestSaveContextProcessorTest extends BaseRestDsIntegrationTest {
 
         SaveContext saveContext = new SaveContext().saving(customer, contact1);
 
-        processor.normalizeCompositionItems(saveContext);
+        processor.process(saveContext);
 
         assertThat(saveContext.getEntitiesToSave()).hasSize(1);
         assertThat(saveContext.getEntitiesToSave()).first().isSameAs(customer);
@@ -88,7 +88,7 @@ public class RestSaveContextProcessorTest extends BaseRestDsIntegrationTest {
 
         SaveContext saveContext = new SaveContext().saving(customer, contact1).removing(contact2);
 
-        processor.normalizeCompositionItems(saveContext);
+        processor.process(saveContext);
 
         assertThat(saveContext.getEntitiesToSave()).hasSize(1);
         assertThat(saveContext.getEntitiesToSave()).first().isEqualTo(customer);

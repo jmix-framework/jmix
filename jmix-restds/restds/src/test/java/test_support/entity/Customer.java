@@ -1,5 +1,6 @@
 package test_support.entity;
 
+import io.jmix.core.FileRef;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.JmixEmbedded;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -42,6 +43,16 @@ public class Customer {
 
     @JmixEmbedded
     private CustomerAddress address;
+
+    private FileRef document;
+
+    public FileRef getDocument() {
+        return document;
+    }
+
+    public void setDocument(FileRef document) {
+        this.document = document;
+    }
 
     public String getEmail() {
         return email;

@@ -16,6 +16,8 @@
 
 package io.jmix.core;
 
+import java.util.Collection;
+
 /**
  * Provides access to all registered file storage beans of the application.
  * <p>
@@ -44,4 +46,9 @@ public interface FileStorageLocator {
      *                               in the {@code jmix.core.defaultFileStorage} application property.
      */
     <T extends FileStorage> T getDefault();
+
+    /**
+     * @return unmodifiable collection of all registered file storages
+     */
+    Collection<? extends FileStorage> getAll();
 }

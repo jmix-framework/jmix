@@ -16,10 +16,7 @@
 
 package test_support;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.JmixModules;
-import io.jmix.core.Resources;
-import io.jmix.core.Stores;
+import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
@@ -32,6 +29,7 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.restds.RestDsConfiguration;
 import io.jmix.restds.impl.RestAuthenticationManagerSupplier;
+import io.jmix.restds.filestorage.RestFileStorage;
 import io.jmix.restds.impl.RestPasswordAuthenticator;
 import io.jmix.restds.impl.RestTokenHolder;
 import io.jmix.security.SecurityConfiguration;
@@ -64,6 +62,11 @@ import javax.sql.DataSource;
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = {RestDsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class})
 public class TestRestDsConfiguration {
+
+    @Bean
+    FileStorage restService1FileStorage() {
+        return new RestFileStorage("restService1", "fs");
+    }
 
     // In production code created by autoconfiguration
     @Bean("restds_RestAuthenticationManagerSupplier")

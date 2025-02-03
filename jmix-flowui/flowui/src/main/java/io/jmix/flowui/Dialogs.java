@@ -181,7 +181,8 @@ public interface Dialogs {
         Dialog open();
     }
 
-    interface InputDialogBuilder extends DialogBuilder<InputDialogBuilder> {
+    interface InputDialogBuilder extends DialogBuilder<InputDialogBuilder>,
+            Draggable<InputDialogBuilder> {
 
         /**
          * Adds input parameter to the dialog. InputParameter describes field which will be used in the input dialog.

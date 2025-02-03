@@ -791,6 +791,23 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
+        public InputDialogBuilder withDraggable(boolean draggable) {
+            dialogBuild.setDraggable(draggable);
+            return this;
+        }
+
+        @Override
+        public boolean isDraggable() {
+            return dialogBuild.isDraggable();
+        }
+
+        @Override
+        public InputDialogBuilder withDraggedListener(ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+            dialogBuild.addDraggedListener(listener);
+            return this;
+        }
+
+        @Override
         public InputDialogBuilder withParameter(InputParameter parameter) {
             inputDialog.setParameter(parameter);
             return this;

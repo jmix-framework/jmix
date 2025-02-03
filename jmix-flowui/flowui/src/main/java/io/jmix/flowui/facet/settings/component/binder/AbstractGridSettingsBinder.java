@@ -25,7 +25,6 @@ import io.jmix.flowui.facet.settings.component.DataGridSettings;
 import io.jmix.flowui.model.BaseCollectionLoader;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.HasLoader;
-import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -49,37 +48,64 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         }
 
         List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
+        List<Grid.Column<?>> newColumnsOrder = new ArrayList<>();
 
-        List<String> componentColumnKeys = componentColumns.stream().map(Grid.Column::getKey).toList();
-        List<String> settingsColumnKeys = settings.getColumns().stream()
-                .map(DataGridSettings.Column::getKey).filter(Objects::nonNull).toList();
-
-        // Checks only size of collections and same elements. It does not consider the order in collections.
-        // So settings won't be applied if DataGrid contains columns that are missed in settings.
-        if (CollectionUtils.isEqualCollection(componentColumnKeys, settingsColumnKeys)) {
-            List<Grid.Column<?>> newColumnsOrder = new ArrayList<>(componentColumnKeys.size());
-
-            for (DataGridSettings.Column sColumn : settings.getColumns()) {
-                Grid.Column<?> column = component.getColumnByKey(sColumn.getKey());
-                Objects.requireNonNull(column);
-
-                if (sColumn.getWidth() != null) {
-                    // Changing the column width manually works only if flexGrow is 0.
-                    // If flexGrow is >=1 then the column width is 100px. So we consider that user didn't resize
-                    //  the column if its width is 100px. And we keep the flexGrow value in this case.
-                    column.setFlexGrow(sColumn.getFlexGrow() > 0 && !"100px".equals(sColumn.getWidth())
-                            ? 0
-                            : sColumn.getFlexGrow());
-
-                    column.setWidth(sColumn.getWidth());
-                }
-                if (sColumn.getVisible() != null) {
-                    column.setVisible(sColumn.getVisible());
-                }
-                newColumnsOrder.add(column);
+        // apply existing settings if possible
+        for (DataGridSettings.Column sColumn : settings.getColumns()) {
+            Grid.Column<?> column = component.getColumnByKey(sColumn.getKey());
+            if (column == null) {
+                log.warn("Column with key '{}' not found in {}. The settings will not be applied.",
+                        sColumn.getKey(), Grid.class.getSimpleName());
+                continue;
             }
-            component.setColumnOrder((List) newColumnsOrder);
+
+            if (sColumn.getWidth() != null) {
+                // Changing the column width manually works only if flexGrow is 0.
+                // If flexGrow is >=1 then the column width is 100px. So we consider that user didn't resize
+                //  the column if its width is 100px. And we keep the flexGrow value in this case.
+                column.setFlexGrow(sColumn.getFlexGrow() > 0 && !"100px".equals(sColumn.getWidth())
+                        ? 0
+                        : sColumn.getFlexGrow());
+
+                column.setWidth(sColumn.getWidth());
+            }
+            if (sColumn.getVisible() != null) {
+                column.setVisible(sColumn.getVisible());
+            }
+
+            newColumnsOrder.add(column);
         }
+
+        if (newColumnsOrder.size() != componentColumns.size()) {
+            List<? extends Grid.Column<?>> notProcessedColumns = componentColumns.stream()
+                    .filter(column -> !newColumnsOrder.contains(column))
+                    .toList();
+
+            for (Grid.Column<?> notProcessedColumn : notProcessedColumns) {
+                int index = findFirstLeftNeighborIndex(componentColumns, newColumnsOrder, notProcessedColumn);
+
+                // add right after left neighbor, otherwise add to zero-index
+                newColumnsOrder.add(index + 1, notProcessedColumn);
+            }
+        }
+
+        component.setColumnOrder((List) newColumnsOrder);
+    }
+
+    protected int findFirstLeftNeighborIndex(List<? extends Grid.Column<?>> componentColumns,
+                                             List<Grid.Column<?>> newColumnsOrder,
+                                             Grid.Column<?> notIncludedColumn) {
+        int startIndex = componentColumns.indexOf(notIncludedColumn);
+        while (startIndex > 0) {
+            Grid.Column<?> neighborCandidate = componentColumns.get(--startIndex);
+
+            if (newColumnsOrder.contains(neighborCandidate)) {
+                return newColumnsOrder.indexOf(neighborCandidate);
+            }
+        }
+
+        // left neighbor is not found, should be 0 index
+        return -1;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

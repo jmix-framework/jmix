@@ -34,8 +34,8 @@ import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.util.RemoveOperation.ActionCancelledEvent;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
+import io.jmix.flowui.util.RemoveOperation.BeforeActionPerformedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -52,6 +52,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     protected boolean confirmation = true;
     protected String confirmationText;
     protected String confirmationHeader;
+    protected Consumer<BeforeActionPerformedEvent<E>> beforeActionPerformedHandler;
     protected Consumer<AfterActionPerformedEvent<E>> afterActionPerformedHandler;
     protected Consumer<ActionCancelledEvent<E>> actionCancelledHandler;
     protected Consumer<Collection<E>> delegate;
@@ -136,6 +137,16 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     }
 
     /**
+     * Sets the handler to be invoked before removing entities.
+     *
+     * @param beforeActionPerformedHandler handler to be set
+     */
+    public void setBeforeActionPerformedHandler(
+            @Nullable Consumer<BeforeActionPerformedEvent<E>> beforeActionPerformedHandler) {
+        this.beforeActionPerformedHandler = beforeActionPerformedHandler;
+    }
+
+    /**
      * Sets the handler to be invoked after removing entities.
      */
     public void setAfterActionPerformedHandler(@Nullable Consumer<AfterActionPerformedEvent<E>> afterActionPerformedHandler) {
@@ -217,6 +228,10 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
             builder = builder.withConfirmationTitle(confirmationHeader);
         }
 
+        if (beforeActionPerformedHandler != null) {
+            builder = builder.beforeActionPerformed(beforeActionPerformedHandler);
+        }
+
         if (afterActionPerformedHandler != null) {
             builder = builder.afterActionPerformed(afterActionPerformedHandler);
         }
@@ -244,6 +259,12 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
 
     public RemoveAction<E> withConfirmationHeader(@Nullable String confirmationHeader) {
         setConfirmationHeader(confirmationHeader);
+        return this;
+    }
+
+    public RemoveAction<E> withBeforeActionPerformedHandler(
+            @Nullable Consumer<BeforeActionPerformedEvent<E>> beforeActionPerformedHandler) {
+        setBeforeActionPerformedHandler(beforeActionPerformedHandler);
         return this;
     }
 

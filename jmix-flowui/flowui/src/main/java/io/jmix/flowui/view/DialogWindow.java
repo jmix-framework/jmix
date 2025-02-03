@@ -133,6 +133,9 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
             setValueIfPresent(dialogMode.height(), this::setHeight);
             setValueIfPresent(dialogMode.maxHeight(), this::setMaxHeight);
             setValueIfPresent(dialogMode.minHeight(), this::setMinHeight);
+
+            setValueIfPresent(dialogMode.left(), this::setLeft);
+            setValueIfPresent(dialogMode.top(), this::setTop);
         }
     }
 
@@ -266,6 +269,20 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
         if (event.isFromClient()) {
             view.closeWithDefaultAction();
         }
+    }
+
+    /**
+     * Adds a listener that is called after user finishes dragging the dialog.
+     * It is called only if dragging is enabled.
+     * <p>
+     * Note: By default, the component will sync the top/left values after every dragging.
+     *
+     * @param listener the listener to add
+     * @return a Registration for removing the event listener
+     * @see #setDraggable(boolean)
+     */
+    public Registration addDraggedListener(ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+        return dialog.addDraggedListener(listener);
     }
 
     /**
@@ -423,6 +440,52 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
      */
     public void setResizable(boolean resizable) {
         dialog.setResizable(resizable);
+    }
+
+    /**
+     * Gets the left position of the overlay.
+     *
+     * @return the left position of the overlay
+     */
+    public String getLeft() {
+        return dialog.getLeft();
+    }
+
+    /**
+     * Sets the distance of the overlay from the left of its container. If a
+     * unitless number is provided, pixels are assumed.
+     * <p>
+     * Note that the overlay left edge may not be the same as the viewport left
+     * edge (e.g. the {@code Lumo} theme defines some spacing to prevent the overlay
+     * from stretching all the way to the left of the viewport).
+     *
+     * @param left the left position of the overlay
+     */
+    public void setLeft(String left) {
+        dialog.setLeft(left);
+    }
+
+    /**
+     * Gets the top position of the overlay.
+     *
+     * @return the top position of the overlay
+     */
+    public String getTop() {
+        return dialog.getTop();
+    }
+
+    /**
+     * Sets the top position of the overlay. If a unitless number is provided,
+     * pixels are assumed.
+     * <p>
+     * Note that the overlay top edge may not be the same as the viewport top
+     * edge (e.g. the {@code Lumo} theme defines some spacing to prevent the overlay
+     * from stretching all the way to the top of the viewport).
+     *
+     * @param top the top position of the overlay
+     */
+    public void setTop(String top) {
+        dialog.setTop(top);
     }
 
     @Override

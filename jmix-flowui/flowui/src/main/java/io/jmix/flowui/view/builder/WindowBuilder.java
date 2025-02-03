@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.view.builder;
 
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
@@ -43,6 +45,7 @@ public class WindowBuilder<V extends View<?>> extends AbstractWindowBuilder<V> i
 
         this.afterOpenListener = builder.afterOpenListener;
         this.afterCloseListener = builder.afterCloseListener;
+        this.draggedListener = builder.draggedListener;
 
         this.viewClass = viewClass;
     }
@@ -72,6 +75,12 @@ public class WindowBuilder<V extends View<?>> extends AbstractWindowBuilder<V> i
     @Override
     public WindowBuilder<V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         super.withAfterCloseListener(listener);
+        return this;
+    }
+
+    @Override
+    public WindowBuilder<V> withDraggedListener(@Nullable ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+        super.withDraggedListener(listener);
         return this;
     }
 

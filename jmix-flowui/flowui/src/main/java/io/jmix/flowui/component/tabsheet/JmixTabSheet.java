@@ -175,6 +175,7 @@ public class JmixTabSheet extends Component
         remove(getTabAt(position));
     }
 
+    @Nullable
     public Component getContentByTab(Tab tab) {
         return tabToContent.get(tab);
     }
@@ -230,6 +231,7 @@ public class JmixTabSheet extends Component
      *
      * @return the selected tab, or {@code null} if none is selected
      */
+    @Nullable
     public Tab getSelectedTab() {
         return tabs.getSelectedTab();
     }
@@ -433,6 +435,7 @@ public class JmixTabSheet extends Component
          *
          * @return the selected tab for this event
          */
+        @Nullable
         public Tab getSelectedTab() {
             return this.selectedTab;
         }

@@ -23,11 +23,15 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.StandardDetailView.InitEntityEvent;
+import io.jmix.flowui.view.StandardDetailView.ValidationEvent;
 import io.jmix.flowui.view.View.QueryParametersChangeEvent;
+import io.jmix.flowui.view.View.RestoreComponentsStateEvent;
 import org.springframework.lang.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public final class ViewControllerUtils {
 
@@ -128,39 +132,43 @@ public final class ViewControllerUtils {
     }
 
     /**
-     * Adds {@link View.RestoreComponentsStateEvent} listener.
+     * Adds {@link RestoreComponentsStateEvent} listener.
      *
      * @param listener the listened to add, not {@code null}
      * @return a registration object that can be used for removing the listener
      */
-    public static Registration addRestoreComponentsStateEventListener(
-            View<?> view,
-            ComponentEventListener<View.RestoreComponentsStateEvent> listener
-    ) {
+    public static Registration addRestoreComponentsStateEventListener(View<?> view,
+                                                                      ComponentEventListener<RestoreComponentsStateEvent> listener) {
         return view.addRestoreComponentsStateEventListener(listener);
     }
 
-    public static <T> Registration addInitEntityEventListener(StandardDetailView<T> view, ComponentEventListener<StandardDetailView.InitEntityEvent<T>> listener) {
+    public static <T> Registration addInitEntityEventListener(StandardDetailView<T> view,
+                                                              ComponentEventListener<InitEntityEvent<T>> listener) {
         return view.addInitEntityListener(listener);
     }
 
-    public static Registration addBeforeShowEventListener(View<?> view, ComponentEventListener<View.BeforeShowEvent> listener) {
+    public static Registration addBeforeShowEventListener(View<?> view,
+                                                          ComponentEventListener<View.BeforeShowEvent> listener) {
         return view.addBeforeShowListener(listener);
     }
 
-    public static Registration addDetachListener(View<?> view, ComponentEventListener<DetachEvent> listener) {
+    public static Registration addDetachListener(View<?> view,
+                                                 ComponentEventListener<DetachEvent> listener) {
         return view.addDetachListener(listener);
     }
 
-    public static Registration addAfterCloseListener(View<?> view, ComponentEventListener<View.AfterCloseEvent> listener) {
+    public static Registration addAfterCloseListener(View<?> view,
+                                                     ComponentEventListener<View.AfterCloseEvent> listener) {
         return view.addAfterCloseListener(listener);
     }
 
-    public static Registration addValidationEventListener(StandardDetailView<?> view, ComponentEventListener<StandardDetailView.ValidationEvent> listener) {
+    public static Registration addValidationEventListener(StandardDetailView<?> view,
+                                                          ComponentEventListener<ValidationEvent> listener) {
         return view.addValidationEventListener(listener);
     }
 
-    public static Registration addReadyListener(View<?> view, ComponentEventListener<View.ReadyEvent> listener) {
+    public static Registration addReadyListener(View<?> view,
+                                                ComponentEventListener<View.ReadyEvent> listener) {
         return view.addReadyListener(listener);
     }
 
@@ -173,7 +181,8 @@ public final class ViewControllerUtils {
      * @deprecated use {@link ViewControllerUtils#addInitEntityEventListener(StandardDetailView, ComponentEventListener)} instead
      */
     @Deprecated(since = "2.2", forRemoval = true)
-    public static <T> Registration addInitEntityEvent(StandardDetailView<T> view, ComponentEventListener<StandardDetailView.InitEntityEvent<T>> listener) {
+    public static <T> Registration addInitEntityEvent(StandardDetailView<T> view,
+                                                      ComponentEventListener<InitEntityEvent<T>> listener) {
         return view.addInitEntityListener(listener);
     }
 
@@ -181,11 +190,17 @@ public final class ViewControllerUtils {
      * @deprecated use {@link ViewControllerUtils#addBeforeShowEventListener(View, ComponentEventListener)} instead
      */
     @Deprecated(since = "2.2", forRemoval = true)
-    public static Registration addBeforeShowEvent(View<?> view, ComponentEventListener<View.BeforeShowEvent> listener) {
+    public static Registration addBeforeShowEvent(View<?> view,
+                                                  ComponentEventListener<View.BeforeShowEvent> listener) {
         return view.addBeforeShowListener(listener);
     }
 
     public static void setAfterNavigationHandler(View<?> view, Runnable operation) {
         view.setAfterNavigationHandler(operation);
+    }
+
+    public static <T extends Component> void setViewCloseDelegate(View<T> view,
+                                                                  Consumer<View<T>> closeDelegate) {
+        view.setCloseDelegate(closeDelegate);
     }
 }

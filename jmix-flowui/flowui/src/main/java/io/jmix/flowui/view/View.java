@@ -285,7 +285,7 @@ public class View<T extends Component> extends Composite<T>
      * @return whether this view prevents browser tab from accidentally closing
      */
     public boolean isPreventBrowserTabClosing() {
-        UiViewProperties properties = applicationContext.getBean(UiViewProperties.class);
+        UiViewProperties properties = getApplicationContext().getBean(UiViewProperties.class);
         return properties.isPreventBrowserTabClosing() && preventBrowserTabClosing;
     }
 

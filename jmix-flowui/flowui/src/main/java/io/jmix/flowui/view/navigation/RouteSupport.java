@@ -333,6 +333,28 @@ public class RouteSupport {
         });
     }
 
+    /**
+     * Invokes {@code history.replaceState} in the browser with the given location.
+     *
+     * @param ui       UI instance for which to set location
+     * @param location the new location to set in the browser
+     */
+    public void setLocation(UI ui, Location location) {
+        setLocation(ui, location, false);
+    }
+
+    /**
+     * Invokes {@code history.replaceState} in the browser with the given location.
+     *
+     * @param ui       UI instance for which to set location
+     * @param location the new location to set in the browser
+     * @param callback {@code true} if the change should make
+     *                 a return call to the server
+     */
+    public void setLocation(UI ui, Location location, boolean callback) {
+        ui.getPage().getHistory().replaceState(null, location, callback);
+    }
+
     protected List<String> convertValues(List<Object> values) {
         return values.stream()
                 .distinct()

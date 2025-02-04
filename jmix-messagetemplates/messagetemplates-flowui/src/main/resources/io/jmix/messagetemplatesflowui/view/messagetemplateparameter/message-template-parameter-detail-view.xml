@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://MessageTemplateParameterDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="messageTemplateParameterDc"
+                  class="io.jmix.messagetemplates.entity.MessageTemplateParameter">
+            <fetchPlan extends="_base"/>
+            <loader id="messageTemplateParameterDl"/>
+        </instance>
+        <collection id="parameterLocalizationDc"
+                    class="io.jmix.messagetemplatesflowui.view.messagetemplateparameter.model.MessageTemplateParameterLocalization"/>
+    </data>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <facets>
+        <settings auto="true"/>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <tabSheet id="mainTabSheet" width="100%">
+            <tab id="generalTab" label="msg://mainTabSheet.detailsTab.label">
+                <formLayout id="form" dataContainer="messageTemplateParameterDc">
+                    <textField id="nameField" property="name"/>
+                    <textField id="aliasField" property="alias"/>
+                    <select id="typeSelect" property="type"
+                            itemsEnum="io.jmix.messagetemplates.entity.ParameterType"/>
+                    <checkbox id="hiddenCheckbox" property="hidden"/>
+                    <checkbox id="requiredCheckbox" property="required"/>
+                    <comboBox id="metaClassField" property="entityMetaClass"
+                              visible="false" required="true"/>
+                    <comboBox id="enumerationField" property="enumerationClass"
+                              visible="false" required="true"/>
+                    <checkbox id="defaultDateIsCurrentField" property="defaultDateIsCurrent"
+                              visible="false"/>
+                    <hbox id="defaultValuePlaceholder"/>
+                </formLayout>
+            </tab>
+            <tab id="localizationTab" label="msg://mainTabSheet.localizationTab.label">
+                <vbox padding="false" height="100%">
+                    <hbox classNames="buttons-panel">
+                        <button id="createBtn" action="localizationDataGrid.create"/>
+                        <button id="editBtn" action="localizationDataGrid.edit"/>
+                        <button id="removeBtn" action="localizationDataGrid.remove"/>
+                    </hbox>
+                    <dataGrid id="localizationDataGrid"
+                              dataContainer="parameterLocalizationDc"
+                              editorBuffered="true"
+                              width="100%"
+                              minWidth="20em">
+                        <actions>
+                            <action id="create" type="list_create"/>
+                            <action id="edit" type="list_edit"/>
+                            <action id="remove" type="list_remove"/>
+                        </actions>
+                        <columns resizable="true" sortable="false">
+                            <column property="locale" editable="true"/>
+                            <column property="name" editable="true"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+        </tabSheet>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

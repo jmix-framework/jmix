@@ -16,7 +16,10 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.*;
+import io.jmix.core.EntityInitializer;
+import io.jmix.core.EntityUuidGenerator;
+import io.jmix.core.JmixOrder;
+import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -32,6 +35,9 @@ public class GeneratedIdEntityInitializer implements EntityInitializer, Ordered 
     @Autowired
     private Metadata metadata;
 
+    @Autowired
+    private EntityUuidGenerator uuidGenerator;
+
     @Override
     public void initEntity(Object entity) {
         MetaClass metaClass = metadata.getClass(entity);
@@ -41,7 +47,7 @@ public class GeneratedIdEntityInitializer implements EntityInitializer, Ordered 
                         && property.getAnnotations().get(JmixGeneratedValue.class.getName()) != null)
                 .forEach(property -> {
                     if (EntityValues.getValue(entity, property.getName()) == null) {
-                        EntityValues.setValue(entity, property.getName(), UuidProvider.createUuid());
+                        EntityValues.setValue(entity, property.getName(), uuidGenerator.generate());
                     }
                 });
     }

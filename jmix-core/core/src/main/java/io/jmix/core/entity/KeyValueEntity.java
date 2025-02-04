@@ -97,7 +97,7 @@ public class KeyValueEntity
     }
 
     public KeyValueEntity() {
-        uuid = UuidProvider.createUuid();
+        uuid = UuidProvider.createUuidV7();
     }
 
     public MetaClass getInstanceMetaClass() {

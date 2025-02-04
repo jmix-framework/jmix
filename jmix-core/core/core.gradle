@@ -59,6 +59,7 @@ dependencies {
     api 'javax.cache:cache-api'
 
     implementation'com.google.code.gson:gson'
+    implementation 'com.github.f4b6a3:uuid-creator'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'

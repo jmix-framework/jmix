@@ -110,6 +110,8 @@ public class ReportListView extends StandardListView<Report> {
     protected ViewNavigators viewNavigators;
     @Autowired
     private Messages messages;
+    @Autowired
+    private EntityUuidGenerator entityUuidGenerator;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -258,11 +260,11 @@ public class ReportListView extends StandardListView<Report> {
                 .fetchPlan("report.edit")
                 .one();
         Report copiedReport = metadataTools.deepCopy(source);
-        copiedReport.setId(UuidProvider.createUuid());
+        copiedReport.setId(entityUuidGenerator.generate());
         copiedReport.setName(reportsUtils.generateReportName(source.getName()));
         copiedReport.setCode(null);
         for (ReportTemplate copiedTemplate : copiedReport.getTemplates()) {
-            copiedTemplate.setId(UuidProvider.createUuid());
+            copiedTemplate.setId(entityUuidGenerator.generate());
         }
 
         reports.save(copiedReport);

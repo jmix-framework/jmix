@@ -29,7 +29,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.session.MapSession;
 import org.springframework.session.MapSessionRepository;
 import org.springframework.session.SessionRepository;
@@ -37,6 +37,7 @@ import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class, SessionsAutoConfiguration.OAuth2SessionsConfiguration.class,
@@ -47,12 +48,12 @@ public class SessionsAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(SessionRepository.class)
     public SessionRepository<MapSession> sessionRepository() {
-        return new MapSessionRepository(new HashMap<>());
+        return new MapSessionRepository(new ConcurrentHashMap<>());
     }
 
     @Configuration(proxyBeanMethods = false)
-    @ConditionalOnClass(TokenStore.class)
-    @ConditionalOnBean(TokenStore.class)
+    @ConditionalOnClass(OAuth2AuthorizationService.class)
+    @ConditionalOnBean(OAuth2AuthorizationService.class)
     @Order(10)
     public static class OAuth2SessionsConfiguration {
         @Bean("sess_sessionIdResolver")

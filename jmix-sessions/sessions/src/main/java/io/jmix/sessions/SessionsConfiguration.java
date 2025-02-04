@@ -18,19 +18,41 @@ package io.jmix.sessions;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.security.ClientDetails;
+import io.jmix.core.session.SessionData;
+import io.jmix.sessions.resolver.OAuth2AndCookieSessionIdResolver;
 import io.jmix.sessions.validators.VaadinSessionAttributesValidator;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.SessionCookieConfig;
+import jakarta.servlet.http.HttpSessionListener;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
-import org.springframework.session.web.http.HttpSessionIdResolver;
-import org.springframework.session.web.http.SessionRepositoryFilter;
+import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
+import org.springframework.session.web.http.*;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ObjectUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @ComponentScan
@@ -39,21 +61,18 @@ public class SessionsConfiguration<S extends Session> {
 
     @Autowired
     protected HttpSessionIdResolver sessionIdResolver;
-
     @Autowired
     protected ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
+    protected SessionRegistry sessionRegistry;
+
+    private List<HttpSessionListener> httpSessionListeners = new ArrayList<>();
 
     public SessionRepositoryWrapper<S> sessionRepositoryWrapper(SessionRepository<S> sessionRepository) {
         SessionRepositoryWrapper<S> sessionRepositoryWrapper = new SessionRepositoryWrapper<>(
-                sessionRegistry(), applicationEventPublisher, sessionRepository);
+                sessionRegistry, applicationEventPublisher, sessionRepository);
         sessionRepositoryWrapper.addAttributePersistenceValidators(new VaadinSessionAttributesValidator());
         return sessionRepositoryWrapper;
-    }
-
-    @Bean
-    @Primary
-    protected SessionRegistry sessionRegistry() {
-        return new SessionRegistryImpl();
     }
 
     @Bean
@@ -64,5 +83,34 @@ public class SessionsConfiguration<S extends Session> {
                 = new SessionRepositoryFilter<>(sessionRepositoryWrapper(sessionRepository));
         sessionRepositoryFilter.setHttpSessionIdResolver(sessionIdResolver);
         return sessionRepositoryFilter;
+    }
+
+    @Bean
+    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> tokenCustomizer(ObjectProvider<SessionData> sessionDataProvider) {
+        return (context) -> {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null
+                    && authentication.isAuthenticated()
+                    && authentication.getDetails() instanceof ClientDetails cd) {
+                //todo [jmix-framework/jmix#3915] implement: store access token in sessionData.
+                // find a way to obtain access token value there or move this part of code to more appropriate place
+                // see io.jmix.sessions.resolver.OAuth2AndCookieSessionIdResolver.setOAuth2SessionId
+                /*SessionData sessionData = sessionDataProvider.getIfAvailable();
+                if (sessionData != null) {
+                    sessionData.setAttribute(OAuth2AndCookieSessionIdResolver.ACCESS_TOKEN,"???");
+                }*/
+                context.getClaims().claim(OAuth2AndCookieSessionIdResolver.SESSION_ID, cd.getSessionId());
+            }
+        };
+    }
+
+    @Bean
+    public SessionEventHttpSessionListenerAdapter sessionEventHttpSessionListenerAdapter() {
+        return new SessionEventHttpSessionListenerAdapter(this.httpSessionListeners);
+    }
+
+    @Autowired(required = false)
+    public void setHttpSessionListeners(List<HttpSessionListener> listeners) {
+        this.httpSessionListeners = listeners;
     }
 }

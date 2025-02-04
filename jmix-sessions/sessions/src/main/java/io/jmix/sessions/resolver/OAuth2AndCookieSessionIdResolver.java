@@ -19,31 +19,35 @@ package io.jmix.sessions.resolver;
 import com.google.common.base.Strings;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.core.session.SessionData;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.OAuth2RefreshToken;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Uses oauth2 access token and cookies to search session id.
  **/
 public class OAuth2AndCookieSessionIdResolver implements HttpSessionIdResolver {
 
-    private static final String SESSION_ID = "OAuth2.SESSION_ID";
-    private static final String ACCESS_TOKEN = "OAuth2.ACCESS_TOKEN";
+    public static final String SESSION_ID = "OAuth2.SESSION_ID";
+    public static final String ACCESS_TOKEN = "OAuth2.ACCESS_TOKEN";
 
-    protected TokenStore tokenStore;
+    protected OAuth2AuthorizationService oAuth2AuthorizationService;
+
     protected HttpSessionIdResolver cookieHttpSessionIdResolver = new CookieHttpSessionIdResolver();
     protected ObjectProvider<SessionData> sessionDataProvider;
 
@@ -76,40 +80,52 @@ public class OAuth2AndCookieSessionIdResolver implements HttpSessionIdResolver {
 
     protected List<String> resolveOAuth2SessionIds(HttpServletRequest request) {
         String sessionId = null;
+        OAuth2Authorization auth = null;
         if (isAccessTokenRequest(request)) {
-            OAuth2AccessToken token = tokenStore.readAccessToken(getAccessToken(request));
-            if (token != null) {
-                sessionId = (String) token.getAdditionalInformation().get(SESSION_ID);
-            }
+            auth = oAuth2AuthorizationService.findByToken(getAccessToken(request), OAuth2TokenType.ACCESS_TOKEN);
         } else if (isRefreshTokenRequest(request)) {
-            OAuth2RefreshToken token = tokenStore.readRefreshToken(getRefreshToken(request));
+            auth = oAuth2AuthorizationService.findByToken(getRefreshToken(request), OAuth2TokenType.REFRESH_TOKEN);
+        }
+        if (auth != null) {
+            OAuth2Authorization.Token<OAuth2AccessToken> token = auth.getAccessToken();
             if (token != null) {
-                OAuth2Authentication authentication = tokenStore.readAuthenticationForRefreshToken(token);
-                if (authentication.getDetails() instanceof ClientDetails) {
-                    sessionId = ((ClientDetails) authentication.getDetails()).getSessionId();
+                Map<String, Object> claims = token.getClaims();
+                if (claims != null) {
+                    sessionId = (String) claims.get(SESSION_ID);
                 }
             }
+            //todo [jmix-framework/jmix#3915][#3868] ClientDetails fallback when it will be implemented, investigate other fallbacks for null-case
         }
 
         return sessionId != null ? Collections.singletonList(sessionId) : Collections.emptyList();
     }
 
-    protected void setOAuth2SessionId(HttpServletRequest request, String sessionId) {
+    protected void setOAuth2SessionId(HttpServletRequest request, String sessionId) {//todo [jmix-framework/jmix#3915] concurrency?
         String tokenValue = getAccessToken(request);
-        OAuth2AccessToken token;
+        OAuth2Authorization.Token<OAuth2AccessToken> token;
+
         if (tokenValue == null) {
             SessionData sessionData = sessionDataProvider.getIfAvailable();
-            if (sessionData != null) {
+            //todo [jmix-framework/jmix#3915] enable when access token value will be stored in sessionData
+            // see io.jmix.sessions.SessionsConfiguration.tokenCustomizer
+            /*if (sessionData != null) {
                 tokenValue = (String) sessionData.getAttribute(ACCESS_TOKEN);
-            }
+            }*/
         }
         if (tokenValue != null) {
-            token = tokenStore.readAccessToken(tokenValue);
-            if (token != null) {
-                String originalSessionId = (String) token.getAdditionalInformation().get(SESSION_ID);
-                if (!Objects.equals(originalSessionId, sessionId)) {
-                    token.getAdditionalInformation().put(SESSION_ID, sessionId);
-                    tokenStore.storeAccessToken(token, tokenStore.readAuthentication(token));
+            OAuth2Authorization auth = oAuth2AuthorizationService.findByToken(tokenValue, OAuth2TokenType.ACCESS_TOKEN);
+
+            if (auth != null) {
+                token = auth.getAccessToken();
+                if (token != null) {
+                    Map<String, Object> claims = token.getClaims();
+                    if (claims != null) {
+                        String originalSessionId = (String) claims.get(SESSION_ID);
+                        if (!Objects.equals(originalSessionId, sessionId)) {
+                            claims.put(SESSION_ID, sessionId);
+                            oAuth2AuthorizationService.save(auth);
+                        }
+                    }
                 }
             }
         }
@@ -118,9 +134,9 @@ public class OAuth2AndCookieSessionIdResolver implements HttpSessionIdResolver {
     protected void expireOAuth2Session(HttpServletRequest request) {
         String tokenValue = getAccessToken(request);
         if (tokenValue != null) {
-            OAuth2AccessToken oAuth2AccessToken = tokenStore.readAccessToken(tokenValue);
-            if (oAuth2AccessToken != null) {
-                tokenStore.removeAccessToken(oAuth2AccessToken);
+            OAuth2Authorization auth = oAuth2AuthorizationService.findByToken(tokenValue, OAuth2TokenType.ACCESS_TOKEN);
+            if (auth != null) {
+                oAuth2AuthorizationService.remove(auth);
             }
         }
     }
@@ -130,7 +146,7 @@ public class OAuth2AndCookieSessionIdResolver implements HttpSessionIdResolver {
     }
 
     protected boolean isRefreshTokenRequest(HttpServletRequest request) {
-        return OAuth2AccessToken.REFRESH_TOKEN.equals(request.getParameter("grant_type")) &&
+        return AuthorizationGrantType.REFRESH_TOKEN.getValue().equals(request.getParameter("grant_type")) &&
                 !Strings.isNullOrEmpty(getRefreshToken(request));
     }
 
@@ -139,16 +155,21 @@ public class OAuth2AndCookieSessionIdResolver implements HttpSessionIdResolver {
     }
 
     protected String getAccessToken(HttpServletRequest request) {
-        return (String) request.getAttribute(OAuth2AuthenticationDetails.ACCESS_TOKEN_VALUE);
+        String header = request.getHeader("authorization");
+        if (header != null && header.startsWith("Bearer")) {
+            return header.substring(7);
+        }
+
+        return null;
     }
 
     protected String getRefreshToken(HttpServletRequest request) {
-        return request.getParameter(OAuth2AccessToken.REFRESH_TOKEN);
+        return request.getParameter(OAuth2ParameterNames.REFRESH_TOKEN);
     }
 
     @Autowired
-    public void setTokenStore(TokenStore tokenStore) {
-        this.tokenStore = tokenStore;
+    public void setOauth2AuthorizationService(OAuth2AuthorizationService oAuth2AuthorizationService) {
+        this.oAuth2AuthorizationService = oAuth2AuthorizationService;
     }
 
     @Autowired

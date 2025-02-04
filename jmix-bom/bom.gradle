@@ -296,7 +296,7 @@ dependencies {
         api 'org.antlr:antlr-runtime:3.5.2'
         api 'org.apache.commons:commons-collections4:4.4'
         api 'org.apache.commons:commons-text:1.10.0'
-        api 'org.apache.commons:commons-compress:1.23.0'
+        api 'org.apache.commons:commons-compress:1.27.1'
         api 'org.dom4j:dom4j:2.1.4'
 
 //        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
@@ -346,7 +346,7 @@ dependencies {
         api "org.apache.avalon.framework:avalon-framework-api:$avalonVersion"
         api "org.apache.avalon.framework:avalon-framework-impl:$avalonVersion"
 
-        def xmlgraphicsVersion = '2.8'
+        def xmlgraphicsVersion = '2.10'
         api "org.apache.xmlgraphics:fop:$xmlgraphicsVersion"
         api "org.apache.xmlgraphics:xmlgraphics-commons:$xmlgraphicsVersion"
 
@@ -423,6 +423,12 @@ dependencies {
         api 'org.opensearch.client:opensearch-rest-client:2.14.0'
 
         api 'com.github.f4b6a3:uuid-creator:6.0.0'
+
+        api 'xerces:xercesImpl:2.12.2'
+        api 'org.apache.james:apache-mime4j-core:0.8.12'
+        api 'com.google.protobuf:protobuf-java:3.25.6'
+        api 'com.fasterxml.woodstox:woodstox-core:6.4.0'
+        api 'org.apache.lucene:lucene-queryparser:9.12.1'
     }
 }
 

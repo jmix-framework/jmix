@@ -21,9 +21,9 @@ import java.util.List;
 
 public class VaadinSessionAttributesValidator implements SessionAttributePersistenceValidator {
 
-    public final static String SERVLET_NAME = "jmixVaadinServlet";
+    public final static String SERVLET_NAME = "springServlet";
 
-    public final static String VAADIN_SESSION_KEY = "com.vaadin.server.VaadinSession." + SERVLET_NAME;
+    public final static String VAADIN_SESSION_KEY = "com.vaadin.flow.server.VaadinSession." + SERVLET_NAME;
     public final static String VAADIN_SERVLET_LOCK_KEY = SERVLET_NAME + ".lock";
 
     private final static List<String> NON_PERSISTENT_ATTRIBUTES = Arrays.asList(VAADIN_SERVLET_LOCK_KEY, VAADIN_SESSION_KEY);

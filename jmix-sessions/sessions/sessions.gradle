@@ -22,16 +22,9 @@ archivesBaseName = 'jmix-sessions'
 
 dependencies {
     api project(':core')
+    implementation project(':authserver')
 
     api 'org.springframework.session:spring-session-core'
-//    compileOnly 'org.springframework.security.oauth:spring-security-oauth2'
+    compileOnly 'org.springframework.security:spring-security-oauth2-authorization-server'
 
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'org.apache.commons:commons-dbcp2'
-    testImplementation 'org.liquibase:liquibase-core'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
-    testRuntimeOnly 'org.slf4j:slf4j-simple'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
 }

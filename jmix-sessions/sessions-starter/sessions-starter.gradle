@@ -21,5 +21,6 @@ dependencies {
     api project(':sessions')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
-//    compileOnly 'org.springframework.security.oauth:spring-security-oauth2'
+
+    compileOnly 'org.springframework.security:spring-security-oauth2-authorization-server'
 }

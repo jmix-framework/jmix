@@ -22,6 +22,11 @@ import io.jmix.sessions.events.JmixSessionCreatedEvent;
 import io.jmix.sessions.events.JmixSessionDestroyedEvent;
 import io.jmix.sessions.events.JmixSessionRestoredEvent;
 import io.jmix.sessions.validators.SessionAttributePersistenceValidator;
+import io.jmix.sessions.validators.VaadinSessionAttributesValidator;
+import jakarta.servlet.http.HttpSessionBindingEvent;
+import jakarta.servlet.http.HttpSessionBindingListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.session.FindByIndexNameSessionRepository;
@@ -37,6 +42,7 @@ import java.util.stream.Collectors;
 @Internal
 public class SessionRepositoryWrapper<S extends Session> implements FindByIndexNameSessionRepository<SessionRepositoryWrapper<S>.SessionWrapper> {
 
+    private static final Logger log = LoggerFactory.getLogger(SessionRepositoryWrapper.class);
     private List<SessionAttributePersistenceValidator> attributePersistenceValidators = new ArrayList<>();
 
     protected Map<String, Map<String, Object>> nonPersistentSessionAttributesMap = new ConcurrentHashMap<>();
@@ -100,11 +106,19 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
         if (session != null) {
             SessionWrapper sessionWrapper = new SessionWrapper(session);
             restoreNonPersistentAttributes(sessionWrapper);
-            if (SecurityContextHelper.getAuthentication() != null) {
-                Object principal = SecurityContextHelper.getAuthentication().getPrincipal();
-                if (principal != null && sessionRegistry.getSessionInformation(id) == null) {
-                    sessionRegistry.registerNewSession(id, principal);
-                    applicationEventPublisher.publishEvent(new JmixSessionRestoredEvent<>(sessionWrapper));
+            try {
+                if (SecurityContextHelper.getAuthentication() != null) {
+                    Object principal = SecurityContextHelper.getAuthentication().getPrincipal();
+                    if (principal != null && sessionRegistry.getSessionInformation(id) == null) {
+                        sessionRegistry.registerNewSession(id, principal);
+                        applicationEventPublisher.publishEvent(new JmixSessionRestoredEvent<>(sessionWrapper));
+                    }
+                }
+            } catch (IllegalStateException e) {//todo [jmix-framework/jmix#3915] rework this Vaadin compatibility WA
+                if (e.getMessage().contains("invalidated")) {
+                    log.debug("This IllegalStateException should occur once. In case of frequent exceptions - investigate.");
+                } else {
+                    throw e;
                 }
             }
             return sessionWrapper;
@@ -118,6 +132,12 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
         if (session != null) {
             applicationEventPublisher.publishEvent(new JmixSessionDestroyedEvent<>(session));
             delegate.deleteById(id);
+            //workaround for Vaadin and sessions compatibility:
+            Object vaadinSession = session.nonPersistentAttributes.get(VaadinSessionAttributesValidator.VAADIN_SESSION_KEY);
+            if (vaadinSession instanceof HttpSessionBindingListener listener) {
+                listener.valueUnbound(null);
+            }
+
         }
         nonPersistentSessionAttributesMap.remove(id);
     }

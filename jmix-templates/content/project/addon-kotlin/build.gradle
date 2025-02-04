@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath "io.jmix.gradle:jmix-gradle-plugin:2.5.0-M2"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.10"
     }
 }
 

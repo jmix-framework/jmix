@@ -31,6 +31,11 @@ public class AuthServerProperties {
     boolean useDefaultConfiguration;
 
     /**
+     * Whether InMemoryAuthorizationService should be used instead of JdbcOAuth2AuthorizationService
+     */
+    boolean useInMemoryAuthorizationService;
+
+    /**
      * A list of jmix-specific client configurations
      */
     Map<String, JmixClient> client;
@@ -47,11 +52,13 @@ public class AuthServerProperties {
 
     public AuthServerProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
+            @DefaultValue("false") boolean useInMemoryAuthorizationService,
             @DefaultValue Map<String, JmixClient> client,
             @DefaultValue("/as-login") String loginPageUrl,
             @DefaultValue("as-login.html") String loginPageViewName
             ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
+        this.useInMemoryAuthorizationService = useInMemoryAuthorizationService;
         this.client = client;
         this.loginPageUrl = loginPageUrl;
         this.loginPageViewName = loginPageViewName;
@@ -59,6 +66,10 @@ public class AuthServerProperties {
 
     public boolean isUseDefaultConfiguration() {
         return useDefaultConfiguration;
+    }
+
+    public boolean isUseInMemoryAuthorizationService() {
+        return useInMemoryAuthorizationService;
     }
 
     public Map<String, JmixClient> getClient() {

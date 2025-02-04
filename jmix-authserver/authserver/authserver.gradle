@@ -25,6 +25,7 @@ dependencies {
 
     api 'org.springframework.security:spring-security-oauth2-authorization-server'
     api 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    api 'org.springframework.boot:spring-boot-starter-jdbc'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

@@ -35,7 +35,6 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -118,7 +117,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         ZipArchiveOutputStream zipOutputStream = new ZipArchiveOutputStream(byteArrayOutputStream);
         zipOutputStream.setMethod(ZipArchiveOutputStream.STORED);
         zipOutputStream.setEncoding(StandardCharsets.UTF_8.name());
-        ArchiveEntry singleDesignEntry = newStoredEntry("entities.json", jsonBytes);
+        ZipArchiveEntry singleDesignEntry = newStoredEntry("entities.json", jsonBytes);
         try {
             zipOutputStream.putArchiveEntry(singleDesignEntry);
             zipOutputStream.write(jsonBytes);
@@ -158,7 +157,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         return dataManager.loadList(ctx);
     }
 
-    protected ArchiveEntry newStoredEntry(String name, byte[] data) {
+    protected ZipArchiveEntry newStoredEntry(String name, byte[] data) {
         ZipArchiveEntry zipEntry = new ZipArchiveEntry(name);
         zipEntry.setSize(data.length);
         zipEntry.setCompressedSize(zipEntry.getSize());

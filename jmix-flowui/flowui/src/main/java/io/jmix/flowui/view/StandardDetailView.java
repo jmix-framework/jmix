@@ -51,7 +51,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.lang.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -509,6 +512,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         // if only new entities are registered as modified in DataContext,
         // check whether they were modified after opening the view
         return isModifiedAfterOpen();
+    }
+
+    @Override
+    public void clearChanges() {
+        getViewData().getDataContext().clearChanges();
+        setModifiedAfterOpen(false);
     }
 
     protected InstanceContainer<T> getEditedEntityContainer() {

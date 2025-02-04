@@ -24,9 +24,7 @@ import io.jmix.flowui.view.Subscribe;
 import org.springframework.lang.Nullable;
 
 import javax.annotation.CheckReturnValue;
-import java.util.Collection;
-import java.util.EventObject;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -155,6 +153,14 @@ public interface DataContext {
      * Returns true if the context has detected changes in the tracked entities.
      */
     boolean hasChanges();
+
+    /**
+     * Clears the lists of modified and removed entities. After calling this method, {@link #hasChanges()} returns false,
+     * {@link #getModified()} and {@link #getRemoved()} return empty sets.
+     */
+    default void clearChanges() {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 
     /**
      * Returns true if the context has detected changes in the given entity.

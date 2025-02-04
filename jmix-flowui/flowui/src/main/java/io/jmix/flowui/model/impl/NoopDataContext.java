@@ -110,6 +110,10 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
+    public void clearChanges() {
+    }
+
+    @Override
     public boolean isModified(Object entity) {
         return false;
     }

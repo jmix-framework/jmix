@@ -24,4 +24,10 @@ public interface ChangeTracker {
      * @return {@code true} if the view has unsaved changes
      */
     boolean hasUnsavedChanges();
+
+    /**
+     * Clears the "modified" state of the view. After calling this method, {@link #hasUnsavedChanges()} should
+     * return {@code false};
+     */
+    default void clearChanges() {}
 }

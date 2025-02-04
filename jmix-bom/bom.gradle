@@ -259,6 +259,9 @@ dependencies {
         api "io.jmix.superset:jmix-superset-flowui-kit:$freeVersion"
         api "io.jmix.superset:jmix-superset-flowui-starter:$freeVersion"
 
+        api "io.jmix.tabbedmode:jmix-tabbedmode-flowui:$freeVersion"
+        api "io.jmix.tabbedmode:jmix-tabbedmode-flowui-starter:$freeVersion"
+
         api "io.jmix.templates.studio:jmix-studio-templates:$freeVersion"
 
         api "io.jmix.translations:jmix-translations-fr:$freeVersion"

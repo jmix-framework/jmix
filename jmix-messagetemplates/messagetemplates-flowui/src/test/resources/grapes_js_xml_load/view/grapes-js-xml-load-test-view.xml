@@ -1,0 +1,58 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:msgtmp="http://jmix.io/schema/messagetemplates/ui">
+    <layout>
+        <msgtmp:grapesJs id="grapesJs"
+                         classNames="cssClassName1, cssClassName2"
+                         css="color: red;"
+                         readOnly="true"
+                         height="50px"
+                         maxHeight="55px"
+                         maxWidth="120px"
+                         minHeight="40px"
+                         minWidth="80px"
+                         visible="true"
+                         width="100px">
+            <msgtmp:plugins>
+                <msgtmp:plugin name="grapesjs-blocks-basic"/>
+                <msgtmp:plugin name="grapesjs-blocks-flexbox"/>
+                <msgtmp:plugin name="grapesjs-custom-code"/>
+                <msgtmp:plugin name="grapesjs-plugin-forms"/>
+                <msgtmp:plugin name="grapesjs-preset-newsletter"/>
+                <msgtmp:plugin name="grapesjs-parser-postcss"/>
+                <msgtmp:plugin name="grapesjs-style-filter"/>
+                <msgtmp:plugin name="grapesjs-tabs"/>
+                <msgtmp:plugin name="grapesjs-tooltip"/>
+                <msgtmp:plugin name="grapesjs-tui-image-editor"/>
+            </msgtmp:plugins>
+
+            <msgtmp:blocks>
+                <msgtmp:block id="myBlock"
+                              label="Block label"
+                              category="Extra">
+                    <msgtmp:content>
+                        <![CDATA[<p>This is my first block</p>]]>
+                    </msgtmp:content>
+                    <msgtmp:attributes>
+                        <![CDATA[{ "title": "Insert h1 block" }]]>
+                    </msgtmp:attributes>
+                </msgtmp:block>
+            </msgtmp:blocks>
+        </msgtmp:grapesJs>
+    </layout>
+</view>

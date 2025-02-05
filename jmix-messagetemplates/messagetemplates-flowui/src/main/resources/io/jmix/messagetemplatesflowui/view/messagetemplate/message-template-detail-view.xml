@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:msgtmp="http://jmix.io/schema/messagetemplates/ui"
+      title="msg://MessageTemplateDetailView.title"
+      focusComponent="grapesJsEditor">
+    <data>
+        <instance id="messageTemplateDc"
+                  class="io.jmix.messagetemplates.entity.MessageTemplate">
+            <fetchPlan extends="_base">
+                <property name="parameters" fetchPlan="_base"/>
+            </fetchPlan>
+            <collection id="parametersDc" property="parameters"/>
+            <loader/>
+        </instance>
+        <collection id="messageTemplateGroupsDc"
+                    class="io.jmix.messagetemplates.entity.MessageTemplateGroup">
+            <fetchPlan extends="_base"/>
+            <loader id="messageTemplateGroupsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from msgtmp_MessageTemplateGroup e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <tabSheet id="mainTabSheet" width="100%" height="100%">
+            <tab id="detailsTab" label="msg://mainTabSheet.detailsTab.label">
+                <split width="100%" height="100%"
+                       splitterPosition="30" classNames="gap-xs">
+                    <formLayout dataContainer="messageTemplateDc" classNames="px-xs">
+                        <textField id="nameField" property="name"/>
+                        <textField id="codeField" property="code"/>
+                        <radioButtonGroup id="typeField" property="type"/>
+                        <entityComboBox id="groupField" property="group"
+                                        itemsContainer="messageTemplateGroupsDc">
+                            <actions>
+                                <action id="lookup" type="entity_lookup"/>
+                                <action id="clear" type="entity_clear"/>
+                            </actions>
+                        </entityComboBox>
+                    </formLayout>
+                    <vbox padding="false" classNames="px-xs">
+                        <vbox id="plainTextAreaLayout" expand="plainTextArea"
+                              width="100%" height="100%"
+                              padding="false" visible="false">
+                            <h4 text="msg://plainTextArea.header"/>
+                            <textArea id="plainTextArea" width="100%"
+                                      minHeight="20em"
+                                      dataContainer="messageTemplateDc" property="content"/>
+                        </vbox>
+                        <vbox id="grapesJsEditorLayout" expand="grapesJsEditor"
+                              width="100%" height="100%"
+                              padding="false">
+                            <hbox id="htmlTemplateControlsPanel" classNames="buttons-panel">
+                                <fileUploadField id="importTemplateField" uploadIcon="UPLOAD"
+                                                 acceptedFileTypes=".html"/>
+                                <button id="editCodeBtn" icon="CODE" title="msg://editCodeBtn.title"/>
+                                <button id="viewBtn" icon="EYE" title="msg://viewBtn.title"/>
+                            </hbox>
+                            <msgtmp:grapesJs id="grapesJsEditor" width="100%"
+                                             minHeight="20em">
+                                <msgtmp:plugins>
+                                    <msgtmp:plugin name="grapesjs-blocks-basic"/>
+                                    <msgtmp:plugin name="grapesjs-preset-newsletter"/>
+                                    <msgtmp:plugin name="grapesjs-plugin-forms"/>
+                                    <msgtmp:plugin name="grapesjs-blocks-flexbox"/>
+                                    <msgtmp:plugin name="grapesjs-tui-image-editor"/>
+                                    <msgtmp:plugin name="grapesjs-custom-code"/>
+                                    <msgtmp:plugin name="grapesjs-parser-postcss"/>
+                                </msgtmp:plugins>
+                            </msgtmp:grapesJs>
+                        </vbox>
+                    </vbox>
+                </split>
+            </tab>
+            <tab id="parametersTab" label="msg://mainTabSheet.parametersTab.label">
+                <vbox width="100%" height="100%" padding="false">
+                    <hbox>
+                        <button action="parametersDataGrid.create"/>
+                        <button action="parametersDataGrid.edit"/>
+                        <button action="parametersDataGrid.remove"/>
+                    </hbox>
+                    <dataGrid id="parametersDataGrid" dataContainer="parametersDc"
+                              minHeight="20em"
+                              width="100%"
+                              columnReorderingAllowed="true">
+                        <actions>
+                            <action id="create" type="list_create">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="edit" type="list_edit">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="remove" type="list_remove"/>
+                        </actions>
+                        <columns resizable="true">
+                            <column property="name"/>
+                            <column property="alias"/>
+                            <column property="type"/>
+                            <column property="required"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+        </tabSheet>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

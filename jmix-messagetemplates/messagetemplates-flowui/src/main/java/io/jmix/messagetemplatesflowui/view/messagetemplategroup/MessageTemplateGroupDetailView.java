@@ -24,5 +24,6 @@ import io.jmix.messagetemplates.entity.MessageTemplateGroup;
 @ViewController("msgtmp_MessageTemplateGroup.detail")
 @ViewDescriptor("message-template-group-detail-view.xml")
 @EditedEntityContainer("messageTemplateGroupDc")
+@DialogMode(width = "37.5em")
 public class MessageTemplateGroupDetailView extends StandardDetailView<MessageTemplateGroup> {
 }

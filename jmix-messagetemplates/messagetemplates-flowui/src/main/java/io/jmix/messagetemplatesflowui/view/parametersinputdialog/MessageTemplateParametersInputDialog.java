@@ -16,7 +16,6 @@
 
 package io.jmix.messagetemplatesflowui.view.parametersinputdialog;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.component.HasValue;
@@ -25,7 +24,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.UiComponentsGenerator;
 import io.jmix.flowui.component.formlayout.JmixFormLayout;
 import io.jmix.flowui.component.validation.ValidationErrors;
-import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.*;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
 import io.jmix.messagetemplatesflowui.MessageParameterLocalizationSupport;
@@ -42,7 +41,7 @@ import java.util.Map;
 
 @ViewController("msgtmp_MessageTemplateParametersInputDialogView")
 @ViewDescriptor("message-template-parameters-input-dialog.xml")
-@DialogMode(width = "35em")
+@DialogMode(width = "37.5em")
 public class MessageTemplateParametersInputDialog extends StandardView {
 
     @ViewComponent
@@ -112,8 +111,8 @@ public class MessageTemplateParametersInputDialog extends StandardView {
         }
     }
 
-    @Subscribe("saveAndCloseButton")
-    public void onSaveAndCloseButtonClick(ClickEvent<JmixButton> event) {
+    @Subscribe("saveAction")
+    public void onSaveAction(ActionPerformedEvent event) {
         ValidationErrors validationErrors = viewValidation.validateUiComponents(form);
         if (validationErrors.isEmpty()) {
             parameters = collectParameters();

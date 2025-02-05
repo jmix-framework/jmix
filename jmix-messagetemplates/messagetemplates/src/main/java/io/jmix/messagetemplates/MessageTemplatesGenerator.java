@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The interface is used to generate messages using templates.
+ * Interface defining methods for generating messages using templates.
  */
 public interface MessageTemplatesGenerator {
 

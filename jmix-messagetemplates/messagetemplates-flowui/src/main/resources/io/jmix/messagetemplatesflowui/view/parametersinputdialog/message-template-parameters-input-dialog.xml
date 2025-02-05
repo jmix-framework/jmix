@@ -18,12 +18,13 @@
       title="msg://MessageTemplateParametersInputDialog.title"
       focusComponent="form">
     <actions>
+        <action id="saveAction" icon="CHECK" text="msg:///actions.Ok" actionVariant="PRIMARY"/>
         <action id="closeAction" type="view_close"/>
     </actions>
     <layout>
         <formLayout id="form" width="100%"/>
         <hbox id="detailActions">
-            <button id="saveAndCloseButton" icon="CHECK" text="msg:///actions.Ok" themeNames="primary"/>
+            <button id="saveAndCloseButton" action="saveAction"/>
             <button id="closeButton" action="closeAction"/>
         </hbox>
     </layout>

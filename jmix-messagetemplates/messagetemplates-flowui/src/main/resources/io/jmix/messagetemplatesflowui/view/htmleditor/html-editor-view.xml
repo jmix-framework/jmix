@@ -18,6 +18,7 @@
       title="msg://HtmlEditorView.title"
       focusComponent="codeEditor">
     <actions>
+        <action id="saveAction" icon="CHECK" text="msg:///actions.Ok" actionVariant="PRIMARY"/>
         <action id="closeAction" type="view_close"/>
     </actions>
     <layout expand="codeEditor">
@@ -25,8 +26,7 @@
                     width="100%"
                     mode="HTML"/>
         <hbox id="detailActions">
-            <button id="saveButton" text="msg:///actions.Ok"
-                    icon="CHECK" themeNames="primary"/>
+            <button id="saveButton" action="saveAction"/>
             <button id="closeButton" action="closeAction"/>
         </hbox>
     </layout>

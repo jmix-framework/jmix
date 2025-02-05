@@ -16,8 +16,8 @@
 
 package io.jmix.messagetemplatesflowui.view.htmleditor;
 
-import com.vaadin.flow.component.ClickEvent;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 
@@ -55,8 +55,8 @@ public class HtmlEditorView extends StandardView implements ReadOnlyAwareView {
         }
     }
 
-    @Subscribe("saveButton")
-    public void onSaveButtonClick(ClickEvent<JmixButton> event) {
+    @Subscribe("saveAction")
+    public void onSaveAction(ActionPerformedEvent event) {
         close(StandardOutcome.SAVE);
     }
 }

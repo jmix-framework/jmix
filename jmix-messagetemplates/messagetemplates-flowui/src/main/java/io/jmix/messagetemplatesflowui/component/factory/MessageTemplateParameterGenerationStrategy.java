@@ -17,8 +17,10 @@
 package io.jmix.messagetemplatesflowui.component.factory;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.data.provider.Query;
-import io.jmix.core.*;
+import io.jmix.core.JmixOrder;
+import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -26,6 +28,8 @@ import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
+import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
+import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -33,11 +37,11 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.factory.AbstractComponentGenerationStrategy;
 import io.jmix.flowui.component.factory.EntityFieldCreationSupport;
-import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
 import io.jmix.messagetemplatesflowui.MessageParameterResolver;
 import org.springframework.core.Ordered;
@@ -46,7 +50,6 @@ import org.springframework.lang.Nullable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.stream.Stream;
 
 /**
  * Strategy for generating visual components for a {@link MessageTemplateParameter}.
@@ -59,7 +62,6 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
         implements Ordered {
 
     protected MessageParameterResolver messageParameterResolver;
-    protected DataManager dataManager;
 
     public MessageTemplateParameterGenerationStrategy(UiComponents uiComponents,
                                                       Metadata metadata,
@@ -68,12 +70,10 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
                                                       DatatypeRegistry datatypeRegistry,
                                                       Messages messages,
                                                       EntityFieldCreationSupport entityFieldCreationSupport,
-                                                      MessageParameterResolver messageParameterResolver,
-                                                      DataManager dataManager) {
+                                                      MessageParameterResolver messageParameterResolver) {
         super(uiComponents, metadata, metadataTools, actions, datatypeRegistry, messages, entityFieldCreationSupport);
 
         this.messageParameterResolver = messageParameterResolver;
-        this.dataManager = dataManager;
     }
 
     @Nullable
@@ -185,23 +185,22 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
 
     @Nullable
     protected Component createEntityCollectionField(ComponentGenerationContext context) {
+        JmixMultiValuePicker<?> multiEntityPicker =
+                uiComponents.create(JmixMultiValuePicker.class);
+
+        multiEntityPicker.setWidthFull();
+
+        MultiValueSelectAction<?> selectAction = actions.create(MultiValueSelectAction.ID);
         MessageTemplateParameter parameter =
                 ((MessageTemplateParameterGenerationContext) context).getMessageTemplateParameter();
 
         MetaClass metaClass = metadata.getClass(parameter.getEntityMetaClass());
+        selectAction.setEntityName(metaClass.getName());
 
-        JmixMultiSelectComboBoxPicker<?> multiSelectComboBoxPicker =
-                uiComponents.create(JmixMultiSelectComboBoxPicker.class);
+        multiEntityPicker.addAction(selectAction);
+        multiEntityPicker.addAction(actions.create(ValueClearAction.ID));
 
-        multiSelectComboBoxPicker.setItemsFetchCallback(
-                query -> getItemsByQuery(query, metaClass.getJavaClass()));
-        multiSelectComboBoxPicker.setMetaClass(metaClass);
-        multiSelectComboBoxPicker.setWidthFull();
-
-        multiSelectComboBoxPicker.addAction(actions.create(EntityLookupAction.ID));
-        multiSelectComboBoxPicker.addAction(actions.create(EntityClearAction.ID));
-
-        return multiSelectComboBoxPicker;
+        return multiEntityPicker;
     }
 
     protected Component createBooleanField() {
@@ -223,22 +222,6 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
         }
 
         return enumField;
-    }
-
-    protected <T> Stream<T> getItemsByQuery(Query<T, String> query, Class<T> entityClass) {
-        return dataManager.load(entityClass)
-                .all()
-                .firstResult(query.getOffset())
-                .maxResults(query.getLimit())
-                .list()
-                .stream()
-                .filter(entity -> metadataTools.getInstanceName(entity)
-                        .toLowerCase()
-                        .contains(
-                                query.getFilter()
-                                        .orElse("")
-                                        .toLowerCase()
-                        ));
     }
 
     @Override

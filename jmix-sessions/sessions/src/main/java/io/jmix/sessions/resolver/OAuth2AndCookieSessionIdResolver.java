@@ -87,21 +87,25 @@ public class OAuth2AndCookieSessionIdResolver implements HttpSessionIdResolver {
             auth = oAuth2AuthorizationService.findByToken(getRefreshToken(request), OAuth2TokenType.REFRESH_TOKEN);
         }
         if (auth != null) {
-            OAuth2Authorization.Token<OAuth2AccessToken> token = auth.getAccessToken();//is .getAccessToken() actually nullable?
-            Map<String, Object> claims = token.getClaims();
-            if (claims != null) {
-                sessionId = (String) claims.get(SESSION_ID);
+            OAuth2Authorization.Token<OAuth2AccessToken> token = auth.getAccessToken();
+            if (token != null) {
+                Map<String, Object> claims = token.getClaims();
+                if (claims != null) {
+                    sessionId = (String) claims.get(SESSION_ID);
+                }
             }
-            //todo [jmix-framework/jmix#3915][#3868] ClientDetails fallback when it will be implemented
+            //todo [jmix-framework/jmix#3915][#3868] ClientDetails fallback when it will be implemented, investigate other fallbacks for null-case
         }
 
         return sessionId != null ? Collections.singletonList(sessionId) : Collections.emptyList();
     }
 
-    protected void setOAuth2SessionId(HttpServletRequest request, String sessionId) {//todo concurrency?
+    protected void setOAuth2SessionId(HttpServletRequest request, String sessionId) {//todo [jmix-framework/jmix#3915] concurrency?
         String tokenValue = getAccessToken(request);
         OAuth2Authorization.Token<OAuth2AccessToken> token;
-        /*if (tokenValue == null) {//todo [jmix-framework/jmix#3915] implement
+        //todo [jmix-framework/jmix#3915] enable when access token value will be stored in sessionData
+        // see io.jmix.sessions.SessionsConfiguration.tokenCustomizer
+        /*if (tokenValue == null) {
             SessionData sessionData = sessionDataProvider.getIfAvailable();
             if (sessionData != null) {
                 tokenValue = (String) sessionData.getAttribute(ACCESS_TOKEN);
@@ -112,12 +116,14 @@ public class OAuth2AndCookieSessionIdResolver implements HttpSessionIdResolver {
 
             if (auth != null) {
                 token = auth.getAccessToken();
-                Map<String, Object> claims = token.getClaims();
-                if (claims != null) {
-                    String originalSessionId = (String) claims.get(SESSION_ID);
-                    if (!Objects.equals(originalSessionId, sessionId)) {
-                        claims.put(SESSION_ID, sessionId);
-                        oAuth2AuthorizationService.save(auth);
+                if (token != null) {
+                    Map<String, Object> claims = token.getClaims();
+                    if (claims != null) {
+                        String originalSessionId = (String) claims.get(SESSION_ID);
+                        if (!Objects.equals(originalSessionId, sessionId)) {
+                            claims.put(SESSION_ID, sessionId);
+                            oAuth2AuthorizationService.save(auth);
+                        }
                     }
                 }
             }

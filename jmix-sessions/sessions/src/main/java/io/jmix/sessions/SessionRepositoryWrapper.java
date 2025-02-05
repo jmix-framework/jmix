@@ -137,7 +137,6 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
             if (vaadinSession instanceof HttpSessionBindingListener listener) {
                 listener.valueUnbound(null);
             }
-
         }
         nonPersistentSessionAttributesMap.remove(id);
     }

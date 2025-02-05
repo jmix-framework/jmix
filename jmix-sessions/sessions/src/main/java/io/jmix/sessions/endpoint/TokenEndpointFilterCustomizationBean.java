@@ -24,20 +24,16 @@ public class TokenEndpointFilterCustomizationBean {
 
     @PostConstruct
     public void modifyFilterChain() {
-
         Optional<OAuth2TokenEndpointFilter> tokenEndpointFilter = authorizationServerSecurityFilterChain.getFilters().stream()
                 .filter(filter -> OAuth2TokenEndpointFilter.class.isAssignableFrom(filter.getClass()))
                 .map(f -> (OAuth2TokenEndpointFilter) f)
                 .findAny();
 
-
         if (tokenEndpointFilter.isEmpty()) {
             throw new RuntimeException("No OAuth2TokenEndpointFilter found");
         }
 
-
         List<Filter> filters = authorizationServerSecurityFilterChain.getFilters();
-
         filters.replaceAll(filter -> {
             if (filter instanceof OAuth2TokenEndpointFilter tef) {
                 return new OAuth2TokenEndpointFilterWrapper(tef, requestLocaleProvider);

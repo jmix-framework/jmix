@@ -68,7 +68,6 @@ public class SessionsConfiguration<S extends Session> {
 
     private List<HttpSessionListener> httpSessionListeners = new ArrayList<>();
 
-
     public SessionRepositoryWrapper<S> sessionRepositoryWrapper(SessionRepository<S> sessionRepository) {
         SessionRepositoryWrapper<S> sessionRepositoryWrapper = new SessionRepositoryWrapper<>(
                 sessionRegistry, applicationEventPublisher, sessionRepository);
@@ -93,8 +92,11 @@ public class SessionsConfiguration<S extends Session> {
             if (authentication != null
                     && authentication.isAuthenticated()
                     && authentication.getDetails() instanceof ClientDetails cd) {
+                //todo [jmix-framework/jmix#3915] implement: store access token in sessionData.
+                // find a way to obtain access token value there or move this part of code to more appropriate place
+                // see io.jmix.sessions.resolver.OAuth2AndCookieSessionIdResolver.setOAuth2SessionId
                 /*SessionData sessionData = sessionDataProvider.getIfAvailable();
-                if (sessionData != null) {//todo [jmix-framework/jmix#3915] implement
+                if (sessionData != null) {
                     sessionData.setAttribute(OAuth2AndCookieSessionIdResolver.ACCESS_TOKEN,"???");
                 }*/
                 context.getClaims().claim(OAuth2AndCookieSessionIdResolver.SESSION_ID, cd.getSessionId());
@@ -106,7 +108,6 @@ public class SessionsConfiguration<S extends Session> {
     public SessionEventHttpSessionListenerAdapter sessionEventHttpSessionListenerAdapter() {
         return new SessionEventHttpSessionListenerAdapter(this.httpSessionListeners);
     }
-
 
     @Autowired(required = false)
     public void setHttpSessionListeners(List<HttpSessionListener> listeners) {

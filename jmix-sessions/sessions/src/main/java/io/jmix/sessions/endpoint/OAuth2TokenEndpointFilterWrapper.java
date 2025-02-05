@@ -44,5 +44,4 @@ public class OAuth2TokenEndpointFilterWrapper extends OncePerRequestFilter {
 
         delegate.doFilter(request, response, filterChain);
     }
-
 }

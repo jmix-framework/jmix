@@ -30,7 +30,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.springframework.boot:spring-boot-test'
 
-    testImplementation 'io.jmix.data:jmix-eclipselink-starter'
+    testImplementation project(':eclipselink-starter')
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testRuntimeOnly 'org.hsqldb:hsqldb'

@@ -25,6 +25,8 @@ public interface OAuth2ExpiredTokenCleaner {
      * Removes expired access token.
      * <p>
      * If access token also has related refresh token then both should be expired to be removed.
+     *
+     * @return amount of removed tokens
      */
-    void removeExpiredAccessTokens();
+    int removeExpiredAccessTokens();
 }

@@ -25,7 +25,8 @@ public class InMemoryOAuth2ExpiredTokenCleaner implements OAuth2ExpiredTokenClea
     private static final Logger log = LoggerFactory.getLogger(InMemoryOAuth2ExpiredTokenCleaner.class);
 
     @Override
-    public void removeExpiredAccessTokens() {
+    public int removeExpiredAccessTokens() {
         log.warn("Cleanup is not supported for InMemoryOAuth2AuthorizationService");
+        return 0;
     }
 }

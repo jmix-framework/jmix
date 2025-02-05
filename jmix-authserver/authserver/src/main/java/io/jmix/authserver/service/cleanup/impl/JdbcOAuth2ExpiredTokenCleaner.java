@@ -17,15 +17,11 @@
 package io.jmix.authserver.service.cleanup.impl;
 
 import io.jmix.authserver.service.cleanup.OAuth2ExpiredTokenCleaner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcOperations;
 
 import java.util.Date;
 
 public class JdbcOAuth2ExpiredTokenCleaner implements OAuth2ExpiredTokenCleaner {
-
-    private static final Logger log = LoggerFactory.getLogger(JdbcOAuth2ExpiredTokenCleaner.class);
 
     private static final String TABLE_NAME = "oauth2_authorization";
 
@@ -43,9 +39,8 @@ public class JdbcOAuth2ExpiredTokenCleaner implements OAuth2ExpiredTokenCleaner 
     }
 
     @Override
-    public void removeExpiredAccessTokens() {
+    public int removeExpiredAccessTokens() {
         Date currentDate = new Date();
-        int updated = jdbcOperations.update(DELETE_ACCESS_TOKEN_QUERY, currentDate, currentDate);
-        log.info("Removed {} expired access tokens", updated);
+        return jdbcOperations.update(DELETE_ACCESS_TOKEN_QUERY, currentDate, currentDate);
     }
 }

@@ -35,24 +35,25 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.EntityOp;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.data.AttributeChangesProvider;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.impl.EntityEventManager;
 import io.jmix.data.impl.JpaLifecycleListener;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.*;
 
-import org.springframework.lang.Nullable;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
@@ -94,6 +95,9 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
     protected EntityManager entityManager;
 
     protected TransactionTemplate transaction;
+
+    @Autowired
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     @Autowired
     protected void setTransactionManager(PlatformTransactionManager transactionManager) {
@@ -443,6 +447,12 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
         }
     }
 
+    @Nullable
+    protected String findSubstitutedUsername() {
+        UserDetails substitutedUser = currentUserSubstitution.getSubstitutedUser();
+        return substitutedUser != null ? substitutedUser.getUsername() : null;
+    }
+
     protected void enqueueItem(EntityLogItem item, String storeName) {
         if (item == null)
             return;
@@ -556,6 +566,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
             item = metadata.create(EntityLogItem.class);
             item.setEventTs(ts);
             item.setUsername(findUsername());
+            item.setSubstitutedUsername(findSubstitutedUsername());
             item.setType(type);
             item.setEntity(extendedEntities.getOriginalOrThisMetaClass(metaClass).getName());
             item.setEntityInstanceName(metadataTools.getInstanceName(entity));
@@ -674,6 +685,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
         item = metadata.create(EntityLogItem.class);
         item.setEventTs(ts);
         item.setUsername(findUsername());
+        item.setSubstitutedUsername(findSubstitutedUsername());
         item.setType(type);
         item.setEntity(entityName);
         item.setEntityInstanceName(metadataTools.getInstanceName(entity));

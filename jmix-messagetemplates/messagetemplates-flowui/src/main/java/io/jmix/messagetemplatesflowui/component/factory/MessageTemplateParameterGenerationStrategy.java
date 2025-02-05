@@ -176,6 +176,7 @@ public class MessageTemplateParameterGenerationStrategy extends AbstractComponen
 
         entityPicker.setMetaClass(metaClass);
         entityPicker.setWidthFull();
+
         entityPicker.addAction(actions.create(EntityLookupAction.ID));
         entityPicker.addAction(actions.create(EntityClearAction.ID));
 

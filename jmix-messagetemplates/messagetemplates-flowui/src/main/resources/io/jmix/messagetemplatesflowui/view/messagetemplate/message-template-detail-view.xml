@@ -67,6 +67,7 @@
                               padding="false" visible="false">
                             <h4 text="msg://plainTextArea.header"/>
                             <textArea id="plainTextArea" width="100%"
+                                      minHeight="20em"
                                       dataContainer="messageTemplateDc" property="content"/>
                         </vbox>
                         <vbox id="grapesJsEditorLayout" expand="grapesJsEditor"
@@ -78,7 +79,8 @@
                                 <button id="editCodeBtn" icon="CODE" title="msg://editCodeBtn.title"/>
                                 <button id="viewBtn" icon="EYE" title="msg://viewBtn.title"/>
                             </hbox>
-                            <msgtmp:grapesJs id="grapesJsEditor" width="100%">
+                            <msgtmp:grapesJs id="grapesJsEditor" width="100%"
+                                             minHeight="20em">
                                 <msgtmp:plugins>
                                     <msgtmp:plugin name="grapesjs-blocks-basic"/>
                                     <msgtmp:plugin name="grapesjs-preset-newsletter"/>

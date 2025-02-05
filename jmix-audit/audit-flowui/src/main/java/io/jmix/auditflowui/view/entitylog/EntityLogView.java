@@ -115,6 +115,8 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected JmixComboBox<String> userField;
     @ViewComponent
+    protected JmixComboBox<String> substitutedUserField;
+    @ViewComponent
     protected ComboBox<String> filterEntityNameField;
     @ViewComponent
     protected ValuePicker<Object> instancePicker;
@@ -229,6 +231,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         ComponentUtils.setItemsMap(changeTypeField, changeTypeMap);
 
         userField.setItemsFetchCallback(this::onUserFieldFetchCallback);
+        substitutedUserField.setItemsFetchCallback(this::onSubstitutedUserFetchCallback);
 
         filterEntityNameField.setItems(entityMetaClassesMap.values());
         instancePicker.setFormatter(value -> value != null ? metadataTools.getInstanceName(value) : null);
@@ -249,8 +252,24 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
         log.debug("EntityLogView.userField Search {}", enteredValue);
 
-        return StringUtils.isNotBlank(enteredValue)
-                ? userRepository.getByUsernameLike(enteredValue).stream().map(UserDetails::getUsername)
+        return searchUsers(enteredValue);
+    }
+
+    protected Stream<String> onSubstitutedUserFetchCallback(Query<String, String> query) {
+        // Ignore offset and limit since methods called to avoid exception
+        query.getOffset();
+        query.getLimit();
+
+        String enteredValue = query.getFilter().orElse(null);
+
+        log.debug("EntityLogView.substitutedUserField Search {}", enteredValue);
+
+        return searchUsers(enteredValue);
+    }
+
+    protected Stream<String> searchUsers(@Nullable String searchString) {
+        return StringUtils.isNotBlank(searchString)
+                ? userRepository.getByUsernameLike(searchString).stream().map(UserDetails::getUsername)
                 : Stream.empty();
     }
 
@@ -671,6 +690,13 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         } else {
             entityLogDl.removeParameter("user");
         }
+
+        if (substitutedUserField.getValue() != null) {
+            entityLogDl.setParameter("substitutedUser", substitutedUserField.getValue());
+        } else {
+            entityLogDl.removeParameter("substitutedUser");
+        }
+
         if (changeTypeField.getValue() != null) {
             entityLogDl.setParameter("changeType", changeTypeField.getValue());
         } else {
@@ -701,6 +727,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @Subscribe("clearEntityLogTableBtn")
     protected void onClearEntityLogTableBtnClick(ClickEvent<Button> event) {
         userField.clear();
+        substitutedUserField.clear();
         filterEntityNameField.clear();
         changeTypeField.clear();
         instancePicker.clear();

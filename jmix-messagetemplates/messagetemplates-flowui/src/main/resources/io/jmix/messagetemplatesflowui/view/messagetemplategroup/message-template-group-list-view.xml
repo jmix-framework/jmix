@@ -36,15 +36,20 @@
         <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
-            <genericFilter component="genericFilter"/>
+            <propertyFilter component="nameFilter"/>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
     <layout>
-        <genericFilter id="genericFilter"
-                       dataLoader="messageTemplateGroupsDl">
-            <properties include=".*"/>
-        </genericFilter>
+        <propertyFilter id="nameFilter" property="name" operation="CONTAINS" dataLoader="messageTemplateGroupsDl"
+                        labelVisible="false" operationTextVisible="false"
+                        width="100%" maxWidth="30em">
+            <textField id="nameFilterValueComponent" placeholder="msg://nameFilter.valueComponent.placeholder">
+                <prefix>
+                    <icon icon="SEARCH"/>
+                </prefix>
+            </textField>
+        </propertyFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createButton" action="messageTemplateGroupsDataGrid.create"/>
             <button id="editButton" action="messageTemplateGroupsDataGrid.edit"/>

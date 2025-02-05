@@ -144,10 +144,26 @@ public class OracleJdbcOAuth2AuthorizationService extends JdbcOAuth2Authorizatio
         return null;
     }
 
+    @Nullable
     protected OAuth2Authorization findBy(String filter, List<SqlParameterValue> parameters) {
-        PreparedStatementSetter pss = new LobCreatorArgumentPreparedStatementSetter(getLobHandler().getLobCreator(), parameters.toArray());
-        List<OAuth2Authorization> result = this.jdbcOperations.query(LOAD_AUTHORIZATION_SQL + filter, pss, getAuthorizationRowMapper());
-        return !result.isEmpty() ? result.get(0) : null;
+        LobCreator lobCreator = this.getLobHandler().getLobCreator();
+        OAuth2Authorization authorization;
+        try {
+            PreparedStatementSetter pss = new LobCreatorArgumentPreparedStatementSetter(lobCreator, parameters.toArray());
+            List<OAuth2Authorization> result = this.jdbcOperations.query(LOAD_AUTHORIZATION_SQL + filter, pss, getAuthorizationRowMapper());
+            authorization = !result.isEmpty() ? result.get(0) : null;
+        } catch (Throwable e) {
+            try {
+                lobCreator.close();
+            } catch (Throwable e2) {
+                e.addSuppressed(e2);
+            }
+            throw e;
+        }
+
+        lobCreator.close();
+
+        return authorization;
     }
 
     protected static void initColumnMetadata(JdbcOperations jdbcOperations) {
@@ -182,7 +198,7 @@ public class OracleJdbcOAuth2AuthorizationService extends JdbcOAuth2Authorizatio
         columnMetadataMap.put(columnMetadata.getColumnName(), columnMetadata);
     }
 
-    private static OracleJdbcOAuth2AuthorizationService.ColumnMetadata getColumnMetadata(JdbcOperations jdbcOperations, String columnName, int defaultDataType) {
+    protected static OracleJdbcOAuth2AuthorizationService.ColumnMetadata getColumnMetadata(JdbcOperations jdbcOperations, String columnName, int defaultDataType) {
         Integer dataType = jdbcOperations.execute((ConnectionCallback<Integer>) conn -> {
             DatabaseMetaData databaseMetaData = conn.getMetaData();
             ResultSet rs = databaseMetaData.getColumns(null, null, TABLE_NAME, columnName);
@@ -199,7 +215,7 @@ public class OracleJdbcOAuth2AuthorizationService extends JdbcOAuth2Authorizatio
         return new OracleJdbcOAuth2AuthorizationService.ColumnMetadata(columnName, dataType != null ? dataType : defaultDataType);
     }
 
-    private static SqlParameterValue mapToSqlParameter(String columnName, String value) {
+    protected static SqlParameterValue mapToSqlParameter(String columnName, String value) {
         ColumnMetadata columnMetadata = columnMetadataMap.get(columnName);
         return Types.BLOB == columnMetadata.getDataType() && StringUtils.hasText(value) ?
                 new SqlParameterValue(Types.BLOB, value.getBytes(StandardCharsets.UTF_8)) :
@@ -233,9 +249,8 @@ public class OracleJdbcOAuth2AuthorizationService extends JdbcOAuth2Authorizatio
         }
 
         @Override
-        protected void doSetValue(PreparedStatement ps, int parameterPosition, Object argValue) throws SQLException {
-            if (argValue instanceof SqlParameterValue) {
-                SqlParameterValue paramValue = (SqlParameterValue) argValue;
+        protected void doSetValue(PreparedStatement ps, int parameterPosition, @Nullable Object argValue) throws SQLException {
+            if (argValue instanceof SqlParameterValue paramValue) {
                 if (paramValue.getSqlType() == Types.BLOB) {
                     if (paramValue.getValue() != null) {
                         Assert.isInstanceOf(byte[].class, paramValue.getValue(),

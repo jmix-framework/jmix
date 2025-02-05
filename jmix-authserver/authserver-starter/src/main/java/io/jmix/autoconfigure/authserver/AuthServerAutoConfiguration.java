@@ -29,6 +29,9 @@ import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignment;
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentPropertiesMapper;
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentRepository;
 import io.jmix.authserver.service.OracleJdbcOAuth2AuthorizationService;
+import io.jmix.authserver.service.cleanup.OAuth2ExpiredTokenCleaner;
+import io.jmix.authserver.service.cleanup.impl.InMemoryOAuth2ExpiredTokenCleaner;
+import io.jmix.authserver.service.cleanup.impl.JdbcOAuth2ExpiredTokenCleaner;
 import io.jmix.authserver.service.mapper.JdbcOAuth2AuthorizationServiceObjectMapperCustomizer;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.data.persistence.DbmsType;
@@ -186,6 +189,16 @@ public class AuthServerAutoConfiguration {
                 authorizationService.setAuthorizationParametersMapper(parametersMapper);
 
                 return authorizationService;
+            }
+        }
+
+        @Bean("authsr_OAuth2ExpiredTokenCleaner")
+        @ConditionalOnMissingBean
+        public OAuth2ExpiredTokenCleaner OAuth2ExpiredTokenCleaner(JdbcOperations jdbcOperations) {
+            if (authServerProperties.isUseInMemoryAuthorizationService()) {
+                return new InMemoryOAuth2ExpiredTokenCleaner();
+            } else {
+                return new JdbcOAuth2ExpiredTokenCleaner(jdbcOperations);
             }
         }
 

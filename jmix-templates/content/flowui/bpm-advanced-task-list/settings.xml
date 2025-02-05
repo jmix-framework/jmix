@@ -1,0 +1,160 @@
+<!--
+  ~ Copyright 2025 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
+          icon="resource://template/template_browse.svg"
+          order="900"
+          name="BPM: Advanced task list view">
+    <tags>
+        <tag>BPM</tag>
+    </tags>
+    <description>
+        <![CDATA[<html> Create the view that allows the currently authenticated user to view and work with active user tasks.
+        Displays a list of user tasks in the DataGrid component. </html>]]>
+    </description>
+
+    <locMessages key="viewTitle" expressionKey="${studioUtils.decapitalize(controllerName)}.title">
+        <message lang="default">
+            <![CDATA[${studioUtils.makeScreenNaturalCaption(id, project)}]]>
+        </message>
+    </locMessages>
+
+    <locMessages key="taskFilterHeaderText" expressionKey="${'taskFilter.header.text'}">
+        <message lang="default">
+            <![CDATA[Filter]]>
+        </message>
+    </locMessages>
+
+    <locMessages key="resetTaskFilterText" expressionKey="${'taskFilter.actions.reset.text'}">
+        <message lang="default">
+            <![CDATA[Reset]]>
+        </message>
+    </locMessages>
+
+    <locMessages key="filterGeneralGroupTitle" expressionKey="${'taskFilter.generalGroup.summaryText'}">
+        <message lang="default">
+            <![CDATA[General]]>
+        </message>
+    </locMessages>
+
+    <locMessages key="filterAssignmentGroupTitle" expressionKey="${'taskFilter.assignmentGroup.summaryText'}">
+        <message lang="default">
+            <![CDATA[Assignment]]>
+        </message>
+    </locMessages>
+
+    <locMessages key="taskFilterTaskNameLabel" expressionKey="${'taskFilter.fields.taskName.label'}">
+        <message lang="default">
+            <![CDATA[Task]]>
+        </message>
+    </locMessages>
+
+    <locMessages key="taskFilterProcessNameLabel" expressionKey="${'taskFilter.fields.processName.label'}">
+        <message lang="default">
+            <![CDATA[Process]]>
+        </message>
+    </locMessages>
+
+    <locMessages key="openTaskFormActionText" expressionKey="${'tasksDataGrid.actions.openTaskForm.text'}">
+        <message lang="default">
+            <![CDATA[Open]]>
+        </message>
+    </locMessages>
+
+    <locMessages key="processColumnHeader" expressionKey="${'tasksDataGrid.process.header'}">
+        <message lang="default">
+            <![CDATA[Process]]>
+        </message>
+    </locMessages>
+
+    <locMessages key="assignmentTypeAll" expressionKey="${controllerName.concat('\\$MyTaskAssignmentType.ALL')}">
+        <message lang="default">
+            <![CDATA[All]]>
+        </message>
+    </locMessages>
+
+    <locMessages key="assignmentTypeAssignedToMe"
+                 expressionKey="${controllerName.concat('\\$MyTaskAssignmentType.ASSIGNED_TO_ME')}">
+        <message lang="default">
+            <![CDATA[Assigned to me]]>
+        </message>
+    </locMessages>
+
+    <locMessages key="assignmentTypeGroup" expressionKey="${controllerName.concat('\\$MyTaskAssignmentType.GROUP')}">
+        <message lang="default">
+            <![CDATA[Group]]>
+        </message>
+    </locMessages>
+
+    <property caption="Descriptor name"
+              code="descriptorName"
+              defaultValue="advanced-task-list-view"
+              propertyType="DESCRIPTOR_NAME"
+              required="true"
+              focused="true"
+              sourceName="descriptor"/>
+
+    <property caption="Controller name"
+              code="controllerName"
+              propertyType="CLASS_NAME"
+              required="true"
+              dynamic="true"
+              sourceName="controller"
+              valueTemplate="${api.evaluateScript('controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}">
+        <dependency code="descriptorName"/>
+    </property>
+
+    <property caption="View id"
+              code="viewId"
+              propertyType="SCREEN_ID"
+              advanced="true"
+              dynamic="true"
+              required="true"
+              valueTemplate="${api.evaluateScript('screenIdByDescriptorName.groovy', ['descriptorName': descriptorName, 'projectId': project_id])}">
+        <dependency code="descriptorName"/>
+    </property>
+
+    <property caption="View route"
+              code="route"
+              defaultValue="advanced-task-list-view"
+              propertyType="FLOW_VIEW_ROUTE"
+              advanced="true"
+              dynamic="true"
+              required="true"
+              valueTemplate="${descriptorName}">
+        <dependency code="descriptorName"/>
+    </property>
+
+    <property caption="View route layout"
+              code="routeLayout"
+              propertyType="FLOW_VIEW_ROUTE_LAYOUT"
+              visible="false"
+              advanced="true"/>
+
+    <property caption="Parent menu item"
+              code="menuItem"
+              propertyType="FLOW_MENU_ITEM"/>
+
+    <!-- sources -->
+    <source fileExt="xml"
+            name="descriptor"/>
+
+    <source fileExt="java"
+            name="controller"/>
+
+    <source fileExt="kt"
+            name="controller"/>
+</template>

@@ -35,14 +35,6 @@ public class JmixUploadButton extends Upload {
         addClassName(JMIX_UPLOAD_BUTTON_CLASS_NAME);
     }
 
-    public void setEnabled(boolean enabled) {
-        getElement().setProperty("enabled", enabled);
-    }
-
-    public boolean isEnabled() {
-        return getElement().getProperty("enabled", false);
-    }
-
     @Override
     public void setI18n(UploadI18N i18n) {
         super.setI18n(i18n);

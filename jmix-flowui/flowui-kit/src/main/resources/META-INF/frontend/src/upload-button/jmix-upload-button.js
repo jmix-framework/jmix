@@ -28,10 +28,6 @@ class JmixUploadButton extends Upload {
 
     static get properties() {
         return {
-            enabled: {
-                type: Boolean,
-                value: true,
-            },
             file: Object,
             jmixI18n: {
                 type: Object,
@@ -66,7 +62,6 @@ class JmixUploadButton extends Upload {
 
     static get observers() {
         return [
-            '_onEnabledPropertyChanged(enabled)',
             '_onJmixI18nChanged(jmixI18n)',
         ]
     }
@@ -81,36 +76,6 @@ class JmixUploadButton extends Upload {
         if (this._fileList) {
             this._fileList.hidden = true;
         }
-    }
-
-    /**
-     * @param e
-     * @private
-     * @override
-     */
-    _onAddFilesTouchEnd(e) {
-        // Don't open "add file" dialog if component is disabled
-        if (!this.enabled) {
-            e.stopPropagation();
-            e.preventDefault();
-            return
-        }
-        super._onAddFilesTouchEnd(e)
-    }
-
-    /**
-     * @param e
-     * @private
-     * @override
-     */
-    _onAddFilesClick(e) {
-        // Don't open "add file" dialog if component is disabled
-        if (!this.enabled) {
-            e.stopPropagation();
-            e.preventDefault();
-            return
-        }
-        super._onAddFilesClick(e)
     }
 
     _onUploadSuccessEvent(event) {
@@ -223,18 +188,6 @@ class JmixUploadButton extends Upload {
 
     _onUploadDialogCancelButtonClick(event) {
         this.dispatchEvent(new CustomEvent('file-abort', {detail: {file: this.file, xhr: this.file.xhr}}));
-    }
-
-    _onEnabledPropertyChanged(enabled) {
-        // disable upload component
-        const uploadComponent = this.shadowRoot.querySelector('slot').children[0];
-        if (uploadComponent) {
-            if (enabled) {
-                uploadComponent.removeAttribute("disabled")
-            } else {
-                uploadComponent.setAttribute("disabled", "");
-            }
-        }
     }
 
     _onJmixI18nChanged(jmixI18n) {

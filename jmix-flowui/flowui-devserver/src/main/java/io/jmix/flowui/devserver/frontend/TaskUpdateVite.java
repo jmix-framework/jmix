@@ -29,8 +29,10 @@ import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Updates the Vite configuration files according with current project settings.
@@ -152,11 +154,26 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
                             webComponentTags == null || webComponentTags.isEmpty()
                                     ? ""
                                     : String.join(";", webComponentTags));
-        template = updateFileSystemRouterVitePlugin(template);
+//            .replace("#frontendExtraFileExtensions#",
+//                    getFrontendExtraFileExtensions());
+            template = updateFileSystemRouterVitePlugin(template);
             FileIOUtils.writeIfChanged(generatedConfigFile, template);
             log().debug("Created vite generated configuration file: '{}'",
                     generatedConfigFile);
         }
+    }
+
+    private String getFrontendExtraFileExtensions() {
+        Optional<List<String>> frontendExtraFileExtensions = Optional
+                .ofNullable(options.getFrontendExtraFileExtensions());
+        if (frontendExtraFileExtensions.isPresent()
+                && frontendExtraFileExtensions.get().size() > 0) {
+            return frontendExtraFileExtensions.get().stream()
+                    .map(ext -> ext.replace("'", "\\'")).map(ext -> ext.trim())
+                    .map(ext -> ext.startsWith(".") ? ext : "." + ext)
+                    .collect(Collectors.joining("', '", ", '", "'"));
+        }
+        return "";
     }
 
     private String updateFileSystemRouterVitePlugin(String template) {

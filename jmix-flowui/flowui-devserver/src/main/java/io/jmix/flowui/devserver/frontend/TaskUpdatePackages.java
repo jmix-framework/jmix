@@ -215,7 +215,8 @@ public class TaskUpdatePackages extends NodeUpdater {
         Map<String, String> filteredApplicationDependencies = new ExclusionFilter(
                 finder,
                 options.isReactEnabled()
-                        && FrontendUtils.isReactModuleAvailable(options))
+                        && FrontendUtils.isReactModuleAvailable(options),
+                options.isNpmExcludeWebComponents())
                 .exclude(applicationDependencies);
 
         // Add application dependencies
@@ -419,9 +420,11 @@ public class TaskUpdatePackages extends NodeUpdater {
      * Cleans up any previous version properties from the packageJson object if
      * present.
      *
-     * @param packageJson JsonObject of current package.json contents
+     * @param packageJson
+     *            JsonObject of current package.json contents
      * @return amount of removed properties
-     * @throws IOException thrown if removal of package-lock.json fails
+     * @throws IOException
+     *             thrown if removal of package-lock.json fails
      */
     private int removeLegacyProperties(JsonObject packageJson)
             throws IOException {
@@ -484,7 +487,8 @@ public class TaskUpdatePackages extends NodeUpdater {
      * Dependencies will be sorted by key so that different runs for same
      * dependencies in different order will not trigger npm install.
      *
-     * @param packageJson JsonObject built in the same format as package.json
+     * @param packageJson
+     *            JsonObject built in the same format as package.json
      * @return has for dependencies and devDependencies
      */
     static String generatePackageJsonHash(JsonObject packageJson) {

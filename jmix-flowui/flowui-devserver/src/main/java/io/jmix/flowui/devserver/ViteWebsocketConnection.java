@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 import io.jmix.flowui.devserver.frontend.FrontendUtils;
@@ -39,8 +41,8 @@ public class ViteWebsocketConnection implements Listener {
 
     private final Consumer<String> onMessage;
     private final Runnable onClose;
-    private final CompletableFuture<WebSocket> clientWebsocket;
     private final List<CharSequence> parts = new ArrayList<>();
+    private CompletableFuture<WebSocket> clientWebsocket = new CompletableFuture<>();
 
     private static Logger getLogger() {
         return LoggerFactory.getLogger(ViteWebsocketConnection.class);
@@ -69,13 +71,17 @@ public class ViteWebsocketConnection implements Listener {
         this.onClose = onClose;
         String wsHost = ViteHandler.DEV_SERVER_HOST.replace("http://", "ws://");
         URI uri = URI.create(wsHost + ":" + port + path);
-        clientWebsocket = HttpClient.newHttpClient().newWebSocketBuilder()
+        HttpClient.newHttpClient().newWebSocketBuilder()
                 .subprotocols(subProtocol).buildAsync(uri, this)
                 .whenComplete(((webSocket, failure) -> {
                     if (failure == null) {
                         getLogger().debug(
                                 "Connection to {} using the {} protocol established",
                                 uri, webSocket.getSubprotocol());
+                        if (clientWebsocket.complete(webSocket)) {
+                            getLogger().trace(
+                                    "Websocket future completed in client build completion");
+                        }
                     } else {
                         getLogger().warn("Failed to connect to {}", uri);
                         onConnectionFailure.accept(failure);
@@ -88,6 +94,9 @@ public class ViteWebsocketConnection implements Listener {
         getLogger().debug("Connected using the {} protocol",
                 webSocket.getSubprotocol());
 
+        if (clientWebsocket.complete(webSocket)) {
+            getLogger().trace("Websocket future completed in onOpen");
+        }
         Listener.super.onOpen(webSocket);
     }
 
@@ -144,9 +153,24 @@ public class ViteWebsocketConnection implements Listener {
      */
     public void close() throws InterruptedException, ExecutionException {
         getLogger().debug("Closing the connection");
-        CompletableFuture<WebSocket> closeRequest = clientWebsocket.get()
+        if (clientWebsocket.isDone()) {
+            WebSocket client = clientWebsocket.get();
+            if (!client.isOutputClosed()) {
+                CompletableFuture<WebSocket> closeRequest = client
                 .sendClose(CloseCodes.NORMAL_CLOSURE.getCode(), "");
-        closeRequest.get();
+                try {
+                    closeRequest.get(500, TimeUnit.MILLISECONDS);
+                } catch (TimeoutException e) {
+                    getLogger().debug("Timed out waiting for close request");
+                }
+            }
+        } else {
+            // Websocket client connection has not been established
+            clientWebsocket.cancel(true);
+        }
+        // release HttpClient reference, so its internal executor can be
+        // properly stopped
+        clientWebsocket = null;
     }
 
     @Override

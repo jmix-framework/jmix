@@ -22,6 +22,7 @@ import com.vaadin.flow.internal.BrowserLiveReloadAccessor;
 import com.vaadin.flow.internal.DevModeHandler;
 import com.vaadin.flow.internal.NetworkUtil;
 import com.vaadin.flow.internal.UrlUtil;
+import com.vaadin.flow.router.internal.RouteUtil;
 import com.vaadin.flow.server.ExecutionFailedException;
 import com.vaadin.flow.server.HandlerHelper;
 import com.vaadin.flow.server.HttpStatusCode;
@@ -29,6 +30,7 @@ import com.vaadin.flow.server.InitParameters;
 import com.vaadin.flow.server.StaticFileServer;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
+import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.startup.ApplicationConfiguration;
 import io.jmix.flowui.devserver.frontend.FrontendTools;
@@ -633,11 +635,11 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
     @Override
     public boolean handleRequest(VaadinSession session, VaadinRequest request,
                                  VaadinResponse response) throws IOException {
-        return handleRequestInternal(request, response, devServerStartFuture,
+        return handleRequestInternal(session, request, response, devServerStartFuture,
                 isDevServerFailedToStart);
     }
 
-    static boolean handleRequestInternal(VaadinRequest request,
+    static boolean handleRequestInternal(VaadinSession session, VaadinRequest request,
             VaadinResponse response, CompletableFuture<?> devServerStartFuture,
             AtomicBoolean isDevServerFailedToStart) throws IOException {
         if (devServerStartFuture.isDone()) {
@@ -662,6 +664,14 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
                 response.getWriter().write("Ready");
                 response.setHeader("Cache-Control", "no-cache");
                 return true;
+            }
+            try {
+                session.getLockInstance().lock();
+                VaadinService service = session.getService();
+                RouteUtil.checkForClientRouteCollisions(service, service
+                        .getRouter().getRegistry().getRegisteredRoutes());
+            } finally {
+                session.getLockInstance().unlock();
             }
             return false;
         } else {
@@ -770,6 +780,11 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
             }
         });
 
+        if (requestFilename
+                .startsWith("/VAADIN/generated/jar-resources/copilot/")) {
+            // Cache copilot files as they have a generated hash at the end
+            response.setHeader("Cache-Control", "max-age=31536001,immutable");
+        }
         if (responseCode == HttpURLConnection.HTTP_OK) {
             // Copies response payload
             writeStream(response.getOutputStream(),

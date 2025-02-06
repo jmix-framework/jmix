@@ -290,11 +290,13 @@ public class DevModeInitializer implements Serializable {
                 .withFrontendHotdeploy(true)
                 .withBundleBuild(false)
                 .withReact(false)
+                .withNpmExcludeWebComponents(false)
                 .withThemeValue(System.getProperty(PARAM_THEME_VALUE))
                 .withThemeVariant(System.getProperty(PARAM_THEME_VARIANT))
                 .withThemeClass(System.getProperty(PARAM_THEME_CLASS))
                 .withStudioFolder(studioFolder);
 
+        // Do not execute inside runnable thread as static mocking doesn't work.
         NodeTasks tasks = new NodeTasks(options);
 
         Runnable runnable = () -> {
@@ -349,6 +351,14 @@ public class DevModeInitializer implements Serializable {
                 ));
 
         return resultLookup[0];
+    }
+
+    private static List<String> getFrontendExtraFileExtensions(
+            ApplicationConfiguration config) {
+        List<String> stringProperty = Arrays.asList(config
+                .getStringProperty(InitParameters.FRONTEND_EXTRA_EXTENSIONS, "")
+                .split(","));
+        return stringProperty;
     }
 
     private static Map<Object, Class<?>> getServiceBindings(ApplicationConfiguration config,
@@ -521,7 +531,8 @@ public class DevModeInitializer implements Serializable {
             // Creating a temporary jar file out of the vfs files
             String vfsJarPath = url.toString();
             String fileNamePrefix = vfsJarPath.substring(
-                    vfsJarPath.lastIndexOf('/') + 1,
+                    vfsJarPath.lastIndexOf(
+                            vfsJarPath.contains("\\") ? '\\' : '/') + 1,
                     vfsJarPath.lastIndexOf(".jar"));
             Path tempJar = Files.createTempFile(fileNamePrefix, ".jar");
 

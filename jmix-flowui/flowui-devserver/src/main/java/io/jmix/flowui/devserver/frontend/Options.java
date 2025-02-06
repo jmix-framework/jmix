@@ -24,6 +24,7 @@ import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import elemental.json.JsonObject;
 import io.jmix.flowui.devserver.frontend.installer.NodeInstaller;
 import io.jmix.flowui.devserver.frontend.installer.Platform;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.Serializable;
@@ -96,6 +97,9 @@ public class Options implements Serializable {
     private boolean skipDevBundle = false;
 
     private boolean compressBundle = true;
+
+    private List<String> frontendExtraFileExtensions = null;
+
     private File studioFolder;
     private String themeValue;
     private String themeVariant;
@@ -142,6 +146,7 @@ public class Options implements Serializable {
 
     private boolean reactEnable = true;
 
+    private boolean npmExcludeWebComponents = false;
     /**
      * Removes generated files from a previous execution that are no more
      * created.
@@ -759,7 +764,12 @@ public class Options implements Serializable {
         return this;
     }
 
-    protected FeatureFlags getFeatureFlags() {
+    /**
+     * Get the available feature flags.
+     *
+     * @return FeatureFlags object
+     */
+    public FeatureFlags getFeatureFlags() {
         if (featureFlags == null) {
             featureFlags = new FeatureFlags(lookup);
             if (javaResourceFolder != null) {
@@ -973,6 +983,12 @@ public class Options implements Serializable {
 
     public Options withReact(boolean reactEnable) {
         this.reactEnable = reactEnable;
+        if (reactEnable && !FrontendUtils
+                .isReactRouterRequired(getFrontendDirectory())) {
+            LoggerFactory.getLogger(Options.class).debug(
+                    "Setting reactEnable to false as Vaadin Router is used!");
+            this.reactEnable = false;
+        }
         return this;
     }
 
@@ -1003,5 +1019,47 @@ public class Options implements Serializable {
      */
     public boolean isCleanOldGeneratedFiles() {
         return cleanOldGeneratedFiles;
+    }
+    /**
+     * Sets the extra file extensions used in the project.
+     *
+     * @param frontendExtraFileExtensions
+     *            the file extensions to add for the project
+     * @return this builder
+     */
+    public Options withFrontendExtraFileExtensions(
+            List<String> frontendExtraFileExtensions) {
+        this.frontendExtraFileExtensions = frontendExtraFileExtensions;
+        return this;
+    }
+
+    /**
+     * Gets the project file extensions.
+     *
+     * @return the project file extensions
+     */
+    public List<String> getFrontendExtraFileExtensions() {
+        return frontendExtraFileExtensions;
+    }
+
+    /**
+     * Sets whether to exclude web component npm packages in packages.json.
+     *
+     * @return this builder
+     */
+    public boolean isNpmExcludeWebComponents() {
+        return npmExcludeWebComponents;
+    }
+
+    /**
+     * Sets whether to exclude web component npm packages in packages.json.
+     *
+     * @param exclude
+     *            whether to exclude web component npm packages
+     * @return this builder
+     */
+    public Options withNpmExcludeWebComponents(boolean exclude) {
+        this.npmExcludeWebComponents = exclude;
+        return this;
     }
 }

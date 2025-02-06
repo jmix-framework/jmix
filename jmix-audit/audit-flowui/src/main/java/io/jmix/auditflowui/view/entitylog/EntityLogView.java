@@ -242,7 +242,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         setupWrapper.setColspan(loggedEntityTableBox, 2);
     }
 
-    @SuppressWarnings({"unchecked", "ResultOfMethodCallIgnored"})
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
     protected Stream<String> onUserFieldFetchCallback(Query<String, String> query) {
         // Ignore offset and limit since methods called to avoid exception
         query.getOffset();
@@ -255,6 +255,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         return searchUsers(enteredValue);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     protected Stream<String> onSubstitutedUserFetchCallback(Query<String, String> query) {
         // Ignore offset and limit since methods called to avoid exception
         query.getOffset();

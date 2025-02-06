@@ -22,25 +22,22 @@ package io.jmix.tabbedmode.view;
 public enum ViewOpenMode {
 
     /**
-     * Open a screen in new tab of the main window.
-     * <p>
-     * In Web Client with {@code AppWindow.Mode.SINGLE} the new screen replaces current screen.
+     * Open a view in new tab of the main view.
      */
     NEW_TAB,
 
     /**
-     * Open a screen on top of the current tab screens stack.
+     * Open a view on top of the current tab views stack.
      */
     THIS_TAB,
 
     /**
-     * Open a screen as modal dialog.
+     * Open a view as a dialog window.
      */
     DIALOG,
 
     /**
-     * TODO: gg, fix javadoc
-     * In Web Client opens a screen as main
+     * Opens a view as a root, which is displayed directly in the web browser tab.
      */
     ROOT
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.authserver'
-archivesBaseName = 'jmix-authserver-starter'
+package io.jmix.authserver.service.cleanup;
 
-dependencies {
-    api project(':authserver')
-    api project(':security-resource-server')
+/**
+ * Interface that provides functionality to remove expired tokens.
+ */
+public interface OAuth2ExpiredTokenCleaner {
 
-    implementation project(':data')
-    implementation project(':core-starter')
-    implementation project(':security-starter')
-    implementation project(':security-resource-server-starter')
-
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    /**
+     * Removes expired access token.
+     * <p>
+     * If access token also has related refresh token then both should be expired to be removed.
+     *
+     * @return amount of removed tokens
+     */
+    int removeExpiredAccessTokens();
 }

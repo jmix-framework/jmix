@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.authserver'
-archivesBaseName = 'jmix-authserver-starter'
+package io.jmix.authserver.service.cleanup.impl;
 
-dependencies {
-    api project(':authserver')
-    api project(':security-resource-server')
+import io.jmix.authserver.service.cleanup.OAuth2ExpiredTokenCleaner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    implementation project(':data')
-    implementation project(':core-starter')
-    implementation project(':security-starter')
-    implementation project(':security-resource-server-starter')
+public class InMemoryOAuth2ExpiredTokenCleaner implements OAuth2ExpiredTokenCleaner {
 
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    private static final Logger log = LoggerFactory.getLogger(InMemoryOAuth2ExpiredTokenCleaner.class);
+
+    @Override
+    public int removeExpiredAccessTokens() {
+        log.warn("Cleanup is not supported for InMemoryOAuth2AuthorizationService");
+        return 0;
+    }
 }

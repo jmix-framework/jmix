@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.authserver'
-archivesBaseName = 'jmix-authserver-starter'
+@Internal
+@NonNullApi
+package io.jmix.authserver.service.cleanup.impl;
 
-dependencies {
-    api project(':authserver')
-    api project(':security-resource-server')
-
-    implementation project(':data')
-    implementation project(':core-starter')
-    implementation project(':security-starter')
-    implementation project(':security-resource-server-starter')
-
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

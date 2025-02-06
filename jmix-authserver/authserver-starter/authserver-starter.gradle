@@ -19,9 +19,9 @@ archivesBaseName = 'jmix-authserver-starter'
 
 dependencies {
     api project(':authserver')
-    api project(':data')
     api project(':security-resource-server')
 
+    implementation project(':data')
     implementation project(':core-starter')
     implementation project(':security-starter')
     implementation project(':security-resource-server-starter')

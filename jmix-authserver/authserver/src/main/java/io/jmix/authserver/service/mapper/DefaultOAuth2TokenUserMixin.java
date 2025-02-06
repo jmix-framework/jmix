@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * Default User mixin that ignores password
+ * Default User mixin that ignores password.
  */
 @JsonIgnoreProperties(
         ignoreUnknown = true

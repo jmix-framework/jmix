@@ -17,7 +17,7 @@
 package io.jmix.authserver.service.cleanup;
 
 /**
- * Interface that provides functionality to remove expired tokens
+ * Interface that provides functionality to remove expired tokens.
  */
 public interface OAuth2ExpiredTokenCleaner {
 

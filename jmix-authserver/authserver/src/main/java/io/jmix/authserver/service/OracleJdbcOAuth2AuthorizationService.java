@@ -198,7 +198,7 @@ public class OracleJdbcOAuth2AuthorizationService extends JdbcOAuth2Authorizatio
         columnMetadataMap.put(columnMetadata.getColumnName(), columnMetadata);
     }
 
-    protected static OracleJdbcOAuth2AuthorizationService.ColumnMetadata getColumnMetadata(JdbcOperations jdbcOperations, String columnName, int defaultDataType) {
+    private static OracleJdbcOAuth2AuthorizationService.ColumnMetadata getColumnMetadata(JdbcOperations jdbcOperations, String columnName, int defaultDataType) {
         Integer dataType = jdbcOperations.execute((ConnectionCallback<Integer>) conn -> {
             DatabaseMetaData databaseMetaData = conn.getMetaData();
             ResultSet rs = databaseMetaData.getColumns(null, null, TABLE_NAME, columnName);

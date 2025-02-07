@@ -43,6 +43,7 @@ import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
 import io.jmix.tabbedmode.component.tabsheet.TabViewContainer;
 import io.jmix.tabbedmode.component.workarea.AppWorkArea;
 import io.jmix.tabbedmode.component.workarea.HasWorkArea;
+import io.jmix.tabbedmode.view.DialogWindow;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;

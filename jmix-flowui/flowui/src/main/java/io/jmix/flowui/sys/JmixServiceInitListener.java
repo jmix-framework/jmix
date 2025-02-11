@@ -28,9 +28,9 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.JmixModules;
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.Resources;
+import io.jmix.flowui.backgroundtask.BackgroundTaskManager;
 import io.jmix.flowui.component.error.JmixInternalServerError;
 import io.jmix.flowui.exception.UiExceptionHandlers;
-import io.jmix.flowui.backgroundtask.BackgroundTaskManager;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.view.ViewRegistry;
 import org.jsoup.nodes.DataNode;
@@ -44,9 +44,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
@@ -194,16 +192,20 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
 
     @Nullable
     protected String getContent(String path) {
-        InputStream resourceStream = resources.getResourceAsStream(path);
-        if (resourceStream == null) {
+        try (InputStream resourceStream = resources.getResourceAsStream(path)) {
+            if (resourceStream == null) {
+                return null;
+            }
+
+            try (Reader reader = new InputStreamReader(resourceStream, StandardCharsets.UTF_8);
+                 BufferedReader bufferedReader = new BufferedReader(reader)) {
+                return bufferedReader.lines()
+                        .collect(Collectors.joining(System.lineSeparator()));
+            }
+        } catch (IOException e) {
+            log.warn("Unable to read resource '{}'", path, e);
             return null;
         }
-
-        BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(resourceStream, StandardCharsets.UTF_8)
-        );
-        return bufferedReader.lines()
-                .collect(Collectors.joining(System.lineSeparator()));
     }
 
     protected Element createElement(String tag, @Nullable String content, String... attrs) {

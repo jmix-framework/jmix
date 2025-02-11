@@ -27,6 +27,7 @@ import jakarta.annotation.Nullable;
  *
  * @deprecated use {@link com.vaadin.flow.component.HasPlaceholder} instead.
  */
+// don't forget to remove corresponding spotbugs exclusion
 @Deprecated(since = "2.2", forRemoval = true)
 public interface HasPlaceholder extends com.vaadin.flow.component.HasPlaceholder {
 

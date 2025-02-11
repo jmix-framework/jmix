@@ -269,6 +269,17 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
             this.controllerClass = controllerClass;
             return this;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            // no fields to test
+            return super.equals(obj);
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
     }
 
     public static class BeanMenuItem extends MenuItem {

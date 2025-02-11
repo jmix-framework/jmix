@@ -97,6 +97,7 @@ public class ValuePickerButtonActionBinder implements ComponentActionsHolderBind
                     ActionBinderUtils.refreshShortcutCombinationProperty(component, (KeyCombination) event.getNewValue(), (KeyCombination) event.getOldValue(), registrations);
                     component.setTitle(generateTitle(action));
                     break;
+                default:
             }
         }));
 

@@ -23,8 +23,10 @@ import io.jmix.flowui.view.ViewValidation;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -46,9 +48,12 @@ public class ConstraintViolationExceptionHandler extends AbstractUiExceptionHand
     }
 
     @Override
-    protected void doHandle(String className, String message, Throwable throwable) {
+    protected void doHandle(String className, String message, @Nullable Throwable throwable) {
         ConstraintViolationException exception = (ConstraintViolationException) throwable;
-        Set<ConstraintViolation<?>> violations = exception.getConstraintViolations();
+        Set<ConstraintViolation<?>> violations = throwable == null
+                ? Collections.emptySet()
+                : exception.getConstraintViolations();
+
         ValidationErrors validationErrors = new ValidationErrors();
         violations.forEach(v -> {
             String violationMessage = v.getMessage();

@@ -197,6 +197,7 @@ public class JmixButtonActionSupport {
                 removeActionVariant(button, (ActionVariant) event.getOldValue());
                 addActionVariant(button, (ActionVariant) event.getNewValue());
                 break;
+            default:
         }
     }
 }

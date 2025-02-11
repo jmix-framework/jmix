@@ -188,26 +188,24 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
 
     @Override
     protected Component createDatePicker(ComponentGenerationContext context) {
-        Component datePicker = super.createDatePicker(context);
 
         // TODO: gg, implement
-        JpqlFilterComponentGenerationContext filterContext = (JpqlFilterComponentGenerationContext) context;
-        Class<?> parameterClass = filterContext.getParameterClass();
+//        JpqlFilterComponentGenerationContext filterContext = (JpqlFilterComponentGenerationContext) context;
+//        Class<?> parameterClass = filterContext.getParameterClass();
 //        dataAwareComponentsTools.setupDateFormat(dateField, parameterClass);
 
-        return datePicker;
+        return super.createDatePicker(context);
     }
 
     @Override
     protected Component createDateTimePicker(ComponentGenerationContext context) {
-        Component dateTimePicker = super.createDateTimePicker(context);
 
         // TODO: gg, implement
-        JpqlFilterComponentGenerationContext filterContext = (JpqlFilterComponentGenerationContext) context;
-        Class<?> parameterClass = filterContext.getParameterClass();
+//        JpqlFilterComponentGenerationContext filterContext = (JpqlFilterComponentGenerationContext) context;
+//        Class<?> parameterClass = filterContext.getParameterClass();
 //        dataAwareComponentsTools.setupDateFormat(dateField, parameterClass);
 
-        return dateTimePicker;
+        return super.createDateTimePicker(context);
     }
 
     @SuppressWarnings("unchecked")

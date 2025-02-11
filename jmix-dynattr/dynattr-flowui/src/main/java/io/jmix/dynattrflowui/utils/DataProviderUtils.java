@@ -23,28 +23,28 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public final class DataProviderUtils {
-    private DataProviderUtils() {}
 
+    private DataProviderUtils() {
+    }
 
     /**
      * Creates a new DataProvider from list for ui component that represents his own data from data provider interface
+     *
      * @param items source collection that contains items to show
      * @return lazy data provider with pagination support for ui component
      * @see com.vaadin.flow.data.provider.HasDataView
      * @see com.vaadin.flow.data.provider.DataProvider
      */
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static DataProvider createCallbackDataProvider(List<?> items) {
-        return new CallbackDataProvider<>(e -> {
-            return (Stream) items.stream()
-                    .limit(e.getLimit())
-                    .skip(e.getOffset());
-
-        }, e -> {
-            return Math.toIntExact(items.stream()
-                    .limit(e.getLimit())
-                    .skip(e.getOffset())
-                    .count());
-        });
+        return new CallbackDataProvider<>(e ->
+                (Stream) items.stream()
+                        .skip(e.getOffset())
+                        .limit(e.getLimit()), e ->
+                Math.toIntExact(items.stream()
+                        .skip(e.getOffset())
+                        .limit(e.getLimit())
+                        .count())
+        );
     }
 }

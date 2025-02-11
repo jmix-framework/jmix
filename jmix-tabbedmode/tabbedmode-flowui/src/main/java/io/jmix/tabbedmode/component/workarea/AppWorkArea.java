@@ -31,7 +31,7 @@ import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
-import io.jmix.tabbedmode.component.tabsheet.TabViewContainer;
+import io.jmix.tabbedmode.component.viewcontainer.TabViewContainer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;

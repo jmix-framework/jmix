@@ -33,7 +33,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 @org.springframework.stereotype.Component("tabmod_ViewBuilders")
 public class ViewBuilders {
 
-    protected Views views;
+    protected final Views views;
 
     protected final ViewBuilderProcessor viewBuilderProcessor;
     protected final DetailViewBuilderProcessor detailViewBuilderProcessor;

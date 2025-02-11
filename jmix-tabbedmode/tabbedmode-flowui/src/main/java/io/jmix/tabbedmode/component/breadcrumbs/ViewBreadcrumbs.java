@@ -36,9 +36,6 @@ import java.util.function.Consumer;
 
 public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements ApplicationContextAware {
 
-    // TODO: gg, rename
-    protected static final String BREADCRUMBS_VISIBLE_WRAP_STYLE = "jmix-breadcrumbs-visible";
-
     protected Deque<View<?>> views = new ArrayDeque<>(4);
     protected BiMap<View<?>, JmixBreadcrumb> viewBreadcrumb = HashBiMap.create(4);
     protected Map<View<?>, Location> viewLocation = new HashMap<>(4);
@@ -96,11 +93,7 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
         }
 
 
-        if (views.size() > 1 /*&& workAreaMode == Mode.TABBED*/) {
-            setVisibleInternal(true);
-        }
-
-        adjustParentStyles();
+        updateVisibility();
     }
 
     public void removeView() {
@@ -110,9 +103,7 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
             getContent().remove(breadcrumb);
         }
 
-        if (views.size() <= 1/* && workAreaMode == Mode.TABBED*/) {
-            setVisibleInternal(false);
-        }
+        updateVisibility();
     }
 
     protected void navigationClicked(ClickEvent<JmixBreadcrumb> event) {
@@ -120,16 +111,6 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
         if (navigationHandler != null && view != null) {
             navigationHandler.accept(new BreadcrumbsNavigationContext(this, view));
         }
-    }
-
-    protected void adjustParentStyles() {
-        getParent().ifPresent(parent -> {
-            if (isVisible()) {
-                parent.addClassName(BREADCRUMBS_VISIBLE_WRAP_STYLE);
-            } else {
-                parent.removeClassName(BREADCRUMBS_VISIBLE_WRAP_STYLE);
-            }
-        });
     }
 
     @Override
@@ -141,8 +122,10 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
 
     protected void setVisibleInternal(boolean visible) {
         super.setVisible(visible && visibleExplicitly);
+    }
 
-        adjustParentStyles();
+    protected void updateVisibility() {
+        setVisibleInternal(views.size() > 1);
     }
 
     public record BreadcrumbsNavigationContext(ViewBreadcrumbs breadcrumbs, View<?> view) {

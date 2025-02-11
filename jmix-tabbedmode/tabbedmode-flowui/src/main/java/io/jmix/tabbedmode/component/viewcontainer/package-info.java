@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.tabbedmode.component.tabsheet;
+@Experimental
+@NonNullApi
+package io.jmix.tabbedmode.component.viewcontainer;
 
-import com.vaadin.flow.component.html.Div;
-import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
-import org.springframework.lang.Nullable;
-
-
-// TODO: gg, create Web Component
-public class TabViewContainer extends Div {
-
-    protected ViewBreadcrumbs breadcrumbs;
-
-    @Nullable
-    public ViewBreadcrumbs getBreadcrumbs() {
-        return breadcrumbs;
-    }
-
-    public void setBreadcrumbs(@Nullable ViewBreadcrumbs breadcrumbs) {
-        this.breadcrumbs = breadcrumbs;
-    }
-}
+import io.jmix.core.annotation.Experimental;
+import org.springframework.lang.NonNullApi;

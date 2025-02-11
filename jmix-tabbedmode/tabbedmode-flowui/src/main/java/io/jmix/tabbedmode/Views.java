@@ -40,7 +40,7 @@ import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
-import io.jmix.tabbedmode.component.tabsheet.TabViewContainer;
+import io.jmix.tabbedmode.component.viewcontainer.TabViewContainer;
 import io.jmix.tabbedmode.component.workarea.AppWorkArea;
 import io.jmix.tabbedmode.component.workarea.HasWorkArea;
 import io.jmix.tabbedmode.view.DialogWindow;
@@ -312,19 +312,22 @@ public class Views {
 
         // TODO: gg, method?
         Tab selectedTab = tabSheet.getSelectedTab();
-        TabViewContainer windowContainer = selectedTab != null ? (TabViewContainer) tabSheet.getContentByTab(selectedTab) : null;
+        TabViewContainer windowContainer = selectedTab != null
+                ? (TabViewContainer) tabSheet.getContentByTab(selectedTab)
+                : null;
 
         if (windowContainer == null || windowContainer.getBreadcrumbs() == null) {
             throw new IllegalStateException(ViewBreadcrumbs.class + " not found");
         }
 
         ViewBreadcrumbs breadcrumbs = windowContainer.getBreadcrumbs();
+        // TODO: gg, remove after test
         // TODO: gg, exception?
-        View<?> currentView = breadcrumbs.getCurrentViewInfo().view();
+        /*View<?> currentView = breadcrumbs.getCurrentViewInfo().view();
 
-        windowContainer.remove(currentView);
+        windowContainer.remove(currentView);*/
 
-        windowContainer.add(view);
+        windowContainer.setView(view);
         breadcrumbs.addView(view, resolveLocation(view));
 
         ViewControllerUtils.setViewCloseDelegate(view, __ -> removeThisTabView(ui, view));
@@ -343,10 +346,10 @@ public class Views {
 
     protected void removeThisTabView(JmixUI ui, View<?> view) {
         TabViewContainer windowContainer = getTabWindowContainer(view);
-        windowContainer.remove(view);
+        windowContainer.removeView();
 
         ViewBreadcrumbs breadcrumbs = windowContainer.getBreadcrumbs();
-        if (null == breadcrumbs) {
+        if (breadcrumbs == null) {
             throw new IllegalStateException(ViewBreadcrumbs.class + " not found");
         }
 
@@ -357,7 +360,7 @@ public class Views {
             throw new IllegalStateException("Current %s not found".formatted(View.class.getSimpleName()));
         }
 
-        windowContainer.add(currentViewInfo.view());
+        windowContainer.setView(currentViewInfo.view());
 
         AppWorkArea workArea = getConfiguredWorkArea(ui);
         JmixMainTabSheet tabSheet = workArea.getTabbedWindowContainer();
@@ -437,18 +440,13 @@ public class Views {
                 getConfiguredWorkArea().generateUrlStateMark()));*/
 
         TabViewContainer windowContainer = uiComponents.create(TabViewContainer.class);
-        windowContainer.setClassName("jmix-app-window-wrap");
+//        windowContainer.setClassName("jmix-tab-view-container");
         windowContainer.setSizeFull();
 
         windowContainer.setBreadcrumbs(breadcrumbs);
-        windowContainer.add(breadcrumbs);
-
-        windowContainer.add(view);
+        windowContainer.setView(view);
 
         AppWorkArea workArea = getConfiguredWorkArea(ui);
-
-//        if (workArea.getMode() == Mode.TABBED) {
-        windowContainer.addClassName("jmix-app-tabbed-window");
 
 //        TabSheetBehaviour tabSheetBehaviour = workArea.getTabbedWindowContainer().getTabSheetBehaviour();
         // TODO: gg, interface?

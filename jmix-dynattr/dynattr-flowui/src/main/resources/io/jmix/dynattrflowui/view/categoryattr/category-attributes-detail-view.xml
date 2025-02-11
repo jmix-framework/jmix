@@ -61,7 +61,7 @@
                             <comboBox id="dataTypeField" property="dataType" required="true"
                                       requiredMessage="msg://dataTypeField.required"/>
                             <textArea id="descriptionField" property="description" minHeight="7em"/>
-                            <checkbox id="isRequiredField" property="required" />
+                            <checkbox id="isRequiredField" property="required"/>
                         </formLayout>
                         <formLayout id="optionalAttributeForm" dataContainer="categoryAttributeDc"
                                     width="100%"
@@ -82,8 +82,6 @@
                                 </validators>
                             </textField>
                             <valuePicker id="defaultEntityIdField"
-                                         dataContainer="categoryAttributeDc"
-                                         property="defaultEntity"
                                          label="msg://io.jmix.dynattr.model/CategoryAttribute.defaultEntityId">
                                 <actions>
                                     <action id="lookup" icon="ELLIPSIS_DOTS_H"/>
@@ -103,7 +101,8 @@
                             <textField id="defaultDoubleField" property="defaultDouble"/>
                             <textField id="defaultDecimalField" property="defaultDecimal"/>
                             <comboBox id="defaultBooleanField" property="defaultBoolean"/>
-                            <comboBox id="defaultEnumField" label="msg://io.jmix.dynattr.model/CategoryAttribute.defaultString"/>
+                            <comboBox id="defaultEnumField"
+                                      label="msg://io.jmix.dynattr.model/CategoryAttribute.defaultString"/>
                             <dateTimePicker id="defaultDateField" property="defaultDate"/>
                             <datePicker id="defaultDateWithoutTimeField" property="defaultDateWithoutTime"/>
                             <textField id="numberFormatPatternField" property="configuration.numberFormatPattern"/>
@@ -235,7 +234,7 @@
                 </vbox>
             </tab>
         </tabSheet>
-        <hbox id="detailButtonsBox" >
+        <hbox id="detailButtonsBox">
             <button action="windowCommitAndClose"/>
             <button action="windowClose"/>
         </hbox>

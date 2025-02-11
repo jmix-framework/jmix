@@ -33,7 +33,6 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
@@ -309,6 +308,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe
     protected void onAfterShow(BeforeShowEvent event) {
+        initDefaultEntityFieldId();
         initDefaultEnumField();
         if (isDataTypeEnum()) {
             initDefaultEnumFieldValue();
@@ -338,6 +338,13 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         tabSheet.addSelectedChangeListener(e -> refreshOnce());
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
+    }
+
+    protected void initDefaultEntityFieldId() {
+        refreshDefaultEntityIdFieldValue();
+
+        // add listener after setting initial value
+        defaultEntityIdField.addValueChangeListener(this::onDefaultEntityIdFieldValueChange);
     }
 
     private boolean isDataTypeEnum() {
@@ -373,7 +380,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
     }
 
-    @Subscribe("defaultEntityIdField")
     protected void onDefaultEntityIdFieldValueChange(JmixValuePicker.ValueChangeEvent<Object> event) {
         Object entity = event.getValue();
         Object objectDefaultEntityId = null;
@@ -816,19 +822,17 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                     if (e.size() != 1) {
                         return;
                     }
-                    Object targetEntity = e.iterator().next();
-                    Object targetEntityId = EntityValues.getId(targetEntity);
-                    getEditedEntity().setDefaultEntity(metadata.create(ReferenceToEntity.class));
-                    getEditedEntity().setObjectDefaultEntityId(targetEntityId);
-                    defaultEntityIdField.setValue(getEditedEntity().getDefaultEntity());
 
+                    Object targetEntity = e.iterator().next();
+                    defaultEntityIdField.setValue(targetEntity);
                 });
+
         if (!Strings.isNullOrEmpty(screenField.getValue())) {
             lookupBuilder.withViewId(screenField.getValue());
         }
+
         try {
-            lookupBuilder.build()
-                    .open();
+            lookupBuilder.open();
         } catch (AccessDeniedException ex) {
             notifications.create(messages.getMessage(CategoryAttributesDetailView.class, "entityViewAccessDeniedMessage"))
                     .withType(Notifications.Type.ERROR)
@@ -909,6 +913,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected void refreshDefaultEntityIdFieldValue() {
         CategoryAttribute attribute = getEditedEntity();
         Class<?> javaClass = getEditedEntity().getJavaType();
+
         if (javaClass != null) {
             MetaClass metaClass = metadata.getClass(javaClass);
             if (attribute.getObjectDefaultEntityId() != null) {
@@ -919,6 +924,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 lc.setQueryString(format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))
                         .setParameter("entityId", attribute.getObjectDefaultEntityId());
                 Object entity = dataManager.load(lc);
+
                 defaultEntityIdField.setValue(entity);
             }
         }
@@ -968,7 +974,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 if (metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(metaClass)) {
                     continue;
                 }
-                if(!Stores.isMain(metaClass.getStore().getName())) {
+                if (!Stores.isMain(metaClass.getStore().getName())) {
                     continue;
                 }
                 optionsMap.put(metaClass.getJavaClass().getName(), messageTools.getDetailedEntityCaption(metaClass));

@@ -18,7 +18,6 @@ package io.jmix.tabbedmode.component.breadcrumbs;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.router.Location;
 import io.jmix.flowui.view.View;
@@ -106,7 +105,7 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
         updateVisibility();
     }
 
-    protected void navigationClicked(ClickEvent<JmixBreadcrumb> event) {
+    protected void navigationClicked(JmixBreadcrumb.ClickEvent<JmixBreadcrumb> event) {
         View<?> view = viewBreadcrumb.inverse().get(event.getSource());
         if (navigationHandler != null && view != null) {
             navigationHandler.accept(new BreadcrumbsNavigationContext(this, view));

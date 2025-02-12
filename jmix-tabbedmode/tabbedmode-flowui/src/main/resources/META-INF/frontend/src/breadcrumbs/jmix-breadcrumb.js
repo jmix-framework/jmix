@@ -50,7 +50,7 @@ class JmixBreadcrumb extends ActiveMixin(TabindexMixin(FocusMixin(ThemableMixin(
             }
 
             :host(:last-of-type) {
-                //pointer-events: none;
+                pointer-events: none;
             }
 
             [part='text'] {

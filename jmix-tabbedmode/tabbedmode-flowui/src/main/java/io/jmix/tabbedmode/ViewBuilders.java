@@ -88,12 +88,7 @@ public class ViewBuilders {
         DetailViewBuilder<E, ?> builder = new DetailViewBuilder<>(origin, beanType,
                 detailViewBuilderProcessor::build, this::openView);
 
-        builder.withListDataComponent(listDataComponent);
-
-        E selected = listDataComponent.getSingleSelectedItem();
-        if (selected != null) {
-            builder.editEntity(selected);
-        }
+        initDetailBuilder(builder, listDataComponent);
 
         return builder;
     }
@@ -110,12 +105,7 @@ public class ViewBuilders {
         DetailViewBuilder<E, ?> builder = new DetailViewBuilder<>(origin, beanType, viewId,
                 detailViewBuilderProcessor::build, this::openView);
 
-        builder.withListDataComponent(listDataComponent);
-
-        E selected = listDataComponent.getSingleSelectedItem();
-        if (selected != null) {
-            builder.editEntity(selected);
-        }
+        initDetailBuilder(builder, listDataComponent);
 
         return builder;
     }
@@ -133,14 +123,19 @@ public class ViewBuilders {
         DetailViewBuilder<E, V> builder = new DetailViewBuilder<>(origin, beanType, viewClass,
                 detailViewBuilderProcessor::build, this::openView);
 
+        initDetailBuilder(builder, listDataComponent);
+
+        return builder;
+    }
+
+    protected <E, V extends View<?>> void initDetailBuilder(DetailViewBuilder<E, V> builder,
+                                                            ListDataComponent<E> listDataComponent) {
         builder.withListDataComponent(listDataComponent);
 
         E selected = listDataComponent.getSingleSelectedItem();
         if (selected != null) {
             builder.editEntity(selected);
         }
-
-        return builder;
     }
 
     @SuppressWarnings("unchecked")
@@ -157,13 +152,7 @@ public class ViewBuilders {
         DetailViewBuilder<E, ?> builder = new DetailViewBuilder<>(origin, beanType,
                 detailViewBuilderProcessor::build, this::openView);
 
-        HasValue<?, E> valueComponent = (HasValue<?, E>) picker;
-        builder.withField(valueComponent);
-
-        E value = valueComponent.getValue();
-        if (value != null) {
-            builder.editEntity(value);
-        }
+        initDetailBuilder(builder, (HasValue<?, E>) picker);
 
         return builder;
     }
@@ -183,19 +172,14 @@ public class ViewBuilders {
         DetailViewBuilder<E, ?> builder = new DetailViewBuilder<>(origin, beanType, viewId,
                 detailViewBuilderProcessor::build, this::openView);
 
-        HasValue<?, E> valueComponent = (HasValue<?, E>) picker;
-        builder.withField(valueComponent);
-
-        E value = valueComponent.getValue();
-        if (value != null) {
-            builder.editEntity(value);
-        }
+        initDetailBuilder(builder, (HasValue<?, E>) picker);
 
         return builder;
     }
 
     @SuppressWarnings("unchecked")
-    public <E, V extends View<?>> DetailViewBuilder<E, V> detail(EntityPickerComponent<E> picker, Class<V> viewClass) {
+    public <E, V extends View<?>> DetailViewBuilder<E, V> detail(EntityPickerComponent<E> picker,
+                                                                 Class<V> viewClass) {
         checkNotNullArgument(picker);
         checkArgument(picker instanceof HasValue,
                 "A component must implement '%s'", HasValue.class.getName());
@@ -209,15 +193,19 @@ public class ViewBuilders {
         DetailViewBuilder<E, V> builder = new DetailViewBuilder<>(origin, beanType, viewClass,
                 detailViewBuilderProcessor::build, this::openView);
 
-        HasValue<?, E> valueComponent = (HasValue<?, E>) picker;
+        initDetailBuilder(builder, (HasValue<?, E>) picker);
+
+        return builder;
+    }
+
+    protected <E, V extends View<?>> void initDetailBuilder(DetailViewBuilder<E, V> builder,
+                                                            HasValue<?, E> valueComponent) {
         builder.withField(valueComponent);
 
         E value = valueComponent.getValue();
         if (value != null) {
             builder.editEntity(value);
         }
-
-        return builder;
     }
 
     public <E> LookupViewBuilder<E, ?> lookup(View<?> origin, Class<E> entityClass) {
@@ -380,7 +368,7 @@ public class ViewBuilders {
     }
 
     public <E> LookupViewBuilder<E, ?> lookup(EntityMultiPickerComponent<E> picker,
-                                                                 String viewId) {
+                                              String viewId) {
         checkNotNullArgument(picker);
         checkArgument(picker instanceof HasValue,
                 "A component must implement '%s'", HasValue.class.getName());

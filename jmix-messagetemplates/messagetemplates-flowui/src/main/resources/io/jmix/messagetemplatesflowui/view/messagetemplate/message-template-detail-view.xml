@@ -47,9 +47,9 @@
     <layout>
         <tabSheet id="mainTabSheet" width="100%" height="100%">
             <tab id="detailsTab" label="msg://mainTabSheet.detailsTab.label">
-                <split width="100%" height="100%"
+                <split id="mainSplit" width="100%" height="100%"
                        splitterPosition="30" classNames="gap-xs">
-                    <formLayout dataContainer="messageTemplateDc" classNames="px-xs">
+                    <formLayout id="form" dataContainer="messageTemplateDc" classNames="px-xs">
                         <textField id="nameField" property="name"/>
                         <textField id="codeField" property="code"/>
                         <radioButtonGroup id="typeField" property="type"/>
@@ -61,11 +61,11 @@
                             </actions>
                         </entityComboBox>
                     </formLayout>
-                    <vbox padding="false" classNames="px-xs">
+                    <vbox id="contentBox" padding="false" classNames="px-xs">
                         <vbox id="plainTextAreaLayout" expand="plainTextArea"
                               width="100%" height="100%"
                               padding="false" visible="false">
-                            <h4 text="msg://plainTextArea.header"/>
+                            <h4 id="plainTextHeader" text="msg://plainTextArea.header"/>
                             <textArea id="plainTextArea" width="100%"
                                       minHeight="20em"
                                       dataContainer="messageTemplateDc" property="content"/>
@@ -96,8 +96,8 @@
                 </split>
             </tab>
             <tab id="parametersTab" label="msg://mainTabSheet.parametersTab.label">
-                <vbox width="100%" height="100%" padding="false">
-                    <hbox>
+                <vbox id="parametersBox" width="100%" height="100%" padding="false">
+                    <hbox id="buttonsPanel">
                         <button action="parametersDataGrid.create"/>
                         <button action="parametersDataGrid.edit"/>
                         <button action="parametersDataGrid.remove"/>

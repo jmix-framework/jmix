@@ -34,9 +34,9 @@
     </facets>
     <layout>
         <formLayout id="form" dataContainer="messageTemplateBlockDc">
-            <textField property="name"/>
-            <textField property="label"/>
-            <textField property="category"/>
+            <textField id="nameField" property="name"/>
+            <textField id="labelField" property="label"/>
+            <textField id="categoryField" property="category"/>
             <comboBox id="iconsComboBox" property="icon"/>
         </formLayout>
         <tabSheet id="tabSheet" width="100%" height="100%">

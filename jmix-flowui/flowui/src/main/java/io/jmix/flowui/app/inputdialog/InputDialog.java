@@ -402,7 +402,6 @@ public class InputDialog extends StandardView {
         return idToContentMap.get(parameterId);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     protected Component createField(InputParameter parameter) {
         InputDialogGenerationContext context = new InputDialogGenerationContext(null, null, parameter);
         context.setTargetClass(this.getClass());

@@ -32,8 +32,6 @@ import static io.jmix.flowui.component.validation.ValidatorHelper.getNumberConst
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NegativeOrZeroValidator<T extends Number> extends AbstractValidator<T> implements InitializingBean {
 
-    protected String defaultMessage;
-
     public NegativeOrZeroValidator() {
     }
 

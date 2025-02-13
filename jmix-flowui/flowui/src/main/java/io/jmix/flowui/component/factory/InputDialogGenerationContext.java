@@ -19,12 +19,15 @@ package io.jmix.flowui.component.factory;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.app.inputdialog.InputParameter;
 import io.jmix.flowui.component.ComponentGenerationContext;
+import org.springframework.lang.Nullable;
 
 public class InputDialogGenerationContext extends ComponentGenerationContext {
 
     protected final InputParameter inputParameter;
 
-    public InputDialogGenerationContext(MetaClass metaClass, String property, InputParameter inputParameter) {
+    public InputDialogGenerationContext(@Nullable MetaClass metaClass,
+                                        @Nullable String property,
+                                        InputParameter inputParameter) {
         super(metaClass, property);
         this.inputParameter = inputParameter;
     }

@@ -571,6 +571,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
                 case Action.PROP_VISIBLE:
                     setVisible((Boolean) event.getNewValue());
                     break;
+                default:
             }
         }
 

@@ -33,9 +33,9 @@ import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -54,7 +54,6 @@ public class RemoveOperation {
     protected ExtendedEntities extendedEntities;
     protected EntityStates entityStates;
     protected Metadata metadata;
-    protected MetadataTools metadataTools;
 
     @SuppressWarnings("rawtypes")
     protected Consumer removeDelegate;
@@ -82,11 +81,6 @@ public class RemoveOperation {
     @Autowired
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
-    }
-
-    @Autowired
-    public void setMetadataTools(MetadataTools metadataTools) {
-        this.metadataTools = metadataTools;
     }
 
     /**

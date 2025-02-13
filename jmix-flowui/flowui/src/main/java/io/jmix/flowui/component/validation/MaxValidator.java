@@ -34,8 +34,6 @@ public class MaxValidator<T extends Number> extends AbstractValidator<T> impleme
 
     protected int max = Integer.MAX_VALUE;
 
-    protected String defaultMessage;
-
     public MaxValidator() {
     }
 

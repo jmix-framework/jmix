@@ -59,12 +59,13 @@ public class UserIndicator<V> extends Composite<Div> implements SupportsFormatte
     }
 
     protected void updateUserIndicatorLabel(V user) {
-        if (userComponent instanceof HasText hasTextComponent) {
-            String userTitle = generateUserTitle(user);
-            hasTextComponent.setText(userTitle);
+        if (userComponent == null) {
+            return;
         }
-    }
 
+        String userTitle = generateUserTitle(user);
+        ((HasText) userComponent).setText(userTitle);
+    }
 
     protected Span createUserIndicator() {
         Span userNameLabel = new Span();

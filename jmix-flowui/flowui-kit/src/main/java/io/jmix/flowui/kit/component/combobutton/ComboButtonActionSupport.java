@@ -171,6 +171,7 @@ public class ComboButtonActionSupport {
                 removeActionVariant(comboButton, (ActionVariant) event.getOldValue());
                 addActionVariant(comboButton, (ActionVariant) event.getNewValue());
                 break;
+            default:
         }
     }
 }

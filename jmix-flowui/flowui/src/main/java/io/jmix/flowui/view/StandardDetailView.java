@@ -681,6 +681,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                     return true;
                 }
             }
+
+            Preconditions.checkNotNullArgument(fetchPlan);
             return getEntityStates().isLoadedWithFetchPlan(entityToEdit, fetchPlan);
         }
 

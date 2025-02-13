@@ -25,6 +25,7 @@ import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.tabbedmode.sys.vaadin.TabbedModeVaadinServlet;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan
+@ConfigurationPropertiesScan
 @JmixModule(dependsOn = {FlowuiConfiguration.class})
 public class TabbedModeFlowuiConfiguration {
 

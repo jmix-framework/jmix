@@ -77,6 +77,7 @@ public class Views {
     protected final EntityStates entityStates;
     protected final UiProperties uiProperties;
     protected final MeterRegistry meterRegistry;
+    protected final TabbedModeProperties tabbedModeProperties;
 
     public Views(ApplicationContext applicationContext,
                  ViewRegistry viewRegistry,
@@ -86,7 +87,8 @@ public class Views {
                  RouteSupport routeSupport,
                  EntityStates entityStates,
                  UiProperties uiProperties,
-                 MeterRegistry meterRegistry) {
+                 MeterRegistry meterRegistry,
+                 TabbedModeProperties tabbedModeProperties) {
         this.applicationContext = applicationContext;
         this.viewRegistry = viewRegistry;
         this.uiComponents = uiComponents;
@@ -96,6 +98,7 @@ public class Views {
         this.entityStates = entityStates;
         this.uiProperties = uiProperties;
         this.meterRegistry = meterRegistry;
+        this.tabbedModeProperties = tabbedModeProperties;
     }
 
     public View<?> create(String viewId) {
@@ -680,20 +683,16 @@ public class Views {
         if (openMode == ViewOpenMode.NEW_TAB) {
             AppWorkArea workArea = getConfiguredWorkArea(ui);
 
-//            if (workArea.getMode() == Mode.TABBED) {
-//            int maxTabCount = uiProperties.getMaxTabCount();
-            int maxTabCount = 7; // TODO: gg, implement
+            int maxTabCount = tabbedModeProperties.getMaxTabCount();
             return maxTabCount > 0 && workArea.getOpenedTabCount() + 1 > maxTabCount;
-//            }
         }
 
         return false;
     }
 
     protected void showTooManyOpenTabsMessage() {
-        notifications.create(messages.formatMessage("", "tooManyOpenTabs.message",
-                        /*uiProperties.getMaxTabCount()*/7)) // TODO: gg, implement
-                .show();
+        notifications.show(messages.formatMessage("", "tooManyOpenTabs.message",
+                        tabbedModeProperties.getMaxTabCount()));
     }
 
     // TODO: gg, move to util

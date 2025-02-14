@@ -24,11 +24,15 @@ import com.vaadin.flow.router.Location;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
+import io.jmix.tabbedmode.action.tabsheet.CloseAllTabsAction;
+import io.jmix.tabbedmode.action.tabsheet.CloseOthersTabsAction;
+import io.jmix.tabbedmode.action.tabsheet.CloseThisTabAction;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
 import io.jmix.tabbedmode.component.viewcontainer.TabViewContainer;
@@ -52,6 +56,7 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
     public static final String TABBED_CONTAINER_CLASS_NAME = "jmix-main-tabsheet";
     public static final String INITIAL_LAYOUT_CLASS_NAME = "jmix-initial-layout";
 
+    protected Actions actions;
     protected RouteSupport routeSupport;
     protected UiComponents uiComponents;
 
@@ -67,6 +72,7 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         uiComponents = applicationContext.getBean(UiComponents.class);
         routeSupport = applicationContext.getBean(RouteSupport.class);
+        actions = applicationContext.getBean(Actions.class);
     }
 
     @Override
@@ -88,6 +94,11 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
         tabSheet.setClassName(TABBED_CONTAINER_CLASS_NAME);
 
         tabSheet.addSelectedChangeListener(this::onSelectedTabChanged);
+
+        // TODO: gg, provider like Generic Filter
+        tabSheet.addAction(actions.create(CloseThisTabAction.ID));
+        tabSheet.addAction(actions.create(CloseOthersTabsAction.ID));
+        tabSheet.addAction(actions.create(CloseAllTabsAction.ID));
 
         // TODO: gg, init close handlers, etc.
 

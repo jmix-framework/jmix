@@ -457,6 +457,7 @@ public class Views {
 
         String tabId = "tab_" + UuidProvider.createUuid();
 
+        // TODO: gg, UiComponents
         JmixViewTab newTab = new JmixViewTab(ViewControllerUtils.getPageTitle(view));
         newTab.setId(tabId);
         // TODO: gg, implement
@@ -616,10 +617,6 @@ public class Views {
     }
 
     protected Stream<ViewStack> getTabbedViewsStacks(AppWorkArea workArea) {
-        /*if (workArea.getMode() != Mode.TABBED) {
-            throw new IllegalArgumentException("WorkArea mode is not TABBED");
-        }*/
-
 //        TabSheetBehaviour tabSheetBehaviour = workArea.getTabbedWindowContainer().getTabSheetBehaviour();
         JmixMainTabSheet tabSheetBehaviour = workArea.getTabbedWindowContainer();
 

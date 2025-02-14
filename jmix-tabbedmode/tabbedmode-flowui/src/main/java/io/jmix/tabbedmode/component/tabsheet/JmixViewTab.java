@@ -50,6 +50,11 @@ public class JmixViewTab extends Tab {
         super(components);
     }
 
+    @Override
+    public void setId(String id) {
+        super.setId(id);
+    }
+
     @Nullable
     public String getText() {
         return textElement != null ? textElement.getText() : null;
@@ -118,7 +123,11 @@ public class JmixViewTab extends Tab {
     }
 
     protected void onCloseButtonClicked(ClickEvent<Button> event) {
-        fireEvent(new BeforeCloseEvent<>(this, event.isFromClient()));
+        closeInternal(event.isFromClient());
+    }
+
+    protected void closeInternal(boolean fromClient) {
+        fireEvent(new BeforeCloseEvent<>(this, fromClient));
     }
 
     // TODO: gg, remove
@@ -146,6 +155,7 @@ public class JmixViewTab extends Tab {
     // TODO: gg, rename
     public static class BeforeCloseEvent<C extends Component> extends ComponentEvent<C> {
 
+        // TODO: gg, add usage
         protected boolean closePrevented = false;
 
         public BeforeCloseEvent(C source, boolean fromClient) {

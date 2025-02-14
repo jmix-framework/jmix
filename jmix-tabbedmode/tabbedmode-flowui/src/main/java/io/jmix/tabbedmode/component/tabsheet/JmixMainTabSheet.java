@@ -16,17 +16,24 @@
 
 package io.jmix.tabbedmode.component.tabsheet;
 
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.tabs.Tab;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
+import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.HasActions;
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
-public class JmixMainTabSheet extends JmixTabSheet {
+@JsModule("./src/tabsheet/mainTabSheetConnector.ts")
+public class JmixMainTabSheet extends JmixTabSheet implements HasActions {
+
+    private MainTabSheetActionsSupport actionsSupport;
 
     public void removeAll() {
         new ArrayList<>(tabToContent.keySet())
@@ -49,13 +56,69 @@ public class JmixMainTabSheet extends JmixTabSheet {
         return super.getSelectedTab();
     }
 
-    /*@Override
-    public Component getContentByTab(Tab tab) {
-        return findContentByTab(tab)
-                .orElseThrow(() -> new IllegalStateException("Specified tab has no content"));
+    @Override
+    public void addAction(Action action) {
+        getActionsSupport().addAction(action);
     }
 
-    public Optional<Component> findContentByTab(Tab tab) {
-        return Optional.ofNullable(tabToContent.get(tab));
-    }*/
+    @Override
+    public void addAction(Action action, int index) {
+        getActionsSupport().addAction(action, index);
+    }
+
+    @Override
+    public void removeAction(Action action) {
+        getActionsSupport().removeAction(action);
+    }
+
+    @Override
+    public Collection<Action> getActions() {
+        return getActionsSupport().getActions();
+    }
+
+    @Nullable
+    @Override
+    public Action getAction(String id) {
+        return getActionsSupport().getAction(id).orElse(null);
+    }
+
+    public Tab getTab(String id) {
+        return findTab(id).orElseThrow(() ->
+                new IllegalArgumentException("Not found tab with id: '%s'".formatted(id)));
+    }
+
+    public Optional<Tab> findTab(String id) {
+        return getTabs().stream()
+                .filter(tab -> UiComponentUtils.sameId(tab, id))
+                .findAny();
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+
+        initConnector();
+    }
+
+    protected MainTabSheetActionsSupport getActionsSupport() {
+        if (actionsSupport == null) {
+            actionsSupport = createActionsSupport();
+        }
+
+        return actionsSupport;
+    }
+
+    protected MainTabSheetActionsSupport createActionsSupport() {
+        return new MainTabSheetActionsSupport(this);
+    }
+
+    protected void initConnector() {
+        getElement().executeJs(
+                "window.Vaadin.Flow.mainTabSheetConnector.initLazy(this)");
+    }
+
+    @ClientCallable
+    private void updateContextMenuTargetTab(String tabId) {
+        getElement().setProperty("_contextMenuTargetTabId", tabId);
+    }
 }

@@ -395,7 +395,11 @@ public class LoginViewSupport {
     }
 
     protected boolean isPathAvailable(@Nullable String path) {
-        return getRouteConfiguration().isPathAvailable(LocationUtil.ensureRelativeNonNull(path));
+        String normalizedPath = LocationUtil.ensureRelativeNonNull(path);
+
+        RouteRegistry handledRegistry = getRouteConfiguration().getHandledRegistry();
+
+        return handledRegistry.getNavigationRouteTarget(normalizedPath).hasTarget();
     }
 
     protected AppCookies getCookies() {

@@ -80,7 +80,7 @@ dependencies {
     constraints {
 
         // community add-ons
-
+        implementation 'de.bytestore:plugin-starter:1.4.0' 
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.restds.exception.RestDataStoreAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.HttpClientErrorException;
 
 /**
  * Provides information about REST capabilities for a particular REST data store.
@@ -64,6 +65,8 @@ public class RestCapabilities {
             String json = restInvoker.capabilities();
             JsonNode rootNode = objectMapper.readTree(json);
             inlineFetchPlans = rootNode.get("inlineFetchPlans").asBoolean();
+        } catch (HttpClientErrorException.NotFound e) {
+            log.info("Cannot determine REST capabilities: {}", e.getMessage());
         } catch (RestDataStoreAccessException e) {
             log.info("Cannot determine REST capabilities for {}: {}", e.getDataStoreName(), e.getMessage());
         } catch (JsonProcessingException e) {

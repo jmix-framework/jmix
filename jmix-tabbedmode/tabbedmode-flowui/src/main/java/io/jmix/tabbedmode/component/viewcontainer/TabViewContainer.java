@@ -28,16 +28,18 @@ import org.springframework.lang.Nullable;
 
 @Tag("jmix-view-container")
 @JsModule("./src/viewcontainer/jmix-view-container.js")
-public class TabViewContainer extends Component implements HasSize, HasStyle {
+public class TabViewContainer extends Component implements ViewContainer, HasSize, HasStyle {
 
     protected ViewBreadcrumbs breadcrumbs;
     protected View<?> view;
 
     @Nullable
+    @Override
     public ViewBreadcrumbs getBreadcrumbs() {
         return breadcrumbs;
     }
 
+    @Override
     public void setBreadcrumbs(@Nullable ViewBreadcrumbs breadcrumbs) {
         if (this.breadcrumbs != null) {
             remove(this.breadcrumbs);
@@ -51,15 +53,18 @@ public class TabViewContainer extends Component implements HasSize, HasStyle {
         }
     }
 
+    @Override
     public void removeBreadcrumbs() {
         setBreadcrumbs(null);
     }
 
     @Nullable
+    @Override
     public View<?> getView() {
         return view;
     }
 
+    @Override
     public void setView(@Nullable View<?> view) {
         if (this.view != null) {
             remove(this.view);
@@ -72,6 +77,7 @@ public class TabViewContainer extends Component implements HasSize, HasStyle {
         }
     }
 
+    @Override
     public void removeView() {
         setView(null);
     }

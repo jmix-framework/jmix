@@ -16,7 +16,8 @@
 
 package io.jmix.tabbedmode.component.tabsheet;
 
-import com.vaadin.flow.component.tabs.TabSheet;
+import com.vaadin.flow.component.Component;
+import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
 
 public final class MainTabSheetUtils {
 
@@ -25,5 +26,14 @@ public final class MainTabSheetUtils {
 
     public static void closeTab(JmixViewTab tab) {
         tab.closeInternal(true);
+    }
+
+    public static ViewContainer asViewContainer(Component component) {
+        if (component instanceof ViewContainer viewContainer) {
+            return viewContainer;
+        } else {
+            throw new IllegalStateException("Tab content '%s' is not a %s"
+                    .formatted(component, ViewContainer.class.getSimpleName()));
+        }
     }
 }

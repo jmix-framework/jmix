@@ -17,6 +17,7 @@
 package io.jmix.securityflowui.security;
 
 import com.vaadin.flow.router.LocationUtil;
+import com.vaadin.flow.server.RouteRegistry;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.view.ViewRegistry;
@@ -36,6 +37,9 @@ public class JmixViewPathRequestMatcher implements RequestMatcher {
     @Override
     public boolean matches(HttpServletRequest request) {
         String path = LocationUtil.ensureRelativeNonNull(request.getServletPath());
-        return viewRegistry.getRouteConfiguration().isPathAvailable(path);
+
+        RouteRegistry handledRegistry = viewRegistry.getRouteConfiguration().getHandledRegistry();
+
+        return handledRegistry.getNavigationRouteTarget(path).hasTarget();
     }
 }

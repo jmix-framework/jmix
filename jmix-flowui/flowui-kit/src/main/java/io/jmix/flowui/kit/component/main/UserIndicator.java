@@ -22,7 +22,6 @@ import com.vaadin.flow.component.html.Span;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.SupportsFormatter;
 import io.jmix.flowui.kit.component.formatter.Formatter;
-
 import jakarta.annotation.Nullable;
 
 /**
@@ -59,15 +58,13 @@ public class UserIndicator<V> extends Composite<Div> implements SupportsFormatte
     }
 
     protected void updateUserIndicatorLabel(V user) {
-        if (userComponent == null) {
-            return;
+        if (userComponent instanceof HasText hasTextComponent) {
+            String userTitle = generateUserTitle(user);
+            hasTextComponent.setText(userTitle);
         }
-
-        String userTitle = generateUserTitle(user);
-        ((HasText) userComponent).setText(userTitle);
     }
 
-    protected Span createUserIndicator() {
+    protected Component createUserIndicator() {
         Span userNameLabel = new Span();
         userNameLabel.addClassName(USER_INDICATOR_LABEL_CLASS_NAME);
         return userNameLabel;

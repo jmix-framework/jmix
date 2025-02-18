@@ -183,10 +183,9 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     public void prePersist(DescriptorEvent event) {
         Object entity = event.getObject();
 
-        Date currentDate = timeSource.currentTimestamp();
-        UserDetails currentUser = auditInfoProvider.getCurrentUser();
-
         if (EntityValues.isAuditSupported(entity)) {
+            Date currentDate = timeSource.currentTimestamp();
+            UserDetails currentUser = auditInfoProvider.getCurrentUser();
             entityAuditInfoProvider.setCreateInfo(entity, currentDate, currentUser);
             entityAuditInfoProvider.setUpdateInfo(entity, currentDate, currentUser, true);
         }

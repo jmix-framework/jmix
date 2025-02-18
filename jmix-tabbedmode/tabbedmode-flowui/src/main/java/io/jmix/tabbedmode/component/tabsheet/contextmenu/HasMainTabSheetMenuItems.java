@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.tabbedmode.action.tabsheet;
+package io.jmix.tabbedmode.component.tabsheet.contextmenu;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import io.jmix.tabbedmode.component.tabsheet.contextmenu.MainTabSheetContextMenu.MainTabSheetContextMenuItemClickEvent;
-import io.jmix.tabbedmode.component.tabsheet.contextmenu.MainTabSheetMenuItem;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 

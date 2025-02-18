@@ -203,4 +203,9 @@ public final class ViewControllerUtils {
                                                                   Consumer<View<T>> closeDelegate) {
         view.setCloseDelegate(closeDelegate);
     }
+
+    public static boolean isSameView(View<?> view, View<?> other) {
+        return view.getClass() == other.getClass()
+                && view.getId().equals(other.getId());
+    }
 }

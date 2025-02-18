@@ -46,13 +46,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Tag("jmix-work-area")
-@JsModule("./src/workarea/jmix-work-area.js")
+@Tag("jmix-app-work-area")
+@JsModule("./src/workarea/jmix-app-work-area.js")
 public class AppWorkArea extends Component implements HasSize, ApplicationContextAware, InitializingBean {
 
-    // TODO: gg, replace with state attributes
     public static final String TABBED_CONTAINER_CLASS_NAME = "jmix-main-tabsheet";
     public static final String INITIAL_LAYOUT_CLASS_NAME = "jmix-initial-layout";
 
@@ -98,8 +98,6 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
         tabSheet.addAction(actions.create(CloseOthersTabsAction.ID));
         tabSheet.addAction(actions.create(CloseAllTabsAction.ID));
 
-        // TODO: gg, init close handlers, etc.
-
         return tabSheet;
     }
 
@@ -129,11 +127,6 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
     }
 
     protected void onSelectedTabChanged(TabbedViewsContainer.SelectedChangeEvent<?> event) {
-        // TODO: gg, why?
-        /*if (!event.isFromClient()) {
-            return;
-        }*/
-
         Tab selectedTab = event.getSelectedTab();
         if (selectedTab == null) {
             return;
@@ -223,24 +216,27 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
     public Collection<View<?>> getActiveWorkAreaViews() {
         TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
         return tabbedContainer.getTabComponentsStream()
-                .map(component -> {
-                    ViewContainer viewContainer = MainTabSheetUtils.asViewContainer(component);
-                    ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
-                    if (breadcrumbs != null) {
-                        ViewBreadcrumbs.ViewInfo viewInfo = breadcrumbs.getCurrentViewInfo();
-                        if (viewInfo != null) {
-                            return viewInfo.view();
-                        } else {
-                            throw new IllegalStateException("Tab does not contain a %s"
-                                    .formatted(View.class.getSimpleName()));
-                        }
-                    } else if (viewContainer.getView() != null) {
-                        return viewContainer.getView();
-                    } else {
-                        throw new IllegalStateException("Tab does not contain a %s"
-                                .formatted(View.class.getSimpleName()));
-                    }
-                }).toList();
+                .map(this::getViewFromContent)
+                .collect(Collectors.toList());
+    }
+
+    protected View<?> getViewFromContent(Component component) {
+        ViewContainer viewContainer = MainTabSheetUtils.asViewContainer(component);
+        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
+        if (breadcrumbs != null) {
+            ViewBreadcrumbs.ViewInfo viewInfo = breadcrumbs.getCurrentViewInfo();
+            if (viewInfo != null) {
+                return viewInfo.view();
+            } else {
+                throw new IllegalStateException("Tab does not contain a %s"
+                        .formatted(View.class.getSimpleName()));
+            }
+        } else if (viewContainer.getView() != null) {
+            return viewContainer.getView();
+        } else {
+            throw new IllegalStateException("Tab does not contain a %s"
+                    .formatted(View.class.getSimpleName()));
+        }
     }
 
     public Collection<View<?>> getCurrentBreadcrumbs() {
@@ -260,7 +256,6 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
         return views;
     }
 
-    // TODO: gg, interface?
     public TabbedViewsContainer<?> getTabbedViewsContainer() {
         return tabbedContainer;
     }
@@ -282,6 +277,10 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
         }
     }
 
+    public int getOpenedTabCount() {
+        return getTabbedViewsContainer().getTabs().size();
+    }
+
     /**
      * Adds a listener that will be notified when a work area state is changed.
      *
@@ -292,10 +291,6 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
         return addListener(StateChangeEvent.class, listener);
     }
 
-    public int getOpenedTabCount() {
-        return getTabbedViewsContainer().getTabs().size();
-    }
-
     /**
      * Event that is fired when work area changed its state.
      */
@@ -304,7 +299,6 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
         protected final State state;
 
         public StateChangeEvent(AppWorkArea source, State state) {
-            // TODO: gg, from client?
             super(source, false);
             this.state = state;
         }
@@ -316,9 +310,10 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
 
 
     /**
-     * Work area state
+     * App Work Area state.
      */
     public enum State {
+
         /**
          * If the work area is in the INITIAL_LAYOUT state, the work area does not contain other screens.
          */
@@ -329,6 +324,4 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
          */
         VIEW_CONTAINER
     }
-
-//    WorkAreaTabChangedEvent
 }

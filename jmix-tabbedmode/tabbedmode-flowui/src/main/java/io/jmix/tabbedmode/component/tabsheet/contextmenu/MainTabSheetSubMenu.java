@@ -22,9 +22,8 @@ import com.vaadin.flow.component.contextmenu.MenuManager;
 import com.vaadin.flow.component.contextmenu.SubMenuBase;
 import com.vaadin.flow.function.SerializableRunnable;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.tabbedmode.action.tabsheet.HasMainTabSheetMenuItems;
 import io.jmix.tabbedmode.component.tabsheet.contextmenu.MainTabSheetContextMenu.MainTabSheetContextMenuItemClickEvent;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public class MainTabSheetSubMenu extends
         SubMenuBase<MainTabSheetContextMenu, MainTabSheetMenuItem, MainTabSheetSubMenu>

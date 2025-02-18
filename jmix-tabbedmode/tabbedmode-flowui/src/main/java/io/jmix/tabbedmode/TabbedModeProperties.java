@@ -16,6 +16,7 @@
 
 package io.jmix.tabbedmode;
 
+import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -27,8 +28,15 @@ public class TabbedModeProperties {
      */
     int maxTabCount;
 
-    public TabbedModeProperties(@DefaultValue("20") int maxTabCount) {
+    /**
+     * Whether {@link ViewBreadcrumbs} is shown in views.
+     */
+    boolean showBreadcrumbs;
+
+    public TabbedModeProperties(@DefaultValue("20") int maxTabCount,
+                                @DefaultValue("true") boolean showBreadcrumbs) {
         this.maxTabCount = maxTabCount;
+        this.showBreadcrumbs = showBreadcrumbs;
     }
 
     /**
@@ -36,5 +44,12 @@ public class TabbedModeProperties {
      */
     public int getMaxTabCount() {
         return maxTabCount;
+    }
+
+    /**
+     * @see #showBreadcrumbs
+     */
+    public boolean isShowBreadcrumbs() {
+        return showBreadcrumbs;
     }
 }

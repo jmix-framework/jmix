@@ -27,7 +27,6 @@ import com.vaadin.flow.function.SerializableRunnable;
 import elemental.json.JsonObject;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
-import io.jmix.tabbedmode.action.tabsheet.HasMainTabSheetMenuItems;
 import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
 import org.springframework.lang.Nullable;
 

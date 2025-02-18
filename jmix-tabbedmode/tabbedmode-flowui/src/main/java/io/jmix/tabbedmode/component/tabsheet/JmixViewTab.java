@@ -78,11 +78,6 @@ public class JmixViewTab extends Tab {
             this.textElement.getElement().removeFromParent();
             this.textElement = null;
         }
-
-        /*removeAll(getNonTextNodes());
-        if (text != null && !text.isEmpty()) {
-            getElement().appendChild(Element.createText(text));
-        }*/
     }
 
     private HasText createTextElement() {
@@ -129,23 +124,6 @@ public class JmixViewTab extends Tab {
     protected void closeInternal(boolean fromClient) {
         fireEvent(new BeforeCloseEvent<>(this, fromClient));
     }
-
-    // TODO: gg, remove
-    /*protected void removeAll(Element... exclusion) {
-        Set<Element> toExclude = Stream.of(exclusion)
-                .collect(Collectors.toSet());
-        Predicate<Element> filter = toExclude::contains;
-        getElement().getChildren().filter(filter.negate())
-                .forEach(child -> child.removeAttribute("slot"));
-        getElement().removeAllChildren();
-        getElement().appendChild(exclusion);
-    }
-
-    protected Element[] getNonTextNodes() {
-        return getElement().getChildren()
-                .filter(element -> !element.isTextNode())
-                .toArray(Element[]::new);
-    }*/
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Registration addBeforeCloseListener(ComponentEventListener<BeforeCloseEvent<JmixViewTab>> listener) {

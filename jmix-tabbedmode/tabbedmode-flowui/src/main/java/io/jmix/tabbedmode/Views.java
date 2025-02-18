@@ -59,6 +59,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
+import static io.jmix.flowui.monitoring.ViewLifeCycle.BEFORE_SHOW;
 import static io.jmix.flowui.monitoring.ViewLifeCycle.READY;
 import static io.micrometer.core.instrument.Timer.start;
 
@@ -108,7 +109,6 @@ public class Views {
         return createInternal(viewInfo.getControllerClass());
     }
 
-    // TODO: gg, OperationResult
     @SuppressWarnings("unchecked")
     public <T extends View<?>> T create(Class<T> viewClass) {
         String id = ViewDescriptorUtils.getInferredViewId(viewClass);
@@ -123,34 +123,20 @@ public class Views {
         return open(getCurrentUI(), view, openMode);
     }
 
-    protected JmixUI getCurrentUI() {
-        UI ui = UI.getCurrent();
-        if (!(ui instanceof JmixUI jmixUI)) {
-            throw new IllegalStateException("UI is not a " + JmixUI.class.getSimpleName());
-        }
-
-        return jmixUI;
-    }
-
     public OperationResult open(JmixUI ui, View<?> view, ViewOpenMode openMode) {
         checkNotNullArgument(view);
         checkNotNullArgument(openMode);
         // TODO: gg, implement?
 //        checkNotYetOpened(view);
 
-        if (isMaxTabCountExceeded(ui, view, openMode)) {
+        if (isMaxTabCountExceeded(ui, openMode)) {
             showTooManyOpenTabsMessage();
             return OperationResult.fail();
         }
 
-//        Timer.Sample beforeShowSample = Timer.start(meterRegistry);
-
-        // TODO: gg, implement ViewContext that stores OpenMode
-//        ViewControllerUtils.setViewCloseDelegate(view, __ -> removeThisTabView(ui, view));
-
+        Timer.Sample beforeShowSample = start(meterRegistry);
         fireViewBeforeShowEvent(view);
-
-//        beforeShowSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.BEFORE_SHOW, screen.getId()));
+        stopViewTimerSample(beforeShowSample, meterRegistry, BEFORE_SHOW, view.getId().orElse(null));
 
         switch (openMode) {
             case ROOT:
@@ -173,8 +159,7 @@ public class Views {
                 throw new UnsupportedOperationException("Unsupported OpenMode " + openMode);
         }
 
-//        userActionsLog.trace("Screen {} {} opened", screen.getId(), screen.getClass());
-
+        log.trace("Screen {} {} opened", view.getId().orElse(null), view.getClass());
 
         // TODO: gg, single place
         // TODO: gg, get from breadcrumbs
@@ -182,9 +167,9 @@ public class Views {
         updatePageTitle(ui, view);
         // TODO: gg, fire QueryParametersChangeEvent?
 
-        Timer.Sample sample = start(meterRegistry);
+        Timer.Sample readySample = start(meterRegistry);
         fireViewReadyEvent(view);
-        stopViewTimerSample(sample, meterRegistry, READY, view.getId().orElse(null));
+        stopViewTimerSample(readySample, meterRegistry, READY, view.getId().orElse(null));
 
         fireViewOpenedEvent(view);
 
@@ -197,14 +182,6 @@ public class Views {
     }
 
     protected void updateUrl(JmixUI ui, Location newLocation) {
-        // TODO: gg, implement
-        /*WindowImpl windowImpl = (WindowImpl) screen.getWindow();
-        Map<String, String> params = windowImpl.getResolvedState() != null
-                ? windowImpl.getResolvedState().getParams()
-                : Collections.emptyMap();
-
-        ui.getUrlRouting().pushState(screen, params);*/
-
         routeSupport.setLocation(ui, newLocation);
     }
 
@@ -226,19 +203,10 @@ public class Views {
         return RouteConfiguration.forSessionScope();
     }
 
-    private Object getParamValue(DetailView<?> detailView) {
+    protected Object getParamValue(DetailView<?> detailView) {
         Object editedEntity = detailView.getEditedEntity();
         return entityStates.isNew(editedEntity) ? "new" : Objects.requireNonNull(EntityValues.getId(editedEntity));
     }
-
-    private boolean hasRouteParams(View<?> view) {
-        return view instanceof DetailView;
-    }
-
-    /*private String generateViewRoute(TabbedUI ui, View<?> view) {
-
-        RouteConfiguration.forSessionScope().getRoute()
-    }*/
 
     // TODO: gg, temporal, remove
     public OperationResult openFromNavigation(View<?> view, ViewOpenMode openMode) {
@@ -264,7 +232,7 @@ public class Views {
 
 
         if (openMode == ViewOpenMode.NEW_TAB) {
-            if (isMaxTabCountExceeded(ui, view, openMode)) {
+            if (isMaxTabCountExceeded(ui, openMode)) {
                 showTooManyOpenTabsMessage();
                 return OperationResult.fail();
             }
@@ -275,7 +243,7 @@ public class Views {
             View<?> sameView = getTabbedViewsStacks(workArea)
                     .filter(windowStack -> windowStack.getBreadcrumbs().size() == 1) // never close non-top active screens
                     .map(windowStack -> windowStack.getBreadcrumbs().iterator().next())
-                    .filter(tabScreen -> isAlreadyOpened(view, tabScreen))
+                    .filter(tabScreen -> ViewControllerUtils.isSameView(view, tabScreen))
                     .findFirst()
                     .orElse(null);
 
@@ -325,23 +293,17 @@ public class Views {
             throw new IllegalStateException(ViewBreadcrumbs.class + " not found");
         }
 
-        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
-        // TODO: gg, remove after test
-        // TODO: gg, exception?
-        /*View<?> currentView = breadcrumbs.getCurrentViewInfo().view();
-
-        windowContainer.remove(currentView);*/
-
         viewContainer.setView(view);
+
+        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
         breadcrumbs.addView(view, resolveLocation(view));
 
         ViewControllerUtils.setViewCloseDelegate(view, __ -> removeThisTabView(ui, view));
 
         if (selectedTab instanceof JmixViewTab viewTab) {
             viewTab.setText(ViewControllerUtils.getPageTitle(view));
-            viewTab.setClosable(true); // TODO: gg, implement view.isCloseable()
+            viewTab.setClosable(true/*view.isCloseable()*/); // TODO: gg, implement view.isCloseable()
         } else {
-            // TODO: gg, exception or ignore?
             selectedTab.setLabel(ViewControllerUtils.getPageTitle(view));
         }
 
@@ -399,11 +361,9 @@ public class Views {
         AppWorkArea workArea = getConfiguredWorkArea(ui);
 
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
-        // TODO: gg, implement?
-//        tabbedContainer.silentCloseTabAndSelectPrevious(windowContainer);
         tabbedContainer.remove(windowContainer);
 
-        boolean allWindowsRemoved = tabbedContainer.getTabs().isEmpty();
+        boolean allViewsRemoved = tabbedContainer.getTabs().isEmpty();
 
         ViewBreadcrumbs breadcrumbs = windowContainer.getBreadcrumbs();
         if (breadcrumbs != null) {
@@ -411,7 +371,7 @@ public class Views {
             breadcrumbs.removeView();
         }
 
-        if (allWindowsRemoved) {
+        if (allViewsRemoved) {
             workArea.switchTo(AppWorkArea.State.INITIAL_LAYOUT);
 
             // TODO: gg, move or re-implement, e.g. to state change listener?
@@ -431,18 +391,11 @@ public class Views {
     }
 
     protected void createNewTabLayout(JmixUI ui, View<?> view) {
-        ViewBreadcrumbs breadcrumbs = createViewBreadCrumbs(/*ui, view*/);
+        ViewBreadcrumbs breadcrumbs = createViewBreadCrumbs();
         breadcrumbs.setNavigationHandler(this::onBreadcrumbsNavigate);
         breadcrumbs.addView(view, resolveLocation(view));
 
-        // TODO: gg, store route
-        /*WindowImpl windowImpl = (WindowImpl) screen.getWindow();
-        windowImpl.setResolvedState(createOrUpdateState(
-                windowImpl.getResolvedState(),
-                getConfiguredWorkArea().generateUrlStateMark()));*/
-
         TabViewContainer windowContainer = uiComponents.create(TabViewContainer.class);
-//        windowContainer.setClassName("jmix-tab-view-container");
         windowContainer.setSizeFull();
 
         windowContainer.setBreadcrumbs(breadcrumbs);
@@ -454,32 +407,16 @@ public class Views {
 
         String tabId = "tab_" + UuidProvider.createUuid();
 
-        // TODO: gg, UiComponents
-        JmixViewTab newTab = new JmixViewTab(ViewControllerUtils.getPageTitle(view));
+        JmixViewTab newTab = uiComponents.create(JmixViewTab.class);
         newTab.setId(tabId);
+        newTab.setText(ViewControllerUtils.getPageTitle(view));
         // TODO: gg, implement
         newTab.setClosable(true /*view.isCloseable()*/);
         newTab.addBeforeCloseListener(this::handleViewTabClose);
 
         Tab addedTab = tabbedContainer.add(newTab, windowContainer);
 
-        /*if (ui.isTestMode()) {
-            String id = "tab_" + window.getId();
-
-            tabbedContainer.setTabTestId(tabId, ui.getTestIdManager().getTestId(id));
-            tabbedContainer.setTabJmixId(tabId, id);
-        }*/
-//        TabWindow tabWindow = (TabWindow) window;
-
-        /*String windowContentSwitchMode = tabWindow.getContentSwitchMode().name();
-        ContentSwitchMode contentSwitchMode = ContentSwitchMode.valueOf(windowContentSwitchMode);
-        tabbedContainer.setContentSwitchMode(tabId, contentSwitchMode);*/
-
-//        tabbedContainer.setTabCloseHandler(windowContainer, this::handleTabWindowClose);
         tabbedContainer.setSelectedTab(addedTab);
-//        } else {
-        // TODO: gg, implement?
-//        }
     }
 
     protected void handleViewTabClose(JmixViewTab.BeforeCloseEvent<JmixViewTab> event) {
@@ -539,12 +476,9 @@ public class Views {
                 return;
             }
 
-            if (isCloseable(viewToClose.view())
-                /*&& !isViewClosePrevented(viewToClose, CloseOriginType.CLOSE_BUTTON)*/) {
-
+            if (isCloseable(viewToClose.view())) {
                 viewToClose.view().close(StandardOutcome.CLOSE)
                         .then(this);
-                // TODO: gg, why not this?
             }
         }
     }
@@ -565,8 +499,7 @@ public class Views {
     }
 
     protected void onBreadcrumbsNavigate(ViewBreadcrumbs.BreadcrumbsNavigationContext context) {
-        // TODO: gg, create class?
-        Runnable closeOperation = new Runnable() {
+        new Runnable() {
             @Override
             public void run() {
                 ViewBreadcrumbs.ViewInfo viewToClose = context.breadcrumbs().getCurrentViewInfo();
@@ -580,25 +513,16 @@ public class Views {
                 }*/
 
                 if (context.view() != viewToClose.view()) {
-                    // TODO: gg, do we need this?
-//                    if (!isViewClosePrevented(currentWindow, CloseOriginType.BREADCRUMBS)) {
                     viewToClose.view().close(StandardOutcome.CLOSE)
                             .then(this);
-//                    }
                 }
             }
-        };
-        closeOperation.run();
+        }.run();
     }
 
-    protected ViewBreadcrumbs createViewBreadCrumbs(/*TabbedUI ui, View<?> view*/) {
-//        AppWorkArea appWorkArea = getConfiguredWorkArea(ui);
-
+    protected ViewBreadcrumbs createViewBreadCrumbs() {
         ViewBreadcrumbs breadcrumbs = uiComponents.create(ViewBreadcrumbs.class);
-
-        // TODO: gg, implement
-//        boolean showBreadCrumbs = uiProperties.isShowBreadCrumbs() || appWorkArea.getMode() == Mode.SINGLE;
-//        breadcrumbs.setVisible(showBreadCrumbs);
+        breadcrumbs.setVisible(tabbedModeProperties.isShowBreadcrumbs());
 
         return breadcrumbs;
     }
@@ -670,7 +594,7 @@ public class Views {
         applicationContext.publishEvent(viewOpenedEvent);
     }
 
-    protected boolean isMaxTabCountExceeded(JmixUI ui, View<?> view, ViewOpenMode openMode) {
+    protected boolean isMaxTabCountExceeded(JmixUI ui, ViewOpenMode openMode) {
         if (openMode == ViewOpenMode.NEW_TAB) {
             AppWorkArea workArea = getConfiguredWorkArea(ui);
 
@@ -686,11 +610,13 @@ public class Views {
                 tabbedModeProperties.getMaxTabCount()));
     }
 
-    // TODO: gg, move to util
-    protected static boolean isAlreadyOpened(View<?> newView, View<?> openedView) {
-//        return newView.isSameView(openedView);
-        return newView.getClass() == openedView.getClass()
-                && newView.getId().equals(openedView.getId());
+    protected JmixUI getCurrentUI() {
+        UI ui = UI.getCurrent();
+        if (!(ui instanceof JmixUI jmixUI)) {
+            throw new IllegalStateException("UI is not a " + JmixUI.class.getSimpleName());
+        }
+
+        return jmixUI;
     }
 
     public class OpenedViews {

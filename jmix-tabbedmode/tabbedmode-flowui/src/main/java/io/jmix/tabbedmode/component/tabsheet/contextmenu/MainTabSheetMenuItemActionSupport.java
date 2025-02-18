@@ -21,7 +21,7 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;

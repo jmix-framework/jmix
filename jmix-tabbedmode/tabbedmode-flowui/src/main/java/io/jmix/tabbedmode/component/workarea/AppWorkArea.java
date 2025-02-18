@@ -62,7 +62,7 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
 
     protected State state = State.INITIAL_LAYOUT;
 
-    protected TabbedViewsContainer<?> tabbedViewsContainer;
+    protected TabbedViewsContainer<?> tabbedContainer;
     protected Component initialLayout;
 
     public AppWorkArea() {
@@ -81,7 +81,7 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
     }
 
     private void initComponent() {
-        tabbedViewsContainer = createTabbedViewsContainer();
+        tabbedContainer = createTabbedViewsContainer();
         Component initialLayout = createInitialLayout();
         setInitialLayout(initialLayout);
     }
@@ -139,7 +139,7 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
             return;
         }
 
-        Component tabComponent = tabbedViewsContainer.findComponent(selectedTab).orElse(null);
+        Component tabComponent = tabbedContainer.findComponent(selectedTab).orElse(null);
         if (!(tabComponent instanceof ViewContainer viewContainer)) {
             return;
         }
@@ -187,7 +187,7 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
                 getElement().appendChild(initialLayout.getElement());
                 break;
             case VIEW_CONTAINER:
-                getElement().appendChild(tabbedViewsContainer.getElement());
+                getElement().appendChild(tabbedContainer.getElement());
                 break;
             default:
                 throw new IllegalStateException("Unexpected state: " + state);
@@ -208,9 +208,9 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
     }
 
     public Collection<View<?>> getOpenedWorkAreaViews() {
-        TabbedViewsContainer<?> tabbedViewsContainer = getTabbedViewsContainer();
+        TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
 
-        return tabbedViewsContainer.getTabComponentsStream()
+        return tabbedContainer.getTabComponentsStream()
                 .flatMap(component -> {
                     ViewContainer viewContainer = MainTabSheetUtils.asViewContainer(component);
                     ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
@@ -221,8 +221,8 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
     }
 
     public Collection<View<?>> getActiveWorkAreaViews() {
-        TabbedViewsContainer<?> tabbedViewsContainer = getTabbedViewsContainer();
-        return tabbedViewsContainer.getTabComponentsStream()
+        TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
+        return tabbedContainer.getTabComponentsStream()
                 .map(component -> {
                     ViewContainer viewContainer = MainTabSheetUtils.asViewContainer(component);
                     ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
@@ -262,18 +262,18 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
 
     // TODO: gg, interface?
     public TabbedViewsContainer<?> getTabbedViewsContainer() {
-        return tabbedViewsContainer;
+        return tabbedContainer;
     }
 
     @Nullable
     public ViewContainer getCurrentViewContainer() {
-        TabbedViewsContainer<?> tabbedViewsContainer = getTabbedViewsContainer();
-        Tab selectedTab = tabbedViewsContainer.getSelectedTab();
+        TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
+        Tab selectedTab = tabbedContainer.getSelectedTab();
         if (selectedTab == null) {
             return null;
         }
 
-        Component component = tabbedViewsContainer.getComponent(selectedTab);
+        Component component = tabbedContainer.getComponent(selectedTab);
         if (component instanceof ViewContainer viewContainer) {
             return viewContainer;
         } else {

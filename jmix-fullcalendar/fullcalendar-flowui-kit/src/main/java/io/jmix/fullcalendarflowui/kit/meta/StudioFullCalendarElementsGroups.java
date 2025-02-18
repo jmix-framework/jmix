@@ -28,6 +28,7 @@ public interface StudioFullCalendarElementsGroups {
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             elementClassFqn = "io.jmix.fullcalendarflowui.component.data.CalendarDataProvider",
+            documentationLink = "%VERSION%/calendar/full-calendar-component.html#data-model",
             target = "io.jmix.fullcalendarflowui.component.FullCalendar",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg"
     )
@@ -39,6 +40,7 @@ public interface StudioFullCalendarElementsGroups {
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             elementClassFqn = "io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarDisplayMode",
+            documentationLink = "%VERSION%/calendar/full-calendar-component.html#custom-calendar-display-mode",
             target = "io.jmix.fullcalendarflowui.component.FullCalendar",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg"
     )
@@ -50,6 +52,7 @@ public interface StudioFullCalendarElementsGroups {
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             elementClassFqn = "io.jmix.fullcalendarflowui.kit.meta.group.StudioFullCalendarProperties",
+            documentationLink = "%VERSION%/calendar/full-calendar-component.html#properties",
             target = {
                     "io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarDisplayMode",
                     "io.jmix.fullcalendarflowui.kit.component.model.DayGridDayProperties",
@@ -74,6 +77,7 @@ public interface StudioFullCalendarElementsGroups {
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             elementClassFqn = "io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours",
+            documentationLink = "%VERSION%/calendar/full-calendar-component.html#business-hours",
             target = "io.jmix.fullcalendarflowui.component.FullCalendar",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg"
     )
@@ -85,6 +89,7 @@ public interface StudioFullCalendarElementsGroups {
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             elementClassFqn = "io.jmix.fullcalendarflowui.kit.meta.group.StudioFullCalendarHiddenDays",
+            documentationLink = "%VERSION%/calendar/full-calendar-component.html#hiddenDays",
             target = "io.jmix.fullcalendarflowui.component.FullCalendar",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg"
     )

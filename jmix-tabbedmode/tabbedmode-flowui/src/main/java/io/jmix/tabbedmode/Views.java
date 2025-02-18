@@ -622,7 +622,7 @@ public class Views {
         return workArea.getTabbedViewsContainer().getTabComponentsStream()
                 .map(MainTabSheetUtils::asViewContainer)
                 .map(viewContainer ->
-                        new ViewStack(viewContainer, workArea.getTabbedViewsContainer()));
+                        new ViewStack(workArea.getTabbedViewsContainer(), viewContainer));
     }
 
     public OpenedViews getOpenedViews() {
@@ -782,44 +782,45 @@ public class Views {
          * @return tab containers or single window container with access to breadcrumbs or empty collection
          * if there is no root view or root view does not have {@link AppWorkArea}
          */
-        public Collection<ViewStack> getWorkAreaStacks() {
-            // TODO: gg, implement
-            /*TabSheetBehaviour tabSheetBehaviour = workArea.getTabbedWindowContainer().getTabSheetBehaviour();
+        public Collection<ViewStack> getWorkAreaViewStacks() {
+            Optional<AppWorkArea> workArea = findConfiguredWorkArea(ui);
+            if (workArea.isEmpty()) {
+                return Collections.emptyList();
+            }
 
-            return tabSheetBehaviour.getTabComponentsStream()
-                    .map(c -> ((TabWindowContainer) c))
-                    .map(windowContainer -> new WindowStackImpl(windowContainer, workArea.getTabbedWindowContainer()));*/
-            return Collections.emptyList();
+            TabbedViewsContainer<?> tabbedContainer = workArea.get().getTabbedViewsContainer();
+            return tabbedContainer.getTabComponentsStream()
+                    .map(MainTabSheetUtils::asViewContainer)
+                    .map(viewContainer ->
+                            new ViewStack(tabbedContainer, viewContainer))
+                    .toList();
         }
     }
 
     public static class ViewStack {
 
-        protected final ViewContainer viewContainer;
         protected final TabbedViewsContainer<?> tabbedContainer;
+        protected final ViewContainer viewContainer;
 
-        public ViewStack(ViewContainer viewContainer, TabbedViewsContainer<?> tabbedContainer) {
-            this.viewContainer = viewContainer;
+        public ViewStack(TabbedViewsContainer<?> tabbedContainer, ViewContainer viewContainer) {
             this.tabbedContainer = tabbedContainer;
+            this.viewContainer = viewContainer;
         }
 
         /**
          * @return screens of the container in descending order, first element is active screen
-         * @throws IllegalStateException in case window stack has been closed
+         * @throws IllegalStateException in case view stack has been closed
          */
         public Collection<View<?>> getBreadcrumbs() {
             checkAttached();
 
-            // TODO: gg, re-work?
-            Deque<View<?>> viewDeque = viewContainer.getBreadcrumbs().getViews();
-            Iterator<View<?>> windowIterator = viewDeque.descendingIterator();
-
-            List<View<?>> views = new ArrayList<>(viewDeque.size());
-
-            while (windowIterator.hasNext()) {
-                View<?> view = windowIterator.next();
-                views.add(view);
+            ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
+            if (breadcrumbs == null) {
+                return Collections.emptyList();
             }
+
+            List<View<?>> views = new ArrayList<>(breadcrumbs.getViews().size());
+            breadcrumbs.getViews().descendingIterator().forEachRemaining(views::add);
 
             return views;
         }
@@ -827,10 +828,9 @@ public class Views {
         public boolean isSelected() {
             checkAttached();
 
-            // TODO: gg, implement
             Tab selectedTab = tabbedContainer.getSelectedTab();
-//            return selectedTab == windowContainer;
-            return false;
+            return selectedTab != null
+                    && tabbedContainer.getComponent(selectedTab) == viewContainer;
         }
 
         /**
@@ -838,12 +838,12 @@ public class Views {
          */
         public void select() {
             checkAttached();
-            // TODO: gg, implement
-//            tabbedWindowContainer.setSelectedTab(windowContainer);
+
+            Tab tab = tabbedContainer.getTab(((Component) viewContainer));
+            tabbedContainer.setSelectedTab(tab);
         }
 
         protected void checkAttached() {
-//            windowContainer.getParent().isPresent()
             if (!((Component) viewContainer).isAttached()) {
                 throw new IllegalStateException("%s has been detached"
                         .formatted(ViewStack.class.getSimpleName()));

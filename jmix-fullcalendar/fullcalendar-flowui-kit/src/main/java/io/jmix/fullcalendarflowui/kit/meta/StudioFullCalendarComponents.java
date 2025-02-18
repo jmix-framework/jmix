@@ -32,6 +32,7 @@ public interface StudioFullCalendarComponents {
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             category = "Components",
             classFqn = "io.jmix.fullcalendarflowui.component.FullCalendar",
+            documentationLink = "%VERSION%/calendar/full-calendar-component.html",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/component/calendar.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,

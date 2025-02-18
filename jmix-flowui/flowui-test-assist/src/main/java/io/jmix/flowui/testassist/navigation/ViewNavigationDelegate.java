@@ -22,10 +22,8 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.server.VaadinSession;
-import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.AbstractViewNavigator;
-import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.flowui.view.navigation.ViewNavigator;
 
 import java.net.MalformedURLException;
@@ -52,14 +50,6 @@ import java.net.URL;
 public class ViewNavigationDelegate<N extends AbstractViewNavigator> {
 
     protected static final String CURRENT_NAVIGATION_URL_ATTRIBUTE = "testCurrentNavigationUrl";
-
-    protected ViewNavigationSupport navigationSupport;
-    protected ViewSupport viewSupport;
-
-    public ViewNavigationDelegate(ViewNavigationSupport navigationSupport, ViewSupport viewSupport) {
-        this.navigationSupport = navigationSupport;
-        this.viewSupport = viewSupport;
-    }
 
     public URL fetchCurrentUrl() {
         VaadinSession session = UI.getCurrent().getSession();

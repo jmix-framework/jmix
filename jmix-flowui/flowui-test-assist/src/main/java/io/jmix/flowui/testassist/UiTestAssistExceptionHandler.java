@@ -18,6 +18,10 @@ package io.jmix.flowui.testassist;
 
 import io.jmix.flowui.exception.UiExceptionHandler;
 
+/**
+ * @deprecated unused, use {@link PropagationExceptionHandler} instead
+ */
+@Deprecated(since = "2.5", forRemoval = true)
 public class UiTestAssistExceptionHandler implements UiExceptionHandler {
 
     @Override
@@ -25,6 +29,10 @@ public class UiTestAssistExceptionHandler implements UiExceptionHandler {
         // Exception can be thrown while navigation is performing. However,
         // this exception is not propagated and test considered as passed.
         // So we should propagate the exception to fail the test.
-        throw (RuntimeException) exception;
+        if (exception instanceof RuntimeException runtimeException) {
+            throw runtimeException;
+        }
+
+        throw new RuntimeException(exception);
     }
 }

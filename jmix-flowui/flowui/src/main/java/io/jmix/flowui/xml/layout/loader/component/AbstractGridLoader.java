@@ -449,9 +449,15 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 });
     }
 
-    protected void loadColumnEditable(Element element, DataGridColumn<?> column, String property) {
+    protected void loadColumnEditable(Element element, DataGridColumn<?> column, @Nullable String property) {
         loadBoolean(element, "editable", editable -> {
             if (Boolean.TRUE.equals(editable)) {
+                if (property == null) {
+                    throw new GuiDevelopmentException(
+                            "'property' attribute is required for editable column with '%s' key"
+                                    .formatted(column.getKey()), context);
+                }
+
                 setDefaultEditComponent(column, property);
             }
         });

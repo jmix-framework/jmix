@@ -20,18 +20,13 @@ import com.vaadin.flow.component.AbstractField;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.binding.impl.AbstractValueBinding;
 import io.jmix.flowui.data.binding.impl.FieldValueBinding;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component("flowui_TwinColumnDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class TwinColumnDelegate<C extends AbstractField<?, V>, T, V> extends AbstractFieldDelegate<C, T, V> {
-
-    protected ApplicationContext applicationContext;
 
     public TwinColumnDelegate(C component) {
         super(component);
@@ -40,11 +35,6 @@ public class TwinColumnDelegate<C extends AbstractField<?, V>, T, V> extends Abs
     @Override
     protected AbstractValueBinding createValueBinding(ValueSource valueSource) {
         return applicationContext.getBean(FieldValueBinding.class, valueSource, component);
-    }
-
-    @Autowired
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     @Override

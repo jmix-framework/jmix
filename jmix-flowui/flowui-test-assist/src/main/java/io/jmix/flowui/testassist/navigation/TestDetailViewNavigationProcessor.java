@@ -17,11 +17,8 @@
 package io.jmix.flowui.testassist.navigation;
 
 import com.vaadin.flow.function.SerializableConsumer;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.StandardDetailView;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.*;
 
@@ -47,9 +44,8 @@ public class TestDetailViewNavigationProcessor extends DetailViewNavigationProce
 
     public TestDetailViewNavigationProcessor(ViewSupport viewSupport, ViewRegistry viewRegistry,
                                              ViewNavigationSupport navigationSupport, RouteSupport routeSupport,
-                                             Metadata metadata, MetadataTools metadataTools,
                                              ViewNavigationDelegate<DetailViewNavigator<?>> navigationDelegate) {
-        super(viewSupport, viewRegistry, navigationSupport, routeSupport, metadata, metadataTools);
+        super(viewSupport, viewRegistry, navigationSupport, routeSupport);
 
         this.navigationDelegate = navigationDelegate;
     }

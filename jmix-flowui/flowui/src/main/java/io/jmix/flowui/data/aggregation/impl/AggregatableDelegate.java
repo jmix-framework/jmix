@@ -69,7 +69,7 @@ public class AggregatableDelegate<K> {
         this.itemValueProvider = itemValueProvider;
     }
 
-    public Map<AggregationInfo, String> aggregate(@Nullable AggregationInfo[] aggregationInfos,
+    public Map<AggregationInfo, String> aggregate(AggregationInfo[] aggregationInfos,
                                                   Collection<K> itemsIds) {
         Preconditions.checkNotNull(aggregationInfos, "AggregationInfo can not be null");
         Preconditions.checkState(aggregationInfos.length != 0,
@@ -81,7 +81,7 @@ public class AggregatableDelegate<K> {
         return doAggregation(aggregationInfos, itemsIds);
     }
 
-    public Map<AggregationInfo, Object> aggregateValues(@Nullable AggregationInfo[] aggregationInfos,
+    public Map<AggregationInfo, Object> aggregateValues(AggregationInfo[] aggregationInfos,
                                                         Collection<K> itemIds) {
         Preconditions.checkNotNull(aggregationInfos, "AggregationInfos can not be null");
         Preconditions.checkState(aggregationInfos.length != 0,

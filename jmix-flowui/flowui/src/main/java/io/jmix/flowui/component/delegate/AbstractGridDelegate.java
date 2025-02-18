@@ -43,7 +43,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.AggregationInfo;
@@ -86,7 +85,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected MetadataTools metadataTools;
     protected MessageTools messageTools;
-    protected UiComponents uiComponents;
     protected AccessManager accessManager;
     protected Aggregations aggregations;
     protected AggregatableDelegate<Object> aggregatableDelegate;
@@ -142,7 +140,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected void autowireDependencies() {
         metadataTools = applicationContext.getBean(MetadataTools.class);
         messageTools = applicationContext.getBean(MessageTools.class);
-        uiComponents = applicationContext.getBean(UiComponents.class);
         accessManager = applicationContext.getBean(AccessManager.class);
         aggregations = applicationContext.getBean(Aggregations.class);
     }
@@ -571,6 +568,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     public DataGridColumn<E> addColumn(Grid.Column<E> column) {
         columns.add(column);
+
+        // always DataGridColumn expected cause #getDefaultColumnFactory
         return (DataGridColumn<E>) column;
     }
 

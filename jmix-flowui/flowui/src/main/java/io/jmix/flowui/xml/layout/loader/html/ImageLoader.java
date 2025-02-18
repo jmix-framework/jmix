@@ -17,11 +17,8 @@
 package io.jmix.flowui.xml.layout.loader.html;
 
 import io.jmix.flowui.component.image.JmixImage;
-import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
 public class ImageLoader extends AbstractHtmlContainerLoader<JmixImage<?>> {
-
-    protected DataLoaderSupport dataLoaderSupport;
 
     @Override
     protected JmixImage<?> createComponent() {
@@ -39,12 +36,5 @@ public class ImageLoader extends AbstractHtmlContainerLoader<JmixImage<?>> {
         componentLoader().loadClickNotifierAttributes(resultComponent, element);
 
         getDataLoaderSupport().loadData(resultComponent, element);
-    }
-
-    protected DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
     }
 }

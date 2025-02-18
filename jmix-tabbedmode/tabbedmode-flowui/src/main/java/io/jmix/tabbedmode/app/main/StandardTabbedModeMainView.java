@@ -50,10 +50,7 @@ public class StandardTabbedModeMainView extends StandardMainView implements HasW
     }
 
     private AppWorkArea createWorkArea() {
-        AppWorkArea workArea = uiComponents().create(AppWorkArea.class);
-        workArea.setClassName("jmix-workarea");
-        workArea.setSizeFull();
-        return workArea;
+        return uiComponents().create(AppWorkArea.class);
     }
 
     @Nullable
@@ -69,12 +66,12 @@ public class StandardTabbedModeMainView extends StandardMainView implements HasW
     }
 
     @Override
-    public void setInitialLayout(Component initialLayout) {
+    public void setInitialLayout(@Nullable Component initialLayout) {
         workArea.setInitialLayout(initialLayout);
     }
 
     @Override
-    public void showRouterLayoutContent(HasElement content) {
+    public void showRouterLayoutContent(@Nullable HasElement content) {
         // TODO: gg, re-implement and delegate to WorkArea
         super.showRouterLayoutContent(content);
     }

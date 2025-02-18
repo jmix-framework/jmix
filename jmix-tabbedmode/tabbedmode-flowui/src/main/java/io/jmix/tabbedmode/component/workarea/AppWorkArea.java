@@ -17,6 +17,7 @@
 package io.jmix.tabbedmode.component.workarea;
 
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.tabs.Tab;
@@ -34,7 +35,6 @@ import io.jmix.tabbedmode.action.tabsheet.CloseThisTabAction;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
-import io.jmix.tabbedmode.component.viewcontainer.TabViewContainer;
 import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -48,12 +48,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-// TODO: gg, create Web Component
-@Tag(Tag.DIV)
+@Tag("jmix-work-area")
+@JsModule("./src/workarea/jmix-work-area.js")
 public class AppWorkArea extends Component implements HasSize, ApplicationContextAware, InitializingBean {
-
-    // TODO: gg, create Web Component
-    public static final String WORK_AREA_CLASS_NAME = "jmix-app-workarea";
 
     // TODO: gg, replace with state attributes
     public static final String TABBED_CONTAINER_CLASS_NAME = "jmix-main-tabsheet";
@@ -84,8 +81,6 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
     }
 
     private void initComponent() {
-        setClassName(WORK_AREA_CLASS_NAME);
-        // TODO: gg, use beans
         tabbedViewsContainer = createTabbedViewsContainer();
         Component initialLayout = createInitialLayout();
         setInitialLayout(initialLayout);
@@ -144,13 +139,12 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
             return;
         }
 
-        // TODO: gg, get?
-        TabViewContainer tabViewContainer = (TabViewContainer) tabbedViewsContainer.findComponent(selectedTab).orElse(null);
-        if (tabViewContainer == null) {
+        Component tabComponent = tabbedViewsContainer.findComponent(selectedTab).orElse(null);
+        if (!(tabComponent instanceof ViewContainer viewContainer)) {
             return;
         }
 
-        ViewBreadcrumbs breadcrumbs = tabViewContainer.getBreadcrumbs();
+        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
         if (breadcrumbs != null && breadcrumbs.getCurrentViewInfo() != null) {
             ViewBreadcrumbs.ViewInfo currentViewInfo = breadcrumbs.getCurrentViewInfo();
             updatePageTitle(currentViewInfo.view());

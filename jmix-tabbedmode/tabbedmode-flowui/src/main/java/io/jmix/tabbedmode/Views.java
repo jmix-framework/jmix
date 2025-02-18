@@ -314,25 +314,25 @@ public class Views {
 
         TabbedViewsContainer<?> tabbedViewsContainer = workArea.getTabbedViewsContainer();
 
-        // TODO: gg, method?
         Tab selectedTab = tabbedViewsContainer.getSelectedTab();
-        // TODO: gg, get?
-        TabViewContainer windowContainer = selectedTab != null
-                ? (TabViewContainer) tabbedViewsContainer.findComponent(selectedTab).orElse(null)
-                : null;
+        if (selectedTab == null) {
+            throw new IllegalStateException("No selected tab found");
+        }
 
-        if (windowContainer == null || windowContainer.getBreadcrumbs() == null) {
+        Component tabComponent = tabbedViewsContainer.getComponent(selectedTab);
+        if (!(tabComponent instanceof ViewContainer viewContainer)
+                || viewContainer.getBreadcrumbs() == null) {
             throw new IllegalStateException(ViewBreadcrumbs.class + " not found");
         }
 
-        ViewBreadcrumbs breadcrumbs = windowContainer.getBreadcrumbs();
+        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
         // TODO: gg, remove after test
         // TODO: gg, exception?
         /*View<?> currentView = breadcrumbs.getCurrentViewInfo().view();
 
         windowContainer.remove(currentView);*/
 
-        windowContainer.setView(view);
+        viewContainer.setView(view);
         breadcrumbs.addView(view, resolveLocation(view));
 
         ViewControllerUtils.setViewCloseDelegate(view, __ -> removeThisTabView(ui, view));
@@ -484,25 +484,28 @@ public class Views {
 
     protected void handleViewTabClose(JmixViewTab.BeforeCloseEvent<JmixViewTab> event) {
         JmixViewTab tab = event.getSource();
-        JmixUI jmixUI = tab.getUI()
-                .filter(ui -> ui instanceof JmixUI)
-                .map(ui -> (JmixUI) ui)
-                .orElseThrow(() -> new IllegalStateException("%s is not attached to UI or UI is not a %s"
-                        .formatted(tab.getClass().getSimpleName(), JmixUI.class.getSimpleName())));
+        UI ui = tab.getUI().orElse(null);
+        if (!(ui instanceof JmixUI jmixUI)) {
+            throw new IllegalStateException("%s is not attached to UI or UI is not a %s"
+                    .formatted(tab.getClass().getSimpleName(), JmixUI.class.getSimpleName()));
+        }
 
         AppWorkArea workArea = getConfiguredWorkArea(jmixUI);
-
         TabbedViewsContainer<?> tabbedViewsContainer = workArea.getTabbedViewsContainer();
 
-        // TODO: gg, get?
-        TabViewContainer windowContainer = ((TabViewContainer) tabbedViewsContainer.findComponent(tab).orElse(null));
-        if (windowContainer == null || windowContainer.getBreadcrumbs() == null) {
+        ViewBreadcrumbs breadcrumbs = getViewBreadcrumbs(tabbedViewsContainer, tab);
+        Runnable closeTask = new TabCloseTask(breadcrumbs, tabbedViewsContainer, tab);
+        closeTask.run();
+    }
+
+    protected ViewBreadcrumbs getViewBreadcrumbs(TabbedViewsContainer<?> tabbedViewsContainer, Tab tab) {
+        Component tabComponent = tabbedViewsContainer.getComponent(tab);
+        if (!(tabComponent instanceof ViewContainer viewContainer)
+                || viewContainer.getBreadcrumbs() == null) {
             throw new IllegalStateException(ViewBreadcrumbs.class + " not found");
         }
 
-        ViewBreadcrumbs breadcrumbs = windowContainer.getBreadcrumbs();
-        Runnable closeTask = new TabCloseTask(breadcrumbs, tabbedViewsContainer, tab);
-        closeTask.run();
+        return viewContainer.getBreadcrumbs();
     }
 
     public String getLoginViewId() {

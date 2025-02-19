@@ -40,6 +40,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.tabbedmode.app.main.HasWorkArea;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
+import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs.BreadcrumbsNavigationContext;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.viewcontainer.TabViewContainer;
@@ -126,8 +127,7 @@ public class Views {
     public OperationResult open(JmixUI ui, View<?> view, ViewOpenMode openMode) {
         checkNotNullArgument(view);
         checkNotNullArgument(openMode);
-        // TODO: gg, implement?
-//        checkNotYetOpened(view);
+        checkNotYetOpened(view);
 
         if (isMaxTabCountExceeded(ui, openMode)) {
             showTooManyOpenTabsMessage();
@@ -174,6 +174,13 @@ public class Views {
         fireViewOpenedEvent(view);
 
         return OperationResult.success();
+    }
+
+    protected void checkNotYetOpened(View<?> view) {
+        if (view.isAttached()) {
+            throw new IllegalStateException("%s is already opened: '%s'"
+                    .formatted(View.class.getSimpleName(), view.getId().orElse(null)));
+        }
     }
 
     protected void updatePageTitle(JmixUI ui, View<?> view) {
@@ -250,7 +257,6 @@ public class Views {
             if (sameView != null) {
                 OperationResult result = sameView.close(NAVIGATION_CLOSE_ACTION);
                 if (result.getStatus() != OperationResult.Status.SUCCESS) {
-                    // TODO: gg, test
                     // if unsaved changes dialog is shown, we can continue later
                     return result.compose(() -> openFromNavigation(ui, view, openMode));
                 }
@@ -417,6 +423,10 @@ public class Views {
         tabbedContainer.setSelectedTab(addedTab);
     }
 
+    protected void onBreadcrumbsNavigate(BreadcrumbsNavigationContext context) {
+        new BreadcrumbsNavigationTask(context).run();
+    }
+
     protected void handleViewTabClose(JmixViewTab.BeforeCloseEvent<JmixViewTab> event) {
         JmixViewTab tab = event.getSource();
         UI ui = tab.getUI().orElse(null);
@@ -429,8 +439,11 @@ public class Views {
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
 
         ViewBreadcrumbs breadcrumbs = getViewBreadcrumbs(tabbedContainer, tab);
-        Runnable closeTask = new TabCloseTask(breadcrumbs, tabbedContainer, tab);
-        closeTask.run();
+        createTabCloseTask(breadcrumbs).run();
+    }
+
+    protected TabCloseTask createTabCloseTask(ViewBreadcrumbs breadcrumbs) {
+        return new TabCloseTask(breadcrumbs);
     }
 
     protected ViewBreadcrumbs getViewBreadcrumbs(TabbedViewsContainer<?> tabbedContainer, Tab tab) {
@@ -452,36 +465,6 @@ public class Views {
         return uiProperties.getMainViewId();
     }
 
-    // TODO: gg, create base class?
-    public class TabCloseTask implements Runnable {
-
-        protected final ViewBreadcrumbs breadcrumbs;
-        protected final TabbedViewsContainer<?> tabbedContainer;
-        protected final JmixViewTab tab;
-
-        public TabCloseTask(ViewBreadcrumbs breadcrumbs,
-                            TabbedViewsContainer<?> tabbedContainer,
-                            JmixViewTab tab) {
-            this.breadcrumbs = breadcrumbs;
-            this.tabbedContainer = tabbedContainer;
-            this.tab = tab;
-        }
-
-        @Override
-        public void run() {
-            ViewBreadcrumbs.ViewInfo viewToClose = breadcrumbs.getCurrentViewInfo();
-            if (viewToClose == null) {
-//                tabSheet.remove(tab);
-                return;
-            }
-
-            if (isCloseable(viewToClose.view())) {
-                viewToClose.view().close(StandardOutcome.CLOSE)
-                        .then(this);
-            }
-        }
-    }
-
     protected boolean isCloseable(View<?> view) {
         // TODO: gg, implement
         return true;
@@ -495,28 +478,6 @@ public class Views {
 
 //        return ((WindowImpl) view).isDefaultScreenWindow();
 
-    }
-
-    protected void onBreadcrumbsNavigate(ViewBreadcrumbs.BreadcrumbsNavigationContext context) {
-        new Runnable() {
-            @Override
-            public void run() {
-                ViewBreadcrumbs.ViewInfo viewToClose = context.breadcrumbs().getCurrentViewInfo();
-                if (viewToClose == null) {
-                    return;
-                }
-
-                // TODO: gg, implement
-                /*if (!viewToClose.isCloseable()) {
-                    return;
-                }*/
-
-                if (context.view() != viewToClose.view()) {
-                    viewToClose.view().close(StandardOutcome.CLOSE)
-                            .then(this);
-                }
-            }
-        }.run();
     }
 
     protected ViewBreadcrumbs createViewBreadCrumbs() {
@@ -772,6 +733,55 @@ public class Views {
             if (!((Component) viewContainer).isAttached()) {
                 throw new IllegalStateException("%s has been detached"
                         .formatted(ViewStack.class.getSimpleName()));
+            }
+        }
+    }
+
+    protected static class BreadcrumbsNavigationTask implements Runnable {
+
+        private final BreadcrumbsNavigationContext context;
+
+        public BreadcrumbsNavigationTask(BreadcrumbsNavigationContext context) {
+            this.context = context;
+        }
+
+        @Override
+        public void run() {
+            ViewBreadcrumbs.ViewInfo viewToClose = context.breadcrumbs().getCurrentViewInfo();
+            if (viewToClose == null) {
+                return;
+            }
+
+            // TODO: gg, implement
+            /*if (!viewToClose.isCloseable()) {
+                return;
+            }*/
+
+            if (context.view() != viewToClose.view()) {
+                viewToClose.view().close(StandardOutcome.CLOSE)
+                        .then(this);
+            }
+        }
+    }
+
+    protected class TabCloseTask implements Runnable {
+
+        protected final ViewBreadcrumbs breadcrumbs;
+
+        public TabCloseTask(ViewBreadcrumbs breadcrumbs) {
+            this.breadcrumbs = breadcrumbs;
+        }
+
+        @Override
+        public void run() {
+            ViewBreadcrumbs.ViewInfo viewToClose = breadcrumbs.getCurrentViewInfo();
+            if (viewToClose == null) {
+                return;
+            }
+
+            if (isCloseable(viewToClose.view())) {
+                viewToClose.view().close(StandardOutcome.CLOSE)
+                        .then(this);
             }
         }
     }

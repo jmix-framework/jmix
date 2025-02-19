@@ -28,6 +28,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.OpenedDialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -37,14 +38,14 @@ import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
+import io.jmix.tabbedmode.app.main.HasWorkArea;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.viewcontainer.TabViewContainer;
 import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
-import io.jmix.tabbedmode.component.workarea.WorkArea;
-import io.jmix.tabbedmode.app.main.HasWorkArea;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
+import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.view.DialogWindow;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -241,8 +242,8 @@ public class Views {
             // TODO: gg, re-work?
             WorkArea workArea = getConfiguredWorkArea(ui);
             View<?> sameView = getTabbedViewsStacks(workArea)
-                    .filter(windowStack -> windowStack.getBreadcrumbs().size() == 1) // never close non-top active screens
-                    .map(windowStack -> windowStack.getBreadcrumbs().iterator().next())
+                    .filter(viewStack -> viewStack.getBreadcrumbs().size() == 1) // never close non-top active screens
+                    .map(viewStack -> viewStack.getBreadcrumbs().iterator().next())
                     .filter(tabScreen -> ViewControllerUtils.isSameView(view, tabScreen))
                     .findFirst()
                     .orElse(null);
@@ -307,16 +308,13 @@ public class Views {
         } else {
             selectedTab.setLabel(ViewControllerUtils.getPageTitle(view));
         }
-
-//        ContentSwitchMode contentSwitchMode = ContentSwitchMode.valueOf(tabWindow.getContentSwitchMode().name());
-//        tabbedContainer.setContentSwitchMode(tabId, contentSwitchMode);
     }
 
     protected void removeThisTabView(JmixUI ui, View<?> view) {
-        TabViewContainer windowContainer = getTabWindowContainer(view);
-        windowContainer.removeView();
+        ViewContainer viewContainer = getViewContainer(view);
+        viewContainer.removeView();
 
-        ViewBreadcrumbs breadcrumbs = windowContainer.getBreadcrumbs();
+        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
         if (breadcrumbs == null) {
             throw new IllegalStateException("%s not found"
                     .formatted(ViewBreadcrumbs.class.getSimpleName()));
@@ -329,11 +327,11 @@ public class Views {
             throw new IllegalStateException("Current %s not found".formatted(View.class.getSimpleName()));
         }
 
-        windowContainer.setView(currentViewInfo.view());
+        viewContainer.setView(currentViewInfo.view());
 
         WorkArea workArea = getConfiguredWorkArea(ui);
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
-        Tab tab = tabbedContainer.getTab(windowContainer);
+        Tab tab = tabbedContainer.getTab(((Component) viewContainer));
 
         if (tab instanceof JmixViewTab viewTab) {
             viewTab.setText(ViewControllerUtils.getPageTitle(currentViewInfo.view()));
@@ -358,16 +356,16 @@ public class Views {
     }
 
     protected void removeNewTabView(JmixUI ui, View<?> view) {
-        TabViewContainer windowContainer = getTabWindowContainer(view);
+        ViewContainer viewContainer = getViewContainer(view);
 
         WorkArea workArea = getConfiguredWorkArea(ui);
 
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
-        tabbedContainer.remove(windowContainer);
+        tabbedContainer.remove(((Component) viewContainer));
 
         boolean allViewsRemoved = tabbedContainer.getTabs().isEmpty();
 
-        ViewBreadcrumbs breadcrumbs = windowContainer.getBreadcrumbs();
+        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
         if (breadcrumbs != null) {
             breadcrumbs.setNavigationHandler(null);
             breadcrumbs.removeView();
@@ -383,13 +381,12 @@ public class Views {
         }
     }
 
-    // TODO: gg, ViewContainer
-    protected TabViewContainer getTabWindowContainer(View<?> view) {
+    protected ViewContainer getViewContainer(View<?> view) {
         return view.getParent()
-                .filter(parent -> parent instanceof TabViewContainer)
-                .map(parent -> ((TabViewContainer) parent))
+                .filter(parent -> parent instanceof ViewContainer)
+                .map(parent -> ((ViewContainer) parent))
                 .orElseThrow(() -> new IllegalStateException("%s is not attached to a %s"
-                        .formatted(View.class.getSimpleName(), TabViewContainer.class.getSimpleName())));
+                        .formatted(View.class.getSimpleName(), ViewContainer.class.getSimpleName())));
     }
 
     protected void createNewTabLayout(JmixUI ui, View<?> view) {
@@ -397,11 +394,11 @@ public class Views {
         breadcrumbs.setNavigationHandler(this::onBreadcrumbsNavigate);
         breadcrumbs.addView(view, resolveLocation(view));
 
-        TabViewContainer windowContainer = uiComponents.create(TabViewContainer.class);
-        windowContainer.setSizeFull();
+        TabViewContainer viewContainer = uiComponents.create(TabViewContainer.class);
+        viewContainer.setSizeFull();
 
-        windowContainer.setBreadcrumbs(breadcrumbs);
-        windowContainer.setView(view);
+        viewContainer.setBreadcrumbs(breadcrumbs);
+        viewContainer.setView(view);
 
         WorkArea workArea = getConfiguredWorkArea(ui);
 
@@ -416,7 +413,7 @@ public class Views {
         newTab.setClosable(true /*view.isCloseable()*/);
         newTab.addBeforeCloseListener(this::handleViewTabClose);
 
-        Tab addedTab = tabbedContainer.add(newTab, windowContainer);
+        Tab addedTab = tabbedContainer.add(newTab, viewContainer);
 
         tabbedContainer.setSelectedTab(addedTab);
     }
@@ -553,7 +550,8 @@ public class Views {
     }
 
     public OpenedViews getOpenedViews() {
-        return new OpenedViews(getCurrentUI());
+        OpenedDialogWindows openedDialogWindows = applicationContext.getBean(OpenedDialogWindows.class);
+        return new OpenedViews(getCurrentUI(), openedDialogWindows);
     }
 
     public Component getCurrentView(JmixUI ui) {
@@ -625,9 +623,12 @@ public class Views {
     public class OpenedViews {
 
         protected final JmixUI ui;
+        protected final OpenedDialogWindows openedDialogWindows;
 
-        public OpenedViews(JmixUI ui) {
+        public OpenedViews(JmixUI ui,
+                           OpenedDialogWindows openedDialogWindows) {
             this.ui = ui;
+            this.openedDialogWindows = openedDialogWindows;
         }
 
         /**
@@ -652,7 +653,7 @@ public class Views {
         public Collection<View<?>> getAll() {
             List<View<?>> views = new ArrayList<>();
             views.addAll(getOpenedWorkAreaViews());
-            views.addAll(getDialogViews());
+            views.addAll(getDialogWindows());
 
             return views;
         }
@@ -674,7 +675,7 @@ public class Views {
         public Collection<View<?>> getActiveViews() {
             List<View<?>> views = new ArrayList<>();
             views.addAll(getActiveWorkAreaViews());
-            views.addAll(getDialogViews());
+            views.addAll(getDialogWindows());
 
             return views;
         }
@@ -692,9 +693,8 @@ public class Views {
         /**
          * @return all views opened in a dialog window
          */
-        public Collection<View<?>> getDialogViews() {
-            // TODO: gg, implement
-            return Collections.emptyList();
+        public Collection<View<?>> getDialogWindows() {
+            return openedDialogWindows.getDialogs(ui);
         }
 
         /**
@@ -708,7 +708,7 @@ public class Views {
         }
 
         /**
-         * @return tab containers or single window container with access to breadcrumbs or empty collection
+         * @return tab containers with access to breadcrumbs or empty collection
          * if there is no root view or root view does not have {@link WorkArea}
          */
         public Collection<ViewStack> getWorkAreaViewStacks() {

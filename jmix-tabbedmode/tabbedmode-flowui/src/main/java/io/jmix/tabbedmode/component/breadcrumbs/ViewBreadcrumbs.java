@@ -55,7 +55,6 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> {
     }
 
     public Deque<View<?>> getViews() {
-        // TODO: gg, UnmodifiableDeque?
         return new ArrayDeque<>(views);
     }
 

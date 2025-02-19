@@ -42,8 +42,8 @@ import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.viewcontainer.TabViewContainer;
 import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
-import io.jmix.tabbedmode.component.workarea.AppWorkArea;
-import io.jmix.tabbedmode.component.workarea.HasWorkArea;
+import io.jmix.tabbedmode.component.workarea.WorkArea;
+import io.jmix.tabbedmode.app.main.HasWorkArea;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import io.jmix.tabbedmode.view.DialogWindow;
 import io.jmix.tabbedmode.view.ViewOpenMode;
@@ -239,7 +239,7 @@ public class Views {
 
             // TODO: gg, check isMultipleOpen
             // TODO: gg, re-work?
-            AppWorkArea workArea = getConfiguredWorkArea(ui);
+            WorkArea workArea = getConfiguredWorkArea(ui);
             View<?> sameView = getTabbedViewsStacks(workArea)
                     .filter(windowStack -> windowStack.getBreadcrumbs().size() == 1) // never close non-top active screens
                     .map(windowStack -> windowStack.getBreadcrumbs().iterator().next())
@@ -277,8 +277,8 @@ public class Views {
     }
 
     protected void openThisTab(JmixUI ui, View<?> view) {
-        AppWorkArea workArea = getConfiguredWorkArea(ui);
-        workArea.switchTo(AppWorkArea.State.VIEW_CONTAINER);
+        WorkArea workArea = getConfiguredWorkArea(ui);
+        workArea.switchTo(WorkArea.State.VIEW_CONTAINER);
 
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
 
@@ -290,7 +290,8 @@ public class Views {
         Component tabComponent = tabbedContainer.getComponent(selectedTab);
         if (!(tabComponent instanceof ViewContainer viewContainer)
                 || viewContainer.getBreadcrumbs() == null) {
-            throw new IllegalStateException(ViewBreadcrumbs.class + " not found");
+            throw new IllegalStateException("%s not found"
+                    .formatted(ViewBreadcrumbs.class.getSimpleName()));
         }
 
         viewContainer.setView(view);
@@ -317,7 +318,8 @@ public class Views {
 
         ViewBreadcrumbs breadcrumbs = windowContainer.getBreadcrumbs();
         if (breadcrumbs == null) {
-            throw new IllegalStateException(ViewBreadcrumbs.class + " not found");
+            throw new IllegalStateException("%s not found"
+                    .formatted(ViewBreadcrumbs.class.getSimpleName()));
         }
 
         breadcrumbs.removeView();
@@ -329,7 +331,7 @@ public class Views {
 
         windowContainer.setView(currentViewInfo.view());
 
-        AppWorkArea workArea = getConfiguredWorkArea(ui);
+        WorkArea workArea = getConfiguredWorkArea(ui);
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
         Tab tab = tabbedContainer.getTab(windowContainer);
 
@@ -347,8 +349,8 @@ public class Views {
     }
 
     protected void openNewTab(JmixUI ui, View<?> view) {
-        AppWorkArea workArea = getConfiguredWorkArea(ui);
-        workArea.switchTo(AppWorkArea.State.VIEW_CONTAINER);
+        WorkArea workArea = getConfiguredWorkArea(ui);
+        workArea.switchTo(WorkArea.State.VIEW_CONTAINER);
 
         // work with new view
         createNewTabLayout(ui, view);
@@ -358,7 +360,7 @@ public class Views {
     protected void removeNewTabView(JmixUI ui, View<?> view) {
         TabViewContainer windowContainer = getTabWindowContainer(view);
 
-        AppWorkArea workArea = getConfiguredWorkArea(ui);
+        WorkArea workArea = getConfiguredWorkArea(ui);
 
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
         tabbedContainer.remove(windowContainer);
@@ -372,7 +374,7 @@ public class Views {
         }
 
         if (allViewsRemoved) {
-            workArea.switchTo(AppWorkArea.State.INITIAL_LAYOUT);
+            workArea.switchTo(WorkArea.State.INITIAL_LAYOUT);
 
             // TODO: gg, move or re-implement, e.g. to state change listener?
             View<?> rootView = UiComponentUtils.getView(workArea);
@@ -401,7 +403,7 @@ public class Views {
         windowContainer.setBreadcrumbs(breadcrumbs);
         windowContainer.setView(view);
 
-        AppWorkArea workArea = getConfiguredWorkArea(ui);
+        WorkArea workArea = getConfiguredWorkArea(ui);
 
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
 
@@ -427,7 +429,7 @@ public class Views {
                     .formatted(tab.getClass().getSimpleName(), JmixUI.class.getSimpleName()));
         }
 
-        AppWorkArea workArea = getConfiguredWorkArea(jmixUI);
+        WorkArea workArea = getConfiguredWorkArea(jmixUI);
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
 
         ViewBreadcrumbs breadcrumbs = getViewBreadcrumbs(tabbedContainer, tab);
@@ -439,7 +441,8 @@ public class Views {
         Component tabComponent = tabbedContainer.getComponent(tab);
         if (!(tabComponent instanceof ViewContainer viewContainer)
                 || viewContainer.getBreadcrumbs() == null) {
-            throw new IllegalStateException(ViewBreadcrumbs.class + " not found");
+            throw new IllegalStateException("%s not found"
+                    .formatted(ViewBreadcrumbs.class.getSimpleName()));
         }
 
         return viewContainer.getBreadcrumbs();
@@ -527,7 +530,7 @@ public class Views {
         return breadcrumbs;
     }
 
-    public Optional<AppWorkArea> findConfiguredWorkArea(JmixUI ui) {
+    public Optional<WorkArea> findConfiguredWorkArea(JmixUI ui) {
         View<?> topLevelView = ui.getTopLevelView();
         if (topLevelView instanceof HasWorkArea hasWorkArea) {
             return Optional.ofNullable(hasWorkArea.getWorkArea());
@@ -536,13 +539,13 @@ public class Views {
         return Optional.empty();
     }
 
-    public AppWorkArea getConfiguredWorkArea(JmixUI ui) {
+    public WorkArea getConfiguredWorkArea(JmixUI ui) {
         return findConfiguredWorkArea(ui)
                 .orElseThrow(() -> new IllegalStateException("Root %s does not have any configured work area"
                         .formatted(View.class.getSimpleName())));
     }
 
-    protected Stream<ViewStack> getTabbedViewsStacks(AppWorkArea workArea) {
+    protected Stream<ViewStack> getTabbedViewsStacks(WorkArea workArea) {
         return workArea.getTabbedViewsContainer().getTabComponentsStream()
                 .map(MainTabSheetUtils::asViewContainer)
                 .map(viewContainer ->
@@ -596,7 +599,7 @@ public class Views {
 
     protected boolean isMaxTabCountExceeded(JmixUI ui, ViewOpenMode openMode) {
         if (openMode == ViewOpenMode.NEW_TAB) {
-            AppWorkArea workArea = getConfiguredWorkArea(ui);
+            WorkArea workArea = getConfiguredWorkArea(ui);
 
             int maxTabCount = tabbedModeProperties.getMaxTabCount();
             return maxTabCount > 0 && workArea.getOpenedTabCount() + 1 > maxTabCount;
@@ -644,7 +647,7 @@ public class Views {
 
         /**
          * @return all opened views excluding the root view or empty collection if there is no root view
-         * or root view does not have {@link AppWorkArea}
+         * or root view does not have {@link WorkArea}
          */
         public Collection<View<?>> getAll() {
             List<View<?>> views = new ArrayList<>();
@@ -656,17 +659,17 @@ public class Views {
 
         /**
          * @return all opened views excluding the root view and dialogs or empty collection
-         * if there is no root view or root view does not have {@link AppWorkArea}
+         * if there is no root view or root view does not have {@link WorkArea}
          */
         public Collection<View<?>> getOpenedWorkAreaViews() {
             return findConfiguredWorkArea(ui)
-                    .map(AppWorkArea::getOpenedWorkAreaViews)
+                    .map(WorkArea::getOpenedWorkAreaViews)
                     .orElse(Collections.emptyList());
         }
 
         /**
          * @return top views from work area tabs and all dialog windows or empty collection if there is no root view
-         * or root view does not have {@link AppWorkArea}
+         * or root view does not have {@link WorkArea}
          */
         public Collection<View<?>> getActiveViews() {
             List<View<?>> views = new ArrayList<>();
@@ -678,11 +681,11 @@ public class Views {
 
         /**
          * @return top views from work area tabs or empty collection if there is no root view
-         * or root view does not have {@link AppWorkArea}
+         * or root view does not have {@link WorkArea}
          */
         public Collection<View<?>> getActiveWorkAreaViews() {
             return findConfiguredWorkArea(ui)
-                    .map(AppWorkArea::getActiveWorkAreaViews)
+                    .map(WorkArea::getActiveWorkAreaViews)
                     .orElse(Collections.emptyList());
         }
 
@@ -696,20 +699,20 @@ public class Views {
 
         /**
          * @return views of the currently opened tab of work area in descending order (first element is active view)
-         * or empty collection if there is no root view or root view does not have {@link AppWorkArea}
+         * or empty collection if there is no root view or root view does not have {@link WorkArea}
          */
         public Collection<View<?>> getCurrentBreadcrumbs() {
             return findConfiguredWorkArea(ui)
-                    .map(AppWorkArea::getCurrentBreadcrumbs)
+                    .map(WorkArea::getCurrentBreadcrumbs)
                     .orElse(Collections.emptyList());
         }
 
         /**
          * @return tab containers or single window container with access to breadcrumbs or empty collection
-         * if there is no root view or root view does not have {@link AppWorkArea}
+         * if there is no root view or root view does not have {@link WorkArea}
          */
         public Collection<ViewStack> getWorkAreaViewStacks() {
-            Optional<AppWorkArea> workArea = findConfiguredWorkArea(ui);
+            Optional<WorkArea> workArea = findConfiguredWorkArea(ui);
             if (workArea.isEmpty()) {
                 return Collections.emptyList();
             }

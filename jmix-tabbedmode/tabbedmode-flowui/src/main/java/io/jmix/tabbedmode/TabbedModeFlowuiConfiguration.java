@@ -24,7 +24,11 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.ActionsConfiguration;
+import io.jmix.flowui.sys.registration.ComponentRegistration;
+import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
+import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.sys.vaadin.TabbedModeVaadinServlet;
+import io.jmix.tabbedmode.xml.layout.loader.WorkAreaLoader;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -48,6 +52,14 @@ public class TabbedModeFlowuiConfiguration {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
         actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.tabbedmode.action"));
         return actionsConfiguration;
+    }
+
+    @Bean
+    public ComponentRegistration workAreaComponent() {
+        return ComponentRegistrationBuilder.create(WorkArea.class)
+                .withComponentLoader("workArea", WorkAreaLoader.class)
+                .build();
+
     }
 
     @Bean("tabmod_ServletRegistrationBean")

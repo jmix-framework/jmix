@@ -19,9 +19,9 @@ import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
 import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-class JmixAppWorkArea extends ThemableMixin(ElementMixin(PolylitMixin(LitElement))) {
+class JmixWorkArea extends ThemableMixin(ElementMixin(PolylitMixin(LitElement))) {
     static get is() {
-        return 'jmix-app-work-area';
+        return 'jmix-work-area';
     }
 
     static get styles() {
@@ -39,6 +39,6 @@ class JmixAppWorkArea extends ThemableMixin(ElementMixin(PolylitMixin(LitElement
     }
 }
 
-defineCustomElement(JmixAppWorkArea);
+defineCustomElement(JmixWorkArea);
 
-export {JmixAppWorkArea};
+export {JmixWorkArea};

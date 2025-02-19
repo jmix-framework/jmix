@@ -16,70 +16,38 @@
 
 package io.jmix.tabbedmode.app.main;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.router.RouterLayout;
 import io.jmix.core.Metadata;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.UiProperties;
-import io.jmix.flowui.app.main.StandardMainView;
 import io.jmix.flowui.component.applayout.JmixAppLayout;
 import io.jmix.flowui.view.*;
 import io.jmix.tabbedmode.JmixUI;
 import io.jmix.tabbedmode.Views;
-import io.jmix.tabbedmode.component.workarea.AppWorkArea;
-import io.jmix.tabbedmode.component.workarea.HasWorkArea;
+import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.navigation.RedirectHandler;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 import org.springframework.lang.Nullable;
 
 @CssImport("./src/view/main-view.css")
-public class StandardTabbedModeMainView extends StandardMainView implements HasWorkArea {
+public class StandardTabbedModeMainView extends View<JmixAppLayout> implements HasWorkArea, RouterLayout {
 
-    private AppWorkArea workArea;
+    protected WorkArea workArea;
 
     @Override
-    protected JmixAppLayout initContent() {
-        JmixAppLayout jmixAppLayout = super.initContent();
-        workArea = createWorkArea();
-        jmixAppLayout.setContent(workArea);
-
-        return jmixAppLayout;
-    }
-
-    private AppWorkArea createWorkArea() {
-        return uiComponents().create(AppWorkArea.class);
-    }
-
-    @Nullable
-    @Override
-    public AppWorkArea getWorkArea() {
-        // TODO: gg, explicitly define in XML?
+    public WorkArea getWorkAreaOrNull() {
         return workArea;
     }
 
-    @Override
-    public Component getInitialLayout() {
-        return workArea.getInitialLayout();
-    }
+    public void setWorkArea(WorkArea workArea) {
+        Preconditions.checkState(this.workArea == null, "%s has already been initialized"
+                .formatted(WorkArea.class.getSimpleName()));
 
-    @Override
-    public void setInitialLayout(@Nullable Component initialLayout) {
-        workArea.setInitialLayout(initialLayout);
-    }
-
-    @Override
-    public void showRouterLayoutContent(@Nullable HasElement content) {
-        // TODO: gg, re-implement and delegate to WorkArea
-        super.showRouterLayoutContent(content);
-    }
-
-    @Override
-    public void removeRouterLayoutContent(HasElement oldContent) {
-        // TODO: gg, re-implement and delegate to WorkArea
-        super.removeRouterLayoutContent(oldContent);
+        this.workArea = workArea;
+        getContent().setContent(workArea);
     }
 
     @Subscribe
@@ -88,12 +56,7 @@ public class StandardTabbedModeMainView extends StandardMainView implements HasW
         handleRedirect();
     }
 
-    private void showNotification(String message) {
-        Notification.show(message, 3000, Notification.Position.MIDDLE);
-    }
-
-    // TODO: gg, move to helper class
-
+    // TODO: gg, move to support bean
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void openDefaultView() {
         String defaultViewId = uiProperties().getDefaultViewId();
@@ -141,10 +104,6 @@ public class StandardTabbedModeMainView extends StandardMainView implements HasW
                 redirectHandler.redirect();
             }
         }
-    }
-
-    protected UiComponents uiComponents() {
-        return getApplicationContext().getBean(UiComponents.class);
     }
 
     protected UiProperties uiProperties() {

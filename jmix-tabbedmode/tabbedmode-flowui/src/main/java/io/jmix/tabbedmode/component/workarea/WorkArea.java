@@ -49,9 +49,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Tag("jmix-app-work-area")
-@JsModule("./src/workarea/jmix-app-work-area.js")
-public class AppWorkArea extends Component implements HasSize, ApplicationContextAware, InitializingBean {
+import static com.google.common.base.Preconditions.checkState;
+
+@Tag("jmix-work-area")
+@JsModule("./src/workarea/jmix-work-area.js")
+public class WorkArea extends Component implements HasSize, ApplicationContextAware, InitializingBean {
 
     public static final String TABBED_CONTAINER_CLASS_NAME = "jmix-main-tabsheet";
     public static final String INITIAL_LAYOUT_CLASS_NAME = "jmix-initial-layout";
@@ -63,9 +65,9 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
     protected State state = State.INITIAL_LAYOUT;
 
     protected TabbedViewsContainer<?> tabbedContainer;
-    protected Component initialLayout;
+    protected VerticalLayout initialLayout;
 
-    public AppWorkArea() {
+    public WorkArea() {
     }
 
     @Override
@@ -82,8 +84,6 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
 
     private void initComponent() {
         tabbedContainer = createTabbedViewsContainer();
-        Component initialLayout = createInitialLayout();
-        setInitialLayout(initialLayout);
     }
 
     protected TabbedViewsContainer<?> createTabbedViewsContainer() {
@@ -101,15 +101,12 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
         return tabSheet;
     }
 
-    protected Component createInitialLayout() {
-        return uiComponents.create(VerticalLayout.class);
-    }
-
-    public Component getInitialLayout() {
+    public VerticalLayout getInitialLayout() {
+        checkState(initialLayout != null, "Initial layout is not initialized");
         return initialLayout;
     }
 
-    public void setInitialLayout(Component initialLayout) {
+    public void setInitialLayout(VerticalLayout initialLayout) {
         Preconditions.checkNotNullArgument(initialLayout);
 
         if (this.initialLayout != null) {
@@ -294,11 +291,11 @@ public class AppWorkArea extends Component implements HasSize, ApplicationContex
     /**
      * Event that is fired when work area changed its state.
      */
-    public static class StateChangeEvent extends ComponentEvent<AppWorkArea> {
+    public static class StateChangeEvent extends ComponentEvent<WorkArea> {
 
         protected final State state;
 
-        public StateChangeEvent(AppWorkArea source, State state) {
+        public StateChangeEvent(WorkArea source, State state) {
             super(source, false);
             this.state = state;
         }

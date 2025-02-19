@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Primary
-@Component("tabmod_TabbedLoginViewSupport")
+@Component("tabmod_TabbedModeLoginViewSupport")
 public class TabbedModeLoginViewSupport extends LoginViewSupport {
 
     protected ViewBuilders viewBuilders;

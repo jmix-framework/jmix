@@ -18,7 +18,7 @@ package io.jmix.tabbedmode.app.main;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.router.RouterLayout;
 import io.jmix.core.Metadata;
@@ -30,7 +30,6 @@ import io.jmix.tabbedmode.Views;
 import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.navigation.RedirectHandler;
 import io.jmix.tabbedmode.view.ViewOpenMode;
-import org.springframework.lang.Nullable;
 
 @CssImport("./src/view/main-view.css")
 public class StandardTabbedModeMainView extends View<JmixAppLayout> implements HasWorkArea, RouterLayout {
@@ -104,6 +103,18 @@ public class StandardTabbedModeMainView extends View<JmixAppLayout> implements H
                 redirectHandler.redirect();
             }
         }
+    }
+
+    @Override
+    public void showRouterLayoutContent(HasElement content) {
+        throw new UnsupportedOperationException("Use %s to show content instead"
+                .formatted(WorkArea.class.getSimpleName()));
+    }
+
+    @Override
+    public void removeRouterLayoutContent(HasElement oldContent) {
+        throw new UnsupportedOperationException("Use %s to show content instead"
+                .formatted(WorkArea.class.getSimpleName()));
     }
 
     protected UiProperties uiProperties() {

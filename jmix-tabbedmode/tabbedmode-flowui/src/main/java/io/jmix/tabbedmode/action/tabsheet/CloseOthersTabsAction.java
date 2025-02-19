@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashSet;
 
 @ActionType(CloseOthersTabsAction.ID)
-public class CloseOthersTabsAction extends MainTabSheetAction<CloseOthersTabsAction> {
+public class CloseOthersTabsAction extends TabbedViewsContainerAction<CloseOthersTabsAction> {
 
     private static final Logger log = LoggerFactory.getLogger(CloseOthersTabsAction.class);
 

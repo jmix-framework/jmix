@@ -18,7 +18,7 @@ package io.jmix.tabbedmode.component.tabsheet;
 
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.delegate.AbstractActionsHolderSupport;
-import io.jmix.tabbedmode.action.tabsheet.MainTabSheetAction;
+import io.jmix.tabbedmode.action.tabsheet.TabbedViewsContainerAction;
 import io.jmix.tabbedmode.component.tabsheet.contextmenu.MainTabSheetContextMenu;
 import io.jmix.tabbedmode.component.tabsheet.contextmenu.MainTabSheetMenuItem;
 import io.jmix.tabbedmode.component.tabsheet.contextmenu.MainTabSheetMenuItemActionWrapper;
@@ -82,8 +82,8 @@ public class MainTabSheetActionsSupport extends AbstractActionsHolderSupport<Jmi
     protected void attachAction(Action action) {
         super.attachAction(action);
 
-        if (action instanceof MainTabSheetAction<?> mainTabSheetAction) {
-            mainTabSheetAction.setTarget(component);
+        if (action instanceof TabbedViewsContainerAction<?> tabbedViewsContainerAction) {
+            tabbedViewsContainerAction.setTarget(component);
         }
     }
 
@@ -91,8 +91,8 @@ public class MainTabSheetActionsSupport extends AbstractActionsHolderSupport<Jmi
     protected void detachAction(Action action) {
         super.detachAction(action);
 
-        if (action instanceof MainTabSheetAction<?> mainTabSheetAction) {
-            mainTabSheetAction.setTarget(null);
+        if (action instanceof TabbedViewsContainerAction<?> tabbedViewsContainerAction) {
+            tabbedViewsContainerAction.setTarget(null);
         }
     }
 

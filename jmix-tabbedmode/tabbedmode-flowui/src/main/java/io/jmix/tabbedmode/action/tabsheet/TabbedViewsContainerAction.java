@@ -19,25 +19,23 @@ package io.jmix.tabbedmode.action.tabsheet;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.tabs.Tab;
-import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.TargetAction;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
+import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import org.springframework.lang.Nullable;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class MainTabSheetAction<A extends MainTabSheetAction<A>> extends BaseAction
-        implements TargetAction<JmixMainTabSheet> {
+public abstract class TabbedViewsContainerAction<A extends TabbedViewsContainerAction<A>> extends BaseAction
+        implements TargetAction<TabbedViewsContainer<?>> {
 
-    protected JmixMainTabSheet target;
+    protected TabbedViewsContainer<?> target;
 
-    public MainTabSheetAction(String id) {
+    public TabbedViewsContainerAction(String id) {
         super(id);
 
         initAction();
@@ -49,12 +47,12 @@ public abstract class MainTabSheetAction<A extends MainTabSheetAction<A>> extend
 
     @Nullable
     @Override
-    public JmixMainTabSheet getTarget() {
+    public TabbedViewsContainer<?> getTarget() {
         return target;
     }
 
     @Override
-    public void setTarget(@Nullable JmixMainTabSheet target) {
+    public void setTarget(@Nullable TabbedViewsContainer<?> target) {
         if (!Objects.equals(this.target, target)) {
             this.target = target;
 
@@ -63,7 +61,7 @@ public abstract class MainTabSheetAction<A extends MainTabSheetAction<A>> extend
     }
 
     @SuppressWarnings("unchecked")
-    public A withTarget(@Nullable JmixMainTabSheet target) {
+    public A withTarget(@Nullable TabbedViewsContainer<?> target) {
         setTarget(target);
         return ((A) this);
     }

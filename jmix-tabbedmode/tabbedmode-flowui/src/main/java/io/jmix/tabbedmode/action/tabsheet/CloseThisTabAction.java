@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ActionType(CloseThisTabAction.ID)
-public class CloseThisTabAction extends MainTabSheetAction<CloseThisTabAction> {
+public class CloseThisTabAction extends TabbedViewsContainerAction<CloseThisTabAction> {
 
     private static final Logger log = LoggerFactory.getLogger(CloseThisTabAction.class);
 

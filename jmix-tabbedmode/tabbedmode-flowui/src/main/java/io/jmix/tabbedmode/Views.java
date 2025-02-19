@@ -53,7 +53,6 @@ import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -550,36 +549,33 @@ public class Views {
     }
 
     public OpenedViews getOpenedViews() {
+        return getOpenedViews(getCurrentUI());
+    }
+
+    public OpenedViews getOpenedViews(JmixUI ui) {
         OpenedDialogWindows openedDialogWindows = applicationContext.getBean(OpenedDialogWindows.class);
-        return new OpenedViews(getCurrentUI(), openedDialogWindows);
+        return new OpenedViews(ui, openedDialogWindows);
     }
 
-    public Component getCurrentView(JmixUI ui) {
-        Component currentView = findCurrentView(ui);
-        if (currentView == null) {
-            throw new IllegalStateException("No view found");
-        }
-
-        return currentView;
+    public View<?> getCurrentView(JmixUI ui) {
+        return findCurrentView(ui)
+                .orElseThrow(() -> new IllegalStateException("No %s found"
+                        .formatted(View.class.getSimpleName())));
     }
 
-    @Nullable
-    public Component findCurrentView(JmixUI ui) {
-        // TODO: gg, implement
-        /*Iterator<Screen> dialogsIterator = getOpenedScreens().getDialogScreens().iterator();
+    public Optional<View<?>> findCurrentView(JmixUI ui) {
+        OpenedViews openedViews = getOpenedViews(ui);
+        Iterator<View<?>> dialogsIterator = openedViews.getDialogWindows().iterator();
         if (dialogsIterator.hasNext()) {
-            return dialogsIterator.next();
+            return Optional.of(dialogsIterator.next());
         }
 
-        Iterator<Screen> screensIterator = getOpenedScreens().getCurrentBreadcrumbs().iterator();
-        if (screensIterator.hasNext()) {
-            return screensIterator.next();
+        Iterator<View<?>> viewsIterator = openedViews.getCurrentBreadcrumbs().iterator();
+        if (viewsIterator.hasNext()) {
+            return Optional.of(viewsIterator.next());
         }
 
-        return getOpenedScreens().getRootScreenOrNull();*/
-
-        // TODO: gg, temp solution
-        return ui.getTopLevelView();
+        return openedViews.findRootView();
     }
 
     protected void fireViewBeforeShowEvent(View<?> view) {

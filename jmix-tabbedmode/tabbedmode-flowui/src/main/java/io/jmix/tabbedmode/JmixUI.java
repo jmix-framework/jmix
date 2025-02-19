@@ -658,7 +658,7 @@ public class JmixUI extends UI {
     }
 
     @Override
-    public Component getCurrentView() {
+    public View<?> getCurrentView() {
         return views.getCurrentView(this);
     }
 

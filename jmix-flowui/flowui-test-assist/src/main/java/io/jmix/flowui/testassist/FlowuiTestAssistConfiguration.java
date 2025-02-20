@@ -18,8 +18,6 @@ package io.jmix.flowui.testassist;
 
 import com.vaadin.flow.spring.VaadinScopesConfig;
 import io.jmix.core.JmixOrder;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.testassist.navigation.TestDetailViewNavigationProcessor;
 import io.jmix.flowui.testassist.navigation.TestListViewNavigationProcessor;
@@ -54,9 +52,8 @@ public class FlowuiTestAssistConfiguration {
     }
 
     @Bean("ui_ViewNavigationDelegate")
-    public ViewNavigationDelegate<? extends AbstractViewNavigator> viewNavigationDelegate(
-            ViewNavigationSupport navigationSupport, ViewSupport viewSupport) {
-        return new ViewNavigationDelegate<>(navigationSupport, viewSupport);
+    public ViewNavigationDelegate<? extends AbstractViewNavigator> viewNavigationDelegate() {
+        return new ViewNavigationDelegate<>();
     }
 
     @Primary
@@ -64,11 +61,10 @@ public class FlowuiTestAssistConfiguration {
     public DetailViewNavigationProcessor detailViewNavigationProcessor(ViewSupport viewSupport,
                                                                        ViewRegistry viewRegistry,
                                                                        ViewNavigationSupport navigationSupport,
-                                                                       RouteSupport routeSupport, Metadata metadata,
-                                                                       MetadataTools metadataTools,
+                                                                       RouteSupport routeSupport,
                                                                        ViewNavigationDelegate<?> navigationDelegate) {
         return new TestDetailViewNavigationProcessor(viewSupport, viewRegistry, navigationSupport, routeSupport,
-                metadata, metadataTools, (ViewNavigationDelegate<DetailViewNavigator<?>>) navigationDelegate);
+                (ViewNavigationDelegate<DetailViewNavigator<?>>) navigationDelegate);
     }
 
     @Primary

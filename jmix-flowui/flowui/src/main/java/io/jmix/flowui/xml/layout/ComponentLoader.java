@@ -221,6 +221,11 @@ public interface ComponentLoader<T extends Component> {
 
     void setApplicationContext(ApplicationContext applicationContext);
 
+    /**
+     * @deprecated unused
+     */
+    // don't forget to remove corresponding spotbugs exclusion
+    @Deprecated(since = "2.5", forRemoval = true)
     void setEnvironment(Environment environment);
 
     /**

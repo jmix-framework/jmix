@@ -19,45 +19,32 @@ package io.jmix.flowui.xml.facet;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.impl.UrlQueryParametersFacetImpl;
-import io.jmix.flowui.facet.urlqueryparameters.*;
+import io.jmix.flowui.facet.urlqueryparameters.UrlQueryParametersBinderProvider;
 import io.jmix.flowui.view.navigation.RouteSupport;
-import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dom4j.Element;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.Collections;
 import java.util.List;
 
 @org.springframework.stereotype.Component("flowui_UrlQueryParametersFacetProvider")
-public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryParametersFacet>, ApplicationContextAware {
+public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryParametersFacet> {
 
     protected LoaderSupport loaderSupport;
     protected RouteSupport routeSupport;
-    protected UrlParamSerializer urlParamSerializer;
-    protected ApplicationContext applicationContext;
 
     protected List<UrlQueryParametersBinderProvider> binderProviders;
 
     public UrlQueryParametersFacetProvider(LoaderSupport loaderSupport,
                                            RouteSupport routeSupport,
-                                           UrlParamSerializer urlParamSerializer,
                                            @Autowired(required = false)
                                            List<UrlQueryParametersBinderProvider> binderProviders) {
         this.loaderSupport = loaderSupport;
         this.routeSupport = routeSupport;
-        this.urlParamSerializer = urlParamSerializer;
         this.binderProviders = CollectionUtils.isEmpty(binderProviders) ? Collections.emptyList() : binderProviders;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     @Override

@@ -49,7 +49,6 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
 
     public static final String UNARY_FIELD_CLASS_NAME = "unary-field";
 
-    protected ApplicationContext applicationContext;
 //    protected DataAwareComponentsTools dataAwareComponentsTools;
 
     public PropertyFilterComponentGenerationStrategy(UiComponents uiComponents,
@@ -63,7 +62,6 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
                                                      DataAwareComponentsTools dataAwareComponentsTools*/) {
         super(uiComponents, metadata, metadataTools, actions, datatypeRegistry, messages, entityFieldCreationSupport);
 //        this.dataAwareComponentsTools = dataAwareComponentsTools;
-        this.applicationContext = applicationContext;
     }
 
     @Nullable

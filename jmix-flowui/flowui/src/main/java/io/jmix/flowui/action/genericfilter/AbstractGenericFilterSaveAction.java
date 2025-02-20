@@ -26,7 +26,6 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.UiComponentProperties;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.app.filter.condition.LogicalFilterConditionDetailView;
 import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.DialogOutcome;
@@ -47,8 +46,8 @@ import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import java.util.Map;
 import java.util.Objects;
@@ -70,7 +69,6 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
     protected Dialogs dialogs;
     protected GenericFilterSupport genericFilterSupport;
     protected FilterComponents filterComponents;
-    protected UiComponents uiComponents;
     protected UiComponentProperties uiComponentProperties;
 
     protected Registration configurationRefreshedRegistration;
@@ -94,11 +92,6 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
     @Autowired
     public void setFilterComponents(FilterComponents filterComponents) {
         this.filterComponents = filterComponents;
-    }
-
-    @Autowired
-    public void setUiComponents(UiComponents uiComponents) {
-        this.uiComponents = uiComponents;
     }
 
     @Autowired

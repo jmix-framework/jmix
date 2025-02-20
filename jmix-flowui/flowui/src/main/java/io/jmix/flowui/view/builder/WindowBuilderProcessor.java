@@ -29,10 +29,6 @@ import org.springframework.stereotype.Component;
 @Component("flowui_WindowBuilderProcessor")
 public class WindowBuilderProcessor extends AbstractWindowBuilderProcessor {
 
-    protected ApplicationContext applicationContext;
-
-    protected ViewRegistry viewRegistry;
-
     public WindowBuilderProcessor(ApplicationContext applicationContext,
                                   Views views,
                                   ViewRegistry viewRegistry,

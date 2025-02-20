@@ -68,7 +68,7 @@ public class JmixVaadinServletContextInitializer extends VaadinServletContextIni
     /**
      * Listener sets provided class path to "java.class.path" property.
      */
-    protected class SetupTempClassPathContextListener implements ServletContextListener {
+    protected static class SetupTempClassPathContextListener implements ServletContextListener {
 
         protected String classPath;
 

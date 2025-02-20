@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -34,16 +35,15 @@ import java.util.Map;
 public class MenuItemCommands {
 
     protected DataManager dataManager;
-    protected ClassManager classManager;
 
     protected FetchPlanRepository fetchPlanRepository;
 
     protected ApplicationContext applicationContext;
 
-    public MenuItemCommands(DataManager dataManager, ClassManager classManager,
-                            FetchPlanRepository fetchPlanRepository, ApplicationContext applicationContext) {
+    public MenuItemCommands(DataManager dataManager,
+                            FetchPlanRepository fetchPlanRepository,
+                            ApplicationContext applicationContext) {
         this.dataManager = dataManager;
-        this.classManager = classManager;
         this.fetchPlanRepository = fetchPlanRepository;
         this.applicationContext = applicationContext;
     }

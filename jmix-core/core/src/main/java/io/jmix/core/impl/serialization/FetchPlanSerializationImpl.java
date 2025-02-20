@@ -187,7 +187,8 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
         }
 
         protected FetchPlan deserializeFetchPlan(JsonObject jsonObject) {
-            String fetchPlanName = jsonObject.getAsJsonPrimitive("name").getAsString();
+            JsonPrimitive nameJson = jsonObject.getAsJsonPrimitive("name");
+            String fetchPlanName = nameJson != null ? nameJson.getAsString() : "";
             String entityName = jsonObject.getAsJsonPrimitive("entity").getAsString();
             JsonArray properties = jsonObject.getAsJsonArray("properties");
             MetaClass metaClass = metadata.findClass(entityName);

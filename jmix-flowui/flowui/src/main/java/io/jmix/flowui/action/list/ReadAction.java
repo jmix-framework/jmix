@@ -313,7 +313,7 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
             ((ReadOnlyAwareView) view).setReadOnly(true);
         } else {
             throw new IllegalStateException(String.format("%s '%s' does not implement %s: %s",
-                    View.class.getSimpleName(), view.getId(),
+                    View.class.getSimpleName(), view.getId().orElse(null),
                     ReadOnlyAwareView.class.getSimpleName(), view.getClass()));
         }
 

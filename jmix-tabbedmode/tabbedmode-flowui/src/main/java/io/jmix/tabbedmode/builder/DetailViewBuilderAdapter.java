@@ -18,6 +18,7 @@ package io.jmix.tabbedmode.builder;
 
 import com.vaadin.flow.component.HasValue;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.view.ReadOnlyAwareView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
@@ -52,6 +53,20 @@ public class DetailViewBuilderAdapter<E, V extends View<?>> extends DetailViewBu
 
         editedEntity = viewNavigator.getEditedEntity().orElse(null);
         mode = viewNavigator.getMode();
+
+        if (viewNavigator.isReadOnly()) {
+            // View navigators don't provide the ViewConfigurer handler,
+            // so it's safe to set one here
+            withViewConfigurer(view -> {
+                if (view instanceof ReadOnlyAwareView) {
+                    ((ReadOnlyAwareView) view).setReadOnly(true);
+                } else {
+                    throw new IllegalStateException(String.format("%s '%s' does not implement %s: %s",
+                            View.class.getSimpleName(), view.getId().orElse(null),
+                            ReadOnlyAwareView.class.getSimpleName(), view.getClass()));
+                }
+            });
+        }
 
         if (viewNavigator instanceof EnhancedViewNavigator<?> enhancedViewNavigator) {
             listDataComponent = (ListDataComponent<E>) enhancedViewNavigator.getListDataComponent().orElse(null);

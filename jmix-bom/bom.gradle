@@ -88,6 +88,8 @@ dependencies {
         api "gr.netmechanics.jmix:duration-field-starter:2.1.0"
         api "gr.netmechanics.jmix:jmix-multilingual-field:1.2.0"
         api "gr.netmechanics.jmix:jmix-multilingual-field-starter:1.2.0"
+        api 'de.bytestore:swagger-ui-starter:1.2.0'
+        api 'de.bytestore:plugin-starter:1.4.0'
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

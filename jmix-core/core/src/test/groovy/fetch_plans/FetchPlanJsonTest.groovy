@@ -16,7 +16,6 @@
 
 package fetch_plans
 
-
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.FetchPlan
 import io.jmix.core.FetchPlanSerialization
@@ -26,7 +25,7 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import test_support.addon1.TestAddon1Configuration
 import test_support.app.TestAppConfiguration
-import test_support.app.entity.sales.Customer
+import test_support.app.entity.sales.Order
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 class FetchPlanJsonTest extends Specification {
@@ -37,7 +36,10 @@ class FetchPlanJsonTest extends Specification {
     FetchPlanSerialization fetchPlanSerialization
 
     def "test serialization"() {
-        def fetchPlan = fetchPlans.builder(Customer).addFetchPlan(FetchPlan.BASE).build()
+        def fetchPlan = fetchPlans.builder(Order)
+                .addFetchPlan(FetchPlan.BASE)
+                .add('customer', FetchPlan.BASE)
+                .build()
 
         when:
         def json = fetchPlanSerialization.toJson(fetchPlan)
@@ -46,8 +48,37 @@ class FetchPlanJsonTest extends Specification {
         FetchPlan fetchPlan1 = fetchPlanSerialization.fromJson('''
         {
           "name" : "",
-          "entity" : "core_Customer",
-          "properties" : [ "deleteTs", "updatedBy", "createdBy", "name", "createTs", "id", "version", "updateTs", "deletedBy", "status" ]
+          "entity" : "core_Order",
+          "properties" : [ "date", "amount", "updatedBy", "version", "deletedBy", "deleteTs", "number", "createdBy", "createTs", "id", "updateTs", {
+            "name" : "customer",
+            "fetchPlan" : {
+              "properties" : [ "deleteTs", "updatedBy", "createdBy", "name", "createTs", "id", "version", "updateTs", "deletedBy", "status" ]
+            }
+          } ]
+        }        
+        ''')
+        fetchPlan1 == fetchPlan
+    }
+
+    def "test deserializing without name"() {
+        def fetchPlan = fetchPlans.builder(Order)
+                .addFetchPlan(FetchPlan.BASE)
+                .add('customer', FetchPlan.BASE)
+                .build()
+
+        when:
+        def json = fetchPlanSerialization.toJson(fetchPlan)
+
+        then:
+        FetchPlan fetchPlan1 = fetchPlanSerialization.fromJson('''
+        {
+          "entity" : "core_Order",
+          "properties" : [ "date", "amount", "updatedBy", "version", "deletedBy", "deleteTs", "number", "createdBy", "createTs", "id", "updateTs", {
+            "name" : "customer",
+            "fetchPlan" : {
+              "properties" : [ "deleteTs", "updatedBy", "createdBy", "name", "createTs", "id", "version", "updateTs", "deletedBy", "status" ]
+            }
+          } ]
         }        
         ''')
         fetchPlan1 == fetchPlan

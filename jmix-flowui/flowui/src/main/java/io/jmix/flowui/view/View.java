@@ -34,6 +34,7 @@ import io.jmix.flowui.util.WebBrowserTools;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -206,7 +207,7 @@ public class View<T extends Component> extends Composite<T>
 
         onDetachInternal();
 
-        if (isPreventBrowserTabClosing()) {
+        if (!isContextActive() || isPreventBrowserTabClosing()) {
             WebBrowserTools.allowBrowserTabClosing(this);
         }
     }
@@ -214,8 +215,11 @@ public class View<T extends Component> extends Composite<T>
     @Internal
     protected void onDetachInternal() {
         removeApplicationListeners();
-        removeViewAttributes();
-        unregisterBackNavigation();
+
+        if (isContextActive()) {
+            removeViewAttributes();
+            unregisterBackNavigation();
+        }
     }
 
     protected void unregisterBackNavigation() {
@@ -727,5 +731,12 @@ public class View<T extends Component> extends Composite<T>
     @Override
     protected ComponentEventBus getEventBus() {
         return super.getEventBus();
+    }
+
+    private boolean isContextActive() {
+        if (getApplicationContext() instanceof ConfigurableApplicationContext context) {
+            return context.isActive();
+        }
+        return true;
     }
 }

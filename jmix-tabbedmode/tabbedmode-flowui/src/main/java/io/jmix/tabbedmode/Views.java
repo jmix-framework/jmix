@@ -20,9 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.di.Instantiator;
-import com.vaadin.flow.router.Location;
-import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.*;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Messages;
 import io.jmix.core.UuidProvider;
@@ -39,6 +37,7 @@ import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.tabbedmode.app.main.HasWorkArea;
+import io.jmix.tabbedmode.builder.ViewOpeningContext;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs.BreadcrumbsNavigationContext;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
@@ -54,6 +53,7 @@ import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -64,6 +64,7 @@ import static io.jmix.flowui.monitoring.ViewLifeCycle.BEFORE_SHOW;
 import static io.jmix.flowui.monitoring.ViewLifeCycle.READY;
 import static io.micrometer.core.instrument.Timer.start;
 
+@SuppressWarnings("unused")
 @org.springframework.stereotype.Component("tabmod_Views")
 public class Views {
 
@@ -125,14 +126,27 @@ public class Views {
     }
 
     public OperationResult open(JmixUI ui, View<?> view, ViewOpenMode openMode) {
-        checkNotNullArgument(view);
-        checkNotNullArgument(openMode);
+        return open(ui, new ViewOpeningContext(view, openMode));
+    }
+
+    public OperationResult open(ViewOpeningContext context) {
+        return open(getCurrentUI(), context);
+    }
+
+    public OperationResult open(JmixUI ui, ViewOpeningContext context) {
+        checkNotNullArgument(context);
+
+        View<?> view = context.getView();
+        ViewOpenMode openMode = context.getOpenMode();
+
         checkNotYetOpened(view);
 
         if (isMaxTabCountExceeded(ui, openMode)) {
             showTooManyOpenTabsMessage();
             return OperationResult.fail();
         }
+
+        sendNavigationEvent(ui, context);
 
         Timer.Sample beforeShowSample = start(meterRegistry);
         fireViewBeforeShowEvent(view);
@@ -159,11 +173,9 @@ public class Views {
                 throw new UnsupportedOperationException("Unsupported OpenMode " + openMode);
         }
 
-        log.trace("Screen {} {} opened", view.getId().orElse(null), view.getClass());
+        log.trace("View {} {} opened", view.getId().orElse(null), view.getClass());
 
-        // TODO: gg, single place
-        // TODO: gg, get from breadcrumbs
-        updateUrl(ui, resolveLocation(view));
+        updateUrl(ui, resolveLocation(view, context));
         updatePageTitle(ui, view);
         // TODO: gg, fire QueryParametersChangeEvent?
 
@@ -174,6 +186,26 @@ public class Views {
         fireViewOpenedEvent(view);
 
         return OperationResult.success();
+    }
+
+    // For compatibility with navigation, only.
+    protected void sendNavigationEvent(JmixUI ui, ViewOpeningContext context) {
+        RouteParameters routeParameters = context.getRouteParameters();
+        if (routeParameters.getParameterNames().isEmpty()) {
+            return;
+        }
+
+        View<?> view = context.getView();
+        BeforeEnterEvent event = new BeforeEnterEvent(
+                ui.getInternals().getRouter(),
+                NavigationTrigger.PROGRAMMATIC,
+                resolveLocation(view, context),
+                view.getClass(),
+                routeParameters,
+                ui,
+                Collections.emptyList()
+        );
+        ViewControllerUtils.processBeforeEnterInternal(view, event);
     }
 
     protected void checkNotYetOpened(View<?> view) {
@@ -192,12 +224,18 @@ public class Views {
         routeSupport.setLocation(ui, newLocation);
     }
 
-    // TODO: gg, implement actual
     protected Location resolveLocation(View<?> view) {
-        RouteParameters routeParameters = RouteParameters.empty();
-        if (view instanceof DetailView<?> detailView) {
-            // TODO: gg, implement actual
-            String param = /*getRouteParamName();*/ "id";
+        return resolveLocation(view, null);
+    }
+
+    protected Location resolveLocation(View<?> view, @Nullable ViewOpeningContext context) {
+        RouteParameters routeParameters = context != null
+                ? context.getRouteParameters()
+                : RouteParameters.empty();
+
+        if (routeParameters.getParameterNames().isEmpty()
+                && view instanceof StandardDetailView<?> detailView) {
+            String param = getRouteParamName(detailView);
             Object value = getParamValue(detailView);
             routeParameters = routeSupport.createRouteParameters(param, value);
         }
@@ -206,13 +244,19 @@ public class Views {
         return new Location(locationString);
     }
 
+    protected String getRouteParamName(StandardDetailView<?> detailView) {
+        return ViewControllerUtils.getRouteParamName(detailView);
+    }
+
     protected RouteConfiguration getRouteConfiguration() {
         return RouteConfiguration.forSessionScope();
     }
 
     protected Object getParamValue(DetailView<?> detailView) {
         Object editedEntity = detailView.getEditedEntity();
-        return entityStates.isNew(editedEntity) ? "new" : Objects.requireNonNull(EntityValues.getId(editedEntity));
+        return entityStates.isNew(editedEntity)
+                ? StandardDetailView.NEW_ENTITY_ID
+                : Objects.requireNonNull(EntityValues.getId(editedEntity));
     }
 
     // TODO: gg, temporal, remove
@@ -490,7 +534,7 @@ public class Views {
     public Optional<WorkArea> findConfiguredWorkArea(JmixUI ui) {
         View<?> topLevelView = ui.getTopLevelView();
         if (topLevelView instanceof HasWorkArea hasWorkArea) {
-            return Optional.ofNullable(hasWorkArea.getWorkArea());
+            return Optional.ofNullable(hasWorkArea.getWorkAreaOrNull());
         }
 
         return Optional.empty();

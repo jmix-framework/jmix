@@ -16,8 +16,70 @@
 
 package io.jmix.tabbedmode.builder;
 
+import com.google.common.base.Objects;
+import com.vaadin.flow.router.RouteParameters;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.view.View;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 
-public record ViewOpeningContext(View<?> view, ViewOpenMode openMode) {
+public class ViewOpeningContext {
+
+    protected final View<?> view;
+    protected final ViewOpenMode openMode;
+
+    protected RouteParameters routeParameters;
+
+    public ViewOpeningContext(View<?> view, ViewOpenMode openMode) {
+        Preconditions.checkNotNullArgument(view);
+        Preconditions.checkNotNullArgument(openMode);
+
+        this.view = view;
+        this.openMode = openMode;
+    }
+
+    public ViewOpeningContext(View<?> view,
+                              ViewOpenMode openMode,
+                              RouteParameters routeParameters) {
+        this(view, openMode);
+
+        Preconditions.checkNotNullArgument(routeParameters);
+        this.routeParameters = routeParameters;
+    }
+
+    public View<?> getView() {
+        return view;
+    }
+
+    public ViewOpenMode getOpenMode() {
+        return openMode;
+    }
+
+    public RouteParameters getRouteParameters() {
+        return routeParameters != null
+                ? routeParameters
+                : RouteParameters.empty();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ViewOpeningContext that = (ViewOpeningContext) o;
+        return Objects.equal(view, that.view)
+                && openMode == that.openMode
+                && Objects.equal(routeParameters, that.routeParameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(view, openMode, routeParameters);
+    }
+
+    @Override
+    public String toString() {
+        return "ViewOpeningContext{" +
+                "view=" + view +
+                ", openMode=" + openMode +
+                ", routeParameters=" + routeParameters +
+                '}';
+    }
 }

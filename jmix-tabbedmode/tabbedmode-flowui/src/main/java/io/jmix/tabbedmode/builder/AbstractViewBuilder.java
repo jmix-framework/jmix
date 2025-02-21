@@ -120,7 +120,12 @@ public class AbstractViewBuilder<V extends View<?>, B extends AbstractViewBuilde
             builtView = build();
         }
 
-        openHandler.accept(new ViewOpeningContext(builtView, openMode));
+        openHandler.accept(createViewOpeningContext());
+
         return builtView;
+    }
+
+    protected ViewOpeningContext createViewOpeningContext() {
+        return new ViewOpeningContext(builtView, openMode);
     }
 }

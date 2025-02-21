@@ -445,6 +445,6 @@ public class ViewBuilders {
     }
 
     protected void openView(ViewOpeningContext context) {
-        views.open(context.view(), context.openMode());
+        views.open(context);
     }
 }

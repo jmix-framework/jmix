@@ -18,6 +18,7 @@ package io.jmix.tabbedmode;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.di.Instantiator;
 import com.vaadin.flow.router.*;
@@ -137,7 +138,7 @@ public class Views {
         checkNotNullArgument(context);
 
         View<?> view = context.getView();
-        ViewOpenMode openMode = context.getOpenMode();
+        ViewOpenMode openMode = getActualOpenMode(ui, context.getOpenMode());
 
         checkNotYetOpened(view);
 
@@ -186,6 +187,28 @@ public class Views {
         fireViewOpenedEvent(view);
 
         return OperationResult.success();
+    }
+
+    protected ViewOpenMode getActualOpenMode(JmixUI ui, ViewOpenMode requiredOpenMode) {
+        ViewOpenMode openMode = requiredOpenMode;
+
+        if (openMode != ViewOpenMode.DIALOG
+                && openMode != ViewOpenMode.ROOT
+                && hasModalDialogWindow(ui)) {
+            openMode = ViewOpenMode.DIALOG;
+        }
+
+        return openMode;
+    }
+
+    protected boolean hasModalDialogWindow(JmixUI ui) {
+        return getOpenedViews(ui)
+                .getDialogWindows()
+                .stream()
+                .anyMatch(view -> {
+                    Dialog dialog = UiComponentUtils.findDialog(view);
+                    return dialog != null && dialog.isModal();
+                });
     }
 
     // For compatibility with navigation, only.
@@ -316,6 +339,12 @@ public class Views {
 
     protected void openDialogWindow(JmixUI ui, View<?> view) {
         DialogWindow<?> dialogWindow = createDialog(view);
+
+        if (ui.hasModalComponent()) {
+            // force modal
+            dialogWindow.setModal(true);
+        }
+
         dialogWindow.open();
     }
 

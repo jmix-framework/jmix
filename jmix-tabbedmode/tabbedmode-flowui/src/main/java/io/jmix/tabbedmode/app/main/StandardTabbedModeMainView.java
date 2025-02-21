@@ -75,7 +75,7 @@ public class StandardTabbedModeMainView extends View<JmixAppLayout> implements H
         views().open(view, ViewOpenMode.NEW_TAB);
 
         // TODO: gg, implement
-        /*view.setDefaultView(view);
+        /*view.setDefaultView(true);
 
         if (!uiProperties.isDefaultScreenCanBeClosed()) {
             view.setCloseable(false);

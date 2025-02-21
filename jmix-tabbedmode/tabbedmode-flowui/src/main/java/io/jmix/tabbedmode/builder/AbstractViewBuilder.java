@@ -126,6 +126,6 @@ public class AbstractViewBuilder<V extends View<?>, B extends AbstractViewBuilde
     }
 
     protected ViewOpeningContext createViewOpeningContext() {
-        return new ViewOpeningContext(builtView, openMode);
+        return ViewOpeningContext.create(builtView, openMode);
     }
 }

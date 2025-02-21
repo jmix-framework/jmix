@@ -28,6 +28,7 @@ public class ViewOpeningContext {
     protected final ViewOpenMode openMode;
 
     protected RouteParameters routeParameters;
+    protected boolean closeSameView = false;
 
     public ViewOpeningContext(View<?> view, ViewOpenMode openMode) {
         Preconditions.checkNotNullArgument(view);
@@ -37,13 +38,8 @@ public class ViewOpeningContext {
         this.openMode = openMode;
     }
 
-    public ViewOpeningContext(View<?> view,
-                              ViewOpenMode openMode,
-                              RouteParameters routeParameters) {
-        this(view, openMode);
-
-        Preconditions.checkNotNullArgument(routeParameters);
-        this.routeParameters = routeParameters;
+    public static ViewOpeningContext create(View<?> view, ViewOpenMode openMode) {
+        return new ViewOpeningContext(view, openMode);
     }
 
     public View<?> getView() {
@@ -60,6 +56,22 @@ public class ViewOpeningContext {
                 : RouteParameters.empty();
     }
 
+    public boolean isCloseSameView() {
+        return closeSameView;
+    }
+
+    public ViewOpeningContext withRouteParameters(RouteParameters routeParameters) {
+        Preconditions.checkNotNullArgument(routeParameters);
+
+        this.routeParameters = routeParameters;
+        return this;
+    }
+
+    public ViewOpeningContext withCloseSameView(boolean closeSameView) {
+        this.closeSameView = closeSameView;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -71,7 +83,7 @@ public class ViewOpeningContext {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(view, openMode, routeParameters);
+        return Objects.hashCode(view, openMode, routeParameters, closeSameView);
     }
 
     @Override

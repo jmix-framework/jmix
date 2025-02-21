@@ -71,8 +71,7 @@ public class Views {
 
     private static final Logger log = LoggerFactory.getLogger(Views.class);
 
-    // TODO: gg, rename?
-    public static final CloseAction NAVIGATION_CLOSE_ACTION = new StandardCloseAction("navigation");
+    public static final CloseAction CLOSE_SAME_VIEW_ACTION = new StandardCloseAction("closeSameView");
 
     protected final ApplicationContext applicationContext;
     protected final ViewRegistry viewRegistry;
@@ -127,7 +126,7 @@ public class Views {
     }
 
     public OperationResult open(JmixUI ui, View<?> view, ViewOpenMode openMode) {
-        return open(ui, new ViewOpeningContext(view, openMode));
+        return open(ui, ViewOpeningContext.create(view, openMode));
     }
 
     public OperationResult open(ViewOpeningContext context) {
@@ -139,6 +138,11 @@ public class Views {
 
         View<?> view = context.getView();
         ViewOpenMode openMode = getActualOpenMode(ui, context.getOpenMode());
+
+        OperationResult result = closeSameView(ui, context);
+        if (result != null) {
+            return result;
+        }
 
         checkNotYetOpened(view);
 
@@ -155,19 +159,19 @@ public class Views {
 
         switch (openMode) {
             case ROOT:
-                openRootView(ui, view);
+                openRootView(ui, context);
                 break;
 
             case THIS_TAB:
-                openThisTab(ui, view);
+                openThisTab(ui, context);
                 break;
 
             case NEW_TAB:
-                openNewTab(ui, view);
+                openNewTab(ui, context);
                 break;
 
             case DIALOG:
-                openDialogWindow(ui, view);
+                openDialogWindow(ui, context);
                 break;
 
             default:
@@ -187,6 +191,31 @@ public class Views {
         fireViewOpenedEvent(view);
 
         return OperationResult.success();
+    }
+
+    @Nullable
+    protected OperationResult closeSameView(JmixUI ui, ViewOpeningContext context) {
+        if (ViewOpenMode.NEW_TAB == context.getOpenMode()
+                && context.isCloseSameView()) {
+            View<?> view = context.getView();
+            WorkArea workArea = getConfiguredWorkArea(ui);
+            View<?> sameView = getTabbedViewsStacks(workArea)
+                    .filter(viewStack -> viewStack.getBreadcrumbs().size() == 1) // never close non-top active screens
+                    .map(viewStack -> viewStack.getBreadcrumbs().iterator().next())
+                    .filter(tabScreen -> ViewControllerUtils.isSameView(view, tabScreen))
+                    .findFirst()
+                    .orElse(null);
+
+            if (sameView != null) {
+                OperationResult result = sameView.close(CLOSE_SAME_VIEW_ACTION);
+                if (result.getStatus() != OperationResult.Status.SUCCESS) {
+                    // if unsaved changes dialog is shown, we can continue later
+                    return result.compose(() -> open(ui, context));
+                }
+            }
+        }
+
+        return null;
     }
 
     protected ViewOpenMode getActualOpenMode(JmixUI ui, ViewOpenMode requiredOpenMode) {
@@ -282,62 +311,12 @@ public class Views {
                 : Objects.requireNonNull(EntityValues.getId(editedEntity));
     }
 
-    // TODO: gg, temporal, remove
-    public OperationResult openFromNavigation(View<?> view, ViewOpenMode openMode) {
-        return openFromNavigation(getCurrentUI(), view, openMode);
+    protected void openRootView(JmixUI ui, ViewOpeningContext context) {
+        ui.setTopLevelView(context.getView());
     }
 
-    // TODO: gg, temporal, remove
-    public OperationResult openFromNavigation(JmixUI ui, View<?> view, ViewOpenMode openMode) {
-        // TODO: gg, temporal fix
-        /*AppWorkArea workArea = getConfiguredWorkAreaOptional(ui)
-                .orElseGet(() -> {
-                    String mainViewId = uiProperties.getMainViewId();
-                    View<?> mainView = create(mainViewId);
-                    if (mainView instanceof HasWorkArea hasWorkArea) {
-                        open(mainView, OpenMode.ROOT);
-                        return hasWorkArea.getWorkArea();
-                    } else {
-                        throw new IllegalStateException("%s is not a %s"
-                                .formatted(mainView.getClass().getSimpleName(),
-                                        HasWorkArea.class.getSimpleName()));
-                    }
-                });*/
-
-
-        if (openMode == ViewOpenMode.NEW_TAB) {
-            if (isMaxTabCountExceeded(ui, openMode)) {
-                showTooManyOpenTabsMessage();
-                return OperationResult.fail();
-            }
-
-            // TODO: gg, check isMultipleOpen
-            // TODO: gg, re-work?
-            WorkArea workArea = getConfiguredWorkArea(ui);
-            View<?> sameView = getTabbedViewsStacks(workArea)
-                    .filter(viewStack -> viewStack.getBreadcrumbs().size() == 1) // never close non-top active screens
-                    .map(viewStack -> viewStack.getBreadcrumbs().iterator().next())
-                    .filter(tabScreen -> ViewControllerUtils.isSameView(view, tabScreen))
-                    .findFirst()
-                    .orElse(null);
-
-            if (sameView != null) {
-                OperationResult result = sameView.close(NAVIGATION_CLOSE_ACTION);
-                if (result.getStatus() != OperationResult.Status.SUCCESS) {
-                    // if unsaved changes dialog is shown, we can continue later
-                    return result.compose(() -> openFromNavigation(ui, view, openMode));
-                }
-            }
-        }
-
-        return open(ui, view, openMode);
-    }
-
-    protected void openRootView(JmixUI ui, View<?> rootView) {
-        ui.setTopLevelView(rootView);
-    }
-
-    protected void openDialogWindow(JmixUI ui, View<?> view) {
+    protected void openDialogWindow(JmixUI ui, ViewOpeningContext context) {
+        View<?> view = context.getView();
         DialogWindow<?> dialogWindow = createDialog(view);
 
         if (ui.hasModalComponent()) {
@@ -355,7 +334,8 @@ public class Views {
         return dialogWindow;
     }
 
-    protected void openThisTab(JmixUI ui, View<?> view) {
+    protected void openThisTab(JmixUI ui, ViewOpeningContext context) {
+        View<?> view = context.getView();
         WorkArea workArea = getConfiguredWorkArea(ui);
         workArea.switchTo(WorkArea.State.VIEW_CONTAINER);
 
@@ -424,7 +404,8 @@ public class Views {
         updatePageTitle(ui, currentViewInfo.view());
     }
 
-    protected void openNewTab(JmixUI ui, View<?> view) {
+    protected void openNewTab(JmixUI ui, ViewOpeningContext context) {
+        View<?> view = context.getView();
         WorkArea workArea = getConfiguredWorkArea(ui);
         workArea.switchTo(WorkArea.State.VIEW_CONTAINER);
 

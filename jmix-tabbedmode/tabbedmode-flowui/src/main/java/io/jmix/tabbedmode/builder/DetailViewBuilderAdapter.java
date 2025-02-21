@@ -102,6 +102,7 @@ public class DetailViewBuilderAdapter<E, V extends View<?>> extends DetailViewBu
 
     @Override
     protected ViewOpeningContext createViewOpeningContext() {
-        return new ViewOpeningContext(builtView, openMode, routeParameters);
+        return ViewOpeningContext.create(builtView, openMode)
+                .withRouteParameters(routeParameters);
     }
 }

@@ -37,6 +37,8 @@ public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
 
     @Override
     protected void initView(View<?> view) {
+        super.initView(view);
+
         view.addAfterCloseListener(this::onViewAfterClosed);
     }
 

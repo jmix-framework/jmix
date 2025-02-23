@@ -153,6 +153,8 @@ public class Views {
 
         sendNavigationEvent(ui, context);
 
+        fireQueryParametersChangeEvent(view, context.getQueryParameters());
+
         Timer.Sample beforeShowSample = start(meterRegistry);
         fireViewBeforeShowEvent(view);
         stopViewTimerSample(beforeShowSample, meterRegistry, BEFORE_SHOW, view.getId().orElse(null));
@@ -182,7 +184,6 @@ public class Views {
 
         updateUrl(ui, resolveLocation(view, context));
         updatePageTitle(ui, view);
-        // TODO: gg, fire QueryParametersChangeEvent?
 
         Timer.Sample readySample = start(meterRegistry);
         fireViewReadyEvent(view);
@@ -292,8 +293,12 @@ public class Views {
             routeParameters = routeSupport.createRouteParameters(param, value);
         }
 
+        QueryParameters queryParameters = context != null
+                ? context.getQueryParameters()
+                : QueryParameters.empty();
+
         String locationString = getRouteConfiguration().getUrl(view.getClass(), routeParameters);
-        return new Location(locationString);
+        return new Location(locationString, queryParameters);
     }
 
     protected String getRouteParamName(StandardDetailView<?> detailView) {
@@ -356,7 +361,7 @@ public class Views {
         viewContainer.setView(view);
 
         ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
-        breadcrumbs.addView(view, resolveLocation(view));
+        breadcrumbs.addView(view, resolveLocation(view, context));
 
         ViewControllerUtils.setViewCloseDelegate(view, __ -> removeThisTabView(ui, view));
 
@@ -410,7 +415,7 @@ public class Views {
         workArea.switchTo(WorkArea.State.VIEW_CONTAINER);
 
         // work with new view
-        createNewTabLayout(ui, view);
+        createNewTabLayout(ui, context);
         ViewControllerUtils.setViewCloseDelegate(view, __ -> removeNewTabView(ui, view));
     }
 
@@ -448,10 +453,11 @@ public class Views {
                         .formatted(View.class.getSimpleName(), ViewContainer.class.getSimpleName())));
     }
 
-    protected void createNewTabLayout(JmixUI ui, View<?> view) {
+    protected void createNewTabLayout(JmixUI ui, ViewOpeningContext context) {
+        View<?> view = context.getView();
         ViewBreadcrumbs breadcrumbs = createViewBreadCrumbs();
         breadcrumbs.setNavigationHandler(this::onBreadcrumbsNavigate);
-        breadcrumbs.addView(view, resolveLocation(view));
+        breadcrumbs.addView(view, resolveLocation(view, context));
 
         TabViewContainer viewContainer = uiComponents.create(TabViewContainer.class);
         viewContainer.setSizeFull();
@@ -591,6 +597,10 @@ public class Views {
         }
 
         return openedViews.findRootView();
+    }
+
+    protected void fireQueryParametersChangeEvent(View<?> view, QueryParameters queryParameters) {
+        ViewControllerUtils.fireEvent(view, new View.QueryParametersChangeEvent(view, queryParameters));
     }
 
     protected void fireViewBeforeShowEvent(View<?> view) {

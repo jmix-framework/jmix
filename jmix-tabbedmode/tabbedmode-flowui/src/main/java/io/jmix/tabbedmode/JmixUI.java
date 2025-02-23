@@ -520,6 +520,7 @@ public class JmixUI extends UI {
             // TODO: gg, QueryParameters
             views.open(this, ViewOpeningContext.create(view, openMode)
                     .withRouteParameters(navigationState.getRouteParameters())
+                    .withQueryParameters(location.getQueryParameters())
                     .withCloseSameView(true));
 
         } catch (Exception exception) {

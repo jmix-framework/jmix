@@ -17,6 +17,7 @@
 package io.jmix.tabbedmode.builder;
 
 import com.google.common.base.Objects;
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.view.View;
@@ -28,6 +29,7 @@ public class ViewOpeningContext {
     protected final ViewOpenMode openMode;
 
     protected RouteParameters routeParameters;
+    protected QueryParameters queryParameters;
     protected boolean closeSameView = false;
 
     public ViewOpeningContext(View<?> view, ViewOpenMode openMode) {
@@ -56,6 +58,12 @@ public class ViewOpeningContext {
                 : RouteParameters.empty();
     }
 
+    public QueryParameters getQueryParameters() {
+        return queryParameters != null
+                ? queryParameters
+                : QueryParameters.empty();
+    }
+
     public boolean isCloseSameView() {
         return closeSameView;
     }
@@ -64,6 +72,13 @@ public class ViewOpeningContext {
         Preconditions.checkNotNullArgument(routeParameters);
 
         this.routeParameters = routeParameters;
+        return this;
+    }
+
+    public ViewOpeningContext withQueryParameters(QueryParameters queryParameters) {
+        Preconditions.checkNotNullArgument(queryParameters);
+
+        this.queryParameters = queryParameters;
         return this;
     }
 

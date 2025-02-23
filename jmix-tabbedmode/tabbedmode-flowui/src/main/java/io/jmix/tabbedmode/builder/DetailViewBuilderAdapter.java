@@ -17,6 +17,7 @@
 package io.jmix.tabbedmode.builder;
 
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.view.ReadOnlyAwareView;
@@ -31,6 +32,7 @@ import java.util.function.Function;
 public class DetailViewBuilderAdapter<E, V extends View<?>> extends DetailViewBuilder<E, V> {
 
     protected RouteParameters routeParameters = RouteParameters.empty();
+    protected QueryParameters queryParameters = QueryParameters.empty();
 
     public DetailViewBuilderAdapter(DetailViewNavigator<E> viewNavigator,
                                     Class<V> viewClass,
@@ -70,6 +72,8 @@ public class DetailViewBuilderAdapter<E, V extends View<?>> extends DetailViewBu
 
         viewNavigator.getRouteParameters().ifPresent(routeParameters ->
                 this.routeParameters = routeParameters);
+        viewNavigator.getQueryParameters().ifPresent(queryParameters ->
+                this.queryParameters = queryParameters);
     }
 
     protected void applyFrom(DetailWindowBuilder<E, V> windowBuilder) {
@@ -103,6 +107,7 @@ public class DetailViewBuilderAdapter<E, V extends View<?>> extends DetailViewBu
     @Override
     protected ViewOpeningContext createViewOpeningContext() {
         return ViewOpeningContext.create(builtView, openMode)
-                .withRouteParameters(routeParameters);
+                .withRouteParameters(routeParameters)
+                .withQueryParameters(queryParameters);
     }
 }

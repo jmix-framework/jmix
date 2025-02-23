@@ -35,7 +35,6 @@ import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.*;
 import io.jmix.tabbedmode.Views;
-import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -52,8 +51,7 @@ public class LookupViewBuilderProcessor extends AbstractViewBuilderProcessor {
     protected ExtendedEntities extendedEntities;
     protected UiViewProperties viewProperties;
 
-    public LookupViewBuilderProcessor(ApplicationContext applicationContext,
-                                      Views views,
+    public LookupViewBuilderProcessor(Views views,
                                       ViewRegistry viewRegistry,
                                       UiAccessChecker uiAccessChecker,
                                       Metadata metadata,
@@ -63,7 +61,7 @@ public class LookupViewBuilderProcessor extends AbstractViewBuilderProcessor {
                                       EntityStates entityStates,
                                       ExtendedEntities extendedEntities,
                                       UiViewProperties viewProperties) {
-        super(applicationContext, views, viewRegistry, uiAccessChecker);
+        super(views, viewRegistry, uiAccessChecker);
 
         this.metadata = metadata;
         this.metadataTools = metadataTools;

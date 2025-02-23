@@ -74,6 +74,7 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
 
     protected void initView(View<?> view) {
         ViewControllerUtils.setViewCloseDelegate(view, __ -> closeInternal());
+        ViewControllerUtils.setPageTitleDelegate(view, title -> dialog.setHeaderTitle(title));
     }
 
     protected Dialog createDialog() {

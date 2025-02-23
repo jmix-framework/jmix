@@ -1,0 +1,154 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.tabbedmode.component.tabsheet.contextmenu;
+
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Html;
+import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.KeyCombination;
+import org.springframework.lang.Nullable;
+
+import java.beans.PropertyChangeEvent;
+import java.util.Objects;
+
+public class MainTabSheetMenuItemActionSupport {
+
+    protected final MainTabSheetMenuItemActionWrapper menuItem;
+
+    protected Action action;
+    protected boolean overrideComponentProperties;
+
+    protected Registration registration;
+    protected Registration actionPropertyChangeRegistration;
+
+    public MainTabSheetMenuItemActionSupport(MainTabSheetMenuItemActionWrapper menuItem) {
+        this.menuItem = menuItem;
+    }
+
+    @Nullable
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(@Nullable Action action) {
+        setAction(action, true);
+    }
+
+    public void setAction(@Nullable Action action, boolean overrideComponentProperties) {
+        if (Objects.equals(this.action, action) && this.overrideComponentProperties == overrideComponentProperties) {
+            return;
+        }
+
+        removeRegistrations();
+
+        this.action = action;
+        this.overrideComponentProperties = overrideComponentProperties;
+        MainTabSheetMenuItem contextMenuItem = menuItem.getMenuItem();
+
+        if (action != null && contextMenuItem != null) {
+            if (overrideComponentProperties) {
+                menuItem.setText(action.getText());
+                contextMenuItem.setEnabled(action.isEnabled());
+                contextMenuItem.setVisible(action.isVisible());
+                menuItem.setTooltipText(action.getDescription());
+
+                if (isShowActionIconEnabled()) {
+                    menuItem.setPrefixComponent(action.getIcon());
+                }
+
+                if (isShowActionShortcutEnabled()) {
+                    menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
+                }
+
+                actionPropertyChangeRegistration = action.addPropertyChangeListener(this::propertyChangeEventListener);
+            }
+
+            registration = contextMenuItem.addMenuItemClickListener(event ->
+                    action.actionPerform(event.getTab()));
+        }
+
+        updateVisible();
+    }
+
+    protected boolean isShowActionIconEnabled() {
+        return false;
+    }
+
+    protected boolean isShowActionShortcutEnabled() {
+        return false;
+    }
+
+    @Nullable
+    protected Component createShortcutComponent(@Nullable KeyCombination keyCombination) {
+        return keyCombination == null ? null : new Html("<kbd>" + keyCombination.format() + "</kbd>");
+    }
+
+    protected void updateVisible() {
+        MainTabSheetMenuItem contextMenuItem = menuItem.getMenuItem();
+        if (contextMenuItem != null) {
+            boolean visibleByAction = !overrideComponentProperties || (action != null && action.isVisible());
+            contextMenuItem.setVisible(!menuItem.isEmpty() && visibleByAction);
+        }
+    }
+
+    protected void removeRegistrations() {
+        if (action != null) {
+            if (registration != null) {
+                registration.remove();
+                registration = null;
+            }
+
+            if (actionPropertyChangeRegistration != null) {
+                actionPropertyChangeRegistration.remove();
+                actionPropertyChangeRegistration = null;
+            }
+        }
+    }
+
+    protected void propertyChangeEventListener(PropertyChangeEvent event) {
+        String propertyName = event.getPropertyName();
+        MainTabSheetMenuItem contextMenuItem = menuItem.getMenuItem();
+
+        switch (propertyName) {
+            case Action.PROP_TEXT -> {
+                menuItem.setText(action.getText());
+                updateVisible();
+            }
+            case Action.PROP_ENABLED -> {
+                if (contextMenuItem != null) {
+                    contextMenuItem.setEnabled(action.isEnabled());
+                }
+            }
+            case Action.PROP_VISIBLE -> updateVisible();
+            case Action.PROP_DESCRIPTION -> menuItem.setTooltipText(action.getDescription());
+            case Action.PROP_ICON -> {
+                if (isShowActionIconEnabled()) {
+                    menuItem.setPrefixComponent(action.getIcon());
+                }
+                updateVisible();
+            }
+            case Action.PROP_SHORTCUT_COMBINATION -> {
+                if (isShowActionShortcutEnabled()) {
+                    menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
+                }
+                updateVisible();
+            }
+            default -> {/* do nothing */}
+        }
+    }
+}

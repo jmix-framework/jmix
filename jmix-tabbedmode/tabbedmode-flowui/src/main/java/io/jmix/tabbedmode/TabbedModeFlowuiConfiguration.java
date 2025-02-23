@@ -21,20 +21,46 @@ import com.vaadin.flow.spring.SpringBootAutoConfiguration;
 import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.flow.spring.VaadinConfigurationProperties;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.sys.ActionsConfiguration;
+import io.jmix.flowui.sys.registration.ComponentRegistration;
+import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
+import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.sys.vaadin.TabbedModeVaadinServlet;
+import io.jmix.tabbedmode.xml.layout.loader.WorkAreaLoader;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Collections;
+
 @Configuration
 @ComponentScan
+@ConfigurationPropertiesScan
 @JmixModule(dependsOn = {FlowuiConfiguration.class})
 public class TabbedModeFlowuiConfiguration {
+
+    @Bean("tabmod_UiActions")
+    public ActionsConfiguration actions(ApplicationContext applicationContext,
+                                        AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.tabbedmode.action"));
+        return actionsConfiguration;
+    }
+
+    @Bean
+    public ComponentRegistration workAreaComponent() {
+        return ComponentRegistrationBuilder.create(WorkArea.class)
+                .withComponentLoader("workArea", WorkAreaLoader.class)
+                .build();
+
+    }
 
     @Bean("tabmod_ServletRegistrationBean")
     public ServletRegistrationBean<SpringServlet> servletRegistrationBean(

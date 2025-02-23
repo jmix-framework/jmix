@@ -157,6 +157,16 @@ public class View<T extends Component> extends Composite<T>
         stopViewTimerSample(sample, meterRegistry, BEFORE_SHOW, getId().orElse(null));
     }
 
+    /**
+     * CAUTION: for internal use only.
+     *
+     * @param event before navigation event with event details
+     */
+    @Internal
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        // Hook to be implemented
+    }
+
     @Override
     public void beforeLeave(BeforeLeaveEvent event) {
         if (!event.isPostponed()) {

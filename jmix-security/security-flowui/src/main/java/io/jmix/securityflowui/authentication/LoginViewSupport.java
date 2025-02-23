@@ -36,14 +36,10 @@ import io.jmix.core.security.DeviceTimeZoneProvider;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.ViewNavigators;
-import io.jmix.flowui.app.main.StandardMainView;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.sys.AppCookies;
 import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
-import io.jmix.flowui.view.DetailView;
-import io.jmix.flowui.view.DetailViewTypeExtractor;
-import io.jmix.flowui.view.ViewInfo;
-import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.flowui.view.*;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.securityflowui.accesscontext.UiLoginToUiContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -319,12 +315,17 @@ public class LoginViewSupport {
     }
 
     protected boolean isRedirectToInitialView(Location redirectLocation) {
-        if (!Strings.isNullOrEmpty(redirectLocation.getQueryParameters().getQueryString())) {
+        if (!redirectLocation.getQueryParameters().getParameters().isEmpty()) {
             return false;
         }
+
+        String mainViewId = uiProperties.getMainViewId();
+        Class<? extends View<?>> mainViewClass = viewRegistry.getViewInfo(mainViewId)
+                .getControllerClass();
+
         RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
         return routeConfiguration.getRoute(redirectLocation.getPathWithQueryParameters())
-                .map(StandardMainView.class::isAssignableFrom)
+                .map(mainViewClass::isAssignableFrom)
                 .orElse(false);
     }
 

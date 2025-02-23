@@ -21,7 +21,7 @@ import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
 import {ActiveMixin} from '@vaadin/a11y-base/src/active-mixin.js';
 import {FocusMixin} from '@vaadin/a11y-base/src/focus-mixin.js';
 import {TabindexMixin} from '@vaadin/a11y-base/src/tabindex-mixin.js';
-import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {TextController} from './text-controller.js';
 
 class JmixBreadcrumb extends ActiveMixin(TabindexMixin(FocusMixin(ThemableMixin(ElementMixin(PolylitMixin(LitElement)))))) {
@@ -50,7 +50,7 @@ class JmixBreadcrumb extends ActiveMixin(TabindexMixin(FocusMixin(ThemableMixin(
             }
 
             :host(:last-of-type) {
-                //pointer-events: none;
+                pointer-events: none;
             }
 
             [part='text'] {
@@ -63,7 +63,7 @@ class JmixBreadcrumb extends ActiveMixin(TabindexMixin(FocusMixin(ThemableMixin(
                 height: 100%;
                 min-height: inherit;
                 text-shadow: inherit;
-                
+
                 gap: var(--lumo-space-s);
             }
 
@@ -106,8 +106,8 @@ class JmixBreadcrumb extends ActiveMixin(TabindexMixin(FocusMixin(ThemableMixin(
             }
 
             /* RTL specific styles */
-            
-            
+
+
             /*  */
 
             @media (forced-colors: active) {

@@ -182,8 +182,10 @@ public class Views {
 
         log.trace("View {} {} opened", view.getId().orElse(null), view.getClass());
 
-        updateUrl(ui, resolveLocation(view, context));
-        updatePageTitle(ui, view);
+        if (openMode != ViewOpenMode.DIALOG) {
+            updateUrl(ui, resolveLocation(view, context));
+            updatePageTitle(ui, view);
+        }
 
         Timer.Sample readySample = start(meterRegistry);
         fireViewReadyEvent(view);
@@ -270,7 +272,12 @@ public class Views {
 
     protected void updatePageTitle(JmixUI ui, View<?> view) {
         String title = ViewControllerUtils.getPageTitle(view);
-        ui.getPage().setTitle(title);
+        updatePageTitle(ui, view, title);
+    }
+
+    protected void updatePageTitle(JmixUI ui, View<?> view, String title) {
+        ui.getInternals().cancelPendingTitleUpdate();
+        ui.getInternals().setTitle(title);
     }
 
     protected void updateUrl(JmixUI ui, Location newLocation) {
@@ -364,12 +371,14 @@ public class Views {
         breadcrumbs.addView(view, resolveLocation(view, context));
 
         ViewControllerUtils.setViewCloseDelegate(view, __ -> removeThisTabView(ui, view));
+        ViewControllerUtils.setPageTitleDelegate(view, title -> {
+            updateTabTitle(selectedTab, title);
+            updatePageTitle(ui, view, title);
+        });
 
+        updateTabTitle(selectedTab, ViewControllerUtils.getPageTitle(view));
         if (selectedTab instanceof JmixViewTab viewTab) {
-            viewTab.setText(ViewControllerUtils.getPageTitle(view));
             viewTab.setClosable(true/*view.isCloseable()*/); // TODO: gg, implement view.isCloseable()
-        } else {
-            selectedTab.setLabel(ViewControllerUtils.getPageTitle(view));
         }
     }
 
@@ -396,11 +405,7 @@ public class Views {
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
         Tab tab = tabbedContainer.getTab(((Component) viewContainer));
 
-        if (tab instanceof JmixViewTab viewTab) {
-            viewTab.setText(ViewControllerUtils.getPageTitle(currentViewInfo.view()));
-        } else {
-            tab.setLabel(ViewControllerUtils.getPageTitle(currentViewInfo.view()));
-        }
+        updateTabTitle(tab, ViewControllerUtils.getPageTitle(currentViewInfo.view()));
 
         // TODO: gg, move to a single place
         if (currentViewInfo.location() != null) {
@@ -478,9 +483,21 @@ public class Views {
         newTab.setClosable(true /*view.isCloseable()*/);
         newTab.addBeforeCloseListener(this::handleViewTabClose);
 
-        Tab addedTab = tabbedContainer.add(newTab, viewContainer);
+        ViewControllerUtils.setPageTitleDelegate(view, title -> {
+            updateTabTitle(newTab, title);
+            updatePageTitle(ui, view, title);
+        });
 
+        Tab addedTab = tabbedContainer.add(newTab, viewContainer);
         tabbedContainer.setSelectedTab(addedTab);
+    }
+
+    protected void updateTabTitle(Tab tab, String title) {
+        if (tab instanceof JmixViewTab viewTab) {
+            viewTab.setText(title);
+        } else {
+            tab.setLabel(title);
+        }
     }
 
     protected void onBreadcrumbsNavigate(BreadcrumbsNavigationContext context) {

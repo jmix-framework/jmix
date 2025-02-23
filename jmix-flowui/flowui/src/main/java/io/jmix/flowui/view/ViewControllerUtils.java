@@ -206,6 +206,10 @@ public final class ViewControllerUtils {
         view.setCloseDelegate(closeDelegate);
     }
 
+    public static void setPageTitleDelegate(View<?> view, Consumer<String> pageTitleDelegate) {
+        view.setPageTitleDelegate(pageTitleDelegate);
+    }
+
     public static boolean isSameView(View<?> view, View<?> other) {
         return view.getClass() == other.getClass()
                 && view.getId().equals(other.getId());

@@ -41,6 +41,10 @@ public class StandardMainView extends View<JmixAppLayout> implements RouterLayou
     public void showRouterLayoutContent(@Nullable HasElement content) {
         getContent().showRouterLayoutContent(content != null ? content : initialLayout);
 
+        if (content instanceof View<?> view) {
+            ViewControllerUtils.setPageTitleDelegate(view, this::updatePageTitle);
+        }
+
         updateTitle();
     }
 
@@ -56,9 +60,22 @@ public class StandardMainView extends View<JmixAppLayout> implements RouterLayou
     }
 
     protected void updateTitle() {
+        updateTitle(getTitleFromOpenedView());
+    }
+
+    protected void updateTitle(String title) {
         getTitleComponent()
                 .filter(c -> c instanceof HasText)
-                .ifPresent(c -> ((HasText) c).setText(getTitleFromOpenedView()));
+                .ifPresent(c -> ((HasText) c).setText(title));
+    }
+
+    protected void updatePageTitle(String title) {
+        updateTitle(title);
+
+        getUI().ifPresent(ui -> {
+            ui.getInternals().cancelPendingTitleUpdate();
+            ui.getInternals().setTitle(title);
+        });
     }
 
     protected Optional<Component> getTitleComponent() {

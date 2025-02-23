@@ -18,7 +18,7 @@ package io.jmix.tabbedmode.xml.facet;
 
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.impl.AbstractFacet;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 

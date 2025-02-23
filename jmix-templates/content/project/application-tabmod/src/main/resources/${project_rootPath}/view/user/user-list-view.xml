@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://UserListView.title"
+      focusComponent="usersDataGrid">
+    <data>
+        <collection id="usersDc"
+                    class="${project_rootPackage}.entity.User">
+            <fetchPlan extends="_base"/>
+            <loader id="usersDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from ${normalizedPrefix_underscore}User e order by e.username]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <genericFilter component="genericFilter"/>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="usersDl">
+            <properties include=".*"/>
+        </genericFilter>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createButton" action="usersDataGrid.createAction"/>
+            <button id="editButton" action="usersDataGrid.editAction"/>
+            <button id="removeButton" action="usersDataGrid.removeAction"/>
+            <button id="showRoleAssignmentsButton" action="usersDataGrid.showRoleAssignmentsAction"/>
+            <dropdownButton id="additionalButton" text="msg://additionalMenu" icon="COG">
+                <items>
+                    <actionItem id="changePasswordItem" ref="usersDataGrid.changePasswordAction"/>
+                    <actionItem id="resetPasswordItem" ref="usersDataGrid.resetPasswordAction"/>
+                    <actionItem id="showUserSubstitutionsItem" ref="usersDataGrid.showUserSubstitutionsAction"/>
+                </items>
+            </dropdownButton>
+            <simplePagination id="pagination" dataLoader="usersDl"/>
+        </hbox>
+        <dataGrid id="usersDataGrid"
+                  width="100%"
+                  columnReorderingAllowed="true"
+                  minHeight="20em"
+                  dataContainer="usersDc">
+            <actions>
+                <action id="createAction" type="list_create"/>
+                <action id="editAction" type="list_edit"/>
+                <action id="removeAction" type="list_remove"/>
+                <action id="showRoleAssignmentsAction" type="sec_showRoleAssignments"/>
+                <action id="changePasswordAction" type="sec_changePassword"/>
+                <action id="resetPasswordAction" type="sec_resetPassword"/>
+                <action id="showUserSubstitutionsAction" type="sec_showUserSubstitutions"/>
+            </actions>
+            <columns resizable="true">
+                <column property="username"/>
+                <column property="firstName"/>
+                <column property="lastName"/>
+                <column property="email"/>
+                <column property="timeZoneId"/>
+                <column property="active"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectButton" action="selectAction"/>
+            <button id="discardButton" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

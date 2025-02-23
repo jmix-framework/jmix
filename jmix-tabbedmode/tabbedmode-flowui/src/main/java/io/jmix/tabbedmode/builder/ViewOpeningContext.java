@@ -16,8 +16,97 @@
 
 package io.jmix.tabbedmode.builder;
 
+import com.google.common.base.Objects;
+import com.vaadin.flow.router.QueryParameters;
+import com.vaadin.flow.router.RouteParameters;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.view.View;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 
-public record ViewOpeningContext(View<?> view, ViewOpenMode openMode) {
+public class ViewOpeningContext {
+
+    protected final View<?> view;
+    protected final ViewOpenMode openMode;
+
+    protected RouteParameters routeParameters;
+    protected QueryParameters queryParameters;
+    protected boolean closeSameView = false;
+
+    public ViewOpeningContext(View<?> view, ViewOpenMode openMode) {
+        Preconditions.checkNotNullArgument(view);
+        Preconditions.checkNotNullArgument(openMode);
+
+        this.view = view;
+        this.openMode = openMode;
+    }
+
+    public static ViewOpeningContext create(View<?> view, ViewOpenMode openMode) {
+        return new ViewOpeningContext(view, openMode);
+    }
+
+    public View<?> getView() {
+        return view;
+    }
+
+    public ViewOpenMode getOpenMode() {
+        return openMode;
+    }
+
+    public RouteParameters getRouteParameters() {
+        return routeParameters != null
+                ? routeParameters
+                : RouteParameters.empty();
+    }
+
+    public QueryParameters getQueryParameters() {
+        return queryParameters != null
+                ? queryParameters
+                : QueryParameters.empty();
+    }
+
+    public boolean isCloseSameView() {
+        return closeSameView;
+    }
+
+    public ViewOpeningContext withRouteParameters(RouteParameters routeParameters) {
+        Preconditions.checkNotNullArgument(routeParameters);
+
+        this.routeParameters = routeParameters;
+        return this;
+    }
+
+    public ViewOpeningContext withQueryParameters(QueryParameters queryParameters) {
+        Preconditions.checkNotNullArgument(queryParameters);
+
+        this.queryParameters = queryParameters;
+        return this;
+    }
+
+    public ViewOpeningContext withCloseSameView(boolean closeSameView) {
+        this.closeSameView = closeSameView;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ViewOpeningContext that = (ViewOpeningContext) o;
+        return Objects.equal(view, that.view)
+                && openMode == that.openMode
+                && Objects.equal(routeParameters, that.routeParameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(view, openMode, routeParameters, closeSameView);
+    }
+
+    @Override
+    public String toString() {
+        return "ViewOpeningContext{" +
+                "view=" + view +
+                ", openMode=" + openMode +
+                ", routeParameters=" + routeParameters +
+                '}';
+    }
 }

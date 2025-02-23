@@ -29,13 +29,6 @@
     width: 100%;
 }
 
-.jmix-app-window-wrap {
-    display: flex;
-    flex-direction: column;
-    padding: var(--lumo-space-m);
-    box-sizing: border-box;
-}
-
 .jmix-view-tab-close-button {
     margin: 0;
     padding: 0;

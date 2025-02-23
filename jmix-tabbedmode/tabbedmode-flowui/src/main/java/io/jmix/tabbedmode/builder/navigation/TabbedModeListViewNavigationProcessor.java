@@ -56,6 +56,6 @@ public class TabbedModeListViewNavigationProcessor extends ListViewNavigationPro
     }
 
     protected void openView(ViewOpeningContext context) {
-        views.open(context.view(), context.openMode());
+        views.open(context);
     }
 }

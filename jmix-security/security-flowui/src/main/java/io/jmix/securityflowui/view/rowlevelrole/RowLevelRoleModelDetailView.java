@@ -92,6 +92,11 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     }
 
     @Override
+    protected void setupEntityToEdit(RowLevelRoleModel entityToEdit) {
+        // do nothing
+    }
+
+    @Override
     protected void initExistingEntity(String serializedEntityCode) {
         String code = urlParamSerializer.deserialize(String.class, serializedEntityCode);
         RowLevelRole roleByCode = roleRepository.findRoleByCode(code);

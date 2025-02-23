@@ -16,7 +16,6 @@
 
 package io.jmix.tabbedmode.security.authentication;
 
-import com.google.common.base.Strings;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.VaadinServletRequest;
@@ -24,22 +23,13 @@ import com.vaadin.flow.server.VaadinServletResponse;
 import io.jmix.flowui.view.View;
 import io.jmix.securityflowui.authentication.LoginViewSupport;
 import io.jmix.tabbedmode.JmixUI;
-import io.jmix.tabbedmode.ViewBuilders;
 import io.jmix.tabbedmode.navigation.RedirectHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Primary
 @Component("tabmod_TabbedModeLoginViewSupport")
 public class TabbedModeLoginViewSupport extends LoginViewSupport {
-
-    protected ViewBuilders viewBuilders;
-
-    @Autowired
-    public void setViewBuilders(ViewBuilders viewBuilders) {
-        this.viewBuilders = viewBuilders;
-    }
 
     @Override
     protected void showInitialView(VaadinServletRequest request, VaadinServletResponse response) {

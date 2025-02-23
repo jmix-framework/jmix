@@ -39,7 +39,6 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.EditedEntityTransformer;
 import io.jmix.tabbedmode.Views;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -55,15 +54,14 @@ public class DetailViewBuilderProcessor extends AbstractViewBuilderProcessor {
     protected List<EditedEntityTransformer> editedEntityTransformers;
     protected UiViewProperties viewProperties;
 
-    public DetailViewBuilderProcessor(ApplicationContext applicationContext,
-                                      Views views,
+    public DetailViewBuilderProcessor(Views views,
                                       ViewRegistry viewRegistry,
                                       UiAccessChecker uiAccessChecker,
                                       Metadata metadata,
                                       ExtendedEntities extendedEntities,
                                       List<EditedEntityTransformer> editedEntityTransformers,
                                       UiViewProperties viewProperties) {
-        super(applicationContext, views, viewRegistry, uiAccessChecker);
+        super(views, viewRegistry, uiAccessChecker);
 
         this.metadata = metadata;
         this.extendedEntities = extendedEntities;

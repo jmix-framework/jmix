@@ -113,11 +113,6 @@
         <Package name="~io\.jmix\.flowui.*"/>
     </Match>
 
-    <!-- todo Temporarily ignored Tabbed Mode module -->
-    <Match>
-        <Package name="~io\.jmix\.tabbedmode.*"/>
-    </Match>
-
     <!-- Ignored problems in classes -->
 
     <Match>

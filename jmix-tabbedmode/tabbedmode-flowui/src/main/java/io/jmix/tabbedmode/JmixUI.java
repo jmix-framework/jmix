@@ -526,13 +526,7 @@ public class JmixUI extends UI {
         } catch (Exception exception) {
             handleExceptionNavigation(location, exception);
         } finally {
-            if (getInternals().getSession().getConfiguration().isReactEnabled()
-                    && getInternals().getContinueNavigationAction() != null) {
-                getInternals().clearLastHandledNavigation();
-            } else {
-                getInternals().clearLastHandledNavigation();
-            }
-
+            getInternals().clearLastHandledNavigation();
         }
     }
 

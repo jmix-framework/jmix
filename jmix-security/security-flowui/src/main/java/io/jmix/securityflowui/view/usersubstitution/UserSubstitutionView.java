@@ -63,12 +63,23 @@ public class UserSubstitutionView extends StandardView {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
+        findUsername(event);
+
+        super.beforeEnter(event);
+    }
+
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        findUsername(event);
+
+        super.processBeforeEnterInternal(event);
+    }
+
+    protected void findUsername(BeforeEnterEvent event) {
         username = event.getRouteParameters().get(ROUTE_PARAM_NAME)
                 .orElseThrow(() ->
                         new IllegalStateException(String.format("Entity '%s' not found", ROUTE_PARAM_NAME)));
         userSubstitutionsDl.setParameter("username", username);
-
-        super.beforeEnter(event);
     }
 
     @Override

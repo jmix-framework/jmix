@@ -163,6 +163,19 @@ public class AppSettingsEntityView extends StandardView {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
+        findSettingsClass(event);
+
+        super.beforeEnter(event);
+    }
+
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        findSettingsClass(event);
+
+        super.processBeforeEnterInternal(event);
+    }
+
+    protected void findSettingsClass(BeforeEnterEvent event) {
         Map<String, List<String>> parameters = event.getLocation().getQueryParameters().getParameters();
 
         if (parameters.containsKey(QUERY_PARAM_SETTINGS_CLASS)) {
@@ -170,7 +183,6 @@ public class AppSettingsEntityView extends StandardView {
                     .findAny()
                     .ifPresent(this::setSettingsClass);
         }
-        super.beforeEnter(event);
     }
 
     @Subscribe

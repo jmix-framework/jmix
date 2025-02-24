@@ -502,14 +502,18 @@ public class JmixUI extends UI {
         try {
             // Jmix API
             Class<? extends Component> navigationTarget = navigationState.getNavigationTarget();
+            // Don't throw exception for placeholder, just skip it
+            if (UI.ClientViewPlaceholder.class.isAssignableFrom(navigationTarget)) {
+                return;
+            }
+
             if (!View.class.isAssignableFrom(navigationTarget)) {
-                throw new IllegalArgumentException("'navigationTarget' is not a %s"
-                        .formatted(View.class.getSimpleName()));
+                throw new IllegalArgumentException("navigationTarget '%s' is not a %s"
+                        .formatted(navigationTarget.getName(), View.class.getSimpleName()));
             }
 
             //noinspection unchecked
             Class<? extends View<?>> viewClass = (Class<? extends View<?>>) navigationTarget;
-            View<?> view = views.create(viewClass);
             ViewOpenMode openMode = inferOpenMode(viewClass);
 
             if (!ViewOpenMode.ROOT.equals(openMode)
@@ -517,7 +521,8 @@ public class JmixUI extends UI {
                 renderTopLevelView();
             }
 
-            // TODO: gg, QueryParameters
+            View<?> view = views.create(viewClass);
+
             views.open(this, ViewOpeningContext.create(view, openMode)
                     .withRouteParameters(navigationState.getRouteParameters())
                     .withQueryParameters(location.getQueryParameters())
@@ -616,6 +621,12 @@ public class JmixUI extends UI {
         if (this.topLevelView != topLevelView) {
             HasElement oldRoot = this.topLevelView;
             this.topLevelView = topLevelView;
+
+            // Probably 'wrapperElement' contains placeholder
+            if (oldRoot == null
+                    && wrapperElement.getChildren().findAny().isPresent()) {
+               wrapperElement.removeAllChildren();
+            }
 
             internalsHandler.updateRoot(this, oldRoot, topLevelView);
         }

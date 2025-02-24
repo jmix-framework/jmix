@@ -34,8 +34,6 @@ public class MinValidator<T extends Number> extends AbstractValidator<T> impleme
 
     protected int min;
 
-    protected String defaultMessage;
-
     public MinValidator() {
     }
 

@@ -110,6 +110,13 @@ public class RoleAssignmentView extends StandardView {
         super.beforeEnter(event);
     }
 
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        super.processBeforeEnterInternal(event);
+
+        findUser(event.getRouteParameters());
+    }
+
     @Subscribe
     public void onBeforeClose(BeforeCloseEvent event) {
         preventUnsavedChanges(event);

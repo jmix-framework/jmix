@@ -97,7 +97,19 @@ public class SearchResultsView extends StandardView {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
+        initSearch(event);
+
         super.beforeEnter(event);
+    }
+
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        initSearch(event);
+
+        super.processBeforeEnterInternal(event);
+    }
+
+    protected void initSearch(BeforeEnterEvent event) {
         parseQueryParameters(event.getLocation().getQueryParameters().getParameters());
         initSearchFieldContext();
         SearchContext searchContext = createSearchContext(value, entities, searchSize);

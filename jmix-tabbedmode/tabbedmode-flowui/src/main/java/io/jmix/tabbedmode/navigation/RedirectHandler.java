@@ -29,7 +29,6 @@ import io.jmix.tabbedmode.view.ViewOpenMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: gg, make a bean?
 public class RedirectHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RedirectHandler.class);
@@ -85,6 +84,7 @@ public class RedirectHandler {
         View<?> view = views.create(viewClass);
 
         views.open(ui, ViewOpeningContext.create(view, ViewOpenMode.NEW_TAB)
-                .withRouteParameters(navigationState.getRouteParameters()));
+                .withRouteParameters(navigationState.getRouteParameters())
+                .withQueryParameters(location.getQueryParameters()));
     }
 }

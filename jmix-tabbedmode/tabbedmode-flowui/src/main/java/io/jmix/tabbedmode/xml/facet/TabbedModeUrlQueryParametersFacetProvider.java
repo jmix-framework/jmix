@@ -20,6 +20,7 @@ import io.jmix.core.JmixOrder;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.core.annotation.Order;
 
@@ -27,6 +28,12 @@ import org.springframework.core.annotation.Order;
 @Order(JmixOrder.LOWEST_PRECEDENCE - 100)
 @org.springframework.stereotype.Component("tabmod_TabbedModeUrlQueryParametersFacetProvider")
 public class TabbedModeUrlQueryParametersFacetProvider implements FacetProvider<UrlQueryParametersFacet> {
+
+    protected final LoaderSupport loaderSupport;
+
+    public TabbedModeUrlQueryParametersFacetProvider(LoaderSupport loaderSupport) {
+        this.loaderSupport = loaderSupport;
+    }
 
     @Override
     public String getFacetTag() {
@@ -45,6 +52,8 @@ public class TabbedModeUrlQueryParametersFacetProvider implements FacetProvider<
 
     @Override
     public void loadFromXml(UrlQueryParametersFacet facet, Element element, ComponentLoader.ComponentContext context) {
-        // do nothing
+        facet.setOwner(context.getView());
+
+        loaderSupport.loadString(element, "id", facet::setId);
     }
 }

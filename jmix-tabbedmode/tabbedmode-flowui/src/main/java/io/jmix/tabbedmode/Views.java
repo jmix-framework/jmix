@@ -254,7 +254,9 @@ public class Views {
     // For compatibility with navigation, only.
     protected void sendNavigationEvent(JmixUI ui, ViewOpeningContext context) {
         RouteParameters routeParameters = context.getRouteParameters();
-        if (routeParameters.getParameterNames().isEmpty()) {
+        QueryParameters queryParameters = context.getQueryParameters();
+        if (routeParameters.getParameterNames().isEmpty()
+                && queryParameters.getParameters().isEmpty()) {
             return;
         }
 

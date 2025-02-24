@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "name": "Full-Stack Application (Kotlin)",
+  "name": "Full-Stack Application with Tabbed Mode add-on (Kotlin)",
   "order": 110,
   "addon": false,
-  "description": "<html>Jmix web application in Kotlin.<p>Contains Flow UI, Security, File Storage subsystems and Data Tools add-on.<br>Uses embedded HSQL database.<p>You can change the database and include add-ons from the Marketplace at any time when working with the project.</html>",
+  "description": "<html>Jmix web application in Kotlin.<p>Contains Flow UI, Security, File Storage subsystems, Data Tools and Tabbed Mode add-on.<br>Uses embedded HSQL database.<p>You can change the database and include add-ons from the Marketplace at any time when working with the project.</html>",
   "params": [
     {
       "name": "projectId",

@@ -50,6 +50,11 @@ public class JmixViewTab extends Tab {
         super(components);
     }
 
+    @Override
+    public void setId(String id) {
+        super.setId(id);
+    }
+
     @Nullable
     public String getText() {
         return textElement != null ? textElement.getText() : null;
@@ -73,11 +78,6 @@ public class JmixViewTab extends Tab {
             this.textElement.getElement().removeFromParent();
             this.textElement = null;
         }
-
-        /*removeAll(getNonTextNodes());
-        if (text != null && !text.isEmpty()) {
-            getElement().appendChild(Element.createText(text));
-        }*/
     }
 
     private HasText createTextElement() {
@@ -118,25 +118,12 @@ public class JmixViewTab extends Tab {
     }
 
     protected void onCloseButtonClicked(ClickEvent<Button> event) {
-        fireEvent(new BeforeCloseEvent<>(this, event.isFromClient()));
+        closeInternal(event.isFromClient());
     }
 
-    // TODO: gg, remove
-    /*protected void removeAll(Element... exclusion) {
-        Set<Element> toExclude = Stream.of(exclusion)
-                .collect(Collectors.toSet());
-        Predicate<Element> filter = toExclude::contains;
-        getElement().getChildren().filter(filter.negate())
-                .forEach(child -> child.removeAttribute("slot"));
-        getElement().removeAllChildren();
-        getElement().appendChild(exclusion);
+    protected void closeInternal(boolean fromClient) {
+        fireEvent(new BeforeCloseEvent<>(this, fromClient));
     }
-
-    protected Element[] getNonTextNodes() {
-        return getElement().getChildren()
-                .filter(element -> !element.isTextNode())
-                .toArray(Element[]::new);
-    }*/
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Registration addBeforeCloseListener(ComponentEventListener<BeforeCloseEvent<JmixViewTab>> listener) {
@@ -146,6 +133,7 @@ public class JmixViewTab extends Tab {
     // TODO: gg, rename
     public static class BeforeCloseEvent<C extends Component> extends ComponentEvent<C> {
 
+        // TODO: gg, add usage
         protected boolean closePrevented = false;
 
         public BeforeCloseEvent(C source, boolean fromClient) {

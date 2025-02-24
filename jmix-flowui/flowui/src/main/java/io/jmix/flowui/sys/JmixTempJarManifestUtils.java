@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Workaround on Windows OS if you build project using gradle with long class path.
@@ -56,20 +57,25 @@ public class JmixTempJarManifestUtils {
             filePath = StringUtils.capitalize(filePath);
         }
 
+        UrlResource urlResource;
+
         try {
-            UrlResource urlResource = new UrlResource(
+            urlResource = new UrlResource(
                     ResourceUtils.JAR_URL_PREFIX +
                             ResourceUtils.FILE_URL_PREFIX + filePath +
                             ResourceUtils.JAR_URL_SEPARATOR + "META-INF/MANIFEST.MF");
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(urlResource.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            while (reader.ready()) {
-                sb.append(reader.readLine());
-            }
-            return sb.toString();
         } catch (MalformedURLException e) {
             throw new RuntimeException("Cannot find temporary jar file", e);
+        }
+
+        try (InputStreamReader reader = new InputStreamReader(urlResource.getInputStream(), StandardCharsets.UTF_8);
+             BufferedReader bufferedReader = new BufferedReader(reader)) {
+            StringBuilder sb = new StringBuilder();
+
+            while (bufferedReader.ready()) {
+                sb.append(bufferedReader.readLine());
+            }
+            return sb.toString();
         } catch (IOException e) {
             throw new RuntimeException("Cannot read MANIFEST.MF from temporary jar file", e);
         }

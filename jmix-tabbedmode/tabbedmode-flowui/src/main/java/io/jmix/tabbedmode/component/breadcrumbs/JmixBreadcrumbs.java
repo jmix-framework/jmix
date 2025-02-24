@@ -19,49 +19,24 @@ package io.jmix.tabbedmode.component.breadcrumbs;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.notification.Notification;
+import io.jmix.core.common.util.Preconditions;
 
 @Tag("jmix-breadcrumbs")
 @JsModule("./src/breadcrumbs/jmix-breadcrumbs.js")
 public class JmixBreadcrumbs extends Component {
 
-    protected JmixBreadcrumb homeLink;
-
     public JmixBreadcrumbs() {
     }
 
-    public boolean isHomeLinkVisible() {
-        return homeLink != null;
-    }
-
-    public void setHomeLinkVisible(boolean visible) {
-        if (visible && homeLink == null) {
-            homeLink = createHomeLink();
-            getElement().insertChild(0, homeLink.getElement());
-        } else if (homeLink != null) {
-            homeLink.removeFromParent();
-        }
-    }
-
-    private JmixBreadcrumb createHomeLink() {
-        JmixBreadcrumb breadcrumb = new JmixBreadcrumb()
-                .withText("Home") // TODO: gg, message
-                .withClickHandler(event -> {
-                    Notification.show("Home clicked");
-                });
-        // TODO: gg, icon
-        breadcrumb.addClassName("jmix-breadcrumb-home-link");
-
-        return breadcrumb;
-    }
-
     public void add(JmixBreadcrumb breadcrumb) {
-        // TODO: gg, check for null
+        Preconditions.checkNotNullArgument(breadcrumb);
+
         getElement().appendChild(breadcrumb.getElement());
     }
 
     public void remove(JmixBreadcrumb breadcrumb) {
-        // TODO: gg, check for null
+        Preconditions.checkNotNullArgument(breadcrumb);
+
         getElement().removeChild(breadcrumb.getElement());
     }
 }

@@ -46,9 +46,10 @@ public class FacetsImpl implements Facets, ApplicationContextAware {
     }
 
     @Autowired(required = false)
-    protected void setFacetRegistrations(List<FacetProvider<?>> registrations) {
-        this.registrations = registrations.stream()
-                .collect(toMap(FacetProvider::getFacetClass, identity()));
+    protected void setFacetRegistrations(List<FacetProvider<?>> facetProviders) {
+        for (FacetProvider<?> facetProvider : facetProviders) {
+            registrations.putIfAbsent(facetProvider.getFacetClass(), facetProvider);
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.tabbedmode.component.workarea;
+@Experimental
+@NonNullApi
+package io.jmix.tabbedmode.xml.layout;
 
-import org.springframework.lang.Nullable;
-
-public interface HasWorkArea {
-
-    /**
-     * @return a work area component
-     */
-    @Nullable
-    AppWorkArea getWorkArea();
-}
+import io.jmix.core.annotation.Experimental;
+import org.springframework.lang.NonNullApi;

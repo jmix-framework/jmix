@@ -81,6 +81,11 @@ public class DataViewBindingImpl<C extends Component & HasDataView<V, ?, ?>, V>
             this.componentValueChangeRegistration.remove();
             this.componentValueChangeRegistration = null;
         }
+
+        if (this.itemsChangeRegistration != null) {
+            this.itemsChangeRegistration.remove();
+            this.itemsChangeRegistration = null;
+        }
     }
 
     @SuppressWarnings("unchecked")

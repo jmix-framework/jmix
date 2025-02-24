@@ -195,6 +195,14 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         super.beforeEnter(event);
     }
 
+    @Internal
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        super.processBeforeEnterInternal(event);
+
+        findEntityId(event);
+    }
+
     private void checkReadOnlyState(BeforeEnterEvent event) {
         Location location = event.getLocation();
         List<String> mode = location
@@ -679,8 +687,11 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                 if (!metadataTools.isJpaEntity(entityMetaClass)) {
                     // DTO entity doesn't have fetch plan - unable to proceed
                     return true;
+                } else {
+                    throw new IllegalStateException("Fetch plan can't be null for JPA entity");
                 }
             }
+
             return getEntityStates().isLoadedWithFetchPlan(entityToEdit, fetchPlan);
         }
 

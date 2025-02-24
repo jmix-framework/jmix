@@ -24,18 +24,14 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.view.View;
 import io.jmix.tabbedmode.JmixUI;
 import io.jmix.tabbedmode.Views;
+import io.jmix.tabbedmode.builder.ViewOpeningContext;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-
-// TODO: gg, make a bean?
 public class RedirectHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RedirectHandler.class);
-
-    protected static final String REDIRECT_PARAM = "redirectTo";
 
     protected final JmixUI ui;
     protected final Views views;
@@ -70,14 +66,14 @@ public class RedirectHandler {
 
     // TODO: gg, move to util
     protected void openView(Location location) {
-        Optional<NavigationState> navigationState = UI.getCurrent().getInternals()
-                .getRouter().resolveNavigationTarget(location);
+        NavigationState navigationState = UI.getCurrent().getInternals()
+                .getRouter().resolveNavigationTarget(location).orElse(null);
 
-        if (navigationState.isEmpty()) {
+        if (navigationState == null) {
             return;
         }
 
-        Class<? extends Component> navigationTarget = navigationState.get().getNavigationTarget();
+        Class<? extends Component> navigationTarget = navigationState.getNavigationTarget();
         if (!View.class.isAssignableFrom(navigationTarget)) {
             throw new IllegalArgumentException("'navigationTarget' is not a "
                     + View.class.getSimpleName());
@@ -85,8 +81,10 @@ public class RedirectHandler {
 
         //noinspection unchecked
         Class<? extends View<?>> viewClass = (Class<? extends View<?>>) navigationTarget;
-        // TODO: gg, navigate insteaed of direct call to Views?
         View<?> view = views.create(viewClass);
-        views.openFromNavigation(ui, view, ViewOpenMode.NEW_TAB);
+
+        views.open(ui, ViewOpeningContext.create(view, ViewOpenMode.NEW_TAB)
+                .withRouteParameters(navigationState.getRouteParameters())
+                .withQueryParameters(location.getQueryParameters()));
     }
 }

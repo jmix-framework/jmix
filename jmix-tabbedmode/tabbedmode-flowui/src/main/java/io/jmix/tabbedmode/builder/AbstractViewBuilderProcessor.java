@@ -21,21 +21,16 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.tabbedmode.Views;
-import org.springframework.context.ApplicationContext;
 
 public abstract class AbstractViewBuilderProcessor {
-
-    protected ApplicationContext applicationContext;
 
     protected Views views;
     protected ViewRegistry viewRegistry;
     protected UiAccessChecker uiAccessChecker;
 
-    public AbstractViewBuilderProcessor(ApplicationContext applicationContext,
-                                        Views views,
+    public AbstractViewBuilderProcessor(Views views,
                                         ViewRegistry viewRegistry,
                                         UiAccessChecker uiAccessChecker) {
-        this.applicationContext = applicationContext;
         this.views = views;
         this.viewRegistry = viewRegistry;
         this.uiAccessChecker = uiAccessChecker;
@@ -68,6 +63,5 @@ public abstract class AbstractViewBuilderProcessor {
         }
     }
 
-    // TODO: gg, interface
     protected abstract <V extends View<?>> Class<V> inferViewClass(AbstractViewBuilder<V, ?> builder);
 }

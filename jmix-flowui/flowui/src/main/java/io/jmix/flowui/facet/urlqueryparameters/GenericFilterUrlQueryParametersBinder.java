@@ -316,13 +316,16 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         if (configurationComponent instanceof PropertyFilter<?> configurationPropertyFilter
                 && filterComponent instanceof PropertyFilter<?> propertyFilter) {
             return updatePropertyCondition(configurationPropertyFilter, propertyFilter);
-        } else if (configurationComponent instanceof JpqlFilter<?> configurationJpqlFilter
+        }
+
+        /* else if (configurationComponent instanceof JpqlFilter<?> configurationJpqlFilter
                 && filterComponent instanceof JpqlFilter<?> jpqlFilter) {
             //TODO: kremnevda, implement 02.06.2023
         } else if (configurationComponent instanceof GroupFilter configurationGroupFilter
                 && filterComponent instanceof GroupFilter groupFilter) {
             //TODO: kremnevda, implement 02.06.2023
         }
+        */
 
         return null;
     }

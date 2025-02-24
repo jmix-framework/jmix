@@ -87,7 +87,6 @@ public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, Ent
         if (!hasValue.isEmpty()
                 && valueSource instanceof EntityValueSource) {
             EntityValueSource<?, ?> entityValueSource = (EntityValueSource<?, ?>) valueSource;
-            entityValueSource.getMetaPropertyPath();
             if (entityValueSource.getMetaPropertyPath().getMetaProperty().getType() == MetaProperty.Type.COMPOSITION) {
                 View view = UiComponentUtils.findView(((Component) target));
                 if (view != null) {

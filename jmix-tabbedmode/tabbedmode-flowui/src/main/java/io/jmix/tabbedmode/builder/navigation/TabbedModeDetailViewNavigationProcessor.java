@@ -16,8 +16,6 @@
 
 package io.jmix.tabbedmode.builder.navigation;
 
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.DetailViewNavigationProcessor;
@@ -43,11 +41,9 @@ public class TabbedModeDetailViewNavigationProcessor extends DetailViewNavigatio
                                                    ViewRegistry viewRegistry,
                                                    ViewNavigationSupport navigationSupport,
                                                    RouteSupport routeSupport,
-                                                   Metadata metadata,
-                                                   MetadataTools metadataTools,
                                                    Views views,
                                                    DetailViewBuilderProcessor detailViewBuilderProcessor) {
-        super(viewSupport, viewRegistry, navigationSupport, routeSupport, metadata, metadataTools);
+        super(viewSupport, viewRegistry, navigationSupport, routeSupport);
 
         this.views = views;
         this.detailViewBuilderProcessor = detailViewBuilderProcessor;
@@ -63,6 +59,6 @@ public class TabbedModeDetailViewNavigationProcessor extends DetailViewNavigatio
     }
 
     protected void openView(ViewOpeningContext context) {
-        views.open(context.view(), context.openMode());
+        views.open(context);
     }
 }

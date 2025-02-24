@@ -18,8 +18,6 @@ package io.jmix.flowui.view.navigation;
 
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.sys.ViewSupport;
@@ -38,20 +36,14 @@ import static java.util.Objects.requireNonNull;
 public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<DetailViewNavigator<?>> {
 
     protected RouteSupport routeSupport;
-    protected Metadata metadata;
-    protected MetadataTools metadataTools;
 
     public DetailViewNavigationProcessor(ViewSupport viewSupport,
                                          ViewRegistry viewRegistry,
                                          ViewNavigationSupport navigationSupport,
-                                         RouteSupport routeSupport,
-                                         Metadata metadata,
-                                         MetadataTools metadataTools) {
+                                         RouteSupport routeSupport) {
         super(viewSupport, viewRegistry, navigationSupport);
 
         this.routeSupport = routeSupport;
-        this.metadata = metadata;
-        this.metadataTools = metadataTools;
     }
 
     @Override

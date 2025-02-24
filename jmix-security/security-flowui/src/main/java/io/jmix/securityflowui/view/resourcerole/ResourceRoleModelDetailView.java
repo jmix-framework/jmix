@@ -119,6 +119,11 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     }
 
     @Override
+    protected void setupEntityToEdit(ResourceRoleModel entityToEdit) {
+        // do nothing
+    }
+
+    @Override
     protected void initExistingEntity(String serializedEntityCode) {
         String code = urlParamSerializer.deserialize(String.class, serializedEntityCode);
         ResourceRole roleByCode = roleRepository.findRoleByCode(code);

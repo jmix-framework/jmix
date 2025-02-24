@@ -25,6 +25,8 @@ import com.vaadin.flow.router.Location;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.ComponentContainer;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
@@ -38,10 +40,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,7 +48,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 @Tag("jmix-work-area")
 @JsModule("./src/workarea/jmix-work-area.js")
-public class WorkArea extends Component implements HasSize, ApplicationContextAware, InitializingBean {
+public class WorkArea extends Component implements HasSize, ComponentContainer, ApplicationContextAware, InitializingBean {
 
     public static final String TABBED_CONTAINER_CLASS_NAME = "jmix-main-tabsheet";
     public static final String INITIAL_LAYOUT_CLASS_NAME = "jmix-initial-layout";
@@ -270,6 +269,22 @@ public class WorkArea extends Component implements HasSize, ApplicationContextAw
 
     public int getOpenedTabCount() {
         return getTabbedViewsContainer().getTabs().size();
+    }
+
+    @Override
+    public Optional<Component> findOwnComponent(String id) {
+        return Optional.ofNullable(state == State.INITIAL_LAYOUT
+                && initialLayout != null
+                && UiComponentUtils.sameId(initialLayout, id)
+                ? initialLayout
+                : null);
+    }
+
+    @Override
+    public Collection<Component> getOwnComponents() {
+        return state == State.INITIAL_LAYOUT && initialLayout != null
+                ? Collections.singleton(initialLayout)
+                : Collections.emptyList();
     }
 
     /**

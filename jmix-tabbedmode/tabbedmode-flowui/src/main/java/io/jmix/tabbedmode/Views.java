@@ -22,6 +22,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.di.Instantiator;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Messages;
 import io.jmix.core.UuidProvider;
@@ -66,7 +67,6 @@ import static io.jmix.flowui.monitoring.ViewLifeCycle.BEFORE_SHOW;
 import static io.jmix.flowui.monitoring.ViewLifeCycle.READY;
 import static io.micrometer.core.instrument.Timer.start;
 
-@SuppressWarnings("unused")
 @org.springframework.stereotype.Component("tabmod_Views")
 public class Views {
 
@@ -231,6 +231,11 @@ public class Views {
 
     protected ViewOpenMode getActualOpenMode(JmixUI ui, ViewOpenMode requiredOpenMode) {
         ViewOpenMode openMode = requiredOpenMode;
+
+        if (openMode == ViewOpenMode.THIS_TAB
+                && getConfiguredWorkArea(ui).getState() == WorkArea.State.INITIAL_LAYOUT) {
+            openMode = ViewOpenMode.NEW_TAB;
+        }
 
         if (openMode != ViewOpenMode.DIALOG
                 && openMode != ViewOpenMode.ROOT
@@ -655,8 +660,11 @@ public class Views {
     }
 
     protected void showTooManyOpenTabsMessage() {
-        notifications.show(messages.formatMessage("", "tooManyOpenTabs.message",
-                tabbedModeProperties.getMaxTabCount()));
+        notifications.create(messages.formatMessage("", "tooManyOpenTabs.message",
+                        tabbedModeProperties.getMaxTabCount()))
+                .withType(Notifications.Type.WARNING)
+                .withClassName(LumoUtility.Whitespace.PRE)
+                .show();
     }
 
     protected JmixUI getCurrentUI() {

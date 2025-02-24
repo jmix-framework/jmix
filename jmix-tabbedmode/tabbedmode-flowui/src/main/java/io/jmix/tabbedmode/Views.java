@@ -27,6 +27,7 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.Messages;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.OpenedDialogWindows;
 import io.jmix.flowui.UiComponents;
@@ -34,6 +35,7 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
 import io.jmix.flowui.sys.BeanUtil;
+import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.view.*;
@@ -83,6 +85,7 @@ public class Views {
     protected final EntityStates entityStates;
     protected final UiProperties uiProperties;
     protected final MeterRegistry meterRegistry;
+    protected final UiAccessChecker uiAccessChecker;
     protected final TabbedModeProperties tabbedModeProperties;
 
     public Views(ApplicationContext applicationContext,
@@ -94,6 +97,7 @@ public class Views {
                  EntityStates entityStates,
                  UiProperties uiProperties,
                  MeterRegistry meterRegistry,
+                 UiAccessChecker uiAccessChecker,
                  TabbedModeProperties tabbedModeProperties) {
         this.applicationContext = applicationContext;
         this.viewRegistry = viewRegistry;
@@ -104,12 +108,13 @@ public class Views {
         this.entityStates = entityStates;
         this.uiProperties = uiProperties;
         this.meterRegistry = meterRegistry;
+        this.uiAccessChecker = uiAccessChecker;
         this.tabbedModeProperties = tabbedModeProperties;
     }
 
     public View<?> create(String viewId) {
         ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
-        return createInternal(viewInfo.getControllerClass());
+        return createInternal(viewInfo);
     }
 
     @SuppressWarnings("unchecked")
@@ -118,8 +123,21 @@ public class Views {
         return (T) create(id);
     }
 
-    protected <T extends View<?>> T createInternal(Class<T> viewClass) {
-        return Instantiator.get(UI.getCurrent()).getOrCreate(viewClass);
+    protected View<?> createInternal(ViewInfo viewInfo) {
+        checkPermissions(viewInfo);
+
+        return Instantiator.get(UI.getCurrent()).getOrCreate(viewInfo.getControllerClass());
+    }
+
+    private void checkPermissions(ViewInfo viewInfo) {
+        if (uiProperties.getLoginViewId().equals(viewInfo.getId())) {
+            return;
+        }
+
+        boolean viewPermitted = uiAccessChecker.isViewPermitted(viewInfo.getControllerClass());
+        if (!viewPermitted) {
+            throw new AccessDeniedException("view", viewInfo.getId());
+        }
     }
 
     public OperationResult open(View<?> view, ViewOpenMode openMode) {

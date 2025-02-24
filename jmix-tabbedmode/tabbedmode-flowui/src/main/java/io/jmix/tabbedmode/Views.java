@@ -48,6 +48,7 @@ import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.view.DialogWindow;
+import io.jmix.tabbedmode.view.MultipleOpen;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -199,7 +200,8 @@ public class Views {
     @Nullable
     protected OperationResult closeSameView(JmixUI ui, ViewOpeningContext context) {
         if (ViewOpenMode.NEW_TAB == context.getOpenMode()
-                && context.isCloseSameView()) {
+                && context.isCheckMultipleOpen()
+                && !isMultipleOpen(context.getView())) {
             View<?> view = context.getView();
             WorkArea workArea = getConfiguredWorkArea(ui);
             View<?> sameView = getTabbedViewsStacks(workArea)
@@ -219,6 +221,12 @@ public class Views {
         }
 
         return null;
+    }
+
+    protected boolean isMultipleOpen(View<?> view) {
+        return ViewControllerUtils.findAnnotation(view, MultipleOpen.class)
+                .map(MultipleOpen::value)
+                .orElseGet(tabbedModeProperties::isMultipleOpen);
     }
 
     protected ViewOpenMode getActualOpenMode(JmixUI ui, ViewOpenMode requiredOpenMode) {

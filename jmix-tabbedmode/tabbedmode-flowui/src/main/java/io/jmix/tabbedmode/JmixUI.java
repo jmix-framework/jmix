@@ -521,7 +521,7 @@ public class JmixUI extends UI {
             views.open(this, ViewOpeningContext.create(view, openMode)
                     .withRouteParameters(navigationState.getRouteParameters())
                     .withQueryParameters(location.getQueryParameters())
-                    .withCloseSameView(true));
+                    .withCheckMultipleOpen(true));
 
         } catch (Exception exception) {
             handleExceptionNavigation(location, exception);

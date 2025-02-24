@@ -17,6 +17,7 @@
 package io.jmix.tabbedmode;
 
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
+import io.jmix.tabbedmode.view.MultipleOpen;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -29,13 +30,22 @@ public class TabbedModeProperties {
     int maxTabCount;
 
     /**
+     * Whatever views should be opened multiple times from the main menu.
+     * <p>
+     * Note: the {@link MultipleOpen} annotation have precedence for a specific view.
+     */
+    boolean multipleOpen;
+
+    /**
      * Whether {@link ViewBreadcrumbs} is shown in views.
      */
     boolean showBreadcrumbs;
 
     public TabbedModeProperties(@DefaultValue("20") int maxTabCount,
+                                @DefaultValue("false") boolean multipleOpen,
                                 @DefaultValue("true") boolean showBreadcrumbs) {
         this.maxTabCount = maxTabCount;
+        this.multipleOpen = multipleOpen;
         this.showBreadcrumbs = showBreadcrumbs;
     }
 
@@ -44,6 +54,13 @@ public class TabbedModeProperties {
      */
     public int getMaxTabCount() {
         return maxTabCount;
+    }
+
+    /**
+     * @see #multipleOpen
+     */
+    public boolean isMultipleOpen() {
+        return multipleOpen;
     }
 
     /**

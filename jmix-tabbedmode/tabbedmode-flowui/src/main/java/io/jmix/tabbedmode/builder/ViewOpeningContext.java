@@ -30,7 +30,7 @@ public class ViewOpeningContext {
 
     protected RouteParameters routeParameters;
     protected QueryParameters queryParameters;
-    protected boolean closeSameView = false;
+    protected boolean checkMultipleOpen = false;
 
     public ViewOpeningContext(View<?> view, ViewOpenMode openMode) {
         Preconditions.checkNotNullArgument(view);
@@ -64,8 +64,8 @@ public class ViewOpeningContext {
                 : QueryParameters.empty();
     }
 
-    public boolean isCloseSameView() {
-        return closeSameView;
+    public boolean isCheckMultipleOpen() {
+        return checkMultipleOpen;
     }
 
     public ViewOpeningContext withRouteParameters(RouteParameters routeParameters) {
@@ -82,8 +82,8 @@ public class ViewOpeningContext {
         return this;
     }
 
-    public ViewOpeningContext withCloseSameView(boolean closeSameView) {
-        this.closeSameView = closeSameView;
+    public ViewOpeningContext withCheckMultipleOpen(boolean checkMultipleOpen) {
+        this.checkMultipleOpen = checkMultipleOpen;
         return this;
     }
 
@@ -91,14 +91,16 @@ public class ViewOpeningContext {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ViewOpeningContext that = (ViewOpeningContext) o;
-        return Objects.equal(view, that.view)
+        return checkMultipleOpen == that.checkMultipleOpen
+                && Objects.equal(view, that.view)
                 && openMode == that.openMode
-                && Objects.equal(routeParameters, that.routeParameters);
+                && Objects.equal(routeParameters, that.routeParameters)
+                && Objects.equal(queryParameters, that.queryParameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(view, openMode, routeParameters, closeSameView);
+        return Objects.hashCode(view, openMode, routeParameters, queryParameters, checkMultipleOpen);
     }
 
     @Override
@@ -107,6 +109,8 @@ public class ViewOpeningContext {
                 "view=" + view +
                 ", openMode=" + openMode +
                 ", routeParameters=" + routeParameters +
+                ", queryParameters=" + queryParameters +
+                ", checkMultipleOpen=" + checkMultipleOpen +
                 '}';
     }
 }

@@ -42,18 +42,37 @@ public class JmixBreadcrumb extends Component implements HasAriaLabel, HasEnable
         return this;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public void setClickHandler(ComponentEventListener<ClickEvent<JmixBreadcrumb>> listener) {
         if (clickRegistration != null) {
             clickRegistration.remove();
             clickRegistration = null;
         }
 
-        clickRegistration = addListener(ClickEvent.class, (ComponentEventListener) listener);
+        clickRegistration = getElement().addEventListener("click", event ->
+                        listener.onComponentEvent(new ClickEvent<>(this, true)))
+                // language=javascript
+                .setFilter("""
+                        typeof element.nextElementSibling !== 'undefined'
+                            && element.nextElementSibling !== null
+                        """);
     }
 
     public JmixBreadcrumb withClickHandler(ComponentEventListener<ClickEvent<JmixBreadcrumb>> listener) {
         setClickHandler(listener);
         return this;
+    }
+
+    public static class ClickEvent<C extends JmixBreadcrumb> extends ComponentEvent<C> {
+
+        /**
+         * Creates a new click event.
+         *
+         * @param source     the source component
+         * @param fromClient {@code true} if the event originated from the client
+         *                   side, {@code false} otherwise
+         */
+        public ClickEvent(C source, boolean fromClient) {
+            super(source, fromClient);
+        }
     }
 }

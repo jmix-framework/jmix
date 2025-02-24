@@ -71,6 +71,11 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
     protected UrlParamSerializer urlParamSerializer;
 
     @Override
+    protected void setupEntityToEdit(ManagedBeanInfo entityToEdit) {
+        // do nothing
+    }
+
+    @Override
     protected void initExistingEntity(String mbeanObjectName) {
         String objectName = urlParamSerializer.deserialize(String.class, mbeanObjectName);
         ManagedBeanInfo managedBean = jmxControl.getManagedBean(objectName);

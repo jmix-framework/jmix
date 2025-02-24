@@ -18,9 +18,11 @@ package io.jmix.flowui.view;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.StandardDetailView.InitEntityEvent;
@@ -202,5 +204,23 @@ public final class ViewControllerUtils {
     public static <T extends Component> void setViewCloseDelegate(View<T> view,
                                                                   Consumer<View<T>> closeDelegate) {
         view.setCloseDelegate(closeDelegate);
+    }
+
+    public static void setPageTitleDelegate(View<?> view, Consumer<String> pageTitleDelegate) {
+        view.setPageTitleDelegate(pageTitleDelegate);
+    }
+
+    public static boolean isSameView(View<?> view, View<?> other) {
+        return view.getClass() == other.getClass()
+                && view.getId().equals(other.getId());
+    }
+
+    public static String getRouteParamName(StandardDetailView<?> detailView) {
+        return detailView.getRouteParamName();
+    }
+
+    @Internal
+    public static void processBeforeEnterInternal(View<?> view, BeforeEnterEvent event) {
+        view.processBeforeEnterInternal(event);
     }
 }

@@ -20,17 +20,15 @@ import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.tabbedmode.Views;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component("tabmod_ViewBuilderProcessor")
 public class ViewBuilderProcessor extends AbstractViewBuilderProcessor {
 
-    public ViewBuilderProcessor(ApplicationContext applicationContext,
-                                Views views,
+    public ViewBuilderProcessor(Views views,
                                 ViewRegistry viewRegistry,
                                 UiAccessChecker uiAccessChecker) {
-        super(applicationContext, views, viewRegistry, uiAccessChecker);
+        super(views, viewRegistry, uiAccessChecker);
     }
 
     public <V extends View<?>> V build(ViewBuilder<V> builder) {

@@ -437,6 +437,7 @@ public class MessageTemplateParameterDetailView extends StandardDetailView<Messa
     @Subscribe
     public void onBeforeSave(BeforeSaveEvent event) {
         if (parameterLocalizationDc.getItems().isEmpty()) {
+            getEditedEntity().setLocalization(null);
             return;
         }
 

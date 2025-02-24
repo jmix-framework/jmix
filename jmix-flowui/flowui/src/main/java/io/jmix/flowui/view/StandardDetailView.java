@@ -195,6 +195,14 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         super.beforeEnter(event);
     }
 
+    @Internal
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        super.processBeforeEnterInternal(event);
+
+        findEntityId(event);
+    }
+
     private void checkReadOnlyState(BeforeEnterEvent event) {
         Location location = event.getLocation();
         List<String> mode = location

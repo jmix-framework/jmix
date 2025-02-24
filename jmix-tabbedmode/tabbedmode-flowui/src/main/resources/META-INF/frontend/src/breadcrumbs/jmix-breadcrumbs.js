@@ -29,8 +29,9 @@ class JmixBreadcrumbs extends ElementMixin(PolylitMixin(LitElement)) {
         return css`
             :host {
                 display: flex;
-                box-sizing: border-box;
+                flex-wrap: wrap;
                 gap: var(--lumo-space-s);
+                box-sizing: border-box;
             }
             
             :host([hidden]) {

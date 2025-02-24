@@ -14,24 +14,29 @@
  * limitations under the License.
  */
 
-package io.jmix.tabbedmode.component.tabsheet;
+package io.jmix.tabbedmode.xml.facet;
 
-import com.vaadin.flow.component.html.Div;
-import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
+import io.jmix.flowui.facet.UrlQueryParametersFacet;
+import io.jmix.flowui.facet.impl.AbstractFacet;
 import org.springframework.lang.Nullable;
 
+import java.util.List;
 
-// TODO: gg, create Web Component
-public class TabViewContainer extends Div {
+public class NoopUrlQueryParametersFacetImpl extends AbstractFacet implements UrlQueryParametersFacet {
 
-    protected ViewBreadcrumbs breadcrumbs;
-
-    @Nullable
-    public ViewBreadcrumbs getBreadcrumbs() {
-        return breadcrumbs;
+    @Override
+    public void registerBinder(Binder binder) {
+        // do nothing
     }
 
-    public void setBreadcrumbs(@Nullable ViewBreadcrumbs breadcrumbs) {
-        this.breadcrumbs = breadcrumbs;
+    @Override
+    public List<Binder> getBinders() {
+        return List.of();
+    }
+
+    @Nullable
+    @Override
+    public Object getSubPart(String name) {
+        return null;
     }
 }

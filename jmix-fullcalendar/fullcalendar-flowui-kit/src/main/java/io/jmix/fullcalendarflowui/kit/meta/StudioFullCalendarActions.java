@@ -26,6 +26,7 @@ public interface StudioFullCalendarActions {
             description = "Displays a dialog window with days of week to select",
             classFqn = "io.jmix.fullcalendarflowui.action.DaysOfWeekEditAction",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/calendar/full-calendar-component.html#days-of-week-datatype",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

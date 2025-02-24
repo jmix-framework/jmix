@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static com.google.common.base.Preconditions.checkState;
+
 public class AbstractViewBuilder<V extends View<?>, B extends AbstractViewBuilder<V, B>> {
 
     protected final View<?> origin;
@@ -39,6 +41,8 @@ public class AbstractViewBuilder<V extends View<?>, B extends AbstractViewBuilde
     protected Consumer<ViewReadyEvent<V>> readyListener;
     protected Consumer<ViewAfterCloseEvent<V>> afterCloseListener;
     protected Consumer<V> viewConfigurer;
+
+    protected V builtView;
 
     public AbstractViewBuilder(View<?> origin,
                                Function<B, V> buildHandler,
@@ -104,12 +108,24 @@ public class AbstractViewBuilder<V extends View<?>, B extends AbstractViewBuilde
 
     @SuppressWarnings("unchecked")
     public V build() {
-        return buildHandler.apply((B) this);
+        checkState(builtView == null, "%s already built"
+                .formatted(View.class.getSimpleName()));
+
+        builtView = buildHandler.apply((B) this);
+        return builtView;
     }
 
     public V open() {
-        V view = build();
-        openHandler.accept(new ViewOpeningContext(view, openMode));
-        return view;
+        if (builtView == null) {
+            builtView = build();
+        }
+
+        openHandler.accept(createViewOpeningContext());
+
+        return builtView;
+    }
+
+    protected ViewOpeningContext createViewOpeningContext() {
+        return ViewOpeningContext.create(builtView, openMode);
     }
 }

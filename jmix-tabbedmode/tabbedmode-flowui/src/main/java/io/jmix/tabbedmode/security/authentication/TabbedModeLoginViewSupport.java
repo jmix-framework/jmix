@@ -17,31 +17,26 @@
 package io.jmix.tabbedmode.security.authentication;
 
 import com.vaadin.flow.router.Location;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletResponse;
+import io.jmix.flowui.view.View;
 import io.jmix.securityflowui.authentication.LoginViewSupport;
 import io.jmix.tabbedmode.JmixUI;
-import io.jmix.tabbedmode.ViewBuilders;
 import io.jmix.tabbedmode.navigation.RedirectHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Primary
-@Component("tabmod_TabbedLoginViewSupport")
+@Component("tabmod_TabbedModeLoginViewSupport")
 public class TabbedModeLoginViewSupport extends LoginViewSupport {
-
-    protected ViewBuilders viewBuilders;
-
-    @Autowired
-    public void setViewBuilders(ViewBuilders viewBuilders) {
-        this.viewBuilders = viewBuilders;
-    }
 
     @Override
     protected void showInitialView(VaadinServletRequest request, VaadinServletResponse response) {
         Location location = getRedirectLocation(request, response);
-        if (location != null && !isRedirectToInitialView(location)) {
+        if (location != null
+                && !isRedirectToInitialView(location)
+                && !isRedirectToDefaultView(location)) {
             JmixUI ui = JmixUI.getCurrent();
             if (ui != null) {
                 RedirectHandler redirectHandler = ui.getRedirectHandler();
@@ -50,5 +45,24 @@ public class TabbedModeLoginViewSupport extends LoginViewSupport {
         }
 
         navigateToMainView();
+    }
+
+    protected boolean isRedirectToDefaultView(Location redirectLocation) {
+        String defaultViewId = uiProperties.getDefaultViewId();
+        if (defaultViewId == null) {
+            return false;
+        }
+
+        if (!redirectLocation.getQueryParameters().getParameters().isEmpty()) {
+            return false;
+        }
+
+        Class<? extends View<?>> defaultViewClass = viewRegistry.getViewInfo(defaultViewId)
+                .getControllerClass();
+
+        RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
+        return routeConfiguration.getRoute(redirectLocation.getPathWithQueryParameters())
+                .map(defaultViewClass::isAssignableFrom)
+                .orElse(false);
     }
 }

@@ -34,7 +34,9 @@ import io.jmix.flowui.util.WebBrowserTools;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -71,6 +73,9 @@ public class View<T extends Component> extends Composite<T>
     private ViewFacets viewFacets;
 
     private Consumer<View<T>> closeDelegate;
+
+    private Consumer<String> pageTitleDelegate;
+    private String pageTitle;
 
     private boolean closeActionPerformed = false;
     private boolean preventBrowserTabClosing = false;
@@ -155,6 +160,16 @@ public class View<T extends Component> extends Composite<T>
         Sample sample = startTimerSample(meterRegistry);
         fireEvent(new BeforeShowEvent(this));
         stopViewTimerSample(sample, meterRegistry, BEFORE_SHOW, getId().orElse(null));
+    }
+
+    /**
+     * CAUTION: for internal use only.
+     *
+     * @param event before navigation event with event details
+     */
+    @Internal
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        // Hook to be implemented
     }
 
     @Override
@@ -308,6 +323,15 @@ public class View<T extends Component> extends Composite<T>
         this.closeDelegate = closeDelegate;
     }
 
+    @Nullable
+    Consumer<String> getPageTitleDelegate() {
+        return pageTitleDelegate;
+    }
+
+    void setPageTitleDelegate(@Nullable Consumer<String> pageTitleDelegate) {
+        this.pageTitleDelegate = pageTitleDelegate;
+    }
+
     protected ViewData getViewData() {
         return viewData;
     }
@@ -344,8 +368,27 @@ public class View<T extends Component> extends Composite<T>
 
     @Override
     public String getPageTitle() {
-        // return not cached value in case of hot deploy
+        return pageTitle != null
+                ? pageTitle
+                // return not cached value in case of hot deploy
+                : getLocalizedTitleInternal();
+    }
+
+    private String getLocalizedTitleInternal() {
         return getViewSupport().getLocalizedTitle(this, false);
+    }
+
+    public void setPageTitle(@Nullable String title) {
+        if (Objects.equals(this.pageTitle, title)) {
+            return;
+        }
+
+        this.pageTitle = title;
+
+        if (pageTitleDelegate != null) {
+            String titleToSet = title != null ? title : getLocalizedTitleInternal();
+            pageTitleDelegate.accept(titleToSet);
+        }
     }
 
     /**

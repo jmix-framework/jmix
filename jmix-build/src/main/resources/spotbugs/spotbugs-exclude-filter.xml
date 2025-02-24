@@ -71,11 +71,6 @@
         <Package name="io.jmix.data.impl.jpql.antlr2"/>
     </Match>
 
-    <!-- todo Temporarily ignored Tabbed Mode module -->
-    <Match>
-        <Package name="~io\.jmix\.tabbedmode.*"/>
-    </Match>
-
     <!-- FlowUI module -->
 
     <Match>

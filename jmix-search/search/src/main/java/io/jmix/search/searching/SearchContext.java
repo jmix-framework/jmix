@@ -67,11 +67,11 @@ public class SearchContext {
     /**
      * Sets amount of documents to skip within search.
      *
-     * @param offset Offset. Must be positive
+     * @param offset Offset. Must be non-negative
      * @return Current {@link SearchContext}
      */
     public SearchContext setOffset(int offset) {
-        Preconditions.checkArgument(offset > 0, "Offset must be positive");
+        Preconditions.checkArgument(offset >= 0, "Offset must be non-negative");
         this.offset = offset;
         return this;
     }

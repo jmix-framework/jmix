@@ -18,14 +18,10 @@ package io.jmix.tabbedmode.component.breadcrumbs;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.router.Location;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayDeque;
@@ -34,10 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements ApplicationContextAware {
-
-    // TODO: gg, rename
-    protected static final String BREADCRUMBS_VISIBLE_WRAP_STYLE = "jmix-breadcrumbs-visible";
+public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> {
 
     protected Deque<View<?>> views = new ArrayDeque<>(4);
     protected BiMap<View<?>, JmixBreadcrumb> viewBreadcrumb = HashBiMap.create(4);
@@ -57,17 +50,11 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
         return content;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        // TODO: gg, implement
-    }
-
     public void setNavigationHandler(@Nullable Consumer<BreadcrumbsNavigationContext> handler) {
         this.navigationHandler = handler;
     }
 
     public Deque<View<?>> getViews() {
-        // TODO: gg, UnmodifiableDeque?
         return new ArrayDeque<>(views);
     }
 
@@ -85,7 +72,6 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
         if (views.add(view)) {
             // TODO: gg, add class that stores view and location instead of maps
             JmixBreadcrumb breadcrumb = new JmixBreadcrumb();
-            // TODO: gg, replace StringUtils
             breadcrumb.setText(ViewControllerUtils.getPageTitle(view));
             breadcrumb.setClickHandler(this::navigationClicked);
             breadcrumb.setTabIndex(-1);
@@ -96,11 +82,7 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
         }
 
 
-        if (views.size() > 1 /*&& workAreaMode == Mode.TABBED*/) {
-            setVisibleInternal(true);
-        }
-
-        adjustParentStyles();
+        updateVisibility();
     }
 
     public void removeView() {
@@ -110,26 +92,14 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
             getContent().remove(breadcrumb);
         }
 
-        if (views.size() <= 1/* && workAreaMode == Mode.TABBED*/) {
-            setVisibleInternal(false);
-        }
+        updateVisibility();
     }
 
-    protected void navigationClicked(ClickEvent<JmixBreadcrumb> event) {
+    protected void navigationClicked(JmixBreadcrumb.ClickEvent<JmixBreadcrumb> event) {
         View<?> view = viewBreadcrumb.inverse().get(event.getSource());
         if (navigationHandler != null && view != null) {
             navigationHandler.accept(new BreadcrumbsNavigationContext(this, view));
         }
-    }
-
-    protected void adjustParentStyles() {
-        getParent().ifPresent(parent -> {
-            if (isVisible()) {
-                parent.addClassName(BREADCRUMBS_VISIBLE_WRAP_STYLE);
-            } else {
-                parent.removeClassName(BREADCRUMBS_VISIBLE_WRAP_STYLE);
-            }
-        });
     }
 
     @Override
@@ -141,8 +111,10 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
 
     protected void setVisibleInternal(boolean visible) {
         super.setVisible(visible && visibleExplicitly);
+    }
 
-        adjustParentStyles();
+    protected void updateVisibility() {
+        setVisibleInternal(views.size() > 1);
     }
 
     public record BreadcrumbsNavigationContext(ViewBreadcrumbs breadcrumbs, View<?> view) {

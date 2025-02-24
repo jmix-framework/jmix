@@ -352,6 +352,7 @@ public class DialogsImpl implements Dialogs {
                     case SUCCESS:
                         button.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
                         break;
+                    default:
                 }
 
                 initKeyCombination(firstOkAction, firstDeclineAction, action, button);

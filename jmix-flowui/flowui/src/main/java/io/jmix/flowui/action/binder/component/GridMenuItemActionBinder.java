@@ -80,6 +80,7 @@ public class GridMenuItemActionBinder implements ComponentActionsHolderBinder<Gr
                 case Action.PROP_ICON:
                     updateIcon(action, component);
                     break;
+                default:
             }
         });
     }

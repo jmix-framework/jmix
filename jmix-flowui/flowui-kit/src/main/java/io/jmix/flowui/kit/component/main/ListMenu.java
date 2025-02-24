@@ -609,7 +609,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @deprecated use {@link #getPrefixComponent()}
          */
         @Nullable
-        @Deprecated(since="2.2", forRemoval=true)
+        @Deprecated(since = "2.2", forRemoval = true)
         public VaadinIcon getIcon() {
             return icon;
         }
@@ -621,7 +621,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @return current menu instance
          * @deprecated use {@link #withPrefixComponent(Component)} or {@link #setPrefixComponent(Component)}
          */
-        @Deprecated(since="2.2", forRemoval=true)
+        @Deprecated(since = "2.2", forRemoval = true)
         public MenuItem withIcon(@Nullable VaadinIcon icon) {
             this.icon = icon;
             return this;
@@ -857,7 +857,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         @Override
-        @Deprecated(since="2.2", forRemoval=true)
+        @Deprecated(since = "2.2", forRemoval = true)
         public MenuBarItem withIcon(@Nullable VaadinIcon icon) {
             return (MenuBarItem) super.withIcon(icon);
         }
@@ -1047,6 +1047,17 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         @Override
         public boolean isMenu() {
             return true;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            // no fields to test
+            return super.equals(obj);
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
         }
     }
 

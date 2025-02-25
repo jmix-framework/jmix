@@ -16,6 +16,8 @@
 
 package io.jmix.flowuidata.settings;
 
+import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.VaadinSessionState;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.UnconstrainedDataManager;
@@ -155,6 +157,7 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     }
 
     protected boolean notAuthenticated() {
-        return SecurityContextHelper.getAuthentication() == null;
+        return VaadinSession.getCurrent().getState() != VaadinSessionState.OPEN
+                || SecurityContextHelper.getAuthentication() == null;
     }
 }

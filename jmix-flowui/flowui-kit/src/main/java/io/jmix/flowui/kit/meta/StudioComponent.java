@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public @interface StudioComponent {
     String category() default "";
 
     /**
-     * Xml attribute that should be used as identifier for injection or handler target.
+     * XML attribute that should be used as identifier for injection or handler target.
      * <p></p>
      * Default value is <code>id</code>.
      */
@@ -64,35 +64,52 @@ public @interface StudioComponent {
     String icon() default "io/jmix/flowui/kit/meta/icon/unknownComponent.svg";
 
     /**
-     * Xml tag local name.
+     * XML tag local name.
      */
     String xmlElement() default "";
 
     /**
-     * FQN of xml namespace schema.
+     * FQN of XML namespace schema.
      */
     String xmlns() default "";
 
     /**
-     * Xml namespace alias.
+     * XML namespace alias.
      */
     String xmlnsAlias() default "";
 
     /**
      * Describes the available place in the Component Hierarchy.
-     * By default, components can be located inside layout (or fragment content)
-     * or inside a component inherited from {@link HasComponents}
+     * By default, components can be located inside:
+     * <ul>
+     * <li>{@code view/layout/hasComponents}</li>
+     * <li>{@code mainView/appLayout/navigationBar/[hasComponents]}</li>
+     * <li>{@code mainView/appLayout/drawerLayout/[hasComponents]}</li>
+     * <li>{@code mainView/appLayout/initialLayout/[hasComponents]}</li>
+     * <li>{@code mainView/appLayout/workArea/initialLayout/[hasComponents]} - if mainView from tabbed mode</li>
+     * <li>{@code fragment/content}</li>
+     * </ul>
+     *
+     * <h3>Notes:</h3>
+     * <p>
+     *    {@code hasComponents} – placeholder for a component inherited from {@link HasComponents}.
+     * </p>
+     * <p>
+     *     {@code [hasComponents]} - means that {@code hasComponents} is an <b>optional</b> part
+     * </p>
      */
-    String availablePlaceRegExp() default "((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)|(/initialLayout)))$)|(^view/layout$)|(^fragment/content)" +
-            "|((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)|(/initialLayout))|(^view/layout)|(^fragment/content))?(/hasComponents)*$)";
+    String availablePlaceRegExp() default "((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)" +
+            "|(/workArea/initialLayout)|(/initialLayout))$)|(^view/layout$)|(^fragment/content)" +
+            "|((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)|(/workArea/initialLayout)|(/initialLayout))" +
+            "|(^view/layout)|(^fragment/content))?(/hasComponents)*$)";
 
     /**
-     * Descriptions of the xml attributes.
+     * Descriptions of the XML attributes.
      */
     StudioProperty[] properties() default {};
 
     /**
-     * Descriptions of the xml attributes relationship.
+     * Descriptions of the XML attributes relationship.
      * For example <code>property</code> and <code>dataContainer</code>
      */
     StudioPropertiesBinding[] propertiesBindings() default {};
@@ -104,12 +121,14 @@ public @interface StudioComponent {
 
     /**
      * Describes the available children information.
+     *
      * @see StudioAvailableChildrenInfo
      */
     StudioAvailableChildrenInfo availableChildren() default @StudioAvailableChildrenInfo();
 
     /**
      * Describes the conversion information.
+     *
      * @see StudioConvertStrategy
      */
     StudioConvertStrategy convertStrategy() default @StudioConvertStrategy();

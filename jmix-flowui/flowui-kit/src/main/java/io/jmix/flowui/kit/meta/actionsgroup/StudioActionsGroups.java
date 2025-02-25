@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,14 +35,20 @@ public interface StudioActionsGroups {
             name = "Actions",
             actionClassFqn = "io.jmix.flowui.action.view.ViewAction",
             target = {"io.jmix.flowui.view.View"},
-            unsupportedTarget = {"io.jmix.flowui.app.main.StandardMainView"}
+            unsupportedTarget = {
+                    "io.jmix.flowui.app.main.StandardMainView",
+                    "io.jmix.tabbedmode.app.main.StandardTabbedModeMainView"
+            }
     )
     void viewActions();
 
     @StudioActionsGroup(
             name = "Actions",
             actionClassFqn = "io.jmix.flowui.kit.action.BaseAction",
-            target = {"io.jmix.flowui.app.main.StandardMainView"}
+            target = {
+                    "io.jmix.flowui.app.main.StandardMainView",
+                    "io.jmix.tabbedmode.app.main.StandardTabbedModeMainView"
+            }
     )
     void mainViewActions();
 

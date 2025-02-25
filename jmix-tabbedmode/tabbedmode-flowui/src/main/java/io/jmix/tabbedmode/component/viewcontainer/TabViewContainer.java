@@ -48,9 +48,13 @@ public class TabViewContainer extends Component implements ViewContainer, HasSiz
         this.breadcrumbs = breadcrumbs;
 
         if (breadcrumbs != null) {
-            add(breadcrumbs);
-            breadcrumbs.getElement().setAttribute("slot", "breadcrumbs");
+            setBreadcrumbsInternal(breadcrumbs);
         }
+    }
+
+    protected void setBreadcrumbsInternal(ViewBreadcrumbs breadcrumbs) {
+        add(breadcrumbs);
+        breadcrumbs.getElement().setAttribute("slot", "breadcrumbs");
     }
 
     @Override
@@ -73,6 +77,12 @@ public class TabViewContainer extends Component implements ViewContainer, HasSiz
         this.view = view;
 
         if (view != null) {
+            removeAll();
+
+            if (this.breadcrumbs != null) {
+                setBreadcrumbsInternal(this.breadcrumbs);
+            }
+
             add(view);
         }
     }
@@ -94,5 +104,11 @@ public class TabViewContainer extends Component implements ViewContainer, HasSiz
             throw new IllegalArgumentException("The given component ("
                     + component + ") is not a child of this component");
         }
+    }
+
+    protected void removeAll() {
+        getElement().getChildren()
+                .forEach(child -> child.removeAttribute("slot"));
+        getElement().removeAllChildren();
     }
 }

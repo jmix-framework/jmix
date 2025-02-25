@@ -35,7 +35,6 @@
         <workArea id="workArea"
                   classNames="jmix-work-area">
             <initialLayout width="100%" height="100%">
-                <button id="testBtn"/>
             </initialLayout>
         </workArea>
     </appLayout>

@@ -157,7 +157,8 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     }
 
     protected boolean notAuthenticated() {
-        return VaadinSession.getCurrent().getState() != VaadinSessionState.OPEN
+        VaadinSession session = VaadinSession.getCurrent();
+        return (session != null && session.getState() != VaadinSessionState.OPEN)
                 || SecurityContextHelper.getAuthentication() == null;
     }
 }

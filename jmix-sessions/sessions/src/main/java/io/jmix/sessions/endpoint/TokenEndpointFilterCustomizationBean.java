@@ -1,13 +1,17 @@
 package io.jmix.sessions.endpoint;
 
 import io.jmix.authserver.authentication.RequestLocaleProvider;
+import io.jmix.core.session.SessionData;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.Filter;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.web.OAuth2TokenEndpointFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +26,12 @@ public class TokenEndpointFilterCustomizationBean {
     @Autowired
     private RequestLocaleProvider requestLocaleProvider;
 
+    @Autowired
+    private OAuth2AuthorizationService authorizationService;
+
+    @Autowired
+    private ObjectProvider<SessionData> sessionDataProvider;
+
     @PostConstruct
     public void modifyFilterChain() {
         Optional<OAuth2TokenEndpointFilter> tokenEndpointFilter = authorizationServerSecurityFilterChain.getFilters().stream()
@@ -35,11 +45,15 @@ public class TokenEndpointFilterCustomizationBean {
 
         List<Filter> filters = authorizationServerSecurityFilterChain.getFilters();
         filters.replaceAll(filter -> {
-            if (filter instanceof OAuth2TokenEndpointFilter tef) {
-                return new OAuth2TokenEndpointFilterWrapper(tef, requestLocaleProvider);
+            if (filter instanceof OAuth2TokenEndpointFilter delegate) {
+                return createWrapper(delegate);
             } else {
                 return filter;
             }
         });
+    }
+
+    protected OncePerRequestFilter createWrapper(OAuth2TokenEndpointFilter delegate){
+        return new OAuth2TokenEndpointFilterWrapper(delegate, requestLocaleProvider, sessionDataProvider, authorizationService);
     }
 }

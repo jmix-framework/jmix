@@ -118,9 +118,21 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
+        applyEntityMetaClass(event);
+
+        super.beforeEnter(event);
+    }
+
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        applyEntityMetaClass(event);
+
+        super.processBeforeEnterInternal(event);
+    }
+
+    protected void applyEntityMetaClass(BeforeEnterEvent event) {
         event.getRouteParameters().get(ROUTE_PARAM_NAME)
                 .ifPresent(this::setMetadataClassName);
-        super.beforeEnter(event);
     }
 
     @Subscribe

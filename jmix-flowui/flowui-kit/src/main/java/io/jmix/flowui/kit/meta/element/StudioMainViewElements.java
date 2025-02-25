@@ -61,14 +61,6 @@ public interface StudioMainViewElements {
             target = {"com.vaadin.flow.component.applayout.AppLayout", "io.jmix.tabbedmode.component.workarea.WorkArea"},
             unlimitedCount = false,
             visible = true,
-            availableChildren = @StudioAvailableChildrenInfo(
-                    availableTags = {
-                            @StudioAvailableChildrenInfo.TagInfo(
-                                    qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                                    maxCount = 99999
-                            )
-                    }
-            ),
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "alignItems", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,

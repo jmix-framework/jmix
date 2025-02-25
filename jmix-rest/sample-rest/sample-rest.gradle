@@ -30,6 +30,7 @@ dependencies {
     implementation project(':authserver-starter')
     implementation project(':localfs-starter')
     implementation project(':dynattr-starter')
+    implementation project(':sessions-starter')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 

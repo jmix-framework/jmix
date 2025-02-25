@@ -28,7 +28,7 @@ import test_support.RestSpec
 
 import static test_support.RestSpecsUtils.createRequest
 
-@Ignore //todo [jmix-framework/jmix#3915]
+
 class TokenInvalidationTest extends RestSpec {
     @Autowired
     protected SessionRegistry sessionRegistry
@@ -37,11 +37,9 @@ class TokenInvalidationTest extends RestSpec {
 
     def "session associated with access token is expired"() {
         setup:
-        //SessionFilter sessionFilter = new SessionFilter(); //todo [jmix-framework/jmix#3915]
         when:
         def response = createRequest(userToken)
-                //.filter(sessionFilter)
-                .when().filter(sessionFilter)
+                .when()
                 .get('/userInfo')
 
         then:
@@ -52,7 +50,6 @@ class TokenInvalidationTest extends RestSpec {
         killSession('admin')
 
         response = createRequest(userToken)
-                //.filter(sessionFilter)
                 .when()
                 .get('/userInfo')
 
@@ -63,7 +60,6 @@ class TokenInvalidationTest extends RestSpec {
         when:
 
         response = createRequest(userToken)
-                //.filter(sessionFilter)
                 .when()
                 .get('/userInfo')
 
@@ -106,7 +102,6 @@ class TokenInvalidationTest extends RestSpec {
     }
 
     protected void disableUser(String username) {
-        UserDetails userDetails = userRepository.loadUserByUsername(username)
         eventPublisher.publishEvent(new UserDisabledEvent(username))
     }
 }

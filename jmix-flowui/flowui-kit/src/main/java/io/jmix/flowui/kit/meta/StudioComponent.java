@@ -98,7 +98,7 @@ public @interface StudioComponent {
      *     {@code [hasComponents]} - means that {@code hasComponents} is an <b>optional</b> part
      * </p>
      */
-    String availablePlaceRegExp() default "((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)" +
+    String availablePlaceRegExp() default "(^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)" +
             "|(/workArea/initialLayout)|(/initialLayout))$)|(^view/layout$)|(^fragment/content)" +
             "|((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)|(/workArea/initialLayout)|(/initialLayout))" +
             "|(^view/layout)|(^fragment/content))?(/hasComponents)*$)";

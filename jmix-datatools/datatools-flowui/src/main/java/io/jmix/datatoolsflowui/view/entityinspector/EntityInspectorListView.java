@@ -195,7 +195,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected CollectionContainer entitiesDc;
 
     protected String entityName;
-    protected boolean isDialogMode = true;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -206,6 +205,19 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
+        applyQueryParameters(event);
+
+        super.beforeEnter(event);
+    }
+
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        applyQueryParameters(event);
+
+        super.processBeforeEnterInternal(event);
+    }
+
+    protected void applyQueryParameters(BeforeEnterEvent event) {
         initialParameters = event.getLocation().getQueryParameters();
         Map<String, List<String>> parameters = initialParameters.getParameters();
 
@@ -220,10 +232,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
                     .findAny()
                     .ifPresent(this::setShowMode);
         }
-
-        isDialogMode = false;
-
-        super.beforeEnter(event);
     }
 
     //to handle the usage of entityName public setter
@@ -238,12 +246,12 @@ public class EntityInspectorListView extends StandardListView<Object> {
             entitiesDl.load();
         }
 
-        lookupBox.setVisible(!isDialogMode);
+        lookupBox.setVisible(!UiComponentUtils.isComponentAttachedToDialog(this));
     }
 
     @Subscribe
     public void onReady(ReadyEvent event) {
-        if (!isDialogMode) {
+        if (!UiComponentUtils.isComponentAttachedToDialog(this)) {
             entitiesLookup.addValueChangeListener(this::entityChangeListener);
             showMode.addValueChangeListener(this::showModeChangeListener);
         }

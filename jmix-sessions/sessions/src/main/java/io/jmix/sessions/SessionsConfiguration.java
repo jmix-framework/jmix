@@ -18,7 +18,6 @@ package io.jmix.sessions;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.security.ClientDetails;
 import io.jmix.core.session.SessionData;
 import io.jmix.sessions.resolver.OAuth2AndCookieSessionIdResolver;
 import io.jmix.sessions.validators.VaadinSessionAttributesValidator;
@@ -42,7 +41,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
@@ -85,24 +86,6 @@ public class SessionsConfiguration<S extends Session> {
         return sessionRepositoryFilter;
     }
 
-    @Bean
-    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> tokenCustomizer(ObjectProvider<SessionData> sessionDataProvider) {
-        return (context) -> {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null
-                    && authentication.isAuthenticated()
-                    && authentication.getDetails() instanceof ClientDetails cd) {
-                //todo [jmix-framework/jmix#3915] implement: store access token in sessionData.
-                // find a way to obtain access token value there or move this part of code to more appropriate place
-                // see io.jmix.sessions.resolver.OAuth2AndCookieSessionIdResolver.setOAuth2SessionId
-                /*SessionData sessionData = sessionDataProvider.getIfAvailable();
-                if (sessionData != null) {
-                    sessionData.setAttribute(OAuth2AndCookieSessionIdResolver.ACCESS_TOKEN,"???");
-                }*/
-                context.getClaims().claim(OAuth2AndCookieSessionIdResolver.SESSION_ID, cd.getSessionId());
-            }
-        };
-    }
 
     @Bean
     public SessionEventHttpSessionListenerAdapter sessionEventHttpSessionListenerAdapter() {

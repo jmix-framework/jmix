@@ -18,6 +18,8 @@ package oauth_token
 
 import io.jmix.core.security.event.UserDisabledEvent
 import io.restassured.filter.session.SessionFilter
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.core.session.SessionRegistry
@@ -30,6 +32,8 @@ import static test_support.RestSpecsUtils.createRequest
 
 
 class TokenInvalidationTest extends RestSpec {
+    private static final Logger log = LoggerFactory.getLogger(TokenInvalidationTest);
+
     @Autowired
     protected SessionRegistry sessionRegistry
     @Autowired
@@ -98,7 +102,11 @@ class TokenInvalidationTest extends RestSpec {
 
         sessionRegistry.getAllSessions(principal, false)
                 .stream()
-                .forEach({ it.expireNow() })
+                .forEach({
+                    log.info("Found session ${it.getSessionId()}[expired:${it.isExpired()}] for user '$username'")
+                    it.expireNow()
+                    log.info("Session ${it.sessionId} 'expired' set to true")
+                })
     }
 
     protected void disableUser(String username) {

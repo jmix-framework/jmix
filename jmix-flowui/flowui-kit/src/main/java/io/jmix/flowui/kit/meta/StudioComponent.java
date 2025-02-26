@@ -90,7 +90,7 @@ public @interface StudioComponent {
      * <li>{@code fragment/content}</li>
      * </ul>
      *
-     * <h3>Notes:</h3>
+     * <h4>Notes:</h4>
      * <p>
      *    {@code hasComponents} – placeholder for a component inherited from {@link HasComponents}.
      * </p>

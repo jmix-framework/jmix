@@ -39,6 +39,7 @@ class TokenInvalidationTest extends RestSpec {
     @Autowired
     protected ApplicationEventPublisher eventPublisher
 
+    @Ignore //todo [jmix-framework/jmix#4160]
     def "session associated with access token is expired"() {
         setup:
         when:

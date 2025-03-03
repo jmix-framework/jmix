@@ -15,6 +15,8 @@
  */
 
 import 'ace-builds/src-noconflict/ace.js';
+import 'ace-builds/src-noconflict/ext-language_tools.js';
+import 'ace-builds/src-noconflict/ext-inline_autocomplete.js';
 import 'ace-builds/esm-resolver.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
@@ -133,6 +135,36 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 observer: '_onUseSoftTabsChange'
             },
 
+            enableBasicAutocompletion: {
+                type: Boolean,
+                value: true,
+                observer: '_onEnableBasicAutocompletionChange'
+            },
+
+            enableInlineAutocompletion: {
+                type: Boolean,
+                value: false,
+                observer: '_onEnableInlineAutocompletionChange'
+            },
+
+            enableSnippets: {
+                type: Boolean,
+                value: false,
+                observer: '_onEnableSnippetsChange'
+            },
+
+            enableLiveAutocompletion: {
+                type: Boolean,
+                value: false,
+                observer: '_onEnableLiveAutocompletionChange'
+            },
+
+            staticCompletions: {
+                type: Object,
+                value: [],
+                observer: '_onStaticCompletionsChange'
+            },
+
             /** @private */
             _editor: {
                 type: Object
@@ -167,7 +199,11 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             fontSize: this.fontSize,
             wrap: this.textWrap,
             useSoftTabs: this.useSoftTabs,
-            useWorker: false
+            useWorker: false,
+            enableBasicAutocompletion: this.enableBasicAutocompletion,
+            enableInlineAutocompletion: this.enableInlineAutocompletion,
+            enableSnippets: this.enableSnippets,
+            enableLiveAutocompletion: this.enableLiveAutocompletion
         });
 
         this._tooltipController = new TooltipController(this);
@@ -187,6 +223,19 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         });
 
         this._setFocusElement(this._editor.textInput.getElement());
+
+        this.jmixStaticCompleter = {
+            staticCompletions: JSON.parse(this.staticCompletions),
+            getCompletions: function (editor, session, pos, prefix, callback) {
+                var completions = this.staticCompletions
+                    .filter(w => w.startsWith(prefix))
+                    .map(w => ({meta:'JMIX', name:w, value:w, score:0}));
+                callback(null, completions);
+            },
+            id: "jmixStaticCompleter"
+        };
+
+        ace.require('ace/ext/language_tools').addCompleter(this.jmixStaticCompleter);
     }
 
     initApplicationThemeObserver() {
@@ -379,6 +428,62 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.setPrintMarginColumn(printMarginColumn);
+    }
+
+    /**
+     * @private
+     */
+    _onEnableBasicAutocompletion(enableBasicAutocompletion) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.session.setEnableBasicAutocompletion(enableBasicAutocompletion);
+    }
+
+    /**
+     * @private
+     */
+    _onEnableInlineAutocompletion(enableInlineAutocompletion) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.session.setEnableInlineAutocompletion(enableInlineAutocompletion);
+    }
+
+    /**
+     * @private
+     */
+    _onEnableSnippets(enableSnippets) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.session.setEnableSnippets(enableSnippets);
+    }
+
+    /**
+     * @private
+     */
+    _onEnableLiveAutocompletion(enableLiveAutocompletion) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.session.setEnableLiveAutocompletion(enableLiveAutocompletion);
+    }
+
+
+    /**
+     * @private
+     */
+    _onStaticCompletionsChange(staticCompletions) {
+        if (this.jmixStaticCompleter === undefined) {
+            return;
+        }
+
+        this.jmixStaticCompleter.staticCompletions=JSON.parse(staticCompletions);
     }
 
     get clearElement() {

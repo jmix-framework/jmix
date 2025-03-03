@@ -15,6 +15,8 @@
  */
 package io.jmix.flowui.kit.component.codeeditor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
@@ -56,6 +58,11 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     protected static final String PROPERTY_FONT_SIZE = "fontSize";
     protected static final String PROPERTY_TEXT_WRAP = "textWrap";
     protected static final String PROPERTY_USE_SOFT_TABS = "useSoftTabs";
+    protected static final String PROPERTY_ENABLE_BASIC_AUTOCOMPLETION = "enableBasicAutocompletion";
+    protected static final String PROPERTY_ENABLE_INLINE_AUTOCOMPLETION = "enableInlineAutocompletion";
+    protected static final String PROPERTY_ENABLE_SNIPPETS = "enableSnippets";
+    protected static final String PROPERTY_ENABLE_LIVE_AUTOCOMPLETION = "enableLiveAutocompletion";
+    protected static final String PROPERTY_STATIC_COMPLETIONS = "staticCompletions";
 
     protected static final int PRINT_MARGIN_COLUMN_DEFAULT_VALUE = 80;
     protected static final String FONT_SIZE_DEFAULT_VALUE = "1rem";
@@ -286,6 +293,97 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     public void setUseSoftTabs(boolean useSoftTabs) {
         getElement().setProperty(PROPERTY_USE_SOFT_TABS, useSoftTabs);
+    }
+
+    /**
+     * @return {@code true} if basic autocompletion is enabled,
+     *         {@code false} otherwise.
+     */
+    @Synchronize(PROPERTY_ENABLE_BASIC_AUTOCOMPLETION)
+    public boolean isEnableBasicAutocompletion() {
+        return getElement().getProperty(PROPERTY_ENABLE_BASIC_AUTOCOMPLETION, true);
+    }
+
+    /**
+     * Enables basic autocompletion.
+     *
+     * @param enableBasicAutocompletion whether enable basic autocompletion
+     */
+    public void setEnableBasicAutocompletion(boolean enableBasicAutocompletion) {
+        getElement().setProperty(PROPERTY_ENABLE_BASIC_AUTOCOMPLETION, enableBasicAutocompletion);
+    }
+
+    /**
+     * @return {@code true} if inline autocompletion enabled,
+     *         {@code false} otherwise.
+     */
+    @Synchronize(PROPERTY_ENABLE_INLINE_AUTOCOMPLETION)
+    public boolean isEnableInlineAutocompletion() {
+        return getElement().getProperty(PROPERTY_ENABLE_INLINE_AUTOCOMPLETION, true);
+    }
+
+    /**
+     * Enables inline autocomletion.
+     *
+     * @param enableInlineAutocompletion whether to enable inline autocompletion
+     */
+    public void setEnableInlineAutocompletion(boolean enableInlineAutocompletion) {
+        getElement().setProperty(PROPERTY_ENABLE_INLINE_AUTOCOMPLETION, enableInlineAutocompletion);
+    }
+
+    /**
+     * @return {@code true} if snippets enabled,
+     *         {@code false} otherwise.
+     */
+    @Synchronize(PROPERTY_ENABLE_SNIPPETS)
+    public boolean isEnableSnippets() {
+        return getElement().getProperty(PROPERTY_ENABLE_SNIPPETS, true);
+    }
+
+    /**
+     * Enables code snippets.
+     *
+     * @param enableSnippets whether to enable code snippets
+     */
+    public void setEnableSnippets(boolean enableSnippets) {
+        getElement().setProperty(PROPERTY_ENABLE_SNIPPETS, enableSnippets);
+    }
+
+    /**
+     * @return {@code true} if live autocompletion is enabled,
+     *         {@code false} otherwise.
+     */
+    @Synchronize(PROPERTY_ENABLE_LIVE_AUTOCOMPLETION)
+    public boolean isEnableLiveAutocompletion() {
+        return getElement().getProperty(PROPERTY_ENABLE_LIVE_AUTOCOMPLETION, true);
+    }
+
+    /**
+     * Enables live autocompletion.
+     *
+     * @param enableLiveAutocompletion whether to enable live autocompletion
+     */
+    public void setEnableLiveAutocompletion(boolean enableLiveAutocompletion) {
+        getElement().setProperty(PROPERTY_ENABLE_LIVE_AUTOCOMPLETION, enableLiveAutocompletion);
+    }
+
+    /**
+     * @return list of static completions.
+     */
+    @Synchronize(PROPERTY_STATIC_COMPLETIONS)
+    public String[] getStaticCompletions() throws JsonProcessingException {
+        String value = getElement().getProperty(PROPERTY_STATIC_COMPLETIONS, "");
+        return new ObjectMapper().readValue(value, String[].class);
+    }
+
+    /**
+     * Sets list of static completions.
+     *
+     * @param completions list of words
+     */
+    public void setStaticCompletions(String[] completions) throws JsonProcessingException {
+        String json = new ObjectMapper().writeValueAsString(completions);
+        getElement().setProperty(PROPERTY_STATIC_COMPLETIONS, json);
     }
 
     /**

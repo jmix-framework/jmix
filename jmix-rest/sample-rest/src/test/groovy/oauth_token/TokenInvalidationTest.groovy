@@ -39,7 +39,7 @@ class TokenInvalidationTest extends RestSpec {
     @Autowired
     protected ApplicationEventPublisher eventPublisher
 
-    @Ignore //todo [jmix-framework/jmix#4160]
+
     def "session associated with access token is expired"() {
         setup:
         when:
@@ -52,7 +52,7 @@ class TokenInvalidationTest extends RestSpec {
         response.thenReturn().path('username') == "admin"
 
         when:
-        killSession('admin')
+        killSessions('admin')
 
         response = createRequest(userToken)
                 .when()
@@ -93,22 +93,6 @@ class TokenInvalidationTest extends RestSpec {
         response.then().statusCode(401)
     }
 
-    protected void killSession(String username) {
-        UserDetails principal = sessionRegistry.getAllPrincipals().stream()
-                .filter({ it instanceof UserDetails })
-                .map({ (UserDetails) it })
-                .filter({ it.getUsername() == username })
-                .findFirst()
-                .orElseThrow({ new RuntimeException("Unable to find principal") })
-
-        sessionRegistry.getAllSessions(principal, false)
-                .stream()
-                .forEach({
-                    log.info("Found session ${it.getSessionId()}[expired:${it.isExpired()}] for user '$username'")
-                    it.expireNow()
-                    log.info("Session ${it.sessionId} 'expired' set to true")
-                })
-    }
 
     protected void disableUser(String username) {
         eventPublisher.publishEvent(new UserDisabledEvent(username))

@@ -50,9 +50,8 @@ import io.jmix.tabbedmode.component.viewcontainer.TabViewContainer;
 import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import io.jmix.tabbedmode.component.workarea.WorkArea;
+import io.jmix.tabbedmode.view.*;
 import io.jmix.tabbedmode.view.DialogWindow;
-import io.jmix.tabbedmode.view.MultipleOpen;
-import io.jmix.tabbedmode.view.ViewOpenMode;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
@@ -126,7 +125,24 @@ public class Views {
     protected View<?> createInternal(ViewInfo viewInfo) {
         checkPermissions(viewInfo);
 
-        return Instantiator.get(UI.getCurrent()).getOrCreate(viewInfo.getControllerClass());
+        View<?> view = Instantiator.get(UI.getCurrent()).getOrCreate(viewInfo.getControllerClass());
+        initProperties(view);
+
+        return view;
+    }
+
+    protected void initProperties(View<?> view) {
+        TabbedModeViewProperties properties = new TabbedModeViewProperties();
+
+        boolean closeable = ViewControllerUtils.findAnnotation(view, ViewProperties.class)
+                .map(ViewProperties::closeable).orElse(true);
+        properties.setCloseable(closeable);
+
+        boolean forceDialog = ViewControllerUtils.findAnnotation(view, ViewProperties.class)
+                .map(ViewProperties::forceDialog).orElse(false);
+        properties.setForceDialog(forceDialog);
+
+        TabbedModeViewUtils.setViewProperties(view, properties);
     }
 
     private void checkPermissions(ViewInfo viewInfo) {
@@ -156,7 +172,7 @@ public class Views {
         checkNotNullArgument(context);
 
         View<?> view = context.getView();
-        ViewOpenMode openMode = getActualOpenMode(ui, context.getOpenMode());
+        ViewOpenMode openMode = getActualOpenMode(ui, context);
 
         OperationResult result = closeSameView(ui, context);
         if (result != null) {
@@ -247,8 +263,12 @@ public class Views {
                 .orElseGet(tabbedModeProperties::isMultipleOpen);
     }
 
-    protected ViewOpenMode getActualOpenMode(JmixUI ui, ViewOpenMode requiredOpenMode) {
-        ViewOpenMode openMode = requiredOpenMode;
+    protected ViewOpenMode getActualOpenMode(JmixUI ui, ViewOpeningContext context) {
+        ViewOpenMode openMode = context.getOpenMode();
+
+        if (TabbedModeViewUtils.isForceDialog(context.getView())) {
+            openMode = ViewOpenMode.DIALOG;
+        }
 
         if (openMode == ViewOpenMode.THIS_TAB
                 && getConfiguredWorkArea(ui).getState() == WorkArea.State.INITIAL_LAYOUT) {
@@ -411,7 +431,7 @@ public class Views {
 
         updateTabTitle(selectedTab, ViewControllerUtils.getPageTitle(view));
         if (selectedTab instanceof JmixViewTab viewTab) {
-            viewTab.setClosable(true/*view.isCloseable()*/); // TODO: gg, implement view.isCloseable()
+            viewTab.setClosable(TabbedModeViewUtils.isCloseable(view));
         }
     }
 
@@ -512,8 +532,7 @@ public class Views {
         JmixViewTab newTab = uiComponents.create(JmixViewTab.class);
         newTab.setId(tabId);
         newTab.setText(ViewControllerUtils.getPageTitle(view));
-        // TODO: gg, implement
-        newTab.setClosable(true /*view.isCloseable()*/);
+        newTab.setClosable(TabbedModeViewUtils.isCloseable(view));
         newTab.addBeforeCloseListener(this::handleViewTabClose);
 
         ViewControllerUtils.setPageTitleDelegate(view, title -> {
@@ -573,21 +592,6 @@ public class Views {
 
     public String getMainViewId() {
         return uiProperties.getMainViewId();
-    }
-
-    protected boolean isCloseable(View<?> view) {
-        // TODO: gg, implement
-        return true;
-        /*if (!view.isCloseable()) {
-            return true;
-        }*/
-
-        /*if (applicationContext.getBean(UiProperties.class).isDefaultScreenCanBeClosed()) {
-            return false;
-        }*/
-
-//        return ((WindowImpl) view).isDefaultScreenWindow();
-
     }
 
     protected ViewBreadcrumbs createViewBreadCrumbs() {
@@ -869,10 +873,9 @@ public class Views {
                 return;
             }
 
-            // TODO: gg, implement
-            /*if (!viewToClose.isCloseable()) {
+            if (!TabbedModeViewUtils.isCloseable(viewToClose.view())) {
                 return;
-            }*/
+            }
 
             if (context.view() != viewToClose.view()) {
                 viewToClose.view().close(StandardOutcome.CLOSE)
@@ -881,7 +884,7 @@ public class Views {
         }
     }
 
-    protected class TabCloseTask implements Runnable {
+    protected static class TabCloseTask implements Runnable {
 
         protected final ViewBreadcrumbs breadcrumbs;
 
@@ -896,7 +899,7 @@ public class Views {
                 return;
             }
 
-            if (isCloseable(viewToClose.view())) {
+            if (TabbedModeViewUtils.isCloseable(viewToClose.view())) {
                 viewToClose.view().close(StandardOutcome.CLOSE)
                         .then(this);
             }

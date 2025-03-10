@@ -17,10 +17,13 @@
 package io.jmix.tabbedmode.action.tabsheet;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
+import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,9 @@ public class CloseOthersTabsAction extends TabbedViewsContainerAction<CloseOther
 
     public static final String ID = "tabmod_closeOthersTabs";
 
+    protected Registration tabsCollectionChangeListener;
+    protected Registration contextMenuTargetListener;
+
     public CloseOthersTabsAction() {
         this(ID);
     }
@@ -45,6 +51,51 @@ public class CloseOthersTabsAction extends TabbedViewsContainerAction<CloseOther
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.closeOthersTabs.text");
+    }
+
+    @Override
+    protected void detachListeners(TabbedViewsContainer<?> target) {
+        super.detachListeners(target);
+
+        if (tabsCollectionChangeListener != null) {
+            tabsCollectionChangeListener.remove();
+            tabsCollectionChangeListener = null;
+        }
+
+        if (contextMenuTargetListener != null) {
+            contextMenuTargetListener.remove();
+            contextMenuTargetListener = null;
+        }
+    }
+
+    @Override
+    protected void attachListeners(TabbedViewsContainer<?> target) {
+        super.attachListeners(target);
+
+        tabsCollectionChangeListener = target.addTabsCollectionChangeListener(event ->
+                refreshState());
+
+        contextMenuTargetListener = target.getElement()
+                .addPropertyChangeListener("_contextMenuTargetTabId", __ -> refreshState());
+    }
+
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable() && hasCloseableTabs();
+    }
+
+    protected boolean hasCloseableTabs() {
+        if (target.getTabs().size() <= 1) {
+            return false;
+        }
+
+        Tab actionTab = findActionTab();
+        return target.getTabs().stream()
+                .anyMatch(tab ->
+                        !tab.equals(actionTab)
+                                && tab instanceof JmixViewTab viewTab
+                                && viewTab.isClosable()
+                );
     }
 
     @Override

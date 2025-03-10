@@ -17,13 +17,17 @@
 package io.jmix.tabbedmode.action.tabsheet;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
+import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 @ActionType(CloseThisTabAction.ID)
 public class CloseThisTabAction extends TabbedViewsContainerAction<CloseThisTabAction> {
@@ -31,6 +35,8 @@ public class CloseThisTabAction extends TabbedViewsContainerAction<CloseThisTabA
     private static final Logger log = LoggerFactory.getLogger(CloseThisTabAction.class);
 
     public static final String ID = "tabmod_closeThisTab";
+
+    protected Registration contextMenuTargetListener;
 
     public CloseThisTabAction() {
         this(ID);
@@ -43,6 +49,31 @@ public class CloseThisTabAction extends TabbedViewsContainerAction<CloseThisTabA
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.closeThisTab.text");
+    }
+
+    @Override
+    protected void detachListeners(TabbedViewsContainer<?> target) {
+        super.detachListeners(target);
+
+        if (contextMenuTargetListener != null) {
+            contextMenuTargetListener.remove();
+            contextMenuTargetListener = null;
+        }
+    }
+
+    @Override
+    protected void attachListeners(TabbedViewsContainer<?> target) {
+        super.attachListeners(target);
+
+        contextMenuTargetListener = target.getElement()
+                .addPropertyChangeListener("_contextMenuTargetTabId", __ -> refreshState());
+    }
+
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable()
+                && findActionTab() instanceof JmixViewTab viewTab
+                && viewTab.isClosable();
     }
 
     @Override

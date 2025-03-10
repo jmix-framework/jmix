@@ -41,12 +41,19 @@ public class TabbedModeProperties {
      */
     boolean showBreadcrumbs;
 
+    /**
+     * Whether the default view can be closed using default close buttons provided by a tab or a dialog window.
+     */
+    boolean defaultViewCloseable;
+
     public TabbedModeProperties(@DefaultValue("20") int maxTabCount,
                                 @DefaultValue("false") boolean multipleOpen,
-                                @DefaultValue("true") boolean showBreadcrumbs) {
+                                @DefaultValue("true") boolean showBreadcrumbs,
+                                @DefaultValue("true") boolean defaultViewCloseable) {
         this.maxTabCount = maxTabCount;
         this.multipleOpen = multipleOpen;
         this.showBreadcrumbs = showBreadcrumbs;
+        this.defaultViewCloseable = defaultViewCloseable;
     }
 
     /**
@@ -68,5 +75,12 @@ public class TabbedModeProperties {
      */
     public boolean isShowBreadcrumbs() {
         return showBreadcrumbs;
+    }
+
+    /**
+     * @see #defaultViewCloseable
+     */
+    public boolean isDefaultViewCloseable() {
+        return defaultViewCloseable;
     }
 }

@@ -29,6 +29,13 @@
     width: 100%;
 }
 
+.jmix-view-tab-text {
+    max-width: var(--jmix-tabmod-main-tab-text-max-width, 16rem);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 .jmix-view-tab-close-button {
     margin: 0;
     padding: 0;

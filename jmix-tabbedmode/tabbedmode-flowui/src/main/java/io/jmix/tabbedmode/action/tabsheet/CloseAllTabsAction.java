@@ -17,10 +17,12 @@
 package io.jmix.tabbedmode.action.tabsheet;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
+import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,8 @@ public class CloseAllTabsAction extends TabbedViewsContainerAction<CloseAllTabsA
 
     public static final String ID = "tabmod_closeAllTabs";
 
+    protected Registration tabsCollectionChangeListener;
+
     public CloseAllTabsAction() {
         this(ID);
     }
@@ -45,6 +49,41 @@ public class CloseAllTabsAction extends TabbedViewsContainerAction<CloseAllTabsA
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.closeAllTabs.text");
+    }
+
+    @Override
+    protected void detachListeners(TabbedViewsContainer<?> target) {
+        super.detachListeners(target);
+
+        if (tabsCollectionChangeListener != null) {
+            tabsCollectionChangeListener.remove();
+            tabsCollectionChangeListener = null;
+        }
+    }
+
+    @Override
+    protected void attachListeners(TabbedViewsContainer<?> target) {
+        super.attachListeners(target);
+
+        tabsCollectionChangeListener = target.addTabsCollectionChangeListener(event ->
+                refreshState());
+    }
+
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable() && hasCloseableTabs();
+    }
+
+    protected boolean hasCloseableTabs() {
+        if (target.getTabs().isEmpty()) {
+            return false;
+        }
+
+        return target.getTabs().stream()
+                .anyMatch(tab ->
+                        tab instanceof JmixViewTab viewTab
+                                && viewTab.isClosable()
+                );
     }
 
     @Override

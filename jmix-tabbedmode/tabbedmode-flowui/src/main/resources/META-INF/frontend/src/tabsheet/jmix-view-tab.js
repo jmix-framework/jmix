@@ -263,9 +263,9 @@ registerStyles('jmix-view-tab', [tabStyles, jmixViewTabStylesField], {moduleId: 
  * `<jmix-view-tab>` is a Web Component providing an accessible and customizable tab.
  *
  * ```
- *   <vaadin-tab>
+ *   <jmix-view-tab>
  *     Tab 1
- *   </vaadin-tab>
+ *   </jmix-view-tab>
  * ```
  *
  * The following state attributes are available for styling:

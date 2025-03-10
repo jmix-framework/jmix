@@ -30,7 +30,6 @@ import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.ComponentContainer;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasSubParts;
@@ -39,7 +38,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -105,6 +103,10 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
 
         updateTabContent(tab, content);
 
+        fireEvent(new TabsCollectionChangeEvent<>(this, false,
+                TabsCollectionChangeType.ADD,
+                Collections.singleton(tab)));
+
         return tab;
     }
 
@@ -116,6 +118,10 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
         content.removeFromParent();
 
         tabs.remove(tab);
+
+        fireEvent(new TabsCollectionChangeEvent<>(this, false,
+                TabsCollectionChangeType.REMOVE,
+                Collections.singleton(tab)));
     }
 
     @Override
@@ -207,7 +213,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     @Override
     public Optional<Tab> findTab(String id) {
         return getTabs().stream()
-                .filter(tab -> UiComponentUtils.sameId(tab, id))
+                .filter(tab -> sameId(tab, id))
                 .findAny();
     }
 
@@ -241,11 +247,19 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     }
 
     @Override
-    public Registration addSelectedChangeListener(Consumer<SelectedChangeEvent<JmixMainTabSheet>> listener) {
+    public Registration addSelectedChangeListener(
+            ComponentEventListener<SelectedChangeEvent<JmixMainTabSheet>> listener) {
         return tabs.addSelectedChangeListener(event ->
-                listener.accept(new SelectedChangeEvent<>(this,
+                listener.onComponentEvent(new SelectedChangeEvent<>(this,
                         event.getPreviousTab(), event.isFromClient(),
                         event.isInitialSelection())));
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public Registration addTabsCollectionChangeListener(
+            ComponentEventListener<TabsCollectionChangeEvent<JmixMainTabSheet>> listener) {
+        return addListener(TabsCollectionChangeEvent.class, ((ComponentEventListener) listener));
     }
 
     @Override

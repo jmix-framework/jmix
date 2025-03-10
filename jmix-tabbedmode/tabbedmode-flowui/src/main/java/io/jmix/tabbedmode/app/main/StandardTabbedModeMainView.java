@@ -17,19 +17,16 @@
 package io.jmix.tabbedmode.app.main;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.router.RouterLayout;
-import io.jmix.core.Metadata;
-import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.component.applayout.JmixAppLayout;
-import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.Subscribe;
+import io.jmix.flowui.view.View;
 import io.jmix.tabbedmode.JmixUI;
-import io.jmix.tabbedmode.Views;
 import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.navigation.RedirectHandler;
-import io.jmix.tabbedmode.view.ViewOpenMode;
+import io.jmix.tabbedmode.sys.MainViewSupport;
 
 @CssImport("./src/view/main-view.css")
 public class StandardTabbedModeMainView extends View<JmixAppLayout> implements HasWorkArea, RouterLayout {
@@ -55,44 +52,8 @@ public class StandardTabbedModeMainView extends View<JmixAppLayout> implements H
         handleRedirect();
     }
 
-    // TODO: gg, move to support bean
-    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void openDefaultView() {
-        String defaultViewId = uiProperties().getDefaultViewId();
-        if (Strings.isNullOrEmpty(defaultViewId)) {
-            return;
-        }
-
-        if (!viewRegistry().hasView(defaultViewId)) {
-            return;
-        }
-
-        View<?> view = views().create(defaultViewId);
-        if (view instanceof DetailView detailView) {
-            detailView.setEntityToEdit(getEntityToEdit(defaultViewId));
-        }
-
-        views().open(view, ViewOpenMode.NEW_TAB);
-
-        // TODO: gg, implement
-        /*view.setDefaultView(true);
-
-        if (!uiProperties.isDefaultScreenCanBeClosed()) {
-            view.setCloseable(false);
-        }*/
-    }
-
-    protected Object getEntityToEdit(String viewId) {
-        ViewInfo viewInfo = viewRegistry().getViewInfo(viewId);
-        Class<?> entityClass = getEntityClass(viewInfo);
-
-        return metadata().create(entityClass);
-    }
-
-    protected Class<?> getEntityClass(ViewInfo viewInfo) {
-        return DetailViewTypeExtractor.extractEntityClass(viewInfo)
-                .orElseThrow(() -> new IllegalStateException(
-                        String.format("Failed to determine entity type for detail view '%s'", viewInfo.getId())));
+        mainViewSupport().openDefaultView();
     }
 
     protected void handleRedirect() {
@@ -117,19 +78,7 @@ public class StandardTabbedModeMainView extends View<JmixAppLayout> implements H
                 .formatted(WorkArea.class.getSimpleName()));
     }
 
-    protected UiProperties uiProperties() {
-        return getApplicationContext().getBean(UiProperties.class);
-    }
-
-    protected Views views() {
-        return getApplicationContext().getBean(Views.class);
-    }
-
-    protected ViewRegistry viewRegistry() {
-        return getApplicationContext().getBean(ViewRegistry.class);
-    }
-
-    protected Metadata metadata() {
-        return getApplicationContext().getBean(Metadata.class);
+    private MainViewSupport mainViewSupport() {
+        return getApplicationContext().getBean(MainViewSupport.class);
     }
 }

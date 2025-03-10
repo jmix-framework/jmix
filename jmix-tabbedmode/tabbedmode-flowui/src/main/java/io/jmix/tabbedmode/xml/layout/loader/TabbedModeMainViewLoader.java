@@ -78,11 +78,15 @@ public class TabbedModeMainViewLoader extends AbstractViewLoader<StandardTabbedM
             return;
         }
 
-        ComponentLoader<?> workAreaLoader = getLayoutLoader().createComponentLoader(workAreaElement);
+        workAreaLoader = getLayoutLoader().createComponentLoader(workAreaElement);
         workAreaLoader.initComponent();
 
-        WorkArea workArea = (WorkArea) workAreaLoader.getResultComponent();
-        resultComponent.setWorkArea(workArea);
+        if (workAreaLoader.getResultComponent() instanceof WorkArea workArea) {
+            resultComponent.setWorkArea(workArea);
+        } else {
+            throw new IllegalStateException("'%s' component does not extend '%s'"
+                    .formatted(WORK_AREA_ELEMENT_NAME, WorkArea.class.getName()));
+        }
     }
 
     protected void loadWorkArea() {
@@ -91,7 +95,6 @@ public class TabbedModeMainViewLoader extends AbstractViewLoader<StandardTabbedM
         }
     }
 
-    // +
     protected Element getAppLayoutElement() {
         Element appLayout = element.element(CONTENT_NAME);
         if (appLayout == null) {
@@ -101,7 +104,6 @@ public class TabbedModeMainViewLoader extends AbstractViewLoader<StandardTabbedM
         return appLayout;
     }
 
-    // +
     protected void loadAppLayout() {
         AppLayout appLayout = resultComponent.getContent();
         Element appLayoutElement = getAppLayoutElement();
@@ -116,7 +118,6 @@ public class TabbedModeMainViewLoader extends AbstractViewLoader<StandardTabbedM
                         () -> appLayout.setPrimarySection(AppLayout.Section.DRAWER));
     }
 
-    // +
     protected List<Component> createSubComponents(Element appLayout, String contentName) {
         Element contentElement = appLayout.element(contentName);
         if (contentElement != null) {

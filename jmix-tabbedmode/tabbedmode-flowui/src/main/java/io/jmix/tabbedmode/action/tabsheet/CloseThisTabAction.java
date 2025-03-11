@@ -21,6 +21,8 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
+import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.tabbedmode.TabbedModeProperties;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
@@ -51,6 +53,11 @@ public class CloseThisTabAction extends TabbedViewsContainerAction<CloseThisTabA
         this.text = messages.getMessage("actions.closeThisTab.text");
     }
 
+    @Autowired
+    protected void setTabbedModeProperties(TabbedModeProperties properties) {
+        this.shortcutCombination = KeyCombination.create(properties.getCloseThisTabShortcut());
+    }
+
     @Override
     protected void detachListeners(TabbedViewsContainer<?> target) {
         super.detachListeners(target);
@@ -77,8 +84,8 @@ public class CloseThisTabAction extends TabbedViewsContainerAction<CloseThisTabA
     }
 
     @Override
-    public void execute(Component component) {
-        if (component instanceof JmixViewTab tab) {
+    public void execute(@Nullable Component trigger) {
+        if (findTab(trigger) instanceof JmixViewTab tab) {
             MainTabSheetUtils.closeTab(tab);
         } else {
             log.warn("Cannot close the tab because the component is not a '{}'",

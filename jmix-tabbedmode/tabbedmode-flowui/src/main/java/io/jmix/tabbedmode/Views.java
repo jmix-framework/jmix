@@ -342,6 +342,18 @@ public class Views {
     }
 
     protected Location resolveLocation(View<?> view, @Nullable ViewOpeningContext context) {
+        String locationString = ViewControllerUtils.findAnnotation(view, Route.class).isPresent()
+                ? resolveLocationString(view, context)
+                : getEmptyLocationString(view, context);
+
+        QueryParameters queryParameters = context != null
+                ? context.getQueryParameters()
+                : QueryParameters.empty();
+
+        return new Location(locationString, queryParameters);
+    }
+
+    protected String resolveLocationString(View<?> view, @Nullable ViewOpeningContext context) {
         RouteParameters routeParameters = context != null
                 ? context.getRouteParameters()
                 : RouteParameters.empty();
@@ -353,12 +365,11 @@ public class Views {
             routeParameters = routeSupport.createRouteParameters(param, value);
         }
 
-        QueryParameters queryParameters = context != null
-                ? context.getQueryParameters()
-                : QueryParameters.empty();
+        return getRouteConfiguration().getUrl(view.getClass(), routeParameters);
+    }
 
-        String locationString = getRouteConfiguration().getUrl(view.getClass(), routeParameters);
-        return new Location(locationString, queryParameters);
+    protected String getEmptyLocationString(View<?> view, @Nullable ViewOpeningContext context) {
+        return "";
     }
 
     protected String getRouteParamName(StandardDetailView<?> detailView) {
@@ -459,6 +470,9 @@ public class Views {
         Tab tab = tabbedContainer.getTab(((Component) viewContainer));
 
         updateTabTitle(tab, ViewControllerUtils.getPageTitle(currentViewInfo.view()));
+        if (tab instanceof JmixViewTab viewTab) {
+            viewTab.setClosable(TabbedModeViewUtils.isCloseable(view));
+        }
 
         // TODO: gg, move to a single place
         if (currentViewInfo.location() != null) {

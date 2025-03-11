@@ -27,9 +27,11 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
+import io.jmix.tabbedmode.TabbedModeProperties;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
@@ -41,6 +43,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
+import java.util.function.IntBinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,9 +56,8 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     public static final String TABBED_CONTAINER_CLASS_NAME = "jmix-main-tabsheet";
     public static final String INITIAL_LAYOUT_CLASS_NAME = "jmix-initial-layout";
 
-    protected RouteSupport routeSupport;
-    protected UiComponents uiComponents;
-    protected WorkAreaSupport workAreaSupport;
+    protected ApplicationContext applicationContext;
+    protected RouteSupport routeSupport;    // lazy initialized
 
     protected State state = State.INITIAL_LAYOUT;
 
@@ -67,9 +69,7 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        uiComponents = applicationContext.getBean(UiComponents.class);
-        routeSupport = applicationContext.getBean(RouteSupport.class);
-        workAreaSupport = applicationContext.getBean(WorkAreaSupport.class);
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -82,16 +82,70 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     }
 
     protected TabbedViewsContainer<?> createTabbedViewsContainer() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
         JmixMainTabSheet tabSheet = uiComponents.create(JmixMainTabSheet.class);
         tabSheet.setSizeFull();
         tabSheet.setClassName(TABBED_CONTAINER_CLASS_NAME);
 
         tabSheet.addSelectedChangeListener(this::onSelectedTabChanged);
 
+        WorkAreaSupport workAreaSupport = applicationContext.getBean(WorkAreaSupport.class);
         workAreaSupport.getDefaultActions()
                 .forEach(tabSheet::addAction);
 
+        initTabbedViewsContainerShortcuts(tabSheet);
+
         return tabSheet;
+    }
+
+    protected void initTabbedViewsContainerShortcuts(TabbedViewsContainer<?> tabbedContainer) {
+        TabbedModeProperties properties = applicationContext.getBean(TabbedModeProperties.class);
+
+        KeyCombination nextTabShortcut = KeyCombination.create(properties.getOpenNextTabShortcut());
+        if (nextTabShortcut != null) {
+            Shortcuts.addShortcutListener((Component) tabbedContainer,
+                    this::switchToNextTab,
+                    nextTabShortcut.getKey(),
+                    nextTabShortcut.getKeyModifiers());
+        }
+
+        KeyCombination prevTabShortcut = KeyCombination.create(properties.getOpenPreviousTabShortcut());
+        if (prevTabShortcut != null) {
+            Shortcuts.addShortcutListener((Component) tabbedContainer,
+                    this::switchToPreviousTab,
+                    prevTabShortcut.getKey(),
+                    prevTabShortcut.getKeyModifiers());
+        }
+    }
+
+    protected void switchToNextTab() {
+        switchTab((selectedIndex, tabsNumber) ->
+                (selectedIndex + 1) % tabsNumber);
+    }
+
+    protected void switchToPreviousTab() {
+        switchTab((selectedIndex, tabsNumber) ->
+                (tabsNumber + selectedIndex - 1) % tabsNumber);
+    }
+
+    protected void switchTab(IntBinaryOperator newIndexCalculator) {
+        int tabsNumber = tabbedContainer.getTabs().size();
+        if (tabsNumber <= 1
+                || hasModalWindows()) {
+            return;
+        }
+
+        int selectedIndex = tabbedContainer.getSelectedIndex();
+        int newIndex = newIndexCalculator.applyAsInt(selectedIndex, tabsNumber);
+        tabbedContainer.setSelectedIndex(newIndex);
+
+        // TODO: gg, trigger focus
+    }
+
+    protected boolean hasModalWindows() {
+        return getUI()
+                .map(UI::hasModalComponent)
+                .orElse(false);
     }
 
     public VerticalLayout getInitialLayout() {
@@ -137,11 +191,13 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
                 updateUrl(currentViewInfo.location());
             }
         }
+
+        // TODO: gg, trigger focus
     }
 
     protected void updateUrl(Location resolvedLocation) {
         getUI().ifPresent(ui ->
-                routeSupport.setLocation(ui, resolvedLocation));
+                routeSupport().setLocation(ui, resolvedLocation));
     }
 
     protected void updatePageTitle(View<?> view) {
@@ -177,15 +233,6 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
         }
 
         this.state = state;
-
-        // TODO: gg, implement
-        // init global tab shortcuts
-        /*if (!this.shortcutsInitialized
-                && getState() == State.WINDOW_CONTAINER) {
-            initTabShortcuts();
-
-            this.shortcutsInitialized = true;
-        }*/
 
         fireEvent(new StateChangeEvent(this, state));
     }
@@ -329,5 +376,13 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
          * If the work area is in the WINDOW_CONTAINER state, the work area contains at least one screen.
          */
         VIEW_CONTAINER
+    }
+
+    protected RouteSupport routeSupport() {
+        if (routeSupport == null) {
+            routeSupport = applicationContext.getBean(RouteSupport.class);
+        }
+
+        return routeSupport;
     }
 }

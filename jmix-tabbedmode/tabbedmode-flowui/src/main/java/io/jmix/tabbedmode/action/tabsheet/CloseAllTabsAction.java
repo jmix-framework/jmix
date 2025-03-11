@@ -20,12 +20,15 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
+import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.tabbedmode.TabbedModeProperties;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import java.util.HashSet;
 
@@ -49,6 +52,11 @@ public class CloseAllTabsAction extends TabbedViewsContainerAction<CloseAllTabsA
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.closeAllTabs.text");
+    }
+
+    @Autowired
+    protected void setTabbedModeProperties(TabbedModeProperties properties) {
+        this.shortcutCombination = KeyCombination.create(properties.getCloseAllTabsShortcut());
     }
 
     @Override
@@ -87,7 +95,7 @@ public class CloseAllTabsAction extends TabbedViewsContainerAction<CloseAllTabsA
     }
 
     @Override
-    public void execute(Component component) {
+    public void execute(@Nullable Component trigger) {
         checkTarget();
 
         new HashSet<>(target.getTabs()).stream()

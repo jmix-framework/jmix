@@ -46,14 +46,49 @@ public class TabbedModeProperties {
      */
     boolean defaultViewCloseable;
 
+    /**
+     * Shortcut for switching to the next tab in the main view.
+     */
+    String openNextTabShortcut;
+
+    /**
+     * Shortcut for switching to the previous tab in the main view.
+     */
+    String openPreviousTabShortcut;
+
+    /**
+     * Shortcut for closing this tab in the main view.
+     */
+    String closeThisTabShortcut;
+
+    /**
+     * Shortcut for closing other tabs in the main view.
+     */
+    String closeOtherTabsShortcut;
+
+    /**
+     * Shortcut for closing all tabs in the main view.
+     */
+    String closeAllTabsShortcut;
+
     public TabbedModeProperties(@DefaultValue("20") int maxTabCount,
                                 @DefaultValue("false") boolean multipleOpen,
                                 @DefaultValue("true") boolean showBreadcrumbs,
-                                @DefaultValue("true") boolean defaultViewCloseable) {
+                                @DefaultValue("true") boolean defaultViewCloseable,
+                                String closeThisTabShortcut,
+                                String closeOtherTabsShortcut,
+                                String closeAllTabsShortcut,
+                                String openNextTabShortcut,
+                                String openPreviousTabShortcut) {
         this.maxTabCount = maxTabCount;
         this.multipleOpen = multipleOpen;
         this.showBreadcrumbs = showBreadcrumbs;
         this.defaultViewCloseable = defaultViewCloseable;
+        this.closeThisTabShortcut = closeThisTabShortcut;
+        this.closeOtherTabsShortcut = closeOtherTabsShortcut;
+        this.closeAllTabsShortcut = closeAllTabsShortcut;
+        this.openNextTabShortcut = openNextTabShortcut;
+        this.openPreviousTabShortcut = openPreviousTabShortcut;
     }
 
     /**
@@ -82,5 +117,40 @@ public class TabbedModeProperties {
      */
     public boolean isDefaultViewCloseable() {
         return defaultViewCloseable;
+    }
+
+    /**
+     * @see #closeThisTabShortcut
+     */
+    public String getCloseThisTabShortcut() {
+        return closeThisTabShortcut;
+    }
+
+    /**
+     * @see #closeOtherTabsShortcut
+     */
+    public String getCloseOtherTabsShortcut() {
+        return closeOtherTabsShortcut;
+    }
+
+    /**
+     * @see #closeAllTabsShortcut
+     */
+    public String getCloseAllTabsShortcut() {
+        return closeAllTabsShortcut;
+    }
+
+    /**
+     * @see #openNextTabShortcut
+     */
+    public String getOpenNextTabShortcut() {
+        return openNextTabShortcut;
+    }
+
+    /**
+     * @see #openPreviousTabShortcut
+     */
+    public String getOpenPreviousTabShortcut() {
+        return openPreviousTabShortcut;
     }
 }

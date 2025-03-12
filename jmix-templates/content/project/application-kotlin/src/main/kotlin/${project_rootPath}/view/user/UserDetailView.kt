@@ -7,7 +7,6 @@ import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.textfield.PasswordField
 import com.vaadin.flow.router.Route
 import io.jmix.core.EntityStates
-import io.jmix.core.MessageTools
 import io.jmix.flowui.Notifications
 import io.jmix.flowui.component.textfield.TypedTextField
 import io.jmix.flowui.view.*
@@ -36,9 +35,6 @@ open class UserDetailView : StandardDetailView<User>() {
 
     @ViewComponent
     private lateinit var messageBundle: MessageBundle
-
-    @Autowired
-    private lateinit var messageTools: MessageTools
 
     @Autowired
     private lateinit var notifications: Notifications
@@ -81,8 +77,7 @@ open class UserDetailView : StandardDetailView<User>() {
         if (entityStates.isNew(editedEntity)) {
             editedEntity.password = passwordEncoder.encode(passwordField.value)
 
-            val entityCaption = messageTools.getEntityCaption(editedEntityContainer.entityMetaClass)
-            notifications.create(messageBundle.formatMessage("noAssignedRolesNotification", entityCaption))
+            notifications.create(messageBundle.getMessage("noAssignedRolesNotification"))
                 .withType(Notifications.Type.WARNING)
                 .withPosition(Notification.Position.TOP_END)
                 .show()

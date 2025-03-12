@@ -21,6 +21,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
@@ -30,6 +31,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
+import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.tabbedmode.TabbedModeProperties;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
@@ -63,6 +65,7 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
 
     protected TabbedViewsContainer<?> tabbedContainer;
     protected VerticalLayout initialLayout;
+    protected ViewRegistry viewRegistry;
 
     public WorkArea() {
     }
@@ -139,13 +142,23 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
         int newIndex = newIndexCalculator.applyAsInt(selectedIndex, tabsNumber);
         tabbedContainer.setSelectedIndex(newIndex);
 
-        // TODO: gg, trigger focus
+        findViewInfo(tabbedContainer.getTabAt(newIndex))
+                .ifPresent(viewInfo -> requestFocus(viewInfo.view()));
     }
 
     protected boolean hasModalWindows() {
         return getUI()
                 .map(UI::hasModalComponent)
                 .orElse(false);
+    }
+
+    protected void requestFocus(View<?> view) {
+        UiComponentUtils.findFocusComponent(view)
+                .ifPresent(focusable -> {
+                    focusable.focus();
+                    Element element = focusable.getElement();
+                    element.executeJs("setTimeout(function(){$0.setAttribute('focus-ring', '')},0)", element);
+                });
     }
 
     public VerticalLayout getInitialLayout() {
@@ -176,23 +189,25 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
             return;
         }
 
-        Component tabComponent = tabbedContainer.findComponent(selectedTab).orElse(null);
-        if (!(tabComponent instanceof ViewContainer viewContainer)) {
-            return;
-        }
-
-        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
-        if (breadcrumbs != null && breadcrumbs.getCurrentViewInfo() != null) {
-            ViewBreadcrumbs.ViewInfo currentViewInfo = breadcrumbs.getCurrentViewInfo();
+        findViewInfo(selectedTab).ifPresent(currentViewInfo -> {
             updatePageTitle(currentViewInfo.view());
-            // TODO: gg, update tab title here?
 
             if (currentViewInfo.location() != null) {
                 updateUrl(currentViewInfo.location());
             }
+        });
+    }
+
+    protected Optional<ViewBreadcrumbs.ViewInfo> findViewInfo(Tab tab) {
+        Component tabComponent = tabbedContainer.findComponent(tab).orElse(null);
+        if (!(tabComponent instanceof ViewContainer viewContainer)) {
+            return Optional.empty();
         }
 
-        // TODO: gg, trigger focus
+        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
+        return breadcrumbs != null
+                ? Optional.ofNullable(breadcrumbs.getCurrentViewInfo())
+                : Optional.empty();
     }
 
     protected void updateUrl(Location resolvedLocation) {
@@ -384,5 +399,13 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
         }
 
         return routeSupport;
+    }
+
+    protected ViewRegistry viewRegistry() {
+        if (viewRegistry == null) {
+            viewRegistry = applicationContext.getBean(ViewRegistry.class);
+        }
+
+        return viewRegistry;
     }
 }

@@ -65,7 +65,6 @@ public class JmixViewTab extends Tab {
      *
      * @param text the label to display
      */
-    // TODO: gg, refactor
     public void setText(@Nullable String text) {
         if (!Strings.isNullOrEmpty(text)) {
             if (this.textElement == null) {
@@ -108,7 +107,6 @@ public class JmixViewTab extends Tab {
     }
 
     protected Component createCloseButton() {
-        // TODO: gg, uiComponents?
         Button closeButton = new Button();
         closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
         closeButton.setClassName(BASE_CLASS_NAME + "-close-button");
@@ -122,21 +120,17 @@ public class JmixViewTab extends Tab {
     }
 
     protected void closeInternal(boolean fromClient) {
-        fireEvent(new BeforeCloseEvent<>(this, fromClient));
+        fireEvent(new CloseEvent<>(this, fromClient));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Registration addBeforeCloseListener(ComponentEventListener<BeforeCloseEvent<JmixViewTab>> listener) {
-        return addListener(BeforeCloseEvent.class, (ComponentEventListener) listener);
+    public Registration addCloseListener(ComponentEventListener<CloseEvent<JmixViewTab>> listener) {
+        return addListener(CloseEvent.class, (ComponentEventListener) listener);
     }
 
-    // TODO: gg, rename
-    public static class BeforeCloseEvent<C extends Component> extends ComponentEvent<C> {
+    public static class CloseEvent<C extends Component> extends ComponentEvent<C> {
 
-        // TODO: gg, add usage
-        protected boolean closePrevented = false;
-
-        public BeforeCloseEvent(C source, boolean fromClient) {
+        public CloseEvent(C source, boolean fromClient) {
             super(source, fromClient);
         }
     }

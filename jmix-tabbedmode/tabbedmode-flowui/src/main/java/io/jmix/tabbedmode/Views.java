@@ -546,7 +546,7 @@ public class Views {
         newTab.setId(tabId);
         newTab.setText(ViewControllerUtils.getPageTitle(view));
         newTab.setClosable(TabbedModeViewUtils.isCloseable(view));
-        newTab.addBeforeCloseListener(this::handleViewTabClose);
+        newTab.addCloseListener(this::handleViewTabClose);
 
         ViewControllerUtils.setPageTitleDelegate(view, title -> {
             updateTabTitle(newTab, title);
@@ -569,7 +569,7 @@ public class Views {
         new BreadcrumbsNavigationTask(context).run();
     }
 
-    protected void handleViewTabClose(JmixViewTab.BeforeCloseEvent<JmixViewTab> event) {
+    protected void handleViewTabClose(JmixViewTab.CloseEvent<JmixViewTab> event) {
         JmixViewTab tab = event.getSource();
         UI ui = tab.getUI().orElse(null);
         if (!(ui instanceof JmixUI jmixUI)) {

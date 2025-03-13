@@ -20,16 +20,23 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.container.VerticalLayoutLoader;
+import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
+import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import io.jmix.tabbedmode.component.workarea.WorkArea;
+import io.jmix.tabbedmode.component.workarea.WorkAreaSupport;
 import org.dom4j.Element;
 
 public class WorkAreaLoader extends AbstractComponentLoader<WorkArea> {
 
+    public static final String TAG = "workArea";
+
+    protected ComponentLoader<?> tabbedViewsContainerLoader;
     protected ComponentLoader<?> initialLayoutLoader;
 
     @Override
     protected WorkArea createComponent() {
         WorkArea workArea = factory.create(WorkArea.class);
+        createTabbedViewsContainer(workArea, element);
         createInitialLayout(workArea, element);
 
         return workArea;
@@ -40,7 +47,40 @@ public class WorkAreaLoader extends AbstractComponentLoader<WorkArea> {
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
+        loadTabbedViewsContainer();
         loadInitialLayout();
+    }
+
+    protected void createTabbedViewsContainer(WorkArea workArea, Element element) {
+        TabbedViewsContainer<?> tabbedContainer;
+
+        Element tabbedViewsContainerElement = element.element("tabbedContainer");
+        if (tabbedViewsContainerElement != null) {
+            tabbedViewsContainerLoader = getLayoutLoader().createComponentLoader(tabbedViewsContainerElement);
+            tabbedViewsContainerLoader.initComponent();
+
+            tabbedContainer = ((TabbedViewsContainer<?>) tabbedViewsContainerLoader.getResultComponent());
+        } else {
+            tabbedContainer = createDefaultTabbedViewsContainer();
+        }
+
+        workArea.setTabbedViewsContainer(tabbedContainer);
+    }
+
+    /**
+     * For compatibility only.
+     */
+    @Deprecated(since = "2.6", forRemoval = true)
+    protected TabbedViewsContainer<?> createDefaultTabbedViewsContainer() {
+        JmixMainTabSheet tabSheet = factory.create(JmixMainTabSheet.class);
+        tabSheet.setSizeFull();
+        tabSheet.setClassName("jmix-main-tabsheet");
+
+        WorkAreaSupport workAreaSupport = applicationContext.getBean(WorkAreaSupport.class);
+        workAreaSupport.getDefaultActions()
+                .forEach(tabSheet::addAction);
+
+        return tabSheet;
     }
 
     protected void createInitialLayout(WorkArea workArea, Element element) {
@@ -54,6 +94,12 @@ public class WorkAreaLoader extends AbstractComponentLoader<WorkArea> {
 
         VerticalLayout initialLayout = (VerticalLayout) initialLayoutLoader.getResultComponent();
         workArea.setInitialLayout(initialLayout);
+    }
+
+    protected void loadTabbedViewsContainer() {
+        if (tabbedViewsContainerLoader != null) {
+            tabbedViewsContainerLoader.loadComponent();
+        }
     }
 
     protected void loadInitialLayout() {

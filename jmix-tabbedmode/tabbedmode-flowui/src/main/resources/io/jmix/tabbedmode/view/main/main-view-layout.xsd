@@ -37,6 +37,7 @@
 
     <xs:complexType name="workAreaContainer">
         <xs:sequence>
+            <xs:element name="tabbedContainer" type="tabbedContainer"/>
             <xs:element name="initialLayout" type="initialLayoutContainer"/>
         </xs:sequence>
 
@@ -47,6 +48,31 @@
         <xs:attribute name="css" type="xs:string"/>
     </xs:complexType>
 
+    <xs:complexType name="tabbedContainer">
+        <xs:complexContent>
+            <xs:extension base="layout:baseComponent">
+                <xs:sequence>
+                    <xs:element name="actions" minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice maxOccurs="unbounded">
+                                    <xs:element name="action" type="tabbedContainerAction"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+
+                    <xs:element name="prefix" minOccurs="0" type="layout:prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="layout:prefixOrSuffixComponent"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="layout:hasClassNames"/>
+                <xs:attributeGroup ref="layout:hasSize"/>
+                <xs:attribute name="themeNames" type="layout:tabSheetThemeNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="initialLayoutContainer">
         <xs:complexContent>
             <xs:extension base="layout:baseLayout">
@@ -54,6 +80,12 @@
                 <xs:attribute name="css" type="xs:string"/>
                 <xs:attribute name="themeNames" type="layout:spacingThemeNames"/>
             </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="tabbedContainerAction">
+        <xs:complexContent>
+            <xs:extension base="layout:baseAction"/>
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>

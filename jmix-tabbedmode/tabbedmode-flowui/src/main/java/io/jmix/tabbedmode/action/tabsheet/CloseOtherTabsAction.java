@@ -33,27 +33,27 @@ import org.springframework.lang.Nullable;
 
 import java.util.HashSet;
 
-@ActionType(CloseOthersTabsAction.ID)
-public class CloseOthersTabsAction extends TabbedViewsContainerAction<CloseOthersTabsAction> {
+@ActionType(CloseOtherTabsAction.ID)
+public class CloseOtherTabsAction extends TabbedViewsContainerAction<CloseOtherTabsAction> {
 
-    private static final Logger log = LoggerFactory.getLogger(CloseOthersTabsAction.class);
+    private static final Logger log = LoggerFactory.getLogger(CloseOtherTabsAction.class);
 
-    public static final String ID = "tabmod_closeOthersTabs";
+    public static final String ID = "tabmod_closeOtherTabs";
 
     protected Registration tabsCollectionChangeListener;
     protected Registration contextMenuTargetListener;
 
-    public CloseOthersTabsAction() {
+    public CloseOtherTabsAction() {
         this(ID);
     }
 
-    public CloseOthersTabsAction(String id) {
+    public CloseOtherTabsAction(String id) {
         super(id);
     }
 
     @Autowired
     protected void setMessages(Messages messages) {
-        this.text = messages.getMessage("actions.closeOthersTabs.text");
+        this.text = messages.getMessage("actions.closeOtherTabs.text");
     }
 
     @Autowired

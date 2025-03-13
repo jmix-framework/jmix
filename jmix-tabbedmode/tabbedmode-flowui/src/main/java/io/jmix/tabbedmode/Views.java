@@ -446,8 +446,8 @@ public class Views {
         }
     }
 
-    protected void removeThisTabView(JmixUI ui, View<?> view) {
-        ViewContainer viewContainer = getViewContainer(view);
+    protected void removeThisTabView(JmixUI ui, View<?> viewToRemove) {
+        ViewContainer viewContainer = getViewContainer(viewToRemove);
         viewContainer.removeView();
 
         ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
@@ -463,22 +463,21 @@ public class Views {
             throw new IllegalStateException("Current %s not found".formatted(View.class.getSimpleName()));
         }
 
-        viewContainer.setView(currentViewInfo.view());
+        View<?> viewToDisplay = currentViewInfo.view();
+        viewContainer.setView(viewToDisplay);
 
         WorkArea workArea = getConfiguredWorkArea(ui);
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
         Tab tab = tabbedContainer.getTab(((Component) viewContainer));
 
-        updateTabTitle(tab, ViewControllerUtils.getPageTitle(currentViewInfo.view()));
+        updateTabTitle(tab, ViewControllerUtils.getPageTitle(viewToDisplay));
         if (tab instanceof JmixViewTab viewTab) {
-            viewTab.setClosable(TabbedModeViewUtils.isCloseable(view));
+            viewTab.setClosable(TabbedModeViewUtils.isCloseable(viewToDisplay));
         }
 
         // TODO: gg, move to a single place
-        if (currentViewInfo.location() != null) {
-            updateUrl(ui, currentViewInfo.location());
-        }
-        updatePageTitle(ui, currentViewInfo.view());
+        updateUrl(ui, currentViewInfo.location());
+        updatePageTitle(ui, viewToDisplay);
     }
 
     protected void openNewTab(JmixUI ui, ViewOpeningContext context) {

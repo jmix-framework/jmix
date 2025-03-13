@@ -191,10 +191,7 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
 
         findViewInfo(selectedTab).ifPresent(currentViewInfo -> {
             updatePageTitle(currentViewInfo.view());
-
-            if (currentViewInfo.location() != null) {
-                updateUrl(currentViewInfo.location());
-            }
+            updateUrl(currentViewInfo.location());
         });
     }
 

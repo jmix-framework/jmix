@@ -47,8 +47,8 @@
   top: 0;
 }
 
-.jmix-closeable-layout .close-button vaadin-icon {
-  color: var(--_lumo-button-color, var(--lumo-contrast))
+.jmix-closeable-layout .close-button {
+  color: inherit;
 }
 
 vaadin-notification-card:not([slot$='stretch']) .jmix-closeable-layout {

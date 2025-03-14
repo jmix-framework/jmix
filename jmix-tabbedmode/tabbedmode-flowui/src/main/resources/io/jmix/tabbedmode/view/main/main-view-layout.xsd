@@ -68,7 +68,7 @@
 
                 <xs:attributeGroup ref="layout:hasClassNames"/>
                 <xs:attributeGroup ref="layout:hasSize"/>
-                <xs:attribute name="themeNames" type="layout:tabSheetThemeNames"/>
+                <xs:attribute name="themeNames" type="tabbedContainerThemeNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -88,4 +88,21 @@
             <xs:extension base="layout:baseAction"/>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:simpleType name="tabbedContainerThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="centered"/>
+                    <xs:enumeration value="minimal"/>
+                    <xs:enumeration value="hide-scroll-buttons"/>
+                    <xs:enumeration value="bordered"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
 </xs:schema>

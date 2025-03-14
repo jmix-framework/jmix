@@ -9,11 +9,10 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either Staexpress or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 
 .jmix-main-tabsheet::part(content) {
     padding: 0;
@@ -27,29 +26,4 @@
 .jmix-main-tabsheet jmix-view-tab:before,
 .jmix-main-tabsheet jmix-view-tab:after {
     width: 100%;
-}
-
-.jmix-view-tab-text {
-    max-width: var(--jmix-tabmod-main-tab-text-max-width, 16rem);
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.jmix-view-tab-close-button {
-    margin: 0;
-    padding: 0;
-
-    height: auto;
-    min-width: 0;
-
-    color: inherit;
-    font-size: 0.75em;
-    line-height: inherit;
-
-    background: transparent;
-}
-
-.jmix-view-tab-close-button::part(prefix) {
-    margin: 0;
 }

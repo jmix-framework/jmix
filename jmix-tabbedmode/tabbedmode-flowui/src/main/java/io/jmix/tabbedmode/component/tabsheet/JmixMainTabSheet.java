@@ -17,13 +17,13 @@
 package io.jmix.tabbedmode.component.tabsheet;
 
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.TabSheetVariant;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.function.SerializableConsumer;
@@ -46,9 +46,10 @@ import static io.jmix.flowui.component.UiComponentUtils.sameId;
 @Tag("jmix-tabsheet")
 @JsModule("./src/tabsheet/jmix-tabsheet.js")
 @JsModule("./src/tabsheet/mainTabSheetConnector.ts")
+@CssImport("./src/tabsheet/jmix-main-tabsheet.css")
 public class JmixMainTabSheet extends Component implements TabbedViewsContainer<JmixMainTabSheet>,
         HasActions, ComponentContainer, HasSubParts,
-        HasStyle, HasSize, HasThemeVariant<TabSheetVariant>, HasPrefix, HasSuffix {
+        HasStyle, HasSize, HasThemeVariant<JmixMainTabSheetVariant>, HasPrefix, HasSuffix {
 
     protected static final String GENERATED_TAB_ID_PREFIX = "tabsheet-tab-";
 

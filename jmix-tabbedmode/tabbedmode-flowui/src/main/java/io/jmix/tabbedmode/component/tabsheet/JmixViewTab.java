@@ -19,6 +19,7 @@ package io.jmix.tabbedmode.component.tabsheet;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -30,6 +31,7 @@ import org.springframework.lang.Nullable;
 
 @Tag("jmix-view-tab")
 @JsModule("./src/tabsheet/jmix-view-tab.js")
+@CssImport("./src/tabsheet/jmix-view-tab.css")
 public class JmixViewTab extends Tab {
 
     protected static final String BASE_CLASS_NAME = "jmix-view-tab";

@@ -18,7 +18,6 @@ package io.jmix.tabbedmode.app.main;
 
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.HasElement;
-import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.router.RouterLayout;
 import io.jmix.flowui.component.applayout.JmixAppLayout;
 import io.jmix.flowui.view.Subscribe;
@@ -28,7 +27,6 @@ import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.navigation.RedirectHandler;
 import io.jmix.tabbedmode.sys.MainViewSupport;
 
-@CssImport("./src/view/main-view.css")
 public class StandardTabbedModeMainView extends View<JmixAppLayout> implements HasWorkArea, RouterLayout {
 
     protected WorkArea workArea;

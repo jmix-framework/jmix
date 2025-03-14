@@ -71,9 +71,7 @@ public class ConditionJpqlGenerator {
     private void copyGenerationContext(ConditionGenerationContext generationContext) {
         for (Condition childCondition:generationContext.getChildContexts().keySet()){
             ConditionGenerationContext childContext = generationContext.getChildContexts().get(childCondition);
-            childContext.setEntityAlias(generationContext.getEntityAlias());
-            childContext.setEntityName(generationContext.getEntityName());
-            childContext.setValueProperties(generationContext.getValueProperties());
+            childContext.copy(generationContext);
             copyGenerationContext(childContext);
         }
     }

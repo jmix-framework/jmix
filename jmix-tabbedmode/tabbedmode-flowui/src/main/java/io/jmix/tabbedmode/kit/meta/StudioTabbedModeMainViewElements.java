@@ -78,7 +78,8 @@ public interface StudioTabbedModeMainViewElements {
     @StudioActionsGroup(
             name = "Actions",
             actionClassFqn = "io.jmix.tabbedmode.action.tabsheet.TabbedViewsContainerAction",
-            target = {"io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet"}
+            target = {"io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet"},
+            xmlns = "http://jmix.io/schema/tabmod/main-view"
     )
     void tabbedContainerActions();
 }

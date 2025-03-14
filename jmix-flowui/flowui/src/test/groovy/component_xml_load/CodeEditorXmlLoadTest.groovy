@@ -60,6 +60,7 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.codeEditorId) {
             id.get() == "codeEditorId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            defaultSuggestionsEnabled
             style.get("color") == "red"
             enabled
             errorMessage == "errorMessageString"
@@ -69,6 +70,7 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
             !highlightActiveLine
             !highlightGutterLine
             label == "labelString"
+            liveSuggestionsEnabled
             maxHeight == "55px"
             maxWidth == "120px"
             minHeight == "40px"
@@ -81,6 +83,7 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
             !showGutter
             !showLineNumbers
             !showPrintMargin
+            suggestOn == "{E}\\."
             tabIndex == 3
             textWrap
             !useSoftTabs

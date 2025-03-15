@@ -477,24 +477,21 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
      * Services
      */
     protected void buildServicesPaths(OpenAPI openAPI) {
-        for (RestServiceInfo serviceInfo : servicesConfiguration.getServiceInfos()) {
+        for (RestServicesConfiguration.RestServiceInfo serviceInfo : servicesConfiguration.getServiceInfos()) {
             String serviceName = serviceInfo.getName();
 
-            for (RestMethodInfo methodInfo : serviceInfo.getMethods()) {
-                openAPI.path(
-                        String.format(SERVICE_PATH, serviceName, methodInfo.getName()),
-                        createServiceMethodPathItem(serviceName, methodInfo, RestHttpMethod.valueOf(methodInfo.getHttpMethod())));
+            for (RestServicesConfiguration.RestMethodInfo methodInfo : serviceInfo.getMethods()) {
+                String path = String.format(SERVICE_PATH, serviceName, methodInfo.getName());
+                PathItem pathItem = openAPI.getPaths().getOrDefault(path, new PathItem());
+
+                switch (RestHttpMethod.valueOf(methodInfo.getHttpMethod())) {
+                    case GET -> pathItem.get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET));
+                    case POST -> pathItem.post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST));
+                }
+
+                openAPI.path(path, pathItem);
             }
         }
-    }
-
-    private PathItem createServiceMethodPathItem(String serviceName, RestMethodInfo methodInfo, RestHttpMethod restHttpMethod) {
-        return switch (restHttpMethod) {
-            case GET -> new PathItem()
-                    .get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET));
-            case POST -> new PathItem()
-                    .post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST));
-        };
     }
 
     protected Operation createServiceMethodOp(String service, RestMethodInfo methodInfo, RequestMethod requestMethod) {

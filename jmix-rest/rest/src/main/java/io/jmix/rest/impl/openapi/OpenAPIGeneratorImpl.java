@@ -476,11 +476,11 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     /*
      * Services
      */
-    protected void buildServicesPaths(io.swagger.v3.oas.models.OpenAPI openAPI) {
-        for (RestServicesConfiguration.RestServiceInfo serviceInfo : servicesConfiguration.getServiceInfos()) {
+    protected void buildServicesPaths(OpenAPI openAPI) {
+        for (RestServiceInfo serviceInfo : servicesConfiguration.getServiceInfos()) {
             String serviceName = serviceInfo.getName();
 
-            for (RestServicesConfiguration.RestMethodInfo methodInfo : serviceInfo.getMethods()) {
+            for (RestMethodInfo methodInfo : serviceInfo.getMethods()) {
                 openAPI.path(
                         String.format(SERVICE_PATH, serviceName, methodInfo.getName()),
                         createServiceMethodPathItem(serviceName, methodInfo, RestHttpMethod.valueOf(methodInfo.getHttpMethod())));
@@ -488,7 +488,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         }
     }
 
-    private PathItem createServiceMethodPathItem(String serviceName, RestServicesConfiguration.RestMethodInfo methodInfo, RestHttpMethod restHttpMethod) {
+    private PathItem createServiceMethodPathItem(String serviceName, RestMethodInfo methodInfo, RestHttpMethod restHttpMethod) {
         return switch (restHttpMethod) {
             case GET -> new PathItem()
                     .get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET));

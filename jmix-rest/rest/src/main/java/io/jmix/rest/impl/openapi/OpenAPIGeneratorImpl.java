@@ -477,10 +477,10 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
      * Services
      */
     protected void buildServicesPaths(OpenAPI openAPI) {
-        for (RestServicesConfiguration.RestServiceInfo serviceInfo : servicesConfiguration.getServiceInfos()) {
+        for (RestServiceInfo serviceInfo : servicesConfiguration.getServiceInfos()) {
             String serviceName = serviceInfo.getName();
 
-            for (RestServicesConfiguration.RestMethodInfo methodInfo : serviceInfo.getMethods()) {
+            for (RestMethodInfo methodInfo : serviceInfo.getMethods()) {
                 String path = String.format(SERVICE_PATH, serviceName, methodInfo.getName());
                 PathItem pathItem = openAPI.getPaths().getOrDefault(path, new PathItem());
 

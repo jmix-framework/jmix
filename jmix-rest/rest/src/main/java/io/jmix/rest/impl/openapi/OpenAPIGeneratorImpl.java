@@ -26,6 +26,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.rest.RestProperties;
+import io.jmix.rest.annotation.RestHttpMethod;
 import io.jmix.rest.impl.config.RestQueriesConfiguration;
 import io.jmix.rest.impl.config.RestQueriesConfiguration.QueryInfo;
 import io.jmix.rest.impl.config.RestServicesConfiguration;
@@ -475,17 +476,25 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     /*
      * Services
      */
-    protected void buildServicesPaths(OpenAPI openAPI) {
-        for (RestServiceInfo serviceInfo : servicesConfiguration.getServiceInfos()) {
+    protected void buildServicesPaths(io.swagger.v3.oas.models.OpenAPI openAPI) {
+        for (RestServicesConfiguration.RestServiceInfo serviceInfo : servicesConfiguration.getServiceInfos()) {
             String serviceName = serviceInfo.getName();
 
-            for (RestMethodInfo methodInfo : serviceInfo.getMethods()) {
-                openAPI.path(String.format(SERVICE_PATH, serviceName, methodInfo.getName()),
-                        new PathItem()
-                                .get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET))
-                                .post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST)));
+            for (RestServicesConfiguration.RestMethodInfo methodInfo : serviceInfo.getMethods()) {
+                openAPI.path(
+                        String.format(SERVICE_PATH, serviceName, methodInfo.getName()),
+                        createServiceMethodPathItem(serviceName, methodInfo, RestHttpMethod.valueOf(methodInfo.getHttpMethod())));
             }
         }
+    }
+
+    private PathItem createServiceMethodPathItem(String serviceName, RestServicesConfiguration.RestMethodInfo methodInfo, RestHttpMethod restHttpMethod) {
+        return switch (restHttpMethod) {
+            case GET -> new PathItem()
+                    .get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET));
+            case POST -> new PathItem()
+                    .post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST));
+        };
     }
 
     protected Operation createServiceMethodOp(String service, RestMethodInfo methodInfo, RequestMethod requestMethod) {

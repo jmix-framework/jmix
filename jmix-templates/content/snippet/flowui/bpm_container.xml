@@ -35,7 +35,7 @@ if (formTemplate.name() == 'VARIABLE') {
                         entityName = entity.name
                     }
                 }
-                query = 'select e from ${entityName} e'
+                query = 'select e from ' + entityName + ' e'
             }
 
             def entity = api.findEntityByName(entityName)

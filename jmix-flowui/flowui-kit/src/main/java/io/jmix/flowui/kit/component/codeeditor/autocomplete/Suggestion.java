@@ -28,7 +28,7 @@ public class Suggestion implements Serializable {
 
     protected String displayText;
     protected String suggestionText;
-    protected String metaText;
+    protected String descriptionText;
 
     /**
      * @param displayText    text displayed in the popup window for suggestions
@@ -39,15 +39,15 @@ public class Suggestion implements Serializable {
     }
 
     /**
-     * @param displayText    text displayed in the popup window for suggestions
-     * @param suggestionText the value inserted into the editor if the suggestion is selected
-     * @param metaText       the hint text that appears next to the {@link #displayText} in the popup window
-     *                       for suggestions
+     * @param displayText     text displayed in the popup window for suggestions
+     * @param suggestionText  the value inserted into the editor if the suggestion is selected
+     * @param descriptionText the hint text that appears next to the {@link #displayText} in the popup window
+     *                        for suggestions
      */
-    public Suggestion(String displayText, String suggestionText, @Nullable String metaText) {
+    public Suggestion(String displayText, String suggestionText, @Nullable String descriptionText) {
         this.displayText = displayText;
         this.suggestionText = suggestionText;
-        this.metaText = metaText;
+        this.descriptionText = descriptionText;
     }
 
     /**
@@ -68,7 +68,7 @@ public class Suggestion implements Serializable {
      * @return the hint text that appears next to the {@link #displayText} in the popup window
      * for suggestions
      */
-    public String getMetaText() {
-        return metaText;
+    public String getDescriptionText() {
+        return descriptionText;
     }
 }

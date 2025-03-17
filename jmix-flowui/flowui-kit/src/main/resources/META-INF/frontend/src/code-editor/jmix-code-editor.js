@@ -311,7 +311,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 return {
                     caption: suggestion.displayText,
                     value: suggestion.suggestionText,
-                    meta: suggestion.metaText
+                    meta: suggestion.descriptionText
                 }
             }
         };

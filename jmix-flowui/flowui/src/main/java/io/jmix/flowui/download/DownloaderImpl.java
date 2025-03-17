@@ -56,6 +56,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 public class DownloaderImpl implements Downloader {
 
     private static final Logger log = LoggerFactory.getLogger(DownloaderImpl.class);
+    protected static final String DEFAULT_CHARSET_SUFFIX = ";charset=UTF-8";
 
     protected UiProperties uiProperties;
     protected CoreProperties coreProperties;
@@ -188,9 +189,9 @@ public class DownloaderImpl implements Downloader {
         StreamResource resource = new StreamResource(resourceName, dataProvider::getStream);
 
         if (downloadFormat != null && StringUtils.isNotEmpty(downloadFormat.getContentType())) {
-            resource.setContentType(downloadFormat.getContentType());
+            resource.setContentType(downloadFormat.getContentType() + DEFAULT_CHARSET_SUFFIX);
         } else {
-            resource.setContentType(FileTypesHelper.getMIMEType(resourceName));
+            resource.setContentType(FileTypesHelper.getMIMEType(resourceName) + DEFAULT_CHARSET_SUFFIX);
         }
 
         if (showNewWindow && isBrowserSupportsPopups() || isIPhone()) {

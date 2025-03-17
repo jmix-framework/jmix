@@ -19,7 +19,7 @@ import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.UiComponentUtils;
-import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%} else {%> : io.jmix.flowui.component.grid.TreeDataGrid <%}%>;
+import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%} else {%> io.jmix.flowui.component.grid.TreeDataGrid <%}%>;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;

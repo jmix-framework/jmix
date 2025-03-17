@@ -193,7 +193,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     /**
      * Sets visibility of unlimited (null) option value in the items per page select component. If unlimited (null) option
      * is selected component will try to load data with {@link UiProperties#getEntityMaxFetchSize(String)}
-     * limitation. The default value is true.
+     * limitation. The default value is {@code true}.
      *
      * @param unlimitedItemVisible whether unlimited option should be visible
      */

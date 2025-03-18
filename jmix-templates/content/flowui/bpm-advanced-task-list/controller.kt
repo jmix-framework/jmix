@@ -9,6 +9,7 @@ import com.vaadin.flow.component.ClickEvent
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasValue
 import com.vaadin.flow.component.button.ButtonVariant
+import com.vaadin.flow.component.grid.GridSortOrder
 import com.vaadin.flow.component.html.H5
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -31,6 +32,7 @@ import io.jmix.core.usersubstitution.CurrentUserSubstitution
 import io.jmix.flowui.component.UiComponentUtils
 import io.jmix.flowui.component.details.JmixDetails
 import io.jmix.flowui.component.formlayout.JmixFormLayout
+import io.jmix.flowui.component.grid.DataGrid
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup
 import io.jmix.flowui.component.textfield.TypedTextField
 import io.jmix.flowui.kit.action.ActionPerformedEvent
@@ -99,6 +101,9 @@ class ${controllerName} : StandardListView<TaskData>() {
     @ViewComponent
     private lateinit var assignmentTypeField: JmixRadioButtonGroup<MyTaskAssignmentType?>
 
+    @ViewComponent
+    private lateinit var tasksDataGrid: DataGrid<TaskData>
+
     // Flowable API
     @Autowired
     private lateinit var taskService: TaskService
@@ -130,6 +135,7 @@ class ${controllerName} : StandardListView<TaskData>() {
         assignmentTypeField.setValue(MyTaskAssignmentType.ALL)
         generalFilters.setSummary(H5(messageBundle.getMessage("taskFilter.generalGroup.summaryText")))
         assignmentFilters.setSummary(H5(messageBundle.getMessage("taskFilter.assignmentGroup.summaryText")))
+        tasksDataGrid.sort(GridSortOrder.desc(tasksDataGrid.getColumnByKey(CREATE_TIME_PROPERTY)).build())
     }
 
     @Subscribe

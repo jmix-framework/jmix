@@ -26,9 +26,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeLeaveEvent;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import io.jmix.appsettings.AppSettings;
 import io.jmix.appsettings.AppSettingsTools;
 import io.jmix.appsettings.entity.AppSettingsEntity;
@@ -59,6 +57,7 @@ import io.jmix.flowui.view.navigation.RouteSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.persistence.Convert;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -98,7 +97,7 @@ public class AppSettingsEntityView extends StandardView {
     // if someone has extended this view and is using Messages.
     @Autowired
     protected Messages messages;
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
     @Autowired
     protected AppSettingsTools appSettingsTools;
@@ -140,11 +139,14 @@ public class AppSettingsEntityView extends StandardView {
 
         prevMetaClass = e.getOldValue();
         currentMetaClass = e.getValue();
-        getUI().ifPresent(ui -> routeSupport.setQueryParameter(
-                ui,
-                QUERY_PARAM_SETTINGS_CLASS,
-                currentMetaClass.getName()
-        ));
+
+        getUI().ifPresent(ui -> {
+            if (currentMetaClass == null) {
+                routeSupport.setQueryParameters(ui, QueryParameters.empty());
+            } else {
+                routeSupport.setQueryParameter(ui, QUERY_PARAM_SETTINGS_CLASS, currentMetaClass.getName());
+            }
+        });
 
         if (dataContext != null && hasUnsavedChanges()) {
             handleEntitySelectorValueChangeWithUnsavedChanges();
@@ -223,7 +225,7 @@ public class AppSettingsEntityView extends StandardView {
     }
 
     protected OperationResult navigate(BeforeLeaveEvent.ContinueNavigationAction navigationAction,
-                                     CloseAction closeAction) {
+                                       CloseAction closeAction) {
         navigationAction.proceed();
 
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);

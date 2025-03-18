@@ -47,3 +47,13 @@ vaadin-menu-bar[jmix-role='jmix-combo-button-icon'] > vaadin-menu-bar-button:nth
     padding-left: calc(var(--lumo-button-size) / 4);
     padding-right: calc(var(--lumo-button-size) / 4);
 }
+
+vaadin-menu-bar[jmix-role='jmix-dropdown-button'][theme~='small'] > vaadin-menu-bar-button > vaadin-menu-bar-item,
+vaadin-menu-bar[jmix-role='jmix-combo-button-icon'][theme~='small'] > vaadin-menu-bar-button > vaadin-menu-bar-item {
+    font-size: var(--lumo-font-size-s);
+}
+
+vaadin-menu-bar[jmix-role='jmix-dropdown-button'][theme~='large'] > vaadin-menu-bar-button > vaadin-menu-bar-item,
+vaadin-menu-bar[jmix-role='jmix-combo-button-icon'][theme~='large'] > vaadin-menu-bar-button > vaadin-menu-bar-item {
+    font-size: var(--lumo-font-size-l);
+}

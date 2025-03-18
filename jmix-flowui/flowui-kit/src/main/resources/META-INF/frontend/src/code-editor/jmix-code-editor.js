@@ -176,6 +176,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         this.addController(this._tooltipController);
 
         this._editor.on('blur', () => {
+            this.value = this._editor.getValue();
             const customEvent = new CustomEvent('value-changed', {detail: {value: this._editor.getValue()}});
             this.dispatchEvent(customEvent);
 

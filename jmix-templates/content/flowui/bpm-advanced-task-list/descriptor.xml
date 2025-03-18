@@ -78,7 +78,7 @@
                         <action id="openTaskForm"
                                 icon="PENCIL"
                                 text="${messageKeys['openTaskFormActionText']}"
-                                type="list_itemTracking"/>
+                                type="list_edit"/>
                     </actions>
                     <columns resizable="true">
                         <column property="name"/>

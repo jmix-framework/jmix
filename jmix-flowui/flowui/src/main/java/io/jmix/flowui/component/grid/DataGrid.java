@@ -385,6 +385,9 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         if (!context.isPropertyEnabled()) {
             // Remove column from component while GridDelegate stores this column
             super.removeColumn(context.getColumn());
+
+            // Remove column from aggregation mechanism
+            gridDelegate.removeAggregationInfo(context.getColumn());
         }
     }
 

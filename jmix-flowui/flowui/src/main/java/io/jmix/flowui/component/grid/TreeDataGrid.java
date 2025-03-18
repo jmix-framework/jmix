@@ -426,6 +426,9 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         if (!context.isPropertyEnabled()) {
             // Remove column from component while GridDelegate stores this column
             super.removeColumn(context.getColumn());
+
+            // Remove column from aggregation mechanism
+            gridDelegate.removeAggregationInfo(context.getColumn());
         }
     }
 

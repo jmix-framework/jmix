@@ -50,18 +50,28 @@ public class AuthServerProperties {
      */
     String loginPageViewName;
 
+    /**
+     * Actual 'authorize' endpoint. Default: /oauth2/authorize
+     * <p>
+     * NOTE: This property should be specified if default endpoint has been remapped via Spring Security configuration.
+     * Changing this property itself doesn't change actual authorize endpoint.
+     */
+    String authorizeEndpoint;
+
     public AuthServerProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
             @DefaultValue("false") boolean useInMemoryAuthorizationService,
             @DefaultValue Map<String, JmixClient> client,
             @DefaultValue("/as-login") String loginPageUrl,
-            @DefaultValue("as-login.html") String loginPageViewName
-            ) {
+            @DefaultValue("as-login.html") String loginPageViewName,
+            @DefaultValue("/oauth2/authorize") String authorizeEndpoint
+    ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.useInMemoryAuthorizationService = useInMemoryAuthorizationService;
         this.client = client;
         this.loginPageUrl = loginPageUrl;
         this.loginPageViewName = loginPageViewName;
+        this.authorizeEndpoint = authorizeEndpoint;
     }
 
     public boolean isUseDefaultConfiguration() {
@@ -82,6 +92,10 @@ public class AuthServerProperties {
 
     public String getLoginPageViewName() {
         return loginPageViewName;
+    }
+
+    public String getAuthorizeEndpoint() {
+        return authorizeEndpoint;
     }
 
     /**

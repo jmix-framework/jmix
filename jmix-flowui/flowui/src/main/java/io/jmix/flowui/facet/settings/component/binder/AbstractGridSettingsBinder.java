@@ -22,9 +22,7 @@ import com.vaadin.flow.data.provider.SortDirection;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.facet.settings.component.DataGridSettings;
-import io.jmix.flowui.model.BaseCollectionLoader;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.HasLoader;
+import io.jmix.flowui.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -90,6 +88,15 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         }
 
         component.setColumnOrder((List) newColumnsOrder);
+
+        // Collection property container sorting cannot be applied in '#applyDataLoadingSettings()',
+        // because the items are not loaded at that moment and Grid will attempt to sort an empty container.
+        // The next sorting operation won't be applied, as the Grid does not re-sort if the sorting is the same.
+        // However, it is safe to sort collection property container here, because it is in-memory items
+        // collection.
+        if (isCollectionPropertyContainer(getGridItems(component))) {
+            applySorting(component, settings);
+        }
     }
 
     protected int findFirstLeftNeighborIndex(List<? extends Grid.Column<?>> componentColumns,
@@ -108,14 +115,20 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         return -1;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void applyDataLoadingSettings(V component, S settings) {
-        if (!isDataLoadingSettingsEnabled(component)
-                || isEmpty(settings.getSortOrder())) {
+        if (!isDataLoadingSettingsEnabled(component)) {
             return;
         }
 
+        applySorting(component, settings);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void applySorting(V component, S settings) {
+        if (isEmpty(settings.getSortOrder())) {
+            return;
+        }
         List sortOrder = settings.getSortOrder().stream()
                 .filter(o -> o.getKey() != null)
                 .map(sSortOrder -> new GridSortOrder<>(
@@ -195,6 +208,13 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
                     && ((HasLoader) container).getLoader() instanceof BaseCollectionLoader;
         }
         return false;
+    }
+
+    protected boolean isCollectionPropertyContainer(@Nullable DataGridItems<?> items) {
+        if (!(items instanceof ContainerDataUnit<?>)) {
+            return false;
+        }
+        return ((ContainerDataUnit<?>) items).getContainer() instanceof CollectionPropertyContainer<?>;
     }
 
     @Nullable

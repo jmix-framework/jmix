@@ -79,8 +79,12 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
         String text = (String) event.getValue();
         V value = getValue();
 
-        if (Strings.isNullOrEmpty(text)
-                || Objects.equals(text, formatValue(value))) {
+        if (Strings.isNullOrEmpty(text)) {
+            setValueFromClient(getEmptyValue());
+            return;
+        }
+
+        if (Objects.equals(text, formatValue(value))) {
             return;
         }
 

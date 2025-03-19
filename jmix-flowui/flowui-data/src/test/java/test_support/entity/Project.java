@@ -23,6 +23,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Table(name = "TEST_PROJECT")
@@ -32,7 +33,7 @@ public class Project {
     private static final long serialVersionUID = 1662802734694727725L;
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "ID", nullable = false)
     @JmixGeneratedValue
     protected UUID id;
 
@@ -56,6 +57,17 @@ public class Project {
 
     @Column(name = "ACTIVE")
     private Boolean active;
+
+    @OneToMany(mappedBy = "project")
+    private List<User> users;
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
 
     public UUID getId() {
         return id;

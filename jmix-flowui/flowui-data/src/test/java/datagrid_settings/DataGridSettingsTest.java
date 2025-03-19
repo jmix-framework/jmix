@@ -19,6 +19,7 @@ package datagrid_settings;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.data.provider.SortDirection;
+import datagrid_settings.view.DataGridSettingsNestedContainerTestVIew;
 import datagrid_settings.view.DataGridSettingsTestView;
 import io.jmix.flowui.facet.settings.component.DataGridSettings;
 import io.jmix.flowui.settings.UserSettingsCache;
@@ -33,7 +34,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import test_support.AbstractSettingsTest;
 import test_support.FlowuiDataTestConfiguration;
 import test_support.entity.Project;
+import test_support.entity.User;
 
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,13 +73,11 @@ public class DataGridSettingsTest extends AbstractSettingsTest {
         // Change settings of DataGrid
         view = navigateTo(DataGridSettingsTestView.class);
 
-        // Visibility is not saved in settings, it is needed to check that
-        // columns size is not changed after saving settings.
         view.projectsDataGrid.getColumnByKey("active").setVisible(false);
-        view.projectsDataGrid.setColumnPosition(getColumn(view, "budget"), 0);
+        view.projectsDataGrid.setColumnPosition(getPdgColumn(view, "budget"), 0);
         view.projectsDataGrid.sort(List.of(
-                new GridSortOrder<>(getColumn(view, "name"), SortDirection.ASCENDING),
-                new GridSortOrder<>(getColumn(view, "description"), SortDirection.DESCENDING)));
+                new GridSortOrder<>(getPdgColumn(view, "name"), SortDirection.ASCENDING),
+                new GridSortOrder<>(getPdgColumn(view, "description"), SortDirection.DESCENDING)));
 
         view.closeWithDefaultAction();
 
@@ -93,13 +94,9 @@ public class DataGridSettingsTest extends AbstractSettingsTest {
 
         assertNotNull(dataGridSettings.getColumns());
 
-        assertEquals("budget", dataGridSettings.getColumns().get(0).getKey());
-
-        /*
-         * Hidden columns by 'visible' property are presented in Grid#getColumns(),
-         * so settings also should contain them.
-         */
         assertEquals(5, dataGridSettings.getColumns().size());
+        assertEquals("budget", dataGridSettings.getColumns().get(0).getKey());
+        assertFalse(dataGridSettings.getColumns().get(4).getVisible()); // "active" column
     }
 
     @Test
@@ -108,10 +105,10 @@ public class DataGridSettingsTest extends AbstractSettingsTest {
         // Change settings of DataGrid
         DataGridSettingsTestView view = navigateTo(DataGridSettingsTestView.class);
 
-        view.projectsDataGrid.setColumnPosition(getColumn(view, "budget"), 0);
+        view.projectsDataGrid.setColumnPosition(getPdgColumn(view, "budget"), 0);
         view.projectsDataGrid.sort(List.of(
-                new GridSortOrder<>(getColumn(view, "name"), SortDirection.ASCENDING),
-                new GridSortOrder<>(getColumn(view, "description"), SortDirection.DESCENDING)));
+                new GridSortOrder<>(getPdgColumn(view, "name"), SortDirection.ASCENDING),
+                new GridSortOrder<>(getPdgColumn(view, "description"), SortDirection.DESCENDING)));
 
         view.closeWithDefaultAction();
 
@@ -131,6 +128,35 @@ public class DataGridSettingsTest extends AbstractSettingsTest {
         assertEquals("budget", view.projectsDataGrid.getColumns().get(0).getKey());
     }
 
+    @Test
+    @DisplayName("Apply sorting to DataGrid with CollectionPropertyContainer")
+    public void applySortingToDataGridWithCollectionPropertyContainer() {
+        var view = navigateTo(DataGridSettingsNestedContainerTestVIew.class);
+
+        /*
+         * Change settings of DataGrid
+         */
+        view.nestedUsersDataGrid.sort(List.of(
+                new GridSortOrder<>(getUdgColumn(view, "issuesCount"), SortDirection.ASCENDING)));
+
+        view.closeWithDefaultAction();
+
+        /*
+         * Reopen view and check restored settings
+         */
+        view = navigateTo(DataGridSettingsNestedContainerTestVIew.class);
+
+        assertEquals(1, view.nestedUsersDataGrid.getSortOrder().size());
+        assertEquals(SortDirection.ASCENDING, view.nestedUsersDataGrid.getSortOrder().get(0).getDirection());
+
+        // Check items order
+        assertNotNull(view.nestedUsersDataGrid.getItems());
+
+        Iterator<User> iterator = view.nestedUsersDataGrid.getItems().getItems().iterator();
+        assertEquals(1, iterator.next().getIssuesCount());
+        assertEquals(2, iterator.next().getIssuesCount());
+    }
+
     protected boolean isSortAscending(List<DataGridSettings.SortOrder> sortOrder, String key) {
         DataGridSettings.SortOrder columnSo = sortOrder.stream().filter(so -> key.equals(so.getKey()))
                 .findFirst()
@@ -138,7 +164,11 @@ public class DataGridSettingsTest extends AbstractSettingsTest {
         return SortDirection.ASCENDING.name().equals(columnSo.getSortDirection());
     }
 
-    protected Grid.Column<Project> getColumn(DataGridSettingsTestView view, String key) {
+    protected Grid.Column<Project> getPdgColumn(DataGridSettingsTestView view, String key) {
         return view.projectsDataGrid.getColumnByKey(key);
+    }
+
+    protected Grid.Column<User> getUdgColumn(DataGridSettingsNestedContainerTestVIew view, String key) {
+        return view.nestedUsersDataGrid.getColumnByKey(key);
     }
 }

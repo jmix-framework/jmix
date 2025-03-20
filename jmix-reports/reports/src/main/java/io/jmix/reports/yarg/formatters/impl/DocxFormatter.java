@@ -15,11 +15,10 @@
  */
 package io.jmix.reports.yarg.formatters.impl;
 
+import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
 import io.jmix.reports.yarg.formatters.impl.docx.*;
 import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverter;
-import io.jmix.reports.yarg.formatters.impl.docx.DocumentWrapper;
-import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportFieldFormat;
 import io.jmix.reports.yarg.structure.ReportOutputType;
@@ -88,6 +87,8 @@ public class DocxFormatter extends AbstractFormatter {
 
         handleUrls();
 
+        handleMultilineTexts();
+
         updateTableOfContents();
 
         saveAndClose();
@@ -120,6 +121,10 @@ public class DocxFormatter extends AbstractFormatter {
     protected void handleUrls() {
         UrlVisitor urlVisitor = new UrlVisitor(new io.jmix.reports.yarg.formatters.impl.DocxFormatterDelegate(this), wordprocessingMLPackage.getMainDocumentPart());
         new TraversalUtil(wordprocessingMLPackage.getMainDocumentPart(), urlVisitor);
+    }
+
+    protected void handleMultilineTexts() {
+
     }
 
     protected void loadDocument() {
@@ -283,5 +288,11 @@ public class DocxFormatter extends AbstractFormatter {
         byte[] bytes = new byte[bb.limit()];
         bb.get(bytes);
         return new String(bytes, "UTF-8");
+    }
+
+    protected boolean isSupportedMultilineText(Text text) {
+        String value = text.getValue();
+
+        return value != null && value.lines().count() > 1;
     }
 }

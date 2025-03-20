@@ -25,6 +25,8 @@ import org.docx4j.wml.Tbl;
 import org.docx4j.wml.Text;
 import org.docx4j.wml.Tr;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -37,6 +39,7 @@ public class TableManager {
     protected Tr rowWithAliases = null;
     protected String bandName = null;
     protected boolean skipIt = false;
+    protected List<Text> multilineTexts = new ArrayList<>();
 
     TableManager(DocxFormatterDelegate docxFormatter, Tbl tbl) {
         this.docxFormatter = docxFormatter;
@@ -83,7 +86,7 @@ public class TableManager {
                 //todo eude the following logic is not full and ignores situation when in 1 text we have both table and not table aliases
                 boolean hasTableAliases = false;
                 Matcher matcher = AbstractFormatter.UNIVERSAL_ALIAS_PATTERN.matcher(textValue);
-                while(matcher.find()) {
+                while (matcher.find()) {
                     AbstractFormatter.BandPathAndParameterName bandAndParameter = docxFormatter.separateBandNameAndParameterName(matcher.group(1));
                     if (isBlank(bandAndParameter.getBandPath()) || isBlank(bandAndParameter.getParameterName())) {
                         hasTableAliases = true;
@@ -93,6 +96,9 @@ public class TableManager {
                 if (hasTableAliases) {
                     String resultString = docxFormatter.insertBandDataToString(band, textValue);
                     text.setValue(resultString);
+                    if (docxFormatter.isSupportedMultilineText(text)) {
+                        multilineTexts.add(text);
+                    }
                 }
                 text.setSpace("preserve");
             }
@@ -143,5 +149,9 @@ public class TableManager {
 
     public void setSkipIt(boolean skipIt) {
         this.skipIt = skipIt;
+    }
+
+    public List<Text> getMultilineTexts() {
+        return multilineTexts;
     }
 }

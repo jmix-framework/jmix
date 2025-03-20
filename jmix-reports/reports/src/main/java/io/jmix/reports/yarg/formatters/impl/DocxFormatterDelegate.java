@@ -123,4 +123,8 @@ public class DocxFormatterDelegate {
 
         return result;
     }
+
+    public boolean isSupportedMultilineText(Text text) {
+        return docxFormatter.isSupportedMultilineText(text);
+    }
 }

@@ -144,6 +144,11 @@ public class ReportsProperties {
      */
     boolean formulasPostProcessingEvaluationEnabled;
 
+    /**
+     * If enabled - all string parameters with multi-line values will be written with preserved line breaks in the DOCX report.
+     */
+    boolean multilineStringsProcessingEnabled;
+
     public ReportsProperties(@DefaultValue("/") String officePath,
                              @DefaultValue({"8100", "8101", "8102", "8103"}) List<Integer> officePorts,
                              @DefaultValue("20") int docFormatterTimeout,
@@ -166,7 +171,8 @@ public class ReportsProperties {
                              @DefaultValue("1000") int historyCleanupMaxItemsPerReport,
                              @DefaultValue("3") int countOfRetry,
                              @DefaultValue("false") boolean useOfficeForDocumentConversion,
-                             @DefaultValue("false") boolean formulasPostProcessingEvaluationEnabled) {
+                             @DefaultValue("false") boolean formulasPostProcessingEvaluationEnabled,
+                             @DefaultValue("false") boolean multilineStringsProcessingEnabled) {
         this.officePath = officePath;
         this.officePorts = officePorts;
         this.docFormatterTimeout = docFormatterTimeout;
@@ -190,6 +196,7 @@ public class ReportsProperties {
         this.countOfRetry = countOfRetry;
         this.useOfficeForDocumentConversion = useOfficeForDocumentConversion;
         this.formulasPostProcessingEvaluationEnabled = formulasPostProcessingEvaluationEnabled;
+        this.multilineStringsProcessingEnabled = multilineStringsProcessingEnabled;
     }
 
     /**
@@ -342,5 +349,12 @@ public class ReportsProperties {
      */
     public boolean isFormulasPostProcessingEvaluationEnabled() {
         return formulasPostProcessingEvaluationEnabled;
+    }
+
+    /**
+     * @see #multilineStringsProcessingEnabled
+     */
+    public boolean isMultilineStringsProcessingEnabled() {
+        return multilineStringsProcessingEnabled;
     }
 }

@@ -45,8 +45,10 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
     protected Registration queryParametersChangeRegistration;
     protected Registration initialComponentsStateRegistration;
     protected Registration postReadyRegistration;
+    protected Registration pushQueryParametersRegistration;
 
     protected QueryParameters initialQueryParameters;
+    protected QueryParameters postponedQueryParameters;
     protected boolean ownerReady = false;
 
     public UrlQueryParametersFacetImpl(RouteSupport routeSupport) {
@@ -168,20 +170,41 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
                     event.getQueryParameters()
             );
         } else {
-            owner.getUI().ifPresent(ui -> {
-                        routeSupport.fetchCurrentLocation(ui, location -> {
-                            QueryParameters queryParameters = routeSupport.mergeQueryParameters(
-                                    location.getQueryParameters(),
-                                    event.getQueryParameters()
-                            );
+            if (postponedQueryParameters == null) {
+                postponedQueryParameters = QueryParameters.empty();
+            }
 
-                            log.debug("Mering component QueryParameters; added: {}; result: {}",
-                                    queryParametersString(event.getQueryParameters()),
-                                    queryParametersString(queryParameters));
+            log.debug("Collecting postponed QueryParameters; added: {}; previous: {}",
+                    queryParametersString(event.getQueryParameters()),
+                    queryParametersString(postponedQueryParameters));
 
-                            routeSupport.setQueryParameters(ui, queryParameters);
-                        });
-                    }
+            postponedQueryParameters = routeSupport.mergeQueryParameters(
+                    postponedQueryParameters,
+                    event.getQueryParameters()
+            );
+
+            if (pushQueryParametersRegistration != null) {
+                return;
+            }
+
+            owner.getUI().ifPresent(ui ->
+                    pushQueryParametersRegistration = ui.beforeClientResponse(owner, __ ->
+                            routeSupport.fetchCurrentLocation(ui, location -> {
+                                QueryParameters queryParameters = routeSupport.mergeQueryParameters(
+                                        location.getQueryParameters(),
+                                        postponedQueryParameters
+                                );
+
+                                log.debug("Mering postponed QueryParameters; added: {}; result: {}",
+                                        queryParametersString(postponedQueryParameters),
+                                        queryParametersString(queryParameters));
+
+                                postponedQueryParameters = null;
+                                pushQueryParametersRegistration = null;
+
+                                routeSupport.setQueryParameters(ui, queryParameters);
+                            })
+                    )
             );
         }
     }

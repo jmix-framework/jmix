@@ -201,6 +201,10 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
 
     public void setRequiredMessage(@Nullable String requiredMessage) {
         this.requiredMessage = requiredMessage;
+
+        if (isInvalid() && isEmptyAndRequired()) {
+            setComponentRequiredErrorState();
+        }
     }
 
     @Nullable

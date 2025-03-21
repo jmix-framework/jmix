@@ -45,6 +45,10 @@ public class CodeEditorLoader extends AbstractComponentLoader<CodeEditor> {
         loadBoolean(element, "textWrap", resultComponent::setTextWrap);
         loadBoolean(element, "useSoftTabs", resultComponent::setUseSoftTabs);
 
+        loadBoolean(element, "defaultSuggestionsEnabled", resultComponent::setDefaultSuggestionsEnabled);
+        loadBoolean(element, "liveSuggestionsEnabled", resultComponent::setLiveSuggestionsEnabled);
+        loadString(element, "suggestOn", resultComponent::setSuggestOn);
+
         loadEnum(element, CodeEditorMode.class, "mode", resultComponent::setMode);
         loadEnum(element, CodeEditorTheme.class, "theme", resultComponent::setTheme);
 

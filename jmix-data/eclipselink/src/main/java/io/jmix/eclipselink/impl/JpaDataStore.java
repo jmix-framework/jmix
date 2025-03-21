@@ -87,9 +87,6 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     protected AccessManager accessManager;
 
     @Autowired
-    protected QueryResultsManager queryResultsManager;
-
-    @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
 
     @Autowired
@@ -156,8 +153,6 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     protected List<Object> loadAll(LoadContext<?> context) {
         MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
 
-        queryResultsManager.savePreviousQueryResults(context);
-
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
         boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
         try {
@@ -217,8 +212,6 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
     @Override
     protected long countAll(LoadContext<?> context) {
-        queryResultsManager.savePreviousQueryResults(context);
-
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
         boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
@@ -530,12 +523,6 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
         if (countQuery) {
             queryBuilder.setCountQuery();
-        }
-
-        if (!context.getPreviousQueries().isEmpty()) {
-            log.debug("Restrict query by previous results");
-            //todo MG maybe use user key instead of session id
-//            queryBuilder.setPreviousResults(userSessionSource.getUserSession().getId(), context.getQueryKey());
         }
 
         JmixEclipseLinkQuery<?> query = queryBuilder.getQuery(em);

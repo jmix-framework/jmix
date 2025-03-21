@@ -43,8 +43,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Supports functionality that allows queries from previously selected results.
+ * DEPRECATED, will be removed in 3.0.
  */
+@Deprecated(forRemoval = true)
 @Component("data_QueryResultsManager")
 public class QueryResultsManagerImpl implements QueryResultsManager {
 

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.data;
 
+import io.jmix.flowui.kit.meta.StudioIgnore;
 import org.springframework.lang.Nullable;
 
 /**
@@ -26,6 +27,7 @@ public interface HasValueSourceProvider {
     @Nullable
     ValueSourceProvider getValueSourceProvider();
 
+    @StudioIgnore
     void setValueSourceProvider(@Nullable ValueSourceProvider provider);
 }
 

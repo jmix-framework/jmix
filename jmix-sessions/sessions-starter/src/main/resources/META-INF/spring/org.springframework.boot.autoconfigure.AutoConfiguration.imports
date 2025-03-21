@@ -1,1 +1,2 @@
+io.jmix.autoconfigure.sessions.JmixHazelcastSessionsAutoConfiguration
 io.jmix.autoconfigure.sessions.SessionsAutoConfiguration

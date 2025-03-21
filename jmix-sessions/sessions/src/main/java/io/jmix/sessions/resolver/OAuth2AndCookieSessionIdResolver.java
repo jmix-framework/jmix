@@ -140,7 +140,7 @@ public class OAuth2AndCookieSessionIdResolver implements HttpSessionIdResolver {
 
     protected String getAccessToken(HttpServletRequest request) {
         String header = request.getHeader("authorization");
-        if (header != null && header.startsWith("Bearer")) {
+        if (header != null && header.toLowerCase(Locale.ENGLISH).startsWith("bearer")) {
             return header.substring(7);
         }
 

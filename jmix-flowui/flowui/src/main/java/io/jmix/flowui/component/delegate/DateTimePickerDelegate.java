@@ -52,6 +52,18 @@ public class DateTimePickerDelegate<V extends Comparable>
     }
 
     @Override
+    protected void setInvalidInternal(boolean invalid) {
+        component.getElement().setProperty(PROPERTY_INVALID, invalid);
+        component.getElement().executeJs("""
+                (function() {
+                    this.invalid = $0;
+                    if (this.__datePicker) { this.__datePicker.invalid = $0; }
+                    if (this.__timePicker) { this.__timePicker.invalid = $0; }
+                }.bind(this)());
+                """, invalid);
+    }
+
+    @Override
     protected void setupProperties(ValueSource<V> valueSource) {
         if (valueSource instanceof EntityValueSource<?,?> entityValueSource) {
             dataAwareComponentsTools.setupZoneId(component, entityValueSource);

@@ -18,6 +18,7 @@ package io.jmix.gridexportflowui.action;
 
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.Messages;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.action.ActionType;
@@ -60,6 +61,7 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     protected ApplicationContext applicationContext;
 
     protected Messages messages;
+    protected MetadataTools metadataTools;
     protected Downloader downloader;
     protected Dialogs dialogs;
 
@@ -86,6 +88,11 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
     }
 
     @Autowired
@@ -267,7 +274,7 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
         for (ExportMode exportMode : availableExportModes) {
             switch (exportMode) {
                 case ALL_ROWS -> {
-                    if (isDataLoaderExist(target)) {
+                    if (isExportAllAvailable(target)) {
                         actions.add(createExportAllAction(primaryFilterPredicate));
                     }
                 }
@@ -332,8 +339,9 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
                 .withHandler(event -> doExport(ExportMode.CURRENT_PAGE, primaryFilterPredicate));
     }
 
-    protected boolean isDataLoaderExist(ListDataComponent<?> target) {
+    protected boolean isExportAllAvailable(ListDataComponent<?> target) {
         return target.getItems() instanceof ContainerDataUnit<?> containerItems
+                && metadataTools.getPrimaryKeyProperty(containerItems.getEntityMetaClass()) != null
                 && containerItems.getContainer() instanceof HasLoader containerWithLoader
                 && containerWithLoader.getLoader() != null;
     }

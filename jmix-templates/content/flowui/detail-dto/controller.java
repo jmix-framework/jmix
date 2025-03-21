@@ -28,7 +28,7 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
     private EntityStates entityStates;
 
     @Install(to = "${dlId}", target = Target.DATA_LOADER)
-    private ${entity.className} customerDlLoadDelegate(final LoadContext<${entity.className}> loadContext) {
+    private ${entity.className} loadDelegate(final LoadContext<${entity.className}> loadContext) {
         Object id = loadContext.getId();
         // Here you can load the entity by id from an external storage.
         // Set the loaded entity to the not-new state using EntityStates.setNew(entity, false).

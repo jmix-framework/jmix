@@ -21,23 +21,40 @@ import com.vaadin.flow.server.RouteRegistry;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.security.configurer.JmixRequestCacheRequestMatcher;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.lang.Nullable;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.util.Collections;
+import java.util.List;
 
 @Internal
 public class JmixViewPathRequestMatcher implements RequestMatcher {
 
     private final ViewRegistry viewRegistry;
+    private final List<JmixRequestCacheRequestMatcher> additionalRequestMatchers;
 
     public JmixViewPathRequestMatcher(ViewRegistry viewRegistry) {
+        this(viewRegistry, Collections.emptyList());
+    }
+
+    public JmixViewPathRequestMatcher(ViewRegistry viewRegistry,
+                                      @Nullable List<JmixRequestCacheRequestMatcher> additionalRequestMatchers) {
         Preconditions.checkNotNullArgument(viewRegistry);
         this.viewRegistry = viewRegistry;
+        this.additionalRequestMatchers = additionalRequestMatchers == null ? Collections.emptyList() : additionalRequestMatchers;
     }
 
     @Override
     public boolean matches(HttpServletRequest request) {
-        String path = LocationUtil.ensureRelativeNonNull(request.getServletPath());
+        boolean matches = additionalRequestMatchers.stream()
+                .anyMatch(matcher -> matcher.matches(request));
+        if (matches) {
+            return true;
+        }
 
+        String path = LocationUtil.ensureRelativeNonNull(request.getServletPath());
         RouteRegistry handledRegistry = viewRegistry.getRouteConfiguration().getHandledRegistry();
 
         return handledRegistry.getNavigationRouteTarget(path).hasTarget();

@@ -139,7 +139,7 @@ public class UiComponentProperties {
      * Whether the {@link JmixCheckbox} should initialize its required state during data binding based on the
      * {@link NotNull} annotation or the mandatory property.
      */
-    boolean checkboxMandatoryPropertyValidationEnabled;
+    boolean checkboxRequiredStateInitializationEnabled;
 
     public UiComponentProperties(
             String gridCreateShortcut,
@@ -168,7 +168,7 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean showErrorMessageBelowField,
             @DefaultValue("true") boolean immediateRequiredValidationEnabled,
             @DefaultValue("true") boolean defaultTrimEnabled,
-            @DefaultValue("true") boolean checkboxMandatoryPropertyValidationEnabled) {
+            @DefaultValue("true") boolean checkboxRequiredStateInitializationEnabled) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -203,7 +203,7 @@ public class UiComponentProperties {
 
         this.defaultTrimEnabled = defaultTrimEnabled;
 
-        this.checkboxMandatoryPropertyValidationEnabled = checkboxMandatoryPropertyValidationEnabled;
+        this.checkboxRequiredStateInitializationEnabled = checkboxRequiredStateInitializationEnabled;
     }
 
     public String getGridCreateShortcut() {
@@ -359,9 +359,9 @@ public class UiComponentProperties {
     }
 
     /**
-     * @see #checkboxMandatoryPropertyValidationEnabled
+     * @see #checkboxRequiredStateInitializationEnabled
      */
-    public boolean isCheckboxMandatoryPropertyValidationEnabled() {
-        return checkboxMandatoryPropertyValidationEnabled;
+    public boolean isCheckboxRequiredStateInitializationEnabled() {
+        return checkboxRequiredStateInitializationEnabled;
     }
 }

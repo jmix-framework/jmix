@@ -44,7 +44,7 @@ public class CheckboxValueBinding<V> extends AbstractValueBinding<V> {
 
     @Override
     protected void initRequired(HasValue<?, V> component, MetaPropertyPath metaPropertyPath) {
-        if (!uiComponentProperties.isCheckboxMandatoryPropertyValidationEnabled()) {
+        if (!uiComponentProperties.isCheckboxRequiredStateInitializationEnabled()) {
             return;
         }
 

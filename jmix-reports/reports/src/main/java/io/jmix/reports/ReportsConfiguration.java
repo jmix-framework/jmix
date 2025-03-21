@@ -21,6 +21,8 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.reports.libintegration.*;
+import io.jmix.reports.yarg.formatters.impl.docx.MultilineTextProcessor;
+import io.jmix.reports.yarg.formatters.impl.docx.MultilineTextProcessorImpl;
 import io.jmix.reports.yarg.loaders.QueryLoaderPreprocessor;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
@@ -220,5 +222,10 @@ public class ReportsConfiguration {
     @Bean("report_StringConverter")
     public JmixObjectToStringConverter objectToStringConverter() {
         return new JmixObjectToStringConverter();
+    }
+
+    @Bean("report_MultilineTextProcessor")
+    public MultilineTextProcessor multilineTextProcessor() {
+        return new MultilineTextProcessorImpl();
     }
 }

@@ -1,15 +1,25 @@
 <%
 def addActionName = (cardinality_MANY_TO_MANY) ? 'addAction' : 'createAction'
+def addActionType = (cardinality_MANY_TO_MANY) ? 'list_add' : 'list_create'
 def removeActionName = (cardinality_MANY_TO_MANY) ? 'excludeAction' : 'removeAction'
+def removeActionType = (cardinality_MANY_TO_MANY) ? 'list_exclude' : 'list_remove'
 %>
 <dataGrid id="${viewProperty_name}DataGrid" dataContainer="${viewProperty_name}Dc" width="100%" height="${tableHeight}">
 <% if (!cardinality_MANY_TO_MANY || owner) {%>
 <actions>
-    <action id="${addActionName}" type="list_${addActionName}"/>
+    <action id="${addActionName}" type="${addActionType}">
+        <properties>
+            <property name="openMode" value="DIALOG"/>
+        </properties>
+    </action>
     <% if (cardinality_ONE_TO_MANY) {%>
-    <action id="editAction" type="list_edit"/>
+    <action id="editAction" type="list_edit">
+        <properties>
+            <property name="openMode" value="DIALOG"/>
+        </properties>
+    </action>
     <% }%>
-    <action id="${removeActionName}" type="list_${removeActionName}"/>
+    <action id="${removeActionName}" type="${removeActionType}"/>
 </actions>
 <% }%>
 <columns>

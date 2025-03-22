@@ -53,6 +53,11 @@ public class ExportImportEntityConstraint implements EntityOperationConstraint<E
     @Override
     public void applyTo(ExportImportEntityContext context) {
         for (MetaProperty metaProperty : context.getEntityClass().getProperties()) {
+            if (metaProperty.getRange().isClass()) {
+                if (!secureOperations.isEntityReadPermitted(metaProperty.getRange().asClass(), policyStore)) {
+                    context.notExportedAttribute(metaProperty.getName());
+                }
+            }
             if (!secureOperations.isEntityAttrUpdatePermitted(new MetaPropertyPath(context.getEntityClass(), metaProperty), policyStore)) {
                 context.notImportedAttribute(metaProperty.getName());
             }

@@ -19,9 +19,7 @@ package entities;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import io.jmix.core.Id;
-import io.jmix.samples.rest.entity.driver.Car;
-import io.jmix.samples.rest.entity.driver.Colour;
-import io.jmix.samples.rest.entity.driver.Model;
+import io.jmix.samples.rest.entity.driver.*;
 import io.jmix.samples.rest.security.*;
 import io.jmix.samples.rest.service.RestTestService;
 import org.apache.http.HttpStatus;
@@ -58,6 +56,8 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
     private Colour colour;
     private Car car;
     private Model model;
+    private Driver driver;
+    private DriverAllocation driverAllocation;
     /**
      * User ids
      */
@@ -66,6 +66,7 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
     private UserDetails colorCreate;
     private UserDetails colorDelete;
     private UserDetails carRead;
+    private UserDetails carReadAllAttr;
     /**
      * Logins
      */
@@ -74,11 +75,13 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
     private final String colorCreateUserLogin = "colorCreateUser";
     private final String colorDeleteUserLogin = "colorDeleteUser";
     private final String carReadUserLogin = "carReadUser";
+    private final String carReadAllAttrUserLogin = "carReadAllAttrUser";
     private final String colorReadUserPassword = "colorReadUser";
     private final String colorUpdateUserPassword = "colorUpdateUser";
     private final String colorCreateUserPassword = "colorCreateUser";
     private final String colorDeleteUserPassword = "colorDeleteUser";
     private final String carReadUserPassword = "carReadUser";
+    private final String carReadAllAttrUserPassword = "carReadAllAttrUser";
 
     /**
      * User OAuth tokens
@@ -88,6 +91,7 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
     private String colorCreateUserToken;
     private String colorDeleteUserToken;
     private String carReadUserToken;
+    private String carReadAllAttrUserToken;
 
     private UUID groupUuid = UUID.fromString("0fa2b1a5-1d68-4d69-9fbd-dff348347f93");
     private String modelUuidString;
@@ -103,11 +107,14 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
         colorCreateUserToken = getAuthToken(oauthUrl, colorCreateUserLogin, colorCreateUserPassword);
         colorDeleteUserToken = getAuthToken(oauthUrl, colorDeleteUserLogin, colorDeleteUserPassword);
         carReadUserToken = getAuthToken(oauthUrl, carReadUserLogin, carReadUserPassword);
+        carReadAllAttrUserToken = getAuthToken(oauthUrl, carReadAllAttrUserLogin, carReadAllAttrUserPassword);
     }
 
     @AfterEach
     public void tearDown() throws SQLException {
         dirtyData.cleanup(conn);
+        dataManager.remove(Id.of(driverAllocation));
+        dataManager.remove(Id.of(driver));
         dataManager.remove(Id.of(car));
         dataManager.remove(Id.of(model));
         dataManager.remove(Id.of(colour));
@@ -142,6 +149,24 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
         //checks that forbidden attributes aren't included to the result JSON
         String url = baseUrl + "/entities/ref_Car/" + carUuidString + "?fetchPlan=carEdit";
         try (CloseableHttpResponse response = sendGet(url, carReadUserToken, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(carUuidString, ctx.read("$.id"));
+            assertNotNull(ctx.read("$.vin"));
+            assertNotNull(ctx.read("$.model"));
+
+            assertThrows(PathNotFoundException.class, () -> ctx.read("$.colour"));
+
+            assertThrows(PathNotFoundException.class, () -> ctx.read("$.driverAllocations"));
+        }
+    }
+
+    @Test
+    void forbiddenEntitiesAreNotPresentInAttributes() throws Exception {
+        // Checks that forbidden entities aren't included as references in the result JSON
+        // even if all attributes are enabled
+        String url = baseUrl + "/entities/ref_Car/" + carUuidString + "?fetchPlan=carEdit";
+        try (CloseableHttpResponse response = sendGet(url, carReadAllAttrUserToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(carUuidString, ctx.read("$.id"));
@@ -283,6 +308,15 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
         car.setModel(model);
         car = dataManager.save(car);
         carUuidString = car.getId().toString();
+
+        driver = dataManager.create(Driver.class);
+        driver.setName("Joe");
+        driver = dataManager.save(driver);
+
+        driverAllocation = dataManager.create(DriverAllocation.class);
+        driverAllocation.setDriver(driver);
+        driverAllocation.setCar(car);
+        driverAllocation = dataManager.save(driverAllocation);
     }
 
     private void createUsers() {
@@ -320,5 +354,12 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
                 .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(CarReadRole.NAME))
                 .build();
         userRepository.addUser(carRead);
+
+        carReadAllAttr = User.builder()
+                .username(carReadAllAttrUserLogin)
+                .password("{noop}" + carReadAllAttrUserPassword)
+                .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(CarReadAllAttributesRole.NAME))
+                .build();
+        userRepository.addUser(carReadAllAttr);
     }
 }

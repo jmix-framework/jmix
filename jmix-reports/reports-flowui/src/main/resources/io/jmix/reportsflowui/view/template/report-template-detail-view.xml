@@ -27,7 +27,8 @@
                                required="true" requiredMessage="msg://codeField.requiredMessage"/>
                     <fileUploadField id="templateUploadField" fileNameVisible="true"
                                      label="msg://templateUploadField.label" width="100%"/>
-                    <vbox id="templateFileEditorBox" spacing="false" padding="true" width="100%" classNames="report-bordered report-codeeditor-box">
+                    <vbox id="templateFileEditorBox" spacing="false" padding="true" width="100%"
+                          classNames="report-bordered report-codeeditor-box">
                         <div width="100%" classNames="flex, justify-end">
                             <button id="templateFileEditorFullScreenBtn"
                                     text="msg:///fullScreenBtn.title"
@@ -35,8 +36,8 @@
                         </div>
                         <div width="100%" classNames="flex, items-start">
                             <codeEditor id="templateFileEditor"
-                                    width="100%"
-                                    height="20em"/>
+                                        width="100%"
+                                        height="20em"/>
                         </div>
                     </vbox>
                     <comboBox id="outputTypeField" property="reportOutputType" label="msg://outputTypeField.label"
@@ -54,8 +55,8 @@
                     <checkbox id="alterableField" property="alterable" label="msg://alterableField.label" width="100%"/>
                     <checkbox id="defaultField" label="msg://defaultField.label" width="100%"/>
                     <select id="customDefinedByField" property="customDefinedBy"
-                              label="msg://customDefinedByField.label"
-                              requiredMessage="msg://customDefinedByField.requiredMessage" width="100%"/>
+                            label="msg://customDefinedByField.label"
+                            requiredMessage="msg://customDefinedByField.requiredMessage" width="100%"/>
                     <vbox id="customDefinitionBox" spacing="false" padding="true" width="100%" alignItems="END"
                           classNames="report-bordered report-codeeditor-box">
                         <div width="100%" classNames="flex, justify-end">
@@ -66,9 +67,9 @@
                         <vbox width="100%" padding="false">
                             <div width="100%" classNames="flex, items-start">
                                 <codeEditor id="customDefinitionField" property="customDefinition"
-                                      label="msg://customDefinitionField.label"
-                                      height="6em"
-                                      requiredMessage="msg://customDefinitionField.requiredMessage" width="100%"/>
+                                            label="msg://customDefinitionField.label"
+                                            height="6em"
+                                            requiredMessage="msg://customDefinitionField.requiredMessage" width="100%"/>
                             </div>
                         </vbox>
                     </vbox>

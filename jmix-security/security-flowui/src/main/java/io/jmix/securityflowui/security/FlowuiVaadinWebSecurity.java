@@ -26,6 +26,7 @@ import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.security.configurer.JmixRequestCacheRequestMatcher;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ import org.springframework.security.web.util.matcher.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -56,6 +58,7 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     protected ApplicationContext applicationContext;
     protected ServerProperties serverProperties;
     protected ServletContext servletContext;
+    protected List<JmixRequestCacheRequestMatcher> requestCacheRequestMatchers;
 
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -83,9 +86,11 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     }
 
     @Autowired
-    public void setVaadinDefaultRequestCache(VaadinDefaultRequestCache vaadinDefaultRequestCache) {
+    public void setVaadinDefaultRequestCache(VaadinDefaultRequestCache vaadinDefaultRequestCache,
+                                             List<JmixRequestCacheRequestMatcher> requestCacheRequestMatchers) {
         // Configure request cache to do not save resource
         // requests as they are not valid redirect routes.
+        this.requestCacheRequestMatchers = requestCacheRequestMatchers;
         vaadinDefaultRequestCache.setDelegateRequestCache(getDelegateRequestCache());
     }
 
@@ -188,6 +193,6 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     }
 
     protected RequestMatcher createViewPathRequestMatcher(ViewRegistry viewRegistry) {
-        return new JmixViewPathRequestMatcher(viewRegistry);
+        return new JmixViewPathRequestMatcher(viewRegistry, requestCacheRequestMatchers);
     }
 }

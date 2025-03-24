@@ -58,4 +58,17 @@ public class DateTimePickerDelegate<V extends Comparable>
             dataAwareComponentsTools.setupRange(component, entityValueSource);
         }
     }
+
+    @Override
+    protected void setInvalidInternal(boolean invalid) {
+        // TODO: fixed in Vaadin 24.7, remove after upgrading
+        component.getElement().setProperty(PROPERTY_INVALID, invalid);
+        component.getElement().executeJs("""
+                (function() {
+                    this.invalid = $0;
+                    if (this.__datePicker) { this.__datePicker.invalid = $0; }
+                    if (this.__timePicker) { this.__timePicker.invalid = $0; }
+                }.bind(this)());
+                """, invalid);
+    }
 }

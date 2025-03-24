@@ -151,6 +151,7 @@ class DataManagerCommitTest extends DataSpec {
         def foo1 = dataManager.load(Id.of(foo)).fetchPlan { fp -> fp.addAll('parts.name') }.one()
 
         then:
+        noExceptionThrown() //Non-standard id name (foo.longId) is mapped correctly in io.jmix.eclipselink.impl.FetchGroupManager.getMasterEntityAttributes:373
         savedSet.size() == 2
         savedSet.get(foo) == foo
         savedSet.get(part) == part

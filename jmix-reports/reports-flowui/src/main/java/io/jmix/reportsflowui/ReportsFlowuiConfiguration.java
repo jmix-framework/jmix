@@ -21,7 +21,6 @@ import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
-import io.jmix.gridexportflowui.GridExportFlowuiConfiguration;
 import io.jmix.reports.ReportsConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
@@ -35,7 +34,7 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {FlowuiConfiguration.class, ReportsConfiguration.class, GridExportFlowuiConfiguration.class})
+@JmixModule(dependsOn = {FlowuiConfiguration.class, ReportsConfiguration.class})
 @PropertySource(name = "io.jmix.reportsflowui", value = "classpath:/io/jmix/reportsflowui/module.properties")
 public class ReportsFlowuiConfiguration {
 

@@ -41,12 +41,10 @@ import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.model.KeyValueCollectionContainer;
 import io.jmix.flowui.view.*;
-import io.jmix.gridexportflowui.action.ExcelExportAction;
 import io.jmix.reports.entity.JmixTableData;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
@@ -103,6 +101,8 @@ public class ReportTableView extends StandardView {
     protected Messages messages;
     @Autowired
     protected Notifications notifications;
+    @Autowired(required = false)
+    protected ReportExcelHelper reportExcelHelper;
 
     protected String templateCode;
     protected Map<String, Object> reportParameters;
@@ -301,16 +301,12 @@ public class ReportTableView extends StandardView {
     }
 
     private HorizontalLayout createButtonsPanel(ReportOutputDocument document, DataGrid<KeyValueEntity> dataGrid) {
-        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.ID);
-        excelExportAction.withFileName(document.getReport().getName());
-        dataGrid.addAction(excelExportAction);
-
-        JmixButton excelButton = uiComponents.create(JmixButton.class);
-        excelButton.setAction(excelExportAction);
-
         HorizontalLayout buttonsPanel = uiComponents.create(HorizontalLayout.class);
         buttonsPanel.setClassName("buttons-panel");
-        buttonsPanel.add(excelButton);
+
+        if (reportExcelHelper != null) {
+            buttonsPanel.add(reportExcelHelper.createExportAction(dataGrid, document));
+        }
 
         return buttonsPanel;
     }
@@ -323,8 +319,8 @@ public class ReportTableView extends StandardView {
         columnInfos.forEach(columnInfo -> {
             Class javaClass = columnInfo.getColumnClass();
             if (Entity.class.isAssignableFrom(javaClass) ||
-                EnumClass.class.isAssignableFrom(javaClass) ||
-                datatypeRegistry.find(javaClass) != null) {
+                    EnumClass.class.isAssignableFrom(javaClass) ||
+                    datatypeRegistry.find(javaClass) != null) {
                 collectionContainer.addProperty(columnInfo.getKey(), javaClass);
             }
         });

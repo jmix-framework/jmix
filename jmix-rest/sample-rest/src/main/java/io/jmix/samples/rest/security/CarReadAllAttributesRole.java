@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,19 +24,17 @@ import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.security.role.annotation.SpecificPolicy;
 
-import static io.jmix.security.model.EntityAttributePolicyAction.MODIFY;
 import static io.jmix.security.model.EntityAttributePolicyAction.VIEW;
 import static io.jmix.security.model.EntityPolicyAction.READ;
 
-@ResourceRole(name = CarReadRole.NAME, code = CarReadRole.NAME, scope = SecurityScope.API)
-public interface CarReadRole {
+@ResourceRole(name = CarReadAllAttributesRole.NAME, code = CarReadAllAttributesRole.NAME, scope = SecurityScope.API)
+public interface CarReadAllAttributesRole {
 
-    String NAME = "car-read-access";
+    String NAME = "car-read-all-attr-access";
 
     // Car entity
     @EntityPolicy(entityClass = Car.class, actions = READ)
-    @EntityAttributePolicy(entityClass = Car.class, attributes = "vin", action = MODIFY)
-    @EntityAttributePolicy(entityClass = Car.class, attributes = "model", action = VIEW)
+    @EntityAttributePolicy(entityName = "ref_Car", attributes = "*", action = VIEW)
     // Model entity
     @EntityPolicy(entityClass = Model.class, actions = READ)
     // rest

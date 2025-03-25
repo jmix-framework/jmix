@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.view.builder;
 
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.View;
@@ -50,6 +52,16 @@ public interface DialogWindowBuilder<V extends View<?>> {
      * @return after close dialog listener
      */
     Optional<Consumer<AfterCloseEvent<V>>> getAfterCloseListener();
+
+    /**
+     * @return dialog dragged listener
+     */
+    Optional<ComponentEventListener<Dialog.DialogDraggedEvent>> getDraggedListener();
+
+    /**
+     * @return dialog resize listener
+     */
+    Optional<ComponentEventListener<Dialog.DialogResizeEvent>> getResizeListener();
 
     /**
      * @return dialog view configurer

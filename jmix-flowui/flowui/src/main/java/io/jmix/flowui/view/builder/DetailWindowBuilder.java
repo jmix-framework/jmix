@@ -16,7 +16,9 @@
 
 package io.jmix.flowui.view.builder;
 
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.core.DataManager;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -26,7 +28,6 @@ import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
@@ -82,6 +83,8 @@ public class DetailWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
 
         this.afterOpenListener = builder.afterOpenListener;
         this.afterCloseListener = builder.afterCloseListener;
+        this.draggedListener = builder.draggedListener;
+        this.resizeListener = builder.resizeListener;
     }
 
     public DetailWindowBuilder(View<?> origin,
@@ -263,6 +266,20 @@ public class DetailWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
     @Override
     public DetailWindowBuilder<E, V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         super.withAfterCloseListener(listener);
+        return this;
+    }
+
+    @Override
+    public DetailWindowBuilder<E, V> withDraggedListener(
+            @Nullable ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+        super.withDraggedListener(listener);
+        return this;
+    }
+
+    @Override
+    public DetailWindowBuilder<E, V> withResizeListener(
+            @Nullable ComponentEventListener<Dialog.DialogResizeEvent> listener) {
+        super.withResizeListener(listener);
         return this;
     }
 

@@ -16,7 +16,9 @@
 
 package io.jmix.flowui.view.builder;
 
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.DialogWindow;
@@ -121,6 +123,20 @@ public class LookupWindowClassBuilder<E, V extends View<?> & LookupView<E>> exte
     @Override
     public LookupWindowClassBuilder<E, V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         super.withAfterCloseListener(listener);
+        return this;
+    }
+
+    @Override
+    public LookupWindowClassBuilder<E, V> withDraggedListener(
+            @Nullable ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+        super.withDraggedListener(listener);
+        return this;
+    }
+
+    @Override
+    public LookupWindowClassBuilder<E, V> withResizeListener(
+            @Nullable ComponentEventListener<Dialog.DialogResizeEvent> listener) {
+        super.withResizeListener(listener);
         return this;
     }
 

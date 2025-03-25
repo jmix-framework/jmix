@@ -16,19 +16,15 @@
 
 package io.jmix.sessions.impl;
 
+import io.jmix.sessions.SessionsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.scheduling.support.CronExpression;
-import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.scheduling.support.PeriodicTrigger;
-import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.MapSession;
+import org.springframework.session.MapSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.session.events.SessionExpiredEvent;
 import org.springframework.util.Assert;
@@ -37,7 +33,9 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
+/**
+ * {@link Map} implementation for {@link MapSessionRepository} that periodically removes expired sessions.
+ */
 public class JmixExpiringSessionMap extends ConcurrentHashMap<String, Session> implements InitializingBean, DisposableBean {
     private static final Logger log = LoggerFactory.getLogger(JmixExpiringSessionMap.class);
 
@@ -49,10 +47,10 @@ public class JmixExpiringSessionMap extends ConcurrentHashMap<String, Session> i
 
     protected ApplicationEventPublisher applicationEventPublisher;
 
-    public JmixExpiringSessionMap(ApplicationEventPublisher applicationEventPublisher, JmixExpiringMapProperties properties) {
+    public JmixExpiringSessionMap(ApplicationEventPublisher applicationEventPublisher, SessionsProperties properties) {
         this.applicationEventPublisher = applicationEventPublisher;
-        this.cleanupEnabled = properties.getCleanupEnabled();
-        this.cleanupTimeout = properties.getCleanupTimeout();
+        this.cleanupEnabled = properties.getExpiringMap().getCleanupEnabled();
+        this.cleanupTimeout = properties.getExpiringMap().getCleanupTimeout();
     }
 
     public void setCleanupTimeout(Duration cleanupTimeout) {

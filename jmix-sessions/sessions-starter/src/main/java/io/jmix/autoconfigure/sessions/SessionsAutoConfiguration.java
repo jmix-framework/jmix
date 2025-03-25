@@ -18,7 +18,7 @@ package io.jmix.autoconfigure.sessions;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.sessions.SessionsConfiguration;
-import io.jmix.sessions.impl.JmixExpiringMapProperties;
+import io.jmix.sessions.SessionsProperties;
 import io.jmix.sessions.impl.JmixExpiringSessionMap;
 import io.jmix.sessions.resolver.OAuth2AndCookieSessionIdResolver;
 import org.springframework.beans.factory.ObjectProvider;
@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 @Import({CoreConfiguration.class, SessionsAutoConfiguration.OAuth2SessionsConfiguration.class,
         SessionsAutoConfiguration.DefaultSessionsConfiguration.class, SessionsConfiguration.class})
 @AutoConfigureAfter({SessionAutoConfiguration.class, JmixHazelcastSessionsAutoConfiguration.class})
-@EnableConfigurationProperties(JmixExpiringMapProperties.class)
+@EnableConfigurationProperties(SessionsProperties.class)
 public class SessionsAutoConfiguration {
 
     @ConditionalOnMissingBean(SessionRepository.class)
@@ -88,7 +88,7 @@ public class SessionsAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean(JmixExpiringSessionMap.class)
         public JmixExpiringSessionMap jmixExpiringSessionMap(ApplicationEventPublisher applicationEventPublisher,
-                                                             JmixExpiringMapProperties expiringMapProperties) {
+                                                             SessionsProperties expiringMapProperties) {
             return new JmixExpiringSessionMap(applicationEventPublisher, expiringMapProperties);
         }
     }

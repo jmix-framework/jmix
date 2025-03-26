@@ -30,7 +30,7 @@ public class SessionsProperties {
     private ExpiringMap expiringMap;
 
 
-    public SessionsProperties(ExpiringMap expiringMap) {
+    public SessionsProperties(@DefaultValue ExpiringMap expiringMap) {
         this.expiringMap = expiringMap;
     }
 

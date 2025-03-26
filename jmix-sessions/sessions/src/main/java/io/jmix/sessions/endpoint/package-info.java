@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@Internal
+package io.jmix.sessions.endpoint;
 
-group = 'io.jmix.sessions'
-archivesBaseName = 'jmix-sessions-starter'
-
-dependencies {
-    api project(':sessions')
-
-    api 'org.springframework.boot:spring-boot-autoconfigure'
-
-    compileOnly 'org.springframework.security:spring-security-oauth2-authorization-server'
-    compileOnly 'org.springframework.session:spring-session-hazelcast'
-}
+import io.jmix.core.annotation.Internal;

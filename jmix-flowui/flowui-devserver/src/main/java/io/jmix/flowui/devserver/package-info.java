@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.devserver.servlet;
-
-import com.vaadin.flow.server.VaadinServlet;
-import jakarta.servlet.annotation.WebServlet;
-
-@SuppressWarnings("unused")
-@WebServlet(urlPatterns = "/*")
-public class JmixVaadinServlet extends VaadinServlet {
-}
+/**
+ * Used for Studio preview.
+ * Don't rename or refactor classes and packages.
+ */
+package io.jmix.flowui.devserver;

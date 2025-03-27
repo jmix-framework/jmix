@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
-import io.jmix.flowui.devserver.servlet.JmixErrorHandler;
 import io.jmix.flowui.devserver.servlet.JmixServletContextListener;
 import io.jmix.flowui.devserver.servlet.JmixSystemPropertiesLifeCycleListener;
 import org.eclipse.jetty.ee10.annotations.AnnotationConfiguration;
@@ -31,11 +30,13 @@ import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketSe
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
 
-/**
- * Used in Studio.
- */
 @SuppressWarnings("unused")
 public class FlowJettyServer extends Server {
+
+    private static final String PROPERTIES_ATTR = "Properties";
+    private static final String IS_PNPM_ENABLED_ATTR = "IsPnpmEnabled";
+    private static final String EXTRA_CLASSPATH_ATTR = "ExtraClassPath";
+    private static final String PROJECT_BASE_DIR_ATTR = "ProjectBaseDir";
 
     private final Map<String, Object> params;
 
@@ -61,9 +62,9 @@ public class FlowJettyServer extends Server {
         );
         this.addEventListener(
                 new JmixSystemPropertiesLifeCycleListener(
-                        (String) params.get("ProjectBaseDir"),
-                        (String) params.get("IsPnpmEnabled"),
-                        (Properties) params.get("Properties")
+                        (String) params.get(PROJECT_BASE_DIR_ATTR),
+                        (String) params.get(IS_PNPM_ENABLED_ATTR),
+                        (Properties) params.get(PROPERTIES_ATTR)
                 )
         );
         Configurations
@@ -78,13 +79,12 @@ public class FlowJettyServer extends Server {
         context.getContext().setExtendedListenerTypes(true);
         context.setClassLoader(FlowJettyServer.class.getClassLoader());
         context.setParentLoaderPriority(true);
-        context.setExtraClasspath((String) params.get("ExtraClassPath"));
-        context.setBaseResourceAsString((String) params.get("ResourceBaseDir"));
+        context.setExtraClasspath((String) params.get(EXTRA_CLASSPATH_ATTR));
+        context.setBaseResourceAsString((String) params.get(PROJECT_BASE_DIR_ATTR));
 
         JakartaWebSocketServletContainerInitializer.configure(context, null);
 
         context.addEventListener(new JmixServletContextListener(params));
-        context.setErrorHandler(new JmixErrorHandler());
 
         return context;
     }

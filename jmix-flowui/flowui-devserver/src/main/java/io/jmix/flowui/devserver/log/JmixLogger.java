@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import io.jmix.flowui.devserver.frontend.FrontendUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
@@ -48,14 +47,15 @@ public class JmixLogger extends AbstractLogger {
     @Override
     protected void handleNormalizedLoggingCall(Level level, Marker marker, String messagePattern, Object[] arguments, Throwable throwable) {
         String throwableMsg = throwable == null ? "" : "\n" + Arrays.toString(throwable.getStackTrace());
-        boolean logInFile = isImportantLog();
-        FrontendUtils.console(
-                new Date() + " "
-                        + level.name().toUpperCase() + " - "
-                        + name + ": "
-                        // + "#" + Thread.currentThread().getName() + " "
-                        + MessageFormatter.basicArrayFormat(messagePattern, arguments)
-                        + throwableMsg + "\n", logInFile);
+        if (isImportantLog()) {
+            JmixLoggerUtils.logInFile(
+                    new Date() + " "
+                            + level.name().toUpperCase() + " - "
+                            + name + ": "
+                            // + "#" + Thread.currentThread().getName() + " "
+                            + MessageFormatter.basicArrayFormat(messagePattern, arguments)
+                            + throwableMsg + "\n");
+        }
     }
 
     @Override

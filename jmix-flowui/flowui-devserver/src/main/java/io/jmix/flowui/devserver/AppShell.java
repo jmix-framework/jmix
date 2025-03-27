@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.devserver.servlet;
+package io.jmix.flowui.devserver;
 
-import com.vaadin.flow.server.VaadinServlet;
-import jakarta.servlet.annotation.WebServlet;
+import com.vaadin.flow.component.page.AppShellConfigurator;
+import com.vaadin.flow.component.page.Push;
+import com.vaadin.flow.shared.communication.PushMode;
+import com.vaadin.flow.theme.Theme;
 
+@Push(value = PushMode.MANUAL)
+@Theme(AppShell.PREVIEW_THEME_NAME)
 @SuppressWarnings("unused")
-@WebServlet(urlPatterns = "/*")
-public class JmixVaadinServlet extends VaadinServlet {
+public class AppShell implements AppShellConfigurator {
+    public static final String PREVIEW_THEME_NAME = "preview-theme";
 }

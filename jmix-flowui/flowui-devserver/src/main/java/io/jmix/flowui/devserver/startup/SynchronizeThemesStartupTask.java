@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.devserver.servlet;
+package io.jmix.flowui.devserver.startup;
 
-import com.vaadin.flow.server.VaadinServlet;
-import jakarta.servlet.annotation.WebServlet;
+import io.jmix.flowui.devserver.theme.ThemeFilesSynchronizer;
 
-@SuppressWarnings("unused")
-@WebServlet(urlPatterns = "/*")
-public class JmixVaadinServlet extends VaadinServlet {
+public class SynchronizeThemesStartupTask implements StartupTask {
+    @Override
+    public void execute(StartupContext context) {
+        ThemeFilesSynchronizer.start(context);
+    }
 }

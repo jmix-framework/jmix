@@ -28,7 +28,8 @@ public class JmixServletContextListener implements ServletContextListener {
     private final Map<String, Object> params = new HashMap<>();
     private final ServletContextListeners listeners = new ServletContextListeners();
 
-    // do not delete
+    // don't delete
+    @SuppressWarnings("unused")
     public JmixServletContextListener() {
     }
 

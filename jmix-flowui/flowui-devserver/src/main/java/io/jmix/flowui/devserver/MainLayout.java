@@ -24,4 +24,8 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 @Route("")
 @AnonymousAllowed
 public class MainLayout extends Div implements RouterLayout {
+    public MainLayout() {
+        setId("jmix-view-designer-preview-main-layout");
+        setSizeFull();
+    }
 }

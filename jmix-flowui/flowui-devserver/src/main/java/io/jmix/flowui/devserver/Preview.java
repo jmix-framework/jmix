@@ -26,6 +26,11 @@ public class Preview extends Div implements BeforeEnterObserver {
 
     private static final Logger log = LoggerFactory.getLogger(Preview.class);
 
+    public Preview() {
+        setId("jmix-view-designer-preview");
+        setSizeFull();
+    }
+
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         event.getRouteParameters().get("id").ifPresent(id ->

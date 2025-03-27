@@ -25,6 +25,6 @@ dependencies {
     api 'com.google.guava:guava'
     api 'jakarta.annotation:jakarta.annotation-api'
     api("com.vaadin:vaadin-core") {
-        exclude module: "vaadin-dev-server"
+        // exclude module: "vaadin-dev-server"
     }
 }

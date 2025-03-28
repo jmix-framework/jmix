@@ -185,23 +185,23 @@ public class ThemeFilesSynchronizer implements Serializable {
             return;
         }
 
-        File projectThemeFolder = context.getProjectThemeFolder();
-        if (!projectThemeFolder.exists()) {
+        File projectThemesFolder = context.getProjectThemesFolder();
+        if (!projectThemesFolder.exists()) {
             log.info("Project theme folder not set. Skipping watching the theme files");
             return;
         }
 
-        File designerThemeFolder = context.getDesignerThemeFolder();
+        File designerThemesFolder = context.getDesignerThemesFolder();
 
         if (INSTANCE != null) {
             INSTANCE.doStop();
         }
 
-        INSTANCE = new ThemeFilesSynchronizer(projectThemeFolder,
+        INSTANCE = new ThemeFilesSynchronizer(projectThemesFolder,
                 projectThemeFile -> synchronizeThemesFolders(context));
 
-        log.info("Scheduling synchronization between project theme folder {} and designer theme folder {}",
-                projectThemeFolder, designerThemeFolder);
+        log.info("Scheduling synchronization between project themes folder {} and designer themes folder {}",
+                projectThemesFolder, designerThemesFolder);
 
         INSTANCE.doStart();
     }

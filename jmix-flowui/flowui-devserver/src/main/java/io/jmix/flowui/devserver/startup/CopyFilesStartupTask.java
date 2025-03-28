@@ -41,28 +41,42 @@ public class CopyFilesStartupTask implements StartupTask {
     public static void copyThemes(StartupContext context) {
         logFileCopying("project themes");
 
-        File projectThemeFolder = context.getProjectThemeFolder();
-        File designerThemeFolder = context.getDesignerThemeFolder();
+        File projectThemesFolder = context.getProjectThemesFolder();
+        File designerThemesFolder = context.getDesignerThemesFolder();
+        File defaultDesignerThemeFolder = new File(designerThemesFolder, AppShell.PREVIEW_THEME_NAME);
 
-        if (projectThemeFolder.exists() && projectThemeFolder.isDirectory()) {
+        if (projectThemesFolder.exists() && projectThemesFolder.isDirectory()) {
             try {
-                FileUtils.copyDirectory(projectThemeFolder, designerThemeFolder);
+                FileUtils.copyDirectory(projectThemesFolder, designerThemesFolder);
                 log.info("Themes folder has been copied successfully from {} to {}",
-                        projectThemeFolder, designerThemeFolder);
+                        projectThemesFolder, designerThemesFolder);
 
                 String themeName = context.themeName();
                 if (StringUtils.isNotBlank(themeName)) {
-                    File themeDir = new File(designerThemeFolder, themeName);
+                    File themeDir = new File(designerThemesFolder, themeName);
                     if (themeDir.exists() && themeDir.isDirectory()) {
-                        File newThemeDir = new File(designerThemeFolder, AppShell.PREVIEW_THEME_NAME);
-                        FileUtils.copyDirectory(themeDir, newThemeDir);
+                        FileUtils.copyDirectory(themeDir, defaultDesignerThemeFolder);
                         FileUtils.deleteDirectory(themeDir);
-                        log.info("Theme folder '{}' has been successfully copied to '{}'", themeName, newThemeDir);
+                        log.info("Theme folder '{}' has been successfully copied to '{}'",
+                                themeName, defaultDesignerThemeFolder);
                     }
+                } else {
+                    createDefaultThemeFolder(defaultDesignerThemeFolder);
                 }
             } catch (IOException e) {
-                log.warn("Cannot copy project themes from {} to {}", projectThemeFolder, designerThemeFolder);
+                log.warn("Cannot copy project themes from {} to {}", projectThemesFolder, designerThemesFolder);
             }
+        } else {
+            createDefaultThemeFolder(defaultDesignerThemeFolder);
+        }
+    }
+
+    private static void createDefaultThemeFolder(File designerThemeFolder) {
+        try {
+            log.info("Creating empty designer theme folder {}", designerThemeFolder);
+            FileUtils.forceMkdir(designerThemeFolder);
+        } catch (IOException e) {
+            log.warn("Can not create designer theme folder {}", designerThemeFolder);
         }
     }
 

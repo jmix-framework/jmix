@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.vaadin.flow.server.Constants.VAADIN_PREFIX;
+import static com.vaadin.flow.server.InitParameters.FRONTEND_HOTDEPLOY;
 import static com.vaadin.flow.server.InitParameters.SERVLET_PARAMETER_ENABLE_PNPM;
 import static com.vaadin.flow.server.frontend.FrontendUtils.PROJECT_BASEDIR;
 import static java.lang.Boolean.parseBoolean;
@@ -91,8 +92,6 @@ public class JmixSystemPropertiesLifeCycleListener implements LifeCycle.Listener
     }
 
     private void onStartup() {
-        System.getProperties().putAll(properties);
-
         StartupContext context = new StartupContext(getProjectThemeName(),
                 new File(projectBaseDir), new File(getDesignerDir()));
 
@@ -122,23 +121,32 @@ public class JmixSystemPropertiesLifeCycleListener implements LifeCycle.Listener
     }
 
     private void initializeProperties() {
-        properties.setProperty(VAADIN_PREFIX + SERVLET_PARAMETER_ENABLE_PNPM, isPnpmEnabled);
-        properties.setProperty(STUDIO_VIEW_DESIGNER_DIR_PROPERTY, getDesignerDir());
-        properties.setProperty(VAADIN_PREFIX + PROJECT_BASEDIR, getUseProjectFolder() ? projectBaseDir : getDesignerDir());
-
         readJmixPreviewPropertiesFile();
+
+        properties.setProperty(VAADIN_PREFIX + SERVLET_PARAMETER_ENABLE_PNPM, isPnpmEnabled);
+        properties.setProperty(VAADIN_PREFIX + FRONTEND_HOTDEPLOY, getFrontedHotDeploy());
+
+        String designerDir = getDesignerDir();
+        String projectDir = getUseProjectFolder() ? projectBaseDir : designerDir;
+
+        properties.setProperty(VAADIN_PREFIX + PROJECT_BASEDIR, projectDir);
+        properties.setProperty(STUDIO_VIEW_DESIGNER_DIR_PROPERTY, designerDir);
+
+        System.getProperties().putAll(properties);
 
         log.info("Properties has been initialized.\n" +
                         "Jmix version: {}; " +
                         "Jmix Studio version: {}; " +
                         "Use project folder: {}; " +
                         "Use project properties: {}; " +
-                        "Project theme: {}; ",
+                        "Project theme: {}; " +
+                        "Using properties: {}; ",
                 getJmixVersion(),
                 getJmixStudioVersion(),
                 getUseProjectFolder(),
                 getUseProjectProperties(),
-                getProjectThemeName());
+                getProjectThemeName(),
+                properties);
     }
 
     private void readJmixPreviewPropertiesFile() {
@@ -176,6 +184,10 @@ public class JmixSystemPropertiesLifeCycleListener implements LifeCycle.Listener
 
     private String getJmixStudioVersion() {
         return properties.getProperty(JMIX_STUDIO_VERSION_PROPERTY);
+    }
+
+    private String getFrontedHotDeploy() {
+        return properties.getProperty(VAADIN_PREFIX + FRONTEND_HOTDEPLOY, "false");
     }
 
     private boolean getUseProjectFolder() {

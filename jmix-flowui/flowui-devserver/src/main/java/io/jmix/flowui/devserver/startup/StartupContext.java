@@ -42,15 +42,15 @@ public record StartupContext(
         return getFrontendFolder(designerFolder);
     }
 
-    public File getProjectThemeFolder() {
-        return getThemeFolder(projectFolder);
+    public File getProjectThemesFolder() {
+        return getThemesFolder(projectFolder);
     }
 
-    public File getDesignerThemeFolder() {
-        return getThemeFolder(designerFolder);
+    public File getDesignerThemesFolder() {
+        return getThemesFolder(designerFolder);
     }
 
-    private File getThemeFolder(File baseFolder) {
+    private File getThemesFolder(File baseFolder) {
         return getFrontendFolder(baseFolder).toPath().resolve(Constants.APPLICATION_THEME_ROOT).toFile();
     }
 

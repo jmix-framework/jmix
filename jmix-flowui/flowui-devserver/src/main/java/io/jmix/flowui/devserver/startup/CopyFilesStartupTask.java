@@ -18,6 +18,7 @@ package io.jmix.flowui.devserver.startup;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import io.jmix.flowui.devserver.AppShell;
 import org.apache.commons.io.FileUtils;
@@ -73,8 +74,12 @@ public class CopyFilesStartupTask implements StartupTask {
 
     private static void createDefaultThemeFolder(File designerThemeFolder) {
         try {
-            log.info("Creating empty designer theme folder {}", designerThemeFolder);
+            log.info("Creating empty designer theme folder {}...", designerThemeFolder);
             FileUtils.forceMkdir(designerThemeFolder);
+
+            log.info("Creating empty styles.css file...");
+            File stylesCss = new File(designerThemeFolder, "styles.css");
+            FileUtils.write(stylesCss, "", StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.warn("Can not create designer theme folder {}", designerThemeFolder);
         }

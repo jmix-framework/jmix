@@ -342,4 +342,9 @@
         <Method name="onReportTemplateDcItemPropertyChange"/>
     </Match>
 
+    <Match>
+        <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
+        <Class name="io.jmix.sessions.impl.JmixExpiringSessionMap"/>
+    </Match>
+
 </FindBugsFilter>

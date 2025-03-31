@@ -37,6 +37,9 @@ public @interface DialogMode {
     String maxHeight() default "";
     String minHeight() default "";
 
+    String left() default "";
+    String top() default "";
+
     boolean modal() default true;
 
     boolean draggable() default true;

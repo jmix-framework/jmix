@@ -17,6 +17,8 @@
 package io.jmix.flowui.view.builder;
 
 
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
@@ -37,6 +39,8 @@ public class AbstractWindowBuilder<V extends View<?>> implements DialogWindowBui
 
     protected Consumer<AfterOpenEvent<V>> afterOpenListener;
     protected Consumer<AfterCloseEvent<V>> afterCloseListener;
+    protected ComponentEventListener<Dialog.DialogDraggedEvent> draggedListener;
+    protected ComponentEventListener<Dialog.DialogResizeEvent> resizeListener;
     protected Consumer<V> viewConfigurer;
 
     protected AbstractWindowBuilder(View<?> origin,
@@ -69,6 +73,28 @@ public class AbstractWindowBuilder<V extends View<?>> implements DialogWindowBui
     }
 
     /**
+     * Adds {@link Dialog.DialogDraggedEvent} listener to the dialog window.
+     *
+     * @param listener the listener to add
+     * @return this instance for chaining
+     */
+    public AbstractWindowBuilder<V> withDraggedListener(@Nullable ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+        this.draggedListener = listener;
+        return this;
+    }
+
+    /**
+     * Adds {@link Dialog.DialogResizeEvent} listener to the dialog window.
+     *
+     * @param listener the listener to add
+     * @return this instance for chaining
+     */
+    public AbstractWindowBuilder<V> withResizeListener(@Nullable ComponentEventListener<Dialog.DialogResizeEvent> listener) {
+        this.resizeListener = listener;
+        return this;
+    }
+
+    /**
      * Adds configurer to the dialog window.
      *
      * @param configurer the configurer to add
@@ -97,6 +123,16 @@ public class AbstractWindowBuilder<V extends View<?>> implements DialogWindowBui
     @Override
     public Optional<Consumer<AfterCloseEvent<V>>> getAfterCloseListener() {
         return Optional.ofNullable(afterCloseListener);
+    }
+
+    @Override
+    public Optional<ComponentEventListener<Dialog.DialogDraggedEvent>> getDraggedListener() {
+        return Optional.ofNullable(draggedListener);
+    }
+
+    @Override
+    public Optional<ComponentEventListener<Dialog.DialogResizeEvent>> getResizeListener() {
+        return Optional.ofNullable(resizeListener);
     }
 
     @Override

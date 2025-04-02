@@ -68,7 +68,9 @@
 
                 <xs:attributeGroup ref="layout:hasClassNames"/>
                 <xs:attributeGroup ref="layout:hasSize"/>
+
                 <xs:attribute name="themeNames" type="tabbedContainerThemeNames"/>
+                <xs:attribute name="contentSwitchMode" type="tabbedContainerContentSwitchMode"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -104,5 +106,12 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="tabbedContainerContentSwitchMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="HIDE"/>
+            <xs:enumeration value="UNLOAD"/>
+        </xs:restriction>
     </xs:simpleType>
 </xs:schema>

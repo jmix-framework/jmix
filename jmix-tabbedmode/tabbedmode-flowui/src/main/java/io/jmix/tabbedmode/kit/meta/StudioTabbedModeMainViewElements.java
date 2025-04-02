@@ -71,6 +71,10 @@ public interface StudioTabbedModeMainViewElements {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "contentSwitchMode", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.tabbedmode.component.workarea.TabbedViewsContainer$ContentSwitchMode",
+                            defaultValue = "UNLOAD",
+                            options = {"HIDE", "UNLOAD"}),
             }
     )
     Div tabbedContainer();

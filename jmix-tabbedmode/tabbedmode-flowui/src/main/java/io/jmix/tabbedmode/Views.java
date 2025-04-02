@@ -864,7 +864,8 @@ public class Views {
         }
 
         protected void checkAttached() {
-            if (!((Component) viewContainer).isAttached()) {
+            Optional<Tab> tab = tabbedContainer.findTab(((Component) viewContainer));
+            if (tab.isEmpty()) {
                 throw new IllegalStateException("%s has been detached"
                         .formatted(ViewStack.class.getSimpleName()));
             }

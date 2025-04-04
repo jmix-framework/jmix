@@ -30,6 +30,14 @@ public class ValuesPickerImpl<V> extends ValuePickerImpl<Collection<V>> implemen
         return new JmixPickerField<>();
     }
 
+    @Nullable
+    @Override
+    public Collection<V> getValue() {
+        return super.getValue() != null
+                ? Collections.unmodifiableCollection(super.getValue())
+                : null;
+    }
+
     @Override
     public void setValue(@Nullable Collection<V> value) {
         setValueInternal(value, false);

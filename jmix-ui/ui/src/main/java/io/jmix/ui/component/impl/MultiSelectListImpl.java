@@ -83,6 +83,14 @@ public class MultiSelectListImpl<V> extends AbstractSelectList<Collection<V>, V,
                 new LinkedHashSet<>() : new LinkedHashSet<>(modelValue);
     }
 
+    @Nullable
+    @Override
+    public Collection<V> getValue() {
+        return super.getValue() != null
+                ? Collections.unmodifiableCollection(super.getValue())
+                : null;
+    }
+
     @Override
     public void setValue(@Nullable Collection<V> value) {
         Collection<V> oldValue = getOldValue(value);

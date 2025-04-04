@@ -140,6 +140,14 @@ public class TagFieldImpl<V> extends AbstractSuggestionField<Collection<V>, V, J
         component.clearText();
     }
 
+    @Nullable
+    @Override
+    public Collection<V> getValue() {
+        return super.getValue() != null
+                ? Collections.unmodifiableCollection(super.getValue())
+                : null;
+    }
+
     @Override
     public boolean isEmpty() {
         return super.isEmpty()

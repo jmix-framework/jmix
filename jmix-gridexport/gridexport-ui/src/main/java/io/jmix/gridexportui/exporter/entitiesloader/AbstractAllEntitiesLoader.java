@@ -22,6 +22,11 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.Sort;
 import io.jmix.gridexportui.GridExportProperties;
 import io.jmix.ui.component.data.DataUnit;
+import io.jmix.ui.component.data.meta.ContainerDataUnit;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionLoader;
+import io.jmix.ui.model.DataLoader;
+import io.jmix.ui.model.HasLoader;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.annotation.Nullable;
@@ -49,4 +54,31 @@ public abstract class AbstractAllEntitiesLoader implements AllEntitiesLoader {
 
     @SuppressWarnings("rawtypes")
     protected abstract LoadContext generateLoadContext(DataUnit dataUnit, @Nullable Sort sort);
+
+    protected CollectionLoader<?> getDataLoader(DataUnit dataUnit) {
+        if (!(dataUnit instanceof ContainerDataUnit<?>)) {
+            throw new IllegalArgumentException(
+                    String.format("Cannot get data loader. %s must be an instance of %s.",
+                            DataUnit.class.getSimpleName(), dataUnit.getClass().getSimpleName())
+            );
+        }
+
+        CollectionContainer<?> collectionContainer = ((ContainerDataUnit<?>) dataUnit).getContainer();
+        if (!(collectionContainer instanceof HasLoader)) {
+            throw new IllegalArgumentException(
+                    String.format("Cannot data loader. %s must be an instance of %s.",
+                            CollectionContainer.class.getSimpleName(), HasLoader.class.getSimpleName())
+            );
+        }
+
+        DataLoader loader = ((HasLoader) collectionContainer).getLoader();
+        if (!(loader instanceof CollectionLoader)) {
+            throw new RuntimeException(
+                    String.format("Cannot export all rows. %s must be an instance of %s.",
+                            DataLoader.class.getSimpleName(), CollectionLoader.class.getSimpleName())
+            );
+        }
+
+        return (CollectionLoader<?>) loader;
+    }
 }

@@ -16,11 +16,7 @@
 
 package io.jmix.gridexportui.exporter.entitiesloader;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.Id;
-import io.jmix.core.LoadContext;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.Sort;
+import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
@@ -29,17 +25,14 @@ import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.gridexportui.GridExportProperties;
 import io.jmix.gridexportui.exporter.EntityExportContext;
 import io.jmix.ui.component.data.DataUnit;
-import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
-import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.model.HasLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This loader implements the keyset pagination strategy. Entities retrieval is based on sorting
@@ -68,25 +61,14 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
      * Generates the load context using the given {@code DataUnit}.
      *
      * @param dataUnit data unit linked with the data
-     * @param sort An optional sorting specification for the data.
-     *             If {@code null} sorting will be applied by the primary key.
+     * @param sort     An optional sorting specification for the data.
+     *                 If {@code null} sorting will be applied by the primary key.
      */
     @SuppressWarnings("rawtypes")
     protected LoadContext generateLoadContext(DataUnit dataUnit, @Nullable Sort sort) {
-        if (!(dataUnit instanceof ContainerDataUnit)) {
-            throw new RuntimeException("Cannot export all rows. DataUnit must be an instance of ContainerDataUnit.");
-        }
-        CollectionContainer collectionContainer = ((ContainerDataUnit) dataUnit).getContainer();
-        if (!(collectionContainer instanceof HasLoader)) {
-            throw new RuntimeException("Cannot export all rows. Collection container must be an instance of HasLoader.");
-        }
+        CollectionLoader dataLoader = getDataLoader(dataUnit);
 
-        DataLoader dataLoader = ((HasLoader) collectionContainer).getLoader();
-        if (!(dataLoader instanceof CollectionLoader)) {
-            throw new RuntimeException("Cannot export all rows. Data loader must be an instance of CollectionLoader.");
-        }
-
-        LoadContext loadContext = ((CollectionLoader) dataLoader).createLoadContext();
+        LoadContext loadContext = dataLoader.createLoadContext();
         LoadContext.Query query = loadContext.getQuery();
         if (query == null) {
             throw new RuntimeException("Cannot export all rows. Query in LoadContext is null.");
@@ -128,12 +110,12 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
      * responsibility of that visitor. Data is loaded in batches, the batch size is configured by the
      * {@link GridExportProperties#getExportAllBatchSize()}.
      *
-     * @param dataUnit        data unit linked with the data
+     * @param dataUnit              data unit linked with the data
      * @param exportedEntityVisitor function that is responsible for export
-     * @param sort An optional sorting specification for the data.
-     *             If {@code null} sorting will be applied by the primary key.
+     * @param sort                  An optional sorting specification for the data.
+     *                              If {@code null} sorting will be applied by the primary key.
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor, @Nullable Sort sort) {
         Preconditions.checkNotNullArgument(exportedEntityVisitor,
@@ -141,17 +123,19 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
 
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
         transactionTemplate.executeWithoutResult(transactionStatus -> {
-            long count = dataManager.getCount(generateLoadContext(dataUnit, sort));
             int loadBatchSize = gridExportProperties.getExportAllBatchSize();
 
             int rowNumber = 0;
             boolean initialLoading = true;
             boolean proceedToExport = true;
             Object lastLoadedPkValue = null;
+            boolean lastBatchLoaded = false;
 
-            for (int firstResult = 0; firstResult < count && proceedToExport; firstResult += loadBatchSize) {
+            while (!lastBatchLoaded && proceedToExport) {
                 LoadContext loadContext = generateLoadContext(dataUnit, sort);
-                LoadContext.Query query = loadContext.getQuery();
+
+                //query is not null - checked when generated load context
+                LoadContext.Query query = Objects.requireNonNull(loadContext.getQuery());
 
                 if (initialLoading) {
                     initialLoading = false;
@@ -160,7 +144,12 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
                 }
                 query.setMaxResults(loadBatchSize);
 
-                List entities = dataManager.loadList(loadContext);
+                CollectionLoader<?> collectionLoader = getDataLoader(dataUnit);
+
+                List<?> entities = collectionLoader.getLoadDelegate() == null
+                        ? dataManager.loadList(loadContext)
+                        : collectionLoader.getLoadDelegate().apply(loadContext);
+
                 for (Object entity : entities) {
                     EntityExportContext entityExportContext = new EntityExportContext(entity, ++rowNumber);
                     proceedToExport = exportedEntityVisitor.visitEntity(entityExportContext);
@@ -169,12 +158,12 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
                     }
                 }
 
-                if (entities.isEmpty()) {
-                    break;
+                int loadedEntitiesAmount = entities.size();
+                if (loadedEntitiesAmount > 0) {
+                    Object lastEntity = entities.get(loadedEntitiesAmount - 1);
+                    lastLoadedPkValue = Id.of(lastEntity).getValue();
                 }
-
-                Object lastEntity = entities.get(entities.size() - 1);
-                lastLoadedPkValue = Id.of(lastEntity).getValue();
+                lastBatchLoaded = loadedEntitiesAmount == 0 || loadedEntitiesAmount < loadBatchSize;
             }
         });
     }

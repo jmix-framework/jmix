@@ -23,11 +23,7 @@ import io.jmix.core.Sort;
 import io.jmix.gridexportui.GridExportProperties;
 import io.jmix.gridexportui.exporter.EntityExportContext;
 import io.jmix.ui.component.data.DataUnit;
-import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
-import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.model.HasLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -60,23 +56,12 @@ public class LimitOffsetAllEntitiesLoader extends AbstractAllEntitiesLoader {
      * Generates the load context using the given {@code DataUnit}.
      *
      * @param dataUnit data unit linked with the data
-     * @param sort An optional sorting specification for the data.
-     *             If {@code null} sorting will be applied by the primary key.
+     * @param sort     An optional sorting specification for the data.
+     *                 If {@code null} sorting will be applied by the primary key.
      */
     @SuppressWarnings("rawtypes")
     public LoadContext generateLoadContext(DataUnit dataUnit, @Nullable Sort sort) {
-        if (!(dataUnit instanceof ContainerDataUnit)) {
-            throw new RuntimeException("Cannot export all rows. DataUnit must be an instance of ContainerDataUnit.");
-        }
-        CollectionContainer collectionContainer = ((ContainerDataUnit) dataUnit).getContainer();
-        if (!(collectionContainer instanceof HasLoader)) {
-            throw new RuntimeException("Cannot export all rows. Collection container must be an instance of HasLoader.");
-        }
-
-        DataLoader dataLoader = ((HasLoader) collectionContainer).getLoader();
-        if (!(dataLoader instanceof CollectionLoader)) {
-            throw new RuntimeException("Cannot export all rows. Data loader must be an instance of CollectionLoader.");
-        }
+        CollectionLoader<?> dataLoader = getDataLoader(dataUnit);
 
         LoadContext loadContext = ((CollectionLoader) dataLoader).createLoadContext();
         LoadContext.Query query = loadContext.getQuery();
@@ -89,8 +74,10 @@ public class LimitOffsetAllEntitiesLoader extends AbstractAllEntitiesLoader {
 
     /**
      * Sequential data loading
+     *
      * @param exportedEntityVisitor {@link ExportedEntityVisitor#visitEntity(EntityExportContext)}
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor, @Nullable Sort sort) {
         int loadBatchSize = gridExportProperties.getExportAllBatchSize();
@@ -101,12 +88,17 @@ public class LimitOffsetAllEntitiesLoader extends AbstractAllEntitiesLoader {
 
         while (!lastBatchLoaded && proceedToExport) {
             LoadContext<?> loadContext = generateLoadContext(dataUnit, sort);
+
             //query is not null - checked when generated load context
             LoadContext.Query query = Objects.requireNonNull(loadContext.getQuery());
             query.setFirstResult(firstResultNumber);
             query.setMaxResults(loadBatchSize);
 
-            List<?> entities = dataManager.loadList(loadContext);
+            CollectionLoader<?> collectionLoader = getDataLoader(dataUnit);
+            List<?> entities = collectionLoader.getLoadDelegate() == null
+                    ? dataManager.loadList(loadContext)
+                    : collectionLoader.getLoadDelegate().apply((LoadContext) loadContext);
+
             for (Object entity : entities) {
                 EntityExportContext entityExportContext = new EntityExportContext(entity, ++rowNumber);
                 proceedToExport = exportedEntityVisitor.visitEntity(entityExportContext);

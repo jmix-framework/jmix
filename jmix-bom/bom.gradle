@@ -451,9 +451,9 @@ dependencies {
         api 'com.jayway.jsonpath:json-path:2.9.0'
         api 'org.apache.james:apache-mime4j-core:0.8.10'
 
-        api 'org.apache.tomcat.embed:tomcat-embed-core:9.0.95'
-        api 'org.apache.tomcat.embed:tomcat-embed-el:9.0.95'
-        api 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.95'
+        api 'org.apache.tomcat.embed:tomcat-embed-core:9.0.102'
+        api 'org.apache.tomcat.embed:tomcat-embed-el:9.0.102'
+        api 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.102'
 
         runtime 'org.postgresql:postgresql:42.7.3'
         runtime 'org.hsqldb:hsqldb:2.7.2'

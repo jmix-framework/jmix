@@ -19,6 +19,7 @@ package io.jmix.ui.app.propertyfilter.dateinterval.converter;
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.app.propertyfilter.dateinterval.RelativeDateTimeMomentProvider;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.RelativeDateInterval;
@@ -37,11 +38,15 @@ public class RelativeIntervalConverter implements DateIntervalConverter {
             Pattern.compile("RELATIVE\\s+(=|<>|>|>=|<|<=)\\s+\\w+");
 
     protected Messages messages;
+    protected UiComponentProperties componentProperties;
     protected RelativeDateTimeMomentProvider relativeMomentProvider;
 
     @Autowired
-    public RelativeIntervalConverter(Messages messages, @Nullable RelativeDateTimeMomentProvider relativeMomentProvider) {
+    public RelativeIntervalConverter(Messages messages,
+                                     UiComponentProperties componentProperties,
+                                     @Nullable RelativeDateTimeMomentProvider relativeMomentProvider) {
         this.messages = messages;
+        this.componentProperties = componentProperties;
         this.relativeMomentProvider = relativeMomentProvider;
     }
 
@@ -89,7 +94,10 @@ public class RelativeIntervalConverter implements DateIntervalConverter {
         Operation operation = relativeDateInterval.getOperation();
         Enum relativeMoment = relativeMomentProvider.getByName(relativeDateInterval.getRelativeDateTimeMomentName());
 
-        return messages.getMessage(operation) + " " + messages.getMessage(relativeMoment).toLowerCase();
+        return messages.getMessage(operation) + " " +
+                (componentProperties.isPropertyFilterRelativeDateTimeToLowerCaseEnabled()
+                        ? messages.getMessage(relativeMoment).toLowerCase()
+                        : messages.getMessage(relativeMoment));
     }
 
     @Override

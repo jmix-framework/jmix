@@ -19,6 +19,7 @@ package io.jmix.ui;
 import io.jmix.ui.app.filter.condition.AddConditionScreen;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.Filter;
+import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
 import io.jmix.ui.widget.JmixMainTabSheet;
 import io.jmix.ui.widget.JmixManagedTabSheet;
@@ -137,6 +138,12 @@ public class UiComponentProperties {
      */
     boolean filterConfigurationUniqueNamesEnabled;
 
+    /**
+     * Whether to enable the conversion of localized names of relative date-time moment constants to lowercase in the
+     * {@link PropertyFilter} when a date-time interval operation is used.
+     */
+     boolean propertyFilterRelativeDateTimeToLowerCaseEnabled;
+
     public UiComponentProperties(
             @DefaultValue("true") boolean htmlSanitizerEnabled,
             @DefaultValue("20") int uploadFieldMaxUploadSizeMb,
@@ -165,7 +172,8 @@ public class UiComponentProperties {
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
             @DefaultValue("3") int filterColumnsCount,
             @DefaultValue("false") boolean filterShowConfigurationIdField,
-            @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled
+            @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled,
+            @DefaultValue("true") boolean propertyFilterRelativeDateTimeToLowerCaseEnabled
     ) {
         this.htmlSanitizerEnabled = htmlSanitizerEnabled;
         this.uploadFieldMaxUploadSizeMb = uploadFieldMaxUploadSizeMb;
@@ -195,6 +203,7 @@ public class UiComponentProperties {
         this.filterColumnsCount = filterColumnsCount;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
         this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
+        this.propertyFilterRelativeDateTimeToLowerCaseEnabled = propertyFilterRelativeDateTimeToLowerCaseEnabled;
     }
 
     public int getUploadFieldMaxUploadSizeMb() {
@@ -349,5 +358,12 @@ public class UiComponentProperties {
      */
     public boolean isFilterConfigurationUniqueNamesEnabled() {
         return filterConfigurationUniqueNamesEnabled;
+    }
+
+    /**
+     * @see #propertyFilterRelativeDateTimeToLowerCaseEnabled
+     */
+    public boolean isPropertyFilterRelativeDateTimeToLowerCaseEnabled() {
+        return propertyFilterRelativeDateTimeToLowerCaseEnabled;
     }
 }

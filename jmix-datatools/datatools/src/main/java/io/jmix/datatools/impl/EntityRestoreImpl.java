@@ -238,7 +238,7 @@ public class EntityRestoreImpl implements EntityRestore {
                 continue;
             }
             String jpql = getOnDeleteInverseCascadePropertyQueryString(metaClassToRestore, property);
-            LoadContext<Entity> loadContext = createRestoreCandidatesLoadContext(jpql, detailMetaClass, entityId,
+            LoadContext<Entity> loadContext = createRestoreCandidatesLoadContext(jpql, metaClassToRestore, entityId,
                     restorationContext.getDeletedDate());
             List<Entity> entities = dataManager.loadList(loadContext);
 

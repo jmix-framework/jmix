@@ -288,7 +288,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     }
 
     @EventListener
-    private void onUserChanged(EntityChangedEvent<? extends UserDetails> event) {
+    protected void onUserChanged(EntityChangedEvent<? extends UserDetails> event) {
         if (event.getType() == EntityChangedEvent.Type.DELETED) {
             eventPublisher.publishEvent(new UserRemovedEvent(
                     Objects.requireNonNull(event.getChanges().getOldValue("username"))));

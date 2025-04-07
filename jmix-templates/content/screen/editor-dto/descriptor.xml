@@ -46,8 +46,8 @@ if (createModalVbox) {
                 modal="true"
                 forceDialog="true"/>
     <%} else {%>
-    <dialogMode height="600"
-                width="800"/><%}%>
+    <dialogMode height="AUTO"
+                width="AUTO"/><%}%>
     <layout spacing="true" expand="$expandId">
         <%if (createModalVbox) {
             print('<vbox id="formBox" spacing="true">')}

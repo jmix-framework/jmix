@@ -172,7 +172,8 @@ public class JpqlFilterSupport {
                     Object idValue = idProperty.getRange().asDatatype().parse(value);
                     if (idValue != null) {
                         return dataManager.load(Id.of(idValue, parameterClass))
-                                .one();
+                                .optional()
+                                .orElse(null);
                     }
                 }
             } else if (EnumClass.class.isAssignableFrom(parameterClass)) {

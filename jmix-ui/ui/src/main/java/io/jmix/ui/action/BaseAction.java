@@ -198,8 +198,9 @@ public class BaseAction extends AbstractAction implements Action.SecuredAction {
      * @param enabledRule boolean rule for the action enabled state
      */
     public void removeEnabledRule(EnabledRule enabledRule) {
-        if (enabledRules != null) {
-            enabledRules.remove(enabledRule);
+        if (enabledRules != null
+                && enabledRules.remove(enabledRule)) {
+            refreshState();
         }
     }
 

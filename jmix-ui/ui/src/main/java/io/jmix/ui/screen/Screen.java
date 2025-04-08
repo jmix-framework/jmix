@@ -23,6 +23,8 @@ import io.jmix.ui.Screens;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
+import io.jmix.ui.component.ActionsHolder;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.WindowImplementation;
 import io.jmix.ui.model.ScreenData;
@@ -33,6 +35,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +67,27 @@ public abstract class Screen implements FrameOwner {
 
     // Extensions state
     private Map<Class<?>, Object> extensions;
+
+    protected Screen() {
+        addAfterShowListener(this::refreshActionsState);
+    }
+
+    private void refreshActionsState(AfterShowEvent event) {
+        // We cannot refresh the state of actions when an EnableRule is added
+        // because the logic of EnableRule may rely on something that will be
+        // initialized in a screen event. To prevent breaking changes, it is
+        // more robust to refresh actions' states in the 'AfterShowEvent'
+        refreshActionsState(getWindow().getActions());
+        ComponentsHelper.traverseComponents(getWindow(), component -> {
+            if (component instanceof ActionsHolder) {
+                refreshActionsState(((ActionsHolder) component).getActions());
+            }
+        });
+    }
+
+    private void refreshActionsState(Collection<Action> actions) {
+        actions.forEach(Action::refreshState);
+    }
 
     protected ApplicationContext getApplicationContext() {
         return applicationContext;

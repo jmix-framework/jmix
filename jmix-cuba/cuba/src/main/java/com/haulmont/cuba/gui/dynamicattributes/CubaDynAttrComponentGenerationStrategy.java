@@ -283,20 +283,4 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
                 throw new IllegalStateException(String.format("Attribute type %s not supported", attributeType));
         }
     }
-
-    protected Map<String, String> getLocalizedEnumerationMap(AttributeDefinition attribute) {
-        String enumeration = attribute.getEnumeration();
-        if (enumeration == null) {
-            return Collections.emptyMap();
-        }
-
-        List<String> enumValues = Lists.newArrayList(Splitter.on(",").omitEmptyStrings().split(enumeration));
-        Map<String, String> enumMsgBundleValues = msgBundleTools.getEnumMsgBundleValues(attribute.getEnumerationMsgBundle());
-
-        Map<String, String> localizedEnumerationMap = new LinkedHashMap<>();
-        for (String enumValue : enumValues) {
-            localizedEnumerationMap.put(enumMsgBundleValues.get(enumValue), enumValue);
-        }
-        return localizedEnumerationMap;
-    }
 }

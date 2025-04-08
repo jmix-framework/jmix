@@ -69,19 +69,7 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
         if (columnSettings != null) {
             boolean refreshWasEnabled = getEnhancedTable(table).disableContentBufferRefreshing();
 
-            Collection<String> modelIds = new ArrayList<>();
-            for (Object column : getVTable(table).getVisibleColumns()) {
-                modelIds.add(String.valueOf(column));
-            }
-
-            Collection<String> loadedIds = new ArrayList<>();
-            for (TableSettings.ColumnSettings column : columnSettings) {
-                loadedIds.add(column.getId());
-            }
-
-            if (CollectionUtils.isEqualCollection(modelIds, loadedIds)) {
-                applyColumnSettings(tableSettings, table);
-            }
+            applyColumnSettings(tableSettings, table);
 
             getEnhancedTable(table).enableContentBufferRefreshing(refreshWasEnabled);
         }
@@ -319,7 +307,6 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
                         vTable.setColumnWidth(column, -1);
                     }
 
-
                     Boolean visible = columnSetting.getVisible();
                     if (visible != null) {
                         if (vTable.isColumnCollapsingAllowed()) { // throws exception if not
@@ -331,9 +318,18 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
             }
         }
         // add columns not saved in settings (perhaps new)
-        for (Object column : oldColumns) {
-            if (!newColumns.contains(column)) {
-                newColumns.add(column);
+        if (newColumns.size() != oldColumns.length) {
+            List<Object> notProcessedColumns = new ArrayList<>();
+            for (Object column : oldColumns) {
+                if (!newColumns.contains(column)) {
+                    notProcessedColumns.add(column);
+                }
+            }
+            for (Object notProcessedColumn : notProcessedColumns) {
+                int index = findFirstLeftNeighborIndex(Arrays.asList(oldColumns), newColumns, notProcessedColumn);
+
+                // add right after left neighbor, otherwise add to zero-index
+                newColumns.add(index + 1, notProcessedColumn);
             }
         }
         // if the table contains only one column, always show it
@@ -361,6 +357,22 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
                 vTable.setSortContainerPropertyId(null);
             }
         }
+    }
+
+    protected int findFirstLeftNeighborIndex(List<Object> componentColumns,
+                                             List<Object> newColumnsOrder,
+                                             Object notIncludedColumn) {
+        int startIndex = componentColumns.indexOf(notIncludedColumn);
+        while (startIndex > 0) {
+            Object neighborCandidate = componentColumns.get(--startIndex);
+
+            if (newColumnsOrder.contains(neighborCandidate)) {
+                return newColumnsOrder.indexOf(neighborCandidate);
+            }
+        }
+
+        // left neighbor is not found, should be 0 index
+        return -1;
     }
 
     protected boolean isApplyDataLoadingSettings(Table table) {

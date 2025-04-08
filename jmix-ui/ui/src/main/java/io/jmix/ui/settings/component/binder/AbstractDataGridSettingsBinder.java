@@ -60,17 +60,7 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
         if (columns != null) {
             List<DataGrid.Column> modelColumns = dataGrid.getVisibleColumns();
 
-            List<String> modelIds = modelColumns.stream()
-                    .map(String::valueOf)
-                    .collect(Collectors.toList());
-
-            List<String> loadedIds = columns.stream()
-                    .map(DataGridSettings.ColumnSettings::getId)
-                    .collect(Collectors.toList());
-
-            if (CollectionUtils.isEqualCollection(modelIds, loadedIds)) {
-                applyColumnSettings(dataGrid, settings, modelColumns);
-            }
+            applyColumnSettings(dataGrid, settings, modelColumns);
         }
     }
 
@@ -243,9 +233,18 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
         }
 
         // add columns not saved in settings (perhaps new)
-        for (DataGrid.Column column : oldColumns) {
-            if (!newColumns.contains(column)) {
-                newColumns.add(column);
+        if (newColumns.size() != oldColumns.size()) {
+            List<DataGrid.Column> notProcessedColumns = new ArrayList<>();
+            for (DataGrid.Column column : oldColumns) {
+                if (!newColumns.contains(column)) {
+                    notProcessedColumns.add(column);
+                }
+            }
+            for (DataGrid.Column notProcessedColumn : notProcessedColumns) {
+                int index = findFirstLeftNeighborIndex(new ArrayList<>(oldColumns), newColumns, notProcessedColumn);
+
+                // add right after left neighbor, otherwise add to zero-index
+                newColumns.add(index + 1, notProcessedColumn);
             }
         }
 
@@ -349,5 +348,21 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
 
     protected Grid getGrid(DataGrid dataGrid) {
         return dataGrid.unwrap(Grid.class);
+    }
+
+    protected int findFirstLeftNeighborIndex(List<DataGrid.Column> componentColumns,
+                                             List<DataGrid.Column> newColumnsOrder,
+                                             DataGrid.Column notIncludedColumn) {
+        int startIndex = componentColumns.indexOf(notIncludedColumn);
+        while (startIndex > 0) {
+            Object neighborCandidate = componentColumns.get(--startIndex);
+
+            if (newColumnsOrder.contains(neighborCandidate)) {
+                return newColumnsOrder.indexOf(neighborCandidate);
+            }
+        }
+
+        // left neighbor is not found, should be 0 index
+        return -1;
     }
 }

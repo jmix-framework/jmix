@@ -43,6 +43,7 @@ import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenContext;
 import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -50,6 +51,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 @Internal
@@ -97,6 +99,11 @@ public class RelatedEntitiesSupportImpl implements RelatedEntitiesSupport {
 
         Screen screen = createScreen(builder, metaClass, metaProperty);
 
+        Collection<ScreenSettingsFacet> settingsFacets = screen.getWindow().getFacets()
+                .filter(f-> f instanceof ScreenSettingsFacet)
+                .map(f -> (ScreenSettingsFacet) f)
+                .collect(Collectors.toList());
+
         boolean found = ComponentsHelper.walkComponents(screen.getWindow(), screenComponent -> {
             if (screenComponent instanceof Filter) {
                 Filter filter = (Filter) screenComponent;
@@ -120,6 +127,10 @@ public class RelatedEntitiesSupportImpl implements RelatedEntitiesSupport {
                     configuration.setFilterComponentDefaultValue(jpqlFilter.getParameterName(), jpqlFilter.getValue());
 
                     filter.setCurrentConfiguration(configuration);
+
+                    if (!Strings.isNullOrEmpty(filter.getId())) {
+                        settingsFacets.forEach(f -> f.excludeComponentIds(filter.getId()));
+                    }
 
                     return true;
                 }

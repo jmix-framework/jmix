@@ -183,14 +183,6 @@ public class CheckBoxGroupImpl<V> extends AbstractField<JmixCheckBoxGroup<V>, Se
         }
     }
 
-    @Nullable
-    @Override
-    public Collection<V> getValue() {
-        return super.getValue() != null
-                ? Collections.unmodifiableCollection(super.getValue())
-                : null;
-    }
-
     @Override
     protected void valueBindingConnected(ValueSource<Collection<V>> valueSource) {
         super.valueBindingConnected(valueSource);

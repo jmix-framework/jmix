@@ -85,14 +85,6 @@ public class TwinColumnImpl<V> extends AbstractField<JmixTwinColSelect<V>, Set<V
         }
     }
 
-    @Nullable
-    @Override
-    public Collection<V> getValue() {
-        return super.getValue() != null
-                ? Collections.unmodifiableCollection(super.getValue())
-                : null;
-    }
-
     protected void setItemsToPresentation(Stream<V> options) {
         component.setItems(options);
 

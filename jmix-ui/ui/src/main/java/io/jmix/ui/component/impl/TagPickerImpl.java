@@ -72,14 +72,6 @@ public class TagPickerImpl<V> extends ValuesPickerImpl<V> implements TagPicker<V
         getFieldInternal().setItemCaptionGenerator(this::generateOptionCaption);
     }
 
-    @Nullable
-    @Override
-    public Collection<V> getValue() {
-        return super.getValue() != null
-                ? Collections.unmodifiableCollection(super.getValue())
-                : null;
-    }
-
     @Override
     protected void setValueInternal(@Nullable Collection<V> value, boolean userOriginated) {
         super.setValueInternal(value, userOriginated);

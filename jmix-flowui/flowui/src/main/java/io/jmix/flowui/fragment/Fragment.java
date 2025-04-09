@@ -23,6 +23,10 @@ import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.view.Subscribe;
+import io.jmix.flowui.view.Target;
+import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
@@ -118,6 +122,17 @@ public abstract class Fragment<T extends Component> extends Composite<T> impleme
     @SuppressWarnings("unchecked")
     protected <C extends Component> Optional<C> findInnerComponent(String id) {
         return (Optional<C>) FragmentUtils.findComponent(this, id);
+    }
+
+    @Subscribe(target = Target.HOST_CONTROLLER)
+    private void onHostReadyInternal(final View.ReadyEvent event) {
+        // We cannot refresh the state of actions when an EnableRule is added
+        // because the logic of EnableRule may rely on something that will be
+        // initialized in a screen event. To prevent breaking changes, it is
+        // more robust to refresh actions' states in the host view's 'ReadyEvent'
+        // listener
+        UiComponentUtils.refreshActionsState(getFragmentActions());
+        UiComponentUtils.refreshActionsState(getContent());
     }
 
     /**

@@ -22,6 +22,7 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.UiViewProperties;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
 import io.jmix.flowui.fragment.FragmentOwner;
@@ -86,10 +87,20 @@ public class View<T extends Component> extends Composite<T>
 
     public View() {
         closeDelegate = createDefaultViewDelegate();
+        addReadyListener(this::refreshActionsState);
     }
 
     private Consumer<View<T>> createDefaultViewDelegate() {
         return __ -> getViewSupport().close(this, getReturnParameters());
+    }
+
+    private void refreshActionsState(ReadyEvent event) {
+        // We cannot refresh the state of actions when an EnableRule is added
+        // because the logic of EnableRule may rely on something that will be
+        // initialized in a screen event. To prevent breaking changes, it is
+        // more robust to refresh actions' states in the 'ReadyEvent' listener
+        UiComponentUtils.refreshActionsState(getViewActions());
+        UiComponentUtils.refreshActionsState(getContent());
     }
 
     protected QueryParameters getReturnParameters() {

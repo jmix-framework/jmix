@@ -28,6 +28,8 @@ import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentUtils;
+import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
@@ -768,6 +770,52 @@ public final class UiComponentUtils {
             treeComponents.add(component);
 
             __walkComponentsInternal(view, UiComponentUtils.getComponents(view), callback, treeComponents);
+        }
+    }
+
+    /**
+     * Visit all components below the specified container.
+     *
+     * @param container container to start from
+     * @param visitor   visitor instance
+     */
+    public static void walkComponents(Component container, Consumer<Component> visitor) {
+        getOwnComponents(container)
+                .forEach(component -> {
+                    visitor.accept(component);
+
+                    if (isContainer(component)) {
+                        walkComponents(component, visitor);
+                    }
+                });
+    }
+
+    /**
+     * Calls {@link Action#refreshState()} for all actions of the passed object.
+     *
+     * @param actionsHolder object containing {@link Action Actions}
+     */
+    public static void refreshActionsState(HasActions actionsHolder) {
+        actionsHolder.getActions().forEach(Action::refreshState);
+    }
+
+    /**
+     * Calls {@link Action#refreshState()} for all actions of the passed
+     * component and its children.
+     *
+     * @param component component to refresh actions
+     */
+    public static void refreshActionsState(Component component) {
+        if (component instanceof HasActions actionsHolder) {
+            refreshActionsState(actionsHolder);
+        }
+
+        if (UiComponentUtils.isContainer(component)) {
+            UiComponentUtils.walkComponents(component, child -> {
+                if (child instanceof HasActions actionsHolder) {
+                    refreshActionsState(actionsHolder);
+                }
+            });
         }
     }
 }

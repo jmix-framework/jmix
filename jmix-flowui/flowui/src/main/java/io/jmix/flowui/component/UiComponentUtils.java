@@ -779,13 +779,13 @@ public final class UiComponentUtils {
      * @param container container to start from
      * @param visitor   visitor instance
      */
-    public static void walkComponents(Component container, Consumer<Component> visitor) {
+    public static void traverseComponents(Component container, Consumer<Component> visitor) {
         getOwnComponents(container)
                 .forEach(component -> {
                     visitor.accept(component);
 
                     if (isContainer(component)) {
-                        walkComponents(component, visitor);
+                        traverseComponents(component, visitor);
                     }
                 });
     }
@@ -811,7 +811,7 @@ public final class UiComponentUtils {
         }
 
         if (UiComponentUtils.isContainer(component)) {
-            UiComponentUtils.walkComponents(component, child -> {
+            UiComponentUtils.traverseComponents(component, child -> {
                 if (child instanceof HasActions actionsHolder) {
                     refreshActionsState(actionsHolder);
                 }

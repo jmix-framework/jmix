@@ -34,15 +34,15 @@
         </drawerLayout>
         <workArea id="workArea"
                   classNames="jmix-work-area">
-            <tabbedContainer id="tabbedContainer"
-                             classNames="jmix-main-tabsheet"
-                             width="100%" height="100%">
+            <mainTabSheet id="mainTabSheet"
+                          classNames="jmix-main-tabsheet"
+                          width="100%" height="100%">
                 <actions>
                     <action id="closeThisTabAction" type="tabmod_closeThisTab"/>
                     <action id="closeOthersTabsAction" type="tabmod_closeOtherTabs"/>
                     <action id="closeAllTabsAction" type="tabmod_closeAllTabs"/>
                 </actions>
-            </tabbedContainer>
+            </mainTabSheet>
             <initialLayout id="initialLayout"
                            classNames="jmix-initial-layout"
                            width="100%" height="100%">

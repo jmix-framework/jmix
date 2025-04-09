@@ -54,7 +54,7 @@ public class WorkAreaLoader extends AbstractComponentLoader<WorkArea> {
     protected void createTabbedViewsContainer(WorkArea workArea, Element element) {
         TabbedViewsContainer<?> tabbedContainer;
 
-        Element tabbedViewsContainerElement = element.element("tabbedContainer");
+        Element tabbedViewsContainerElement = element.element(getTabbedContainerElementName());
         if (tabbedViewsContainerElement != null) {
             tabbedViewsContainerLoader = getLayoutLoader().createComponentLoader(tabbedViewsContainerElement);
             tabbedViewsContainerLoader.initComponent();
@@ -65,6 +65,10 @@ public class WorkAreaLoader extends AbstractComponentLoader<WorkArea> {
         }
 
         workArea.setTabbedViewsContainer(tabbedContainer);
+    }
+
+    protected String getTabbedContainerElementName() {
+        return MainTabSheetLoader.TAG;
     }
 
     /**

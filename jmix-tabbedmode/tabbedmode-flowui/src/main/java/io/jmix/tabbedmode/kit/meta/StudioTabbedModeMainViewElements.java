@@ -17,7 +17,6 @@
 package io.jmix.tabbedmode.kit.meta;
 
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
@@ -47,10 +46,10 @@ public interface StudioTabbedModeMainViewElements {
     Div workArea();
 
     @StudioElement(
-            name = "tabbedContainer",
+            name = "mainTabSheet",
             xmlns = "http://jmix.io/schema/tabmod/main-view",
             classFqn = "io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet",
-            xmlElement = "tabbedContainer",
+            xmlElement = "mainTabSheet",
             icon = "io/jmix/flowui/kit/meta/icon/component/tabSheet.svg",
             unlimitedCount = false,
             visible = true,
@@ -77,7 +76,7 @@ public interface StudioTabbedModeMainViewElements {
                             options = {"HIDE", "UNLOAD"}),
             }
     )
-    Div tabbedContainer();
+    Div mainTabSheet();
 
     @StudioActionsGroup(
             name = "Actions",

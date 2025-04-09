@@ -24,7 +24,7 @@ import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 
 public class MainTabSheetLoader extends AbstractComponentLoader<JmixMainTabSheet> {
 
-    public static final String TAG = "tabbedContainer";
+    public static final String TAG = "mainTabSheet";
 
     protected ActionLoaderSupport actionLoaderSupport;
     protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;

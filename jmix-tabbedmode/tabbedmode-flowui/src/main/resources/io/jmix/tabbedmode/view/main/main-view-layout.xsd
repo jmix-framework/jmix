@@ -37,7 +37,7 @@
 
     <xs:complexType name="workAreaContainer">
         <xs:sequence>
-            <xs:element name="tabbedContainer" type="tabbedContainer"/>
+            <xs:element name="mainTabSheet" type="mainTabSheetComponent"/>
             <xs:element name="initialLayout" type="initialLayoutContainer"/>
         </xs:sequence>
 
@@ -48,7 +48,7 @@
         <xs:attribute name="css" type="xs:string"/>
     </xs:complexType>
 
-    <xs:complexType name="tabbedContainer">
+    <xs:complexType name="mainTabSheetComponent">
         <xs:complexContent>
             <xs:extension base="layout:baseComponent">
                 <xs:sequence>
@@ -69,8 +69,8 @@
                 <xs:attributeGroup ref="layout:hasClassNames"/>
                 <xs:attributeGroup ref="layout:hasSize"/>
 
-                <xs:attribute name="themeNames" type="tabbedContainerThemeNames"/>
-                <xs:attribute name="contentSwitchMode" type="tabbedContainerContentSwitchMode"/>
+                <xs:attribute name="themeNames" type="mainTabSheetThemeNames"/>
+                <xs:attribute name="contentSwitchMode" type="mainTabSheetContentSwitchMode"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -91,7 +91,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:simpleType name="tabbedContainerThemeNames">
+    <xs:simpleType name="mainTabSheetThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -108,7 +108,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="tabbedContainerContentSwitchMode">
+    <xs:simpleType name="mainTabSheetContentSwitchMode">
         <xs:restriction base="xs:string">
             <xs:enumeration value="HIDE"/>
             <xs:enumeration value="UNLOAD"/>

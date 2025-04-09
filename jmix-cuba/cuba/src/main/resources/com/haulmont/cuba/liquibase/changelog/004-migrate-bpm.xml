@@ -22,7 +22,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
         context="cuba and !migrated">
 
-    <changeSet id="5" author="migrator" dbms="mysql, mariadb">
+    <changeSet id="5" author="migrator" dbms="mysql, mariadb, mssql">
         <validCheckSum>1:any</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="BPROC_CONTENT_STORAGE"/>
@@ -32,6 +32,44 @@
         <dropForeignKeyConstraint baseTableName="BPROC_USER_GROUP_ROLE" constraintName="FK_BPROC_USER_GROUP_ROLE_SEC_ROLE"/>
         <dropForeignKeyConstraint baseTableName="BPROC_USER_GROUP_USER_LINK" constraintName="FK_USEGROUSE_USER"/>
         <dropForeignKeyConstraint baseTableName="BPROC_USER_GROUP_USER_LINK" constraintName="FK_USEGROUSE_USER_GROUP"/>
+    </changeSet>
+
+    <!-- Drop index for column BPROC_CONTENT_STORAGE.AUTHOR_ID (column will be dropped) -->
+    <changeSet id="8-idx1-oracle" author="migrator" dbms="oracle">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <indexExists tableName="BPROC_CONTENT_STORAGE" indexName="IDX_BPROC_CONTENSTORAG_AUTHOR"/>
+        </preConditions>
+
+        <dropIndex tableName="BPROC_CONTENT_STORAGE" indexName="IDX_BPROC_CONTENSTORAG_AUTHOR"/>
+    </changeSet>
+
+    <changeSet id="8-idx1-other-db" author="migrator" dbms="hsqldb, mysql, mariadb, mssql">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <indexExists tableName="BPROC_CONTENT_STORAGE" indexName="IDX_BPROC_CONTENT_STORAGE_AUTHOR"/>
+        </preConditions>
+
+        <dropIndex tableName="BPROC_CONTENT_STORAGE" indexName="IDX_BPROC_CONTENT_STORAGE_AUTHOR"/>
+    </changeSet>
+
+    <!-- Drop index for column BPROC_USER_GROUP_ROLE.ROLE_ID (column will be dropped) -->
+    <changeSet id="8-idx2-oracle" author="migrator" dbms="hsqldb, mysql, mariadb, mssql">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <indexExists tableName="BPROC_USER_GROUP_ROLE" indexName="IDX_USER_GROUP_ROLE_SEC_ROLE"/>
+        </preConditions>
+
+        <dropIndex tableName="BPROC_USER_GROUP_ROLE" indexName="IDX_USER_GROUP_ROLE_SEC_ROLE"/>
+    </changeSet>
+
+    <changeSet id="8-idx2-other-db" author="migrator" dbms="hsqldb, mysql, mariadb, mssql">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <indexExists tableName="BPROC_USER_GROUP_ROLE" indexName="IDX_BPROC_USER_GROUP_ROLE_SEC_ROLE"/>
+        </preConditions>
+
+        <dropIndex tableName="BPROC_USER_GROUP_ROLE" indexName="IDX_BPROC_USER_GROUP_ROLE_SEC_ROLE"/>
     </changeSet>
 
     <changeSet id="10" author="migrator">

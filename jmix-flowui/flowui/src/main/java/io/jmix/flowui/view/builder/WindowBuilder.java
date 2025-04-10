@@ -16,11 +16,12 @@
 
 package io.jmix.flowui.view.builder;
 
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
@@ -43,6 +44,8 @@ public class WindowBuilder<V extends View<?>> extends AbstractWindowBuilder<V> i
 
         this.afterOpenListener = builder.afterOpenListener;
         this.afterCloseListener = builder.afterCloseListener;
+        this.draggedListener = builder.draggedListener;
+        this.resizeListener = builder.resizeListener;
 
         this.viewClass = viewClass;
     }
@@ -72,6 +75,18 @@ public class WindowBuilder<V extends View<?>> extends AbstractWindowBuilder<V> i
     @Override
     public WindowBuilder<V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         super.withAfterCloseListener(listener);
+        return this;
+    }
+
+    @Override
+    public WindowBuilder<V> withDraggedListener(@Nullable ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+        super.withDraggedListener(listener);
+        return this;
+    }
+
+    @Override
+    public WindowBuilder<V> withResizeListener(@Nullable ComponentEventListener<Dialog.DialogResizeEvent> listener) {
+        super.withResizeListener(listener);
         return this;
     }
 

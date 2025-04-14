@@ -18,7 +18,6 @@ package io.jmix.flowui;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Collections;
@@ -27,6 +26,11 @@ import java.util.Map;
 
 @ConfigurationProperties(prefix = "jmix.ui")
 public class UiProperties {
+
+    /**
+     * Enables automatic tests for UI. If {@code true} components add {@code j-test-id} attribute to DOM tree.
+     */
+    boolean testMode;
 
     /**
      * View that will be used as Login view.
@@ -84,7 +88,8 @@ public class UiProperties {
      */
     boolean websocketRequestSecurityContextProvided;
 
-    public UiProperties(@DefaultValue("login") String loginViewId,
+    public UiProperties(@DefaultValue("false") boolean testMode,
+                        @DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
                         @Nullable String defaultViewId,
                         @DefaultValue("true") boolean compositeMenu,
@@ -98,6 +103,7 @@ public class UiProperties {
                         @DefaultValue("true") boolean useSessionFixationProtection,
                         @DefaultValue("false") boolean websocketRequestSecurityContextProvided
     ) {
+        this.testMode = testMode;
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;
         this.defaultViewId = defaultViewId;
@@ -111,6 +117,13 @@ public class UiProperties {
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.useSessionFixationProtection = useSessionFixationProtection;
         this.websocketRequestSecurityContextProvided = websocketRequestSecurityContextProvided;
+    }
+
+    /**
+     * @see #testMode
+     */
+    public boolean isTestMode() {
+        return testMode;
     }
 
     /**

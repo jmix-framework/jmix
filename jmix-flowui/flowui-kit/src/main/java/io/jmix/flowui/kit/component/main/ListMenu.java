@@ -289,6 +289,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     }
 
     protected void registerMenuItem(MenuItem menuItem, ListItem menuItemComponent) {
+        menuItemComponent.setId(menuItem.getId());
         registrations.put(menuItem.getId(), Pair.of(menuItem, menuItemComponent));
         menuItem.addPropertyChangeListener(menuItemPropertyChangeListener);
     }

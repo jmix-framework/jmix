@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+@NonNullApi
+package io.jmix.securityoauth2.token.store.cleanup;
 
-group = 'io.jmix.security'
-archivesBaseName = 'jmix-security-oauth2'
-
-dependencies {
-    api project(':security')
-
-    implementation 'org.springframework:spring-jdbc'
-    implementation 'org.springframework:spring-tx'
-    implementation 'org.springframework.security.oauth:spring-security-oauth2'
-    implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
-    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime'
-}
+import org.springframework.lang.NonNullApi;

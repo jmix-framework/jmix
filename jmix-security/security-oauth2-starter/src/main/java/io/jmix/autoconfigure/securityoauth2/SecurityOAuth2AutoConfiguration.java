@@ -28,6 +28,9 @@ import io.jmix.securityoauth2.configurer.OAuth2AuthorizationServerConfigurer;
 import io.jmix.securityoauth2.configurer.OAuth2ResourceServerConfigurer;
 import io.jmix.securityoauth2.impl.UniqueAuthenticationKeyGenerator;
 import io.jmix.securityoauth2.token.store.JmixJdbcTokenStore;
+import io.jmix.securityoauth2.token.store.cleanup.OAuth2ExpiredTokenCleaner;
+import io.jmix.securityoauth2.token.store.cleanup.impl.InMemoryOAuth2ExpiredTokenCleaner;
+import io.jmix.securityoauth2.token.store.cleanup.impl.JdbcOAuth2ExpiredTokenCleaner;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -36,6 +39,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
@@ -53,12 +57,19 @@ public class SecurityOAuth2AutoConfiguration {
     @ConditionalOnBean(DataSource.class)
     @Order(JmixOrder.HIGHEST_PRECEDENCE)
     public static class JdbcTokenStoreConfiguration {
+
         @Bean(name = "sec_TokenStore")
         @ConditionalOnMissingBean(TokenStore.class)
         public TokenStore tokenStore(DataSource dataSource, StandardSerialization standardSerialization) {
             JmixJdbcTokenStore tokenStore = new JmixJdbcTokenStore(dataSource, standardSerialization);
             tokenStore.setAuthenticationKeyGenerator(new UniqueAuthenticationKeyGenerator());
             return tokenStore;
+        }
+
+        @Bean(name = "sec_OAuth2ExpiredTokenCleaner")
+        @ConditionalOnMissingBean(OAuth2ExpiredTokenCleaner.class)
+        public OAuth2ExpiredTokenCleaner oAuth2ExpiredTokenCleaner(JdbcOperations jdbcOperations) {
+            return new JdbcOAuth2ExpiredTokenCleaner(jdbcOperations);
         }
     }
 
@@ -71,6 +82,12 @@ public class SecurityOAuth2AutoConfiguration {
             InMemoryTokenStore tokenStore = new InMemoryTokenStore();
             tokenStore.setAuthenticationKeyGenerator(new UniqueAuthenticationKeyGenerator());
             return tokenStore;
+        }
+
+        @Bean(name = "sec_OAuth2ExpiredTokenCleaner")
+        @ConditionalOnMissingBean(OAuth2ExpiredTokenCleaner.class)
+        public OAuth2ExpiredTokenCleaner oAuth2ExpiredTokenCleaner() {
+            return new InMemoryOAuth2ExpiredTokenCleaner();
         }
     }
 

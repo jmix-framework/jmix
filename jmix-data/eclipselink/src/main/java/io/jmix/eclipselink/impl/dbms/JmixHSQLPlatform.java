@@ -16,6 +16,8 @@
 
 package io.jmix.eclipselink.impl.dbms;
 
+import io.jmix.eclipselink.impl.support.JmixIsNullExpressionOperator;
+import org.eclipse.persistence.expressions.ExpressionOperator;
 import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.HSQLPlatform;
 import org.eclipse.persistence.queries.Call;
@@ -54,5 +56,11 @@ public class JmixHSQLPlatform extends HSQLPlatform implements UuidMappingInfo {
     @Override
     public Converter getUuidConverter() {
         return String36UuidConverter.getInstance();
+    }
+
+    @Override
+    protected void initializePlatformOperators() {
+        super.initializePlatformOperators();
+        JmixDatabasePlatformHelper.replaceIsNullOperator(this);
     }
 }

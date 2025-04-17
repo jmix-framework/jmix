@@ -21,6 +21,8 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dnd.DragSource;
+import com.vaadin.flow.component.dnd.EffectAllowed;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -32,7 +34,7 @@ import org.springframework.lang.Nullable;
 @Tag("jmix-view-tab")
 @JsModule("./src/tabsheet/jmix-view-tab.js")
 @CssImport("./src/tabsheet/jmix-view-tab.css")
-public class JmixViewTab extends Tab {
+public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
 
     protected static final String BASE_CLASS_NAME = "jmix-view-tab";
 
@@ -42,6 +44,7 @@ public class JmixViewTab extends Tab {
     protected boolean closable = false;
 
     public JmixViewTab() {
+        initComponent();
     }
 
     public JmixViewTab(String text) {
@@ -50,6 +53,10 @@ public class JmixViewTab extends Tab {
 
     public JmixViewTab(Component... components) {
         super(components);
+    }
+
+    protected void initComponent() {
+        setEffectAllowed(EffectAllowed.MOVE);
     }
 
     @Override

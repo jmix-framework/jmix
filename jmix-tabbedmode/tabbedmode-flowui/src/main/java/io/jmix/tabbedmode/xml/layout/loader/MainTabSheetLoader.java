@@ -50,6 +50,7 @@ public class MainTabSheetLoader extends AbstractComponentLoader<JmixMainTabSheet
         getActionLoaderSupport().loadActions(resultComponent, element);
         getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
 
+        loadBoolean(element, "tabsDraggable", resultComponent::setTabsDraggable);
         loadEnum(element, TabbedViewsContainer.ContentSwitchMode.class,
                 "contentSwitchMode", resultComponent::setContentSwitchMode);
     }

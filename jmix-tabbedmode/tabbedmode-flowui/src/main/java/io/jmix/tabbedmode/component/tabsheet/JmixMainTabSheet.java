@@ -17,8 +17,8 @@
 package io.jmix.tabbedmode.component.tabsheet;
 
 import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dnd.DragSource;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.shared.HasThemeVariant;
@@ -43,10 +43,9 @@ import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-@Tag("jmix-tabsheet")
-@JsModule("./src/tabsheet/jmix-tabsheet.js")
+@Tag("jmix-main-tabsheet")
+@JsModule("./src/tabsheet/jmix-main-tabsheet.js")
 @JsModule("./src/tabsheet/mainTabSheetConnector.ts")
-@CssImport("./src/tabsheet/jmix-main-tabsheet.css")
 public class JmixMainTabSheet extends Component implements TabbedViewsContainer<JmixMainTabSheet>,
         HasActions, ComponentContainer, HasSubParts,
         HasStyle, HasSize, HasThemeVariant<JmixMainTabSheetVariant>, HasPrefix, HasSuffix {
@@ -55,7 +54,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
 
     protected MainTabSheetActionsSupport actionsSupport;
 
-    protected Tabs tabs = new Tabs();
+    protected Tabs tabs;
     protected Map<Tab, Component> tabToContent = new HashMap<>();
 
     protected ContentSwitchMode contentSwitchMode = ContentSwitchMode.UNLOAD;
@@ -65,12 +64,19 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     }
 
     protected void initComponent() {
+        tabs = createTabsComponent();
         SlotUtils.addToSlot(this, "tabs", tabs);
 
         addSelectedChangeListener(e -> {
             getElement().setProperty("selected", tabs.getSelectedIndex());
             updateContent();
         });
+
+        addListener(MainTabsheetDropEvent.class, this::onDrop);
+    }
+
+    protected Tabs createTabsComponent() {
+        return new Tabs();
     }
 
     @Override
@@ -102,6 +108,10 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
             tabs.add(tab);
         } else {
             tabs.addTabAtIndex(position, tab);
+        }
+
+        if (tab instanceof DragSource<?> dragSource) {
+            dragSource.setDraggable(isTabsDraggable());
         }
 
         updateTabContent(tab, content);
@@ -337,6 +347,23 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
         return getActionsSupport().getAction(id).orElse(null);
     }
 
+    public boolean isTabsDraggable() {
+        return getElement().getProperty("tabsDraggable", false);
+    }
+
+    public void setTabsDraggable(boolean tabsDraggable) {
+        getElement().setProperty("tabsDraggable", tabsDraggable);
+
+        getDraggabdleTabsStream().forEach(draggable ->
+                draggable.setDraggable(isTabsDraggable()));
+    }
+
+    protected Stream<? extends DragSource<?>> getDraggabdleTabsStream() {
+        return getTabs().stream()
+                .filter(tab -> tab instanceof DragSource<?>)
+                .map(tab -> (DragSource<?>) tab);
+    }
+
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
@@ -426,6 +453,45 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     protected void initConnector() {
         getElement().executeJs(
                 "window.Vaadin.Flow.mainTabSheetConnector.initLazy(this)");
+    }
+
+    protected void onDrop(MainTabsheetDropEvent event) {
+        if (ignoreDrop(event)) {
+            return;
+        }
+
+        int index = calculateDropIndex(event);
+        if (index == -1) {
+            return;
+        }
+
+        Tab tab = event.getDragSource();
+        tabs.addTabAtIndex(index, tab);
+        tabs.setSelectedTab(tab);
+    }
+
+    protected boolean ignoreDrop(MainTabsheetDropEvent event) {
+        return !isTabsDraggable()
+                || event.getDragSource() == null
+                || event.getDropTarget() == null
+                || event.getDropLocation() == MainTabsheetDropLocation.EMPTY;
+    }
+
+    protected int calculateDropIndex(MainTabsheetDropEvent event) {
+        int index = tabs.indexOf(event.getDropTarget());
+        if (index == -1) {
+            return index;
+        }
+
+        if (event.getDropLocation() == MainTabsheetDropLocation.RIGHT) {
+            index++;
+        }
+
+        if (index > tabs.getTabCount()) {
+            index = tabs.getTabCount();
+        }
+
+        return index;
     }
 
     @ClientCallable

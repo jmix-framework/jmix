@@ -71,6 +71,7 @@
 
                 <xs:attribute name="themeNames" type="mainTabSheetThemeNames"/>
                 <xs:attribute name="contentSwitchMode" type="mainTabSheetContentSwitchMode"/>
+                <xs:attribute name="tabsDraggable" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

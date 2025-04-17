@@ -50,3 +50,35 @@ vaadin-tabs[theme~='centered'][orientation='horizontal'] > jmix-view-tab:first-o
 vaadin-tabs[theme~='centered'][orientation='horizontal'] > jmix-view-tab:last-of-type {
     margin-inline-end: auto;
 }
+
+vaadin-tabs > jmix-view-tab {
+    margin-left: 0;
+}
+
+vaadin-tabs[dir='rtl'] > jmix-view-tab {
+    margin-right: 0;
+}
+
+/* Drag & Drop specific styles */
+
+jmix-view-tab {
+    --_dragover-indicator-color: var(--jmix-view-tab-dragover-indicator-color, var(--lumo-primary-color-50pct));
+    --_dragover-indicator-width: var(--jmix-view-tab-dragover-indicator-width, 2px);
+}
+
+jmix-view-tab.v-dragged {
+    background: linear-gradient(var(--lumo-contrast-5pct), var(--lumo-contrast-5pct)) var(--lumo-base-color);
+}
+
+jmix-view-tab.v-dragged::before,
+jmix-view-tab.v-dragged::after {
+    display: none;
+}
+
+jmix-view-tab[dragover='right'] {
+    border-right: var(--_dragover-indicator-width) solid var(--_dragover-indicator-color);
+}
+
+jmix-view-tab[dragover='left'] {
+    border-left: var(--_dragover-indicator-width) solid var(--_dragover-indicator-color);
+}

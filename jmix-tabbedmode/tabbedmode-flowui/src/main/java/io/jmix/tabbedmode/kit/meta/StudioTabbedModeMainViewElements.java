@@ -56,6 +56,11 @@ public interface StudioTabbedModeMainViewElements {
             target = {"io.jmix.tabbedmode.component.workarea.WorkArea"},
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "tabsDraggable", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "contentSwitchMode", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.tabbedmode.component.workarea.TabbedViewsContainer$ContentSwitchMode",
+                            defaultValue = "UNLOAD",
+                            options = {"HIDE", "UNLOAD"}),
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
@@ -70,10 +75,6 @@ public interface StudioTabbedModeMainViewElements {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "contentSwitchMode", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.tabbedmode.component.workarea.TabbedViewsContainer$ContentSwitchMode",
-                            defaultValue = "UNLOAD",
-                            options = {"HIDE", "UNLOAD"}),
             }
     )
     Div mainTabSheet();

@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-.jmix-main-tabsheet::part(content) {
-    padding: 0;
-}
+import {css} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-.jmix-main-tabsheet jmix-view-tab {
-    margin-left: 0;
-    gap: var(--lumo-space-s);
-}
-
-.jmix-main-tabsheet jmix-view-tab:before,
-.jmix-main-tabsheet jmix-view-tab:after {
-    width: 100%;
-}
+export const jmixMainTabsheetStyles = css`
+    [part='content'] {
+        padding: 0;
+    }
+`;

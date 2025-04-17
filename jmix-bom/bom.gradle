@@ -270,9 +270,9 @@ dependencies {
         api 'org.apache.commons:commons-compress:1.26.0'
         api 'org.dom4j:dom4j:2.1.4'
         api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
-        api 'org.eclipse.persistence:org.eclipse.persistence.core:2.7.15-1-jmix'
-        api 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.15-1-jmix'
-        api 'org.eclipse.persistence:org.eclipse.persistence.extension:2.7.15'
+        api 'org.eclipse.persistence:org.eclipse.persistence.core:2.7.9-7-jmix'
+        api 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-7-jmix'
+        api 'org.eclipse.persistence:org.eclipse.persistence.extension:2.7.9'
         api 'org.glassfish:jakarta.el:3.0.4'
         api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1'
 

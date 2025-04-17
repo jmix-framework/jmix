@@ -17,7 +17,6 @@
 package io.jmix.eclipselink.impl.dbms;
 
 import org.eclipse.persistence.exceptions.ConversionException;
-import org.eclipse.persistence.expressions.ExpressionOperator;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.MySQLPlatform;
@@ -68,11 +67,5 @@ public class JmixMySQLPlatform extends MySQLPlatform implements UuidMappingInfo 
     @Override
     public Converter getUuidConverter() {
         return String32UuidConverter.getInstance();
-    }
-
-    @Override
-    protected void initializePlatformOperators() {
-        super.initializePlatformOperators();
-        JmixDatabasePlatformHelper.replaceIsNullOperator(this);
     }
 }

@@ -18,7 +18,6 @@ package io.jmix.eclipselink.impl.dbms;
 
 import io.jmix.core.UuidProvider;
 import org.eclipse.persistence.exceptions.ConversionException;
-import org.eclipse.persistence.expressions.ExpressionOperator;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.PostgreSQLPlatform;
@@ -60,11 +59,5 @@ public class JmixPostgreSQLPlatform extends PostgreSQLPlatform implements UuidMa
     @Override
     public Converter getUuidConverter() {
         return UuidUuidConverter.getInstance();
-    }
-
-    @Override
-    protected void initializePlatformOperators() {
-        super.initializePlatformOperators();
-        JmixDatabasePlatformHelper.replaceIsNullOperator(this);
     }
 }

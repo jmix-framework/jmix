@@ -16,6 +16,7 @@
 
 package io.jmix.eclipselink.impl.dbms;
 
+import org.eclipse.persistence.expressions.ExpressionOperator;
 import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.SQLServerPlatform;
 
@@ -55,5 +56,11 @@ public class JmixSQLServerPlatform extends SQLServerPlatform implements UuidMapp
     @Override
     public Converter getUuidConverter() {
         return UppercaseStringUuidConverter.getInstance();
+    }
+
+    @Override
+    protected void initializePlatformOperators() {
+        super.initializePlatformOperators();
+        JmixDatabasePlatformHelper.replaceIsNullOperator(this);
     }
 }

@@ -1262,7 +1262,7 @@ public class SoftDeleteTest {
     protected boolean setPrintInnerJoinInWhereClause(EntityManager entityManager, boolean value) {
         JpaEntityManager jpaEntityManager = entityManager.getDelegate().unwrap(JpaEntityManager.class);
         DatabasePlatform platform = jpaEntityManager.getActiveSession().getPlatform();
-        boolean prevValue = platform.shouldPrintInnerJoinInWhereClause();
+        boolean prevValue = platform.shouldPrintInnerJoinInWhereClause(null);
         platform.setPrintInnerJoinInWhereClause(value);
         return prevValue;
     }

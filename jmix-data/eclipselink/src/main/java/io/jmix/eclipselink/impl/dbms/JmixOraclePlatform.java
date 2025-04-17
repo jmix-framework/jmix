@@ -17,6 +17,7 @@
 package io.jmix.eclipselink.impl.dbms;
 
 import org.eclipse.persistence.exceptions.ConversionException;
+import org.eclipse.persistence.expressions.ExpressionOperator;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.Oracle10Platform;
@@ -66,5 +67,11 @@ public class JmixOraclePlatform extends Oracle10Platform implements UuidMappingI
     @Override
     public Converter getUuidConverter() {
         return String32UuidConverter.getInstance();
+    }
+
+    @Override
+    protected void initializePlatformOperators() {
+        super.initializePlatformOperators();
+        JmixDatabasePlatformHelper.replaceIsNullOperator(this);
     }
 }

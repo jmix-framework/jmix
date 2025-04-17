@@ -52,7 +52,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
@@ -62,13 +61,16 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.web.OAuth2TokenEndpointFilter;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatchers;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -161,6 +163,35 @@ public class AuthServerAutoConfiguration {
             http.with(new OAuth2ResourceOwnerPasswordTokenEndpointConfigurer(), Customizer.withDefaults());
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
+        }
+
+        @Bean("authsr_AuthorizationServerLogoutSecurityFilterChain")
+        @Order(JmixSecurityFilterChainOrder.AUTHSERVER_AUTHORIZATION_SERVER + 5)
+        //@Order(JmixSecurityFilterChainOrder.FLOWUI - 9)
+        public SecurityFilterChain logoutSecurityFilterChain(HttpSecurity http) throws Exception {
+            http.securityMatcher("/logout")
+                    .csrf().disable()
+                    .authorizeHttpRequests(authorize -> authorize
+                            .requestMatchers("/logout").authenticated()
+                    ).logout(logout ->
+                            logout.logoutUrl("/logout")
+                                    //.addLogoutHandler(new SecurityContextLogoutHandler()) // Custom logout handler
+                                    .logoutSuccessHandler(logoutSuccessHandler()) // Redirect after logout
+                                    .invalidateHttpSession(true) // Should be true by default
+                                    .clearAuthentication(true) // Should be true by default
+                                    .deleteCookies("JSESSIONID")
+                                    .logoutRequestMatcher(RequestMatchers.anyOf(
+                                            new AntPathRequestMatcher("/logout", "GET"),
+                                            new AntPathRequestMatcher("/logout", "POST")))
+                    );
+            return http.build();
+        }
+
+        public LogoutSuccessHandler logoutSuccessHandler() {
+            //TODO Implement proper redirect after logout
+            SimpleUrlLogoutSuccessHandler successHandler = new SimpleUrlLogoutSuccessHandler();
+            successHandler.setTargetUrlParameter("post_logout_redirect_uri");
+            return successHandler;
         }
 
         @Bean

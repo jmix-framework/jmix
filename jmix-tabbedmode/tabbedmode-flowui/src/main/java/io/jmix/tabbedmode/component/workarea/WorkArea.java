@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkState;
+import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
 @Tag("jmix-work-area")
 @JsModule("./src/workarea/jmix-work-area.js")
@@ -211,6 +212,7 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     }
 
     protected void switchTab(IntBinaryOperator newIndexCalculator) {
+        TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
         int tabsNumber = tabbedContainer.getTabs().size();
         if (tabsNumber <= 1
                 || hasModalWindows()) {
@@ -253,7 +255,7 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     }
 
     protected Optional<ViewBreadcrumbs.ViewInfo> findViewInfo(Tab tab) {
-        Component tabComponent = tabbedContainer.findComponent(tab).orElse(null);
+        Component tabComponent = getTabbedViewsContainer().findComponent(tab).orElse(null);
         if (!(tabComponent instanceof ViewContainer viewContainer)) {
             return Optional.empty();
         }
@@ -319,18 +321,14 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
 
     @Override
     public Optional<Component> findOwnComponent(String id) {
-        return Optional.ofNullable(state == State.INITIAL_LAYOUT
-                && initialLayout != null
-                && UiComponentUtils.sameId(initialLayout, id)
-                ? initialLayout
-                : null);
+        return getOwnComponents().stream()
+                .filter(component -> sameId(component, id))
+                .findAny();
     }
 
     @Override
     public Collection<Component> getOwnComponents() {
-        return state == State.INITIAL_LAYOUT && initialLayout != null
-                ? Collections.singleton(initialLayout)
-                : Collections.emptyList();
+        return List.of(((Component) getTabbedViewsContainer()), getInitialLayout());
     }
 
     /**
@@ -359,7 +357,6 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
             return state;
         }
     }
-
 
     /**
      * App Work Area state.

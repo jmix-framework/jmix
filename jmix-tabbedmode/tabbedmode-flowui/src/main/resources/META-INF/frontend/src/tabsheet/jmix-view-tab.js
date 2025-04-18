@@ -19,11 +19,8 @@ import {ControllerMixin} from '@vaadin/component-base/src/controller-mixin.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
 import {TooltipController} from '@vaadin/component-base/src/tooltip-controller.js';
-import {registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {TabMixin} from '@vaadin/tabs/src/vaadin-tab-mixin.js';
-import {tabStyles} from '@vaadin/tabs/src/vaadin-tab-styles.js';
-
-registerStyles('jmix-view-tab', tabStyles, {moduleId: 'jmix-view-tab-styles'});
 
 /**
  * `<jmix-view-tab>` is a Web Component providing an accessible and customizable tab.

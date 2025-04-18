@@ -19,6 +19,9 @@ import '@vaadin/vaadin-lumo-styles/sizing.js';
 import '@vaadin/vaadin-lumo-styles/style.js';
 import '@vaadin/vaadin-lumo-styles/typography.js';
 import {css, registerStyles} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {tabStyles} from '@vaadin/tabs/src/vaadin-tab-styles.js';
+
+// registerStyles('jmix-view-tab', tabStyles, {moduleId: 'jmix-view-tab-styles'});
 
 // CAUTION: copied from @vaadin/tabs/theme/lumo/vaadin-tab-styles.js [last update Vaadin 24.6.3]
 const jmixViewTabStyles = css`
@@ -257,4 +260,4 @@ const jmixViewTabStyles = css`
     }
 `;
 
-registerStyles('jmix-view-tab', jmixViewTabStyles, {moduleId: 'lumo-view-tab-styles'});
+registerStyles('jmix-view-tab', [tabStyles, jmixViewTabStyles], {moduleId: 'lumo-view-tab-styles'});

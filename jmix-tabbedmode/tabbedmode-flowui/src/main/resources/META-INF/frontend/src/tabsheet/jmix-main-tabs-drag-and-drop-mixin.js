@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 const DropLocation = {
-    LEFT: 'left',
-    RIGHT: 'right',
+    BEFORE: 'before',
+    AFTER: 'after',
     EMPTY: 'empty',
 };
 
@@ -61,8 +61,8 @@ export const DragAndDropMixin = (superClass) =>
             if (tab) {
                 // The dragover occurred on a tab, determine the drop location from coordinates
                 const tabRect = tab.getBoundingClientRect();
-                const dropLeft = e.clientX - tabRect.left < tabRect.right - e.clientX;
-                this._dropLocation = dropLeft ? DropLocation.LEFT : DropLocation.RIGHT;
+                const dropBefore = e.clientX - tabRect.left < tabRect.right - e.clientX;
+                this._dropLocation = (dropBefore ^ this.__isRTL) ? DropLocation.BEFORE : DropLocation.AFTER;
             }
 
             e.stopPropagation();

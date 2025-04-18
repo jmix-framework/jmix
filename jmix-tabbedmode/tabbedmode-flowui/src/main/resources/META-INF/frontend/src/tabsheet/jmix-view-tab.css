@@ -75,10 +75,10 @@ jmix-view-tab.v-dragged::after {
     display: none;
 }
 
-jmix-view-tab[dragover='right'] {
-    border-right: var(--_dragover-indicator-width) solid var(--_dragover-indicator-color);
+jmix-view-tab[dragover='before'] {
+    border-inline-start: var(--_dragover-indicator-width) solid var(--_dragover-indicator-color);
 }
 
-jmix-view-tab[dragover='left'] {
-    border-left: var(--_dragover-indicator-width) solid var(--_dragover-indicator-color);
+jmix-view-tab[dragover='after'] {
+    border-inline-end: var(--_dragover-indicator-width) solid var(--_dragover-indicator-color);
 }

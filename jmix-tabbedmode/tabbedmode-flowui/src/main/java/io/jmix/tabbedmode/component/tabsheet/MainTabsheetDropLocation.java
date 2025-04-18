@@ -18,13 +18,11 @@ package io.jmix.tabbedmode.component.tabsheet;
 
 import org.springframework.lang.Nullable;
 
-import java.util.Objects;
-
 public enum MainTabsheetDropLocation {
 
-    LEFT("left"),
+    BEFORE("before"),
 
-    RIGHT("right"),
+    AFTER("after"),
 
     EMPTY("empty");
 

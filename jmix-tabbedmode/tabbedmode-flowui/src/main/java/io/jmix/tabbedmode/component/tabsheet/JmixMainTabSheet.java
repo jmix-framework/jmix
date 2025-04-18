@@ -483,7 +483,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
             return index;
         }
 
-        if (event.getDropLocation() == MainTabsheetDropLocation.RIGHT) {
+        if (event.getDropLocation() == MainTabsheetDropLocation.AFTER) {
             index++;
         }
 

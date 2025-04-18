@@ -22,9 +22,8 @@ import {TooltipController} from '@vaadin/component-base/src/tooltip-controller.j
 import {registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {TabMixin} from '@vaadin/tabs/src/vaadin-tab-mixin.js';
 import {tabStyles} from '@vaadin/tabs/src/vaadin-tab-styles.js';
-import {jmixViewTabStyles} from "./jmix-view-tab-styles";
 
-registerStyles('jmix-view-tab', [tabStyles, jmixViewTabStyles], {moduleId: 'jmix-view-tab-styles'});
+registerStyles('jmix-view-tab', tabStyles, {moduleId: 'jmix-view-tab-styles'});
 
 /**
  * `<jmix-view-tab>` is a Web Component providing an accessible and customizable tab.
@@ -55,6 +54,7 @@ registerStyles('jmix-view-tab', [tabStyles, jmixViewTabStyles], {moduleId: 'jmix
  * @mixes ThemableMixin
  * @mixes TabMixin
  */
+// CAUTION: copied from @vaadin/tabs/src/vaadin-tab.js [last update Vaadin 24.6.3]
 class JmixViewTab extends ElementMixin(ThemableMixin(TabMixin(ControllerMixin(PolymerElement)))) {
     static get template() {
         return html`

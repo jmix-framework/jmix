@@ -19,13 +19,9 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 import {ControllerMixin} from '@vaadin/component-base/src/controller-mixin.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
-import {registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {TabSheetMixin} from '@vaadin/tabsheet/src/vaadin-tabsheet-mixin.js';
 import {DragAndDropMixin} from "./jmix-main-tabs-drag-and-drop-mixin.js";
-
-import {jmixMainTabsheetStyles} from "./jmix-main-tabsheet-styles";
-
-registerStyles('jmix-main-tabsheet', [jmixMainTabsheetStyles], {moduleId: 'jmix-main-tabsheet-styles'});
 
 /**
  * `<jmix-main-tabsheet>` is a Web Component for organizing and grouping content

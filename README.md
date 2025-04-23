@@ -32,12 +32,12 @@
 </p>
 
 ## Description
-Jmix is a high-level full-stack framework for enterprise web applications. It comes with advanced tooling and a rich set of functional modules. You can plug in advanced system functionality like complex data access control and audit as well as business functionality like reporting or BPM in a few lines of code.
+Jmix is a high-level full-stack framework for enterprise web applications. It comes with advanced tooling and a rich set of functional modules. You can plug in advanced system functionality like complex data access control and audit as well as business functionality like reporting or BPM with just a few lines of code.
 
 Jmix is based on Spring Boot, which means that you can use a lot of third-party libraries and frameworks with minimal configuration, in addition to the functionality provided by Jmix.
 
 ## Using Jmix
-To get started, install [Jmix Studio](https://www.jmix.io/tools) - a plugin for IntelliJ IDEA. It helps you at all stages of the application development: creating and configuring a project, defining the data model, generating database migration scripts, developing UI views in a visual editor. It provides advanced navigation, code completion and inspections specific to Jmix projects.
+To get started, install [Jmix Studio](https://www.jmix.io/tools) - a plugin for IntelliJ IDEA. It helps you at all stages of application development: creating and configuring a project, defining its data model, generating database migration scripts, developing UI views in a visual editor. It provides advanced navigation, code completion and inspections specific to Jmix projects.
 
 To learn Jmix, complete the [tutorial](https://docs.jmix.io/jmix/tutorial/index.html) which walks you through the process of building a full-stack web application. It covers the entire development process, from data modeling to creating UI and managing access rights.
 

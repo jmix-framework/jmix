@@ -178,7 +178,7 @@ public class UiTestIdSupport {
     protected String addFragmentIdPrefix(Component component, String id) {
         return UiComponentUtils.getFragment(component)
                 .getId()
-                .map(fragmentId -> "%s-%s".formatted(fragmentId, id))
+                .map(fragmentId -> fragmentId + StringUtils.capitalize(id))
                 .orElse(id);
     }
 

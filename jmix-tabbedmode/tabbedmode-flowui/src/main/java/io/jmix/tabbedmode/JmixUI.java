@@ -16,9 +16,11 @@
 
 package io.jmix.tabbedmode;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.internal.UIInternalUpdater;
 import com.vaadin.flow.component.page.History;
+import com.vaadin.flow.component.page.WebStorage;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.internal.nodefeature.NodeProperties;
 import com.vaadin.flow.router.*;
@@ -29,11 +31,14 @@ import com.vaadin.flow.router.internal.PathUtil;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
-import com.vaadin.flow.spring.annotation.SpringComponent;
 import elemental.json.JsonValue;
+import io.jmix.core.UuidProvider;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.tabbedmode.builder.ViewOpeningContext;
+import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
+import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
 import io.jmix.tabbedmode.navigation.RedirectHandler;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 import org.slf4j.Logger;
@@ -45,23 +50,22 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
 
-@SpringComponent
+@org.springframework.stereotype.Component("tabmod_JmixUI")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JmixUI extends UI {
 
-//    public static final String STORAGE_KEY = "jmixUi";
+    public static final String STORAGE_KEY = "jmix.tabmod.ui";
 
     private static final Logger log = LoggerFactory.getLogger(JmixUI.class);
 
-    private int uiId = -1;
+    protected int uiId = -1;
 
-    private boolean navigationInProgress = false;
+    protected boolean navigationInProgress = false;
 
-//    protected String jmixUiId = null;
+    protected String jmixUiId = null;
 
     protected final Views views;
 
@@ -85,6 +89,11 @@ public class JmixUI extends UI {
         this.redirectHandler = new RedirectHandler(this, views);
     }
 
+    @Nullable
+    public String getJmixUiId() {
+        return jmixUiId;
+    }
+
     @Override
     public int getUIId() {
         return uiId;
@@ -92,17 +101,18 @@ public class JmixUI extends UI {
 
     static final String SERVER_CONNECTED = "this.serverConnected($0)";
 
-    private NavigationState clientViewNavigationState;
+    protected NavigationState clientViewNavigationState;
 
-    private String forwardToClientUrl = null;
+    protected String forwardToClientUrl = null;
 
-    private boolean firstNavigation = true;
+    protected boolean firstNavigation = true;
 
     @Nullable
     public static JmixUI getCurrent() {
         return (JmixUI) UI.getCurrent();
     }
 
+    @Nullable
     @Override
     public String getForwardToClientUrl() {
         return forwardToClientUrl;
@@ -161,33 +171,28 @@ public class JmixUI extends UI {
         init(request);
     }
 
+    // TODO: gg, do we need this?
     @Override
     public <T, C extends Component & HasUrlParameter<T>> Optional<C> navigate(Class<? extends C> navigationTarget,
                                                                               T parameter,
                                                                               QueryParameters queryParameters) {
-        log.debug("navigate: {}; parameter: {}; queryParameters: {}", navigationTarget, parameter, queryParameters);
-        // TODO: gg, override
-//        return super.navigate(navigationTarget, parameter, queryParameters);
         RouteParameters parameters = HasUrlParameterFormat.getParameters(parameter);
         return navigate(navigationTarget, parameters, queryParameters);
     }
 
+    // TODO: gg, do we need this?
     @Override
     public <T extends Component> Optional<T> navigate(Class<? extends T> navigationTarget,
                                                       QueryParameters queryParameters) {
-        log.debug("navigate: '{}'; queryParameters: '{}'", navigationTarget, queryParameters);
-        // TODO: gg, override
-//        return super.navigate(navigationTarget, queryParameters);
         return navigate(navigationTarget, RouteParameters.empty(), queryParameters);
     }
 
+    // TODO: gg, do we need this?
+    @SuppressWarnings("unchecked")
     @Override
     public <C extends Component> Optional<C> navigate(Class<? extends C> navigationTarget,
                                                       RouteParameters routeParameter,
                                                       QueryParameters queryParameters) {
-        log.debug("navigate: '{}'; routeParameter: '{}'; queryParameters: '{}'", navigationTarget, routeParameter, queryParameters);
-        // TODO: gg, override
-//        return super.navigate(navigationTarget, routeParameter, queryParameters);
         RouteConfiguration configuration = RouteConfiguration
                 .forRegistry(getInternals().getRouter().getRegistry());
         String url = configuration.getUrl(navigationTarget, routeParameter);
@@ -197,7 +202,7 @@ public class JmixUI extends UI {
     }
 
     // TODO: gg, duplicate
-    private <T extends Component> Optional<T> findCurrentNavigationTarget(
+    protected <T extends Component> Optional<T> findCurrentNavigationTarget(
             Class<T> navigationTarget) {
         List<HasElement> activeRouterTargetsChain = getInternals()
                 .getActiveRouterTargetsChain();
@@ -211,8 +216,6 @@ public class JmixUI extends UI {
 
     @Override
     public void navigate(String locationString, QueryParameters queryParameters) {
-        log.debug("navigate: '{}'; queryParameters: '{}'", locationString, queryParameters);
-
         Objects.requireNonNull(locationString, "Location must not be null");
         Objects.requireNonNull(queryParameters,
                 "Query parameters must not be null");
@@ -325,11 +328,8 @@ public class JmixUI extends UI {
      *
      * @param event the event from the browser
      */
-//    @Override
     public void browserNavigate(JmixBrowserNavigateEvent event) {
         // first load, page refresh
-//        super.browserNavigate(event);
-        log.debug("browser navigate: " + event);
         if (event.appShellTitle != null && !event.appShellTitle.isEmpty()) {
             getInternals().setAppShellTitle(event.appShellTitle);
         }
@@ -385,7 +385,7 @@ public class JmixUI extends UI {
      * @param route    the event.route
      * @param location the location with the trimmed route
      */
-    private void replaceStateIfDiffersAndNoReplacePending(String route,
+    protected void replaceStateIfDiffersAndNoReplacePending(String route,
                                                           Location location) {
         boolean locationChanged = !location.getPath().equals(route)
                 && route.startsWith("/")
@@ -429,23 +429,23 @@ public class JmixUI extends UI {
         }
     }
 
-    private void acknowledgeClient() {
+    protected void acknowledgeClient() {
         serverConnected(false);
     }
 
-    private void cancelClient() {
+    protected void cancelClient() {
         serverConnected(true);
     }
 
-    private void serverPaused() {
+    protected void serverPaused() {
         wrapperElement.executeJs("this.serverPaused()");
     }
 
-    private void serverConnected(boolean cancel) {
+    protected void serverConnected(boolean cancel) {
         wrapperElement.executeJs(SERVER_CONNECTED, cancel);
     }
 
-    private void navigateToPlaceholder(Location location) {
+    protected void navigateToPlaceholder(Location location) {
         if (clientViewNavigationState == null) {
             clientViewNavigationState = new NavigationStateBuilder(
                     getInternals().getRouter())
@@ -457,9 +457,7 @@ public class JmixUI extends UI {
                 NavigationTrigger.CLIENT_SIDE);
     }
 
-    private void renderViewForRoute(Location location,
-                                    NavigationTrigger trigger) {
-        log.debug("renderViewForRoute: " + location.getPath() + "; trigger: " + trigger);
+    protected void renderViewForRoute(Location location, NavigationTrigger trigger) {
         if (!shouldHandleNavigation(location)) {
             return;
         }
@@ -484,26 +482,134 @@ public class JmixUI extends UI {
         }
     }
 
-    private boolean shouldHandleNavigation(Location location) {
+    protected boolean shouldHandleNavigation(Location location) {
         return !getInternals().hasLastHandledLocation()
                 || !sameLocation(getInternals().getLastHandledLocation(),
                 location);
     }
 
-    private boolean sameLocation(Location oldLocation, Location newLocation) {
+    protected boolean sameLocation(Location oldLocation, Location newLocation) {
         return PathUtil.trimPath(newLocation.getPathWithQueryParameters())
                 .equals(PathUtil
                         .trimPath(oldLocation.getPathWithQueryParameters()));
     }
 
-    private void handleNavigation(Location location,
-                                  NavigationState navigationState, NavigationTrigger trigger) {
-        log.debug("handleNavigation: '{}; trigger: '{}", location.getPath(), trigger);
+    protected boolean handleExceptionNavigation(Location location, Exception exception) {
+        Optional<ErrorTargetEntry> maybeLookupResult = getInternals()
+                .getRouter().getErrorNavigationTarget(exception);
+        if (maybeLookupResult.isPresent()) {
+            ErrorTargetEntry lookupResult = maybeLookupResult.get();
+
+            ErrorParameter<?> errorParameter = new ErrorParameter<>(
+                    lookupResult.getHandledExceptionType(), exception,
+                    exception.getMessage());
+            ErrorStateRenderer errorStateRenderer = new ErrorStateRenderer(
+                    new NavigationStateBuilder(getInternals().getRouter())
+                            .withTarget(lookupResult.getNavigationTarget())
+                            .build());
+
+            ErrorNavigationEvent errorNavigationEvent = new ErrorNavigationEvent(
+                    getInternals().getRouter(), location, this,
+                    NavigationTrigger.CLIENT_SIDE, errorParameter);
+
+            errorStateRenderer.handle(errorNavigationEvent);
+        } else {
+            throw new RuntimeException(exception);
+        }
+
+        return isPostponed();
+    }
+
+    protected boolean isPostponed() {
+        return getInternals().getContinueNavigationAction() != null;
+    }
+
+    protected void handleErrorNavigation(Location location) {
+        NavigationState errorNavigationState = getInternals().getRouter()
+                .resolveRouteNotFoundNavigationTarget()
+                .orElse(getDefaultNavigationError());
+        ErrorStateRenderer errorStateRenderer = new ErrorStateRenderer(
+                errorNavigationState);
+        NotFoundException notFoundException = new NotFoundException(
+                "Couldn't find route for '" + location.getPath() + "'");
+        ErrorParameter<NotFoundException> errorParameter = new ErrorParameter<>(
+                NotFoundException.class, notFoundException);
+        ErrorNavigationEvent errorNavigationEvent = new ErrorNavigationEvent(
+                getInternals().getRouter(), location, this,
+                NavigationTrigger.CLIENT_SIDE, errorParameter);
+        errorStateRenderer.handle(errorNavigationEvent);
+    }
+
+    protected NavigationState getDefaultNavigationError() {
+        return new NavigationStateBuilder(getInternals().getRouter())
+                .withTarget(RouteNotFoundError.class).build();
+    }
+
+    /* Jmix API */
+
+    protected void handleNavigation(Location location, NavigationState navigationState, NavigationTrigger trigger) {
+        log.debug("handleNavigation: '{}', trigger: '{}', uiId: '{}', jmixUiId: '{}'",
+                location.getPath(), trigger, getUIId(), getJmixUiId());
+
+        if (NavigationTrigger.PAGE_LOAD.equals(trigger)) {
+            handlePageLoad(location, navigationState, trigger);
+        } else {
+            handleNavigationInternal(location, navigationState, trigger);
+        }
+    }
+
+    protected void handlePageLoad(Location location, NavigationState navigationState, NavigationTrigger trigger) {
+        log.debug("handlePageLoad: '{}', uiId: '{}', jmixUiId: '{}'",
+                location.getPath(), getUIId(), getJmixUiId());
+
+        if (jmixUiId != null) {
+            Optional<View<?>> preservedCache = getPreservedViewCache(jmixUiId);
+            if (preservedCache.isPresent()) {
+                movePreservedViewCache(location, navigationState, trigger, preservedCache.get());
+            } else {
+                handleNavigationInternal(location, navigationState, trigger);
+            }
+        } else {
+            obtainJmixUiId(__ ->
+                    handleNavigation(location, navigationState, trigger));
+        }
+    }
+
+    protected void movePreservedViewCache(Location location,
+                                          NavigationState navigationState, NavigationTrigger trigger,
+                                          View<?> preservedView) {
+        Optional<UI> maybePrevUI = preservedView.getUI();
+        if (maybePrevUI.isPresent() && maybePrevUI.get().equals(this)) {
+            handleNavigationInternal(location, navigationState, trigger);
+            return;
+        }
+
+        // Remove the top-level component from the tree
+        preservedView.getElement().removeFromTree(false);
+        setTopLevelView(preservedView);
+
+        // Transfer all remaining UI child elements (typically dialogs
+        // and notifications) to the new UI
+        maybePrevUI.ifPresent(prevUi -> {
+            getInternals().moveElementsFrom(prevUi);
+            prevUi.close();
+        });
+
+        // If requested location differs, navigate to a new view
+        String locationString = findCurrentViewLocationString(this);
+        if (!location.getPath().equals(locationString)) {
+            handleNavigationInternal(location, navigationState, trigger);
+        }
+    }
+
+    protected void handleNavigationInternal(Location location,
+                                            NavigationState navigationState, NavigationTrigger trigger) {
+        log.debug("handleNavigationInternal: '{}', trigger: '{}', uiId: '{}', jmixUiId: '{}'",
+                location.getPath(), trigger, getUIId(), getJmixUiId());
         try {
-            // Jmix API
             Class<? extends Component> navigationTarget = navigationState.getNavigationTarget();
             // Don't throw exception for placeholder, just skip it
-            if (UI.ClientViewPlaceholder.class.isAssignableFrom(navigationTarget)) {
+            if (ClientViewPlaceholder.class.isAssignableFrom(navigationTarget)) {
                 return;
             }
 
@@ -527,12 +633,72 @@ public class JmixUI extends UI {
                     .withRouteParameters(navigationState.getRouteParameters())
                     .withQueryParameters(location.getQueryParameters())
                     .withCheckMultipleOpen(true));
-
         } catch (Exception exception) {
             handleExceptionNavigation(location, exception);
         } finally {
             getInternals().clearLastHandledNavigation();
         }
+    }
+
+    protected void obtainJmixUiId(Consumer<String> resultHandler) {
+        WebStorage.getItem(this, WebStorage.Storage.SESSION_STORAGE, STORAGE_KEY, value -> {
+            if (Strings.isNullOrEmpty(value) || uiWithSameJmixUiIdExists(value)) {
+                jmixUiId = UuidProvider.createUuidV7().toString();
+                WebStorage.setItem(this, WebStorage.Storage.SESSION_STORAGE, STORAGE_KEY, jmixUiId);
+            } else {
+                jmixUiId = value;
+            }
+
+            resultHandler.accept(jmixUiId);
+        });
+    }
+
+    protected boolean uiWithSameJmixUiIdExists(String jmixUiId) {
+        return getSession().getUIs().stream()
+                .anyMatch(ui -> {
+                    if (ui instanceof JmixUI jmixUi) {
+                        return jmixUiId.equals(jmixUi.getJmixUiId())
+                                && getUIId() != jmixUi.getUIId();
+                    } else {
+                        return false;
+                    }
+                });
+    }
+
+    // TODO: gg, move
+    @Nullable
+    protected String findCurrentViewLocationString(JmixUI ui) {
+        Views.OpenedViews openedViews = views.getOpenedViews(ui);
+        Iterator<View<?>> viewsIterator = openedViews.getCurrentBreadcrumbs().iterator();
+        // TODO: gg, refactor somehow
+        if (viewsIterator.hasNext()) {
+            View<?> view = viewsIterator.next();
+            ViewContainer viewContainer = findViewContainer(view);
+            if (viewContainer != null) {
+                ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
+                if (breadcrumbs != null) {
+                    ViewBreadcrumbs.ViewInfo viewInfo = breadcrumbs.getCurrentViewInfo();
+                    if (viewInfo != null) {
+                        return viewInfo.location().getPath();
+                    }
+                }
+            }
+        }
+
+        return ui.getTopLevelViewOptional()
+                .map(view ->
+                        ViewControllerUtils.findAnnotation(view, Route.class).isPresent()
+                                ? RouteConfiguration.forSessionScope().getUrl(view.getClass())
+                                : "")
+                .orElse(null);
+    }
+
+    // TODO: gg, move
+    @Nullable
+    protected ViewContainer findViewContainer(View<?> view) {
+        return (ViewContainer) view.getParent()
+                .filter(parent -> parent instanceof ViewContainer)
+                .orElse(null);
     }
 
     protected ViewOpenMode inferOpenMode(Class<? extends View<?>> viewClass) {
@@ -548,66 +714,13 @@ public class JmixUI extends UI {
         return ViewOpenMode.NEW_TAB;
     }
 
-    private boolean handleExceptionNavigation(Location location,
-                                              Exception exception) {
-        Optional<ErrorTargetEntry> maybeLookupResult = getInternals()
-                .getRouter().getErrorNavigationTarget(exception);
-        if (maybeLookupResult.isPresent()) {
-            ErrorTargetEntry lookupResult = maybeLookupResult.get();
-
-            ErrorParameter<?> errorParameter = new ErrorParameter<>(
-                    lookupResult.getHandledExceptionType(), exception,
-                    exception.getMessage());
-            ErrorStateRenderer errorStateRenderer = new ErrorStateRenderer(
-                    new NavigationStateBuilder(getInternals().getRouter())
-                            .withTarget(lookupResult.getNavigationTarget())
-                            .build());
-
-            ErrorNavigationEvent errorNavigationEvent = new ErrorNavigationEvent(
-                    getInternals().getRouter(), location, this,
-                    NavigationTrigger.CLIENT_SIDE, errorParameter);
-
-            errorStateRenderer.handle(errorNavigationEvent);
-        } else {
-            throw new RuntimeException(exception);
-        }
-        return isPostponed();
-    }
-
-    private boolean isPostponed() {
-        return getInternals().getContinueNavigationAction() != null;
-    }
-
-    private void handleErrorNavigation(Location location) {
-        NavigationState errorNavigationState = getInternals().getRouter()
-                .resolveRouteNotFoundNavigationTarget()
-                .orElse(getDefaultNavigationError());
-        ErrorStateRenderer errorStateRenderer = new ErrorStateRenderer(
-                errorNavigationState);
-        NotFoundException notFoundException = new NotFoundException(
-                "Couldn't find route for '" + location.getPath() + "'");
-        ErrorParameter<NotFoundException> errorParameter = new ErrorParameter<>(
-                NotFoundException.class, notFoundException);
-        ErrorNavigationEvent errorNavigationEvent = new ErrorNavigationEvent(
-                getInternals().getRouter(), location, this,
-                NavigationTrigger.CLIENT_SIDE, errorParameter);
-        errorStateRenderer.handle(errorNavigationEvent);
-    }
-
-    private NavigationState getDefaultNavigationError() {
-        return new NavigationStateBuilder(getInternals().getRouter())
-                .withTarget(RouteNotFoundError.class).build();
-    }
-
-    /* Jmix API */
-
     public RedirectHandler getRedirectHandler() {
         return redirectHandler;
     }
 
     public View<?> getTopLevelView() {
         if (topLevelView == null) {
-            throw new IllegalStateException("UI topLevelView is null");
+            throw new IllegalStateException("UI's top level view is null");
         }
 
         return topLevelView;
@@ -625,10 +738,17 @@ public class JmixUI extends UI {
             // Probably 'wrapperElement' contains placeholder
             if (oldRoot == null
                     && wrapperElement.getChildren().findAny().isPresent()) {
-               wrapperElement.removeAllChildren();
+                wrapperElement.removeAllChildren();
             }
 
             internalsHandler.updateRoot(this, oldRoot, topLevelView);
+
+
+            if (jmixUiId != null) {
+                setPreservedViewCache(jmixUiId, topLevelView);
+            } else {
+                log.warn("'jmixUiId' is null. Session: '{}', uiId: '{}'", getSession(), getUIId());
+            }
         }
     }
 
@@ -654,6 +774,7 @@ public class JmixUI extends UI {
     }
 
     protected String inferTopLevelWindowId() {
+        // TODO: gg, what if we have access to the main view?
         return isAnonymousAuthentication()
                 ? views.getLoginViewId()
                 : views.getMainViewId();
@@ -663,5 +784,42 @@ public class JmixUI extends UI {
         Authentication authentication = SecurityContextHelper.getAuthentication();
         return authentication == null ||
                 authentication instanceof AnonymousAuthenticationToken;
+    }
+
+    protected Optional<View<?>> getPreservedViewCache(String jmixUiId) {
+        VaadinSession session = getSession();
+        if (session == null) {
+            throw new UIDetachedException("Cannot get preserved view cache for a detached UI");
+        }
+
+        PreservedViewCache cache = session.getAttribute(PreservedViewCache.class);
+        if (cache != null && cache.containsKey(jmixUiId)) {
+            return Optional.of(cache.get(jmixUiId));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    protected void setPreservedViewCache(String jmixUiId, @Nullable View<?> topLevelView) {
+        VaadinSession session = getSession();
+        if (session == null) {
+            throw new UIDetachedException("Cannot save preserved view cache for a detached UI");
+        }
+
+        PreservedViewCache cache = session.getAttribute(PreservedViewCache.class);
+        if (cache == null) {
+            cache = new PreservedViewCache();
+        }
+
+        if (topLevelView != null) {
+            cache.put(jmixUiId, topLevelView);
+        } else {
+            cache.remove(jmixUiId);
+        }
+        session.setAttribute(PreservedViewCache.class, cache);
+    }
+
+    // Maps jmixUiId to (top level view)
+    protected static class PreservedViewCache extends HashMap<String, View<?>> {
     }
 }

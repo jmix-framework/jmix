@@ -219,7 +219,7 @@ public class Views {
 
         if (openMode != ViewOpenMode.DIALOG) {
             updateUrl(ui, resolveLocation(view, context));
-            updatePageTitle(ui, view);
+            updatePageTitle(view);
         }
 
         Timer.Sample readySample = start(meterRegistry);
@@ -323,12 +323,13 @@ public class Views {
         }
     }
 
-    protected void updatePageTitle(JmixUI ui, View<?> view) {
+    protected void updatePageTitle(View<?> view) {
         String title = ViewControllerUtils.getPageTitle(view);
-        updatePageTitle(ui, view, title);
+        updatePageTitle(view, title);
     }
 
-    protected void updatePageTitle(JmixUI ui, View<?> view, String title) {
+    protected void updatePageTitle(View<?> view, String title) {
+        JmixUI ui = getUI(view);
         ui.getInternals().cancelPendingTitleUpdate();
         ui.getInternals().setTitle(title);
     }
@@ -434,10 +435,10 @@ public class Views {
         ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
         breadcrumbs.addView(view, resolveLocation(view, context));
 
-        ViewControllerUtils.setViewCloseDelegate(view, __ -> removeThisTabView(ui, view));
+        ViewControllerUtils.setViewCloseDelegate(view, this::removeThisTabView);
         ViewControllerUtils.setPageTitleDelegate(view, title -> {
             updateTabTitle(selectedTab, title);
-            updatePageTitle(ui, view, title);
+            updatePageTitle(view, title);
         });
 
         updateTabTitle(selectedTab, ViewControllerUtils.getPageTitle(view));
@@ -446,7 +447,9 @@ public class Views {
         }
     }
 
-    protected void removeThisTabView(JmixUI ui, View<?> viewToRemove) {
+    protected void removeThisTabView(View<?> viewToRemove) {
+        JmixUI ui = getUI(viewToRemove);
+
         ViewContainer viewContainer = getViewContainer(viewToRemove);
         viewContainer.removeView();
 
@@ -477,7 +480,7 @@ public class Views {
 
         // TODO: gg, move to a single place
         updateUrl(ui, currentViewInfo.location());
-        updatePageTitle(ui, viewToDisplay);
+        updatePageTitle(viewToDisplay);
     }
 
     protected void openNewTab(JmixUI ui, ViewOpeningContext context) {
@@ -487,12 +490,13 @@ public class Views {
 
         // work with new view
         createNewTabLayout(ui, context);
-        ViewControllerUtils.setViewCloseDelegate(view, __ -> removeNewTabView(ui, view));
+        ViewControllerUtils.setViewCloseDelegate(view, this::removeNewTabView);
     }
 
-    protected void removeNewTabView(JmixUI ui, View<?> view) {
-        ViewContainer viewContainer = getViewContainer(view);
+    protected void removeNewTabView(View<?> view) {
+        JmixUI ui = getUI(view);
 
+        ViewContainer viewContainer = getViewContainer(view);
         WorkArea workArea = getConfiguredWorkArea(ui);
 
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
@@ -511,7 +515,7 @@ public class Views {
 
             // TODO: gg, move or re-implement, e.g. to state change listener?
             View<?> rootView = UiComponentUtils.getView(workArea);
-            updatePageTitle(ui, rootView);
+            updatePageTitle(rootView);
             updateUrl(ui, resolveLocation(rootView));
         }
     }
@@ -550,7 +554,7 @@ public class Views {
 
         ViewControllerUtils.setPageTitleDelegate(view, title -> {
             updateTabTitle(newTab, title);
-            updatePageTitle(ui, view, title);
+            updatePageTitle(view, title);
         });
 
         Tab addedTab = tabbedContainer.add(newTab, viewContainer);
@@ -704,6 +708,18 @@ public class Views {
 
     protected JmixUI getCurrentUI() {
         UI ui = UI.getCurrent();
+        if (!(ui instanceof JmixUI jmixUI)) {
+            throw new IllegalStateException("UI is not a " + JmixUI.class.getSimpleName());
+        }
+
+        return jmixUI;
+    }
+
+    protected JmixUI getUI(Component component) {
+        UI ui = component.getUI()
+                .orElseThrow(() ->
+                        new IllegalStateException("%s is not attached to an UI".formatted(component)));
+
         if (!(ui instanceof JmixUI jmixUI)) {
             throw new IllegalStateException("UI is not a " + JmixUI.class.getSimpleName());
         }

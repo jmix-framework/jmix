@@ -92,6 +92,7 @@ dependencies {
         api "gr.netmechanics.jmix:jmix-google-place-starter:1.1.0"
         api 'de.bytestore:swagger-ui-starter:1.2.0'
         api 'de.bytestore:plugin-starter:1.4.0'
+        api 'ru.kavlab:dataimportaddon-starter:0.9.2'
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

@@ -36,6 +36,7 @@
                   classNames="jmix-work-area">
             <mainTabSheet id="mainTabSheet"
                           classNames="jmix-main-tabsheet"
+                          tabsDraggable="true"
                           width="100%" height="100%">
                 <actions>
                     <action id="closeThisTabAction" type="tabmod_closeThisTab"/>

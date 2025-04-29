@@ -160,7 +160,7 @@ public abstract class TabbedViewsContainerAction<A extends TabbedViewsContainerA
             return viewsContainer.getSelectedTab();
         // shouldn't happen
         } else {
-            return trigger;
+            return null;
         }
     }
 

@@ -233,24 +233,32 @@ public class Views {
 
     @Nullable
     protected OperationResult closeSameView(JmixUI ui, ViewOpeningContext context) {
-        if (ViewOpenMode.NEW_TAB == context.getOpenMode()
-                && context.isCheckMultipleOpen()
-                && !isMultipleOpen(context.getView())) {
-            View<?> view = context.getView();
-            WorkArea workArea = getConfiguredWorkArea(ui);
-            View<?> sameView = getTabbedViewsStacks(workArea)
-                    .filter(viewStack -> viewStack.getBreadcrumbs().size() == 1) // never close non-top active screens
-                    .map(viewStack -> viewStack.getBreadcrumbs().iterator().next())
-                    .filter(tabScreen -> ViewControllerUtils.isSameView(view, tabScreen))
-                    .findFirst()
-                    .orElse(null);
+        if (ViewOpenMode.NEW_TAB != context.getOpenMode()
+                || !context.isCheckMultipleOpen()
+                || isMultipleOpen(context.getView())) {
+            return null;
+        }
 
-            if (sameView != null) {
-                OperationResult result = sameView.close(CLOSE_SAME_VIEW_ACTION);
-                if (result.getStatus() != OperationResult.Status.SUCCESS) {
-                    // if unsaved changes dialog is shown, we can continue later
-                    return result.compose(() -> open(ui, context));
-                }
+        View<?> view = context.getView();
+        WorkArea workArea = getConfiguredWorkArea(ui);
+        View<?> sameView = getTabbedViewsStacks(workArea)
+                .filter(viewStack -> viewStack.getBreadcrumbs().size() == 1) // never close non-top active screens
+                .map(viewStack -> viewStack.getBreadcrumbs().iterator().next())
+                .filter(tabScreen -> ViewControllerUtils.isSameView(view, tabScreen))
+                .findFirst()
+                .orElse(null);
+
+        if (sameView != null) {
+            // Select tab before close
+            ViewContainer viewContainer = getViewContainer(sameView);
+            TabbedViewsContainer<?> tabbedViewsContainer = workArea.getTabbedViewsContainer();
+            Tab tab = tabbedViewsContainer.getTab(((Component) viewContainer));
+            tabbedViewsContainer.setSelectedTab(tab);
+
+            OperationResult result = sameView.close(CLOSE_SAME_VIEW_ACTION);
+            if (result.getStatus() != OperationResult.Status.SUCCESS) {
+                // if unsaved changes dialog is shown, we can continue later
+                return result.compose(() -> open(ui, context));
             }
         }
 
@@ -584,23 +592,11 @@ public class Views {
         WorkArea workArea = getConfiguredWorkArea(jmixUI);
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
 
-        ViewBreadcrumbs breadcrumbs = getViewBreadcrumbs(tabbedContainer, tab);
-        createTabCloseTask(breadcrumbs).run();
+        createTabCloseTask(tabbedContainer, tab).run();
     }
 
-    protected TabCloseTask createTabCloseTask(ViewBreadcrumbs breadcrumbs) {
-        return new TabCloseTask(breadcrumbs);
-    }
-
-    protected ViewBreadcrumbs getViewBreadcrumbs(TabbedViewsContainer<?> tabbedContainer, Tab tab) {
-        Component tabComponent = tabbedContainer.getComponent(tab);
-        if (!(tabComponent instanceof ViewContainer viewContainer)
-                || viewContainer.getBreadcrumbs() == null) {
-            throw new IllegalStateException("%s not found"
-                    .formatted(ViewBreadcrumbs.class.getSimpleName()));
-        }
-
-        return viewContainer.getBreadcrumbs();
+    protected TabCloseTask createTabCloseTask(TabbedViewsContainer<?> tabbedContainer, Tab tab) {
+        return new TabCloseTask(tabbedContainer, tab);
     }
 
     public String getLoginViewId() {
@@ -888,7 +884,7 @@ public class Views {
         }
     }
 
-    protected static class BreadcrumbsNavigationTask implements Runnable {
+    protected static class BreadcrumbsNavigationTask extends AbstractTabCloseTask {
 
         private final BreadcrumbsNavigationContext context;
 
@@ -896,7 +892,7 @@ public class Views {
             this.context = context;
         }
 
-        @Override
+        /*@Override
         public void run() {
             ViewBreadcrumbs.ViewInfo viewToClose = context.breadcrumbs().getCurrentViewInfo();
             if (viewToClose == null) {
@@ -911,28 +907,83 @@ public class Views {
                 viewToClose.view().close(StandardOutcome.CLOSE)
                         .then(this);
             }
+        }*/
+
+        @Override
+        protected boolean isCloseable(ViewBreadcrumbs.ViewInfo viewToClose) {
+            return super.isCloseable(viewToClose)
+                    && viewToClose.view() != context.view();
+        }
+
+        @Nullable
+        @Override
+        protected ViewBreadcrumbs.ViewInfo getViewToClose() {
+            return context.breadcrumbs().getCurrentViewInfo();
         }
     }
 
-    protected static class TabCloseTask implements Runnable {
+    protected static class TabCloseTask extends AbstractTabCloseTask {
 
+        protected final TabbedViewsContainer<?> tabbedContainer;
+        protected final Tab tab;
         protected final ViewBreadcrumbs breadcrumbs;
 
-        public TabCloseTask(ViewBreadcrumbs breadcrumbs) {
-            this.breadcrumbs = breadcrumbs;
+        public TabCloseTask(TabbedViewsContainer<?> tabbedContainer, Tab tab) {
+            this.tabbedContainer = tabbedContainer;
+            this.tab = tab;
+
+            breadcrumbs = getViewBreadcrumbs(tabbedContainer, tab);
         }
 
         @Override
         public void run() {
-            ViewBreadcrumbs.ViewInfo viewToClose = breadcrumbs.getCurrentViewInfo();
-            if (viewToClose == null) {
-                return;
-            }
+            selectTab();
 
-            if (TabbedModeViewUtils.isCloseable(viewToClose.view())) {
+            super.run();
+        }
+
+        protected void selectTab() {
+            if (tabbedContainer.getTabs().contains(tab)
+                    && tabbedContainer.getSelectedTab() != tab) {
+                tabbedContainer.setSelectedTab(tab);
+            }
+        }
+
+        @Nullable
+        @Override
+        protected ViewBreadcrumbs.ViewInfo getViewToClose() {
+            return breadcrumbs.getCurrentViewInfo();
+        }
+    }
+
+    protected abstract static class AbstractTabCloseTask implements Runnable {
+
+        @Override
+        public void run() {
+            ViewBreadcrumbs.ViewInfo viewToClose = getViewToClose();
+            if (viewToClose != null
+                    && isCloseable(viewToClose)) {
                 viewToClose.view().close(StandardOutcome.CLOSE)
                         .then(this);
             }
         }
+
+        @Nullable
+        protected abstract ViewBreadcrumbs.ViewInfo getViewToClose();
+
+        protected boolean isCloseable(ViewBreadcrumbs.ViewInfo viewToClose) {
+            return TabbedModeViewUtils.isCloseable(viewToClose.view());
+        }
+    }
+
+    protected static ViewBreadcrumbs getViewBreadcrumbs(TabbedViewsContainer<?> tabbedContainer, Tab tab) {
+        Component tabComponent = tabbedContainer.getComponent(tab);
+        if (!(tabComponent instanceof ViewContainer viewContainer)
+                || viewContainer.getBreadcrumbs() == null) {
+            throw new IllegalStateException("%s not found"
+                    .formatted(ViewBreadcrumbs.class.getSimpleName()));
+        }
+
+        return viewContainer.getBreadcrumbs();
     }
 }

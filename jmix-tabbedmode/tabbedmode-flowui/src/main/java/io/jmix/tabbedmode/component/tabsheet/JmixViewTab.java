@@ -143,4 +143,9 @@ public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
             super(source, fromClient);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Tab{" + getText() + "}";
+    }
 }

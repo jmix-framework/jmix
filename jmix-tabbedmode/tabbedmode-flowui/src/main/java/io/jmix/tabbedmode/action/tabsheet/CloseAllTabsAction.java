@@ -101,9 +101,5 @@ public class CloseAllTabsAction extends TabbedViewsContainerAction<CloseAllTabsA
         new HashSet<>(target.getTabs()).stream()
                 .filter(tab -> tab instanceof JmixViewTab)
                 .forEach(tab -> MainTabSheetUtils.closeTab(((JmixViewTab) tab)));
-
-        if (!target.getTabs().isEmpty()) {
-            log.warn("Cannot close all tabs because some of them are not '{}'", JmixViewTab.class.getName());
-        }
     }
 }

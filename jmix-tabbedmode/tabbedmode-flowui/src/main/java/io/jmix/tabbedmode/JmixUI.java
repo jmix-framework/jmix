@@ -259,8 +259,8 @@ public class JmixUI extends UI {
 
         public static final String EVENT_NAME = "ui-leave-navigation";
 
-        private final String route;
-        private final String query;
+        protected final String route;
+        protected final String query;
 
         /**
          * Creates a new event instance.
@@ -282,11 +282,11 @@ public class JmixUI extends UI {
 
         public static final String EVENT_NAME = "ui-navigate";
 
-        private final String route;
-        private final String query;
-        private final String appShellTitle;
-        private final JsonValue historyState;
-        private final String trigger;
+        protected final String route;
+        protected final String query;
+        protected final String appShellTitle;
+        protected final JsonValue historyState;
+        protected final String trigger;
 
         public JmixBrowserNavigateEvent(UI source, boolean fromClient,
                                         @EventData("route") String route,

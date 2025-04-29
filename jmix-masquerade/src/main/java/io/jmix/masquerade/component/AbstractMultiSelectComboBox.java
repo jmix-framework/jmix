@@ -142,7 +142,7 @@ public abstract class AbstractMultiSelectComboBox<T extends AbstractMultiSelectC
 
     protected void closeOverlay() {
         // to close overlay
-        getDelegate().sendKeys(Keys.ESCAPE);
+        getDelegate().pressEscape();
     }
 
     /**

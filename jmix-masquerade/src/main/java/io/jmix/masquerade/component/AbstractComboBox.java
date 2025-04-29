@@ -20,7 +20,6 @@ import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
 import io.jmix.masquerade.sys.TagNames;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 
 import static io.jmix.masquerade.JConditions.*;
 
@@ -73,7 +72,7 @@ public abstract class AbstractComboBox<T extends AbstractComboBox<T>>
         if (!Strings.isNullOrEmpty(value)) {
             inputDelegate.sendKeys(value);
         } else {
-            inputDelegate.sendKeys(Keys.ENTER);
+            inputDelegate.pressEnter();
         }
 
         //noinspection unchecked

@@ -23,7 +23,7 @@ import org.openqa.selenium.By;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Abstract class for each web-element wrappers.
+ * Abstract class for web-element wrappers.
  *
  * @param <T> inheritor class type
  */

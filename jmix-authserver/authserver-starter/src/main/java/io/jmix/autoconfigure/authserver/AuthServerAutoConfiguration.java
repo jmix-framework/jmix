@@ -38,12 +38,14 @@ import io.jmix.data.persistence.DbmsType;
 import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,6 +55,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
@@ -167,31 +170,47 @@ public class AuthServerAutoConfiguration {
 
         @Bean("authsr_AuthorizationServerLogoutSecurityFilterChain")
         @Order(JmixSecurityFilterChainOrder.AUTHSERVER_AUTHORIZATION_SERVER + 5)
-        //@Order(JmixSecurityFilterChainOrder.FLOWUI - 9)
-        public SecurityFilterChain logoutSecurityFilterChain(HttpSecurity http) throws Exception {
+        public SecurityFilterChain logoutSecurityFilterChain(HttpSecurity http, ServerProperties serverProperties) throws Exception {
+            String sessionCookieName = getSessionCookieName(serverProperties);
+
             http.securityMatcher("/logout")
-                    .csrf().disable()
+                    .csrf(AbstractHttpConfigurer::disable)
+                    .cors(Customizer.withDefaults())
                     .authorizeHttpRequests(authorize -> authorize
                             .requestMatchers("/logout").authenticated()
-                    ).logout(logout ->
-                            logout.logoutUrl("/logout")
-                                    //.addLogoutHandler(new SecurityContextLogoutHandler()) // Custom logout handler
-                                    .logoutSuccessHandler(logoutSuccessHandler()) // Redirect after logout
-                                    .invalidateHttpSession(true) // Should be true by default
-                                    .clearAuthentication(true) // Should be true by default
-                                    .deleteCookies("JSESSIONID")
-                                    .logoutRequestMatcher(RequestMatchers.anyOf(
-                                            new AntPathRequestMatcher("/logout", "GET"),
-                                            new AntPathRequestMatcher("/logout", "POST")))
+                    ).logout(logout -> logout
+                            .logoutUrl("/logout")
+                            .logoutSuccessHandler(createLogoutSuccessHandler())
+                            .invalidateHttpSession(true)
+                            .clearAuthentication(true)
+                            .deleteCookies(sessionCookieName)
+                            .logoutRequestMatcher(createLogoutRequestMatcher("/logout"))
                     );
             return http.build();
         }
 
-        public LogoutSuccessHandler logoutSuccessHandler() {
-            //TODO Implement proper redirect after logout
+        protected LogoutSuccessHandler createLogoutSuccessHandler() {
             SimpleUrlLogoutSuccessHandler successHandler = new SimpleUrlLogoutSuccessHandler();
-            successHandler.setTargetUrlParameter("post_logout_redirect_uri");
+            if (StringUtils.isNotBlank(authServerProperties.getPostLogoutUrlRedirectParameterName())) {
+                successHandler.setTargetUrlParameter(authServerProperties.getPostLogoutUrlRedirectParameterName());
+            }
+            successHandler.setUseReferer(authServerProperties.isUseRefererPostLogout());
             return successHandler;
+        }
+
+        protected String getSessionCookieName(ServerProperties serverProperties) {
+            String sessionCookieName = serverProperties.getServlet().getSession().getCookie().getName();
+            if (StringUtils.isBlank(sessionCookieName)) {
+                sessionCookieName = "JSESSIONID";
+            }
+            return sessionCookieName;
+        }
+
+        protected RequestMatcher createLogoutRequestMatcher(String logoutUrl) {
+            return RequestMatchers.anyOf(
+                    new AntPathRequestMatcher(logoutUrl, "GET"),
+                    new AntPathRequestMatcher(logoutUrl, "POST")
+            );
         }
 
         @Bean

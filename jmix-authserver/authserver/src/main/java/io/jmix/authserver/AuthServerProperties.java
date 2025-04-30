@@ -58,13 +58,27 @@ public class AuthServerProperties {
      */
     String authorizeEndpoint;
 
+    /**
+     * Name of url parameter within logout request which contains url to redirect to after logout
+     */
+    String postLogoutUrlRedirectParameterName;
+
+    /**
+     * Whether referer header value can be used as a target URL after logout.
+     * <p>
+     * Note: URL specified within {@link #postLogoutUrlRedirectParameterName} parameter has more priority
+     */
+    boolean useRefererPostLogout;
+
     public AuthServerProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
             @DefaultValue("false") boolean useInMemoryAuthorizationService,
             @DefaultValue Map<String, JmixClient> client,
             @DefaultValue("/as-login") String loginPageUrl,
             @DefaultValue("as-login.html") String loginPageViewName,
-            @DefaultValue("/oauth2/authorize") String authorizeEndpoint
+            @DefaultValue("/oauth2/authorize") String authorizeEndpoint,
+            @DefaultValue("false") boolean useRefererPostLogout,
+            String postLogoutUrlRedirectParameterName
     ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.useInMemoryAuthorizationService = useInMemoryAuthorizationService;
@@ -72,6 +86,8 @@ public class AuthServerProperties {
         this.loginPageUrl = loginPageUrl;
         this.loginPageViewName = loginPageViewName;
         this.authorizeEndpoint = authorizeEndpoint;
+        this.postLogoutUrlRedirectParameterName = postLogoutUrlRedirectParameterName;
+        this.useRefererPostLogout = useRefererPostLogout;
     }
 
     public boolean isUseDefaultConfiguration() {
@@ -96,6 +112,14 @@ public class AuthServerProperties {
 
     public String getAuthorizeEndpoint() {
         return authorizeEndpoint;
+    }
+
+    public String getPostLogoutUrlRedirectParameterName() {
+        return postLogoutUrlRedirectParameterName;
+    }
+
+    public boolean isUseRefererPostLogout() {
+        return useRefererPostLogout;
     }
 
     /**

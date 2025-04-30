@@ -20,9 +20,20 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates that the annotated interface is a service exposed through the generic REST API.
+ */
 @Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface RemoteService {
 
+    /**
+     * Name of the REST data store.
+     */
     String store();
+
+    /**
+     * Name of the remote service. Required if the remote service name is different from the interface name.
+     */
+    String remoteName() default "";
 }

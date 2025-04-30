@@ -23,7 +23,7 @@ import io.jmix.samples.restservice.entity.Customer;
 import io.jmix.samples.restservice.entity.CustomerContact;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@RestService("CustomerService")
+@RestService("app_Customers")
 public class CustomerService {
 
     @Autowired

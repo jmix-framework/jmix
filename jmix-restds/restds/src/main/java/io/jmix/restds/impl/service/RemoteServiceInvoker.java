@@ -58,11 +58,13 @@ public class RemoteServiceInvoker {
         if (remoteServiceAnnotation == null)
             throw new IllegalStateException("RemoteService annotation is not found for interface " + serviceInterface);
         String storeName = remoteServiceAnnotation.store();
+        String serviceName = remoteServiceAnnotation.remoteName().isEmpty() ?
+                serviceInterface.getSimpleName() : remoteServiceAnnotation.remoteName();
 
         RestClient restClient = restDataStoreUtils.getRestClient(storeName);
 
         String resultJson = restClient.post()
-                .uri(getServiceUri(serviceInterface, storeName, method))
+                .uri(getServiceUri(serviceName, storeName, method))
                 .body(getParamsJson(entitySerialization, method, args))
                 .retrieve()
                 .body(String.class);
@@ -70,10 +72,10 @@ public class RemoteServiceInvoker {
         return method.getReturnType() == void.class ? null : getResultObject(entitySerialization, method, resultJson);
     }
 
-    protected String getServiceUri(Class<?> serviceInterface, String storeName, Method method) {
+    protected String getServiceUri(String serviceName, String storeName, Method method) {
         String basePath = environment.getProperty(storeName + ".basePath", "/rest");
         String servicePath = environment.getProperty(storeName + ".servicesPath", "/services");
-        return basePath + servicePath + "/" + serviceInterface.getSimpleName() + "/" + method.getName();
+        return basePath + servicePath + "/" + serviceName + "/" + method.getName();
     }
 
     protected String getParamsJson(EntitySerialization entitySerialization, Method method, @Nullable Object[] args) {

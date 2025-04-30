@@ -83,7 +83,7 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
     }
 
     @Test
-    void testServiceCall() {
+    void testServiceWithDifferentRemoteName() {
         customer.setContacts(null);
 
         CustomerContact contact = customerService.getPreferredContact(customer);

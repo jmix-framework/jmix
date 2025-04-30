@@ -20,7 +20,7 @@ import io.jmix.restds.annotation.RemoteService;
 import test_support.entity.Customer;
 import test_support.entity.CustomerContact;
 
-@RemoteService(store = "restService1")
+@RemoteService(store = "restService1", remoteName = "app_Customers")
 public interface CustomerService {
 
     CustomerContact getPreferredContact(Customer customer);

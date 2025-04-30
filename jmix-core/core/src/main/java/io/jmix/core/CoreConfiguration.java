@@ -64,7 +64,7 @@ public class CoreConfiguration {
     }
 
     @Bean("core_Modules")
-    public JmixModules modules(JmixModulesProcessor processor) {
+    public static JmixModules modules(JmixModulesProcessor processor) {
         return processor.getJmixModules();
     }
 

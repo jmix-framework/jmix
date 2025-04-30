@@ -24,7 +24,6 @@ import test_support.entity.Customer;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -55,8 +54,6 @@ public interface SampleService {
 
     OffsetDateTime offsetDateTimeMethod(OffsetDateTime param);
 
-    ZonedDateTime zonedDateTimeMethod(ZonedDateTime param);
-
     UUID uuidMethod(UUID param);
 
     URI uriMethod(URI param);
@@ -82,6 +79,7 @@ public interface SampleService {
     class SamplePojo {
         private String name;
         private int age;
+        private FileRef fileRef;
 
         public String getName() {
             return name;
@@ -99,15 +97,23 @@ public interface SampleService {
             this.age = age;
         }
 
+        public FileRef getFileRef() {
+            return fileRef;
+        }
+
+        public void setFileRef(FileRef fileRef) {
+            this.fileRef = fileRef;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (!(o instanceof SamplePojo that)) return false;
-            return getAge() == that.getAge() && Objects.equals(getName(), that.getName());
+            return getAge() == that.getAge() && Objects.equals(getName(), that.getName()) && Objects.equals(getFileRef(), that.getFileRef());
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(getName(), getAge());
+            return Objects.hash(getName(), getAge(), getFileRef());
         }
     }
 

@@ -121,18 +121,16 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
 
     @Test
     void testOtherTypes() throws Exception{
-        // todo
+        FileRef fileRef = FileRef.create("fileStorage1", "/path1", "file1.txt");
+        FileRef resultFileRef = sampleService.fileRefMethod(fileRef);
+        assertThat(resultFileRef).isEqualTo(fileRef);
 
-//        byte[] resultBytes = sampleService.binaryMethod("hello".getBytes(StandardCharsets.UTF_8));
-//        assertThat(resultBytes).isEqualTo("hello".getBytes(StandardCharsets.UTF_8));
+        byte[] resultBytes = sampleService.binaryMethod("hello".getBytes(StandardCharsets.UTF_8));
+        assertThat(resultBytes).isEqualTo("hello".getBytes(StandardCharsets.UTF_8));
 
-//        FileRef fileRef = FileRef.create("fileStorage1", "/path1", "file1.txt");
-//        FileRef resultFileRef = sampleService.fileRefMethod(fileRef);
-//        assertThat(resultFileRef).isEqualTo(fileRef);
-
-//        URI uri = new URI("https://jmix.io");
-//        URI resultUri = sampleService.uriMethod(uri);
-//        assertThat(resultUri).isEqualTo(uri);
+        URI uri = new URI("https://jmix.io");
+        URI resultUri = sampleService.uriMethod(uri);
+        assertThat(resultUri).isEqualTo(uri);
 
         UUID uuid = UUID.fromString("00000000-0000-0000-0000-000000000001");
         UUID resultUuid = sampleService.uuidMethod(uuid);
@@ -153,10 +151,7 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
         OffsetDateTime resultOffsetDateTime = sampleService.offsetDateTimeMethod(offsetDateTime);
         assertThat(resultOffsetDateTime).isEqualTo(offsetDateTime);
 
-        // todo
-//        ZonedDateTime zonedDateTime = ZonedDateTime.parse("2025-04-26T18:44+04:00[Europe/Samara]");
-//        ZonedDateTime resultZonedDateTime = sampleService.zonedDateTimeMethod(zonedDateTime);
-//        assertThat(resultZonedDateTime).isEqualTo(zonedDateTime);
+        // ZonedDateTime is not supported by entities and REST
     }
 
     @Test
@@ -184,11 +179,14 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
         SampleService.SamplePojo pojo = new SampleService.SamplePojo();
         pojo.setName("John");
         pojo.setAge(25);
+        FileRef fileRef = FileRef.create("fileStorage1", "/path1", "file1.txt");
+        pojo.setFileRef(fileRef);
 
         SampleService.SamplePojo resultPojo = sampleService.pojoMethod(pojo);
         assertThat(resultPojo).isNotNull();
         assertThat(resultPojo.getName()).isEqualTo("John");
         assertThat(resultPojo.getAge()).isEqualTo(25);
+        assertThat(resultPojo.getFileRef()).isEqualTo(fileRef);
 
         SampleService.SamplePojoWithEntity pojoWithEntity = new SampleService.SamplePojoWithEntity();
         pojoWithEntity.setName("John");

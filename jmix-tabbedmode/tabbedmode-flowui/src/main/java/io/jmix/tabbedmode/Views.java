@@ -145,7 +145,7 @@ public class Views {
         TabbedModeViewUtils.setViewProperties(view, properties);
     }
 
-    private void checkPermissions(ViewInfo viewInfo) {
+    protected void checkPermissions(ViewInfo viewInfo) {
         if (uiProperties.getLoginViewId().equals(viewInfo.getId())) {
             return;
         }
@@ -886,7 +886,7 @@ public class Views {
 
     protected static class BreadcrumbsNavigationTask extends AbstractTabCloseTask {
 
-        private final BreadcrumbsNavigationContext context;
+        protected final BreadcrumbsNavigationContext context;
 
         public BreadcrumbsNavigationTask(BreadcrumbsNavigationContext context) {
             this.context = context;

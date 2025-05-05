@@ -213,7 +213,7 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
 
     protected void switchTab(IntBinaryOperator newIndexCalculator) {
         TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
-        int tabsNumber = tabbedContainer.getTabs().size();
+        int tabsNumber = Math.toIntExact(tabbedContainer.getTabsStream().count());
         if (tabsNumber <= 1
                 || hasModalWindows()) {
             return;
@@ -316,7 +316,7 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     }
 
     public int getOpenedTabCount() {
-        return getTabbedViewsContainer().getTabs().size();
+        return Math.toIntExact(getTabbedViewsContainer().getTabsStream().count());
     }
 
     @Override

@@ -38,7 +38,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
@@ -182,8 +181,10 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     }
 
     @Override
-    public Set<Tab> getTabs() {
-        return Collections.unmodifiableSet(tabToContent.keySet());
+    public Stream<Tab> getTabsStream() {
+        return getChildren()
+                .sequential()
+                .map(component -> ((Tab) component));
     }
 
     @Override
@@ -225,7 +226,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
 
     @Override
     public Optional<Tab> findTab(String id) {
-        return getTabs().stream()
+        return getTabsStream()
                 .filter(tab -> sameId(tab, id))
                 .findAny();
     }
@@ -251,12 +252,8 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
 
     @Override
     public Stream<Component> getTabComponentsStream() {
-        return tabToContent.values().stream();
-    }
-
-    @Override
-    public Collection<Component> getTabComponents() {
-        return getTabComponentsStream().toList();
+        return getTabsStream()
+                .map(this::getComponent);
     }
 
     @Override
@@ -294,10 +291,8 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
 
     @Override
     public Collection<Component> getOwnComponents() {
-        return getChildren()
-                .sequential()
-                .map(component -> getComponent((Tab) component))
-                .collect(Collectors.toList());
+        return getTabComponentsStream()
+                .toList();
     }
 
     /**
@@ -307,9 +302,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
      */
     @Override
     public Stream<Component> getChildren() {
-        return super.getChildren()
-                .filter(component -> component instanceof Tabs)
-                .flatMap(Component::getChildren);
+        return tabs.getChildren();
     }
 
     @Nullable
@@ -359,7 +352,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     }
 
     protected Stream<? extends DragSource<?>> getDraggabdleTabsStream() {
-        return getTabs().stream()
+        return getTabsStream()
                 .filter(tab -> tab instanceof DragSource<?>)
                 .map(tab -> (DragSource<?>) tab);
     }

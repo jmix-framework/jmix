@@ -27,7 +27,6 @@ import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer<C>> extends HasElement {
@@ -129,8 +128,7 @@ public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer
      */
     int getTabCount();
 
-    // TODO: gg, JavaDoc
-    Set<Tab> getTabs();
+    Stream<Tab> getTabsStream();
 
     /**
      * Returns the tab at the given position.
@@ -155,12 +153,19 @@ public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer
      * Returns the {@link Tab} associated with the given component.
      *
      * @param content the component to look up, can not be <code>null</code>
+     * @return The tab instance associated with the given component.
+     * @throws IllegalArgumentException if tab not found
+     */
+    Tab getTab(Component content);
+
+    /**
+     * Returns the {@link Tab} associated with the given component.
+     *
+     * @param content the component to look up, can not be <code>null</code>
      * @return The tab instance associated with the given component, or
      * <code>null</code> if the {@link TabSheet} does not contain the
      * component.
      */
-    Tab getTab(Component content);
-
     // TODO: gg, JavaDoc
     Optional<Tab> findTab(Component content);
 
@@ -190,9 +195,6 @@ public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer
 
     // TODO: gg, JavaDoc
     Stream<Component> getTabComponentsStream();
-
-    // TODO: gg, JavaDoc
-    Collection<Component> getTabComponents();
 
     ContentSwitchMode getContentSwitchMode();
 

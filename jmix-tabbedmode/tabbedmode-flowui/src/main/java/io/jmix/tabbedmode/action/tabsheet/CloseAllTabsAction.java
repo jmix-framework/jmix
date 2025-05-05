@@ -22,6 +22,7 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.tabbedmode.TabbedModeProperties;
+import io.jmix.tabbedmode.Views;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
@@ -30,10 +31,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
-import java.util.HashSet;
+import java.util.List;
 
 @ActionType(CloseAllTabsAction.ID)
-public class CloseAllTabsAction extends TabbedViewsContainerAction<CloseAllTabsAction> {
+public class CloseAllTabsAction extends AbstractCloseTabsAction<CloseAllTabsAction> {
 
     private static final Logger log = LoggerFactory.getLogger(CloseAllTabsAction.class);
 
@@ -78,16 +79,12 @@ public class CloseAllTabsAction extends TabbedViewsContainerAction<CloseAllTabsA
     }
 
     @Override
-    protected boolean isApplicable() {
-        return super.isApplicable() && hasCloseableTabs();
-    }
-
     protected boolean hasCloseableTabs() {
-        if (target.getTabs().isEmpty()) {
+        if (target.getTabsStream().findAny().isEmpty()) {
             return false;
         }
 
-        return target.getTabs().stream()
+        return target.getTabsStream()
                 .anyMatch(tab ->
                         tab instanceof JmixViewTab viewTab
                                 && viewTab.isClosable()
@@ -98,8 +95,10 @@ public class CloseAllTabsAction extends TabbedViewsContainerAction<CloseAllTabsA
     public void execute(@Nullable Component trigger) {
         checkTarget();
 
-        new HashSet<>(target.getTabs()).stream()
-                .filter(tab -> tab instanceof JmixViewTab)
-                .forEach(tab -> MainTabSheetUtils.closeTab(((JmixViewTab) tab)));
+        List<Views.ViewStack> viewStacks = target.getTabComponentsStream()
+                .map(this::asViewStack)
+                .toList();
+
+        closeViewStacks(viewStacks);
     }
 }

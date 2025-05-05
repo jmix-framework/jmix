@@ -510,7 +510,7 @@ public class Views {
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
         tabbedContainer.remove(((Component) viewContainer));
 
-        boolean allViewsRemoved = tabbedContainer.getTabs().isEmpty();
+        boolean allViewsRemoved = tabbedContainer.getTabsStream().findAny().isEmpty();
 
         ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
         if (breadcrumbs != null) {
@@ -558,7 +558,7 @@ public class Views {
         newTab.setId(tabId);
         newTab.setText(ViewControllerUtils.getPageTitle(view));
         newTab.setClosable(TabbedModeViewUtils.isCloseable(view));
-        newTab.addCloseListener(this::handleViewTabClose);
+        newTab.setCloseDelegate(this::handleViewTabClose);
 
         ViewControllerUtils.setPageTitleDelegate(view, title -> {
             updateTabTitle(newTab, title);
@@ -581,8 +581,8 @@ public class Views {
         new BreadcrumbsNavigationTask(context).run();
     }
 
-    protected void handleViewTabClose(JmixViewTab.CloseEvent<JmixViewTab> event) {
-        JmixViewTab tab = event.getSource();
+    protected void handleViewTabClose(JmixViewTab.CloseContext<JmixViewTab> event) {
+        JmixViewTab tab = event.source();
         UI ui = tab.getUI().orElse(null);
         if (!(ui instanceof JmixUI jmixUI)) {
             throw new IllegalStateException("%s is not attached to UI or UI is not a %s"
@@ -840,7 +840,7 @@ public class Views {
         }
 
         /**
-         * @return screens of the container in descending order, first element is active screen
+         * @return views of the container in descending order, first element is active view
          * @throws IllegalStateException in case view stack has been closed
          */
         public Collection<View<?>> getBreadcrumbs() {
@@ -857,22 +857,57 @@ public class Views {
             return views;
         }
 
+        /**
+         * Whether a tab displaying this {@link ViewStack} is active.
+         *
+         * @return {code true} if a tab displaying this {@link ViewStack} i
+         * s active, {@code false} otherwise
+         */
         public boolean isSelected() {
             checkAttached();
 
             Tab selectedTab = tabbedContainer.getSelectedTab();
             return selectedTab != null
-                    && tabbedContainer.getComponent(selectedTab) == viewContainer;
+                    && tabbedContainer.getComponent(selectedTab).equals(viewContainer);
         }
 
         /**
-         * Select tab in tabbed UI.
+         * Makes a tab displaying this {@link ViewStack} active.
          */
         public void select() {
             checkAttached();
 
             Tab tab = tabbedContainer.getTab(((Component) viewContainer));
-            tabbedContainer.setSelectedTab(tab);
+            if (!tab.equals(tabbedContainer.getSelectedTab())) {
+                tabbedContainer.setSelectedTab(tab);
+            }
+        }
+
+        /**
+         * Closes all views of this {@link ViewStack} returned by {@link #getBreadcrumbs()}.
+         *
+         * @return {@code true} if all view have been closed, {@code false} otherwise
+         */
+        public boolean close() {
+            boolean closed = true;
+
+            // We need to select a tab, so all nested components are attached again
+            select();
+
+            Collection<View<?>> views = getBreadcrumbs();
+            for (View<?> view : views) {
+                if (!TabbedModeViewUtils.isCloseable(view)) {
+                    continue;
+                }
+
+                OperationResult closeResult = view.close(StandardOutcome.CLOSE);
+                if (closeResult.getStatus() != OperationResult.Status.SUCCESS) {
+                    closed = false;
+                    break;
+                }
+            }
+
+            return closed;
         }
 
         protected void checkAttached() {
@@ -892,27 +927,10 @@ public class Views {
             this.context = context;
         }
 
-        /*@Override
-        public void run() {
-            ViewBreadcrumbs.ViewInfo viewToClose = context.breadcrumbs().getCurrentViewInfo();
-            if (viewToClose == null) {
-                return;
-            }
-
-            if (!TabbedModeViewUtils.isCloseable(viewToClose.view())) {
-                return;
-            }
-
-            if (context.view() != viewToClose.view()) {
-                viewToClose.view().close(StandardOutcome.CLOSE)
-                        .then(this);
-            }
-        }*/
-
         @Override
         protected boolean isCloseable(ViewBreadcrumbs.ViewInfo viewToClose) {
             return super.isCloseable(viewToClose)
-                    && viewToClose.view() != context.view();
+                    && !viewToClose.view().equals(context.view());
         }
 
         @Nullable
@@ -933,20 +951,6 @@ public class Views {
             this.tab = tab;
 
             breadcrumbs = getViewBreadcrumbs(tabbedContainer, tab);
-        }
-
-        @Override
-        public void run() {
-            selectTab();
-
-            super.run();
-        }
-
-        protected void selectTab() {
-            if (tabbedContainer.getTabs().contains(tab)
-                    && tabbedContainer.getSelectedTab() != tab) {
-                tabbedContainer.setSelectedTab(tab);
-            }
         }
 
         @Nullable

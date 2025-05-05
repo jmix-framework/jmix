@@ -25,7 +25,6 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import org.springframework.lang.Nullable;
 
@@ -151,14 +150,14 @@ public abstract class TabbedViewsContainerAction<A extends TabbedViewsContainerA
     public abstract void execute(@Nullable Component trigger);
 
     @Nullable
-    protected Component findTab(@Nullable Component trigger) {
+    protected Tab findTab(@Nullable Component trigger) {
         // if executed by a context menu
-        if (trigger instanceof JmixViewTab tab) {
+        if (trigger instanceof Tab tab) {
             return tab;
-        // if executed by a shortcut
+            // if executed by a shortcut
         } else if (trigger instanceof TabbedViewsContainer<?> viewsContainer) {
             return viewsContainer.getSelectedTab();
-        // shouldn't happen
+            // shouldn't happen
         } else {
             return null;
         }

@@ -17,7 +17,10 @@
 package io.jmix.tabbedmode.component.tabsheet;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -28,8 +31,9 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.shared.Registration;
 import org.springframework.lang.Nullable;
+
+import java.util.function.Consumer;
 
 @Tag("jmix-view-tab")
 @JsModule("./src/tabsheet/jmix-view-tab.js")
@@ -42,6 +46,8 @@ public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
 
     protected Component closeButton;
     protected boolean closable = false;
+
+    protected Consumer<CloseContext<JmixViewTab>> closeDelegate;
 
     public JmixViewTab() {
         initComponent();
@@ -129,19 +135,14 @@ public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
     }
 
     protected void closeInternal(boolean fromClient) {
-        fireEvent(new CloseEvent<>(this, fromClient));
+        closeDelegate.accept(new CloseContext<>(this, fromClient));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public Registration addCloseListener(ComponentEventListener<CloseEvent<JmixViewTab>> listener) {
-        return addListener(CloseEvent.class, (ComponentEventListener) listener);
+    public void setCloseDelegate(@Nullable Consumer<CloseContext<JmixViewTab>> delegate) {
+        closeDelegate = delegate;
     }
 
-    public static class CloseEvent<C extends Component> extends ComponentEvent<C> {
-
-        public CloseEvent(C source, boolean fromClient) {
-            super(source, fromClient);
-        }
+    public record CloseContext<C extends JmixViewTab>(C source, boolean fromClient) {
     }
 
     @Override

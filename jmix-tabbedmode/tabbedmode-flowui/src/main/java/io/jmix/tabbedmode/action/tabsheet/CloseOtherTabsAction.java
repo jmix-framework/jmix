@@ -23,18 +23,18 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.tabbedmode.TabbedModeProperties;
+import io.jmix.tabbedmode.Views;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
-import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
-import java.util.HashSet;
+import java.util.List;
 
 @ActionType(CloseOtherTabsAction.ID)
-public class CloseOtherTabsAction extends TabbedViewsContainerAction<CloseOtherTabsAction> {
+public class CloseOtherTabsAction extends AbstractCloseTabsAction<CloseOtherTabsAction> {
 
     private static final Logger log = LoggerFactory.getLogger(CloseOtherTabsAction.class);
 
@@ -88,17 +88,13 @@ public class CloseOtherTabsAction extends TabbedViewsContainerAction<CloseOtherT
     }
 
     @Override
-    protected boolean isApplicable() {
-        return super.isApplicable() && hasCloseableTabs();
-    }
-
     protected boolean hasCloseableTabs() {
-        if (target.getTabs().size() <= 1) {
+        if (target.getTabsStream().count() <= 1) {
             return false;
         }
 
         Tab actionTab = findActionTab();
-        return target.getTabs().stream()
+        return target.getTabsStream()
                 .anyMatch(tab ->
                         !tab.equals(actionTab)
                                 && tab instanceof JmixViewTab viewTab
@@ -110,13 +106,17 @@ public class CloseOtherTabsAction extends TabbedViewsContainerAction<CloseOtherT
     public void execute(@Nullable Component trigger) {
         checkTarget();
 
-        if (findTab(trigger) instanceof JmixViewTab savedTab) {
-            new HashSet<>(target.getTabs()).stream()
-                    .filter(tab -> !tab.equals(savedTab) && tab instanceof JmixViewTab)
-                    .forEach(tab -> MainTabSheetUtils.closeTab(((JmixViewTab) tab)));
-        } else {
-            log.warn("Cannot close other tabs because the component is not a '{}'",
-                    JmixViewTab.class.getName());
+        Tab savedTab = findTab(trigger);
+        if (savedTab == null) {
+            log.warn("Cannot close other tabs because cannot find trigger tab");
         }
+
+        List<Views.ViewStack> viewStacks = target.getTabsStream()
+                .filter(tab -> !tab.equals(savedTab))
+                .map(tab -> target.getComponent(tab))
+                .map(this::asViewStack)
+                .toList();
+
+        closeViewStacks(viewStacks);
     }
 }

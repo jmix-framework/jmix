@@ -16,10 +16,7 @@
 
 package io.jmix.samples.rest.service;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.validation.CustomValidationException;
 import io.jmix.samples.rest.controller.CustomHttpClientErrorException;
@@ -293,5 +290,10 @@ public class RestTestServiceBean implements RestTestService {
     @Override
     public String overloadedMethodWithOptionalArgs(String arg1, String arg2) {
         return "two args";
+    }
+
+    @Override
+    public FileRef fileRefMethod(FileRef fileRef) {
+        return fileRef;
     }
 }

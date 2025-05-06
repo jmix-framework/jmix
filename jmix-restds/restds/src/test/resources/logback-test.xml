@@ -26,6 +26,7 @@
     </root>
 
     <logger name="io.jmix.restds" level="TRACE"/>
+    <logger name="io.jmix.restds.impl.service" level="DEBUG"/>
     <logger name="io.jmix.core.datastore" level="DEBUG"/>
     <logger name="io.jmix.core.AccessLogger" level="DEBUG"/>
 

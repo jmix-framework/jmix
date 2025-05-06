@@ -23,6 +23,7 @@ import com.google.gson.JsonParser;
 import io.jmix.core.Entity;
 import io.jmix.core.EntitySerialization;
 import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.rest.transform.JsonTransformationDirection;
@@ -60,21 +61,21 @@ public class RestParseUtils {
     @Nullable
     public Object toObject(Type type, @Nullable String value, @Nullable String modelVersion) throws ParseException {
         if (value == null) return null;
-        Class clazz;
-        Class argumentTypeClass = null;
+        Class<?> clazz;
+        Class<?> argumentTypeClass = null;
         if (type instanceof Class) {
-            clazz = (Class) type;
+            clazz = (Class<?>) type;
         } else if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
             if (actualTypeArguments.length > 0) {
                 if (actualTypeArguments[0] instanceof Class) {
-                    argumentTypeClass = (Class) actualTypeArguments[0];
+                    argumentTypeClass = (Class<?>) actualTypeArguments[0];
                 } else if (actualTypeArguments[0] instanceof ParameterizedType) {
-                    argumentTypeClass = (Class) ((ParameterizedType) actualTypeArguments[0]).getRawType();
+                    argumentTypeClass = (Class<?>) ((ParameterizedType) actualTypeArguments[0]).getRawType();
                 }
             }
-            clazz = (Class) parameterizedType.getRawType();
+            clazz = (Class<?>) parameterizedType.getRawType();
         } else {
             throw new RuntimeException("Cannot handle the method argument with type " + type.getTypeName());
         }
@@ -121,7 +122,12 @@ public class RestParseUtils {
         if (Long.class == clazz || Long.TYPE == clazz) return datatypeRegistry.get(Long.class).parse(value);
         if (Double.class == clazz || Double.TYPE == clazz
                 || Float.class == clazz || Float.TYPE == clazz) return datatypeRegistry.get(Double.class).parse(value);
-        if (UUID.class == clazz) return UUID.fromString(value);
+
+        Datatype<?> datatype = datatypeRegistry.find(clazz);
+        if (datatype != null) {
+            return datatype.parse(value);
+        }
+
         if (Entity.class.isAssignableFrom(clazz)) {
             return entitySerializationAPI.entityFromJson(value, metadata.getClass(clazz));
         }

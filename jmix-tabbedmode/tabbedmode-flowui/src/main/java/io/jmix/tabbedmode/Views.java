@@ -374,7 +374,32 @@ public class Views {
             routeParameters = routeSupport.createRouteParameters(param, value);
         }
 
-        return getRouteConfiguration().getUrl(view.getClass(), routeParameters);
+        Class<? extends Component> navigationTarget = view.getClass();
+        if (getRouteConfiguration().isRouteRegistered(navigationTarget)) {
+            return getRouteConfiguration().getUrl(navigationTarget, routeParameters);
+        } else if (routeParameters.getParameterNames().isEmpty() && isRootView(view)) {
+            // Happens if root view is hot-deployed
+            return resolveLocationBaseString(view);
+        } else {
+            throw new NotFoundException(String.format(
+                    "No route found for the given navigation target '%s' and parameters '%s'",
+                    navigationTarget.getName(), routeParameters));
+        }
+    }
+
+    protected boolean isRootView(Component component) {
+        Optional<Route> annotation = ViewControllerUtils.findAnnotation(component, Route.class);
+        return annotation.isPresent()
+                && UI.class.isAssignableFrom(annotation.get().layout())
+                || UiComponentUtils.sameId(component, getMainViewId())
+                || UiComponentUtils.sameId(component, getLoginViewId());
+    }
+
+    protected String resolveLocationBaseString(View<?> view) {
+        Optional<Route> annotation = ViewControllerUtils.findAnnotation(view, Route.class);
+        return annotation.isPresent()
+                ? annotation.get().value()
+                : getEmptyLocationString(view, null);
     }
 
     protected String getEmptyLocationString(View<?> view, @Nullable ViewOpeningContext context) {

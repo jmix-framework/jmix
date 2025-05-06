@@ -58,7 +58,7 @@ public class ViewNavigationSupport {
 
     @SuppressWarnings("unchecked")
     public <T extends Component> Optional<T> findCurrentNavigationTarget(Class<? extends T> navigationTarget) {
-        // CAUTION: copied from com.vaadin.flow.component.UI.findCurrentNavigationTarget [last update Vaadin 24.6.3]
+        // CAUTION: copied from com.vaadin.flow.component.UI.findCurrentNavigationTarget [last update Vaadin 24.7.3]
         List<HasElement> activeRouterTargetsChain = UI.getCurrent().getInternals()
                 .getActiveRouterTargetsChain();
         for (HasElement element : activeRouterTargetsChain) {

@@ -60,7 +60,7 @@ import { TabSheetMixin } from '@vaadin/tabsheet/src/vaadin-tabsheet-mixin.js';
  * @mixes ThemableMixin
  * @mixes ControllerMixin
  */
-// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.6.3]
+// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.7.3]
 class JmixTabSheet extends TabSheetMixin(ThemableMixin(ElementMixin(ControllerMixin(PolymerElement)))) {
     static get template() {
         return html`

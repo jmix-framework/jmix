@@ -21,7 +21,7 @@ import { ComboBoxPlaceholder } from '@vaadin/combo-box/src/vaadin-combo-box-plac
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.6.3]
+// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.7.3]
 class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBoxMixin(ThemableMixin(PolymerElement))) {
     static get is() {
         return 'jmix-multi-select-combo-box-internal';
@@ -147,6 +147,12 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
      */
     get _tagNamePrefix() {
         return 'vaadin-multi-select-combo-box';
+    }
+
+    constructor() {
+        super();
+
+        this.addEventListener('custom-value-set', this.__onCustomValueSet.bind(this));
     }
 
     /**
@@ -363,6 +369,19 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
     /**
      * Override method inherited from the combo-box
      * to not commit an already selected item again
+     * after closing overlay on outside click.
+     * @protected
+     * @override
+     */
+    _onClosed() {
+        this._ignoreCommitValue = true;
+
+        super._onClosed();
+    }
+
+    /**
+     * Override method inherited from the combo-box
+     * to not commit an already selected item again
      * on blur, which would result in un-selecting.
      * @protected
      * @override
@@ -372,7 +391,7 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
             this._ignoreCommitValue = false;
 
             // Reset internal combo-box state
-            this.selectedItem = null;
+            this.clear();
             this._inputElementValue = '';
             return;
         }
@@ -440,6 +459,15 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
         }
 
         super.clearCache();
+    }
+
+    /** @private */
+    __onCustomValueSet(event) {
+        // Prevent setting custom value on input blur or outside click,
+        // so it can be only committed explicitly by pressing Enter.
+        if (this._ignoreCommitValue) {
+            event.stopImmediatePropagation();
+        }
     }
 
     /**

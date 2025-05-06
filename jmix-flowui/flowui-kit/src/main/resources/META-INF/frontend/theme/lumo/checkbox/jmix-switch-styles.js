@@ -216,6 +216,9 @@ registerStyles('jmix-switch',
             opacity: 0.4;
         }
 
+        /* todo test me */
+        /* Required */
+        
         :host([required]) [part='required-indicator'] {
             position: absolute;
             top: var(--lumo-space-xs);

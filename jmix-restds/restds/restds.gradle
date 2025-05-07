@@ -23,6 +23,7 @@ archivesBaseName = 'jmix-restds'
 dependencies {
     api project(':core')
     compileOnly project(':security')
+    compileOnly project(':oidc')
 
     api 'org.springframework.security:spring-security-core'
     api 'org.springframework.security:spring-security-config'

@@ -22,6 +22,7 @@ import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.details.Details;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.data.SupportsValueSource;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import org.springframework.lang.Nullable;
 
@@ -45,8 +46,11 @@ public class UiTestIdManagerImpl implements UiTestIdManager {
             return UiTestIdUtil.getCalculatedTestId(listDataComponent.getItems(), component);
         }
 
-        if (component instanceof HasLabel hasLabel && hasLabel.getLabel() != null) {
-            return UiTestIdUtil.getNormalizedTestId(hasLabel.getLabel(), component);
+        if (component instanceof HasLabel hasLabel) {
+            String label = ComponentUtils.getLabel(hasLabel);
+            if (label != null) {
+                return UiTestIdUtil.getNormalizedTestId(hasLabel.getLabel(), component);
+            }
         }
 
         if (component instanceof HasText hasText && hasText.getText() != null) {

@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-import './jmix-switch-styles.js';
 import '../../../src/checkbox/jmix-switch.js'
+import './jmix-switch-styles.js';

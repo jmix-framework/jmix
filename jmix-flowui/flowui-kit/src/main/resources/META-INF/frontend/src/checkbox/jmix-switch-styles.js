@@ -61,12 +61,16 @@ export const switchStyles = css`
         display: inline-flex;
         align-items: center;
         align-self: anchor-center;
-        
-        width: calc(var(--jmix-switch-size, 2.75em) * 2);
-        height: var(--jmix-switch-size, 2.75em);
 
-        margin: var(--lumo-space-xs);
+        width: calc(var(--jmix-switch-size, calc(2.75em / 2)) * 2);
+        height: var(--jmix-switch-size, calc(2.75em / 2));
         
+        --_input-border-width: var(--vaadin-input-field-border-width, 0);
+        --_input-border-color: var(--vaadin-input-field-border-color, transparent);
+        box-shadow: inset 0 0 0 var(--_input-border-width, 0) var(--_input-border-color);
+    }
+    
+    [part='switch'] .checked-indicator {
         --_input-border-width: var(--vaadin-input-field-border-width, 0);
         --_input-border-color: var(--vaadin-input-field-border-color, transparent);
         box-shadow: inset 0 0 0 var(--_input-border-width, 0) var(--_input-border-color);
@@ -81,38 +85,5 @@ export const switchStyles = css`
         -webkit-appearance: none;
         width: initial;
         height: initial;
-    }
-
-    @media (forced-colors: active) {
-        [part='switch'] {
-            outline: 1px solid;
-            outline-offset: -1px;
-        }
-        
-        [part='switch'] .checked-indicator {
-            outline: 1px solid;
-            outline-offset: -1px;
-            border-radius: inherit;
-            background-color: buttontext;
-        }
-
-        :host([disabled]) [part='switch'],
-        :host([disabled]) [part='switch'] .checked-indicator {
-            outline-color: GrayText;
-        }
-
-        :host(:is([checked])) [part='switch'] {
-            background: highlight;
-        }
-
-        :host(:is([checked])) [part='switch'] .checked-indicator {
-            outline: 1px solid;
-            outline-offset: -1px;
-            border-radius: inherit;
-        }
-
-        :host([focused]) [part='switch'] {
-            outline-width: 2px;
-        }
     }
 `;

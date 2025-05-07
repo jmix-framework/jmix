@@ -44,10 +44,7 @@ public class Switch extends AbstractSinglePropertyField<Switch, Boolean>
 
     public Switch() {
         super("checked", false, false);
-        initComponent();
-    }
 
-    protected void initComponent() {
         getElement().addPropertyChangeListener("checked", "checked-changed",
                 __ -> {
                 });

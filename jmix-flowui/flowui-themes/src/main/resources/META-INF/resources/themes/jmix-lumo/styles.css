@@ -77,9 +77,10 @@ html {
   /* Switch */
   --jmix-switch-background: var(--lumo-contrast-20pct);
   --jmix-switch-background-hover: var(--lumo-contrast-30pct);
-  --jmix-switch-border-radius: calc(var(--lumo-border-radius-s) * 3);
+  --jmix-switch-border-radius: calc(var(--jmix-switch-size) / 2);
 
   --jmix-switch-checked-indicator-color: var(--lumo-primary-contrast-color);
+  --jmix-switch-indicator-color: var(--lumo-primary-contrast-color);
   --jmix-switch-checked-indicator-size: calc(var(--lumo-size-m) / 2);
 
   --jmix-switch-label-color: var(--lumo-body-text-color);
@@ -90,4 +91,8 @@ html {
   --jmix-switch-disabled-checked-indicator-color: var(--lumo-contrast-30pct);
   --jmix-switch-disabled-background: var(--lumo-contrast-10pct);
   --jmix-switch-checked-disabled-background: var(--lumo-contrast-20pct)
+}
+
+[theme~="dark"] {
+  --jmix-switch-indicator-color: var(--lumo-contrast-90pct);
 }

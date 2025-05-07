@@ -19,64 +19,108 @@ package io.jmix.flowui.component.checkbox;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.delegate.CheckboxDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.checkbox.Switch;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 
-public class JmixSwitch extends Switch
-        implements SupportsValueSource<Boolean>, SupportsValidation<Boolean>,
+public class JmixSwitch extends Switch implements SupportsValueSource<Boolean>, SupportsValidation<Boolean>,
         HasRequired, ApplicationContextAware, InitializingBean {
 
-    // TODO: kd, remove all
+    protected ApplicationContext applicationContext;
+
+    protected CheckboxDelegate<JmixSwitch, Boolean, Boolean> fieldDelegate;
 
     @Override
-    public String getRequiredMessage() {
-        return "";
-    }
-
-    @Override
-    public void setRequiredMessage(String requiredMessage) {
-
-    }
-
-    @Override
-    public Registration addValidator(Validator<? super Boolean> validator) {
-        return null;
-    }
-
-    @Override
-    public void executeValidators() throws ValidationException {
-
-    }
-
-    @Override
-    public void setInvalid(boolean invalid) {
-
-    }
-
-    @Override
-    public ValueSource<Boolean> getValueSource() {
-        return null;
-    }
-
-    @Override
-    public void setValueSource(ValueSource<Boolean> valueSource) {
-
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        initComponent();
+    }
 
+    protected void initComponent() {
+        fieldDelegate = createFieldDelegate();
+    }
+
+    protected CheckboxDelegate<JmixSwitch, Boolean, Boolean> createFieldDelegate() {
+        //noinspection unchecked
+        return applicationContext.getBean(CheckboxDelegate.class, this);
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public Registration addValidator(Validator<? super Boolean> validator) {
+        return fieldDelegate.addValidator(validator);
+    }
 
+    @Override
+    public void executeValidators() throws ValidationException {
+        fieldDelegate.executeValidators();
+    }
+
+    @Override
+    protected void validate() {
+        fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public boolean isInvalid() {
+        return fieldDelegate.isInvalid();
+    }
+
+    @Override
+    public void setInvalid(boolean invalid) {
+        fieldDelegate.setInvalid(invalid);
+    }
+
+    @Nullable
+    @Override
+    public String getRequiredMessage() {
+        return fieldDelegate.getRequiredMessage();
+    }
+
+    @Override
+    public void setRequiredMessage(@Nullable String requiredMessage) {
+        fieldDelegate.setRequiredMessage(requiredMessage);
+    }
+
+    @Nullable
+    @Override
+    public ValueSource<Boolean> getValueSource() {
+        return fieldDelegate.getValueSource();
+    }
+
+    @Override
+    public void setValueSource(@Nullable ValueSource<Boolean> valueSource) {
+        fieldDelegate.setValueSource(valueSource);
+    }
+
+    @Override
+    public void setValue(Boolean value) {
+        super.setValue(BooleanUtils.toBoolean(value));
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+        super.setRequiredIndicatorVisible(requiredIndicatorVisible);
+
+        fieldDelegate.updateRequiredState();
     }
 }

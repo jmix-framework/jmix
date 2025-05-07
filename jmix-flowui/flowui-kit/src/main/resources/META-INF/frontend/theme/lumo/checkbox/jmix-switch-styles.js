@@ -67,14 +67,19 @@ registerStyles('jmix-switch',
         }
 
         [part='switch'] {
+            box-sizing: border-box;
             width: calc(var(--_switch-size) * 2);
             height: var(--_switch-size);
+
+            margin: var(--lumo-space-xs);
+
             position: relative;
             border-radius: var(--jmix-switch-border-radius, var(--lumo-border-radius-l));
             background: var(--jmix-switch-background, var(--lumo-contrast-20pct));
             transition: transform 0.2s cubic-bezier(0.12, 0.32, 0.54, 2),
             background-color 0.15s;
             cursor: var(--lumo-clickable-cursor);
+
             /* Default field border color */
             --_input-border-color: var(--vaadin-input-field-border-color, var(--lumo-contrast-50pct));
         }
@@ -93,20 +98,24 @@ registerStyles('jmix-switch',
             width: var(--jmix-switch-checked-indicator-size, calc(var(--lumo-size-m) / 2));
             height: var(--jmix-switch-checked-indicator-size, calc(var(--lumo-size-m) / 2));
             border-radius: 50%;
-            
-            color: var(--jmix-switch-checked-indicator-color, var(--lumo-primary-contrast-color));
-            background-color: var(--lumo-primary-contrast-color);
+
+            background-color: var(--jmix-switch-indicator-color, var(--lumo-primary-contrast-color));
             border: none;
+            box-sizing: border-box;
             
             margin-inline-start: calc(var(--lumo-space-xs) / 2);
             transform: none;
 
             opacity: 1;
             transition: margin-inline-start 0.2s ease;
+
+            /* Default field border color */
+            --_input-border-color: var(--vaadin-input-field-border-color, var(--lumo-contrast-50pct));
         }
 
         :host([checked]) [part='switch'] .checked-indicator {
             margin-inline-start: calc(100% - var(--jmix-switch-checked-indicator-size, calc(var(--lumo-size-m) / 2)) - calc(var(--lumo-space-xs) / 2));
+            background-color: var(--jmix-switch-checked-indicator-color, var(--lumo-primary-contrast-color));
         }
 
         /* Readonly */
@@ -122,7 +131,8 @@ registerStyles('jmix-switch',
         }
 
         :host([readonly]:not([checked])) [part='switch'] .checked-indicator {
-            box-sizing: border-box;
+            background: transparent;
+            box-shadow: none;
             border-radius: inherit;
             border: var(--vaadin-input-field-readonly-border, 1px dashed var(--lumo-contrast-50pct));
         }
@@ -155,12 +165,7 @@ registerStyles('jmix-switch',
             background-color: var(--jmix-switch-disabled-background, var(--lumo-contrast-10pct));
         }
 
-        :host([disabled][checked]) [part='switch'] {
-            background-color: var(--jmix-switch-checked-disabled-background, var(--lumo-contrast-20pct));
-        }
-
         :host([disabled]) [part='switch'] .checked-indicator {
-            color: var(--_disabled-checked-indicator-color);
             background-color: var(--_disabled-checked-indicator-color);
         }
 
@@ -175,6 +180,7 @@ registerStyles('jmix-switch',
         }
 
         /* Used for activation "halo" */
+        
         [part='switch']::after {
             position: absolute;
             content: "";
@@ -197,6 +203,7 @@ registerStyles('jmix-switch',
         }
 
         /* Disable hover for touch devices */
+        
         @media (pointer: coarse) {
             /* prettier-ignore */
             :host(:not([checked]):not([disabled]):not([readonly]):not([invalid]):hover) [part='switch'] {
@@ -216,7 +223,45 @@ registerStyles('jmix-switch',
             opacity: 0.4;
         }
 
-        /* todo test me */
+        @media (prefers-reduced-motion: reduce) {
+            [part='switch']::after {
+                content: none;
+            }
+        }
+
+        @media (forced-colors: active) {
+            [part='switch'] {
+                outline: 1px solid;
+                outline-offset: -1px;
+            }
+
+            [part='switch'] .checked-indicator {
+                outline: 1px solid;
+                outline-offset: -1px;
+                border-radius: inherit;
+                background-color: buttontext;
+            }
+
+            :host([disabled]) [part='switch'],
+            :host([disabled]) [part='switch'] .checked-indicator {
+                outline-color: GrayText;
+            }
+
+            :host(:is([checked])) [part='switch'] {
+                background: highlight;
+            }
+
+            :host(:is([checked])) [part='switch'] .checked-indicator {
+                outline: 1px solid;
+                outline-offset: -1px;
+                border-radius: inherit;
+            }
+
+            :host([focused]) [part='switch'] {
+                outline-width: 2px;
+            }
+        }
+
         /* Required */
         
         :host([required]) [part='required-indicator'] {
@@ -230,7 +275,7 @@ registerStyles('jmix-switch',
             left: var(--lumo-space-xs);
         }
 
-        :host([required]) [part='required-indicator'] .checked-indicator {
+        :host([required]) [part='required-indicator']::after {
             content: var(--lumo-required-field-indicator, '\\2022');
             transition: opacity 0.2s;
             color: var(--lumo-required-field-indicator-color, var(--lumo-primary-text-color));
@@ -262,7 +307,7 @@ registerStyles('jmix-switch',
             --_focus-ring-color: var(--lumo-error-color-50pct);
         }
 
-        :host([invalid]) [part='required-indicator'] .checked-indicator {
+        :host([invalid]) [part='required-indicator']::after {
             color: var(--lumo-required-field-indicator-color, var(--lumo-error-text-color));
         }
 
@@ -279,8 +324,8 @@ registerStyles('jmix-switch',
             padding-inline-start: var(--lumo-space-xs);
         }
 
-        :host([has-error-message]) [part='error-message'] .checked-indicator,
-        :host([has-helper]) [part='helper-text'] .checked-indicator {
+        :host([has-error-message]) [part='error-message']::after,
+        :host([has-helper]) [part='helper-text']::after {
             content: '';
             display: block;
             height: 0.4em;
@@ -313,5 +358,8 @@ registerStyles('jmix-switch',
             padding-bottom: 0;
         }
     `,
-    {moduleId: 'lumo-switch' }
+
+    // TODO: kd, workaround for https://github.com/vaadin/web-components/issues/2176
+    //  rename to 'lumo-switch' after vaadin style order support
+    {moduleId: 'jmix-lumo-switch' }
 );

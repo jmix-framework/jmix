@@ -49,7 +49,7 @@ public class UiTestIdManagerImpl implements UiTestIdManager {
         if (component instanceof HasLabel hasLabel) {
             String label = ComponentUtils.getLabel(hasLabel);
             if (label != null) {
-                return UiTestIdUtil.getNormalizedTestId(hasLabel.getLabel(), component);
+                return UiTestIdUtil.getNormalizedTestId(label, component);
             }
         }
 

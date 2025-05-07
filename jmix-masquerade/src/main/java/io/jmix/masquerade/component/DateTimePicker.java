@@ -68,7 +68,8 @@ public class DateTimePicker extends AbstractField<DateTimePicker> {
                 .shouldBe(VISIBLE)
                 .shouldBe(ENABLED)
                 .shouldNotBe(READONLY)
-                .setValue(dateValue);
+                .setValue(dateValue)
+                .pressEnter();
 
         return this;
     }
@@ -84,7 +85,8 @@ public class DateTimePicker extends AbstractField<DateTimePicker> {
                 .shouldBe(VISIBLE)
                 .shouldBe(ENABLED)
                 .shouldNotBe(READONLY)
-                .setValue(timeValue);
+                .setValue(timeValue)
+                .pressEnter();
 
         return this;
     }

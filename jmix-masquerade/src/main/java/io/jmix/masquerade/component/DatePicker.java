@@ -54,7 +54,8 @@ public class DatePicker extends AbstractField<DatePicker> {
                 .shouldBe(VISIBLE)
                 .shouldBe(ENABLED)
                 .shouldNotBe(READONLY)
-                .setValue(value);
+                .setValue(value)
+                .pressEnter();
 
         return this;
     }

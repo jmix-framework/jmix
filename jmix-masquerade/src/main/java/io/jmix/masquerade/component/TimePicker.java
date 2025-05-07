@@ -53,7 +53,8 @@ public class TimePicker extends AbstractField<TimePicker> {
                 .shouldBe((VISIBLE))
                 .shouldBe(ENABLED)
                 .shouldNotBe(READONLY)
-                .setValue(value);
+                .setValue(value)
+                .pressEnter();
 
         return this;
     }

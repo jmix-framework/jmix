@@ -35,6 +35,11 @@ import elemental.json.JsonValue;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.UiEventPublisher;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.sys.autowire.EventListenerDependencyInjector;
+import io.jmix.flowui.sys.autowire.FragmentAutowireContext;
+import io.jmix.flowui.sys.autowire.ViewAutowireContext;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
@@ -55,10 +60,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component("tabmod_JmixUI")
@@ -83,6 +85,7 @@ public class JmixUI extends UI {
     protected RedirectHandler redirectHandler;
     protected UiEventPublisher uiEventPublisher;
     protected ViewNavigationSupport viewNavigationSupport;
+    protected EventListenerDependencyInjector eventListenerDependencyInjector;
 
     protected View<?> topLevelView;
 
@@ -587,12 +590,36 @@ public class JmixUI extends UI {
             prevUi.close();
         });
 
-        uiEventPublisher().publishEvent(new UIRefreshEvent(this));
+        attachApplicationListeners();
+
+        uiEventPublisher().publishEventForCurrentUI(new UIRefreshEvent(this));
 
         // If requested location differs, navigate to a new view
         String locationString = findCurrentViewLocationString(this);
         if (!location.getPath().equals(locationString)) {
             handleNavigationInternal(location, navigationState, trigger);
+        }
+    }
+
+    protected void attachApplicationListeners() {
+        getTopLevelViewOptional()
+                .ifPresent(this::attachApplicationListeners);
+
+        Collection<View<?>> allViews = views.getOpenedViews(this).getAll();
+        for (View<?> view : allViews) {
+            attachApplicationListeners(view);
+        }
+    }
+
+    protected void attachApplicationListeners(View<?> view) {
+        EventListenerDependencyInjector listenerInjector = eventListenerDependencyInjector();
+        listenerInjector.autowire(new ViewAutowireContext(view));
+
+        Collection<Component> components = UiComponentUtils.getComponents(view);
+        for (Component component : components) {
+            if (component instanceof Fragment<?> fragment) {
+                listenerInjector.autowire(new FragmentAutowireContext(fragment));
+            }
         }
     }
 
@@ -756,6 +783,7 @@ public class JmixUI extends UI {
         views.open(topLevelView, ViewOpenMode.ROOT);
     }
 
+    // TODO: gg, remove?
     protected boolean isAnonymousAuthentication() {
         Authentication authentication = SecurityContextHelper.getAuthentication();
         return authentication == null ||
@@ -813,5 +841,25 @@ public class JmixUI extends UI {
         }
 
         return viewNavigationSupport;
+    }
+
+    protected EventListenerDependencyInjector eventListenerDependencyInjector() {
+        if (eventListenerDependencyInjector == null) {
+            eventListenerDependencyInjector = applicationContext.getBean(EventListenerDependencyInjector.class);
+        }
+
+        return eventListenerDependencyInjector;
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        log.info("onAttach: '{}'", getUIId());
+        super.onAttach(attachEvent);
+    }
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent) {
+        log.info("onDetach: '{}'", getUIId());
+        super.onDetach(detachEvent);
     }
 }

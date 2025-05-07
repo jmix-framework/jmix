@@ -63,7 +63,7 @@ public interface UnconstrainedDataManager {
     long getCount(LoadContext<?> context);
 
     /**
-     * Saves a collection of entity instances to their data stores.
+     * Saves entity instances to their data stores.
      *
      * @param context {@link SaveContext} object, containing entities and other information
      * @return set of saved instances
@@ -71,26 +71,39 @@ public interface UnconstrainedDataManager {
     EntitySet save(SaveContext context);
 
     /**
-     * Saves entities to their data stores.
+     * Saves entities to their data stores and reloads them to return the saved instances.
      *
      * @param entities entities to save
      * @return set of saved instances
+     *
+     * @see #saveWithoutReload(Object...)
      */
     EntitySet save(Object... entities);
 
     /**
-     * Saves a collection of entities to their data stores.
+     * Saves entities to their data stores.
+     *
+     * @param entities entities to save
+     */
+    void saveWithoutReload(Object... entities);
+
+    /**
+     * Saves a collection of entities to their data stores and reloads them to return the saved instances.
      *
      * @param entities entities to save
      * @return set of saved instances
+     *
+     * @see #saveWithoutReload(Object...)
      */
     EntitySet saveAll(Collection<?> entities);
 
     /**
-     * Saves the entity to its data store.
+     * Saves the entity to its data store and reloads it to return the saved instance.
      *
      * @param entity entity instance
      * @return saved instance
+     *
+     * @see #saveWithoutReload(Object...)
      */
     <E> E save(E entity);
 

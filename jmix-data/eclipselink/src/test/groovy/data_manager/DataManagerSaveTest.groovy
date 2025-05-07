@@ -32,7 +32,7 @@ import test_support.entity.transient_dto.TestDto
 import test_support.entity.transient_dto.TestEntity
 import test_support.listeners.TestOrderChangedEventListener
 
-class DataManagerCommitTest extends DataSpec {
+class DataManagerSaveTest extends DataSpec {
 
     @Autowired
     DataManager dataManager
@@ -216,6 +216,32 @@ class DataManagerCommitTest extends DataSpec {
         then:
         saved2.contains(customer1)
         saved2.contains(customer2)
+    }
+
+    def "save without reload"() {
+        def customer1 = dataManager.create(Customer)
+        def customer2 = dataManager.create(Customer)
+        def order = dataManager.create(Order)
+
+        when:
+        dataManager.saveWithoutReload([customer1, customer2], order)
+
+        then:
+        dataManager.load(Id.of(customer1)).one() == customer1
+        dataManager.load(Id.of(customer2)).one() == customer2
+        dataManager.load(Id.of(order)).one() == order
+    }
+
+    def "save collection without reload"() {
+        def customer1 = dataManager.create(Customer)
+        def customer2 = dataManager.create(Customer)
+
+        when:
+        dataManager.saveWithoutReload([customer1, customer2])
+
+        then:
+        dataManager.load(Id.of(customer1)).one() == customer1
+        dataManager.load(Id.of(customer2)).one() == customer2
     }
 
     def "saving entity with DTO attribute dependent on datatype attribute doesn't erase it"(){

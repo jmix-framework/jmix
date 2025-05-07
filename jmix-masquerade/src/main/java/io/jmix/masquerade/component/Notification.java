@@ -16,6 +16,7 @@
 
 package io.jmix.masquerade.component;
 
+import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
 import io.jmix.masquerade.condition.*;
@@ -47,25 +48,25 @@ public class Notification extends Composite<Notification> {
     }
 
     @Override
-    public boolean check(SpecificCondition condition) {
+    public CheckResult check(SpecificCondition condition) {
         if (condition instanceof NotificationTheme notificationTheme) {
             shouldHave(domAttribute("theme", notificationTheme.getValue().getThemeName()));
-            return true;
+            return CheckResult.accepted();
         } else if (condition instanceof NotificationPosition notificationPosition) {
             shouldHave(domAttribute("slot", notificationPosition.getValue().getSlotName()));
-            return true;
+            return CheckResult.accepted();
         } else if (condition instanceof NotificationTitle notificationTitle) {
             getTitleElement().shouldHave(exactText(notificationTitle.getValue()));
-            return true;
+            return CheckResult.accepted();
         } else if (condition instanceof NotificationTitleContains notificationTitleContains) {
             getTitleElement().shouldHave(text(notificationTitleContains.getValue()));
-            return true;
+            return CheckResult.accepted();
         } else if (condition instanceof NotificationMessage notificationMessage) {
             getMessageElement().shouldHave(exactText(notificationMessage.getValue()));
-            return true;
+            return CheckResult.accepted();
         } else if (condition instanceof NotificationMessageContains notificationMessageContains) {
             getMessageElement().shouldHave(text(notificationMessageContains.getValue()));
-            return true;
+            return CheckResult.accepted();
         }
 
         return super.check(condition);

@@ -16,6 +16,7 @@
 
 package io.jmix.masquerade.component;
 
+import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.collect.Sets;
@@ -90,13 +91,25 @@ public abstract class AbstractOverlay<T extends AbstractOverlay<T, P>, P extends
     }
 
     @Override
-    public boolean check(SpecificCondition condition) {
+    public CheckResult check(SpecificCondition condition) {
         if (condition instanceof VisibleItems visibleItems) {
-            return CollectionUtils.isEqualCollection(getVisibleItems(), visibleItems.getValue());
+            List<String> currentVisibleItems = getVisibleItems();
+            return new CheckResult(
+                    CollectionUtils.isEqualCollection(currentVisibleItems, visibleItems.getValue()),
+                    currentVisibleItems
+            );
         } else if (condition instanceof VisibleItemsCount visibleItemsCount) {
-            return getVisibleItems().size() == visibleItemsCount.getValue();
+            List<String> currentVisibleItems = getVisibleItems();
+            return new CheckResult(
+                    currentVisibleItems.size() == visibleItemsCount.getValue(),
+                    currentVisibleItems
+            );
         } else if (condition instanceof VisibleItemsContains visibleItemsContains) {
-            return Sets.newHashSet(getVisibleItems()).containsAll(visibleItemsContains.getValue());
+            List<String> currentVisibleItems = getVisibleItems();
+            return new CheckResult(
+                    Sets.newHashSet(currentVisibleItems).containsAll(visibleItemsContains.getValue()),
+                    currentVisibleItems
+            );
         }
 
         return super.check(condition);

@@ -16,6 +16,7 @@
 
 package io.jmix.masquerade.component;
 
+import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
@@ -40,14 +41,14 @@ public abstract class AbstractCheckbox<T extends AbstractComponent<T>> extends A
     }
 
     @Override
-    public boolean check(SpecificCondition condition) {
+    public CheckResult check(SpecificCondition condition) {
         if (condition instanceof Label labelCondition) {
             String expectedValue = Strings.nullToEmpty(labelCondition.getValue());
 
             getLabelDelegate()
                     .shouldBe(VISIBLE)
                     .shouldHave(Condition.exactText(expectedValue));
-            return true;
+            return CheckResult.accepted();
         }
 
         return super.check(condition);

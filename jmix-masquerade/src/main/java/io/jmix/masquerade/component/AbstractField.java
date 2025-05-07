@@ -16,6 +16,7 @@
 
 package io.jmix.masquerade.component;
 
+import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
@@ -40,7 +41,7 @@ public abstract class AbstractField<T extends AbstractField<T>> extends Abstract
     }
 
     @Override
-    public boolean check(SpecificCondition condition) {
+    public CheckResult check(SpecificCondition condition) {
         SelenideElement inputImpl = getInputDelegate();
 
         if (condition instanceof Value valueCondition) {
@@ -61,7 +62,7 @@ public abstract class AbstractField<T extends AbstractField<T>> extends Abstract
             throw new UnsupportedConditionException(condition, this);
         }
 
-        return true;
+        return CheckResult.accepted();
     }
 
     /**

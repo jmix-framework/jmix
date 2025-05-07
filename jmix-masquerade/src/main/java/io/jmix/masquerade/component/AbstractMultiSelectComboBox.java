@@ -16,6 +16,7 @@
 
 package io.jmix.masquerade.component;
 
+import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
@@ -91,13 +92,24 @@ public abstract class AbstractMultiSelectComboBox<T extends AbstractMultiSelectC
     }
 
     @Override
-    public boolean check(SpecificCondition condition) {
+    public CheckResult check(SpecificCondition condition) {
         if (condition instanceof SelectedItems selectedItemsCondition) {
-            return CollectionUtils.isEqualCollection(getValue(), selectedItemsCondition.getValue());
+            List<String> currentValue = getValue();
+            return new CheckResult(
+                    CollectionUtils.isEqualCollection(currentValue, selectedItemsCondition.getValue()), currentValue
+            );
         } else if (condition instanceof SelectedItemsContains selectedItemsContainsCondition) {
-            return Sets.newHashSet(getValue()).containsAll(selectedItemsContainsCondition.getValue());
+            List<String> currentValue = getValue();
+            return new CheckResult(
+                    Sets.newHashSet(currentValue).containsAll(selectedItemsContainsCondition.getValue()),
+                    currentValue
+            );
         } else if (condition instanceof SelectedItemsCount selectedItemsCountCondition) {
-            return getValue().size() == selectedItemsCountCondition.getValue();
+            List<String> currentValue = getValue();
+            return new CheckResult(
+                    currentValue.size() == selectedItemsCountCondition.getValue(),
+                    currentValue.size()
+            );
         } else if (condition instanceof Label labelCondition) {
             String expectedValue = Strings.nullToEmpty(labelCondition.getValue());
 
@@ -108,7 +120,7 @@ public abstract class AbstractMultiSelectComboBox<T extends AbstractMultiSelectC
             throw new UnsupportedConditionException(condition, this);
         }
 
-        return true;
+        return CheckResult.accepted();
     }
 
     protected void clearValue() {

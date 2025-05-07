@@ -16,6 +16,7 @@
 
 package io.jmix.masquerade.component;
 
+import com.codeborne.selenide.CheckResult;
 import io.jmix.masquerade.condition.DateValue;
 import io.jmix.masquerade.condition.SpecificCondition;
 import org.openqa.selenium.By;
@@ -33,10 +34,10 @@ public class DatePicker extends AbstractField<DatePicker> {
     }
 
     @Override
-    public boolean check(SpecificCondition condition) {
+    public CheckResult check(SpecificCondition condition) {
         if (condition instanceof DateValue dateValue) {
             getInputDelegate().shouldHave(exactValue(dateValue.getValue()));
-            return true;
+            return CheckResult.accepted();
         }
 
         return super.check(condition);

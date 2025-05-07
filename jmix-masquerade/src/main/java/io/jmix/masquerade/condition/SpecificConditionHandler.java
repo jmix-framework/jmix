@@ -16,6 +16,8 @@
 
 package io.jmix.masquerade.condition;
 
+import com.codeborne.selenide.CheckResult;
+
 /**
  * Interface for checking {@link SpecificCondition Specific Conditions}.
  * <p>
@@ -27,7 +29,8 @@ public interface SpecificConditionHandler {
      * Checks whether the current handler matches the passed {@link SpecificCondition}.
      *
      * @param condition condition to check
-     * @return {@code true} if the current handler matches the passed {@link SpecificCondition}, {@code false} otherwise
+     * @return {@link CheckResult} that contains {@link  CheckResult.Verdict#ACCEPT} if the current handler matches the
+     * passed {@link SpecificCondition}, {@link  CheckResult.Verdict#REJECT} otherwise
      */
-    boolean check(SpecificCondition condition);
+    CheckResult check(SpecificCondition condition);
 }

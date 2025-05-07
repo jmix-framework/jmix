@@ -16,6 +16,7 @@
 
 package io.jmix.masquerade.sys;
 
+import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.SelenideElement;
 import io.jmix.masquerade.condition.DialogHeader;
 import io.jmix.masquerade.condition.SpecificCondition;
@@ -34,10 +35,10 @@ import static org.openqa.selenium.By.cssSelector;
 public abstract class DialogWindow<T extends DialogWindow<T>> extends Composite<T> {
 
     @Override
-    public boolean check(SpecificCondition condition) {
+    public CheckResult check(SpecificCondition condition) {
         if (condition instanceof DialogHeader dialogHeader) {
             getHeaderElement().shouldHave(exactText(dialogHeader.getValue()));
-            return true;
+            return CheckResult.accepted();
         }
 
         return super.check(condition);

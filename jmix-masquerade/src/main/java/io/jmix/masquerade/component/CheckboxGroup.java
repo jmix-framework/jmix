@@ -16,6 +16,7 @@
 
 package io.jmix.masquerade.component;
 
+import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.collect.Sets;
 import io.jmix.masquerade.condition.CheckedItems;
@@ -48,13 +49,25 @@ public class CheckboxGroup extends AbstractCheckbox<CheckboxGroup> {
     }
 
     @Override
-    public boolean check(SpecificCondition condition) {
+    public CheckResult check(SpecificCondition condition) {
         if (condition instanceof CheckedItems checkedItems) {
-            return CollectionUtils.isEqualCollection(getCheckboxLabelTexts(), checkedItems.getValue());
+            List<String> currentCheckboxLabelTexts = getCheckboxLabelTexts();
+            return new CheckResult(
+                    CollectionUtils.isEqualCollection(currentCheckboxLabelTexts, checkedItems.getValue()),
+                    currentCheckboxLabelTexts
+            );
         } else if (condition instanceof CheckedItemsCount checkedItemsCount) {
-            return getCheckboxLabelTexts().size() == checkedItemsCount.getValue();
+            List<String> currentCheckboxLabelTexts = getCheckboxLabelTexts();
+            return new CheckResult(
+                    currentCheckboxLabelTexts.size() == checkedItemsCount.getValue(),
+                    currentCheckboxLabelTexts
+            );
         } else if (condition instanceof CheckedItemsContains checkedItemsContains) {
-            return Sets.newHashSet(getCheckboxLabelTexts()).containsAll(checkedItemsContains.getValue());
+            List<String> currentCheckboxLabelTexts = getCheckboxLabelTexts();
+            return new CheckResult(
+                    Sets.newHashSet(currentCheckboxLabelTexts).containsAll(checkedItemsContains.getValue()),
+                    currentCheckboxLabelTexts
+            );
         }
 
         return super.check(condition);

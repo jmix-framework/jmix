@@ -16,6 +16,7 @@
 
 package io.jmix.masquerade.component;
 
+import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
@@ -53,7 +54,7 @@ public class Select extends AbstractOverlayComponent<Select, SelectOverlay> {
     }
 
     @Override
-    public boolean check(SpecificCondition condition) {
+    public CheckResult check(SpecificCondition condition) {
         if (condition instanceof Value valueCondition) {
             String expectedValue = Strings.nullToEmpty(valueCondition.getValue());
 
@@ -77,7 +78,7 @@ public class Select extends AbstractOverlayComponent<Select, SelectOverlay> {
             throw new UnsupportedConditionException(condition, this);
         }
 
-        return true;
+        return CheckResult.accepted();
     }
 
     @Override

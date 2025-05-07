@@ -16,6 +16,7 @@
 
 package io.jmix.masquerade.component;
 
+import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
@@ -45,18 +46,18 @@ public class CodeEditor extends AbstractTextInput<CodeEditor> {
     }
 
     @Override
-    public boolean check(SpecificCondition condition) {
+    public CheckResult check(SpecificCondition condition) {
         SelenideElement content = getContentDelegate();
         if (condition instanceof Value valueCondition) {
             String expectedValue = Strings.nullToEmpty(valueCondition.getValue());
 
             content.shouldHave(Condition.exactText(expectedValue));
-            return true;
+            return CheckResult.accepted();
         } else if (condition instanceof ValueContains valueContains) {
             String expectedValue = Strings.nullToEmpty(valueContains.getValue());
 
             content.shouldHave(Condition.text(expectedValue));
-            return true;
+            return CheckResult.accepted();
         }
 
         return super.check(condition);

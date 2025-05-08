@@ -74,5 +74,7 @@ public class TabbedModeLookupWindowBuilderProcessor extends LookupWindowBuilderP
     protected <V extends View<?>> void initDialog(DialogWindowBuilder<V> builder, DialogWindow<V> dialog) {
         builder.getAfterOpenListener().ifPresent(dialog::addAfterOpenListener);
         builder.getAfterCloseListener().ifPresent(dialog::addAfterCloseListener);
+        builder.getDraggedListener().ifPresent(dialog::addDraggedListener);
+        builder.getResizeListener().ifPresent(dialog::addResizeListener);
     }
 }

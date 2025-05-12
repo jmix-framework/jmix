@@ -32,6 +32,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
+/**
+ * Switch is an input field representing a binary choice, similar to {@link JmixCheckbox}.
+ */
 public class JmixSwitch extends Switch implements SupportsValueSource<Boolean>, SupportsValidation<Boolean>,
         HasRequired, ApplicationContextAware, InitializingBean {
 

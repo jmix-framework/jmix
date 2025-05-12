@@ -24,7 +24,7 @@
         <![CDATA[<html>Main view with top menu.</html>]]>
     </description>
 
-    <locMessages key="${id}.title">
+    <locMessages key="mainViewTopMenuTitle" expressionKey="${studioUtils.decapitalize(controllerName)}.title">
         <message lang="default"><![CDATA[${project.getName()} application]]></message>
     </locMessages>
 

@@ -337,6 +337,11 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
 
     /**
      * Sets whether default suggestions based on the current editor mode are enabled.
+     * <p>
+     * For example, if the {@link CodeEditorMode#JAVA} is set, then when prompted for a suggestion,
+     * the standard keywords and local variables and methods defined in the code will be suggested.
+     * <p>
+     * It is allowed to use custom {@link Suggester} with the default suggester at the same time.
      *
      * @param defaultSuggestionsEnabled whether to enable default suggestions
      */
@@ -353,8 +358,12 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
 
     /**
      * Sets whether live suggestions that are suggested while typing are enabled.
+     * <p>
+     * At least one suggester is required.
      *
      * @param liveSuggestionsEnabled whether to enable live suggestions
+     * @see #setSuggester(Suggester)
+     * @see #setDefaultSuggestionsEnabled(boolean)
      */
     public void setLiveSuggestionsEnabled(boolean liveSuggestionsEnabled) {
         getElement().setProperty("liveSuggestionsEnabled", liveSuggestionsEnabled);

@@ -83,12 +83,6 @@ public final class AutowireUtils {
     @Nullable
     public static Object findMethodTarget(Composite<?> composite, String targetId,
                                           BiFunction<Component, String, Optional<Component>> componentFinder) {
-        Component componentLayout = composite.getContent();
-        if (!UiComponentUtils.isContainer(componentLayout)) {
-            throw new IllegalStateException(composite.getClass().getSimpleName() + "'s layout composite " +
-                    "doesn't support child components");
-        }
-
         String[] elements = parse(targetId);
         if (elements.length == 1) {
             Action action = findActionCandidate(composite, targetId);

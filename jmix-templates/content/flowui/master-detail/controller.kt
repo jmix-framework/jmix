@@ -15,16 +15,21 @@ import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.Route
+import io.jmix.core.AccessManager
 import io.jmix.flowui.component.validation.ValidationErrors
 import io.jmix.core.validation.group.UiCrossFieldChecks
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext
 import io.jmix.flowui.action.SecuredBaseAction
 import io.jmix.flowui.component.UiComponentUtils
 import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%} else {%> io.jmix.flowui.component.grid.TreeDataGrid <%}%>
+import io.jmix.flowui.data.EntityValueSource
+import io.jmix.flowui.data.SupportsValueSource
 import io.jmix.flowui.kit.action.Action
 import io.jmix.flowui.kit.action.ActionPerformedEvent
 import io.jmix.flowui.kit.component.button.JmixButton
 import io.jmix.flowui.model.*
 import io.jmix.flowui.view.*
+import org.springframework.beans.factory.annotation.Autowired
 import io.jmix.flowui.view.Target
 <%if (useDataRepositories){%>import io.jmix.core.LoadContext
 import io.jmix.core.SaveContext
@@ -62,6 +67,9 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
 
     @ViewComponent
     private lateinit var detailActions: HorizontalLayout
+
+    @Autowired
+    private lateinit var accessManager: AccessManager
 
     @Subscribe
     fun onInit(event: InitEvent) {
@@ -139,13 +147,22 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
 
     private fun updateControls(editing: Boolean) {
         UiComponentUtils.getComponents(form).forEach { component ->
-            if (component is HasValueAndElement<*, *>) {
-                component.isReadOnly = !editing
+            if (component is SupportsValueSource<*>
+                && component.valueSource is EntityValueSource<*, *>
+                && component is HasValueAndElement<*, *>
+            ) {
+                component.isReadOnly = !editing || !isUpdatePermitted(component.valueSource as EntityValueSource<*, *>)
             }
         }
         detailActions.isVisible = editing
         listLayout.isEnabled = !editing
-        ${tableId}.getActions().forEach(Action::refreshState);
+        testEntitiesDataGrid.actions.forEach(Action::refreshState);
+    }
+
+    private fun isUpdatePermitted(valueSource: EntityValueSource<*, *>): Boolean {
+        return UiEntityAttributeContext(valueSource.metaPropertyPath)
+            .also { accessManager.applyRegisteredConstraints(it) }
+            .canModify()
     }
 
     private fun getViewValidation(): ViewValidation {

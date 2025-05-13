@@ -15,22 +15,26 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import io.jmix.core.AccessManager;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%} else {%> io.jmix.flowui.component.grid.TreeDataGrid <%}%>;
+import io.jmix.flowui.data.EntityValueSource;
+import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.*;
+import org.springframework.beans.factory.annotation.Autowired;
 <%if (useDataRepositories){%>
 import java.util.Collection;
 import java.util.List;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
@@ -70,6 +74,9 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     @ViewComponent
     private HorizontalLayout detailActions;
+
+    @Autowired
+    private AccessManager accessManager;
 
     @Subscribe
     public void onInit(final InitEvent event) {
@@ -147,14 +154,22 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     private void updateControls(boolean editing) {
         UiComponentUtils.getComponents(form).forEach(component -> {
-            if (component instanceof HasValueAndElement<?, ?> field) {
-                field.setReadOnly(!editing);
+            if (component instanceof SupportsValueSource<?> valueSourceComponent
+                    && valueSourceComponent.getValueSource() instanceof EntityValueSource<?, ?> entityValueSource
+                    && component instanceof HasValueAndElement<?, ?> field) {
+                field.setReadOnly(!editing || !isUpdatePermitted(entityValueSource));
             }
         });
 
         detailActions.setVisible(editing);
         listLayout.setEnabled(!editing);
         ${tableId}.getActions().forEach(Action::refreshState);
+    }
+
+    private boolean isUpdatePermitted(EntityValueSource<?, ?> valueSource) {
+        UiEntityAttributeContext context = new UiEntityAttributeContext(valueSource.getMetaPropertyPath());
+        accessManager.applyRegisteredConstraints(context);
+        return context.canModify();
     }
 
     private ViewValidation getViewValidation() {

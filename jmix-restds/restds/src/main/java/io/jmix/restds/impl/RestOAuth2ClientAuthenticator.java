@@ -17,9 +17,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Component("restds_RestOidcAuthenticator")
+@Component("restds_RestOAuth2ClientAuthenticator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class RestOidcAuthenticator implements RestAuthenticator {
+public class RestOAuth2ClientAuthenticator implements RestAuthenticator {
 
     @Autowired
     private OAuth2AuthorizedClientManager authorizedClientManager;

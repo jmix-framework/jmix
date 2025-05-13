@@ -728,10 +728,6 @@ public final class UiComponentUtils {
         return null;
     }
 
-    public static void walkComponents(View<?> view, Consumer<ViewChildrenVisitResult> viewChildrenVisitResultConsumer) {
-        __walkComponentsInternal(view, UiComponentUtils.getComponents(view), viewChildrenVisitResultConsumer, new HashSet<Component>());
-    }
-
     /**
      * Gets JavaScript function for copying a value to the clipboard. A temporary invisible
      * {@code textarea} DOM element is used for copying.
@@ -753,6 +749,15 @@ public final class UiComponentUtils {
                 """;
     }
 
+    /**
+     * @deprecated Use {@link #traverseComponents(Component, Consumer)} instead.
+     */
+    @Deprecated(since = "2.6", forRemoval = true)
+    public static void walkComponents(View<?> view, Consumer<ViewChildrenVisitResult> viewChildrenVisitResultConsumer) {
+        __walkComponentsInternal(view, UiComponentUtils.getComponents(view), viewChildrenVisitResultConsumer, new HashSet<Component>());
+    }
+
+    @Deprecated(since = "2.6", forRemoval = true)
     private static void __walkComponentsInternal(View<?> view,
                                                  Collection<Component> currentChildrenComponents,
                                                  Consumer<ViewChildrenVisitResult> callback,

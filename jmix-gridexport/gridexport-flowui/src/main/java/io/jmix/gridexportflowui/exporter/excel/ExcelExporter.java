@@ -158,9 +158,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             createFonts();
             createFormats();
 
-            List<Grid.Column<Object>> columns = dataGrid.getColumns().stream()
-                    .filter(columnFilter)
-                    .toList();
+            List<Grid.Column<Object>> columns = getColumns(dataGrid, columnFilter);
 
             int r = 0;
 
@@ -733,5 +731,36 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         if (wb instanceof SXSSFWorkbook) {
             ((SXSSFWorkbook) wb).dispose();
         }
+    }
+
+    protected List<Grid.Column<Object>> getColumns(Grid<Object> grid, Predicate<Grid.Column<Object>> columnFilter) {
+        List<Grid.Column<Object>> columns = grid.getColumns().stream()
+                .filter(columnFilter)
+                .toList();
+
+        List<Grid.Column<Object>> allColumns = getOrderedColumns(grid);
+        if (allColumns.isEmpty()) {
+            return columns;
+        }
+
+        return allColumns.stream()
+                .filter(columns::contains)
+                .toList();
+    }
+
+    /**
+     * Returns a list of all columns (including those hidden by security) in the correct order for Jmix extensions
+     * of {@link Grid}. Otherwise, it returns {@link Grid#getColumns()}.
+     *
+     * @param grid grid from which to get all columns
+     * @return all (with hidden by security) columns list that has correct order
+     */
+    protected List<Grid.Column<Object>> getOrderedColumns(Grid<Object> grid) {
+        if (grid instanceof DataGrid<Object> dataGrid) {
+            return dataGrid.getAllColumns();
+        } else if (grid instanceof TreeDataGrid<Object> treeDataGrid) {
+            return treeDataGrid.getAllColumns();
+        }
+        return grid.getColumns();
     }
 }

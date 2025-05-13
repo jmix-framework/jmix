@@ -4107,6 +4107,10 @@
                 <xs:attribute name="textWrap" type="xs:boolean"/>
                 <xs:attribute name="useSoftTabs" type="xs:boolean"/>
 
+                <xs:attribute name="defaultSuggestionsEnabled" type="xs:boolean"/>
+                <xs:attribute name="liveSuggestionsEnabled" type="xs:boolean"/>
+                <xs:attribute name="suggestOn" type="xs:string"/>
+
                 <xs:attribute name="mode" type="codeEditorMode"/>
                 <xs:attribute name="theme" type="codeEditorTheme"/>
 

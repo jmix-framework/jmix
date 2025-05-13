@@ -226,7 +226,7 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                     resultParameters = Maps.newHashMap(ImmutableMap.of("entityIds", ids));
                 } else {
                     resultQuery = String.format("select e from %s e", entityName);
-                    resultParameters = Collections.emptyMap();
+                    resultParameters = new HashMap<>();
                 }
             }
         }

@@ -75,24 +75,14 @@ html {
   --jmix-simple-pagination-gap: 0.3em;
 
   /* Switch */
-  --jmix-switch-background: var(--lumo-contrast-20pct);
-  --jmix-switch-background-hover: var(--lumo-contrast-30pct);
-  --jmix-switch-border-radius: calc(var(--jmix-switch-size) / 2);
-
-  --jmix-switch-checked-indicator-color: var(--lumo-primary-contrast-color);
+  --jmix-switch-checked-indicator-color: var(--jmix-switch-indicator-color);
   --jmix-switch-indicator-color: var(--lumo-primary-contrast-color);
   --jmix-switch-checked-indicator-size: calc(var(--lumo-size-m) / 2);
 
-  --jmix-switch-label-color: var(--lumo-body-text-color);
-  --jmix-switch-label-font-size: var(--lumo-font-size-m);
-  --jmix-switch-label-padding: var(--lumo-space-xs) var(--lumo-space-s) var(--lumo-space-xs) var(--lumo-space-xs);
   --jmix-switch-size: calc(var(--lumo-size-l) / 2);
-
-  --jmix-switch-disabled-checked-indicator-color: var(--lumo-contrast-30pct);
-  --jmix-switch-disabled-background: var(--lumo-contrast-10pct);
-  --jmix-switch-checked-disabled-background: var(--lumo-contrast-20pct)
 }
 
 [theme~="dark"] {
+  --jmix-switch-checked-indicator-color: var(--lumo-primary-contrast-color);
   --jmix-switch-indicator-color: var(--lumo-contrast-90pct);
 }

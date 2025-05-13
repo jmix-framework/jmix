@@ -37,6 +37,7 @@ registerStyles('jmix-switch',
             user-select: none;
             cursor: default;
             outline: none;
+            
             --_switch-size: var(--jmix-switch-size, calc(var(--lumo-size-l) / 2));
             --_focus-ring-color: var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
             --_focus-ring-width: var(--vaadin-focus-ring-width, 2px);
@@ -74,7 +75,7 @@ registerStyles('jmix-switch',
             margin: var(--lumo-space-xs);
 
             position: relative;
-            border-radius: var(--jmix-switch-border-radius, var(--lumo-border-radius-l));
+            border-radius: var(--jmix-switch-border-radius, calc(var(--jmix-switch-size) / 2));
             background: var(--jmix-switch-background, var(--lumo-contrast-20pct));
             transition: transform 0.2s cubic-bezier(0.12, 0.32, 0.54, 2),
             background-color 0.15s;
@@ -223,6 +224,7 @@ registerStyles('jmix-switch',
             opacity: 0.4;
         }
 
+        /* Must be defined in the Lumo theme in order to override the default styles */
         @media (prefers-reduced-motion: reduce) {
             [part='switch']::after {
                 content: none;

@@ -43,7 +43,7 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.virtuallist.VirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.kit.component.checkbox.Switch;
+import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
@@ -502,7 +502,7 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "Switch",
-            classFqn = "io.jmix.flowui.component.checkbox.JmixSwitch",
+            classFqn = "io.jmix.flowui.component.checkbox.Switch",
             category = "Components",
             xmlElement = "switch",
             icon = "io/jmix/flowui/kit/meta/icon/component/checkbox.svg",
@@ -551,7 +551,7 @@ public interface StudioComponents {
                     )
             }
     )
-    Switch switch_();
+    JmixSwitch switch_();
 
     @StudioComponent(
             name = "ComboBox",

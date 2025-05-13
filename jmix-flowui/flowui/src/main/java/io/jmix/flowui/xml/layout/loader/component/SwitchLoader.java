@@ -16,17 +16,17 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.flowui.component.checkbox.JmixSwitch;
+import io.jmix.flowui.component.checkbox.Switch;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-public class SwitchLoader extends AbstractComponentLoader<JmixSwitch> {
+public class SwitchLoader extends AbstractComponentLoader<Switch> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected JmixSwitch createComponent() {
-        return factory.create(JmixSwitch.class);
+    protected Switch createComponent() {
+        return factory.create(Switch.class);
     }
 
     @Override

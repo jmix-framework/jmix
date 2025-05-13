@@ -23,7 +23,7 @@ import { switchStyles } from './jmix-switch-styles.js';
 
 registerStyles('jmix-switch', switchStyles, { moduleId: 'jmix-switch-styles' });
 
-export class Switch extends SwitchMixin(ElementMixin(ThemableMixin(PolymerElement))) {
+export class JmixSwitch extends SwitchMixin(ElementMixin(ThemableMixin(PolymerElement))) {
 
     static get is() {
         return 'jmix-switch';
@@ -61,4 +61,4 @@ export class Switch extends SwitchMixin(ElementMixin(ThemableMixin(PolymerElemen
     }
 }
 
-defineCustomElement(Switch);
+defineCustomElement(JmixSwitch);

@@ -32,17 +32,17 @@ import java.util.Optional;
 
 @Tag("jmix-switch")
 @JsModule("./src/checkbox/jmix-switch.js")
-public class Switch extends AbstractSinglePropertyField<Switch, Boolean>
-        implements ClickNotifier<Switch>, Focusable<Switch>, HasAriaLabel,
+public class JmixSwitch extends AbstractSinglePropertyField<JmixSwitch, Boolean>
+        implements ClickNotifier<JmixSwitch>, Focusable<JmixSwitch>, HasAriaLabel,
         HasValidationProperties, HasValidator<Boolean>,
-        InputField<AbstractField.ComponentValueChangeEvent<Switch, Boolean>, Boolean> {
+        InputField<AbstractField.ComponentValueChangeEvent<JmixSwitch, Boolean>, Boolean> {
 
     protected NativeLabel labelElement;
 
-    protected ValidationController<Switch, Boolean> validationController = new ValidationController<>(
+    protected ValidationController<JmixSwitch, Boolean> validationController = new ValidationController<>(
             this);
 
-    public Switch() {
+    public JmixSwitch() {
         super("checked", false, false);
 
         getElement().addPropertyChangeListener("checked", "checked-changed",

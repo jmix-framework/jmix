@@ -24,7 +24,7 @@ import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
-import io.jmix.flowui.kit.component.checkbox.Switch;
+import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,12 +35,12 @@ import org.springframework.lang.Nullable;
 /**
  * Switch is an input field representing a binary choice, similar to {@link JmixCheckbox}.
  */
-public class JmixSwitch extends Switch implements SupportsValueSource<Boolean>, SupportsValidation<Boolean>,
+public class Switch extends JmixSwitch implements SupportsValueSource<Boolean>, SupportsValidation<Boolean>,
         HasRequired, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
-    protected CheckboxDelegate<JmixSwitch, Boolean, Boolean> fieldDelegate;
+    protected CheckboxDelegate<Switch, Boolean, Boolean> fieldDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -56,7 +56,7 @@ public class JmixSwitch extends Switch implements SupportsValueSource<Boolean>, 
         fieldDelegate = createFieldDelegate();
     }
 
-    protected CheckboxDelegate<JmixSwitch, Boolean, Boolean> createFieldDelegate() {
+    protected CheckboxDelegate<Switch, Boolean, Boolean> createFieldDelegate() {
         //noinspection unchecked
         return applicationContext.getBean(CheckboxDelegate.class, this);
     }

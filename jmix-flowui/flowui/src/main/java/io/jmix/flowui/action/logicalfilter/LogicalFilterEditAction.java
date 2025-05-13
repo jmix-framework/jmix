@@ -60,7 +60,13 @@ public class LogicalFilterEditAction extends EditAction<FilterCondition> {
             builder = builder.withTransformation(transformation);
         }
 
+        if (configuration != null) {
+            builder.withViewConfigurer(view ->
+                    ((FilterConditionDetailView<?>) view).setCurrentConfiguration(configuration));
+        }
+
         DialogWindow<View<?>> dialogWindow = builder.build();
+
         if (afterSaveHandler != null) {
             dialogWindow.addAfterCloseListener(event -> {
                 if (event.closedWith(StandardOutcome.SAVE)
@@ -69,10 +75,6 @@ public class LogicalFilterEditAction extends EditAction<FilterCondition> {
                     afterSaveHandler.accept(savedEntity);
                 }
             });
-        }
-
-        if (configuration != null) {
-            ((FilterConditionDetailView<?>) dialogWindow.getView()).setCurrentConfiguration(configuration);
         }
 
         dialogWindow.open();

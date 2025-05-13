@@ -100,54 +100,50 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
         propertiesFilterPredicate = currentConfiguration.getOwner().getPropertyFiltersPredicate();
     }
 
-    @Subscribe
-    protected void onReady(@SuppressWarnings("unused") ReadyEvent event) {
-        initPropertyField();
-        initOperationField();
-        initDefaultValueField();
+    @Override
+    protected void setupEntityToEdit(PropertyFilterCondition entityToEdit) {
+        initPropertyField(entityToEdit);
+        initOperationField(entityToEdit);
+        initDefaultValueField(entityToEdit);
+
+        super.setupEntityToEdit(entityToEdit);
     }
 
-    protected void initPropertyField() {
+    protected void initPropertyField(PropertyFilterCondition entityToEdit) {
         if (filterMetaClass != null) {
             List<String> properties = filterMetadataTools.getPropertyPaths(currentConfiguration.getOwner()).stream()
                     .map(MetaPropertyPath::toPathString)
                     .collect(Collectors.toList());
 
-            Optional<String> previousValue = propertyField.getOptionalValue();
             propertyField.setItems(properties);
-
-            previousValue.ifPresent(propertyField::setValue);
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected void initOperationField() {
+    protected void initOperationField(PropertyFilterCondition entityToEdit) {
         List<PropertyFilter.Operation> operations;
 
-        if (filterMetaClass != null && getEditedEntity().getProperty() != null) {
+        if (filterMetaClass != null && entityToEdit.getProperty() != null) {
             EnumSet<PropertyFilter.Operation> availableOperations =
-                    propertyFilterSupport.getAvailableOperations(filterMetaClass, getEditedEntity().getProperty());
+                    propertyFilterSupport.getAvailableOperations(filterMetaClass, entityToEdit.getProperty());
 
             operations = new ArrayList<>(availableOperations);
         } else {
             operations = Collections.EMPTY_LIST;
         }
 
-        Optional<PropertyFilter.Operation> previousValue = operationField.getOptionalValue();
         operationField.setItems(operations);
-
-        previousValue.ifPresent(operationField::setValue);
     }
 
     @SuppressWarnings({"unchecked"})
-    protected void initDefaultValueField() {
-        String property = getEditedEntity().getProperty();
-        PropertyFilter.Operation operation = getEditedEntity().getOperation();
+    protected void initDefaultValueField(PropertyFilterCondition entityToEdit) {
+        String property = entityToEdit.getProperty();
+        PropertyFilter.Operation operation = entityToEdit.getOperation();
 
         if (filterMetaClass != null && property != null && operation != null) {
             defaultValueField = singleFilterSupport.generateValueComponent(filterMetaClass, property, operation);
 
-            FilterValueComponent valueComponent = getEditedEntity().getValueComponent();
+            FilterValueComponent valueComponent = entityToEdit.getValueComponent();
             if (valueComponent != null && valueComponent.getDefaultValue() != null) {
                 String modelDefaultValue = valueComponent.getDefaultValue();
                 MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(filterMetaClass,
@@ -197,7 +193,7 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
             }
 
             resetDefaultValue();
-            initDefaultValueField();
+            initDefaultValueField(getEditedEntity());
         }
 
         operationField.setEnabled(!Strings.isNullOrEmpty(property));
@@ -210,7 +206,7 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
 
         if (operation != null && event.isFromClient()) {
             resetDefaultValue();
-            initDefaultValueField();
+            initDefaultValueField(getEditedEntity());
         }
     }
 

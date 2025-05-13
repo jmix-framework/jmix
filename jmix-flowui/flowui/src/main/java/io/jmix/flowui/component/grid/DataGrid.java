@@ -372,7 +372,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     @Override
     protected DataGridEditor<E> createEditor() {
         editorCreated = true;
-        return new DataGridEditorImpl<>(this, applicationContext);
+        return gridDelegate.createEditor();
     }
 
     @SuppressWarnings({"unchecked"})

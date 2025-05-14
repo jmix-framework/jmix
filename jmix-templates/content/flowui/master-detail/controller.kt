@@ -18,6 +18,7 @@ import com.vaadin.flow.router.Route
 import io.jmix.core.AccessManager
 import io.jmix.flowui.component.validation.ValidationErrors
 import io.jmix.core.validation.group.UiCrossFieldChecks
+import io.jmix.flowui.UiViewProperties
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext
 import io.jmix.flowui.action.SecuredBaseAction
 import io.jmix.flowui.component.UiComponentUtils
@@ -100,25 +101,27 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
 
     @Subscribe("saveButton")
     fun onSaveButtonClick(event: ClickEvent<JmixButton>) {
-        val item = ${detailDc}.item
-        val validationErrors = validateView(item)
-        if (!validationErrors.isEmpty) {
-            val viewValidation = getViewValidation()
-            viewValidation.showValidationErrors(validationErrors)
-            viewValidation.focusProblemComponent(validationErrors)
-            return
-        }
-        dataContext.save()
-        ${tableDc}.replaceItem(item)
-        updateControls(false)
+        saveEditedEntity()
     }
 
     @Subscribe("cancelButton")
     fun onCancelButtonClick(event: ClickEvent<JmixButton>) {
-        dataContext.clear()
-        ${detailDc}.setItem(null)
-        ${detailDl}.load()
-        updateControls(false)
+        if (!hasUnsavedChanges()) {
+            discardEditedEntity()
+            return
+        }
+
+        val useSaveConfirmation: Boolean = applicationContext
+            .getBean(UiViewProperties::class.java).isUseSaveConfirmation
+
+        if (useSaveConfirmation) {
+            getViewValidation().showSaveConfirmationDialog(this)
+                .onSave(this::saveEditedEntity)
+                .onDiscard(this::discardEditedEntity)
+        } else {
+            getViewValidation().showUnsavedChangesDialog(this)
+                .onDiscard(this::discardEditedEntity)
+        }
     }
 
     @Subscribe(id = "${tableDc}", target = Target.DATA_CONTAINER)
@@ -132,6 +135,29 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
             ${detailDl}.entityId = null
             ${detailDc}.setItem(null)
         }
+        updateControls(false)
+    }
+
+    private fun saveEditedEntity() {
+        val item = ${detailDc}.item
+        val validationErrors = validateView(item)
+
+        if (!validationErrors.isEmpty) {
+            val viewValidation = getViewValidation()
+            viewValidation.showValidationErrors(validationErrors)
+            viewValidation.focusProblemComponent(validationErrors)
+            return
+        }
+
+        dataContext.save()
+        ${tableDc}.replaceItem(item)
+        updateControls(false)
+    }
+
+    private fun discardEditedEntity() {
+        dataContext.clear()
+        ${detailDc}.setItem(null)
+        ${detailDl}.load()
         updateControls(false)
     }
 
@@ -163,6 +189,10 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         return UiEntityAttributeContext(valueSource.metaPropertyPath)
             .also { accessManager.applyRegisteredConstraints(it) }
             .canModify()
+    }
+
+    private fun hasUnsavedChanges(): Boolean {
+        return dataContext.modified.isNotEmpty()
     }
 
     private fun getViewValidation(): ViewValidation {

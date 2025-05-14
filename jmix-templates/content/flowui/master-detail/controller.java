@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.AccessManager;
+import io.jmix.core.EntityStates;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.UiViewProperties;
@@ -79,6 +80,11 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Autowired
     private AccessManager accessManager;
 
+    @Autowired
+    private EntityStates entityStates;
+
+    private boolean modifiedAfterEdit;
+
     @Subscribe
     public void onInit(final InitEvent event) {
         ${tableId}.getActions().forEach(action -> {
@@ -86,6 +92,11 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
                 secured.addEnabledRule(() -> listLayout.isEnabled());
             }
         });
+    }
+
+    @Subscribe
+    public void onReady(final ReadyEvent event) {
+        setupModifiedTracking();
     }
 
     @Subscribe
@@ -187,6 +198,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
             }
         });
 
+        modifiedAfterEdit = false;
         detailActions.setVisible(editing);
         listLayout.setEnabled(!editing);
         ${tableId}.getActions().forEach(Action::refreshState);
@@ -199,7 +211,26 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     }
 
     private boolean hasUnsavedChanges() {
-        return !dataContext.getModified().isEmpty();
+        for (Object modified : dataContext.getModified()) {
+            if (!entityStates.isNew(modified)) {
+                return true;
+            }
+        }
+
+        return modifiedAfterEdit;
+    }
+
+    private void setupModifiedTracking() {
+        dataContext.addChangeListener(this::onChangeEvent);
+        dataContext.addPostSaveListener(this::onPostSaveEvent);
+    }
+
+    private void onChangeEvent(DataContext.ChangeEvent changeEvent) {
+        modifiedAfterEdit = true;
+    }
+
+    private void onPostSaveEvent(DataContext.PostSaveEvent postSaveEvent) {
+        modifiedAfterEdit = false;
     }
 
     private ViewValidation getViewValidation() {

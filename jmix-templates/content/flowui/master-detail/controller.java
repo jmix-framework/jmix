@@ -106,6 +106,8 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     @Subscribe("${tableId}.createAction")
     public void on${tableId.capitalize()}CreateAction(final ActionPerformedEvent event) {
+        prepareFormForValidation();
+
         dataContext.clear();
         ${entity.className} entity = dataContext.create(${entity.className}.class);
         ${detailDc}.setItem(entity);
@@ -144,6 +146,8 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     @Subscribe(id = "${tableDc}", target = Target.DATA_CONTAINER)
     public void on${tableDc.capitalize()}ItemChange(final InstanceContainer.ItemChangeEvent<${entity.className}> event) {
+        prepareFormForValidation();
+
         ${entity.className} entity = event.getItem();
         dataContext.clear();
         if (entity != null) {
@@ -154,6 +158,15 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
             ${detailDc}.setItem(null);
         }
         updateControls(false);
+    }
+
+    private void prepareFormForValidation() {
+        // all components shouldn't be readonly due to validation passing correctly
+        UiComponentUtils.getComponents(form).forEach(component -> {
+            if (component instanceof HasValueAndElement<?, ?> field) {
+                field.setReadOnly(false);
+            }
+        });
     }
 
     private void saveEditedEntity() {

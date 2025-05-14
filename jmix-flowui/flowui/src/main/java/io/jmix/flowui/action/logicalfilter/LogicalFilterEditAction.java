@@ -61,8 +61,11 @@ public class LogicalFilterEditAction extends EditAction<FilterCondition> {
         }
 
         if (configuration != null) {
-            builder.withViewConfigurer(view ->
-                    ((FilterConditionDetailView<?>) view).setCurrentConfiguration(configuration));
+            builder.withViewConfigurer(view -> {
+                if (view instanceof FilterConditionDetailView<?> filterConditionView) {
+                    filterConditionView.setCurrentConfiguration(configuration);
+                }
+            });
         }
 
         DialogWindow<View<?>> dialogWindow = builder.build();

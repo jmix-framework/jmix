@@ -18,6 +18,7 @@ import com.vaadin.flow.router.Route;
 import io.jmix.core.AccessManager;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -107,25 +108,27 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     @Subscribe("saveButton")
     public void onSaveButtonClick(final ClickEvent<JmixButton> event) {
-        ${entity.className} item = ${detailDc}.getItem();
-        ValidationErrors validationErrors = validateView(item);
-        if (!validationErrors.isEmpty()) {
-            ViewValidation viewValidation = getViewValidation();
-            viewValidation.showValidationErrors(validationErrors);
-            viewValidation.focusProblemComponent(validationErrors);
-            return;
-        }
-        dataContext.save();
-        ${tableDc}.replaceItem(item);
-        updateControls(false);
+        saveEditedEntity();
     }
 
     @Subscribe("cancelButton")
     public void onCancelButtonClick(final ClickEvent<JmixButton> event) {
-        dataContext.clear();
-        ${detailDc}.setItem(null);
-        ${detailDl}.load();
-        updateControls(false);
+        if (!hasUnsavedChanges()) {
+            discardEditedEntity();
+            return;
+        }
+
+        boolean useSaveConfirmation = getApplicationContext()
+                .getBean(UiViewProperties.class).isUseSaveConfirmation();
+
+        if (useSaveConfirmation) {
+            getViewValidation().showSaveConfirmationDialog(this)
+                    .onSave(this::saveEditedEntity)
+                    .onDiscard(this::discardEditedEntity);
+        } else {
+            getViewValidation().showUnsavedChangesDialog(this)
+                    .onDiscard(this::discardEditedEntity);
+        }
     }
 
     @Subscribe(id = "${tableDc}", target = Target.DATA_CONTAINER)
@@ -142,7 +145,30 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         updateControls(false);
     }
 
-    protected ValidationErrors validateView(${entity.className} entity) {
+    private void saveEditedEntity() {
+        ${entity.className} item = ${detailDc}.getItem();
+        ValidationErrors validationErrors = validateView(item);
+
+        if (!validationErrors.isEmpty()) {
+            ViewValidation viewValidation = getViewValidation();
+            viewValidation.showValidationErrors(validationErrors);
+            viewValidation.focusProblemComponent(validationErrors);
+            return;
+        }
+
+        dataContext.save();
+        ${tableDc}.replaceItem(item);
+        updateControls(false);
+    }
+
+    private void discardEditedEntity() {
+        dataContext.clear();
+        ${detailDc}.setItem(null);
+        ${detailDl}.load();
+        updateControls(false);
+    }
+
+    private ValidationErrors validateView(${entity.className} entity) {
         ViewValidation viewValidation = getViewValidation();
         ValidationErrors validationErrors = viewValidation.validateUiComponents(form);
         if (!validationErrors.isEmpty()) {
@@ -170,6 +196,10 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         UiEntityAttributeContext context = new UiEntityAttributeContext(valueSource.getMetaPropertyPath());
         accessManager.applyRegisteredConstraints(context);
         return context.canModify();
+    }
+
+    private boolean hasUnsavedChanges() {
+        return !dataContext.getModified().isEmpty();
     }
 
     private ViewValidation getViewValidation() {

@@ -99,6 +99,8 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
 
     @Subscribe("${tableId}.createAction")
     fun on${tableId.capitalize()}CreateAction(event: ActionPerformedEvent) {
+        prepareFormForValidation()
+
         dataContext.clear()
         val entity: ${entity.className} = dataContext.create(${entity.className}::class.java)
         ${detailDc}.item = entity
@@ -137,6 +139,8 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
 
     @Subscribe(id = "${tableDc}", target = Target.DATA_CONTAINER)
     fun on${tableDc.capitalize()}ItemChange(event: InstanceContainer.ItemChangeEvent<${entity.className}>) {
+        prepareFormForValidation()
+
         val entity: ${entity.className}? = event.item
         dataContext.clear()
         if (entity != null) {
@@ -147,6 +151,16 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
             ${detailDc}.setItem(null)
         }
         updateControls(false)
+    }
+
+    private fun prepareFormForValidation() {
+        // all components shouldn't be readonly due to validation passing correctly
+        UiComponentUtils.getComponents(form)
+            .forEach {
+                if (it is HasValueAndElement<*, *>) {
+                    it.isReadOnly = false
+                }
+            }
     }
 
     private fun saveEditedEntity() {

@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.Route
 import io.jmix.core.AccessManager
+import io.jmix.core.EntityStates
 import io.jmix.flowui.component.validation.ValidationErrors
 import io.jmix.core.validation.group.UiCrossFieldChecks
 import io.jmix.flowui.UiViewProperties
@@ -72,6 +73,11 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     @Autowired
     private lateinit var accessManager: AccessManager
 
+    @Autowired
+    private lateinit var entityStates: EntityStates
+
+    private var modifiedAfterEdit: Boolean = false
+
     @Subscribe
     fun onInit(event: InitEvent) {
         ${tableId}.getActions().forEach { action ->
@@ -79,6 +85,11 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
                 action.addEnabledRule { listLayout.isEnabled }
             }
         }
+    }
+
+    @Subscribe
+    fun onReady(event: ReadyEvent) {
+        setupModifiedTracking()
     }
 
     @Subscribe
@@ -180,9 +191,11 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
                 component.isReadOnly = !editing || !isUpdatePermitted(component.valueSource as EntityValueSource<*, *>)
             }
         }
+
+        modifiedAfterEdit = false
         detailActions.isVisible = editing
         listLayout.isEnabled = !editing
-        testEntitiesDataGrid.actions.forEach(Action::refreshState);
+        testEntitiesDataGrid.actions.forEach(Action::refreshState)
     }
 
     private fun isUpdatePermitted(valueSource: EntityValueSource<*, *>): Boolean {
@@ -192,7 +205,18 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     }
 
     private fun hasUnsavedChanges(): Boolean {
-        return dataContext.modified.isNotEmpty()
+        for (modified in dataContext.modified) {
+            if (!entityStates.isNew(modified)) {
+                return true
+            }
+        }
+
+        return modifiedAfterEdit
+    }
+
+    private fun setupModifiedTracking() {
+        dataContext.addChangeListener { modifiedAfterEdit = true }
+        dataContext.addPostSaveListener { modifiedAfterEdit = false }
     }
 
     private fun getViewValidation(): ViewValidation {

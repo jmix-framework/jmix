@@ -851,6 +851,9 @@ public class ReportWizardCreatorView extends StandardView {
                 buttonsBox.add(addRegionDisabledBtn);
             }
         }
+
+        // We don't have a query yet.
+        regionsRunBtn.setVisible(item.getReportTypeGenerate() != ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
     }
 
     @Subscribe("outputFileFormat")

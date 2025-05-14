@@ -28,7 +28,7 @@ import java.util.Objects;
 
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("flowui_GenericFilterSettingsBinder")
-public class GenericFilterSettingsBinder implements ComponentSettingsBinder<GenericFilter, GenericFilterSettings> {
+public class GenericFilterSettingsBinder implements DataLoadingSettingsBinder<GenericFilter, GenericFilterSettings> {
 
     @Override
     public Class<? extends Component> getComponentClass() {
@@ -45,13 +45,15 @@ public class GenericFilterSettingsBinder implements ComponentSettingsBinder<Gene
         if (settings.getOpened() != null) {
             component.setOpened(settings.getOpened());
         }
+    }
 
+    @Override
+    public void applyDataLoadingSettings(GenericFilter component, GenericFilterSettings settings) {
         if (settings.getDefaultConfigurationId() != null) {
             Configuration defaultConfiguration = component.getConfiguration(settings.getDefaultConfigurationId());
 
             if (defaultConfiguration != null) {
                 component.setCurrentConfiguration(defaultConfiguration);
-                component.apply();
             }
         }
     }

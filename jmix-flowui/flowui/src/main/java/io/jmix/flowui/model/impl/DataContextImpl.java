@@ -329,6 +329,8 @@ public class DataContextImpl implements DataContextInternal {
             }
         }
 
+        mergeLoadedPropertiesInfo(srcEntity, dstEntity, isRoot, options);
+
         mergeLazyLoadingState(srcEntity, dstEntity);
     }
 
@@ -372,7 +374,25 @@ public class DataContextImpl implements DataContextInternal {
 
     protected void mergeSystemState(Object srcEntity, Object dstEntity, boolean isRoot, MergeOptions options) {
         if (isRoot || options.isFresh()) {
+            // Preserve the loaded state in the destination entity
+            EntityEntry dstEntityEntry = EntitySystemAccess.getEntityEntry(dstEntity);
+            LoadedPropertiesInfo prevLoadedPropertiesInfo = dstEntityEntry.getLoadedPropertiesInfo();
+
             entitySystemStateSupport.mergeSystemState((Entity) srcEntity, (Entity) dstEntity);
+
+            dstEntityEntry.setLoadedPropertiesInfo(prevLoadedPropertiesInfo);
+        }
+    }
+
+    protected void mergeLoadedPropertiesInfo(Object srcEntity, Object dstEntity, boolean isRoot, MergeOptions options) {
+        if (isRoot || options.isFresh()) {
+            EntityEntry srcEntityEntry = EntitySystemAccess.getEntityEntry(srcEntity);
+            EntityEntry dstEntityEntry = EntitySystemAccess.getEntityEntry(dstEntity);
+            if (srcEntityEntry.getLoadedPropertiesInfo() == null) {
+                dstEntityEntry.setLoadedPropertiesInfo(null);
+            } else {
+                dstEntityEntry.setLoadedPropertiesInfo(srcEntityEntry.getLoadedPropertiesInfo().copy());
+            }
         }
     }
 

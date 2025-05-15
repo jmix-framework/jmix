@@ -43,4 +43,11 @@ public class StaticLoadedPropertiesInfo implements LoadedPropertiesInfo {
         else
             loadedProperties.remove(name);
     }
+
+    @Override
+    public LoadedPropertiesInfo copy() {
+        StaticLoadedPropertiesInfo dstInfo = new StaticLoadedPropertiesInfo();
+        dstInfo.loadedProperties.addAll(loadedProperties);
+        return dstInfo;
+    }
 }

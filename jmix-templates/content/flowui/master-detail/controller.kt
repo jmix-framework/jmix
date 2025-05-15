@@ -234,7 +234,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         modifiedAfterEdit = false
         detailActions.isVisible = editing
         listLayout.isEnabled = !editing
-        testEntitiesDataGrid.actions.forEach(Action::refreshState)
+        ${tableId}.actions.forEach(Action::refreshState)
     }
 
     private fun isUpdatePermitted(valueSource: EntityValueSource<*, *>): Boolean {

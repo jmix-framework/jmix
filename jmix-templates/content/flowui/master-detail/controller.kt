@@ -15,6 +15,7 @@ import com.vaadin.flow.component.HasValueAndElement
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.router.BeforeLeaveEvent
 import com.vaadin.flow.router.Route
 import io.jmix.core.AccessManager
 import io.jmix.core.EntityStates
@@ -32,6 +33,8 @@ import io.jmix.flowui.kit.action.Action
 import io.jmix.flowui.kit.action.ActionPerformedEvent
 import io.jmix.flowui.kit.component.button.JmixButton
 import io.jmix.flowui.model.*
+import io.jmix.flowui.util.OperationResult
+import io.jmix.flowui.util.UnknownOperationResult
 import io.jmix.flowui.view.*
 import org.springframework.beans.factory.annotation.Autowired
 import io.jmix.flowui.view.Target
@@ -78,6 +81,12 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     @Autowired
     private lateinit var entityStates: EntityStates
 
+    @Autowired
+    private lateinit var uiViewProperties: UiViewProperties
+
+    @Autowired
+    private lateinit var viewValidation: ViewValidation
+
     private var modifiedAfterEdit: Boolean = false
 
     @Subscribe
@@ -97,6 +106,11 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     @Subscribe
     fun onBeforeShow(event: BeforeShowEvent) {
         updateControls(false)
+    }
+
+    @Subscribe
+    fun onBeforeClose(event: BeforeCloseEvent) {
+        preventUnsavedChanges(event)
     }<%if (tableActions.contains("create")) {%>
 
     @Subscribe("${tableId}.createAction")
@@ -126,15 +140,12 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
             return
         }
 
-        val useSaveConfirmation: Boolean = applicationContext
-            .getBean(UiViewProperties::class.java).isUseSaveConfirmation
-
-        if (useSaveConfirmation) {
-            getViewValidation().showSaveConfirmationDialog(this)
+        if (uiViewProperties.isUseSaveConfirmation) {
+            viewValidation.showSaveConfirmationDialog(this)
                 .onSave(this::saveEditedEntity)
                 .onDiscard(this::discardEditedEntity)
         } else {
-            getViewValidation().showUnsavedChangesDialog(this)
+            viewValidation.showUnsavedChangesDialog(this)
                 .onDiscard(this::discardEditedEntity)
         }
     }
@@ -165,20 +176,20 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
             }
     }
 
-    private fun saveEditedEntity() {
+    private fun saveEditedEntity(): OperationResult {
         val item = ${detailDc}.item
         val validationErrors = validateView(item)
 
         if (!validationErrors.isEmpty) {
-            val viewValidation = getViewValidation()
             viewValidation.showValidationErrors(validationErrors)
             viewValidation.focusProblemComponent(validationErrors)
-            return
+            return OperationResult.fail()
         }
 
         dataContext.save()
         ${tableDc}.replaceItem(item)
         updateControls(false)
+        return OperationResult.success()
     }
 
     private fun discardEditedEntity() {
@@ -202,7 +213,6 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     }
 
     private fun validateView(entity: ${entity.className}): ValidationErrors {
-        val viewValidation = getViewValidation()
         val validationErrors = viewValidation.validateUiComponents(form)
         if (!validationErrors.isEmpty) {
             return validationErrors
@@ -248,8 +258,83 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         dataContext.addPostSaveListener { modifiedAfterEdit = false }
     }
 
-    private fun getViewValidation(): ViewValidation {
-        return applicationContext.getBean(ViewValidation::class.java)
+    private fun preventUnsavedChanges(event: BeforeCloseEvent) {
+        val closeAction = event.closeAction
+
+        if (closeAction is ChangeTrackerCloseAction
+            && closeAction.isCheckForUnsavedChanges
+            && hasUnsavedChanges()
+        ) {
+            val result = UnknownOperationResult()
+
+            if (closeAction is NavigateCloseAction) {
+                val beforeLeaveEvent = closeAction.beforeLeaveEvent
+                val navigationAction = beforeLeaveEvent.postpone()
+
+                if (uiViewProperties.isUseSaveConfirmation) {
+                    viewValidation.showSaveConfirmationDialog(this)
+                        .onSave { result.resume(navigateWithSave(navigationAction)) }
+                        .onDiscard { result.resume(navigateWithDiscard(navigationAction)) }
+                        .onCancel {
+                            result.otherwise { cancelNavigation(navigationAction) }
+                            result.fail()
+                        }
+                } else {
+                    viewValidation.showUnsavedChangesDialog(this)
+                        .onDiscard { result.resume(navigateWithDiscard(navigationAction)) }
+                        .onCancel {
+                            result.otherwise { cancelNavigation(navigationAction) }
+                            result.fail()
+                        }
+                }
+            } else {
+                if (uiViewProperties.isUseSaveConfirmation) {
+                    viewValidation.showSaveConfirmationDialog(this)
+                        .onSave { result.resume(closeWithSave()) }
+                        .onDiscard { result.resume(closeWithDiscard()) }
+                        .onCancel(result::fail)
+                } else {
+                    viewValidation.showUnsavedChangesDialog(this)
+                        .onDiscard { result.resume(closeWithDiscard()) }
+                        .onCancel(result::fail)
+                }
+            }
+
+            event.preventClose(result)
+        }
+    }
+
+    private fun navigateWithDiscard(navigationAction: BeforeLeaveEvent.ContinueNavigationAction): OperationResult {
+        return navigate(navigationAction, StandardOutcome.DISCARD.closeAction)
+    }
+
+    private fun navigateWithSave(navigationAction: BeforeLeaveEvent.ContinueNavigationAction): OperationResult {
+        return saveEditedEntity()
+            .compose { navigate(navigationAction, StandardOutcome.SAVE.closeAction) }
+    }
+
+    private fun cancelNavigation(navigationAction: BeforeLeaveEvent.ContinueNavigationAction) {
+        // Because of using React Router, we need to call
+        // 'BeforeLeaveEvent.ContinueNavigationAction.cancel'
+        // explicitly, otherwise navigation process hangs
+        navigationAction.cancel()
+    }
+
+    private fun navigate(
+        navigationAction: BeforeLeaveEvent.ContinueNavigationAction,
+        closeAction: CloseAction
+    ): OperationResult {
+        navigationAction.proceed()
+
+        val afterCloseEvent = AfterCloseEvent(this, closeAction)
+        fireEvent(afterCloseEvent)
+
+        return OperationResult.success()
+    }
+
+    private fun closeWithSave(): OperationResult {
+        return saveEditedEntity()
+            .compose { close(StandardOutcome.SAVE) }
     }<%if (useDataRepositories){%>
 
     @Install(to = "${tableDl}", target = Target.DATA_LOADER)

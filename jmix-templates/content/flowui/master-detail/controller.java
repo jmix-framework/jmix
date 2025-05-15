@@ -15,6 +15,7 @@ import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.AccessManager;
 import io.jmix.core.EntityStates;
@@ -31,6 +32,8 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.*;
+import io.jmix.flowui.util.OperationResult;
+import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 <%if (useDataRepositories){%>
@@ -85,6 +88,12 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Autowired
     private EntityStates entityStates;
 
+    @Autowired
+    private UiViewProperties uiViewProperties;
+
+    @Autowired
+    private ViewValidation viewValidation;
+
     private boolean modifiedAfterEdit;
 
     @Subscribe
@@ -104,6 +113,11 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         updateControls(false);
+    }
+
+    @Subscribe
+    private void onBeforeClose(final BeforeCloseEvent event) {
+        preventUnsavedChanges(event);
     }<%if (tableActions.contains("create")) {%>
 
     @Subscribe("${tableId}.createAction")
@@ -133,15 +147,12 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
             return;
         }
 
-        boolean useSaveConfirmation = getApplicationContext()
-                .getBean(UiViewProperties.class).isUseSaveConfirmation();
-
-        if (useSaveConfirmation) {
-            getViewValidation().showSaveConfirmationDialog(this)
+        if (uiViewProperties.isUseSaveConfirmation()) {
+            viewValidation.showSaveConfirmationDialog(this)
                     .onSave(this::saveEditedEntity)
                     .onDiscard(this::discardEditedEntity);
         } else {
-            getViewValidation().showUnsavedChangesDialog(this)
+            viewValidation.showUnsavedChangesDialog(this)
                     .onDiscard(this::discardEditedEntity);
         }
     }
@@ -171,20 +182,20 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         });
     }
 
-    private void saveEditedEntity() {
+    private OperationResult saveEditedEntity() {
         ${entity.className} item = ${detailDc}.getItem();
         ValidationErrors validationErrors = validateView(item);
 
         if (!validationErrors.isEmpty()) {
-            ViewValidation viewValidation = getViewValidation();
             viewValidation.showValidationErrors(validationErrors);
             viewValidation.focusProblemComponent(validationErrors);
-            return;
+            return OperationResult.fail();
         }
 
         dataContext.save();
         ${tableDc}.replaceItem(item);
         updateControls(false);
+        return OperationResult.success();
     }
 
     private void discardEditedEntity() {
@@ -206,7 +217,6 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     }
 
     private ValidationErrors validateView(${entity.className} entity) {
-        ViewValidation viewValidation = getViewValidation();
         ValidationErrors validationErrors = viewValidation.validateUiComponents(form);
         if (!validationErrors.isEmpty()) {
             return validationErrors;
@@ -259,8 +269,80 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         modifiedAfterEdit = false;
     }
 
-    private ViewValidation getViewValidation() {
-        return getApplicationContext().getBean(ViewValidation.class);
+    private void preventUnsavedChanges(BeforeCloseEvent event) {
+        CloseAction closeAction = event.getCloseAction();
+
+        if (closeAction instanceof ChangeTrackerCloseAction trackerCloseAction
+                && trackerCloseAction.isCheckForUnsavedChanges()
+                && hasUnsavedChanges()) {
+            UnknownOperationResult result = new UnknownOperationResult();
+
+            if (closeAction instanceof NavigateCloseAction navigateCloseAction) {
+                BeforeLeaveEvent beforeLeaveEvent = navigateCloseAction.getBeforeLeaveEvent();
+                BeforeLeaveEvent.ContinueNavigationAction navigationAction = beforeLeaveEvent.postpone();
+
+                if (uiViewProperties.isUseSaveConfirmation()) {
+                    viewValidation.showSaveConfirmationDialog(this)
+                            .onSave(() -> result.resume(navigateWithSave(navigationAction)))
+                            .onDiscard(() -> result.resume(navigateWithDiscard(navigationAction)))
+                            .onCancel(() -> {
+                                result.otherwise(() -> cancelNavigation(navigationAction));
+                                result.fail();
+                            });
+                } else {
+                    viewValidation.showUnsavedChangesDialog(this)
+                            .onDiscard(() -> result.resume(navigateWithDiscard(navigationAction)))
+                            .onCancel(() -> {
+                                result.otherwise(() -> cancelNavigation(navigationAction));
+                                result.fail();
+                            });
+                }
+            } else {
+                if (uiViewProperties.isUseSaveConfirmation()) {
+                    viewValidation.showSaveConfirmationDialog(this)
+                            .onSave(() -> result.resume(closeWithSave()))
+                            .onDiscard(() -> result.resume(closeWithDiscard()))
+                            .onCancel(result::fail);
+                } else {
+                    viewValidation.showUnsavedChangesDialog(this)
+                            .onDiscard(() -> result.resume(closeWithDiscard()))
+                            .onCancel(result::fail);
+                }
+            }
+
+            event.preventClose(result);
+        }
+    }
+
+    private OperationResult navigateWithDiscard(BeforeLeaveEvent.ContinueNavigationAction navigationAction) {
+        return navigate(navigationAction, StandardOutcome.DISCARD.getCloseAction());
+    }
+
+    private OperationResult navigateWithSave(BeforeLeaveEvent.ContinueNavigationAction navigationAction) {
+        return saveEditedEntity()
+                .compose(() -> navigate(navigationAction, StandardOutcome.SAVE.getCloseAction()));
+    }
+
+    private void cancelNavigation(BeforeLeaveEvent.ContinueNavigationAction navigationAction) {
+        // Because of using React Router, we need to call
+        // 'BeforeLeaveEvent.ContinueNavigationAction.cancel'
+        // explicitly, otherwise navigation process hangs
+        navigationAction.cancel();
+    }
+
+    private OperationResult navigate(BeforeLeaveEvent.ContinueNavigationAction navigationAction,
+                                     CloseAction closeAction) {
+        navigationAction.proceed();
+
+        AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
+        fireEvent(afterCloseEvent);
+
+        return OperationResult.success();
+    }
+
+    private OperationResult closeWithSave() {
+        return saveEditedEntity()
+                .compose(() -> close(StandardOutcome.SAVE));
     }<%if (useDataRepositories){%>
 
     @Install(to = "${tableDl}", target = Target.DATA_LOADER)

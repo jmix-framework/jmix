@@ -19,9 +19,9 @@ package io.jmix.flowui.view.navigation;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.di.Instantiator;
 import com.vaadin.flow.function.SerializableConsumer;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.sys.ViewSupport;
@@ -55,6 +55,7 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
         this.navigationSupport = navigationSupport;
     }
 
+    @SuppressWarnings("rawtypes")
     public void processNavigation(N navigator) {
         Class<? extends View> viewClass = getViewClass(navigator);
         RouteParameters routeParameters = getRouteParameters(navigator);
@@ -83,7 +84,7 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
                     unregisterViewDetachListener(origin);
                 });
                 detachRegistrationsCache.put(origin, detachRegistration);
-                navigationSupport.navigate(viewClass, routeParameters, queryParameters);
+                doNavigate(origin, viewClass, routeParameters, queryParameters);
             });
         } else {
             Registration detachRegistration = ViewControllerUtils.addDetachListener(origin, __ -> {
@@ -97,7 +98,32 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
                 unregisterViewDetachListener(origin);
             });
             detachRegistrationsCache.put(origin, detachRegistration);
-            navigationSupport.navigate(viewClass, routeParameters, queryParameters);
+            doNavigate(origin, viewClass, routeParameters, queryParameters);
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected void doNavigate(View<?> origin, Class<? extends View> navigationTargetType,
+                              RouteParameters routeParameters, QueryParameters queryParameters) {
+        UI ui = origin.getUI().orElse(UI.getCurrent());
+        Instantiator instantiator = Instantiator.get(ui);
+        // 1. Due to Vaadin's logic, if we navigate to the same view, it is not recreated. Just the
+        // navigation events are resend to it. The UI class navigation methods do not allow defining
+        // the 'forceInstantiation' flag. Therefore, if we navigate to the same view, we use the Router
+        // to perform the navigation. Since the case when we navigate to the same view is rare, and to
+        // prevent possible side effects in other cases, this particular case is handled individually,
+        // because 'com.vaadin.flow.component.UI.navigate(java.lang.String, com.vaadin. flow.router.QueryParameters)'
+        // is handled by the UI class itself, rather than delegated to the Router.
+        // 2. Comparing the origin type with the target type by using the same approach as Vaadin does,
+        // see 'com.vaadin.flow.router.internal.AbstractNavigationStateRenderer.getRouteTarget'
+        if (instantiator.getApplicationClass(origin).equals(navigationTargetType)) {
+            String url = RouteConfiguration.forSessionScope().getUrl(navigationTargetType, routeParameters);
+            Location location = new Location(url, queryParameters);
+
+            Router router = ui.getInternals().getRouter();
+            router.navigate(ui, location, NavigationTrigger.UI_NAVIGATE, null, true, false);
+        } else {
+            navigationSupport.navigate(navigationTargetType, routeParameters, queryParameters);
         }
     }
 

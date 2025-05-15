@@ -10,6 +10,7 @@ import io.jmix.flowui.view.DefaultMainViewParent;
 <%} else {%>
 import ${routeLayout.getControllerFqn()};
 <%}%>import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -41,6 +42,7 @@ import io.jmix.core.SaveContext;
 import java.util.Set;
 
 import static io.jmix.core.repository.JmixDataRepositoryUtils.*;<%}%>
+import static io.jmix.flowui.component.delegate.AbstractFieldDelegate.PROPERTY_INVALID;
 <%if (classComment) {%>
 ${classComment}
 <%}%>@Route(value = "${listRoute}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent.class <%} else {%>${routeLayout.getControllerClassName()}.class<%}%>)
@@ -186,10 +188,21 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     }
 
     private void discardEditedEntity() {
+        resetFormInvalidState();
+
         dataContext.clear();
         ${detailDc}.setItem(null);
         ${detailDl}.load();
         updateControls(false);
+    }
+
+    private void resetFormInvalidState() {
+        UiComponentUtils.getComponents(form).forEach(component -> {
+            if (component instanceof HasValidation hasValidation && hasValidation.isInvalid()) {
+                component.getElement().setProperty(PROPERTY_INVALID, false);
+                component.getElement().executeJs("this.invalid = \$0", false);
+            }
+        });
     }
 
     private ValidationErrors validateView(${entity.className} entity) {

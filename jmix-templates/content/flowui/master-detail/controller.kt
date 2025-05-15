@@ -10,6 +10,7 @@ import io.jmix.flowui.view.DefaultMainViewParent
 <%} else {%>
 import ${routeLayout.getControllerFqn()}
 <%}%>import com.vaadin.flow.component.ClickEvent
+import com.vaadin.flow.component.HasValidation
 import com.vaadin.flow.component.HasValueAndElement
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
@@ -23,6 +24,7 @@ import io.jmix.flowui.UiViewProperties
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext
 import io.jmix.flowui.action.SecuredBaseAction
 import io.jmix.flowui.component.UiComponentUtils
+import io.jmix.flowui.component.delegate.AbstractFieldDelegate.PROPERTY_INVALID
 import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%} else {%> io.jmix.flowui.component.grid.TreeDataGrid <%}%>
 import io.jmix.flowui.data.EntityValueSource
 import io.jmix.flowui.data.SupportsValueSource
@@ -180,10 +182,23 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     }
 
     private fun discardEditedEntity() {
+        resetFormInvalidState()
+
         dataContext.clear()
         ${detailDc}.setItem(null)
         ${detailDl}.load()
         updateControls(false)
+    }
+
+    private fun resetFormInvalidState() {
+        UiComponentUtils.getComponents(form)
+            .filter { it is HasValidation && it.isInvalid }
+            .forEach {
+                with(it.getElement()) {
+                    setProperty(PROPERTY_INVALID, false)
+                    executeJs("this.invalid = \$0", false)
+                }
+            }
     }
 
     private fun validateView(entity: ${entity.className}): ValidationErrors {

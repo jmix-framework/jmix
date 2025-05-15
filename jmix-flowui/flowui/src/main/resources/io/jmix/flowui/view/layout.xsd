@@ -3168,6 +3168,34 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- Switch -->
+    <xs:complexType name="switchComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="validators" type="checkboxValidatorType"/>
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:sequence>
+
+                <xs:attribute name="value" type="xs:boolean"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasValidation"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- TwinColumn -->
     <xs:complexType name="twinColumnComponent">
         <xs:complexContent>
@@ -4895,6 +4923,7 @@
                 <xs:element name="select" type="selectComponent"/>
                 <xs:element name="details" type="detailsComponent"/>
                 <xs:element name="checkbox" type="checkboxComponent"/>
+                <xs:element name="switch" type="switchComponent"/>
                 <xs:element name="datePicker" type="datePickerComponent"/>
                 <xs:element name="textArea" type="textAreaComponent"/>
                 <xs:element name="textField" type="textFieldComponent"/>

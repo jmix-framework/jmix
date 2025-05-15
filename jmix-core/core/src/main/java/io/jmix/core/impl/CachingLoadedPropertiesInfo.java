@@ -46,4 +46,11 @@ public class CachingLoadedPropertiesInfo implements LoadedPropertiesInfo {
     public void registerProperty(String name, boolean loaded) {
         cache.put(name, loaded);
     }
+
+    @Override
+    public LoadedPropertiesInfo copy() {
+        CachingLoadedPropertiesInfo dstInfo = new CachingLoadedPropertiesInfo();
+        dstInfo.cache.putAll(cache);
+        return dstInfo;
+    }
 }

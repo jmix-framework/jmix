@@ -73,16 +73,4 @@ html {
   --jmix-lumo-warning-color: var(--lumo-warning-contrast-color);
 
   --jmix-simple-pagination-gap: 0.3em;
-
-  /* Switch */
-  --jmix-switch-checked-indicator-color: var(--jmix-switch-indicator-color);
-  --jmix-switch-indicator-color: var(--lumo-primary-contrast-color);
-  --jmix-switch-checked-indicator-size: calc(var(--lumo-size-m) / 2);
-
-  --jmix-switch-size: calc(var(--lumo-size-l) / 2);
-}
-
-[theme~="dark"] {
-  --jmix-switch-checked-indicator-color: var(--lumo-primary-contrast-color);
-  --jmix-switch-indicator-color: var(--lumo-contrast-90pct);
 }

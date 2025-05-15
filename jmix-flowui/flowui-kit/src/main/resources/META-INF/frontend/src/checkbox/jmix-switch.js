@@ -33,7 +33,7 @@ export class JmixSwitch extends SwitchMixin(ElementMixin(ThemableMixin(PolymerEl
         return html`
             <div class="jmix-switch-container">
                 <div part="switch" aria-hidden="true">
-                    <span class="checked-indicator"></span>
+                    <span class="indicator"></span>
                 </div>
                 <slot name="input"></slot>
                 <div part="label">

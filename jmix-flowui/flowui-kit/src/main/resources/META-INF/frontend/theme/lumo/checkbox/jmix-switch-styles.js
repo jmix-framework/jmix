@@ -39,6 +39,8 @@ registerStyles('jmix-switch',
             outline: none;
             
             --_switch-size: var(--jmix-switch-size, calc(var(--lumo-size-l) / 2));
+            --_switch-background: var(--jmix-switch-background, var(--lumo-contrast-20pct));
+            --_switch-indicator-size: var(--jmix-switch-indicator-size, calc(var(--lumo-size-m) / 2));
             --_focus-ring-color: var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
             --_focus-ring-width: var(--vaadin-focus-ring-width, 2px);
             --_selection-color: var(--vaadin-selection-color, var(--lumo-primary-color));
@@ -75,8 +77,8 @@ registerStyles('jmix-switch',
             margin: var(--lumo-space-xs);
 
             position: relative;
-            border-radius: var(--jmix-switch-border-radius, calc(var(--jmix-switch-size) / 2));
-            background: var(--jmix-switch-background, var(--lumo-contrast-20pct));
+            border-radius: var(--jmix-switch-border-radius, calc(var(--_switch-size) / 2));
+            background: var(--_switch-background);
             transition: transform 0.2s cubic-bezier(0.12, 0.32, 0.54, 2),
             background-color 0.15s;
             cursor: var(--lumo-clickable-cursor);
@@ -95,12 +97,12 @@ registerStyles('jmix-switch',
 
         /* Checked indicator */
 
-        [part='switch'] .checked-indicator {
-            width: var(--jmix-switch-checked-indicator-size, calc(var(--lumo-size-m) / 2));
-            height: var(--jmix-switch-checked-indicator-size, calc(var(--lumo-size-m) / 2));
+        [part='switch'] .indicator {
+            width: var(--_switch-indicator-size);
+            height: var(--_switch-indicator-size);
             border-radius: 50%;
 
-            background-color: var(--jmix-switch-indicator-color, var(--lumo-primary-contrast-color));
+            background-color: var(--jmix-switch-indicator-color, var(--lumo-tint-90pct));
             border: none;
             box-sizing: border-box;
             
@@ -114,8 +116,8 @@ registerStyles('jmix-switch',
             --_input-border-color: var(--vaadin-input-field-border-color, var(--lumo-contrast-50pct));
         }
 
-        :host([checked]) [part='switch'] .checked-indicator {
-            margin-inline-start: calc(100% - var(--jmix-switch-checked-indicator-size, calc(var(--lumo-size-m) / 2)) - calc(var(--lumo-space-xs) / 2));
+        :host([checked]) [part='switch'] .indicator {
+            margin-inline-start: calc(100% - var(--_switch-indicator-size) - calc(var(--lumo-space-xs) / 2));
             background-color: var(--jmix-switch-checked-indicator-color, var(--lumo-primary-contrast-color));
         }
 
@@ -131,7 +133,7 @@ registerStyles('jmix-switch',
             border: var(--vaadin-input-field-readonly-border, 1px dashed var(--lumo-contrast-50pct));
         }
 
-        :host([readonly]:not([checked])) [part='switch'] .checked-indicator {
+        :host([readonly]:not([checked])) [part='switch'] .indicator {
             background: transparent;
             box-shadow: none;
             border-radius: inherit;
@@ -166,7 +168,7 @@ registerStyles('jmix-switch',
             background-color: var(--jmix-switch-disabled-background, var(--lumo-contrast-10pct));
         }
 
-        :host([disabled]) [part='switch'] .checked-indicator {
+        :host([disabled]) [part='switch'] .indicator {
             background-color: var(--_disabled-checked-indicator-color);
         }
 
@@ -208,7 +210,7 @@ registerStyles('jmix-switch',
         @media (pointer: coarse) {
             /* prettier-ignore */
             :host(:not([checked]):not([disabled]):not([readonly]):not([invalid]):hover) [part='switch'] {
-                background: var(--jmix-switch-background, var(--lumo-contrast-20pct));
+                background: var(--_switch-background);
             }
         }
 
@@ -237,7 +239,7 @@ registerStyles('jmix-switch',
                 outline-offset: -1px;
             }
 
-            [part='switch'] .checked-indicator {
+            [part='switch'] .indicator {
                 outline: 1px solid;
                 outline-offset: -1px;
                 border-radius: inherit;
@@ -245,7 +247,7 @@ registerStyles('jmix-switch',
             }
 
             :host([disabled]) [part='switch'],
-            :host([disabled]) [part='switch'] .checked-indicator {
+            :host([disabled]) [part='switch'] .indicator {
                 outline-color: GrayText;
             }
 
@@ -253,7 +255,7 @@ registerStyles('jmix-switch',
                 background: highlight;
             }
 
-            :host(:is([checked])) [part='switch'] .checked-indicator {
+            :host(:is([checked])) [part='switch'] .indicator {
                 outline: 1px solid;
                 outline-offset: -1px;
                 border-radius: inherit;

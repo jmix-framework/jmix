@@ -38,12 +38,14 @@ import io.jmix.data.persistence.DbmsType;
 import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,8 +54,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
@@ -62,13 +64,16 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.web.OAuth2TokenEndpointFilter;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatchers;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -161,6 +166,51 @@ public class AuthServerAutoConfiguration {
             http.with(new OAuth2ResourceOwnerPasswordTokenEndpointConfigurer(), Customizer.withDefaults());
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
+        }
+
+        @Bean("authsr_AuthorizationServerLogoutSecurityFilterChain")
+        @Order(JmixSecurityFilterChainOrder.AUTHSERVER_AUTHORIZATION_SERVER + 5)
+        public SecurityFilterChain logoutSecurityFilterChain(HttpSecurity http, ServerProperties serverProperties) throws Exception {
+            String sessionCookieName = getSessionCookieName(serverProperties);
+
+            http.securityMatcher("/logout")
+                    .csrf(AbstractHttpConfigurer::disable)
+                    .cors(Customizer.withDefaults())
+                    .authorizeHttpRequests(authorize -> authorize
+                            .requestMatchers("/logout").authenticated()
+                    ).logout(logout -> logout
+                            .logoutUrl("/logout")
+                            .logoutSuccessHandler(createLogoutSuccessHandler())
+                            .invalidateHttpSession(true)
+                            .clearAuthentication(true)
+                            .deleteCookies(sessionCookieName)
+                            .logoutRequestMatcher(createLogoutRequestMatcher("/logout"))
+                    );
+            return http.build();
+        }
+
+        protected LogoutSuccessHandler createLogoutSuccessHandler() {
+            SimpleUrlLogoutSuccessHandler successHandler = new SimpleUrlLogoutSuccessHandler();
+            if (StringUtils.isNotBlank(authServerProperties.getPostLogoutUrlRedirectParameterName())) {
+                successHandler.setTargetUrlParameter(authServerProperties.getPostLogoutUrlRedirectParameterName());
+            }
+            successHandler.setUseReferer(authServerProperties.isUseRefererPostLogout());
+            return successHandler;
+        }
+
+        protected String getSessionCookieName(ServerProperties serverProperties) {
+            String sessionCookieName = serverProperties.getServlet().getSession().getCookie().getName();
+            if (StringUtils.isBlank(sessionCookieName)) {
+                sessionCookieName = "JSESSIONID";
+            }
+            return sessionCookieName;
+        }
+
+        protected RequestMatcher createLogoutRequestMatcher(String logoutUrl) {
+            return RequestMatchers.anyOf(
+                    new AntPathRequestMatcher(logoutUrl, "GET"),
+                    new AntPathRequestMatcher(logoutUrl, "POST")
+            );
         }
 
         @Bean

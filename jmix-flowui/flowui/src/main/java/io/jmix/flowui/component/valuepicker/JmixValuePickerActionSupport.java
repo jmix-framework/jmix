@@ -18,12 +18,23 @@ package io.jmix.flowui.component.valuepicker;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.PickerComponent;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
+import io.jmix.flowui.kit.component.valuepicker.ValuePickerButton;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Scope;
 
-public class JmixValuePickerActionSupport extends ValuePickerActionSupport {
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+@org.springframework.stereotype.Component("flowui_JmixValuePickerActionSupport")
+public class JmixValuePickerActionSupport extends ValuePickerActionSupport implements ApplicationContextAware {
+
+    protected ApplicationContext applicationContext;
 
     /**
      * @deprecated use one of {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component)},
@@ -56,6 +67,11 @@ public class JmixValuePickerActionSupport extends ValuePickerActionSupport {
         super(component, actionsSlot, hasActionsAttribute);
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     protected void attachAction(Action action) {
@@ -76,5 +92,15 @@ public class JmixValuePickerActionSupport extends ValuePickerActionSupport {
             ((PickerAction<?, PickerComponent<?>, ?>) action)
                     .setTarget(null);
         }
+    }
+
+    @Override
+    protected ValuePickerButton createButton() {
+        // for backward capability
+        if (applicationContext != null) {
+            return applicationContext.getBean(UiComponents.class).create(ValuePickerButton.class);
+        }
+
+        return super.createButton();
     }
 }

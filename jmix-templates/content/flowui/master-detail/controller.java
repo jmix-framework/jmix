@@ -21,6 +21,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.EntityStates;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.action.SecuredBaseAction;
@@ -93,6 +94,9 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     @Autowired
     private ViewValidation viewValidation;
+
+    @Autowired
+    private UiComponentProperties uiComponentProperties;
 
     private boolean modifiedAfterEdit;
 
@@ -238,6 +242,10 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         detailActions.setVisible(editing);
         listLayout.setEnabled(!editing);
         ${tableId}.getActions().forEach(Action::refreshState);
+
+        if (!uiComponentProperties.isImmediateRequiredValidationEnabled() && editing) {
+            resetFormInvalidState();
+        }
     }
 
     private boolean isUpdatePermitted(EntityValueSource<?, ?> valueSource) {

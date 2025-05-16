@@ -21,6 +21,7 @@ import io.jmix.core.AccessManager
 import io.jmix.core.EntityStates
 import io.jmix.flowui.component.validation.ValidationErrors
 import io.jmix.core.validation.group.UiCrossFieldChecks
+import io.jmix.flowui.UiComponentProperties
 import io.jmix.flowui.UiViewProperties
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext
 import io.jmix.flowui.action.SecuredBaseAction
@@ -86,6 +87,9 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
 
     @Autowired
     private lateinit var viewValidation: ViewValidation
+
+    @Autowired
+    private lateinit var uiComponentProperties: UiComponentProperties
 
     private var modifiedAfterEdit: Boolean = false
 
@@ -235,6 +239,10 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         detailActions.isVisible = editing
         listLayout.isEnabled = !editing
         ${tableId}.actions.forEach(Action::refreshState)
+
+        if (!uiComponentProperties.isImmediateRequiredValidationEnabled && editing) {
+            resetFormInvalidState()
+        }
     }
 
     private fun isUpdatePermitted(valueSource: EntityValueSource<*, *>): Boolean {

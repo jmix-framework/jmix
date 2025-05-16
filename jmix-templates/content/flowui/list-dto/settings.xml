@@ -18,7 +18,7 @@
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_browse.svg"
           name="DTO entity list view"
-          order="31">
+          order="30">
     <tags>
         <tag>ENTITY</tag>
         <tag>DTO</tag>

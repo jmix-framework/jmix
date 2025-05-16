@@ -21,6 +21,7 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.security.event.UserRemovedEvent;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.component.genericfilter.FilterConfigurationPersistence;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
 import io.jmix.flowuidata.entity.FilterConfiguration;
@@ -37,33 +38,35 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
     private final DataManager dataManager;
     private final EntityStates entityStates;
 
-    public DatabaseFilterConfigurationPersistence(DataManager dataManager, EntityStates entityStates) {
+    private final CurrentUserSubstitution currentUserSubstitution;
+
+    public DatabaseFilterConfigurationPersistence(DataManager dataManager, EntityStates entityStates,
+                                                  CurrentUserSubstitution currentUserSubstitution) {
         this.dataManager = dataManager;
         this.entityStates = entityStates;
+        this.currentUserSubstitution = currentUserSubstitution;
     }
 
     @Override
     public void remove(FilterConfigurationModel configurationModel) {
-        dataManager.remove(modelToEntity(configurationModel));
+        dataManager.remove(modelToEntity(configurationModel, null));
     }
 
     @Override
     public void save(FilterConfigurationModel configurationModel) {
-        dataManager.save(modelToEntity(configurationModel));
+        FilterConfiguration entity = loadInternal(configurationModel.getConfigurationId(),
+                configurationModel.getComponentId(),
+                currentUserSubstitution.getEffectiveUser().getUsername());
+
+        entity = modelToEntity(configurationModel, entity);
+
+        dataManager.save(entity);
     }
 
     @Override
     @Nullable
     public FilterConfigurationModel load(String configurationId, String componentId, String username) {
-        FilterConfiguration entity = dataManager.load(FilterConfiguration.class)
-                .condition(LogicalCondition.and()
-                        .add(PropertyCondition.equal("configurationId", configurationId).skipNullOrEmpty())
-                        .add(PropertyCondition.equal("componentId", componentId).skipNullOrEmpty())
-                        .add(LogicalCondition.or()
-                                .add(PropertyCondition.isSet("username", false).skipNullOrEmpty())
-                                .add(PropertyCondition.equal("username", username).skipNullOrEmpty())))
-                .optional()
-                .orElse(null);
+        FilterConfiguration entity = loadInternal(configurationId, componentId, username);
 
         return entity == null ? null : entityToModel(entity);
     }
@@ -83,6 +86,19 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
                 .toList();
     }
 
+    @Nullable
+    protected FilterConfiguration loadInternal(String configurationId, String componentId, String username) {
+        return dataManager.load(FilterConfiguration.class)
+                .condition(LogicalCondition.and()
+                        .add(PropertyCondition.equal("configurationId", configurationId).skipNullOrEmpty())
+                        .add(PropertyCondition.equal("componentId", componentId).skipNullOrEmpty())
+                        .add(LogicalCondition.or()
+                                .add(PropertyCondition.isSet("username", false).skipNullOrEmpty())
+                                .add(PropertyCondition.equal("username", username).skipNullOrEmpty())))
+                .optional()
+                .orElse(null);
+    }
+
     @SuppressWarnings({"SpringEventListenerInspection"})
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
     protected void onUserRemove(UserRemovedEvent event) {
@@ -93,8 +109,13 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
         dataManager.remove(configurations.toArray());
     }
 
-    private FilterConfiguration modelToEntity(FilterConfigurationModel model) {
-        FilterConfiguration entity = dataManager.create(FilterConfiguration.class);
+    private FilterConfiguration modelToEntity(FilterConfigurationModel model, @Nullable FilterConfiguration destination) {
+        FilterConfiguration entity = destination;
+        if (entity == null) {
+            entity = dataManager.create(FilterConfiguration.class);
+            entity.setId(model.getId());
+            entityStates.setNew(entity, entityStates.isNew(model));
+        }
 
         entity.setId(model.getId());
         entity.setComponentId(model.getComponentId());
@@ -106,7 +127,6 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
         entity.setRootCondition(model.getRootCondition());
         entity.setSysTenantId(model.getSysTenantId());
 
-        entityStates.setNew(entity, entityStates.isNew(model));
         return entity;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
 
-group 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-data'
+package filter_configuration_persistence.view;
 
-dependencies {
-    api project(':flowui')
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.view.*;
 
-    api project(':data')
-    api project(':eclipselink')
+@Route("filter-configuration-persistence-test-view")
+@ViewController("FilterConfigurationPersistenceTestView")
+@ViewDescriptor("filter-configuration-persistence-test-view.xml")
+public class FilterConfigurationPersistenceTestView extends StandardView {
 
-    implementation 'com.google.code.gson:gson'
-
-    testImplementation project(':flowui-test-assist')
-    testImplementation project(':eclipselink-starter')
-    testImplementation 'org.apache.commons:commons-dbcp2'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+    @ViewComponent
+    public GenericFilter genericFilter;
 }

@@ -17,9 +17,8 @@
 package io.jmix.flowui.component.delegate;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.HasDataView;
-import com.vaadin.flow.data.provider.HasListDataView;
+import com.vaadin.flow.data.provider.*;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -35,8 +34,11 @@ import io.jmix.flowui.data.binding.impl.DataViewBindingImpl;
 import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.data.items.EnumDataProvider;
 import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
+import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.lang.Nullable;
+
+import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -46,6 +48,10 @@ public abstract class AbstractDataViewDelegate<C extends Component
         implements ValueBindingChangeObserver<Object> {
 
     protected DataViewBinding<C, V> binding;
+
+    protected Registration dataChangeRegistration;
+
+    protected EventBus eventBus;
 
     public AbstractDataViewDelegate(C component) {
         super(component);
@@ -57,6 +63,8 @@ public abstract class AbstractDataViewDelegate<C extends Component
             this.binding = null;
         }
 
+        unsubscribeDataChangeListener();
+
         if (dataProvider != null) {
             //noinspection unchecked
             this.binding = new DataViewBindingImpl<>(component,
@@ -65,6 +73,8 @@ public abstract class AbstractDataViewDelegate<C extends Component
                             : dataProvider
             );
             this.binding.bind();
+
+            subscribeDataChangeListener(dataProvider);
         }
     }
 
@@ -114,5 +124,33 @@ public abstract class AbstractDataViewDelegate<C extends Component
 
         //noinspection unchecked,rawtypes
         ((HasListDataView) component).setItems(new EnumDataProvider(itemsEnum));
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public Registration addDataRefreshListener(Consumer<DataChangeEvent.DataRefreshEvent<V>> listener) {
+        return getEventBus().addListener(DataChangeEvent.DataRefreshEvent.class, (Consumer) listener);
+    }
+
+    protected void unsubscribeDataChangeListener() {
+        if (dataChangeRegistration != null) {
+            dataChangeRegistration.remove();
+            dataChangeRegistration = null;
+        }
+    }
+
+    protected void subscribeDataChangeListener(DataProvider<V, ?> dataProvider) {
+        dataChangeRegistration = dataProvider.addDataProviderListener(this::onDataProviderDataChange);
+    }
+
+    protected void onDataProviderDataChange(DataChangeEvent<V> event) {
+        getEventBus().fireEvent(event);
+    }
+
+    protected EventBus getEventBus() {
+        if (eventBus == null) {
+            eventBus = new EventBus();
+        }
+
+        return eventBus;
     }
 }

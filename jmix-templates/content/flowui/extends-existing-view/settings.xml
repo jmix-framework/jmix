@@ -17,7 +17,8 @@
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_extends.svg"
-          name="Extend an existing view">
+          name="Extend an existing view"
+          order="150">
     <tags>
         <tag>EXTEND</tag>
     </tags>

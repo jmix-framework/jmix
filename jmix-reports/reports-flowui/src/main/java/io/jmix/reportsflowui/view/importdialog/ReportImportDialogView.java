@@ -66,12 +66,9 @@ public class ReportImportDialogView extends StandardView {
         upload = uiComponents.create(Upload.class);
         uploadBox.add(upload);
 
-        upload.setReceiver(new FileBuffer());
+        FileBuffer buffer = new FileBuffer();
+        upload.setReceiver(buffer);
         upload.setWidth("100%");
-
-        upload.addFileRemovedListener(e -> {
-            upload.setReceiver(new FileBuffer());
-        });
     }
 
     @Subscribe("closeBtn")

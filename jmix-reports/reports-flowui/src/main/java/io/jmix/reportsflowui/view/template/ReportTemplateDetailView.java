@@ -368,14 +368,15 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         ReportOutputType outputType = ReportOutputType.getTypeFromExtension(extension.toUpperCase());
         visibleTemplateEditor(outputType);
         if (hasHtmlCsvTemplateOutput(outputType)) {
-            String templateContent = new String(reportTemplate.getContent(), StandardCharsets.UTF_8);
-            templateFileEditor.setValue(templateContent);
+            templateFileEditor.setValue(new String(reportTemplate.getContent(), StandardCharsets.UTF_8));
         }
         templateFileEditor.setReadOnly(
                 !secureOperations.isEntityUpdatePermitted(metadata.getClass(reportTemplate), policyStore));
 
         templateFileEditor.addValueChangeListener(e -> {
-            reportTemplate.setContent(e.getValue().getBytes(StandardCharsets.UTF_8));
+            if (hasHtmlCsvTemplateOutput(outputType)) {
+                reportTemplate.setContent(e.getValue().getBytes(StandardCharsets.UTF_8));
+            }
         });
 
         templateFileEditor.setMode(getCodeEditorMode(reportTemplate));

@@ -16,8 +16,6 @@
 
 package com.haulmont.cuba.gui.dynamicattributes;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.actions.picker.ClearAction;
@@ -52,7 +50,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import java.util.*;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component("cuba_DynamicAttributeComponentGenerationStrategy")
@@ -162,7 +160,7 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
 
         Integer rowsCount = attribute.getConfiguration().getRowsCount();
         if (rowsCount != null && rowsCount > 1) {
-            TextArea textArea = uiComponents.create(TextArea.class);
+            TextArea textArea = cubaUiComponents.create(TextArea.class);
             textArea.setRows(rowsCount);
             textField = textArea;
         } else {

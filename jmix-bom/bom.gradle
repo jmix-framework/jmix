@@ -388,9 +388,9 @@ dependencies {
         api "com.openhtmltopdf:openhtmltopdf-rtl-support:$openhtmltopdfVersion"
         api "com.openhtmltopdf:openhtmltopdf-pdfbox:$openhtmltopdfVersion"
 
-        api 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.5.0'
+        api 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.5.3'
         api 'org.docx4j:docx4j-ImportXHTML:11.4.8'
-        api 'org.docx4j:docx4j-export-fo:11.5.0'
+        api 'org.docx4j:docx4j-export-fo:11.5.3'
 
         api 'org.jsoup:jsoup:1.16.1'
         api 'com.opencsv:opencsv:5.7.1'

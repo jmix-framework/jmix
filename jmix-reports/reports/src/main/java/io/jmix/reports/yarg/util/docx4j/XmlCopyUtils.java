@@ -16,8 +16,8 @@
 
 package io.jmix.reports.yarg.util.docx4j;
 
-import javax.xml.bind.*;
-import javax.xml.bind.util.JAXBSource;
+import jakarta.xml.bind.*;
+import jakarta.xml.bind.util.JAXBSource;
 import org.xlsx4j.sml.Cell;
 import org.xml.sax.*;
 import org.xml.sax.ext.LexicalHandler;

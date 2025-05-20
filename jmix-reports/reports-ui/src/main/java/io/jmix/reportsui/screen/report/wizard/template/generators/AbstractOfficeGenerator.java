@@ -20,7 +20,7 @@ import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reportsui.screen.report.wizard.template.Generator;
 import io.jmix.reportsui.screen.report.wizard.template.ReportTemplatePlaceholder;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.apache.poi.ss.util.CellReference;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.io3.Save;

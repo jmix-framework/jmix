@@ -16,7 +16,7 @@
 
 package io.jmix.reports.yarg.formatters.impl.xlsx;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import org.apache.commons.lang3.StringUtils;
 import org.xlsx4j.sml.*;
 

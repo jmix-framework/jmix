@@ -30,6 +30,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
@@ -90,13 +91,15 @@ import static io.jmix.dynattr.AttributeType.*;
 import static io.jmix.dynattr.OptionsLoaderType.*;
 import static java.lang.String.format;
 
-@ViewController("dynat_CategoryAttribute.edit")
+@ViewController("dynat_CategoryAttribute.detail")
 @ViewDescriptor("category-attributes-detail-view.xml")
-@Route(value = "dynat/category/:id/attributes/:id", layout = DefaultMainViewParent.class)
+@Route(value = "dynat/category/:categoryId/attributes/:id", layout = DefaultMainViewParent.class)
 @PrimaryDetailView(CategoryAttribute.class)
 @EditedEntityContainer("categoryAttributeDc")
-@DialogMode(minWidth = "60em", maxWidth = "80%", resizable = true)
+@DialogMode(minWidth = "60em", resizable = true)
 public class CategoryAttributesDetailView extends StandardDetailView<CategoryAttribute> {
+
+    public static final String CATEGORY_ID_ROUTE_PARAMETER = "categoryId";
 
     protected static final String DATA_TYPE_PROPERTY = "dataType";
     protected static final String DEFAULT_DATE_IS_CURRENT_PROPERTY = "defaultDateIsCurrent";
@@ -200,6 +203,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected AccessManager accessManager;
     @Autowired
     protected DynAttrUiHelper dynAttrUiHelper;
+    @Autowired
+    protected EntityStates entityStates;
 
     @ViewComponent
     protected JmixCheckbox lookupField;
@@ -257,16 +262,21 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected CollectionLoader<TargetViewComponent> targetScreensDl;
     @ViewComponent
     protected InstanceContainer<CategoryAttribute> categoryAttributeDc;
-    protected AttributeLocalizationComponent localizationFragment;
-    protected List<TargetViewComponent> targetScreens = new ArrayList<>();
+
     @ViewComponent("dependsOnAttributesField.clear")
-    private ValueClearAction<String> dependsOnAttributesFieldClear;
+    protected ValueClearAction<String> dependsOnAttributesFieldClear;
     @ViewComponent("dependsOnAttributesField.select")
-    private MultiValueSelectAction<String> dependsOnAttributesFieldSelect;
+    protected MultiValueSelectAction<String> dependsOnAttributesFieldSelect;
     @ViewComponent
-    private JmixButton editEnumerationBtn;
-    private boolean isRefreshing = false;
-    private final List<String> defaultEnumValues = new ArrayList<>();
+    protected JmixButton editEnumerationBtn;
+
+    protected boolean isRefreshing = false;
+    protected AttributeLocalizationComponent localizationFragment;
+
+    protected final List<String> defaultEnumValues = new ArrayList<>();
+    protected List<TargetViewComponent> targetScreens = new ArrayList<>();
+
+    protected UUID parentCategoryUuid;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -275,7 +285,26 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         initViewGrid();
     }
 
-    private void initDefaultEnumField() {
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        event.getRouteParameters().get(CATEGORY_ID_ROUTE_PARAMETER)
+                .ifPresent(paramValue -> parentCategoryUuid = UUID.fromString(paramValue));
+
+        super.beforeEnter(event);
+    }
+
+    @Subscribe
+    public void onInitEntity(InitEntityEvent<CategoryAttribute> event) {
+        Category category = loadParentCategory();
+        event.getEntity().setCategory(category);
+    }
+
+    protected Category loadParentCategory() {
+        return dataManager.load(Id.of(parentCategoryUuid, Category.class))
+                .one();
+    }
+
+    protected void initDefaultEnumField() {
         defaultEnumValues.addAll(getEnumValues());
         defaultEnumField.setItems(defaultEnumValues);
         defaultEnumField.addValueChangeListener(e -> {
@@ -346,7 +375,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         defaultEntityIdField.addValueChangeListener(this::onDefaultEntityIdFieldValueChange);
     }
 
-    private boolean isDataTypeEnum() {
+    protected boolean isDataTypeEnum() {
         return getEditedEntity().getDataType() != null &&
                 getEditedEntity().getDataType().equals(AttributeType.ENUMERATION);
     }
@@ -448,7 +477,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         enumerationScreen.open();
     }
 
-    private void clearEnumValueIfCurrentItemAbsentOnEnum() {
+    protected void clearEnumValueIfCurrentItemAbsentOnEnum() {
         if (!defaultEnumValues.contains(defaultEnumField.getValue())) {
             defaultEnumField.clear();
         }
@@ -523,7 +552,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         comboBox.addCustomValueSetListener(e -> item.setComponent(e.getDetail()));
     }
 
-    private <T> void setValueIfAbsentInItems(JmixComboBox<T> jmixComboBox, T value) {
+    protected <T> void setValueIfAbsentInItems(JmixComboBox<T> jmixComboBox, T value) {
         if (value == null) {
             return;
         }
@@ -1111,9 +1140,26 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void onPreCommit(DataContext.PreSaveEvent event) {
+        preCommitOrderNo();
         preCommitLocalizationFields();
         preCommitTargetViewsField();
         preCommitConfiguration();
+    }
+
+    protected void preCommitOrderNo() {
+        if (!entityStates.isNew(getEditedEntity()) && parentCategoryUuid != null) {
+            return;
+        }
+
+        int orderNo = dataManager.loadValue(
+                        "select max(a.orderNo) from dynat_CategoryAttribute a " +
+                                "where a.category.id = :categoryId", Integer.class
+                )
+                .parameter("categoryId", parentCategoryUuid)
+                .optional()
+                .orElse(0);
+
+        getEditedEntity().setOrderNo(++orderNo);
     }
 
     protected void preCommitLocalizationFields() {

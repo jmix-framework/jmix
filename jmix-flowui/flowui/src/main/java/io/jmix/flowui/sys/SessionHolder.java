@@ -28,14 +28,7 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Component;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -140,6 +133,7 @@ public class SessionHolder implements VaadinServiceInitListener {
     @Override
     public void serviceInit(ServiceInitEvent event) {
         event.getSource().addSessionInitListener(this::onSessionInit);
+        event.getSource().addSessionDestroyListener(this::onSessionDestroy);
     }
 
     protected void onSessionInit(SessionInitEvent event) {
@@ -147,6 +141,21 @@ public class SessionHolder implements VaadinServiceInitListener {
         try {
             sessions.add(new WeakReference<>(event.getSession()));
             log.trace("Added session: {}", event.getSession());
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    protected void onSessionDestroy(SessionDestroyEvent event) {
+        lock.writeLock().lock();
+        try {
+            boolean removed = sessions.removeIf(ref ->
+                    ref.refersTo(event.getSession()) || ref.refersTo(null)
+            );
+
+            if (removed) {
+                log.trace("Removed session: {}", event.getSession());
+            }
         } finally {
             lock.writeLock().unlock();
         }

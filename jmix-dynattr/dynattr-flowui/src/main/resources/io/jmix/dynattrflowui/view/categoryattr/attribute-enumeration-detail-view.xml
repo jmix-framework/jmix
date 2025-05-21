@@ -28,7 +28,7 @@
     </facets>
     <layout expand="detailButtonsBox">
         <hbox id="editorBox" width="100%">
-            <vbox width="55em" height="100%" padding="false">
+            <vbox height="100%" padding="false">
                 <hbox width="100%" expand="valueField">
                     <textField id="valueField" datatype="string"/>
                     <button id="addBtn" action="localizedEnumValuesDataGrid.add"/>

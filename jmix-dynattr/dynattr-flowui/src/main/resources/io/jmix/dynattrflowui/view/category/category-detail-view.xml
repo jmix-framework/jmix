@@ -32,7 +32,7 @@
         <action id="windowCommitAndClose" type="detail_saveClose"/>
         <action id="windowClose" type="detail_close"/>
     </actions>
-    <layout spacing="true" expand="tabSheet">
+    <layout expand="tabSheet">
         <tabSheet id="tabSheet" height="AUTO" width="100%">
             <tab id="mainTab" label="msg://mainTab.title">
                 <formLayout id="form" dataContainer="categoryDc">
@@ -58,7 +58,7 @@
                 </vbox>
             </tab>
         </tabSheet>
-        <hbox id="detailButtonsBox" spacing="true">
+        <hbox id="detailButtonsBox">
             <button action="windowCommitAndClose"/>
             <button action="windowClose"/>
         </hbox>

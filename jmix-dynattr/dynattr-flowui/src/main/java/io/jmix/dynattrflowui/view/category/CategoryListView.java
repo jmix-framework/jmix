@@ -160,6 +160,17 @@ public class CategoryListView extends StandardListView<Category> {
     public void beforeEnter(BeforeEnterEvent event) {
         super.beforeEnter(event);
 
+        processQueryParameters(event);
+    }
+
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        super.processBeforeEnterInternal(event);
+
+        processQueryParameters(event);
+    }
+
+    protected void processQueryParameters(BeforeEnterEvent event) {
         Map<String, List<String>> parameters = event.getLocation().getQueryParameters().getParameters();
 
         if (parameters.containsKey(SELECTED_CATEGORY_QUERY_PARAMETER)) {

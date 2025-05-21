@@ -18,7 +18,6 @@ package io.jmix.dynattrflowui.view.category;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -33,10 +32,12 @@ import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
+import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Comparator;
@@ -82,6 +83,8 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     @ViewComponent
     protected JmixComboBox<MetaClass> entityTypeField;
     @ViewComponent
+    protected TypedTextField<String> nameField;
+    @ViewComponent
     protected JmixTabSheet tabSheet;
     @ViewComponent
     protected VerticalLayout localizationTabContainer;
@@ -107,7 +110,17 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected void onEntityTypeFieldValueChange(AbstractField.ComponentValueChangeEvent<ComboBox<MetaClass>, MetaClass> event) {
         if (event.getValue() != null) {
             getEditedEntity().setEntityType(event.getValue().getName());
+
+            if (nameField.getTypedValue() == null) {
+                getEditedEntity().setName(generateCategoryNameByEntityType());
+            }
         }
+    }
+
+    protected String generateCategoryNameByEntityType() {
+        String entityTypeCaption = messageTools.getEntityCaption(entityTypeField.getValue());
+        String categoryEntityCaption = messageTools.getEntityCaption(categoryDc.getEntityMetaClass());
+        return StringUtils.capitalize(entityTypeCaption) + " " + StringUtils.uncapitalize(categoryEntityCaption);
     }
 
     @Subscribe("isDefaultField")

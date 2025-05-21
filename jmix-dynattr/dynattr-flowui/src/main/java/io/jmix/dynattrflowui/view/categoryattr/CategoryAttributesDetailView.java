@@ -29,6 +29,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
@@ -61,7 +62,6 @@ import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -108,8 +108,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected static final String NAME_PROPERTY = "name";
 
     protected static final String MAIN_TAB_NAME = "mainTab";
-    protected static final String VIEW_COLUMN = "view";
-    protected static final String COMPONENT_COLUMN = "component";
 
     protected static final String CONFIGURATION_NUMBER_FORMAT_PATTERN_PROPERTY = "numberFormatPattern";
     protected static final String CONFIGURATION_OPTIONS_LOADER_TYPE_PROPERTY = "optionsLoaderType";
@@ -239,8 +237,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     protected CodeEditor recalculationScriptField;
     @ViewComponent
-    protected DataGrid<TargetViewComponent> targetScreensTable;
-    @ViewComponent
     protected JmixTabSheet tabSheet;
     @ViewComponent
     protected TypedTextField<String> codeField;
@@ -282,7 +278,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected void onInit(InitEvent event) {
         initAttributeForm();
         initCalculatedValuesAndOptionsForm();
-        initViewGrid();
     }
 
     @Override
@@ -291,6 +286,19 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 .ifPresent(paramValue -> parentCategoryUuid = UUID.fromString(paramValue));
 
         super.beforeEnter(event);
+    }
+
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        super.processBeforeEnterInternal(event);
+
+        event.getRouteParameters().get(CATEGORY_ID_ROUTE_PARAMETER)
+                .ifPresent(paramValue -> parentCategoryUuid = UUID.fromString(paramValue));
+    }
+
+    @Override
+    protected void setupEntityToEdit(CategoryAttribute entityToEdit) {
+        // do nothing
     }
 
     @Subscribe
@@ -493,6 +501,28 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         targetScreensDc.getMutableItems().add(metadata.create(TargetViewComponent.class));
     }
 
+    @Subscribe("targetScreensTable.addAllViews")
+    protected void onTargetScreensTableAddAllViews(ActionPerformedEvent event) {
+        String entityType = categoryAttributeDc.getItem().getCategory().getEntityType();
+        MetaClass metaClass = metadata.getClass(entityType);
+        List<String> usedViewIds = targetScreensDc.getItems()
+                .stream()
+                .map(TargetViewComponent::getView)
+                .toList();
+
+        dynAttrFacetInfo.getDynAttrViewIds(metaClass)
+                .stream()
+                .filter(viewId -> !usedViewIds.contains(viewId))
+                .forEach(this::addKnownTargetView);
+    }
+
+    protected void addKnownTargetView(String viewId) {
+        TargetViewComponent targetViewComponent = metadata.create(TargetViewComponent.class);
+        targetViewComponent.setView(viewId);
+
+        targetScreensDc.getMutableItems().add(targetViewComponent);
+    }
+
     @Install(to = "dependsOnAttributesField", subject = "validator")
     protected void dependsOnAttributesFieldValidator(Collection<CategoryAttribute> categoryAttributes) {
         if (org.springframework.util.StringUtils.hasText(recalculationScriptField.getValue())
@@ -502,67 +532,61 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected void initViewGrid() {
-        //noinspection DataFlowIssue
-        targetScreensTable.getColumnByKey(VIEW_COLUMN)
-                .setRenderer(new ComponentRenderer<>(
-                        () -> {
-                            JmixComboBox<String> jmixComboBox = uiComponents.create(JmixComboBox.class);
-                            jmixComboBox.setMinWidth("25em");
-                            return jmixComboBox;
-                        },
-                        (comboBox, item) -> {
-                            if (categoryAttributeDc.getItem().getCategory().getEntityType() != null) {
-                                MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
-                                comboBox.setItems(dynAttrFacetInfo.getDynAttrViewIds(categoryMetaClass));
-                            }
-
-                            setValueIfAbsentInItems(comboBox, item.getView());
-
-                            comboBox.addValueChangeListener(e -> item.setView(e.getValue()));
-                            comboBox.addCustomValueSetListener(e -> item.setView(e.getDetail()));
-                        }));
-        //noinspection DataFlowIssue
-        targetScreensTable.getColumnByKey(COMPONENT_COLUMN)
-                .setRenderer(new ComponentRenderer<>(
-                        this::visibilityTableComponentColumnComponentGenerator,
-                        this::visibilityTableComponentColumnUpdater)
-                );
+    @Supply(to = "targetScreensTable.view", subject = "renderer")
+    protected Renderer<TargetViewComponent> targetScreensTableViewRenderer() {
+        return new ComponentRenderer<>(this::createComboBox, this::targetViewItemUpdater);
     }
 
-    protected JmixComboBox<String> visibilityTableComponentColumnComponentGenerator() {
-        //noinspection unchecked
+    @Supply(to = "targetScreensTable.component", subject = "renderer")
+    protected Renderer<TargetViewComponent> targetScreensTableComponentRenderer() {
+        return new ComponentRenderer<>(this::createComboBox, this::targetComponentItemUpdater);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected JmixComboBox<String> createComboBox() {
         JmixComboBox<String> comboBox = uiComponents.create(JmixComboBox.class);
-        comboBox.setMinWidth("25em");
+        comboBox.setWidthFull();
         comboBox.setAllowCustomValue(true);
         return comboBox;
     }
 
-    protected void visibilityTableComponentColumnUpdater(JmixComboBox<String> comboBox, TargetViewComponent item) {
+    protected void targetViewItemUpdater(JmixComboBox<String> comboBox, TargetViewComponent item) {
+        if (categoryAttributeDc.getItem().getCategory().getEntityType() != null) {
+            MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
+            comboBox.setItems(dynAttrFacetInfo.getDynAttrViewIds(categoryMetaClass));
+        }
+
+        setValueIfAbsentInItems(comboBox, item.getView());
+
+        comboBox.addValueChangeListener(e -> item.setView(e.getValue()));
+        comboBox.addCustomValueSetListener(e -> item.setView(e.getDetail()));
+    }
+
+    protected void targetComponentItemUpdater(JmixComboBox<String> comboBox, TargetViewComponent item) {
         if (item.getView() != null && categoryAttributeDc.getItem().getCategory().getEntityType() != null) {
             MetaClass categoryMetaClass = metadata.getClass(categoryAttributeDc.getItem().getCategory().getEntityType());
             comboBox.setItems(dynAttrFacetInfo.getDynAttrViewIds(categoryMetaClass));
             Collection<String> targetComponents = dynAttrFacetInfo.getDynAttrViewTargetComponentIds(categoryMetaClass, item.getView());
             comboBox.setItems(targetComponents);
         }
+
         setValueIfAbsentInItems(comboBox, item.getComponent());
 
         comboBox.addValueChangeListener(e -> item.setComponent(e.getValue()));
         comboBox.addCustomValueSetListener(e -> item.setComponent(e.getDetail()));
     }
 
-    protected <T> void setValueIfAbsentInItems(JmixComboBox<T> jmixComboBox, T value) {
+    protected <T> void setValueIfAbsentInItems(JmixComboBox<T> comboBox, T value) {
         if (value == null) {
             return;
         }
-        List<T> items = jmixComboBox.getListDataView().getItems().toList();
+        List<T> items = comboBox.getListDataView().getItems().toList();
         if (!items.contains(value)) {
             ArrayList<T> extendedItemsByCustomValue = new ArrayList<>(items);
             extendedItemsByCustomValue.add(value);
-            jmixComboBox.setItems(extendedItemsByCustomValue);
+            comboBox.setItems(extendedItemsByCustomValue);
         }
-        jmixComboBox.setValue(value);
+        comboBox.setValue(value);
     }
 
     protected void initAttributeForm() {
@@ -728,7 +752,12 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
         AttributeType attributeType = dataTypeField.getValue();
         Collection<String> visibleFields = FIELDS_VISIBLE_FOR_TYPES.get(attributeType);
-        for (Component component : optionalAttributeForm.getChildren().toList()) {
+
+        List<Component> itemsToUpdate = optionalAttributeForm.getChildren().collect(Collectors.toList());
+        // component from advanced tab should be handled too
+        itemsToUpdate.add(lookupField);
+
+        for (Component component : itemsToUpdate) {
             boolean visible = visibleFields.contains(component.getId().orElse(StringUtils.EMPTY));
             component.setVisible(visible);
 
@@ -742,8 +771,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             }
         }
 
-        if (MAIN_TAB_NAME.equals(tabSheet.getSelectedTab().getId().orElseThrow()) && !visibleFields.isEmpty()) {
-            optionalAttributeForm.setVisible(true);
+        if (MAIN_TAB_NAME.equals(tabSheet.getSelectedTab().getId().orElseThrow())) {
+            optionalAttributeForm.setVisible(!visibleFields.isEmpty());
         }
 
         if (ENTITY.equals(attributeType)) {

@@ -132,7 +132,10 @@ public class Views {
     }
 
     protected void initProperties(View<?> view) {
-        TabbedModeViewProperties properties = new TabbedModeViewProperties();
+        TabbedModeViewProperties properties = TabbedModeViewUtils.getViewProperties(view);
+        if (properties == null) {
+            properties = new TabbedModeViewProperties();
+        }
 
         boolean closeable = ViewControllerUtils.findAnnotation(view, ViewProperties.class)
                 .map(ViewProperties::closeable).orElse(true);

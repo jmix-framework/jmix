@@ -29,9 +29,11 @@ import io.jmix.flowui.view.StandardDetailView.InitEntityEvent;
 import io.jmix.flowui.view.StandardDetailView.ValidationEvent;
 import io.jmix.flowui.view.View.QueryParametersChangeEvent;
 import io.jmix.flowui.view.View.RestoreComponentsStateEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.lang.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -217,6 +219,15 @@ public final class ViewControllerUtils {
 
     public static String getRouteParamName(StandardDetailView<?> detailView) {
         return detailView.getRouteParamName();
+    }
+
+    public static List<ApplicationListener<?>> getApplicationEventListeners(View<?> view) {
+        return view.getApplicationEventListeners();
+    }
+
+    public static void setApplicationEventListeners(View<?> view,
+                                                    @Nullable List<ApplicationListener<?>> listeners) {
+        view.setApplicationEventListeners(listeners);
     }
 
     @Internal

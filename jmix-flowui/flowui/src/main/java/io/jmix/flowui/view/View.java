@@ -34,9 +34,12 @@ import io.jmix.flowui.util.WebBrowserTools;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.lang.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -81,6 +84,8 @@ public class View<T extends Component> extends Composite<T>
     private boolean closeActionPerformed = false;
     private boolean preventBrowserTabClosing = false;
     private boolean afterNavigationProcessed = false;
+
+    private List<ApplicationListener<?>> applicationEventListeners;     // Global event listeners
 
     private Runnable afterNavigationHandler;
 
@@ -211,9 +216,26 @@ public class View<T extends Component> extends Composite<T>
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
+        onAttachInternal();
+
         if (isPreventBrowserTabClosing()) {
             WebBrowserTools.preventBrowserTabClosing(this);
         }
+    }
+
+    @Internal
+    protected void onAttachInternal() {
+        addApplicationListeners();
+    }
+
+    protected void addApplicationListeners() {
+        uiEventsManager().ifPresent(uiEventsManager -> {
+            uiEventsManager.removeApplicationListeners(this);
+            List<ApplicationListener<?>> listeners = getApplicationEventListeners();
+            for (ApplicationListener<?> listener : listeners) {
+                uiEventsManager.addApplicationListener(this, listener);
+            }
+        });
     }
 
     @Override
@@ -242,10 +264,8 @@ public class View<T extends Component> extends Composite<T>
     }
 
     protected void removeApplicationListeners() {
-        VaadinSession session = VaadinSession.getCurrent();
-        if (session != null) {
-            session.getAttribute(UiEventsManager.class).removeApplicationListeners(this);
-        }
+        uiEventsManager().ifPresent(uiEventsManager ->
+                uiEventsManager.removeApplicationListeners(this));
     }
 
     protected void removeViewAttributes() {
@@ -334,6 +354,18 @@ public class View<T extends Component> extends Composite<T>
 
     void setPageTitleDelegate(@Nullable Consumer<String> pageTitleDelegate) {
         this.pageTitleDelegate = pageTitleDelegate;
+    }
+
+    List<ApplicationListener<?>> getApplicationEventListeners() {
+        return applicationEventListeners != null
+                ? Collections.unmodifiableList(applicationEventListeners)
+                : Collections.emptyList();
+    }
+
+    void setApplicationEventListeners(@Nullable List<ApplicationListener<?>> listeners) {
+        this.applicationEventListeners = listeners;
+
+        // TODO: gg, handle some how?
     }
 
     protected ViewData getViewData() {
@@ -774,6 +806,13 @@ public class View<T extends Component> extends Composite<T>
     @Override
     protected ComponentEventBus getEventBus() {
         return super.getEventBus();
+    }
+
+    private Optional<UiEventsManager> uiEventsManager() {
+        VaadinSession session = VaadinSession.getCurrent();
+        return session != null
+                ? Optional.ofNullable(session.getAttribute(UiEventsManager.class))
+                : Optional.empty();
     }
 
     private boolean isContextActive() {

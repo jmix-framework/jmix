@@ -35,11 +35,7 @@ import elemental.json.JsonValue;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.UiEventPublisher;
-import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.sys.autowire.EventListenerDependencyInjector;
-import io.jmix.flowui.sys.autowire.FragmentAutowireContext;
-import io.jmix.flowui.sys.autowire.ViewAutowireContext;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
@@ -60,7 +56,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component("tabmod_JmixUI")
@@ -590,36 +589,12 @@ public class JmixUI extends UI {
             prevUi.close();
         });
 
-        attachApplicationListeners();
-
         uiEventPublisher().publishEventForCurrentUI(new UIRefreshEvent(this));
 
-        // If requested location differs, navigate to a new view
+        // If a requested location differs, navigate to a new view
         String locationString = findCurrentViewLocationString(this);
         if (!location.getPath().equals(locationString)) {
             handleNavigationInternal(location, navigationState, trigger);
-        }
-    }
-
-    protected void attachApplicationListeners() {
-        getTopLevelViewOptional()
-                .ifPresent(this::attachApplicationListeners);
-
-        Collection<View<?>> allViews = views.getOpenedViews(this).getAll();
-        for (View<?> view : allViews) {
-            attachApplicationListeners(view);
-        }
-    }
-
-    protected void attachApplicationListeners(View<?> view) {
-        EventListenerDependencyInjector listenerInjector = eventListenerDependencyInjector();
-        listenerInjector.autowire(new ViewAutowireContext(view));
-
-        Collection<Component> components = UiComponentUtils.getComponents(view);
-        for (Component component : components) {
-            if (component instanceof Fragment<?> fragment) {
-                listenerInjector.autowire(new FragmentAutowireContext(fragment));
-            }
         }
     }
 
@@ -630,7 +605,7 @@ public class JmixUI extends UI {
         try {
             getInternals().setLastHandledNavigation(location);
             Class<? extends Component> navigationTarget = navigationState.getNavigationTarget();
-            // Don't throw exception for placeholder, just skip it
+            // Don't throw an exception for placeholder, just skip it
             if (ClientViewPlaceholder.class.isAssignableFrom(navigationTarget)) {
                 return;
             }

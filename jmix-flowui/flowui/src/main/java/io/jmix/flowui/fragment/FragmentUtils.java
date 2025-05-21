@@ -24,11 +24,13 @@ import com.vaadin.flow.server.Attributes;
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.UiComponentUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationListener;
 import org.springframework.lang.Nullable;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -264,5 +266,14 @@ public final class FragmentUtils {
         }
 
         return descriptorPath;
+    }
+
+    public static List<ApplicationListener<?>> getApplicationEventListeners(Fragment<?> fragment) {
+        return fragment.getApplicationEventListeners();
+    }
+
+    public static void setApplicationEventListeners(Fragment<?> fragment,
+                                                    @Nullable List<ApplicationListener<?>> listeners) {
+        fragment.setApplicationEventListeners(listeners);
     }
 }

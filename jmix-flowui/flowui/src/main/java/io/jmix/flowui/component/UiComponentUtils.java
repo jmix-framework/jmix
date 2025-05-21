@@ -32,8 +32,10 @@ import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewChildrenVisitResult;
+import io.jmix.flowui.view.ViewControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationListener;
 import org.springframework.lang.Nullable;
 
 import java.io.ByteArrayInputStream;
@@ -768,6 +770,29 @@ public final class UiComponentUtils {
             treeComponents.add(component);
 
             __walkComponentsInternal(view, UiComponentUtils.getComponents(view), callback, treeComponents);
+        }
+    }
+
+    public static List<ApplicationListener<?>> getApplicationEventListeners(Component component) {
+        if (component instanceof View<?> view) {
+            return ViewControllerUtils.getApplicationEventListeners(view);
+        } else if (component instanceof Fragment<?> fragment) {
+            return FragmentUtils.getApplicationEventListeners(fragment);
+        } else {
+            throw new IllegalArgumentException(component.getClass().getSimpleName() +
+                    " has no API to set application event listeners");
+        }
+    }
+
+    public static void setApplicationEventListeners(Component component,
+                                                    @Nullable List<ApplicationListener<?>> listeners) {
+        if (component instanceof View<?> view) {
+            ViewControllerUtils.setApplicationEventListeners(view, listeners);
+        } else if (component instanceof Fragment<?> fragment) {
+            FragmentUtils.setApplicationEventListeners(fragment, listeners);
+        } else {
+            throw new IllegalArgumentException(component.getClass().getSimpleName() +
+                    " has no API to set application event listeners");
         }
     }
 }

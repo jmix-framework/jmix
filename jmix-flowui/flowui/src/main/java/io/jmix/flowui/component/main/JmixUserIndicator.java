@@ -94,8 +94,10 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        uiEventsManager().ifPresent(uiEventsManager ->
-                uiEventsManager.addApplicationListener(this, this::onApplicationEvent));
+        uiEventsManager().ifPresent(uiEventsManager -> {
+            uiEventsManager.removeApplicationListeners(this);
+            uiEventsManager.addApplicationListener(this, this::onApplicationEvent);
+        });
     }
 
     @Override
@@ -216,10 +218,8 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
 
     protected Optional<UiEventsManager> uiEventsManager() {
         VaadinSession session = VaadinSession.getCurrent();
-        if (session == null) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(session.getAttribute(UiEventsManager.class));
+        return session != null
+                ? Optional.ofNullable(session.getAttribute(UiEventsManager.class))
+                : Optional.empty();
     }
 }

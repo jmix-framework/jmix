@@ -159,11 +159,18 @@ public interface StudioElements {
                     @StudioSupplyHandler(
                             methodName = "setRenderer",
                             parameterType = "com.vaadin.flow.data.renderer.Renderer"
+                    ),
+                    @StudioSupplyHandler(
+                            methodName = "setEditorComponent",
+                            parameterType = "com.vaadin.flow.component.Component"
+                    ),
+                    @StudioSupplyHandler(
+                            methodName = "setEditorComponent",
+                            parameterType = "com.vaadin.flow.function.SerializableFunction"
                     )
             }
     )
     Grid.Column column();
-
 
     @StudioElement(
             name = "EditorActionsColumn",

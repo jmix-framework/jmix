@@ -440,7 +440,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     }
 
     protected String generateTabId() {
-        return GENERATED_TAB_ID_PREFIX + RandomStringUtils.randomAlphanumeric(8);
+        return GENERATED_TAB_ID_PREFIX + RandomStringUtils.secure().nextAlphanumeric(8);
     }
 
     protected void initConnector() {

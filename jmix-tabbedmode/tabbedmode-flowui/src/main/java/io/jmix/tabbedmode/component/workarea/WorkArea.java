@@ -119,27 +119,8 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     public Collection<View<?>> getActiveWorkAreaViews() {
         TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
         return tabbedContainer.getTabComponentsStream()
-                .map(this::getViewFromContent)
+                .map(MainTabSheetUtils::getViewFromContent)
                 .collect(Collectors.toList());
-    }
-
-    protected View<?> getViewFromContent(Component component) {
-        ViewContainer viewContainer = MainTabSheetUtils.asViewContainer(component);
-        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
-        if (breadcrumbs != null) {
-            ViewBreadcrumbs.ViewInfo viewInfo = breadcrumbs.getCurrentViewInfo();
-            if (viewInfo != null) {
-                return viewInfo.view();
-            } else {
-                throw new IllegalStateException("Tab does not contain a %s"
-                        .formatted(View.class.getSimpleName()));
-            }
-        } else if (viewContainer.getView() != null) {
-            return viewContainer.getView();
-        } else {
-            throw new IllegalStateException("Tab does not contain a %s"
-                    .formatted(View.class.getSimpleName()));
-        }
     }
 
     public Collection<View<?>> getCurrentBreadcrumbs() {

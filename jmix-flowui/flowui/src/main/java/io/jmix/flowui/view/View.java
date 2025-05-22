@@ -364,8 +364,6 @@ public class View<T extends Component> extends Composite<T>
 
     void setApplicationEventListeners(@Nullable List<ApplicationListener<?>> listeners) {
         this.applicationEventListeners = listeners;
-
-        // TODO: gg, handle some how?
     }
 
     protected ViewData getViewData() {

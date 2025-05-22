@@ -773,6 +773,17 @@ public final class UiComponentUtils {
         }
     }
 
+    /**
+     * Retrieves the application event listeners associated with the specified component.
+     * This method identifies the type of the component and delegates the retrieval of
+     * event listeners to the appropriate utility class based on whether the component
+     * is a View or a Fragment. If the component type is unsupported, an exception is thrown.
+     *
+     * @param component the component for which to retrieve application event listeners.
+     *                  Must be an instance of {@link View} or {@link Fragment}
+     * @return a list of application event listeners associated with the specified component
+     * @throws IllegalArgumentException if the component type is unsupported
+     */
     public static List<ApplicationListener<?>> getApplicationEventListeners(Component component) {
         if (component instanceof View<?> view) {
             return ViewControllerUtils.getApplicationEventListeners(view);
@@ -784,6 +795,15 @@ public final class UiComponentUtils {
         }
     }
 
+    /**
+     * Sets the application event listeners for the provided component if it supports event
+     * listener registration.
+     *
+     * @param component the component for which the application event listeners will be set.
+     *                  Must be an instance of {@link View} or {@link Fragment}
+     * @param listeners a list of application listeners to set for the given component
+     * @throws IllegalArgumentException if the component type is unsupported
+     */
     public static void setApplicationEventListeners(Component component,
                                                     @Nullable List<ApplicationListener<?>> listeners) {
         if (component instanceof View<?> view) {

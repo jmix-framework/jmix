@@ -143,8 +143,6 @@ public abstract class Fragment<T extends Component> extends Composite<T> impleme
 
     void setApplicationEventListeners(@Nullable List<ApplicationListener<?>> listeners) {
         this.applicationEventListeners = listeners;
-
-        // TODO: gg, handle some how?
     }
 
     @Override

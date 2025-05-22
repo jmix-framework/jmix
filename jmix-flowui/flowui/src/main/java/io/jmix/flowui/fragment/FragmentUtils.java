@@ -268,10 +268,23 @@ public final class FragmentUtils {
         return descriptorPath;
     }
 
+    /**
+     * Retrieves the list of application event listeners associated with the specified {@link Fragment}.
+     *
+     * @param fragment the {@link Fragment} for which to retrieve the application event listeners
+     * @return a list of application event listeners associated with the specified {@link Fragment}
+     */
     public static List<ApplicationListener<?>> getApplicationEventListeners(Fragment<?> fragment) {
         return fragment.getApplicationEventListeners();
     }
 
+    /**
+     * Sets the application event listeners for the specified {@link Fragment}.
+     *
+     * @param fragment  the {@link Fragment} for which to set the application event listeners
+     * @param listeners a list of application event listeners to be set for the {@link Fragment},
+     *                  or {@code null} if no listeners should be associated
+     */
     public static void setApplicationEventListeners(Fragment<?> fragment,
                                                     @Nullable List<ApplicationListener<?>> listeners) {
         fragment.setApplicationEventListeners(listeners);

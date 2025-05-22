@@ -379,7 +379,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     /**
      * Marks the content related to the selected tab as enabled and adds it to
      * the component if it is not already added. All the other content panels
-     * are disabled so they can't be interacted with.
+     * are disabled, so they can't be interacted with.
      */
     protected void updateContent() {
         for (Map.Entry<Tab, Component> entry : tabToContent.entrySet()) {

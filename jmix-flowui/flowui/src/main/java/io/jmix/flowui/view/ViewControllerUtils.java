@@ -221,10 +221,23 @@ public final class ViewControllerUtils {
         return detailView.getRouteParamName();
     }
 
+    /**
+     * Retrieves a list of application event listeners associated with a given {@link View}.
+     *
+     * @param view the {@link View} for which to retrieve the application event listeners
+     * @return a list of application event listeners associated with the specified {@link View}
+     */
     public static List<ApplicationListener<?>> getApplicationEventListeners(View<?> view) {
         return view.getApplicationEventListeners();
     }
 
+    /**
+     * Sets the application event listeners for the specified {@link View}.
+     *
+     * @param view      the {@link View} for which to set the application event listeners
+     * @param listeners a list of application event listeners to be set for the {@link View},
+     *                  or {@code null} if no listeners should be associated
+     */
     public static void setApplicationEventListeners(View<?> view,
                                                     @Nullable List<ApplicationListener<?>> listeners) {
         view.setApplicationEventListeners(listeners);

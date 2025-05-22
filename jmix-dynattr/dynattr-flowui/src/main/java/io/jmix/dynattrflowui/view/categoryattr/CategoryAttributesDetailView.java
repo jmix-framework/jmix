@@ -480,6 +480,10 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 })
                 .build();
 
+        // localizedEnumValuesDataGrid will be shown
+        if (coreProperties.getAvailableLocales().size() > 1) {
+            enumerationScreen.setWidth("65em");
+        }
         enumerationScreen.getView().setEnumeration(getEditedEntity().getEnumeration());
         enumerationScreen.getView().setEnumerationLocales(getEditedEntity().getEnumerationLocales());
         enumerationScreen.open();

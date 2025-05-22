@@ -471,7 +471,8 @@ public class Views {
         ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
         breadcrumbs.addView(view, resolveLocation(view, context));
 
-        ViewControllerUtils.setViewCloseDelegate(view, this::removeThisTabView);
+        ViewControllerUtils.setViewCloseDelegate(view, closingView ->
+                removeThisTabView(workArea, closingView));
         ViewControllerUtils.setPageTitleDelegate(view, title -> {
             updateTabTitle(selectedTab, title);
             updatePageTitle(view, title);
@@ -483,9 +484,7 @@ public class Views {
         }
     }
 
-    protected void removeThisTabView(View<?> viewToRemove) {
-        JmixUI ui = getUI(viewToRemove);
-
+    protected void removeThisTabView(WorkArea workArea, View<?> viewToRemove) {
         ViewContainer viewContainer = getViewContainer(viewToRemove);
         viewContainer.removeView();
 
@@ -505,7 +504,6 @@ public class Views {
         View<?> viewToDisplay = currentViewInfo.view();
         viewContainer.setView(viewToDisplay);
 
-        WorkArea workArea = getConfiguredWorkArea(ui);
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
         Tab tab = tabbedContainer.getTab(((Component) viewContainer));
 
@@ -515,6 +513,7 @@ public class Views {
         }
 
         // TODO: gg, move to a single place
+        JmixUI ui = getUI(workArea);
         updateUrl(ui, currentViewInfo.location());
         updatePageTitle(viewToDisplay);
     }
@@ -524,16 +523,13 @@ public class Views {
         WorkArea workArea = getConfiguredWorkArea(ui);
         workArea.switchTo(WorkArea.State.VIEW_CONTAINER);
 
-        // work with new view
-        createNewTabLayout(ui, context);
-        ViewControllerUtils.setViewCloseDelegate(view, this::removeNewTabView);
+        createNewTabLayout(workArea, context);
+        ViewControllerUtils.setViewCloseDelegate(view, closingView ->
+                removeNewTabView(workArea, closingView));
     }
 
-    protected void removeNewTabView(View<?> view) {
-        JmixUI ui = getUI(view);
-
+    protected void removeNewTabView(WorkArea workArea, View<?> view) {
         ViewContainer viewContainer = getViewContainer(view);
-        WorkArea workArea = getConfiguredWorkArea(ui);
 
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
         tabbedContainer.remove(((Component) viewContainer));
@@ -552,6 +548,8 @@ public class Views {
             // TODO: gg, move or re-implement, e.g. to state change listener?
             View<?> rootView = UiComponentUtils.getView(workArea);
             updatePageTitle(rootView);
+
+            JmixUI ui = getUI(workArea);
             updateUrl(ui, resolveLocation(rootView));
         }
     }
@@ -564,7 +562,7 @@ public class Views {
                         .formatted(View.class.getSimpleName(), ViewContainer.class.getSimpleName())));
     }
 
-    protected void createNewTabLayout(JmixUI ui, ViewOpeningContext context) {
+    protected void createNewTabLayout(WorkArea workArea, ViewOpeningContext context) {
         View<?> view = context.getView();
         ViewBreadcrumbs breadcrumbs = createViewBreadCrumbs();
         breadcrumbs.setNavigationHandler(this::onBreadcrumbsNavigate);
@@ -575,8 +573,6 @@ public class Views {
 
         viewContainer.setBreadcrumbs(breadcrumbs);
         viewContainer.setView(view);
-
-        WorkArea workArea = getConfiguredWorkArea(ui);
 
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
 

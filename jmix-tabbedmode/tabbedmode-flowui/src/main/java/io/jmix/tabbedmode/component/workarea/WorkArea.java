@@ -21,134 +21,56 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
+import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.RouteSupport;
+import io.jmix.tabbedmode.TabbedModeProperties;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
-import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
+import java.util.function.IntBinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkState;
+import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
 @Tag("jmix-work-area")
 @JsModule("./src/workarea/jmix-work-area.js")
-public class WorkArea extends Component implements HasSize, ComponentContainer, ApplicationContextAware, InitializingBean {
+public class WorkArea extends Component implements HasSize, ComponentContainer, ApplicationContextAware {
 
-    public static final String TABBED_CONTAINER_CLASS_NAME = "jmix-main-tabsheet";
-    public static final String INITIAL_LAYOUT_CLASS_NAME = "jmix-initial-layout";
-
-    protected RouteSupport routeSupport;
-    protected UiComponents uiComponents;
-    protected WorkAreaSupport workAreaSupport;
+    protected ApplicationContext applicationContext;
+    protected RouteSupport routeSupport;    // lazy initialized
+    protected ViewRegistry viewRegistry;    // lazy initialized
 
     protected State state = State.INITIAL_LAYOUT;
 
     protected TabbedViewsContainer<?> tabbedContainer;
     protected VerticalLayout initialLayout;
 
+    protected ShortcutRegistration nextTabShortcutRegistration;
+    protected ShortcutRegistration previousTabShortcutRegistration;
+
     public WorkArea() {
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        uiComponents = applicationContext.getBean(UiComponents.class);
-        routeSupport = applicationContext.getBean(RouteSupport.class);
-        workAreaSupport = applicationContext.getBean(WorkAreaSupport.class);
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        initComponent();
-    }
-
-    private void initComponent() {
-        tabbedContainer = createTabbedViewsContainer();
-    }
-
-    protected TabbedViewsContainer<?> createTabbedViewsContainer() {
-        JmixMainTabSheet tabSheet = uiComponents.create(JmixMainTabSheet.class);
-        tabSheet.setSizeFull();
-        tabSheet.setClassName(TABBED_CONTAINER_CLASS_NAME);
-
-        tabSheet.addSelectedChangeListener(this::onSelectedTabChanged);
-
-        workAreaSupport.getDefaultActions()
-                .forEach(tabSheet::addAction);
-
-        return tabSheet;
-    }
-
-    public VerticalLayout getInitialLayout() {
-        checkState(initialLayout != null, "Initial layout is not initialized");
-        return initialLayout;
-    }
-
-    public void setInitialLayout(VerticalLayout initialLayout) {
-        Preconditions.checkNotNullArgument(initialLayout);
-
-        if (this.initialLayout != null) {
-            this.initialLayout.removeFromParent();
-        }
-
-        this.initialLayout = initialLayout;
-
-        initialLayout.addClassName(INITIAL_LAYOUT_CLASS_NAME);
-
-        if (state == State.INITIAL_LAYOUT) {
-            getElement().removeAllChildren();
-            getElement().appendChild(initialLayout.getElement());
-        }
-    }
-
-    protected void onSelectedTabChanged(TabbedViewsContainer.SelectedChangeEvent<?> event) {
-        Tab selectedTab = event.getSelectedTab();
-        if (selectedTab == null) {
-            return;
-        }
-
-        Component tabComponent = tabbedContainer.findComponent(selectedTab).orElse(null);
-        if (!(tabComponent instanceof ViewContainer viewContainer)) {
-            return;
-        }
-
-        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
-        if (breadcrumbs != null && breadcrumbs.getCurrentViewInfo() != null) {
-            ViewBreadcrumbs.ViewInfo currentViewInfo = breadcrumbs.getCurrentViewInfo();
-            updatePageTitle(currentViewInfo.view());
-            // TODO: gg, update tab title here?
-
-            if (currentViewInfo.location() != null) {
-                updateUrl(currentViewInfo.location());
-            }
-        }
-    }
-
-    protected void updateUrl(Location resolvedLocation) {
-        getUI().ifPresent(ui ->
-                routeSupport.setLocation(ui, resolvedLocation));
-    }
-
-    protected void updatePageTitle(View<?> view) {
-        getUI().ifPresent(ui -> {
-            Page page = ui.getPage();
-            page.setTitle(ViewControllerUtils.getPageTitle(view));
-        });
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -178,15 +100,6 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
 
         this.state = state;
 
-        // TODO: gg, implement
-        // init global tab shortcuts
-        /*if (!this.shortcutsInitialized
-                && getState() == State.WINDOW_CONTAINER) {
-            initTabShortcuts();
-
-            this.shortcutsInitialized = true;
-        }*/
-
         fireEvent(new StateChangeEvent(this, state));
     }
 
@@ -206,27 +119,8 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     public Collection<View<?>> getActiveWorkAreaViews() {
         TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
         return tabbedContainer.getTabComponentsStream()
-                .map(this::getViewFromContent)
+                .map(MainTabSheetUtils::getViewFromContent)
                 .collect(Collectors.toList());
-    }
-
-    protected View<?> getViewFromContent(Component component) {
-        ViewContainer viewContainer = MainTabSheetUtils.asViewContainer(component);
-        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
-        if (breadcrumbs != null) {
-            ViewBreadcrumbs.ViewInfo viewInfo = breadcrumbs.getCurrentViewInfo();
-            if (viewInfo != null) {
-                return viewInfo.view();
-            } else {
-                throw new IllegalStateException("Tab does not contain a %s"
-                        .formatted(View.class.getSimpleName()));
-            }
-        } else if (viewContainer.getView() != null) {
-            return viewContainer.getView();
-        } else {
-            throw new IllegalStateException("Tab does not contain a %s"
-                    .formatted(View.class.getSimpleName()));
-        }
     }
 
     public Collection<View<?>> getCurrentBreadcrumbs() {
@@ -247,7 +141,142 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     }
 
     public TabbedViewsContainer<?> getTabbedViewsContainer() {
+        checkState(tabbedContainer != null, "%s is not initialized"
+                .formatted(TabbedViewsContainer.class.getSimpleName()));
+
         return tabbedContainer;
+    }
+
+    public void setTabbedViewsContainer(TabbedViewsContainer<?> tabbedContainer) {
+        checkState(this.tabbedContainer == null, "%s has already been initialized"
+                .formatted(TabbedViewsContainer.class.getSimpleName()));
+        Preconditions.checkNotNullArgument(tabbedContainer);
+
+        this.tabbedContainer = tabbedContainer;
+
+        initTabbedViewsContainer(tabbedContainer);
+    }
+
+    protected void initTabbedViewsContainer(TabbedViewsContainer<?> tabbedContainer) {
+        tabbedContainer.addSelectedChangeListener(this::onSelectedTabChanged);
+        initTabbedViewsContainerShortcuts(tabbedContainer);
+    }
+
+    protected void initTabbedViewsContainerShortcuts(TabbedViewsContainer<?> tabbedContainer) {
+        TabbedModeProperties properties = applicationContext.getBean(TabbedModeProperties.class);
+
+        KeyCombination nextTabShortcut = KeyCombination.create(properties.getOpenNextTabShortcut());
+        if (nextTabShortcut != null) {
+            nextTabShortcutRegistration = Shortcuts.addShortcutListener((Component) tabbedContainer,
+                    this::switchToNextTab,
+                    nextTabShortcut.getKey(),
+                    nextTabShortcut.getKeyModifiers());
+        }
+
+        KeyCombination previousTabShortcut = KeyCombination.create(properties.getOpenPreviousTabShortcut());
+        if (previousTabShortcut != null) {
+            previousTabShortcutRegistration = Shortcuts.addShortcutListener((Component) tabbedContainer,
+                    this::switchToPreviousTab,
+                    previousTabShortcut.getKey(),
+                    previousTabShortcut.getKeyModifiers());
+        }
+    }
+
+    protected void switchToNextTab() {
+        switchTab((selectedIndex, tabsNumber) ->
+                (selectedIndex + 1) % tabsNumber);
+    }
+
+    protected void switchToPreviousTab() {
+        switchTab((selectedIndex, tabsNumber) ->
+                (tabsNumber + selectedIndex - 1) % tabsNumber);
+    }
+
+    protected void switchTab(IntBinaryOperator newIndexCalculator) {
+        TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
+        int tabsNumber = Math.toIntExact(tabbedContainer.getTabsStream().count());
+        if (tabsNumber <= 1
+                || hasModalWindows()) {
+            return;
+        }
+
+        int selectedIndex = tabbedContainer.getSelectedIndex();
+        int newIndex = newIndexCalculator.applyAsInt(selectedIndex, tabsNumber);
+        tabbedContainer.setSelectedIndex(newIndex);
+
+        findViewInfo(tabbedContainer.getTabAt(newIndex))
+                .ifPresent(viewInfo -> requestFocus(viewInfo.view()));
+    }
+
+    protected boolean hasModalWindows() {
+        return getUI()
+                .map(UI::hasModalComponent)
+                .orElse(false);
+    }
+
+    protected void requestFocus(View<?> view) {
+        UiComponentUtils.findFocusComponent(view)
+                .ifPresent(focusable -> {
+                    focusable.focus();
+                    Element element = focusable.getElement();
+                    element.executeJs("setTimeout(function(){$0.setAttribute('focus-ring', '')},0)", element);
+                });
+    }
+
+    protected void onSelectedTabChanged(TabbedViewsContainer.SelectedChangeEvent<?> event) {
+        Tab selectedTab = event.getSelectedTab();
+        if (selectedTab == null) {
+            return;
+        }
+
+        findViewInfo(selectedTab).ifPresent(currentViewInfo -> {
+            updatePageTitle(currentViewInfo.view());
+            updateUrl(currentViewInfo.location());
+        });
+    }
+
+    protected Optional<ViewBreadcrumbs.ViewInfo> findViewInfo(Tab tab) {
+        Component tabComponent = getTabbedViewsContainer().findComponent(tab).orElse(null);
+        if (!(tabComponent instanceof ViewContainer viewContainer)) {
+            return Optional.empty();
+        }
+
+        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
+        return breadcrumbs != null
+                ? Optional.ofNullable(breadcrumbs.getCurrentViewInfo())
+                : Optional.empty();
+    }
+
+    protected void updateUrl(Location resolvedLocation) {
+        getUI().ifPresent(ui ->
+                routeSupport().setLocation(ui, resolvedLocation));
+    }
+
+    protected void updatePageTitle(View<?> view) {
+        getUI().ifPresent(ui -> {
+            Page page = ui.getPage();
+            page.setTitle(ViewControllerUtils.getPageTitle(view));
+        });
+    }
+
+    public VerticalLayout getInitialLayout() {
+        checkState(initialLayout != null, "Initial layout is not initialized");
+        return initialLayout;
+    }
+
+    public void setInitialLayout(VerticalLayout initialLayout) {
+        Preconditions.checkNotNullArgument(initialLayout);
+
+        if (this.initialLayout != null) {
+            this.initialLayout.removeFromParent();
+        }
+
+        this.initialLayout = initialLayout;
+
+        if (state == State.INITIAL_LAYOUT) {
+            getElement().removeAllChildren();
+            getElement().appendChild(initialLayout.getElement());
+        }
     }
 
     @Nullable
@@ -268,23 +297,19 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     }
 
     public int getOpenedTabCount() {
-        return getTabbedViewsContainer().getTabs().size();
+        return Math.toIntExact(getTabbedViewsContainer().getTabsStream().count());
     }
 
     @Override
     public Optional<Component> findOwnComponent(String id) {
-        return Optional.ofNullable(state == State.INITIAL_LAYOUT
-                && initialLayout != null
-                && UiComponentUtils.sameId(initialLayout, id)
-                ? initialLayout
-                : null);
+        return getOwnComponents().stream()
+                .filter(component -> sameId(component, id))
+                .findAny();
     }
 
     @Override
     public Collection<Component> getOwnComponents() {
-        return state == State.INITIAL_LAYOUT && initialLayout != null
-                ? Collections.singleton(initialLayout)
-                : Collections.emptyList();
+        return List.of(((Component) getTabbedViewsContainer()), getInitialLayout());
     }
 
     /**
@@ -314,7 +339,6 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
         }
     }
 
-
     /**
      * App Work Area state.
      */
@@ -329,5 +353,21 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
          * If the work area is in the WINDOW_CONTAINER state, the work area contains at least one screen.
          */
         VIEW_CONTAINER
+    }
+
+    protected RouteSupport routeSupport() {
+        if (routeSupport == null) {
+            routeSupport = applicationContext.getBean(RouteSupport.class);
+        }
+
+        return routeSupport;
+    }
+
+    protected ViewRegistry viewRegistry() {
+        if (viewRegistry == null) {
+            viewRegistry = applicationContext.getBean(ViewRegistry.class);
+        }
+
+        return viewRegistry;
     }
 }

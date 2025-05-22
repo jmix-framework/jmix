@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package io.jmix.tabbedmode.view;
+package io.jmix.tabbedmode.event;
 
-import com.vaadin.flow.component.button.Button;
-import io.jmix.flowui.view.AbstractDialogWindow;
+import com.vaadin.flow.component.UI;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.springframework.context.ApplicationEvent;
 
-public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
+/**
+ * The event that is fired each time a web page is refreshed, if the UI state
+ * has been restored from the cached views.
+ * <p>
+ * The event can be handled only in {@link View} controllers of the active {@link UI}.
+ */
+public class UIRefreshEvent extends ApplicationEvent {
 
-    public DialogWindow(V view) {
-        super(view);
+    public UIRefreshEvent(UI source) {
+        super(source);
     }
 
-    @Nullable
     @Override
-    protected Button createHeaderCloseButton() {
-        return TabbedModeViewUtils.isCloseable(view)
-                ? super.createHeaderCloseButton()
-                : null;
+    public UI getSource() {
+        return (UI) super.getSource();
     }
 }

@@ -37,6 +37,7 @@
 
     <xs:complexType name="workAreaContainer">
         <xs:sequence>
+            <xs:element name="mainTabSheet" type="mainTabSheetComponent"/>
             <xs:element name="initialLayout" type="initialLayoutContainer"/>
         </xs:sequence>
 
@@ -45,6 +46,34 @@
         <xs:attributeGroup ref="layout:hasClassNames"/>
 
         <xs:attribute name="css" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="mainTabSheetComponent">
+        <xs:complexContent>
+            <xs:extension base="layout:baseComponent">
+                <xs:sequence>
+                    <xs:element name="actions" minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice maxOccurs="unbounded">
+                                    <xs:element name="action" type="tabbedContainerAction"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+
+                    <xs:element name="prefix" minOccurs="0" type="layout:prefixOrSuffixComponent"/>
+                    <xs:element name="suffix" minOccurs="0" type="layout:prefixOrSuffixComponent"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="layout:hasClassNames"/>
+                <xs:attributeGroup ref="layout:hasSize"/>
+
+                <xs:attribute name="themeNames" type="mainTabSheetThemeNames"/>
+                <xs:attribute name="contentSwitchMode" type="mainTabSheetContentSwitchMode"/>
+                <xs:attribute name="tabsDraggable" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="initialLayoutContainer">
@@ -56,4 +85,34 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:complexType name="tabbedContainerAction">
+        <xs:complexContent>
+            <xs:extension base="layout:baseAction"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:simpleType name="mainTabSheetThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="centered"/>
+                    <xs:enumeration value="minimal"/>
+                    <xs:enumeration value="hide-scroll-buttons"/>
+                    <xs:enumeration value="bordered"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="mainTabSheetContentSwitchMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="HIDE"/>
+            <xs:enumeration value="UNLOAD"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

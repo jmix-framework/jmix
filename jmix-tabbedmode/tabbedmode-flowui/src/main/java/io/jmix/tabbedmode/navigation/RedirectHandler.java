@@ -64,7 +64,6 @@ public class RedirectHandler {
         redirect = null;
     }
 
-    // TODO: gg, move to util
     protected void openView(Location location) {
         NavigationState navigationState = UI.getCurrent().getInternals()
                 .getRouter().resolveNavigationTarget(location).orElse(null);

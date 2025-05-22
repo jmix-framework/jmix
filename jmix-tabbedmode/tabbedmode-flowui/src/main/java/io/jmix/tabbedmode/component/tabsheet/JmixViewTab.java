@@ -17,20 +17,28 @@
 package io.jmix.tabbedmode.component.tabsheet;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dnd.DragSource;
+import com.vaadin.flow.component.dnd.EffectAllowed;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.shared.Registration;
 import org.springframework.lang.Nullable;
+
+import java.util.function.Consumer;
 
 @Tag("jmix-view-tab")
 @JsModule("./src/tabsheet/jmix-view-tab.js")
-public class JmixViewTab extends Tab {
+@CssImport("./src/tabsheet/jmix-view-tab.css")
+public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
 
     protected static final String BASE_CLASS_NAME = "jmix-view-tab";
 
@@ -39,7 +47,10 @@ public class JmixViewTab extends Tab {
     protected Component closeButton;
     protected boolean closable = false;
 
+    protected Consumer<CloseContext<JmixViewTab>> closeDelegate;
+
     public JmixViewTab() {
+        initComponent();
     }
 
     public JmixViewTab(String text) {
@@ -48,6 +59,10 @@ public class JmixViewTab extends Tab {
 
     public JmixViewTab(Component... components) {
         super(components);
+    }
+
+    protected void initComponent() {
+        setEffectAllowed(EffectAllowed.MOVE);
     }
 
     @Override
@@ -65,7 +80,6 @@ public class JmixViewTab extends Tab {
      *
      * @param text the label to display
      */
-    // TODO: gg, refactor
     public void setText(@Nullable String text) {
         if (!Strings.isNullOrEmpty(text)) {
             if (this.textElement == null) {
@@ -108,7 +122,6 @@ public class JmixViewTab extends Tab {
     }
 
     protected Component createCloseButton() {
-        // TODO: gg, uiComponents?
         Button closeButton = new Button();
         closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
         closeButton.setClassName(BASE_CLASS_NAME + "-close-button");
@@ -122,22 +135,18 @@ public class JmixViewTab extends Tab {
     }
 
     protected void closeInternal(boolean fromClient) {
-        fireEvent(new BeforeCloseEvent<>(this, fromClient));
+        closeDelegate.accept(new CloseContext<>(this, fromClient));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public Registration addBeforeCloseListener(ComponentEventListener<BeforeCloseEvent<JmixViewTab>> listener) {
-        return addListener(BeforeCloseEvent.class, (ComponentEventListener) listener);
+    public void setCloseDelegate(@Nullable Consumer<CloseContext<JmixViewTab>> delegate) {
+        closeDelegate = delegate;
     }
 
-    // TODO: gg, rename
-    public static class BeforeCloseEvent<C extends Component> extends ComponentEvent<C> {
+    public record CloseContext<C extends JmixViewTab>(C source, boolean fromClient) {
+    }
 
-        // TODO: gg, add usage
-        protected boolean closePrevented = false;
-
-        public BeforeCloseEvent(C source, boolean fromClient) {
-            super(source, fromClient);
-        }
+    @Override
+    public String toString() {
+        return "Tab{" + getText() + "}";
     }
 }

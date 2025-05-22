@@ -17,7 +17,11 @@
 package io.jmix.tabbedmode.component.tabsheet;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.flowui.view.View;
+import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
+
+import java.util.Optional;
 
 public final class MainTabSheetUtils {
 
@@ -25,7 +29,11 @@ public final class MainTabSheetUtils {
     }
 
     public static void closeTab(JmixViewTab tab) {
-        tab.closeInternal(true);
+        closeTab(tab, true);
+    }
+
+    public static void closeTab(JmixViewTab tab, boolean fromClient) {
+        tab.closeInternal(fromClient);
     }
 
     public static ViewContainer asViewContainer(Component component) {
@@ -35,5 +43,27 @@ public final class MainTabSheetUtils {
             throw new IllegalStateException("Tab content '%s' is not a %s"
                     .formatted(component, ViewContainer.class.getSimpleName()));
         }
+    }
+
+    public static Optional<View<?>> findViewFromContent(Component component) {
+        ViewContainer viewContainer = MainTabSheetUtils.asViewContainer(component);
+        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
+        if (breadcrumbs != null) {
+            ViewBreadcrumbs.ViewInfo viewInfo = breadcrumbs.getCurrentViewInfo();
+            if (viewInfo != null) {
+                return Optional.of(viewInfo.view());
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.ofNullable(viewContainer.getView());
+        }
+    }
+
+    public static View<?> getViewFromContent(Component component) {
+        return findViewFromContent(component)
+                .orElseThrow(() ->
+                        new IllegalStateException("Tab does not contain a %s"
+                                .formatted(View.class.getSimpleName())));
     }
 }

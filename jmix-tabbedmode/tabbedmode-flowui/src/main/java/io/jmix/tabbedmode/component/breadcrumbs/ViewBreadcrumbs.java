@@ -16,30 +16,37 @@
 
 package io.jmix.tabbedmode.component.breadcrumbs;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.router.Location;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> {
+public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements ApplicationContextAware {
 
-    protected Deque<View<?>> views = new ArrayDeque<>(4);
-    protected BiMap<View<?>, JmixBreadcrumb> viewBreadcrumb = HashBiMap.create(4);
-    protected Map<View<?>, Location> viewLocation = new HashMap<>(4);
+    protected UiComponents uiComponents;
+
+    protected Deque<BreadcrumbMappings> mappings = new ArrayDeque<>(4);
 
     protected Consumer<BreadcrumbsNavigationContext> navigationHandler;
     protected boolean visibleExplicitly = true;
 
     public ViewBreadcrumbs() {
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        uiComponents = applicationContext.getBean(UiComponents.class);
     }
 
     @Override
@@ -55,51 +62,64 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> {
     }
 
     public Deque<View<?>> getViews() {
-        return new ArrayDeque<>(views);
+        return mappings.stream()
+                .map(BreadcrumbMappings::view)
+                .collect(Collectors.toCollection(ArrayDeque::new));
     }
 
     @Nullable
     public ViewInfo getCurrentViewInfo() {
-        if (views.isEmpty()) {
+        if (mappings.isEmpty()) {
             return null;
         } else {
-            View<?> view = views.getLast();
-            return new ViewInfo(view, viewLocation.get(view));
+            BreadcrumbMappings mappings = this.mappings.getLast();
+            return new ViewInfo(mappings.view(), mappings.location());
         }
     }
 
-    public void addView(View<?> view, Location resolvedLocation) {
-        if (views.add(view)) {
-            // TODO: gg, add class that stores view and location instead of maps
-            JmixBreadcrumb breadcrumb = new JmixBreadcrumb();
-            breadcrumb.setText(ViewControllerUtils.getPageTitle(view));
-            breadcrumb.setClickHandler(this::navigationClicked);
-            breadcrumb.setTabIndex(-1);
+    public void addView(View<?> view, Location location) {
+        JmixBreadcrumb breadcrumb = createBreadcrumb(view);
 
+        BreadcrumbMappings mappings = new BreadcrumbMappings(breadcrumb, view, location);
+        if (this.mappings.add(mappings)) {
             getContent().add(breadcrumb);
-            viewBreadcrumb.put(view, breadcrumb);
-            viewLocation.put(view, resolvedLocation);
         }
-
 
         updateVisibility();
     }
 
+    protected JmixBreadcrumb createBreadcrumb(View<?> view) {
+        JmixBreadcrumb breadcrumb = uiComponents.create(JmixBreadcrumb.class);
+        breadcrumb.setText(ViewControllerUtils.getPageTitle(view));
+        breadcrumb.setClickHandler(this::navigationClicked);
+        breadcrumb.setTabIndex(-1);
+
+        return breadcrumb;
+    }
+
     public void removeView() {
-        if (!views.isEmpty()) {
-            View<?> removed = views.removeLast();
-            JmixBreadcrumb breadcrumb = viewBreadcrumb.remove(removed);
-            getContent().remove(breadcrumb);
+        if (!mappings.isEmpty()) {
+            BreadcrumbMappings removed = mappings.removeLast();
+            getContent().remove(removed.breadcrumb());
         }
 
         updateVisibility();
     }
 
     protected void navigationClicked(JmixBreadcrumb.ClickEvent<JmixBreadcrumb> event) {
-        View<?> view = viewBreadcrumb.inverse().get(event.getSource());
-        if (navigationHandler != null && view != null) {
-            navigationHandler.accept(new BreadcrumbsNavigationContext(this, view));
+        if (navigationHandler != null) {
+            findView(event.getSource()).ifPresent(view ->
+                    navigationHandler.accept(new BreadcrumbsNavigationContext(this, view)));
         }
+    }
+
+    protected Optional<View<?>> findView(JmixBreadcrumb breadcrumb) {
+        for (BreadcrumbMappings mappings : mappings) {
+            if (mappings.breadcrumb().equals(breadcrumb)) {
+                return Optional.of(mappings.view());
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -114,12 +134,15 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> {
     }
 
     protected void updateVisibility() {
-        setVisibleInternal(views.size() > 1);
+        setVisibleInternal(mappings.size() > 1);
     }
 
     public record BreadcrumbsNavigationContext(ViewBreadcrumbs breadcrumbs, View<?> view) {
     }
 
-    public record ViewInfo(View<?> view, @Nullable Location location) {
+    public record ViewInfo(View<?> view, Location location) {
+    }
+
+    protected record BreadcrumbMappings(JmixBreadcrumb breadcrumb, View<?> view, Location location) {
     }
 }

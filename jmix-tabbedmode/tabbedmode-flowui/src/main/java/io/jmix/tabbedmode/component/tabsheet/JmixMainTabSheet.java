@@ -18,19 +18,18 @@ package io.jmix.tabbedmode.component.tabsheet;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dnd.DragSource;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.TabSheetVariant;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.ComponentContainer;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasSubParts;
@@ -39,37 +38,44 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-@Tag("jmix-tabsheet")
-@JsModule("./src/tabsheet/jmix-tabsheet.js")
+@Tag("jmix-main-tabsheet")
+@JsModule("./src/tabsheet/jmix-main-tabsheet.js")
 @JsModule("./src/tabsheet/mainTabSheetConnector.ts")
 public class JmixMainTabSheet extends Component implements TabbedViewsContainer<JmixMainTabSheet>,
         HasActions, ComponentContainer, HasSubParts,
-        HasStyle, HasSize, HasThemeVariant<TabSheetVariant>, HasPrefix, HasSuffix {
+        HasStyle, HasSize, HasThemeVariant<JmixMainTabSheetVariant>, HasPrefix, HasSuffix {
 
     protected static final String GENERATED_TAB_ID_PREFIX = "tabsheet-tab-";
 
     protected MainTabSheetActionsSupport actionsSupport;
 
-    protected Tabs tabs = new Tabs();
+    protected Tabs tabs;
     protected Map<Tab, Component> tabToContent = new HashMap<>();
+
+    protected ContentSwitchMode contentSwitchMode = ContentSwitchMode.UNLOAD;
 
     public JmixMainTabSheet() {
         initComponent();
     }
 
     protected void initComponent() {
+        tabs = createTabsComponent();
         SlotUtils.addToSlot(this, "tabs", tabs);
 
         addSelectedChangeListener(e -> {
             getElement().setProperty("selected", tabs.getSelectedIndex());
             updateContent();
         });
+
+        addListener(MainTabsheetDropEvent.class, this::onDrop);
+    }
+
+    protected Tabs createTabsComponent() {
+        return new Tabs();
     }
 
     @Override
@@ -103,7 +109,15 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
             tabs.addTabAtIndex(position, tab);
         }
 
+        if (tab instanceof DragSource<?> dragSource) {
+            dragSource.setDraggable(isTabsDraggable());
+        }
+
         updateTabContent(tab, content);
+
+        fireEvent(new TabsCollectionChangeEvent<>(this, false,
+                TabsCollectionChangeType.ADD,
+                Collections.singleton(tab)));
 
         return tab;
     }
@@ -116,6 +130,10 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
         content.removeFromParent();
 
         tabs.remove(tab);
+
+        fireEvent(new TabsCollectionChangeEvent<>(this, false,
+                TabsCollectionChangeType.REMOVE,
+                Collections.singleton(tab)));
     }
 
     @Override
@@ -163,8 +181,10 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     }
 
     @Override
-    public Set<Tab> getTabs() {
-        return Collections.unmodifiableSet(tabToContent.keySet());
+    public Stream<Tab> getTabsStream() {
+        return getChildren()
+                .sequential()
+                .map(component -> ((Tab) component));
     }
 
     @Override
@@ -206,8 +226,8 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
 
     @Override
     public Optional<Tab> findTab(String id) {
-        return getTabs().stream()
-                .filter(tab -> UiComponentUtils.sameId(tab, id))
+        return getTabsStream()
+                .filter(tab -> sameId(tab, id))
                 .findAny();
     }
 
@@ -232,20 +252,34 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
 
     @Override
     public Stream<Component> getTabComponentsStream() {
-        return tabToContent.values().stream();
+        return getTabsStream()
+                .map(this::getComponent);
     }
 
     @Override
-    public Collection<Component> getTabComponents() {
-        return getTabComponentsStream().toList();
+    public ContentSwitchMode getContentSwitchMode() {
+        return contentSwitchMode;
     }
 
     @Override
-    public Registration addSelectedChangeListener(Consumer<SelectedChangeEvent<JmixMainTabSheet>> listener) {
+    public void setContentSwitchMode(ContentSwitchMode mode) {
+        this.contentSwitchMode = mode;
+    }
+
+    @Override
+    public Registration addSelectedChangeListener(
+            ComponentEventListener<SelectedChangeEvent<JmixMainTabSheet>> listener) {
         return tabs.addSelectedChangeListener(event ->
-                listener.accept(new SelectedChangeEvent<>(this,
+                listener.onComponentEvent(new SelectedChangeEvent<>(this,
                         event.getPreviousTab(), event.isFromClient(),
                         event.isInitialSelection())));
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public Registration addTabsCollectionChangeListener(
+            ComponentEventListener<TabsCollectionChangeEvent<JmixMainTabSheet>> listener) {
+        return addListener(TabsCollectionChangeEvent.class, ((ComponentEventListener) listener));
     }
 
     @Override
@@ -257,10 +291,8 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
 
     @Override
     public Collection<Component> getOwnComponents() {
-        return getChildren()
-                .sequential()
-                .map(component -> getComponent((Tab) component))
-                .collect(Collectors.toList());
+        return getTabComponentsStream()
+                .toList();
     }
 
     /**
@@ -270,9 +302,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
      */
     @Override
     public Stream<Component> getChildren() {
-        return super.getChildren()
-                .filter(component -> component instanceof Tabs)
-                .flatMap(Component::getChildren);
+        return tabs.getChildren();
     }
 
     @Nullable
@@ -310,6 +340,23 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
         return getActionsSupport().getAction(id).orElse(null);
     }
 
+    public boolean isTabsDraggable() {
+        return getElement().getProperty("tabsDraggable", false);
+    }
+
+    public void setTabsDraggable(boolean tabsDraggable) {
+        getElement().setProperty("tabsDraggable", tabsDraggable);
+
+        getDraggabdleTabsStream().forEach(draggable ->
+                draggable.setDraggable(isTabsDraggable()));
+    }
+
+    protected Stream<? extends DragSource<?>> getDraggabdleTabsStream() {
+        return getTabsStream()
+                .filter(tab -> tab instanceof DragSource<?>)
+                .map(tab -> (DragSource<?>) tab);
+    }
+
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
@@ -332,7 +379,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     /**
      * Marks the content related to the selected tab as enabled and adds it to
      * the component if it is not already added. All the other content panels
-     * are disabled so they can't be interacted with.
+     * are disabled, so they can't be interacted with.
      */
     protected void updateContent() {
         for (Map.Entry<Tab, Component> entry : tabToContent.entrySet()) {
@@ -350,6 +397,10 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
                 // elements as disabled in the DOM. Navigating between tabs
                 // would then briefly show the content as disabled.
                 content.getNode().setEnabled(false);
+
+                if (contentSwitchMode == ContentSwitchMode.UNLOAD) {
+                    content.removeFromParent();
+                }
             }
         }
     }
@@ -389,12 +440,51 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     }
 
     protected String generateTabId() {
-        return GENERATED_TAB_ID_PREFIX + RandomStringUtils.randomAlphanumeric(8);
+        return GENERATED_TAB_ID_PREFIX + RandomStringUtils.secure().nextAlphanumeric(8);
     }
 
     protected void initConnector() {
         getElement().executeJs(
                 "window.Vaadin.Flow.mainTabSheetConnector.initLazy(this)");
+    }
+
+    protected void onDrop(MainTabsheetDropEvent event) {
+        if (ignoreDrop(event)) {
+            return;
+        }
+
+        int index = calculateDropIndex(event);
+        if (index == -1) {
+            return;
+        }
+
+        Tab tab = event.getDragSource();
+        tabs.addTabAtIndex(index, tab);
+        tabs.setSelectedTab(tab);
+    }
+
+    protected boolean ignoreDrop(MainTabsheetDropEvent event) {
+        return !isTabsDraggable()
+                || event.getDragSource() == null
+                || event.getDropTarget() == null
+                || event.getDropLocation() == MainTabsheetDropLocation.EMPTY;
+    }
+
+    protected int calculateDropIndex(MainTabsheetDropEvent event) {
+        int index = tabs.indexOf(event.getDropTarget());
+        if (index == -1) {
+            return index;
+        }
+
+        if (event.getDropLocation() == MainTabsheetDropLocation.AFTER) {
+            index++;
+        }
+
+        if (index > tabs.getTabCount()) {
+            index = tabs.getTabCount();
+        }
+
+        return index;
     }
 
     @ClientCallable

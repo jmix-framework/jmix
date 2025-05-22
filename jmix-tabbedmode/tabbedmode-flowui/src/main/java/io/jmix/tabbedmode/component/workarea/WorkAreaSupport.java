@@ -19,7 +19,7 @@ package io.jmix.tabbedmode.component.workarea;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.tabbedmode.action.tabsheet.CloseAllTabsAction;
-import io.jmix.tabbedmode.action.tabsheet.CloseOthersTabsAction;
+import io.jmix.tabbedmode.action.tabsheet.CloseOtherTabsAction;
 import io.jmix.tabbedmode.action.tabsheet.CloseThisTabAction;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +48,7 @@ public class WorkAreaSupport {
     protected Stream<String> getDefaultActionIds() {
         return Stream.of(
                 CloseThisTabAction.ID,
-                CloseOthersTabsAction.ID,
+                CloseOtherTabsAction.ID,
                 CloseAllTabsAction.ID
         );
     }

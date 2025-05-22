@@ -17,6 +17,8 @@
 package io.jmix.tabbedmode.component.workarea;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabSheet;
@@ -24,13 +26,10 @@ import com.vaadin.flow.shared.Registration;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
-import java.util.EventObject;
 import java.util.Optional;
-import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public interface TabbedViewsContainer<C extends TabbedViewsContainer<C>> extends HasElement {
+public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer<C>> extends HasElement {
 
     /**
      * Adds a tab created from the given text and content.
@@ -129,8 +128,7 @@ public interface TabbedViewsContainer<C extends TabbedViewsContainer<C>> extends
      */
     int getTabCount();
 
-    // TODO: gg, JavaDoc
-    Set<Tab> getTabs();
+    Stream<Tab> getTabsStream();
 
     /**
      * Returns the tab at the given position.
@@ -155,12 +153,19 @@ public interface TabbedViewsContainer<C extends TabbedViewsContainer<C>> extends
      * Returns the {@link Tab} associated with the given component.
      *
      * @param content the component to look up, can not be <code>null</code>
+     * @return The tab instance associated with the given component.
+     * @throws IllegalArgumentException if tab not found
+     */
+    Tab getTab(Component content);
+
+    /**
+     * Returns the {@link Tab} associated with the given component.
+     *
+     * @param content the component to look up, can not be <code>null</code>
      * @return The tab instance associated with the given component, or
      * <code>null</code> if the {@link TabSheet} does not contain the
      * component.
      */
-    Tab getTab(Component content);
-
     // TODO: gg, JavaDoc
     Optional<Tab> findTab(Component content);
 
@@ -191,8 +196,9 @@ public interface TabbedViewsContainer<C extends TabbedViewsContainer<C>> extends
     // TODO: gg, JavaDoc
     Stream<Component> getTabComponentsStream();
 
-    // TODO: gg, JavaDoc
-    Collection<Component> getTabComponents();
+    ContentSwitchMode getContentSwitchMode();
+
+    void setContentSwitchMode(ContentSwitchMode mode);
 
     /**
      * Adds a listener for {@link SelectedChangeEvent}.
@@ -200,12 +206,20 @@ public interface TabbedViewsContainer<C extends TabbedViewsContainer<C>> extends
      * @param listener the listener to add
      * @return a handle that can be used for removing the listener
      */
-    Registration addSelectedChangeListener(Consumer<SelectedChangeEvent<C>> listener);
+    Registration addSelectedChangeListener(ComponentEventListener<SelectedChangeEvent<C>> listener);
+
+    /**
+     * Adds a listener for {@link TabsCollectionChangeEvent}.
+     *
+     * @param listener the listener to add
+     * @return a handle that can be used for removing the listener
+     */
+    Registration addTabsCollectionChangeListener(ComponentEventListener<TabsCollectionChangeEvent<C>> listener);
 
     /**
      * An event to mark that the selected tab has changed.
      */
-    class SelectedChangeEvent<C extends TabbedViewsContainer<C>> extends EventObject {
+    class SelectedChangeEvent<C extends Component & TabbedViewsContainer<C>> extends ComponentEvent<C> {
 
         protected final Tab selectedTab;
         protected final Tab previousTab;
@@ -216,38 +230,24 @@ public interface TabbedViewsContainer<C extends TabbedViewsContainer<C>> extends
         /**
          * Creates a new selected change event.
          *
-         * @param source      The TabSheet that fired the event.
-         * @param previousTab The previous selected tab.
-         * @param fromClient  <code>true</code> for client-side events,
-         *                    <code>false</code> otherwise.
+         * @param source           the component that fired the event
+         * @param previousTab      the previous selected tab
+         * @param fromClient       {@code true} for client-side events,
+         *                         {@code false} otherwise
+         * @param initialSelection {@code true} if the event is initial
+         *                         tabs selection, {@code false} otherwise
          */
-        public SelectedChangeEvent(C source, Tab previousTab,
+        public SelectedChangeEvent(C source, @Nullable Tab previousTab,
                                    boolean fromClient, boolean initialSelection) {
-            super(source);
+            super(source, fromClient);
+
             this.selectedTab = source.getSelectedTab();
             this.initialSelection = initialSelection;
             this.previousTab = previousTab;
-            this.fromClient = fromClient;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public C getSource() {
-            return (C) super.getSource();
         }
 
         /**
-         * Checks if this event originated from the client side.
-         *
-         * @return <code>true</code> if the event originated from the client side,
-         * <code>false</code> otherwise
-         */
-        public boolean isFromClient() {
-            return fromClient;
-        }
-
-        /**
-         * Get selected tab for this event. Can be {@code null} when autoselect
+         * Returns selected tab for this event. Can be {@code null} when autoselect
          * is set to false.
          *
          * @return the selected tab for this event
@@ -258,11 +258,12 @@ public interface TabbedViewsContainer<C extends TabbedViewsContainer<C>> extends
         }
 
         /**
-         * Get previous selected tab for this event. Can be {@code null} when
+         * Returns previous selected tab for this event. Can be {@code null} when
          * autoselect is set to false.
          *
          * @return the selected tab for this event
          */
+        @Nullable
         public Tab getPreviousTab() {
             return this.previousTab;
         }
@@ -270,11 +271,84 @@ public interface TabbedViewsContainer<C extends TabbedViewsContainer<C>> extends
         /**
          * Checks if this event is initial TabSheet selection.
          *
-         * @return <code>true</code> if the event is initial TabSheet selection,
-         * <code>false</code> otherwise
+         * @return {@code true} if the event is initial
+         * tabs selection, {@code false} otherwise
          */
         public boolean isInitialSelection() {
             return this.initialSelection;
         }
+    }
+
+    /**
+     * An event to mark that the selected tab has changed.
+     */
+    class TabsCollectionChangeEvent<C extends Component & TabbedViewsContainer<C>> extends ComponentEvent<C> {
+
+        protected final TabsCollectionChangeType changeType;
+        protected final Collection<? extends Tab> changes;
+
+        /**
+         * Creates a new tabs collection change event.
+         *
+         * @param source     the source component
+         * @param fromClient {@code true} for client-side events,
+         *                   {@code false} otherwise
+         * @param changeType the type of change
+         * @param changes    changed tabs
+         */
+        public TabsCollectionChangeEvent(C source, boolean fromClient,
+                                         TabsCollectionChangeType changeType,
+                                         Collection<? extends Tab> changes) {
+            super(source, fromClient);
+
+            this.changeType = changeType;
+            this.changes = changes;
+        }
+
+        /**
+         * @return the type of change
+         */
+        public TabsCollectionChangeType getChangeType() {
+            return changeType;
+        }
+
+        /**
+         * @return changed tabs
+         */
+        public Collection<? extends Tab> getChanges() {
+            return changes;
+        }
+    }
+
+    /**
+     * Defines the type of tab change.
+     */
+    enum TabsCollectionChangeType {
+
+        /**
+         * Tabs were added to the collection.
+         */
+        ADD,
+
+        /**
+         * Tabs were removed from the collection.
+         */
+        REMOVE
+    }
+
+    /**
+     * Defines how the content of inactive tabs is handled by this component.
+     */
+    enum ContentSwitchMode {
+
+        /**
+         * The content of inactive tabs is preserved in the DOM tree.
+         */
+        HIDE,
+
+        /**
+         * The content of inactive tabs is removed from the DOM tree.
+         */
+        UNLOAD
     }
 }

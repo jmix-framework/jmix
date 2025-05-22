@@ -16,6 +16,7 @@
 
 package io.jmix.tabbedmode;
 
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.spring.RootMappedCondition;
 import com.vaadin.flow.spring.SpringBootAutoConfiguration;
 import com.vaadin.flow.spring.SpringServlet;
@@ -26,8 +27,10 @@ import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.registration.ComponentRegistration;
 import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
+import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
 import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.sys.vaadin.TabbedModeVaadinServlet;
+import io.jmix.tabbedmode.xml.layout.loader.MainTabSheetLoader;
 import io.jmix.tabbedmode.xml.layout.loader.WorkAreaLoader;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.beans.factory.ObjectProvider;
@@ -57,9 +60,16 @@ public class TabbedModeFlowuiConfiguration {
     @Bean
     public ComponentRegistration workAreaComponent() {
         return ComponentRegistrationBuilder.create(WorkArea.class)
-                .withComponentLoader("workArea", WorkAreaLoader.class)
+                .withComponentLoader(WorkAreaLoader.TAG, WorkAreaLoader.class)
                 .build();
 
+    }
+
+    @Bean
+    public ComponentRegistration mainTabSheetLoader() {
+        return ComponentRegistrationBuilder.create(JmixMainTabSheet.class)
+                .withComponentLoader(MainTabSheetLoader.TAG, MainTabSheetLoader.class)
+                .build();
     }
 
     @Bean("tabmod_ServletRegistrationBean")

@@ -14,24 +14,5 @@
  * limitations under the License.
  */
 
-package io.jmix.tabbedmode.view;
-
-import com.vaadin.flow.component.button.Button;
-import io.jmix.flowui.view.AbstractDialogWindow;
-import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
-
-public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
-
-    public DialogWindow(V view) {
-        super(view);
-    }
-
-    @Nullable
-    @Override
-    protected Button createHeaderCloseButton() {
-        return TabbedModeViewUtils.isCloseable(view)
-                ? super.createHeaderCloseButton()
-                : null;
-    }
-}
+import './jmix-view-tab-styles.js';
+import '../../../src/tabsheet/jmix-view-tab.js';

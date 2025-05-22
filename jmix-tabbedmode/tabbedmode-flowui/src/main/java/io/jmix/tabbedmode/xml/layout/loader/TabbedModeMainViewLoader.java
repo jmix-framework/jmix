@@ -81,8 +81,12 @@ public class TabbedModeMainViewLoader extends AbstractViewLoader<StandardTabbedM
         workAreaLoader = getLayoutLoader().createComponentLoader(workAreaElement);
         workAreaLoader.initComponent();
 
-        WorkArea workArea = (WorkArea) workAreaLoader.getResultComponent();
-        resultComponent.setWorkArea(workArea);
+        if (workAreaLoader.getResultComponent() instanceof WorkArea workArea) {
+            resultComponent.setWorkArea(workArea);
+        } else {
+            throw new IllegalStateException("'%s' component does not extend '%s'"
+                    .formatted(WORK_AREA_ELEMENT_NAME, WorkArea.class.getName()));
+        }
     }
 
     protected void loadWorkArea() {

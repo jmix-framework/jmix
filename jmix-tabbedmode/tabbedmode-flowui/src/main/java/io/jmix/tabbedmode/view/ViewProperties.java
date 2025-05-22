@@ -16,22 +16,26 @@
 
 package io.jmix.tabbedmode.view;
 
-import com.vaadin.flow.component.button.Button;
-import io.jmix.flowui.view.AbstractDialogWindow;
-import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
+/**
+ * Annotation for view controllers that specify parameters of a view.
+ */
+@Documented
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ViewProperties {
 
-    public DialogWindow(V view) {
-        super(view);
-    }
+    /**
+     * {@code false}
+     */
+    boolean closeable() default true;
 
-    @Nullable
-    @Override
-    protected Button createHeaderCloseButton() {
-        return TabbedModeViewUtils.isCloseable(view)
-                ? super.createHeaderCloseButton()
-                : null;
-    }
+    /**
+     *
+     */
+    boolean forceDialog() default false;
 }

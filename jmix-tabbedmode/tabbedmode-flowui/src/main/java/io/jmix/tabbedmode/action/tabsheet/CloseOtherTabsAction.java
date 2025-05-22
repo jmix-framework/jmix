@@ -23,44 +23,52 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.tabbedmode.TabbedModeProperties;
+import io.jmix.tabbedmode.Views;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
-import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
-@ActionType(CloseThisTabAction.ID)
-public class CloseThisTabAction extends TabbedViewsContainerAction<CloseThisTabAction> {
+import java.util.List;
 
-    private static final Logger log = LoggerFactory.getLogger(CloseThisTabAction.class);
+@ActionType(CloseOtherTabsAction.ID)
+public class CloseOtherTabsAction extends AbstractCloseTabsAction<CloseOtherTabsAction> {
 
-    public static final String ID = "tabmod_closeThisTab";
+    private static final Logger log = LoggerFactory.getLogger(CloseOtherTabsAction.class);
 
+    public static final String ID = "tabmod_closeOtherTabs";
+
+    protected Registration tabsCollectionChangeListener;
     protected Registration contextMenuTargetListener;
 
-    public CloseThisTabAction() {
+    public CloseOtherTabsAction() {
         this(ID);
     }
 
-    public CloseThisTabAction(String id) {
+    public CloseOtherTabsAction(String id) {
         super(id);
     }
 
     @Autowired
     protected void setMessages(Messages messages) {
-        this.text = messages.getMessage("actions.closeThisTab.text");
+        this.text = messages.getMessage("actions.closeOtherTabs.text");
     }
 
     @Autowired
     protected void setTabbedModeProperties(TabbedModeProperties properties) {
-        this.shortcutCombination = KeyCombination.create(properties.getCloseThisTabShortcut());
+        this.shortcutCombination = KeyCombination.create(properties.getCloseOtherTabsShortcut());
     }
 
     @Override
     protected void detachListeners(TabbedViewsContainer<?> target) {
         super.detachListeners(target);
+
+        if (tabsCollectionChangeListener != null) {
+            tabsCollectionChangeListener.remove();
+            tabsCollectionChangeListener = null;
+        }
 
         if (contextMenuTargetListener != null) {
             contextMenuTargetListener.remove();
@@ -72,24 +80,43 @@ public class CloseThisTabAction extends TabbedViewsContainerAction<CloseThisTabA
     protected void attachListeners(TabbedViewsContainer<?> target) {
         super.attachListeners(target);
 
+        tabsCollectionChangeListener = target.addTabsCollectionChangeListener(event ->
+                refreshState());
+
         contextMenuTargetListener = target.getElement()
                 .addPropertyChangeListener("_contextMenuTargetTabId", __ -> refreshState());
     }
 
     @Override
-    protected boolean isApplicable() {
-        return super.isApplicable()
-                && findActionTab() instanceof JmixViewTab viewTab
-                && viewTab.isClosable();
+    protected boolean hasCloseableTabs() {
+        if (target.getTabsStream().count() <= 1) {
+            return false;
+        }
+
+        Tab actionTab = findActionTab();
+        return target.getTabsStream()
+                .anyMatch(tab ->
+                        !tab.equals(actionTab)
+                                && tab instanceof JmixViewTab viewTab
+                                && viewTab.isClosable()
+                );
     }
 
     @Override
     public void execute(@Nullable Component trigger) {
-        if (findTab(trigger) instanceof JmixViewTab tab) {
-            MainTabSheetUtils.closeTab(tab);
-        } else {
-            log.warn("Cannot close the tab because the component is not a '{}'",
-                    JmixViewTab.class.getName());
+        checkTarget();
+
+        Tab savedTab = findTab(trigger);
+        if (savedTab == null) {
+            log.warn("Cannot close other tabs because cannot find trigger tab");
         }
+
+        List<Views.ViewStack> viewStacks = target.getTabsStream()
+                .filter(tab -> !tab.equals(savedTab))
+                .map(tab -> target.getComponent(tab))
+                .map(this::asViewStack)
+                .toList();
+
+        closeViewStacks(viewStacks);
     }
 }

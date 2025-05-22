@@ -19,6 +19,7 @@ package io.jmix.tabbedmode.action.tabsheet;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.action.TargetAction;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -54,10 +55,26 @@ public abstract class TabbedViewsContainerAction<A extends TabbedViewsContainerA
     @Override
     public void setTarget(@Nullable TabbedViewsContainer<?> target) {
         if (!Objects.equals(this.target, target)) {
+            if (this.target != null) {
+                detachListeners(this.target);
+            }
+
             this.target = target;
+
+            if (target != null) {
+                attachListeners(target);
+            }
 
             refreshState();
         }
+    }
+
+    protected void detachListeners(TabbedViewsContainer<?> target) {
+        // hook to be implemented
+    }
+
+    protected void attachListeners(TabbedViewsContainer<?> target) {
+        // hook to be implemented
     }
 
     @SuppressWarnings("unchecked")
@@ -121,20 +138,40 @@ public abstract class TabbedViewsContainerAction<A extends TabbedViewsContainerA
     }
 
     @Override
-    public void actionPerform(Component component) {
+    public void actionPerform(Component trigger) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            execute(component);
+            execute(trigger);
         } else {
-            super.actionPerform(component);
+            super.actionPerform(trigger);
         }
     }
 
-    public abstract void execute(Component component);
+    public abstract void execute(@Nullable Component trigger);
+
+    @Nullable
+    protected Tab findTab(@Nullable Component trigger) {
+        // if executed by a context menu
+        if (trigger instanceof Tab tab) {
+            return tab;
+            // if executed by a shortcut
+        } else if (trigger instanceof TabbedViewsContainer<?> viewsContainer) {
+            return viewsContainer.getSelectedTab();
+            // shouldn't happen
+        } else {
+            return null;
+        }
+    }
 
     @Override
     protected boolean isApplicable() {
         return super.isApplicable() && target != null;
+    }
+
+    @Nullable
+    protected Tab findActionTab() {
+        String tabId = target.getElement().getProperty("_contextMenuTargetTabId", "<no_id>");
+        return target.findTab(tabId).orElse(null);
     }
 
     protected void checkTarget() {

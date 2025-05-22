@@ -179,7 +179,6 @@ public class MainTabSheetMenuItemActionWrapper extends Composite<Div>
     }
 
     protected Tooltip getTooltipInternal() {
-        // TODO: gg, test
         if (tooltip == null) {
             tooltip = Tooltip.forComponent(this);
         }
@@ -187,7 +186,7 @@ public class MainTabSheetMenuItemActionWrapper extends Composite<Div>
     }
 
     @Override
-    public Tooltip setTooltipText(String text) {
+    public Tooltip setTooltipText(@Nullable String text) {
         Tooltip tooltip = getTooltipInternal();
 
         tooltip.setText(text);

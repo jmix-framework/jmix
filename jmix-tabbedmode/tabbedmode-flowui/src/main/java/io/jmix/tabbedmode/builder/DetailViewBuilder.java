@@ -32,12 +32,11 @@ public class DetailViewBuilder<E, V extends View<?>> extends AbstractViewBuilder
 
     protected final Class<E> entityClass;
 
-    // TODO: gg, merge to one field?
-    protected E newEntity;
-    protected E editedEntity;
+    protected E entity;
 
     protected Consumer<E> initializer;
     protected Function<E, E> transformation;
+
     protected CollectionContainer<E> container;
 
     protected DataContext parentDataContext;
@@ -51,7 +50,6 @@ public class DetailViewBuilder<E, V extends View<?>> extends AbstractViewBuilder
 
     public DetailViewBuilder(View<?> origin,
                              Class<E> entityClass,
-                             // TODO: gg, ? extends DetailViewBuilder?
                              Function<DetailViewBuilder<E, V>, V> buildHandler,
                              Consumer<ViewOpeningContext> openHandler) {
         super(origin, buildHandler, openHandler);
@@ -80,19 +78,19 @@ public class DetailViewBuilder<E, V extends View<?>> extends AbstractViewBuilder
     }
 
     public DetailViewBuilder<E, V> newEntity() {
-        this.newEntity = null;
+        this.entity = null;
         this.mode = DetailViewMode.CREATE;
         return this;
     }
 
     public DetailViewBuilder<E, V> newEntity(E entity) {
-        this.newEntity = entity;
+        this.entity = entity;
         this.mode = DetailViewMode.CREATE;
         return this;
     }
 
     public DetailViewBuilder<E, V> editEntity(E entity) {
-        this.editedEntity = entity;
+        this.entity = entity;
         this.mode = DetailViewMode.EDIT;
         return this;
     }
@@ -101,12 +99,8 @@ public class DetailViewBuilder<E, V extends View<?>> extends AbstractViewBuilder
         return entityClass;
     }
 
-    public Optional<E> getNewEntity() {
-        return Optional.ofNullable(newEntity);
-    }
-
-    public E getEditedEntity() {
-        return editedEntity;
+    public Optional<E> getEntity() {
+        return Optional.ofNullable(entity);
     }
 
     public Optional<Consumer<E>> getInitializer() {

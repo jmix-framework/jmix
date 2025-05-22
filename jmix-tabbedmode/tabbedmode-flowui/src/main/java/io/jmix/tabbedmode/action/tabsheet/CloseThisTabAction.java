@@ -17,14 +17,13 @@
 package io.jmix.tabbedmode.action.tabsheet;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.tabbedmode.TabbedModeProperties;
+import io.jmix.tabbedmode.Views;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
-import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
 @ActionType(CloseThisTabAction.ID)
-public class CloseThisTabAction extends TabbedViewsContainerAction<CloseThisTabAction> {
+public class CloseThisTabAction extends AbstractCloseTabsAction<CloseThisTabAction> {
 
     private static final Logger log = LoggerFactory.getLogger(CloseThisTabAction.class);
 
@@ -84,9 +83,17 @@ public class CloseThisTabAction extends TabbedViewsContainerAction<CloseThisTabA
     }
 
     @Override
+    protected boolean hasCloseableTabs() {
+        return target.getTabsStream().findAny().isPresent();
+    }
+
+    @Override
     public void execute(@Nullable Component trigger) {
+        checkTarget();
+
         if (findTab(trigger) instanceof JmixViewTab tab) {
-            MainTabSheetUtils.closeTab(tab);
+            Views.ViewStack viewStack = asViewStack(target.getComponent(tab));
+            viewStack.close();
         } else {
             log.warn("Cannot close the tab because the component is not a '{}'",
                     JmixViewTab.class.getName());

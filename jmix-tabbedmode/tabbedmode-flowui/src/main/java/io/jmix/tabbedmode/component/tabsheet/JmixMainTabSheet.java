@@ -198,17 +198,6 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     }
 
     @Override
-    public Tab getTab(Component content) {
-        Preconditions.checkNotNullArgument(content,
-                "The component to look for the tab cannot be null");
-
-        return findTab(content)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Not found tab associated with the given component: '%s'"
-                                .formatted(content.getId().orElse(""))));
-    }
-
-    @Override
     public Optional<Tab> findTab(Component content) {
         Preconditions.checkNotNullArgument(content,
                 "The component to look for the tab cannot be null");
@@ -216,12 +205,6 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
         return tabToContent.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(content))
                 .map(Map.Entry::getKey).findFirst();
-    }
-
-    @Override
-    public Tab getTab(String id) {
-        return findTab(id).orElseThrow(() ->
-                new IllegalArgumentException("Not found tab with id: '%s'".formatted(id)));
     }
 
     @Override

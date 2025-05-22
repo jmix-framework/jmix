@@ -20,6 +20,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.view.DetailViewMode;
 import io.jmix.flowui.view.ReadOnlyAwareView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
@@ -56,8 +57,10 @@ public class DetailViewBuilderAdapter<E, V extends View<?>> extends DetailViewBu
     protected void applyFrom(DetailViewNavigator<E> viewNavigator) {
         ViewBuilderAdapterUtil.apply(this, viewNavigator);
 
-        editedEntity = viewNavigator.getEditedEntity().orElse(null);
         mode = viewNavigator.getMode();
+        if (mode == DetailViewMode.EDIT) {
+            entity = viewNavigator.getEditedEntity().orElse(null);
+        }
 
         if (viewNavigator.isReadOnly()) {
             // View navigators don't provide the ViewConfigurer handler,
@@ -79,9 +82,10 @@ public class DetailViewBuilderAdapter<E, V extends View<?>> extends DetailViewBu
     protected void applyFrom(DetailWindowBuilder<E, V> windowBuilder) {
         ViewBuilderAdapterUtil.apply(this, windowBuilder);
 
-        editedEntity = windowBuilder.getEditedEntity().orElse(null);
-        newEntity = windowBuilder.getNewEntity().orElse(null);
         mode = windowBuilder.getMode();
+        entity = mode == DetailViewMode.CREATE
+                ? windowBuilder.getNewEntity().orElse(null)
+                : windowBuilder.getEditedEntity().orElse(null);
 
         container = windowBuilder.getContainer().orElse(null);
         field = windowBuilder.getField().orElse(null);

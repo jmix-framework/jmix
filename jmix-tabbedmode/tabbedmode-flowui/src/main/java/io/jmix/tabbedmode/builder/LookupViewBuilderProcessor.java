@@ -134,7 +134,6 @@ public class LookupViewBuilderProcessor extends AbstractViewBuilderProcessor {
 
     @Nullable
     protected <E> CollectionContainer<E> findContainer(LookupViewBuilder<E, ?> builder) {
-        // TODO: gg, get rid of duplicate code
         return builder.getContainer().orElseGet(() ->
                 builder.getListDataComponent()
                         .map(listDataComponent -> {

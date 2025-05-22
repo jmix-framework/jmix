@@ -23,6 +23,7 @@ import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.common.util.Preconditions;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -133,7 +134,7 @@ public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer
     /**
      * Returns the tab at the given position.
      *
-     * @param position the position of the tab, must be greater than or equals to 0
+     * @param position the position of the tab must be greater than or equals to 0
      *                 and less than the number of tabs
      * @return The tab at the given index
      * @throws IllegalArgumentException if the index is less than 0 or greater than or equals to the
@@ -144,7 +145,7 @@ public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer
     /**
      * Returns the index of the given tab.
      *
-     * @param tab the tab to look up, can not be <code>null</code>
+     * @param tab the tab to look up
      * @return the index of the tab or -1 if the tab is not added
      */
     int getIndexOf(Tab tab);
@@ -152,27 +153,49 @@ public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer
     /**
      * Returns the {@link Tab} associated with the given component.
      *
-     * @param content the component to look up, can not be <code>null</code>
-     * @return The tab instance associated with the given component.
+     * @param content the component to look up
+     * @return The tab instance associated with the given component
      * @throws IllegalArgumentException if tab not found
      */
-    Tab getTab(Component content);
+    default Tab getTab(Component content) {
+        Preconditions.checkNotNullArgument(content,
+                "The component to look for the tab cannot be null");
+
+        return findTab(content)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Not found tab associated with the given component: '%s'"
+                                .formatted(content.getId().orElse(""))));
+    }
 
     /**
      * Returns the {@link Tab} associated with the given component.
      *
-     * @param content the component to look up, can not be <code>null</code>
-     * @return The tab instance associated with the given component, or
-     * <code>null</code> if the {@link TabSheet} does not contain the
-     * component.
+     * @param content the component to look up
+     * @return The tab instance associated with the given component, or an
+     * empty {@link  Optional} if the {@link TabSheet} does not contain the
+     * {@link Tab} associated with the given component
      */
-    // TODO: gg, JavaDoc
     Optional<Tab> findTab(Component content);
 
-    // TODO: gg, JavaDoc
-    Tab getTab(String id);
+    /**
+     * Returns the {@link Tab} associated with the given ID.
+     *
+     * @param id the ID of the tab to retrieve
+     * @return the {@link Tab} associated with the specified ID
+     * @throws IllegalArgumentException if no tab is found with the given ID
+     */
+    default Tab getTab(String id) {
+        return findTab(id).orElseThrow(() ->
+                new IllegalArgumentException("Not found tab with id: '%s'".formatted(id)));
+    }
 
-    // TODO: gg, JavaDoc
+    /**
+     * Returns the {@link Tab} associated with the given ID.
+     *
+     * @param id the ID of the tab to retrieve
+     * @return the {@link Tab} associated with the specified ID, or an empty
+     * {@link Optional} if no tab is found with the given ID
+     */
     Optional<Tab> findTab(String id);
 
     /**
@@ -193,7 +216,11 @@ public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer
      */
     Optional<Component> findComponent(Tab tab);
 
-    // TODO: gg, JavaDoc
+    /**
+     * Returns a stream of {@link Component} instances representing the tab content.
+     *
+     * @return a stream of {@link Component} instances representing the tab content
+     */
     Stream<Component> getTabComponentsStream();
 
     ContentSwitchMode getContentSwitchMode();

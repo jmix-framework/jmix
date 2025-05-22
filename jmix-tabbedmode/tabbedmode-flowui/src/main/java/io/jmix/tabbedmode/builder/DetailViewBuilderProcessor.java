@@ -100,15 +100,9 @@ public class DetailViewBuilderProcessor extends AbstractViewBuilderProcessor {
     @Override
     protected <V extends View<?>> Class<V> inferViewClass(AbstractViewBuilder<V, ?> builder) {
         DetailViewBuilder<?, V> detailBuilder = ((DetailViewBuilder<?, V>) builder);
-        Class<?> entityClass;
-
-        if (detailBuilder.getMode() == DetailViewMode.CREATE) {
-            entityClass = detailBuilder.getNewEntity()
-                    .map(Object::getClass)
-                    .orElse((Class) detailBuilder.getEntityClass());
-        } else {
-            entityClass = detailBuilder.getEditedEntity().getClass();
-        }
+        Class<?> entityClass = detailBuilder.getEntity()
+                .map(Object::getClass)
+                .orElse((Class) detailBuilder.getEntityClass());
 
         return (Class<V>) viewRegistry.getDetailViewInfo(entityClass).getControllerClass();
     }
@@ -157,7 +151,7 @@ public class DetailViewBuilderProcessor extends AbstractViewBuilderProcessor {
                                   @Nullable CollectionContainer<E> container,
                                   @Nullable EntityValueSource<?, ?> entityValueSource,
                                   boolean oneToOneComposition) {
-        E entity = builder.getNewEntity()
+        E entity = builder.getEntity()
                 .orElse(metadata.create(builder.getEntityClass()));
 
         if (container instanceof Nested) {
@@ -196,7 +190,9 @@ public class DetailViewBuilderProcessor extends AbstractViewBuilderProcessor {
     }
 
     protected <E> E initEditedEntity(DetailViewBuilder<E, ?> builder) {
-        return builder.getEditedEntity();
+        return builder.getEntity().orElseThrow(() -> new IllegalStateException(
+                String.format("Detail View of %s cannot be open with mode EDIT, entity is not set",
+                        builder.getEntityClass())));
     }
 
     @Nullable

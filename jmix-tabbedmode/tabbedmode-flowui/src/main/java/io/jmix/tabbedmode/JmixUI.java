@@ -758,13 +758,6 @@ public class JmixUI extends UI {
         views.open(topLevelView, ViewOpenMode.ROOT);
     }
 
-    // TODO: gg, remove?
-    protected boolean isAnonymousAuthentication() {
-        Authentication authentication = SecurityContextHelper.getAuthentication();
-        return authentication == null ||
-                authentication instanceof AnonymousAuthenticationToken;
-    }
-
     protected Optional<View<?>> getPreservedViewCache(String jmixUiId) {
         VaadinSession session = getSession();
         if (session == null) {

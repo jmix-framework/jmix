@@ -55,8 +55,11 @@ public class TabbedModeJavaScriptBootstrapHandler extends JavaScriptBootstrapHan
     protected BootstrapContext createAndInitUIBootstrapHandler(Class<? extends UI> uiClass,
                                                VaadinRequest request, VaadinResponse response,
                                                VaadinSession session) {
-//        UI ui = ReflectTools.createInstance(uiClass);
-        // TODO: gg, jmix
+        if (!JmixUI.class.isAssignableFrom(uiClass)) {
+            throw new IllegalArgumentException("Provided UI class '%s' must extend '%s'"
+                    .formatted(uiClass.getName(), JmixUI.class.getName()));
+        }
+
         UI ui = context.getBean(uiClass);
         ui.getInternals().setContextRoot(
                 request.getService().getContextRootRelativePath(request));

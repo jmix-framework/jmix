@@ -56,8 +56,6 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     protected Tabs tabs;
     protected Map<Tab, Component> tabToContent = new HashMap<>();
 
-    protected ContentSwitchMode contentSwitchMode = ContentSwitchMode.UNLOAD;
-
     public JmixMainTabSheet() {
         initComponent();
     }
@@ -240,16 +238,6 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     }
 
     @Override
-    public ContentSwitchMode getContentSwitchMode() {
-        return contentSwitchMode;
-    }
-
-    @Override
-    public void setContentSwitchMode(ContentSwitchMode mode) {
-        this.contentSwitchMode = mode;
-    }
-
-    @Override
     public Registration addSelectedChangeListener(
             ComponentEventListener<SelectedChangeEvent<JmixMainTabSheet>> listener) {
         return tabs.addSelectedChangeListener(event ->
@@ -380,10 +368,6 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
                 // elements as disabled in the DOM. Navigating between tabs
                 // would then briefly show the content as disabled.
                 content.getNode().setEnabled(false);
-
-                if (contentSwitchMode == ContentSwitchMode.UNLOAD) {
-                    content.removeFromParent();
-                }
             }
         }
     }

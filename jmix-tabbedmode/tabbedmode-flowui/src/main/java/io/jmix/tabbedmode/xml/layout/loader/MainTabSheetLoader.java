@@ -20,7 +20,6 @@ import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
-import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 
 public class MainTabSheetLoader extends AbstractComponentLoader<JmixMainTabSheet> {
 
@@ -51,8 +50,6 @@ public class MainTabSheetLoader extends AbstractComponentLoader<JmixMainTabSheet
         getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
 
         loadBoolean(element, "tabsDraggable", resultComponent::setTabsDraggable);
-        loadEnum(element, TabbedViewsContainer.ContentSwitchMode.class,
-                "contentSwitchMode", resultComponent::setContentSwitchMode);
     }
 
     protected ActionLoaderSupport getActionLoaderSupport() {

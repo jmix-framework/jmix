@@ -223,10 +223,6 @@ public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer
      */
     Stream<Component> getTabComponentsStream();
 
-    ContentSwitchMode getContentSwitchMode();
-
-    void setContentSwitchMode(ContentSwitchMode mode);
-
     /**
      * Adds a listener for {@link SelectedChangeEvent}.
      *
@@ -361,21 +357,5 @@ public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer
          * Tabs were removed from the collection.
          */
         REMOVE
-    }
-
-    /**
-     * Defines how the content of inactive tabs is handled by this component.
-     */
-    enum ContentSwitchMode {
-
-        /**
-         * The content of inactive tabs is preserved in the DOM tree.
-         */
-        HIDE,
-
-        /**
-         * The content of inactive tabs is removed from the DOM tree.
-         */
-        UNLOAD
     }
 }

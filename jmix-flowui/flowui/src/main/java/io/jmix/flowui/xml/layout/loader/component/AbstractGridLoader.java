@@ -298,7 +298,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         if (buttonElement != null) {
             JmixButton button = factory.create(JmixButton.class);
 
-            loadResourceString(buttonElement, "text", context.getMessageGroup())
+            loadResourceString(buttonElement, "text", context.getMessageGroup(), false)
                     .ifPresentOrElse(button::setText, () -> button.setText(loadMessage(defaultMessage)));
             componentLoader().loadIcon(buttonElement)
                     .ifPresentOrElse(button::setIcon, () -> button.setIcon(defaultIcon));

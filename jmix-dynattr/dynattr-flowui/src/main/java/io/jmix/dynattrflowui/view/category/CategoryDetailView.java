@@ -18,58 +18,39 @@ package io.jmix.dynattrflowui.view.category;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.data.renderer.Renderer;
-import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
-import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetadataObject;
-import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattr.model.Category;
-import io.jmix.dynattr.model.CategoryAttribute;
-import io.jmix.dynattrflowui.utils.DynAttrUiHelper;
-import io.jmix.dynattrflowui.view.categoryattr.CategoryAttributesDetailView;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
-import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.combobox.JmixComboBox;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
-import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
-import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Route(value = "dynat/category/:id", layout = DefaultMainViewParent.class)
 @ViewController("dynat_CategoryView.detail")
 @ViewDescriptor("category-detail-view.xml")
 @PrimaryDetailView(Category.class)
 @EditedEntityContainer("categoryDc")
-@DialogMode(width = "50em", maxWidth = "80%")
+@DialogMode(width = "50em")
 public class CategoryDetailView extends StandardDetailView<Category> {
 
     @Autowired
@@ -91,62 +72,30 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
-    @Autowired
-    protected ReferenceToEntitySupport referenceToEntitySupport;
-    @Autowired
-    protected FetchPlanRepository fetchPlanRepository;
-    @Autowired
     protected UiComponents uiComponents;
-    @Autowired
-    protected FormatStringsRegistry formatStringsRegistry;
-    @Autowired
-    protected DialogWindows dialogWindows;
-    @Autowired
-    protected DynAttrUiHelper dynAttrUiHelper;
     @Autowired
     protected DataComponents dataComponents;
     @Autowired
     protected MsgBundleTools msgBundleTools;
 
-
     @ViewComponent
     protected InstanceContainer<Category> categoryDc;
     @ViewComponent
-    protected CollectionContainer<CategoryAttribute> categoryAttributesDc;
-    @ViewComponent
     protected JmixComboBox<MetaClass> entityTypeField;
+    @ViewComponent
+    protected TypedTextField<String> nameField;
     @ViewComponent
     protected JmixTabSheet tabSheet;
     @ViewComponent
     protected VerticalLayout localizationTabContainer;
-    @ViewComponent
-    protected DataGrid<CategoryAttribute> categoryAttrsGrid;
-    @ViewComponent
-    protected Button moveUpBtn;
-    @ViewComponent
-    protected Button moveDownBtn;
-    @ViewComponent("categoryAttrsGrid.edit")
-    protected Action editAction;
-    @ViewComponent("categoryAttrsGrid.remove")
-    protected Action removeAction;
-    @ViewComponent("categoryAttrsGrid.moveUp")
-    protected Action moveUpAction;
-    @ViewComponent("categoryAttrsGrid.moveDown")
-    protected Action moveDownAction;
-    protected AttributeLocalizationComponent localizationComponent;
 
-    @Subscribe
-    public void onInitEvent(InitEvent event) {
-        sortCategoryAttrsGridByOrderNo();
-    }
+    protected AttributeLocalizationComponent localizationComponent;
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         initEntityTypeField();
         initLocalizationTab();
         setupFieldsLock();
-        setGridActionsEnabled(!categoryAttrsGrid.getSelectedItems().isEmpty());
     }
 
     protected void setupFieldsLock() {
@@ -161,12 +110,17 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected void onEntityTypeFieldValueChange(AbstractField.ComponentValueChangeEvent<ComboBox<MetaClass>, MetaClass> event) {
         if (event.getValue() != null) {
             getEditedEntity().setEntityType(event.getValue().getName());
+
+            if (nameField.getTypedValue() == null) {
+                getEditedEntity().setName(generateCategoryNameByEntityType());
+            }
         }
     }
 
-    private void setGridActionsEnabled(boolean enabled) {
-        List.of(editAction, removeAction, moveUpAction, moveDownAction)
-                .forEach(button -> button.setEnabled(enabled));
+    protected String generateCategoryNameByEntityType() {
+        String entityTypeCaption = messageTools.getEntityCaption(entityTypeField.getValue());
+        String categoryEntityCaption = messageTools.getEntityCaption(categoryDc.getEntityMetaClass());
+        return StringUtils.capitalize(entityTypeCaption) + " " + StringUtils.uncapitalize(categoryEntityCaption);
     }
 
     @Subscribe("isDefaultField")
@@ -197,7 +151,6 @@ public class CategoryDetailView extends StandardDetailView<Category> {
             options.put(metaClass, messageTools.getDetailedEntityCaption(metaClass));
         }
         entityTypeField.setItemLabelGenerator(options::get);
-        //noinspection unchecked
         entityTypeField.setItems(options.keySet().stream()
                 .sorted(Comparator.comparing(MetadataObject::getName))
                 .toList());
@@ -231,235 +184,6 @@ public class CategoryDetailView extends StandardDetailView<Category> {
             localizationTabContainer.add(localizationComponent);
             localizationTabContainer.expand(localizationComponent);
         }
-    }
-
-    @Supply(to = "categoryAttrsGrid.defaultValue", subject = "renderer")
-    protected Renderer<CategoryAttribute> createCategoryAttrsGridDefaultValueRenderer() {
-        return new ComponentRenderer<>(this::categoryAttrsGridDefaultValueColumnComponent,
-                this::categoryAttrsGridDefaultValueColumnUpdater);
-    }
-
-    protected Span categoryAttrsGridDefaultValueColumnComponent() {
-        return uiComponents.create(Span.class);
-    }
-
-    protected void categoryAttrsGridDefaultValueColumnUpdater(Span defaultValueLabel, CategoryAttribute attribute) {
-        String defaultValue = "";
-
-        AttributeType dataType = attribute.getDataType();
-        switch (dataType) {
-            case BOOLEAN -> {
-                Boolean b = attribute.getDefaultBoolean();
-                if (b != null)
-                    defaultValue = BooleanUtils.isTrue(b)
-                            ? messages.getMessage("trueString")
-                            : messages.getMessage("falseString");
-            }
-            case DATE -> {
-                Date dateTime = attribute.getDefaultDate();
-                if (dateTime != null) {
-                    String dateTimeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateTimeFormat();
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateTimeFormat);
-                    defaultValue = simpleDateFormat.format(dateTime);
-                } else if (BooleanUtils.isTrue(attribute.getDefaultDateIsCurrent())) {
-                    defaultValue = messages.getMessage(getClass(), "categoryAttrsGrid.currentDate");
-                }
-            }
-            case DATE_WITHOUT_TIME -> {
-                LocalDate dateWoTime = attribute.getDefaultDateWithoutTime();
-                if (dateWoTime != null) {
-                    String dateWoTimeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateFormat();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateWoTimeFormat);
-                    defaultValue = dateWoTime.format(formatter);
-                } else if (BooleanUtils.isTrue(attribute.getDefaultDateIsCurrent())) {
-                    defaultValue = messages.getMessage(getClass(), "categoryAttrsGrid.currentDate");
-                }
-            }
-            case DECIMAL -> {
-                BigDecimal defaultDecimal = attribute.getDefaultDecimal();
-                if (defaultDecimal != null) {
-                    defaultValue = defaultDecimal.toString();
-                }
-            }
-            case DOUBLE -> {
-                Double defaultDouble = attribute.getDefaultDouble();
-                if (defaultDouble != null) {
-                    defaultValue = defaultDouble.toString();
-                }
-            }
-            case ENTITY -> {
-                Class<?> entityClass = attribute.getJavaType();
-                if (entityClass != null) {
-                    defaultValue = "";
-                    if (attribute.getObjectDefaultEntityId() != null) {
-                        MetaClass metaClass = metadata.getClass(entityClass);
-                        LoadContext<?> lc = new LoadContext<>(metadata.getClass(attribute.getJavaType()));
-                        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
-                        lc.setFetchPlan(fetchPlan);
-                        String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
-                        lc.setQueryString(String.format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))
-                                .setParameter("entityId", attribute.getObjectDefaultEntityId());
-                        Object entity = dataManager.load(lc);
-                        if (entity != null) {
-                            defaultValue = metadataTools.getInstanceName(entity);
-                        }
-                    }
-                } else {
-                    defaultValue = messages.getMessage(getClass(), "categoryAttrsGrid.entityNotFound");
-                }
-            }
-            case ENUMERATION, STRING -> defaultValue = attribute.getDefaultString();
-            case INTEGER -> {
-                Integer defaultInt = attribute.getDefaultInt();
-                if (defaultInt != null) {
-                    defaultValue = defaultInt.toString();
-                }
-            }
-        }
-
-        defaultValueLabel.setText(defaultValue);
-    }
-
-    @Supply(to = "categoryAttrsGrid.dataType", subject = "renderer")
-    protected Renderer<CategoryAttribute> createCategoryAttrsGridDataTypeRenderer() {
-        return new ComponentRenderer<>(this::categoryAttrsGridDataTypeComponent,
-                this::categoryAttrsGridDataTypeUpdater);
-    }
-
-    protected Text categoryAttrsGridDataTypeComponent() {
-        return new Text(null);
-    }
-
-    protected void categoryAttrsGridDataTypeUpdater(Text text, CategoryAttribute categoryAttribute) {
-        String dataType;
-        if (BooleanUtils.isTrue(categoryAttribute.getIsEntity())) {
-            Class<?> javaType = categoryAttribute.getJavaType();
-            if (javaType != null) {
-                MetaClass metaClass = metadata.getClass(javaType);
-                dataType = messageTools.getEntityCaption(metaClass);
-            } else {
-                dataType = "";
-            }
-        } else {
-            String key = AttributeType.class.getSimpleName() + "." + categoryAttribute.getDataType().toString();
-            dataType = messages.getMessage(AttributeType.class, key);
-        }
-
-        text.setText(dataType);
-    }
-
-    @Subscribe("categoryAttrsGrid.create")
-    protected void categoryAttrsGridCreateListener(ActionPerformedEvent event) {
-        dialogWindows.detail(this, CategoryAttribute.class)
-                .withViewClass(CategoryAttributesDetailView.class)
-                .newEntity()
-                .withParentDataContext(getViewData().getDataContext())
-                .withInitializer(e -> e.setCategory(categoryDc.getItem()))
-                .withAfterCloseListener(e -> {
-                    if (e.getCloseAction().equals(StandardOutcome.SAVE.getCloseAction())) {
-                        refreshAttributesDc(e.getView().getEditedEntity());
-                    }
-                })
-                .build()
-                .open();
-    }
-
-    @Subscribe("categoryAttrsGrid.edit")
-    protected void categoryAttrsGridEditListener(ActionPerformedEvent event) {
-        CategoryAttribute categoryAttributeSelected = categoryAttrsGrid.getSingleSelectedItem();
-
-        Assert.notNull(categoryAttributeSelected, "Selected attribute has to be not null");
-        dialogWindows.detail(this, CategoryAttribute.class)
-                .withViewClass(CategoryAttributesDetailView.class)
-                .editEntity(categoryAttributeSelected)
-                .withAfterCloseListener(e -> {
-                    if (e.getCloseAction().equals(StandardOutcome.SAVE.getCloseAction())) {
-                        refreshAttributesDc(e.getView().getEditedEntity());
-                    }
-                })
-                .withParentDataContext(getViewData().getDataContext())
-                .build()
-                .open();
-    }
-
-    private void refreshAttributesDc(CategoryAttribute attribute) {
-        if (categoryAttributesDc.getMutableItems().contains(attribute)) {
-            categoryAttributesDc.replaceItem(attribute);
-        } else {
-            categoryAttributesDc.getMutableItems().add(attribute);
-        }
-        categoryAttrsGrid.getDataProvider().refreshAll();
-    }
-
-    @Subscribe("categoryAttrsGrid.remove")
-    protected void categoryAttrsGridRemoveListener(ActionPerformedEvent event) {
-        CategoryAttribute selected = Objects.requireNonNull(categoryAttrsGrid.getSingleSelectedItem());
-        categoryAttributesDc.getMutableItems().remove(selected);
-        getViewData().getDataContext().remove(selected);
-        categoryAttrsGrid.getDataProvider().refreshAll();
-    }
-
-    protected void onCategoryAttrsGridSelection(SelectionEvent<DataGrid<CategoryAttribute>, CategoryAttribute> event) {
-        Set<CategoryAttribute> selected = categoryAttrsGrid.getSelectedItems();
-        if (selected.isEmpty()) {
-            refreshMoveButtonsEnabled(null);
-        } else {
-            refreshMoveButtonsEnabled(selected.iterator().next());
-        }
-    }
-
-    @Subscribe("categoryAttrsGrid")
-    protected void onCategoryAttrsGridSelectionEvent(SelectionEvent<DataGrid<CategoryAttribute>, CategoryAttribute> event) {
-        setGridActionsEnabled(!event.getAllSelectedItems().isEmpty());
-    }
-
-    @Subscribe("categoryAttrsGrid.moveUp")
-    protected void onCategoryAttrsGridMoveUp(ActionPerformedEvent event) {
-        dynAttrUiHelper.moveTableItemUp(categoryAttributesDc, categoryAttrsGrid, () ->
-                categoryAttributesDc.getMutableItems()
-                        .forEach(item -> item.setOrderNo(categoryAttributesDc.getMutableItems().indexOf(item))));
-
-    }
-
-    @Subscribe("categoryAttrsGrid.moveDown")
-    protected void onCategoryAttrsGridMoveDown(ActionPerformedEvent event) {
-        dynAttrUiHelper.moveTableItemDown(categoryAttributesDc, categoryAttrsGrid, () ->
-                categoryAttributesDc.getMutableItems()
-                        .forEach(item -> item.setOrderNo(categoryAttributesDc.getMutableItems().indexOf(item))));
-    }
-
-    protected CategoryAttribute getPrevAttribute(Integer orderNo) {
-        return categoryAttributesDc.getMutableItems()
-                .stream()
-                .filter(categoryAttribute -> orderNo.compareTo(categoryAttribute.getOrderNo()) > 0)
-                .max(Comparator.comparing(CategoryAttribute::getOrderNo))
-                .orElse(null);
-    }
-
-    protected CategoryAttribute getNextAttribute(Integer orderNo) {
-        return categoryAttributesDc.getMutableItems()
-                .stream()
-                .filter(categoryAttribute -> orderNo.compareTo(categoryAttribute.getOrderNo()) < 0)
-                .min(Comparator.comparing(CategoryAttribute::getOrderNo))
-                .orElse(null);
-    }
-
-    protected void sortCategoryAttrsGridByOrderNo() {
-        Objects.requireNonNull(categoryAttributesDc.getSorter())
-                .sort(Sort.by(Sort.Direction.ASC, "orderNo"));
-    }
-
-    protected void refreshMoveButtonsEnabled(@Nullable CategoryAttribute categoryAttribute) {
-        moveUpBtn.setEnabled(categoryAttribute != null && getPrevAttribute(categoryAttribute.getOrderNo()) != null);
-        moveDownBtn.setEnabled(categoryAttribute != null && getNextAttribute(categoryAttribute.getOrderNo()) != null);
-    }
-
-    public void setCategory(Category category) {
-        categoryDc.setItem(category);
-        categoryAttributesDc.setItems(dataManager.load(CategoryAttribute.class)
-                .query("select e from dynat_CategoryAttribute e where e.category = :category")
-                .parameter("category", category)
-                .list());
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)

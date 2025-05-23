@@ -26,10 +26,10 @@
     <facets>
         <settings auto="true"/>
     </facets>
-    <layout spacing="true" expand="detailButtonsBox">
-        <hbox id="editorBox" margin="false" width="100%">
-            <vbox spacing="true" width="100%" height="100%">
-                <hbox spacing="true" width="100%" expand="valueField">
+    <layout expand="detailButtonsBox">
+        <hbox id="editorBox" width="100%">
+            <vbox height="100%" padding="false" css="flex-grow: 1; width: unset;">
+                <hbox width="100%" expand="valueField">
                     <textField id="valueField" datatype="string"/>
                     <button id="addBtn" action="localizedEnumValuesDataGrid.add"/>
                 </hbox>
@@ -39,22 +39,17 @@
                     <actions>
                         <action id="add" text="msg:///actions.Add"/>
                     </actions>
-                    <columns resizable="true">
-                        <column key="value" property="value" editable="true"/>
-                        <editorActionsColumn key="bufferedEditorColumn" width="7em" header="msg://AttributeLocalizedEnumValue.edit">
-                            <editButton text="Edit" icon="PENCIL"/>
-                            <saveButton icon="CHECK" themeNames="success"/>
-                            <cancelButton icon="CLOSE" themeNames="error"/>
-                        </editorActionsColumn>
-                        <column key="removeItem" editable="false" header="msg://AttributeLocalizedEnumValue.remove"/>
+                    <columns resizable="true" sortable="false">
+                        <column key="value" property="value" editable="true" sortable="true"/>
+                        <column key="bufferedEditorColumn" autoWidth="true" flexGrow="0"/>
                     </columns>
                 </dataGrid>
             </vbox>
-            <vbox id="localizationBox" spacing="true" margin="false" width="100%" height="100%" visible="false">
+            <vbox id="localizationBox" height="100%" visible="false" padding="false" css="flex-grow: 4; width: unset;">
                 <h3 text="msg://localizationBox.title"/>
             </vbox>
         </hbox>
-        <hbox id="detailButtonsBox" spacing="true">
+        <hbox id="detailButtonsBox">
             <button id="commitBtn" icon="CHECK" text="msg:///actions.Ok" themeNames="primary"/>
             <button id="cancelBtn" icon="BAN" text="msg:///actions.Cancel"/>
         </hbox>

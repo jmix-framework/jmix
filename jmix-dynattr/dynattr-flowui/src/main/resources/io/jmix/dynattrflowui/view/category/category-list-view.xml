@@ -16,83 +16,110 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://categoryListView.title"
       focusComponent="categoriesGrid">
-    <data readOnly="true">
+    <data>
         <collection id="categoriesDc"
                     class="io.jmix.dynattr.model.Category"
                     fetchPlan="_local">
-            <loader id="categoriesDl">
+            <loader id="categoriesDl" readOnly="true">
                 <query>
                     <![CDATA[select c from dynat_Category c where c.special is null order by c.createTs]]>
                 </query>
             </loader>
         </collection>
-        <instance id="categoryDc"
-                  class="io.jmix.dynattr.model.Category">
-            <fetchPlan extends="_local">
-                <property name="categoryAttrs" fetchPlan="_local"/>
-            </fetchPlan>
-            <loader id="categoryDl"/>
-            <collection id="attributesDc" property="categoryAttrs"/>
-        </instance>
+        <collection id="attributesDc" class="io.jmix.dynattr.model.CategoryAttribute">
+            <fetchPlan extends="_base"/>
+            <loader id="attributesDl">
+                <query>
+                    <![CDATA[select a from dynat_CategoryAttribute a where a.category = :container_categoriesDc
+                    order by a.orderNo asc]]>
+                </query>
+            </loader>
+        </collection>
     </data>
 
     <facets>
         <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout spacing="true">
-        <split id="split" orientation="HORIZONTAL" width="100%" minHeight="25em"
-               height="100%" themeNames="splitter-spacing">
-            <vbox id="categoryBox" padding="false" height="100%" expand="categoriesGrid">
-                <hbox id="buttonsPanel" classNames="buttons-panel">
-                    <button id="createBtn" action="categoriesGrid.create"/>
-                    <button id="editBtn" action="categoriesGrid.edit"/>
-                    <button id="removeBtn" action="categoriesGrid.remove"/>
-                    <button id="applyChangesBtn" action="categoriesGrid.applyChanges"/>
-                    <dropdownButton id="exportBtn" icon="DOWNLOAD" text="msg://export">
-                        <items>
-                            <actionItem id="exportJSONButtonAction" ref="categoriesGrid.exportJSON"/>
-                            <actionItem id="exportZIPButtonAction" ref="categoriesGrid.exportZIP"/>
-                        </items>
-                    </dropdownButton>
-                    <fileUploadField id="importField" uploadIcon="UPLOAD" uploadText="msg://import"
-                                     acceptedFileTypes=".json,.zip"/>
-                </hbox>
-                <dataGrid id="categoriesGrid"
-                          width="100%"
-                          minHeight="20em"
-                          columnReorderingAllowed="true"
-                          dataContainer="categoriesDc">
-                    <actions>
-                        <action id="create" type="list_create" text="msg://categoriesGrid.create"/>
-                        <action id="edit" type="list_edit"/>
-                        <action id="remove" type="list_remove"/>
-                        <action id="applyChanges" text="msg://categoriesGrid.applyChanges" icon="CHECK"/>
-                        <action id="exportJSON" text="msg://exportJSON"/>
-                        <action id="exportZIP" text="msg://exportZIP"/>
-                    </actions>
-                    <columns resizable="true">
-                        <column property="name" header="msg://categoriesGrid.name"/>
-                        <column property="entityType"/>
-                        <column property="isDefault"/>
-                    </columns>
-                </dataGrid>
-            </vbox>
-            <vbox id="attributesBox" padding="false" height="100%" expand="attributesTable">
-                <h3 text="msg://categoryAttributes.text"/>
-                <dataGrid id="attributesTable"
-                          width="100%"
-                          columnReorderingAllowed="true"
-                          dataContainer="attributesDc">
-                    <columns resizable="true">
-                        <column property="name"/>
-                        <column property="code"/>
-                        <column property="dataType"/>
-                        <column property="required"/>
-                        <column property="isCollection"/>
-                    </columns>
-                </dataGrid>
-            </vbox>
-        </split>
+    <layout classNames="category-list-view-wrapper">
+        <vbox id="categoryBox" padding="false" height="100%" expand="categoriesGrid">
+            <h2 id="categoryHeader" text="msg://categoryHeader.text"/>
+            <hbox id="buttonsPanel" classNames="buttons-panel">
+                <button id="createBtn" action="categoriesGrid.create"/>
+                <button id="editBtn" action="categoriesGrid.edit"/>
+                <button id="removeBtn" action="categoriesGrid.remove"/>
+                <button id="applyChangesBtn" action="categoriesGrid.applyChanges"/>
+                <dropdownButton id="exportBtn" icon="DOWNLOAD" text="msg://export">
+                    <items>
+                        <actionItem id="exportJSONButtonAction" ref="categoriesGrid.exportJSON"/>
+                        <actionItem id="exportZIPButtonAction" ref="categoriesGrid.exportZIP"/>
+                    </items>
+                </dropdownButton>
+                <fileUploadField id="importField" uploadIcon="UPLOAD" uploadText="msg://import"
+                                 acceptedFileTypes=".json,.zip"/>
+            </hbox>
+            <dataGrid id="categoriesGrid"
+                      width="100%"
+                      height="100%"
+                      minHeight="20em"
+                      columnReorderingAllowed="true"
+                      dataContainer="categoriesDc">
+                <actions>
+                    <action id="create" type="list_create">
+                        <properties>
+                            <property name="openMode" value="DIALOG"/>
+                        </properties>
+                    </action>
+                    <action id="edit" type="list_edit">
+                        <properties>
+                            <property name="openMode" value="DIALOG"/>
+                        </properties>
+                    </action>
+                    <action id="remove" type="list_remove"/>
+                    <action id="applyChanges" text="msg://categoriesGrid.applyChanges"
+                            icon="CHECK" actionVariant="SUCCESS"/>
+                    <action id="exportJSON" text="msg://exportJSON"/>
+                    <action id="exportZIP" text="msg://exportZIP"/>
+                </actions>
+                <columns resizable="true">
+                    <column property="name"/>
+                    <column property="entityType"/>
+                    <column property="isDefault"/>
+                </columns>
+            </dataGrid>
+        </vbox>
+        <vbox id="attributesBox" padding="false"
+              height="100%" expand="attributesTable">
+            <h2 text="msg://categoryAttributes.text"/>
+            <hbox id="attributesButtonsPanel" classNames="buttons-panel">
+                <button id="createBtn" action="attributesTable.create"/>
+                <button id="editBtn" action="attributesTable.edit"/>
+                <button id="removeBtn" action="attributesTable.remove"/>
+                <button id="moveUpBtn" action="attributesTable.moveUp"/>
+                <button id="moveDownBtn" action="attributesTable.moveDown"/>
+            </hbox>
+            <dataGrid id="attributesTable"
+                      width="100%"
+                      height="100%"
+                      minHeight="20em"
+                      columnReorderingAllowed="true"
+                      dataContainer="attributesDc">
+                <actions>
+                    <action id="create" type="list_create"/>
+                    <action id="edit" type="list_edit"/>
+                    <action id="remove" type="list_remove"/>
+                    <action id="moveUp" icon="ARROW_UP" type="list_itemTracking"/>
+                    <action id="moveDown" icon="ARROW_DOWN" type="list_itemTracking"/>
+                </actions>
+                <columns resizable="true" sortable="false">
+                    <column property="name"/>
+                    <column property="code"/>
+                    <column property="dataType"/>
+                    <column key="defaultValue" header="msg://categoryAttrsGrid.defaultValue"/>
+                    <column property="required" autoWidth="true"/>
+                    <column property="isCollection" autoWidth="true"/>
+                </columns>
+            </dataGrid>
+        </vbox>
     </layout>
 </view>

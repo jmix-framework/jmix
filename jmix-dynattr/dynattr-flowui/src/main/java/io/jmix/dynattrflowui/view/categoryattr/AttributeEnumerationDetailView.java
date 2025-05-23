@@ -20,12 +20,15 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.dynattr.MsgBundleTools;
@@ -33,6 +36,7 @@ import io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -54,9 +58,8 @@ import java.util.stream.Collectors;
 
 @ViewController("dynat_AttributeEnumerationDetailView")
 @ViewDescriptor("attribute-enumeration-detail-view.xml")
-@DialogMode(width = "55em", height = "45em", resizable = true)
+@DialogMode(width = "30em", resizable = true)
 public class AttributeEnumerationDetailView extends StandardView {
-    public static final String REMOVE_ITEM_COLUMN = "removeItem";
 
     @Autowired
     protected CoreProperties coreProperties;
@@ -91,7 +94,6 @@ public class AttributeEnumerationDetailView extends StandardView {
     protected AttributeLocalizationComponent localizationFragment;
     protected List<AttributeLocalizedEnumValue> localizedEnumValues = new ArrayList<>();
 
-
     public void setEnumeration(String enumeration) {
         this.enumeration = enumeration;
     }
@@ -116,21 +118,11 @@ public class AttributeEnumerationDetailView extends StandardView {
     }
 
     @Subscribe
-    protected void onInit(InitEvent e) {
-        Grid.Column<AttributeLocalizedEnumValue> removeItemColumn = localizedEnumValuesDataGrid.getColumnByKey(REMOVE_ITEM_COLUMN);
-        if (removeItemColumn == null) {
-            throw new IllegalStateException("No column with key " + REMOVE_ITEM_COLUMN);
-        }
-        removeItemColumn.setRenderer(createRemoveItemColumnRenderer());
-    }
-
-    @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         initLocalizedEnumValuesDataGrid();
         initLocalizationFragment();
         localizedEnumValuesDl.load();
     }
-
 
     @Install(to = "localizedEnumValuesDl", target = Target.DATA_LOADER)
     protected List<AttributeLocalizedEnumValue> localizedEnumValuesDlLoadDelegate(LoadContext<AttributeLocalizedEnumValue> loadContext) {
@@ -157,12 +149,87 @@ public class AttributeEnumerationDetailView extends StandardView {
         }
     }
 
-    protected ComponentRenderer<JmixButton, AttributeLocalizedEnumValue> createRemoveItemColumnRenderer() {
-        return new ComponentRenderer<>(this::createRemoveItemColumnComponent, this::gradeRemoveItemColumnUpdater);
+    @Supply(to = "localizedEnumValuesDataGrid.bufferedEditorColumn", subject = "editorComponent")
+    protected Component localizedEnumValuesDataGridEditorComponent() {
+        DataGridEditor<AttributeLocalizedEnumValue> editor = localizedEnumValuesDataGrid.getEditor();
+
+        JmixButton saveButton = createEditorSaveButton(editor);
+        JmixButton cancelButton = createEditorCancelButton(editor);
+
+        HorizontalLayout editorButtonsLayout = createEditorButtonsLayout();
+        editorButtonsLayout.add(saveButton, cancelButton);
+
+        return editorButtonsLayout;
     }
 
-    protected JmixButton createRemoveItemColumnComponent() {
-        return uiComponents.create(JmixButton.class);
+    protected JmixButton createEditorSaveButton(DataGridEditor<AttributeLocalizedEnumValue> editor) {
+        JmixButton saveButton = uiComponents.create(JmixButton.class);
+        saveButton.setIcon(VaadinIcon.CHECK.create());
+        saveButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+        saveButton.addClickListener(__ -> editor.save());
+
+        return saveButton;
+    }
+
+    protected JmixButton createEditorCancelButton(DataGridEditor<AttributeLocalizedEnumValue> editor) {
+        JmixButton cancelButton = uiComponents.create(JmixButton.class);
+        cancelButton.setIcon(VaadinIcon.CLOSE.create());
+        cancelButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+        cancelButton.addClickListener(__ -> editor.cancel());
+
+        return cancelButton;
+    }
+
+    @Supply(to = "localizedEnumValuesDataGrid.bufferedEditorColumn", subject = "renderer")
+    protected Renderer<AttributeLocalizedEnumValue> localizedEnumValuesDataGridEditorRenderer() {
+        return new ComponentRenderer<>(this::createEditorColumnRenderer);
+    }
+
+    protected Component createEditorColumnRenderer(AttributeLocalizedEnumValue currentItem) {
+        DataGridEditor<AttributeLocalizedEnumValue> editor = localizedEnumValuesDataGrid.getEditor();
+
+        JmixButton editButton = createEditorEditButton(editor, currentItem);
+        JmixButton removeButton = createEditorRemoveButton(currentItem);
+
+        HorizontalLayout editorButtonsLayout = createEditorButtonsLayout();
+        editorButtonsLayout.add(editButton, removeButton);
+
+        return editorButtonsLayout;
+    }
+
+    protected JmixButton createEditorEditButton(DataGridEditor<AttributeLocalizedEnumValue> editor,
+                                                AttributeLocalizedEnumValue currentItem) {
+        JmixButton editorButton = uiComponents.create(JmixButton.class);
+        editorButton.setIcon(VaadinIcon.PENCIL.create());
+
+        editorButton.addClickListener(__ -> {
+            if (editor.isOpen()) {
+                editor.cancel();
+            }
+            editor.editItem(currentItem);
+        });
+
+        return editorButton;
+    }
+
+    protected JmixButton createEditorRemoveButton(AttributeLocalizedEnumValue currentItem) {
+        JmixButton removeButton = uiComponents.create(JmixButton.class);
+        removeButton.setIcon(VaadinIcon.TRASH.create());
+        removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+        removeButton.addClickListener(__ -> {
+            localizedEnumValues.remove(currentItem);
+            localizedEnumValuesDl.load();
+        });
+
+        return removeButton;
+    }
+
+    protected HorizontalLayout createEditorButtonsLayout() {
+        HorizontalLayout horizontalLayout = uiComponents.create(HorizontalLayout.class);
+        horizontalLayout.setPadding(false);
+        return horizontalLayout;
     }
 
     protected void gradeRemoveItemColumnUpdater(JmixButton button, AttributeLocalizedEnumValue customer) {
@@ -172,7 +239,7 @@ public class AttributeEnumerationDetailView extends StandardView {
                     localizedEnumValuesDl.load();
                 })
                 .withVariant(ActionVariant.DANGER)
-                .withIcon(VaadinIcon.CLOSE.create());
+                .withIcon(VaadinIcon.TRASH.create());
         button.setAction(removeAction);
     }
 

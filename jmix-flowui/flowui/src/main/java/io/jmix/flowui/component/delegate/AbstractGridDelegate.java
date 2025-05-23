@@ -829,7 +829,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         if (item != null) {
             // have to select clicked item to make action work, otherwise
             // consecutive clicks on the same item deselect it
-            component.select(item);
+            // selection from client is mandatory due to programmatic selection ignores selectableProvider
+            component.getSelectionModel().selectFromClient(item);
         }
 
         if (enterPressHandler != null) {

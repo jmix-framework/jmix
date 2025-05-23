@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,15 @@
 package io.jmix.datatoolsflowui.accesscontext;
 
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
-import io.jmix.datatoolsflowui.view.entityinfo.model.InfoValue;
 
 /**
- * An access context to check permissions for the {@link InfoValue} functionality.
+ * An access context to check permissions to import/export entities using Data Tools views.
  */
-public class UiShowEntityInfoContext extends SpecificOperationAccessContext {
+public class UiImportExportEntityContext extends SpecificOperationAccessContext {
+    
+    public static final String NAME = "datatools.importExportEntity";
 
-    public static final String NAME = "datatools.showEntityInfo";
-
-    public UiShowEntityInfoContext() {
+    public UiImportExportEntityContext() {
         super(NAME);
     }
 }

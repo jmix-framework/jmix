@@ -27,7 +27,7 @@ import io.jmix.securityflowui.role.annotation.ViewPolicy;
 @ResourceRole(name = "Data Tools: minimal access", code = DataToolsMinimalAccessRole.CODE, scope = SecurityScope.UI)
 public interface DataToolsMinimalAccessRole {
 
-    String CODE ="datatools-minimal-access";
+    String CODE = "datatools-minimal-access";
 
     @MenuPolicy(menuIds = "datatl_entityInspectorListView")
     @ViewPolicy(viewIds = {"datatl_entityInspectorListView", "datatl_entityInspectorDetailView"})

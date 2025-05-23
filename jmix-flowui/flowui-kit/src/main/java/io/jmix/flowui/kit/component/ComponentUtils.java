@@ -27,6 +27,7 @@ import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.data.provider.HasListDataView;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementConstants;
@@ -399,6 +400,29 @@ public final class ComponentUtils {
                 }
             });
         }
+    }
+
+    /**
+     * Gets the component label. If the component is wrapped inside {@link FormLayout.FormItem} then its label
+     * is returned.
+     *
+     * @param hasLabel component to get label
+     * @return label of the component if exists, its {@link FormLayout.FormItem} label otherwise
+     */
+    @Nullable
+    public static String getLabel(HasLabel hasLabel) {
+        if (hasLabel.getLabel() != null) {
+            return hasLabel.getLabel();
+        }
+
+        if (hasLabel instanceof Component component
+                && component.getParent().orElse(null) instanceof FormLayout.FormItem formItem
+                && SlotUtils.getChildInSlot(formItem, "label") instanceof HasText hasText
+                && hasText.getText() != null) {
+            return hasText.getText();
+        }
+
+        return null;
     }
 
     /**

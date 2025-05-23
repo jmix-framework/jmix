@@ -95,7 +95,7 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
 
     protected void addButton(Action action) {
         int index = actions.indexOf(action);
-        ValuePickerButton button = new ValuePickerButton();
+        ValuePickerButton button = createButton();
         button.setAction(action);
         getActionsLayout().addComponentAtIndex(index, button);
 
@@ -124,6 +124,10 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
         }
 
         return actionsLayout;
+    }
+
+    protected ValuePickerButton createButton() {
+        return new ValuePickerButton();
     }
 
     protected Div createActionsLayout() {

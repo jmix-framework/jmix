@@ -46,6 +46,7 @@ public class ValuePickerButtonActionSupport {
         this.action = action;
 
         if (action != null && overrideComponentProperties) {
+            button.setId(action.getId());
             button.setTitle(generateTitle(action));
             button.setEnabled(action.isEnabled());
             button.setVisible(action.isVisible());

@@ -42,9 +42,6 @@ includeProject('data-autoconfigure', 'jmix-data/data-autoconfigure')
 includeProject('eclipselink', 'jmix-data/eclipselink')
 includeProject('eclipselink-starter', 'jmix-data/eclipselink-starter')
 
-includeProject('dashboards', 'jmix-dashboards/dashboards')
-includeProject('dashboards-starter', 'jmix-dashboards/dashboards-starter')
-
 includeProject('dataimport', 'jmix-dataimport/dataimport')
 includeProject('dataimport-starter', 'jmix-dataimport/dataimport-starter')
 
@@ -85,9 +82,6 @@ includeProject('fullcalendar-flowui-starter', 'jmix-fullcalendar/fullcalendar-fl
 
 includeProject('gridexport-flowui', 'jmix-gridexport/gridexport-flowui')
 includeProject('gridexport-flowui-starter', 'jmix-gridexport/gridexport-flowui-starter')
-
-includeProject('imap', 'jmix-imap/imap')
-includeProject('imap-starter', 'jmix-imap/imap-starter')
 
 includeProject('ldap', 'jmix-ldap/ldap')
 includeProject('ldap-starter', 'jmix-ldap/ldap-starter')

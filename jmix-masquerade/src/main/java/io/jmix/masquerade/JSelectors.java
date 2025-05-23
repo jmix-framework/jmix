@@ -77,7 +77,7 @@ public class JSelectors {
     }
 
     /**
-     * Create and returns a {@link By} selector that finds the web-element with
+     * Creates and returns a {@link By} selector that finds the web-element with
      * the {@link Masquerade#UI_TEST_ID UI_TEST_ID} attribute
      * equals to the passed value.
      *
@@ -88,6 +88,66 @@ public class JSelectors {
         Preconditions.checkNotNull(uiTestId);
 
         return new ByUiTestId(uiTestId);
+    }
+
+    /**
+     * Creates and returns a {@link By} selector that finds the web-element that has display text that
+     * contains the passed value at the last position in the DOM tree.
+     *
+     * @param displayedText text that is contained in the displayed text
+     * @return {@link By} selector
+     */
+    public static By byDisplayedText(String displayedText) {
+        Preconditions.checkNotNull(displayedText);
+
+        return new ByDisplayedText(displayedText);
+    }
+
+    /**
+     * Creates and returns a {@link By} selector that finds the web-element that has display text that
+     * contains the passed value with the passed element tag name at the last position in the DOM tree.
+     *
+     * @param displayedText text that is contained in the displayed text
+     * @param tagName       target element tag name
+     * @return {@link By} selector
+     */
+    public static By byDisplayedText(String displayedText, String tagName) {
+        Preconditions.checkNotNull(displayedText);
+        Preconditions.checkNotNull(tagName);
+
+        return new ByDisplayedText(displayedText, tagName);
+    }
+
+    /**
+     * Creates and returns a {@link By} selector that finds the web-element that has display text that
+     * contains the passed value at the passed element position
+     * in the DOM tree (can be useful if several elements contain the same text).
+     *
+     * @param displayedText   text that is contained in the displayed text
+     * @param elementPosition position of target element in DOM tree
+     * @return {@link By} selector
+     */
+    public static By byDisplayedText(String displayedText, int elementPosition) {
+        Preconditions.checkNotNull(displayedText);
+
+        return new ByDisplayedText(displayedText, elementPosition);
+    }
+
+    /**
+     * Creates and returns a {@link By} selector that finds the web-element that has display text that
+     * contains the passed value with the passed element tag name at the passed element position
+     * in the DOM tree (can be useful if several elements contain the same text).
+     *
+     * @param displayedText   text that is contained in the displayed text
+     * @param tagName         target element tag name
+     * @param elementPosition position of target element in DOM tree
+     * @return {@link By} selector
+     */
+    public static By byDisplayedText(String displayedText, String tagName, int elementPosition) {
+        Preconditions.checkNotNull(displayedText);
+        Preconditions.checkNotNull(tagName);
+
+        return new ByDisplayedText(displayedText, tagName, elementPosition);
     }
 
     /**
@@ -127,6 +187,47 @@ public class JSelectors {
         @Override
         public String toString() {
             return "By.uiTestId: " + uiTestId;
+        }
+    }
+
+    /**
+     * The {@link By} selector, which find a web-element by its displayed text.
+     */
+    public static class ByDisplayedText extends By.ByXPath {
+
+        protected String displayedText;
+        protected String tagName;
+        protected String elementPosition;
+
+        protected ByDisplayedText(String displayedText, String tagName, String elementPosition) {
+            super("(.//*[contains(text(),'%s')]/ancestor-or-self::%s[@j-test-id])[%s]"
+                    .formatted(displayedText, tagName, elementPosition));
+
+            this.displayedText = displayedText;
+            this.tagName = tagName;
+            this.elementPosition = elementPosition;
+        }
+
+        public ByDisplayedText(String displayedText, String tagName, int elementPosition) {
+            this(displayedText, tagName, String.valueOf(elementPosition));
+        }
+
+        public ByDisplayedText(String displayedText, String tagName) {
+            this(displayedText, tagName, "last()");
+        }
+
+        public ByDisplayedText(String displayedText, int elementPosition) {
+            this(displayedText, "*", elementPosition);
+        }
+
+        public ByDisplayedText(String displayedText) {
+            this(displayedText, "*");
+        }
+
+        @Override
+        public String toString() {
+            return "By.ByDisplayedText: { displayedText: %s, tagName: %s, elementPosition: %s }"
+                    .formatted(displayedText, tagName, elementPosition);
         }
     }
 }

@@ -64,9 +64,6 @@ includeProject('email-starter', 'jmix-email/email-starter')
 includeProject('email-flowui', 'jmix-email/email-flowui')
 includeProject('email-flowui-starter', 'jmix-email/email-flowui-starter')
 
-includeProject('emailtemplates', 'jmix-emailtemplates/emailtemplates')
-includeProject('emailtemplates-starter', 'jmix-emailtemplates/emailtemplates-starter')
-
 includeProject('flowui', 'jmix-flowui/flowui')
 includeProject('flowui-starter', 'jmix-flowui/flowui-starter')
 includeProject('flowui-kit', 'jmix-flowui/flowui-kit')

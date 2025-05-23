@@ -431,6 +431,9 @@ public class ViewSupport {
     @Nullable
     protected Element loadViewXml(ViewInfo viewInfo) {
         Optional<String> templatePath = viewInfo.getTemplatePath();
+
+        log.debug("Loading view with '{}' ID from '{}' path", viewInfo.getId(), templatePath.orElse(""));
+
         return templatePath.map(s -> viewXmlLoader.load(s)).orElse(null);
     }
 

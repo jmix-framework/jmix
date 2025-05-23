@@ -16,9 +16,9 @@
 
 package io.jmix.flowui;
 
+import io.jmix.flowui.exception.ExceptionDialog;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Collections;
@@ -84,6 +84,11 @@ public class UiProperties {
      */
     boolean websocketRequestSecurityContextProvided;
 
+    /**
+     * Whether {@link ExceptionDialog} will open modal or modeless.
+     */
+    boolean useModalExceptionDialog;
+
     public UiProperties(@DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
                         @Nullable String defaultViewId,
@@ -96,7 +101,8 @@ public class UiProperties {
                         @DefaultValue("3600") int fileDownloaderCacheMaxAgeSec,
                         @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
                         @DefaultValue("true") boolean useSessionFixationProtection,
-                        @DefaultValue("false") boolean websocketRequestSecurityContextProvided
+                        @DefaultValue("false") boolean websocketRequestSecurityContextProvided,
+                        @DefaultValue("true") boolean useModalExceptionDialog
     ) {
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;
@@ -111,6 +117,7 @@ public class UiProperties {
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.useSessionFixationProtection = useSessionFixationProtection;
         this.websocketRequestSecurityContextProvided = websocketRequestSecurityContextProvided;
+        this.useModalExceptionDialog = useModalExceptionDialog;
     }
 
     /**
@@ -197,5 +204,12 @@ public class UiProperties {
      */
     public boolean isWebsocketRequestSecurityContextProvided() {
         return websocketRequestSecurityContextProvided;
+    }
+
+    /**
+     * @see #useModalExceptionDialog
+     */
+    public boolean isUseModalExceptionDialog() {
+        return useModalExceptionDialog;
     }
 }

@@ -163,13 +163,19 @@ class JmixPlugin implements Plugin<Project> {
                     def resources = project.file("src/main/resources/")
                     if (resources.exists() && resources.isDirectory()) {
                         def mainProperties = new Properties()
-                        project.file("src/main/resources/application.properties").withInputStream { mainProperties.load(it) }
+                        def appPropsFile = project.file("src/main/resources/application.properties")
+                        if (appPropsFile.exists()) {
+                            appPropsFile.withInputStream { mainProperties.load(it) }
+                        } else {
+                            project.logger.lifecycle("File src/main/resources/application.properties not found")
+                        }
 
                         def confDir = resolveConfDir(project, mainProperties)
 
                         project.logger.lifecycle("Delete directory: {}", confDir)
                         delete "${confDir}"
                     } else {
+                        project.logger.lifecycle("Resource directory not found")
                         return
                     }
                 } else {
@@ -190,7 +196,7 @@ class JmixPlugin implements Plugin<Project> {
         def confDir = null
         if (!profilesList.isEmpty()) {
             for (def profileName : profilesList) {
-                project.logger.debug("Check profile: {}", profileName)
+                project.logger.lifecycle("Check profile: {}", profileName)
                 def profilePropertyFilePath = "src/main/resources/application-%s.properties".formatted(profileName)
                 def profilePropertiesFile = project.file(profilePropertyFilePath)
                 if (profilePropertiesFile.exists()) {

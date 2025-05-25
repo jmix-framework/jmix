@@ -512,7 +512,6 @@ public class Views {
             viewTab.setClosable(TabbedModeViewUtils.isCloseable(viewToDisplay));
         }
 
-        // TODO: gg, move to a single place
         JmixUI ui = getUI(workArea);
         updateUrl(ui, currentViewInfo.location());
         updatePageTitle(viewToDisplay);
@@ -545,7 +544,6 @@ public class Views {
         if (allViewsRemoved) {
             workArea.switchTo(WorkArea.State.INITIAL_LAYOUT);
 
-            // TODO: gg, move or re-implement, e.g. to state change listener?
             View<?> rootView = UiComponentUtils.getView(workArea);
             updatePageTitle(rootView);
 
@@ -774,8 +772,9 @@ public class Views {
         }
 
         /**
-         * @return all opened views excluding the root view or empty collection if there is no root view
-         * or root view does not have {@link WorkArea}
+         * @return all opened views excluding the root view or empty collection
+         * if the root view does not have {@link WorkArea}
+         * @throws IllegalStateException in case there is no root view in UI
          */
         public Collection<View<?>> getAll() {
             List<View<?>> views = new ArrayList<>();
@@ -787,7 +786,8 @@ public class Views {
 
         /**
          * @return all opened views excluding the root view and dialogs or empty collection
-         * if there is no root view or root view does not have {@link WorkArea}
+         * if the root view does not have {@link WorkArea}
+         * @throws IllegalStateException in case there is no root view in UI
          */
         public Collection<View<?>> getOpenedWorkAreaViews() {
             return findConfiguredWorkArea(ui)
@@ -796,8 +796,9 @@ public class Views {
         }
 
         /**
-         * @return top views from work area tabs and all dialog windows or empty collection if there is no root view
-         * or root view does not have {@link WorkArea}
+         * @return top views from work area tabs and all dialog windows or empty collection
+         * if the root view does not have {@link WorkArea}
+         * @throws IllegalStateException in case there is no root view in UI
          */
         public Collection<View<?>> getActiveViews() {
             List<View<?>> views = new ArrayList<>();
@@ -808,8 +809,9 @@ public class Views {
         }
 
         /**
-         * @return top views from work area tabs or empty collection if there is no root view
-         * or root view does not have {@link WorkArea}
+         * @return top views from work area tabs or empty collection
+         * if the root view does not have {@link WorkArea}
+         * @throws IllegalStateException in case there is no root view in UI
          */
         public Collection<View<?>> getActiveWorkAreaViews() {
             return findConfiguredWorkArea(ui)
@@ -825,8 +827,10 @@ public class Views {
         }
 
         /**
-         * @return views of the currently opened tab of work area in descending order (first element is active view)
-         * or empty collection if there is no root view or root view does not have {@link WorkArea}
+         * @return views of the currently opened tab of work area in descending order
+         * (first element is active view) or empty collection if the root view does
+         * not have {@link WorkArea}
+         * @throws IllegalStateException in case there is no root view in UI
          */
         public Collection<View<?>> getCurrentBreadcrumbs() {
             return findConfiguredWorkArea(ui)
@@ -836,7 +840,8 @@ public class Views {
 
         /**
          * @return tab containers with access to breadcrumbs or empty collection
-         * if there is no root view or root view does not have {@link WorkArea}
+         * if the root view does not have {@link WorkArea}
+         * @throws IllegalStateException in case there is no root view in UI
          */
         public Collection<ViewStack> getWorkAreaViewStacks() {
             Optional<WorkArea> workArea = findConfiguredWorkArea(ui);
@@ -850,6 +855,48 @@ public class Views {
                     .map(viewContainer ->
                             new ViewStack(tabbedContainer, viewContainer))
                     .toList();
+        }
+
+        /**
+         * Closes all child views (views if {@link WorkArea} and dialog windows)
+         * from the root view.
+         */
+        public void closeAll() {
+            Collection<View<?>> dialogWindows = getDialogWindows();
+            for (View<?> view : dialogWindows) {
+                if (!TabbedModeViewUtils.isCloseable(view)) {
+                    continue;
+                }
+
+                OperationResult closeResult = view.close(StandardOutcome.CLOSE);
+                if (closeResult.getStatus() != OperationResult.Status.SUCCESS) {
+                    return;
+                }
+            }
+
+            Collection<ViewStack> workAreaViewStacks = getWorkAreaViewStacks();
+            for (ViewStack viewStack : workAreaViewStacks) {
+                if (!viewStack.close()) {
+                    return;
+                }
+            }
+        }
+
+        /**
+         * Check if there are views that have unsaved changes.
+         *
+         * @return {@code true} if there are views with unsaved changes, {@code false} otherwise
+         */
+        public boolean hasUnsavedChanges() {
+            View<?> rootView = getRootView();
+            if (rootView instanceof ChangeTracker changeTracker
+                    && changeTracker.hasUnsavedChanges()) {
+                return true;
+            }
+
+            return getAll().stream()
+                    .anyMatch(openedView -> (openedView instanceof ChangeTracker changeTracker)
+                            && changeTracker.hasUnsavedChanges());
         }
     }
 
@@ -865,7 +912,6 @@ public class Views {
 
         /**
          * @return views of the container in descending order, first element is active view
-         * @throws IllegalStateException in case view stack has been closed
          */
         public Collection<View<?>> getBreadcrumbs() {
             checkAttached();

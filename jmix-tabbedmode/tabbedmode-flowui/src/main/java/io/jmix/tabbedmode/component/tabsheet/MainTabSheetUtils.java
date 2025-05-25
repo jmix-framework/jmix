@@ -28,14 +28,6 @@ public final class MainTabSheetUtils {
     private MainTabSheetUtils() {
     }
 
-    public static void closeTab(JmixViewTab tab) {
-        closeTab(tab, true);
-    }
-
-    public static void closeTab(JmixViewTab tab, boolean fromClient) {
-        tab.closeInternal(fromClient);
-    }
-
     public static ViewContainer asViewContainer(Component component) {
         if (component instanceof ViewContainer viewContainer) {
             return viewContainer;

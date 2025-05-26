@@ -18,14 +18,16 @@ package io.jmix.flowui.component.delegate;
 
 import com.google.common.base.Strings;
 import com.google.common.primitives.Booleans;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.Shortcuts;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.grid.editor.EditorCloseEvent;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
@@ -37,6 +39,7 @@ import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.common.util.Preconditions;
@@ -44,6 +47,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.AggregationInfo;
@@ -85,8 +89,10 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected ApplicationContext applicationContext;
 
+    protected UiComponents uiComponents;
     protected MetadataTools metadataTools;
     protected MessageTools messageTools;
+    protected Messages messages;
     protected AccessManager accessManager;
     protected Aggregations aggregations;
     protected AggregatableDelegate<Object> aggregatableDelegate;
@@ -104,6 +110,12 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected Consumer<EnterPressEvent<C>> enterPressHandler;
 
     protected Consumer<ColumnSecurityContext<E>> afterColumnSecurityApplyHandler;
+
+    protected String emptyStateTextInternal;
+    protected Component emptyStateComponentInternal;
+
+    protected Consumer<String> componentEmptyStateTextSetter;
+    protected Consumer<Component> componentEmptyStateComponentSetter;
 
     protected boolean aggregatable;
     protected EnhancedDataGrid.AggregationPosition aggregationPosition = EnhancedDataGrid.AggregationPosition.BOTTOM;
@@ -140,8 +152,10 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected void autowireDependencies() {
+        uiComponents = applicationContext.getBean(UiComponents.class);
         metadataTools = applicationContext.getBean(MetadataTools.class);
         messageTools = applicationContext.getBean(MessageTools.class);
+        messages = applicationContext.getBean(Messages.class);
         accessManager = applicationContext.getBean(AccessManager.class);
         aggregations = applicationContext.getBean(Aggregations.class);
     }
@@ -729,12 +743,80 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                                 isPropertyEnabledBySecurity(e.getValue())));
             }
         }
+
+        updateEmptyState();
     }
 
     public boolean isPropertyEnabledBySecurity(MetaPropertyPath mpp) {
         EntityAttributeContext context = new EntityAttributeContext(mpp);
         accessManager.applyRegisteredConstraints(context);
         return context.canView();
+    }
+
+    public String getEmptyStateText() {
+        return emptyStateTextInternal;
+    }
+
+    public void setEmptyStateText(String emptyStateText) {
+        this.emptyStateTextInternal = emptyStateText;
+        this.emptyStateComponentInternal = null;
+
+        updateEmptyState();
+    }
+
+    public Component getEmptyStateComponent() {
+        return emptyStateComponentInternal;
+    }
+
+    public void setEmptyStateComponent(Component emptyStateComponent) {
+        this.emptyStateComponentInternal = emptyStateComponent;
+        this.emptyStateTextInternal = null;
+
+        updateEmptyState();
+    }
+
+    public void setEmptyStateSetters(Consumer<String> emptyStateTextSetter,
+                                     Consumer<Component> emptyStateComponentSetter) {
+        this.componentEmptyStateTextSetter = emptyStateTextSetter;
+        this.componentEmptyStateComponentSetter = emptyStateComponentSetter;
+    }
+
+    protected void updateEmptyState() {
+        if (!CollectionUtils.containsAny(component.getColumns(), propertyColumns.keySet())) {
+            Component emptyStateByPermissionsComponent = createEmptyStateByPermissionsComponent();
+
+            componentEmptyStateComponentSetter.accept(emptyStateByPermissionsComponent);
+        } else if (emptyStateComponentInternal != null) {
+            componentEmptyStateComponentSetter.accept(emptyStateComponentInternal);
+        } else if (emptyStateTextInternal != null) {
+            componentEmptyStateTextSetter.accept(emptyStateTextInternal);
+        } else {
+            // to remove any empty state component
+            componentEmptyStateComponentSetter.accept(null);
+        }
+    }
+
+    protected Component createEmptyStateByPermissionsComponent() {
+        HorizontalLayout horizontalLayout = uiComponents.create(HorizontalLayout.class);
+        horizontalLayout.setId("emptyStateByPermissionsComponent");
+        horizontalLayout.setSizeFull();
+        horizontalLayout.setPadding(false);
+
+        horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        horizontalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+        Icon icon = uiComponents.create(Icon.class);
+        icon.setIcon(VaadinIcon.WARNING);
+        icon.setSize("2em");
+
+        icon.setColor("var(--lumo-error-color)");
+
+        H2 emptyStateHeader = uiComponents.create(H2.class);
+        emptyStateHeader.setId("emptyStateHeader");
+        emptyStateHeader.setText(messages.getMessage(getClass(), "gridEmptyStateHeader"));
+
+        horizontalLayout.add(icon, emptyStateHeader);
+        return horizontalLayout;
     }
 
     public List<Grid.Column<E>> getColumns() {

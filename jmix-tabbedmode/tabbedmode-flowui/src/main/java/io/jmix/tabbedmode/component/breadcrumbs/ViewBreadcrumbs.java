@@ -28,6 +28,7 @@ import org.springframework.lang.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -63,7 +64,7 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
 
     public Deque<View<?>> getViews() {
         return mappings.stream()
-                .map(BreadcrumbMappings::view)
+                .map(BreadcrumbMappings::getView)
                 .collect(Collectors.toCollection(ArrayDeque::new));
     }
 
@@ -73,7 +74,7 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
             return null;
         } else {
             BreadcrumbMappings mappings = this.mappings.getLast();
-            return new ViewInfo(mappings.view(), mappings.location());
+            return new ViewInfo(mappings.getView(), mappings.getLocation());
         }
     }
 
@@ -100,10 +101,29 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
     public void removeView() {
         if (!mappings.isEmpty()) {
             BreadcrumbMappings removed = mappings.removeLast();
-            getContent().remove(removed.breadcrumb());
+            getContent().remove(removed.getBreadcrumb());
         }
 
         updateVisibility();
+    }
+
+    public void updateViewLocation(View<?> view, Location location) {
+        BreadcrumbMappings breadcrumbMappings = findMappings(view)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("There is no breadcrumb mappings for the given view '%s'"
+                                .formatted(view.getId().orElse(view.getClass().getSimpleName()))));
+
+        breadcrumbMappings.setLocation(location);
+    }
+
+    protected Optional<BreadcrumbMappings> findMappings(View<?> view) {
+        for (BreadcrumbMappings mappings : mappings) {
+            if (Objects.equals(mappings.getView(), view)) {
+                return Optional.of(mappings);
+            }
+        }
+
+        return Optional.empty();
     }
 
     protected void navigationClicked(JmixBreadcrumb.ClickEvent<JmixBreadcrumb> event) {
@@ -115,10 +135,11 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
 
     protected Optional<View<?>> findView(JmixBreadcrumb breadcrumb) {
         for (BreadcrumbMappings mappings : mappings) {
-            if (mappings.breadcrumb().equals(breadcrumb)) {
-                return Optional.of(mappings.view());
+            if (Objects.equals(mappings.getBreadcrumb(), breadcrumb)) {
+                return Optional.of(mappings.getView());
             }
         }
+
         return Optional.empty();
     }
 
@@ -143,6 +164,56 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
     public record ViewInfo(View<?> view, Location location) {
     }
 
-    protected record BreadcrumbMappings(JmixBreadcrumb breadcrumb, View<?> view, Location location) {
+    protected static class BreadcrumbMappings {
+
+        protected final JmixBreadcrumb breadcrumb;
+        protected final View<?> view;
+        protected Location location;
+
+        protected BreadcrumbMappings(JmixBreadcrumb breadcrumb, View<?> view, Location location) {
+            this.breadcrumb = breadcrumb;
+            this.view = view;
+            this.location = location;
+        }
+
+        public JmixBreadcrumb getBreadcrumb() {
+            return breadcrumb;
+        }
+
+        public View<?> getView() {
+            return view;
+        }
+
+        public Location getLocation() {
+            return location;
+        }
+
+        public void setLocation(Location location) {
+            this.location = location;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (BreadcrumbMappings) obj;
+            return Objects.equals(this.breadcrumb, that.breadcrumb) &&
+                    Objects.equals(this.view, that.view) &&
+                    Objects.equals(this.location, that.location);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(breadcrumb, view, location);
+        }
+
+        @Override
+        public String toString() {
+            return "BreadcrumbMappings[" +
+                    "breadcrumb=" + breadcrumb + ", " +
+                    "view=" + view + ", " +
+                    "location=" + location + ']';
+        }
+
     }
 }

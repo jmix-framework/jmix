@@ -38,6 +38,7 @@ import java.util.function.Consumer;
 @Tag("jmix-view-tab")
 @JsModule("./src/tabsheet/jmix-view-tab.js")
 @CssImport("./src/tabsheet/jmix-view-tab.css")
+// TODO: gg, rename
 public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
 
     protected static final String BASE_CLASS_NAME = "jmix-view-tab";

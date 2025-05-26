@@ -19,8 +19,9 @@ package io.jmix.tabbedmode.component.tabsheet;
 import com.vaadin.flow.component.shared.ThemeVariant;
 
 /**
- * Set of theme variants applicable for the main tabsheet component.
+ * Set of theme variants applicable for the {@link JmixMainTabSheet} component.
  */
+// TODO: gg, rename
 public enum JmixMainTabSheetVariant implements ThemeVariant {
 
     TABS_CENTERED("centered"),

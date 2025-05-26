@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,36 @@
 package io.jmix.tabbedmode.event;
 
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.router.Location;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.navigation.RouteSupport;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * The event that is fired each time a web page is refreshed and the UI state
- * has been restored from the cached views.
+ * The event that is fired each time the location changes by {@link RouteSupport} bean.
  * <p>
  * The event can be handled only in {@link View} controllers of the active {@link UI}.
  */
-public class UIRefreshEvent extends ApplicationEvent {
+public class LocationChangeEvent extends ApplicationEvent {
 
-    public UIRefreshEvent(UI source) {
+    protected final Location location;
+
+    public LocationChangeEvent(UI source, Location location) {
         super(source);
+        this.location = location;
     }
 
     @Override
     public UI getSource() {
         return (UI) super.getSource();
+    }
+
+    /**
+     * Retrieves the location associated with the event.
+     *
+     * @return the location that triggered the event
+     */
+    public Location getLocation() {
+        return location;
     }
 }

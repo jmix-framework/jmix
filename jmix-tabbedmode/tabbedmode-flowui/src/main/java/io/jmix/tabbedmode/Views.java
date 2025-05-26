@@ -253,7 +253,7 @@ public class Views {
 
         if (sameView != null) {
             // Select tab before close
-            ViewContainer viewContainer = getViewContainer(sameView);
+            ViewContainer viewContainer = TabbedModeViewUtils.getViewContainer(sameView);
             TabbedViewsContainer<?> tabbedViewsContainer = workArea.getTabbedViewsContainer();
             Tab tab = tabbedViewsContainer.getTab(((Component) viewContainer));
             tabbedViewsContainer.setSelectedTab(tab);
@@ -485,7 +485,7 @@ public class Views {
     }
 
     protected void removeThisTabView(WorkArea workArea, View<?> viewToRemove) {
-        ViewContainer viewContainer = getViewContainer(viewToRemove);
+        ViewContainer viewContainer = TabbedModeViewUtils.getViewContainer(viewToRemove);
         viewContainer.removeView();
 
         ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
@@ -528,7 +528,7 @@ public class Views {
     }
 
     protected void removeNewTabView(WorkArea workArea, View<?> view) {
-        ViewContainer viewContainer = getViewContainer(view);
+        ViewContainer viewContainer = TabbedModeViewUtils.getViewContainer(view);
 
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
         tabbedContainer.remove(((Component) viewContainer));
@@ -550,14 +550,6 @@ public class Views {
             JmixUI ui = getUI(workArea);
             updateUrl(ui, resolveLocation(rootView));
         }
-    }
-
-    protected ViewContainer getViewContainer(View<?> view) {
-        return view.getParent()
-                .filter(parent -> parent instanceof ViewContainer)
-                .map(parent -> ((ViewContainer) parent))
-                .orElseThrow(() -> new IllegalStateException("%s is not attached to a %s"
-                        .formatted(View.class.getSimpleName(), ViewContainer.class.getSimpleName())));
     }
 
     protected void createNewTabLayout(WorkArea workArea, ViewOpeningContext context) {

@@ -742,6 +742,10 @@ public class JmixUI extends UI {
         return views.getCurrentView(this);
     }
 
+    public Optional<View<?>> findCurrentView() {
+        return views.findCurrentView(this);
+    }
+
     @Override
     public void showRouterLayoutContent(HasElement content) {
         super.showRouterLayoutContent(content);

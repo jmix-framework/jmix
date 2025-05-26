@@ -248,8 +248,8 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     }
 
     protected void updateUrl(Location resolvedLocation) {
-        getUI().ifPresent(ui ->
-                routeSupport().setLocation(ui, resolvedLocation));
+        UI ui = getUI().orElse(UI.getCurrent());
+        routeSupport().setLocation(ui, resolvedLocation);
     }
 
     protected void updatePageTitle(View<?> view) {

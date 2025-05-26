@@ -18,7 +18,11 @@ package io.jmix.tabbedmode.view;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
+import io.jmix.flowui.view.View;
+import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
 import org.springframework.lang.Nullable;
+
+import java.util.Optional;
 
 public final class TabbedModeViewUtils {
 
@@ -81,5 +85,17 @@ public final class TabbedModeViewUtils {
             viewProperties.setForceDialog(forceDialog);
             setViewProperties(component, viewProperties);
         }
+    }
+
+    public static Optional<ViewContainer> findViewContainer(View<?> view) {
+        return view.getParent()
+                .filter(parent -> parent instanceof ViewContainer)
+                .map(parent -> ((ViewContainer) parent));
+    }
+
+    public static ViewContainer getViewContainer(View<?> view) {
+        return findViewContainer(view)
+                .orElseThrow(() -> new IllegalStateException("%s is not attached to a %s"
+                        .formatted(View.class.getSimpleName(), ViewContainer.class.getSimpleName())));
     }
 }

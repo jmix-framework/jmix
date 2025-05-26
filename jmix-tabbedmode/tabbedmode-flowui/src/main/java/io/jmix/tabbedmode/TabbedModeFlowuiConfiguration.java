@@ -16,7 +16,7 @@
 
 package io.jmix.tabbedmode;
 
-import com.vaadin.flow.component.tabs.TabSheet;
+import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.spring.RootMappedCondition;
 import com.vaadin.flow.spring.SpringBootAutoConfiguration;
 import com.vaadin.flow.spring.SpringServlet;
@@ -27,6 +27,7 @@ import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.registration.ComponentRegistration;
 import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
+import io.jmix.tabbedmode.component.router.JmixRouterLink;
 import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
 import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.sys.vaadin.TabbedModeVaadinServlet;
@@ -66,9 +67,16 @@ public class TabbedModeFlowuiConfiguration {
     }
 
     @Bean
-    public ComponentRegistration mainTabSheetLoader() {
+    public ComponentRegistration mainTabSheetComponent() {
         return ComponentRegistrationBuilder.create(JmixMainTabSheet.class)
                 .withComponentLoader(MainTabSheetLoader.TAG, MainTabSheetLoader.class)
+                .build();
+    }
+
+    @Bean
+    public ComponentRegistration routerLinkComponent() {
+        return ComponentRegistrationBuilder.create(JmixRouterLink.class)
+                .replaceComponent(RouterLink.class)
                 .build();
     }
 

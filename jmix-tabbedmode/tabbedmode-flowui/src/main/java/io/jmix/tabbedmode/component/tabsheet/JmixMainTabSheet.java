@@ -45,6 +45,7 @@ import static io.jmix.flowui.component.UiComponentUtils.sameId;
 @Tag("jmix-main-tabsheet")
 @JsModule("./src/tabsheet/jmix-main-tabsheet.js")
 @JsModule("./src/tabsheet/mainTabSheetConnector.ts")
+// TODO: gg, rename
 public class JmixMainTabSheet extends Component implements TabbedViewsContainer<JmixMainTabSheet>,
         HasActions, ComponentContainer, HasSubParts,
         HasStyle, HasSize, HasThemeVariant<JmixMainTabSheetVariant>, HasPrefix, HasSuffix {

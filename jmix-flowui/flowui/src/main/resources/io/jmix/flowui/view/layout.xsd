@@ -2878,10 +2878,6 @@
     <xs:complexType name="drawerToggleComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
-
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="buttonThemeNames"/>
 

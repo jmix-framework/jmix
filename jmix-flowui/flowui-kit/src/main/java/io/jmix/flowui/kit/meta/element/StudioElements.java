@@ -551,7 +551,6 @@ public interface StudioElements {
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "com.vaadin.flow.component.applayout.DrawerToggle",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",

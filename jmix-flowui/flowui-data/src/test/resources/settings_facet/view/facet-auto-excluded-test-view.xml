@@ -24,7 +24,7 @@
     </data>
     <facets>
         <settings id="facet" auto="true">
-            <component id="details" enabled="false"/>
+            <component componentId="details" enabled="false"/>
         </settings>
     </facets>
     <layout spacing="true">

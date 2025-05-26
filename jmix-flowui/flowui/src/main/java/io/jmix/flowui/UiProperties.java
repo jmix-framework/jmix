@@ -87,7 +87,7 @@ public class UiProperties {
     /**
      * Whether {@link ExceptionDialog} will open modal or modeless.
      */
-    boolean useModalExceptionDialog;
+    boolean exceptionDialogModal;
 
     public UiProperties(@DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
@@ -102,7 +102,7 @@ public class UiProperties {
                         @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
                         @DefaultValue("true") boolean useSessionFixationProtection,
                         @DefaultValue("false") boolean websocketRequestSecurityContextProvided,
-                        @DefaultValue("true") boolean useModalExceptionDialog
+                        @DefaultValue("true") boolean exceptionDialogModal
     ) {
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;
@@ -117,7 +117,7 @@ public class UiProperties {
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.useSessionFixationProtection = useSessionFixationProtection;
         this.websocketRequestSecurityContextProvided = websocketRequestSecurityContextProvided;
-        this.useModalExceptionDialog = useModalExceptionDialog;
+        this.exceptionDialogModal = exceptionDialogModal;
     }
 
     /**
@@ -207,9 +207,9 @@ public class UiProperties {
     }
 
     /**
-     * @see #useModalExceptionDialog
+     * @see #exceptionDialogModal
      */
-    public boolean isUseModalExceptionDialog() {
-        return useModalExceptionDialog;
+    public boolean isExceptionDialogModal() {
+        return exceptionDialogModal;
     }
 }

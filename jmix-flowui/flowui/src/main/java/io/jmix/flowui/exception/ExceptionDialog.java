@@ -72,7 +72,7 @@ public class ExceptionDialog implements InitializingBean {
     protected Element stackTraceTextArea;
 
     protected boolean isStackTraceVisible = false;
-    protected boolean useModalExceptionDialog = true;
+    protected boolean exceptionDialogModal = true;
 
     public ExceptionDialog(Throwable throwable) {
         this.throwable = throwable;
@@ -100,7 +100,7 @@ public class ExceptionDialog implements InitializingBean {
 
     @Autowired
     public void setUiProperties(UiProperties uiProperties) {
-        useModalExceptionDialog = uiProperties.isUseModalExceptionDialog();
+        exceptionDialogModal = uiProperties.isExceptionDialogModal();
     }
 
     @Override
@@ -126,7 +126,7 @@ public class ExceptionDialog implements InitializingBean {
         dialog.setCloseOnOutsideClick(false);
         dialog.setDraggable(true);
 
-        dialog.setModal(useModalExceptionDialog);
+        dialog.setModal(exceptionDialogModal);
         dialog.setWidth(WIDTH);
 
         dialog.addThemeVariants(DialogVariant.LUMO_NO_PADDING);

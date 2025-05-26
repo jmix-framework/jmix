@@ -4860,7 +4860,7 @@
     </xs:complexType>
 
     <xs:complexType name="settingsComponentType">
-        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="componentId" type="xs:string" use="required"/>
         <xs:attribute name="enabled" type="xs:boolean"/>
     </xs:complexType>
 

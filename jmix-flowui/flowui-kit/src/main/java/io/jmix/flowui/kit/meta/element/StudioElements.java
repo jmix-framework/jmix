@@ -974,7 +974,7 @@ public interface StudioElements {
             xmlElement = "component",
             target = "io.jmix.flowui.facet.SettingsFacet",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "componentId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN)
             },
             isInjectable = false,

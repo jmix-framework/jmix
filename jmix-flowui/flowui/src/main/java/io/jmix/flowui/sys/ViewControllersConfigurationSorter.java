@@ -17,6 +17,7 @@
 package io.jmix.flowui.sys;
 
 import io.jmix.core.JmixModules;
+import io.jmix.core.annotation.Internal;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.List;
  * have been sorted.
  * @see AbstractBasePackageConfigurationSorter
  */
+@Internal
 @Component("flowui_ViewControllersConfigurationSorter")
 public class ViewControllersConfigurationSorter
         extends AbstractBasePackageConfigurationSorter<ViewControllersConfiguration> {

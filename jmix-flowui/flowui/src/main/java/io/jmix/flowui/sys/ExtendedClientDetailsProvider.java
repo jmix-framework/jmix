@@ -19,10 +19,12 @@ package io.jmix.flowui.sys;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.component.page.Page.ExtendedClientDetailsReceiver;
+import io.jmix.core.annotation.Internal;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
 
+@Internal
 @Component("flowui_ExtendedClientDetailsProvider")
 public class ExtendedClientDetailsProvider {
 

@@ -16,6 +16,7 @@
 
 package io.jmix.core.impl.scanning;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+@Internal
 public abstract class AbstractClasspathScanner {
     public static final String DEFAULT_CLASS_RESOURCE_PATTERN = "**/*.class";
 

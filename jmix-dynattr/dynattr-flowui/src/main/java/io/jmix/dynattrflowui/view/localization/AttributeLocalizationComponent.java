@@ -112,6 +112,7 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
     protected void initComponentUi() {
         localizedValuesDataGrid = new Grid<>(AttributeLocalizedValue.class, false);
         localizedValuesDataGrid.setHeightFull();
+        localizedValuesDataGrid.setMinHeight("20em");
         localizedValuesDataGrid.setDataProvider(new ContainerDataGridItems<>(localizedValuesDc));
 
         localizedValuesDataGrid.addColumn(LANG_PROPERTY)

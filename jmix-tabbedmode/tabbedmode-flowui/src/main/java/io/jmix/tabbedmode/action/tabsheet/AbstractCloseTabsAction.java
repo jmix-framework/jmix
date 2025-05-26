@@ -39,6 +39,7 @@ public abstract class AbstractCloseTabsAction<A extends AbstractCloseTabsAction<
     protected void closeViewStacks(List<Views.ViewStack> viewStacks) {
         for (Views.ViewStack viewStack : viewStacks) {
             if (!viewStack.close()) {
+                viewStack.select();
                 return;
             }
         }

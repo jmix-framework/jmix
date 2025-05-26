@@ -17,7 +17,6 @@
 package io.jmix.tabbedmode.component.tabsheet;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Tag;
@@ -31,6 +30,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.dom.DomEvent;
 import org.springframework.lang.Nullable;
 
 import java.util.function.Consumer;
@@ -126,24 +126,26 @@ public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
         Button closeButton = new Button();
         closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
         closeButton.setClassName(BASE_CLASS_NAME + "-close-button");
-        closeButton.addClickListener(this::onCloseButtonClicked);
+        closeButton.getElement()
+                .addEventListener("click", this::onCloseButtonClicked)
+                .stopPropagation();
 
         return closeButton;
     }
 
-    protected void onCloseButtonClicked(ClickEvent<Button> event) {
-        closeInternal(event.isFromClient());
+    protected void onCloseButtonClicked(DomEvent event) {
+        closeInternal();
     }
 
-    protected void closeInternal(boolean fromClient) {
-        closeDelegate.accept(new CloseContext<>(this, fromClient));
+    protected void closeInternal() {
+        closeDelegate.accept(new CloseContext<>(this));
     }
 
     public void setCloseDelegate(@Nullable Consumer<CloseContext<JmixViewTab>> delegate) {
         closeDelegate = delegate;
     }
 
-    public record CloseContext<C extends JmixViewTab>(C source, boolean fromClient) {
+    public record CloseContext<C extends JmixViewTab>(C source) {
     }
 
     @Override

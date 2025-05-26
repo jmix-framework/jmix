@@ -93,7 +93,9 @@ public class CloseThisTabAction extends AbstractCloseTabsAction<CloseThisTabActi
 
         if (findTab(trigger) instanceof JmixViewTab tab) {
             Views.ViewStack viewStack = asViewStack(target.getComponent(tab));
-            viewStack.close();
+            if (!viewStack.close()) {
+                viewStack.select();
+            }
         } else {
             log.warn("Cannot close the tab because the component is not a '{}'",
                     JmixViewTab.class.getName());

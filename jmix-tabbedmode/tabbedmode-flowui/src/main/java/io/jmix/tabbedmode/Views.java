@@ -595,8 +595,8 @@ public class Views {
         new BreadcrumbsNavigationTask(context).run();
     }
 
-    protected void handleViewTabClose(JmixViewTab.CloseContext<JmixViewTab> event) {
-        JmixViewTab tab = event.source();
+    protected void handleViewTabClose(JmixViewTab.CloseContext<JmixViewTab> context) {
+        JmixViewTab tab = context.source();
         UI ui = tab.getUI().orElse(null);
         if (!(ui instanceof JmixUI jmixUI)) {
             throw new IllegalStateException("%s is not attached to UI or UI is not a %s"
@@ -947,14 +947,30 @@ public class Views {
 
         /**
          * Closes all views of this {@link ViewStack} returned by {@link #getBreadcrumbs()}.
+         * <p>
+         * Note that a tab representing a view stack is not selected before closing.
          *
-         * @return {@code true} if all view have been closed, {@code false} otherwise
+         * @return {@code true} if all views have been closed, {@code false} otherwise
+         * @see #close(boolean)
          */
         public boolean close() {
+            return close(false);
+        }
+
+        /**
+         * Closes all views of this {@link ViewStack} returned by {@link #getBreadcrumbs()}.
+         *
+         * @param selectBeforeClose whether a tab representing a view stack should be
+         *                          selected before closing
+         * @return {@code true} if all views have been closed, {@code false} otherwise
+         * @see #close()
+         */
+        public boolean close(boolean selectBeforeClose) {
             boolean closed = true;
 
-            // We need to select a tab, so all nested components are attached again
-            select();
+            if (selectBeforeClose) {
+                select();
+            }
 
             Collection<View<?>> views = getBreadcrumbs();
             for (View<?> view : views) {
@@ -1020,6 +1036,11 @@ public class Views {
         protected ViewBreadcrumbs.ViewInfo getViewToClose() {
             return breadcrumbs.getCurrentViewInfo();
         }
+
+        @Override
+        protected void closePrevented() {
+            tabbedContainer.setSelectedTab(tab);
+        }
     }
 
     protected abstract static class AbstractTabCloseTask implements Runnable {
@@ -1029,9 +1050,17 @@ public class Views {
             ViewBreadcrumbs.ViewInfo viewToClose = getViewToClose();
             if (viewToClose != null
                     && isCloseable(viewToClose)) {
-                viewToClose.view().close(StandardOutcome.CLOSE)
-                        .then(this);
+                OperationResult closeResult = viewToClose.view().close(StandardOutcome.CLOSE);
+                if (closeResult.getStatus() == OperationResult.Status.SUCCESS) {
+                    closeResult.then(this);
+                } else {
+                    closePrevented();
+                }
             }
+        }
+
+        protected void closePrevented() {
+            // do nothing
         }
 
         @Nullable

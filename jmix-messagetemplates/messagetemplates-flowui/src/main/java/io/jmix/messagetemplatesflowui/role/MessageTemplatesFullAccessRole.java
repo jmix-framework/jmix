@@ -27,6 +27,7 @@ import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
+import io.jmix.security.role.annotation.SpecificPolicy;
 import io.jmix.securityflowui.role.annotation.MenuPolicy;
 import io.jmix.securityflowui.role.annotation.ViewPolicy;
 
@@ -71,4 +72,7 @@ public interface MessageTemplatesFullAccessRole {
     @EntityAttributePolicy(entityClass = MessageTemplateParameterLocalization.class, attributes = "*",
             action = EntityAttributePolicyAction.MODIFY)
     void entityAttributePolicy();
+
+    @SpecificPolicy(resources = "messagetemplates.importExportMessageTemplate")
+    void specific();
 }

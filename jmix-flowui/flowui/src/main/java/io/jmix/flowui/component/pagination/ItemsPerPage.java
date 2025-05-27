@@ -209,4 +209,17 @@ public class ItemsPerPage extends JmixItemsPerPage implements ApplicationContext
         }
         return false;
     }
+
+    @Override
+    protected Select<Integer> createItemsPerPageSelect() {
+        Select<Integer> select = super.createItemsPerPageSelect();
+
+        String emptySelectionCaption = messages.findMessage(
+                "pagination.itemsPerPage.emptySelectionCaption", null);
+        if (emptySelectionCaption != null) {
+            select.setEmptySelectionCaption(emptySelectionCaption);
+        }
+
+        return select;
+    }
 }

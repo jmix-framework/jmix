@@ -17,10 +17,8 @@
 package io.jmix.flowui.component.main;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasText;
-import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.renderer.TextRenderer;
@@ -52,10 +50,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class JmixUserIndicator extends UserIndicator<UserDetails> implements ApplicationContextAware, InitializingBean {
 
@@ -81,8 +76,6 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
     @Override
     public void afterPropertiesSet() throws Exception {
         autowireDependencies();
-
-        initUiUserSubstitutionChangeListener();
     }
 
     protected void autowireDependencies() {
@@ -97,20 +90,22 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         userRepository = applicationContext.getBean(UserRepository.class);
     }
 
-    protected void initUiUserSubstitutionChangeListener() {
-        VaadinSession session = VaadinSession.getCurrent();
-        if (session == null) {
-            return;
-        }
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
 
-        UiEventsManager uiEventsManager = session.getAttribute(UiEventsManager.class);
-
-        if (uiEventsManager != null) {
+        uiEventsManager().ifPresent(uiEventsManager -> {
+            uiEventsManager.removeApplicationListeners(this);
             uiEventsManager.addApplicationListener(this, this::onApplicationEvent);
+        });
+    }
 
-            // Remove on detach event
-            addDetachListener(event -> uiEventsManager.removeApplicationListeners(this));
-        }
+    @Override
+    protected void onDetach(DetachEvent detachEvent) {
+        super.onDetach(detachEvent);
+
+        uiEventsManager().ifPresent(uiEventsManager ->
+                uiEventsManager.removeApplicationListeners(this));
     }
 
     @Override
@@ -219,5 +214,12 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         if (Objects.equals(authenticatedUser.getUsername(), event.getSource())) {
             refreshUser();
         }
+    }
+
+    protected Optional<UiEventsManager> uiEventsManager() {
+        VaadinSession session = VaadinSession.getCurrent();
+        return session != null
+                ? Optional.ofNullable(session.getAttribute(UiEventsManager.class))
+                : Optional.empty();
     }
 }

@@ -86,7 +86,10 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         String title = view.getPageTitle();
 
         dialog.setHeaderTitle(title);
-        dialog.getHeader().add(createHeaderCloseButton());
+        Button closeButton = createHeaderCloseButton();
+        if (closeButton != null) {
+            dialog.getHeader().add(closeButton);
+        }
 
         dialog.setCloseOnEsc(false);
         dialog.setCloseOnOutsideClick(false);
@@ -143,6 +146,7 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         }
     }
 
+    @Nullable
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents().create(JmixButton.class);
         closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
@@ -154,6 +158,7 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         closeButton.setClassName(BASE_CLASS_NAME + "-close-button");
         closeButton.setTitle(messages().getMessage("dialogWindow.closeButton.description"));
         closeButton.addClickListener(this::onCloseButtonClicked);
+
         return closeButton;
     }
 

@@ -17,13 +17,12 @@
 package io.jmix.tabbedmode.xml.layout.loader;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.container.VerticalLayoutLoader;
-import io.jmix.tabbedmode.component.tabsheet.MainTabSheet;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import io.jmix.tabbedmode.component.workarea.WorkArea;
-import io.jmix.tabbedmode.component.workarea.WorkAreaSupport;
 import org.dom4j.Element;
 
 public class WorkAreaLoader extends AbstractComponentLoader<WorkArea> {
@@ -52,39 +51,22 @@ public class WorkAreaLoader extends AbstractComponentLoader<WorkArea> {
     }
 
     protected void createTabbedViewsContainer(WorkArea workArea, Element element) {
-        TabbedViewsContainer<?> tabbedContainer;
-
         Element tabbedViewsContainerElement = element.element(getTabbedContainerElementName());
-        if (tabbedViewsContainerElement != null) {
-            tabbedViewsContainerLoader = getLayoutLoader().createComponentLoader(tabbedViewsContainerElement);
-            tabbedViewsContainerLoader.initComponent();
-
-            tabbedContainer = ((TabbedViewsContainer<?>) tabbedViewsContainerLoader.getResultComponent());
-        } else {
-            tabbedContainer = createDefaultTabbedViewsContainer();
+        if (tabbedViewsContainerElement == null) {
+            throw new GuiDevelopmentException("%s is missing a required element: '%s'"
+                    .formatted(WorkAreaLoader.TAG, getTabbedContainerElementName()),
+                    context, "WorkArea ID", resultComponent.getId().orElse(""));
         }
 
+        tabbedViewsContainerLoader = getLayoutLoader().createComponentLoader(tabbedViewsContainerElement);
+        tabbedViewsContainerLoader.initComponent();
+
+        TabbedViewsContainer<?> tabbedContainer = ((TabbedViewsContainer<?>) tabbedViewsContainerLoader.getResultComponent());
         workArea.setTabbedViewsContainer(tabbedContainer);
     }
 
     protected String getTabbedContainerElementName() {
         return MainTabSheetLoader.TAG;
-    }
-
-    /**
-     * For compatibility only.
-     */
-    @Deprecated(since = "2.6", forRemoval = true)
-    protected TabbedViewsContainer<?> createDefaultTabbedViewsContainer() {
-        MainTabSheet tabSheet = factory.create(MainTabSheet.class);
-        tabSheet.setSizeFull();
-        tabSheet.setClassName("jmix-main-tabsheet");
-
-        WorkAreaSupport workAreaSupport = applicationContext.getBean(WorkAreaSupport.class);
-        workAreaSupport.getDefaultActions()
-                .forEach(tabSheet::addAction);
-
-        return tabSheet;
     }
 
     protected void createInitialLayout(WorkArea workArea, Element element) {

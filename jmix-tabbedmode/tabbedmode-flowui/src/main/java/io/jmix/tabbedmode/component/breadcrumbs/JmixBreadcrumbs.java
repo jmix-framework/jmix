@@ -21,6 +21,11 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import io.jmix.core.common.util.Preconditions;
 
+/**
+ * Server-side component for the {@code <jmix-breadcrumbs>} element.
+ * <p>
+ * It's a container for {@link JmixBreadcrumb} components.
+ */
 @Tag("jmix-breadcrumbs")
 @JsModule("./src/breadcrumbs/jmix-breadcrumbs.js")
 public class JmixBreadcrumbs extends Component {
@@ -28,12 +33,22 @@ public class JmixBreadcrumbs extends Component {
     public JmixBreadcrumbs() {
     }
 
+    /**
+     * Adds a breadcrumb to the container as the last child.
+     *
+     * @param breadcrumb the breadcrumb to add
+     */
     public void add(JmixBreadcrumb breadcrumb) {
         Preconditions.checkNotNullArgument(breadcrumb);
 
         getElement().appendChild(breadcrumb.getElement());
     }
 
+    /**
+     * Removes a breadcrumb from the container.
+     *
+     * @param breadcrumb the breadcrumb to remove
+     */
     public void remove(JmixBreadcrumb breadcrumb) {
         Preconditions.checkNotNullArgument(breadcrumb);
 

@@ -27,15 +27,27 @@ import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.navigation.RedirectHandler;
 import io.jmix.tabbedmode.sys.MainViewSupport;
 
+import java.util.Optional;
+
+/**
+ * Base class for tabbed mode main view.
+ */
 public class StandardTabbedModeMainView extends View<JmixAppLayout> implements HasWorkArea, RouterLayout {
 
     protected WorkArea workArea;
 
     @Override
-    public WorkArea getWorkAreaOrNull() {
-        return workArea;
+    public Optional<WorkArea> getWorkAreaOptional() {
+        return Optional.ofNullable(workArea);
     }
 
+    /**
+     * Sets the {@link WorkArea} component for the view and updates the content
+     * with the specified work area.
+     *
+     * @param workArea the {@link WorkArea} instance to set
+     * @throws IllegalStateException if the work area has already been initialized
+     */
     public void setWorkArea(WorkArea workArea) {
         Preconditions.checkState(this.workArea == null, "%s has already been initialized"
                 .formatted(WorkArea.class.getSimpleName()));

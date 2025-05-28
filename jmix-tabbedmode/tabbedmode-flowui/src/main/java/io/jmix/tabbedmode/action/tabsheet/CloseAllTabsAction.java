@@ -24,19 +24,17 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.tabbedmode.TabbedModeProperties;
 import io.jmix.tabbedmode.Views;
 import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
-import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
 
+/**
+ * Closes all tabs.
+ */
 @ActionType(CloseAllTabsAction.ID)
 public class CloseAllTabsAction extends AbstractCloseTabsAction<CloseAllTabsAction> {
-
-    private static final Logger log = LoggerFactory.getLogger(CloseAllTabsAction.class);
 
     public static final String ID = "tabmod_closeAllTabs";
 

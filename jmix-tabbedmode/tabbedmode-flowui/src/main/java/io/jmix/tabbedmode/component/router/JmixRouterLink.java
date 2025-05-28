@@ -62,7 +62,7 @@ public class JmixRouterLink extends RouterLink {
                 .shouldHighlight(this, convertToAfterNavigationEvent(locationChangeEvent)));
     }
 
-    private AfterNavigationEvent convertToAfterNavigationEvent(LocationChangeEvent locationChangeEvent) {
+    protected AfterNavigationEvent convertToAfterNavigationEvent(LocationChangeEvent locationChangeEvent) {
         UI ui = locationChangeEvent.getSource();
         Router router = ui.getInternals().getRouter();
         Location location = locationChangeEvent.getLocation();

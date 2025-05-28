@@ -35,6 +35,10 @@ import org.springframework.lang.Nullable;
 
 import java.util.function.Consumer;
 
+/**
+ * A tab component designed for use in a {@link JmixMainTabSheet}. Provides additional functionality,
+ * such as support for tab closing and dragging.
+ */
 @Tag("jmix-view-tab")
 @JsModule("./src/tabsheet/jmix-view-tab.js")
 @CssImport("./src/tabsheet/jmix-view-tab.css")
@@ -66,11 +70,11 @@ public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
         setEffectAllowed(EffectAllowed.MOVE);
     }
 
-    @Override
-    public void setId(String id) {
-        super.setId(id);
-    }
-
+    /**
+     * Returns the label of this tab.
+     *
+     * @return the label of this tab, or {@code null} if not is set
+     */
     @Nullable
     public String getText() {
         return textElement != null ? textElement.getText() : null;
@@ -95,17 +99,28 @@ public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
         }
     }
 
-    private HasText createTextElement() {
+    protected HasText createTextElement() {
         Span span = new Span();
         span.setClassName(BASE_CLASS_NAME + "-text");
 
         return span;
     }
 
+    /**
+     * Returns whether this tab is closable or not.
+     *
+     * @return {@code true} if the tab is closable, {@code false} otherwise
+     */
     public boolean isClosable() {
         return closable;
     }
 
+    /**
+     * Sets whether the tab can be closed or not. If set to {@code true}, a close button
+     * will be added to the tab. If set to {@code false}, the close button will be removed.
+     *
+     * @param closable whether the tab should be closable
+     */
     public void setClosable(boolean closable) {
         if (this.closable != closable) {
             this.closable = closable;
@@ -141,10 +156,20 @@ public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
         closeDelegate.accept(new CloseContext<>(this));
     }
 
+    /**
+     * Sets the delegate to handle the close event for this tab.
+     *
+     * @param delegate a close delegate to set, or {@code null} to remove
+     */
     public void setCloseDelegate(@Nullable Consumer<CloseContext<JmixViewTab>> delegate) {
         closeDelegate = delegate;
     }
 
+    /**
+     * Represents the context passed to a close delegate when a {@link JmixViewTab} is closed.
+     *
+     * @param <C> the type of the source, which must extend {@link JmixViewTab}
+     */
     public record CloseContext<C extends JmixViewTab>(C source) {
     }
 

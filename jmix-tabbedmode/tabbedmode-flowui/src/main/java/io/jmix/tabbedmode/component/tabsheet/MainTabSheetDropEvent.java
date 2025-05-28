@@ -24,16 +24,18 @@ import com.vaadin.flow.component.tabs.Tab;
 import elemental.json.JsonString;
 import org.springframework.lang.Nullable;
 
-import java.util.Arrays;
-
+/**
+ * An event that occurs when a drag-and-drop operation is completed on
+ * a {@link JmixMainTabSheet} component.
+ */
 @DomEvent("main-tabsheet-drop")
-public class MainTabsheetDropEvent extends ComponentEvent<JmixMainTabSheet> {
+public class MainTabSheetDropEvent extends ComponentEvent<JmixMainTabSheet> {
 
     protected final Tab dropTarget;
     protected final Tab dragSource;
-    protected final MainTabsheetDropLocation dropLocation;
+    protected final MainTabSheetDropLocation dropLocation;
 
-    public MainTabsheetDropEvent(JmixMainTabSheet source, boolean fromClient,
+    public MainTabSheetDropEvent(JmixMainTabSheet source, boolean fromClient,
                                  @Nullable @EventData("event.detail.dropTargetTab") JsonString tabId,
                                  @EventData("event.detail.dropLocation") String dropLocation) {
         super(source, fromClient);
@@ -43,23 +45,38 @@ public class MainTabsheetDropEvent extends ComponentEvent<JmixMainTabSheet> {
                 : null;
         this.dragSource = getActiveDragSourceComponent() instanceof Tab tab ? tab : null;
 
-        MainTabsheetDropLocation clientDropLocation = MainTabsheetDropLocation.fromClientName(dropLocation);
+        MainTabSheetDropLocation clientDropLocation = MainTabSheetDropLocation.fromClientName(dropLocation);
         this.dropLocation = clientDropLocation != null
                 ? clientDropLocation
-                : MainTabsheetDropLocation.EMPTY;
+                : MainTabSheetDropLocation.EMPTY;
     }
 
+    /**
+     * Returns a drop target tab.
+     *
+     * @return a drop target tab
+     */
     @Nullable
     public Tab getDropTarget() {
         return dropTarget;
     }
 
+    /**
+     * Returns a tab that is being dragged.
+     *
+     * @return a tab that is being dragged
+     */
     @Nullable
     public Tab getDragSource() {
         return dragSource;
     }
 
-    public MainTabsheetDropLocation getDropLocation() {
+    /**
+     * Returns a drop location.
+     *
+     * @return a drop location
+     */
+    public MainTabSheetDropLocation getDropLocation() {
         return dropLocation;
     }
 

@@ -26,6 +26,11 @@ import org.springframework.lang.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 
+/**
+ * This class is responsible for connecting an {@link Action} to menu items,
+ * handling property changes for actions, and updating the visual or functional
+ * components of the menu item according to the action's state.
+ */
 public class MainTabSheetMenuItemActionSupport {
 
     protected final MainTabSheetMenuItemActionWrapper menuItem;
@@ -40,15 +45,33 @@ public class MainTabSheetMenuItemActionSupport {
         this.menuItem = menuItem;
     }
 
+    /**
+     * Returns the current {@link Action} associated with the menu item.
+     *
+     * @return the current {@link Action} or {@code null} if no action is set
+     */
     @Nullable
     public Action getAction() {
         return action;
     }
 
+    /**
+     * Sets the given {@link Action} to the menu item.
+     *
+     * @param action an action to set, or {@code null} to remove the current action
+     */
     public void setAction(@Nullable Action action) {
         setAction(action, true);
     }
 
+    /**
+     * Sets the given {@link Action} to the menu item.
+     *
+     * @param action                      an action to set, or {@code null} to remove the
+     *                                    current action
+     * @param overrideComponentProperties whether to override the menu item's properties
+     *                                    with values of the passed action
+     */
     public void setAction(@Nullable Action action, boolean overrideComponentProperties) {
         if (Objects.equals(this.action, action) && this.overrideComponentProperties == overrideComponentProperties) {
             return;

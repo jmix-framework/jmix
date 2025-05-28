@@ -17,23 +17,28 @@
 package io.jmix.tabbedmode.app.main;
 
 import io.jmix.tabbedmode.component.workarea.WorkArea;
-import org.springframework.lang.Nullable;
 
+import java.util.Optional;
+
+/**
+ * Interface for components that have a {@link WorkArea} component.
+ */
 public interface HasWorkArea {
 
     /**
-     * @return a work area component
+     * @return a {@link WorkArea} component
+     * @throws IllegalStateException if the component does not have a work area
      */
     default WorkArea getWorkArea() {
-        WorkArea workArea = getWorkAreaOrNull();
-        if (workArea != null) {
-            return workArea;
-        } else {
-            throw new IllegalStateException("%s not found"
-                    .formatted(WorkArea.class.getSimpleName()));
-        }
+        return getWorkAreaOptional().orElseThrow(() ->
+                new IllegalStateException("%s not found".formatted(WorkArea.class.getSimpleName())));
     }
 
-    @Nullable
-    WorkArea getWorkAreaOrNull();
+    /**
+     * Returns {@link WorkArea} component, if present.
+     *
+     * @return an {@link Optional} containing the {@link WorkArea} if found;
+     * otherwise, an empty {@link Optional}
+     */
+    Optional<WorkArea> getWorkAreaOptional();
 }

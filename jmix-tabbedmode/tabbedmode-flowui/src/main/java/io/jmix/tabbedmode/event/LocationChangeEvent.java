@@ -42,7 +42,7 @@ public class LocationChangeEvent extends ApplicationEvent {
     }
 
     /**
-     * Retrieves the location associated with the event.
+     * Returns the location associated with the event.
      *
      * @return the location that triggered the event
      */

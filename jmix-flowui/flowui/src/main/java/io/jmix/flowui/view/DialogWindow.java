@@ -26,6 +26,11 @@ import io.jmix.flowui.view.View.ReadyEvent;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
+/**
+ * Wrapper class representing a {@link View} opened as a dialog window.
+ *
+ * @param <V> a view type
+ */
 public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
 
     private boolean readyEventFired = false;

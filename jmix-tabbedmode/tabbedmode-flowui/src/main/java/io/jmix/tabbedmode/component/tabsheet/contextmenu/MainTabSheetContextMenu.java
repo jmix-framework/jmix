@@ -36,7 +36,7 @@ public class MainTabSheetContextMenu extends
         ContextMenuBase<MainTabSheetContextMenu, MainTabSheetMenuItem, MainTabSheetSubMenu>
         implements HasMainTabSheetMenuItems {
 
-    private SerializablePredicate<Tab> dynamicContentHandler;
+    protected SerializablePredicate<Tab> dynamicContentHandler;
 
     public MainTabSheetContextMenu() {
     }
@@ -44,7 +44,6 @@ public class MainTabSheetContextMenu extends
     public MainTabSheetContextMenu(JmixMainTabSheet target) {
         setTarget(target);
     }
-
 
     public MainTabSheetMenuItem addItemAtIndex(int index, String text) {
         return getItems().size() == index

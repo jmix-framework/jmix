@@ -33,6 +33,9 @@ import org.springframework.lang.Nullable;
 
 import java.util.List;
 
+/**
+ * Closes all tabs except the selected (trigger) tab.
+ */
 @ActionType(CloseOtherTabsAction.ID)
 public class CloseOtherTabsAction extends AbstractCloseTabsAction<CloseOtherTabsAction> {
 

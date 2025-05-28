@@ -827,7 +827,7 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Retrieves the application event listeners associated with the specified component.
+     * Returns the application event listeners associated with the specified component.
      * This method identifies the type of the component and delegates the retrieval of
      * event listeners to the appropriate utility class based on whether the component
      * is a View or a Fragment. If the component type is unsupported, an exception is thrown.

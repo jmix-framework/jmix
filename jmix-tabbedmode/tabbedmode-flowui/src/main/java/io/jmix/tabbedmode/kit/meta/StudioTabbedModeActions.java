@@ -46,7 +46,7 @@ public interface StudioTabbedModeActions {
 
     @StudioAction(
             type = "tabmod_closeOtherTabs",
-            description = "Closes all tabs",
+            description = "Closes all tabs except selected",
             classFqn = "io.jmix.tabbedmode.action.tabsheet.CloseOtherTabsAction",
             availableInViewWizard = true,
             properties = {

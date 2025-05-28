@@ -22,6 +22,11 @@ import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 
 import java.util.List;
 
+/**
+ * Base class for actions that close tabs.
+ *
+ * @param <A> action type
+ */
 public abstract class AbstractCloseTabsAction<A extends AbstractCloseTabsAction<A>>
         extends TabbedViewsContainerAction<A> {
 

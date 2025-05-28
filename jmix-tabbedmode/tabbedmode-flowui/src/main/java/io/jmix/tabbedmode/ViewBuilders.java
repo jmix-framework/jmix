@@ -31,7 +31,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * Provides fluent interface for opening views.
+ * Provides a fluent interface for opening views.
  */
 @org.springframework.stereotype.Component("tabmod_ViewBuilders")
 public class ViewBuilders {

@@ -18,23 +18,34 @@ package io.jmix.tabbedmode.component.tabsheet;
 
 import org.springframework.lang.Nullable;
 
-public enum MainTabsheetDropLocation {
+/**
+ * Defines drop locations within {@link JmixMainTabSheet}.
+ */
+public enum MainTabSheetDropLocation {
 
+    /**
+     * Drop before the target tab.
+     */
     BEFORE("before"),
 
+    /**
+     * Drop after the target tab.
+     */
     AFTER("after"),
 
+    /**
+     * Dropping into an empty space so that a target tab cannot be determined.
+     */
     EMPTY("empty");
 
     private final String clientName;
 
-    MainTabsheetDropLocation(String clientName) {
+    MainTabSheetDropLocation(String clientName) {
         this.clientName = clientName;
     }
 
     /**
-     * Gets name that is used in the client side representation of the
-     * component.
+     * Gets a name used in the client side representation of the component.
      *
      * @return the name used in the client side representation of the component.
      */
@@ -43,8 +54,8 @@ public enum MainTabsheetDropLocation {
     }
 
     @Nullable
-    public static MainTabsheetDropLocation fromClientName(String clientName) {
-        for (MainTabsheetDropLocation location : MainTabsheetDropLocation.values()) {
+    public static MainTabSheetDropLocation fromClientName(String clientName) {
+        for (MainTabSheetDropLocation location : MainTabSheetDropLocation.values()) {
             if (location.getClientName().equals(clientName)) {
                 return location;
             }

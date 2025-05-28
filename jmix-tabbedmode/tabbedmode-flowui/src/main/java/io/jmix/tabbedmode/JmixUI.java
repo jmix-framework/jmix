@@ -33,7 +33,6 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
 import elemental.json.JsonValue;
 import io.jmix.core.UuidProvider;
-import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.UiEventPublisher;
 import io.jmix.flowui.sys.autowire.EventListenerDependencyInjector;
 import io.jmix.flowui.view.View;
@@ -43,6 +42,7 @@ import io.jmix.tabbedmode.app.main.HasWorkArea;
 import io.jmix.tabbedmode.builder.ViewOpeningContext;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
+import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.event.UIRefreshEvent;
 import io.jmix.tabbedmode.navigation.RedirectHandler;
 import io.jmix.tabbedmode.view.ViewOpenMode;
@@ -53,8 +53,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -107,10 +105,22 @@ public class JmixUI extends UI {
         return new RedirectHandler(this, views);
     }
 
+    /**
+     * Returns the {@link RedirectHandler} associated with this instance.
+     *
+     * @return the {@link RedirectHandler} responsible for handling navigation redirects
+     */
     public RedirectHandler getRedirectHandler() {
         return redirectHandler;
     }
 
+    /**
+     * Returns the jmix id of this UI, used to link this UI with a browser tab.
+     * When this UI is initialized and a browser tab already has another UI with
+     * the same jmix id associated, the content of the previous UI is moved to this.
+     *
+     * @return the jmix id of this UI
+     */
     @Nullable
     public String getJmixUiId() {
         return jmixUiId;
@@ -129,6 +139,17 @@ public class JmixUI extends UI {
 
     protected boolean firstNavigation = true;
 
+    /**
+     * Gets the currently used UI. The current UI is automatically defined when
+     * processing requests to the server. In other cases, (e.g. from background
+     * threads), the current UI is not automatically defined.
+     * <p>
+     * The UI is stored using a weak reference to avoid leaking memory in case
+     * it is not explicitly cleared.
+     *
+     * @return the current UI instance if available, otherwise {@code null}
+     * @see #setCurrent(UI)
+     */
     @Nullable
     public static JmixUI getCurrent() {
         return (JmixUI) UI.getCurrent();
@@ -705,17 +726,26 @@ public class JmixUI extends UI {
         return ViewOpenMode.NEW_TAB;
     }
 
+    /**
+     * Returns the root view of the UI.
+     *
+     * @return the root view of the UI
+     * @throws IllegalStateException in case there is no root view in UI
+     */
     public View<?> getTopLevelView() {
-        if (topLevelView == null) {
-            throw new IllegalStateException("UI's top level view is null");
-        }
-
-        return topLevelView;
+        return getTopLevelViewOptional()
+                .orElseThrow(() -> new IllegalStateException("UI's top level view is null"));
     }
 
+    /**
+     * Returns the root view of the UI if present.
+     *
+     * @return the root view of the UI if present
+     */
     public Optional<View<?>> getTopLevelViewOptional() {
         return Optional.ofNullable(topLevelView);
     }
+
 
     public void setTopLevelView(@Nullable View<?> topLevelView) {
         if (this.topLevelView != topLevelView) {
@@ -728,7 +758,6 @@ public class JmixUI extends UI {
 
             internalsHandler.updateRoot(this, oldRoot, topLevelView);
 
-
             if (jmixUiId != null) {
                 setPreservedViewCache(jmixUiId, topLevelView);
             } else {
@@ -737,11 +766,37 @@ public class JmixUI extends UI {
         }
     }
 
+    /**
+     * Returns the current active {@link View} within this UI context.
+     * This method searches for the current view using a prioritized approach:
+     * <ol>
+     *     <li>Dialog windows</li>
+     *     <li>Views of the currently opened tab of a {@link WorkArea}</li>
+     *     <li>The root view</li>
+     * </ol>
+     *
+     * @return the current active {@link View}
+     * @throws IllegalStateException if the current {@link View} is not found
+     * @see Views#getCurrentView(JmixUI)
+     */
     @Override
     public View<?> getCurrentView() {
         return views.getCurrentView(this);
     }
 
+    /**
+     * Finds the current active view within this UI context.
+     * This method searches for the current view using a prioritized approach:
+     * <ol>
+     *     <li>Dialog windows</li>
+     *     <li>Views of the currently opened tab of a {@link WorkArea}</li>
+     *     <li>The root view</li>
+     * </ol>
+     *
+     * @return an {@link Optional} containing the current view if found;
+     * otherwise, an empty {@link Optional}
+     * @see Views#findCurrentView(JmixUI)
+     */
     public Optional<View<?>> findCurrentView() {
         return views.findCurrentView(this);
     }
@@ -821,17 +876,5 @@ public class JmixUI extends UI {
         }
 
         return eventListenerDependencyInjector;
-    }
-
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        log.info("onAttach: '{}'", getUIId());
-        super.onAttach(attachEvent);
-    }
-
-    @Override
-    protected void onDetach(DetachEvent detachEvent) {
-        log.info("onDetach: '{}'", getUIId());
-        super.onDetach(detachEvent);
     }
 }

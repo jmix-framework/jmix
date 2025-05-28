@@ -31,6 +31,11 @@ import org.springframework.lang.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * Base class for actions that work with {@link TabbedViewsContainer}.
+ *
+ * @param <A> action type
+ */
 public abstract class TabbedViewsContainerAction<A extends TabbedViewsContainerAction<A>> extends BaseAction
         implements TargetAction<TabbedViewsContainer<?>> {
 

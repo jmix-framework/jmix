@@ -21,6 +21,11 @@ import io.jmix.flowui.view.AbstractDialogWindow;
 import io.jmix.flowui.view.View;
 import org.springframework.lang.Nullable;
 
+/**
+ * Wrapper class representing a {@link View} opened as a dialog window.
+ *
+ * @param <V> a view type
+ */
 public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
 
     public DialogWindow(V view) {

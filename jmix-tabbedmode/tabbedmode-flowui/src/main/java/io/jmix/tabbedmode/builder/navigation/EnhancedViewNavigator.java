@@ -21,6 +21,13 @@ import io.jmix.flowui.component.ListDataComponent;
 
 import java.util.Optional;
 
+/**
+ * Represents a navigator interface with additional enhancements for managing
+ * list data components and fields. This interface provides methods to retrieve
+ * optional components associated with enhanced navigation functionality.
+ *
+ * @param <E> the entity type
+ */
 public interface EnhancedViewNavigator<E> {
 
     Optional<ListDataComponent<E>> getListDataComponent();

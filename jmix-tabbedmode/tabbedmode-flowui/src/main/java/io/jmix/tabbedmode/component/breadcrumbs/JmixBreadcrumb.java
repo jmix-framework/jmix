@@ -20,6 +20,11 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
 
+/**
+ * Server-side component for the {@code <jmix-breadcrumb>} element.
+ * <p>
+ * To use it, add it to the {@link JmixBreadcrumbs}.
+ */
 @Tag("jmix-breadcrumb")
 @JsModule("./src/breadcrumbs/jmix-breadcrumb.js")
 public class JmixBreadcrumb extends Component implements HasAriaLabel, HasEnabled, Focusable<JmixBreadcrumb> {
@@ -29,19 +34,29 @@ public class JmixBreadcrumb extends Component implements HasAriaLabel, HasEnable
     public JmixBreadcrumb() {
     }
 
+    /**
+     * Returns the text of the breadcrumb component.
+     *
+     * @return the text of the breadcrumb component
+     */
     public String getText() {
         return getElement().getProperty("text", "");
     }
 
+    /**
+     * Sets the text of the breadcrumb component.
+     *
+     * @param text the text of the breadcrumb component
+     */
     public void setText(String text) {
         getElement().setProperty("text", text);
     }
 
-    public JmixBreadcrumb withText(String text) {
-        setText(text);
-        return this;
-    }
-
+    /**
+     * Sets a click handler for the breadcrumb component.
+     *
+     * @param listener the listener to handle click events on the breadcrumb
+     */
     public void setClickHandler(ComponentEventListener<ClickEvent<JmixBreadcrumb>> listener) {
         if (clickRegistration != null) {
             clickRegistration.remove();
@@ -57,11 +72,11 @@ public class JmixBreadcrumb extends Component implements HasAriaLabel, HasEnable
                         """);
     }
 
-    public JmixBreadcrumb withClickHandler(ComponentEventListener<ClickEvent<JmixBreadcrumb>> listener) {
-        setClickHandler(listener);
-        return this;
-    }
-
+    /**
+     * Represents a click event triggered on a {@link JmixBreadcrumb} component.
+     *
+     * @param <C> the type of the component on which the event is triggered
+     */
     public static class ClickEvent<C extends JmixBreadcrumb> extends ComponentEvent<C> {
 
         /**

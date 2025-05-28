@@ -22,7 +22,7 @@ package io.jmix.tabbedmode.view;
 public enum ViewOpenMode {
 
     /**
-     * Open a view in new tab of the main view.
+     * Open a view in a new tab of the main view.
      */
     NEW_TAB,
 

@@ -26,6 +26,9 @@ import io.jmix.tabbedmode.component.tabsheet.contextmenu.MainTabSheetMenuItemAct
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The class provides support for managing actions within an associated {@link JmixMainTabSheet} component.
+ */
 public class MainTabSheetActionsSupport extends AbstractActionsHolderSupport<JmixMainTabSheet> {
 
     protected Map<Action, MainTabSheetMenuItemActionWrapper> actionBinding = new HashMap<>();

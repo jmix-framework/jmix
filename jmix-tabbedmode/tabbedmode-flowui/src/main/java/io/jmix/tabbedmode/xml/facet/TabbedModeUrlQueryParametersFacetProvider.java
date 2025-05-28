@@ -24,7 +24,6 @@ import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.core.annotation.Order;
 
-//@Primary
 @Order(JmixOrder.LOWEST_PRECEDENCE - 100)
 @org.springframework.stereotype.Component("tabmod_TabbedModeUrlQueryParametersFacetProvider")
 public class TabbedModeUrlQueryParametersFacetProvider implements FacetProvider<UrlQueryParametersFacet> {

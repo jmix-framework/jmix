@@ -30,6 +30,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
+/**
+ * Closes the selected (trigger) tab.
+ */
 @ActionType(CloseThisTabAction.ID)
 public class CloseThisTabAction extends AbstractCloseTabsAction<CloseThisTabAction> {
 

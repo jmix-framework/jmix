@@ -68,6 +68,9 @@ import static io.jmix.flowui.monitoring.ViewLifeCycle.BEFORE_SHOW;
 import static io.jmix.flowui.monitoring.ViewLifeCycle.READY;
 import static io.micrometer.core.instrument.Timer.start;
 
+/**
+ * API to create and open views.
+ */
 @org.springframework.stereotype.Component("tabmod_Views")
 public class Views {
 
@@ -111,11 +114,24 @@ public class Views {
         this.tabbedModeProperties = tabbedModeProperties;
     }
 
+    /**
+     * Creates a new {@link View} instance by the passed view id.
+     *
+     * @param viewId view id to create a new {@link View} instance
+     * @return a new {@link View} instance
+     */
     public View<?> create(String viewId) {
         ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
         return createInternal(viewInfo);
     }
 
+    /**
+     * Creates a new {@link View} instance by the passed view class.
+     *
+     * @param viewClass the class of the view to create
+     * @param <T>       the type of the view to create, which extends {@link View}
+     * @return a new {@link View} instance
+     */
     @SuppressWarnings("unchecked")
     public <T extends View<?>> T create(Class<T> viewClass) {
         String id = ViewDescriptorUtils.getInferredViewId(viewClass);
@@ -159,10 +175,25 @@ public class Views {
         }
     }
 
+    /**
+     * Opens the passed {@link View} in the current UI with the passed {@link ViewOpenMode}.
+     *
+     * @param view     a view to open
+     * @param openMode in which open mode to open a view
+     * @return {@link OperationResult} with the result of the opening operation
+     */
     public OperationResult open(View<?> view, ViewOpenMode openMode) {
         return open(getCurrentUI(), view, openMode);
     }
 
+    /**
+     * Opens the passed {@link View} in the given UI with the passed {@link ViewOpenMode}.
+     *
+     * @param ui       UI in which to open a view
+     * @param view     a view to open
+     * @param openMode in which open mode to open a view
+     * @return {@link OperationResult} with the result of the opening operation
+     */
     public OperationResult open(JmixUI ui, View<?> view, ViewOpenMode openMode) {
         return open(ui, ViewOpeningContext.create(view, openMode));
     }
@@ -171,6 +202,14 @@ public class Views {
         return open(getCurrentUI(), context);
     }
 
+    /**
+     * Opens a {@link View} in the given UI using parameters obtained from
+     * passed {@link ViewOpeningContext}.
+     *
+     * @param ui      UI in which to open a view
+     * @param context context with the view to open and other parameters
+     * @return {@link OperationResult} with the result of the opening operation
+     */
     public OperationResult open(JmixUI ui, ViewOpeningContext context) {
         checkNotNullArgument(context);
 
@@ -260,7 +299,7 @@ public class Views {
 
             OperationResult result = sameView.close(CLOSE_SAME_VIEW_ACTION);
             if (result.getStatus() != OperationResult.Status.SUCCESS) {
-                // if unsaved changes dialog is shown, we can continue later
+                // if the unsaved changes dialog is shown, we can continue later
                 return result.compose(() -> open(ui, context));
             }
         }
@@ -613,10 +652,22 @@ public class Views {
         return new TabCloseTask(tabbedContainer, tab);
     }
 
+    /**
+     * Returns id of the {@link View} that will be used as Login view
+     *
+     * @return id of the {@link View} that will be used as Login view
+     * @see UiProperties#getLoginViewId()
+     */
     public String getLoginViewId() {
         return uiProperties.getLoginViewId();
     }
 
+    /**
+     * Returns id of the {@link View} that will be used as Main view
+     *
+     * @return id of the {@link View} that will be used as Main view
+     * @see UiProperties#getMainViewId()
+     */
     public String getMainViewId() {
         return uiProperties.getMainViewId();
     }
@@ -628,15 +679,26 @@ public class Views {
         return breadcrumbs;
     }
 
+    /**
+     * Finds the {@link WorkArea} instance for the given {@link JmixUI} instance, if available.
+     *
+     * @param ui the {@link JmixUI} instance for which the work area is being searched
+     * @return an {@link Optional} containing the configured {@link WorkArea} if found;
+     * otherwise, an empty {@link Optional}
+     */
     public Optional<WorkArea> findConfiguredWorkArea(JmixUI ui) {
-        View<?> topLevelView = ui.getTopLevelView();
-        if (topLevelView instanceof HasWorkArea hasWorkArea) {
-            return Optional.ofNullable(hasWorkArea.getWorkAreaOrNull());
-        }
-
-        return Optional.empty();
+        return ui.getTopLevelView() instanceof HasWorkArea hasWorkArea
+                ? hasWorkArea.getWorkAreaOptional()
+                : Optional.empty();
     }
 
+    /**
+     * Returns the {@link WorkArea} instance for the given {@link JmixUI} instance.
+     *
+     * @param ui the {@link JmixUI} instance for which the work area is being searched
+     * @return the {@link WorkArea} instance for the given {@link JmixUI} instance
+     * @throws IllegalStateException if root view does not have any configured work area
+     */
     public WorkArea getConfiguredWorkArea(JmixUI ui) {
         return findConfiguredWorkArea(ui)
                 .orElseThrow(() -> new IllegalStateException("Root %s does not have any configured work area"
@@ -650,21 +712,60 @@ public class Views {
                         new ViewStack(workArea.getTabbedViewsContainer(), viewContainer));
     }
 
+    /**
+     * Returns an instance of {@link OpenedViews} for the current {@link JmixUI} instance.
+     *
+     * @return an instance of {@link OpenedViews} for the current {@link JmixUI} instance
+     */
     public OpenedViews getOpenedViews() {
         return getOpenedViews(getCurrentUI());
     }
 
+    /**
+     * Returns an instance of {@link OpenedViews} for the given {@link JmixUI} instance.
+     *
+     * @param ui the {@link JmixUI} instance for which to get the {@link OpenedViews}
+     * @return an instance of {@link OpenedViews} for the given {@link JmixUI} instance
+     */
     public OpenedViews getOpenedViews(JmixUI ui) {
         OpenedDialogWindows openedDialogWindows = applicationContext.getBean(OpenedDialogWindows.class);
         return new OpenedViews(ui, openedDialogWindows);
     }
 
+    /**
+     * Returns the current active {@link View} within a specific UI context.
+     * This method searches for the current view using a prioritized approach:
+     * <ol>
+     *     <li>Dialog windows</li>
+     *     <li>Views of the currently opened tab of a {@link WorkArea}</li>
+     *     <li>The root view</li>
+     * </ol>
+     *
+     * @param ui the {@link JmixUI} instance representing the UI context in which
+     *           to find the current view.
+     * @return the current active {@link View}
+     * @throws IllegalStateException if the current {@link View} is not found
+     */
     public View<?> getCurrentView(JmixUI ui) {
         return findCurrentView(ui)
                 .orElseThrow(() -> new IllegalStateException("No %s found"
                         .formatted(View.class.getSimpleName())));
     }
 
+    /**
+     * Finds the current active view within a specific UI context.
+     * This method searches for the current view using a prioritized approach:
+     * <ol>
+     *     <li>Dialog windows</li>
+     *     <li>Views of the currently opened tab of a {@link WorkArea}</li>
+     *     <li>The root view</li>
+     * </ol>
+     *
+     * @param ui the {@link JmixUI} instance representing the UI context in which
+     *           to find the current view
+     * @return an {@link Optional} containing the current view if found;
+     * otherwise, an empty {@link Optional}
+     */
     public Optional<View<?>> findCurrentView(JmixUI ui) {
         OpenedViews openedViews = getOpenedViews(ui);
         Iterator<View<?>> dialogsIterator = openedViews.getDialogWindows().iterator();
@@ -737,6 +838,9 @@ public class Views {
         return jmixUI;
     }
 
+    /**
+     * A class that provides information about all opened views.
+     */
     public class OpenedViews {
 
         protected final JmixUI ui;
@@ -749,7 +853,7 @@ public class Views {
         }
 
         /**
-         * @return the root view of UI
+         * @return the root view of the UI
          * @throws IllegalStateException in case there is no root view in UI
          */
         public View<?> getRootView() {
@@ -757,7 +861,7 @@ public class Views {
         }
 
         /**
-         * @return the root view of UI of present
+         * @return the root view of the UI if present
          */
         public Optional<View<?>> findRootView() {
             return ui.getTopLevelViewOptional();
@@ -819,9 +923,9 @@ public class Views {
         }
 
         /**
-         * @return views of the currently opened tab of work area in descending order
-         * (first element is active view) or empty collection if the root view does
-         * not have {@link WorkArea}
+         * @return views of the currently opened tab of a {@link WorkArea}
+         * in descending order (first element is active view) or empty collection
+         * if the root view does not have {@link WorkArea}
          * @throws IllegalStateException in case there is no root view in UI
          */
         public Collection<View<?>> getCurrentBreadcrumbs() {
@@ -869,6 +973,7 @@ public class Views {
             Collection<ViewStack> workAreaViewStacks = getWorkAreaViewStacks();
             for (ViewStack viewStack : workAreaViewStacks) {
                 if (!viewStack.close()) {
+                    viewStack.select();
                     return;
                 }
             }
@@ -892,6 +997,9 @@ public class Views {
         }
     }
 
+    /**
+     * A class representing views of a tab.
+     */
     public static class ViewStack {
 
         protected final TabbedViewsContainer<?> tabbedContainer;
@@ -903,7 +1011,7 @@ public class Views {
         }
 
         /**
-         * @return views of the container in descending order, first element is active view
+         * @return views of the container in descending order, the first element is an active view
          */
         public Collection<View<?>> getBreadcrumbs() {
             checkAttached();
@@ -1071,6 +1179,7 @@ public class Views {
         }
     }
 
+    // TODO: gg, use where possible and move to util
     protected static ViewBreadcrumbs getViewBreadcrumbs(TabbedViewsContainer<?> tabbedContainer, Tab tab) {
         Component tabComponent = tabbedContainer.getComponent(tab);
         if (!(tabComponent instanceof ViewContainer viewContainer)

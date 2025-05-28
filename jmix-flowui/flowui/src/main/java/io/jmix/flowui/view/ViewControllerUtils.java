@@ -222,7 +222,7 @@ public final class ViewControllerUtils {
     }
 
     /**
-     * Retrieves a list of application event listeners associated with a given {@link View}.
+     * Returns a list of application event listeners associated with a given {@link View}.
      *
      * @param view the {@link View} for which to retrieve the application event listeners
      * @return a list of application event listeners associated with the specified {@link View}

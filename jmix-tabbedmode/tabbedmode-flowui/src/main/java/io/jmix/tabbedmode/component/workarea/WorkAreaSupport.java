@@ -26,6 +26,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * For compatibility only.
+ */
+@Deprecated(since = "2.6", forRemoval = true)
 @Component("tabmod_WorkAreaSupport")
 public class WorkAreaSupport {
 

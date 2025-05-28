@@ -74,12 +74,19 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     }
 
     /**
-     * @return a state
+     * @return the current state
      */
     public State getState() {
         return state;
     }
 
+    /**
+     * Switches the {@link WorkArea} to the specified state and updates its
+     * content layout accordingly.
+     *
+     * @param state the new state to switch to
+     * @throws IllegalStateException if an unsupported state is passed.
+     */
     public void switchTo(State state) {
         if (this.state == state) {
             return;
@@ -103,6 +110,13 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
         fireEvent(new StateChangeEvent(this, state));
     }
 
+    /**
+     * Returns a collection of all views currently opened in the work area's
+     * tabbed view container.
+     *
+     * @return a collection of {@link View} objects representing the views
+     * currently opened in the tabbed view container.
+     */
     public Collection<View<?>> getOpenedWorkAreaViews() {
         TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
 
@@ -116,6 +130,14 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
                 }).toList();
     }
 
+    /**
+     * Returns a collection of active views currently displayed in the work area's
+     * tabbed view container. An active view corresponds to the views associated
+     * with the current components within the tabs.
+     *
+     * @return a collection of {@link View} objects representing the active views
+     * in the tabbed view container
+     */
     public Collection<View<?>> getActiveWorkAreaViews() {
         TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
         return tabbedContainer.getTabComponentsStream()
@@ -123,6 +145,12 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns a collection of {@link View} stack representing the current breadcrumbs.
+     *
+     * @return a collection of {@link View} stack representing the current breadcrumbs,
+     * or an empty collection if no breadcrumbs are available.
+     */
     public Collection<View<?>> getCurrentBreadcrumbs() {
         ViewContainer viewContainer = getCurrentViewContainer();
         if (viewContainer == null) {
@@ -140,6 +168,14 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
         return views;
     }
 
+    /**
+     * Returns the {@link TabbedViewsContainer} instance associated with the work area.
+     * If the container is not initialized, an {@link IllegalStateException} is thrown.
+     *
+     * @return the {@link TabbedViewsContainer} instance representing the tabbed view
+     * container of the work area
+     * @throws IllegalStateException if the tabbed view container is not initialized
+     */
     public TabbedViewsContainer<?> getTabbedViewsContainer() {
         checkState(tabbedContainer != null, "%s is not initialized"
                 .formatted(TabbedViewsContainer.class.getSimpleName()));
@@ -147,6 +183,16 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
         return tabbedContainer;
     }
 
+    /**
+     * Sets the {@link TabbedViewsContainer} for this work area. The tabbed views container
+     * is responsible for managing tabbed views within the work area. This method ensures
+     * that the container is initialized only once and will throw an exception if a container
+     * has already been set.
+     *
+     * @param tabbedContainer the {@link TabbedViewsContainer} to associate with this work area
+     * @throws IllegalStateException if the tabbed views container has already been initialized
+     * @throws NullPointerException  if {@code tabbedContainer} is {@code null}
+     */
     public void setTabbedViewsContainer(TabbedViewsContainer<?> tabbedContainer) {
         checkState(this.tabbedContainer == null, "%s has already been initialized"
                 .formatted(TabbedViewsContainer.class.getSimpleName()));
@@ -259,11 +305,25 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
         });
     }
 
+    /**
+     * Returns the initial layout of this {@link WorkArea}. The initial layout
+     * is displayed when no tabs are opened in the {@link TabbedViewsContainer}.
+     *
+     * @return the initial layout instance
+     * @throws IllegalStateException if the initial layout is not initialized
+     */
     public VerticalLayout getInitialLayout() {
         checkState(initialLayout != null, "Initial layout is not initialized");
         return initialLayout;
     }
 
+    /**
+     * Sets the initial layout for this {@link WorkArea}. Initial layout is displayed
+     * when no tabs are opened in the {@link TabbedViewsContainer}.
+     *
+     * @param initialLayout the new initial layout to be set
+     * @throws IllegalArgumentException if {@code initialLayout} is null
+     */
     public void setInitialLayout(VerticalLayout initialLayout) {
         Preconditions.checkNotNullArgument(initialLayout);
 
@@ -279,6 +339,17 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
         }
     }
 
+    /**
+     * Returns the current {@link ViewContainer} instance associated with the selected tab
+     * in the {@link TabbedViewsContainer}. If no tab is selected, returns {@code null}.
+     * If the content of the selected tab is not a valid {@link ViewContainer}, an exception
+     * is thrown.
+     *
+     * @return the current {@link ViewContainer} associated with the selected tab,
+     * or {@code null} if no tab is selected
+     * @throws IllegalStateException if the content of the selected tab is not an
+     *                               instance of {@link ViewContainer}
+     */
     @Nullable
     public ViewContainer getCurrentViewContainer() {
         TabbedViewsContainer<?> tabbedContainer = getTabbedViewsContainer();
@@ -296,6 +367,11 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
         }
     }
 
+    /**
+     * Returns the count of opened tabs within the {@link TabbedViewsContainer}.
+     *
+     * @return the total number of opened tabs
+     */
     public int getOpenedTabCount() {
         return Math.toIntExact(getTabbedViewsContainer().getTabsStream().count());
     }
@@ -323,7 +399,7 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     }
 
     /**
-     * Event that is fired when work area changed its state.
+     * Event that is fired when {@link WorkArea} changed its state.
      */
     public static class StateChangeEvent extends ComponentEvent<WorkArea> {
 
@@ -334,23 +410,28 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
             this.state = state;
         }
 
+        /**
+         * Returns the current state of the {@link WorkArea}.
+         *
+         * @return the current {@link State} of the work area
+         */
         public State getState() {
             return state;
         }
     }
 
     /**
-     * App Work Area state.
+     * {@link WorkArea} state.
      */
     public enum State {
 
         /**
-         * If the work area is in the INITIAL_LAYOUT state, the work area does not contain other screens.
+         * {@link WorkArea} does not contain other views.
          */
         INITIAL_LAYOUT,
 
         /**
-         * If the work area is in the WINDOW_CONTAINER state, the work area contains at least one screen.
+         * {@link WorkArea} contains at least one view.
          */
         VIEW_CONTAINER
     }

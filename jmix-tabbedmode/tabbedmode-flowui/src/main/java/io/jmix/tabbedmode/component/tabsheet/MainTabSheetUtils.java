@@ -23,11 +23,21 @@ import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
 
 import java.util.Optional;
 
+/**
+ * Utility class working with {@link JmixMainTabSheet}'s specifics.
+ */
 public final class MainTabSheetUtils {
 
     private MainTabSheetUtils() {
     }
 
+    /**
+     * Converts the given {@link Component} to a {@link ViewContainer}.
+     *
+     * @param component the component to be cast to {@link ViewContainer}
+     * @return the component cast as {@link ViewContainer} if it is an instance
+     * @throws IllegalStateException if the provided component is not a {@link ViewContainer}
+     */
     public static ViewContainer asViewContainer(Component component) {
         if (component instanceof ViewContainer viewContainer) {
             return viewContainer;
@@ -37,6 +47,13 @@ public final class MainTabSheetUtils {
         }
     }
 
+    /**
+     * Attempts to find and return a {@link View} associated with the provided tab content.
+     *
+     * @param component the component from which the view is to be determined
+     * @return an {@link Optional} containing the found {@link View}, or an empty {@link Optional}
+     * if no view can be determined
+     */
     public static Optional<View<?>> findViewFromContent(Component component) {
         ViewContainer viewContainer = MainTabSheetUtils.asViewContainer(component);
         ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
@@ -52,6 +69,13 @@ public final class MainTabSheetUtils {
         }
     }
 
+    /**
+     * Returns the {@link View} associated with the provided tab content.
+     *
+     * @param component the component from which the associated {@link View} is to be retrieved
+     * @return the {@link View} associated with the provided tab content
+     * @throws IllegalStateException if no {@link View} is found within the provided component
+     */
     public static View<?> getViewFromContent(Component component) {
         return findViewFromContent(component)
                 .orElseThrow(() ->

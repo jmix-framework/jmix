@@ -22,11 +22,13 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.*;
 import io.jmix.tabbedmode.TabbedModeProperties;
 import io.jmix.tabbedmode.Views;
-import io.jmix.tabbedmode.view.TabbedModeViewProperties;
 import io.jmix.tabbedmode.view.TabbedModeViewUtils;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 import org.springframework.stereotype.Component;
 
+/**
+ * Helper class for the main view.
+ */
 @Component("tabmod_MainViewSupport")
 public class MainViewSupport {
 
@@ -48,6 +50,19 @@ public class MainViewSupport {
         this.tabbedModeProperties = tabbedModeProperties;
     }
 
+    /**
+     * Opens the default view configured in the application.
+     * <p>
+     * This method retrieves the default view identifier from the
+     * {@link UiProperties#getDefaultViewId()} method. If the identifier is not defined
+     * or invalid, the method exits without performing further actions.
+     * <p>
+     * If a valid view identifier is present and the corresponding view is registered,
+     * the method creates and configures the view. For {@link DetailView}, it also sets
+     * the entity to be edited.
+     * <p>
+     * Finally, the view is opened in a new tab.
+     */
     public void openDefaultView() {
         String defaultViewId = uiProperties.getDefaultViewId();
         if (Strings.isNullOrEmpty(defaultViewId)) {

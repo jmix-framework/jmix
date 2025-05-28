@@ -105,10 +105,7 @@ class JmixBreadcrumb extends ActiveMixin(TabindexMixin(FocusMixin(ThemableMixin(
                 color: var(--lumo-disabled-text-color);
             }
 
-            /* RTL specific styles */
-
-
-            /*  */
+            /* forced-colors */
 
             @media (forced-colors: active) {
                 :host {

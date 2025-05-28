@@ -269,7 +269,7 @@ public final class FragmentUtils {
     }
 
     /**
-     * Retrieves the list of application event listeners associated with the specified {@link Fragment}.
+     * Returns the list of application event listeners associated with the specified {@link Fragment}.
      *
      * @param fragment the {@link Fragment} for which to retrieve the application event listeners
      * @return a list of application event listeners associated with the specified {@link Fragment}

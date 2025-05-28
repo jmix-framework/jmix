@@ -26,6 +26,15 @@ import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import org.springframework.lang.Nullable;
 
 
+/**
+ * Represents a UI component that acts as a container for {@link View} instances and their associated
+ * {@link ViewBreadcrumbs}. The {@link TabViewContainer} provides mechanisms to manage and dynamically update
+ * views and breadcrumbs.
+ * <p>
+ * The container ensures that only one {@link View} can be set at a time. Adding a new view automatically
+ * removes the existing one. Similarly, breadcrumbs when set are associated with the container and displayed
+ * correctly using a defined slot.
+ */
 @Tag("jmix-view-container")
 @JsModule("./src/viewcontainer/jmix-view-container.js")
 public class TabViewContainer extends Component implements ViewContainer, HasSize, HasStyle {
@@ -92,7 +101,7 @@ public class TabViewContainer extends Component implements ViewContainer, HasSiz
         setView(null);
     }
 
-    private void add(Component component) {
+    protected void add(Component component) {
         getElement().appendChild(component.getElement());
     }
 

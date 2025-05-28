@@ -16,6 +16,15 @@
 
 package io.jmix.tabbedmode.view;
 
+import io.jmix.flowui.view.View;
+import io.jmix.tabbedmode.Views;
+import io.jmix.tabbedmode.action.tabsheet.CloseAllTabsAction;
+import io.jmix.tabbedmode.action.tabsheet.CloseOtherTabsAction;
+import io.jmix.tabbedmode.action.tabsheet.CloseThisTabAction;
+
+/**
+ * Represents available properties of {@link View Views}.
+ */
 public class TabbedModeViewProperties {
 
     protected boolean closeable;
@@ -25,26 +34,70 @@ public class TabbedModeViewProperties {
     public TabbedModeViewProperties() {
     }
 
+    /**
+     * Returns whether a view can be closed by standard operations like a tab close button,
+     * close tab actions, {@link Views.OpenedViews} and {@link Views.ViewStack} methods.
+     *
+     * @return {@code true} if the view is closeable, {@code false} otherwise
+     * @see CloseThisTabAction
+     * @see CloseOtherTabsAction
+     * @see CloseAllTabsAction
+     * @see Views.OpenedViews#closeAll()
+     * @see Views.ViewStack#close()
+     */
     public boolean isCloseable() {
         return closeable;
     }
 
+    /**
+     * Sets whether a view can be closed by standard operations like a tab close button,
+     * close tab actions, {@link Views.OpenedViews} and {@link Views.ViewStack} methods.
+     *
+     * @param closeable {@code true} if the view is closeable, {@code false} otherwise
+     * @see CloseThisTabAction
+     * @see CloseOtherTabsAction
+     * @see CloseAllTabsAction
+     * @see Views.OpenedViews#closeAll()
+     * @see Views.ViewStack#close()
+     */
     public void setCloseable(boolean closeable) {
         this.closeable = closeable;
     }
 
+    /**
+     * Returns whether a view is a default, which means that it's opened after successful log in.
+     *
+     * @return {@code true} if the view is a default, {@code false} otherwise
+     */
     public boolean isDefaultView() {
         return defaultView;
     }
 
+    /**
+     * Sets whether a view is a default, which means that it's opened after successful log in.
+     *
+     * @param defaultView {@code true} if the view is a default, {@code false} otherwise
+     */
     public void setDefaultView(boolean defaultView) {
         this.defaultView = defaultView;
     }
 
+    /**
+     * Returns whether a view must be opened in a dialog window.
+     *
+     * @return {@code true} if the view must be opened in a dialog
+     * window, {@code false} otherwise
+     */
     public boolean isForceDialog() {
         return forceDialog;
     }
 
+    /**
+     * Sets whether a view must be opened in a dialog window.
+     *
+     * @param forceDialog {@code true} if the view must be opened
+     *                    in a dialog window, {@code false} otherwise
+     */
     public void setForceDialog(boolean forceDialog) {
         this.forceDialog = forceDialog;
     }

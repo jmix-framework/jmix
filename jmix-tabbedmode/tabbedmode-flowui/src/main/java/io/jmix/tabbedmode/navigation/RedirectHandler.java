@@ -29,6 +29,9 @@ import io.jmix.tabbedmode.view.ViewOpenMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A helper class for redirecting to a view represented by a {@link Location}.
+ */
 public class RedirectHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RedirectHandler.class);
@@ -36,32 +39,45 @@ public class RedirectHandler {
     protected final JmixUI ui;
     protected final Views views;
 
-    protected Location redirect;
+    protected Location redirectLocation;
 
     public RedirectHandler(JmixUI ui, Views views) {
         this.ui = ui;
         this.views = views;
     }
 
-    public void schedule(Location redirect) {
-        Preconditions.checkNotNullArgument(redirect);
+    /**
+     * Schedules a redirect to the given location.
+     *
+     * @param redirectLocation a location to redirect to
+     */
+    public void schedule(Location redirectLocation) {
+        Preconditions.checkNotNullArgument(redirectLocation);
 
-        this.redirect = redirect;
+        this.redirectLocation = redirectLocation;
     }
 
+    /**
+     * Whether the redirect is scheduled.
+     *
+     * @return {@code true} if the redirect is scheduled, {@code false} otherwise.
+     */
     public boolean scheduled() {
-        return redirect != null;
+        return redirectLocation != null;
     }
 
+    /**
+     * Performs redirect to the previously scheduled location.
+     */
     public void redirect() {
-        if (redirect == null) {
+        if (redirectLocation == null) {
             log.debug("Unable to redirect. Redirect location not set");
             return;
         }
 
-        openView(redirect);
+        openView(redirectLocation);
 
-        redirect = null;
+        redirectLocation = null;
     }
 
     protected void openView(Location location) {

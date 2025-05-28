@@ -33,6 +33,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * A wrapper component for {@link JmixBreadcrumbs} that manages a stack of views.
+ */
 public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements ApplicationContextAware {
 
     protected UiComponents uiComponents;
@@ -58,16 +61,33 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
         return content;
     }
 
+    /**
+     * Sets a handler to be invoked when an individual breadcrumb is clicked.
+     *
+     * @param handler a handler to set
+     */
     public void setNavigationHandler(@Nullable Consumer<BreadcrumbsNavigationContext> handler) {
         this.navigationHandler = handler;
     }
 
+    /**
+     * Returns all views represented by this breadcrumbs component.
+     *
+     * @return a collection containing all {@link View} instances
+     */
     public Deque<View<?>> getViews() {
         return mappings.stream()
                 .map(BreadcrumbMappings::getView)
                 .collect(Collectors.toCollection(ArrayDeque::new));
     }
 
+    /**
+     * returns the information about the current view and its associated location.
+     * If no views are present in the stack, returns {@code null}.
+     *
+     * @return an instance of {@link ViewInfo} containing the current view and its location,
+     * or {@code null} if no views are available.
+     */
     @Nullable
     public ViewInfo getCurrentViewInfo() {
         if (mappings.isEmpty()) {
@@ -78,6 +98,13 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
         }
     }
 
+    /**
+     * Adds the given {@link View} to the view stack, registers {@link Location}
+     * mapping and updates visibility state.
+     *
+     * @param view     a view to add
+     * @param location associated location
+     */
     public void addView(View<?> view, Location location) {
         JmixBreadcrumb breadcrumb = createBreadcrumb(view);
 
@@ -98,6 +125,9 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
         return breadcrumb;
     }
 
+    /**
+     * Removes the last {@link View} from the view stack and updates visibility state.
+     */
     public void removeView() {
         if (!mappings.isEmpty()) {
             BreadcrumbMappings removed = mappings.removeLast();
@@ -107,6 +137,12 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
         updateVisibility();
     }
 
+    /**
+     * Updates {@link Location} mapping of the given {@link View}.
+     *
+     * @param view     view to update the location mapping for
+     * @param location a new location
+     */
     public void updateViewLocation(View<?> view, Location location) {
         BreadcrumbMappings breadcrumbMappings = findMappings(view)
                 .orElseThrow(() ->
@@ -158,9 +194,19 @@ public class ViewBreadcrumbs extends Composite<JmixBreadcrumbs> implements Appli
         setVisibleInternal(mappings.size() > 1);
     }
 
+    /**
+     * @param breadcrumbs
+     * @param view
+     */
     public record BreadcrumbsNavigationContext(ViewBreadcrumbs breadcrumbs, View<?> view) {
     }
 
+    /**
+     * Represents the information about a {@link View} and its associated {@link Location}.
+     *
+     * @param view     the {@link View} instance
+     * @param location the {@link Location} associated with the {@link View} instance
+     */
     public record ViewInfo(View<?> view, Location location) {
     }
 

@@ -30,6 +30,12 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * Interface representing a container for tabbed views, allowing
+ * management of tabs and their associated content.
+ *
+ * @param <C> the component type that extends both {@link Component} and {@link TabbedViewsContainer}
+ */
 public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer<C>> extends HasElement {
 
     /**
@@ -129,6 +135,11 @@ public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer
      */
     int getTabCount();
 
+    /**
+     * Returns a stream of all the tabs in this container.
+     *
+     * @return a stream of {@link Tab} instances in the container
+     */
     Stream<Tab> getTabsStream();
 
     /**
@@ -270,7 +281,7 @@ public interface TabbedViewsContainer<C extends Component & TabbedViewsContainer
         }
 
         /**
-         * Returns selected tab for this event. Can be {@code null} when autoselect
+         * Returns the selected tab for this event. Can be {@code null} when autoselect
          * is set to false.
          *
          * @return the selected tab for this event

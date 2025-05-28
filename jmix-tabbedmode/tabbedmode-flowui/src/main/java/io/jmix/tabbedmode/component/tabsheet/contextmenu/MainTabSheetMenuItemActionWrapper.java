@@ -27,9 +27,13 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasAction;
+import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
 import io.jmix.tabbedmode.component.tabsheet.contextmenu.MainTabSheetContextMenu.MainTabSheetContextMenuItemClickEvent;
 import org.springframework.lang.Nullable;
 
+/**
+ * A wrapper class for handling {@link JmixMainTabSheet}'s menu item actions and related UI content.
+ */
 public class MainTabSheetMenuItemActionWrapper extends Composite<Div>
         implements HasText, HasComponents, HasPrefix, HasSuffix, HasTooltip, HasAction {
 
@@ -58,11 +62,21 @@ public class MainTabSheetMenuItemActionWrapper extends Composite<Div>
         return div;
     }
 
+    /**
+     * Returns the menu item.
+     *
+     * @return the associated menu item or {@code null} if the item is not set
+     */
     @Nullable
     public MainTabSheetMenuItem getMenuItem() {
         return menuItem;
     }
 
+    /**
+     * Sets the menu item.
+     *
+     * @param menuItem menu item to set, or {@code null} to remove
+     */
     public void setMenuItem(@Nullable MainTabSheetMenuItem menuItem) {
         this.menuItem = menuItem;
     }
@@ -78,6 +92,13 @@ public class MainTabSheetMenuItemActionWrapper extends Composite<Div>
         getActionSupport().setAction(action, overrideComponentProperties);
     }
 
+    /**
+     * Adds a click listener to the associated menu item. The listener is triggered
+     * when the menu item is clicked.
+     *
+     * @param clickListener the listener to handle a menu item click events
+     * @return a {@link Registration} object that can be used to remove the listener
+     */
     public Registration addMenuItemClickListener(
             ComponentEventListener<MainTabSheetContextMenuItemClickEvent> clickListener) {
         return menuItem.addMenuItemClickListener(clickListener);
@@ -235,11 +256,16 @@ public class MainTabSheetMenuItemActionWrapper extends Composite<Div>
         getContent().addComponentAsFirst(component);
     }
 
+    /**
+     * Checks if the content is empty.
+     *
+     * @return {@code true} if the content has no children, otherwise {@code false}
+     */
     public boolean isEmpty() {
         return getContent().getChildren().findAny().isEmpty();
     }
 
-    public MainTabSheetMenuItemActionSupport getActionSupport() {
+    protected MainTabSheetMenuItemActionSupport getActionSupport() {
         if (actionSupport == null) {
             actionSupport = createActionSupport();
         }

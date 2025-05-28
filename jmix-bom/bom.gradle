@@ -400,11 +400,9 @@ dependencies {
         api "org.flowable:flowable-spring-boot-starter-process-rest:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn-rest:$flowableVersion"
 
-        //todo SB3 upgrade graphql dependencies to the latest version
+        // deprecated
         api 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
         api 'com.graphql-java-kickstart:graphql-java-servlet:11.1.0'
-
-        //todo remove strict version after jmix-graphql is reworked
         api('com.graphql-java:graphql-java') {
             version {
                 strictly '16.2'

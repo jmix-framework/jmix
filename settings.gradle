@@ -76,10 +76,6 @@ includeProject('fullcalendar-flowui', 'jmix-fullcalendar/fullcalendar-flowui')
 includeProject('fullcalendar-flowui-kit', 'jmix-fullcalendar/fullcalendar-flowui-kit')
 includeProject('fullcalendar-flowui-starter', 'jmix-fullcalendar/fullcalendar-flowui-starter')
 
-//todo SB3 restore graphql modules
-//includeProject('graphql', 'jmix/jmix-graphql/graphql')
-//includeProject('graphql-starter', 'jmix/jmix-graphql/graphql-starter')
-
 includeProject('gridexport-flowui', 'jmix-gridexport/gridexport-flowui')
 includeProject('gridexport-flowui-starter', 'jmix-gridexport/gridexport-flowui-starter')
 

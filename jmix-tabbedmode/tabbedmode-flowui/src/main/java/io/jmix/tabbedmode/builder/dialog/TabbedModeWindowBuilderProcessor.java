@@ -28,11 +28,7 @@ import io.jmix.tabbedmode.builder.ViewBuilder;
 import io.jmix.tabbedmode.builder.ViewBuilderAdapter;
 import io.jmix.tabbedmode.builder.ViewBuilderProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
-@Primary
-@Component("tabmod_TabbedWindowBuilderProcessor")
 public class TabbedModeWindowBuilderProcessor extends WindowBuilderProcessor {
 
     protected final ViewBuilderProcessor viewBuilderProcessor;

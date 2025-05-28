@@ -24,11 +24,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.securityflowui.authentication.LoginViewSupport;
 import io.jmix.tabbedmode.JmixUI;
 import io.jmix.tabbedmode.navigation.RedirectHandler;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
-@Primary
-@Component("tabmod_TabbedModeLoginViewSupport")
 public class TabbedModeLoginViewSupport extends LoginViewSupport {
 
     @Override

@@ -32,13 +32,9 @@ import io.jmix.tabbedmode.builder.DetailViewBuilder;
 import io.jmix.tabbedmode.builder.DetailViewBuilderAdapter;
 import io.jmix.tabbedmode.builder.DetailViewBuilderProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Primary
-@Component("tabmod_TabbedDetailWindowBuilderProcessor")
 public class TabbedModeDetailWindowBuilderProcessor extends DetailWindowBuilderProcessor {
 
     protected final DetailViewBuilderProcessor detailViewBuilderProcessor;

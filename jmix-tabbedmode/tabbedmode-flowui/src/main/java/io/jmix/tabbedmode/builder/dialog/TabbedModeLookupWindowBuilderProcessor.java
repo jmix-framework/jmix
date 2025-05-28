@@ -30,11 +30,7 @@ import io.jmix.tabbedmode.builder.LookupViewBuilder;
 import io.jmix.tabbedmode.builder.LookupViewBuilderAdapter;
 import io.jmix.tabbedmode.builder.LookupViewBuilderProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
-@Primary
-@Component("tabmod_TabbedLookupWindowBuilderProcessor")
 public class TabbedModeLookupWindowBuilderProcessor extends LookupWindowBuilderProcessor {
 
     protected final LookupViewBuilderProcessor lookupViewBuilderProcessor;

@@ -24,11 +24,7 @@ import io.jmix.flowui.view.navigation.DetailViewNavigationProcessor;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import io.jmix.flowui.view.navigation.ListViewNavigationProcessor;
 import io.jmix.flowui.view.navigation.ViewNavigationProcessor;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
-@Primary
-@Component("tabmod_TabbedViewNavigators")
 public class TabbedModeViewNavigators extends ViewNavigators {
 
     public TabbedModeViewNavigators(DetailViewNavigationProcessor detailViewNavigationProcessor,

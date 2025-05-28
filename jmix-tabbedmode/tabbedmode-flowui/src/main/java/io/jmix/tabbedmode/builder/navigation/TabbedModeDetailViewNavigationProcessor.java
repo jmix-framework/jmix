@@ -27,11 +27,7 @@ import io.jmix.tabbedmode.builder.DetailViewBuilder;
 import io.jmix.tabbedmode.builder.DetailViewBuilderAdapter;
 import io.jmix.tabbedmode.builder.DetailViewBuilderProcessor;
 import io.jmix.tabbedmode.builder.ViewOpeningContext;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
-@Primary
-@Component("tabmod_TabbedDetailViewNavigationProcessor")
 public class TabbedModeDetailViewNavigationProcessor extends DetailViewNavigationProcessor {
 
     protected final Views views;

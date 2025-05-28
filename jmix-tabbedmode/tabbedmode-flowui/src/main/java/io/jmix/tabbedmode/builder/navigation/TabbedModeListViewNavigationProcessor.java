@@ -26,11 +26,7 @@ import io.jmix.tabbedmode.builder.ViewBuilder;
 import io.jmix.tabbedmode.builder.ViewBuilderAdapter;
 import io.jmix.tabbedmode.builder.ViewBuilderProcessor;
 import io.jmix.tabbedmode.builder.ViewOpeningContext;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
-@Primary
-@Component("tabmod_TabbedListViewNavigationProcessor")
 public class TabbedModeListViewNavigationProcessor extends ListViewNavigationProcessor {
 
     protected final Views views;

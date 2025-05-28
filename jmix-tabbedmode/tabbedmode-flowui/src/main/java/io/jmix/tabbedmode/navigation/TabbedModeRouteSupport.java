@@ -30,11 +30,7 @@ import io.jmix.tabbedmode.view.TabbedModeUtils;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
-@Primary
-@Component("tabmod_TabbedModeRouteSupport")
 public class TabbedModeRouteSupport extends RouteSupport {
 
     private static final Logger log = LoggerFactory.getLogger(TabbedModeRouteSupport.class);

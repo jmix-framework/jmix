@@ -39,7 +39,6 @@ dependencies {
 
     api 'org.apache.httpcomponents:httpclient'
 
-    api 'commons-logging:commons-logging'
     api 'org.apache.commons:commons-lang3'
     api 'commons-io:commons-io'
     api('org.dom4j:dom4j') {

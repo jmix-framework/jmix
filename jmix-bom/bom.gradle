@@ -330,8 +330,6 @@ dependencies {
 
         api 'org.apache.httpcomponents:httpclient:4.5.14'
 
-        api 'commons-logging:commons-logging:1.2'
-
         def openOfficeVersion = '4.1.2'
         api "org.openoffice:juh:$openOfficeVersion"
         api "org.openoffice:ridl:$openOfficeVersion"

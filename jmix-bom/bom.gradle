@@ -337,10 +337,6 @@ dependencies {
         api "org.openoffice:ridl:$openOfficeVersion"
         api "org.openoffice:unoil:$openOfficeVersion"
 
-        def avalonVersion = '4.3.1'
-        api "org.apache.avalon.framework:avalon-framework-api:$avalonVersion"
-        api "org.apache.avalon.framework:avalon-framework-impl:$avalonVersion"
-
         def xmlgraphicsVersion = '2.10'
         api "org.apache.xmlgraphics:fop:$xmlgraphicsVersion"
         api "org.apache.xmlgraphics:xmlgraphics-commons:$xmlgraphicsVersion"
@@ -383,7 +379,6 @@ dependencies {
 
         api 'org.jsoup:jsoup:1.16.1'
         api 'com.opencsv:opencsv:5.7.1'
-        api 'org.olap4j:olap4j:1.2.0'
 
         def jasperVersion = '6.20.6'
         api "net.sf.jasperreports:jasperreports:$jasperVersion"

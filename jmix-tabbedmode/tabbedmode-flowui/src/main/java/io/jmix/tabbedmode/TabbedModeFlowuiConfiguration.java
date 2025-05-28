@@ -28,7 +28,7 @@ import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.registration.ComponentRegistration;
 import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
 import io.jmix.tabbedmode.component.router.JmixRouterLink;
-import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
+import io.jmix.tabbedmode.component.tabsheet.MainTabSheet;
 import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.sys.vaadin.TabbedModeVaadinServlet;
 import io.jmix.tabbedmode.xml.layout.loader.MainTabSheetLoader;
@@ -68,7 +68,7 @@ public class TabbedModeFlowuiConfiguration {
 
     @Bean
     public ComponentRegistration mainTabSheetComponent() {
-        return ComponentRegistrationBuilder.create(JmixMainTabSheet.class)
+        return ComponentRegistrationBuilder.create(MainTabSheet.class)
                 .withComponentLoader(MainTabSheetLoader.TAG, MainTabSheetLoader.class)
                 .build();
     }

@@ -24,7 +24,7 @@ import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
 import java.util.Optional;
 
 /**
- * Utility class working with {@link JmixMainTabSheet}'s specifics.
+ * Utility class working with {@link MainTabSheet}'s specifics.
  */
 public final class MainTabSheetUtils {
 

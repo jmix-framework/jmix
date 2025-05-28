@@ -44,7 +44,7 @@ import io.jmix.tabbedmode.app.main.HasWorkArea;
 import io.jmix.tabbedmode.builder.ViewOpeningContext;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs.BreadcrumbsNavigationContext;
-import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
+import io.jmix.tabbedmode.component.tabsheet.ViewTab;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.viewcontainer.TabViewContainer;
 import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
@@ -420,7 +420,7 @@ public class Views {
         if (getRouteConfiguration().isRouteRegistered(navigationTarget)) {
             return getRouteConfiguration().getUrl(navigationTarget, routeParameters);
         } else if (routeParameters.getParameterNames().isEmpty() && isRootView(view)) {
-            // Happens if root view is hot-deployed
+            // Happens if a root view is hot-deployed
             return resolveLocationBaseString(view);
         } else {
             throw new NotFoundException(String.format(
@@ -518,7 +518,7 @@ public class Views {
         });
 
         updateTabTitle(selectedTab, ViewControllerUtils.getPageTitle(view));
-        if (selectedTab instanceof JmixViewTab viewTab) {
+        if (selectedTab instanceof ViewTab viewTab) {
             viewTab.setClosable(TabbedModeUtils.isCloseable(view));
         }
     }
@@ -547,7 +547,7 @@ public class Views {
         Tab tab = tabbedContainer.getTab(((Component) viewContainer));
 
         updateTabTitle(tab, ViewControllerUtils.getPageTitle(viewToDisplay));
-        if (tab instanceof JmixViewTab viewTab) {
+        if (tab instanceof ViewTab viewTab) {
             viewTab.setClosable(TabbedModeUtils.isCloseable(viewToDisplay));
         }
 
@@ -607,7 +607,7 @@ public class Views {
 
         String tabId = "tab_" + UuidProvider.createUuid();
 
-        JmixViewTab newTab = uiComponents.create(JmixViewTab.class);
+        ViewTab newTab = uiComponents.create(ViewTab.class);
         newTab.setId(tabId);
         newTab.setText(ViewControllerUtils.getPageTitle(view));
         newTab.setClosable(TabbedModeUtils.isCloseable(view));
@@ -623,7 +623,7 @@ public class Views {
     }
 
     protected void updateTabTitle(Tab tab, String title) {
-        if (tab instanceof JmixViewTab viewTab) {
+        if (tab instanceof ViewTab viewTab) {
             viewTab.setText(title);
         } else {
             tab.setLabel(title);
@@ -634,8 +634,8 @@ public class Views {
         new BreadcrumbsNavigationTask(context).run();
     }
 
-    protected void handleViewTabClose(JmixViewTab.CloseContext<JmixViewTab> context) {
-        JmixViewTab tab = context.source();
+    protected void handleViewTabClose(ViewTab.CloseContext<ViewTab> context) {
+        ViewTab tab = context.source();
         UI ui = tab.getUI().orElse(null);
         if (!(ui instanceof JmixUI jmixUI)) {
             throw new IllegalStateException("%s is not attached to UI or UI is not a %s"
@@ -697,7 +697,7 @@ public class Views {
      *
      * @param ui the {@link JmixUI} instance for which the work area is being searched
      * @return the {@link WorkArea} instance for the given {@link JmixUI} instance
-     * @throws IllegalStateException if root view does not have any configured work area
+     * @throws IllegalStateException if a root view does not have any configured work area
      */
     public WorkArea getConfiguredWorkArea(JmixUI ui) {
         return findConfiguredWorkArea(ui)
@@ -1174,7 +1174,6 @@ public class Views {
         }
     }
 
-    // TODO: gg, use where possible and move to util
     protected static ViewBreadcrumbs getViewBreadcrumbs(TabbedViewsContainer<?> tabbedContainer, Tab tab) {
         Component tabComponent = tabbedContainer.getComponent(tab);
         if (!(tabComponent instanceof ViewContainer viewContainer)

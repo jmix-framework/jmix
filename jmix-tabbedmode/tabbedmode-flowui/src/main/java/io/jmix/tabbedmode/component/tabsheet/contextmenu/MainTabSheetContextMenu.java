@@ -27,7 +27,7 @@ import com.vaadin.flow.function.SerializableRunnable;
 import elemental.json.JsonObject;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
-import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
+import io.jmix.tabbedmode.component.tabsheet.MainTabSheet;
 import org.springframework.lang.Nullable;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -41,7 +41,7 @@ public class MainTabSheetContextMenu extends
     public MainTabSheetContextMenu() {
     }
 
-    public MainTabSheetContextMenu(JmixMainTabSheet target) {
+    public MainTabSheetContextMenu(MainTabSheet target) {
         setTarget(target);
     }
 
@@ -103,17 +103,17 @@ public class MainTabSheetContextMenu extends
 
     @Override
     public void setTarget(Component target) {
-        checkArgument(target instanceof JmixMainTabSheet,
+        checkArgument(target instanceof MainTabSheet,
                 "Only an instance of %s can be used as the target for %s."
-                        .formatted(JmixMainTabSheet.class.getSimpleName(),
+                        .formatted(MainTabSheet.class.getSimpleName(),
                                 MainTabSheetContextMenu.class.getSimpleName()));
 
         super.setTarget(target);
     }
 
     @Override
-    public JmixMainTabSheet getTarget() {
-        return (JmixMainTabSheet) super.getTarget();
+    public MainTabSheet getTarget() {
+        return (MainTabSheet) super.getTarget();
     }
 
     /**
@@ -179,7 +179,7 @@ public class MainTabSheetContextMenu extends
 
     public static class MainTabSheetContextMenuItemClickEvent extends ComponentEvent<MainTabSheetMenuItem> {
 
-        protected JmixMainTabSheet tabSheet;
+        protected MainTabSheet tabSheet;
         protected Tab tab;
 
         /**
@@ -199,7 +199,7 @@ public class MainTabSheetContextMenu extends
             tab = tabSheet.getTab(tabId);
         }
 
-        public JmixMainTabSheet getTabSheet() {
+        public MainTabSheet getTabSheet() {
             return tabSheet;
         }
 

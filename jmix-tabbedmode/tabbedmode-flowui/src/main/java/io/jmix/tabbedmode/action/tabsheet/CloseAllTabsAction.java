@@ -23,7 +23,7 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.tabbedmode.TabbedModeProperties;
 import io.jmix.tabbedmode.Views;
-import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
+import io.jmix.tabbedmode.component.tabsheet.ViewTab;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -84,7 +84,7 @@ public class CloseAllTabsAction extends AbstractCloseTabsAction<CloseAllTabsActi
 
         return target.getTabsStream()
                 .anyMatch(tab ->
-                        tab instanceof JmixViewTab viewTab
+                        tab instanceof ViewTab viewTab
                                 && viewTab.isClosable()
                 );
     }

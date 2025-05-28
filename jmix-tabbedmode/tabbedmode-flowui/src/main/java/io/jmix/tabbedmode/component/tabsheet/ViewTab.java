@@ -36,14 +36,13 @@ import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 /**
- * A tab component designed for use in a {@link JmixMainTabSheet}. Provides additional functionality,
+ * A tab component designed for use in a {@link MainTabSheet}. Provides additional functionality,
  * such as support for tab closing and dragging.
  */
 @Tag("jmix-view-tab")
 @JsModule("./src/tabsheet/jmix-view-tab.js")
 @CssImport("./src/tabsheet/jmix-view-tab.css")
-// TODO: gg, rename
-public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
+public class ViewTab extends Tab implements DragSource<ViewTab> {
 
     protected static final String BASE_CLASS_NAME = "jmix-view-tab";
 
@@ -52,17 +51,17 @@ public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
     protected Component closeButton;
     protected boolean closable = false;
 
-    protected Consumer<CloseContext<JmixViewTab>> closeDelegate;
+    protected Consumer<CloseContext<ViewTab>> closeDelegate;
 
-    public JmixViewTab() {
+    public ViewTab() {
         initComponent();
     }
 
-    public JmixViewTab(String text) {
+    public ViewTab(String text) {
         setText(text);
     }
 
-    public JmixViewTab(Component... components) {
+    public ViewTab(Component... components) {
         super(components);
     }
 
@@ -161,16 +160,16 @@ public class JmixViewTab extends Tab implements DragSource<JmixViewTab> {
      *
      * @param delegate a close delegate to set, or {@code null} to remove
      */
-    public void setCloseDelegate(@Nullable Consumer<CloseContext<JmixViewTab>> delegate) {
+    public void setCloseDelegate(@Nullable Consumer<CloseContext<ViewTab>> delegate) {
         closeDelegate = delegate;
     }
 
     /**
-     * Represents the context passed to a close delegate when a {@link JmixViewTab} is closed.
+     * Represents the context passed to a close delegate when a {@link ViewTab} is closed.
      *
-     * @param <C> the type of the source, which must extend {@link JmixViewTab}
+     * @param <C> the type of the source, which must extend {@link ViewTab}
      */
-    public record CloseContext<C extends JmixViewTab>(C source) {
+    public record CloseContext<C extends ViewTab>(C source) {
     }
 
     @Override

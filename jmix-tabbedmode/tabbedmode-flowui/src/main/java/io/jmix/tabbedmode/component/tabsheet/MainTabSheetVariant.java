@@ -19,10 +19,9 @@ package io.jmix.tabbedmode.component.tabsheet;
 import com.vaadin.flow.component.shared.ThemeVariant;
 
 /**
- * Set of theme variants applicable for the {@link JmixMainTabSheet} component.
+ * Set of theme variants applicable for the {@link MainTabSheet} component.
  */
-// TODO: gg, rename
-public enum JmixMainTabSheetVariant implements ThemeVariant {
+public enum MainTabSheetVariant implements ThemeVariant {
 
     TABS_CENTERED("centered"),
     TABS_SMALL("small"),
@@ -32,7 +31,7 @@ public enum JmixMainTabSheetVariant implements ThemeVariant {
 
     private final String variant;
 
-    JmixMainTabSheetVariant(String variant) {
+    MainTabSheetVariant(String variant) {
         this.variant = variant;
     }
 

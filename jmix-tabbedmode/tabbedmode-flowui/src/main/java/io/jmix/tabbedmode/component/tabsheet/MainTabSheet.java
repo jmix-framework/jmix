@@ -49,10 +49,9 @@ import static io.jmix.flowui.component.UiComponentUtils.sameId;
 @Tag("jmix-main-tabsheet")
 @JsModule("./src/tabsheet/jmix-main-tabsheet.js")
 @JsModule("./src/tabsheet/mainTabSheetConnector.ts")
-// TODO: gg, rename
-public class JmixMainTabSheet extends Component implements TabbedViewsContainer<JmixMainTabSheet>,
+public class MainTabSheet extends Component implements TabbedViewsContainer<MainTabSheet>,
         HasActions, ComponentContainer, HasSubParts,
-        HasStyle, HasSize, HasThemeVariant<JmixMainTabSheetVariant>, HasPrefix, HasSuffix {
+        HasStyle, HasSize, HasThemeVariant<MainTabSheetVariant>, HasPrefix, HasSuffix {
 
     protected static final String GENERATED_TAB_ID_PREFIX = "tabsheet-tab-";
 
@@ -61,7 +60,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     protected Tabs tabs;
     protected Map<Tab, Component> tabToContent = new HashMap<>();
 
-    public JmixMainTabSheet() {
+    public MainTabSheet() {
         initComponent();
     }
 
@@ -244,7 +243,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
 
     @Override
     public Registration addSelectedChangeListener(
-            ComponentEventListener<SelectedChangeEvent<JmixMainTabSheet>> listener) {
+            ComponentEventListener<SelectedChangeEvent<MainTabSheet>> listener) {
         return tabs.addSelectedChangeListener(event ->
                 listener.onComponentEvent(new SelectedChangeEvent<>(this,
                         event.getPreviousTab(), event.isFromClient(),
@@ -254,7 +253,7 @@ public class JmixMainTabSheet extends Component implements TabbedViewsContainer<
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Registration addTabsCollectionChangeListener(
-            ComponentEventListener<TabsCollectionChangeEvent<JmixMainTabSheet>> listener) {
+            ComponentEventListener<TabsCollectionChangeEvent<MainTabSheet>> listener) {
         return addListener(TabsCollectionChangeEvent.class, ((ComponentEventListener) listener));
     }
 

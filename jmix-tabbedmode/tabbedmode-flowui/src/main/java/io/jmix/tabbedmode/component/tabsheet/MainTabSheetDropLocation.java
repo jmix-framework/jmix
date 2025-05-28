@@ -19,7 +19,7 @@ package io.jmix.tabbedmode.component.tabsheet;
 import org.springframework.lang.Nullable;
 
 /**
- * Defines drop locations within {@link JmixMainTabSheet}.
+ * Defines drop locations within {@link MainTabSheet}.
  */
 public enum MainTabSheetDropLocation {
 

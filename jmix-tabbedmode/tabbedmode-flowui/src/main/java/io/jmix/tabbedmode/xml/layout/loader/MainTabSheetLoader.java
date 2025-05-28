@@ -19,9 +19,9 @@ package io.jmix.tabbedmode.xml.layout.loader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
-import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
+import io.jmix.tabbedmode.component.tabsheet.MainTabSheet;
 
-public class MainTabSheetLoader extends AbstractComponentLoader<JmixMainTabSheet> {
+public class MainTabSheetLoader extends AbstractComponentLoader<MainTabSheet> {
 
     public static final String TAG = "mainTabSheet";
 
@@ -29,8 +29,8 @@ public class MainTabSheetLoader extends AbstractComponentLoader<JmixMainTabSheet
     protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
 
     @Override
-    protected JmixMainTabSheet createComponent() {
-        return factory.create(JmixMainTabSheet.class);
+    protected MainTabSheet createComponent() {
+        return factory.create(MainTabSheet.class);
     }
 
     @Override

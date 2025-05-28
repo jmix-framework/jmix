@@ -20,7 +20,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.container.VerticalLayoutLoader;
-import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
+import io.jmix.tabbedmode.component.tabsheet.MainTabSheet;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import io.jmix.tabbedmode.component.workarea.WorkArea;
 import io.jmix.tabbedmode.component.workarea.WorkAreaSupport;
@@ -76,7 +76,7 @@ public class WorkAreaLoader extends AbstractComponentLoader<WorkArea> {
      */
     @Deprecated(since = "2.6", forRemoval = true)
     protected TabbedViewsContainer<?> createDefaultTabbedViewsContainer() {
-        JmixMainTabSheet tabSheet = factory.create(JmixMainTabSheet.class);
+        MainTabSheet tabSheet = factory.create(MainTabSheet.class);
         tabSheet.setSizeFull();
         tabSheet.setClassName("jmix-main-tabsheet");
 

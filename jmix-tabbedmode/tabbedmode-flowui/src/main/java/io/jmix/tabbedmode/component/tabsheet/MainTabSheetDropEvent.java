@@ -26,16 +26,16 @@ import org.springframework.lang.Nullable;
 
 /**
  * An event that occurs when a drag-and-drop operation is completed on
- * a {@link JmixMainTabSheet} component.
+ * a {@link MainTabSheet} component.
  */
 @DomEvent("main-tabsheet-drop")
-public class MainTabSheetDropEvent extends ComponentEvent<JmixMainTabSheet> {
+public class MainTabSheetDropEvent extends ComponentEvent<MainTabSheet> {
 
     protected final Tab dropTarget;
     protected final Tab dragSource;
     protected final MainTabSheetDropLocation dropLocation;
 
-    public MainTabSheetDropEvent(JmixMainTabSheet source, boolean fromClient,
+    public MainTabSheetDropEvent(MainTabSheet source, boolean fromClient,
                                  @Nullable @EventData("event.detail.dropTargetTab") JsonString tabId,
                                  @EventData("event.detail.dropLocation") String dropLocation) {
         super(source, fromClient);

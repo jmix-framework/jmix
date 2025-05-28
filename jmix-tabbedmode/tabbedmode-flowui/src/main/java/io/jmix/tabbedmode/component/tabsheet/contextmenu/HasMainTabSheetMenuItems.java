@@ -18,7 +18,7 @@ package io.jmix.tabbedmode.component.tabsheet.contextmenu;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
-import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
+import io.jmix.tabbedmode.component.tabsheet.MainTabSheet;
 import io.jmix.tabbedmode.component.tabsheet.contextmenu.MainTabSheetContextMenu.MainTabSheetContextMenuItemClickEvent;
 import org.springframework.lang.Nullable;
 
@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 /**
  * Represents an interface defining methods for managing menu items
- * in a {@link JmixMainTabSheet} context menu.
+ * in a {@link MainTabSheet} context menu.
  */
 public interface HasMainTabSheetMenuItems extends Serializable {
 

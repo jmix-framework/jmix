@@ -23,7 +23,7 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.tabbedmode.TabbedModeProperties;
 import io.jmix.tabbedmode.Views;
-import io.jmix.tabbedmode.component.tabsheet.JmixViewTab;
+import io.jmix.tabbedmode.component.tabsheet.ViewTab;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public class CloseThisTabAction extends AbstractCloseTabsAction<CloseThisTabActi
     @Override
     protected boolean isApplicable() {
         return super.isApplicable()
-                && findActionTab() instanceof JmixViewTab viewTab
+                && findActionTab() instanceof ViewTab viewTab
                 && viewTab.isClosable();
     }
 
@@ -94,14 +94,14 @@ public class CloseThisTabAction extends AbstractCloseTabsAction<CloseThisTabActi
     public void execute(@Nullable Component trigger) {
         checkTarget();
 
-        if (findTab(trigger) instanceof JmixViewTab tab) {
+        if (findTab(trigger) instanceof ViewTab tab) {
             Views.ViewStack viewStack = asViewStack(target.getComponent(tab));
             if (!viewStack.close()) {
                 viewStack.select();
             }
         } else {
             log.warn("Cannot close the tab because the component is not a '{}'",
-                    JmixViewTab.class.getName());
+                    ViewTab.class.getName());
         }
     }
 }

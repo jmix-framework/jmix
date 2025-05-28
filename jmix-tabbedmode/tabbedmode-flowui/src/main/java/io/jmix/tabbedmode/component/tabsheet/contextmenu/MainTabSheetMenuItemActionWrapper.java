@@ -27,12 +27,12 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasAction;
-import io.jmix.tabbedmode.component.tabsheet.JmixMainTabSheet;
+import io.jmix.tabbedmode.component.tabsheet.MainTabSheet;
 import io.jmix.tabbedmode.component.tabsheet.contextmenu.MainTabSheetContextMenu.MainTabSheetContextMenuItemClickEvent;
 import org.springframework.lang.Nullable;
 
 /**
- * A wrapper class for handling {@link JmixMainTabSheet}'s menu item actions and related UI content.
+ * A wrapper class for handling {@link MainTabSheet}'s menu item actions and related UI content.
  */
 public class MainTabSheetMenuItemActionWrapper extends Composite<Div>
         implements HasText, HasComponents, HasPrefix, HasSuffix, HasTooltip, HasAction {

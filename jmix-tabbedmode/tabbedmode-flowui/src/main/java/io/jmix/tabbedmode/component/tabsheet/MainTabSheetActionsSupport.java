@@ -27,15 +27,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The class provides support for managing actions within an associated {@link JmixMainTabSheet} component.
+ * The class provides support for managing actions within an associated {@link MainTabSheet} component.
  */
-public class MainTabSheetActionsSupport extends AbstractActionsHolderSupport<JmixMainTabSheet> {
+public class MainTabSheetActionsSupport extends AbstractActionsHolderSupport<MainTabSheet> {
 
     protected Map<Action, MainTabSheetMenuItemActionWrapper> actionBinding = new HashMap<>();
 
     protected MainTabSheetContextMenu contextMenu;
 
-    public MainTabSheetActionsSupport(JmixMainTabSheet component) {
+    public MainTabSheetActionsSupport(MainTabSheet component) {
         super(component);
     }
 

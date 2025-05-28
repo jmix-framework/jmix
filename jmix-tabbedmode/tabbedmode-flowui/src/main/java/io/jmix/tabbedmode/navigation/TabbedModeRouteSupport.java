@@ -26,7 +26,7 @@ import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.tabbedmode.JmixUI;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.event.LocationChangeEvent;
-import io.jmix.tabbedmode.view.TabbedModeViewUtils;
+import io.jmix.tabbedmode.view.TabbedModeUtils;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +77,7 @@ public class TabbedModeRouteSupport extends RouteSupport {
             return;
         }
 
-        TabbedModeViewUtils.findViewContainer(view).ifPresent(viewContainer -> {
+        TabbedModeUtils.findViewContainer(view).ifPresent(viewContainer -> {
             ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
             if (breadcrumbs != null) {
                 breadcrumbs.updateViewLocation(view, location);

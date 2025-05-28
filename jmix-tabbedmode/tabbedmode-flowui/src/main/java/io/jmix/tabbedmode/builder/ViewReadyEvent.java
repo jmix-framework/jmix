@@ -20,6 +20,11 @@ import io.jmix.flowui.view.View;
 
 import java.util.EventObject;
 
+/**
+ * Application event that is triggered when a view is ready.
+ *
+ * @param <V> the view type
+ */
 public class ViewReadyEvent<V extends View<?>> extends EventObject {
 
     public ViewReadyEvent(V source) {

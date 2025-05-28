@@ -23,6 +23,11 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.view.View;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 
+/**
+ * Represents the context used for opening a view in an application. The class encapsulates
+ * details such as the target view, the mode in which the view should be opened, route parameters,
+ * query parameters, and checks for multiple open views.
+ */
 public class ViewOpeningContext {
 
     protected final View<?> view;

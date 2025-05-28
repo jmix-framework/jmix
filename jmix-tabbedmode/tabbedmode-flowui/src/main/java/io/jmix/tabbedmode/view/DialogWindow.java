@@ -35,7 +35,7 @@ public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
     @Nullable
     @Override
     protected Button createHeaderCloseButton() {
-        return TabbedModeViewUtils.isCloseable(view)
+        return TabbedModeUtils.isCloseable(view)
                 ? super.createHeaderCloseButton()
                 : null;
     }

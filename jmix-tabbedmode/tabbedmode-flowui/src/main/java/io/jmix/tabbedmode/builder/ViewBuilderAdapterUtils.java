@@ -25,9 +25,12 @@ import io.jmix.flowui.view.navigation.SupportsAfterViewNavigationHandler;
 import io.jmix.tabbedmode.builder.navigation.AfterNavigationViewReadyListenerAdapter;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 
-public final class ViewBuilderAdapterUtil {
+/**
+ * Utility class working with the navigation compatibility specifics.
+ */
+public final class ViewBuilderAdapterUtils {
 
-    private ViewBuilderAdapterUtil() {
+    private ViewBuilderAdapterUtils() {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -48,7 +51,8 @@ public final class ViewBuilderAdapterUtil {
         windowBuilder.getViewConfigurer().ifPresent(builder::withViewConfigurer);
     }
 
-    public static ViewOpenMode inferOpenMode(AbstractViewNavigator viewNavigator, Class<? extends View<?>> viewClass) {
+    public static ViewOpenMode inferOpenMode(AbstractViewNavigator viewNavigator,
+                                             Class<? extends View<?>> viewClass) {
         Route route = viewClass.getAnnotation(Route.class);
         if (route == null) {
             return ViewOpenMode.NEW_TAB;

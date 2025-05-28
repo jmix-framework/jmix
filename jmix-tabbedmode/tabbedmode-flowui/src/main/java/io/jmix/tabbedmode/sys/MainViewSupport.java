@@ -22,7 +22,7 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.*;
 import io.jmix.tabbedmode.TabbedModeProperties;
 import io.jmix.tabbedmode.Views;
-import io.jmix.tabbedmode.view.TabbedModeViewUtils;
+import io.jmix.tabbedmode.view.TabbedModeUtils;
 import io.jmix.tabbedmode.view.ViewOpenMode;
 import org.springframework.stereotype.Component;
 
@@ -78,10 +78,10 @@ public class MainViewSupport {
             detailView.setEntityToEdit(getEntityToEdit(defaultViewId));
         }
 
-        TabbedModeViewUtils.setDefaultView(view, true);
+        TabbedModeUtils.setDefaultView(view, true);
 
         if (!tabbedModeProperties.isDefaultViewCloseable()) {
-            TabbedModeViewUtils.setCloseable(view, false);
+            TabbedModeUtils.setCloseable(view, false);
         }
 
         views.open(view, ViewOpenMode.NEW_TAB);

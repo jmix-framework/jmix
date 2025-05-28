@@ -55,7 +55,7 @@ public class DetailViewBuilderAdapter<E, V extends View<?>> extends DetailViewBu
 
     @SuppressWarnings({"unchecked"})
     protected void applyFrom(DetailViewNavigator<E> viewNavigator) {
-        ViewBuilderAdapterUtil.apply(this, viewNavigator);
+        ViewBuilderAdapterUtils.apply(this, viewNavigator);
 
         mode = viewNavigator.getMode();
         if (mode == DetailViewMode.EDIT) {
@@ -80,7 +80,7 @@ public class DetailViewBuilderAdapter<E, V extends View<?>> extends DetailViewBu
     }
 
     protected void applyFrom(DetailWindowBuilder<E, V> windowBuilder) {
-        ViewBuilderAdapterUtil.apply(this, windowBuilder);
+        ViewBuilderAdapterUtils.apply(this, windowBuilder);
 
         mode = windowBuilder.getMode();
         entity = mode == DetailViewMode.CREATE

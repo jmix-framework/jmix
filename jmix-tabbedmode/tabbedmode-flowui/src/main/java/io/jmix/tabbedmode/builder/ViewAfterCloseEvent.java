@@ -22,6 +22,12 @@ import io.jmix.flowui.view.View;
 
 import java.util.EventObject;
 
+/**
+ * Application event that encapsulates information about a view that has been closed.
+ * It contains information about the source view and the associated close action.
+ *
+ * @param <V> the type of the view that is the source of this event
+ */
 public class ViewAfterCloseEvent<V extends View<?>> extends EventObject {
 
     protected final CloseAction closeAction;
@@ -38,10 +44,21 @@ public class ViewAfterCloseEvent<V extends View<?>> extends EventObject {
         return ((V) super.getSource());
     }
 
+    /**
+     * Returns the close action associated with the event.
+     *
+     * @return the close action associated with the event
+     */
     public CloseAction getCloseAction() {
         return closeAction;
     }
 
+    /**
+     * Returns whether the view was closed with the specified close action.
+     *
+     * @param outcome the close action to check against the close action associated with the event
+     * @return whether the view was closed with the specified close action
+     */
     public boolean closedWith(StandardOutcome outcome) {
         return outcome.getCloseAction().equals(closeAction);
     }

@@ -148,7 +148,7 @@ public class Views {
     }
 
     protected void initProperties(View<?> view) {
-        TabbedModeViewProperties properties = TabbedModeViewUtils.getViewProperties(view);
+        TabbedModeViewProperties properties = TabbedModeUtils.getViewProperties(view);
         if (properties == null) {
             properties = new TabbedModeViewProperties();
         }
@@ -161,7 +161,7 @@ public class Views {
                 .map(ViewProperties::forceDialog).orElse(false);
         properties.setForceDialog(forceDialog);
 
-        TabbedModeViewUtils.setViewProperties(view, properties);
+        TabbedModeUtils.setViewProperties(view, properties);
     }
 
     protected void checkPermissions(ViewInfo viewInfo) {
@@ -292,7 +292,7 @@ public class Views {
 
         if (sameView != null) {
             // Select tab before close
-            ViewContainer viewContainer = TabbedModeViewUtils.getViewContainer(sameView);
+            ViewContainer viewContainer = TabbedModeUtils.getViewContainer(sameView);
             TabbedViewsContainer<?> tabbedViewsContainer = workArea.getTabbedViewsContainer();
             Tab tab = tabbedViewsContainer.getTab(((Component) viewContainer));
             tabbedViewsContainer.setSelectedTab(tab);
@@ -316,7 +316,7 @@ public class Views {
     protected ViewOpenMode getActualOpenMode(JmixUI ui, ViewOpeningContext context) {
         ViewOpenMode openMode = context.getOpenMode();
 
-        if (TabbedModeViewUtils.isForceDialog(context.getView())) {
+        if (TabbedModeUtils.isForceDialog(context.getView())) {
             openMode = ViewOpenMode.DIALOG;
         }
 
@@ -519,12 +519,12 @@ public class Views {
 
         updateTabTitle(selectedTab, ViewControllerUtils.getPageTitle(view));
         if (selectedTab instanceof JmixViewTab viewTab) {
-            viewTab.setClosable(TabbedModeViewUtils.isCloseable(view));
+            viewTab.setClosable(TabbedModeUtils.isCloseable(view));
         }
     }
 
     protected void removeThisTabView(WorkArea workArea, View<?> viewToRemove) {
-        ViewContainer viewContainer = TabbedModeViewUtils.getViewContainer(viewToRemove);
+        ViewContainer viewContainer = TabbedModeUtils.getViewContainer(viewToRemove);
         viewContainer.removeView();
 
         ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
@@ -548,7 +548,7 @@ public class Views {
 
         updateTabTitle(tab, ViewControllerUtils.getPageTitle(viewToDisplay));
         if (tab instanceof JmixViewTab viewTab) {
-            viewTab.setClosable(TabbedModeViewUtils.isCloseable(viewToDisplay));
+            viewTab.setClosable(TabbedModeUtils.isCloseable(viewToDisplay));
         }
 
         JmixUI ui = getUI(workArea);
@@ -567,7 +567,7 @@ public class Views {
     }
 
     protected void removeNewTabView(WorkArea workArea, View<?> view) {
-        ViewContainer viewContainer = TabbedModeViewUtils.getViewContainer(view);
+        ViewContainer viewContainer = TabbedModeUtils.getViewContainer(view);
 
         TabbedViewsContainer<?> tabbedContainer = workArea.getTabbedViewsContainer();
         tabbedContainer.remove(((Component) viewContainer));
@@ -610,7 +610,7 @@ public class Views {
         JmixViewTab newTab = uiComponents.create(JmixViewTab.class);
         newTab.setId(tabId);
         newTab.setText(ViewControllerUtils.getPageTitle(view));
-        newTab.setClosable(TabbedModeViewUtils.isCloseable(view));
+        newTab.setClosable(TabbedModeUtils.isCloseable(view));
         newTab.setCloseDelegate(this::handleViewTabClose);
 
         ViewControllerUtils.setPageTitleDelegate(view, title -> {
@@ -960,7 +960,7 @@ public class Views {
         public void closeAll() {
             Collection<View<?>> dialogWindows = getDialogWindows();
             for (View<?> view : dialogWindows) {
-                if (!TabbedModeViewUtils.isCloseable(view)) {
+                if (!TabbedModeUtils.isCloseable(view)) {
                     continue;
                 }
 
@@ -1011,20 +1011,15 @@ public class Views {
         }
 
         /**
-         * @return views of the container in descending order, the first element is an active view
+         * Returns a collection of {@link View} stack in descending order, the first element is an active view.
+         *
+         * @return a collection of {@link View} stack representing the current breadcrumbs,
+         * or an empty collection if no breadcrumbs are available.
          */
         public Collection<View<?>> getBreadcrumbs() {
             checkAttached();
 
-            ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
-            if (breadcrumbs == null) {
-                return Collections.emptyList();
-            }
-
-            List<View<?>> views = new ArrayList<>(breadcrumbs.getViews().size());
-            breadcrumbs.getViews().descendingIterator().forEachRemaining(views::add);
-
-            return views;
+            return TabbedModeUtils.getBreadcrumbs(viewContainer);
         }
 
         /**
@@ -1082,7 +1077,7 @@ public class Views {
 
             Collection<View<?>> views = getBreadcrumbs();
             for (View<?> view : views) {
-                if (!TabbedModeViewUtils.isCloseable(view)) {
+                if (!TabbedModeUtils.isCloseable(view)) {
                     continue;
                 }
 
@@ -1175,7 +1170,7 @@ public class Views {
         protected abstract ViewBreadcrumbs.ViewInfo getViewToClose();
 
         protected boolean isCloseable(ViewBreadcrumbs.ViewInfo viewToClose) {
-            return TabbedModeViewUtils.isCloseable(viewToClose.view());
+            return TabbedModeUtils.isCloseable(viewToClose.view());
         }
     }
 

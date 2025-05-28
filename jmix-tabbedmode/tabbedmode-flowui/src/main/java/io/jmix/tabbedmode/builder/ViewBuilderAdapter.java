@@ -49,7 +49,7 @@ public class ViewBuilderAdapter<V extends View<?>> extends ViewBuilder<V> {
     }
 
     protected void applyFrom(AbstractViewNavigator viewNavigator) {
-        ViewBuilderAdapterUtil.apply(this, viewNavigator);
+        ViewBuilderAdapterUtils.apply(this, viewNavigator);
 
         viewNavigator.getRouteParameters().ifPresent(routeParameters ->
                 this.routeParameters = routeParameters);
@@ -58,7 +58,7 @@ public class ViewBuilderAdapter<V extends View<?>> extends ViewBuilder<V> {
     }
 
     protected void applyFrom(DialogWindowBuilder<V> windowBuilder) {
-        ViewBuilderAdapterUtil.apply(this, windowBuilder);
+        ViewBuilderAdapterUtils.apply(this, windowBuilder);
     }
 
     @Override

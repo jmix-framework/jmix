@@ -36,6 +36,7 @@ import io.jmix.tabbedmode.TabbedModeProperties;
 import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheetUtils;
 import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
+import io.jmix.tabbedmode.view.TabbedModeUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -146,7 +147,8 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
     }
 
     /**
-     * Returns a collection of {@link View} stack representing the current breadcrumbs.
+     * Returns a collection of {@link View} stack of currently active tab in descending order,
+     * the first element is an active view.
      *
      * @return a collection of {@link View} stack representing the current breadcrumbs,
      * or an empty collection if no breadcrumbs are available.
@@ -157,15 +159,7 @@ public class WorkArea extends Component implements HasSize, ComponentContainer, 
             return Collections.emptyList();
         }
 
-        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
-        if (breadcrumbs == null) {
-            return Collections.emptyList();
-        }
-
-        List<View<?>> views = new ArrayList<>(breadcrumbs.getViews().size());
-        breadcrumbs.getViews().descendingIterator().forEachRemaining(views::add);
-
-        return views;
+        return TabbedModeUtils.getBreadcrumbs(viewContainer);
     }
 
     /**

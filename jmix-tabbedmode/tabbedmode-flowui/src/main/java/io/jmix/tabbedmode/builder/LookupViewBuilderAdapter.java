@@ -34,7 +34,7 @@ public class LookupViewBuilderAdapter<E, V extends View<?>> extends LookupViewBu
     }
 
     protected void applyFrom(LookupWindowBuilder<E, V> windowBuilder) {
-        ViewBuilderAdapterUtil.apply(this, windowBuilder);
+        ViewBuilderAdapterUtils.apply(this, windowBuilder);
 
         container = windowBuilder.getContainer().orElse(null);
         listDataComponent = windowBuilder.getListDataComponent().orElse(null);

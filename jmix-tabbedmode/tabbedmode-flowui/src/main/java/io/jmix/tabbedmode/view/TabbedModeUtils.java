@@ -23,17 +23,18 @@ import io.jmix.tabbedmode.Views;
 import io.jmix.tabbedmode.action.tabsheet.CloseAllTabsAction;
 import io.jmix.tabbedmode.action.tabsheet.CloseOtherTabsAction;
 import io.jmix.tabbedmode.action.tabsheet.CloseThisTabAction;
+import io.jmix.tabbedmode.component.breadcrumbs.ViewBreadcrumbs;
 import io.jmix.tabbedmode.component.viewcontainer.ViewContainer;
 import org.springframework.lang.Nullable;
 
-import java.util.Optional;
+import java.util.*;
 
 /**
- * Utility class working with Tabbed Mode view's specifics.
+ * Utility class working with the Tabbed Window Mode specifics.
  */
-public final class TabbedModeViewUtils {
+public final class TabbedModeUtils {
 
-    private TabbedModeViewUtils() {
+    private TabbedModeUtils() {
     }
 
     @Nullable
@@ -170,5 +171,25 @@ public final class TabbedModeViewUtils {
         return findViewContainer(view)
                 .orElseThrow(() -> new IllegalStateException("%s is not attached to a %s"
                         .formatted(View.class.getSimpleName(), ViewContainer.class.getSimpleName())));
+    }
+
+    /**
+     * Returns a collection of {@link View} stack of passed {@link ViewContainer} in descending order,
+     * the first element is an active view.
+     *
+     * @param viewContainer a {@link ViewContainer} to get the breadcrumbs for
+     * @return a collection of {@link View} stack representing the current breadcrumbs,
+     * or an empty collection if no breadcrumbs are available.
+     */
+    public static Collection<View<?>> getBreadcrumbs(ViewContainer viewContainer) {
+        ViewBreadcrumbs breadcrumbs = viewContainer.getBreadcrumbs();
+        if (breadcrumbs == null) {
+            return Collections.emptyList();
+        }
+
+        List<View<?>> views = new ArrayList<>(breadcrumbs.getViews().size());
+        breadcrumbs.getViews().descendingIterator().forEachRemaining(views::add);
+
+        return views;
     }
 }

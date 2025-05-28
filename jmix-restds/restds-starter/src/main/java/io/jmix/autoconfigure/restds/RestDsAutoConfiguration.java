@@ -18,11 +18,16 @@ package io.jmix.autoconfigure.restds;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.security.AddonAuthenticationManagerSupplier;
+import io.jmix.core.session.SessionData;
 import io.jmix.restds.RestDsConfiguration;
 import io.jmix.restds.impl.RestAuthenticationManagerSupplier;
 import io.jmix.restds.impl.RestPasswordAuthenticator;
+import io.jmix.restds.impl.RestTokenHolder;
+import io.jmix.restds.impl.SessionRestTokenHolder;
 import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
@@ -49,5 +54,11 @@ public class RestDsAutoConfiguration {
         restAuthenticator.setDataStoreName(storeName);
 
         return new RestAuthenticationManagerSupplier(providersProducer, publisher, restAuthenticator, userDetailsService);
+    }
+
+    @Bean("restds_SessionRestTokenHolder")
+    @ConditionalOnMissingBean(RestTokenHolder.class)
+    public RestTokenHolder restTokenHolder(ObjectProvider<SessionData> sessionDataProvider) {
+        return new SessionRestTokenHolder(sessionDataProvider);
     }
 }

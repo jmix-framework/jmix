@@ -72,6 +72,20 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         container << ["vbox", "hbox"]
     }
 
+    def "Load hbox container with #slot aligned items from XML"() {
+        when: "Open the ContainerView"
+        def containerView = navigateToView ContainerView
+
+        then: "hbox container with #slot aligned items will be loaded"
+        def button = (containerView.hboxWithItemsAlignmentId
+                .children.find { it.getId().orElse(null) == "${slot}Button" }) as JmixButton
+        button.element.getAttribute("slot") == slot
+
+        where:
+        // in case of "start" slot the attribute will not be set
+        slot << ["middle", "end"]
+    }
+
     def "Load flexLayout container from XML"() {
         when: "Open the ContainerView"
         def containerView = navigateToView(ContainerView)

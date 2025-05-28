@@ -16,12 +16,58 @@
 
 package io.jmix.flowui.xml.layout.loader.container;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import io.jmix.flowui.xml.layout.ComponentLoader;
+import org.dom4j.Element;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class HorizontalLayoutLoader extends AbstractLayoutLoader<HorizontalLayout> {
 
     @Override
     protected HorizontalLayout createComponent() {
         return factory.create(HorizontalLayout.class);
+    }
+
+    @Override
+    public void loadComponent() {
+        loadSlot("startSlot", resultComponent::addToStart);
+        loadSlot("middleSlot", resultComponent::addToMiddle);
+        loadSlot("endSlot", resultComponent::addToEnd);
+
+        super.loadComponent();
+    }
+
+    protected void loadSlot(String slotName, Consumer<Collection<Component>> setter) {
+        Element slotElement = element.element(slotName);
+
+        if (slotElement == null || slotElement.elements().isEmpty()) {
+            return;
+        }
+
+        List<Component> slotChildren = slotElement.elements()
+                .stream()
+                .map(this::createSlotChild)
+                .toList();
+
+        setter.accept(slotChildren);
+    }
+
+    protected Component createSlotChild(Element element) {
+        ComponentLoader<?> componentLoader = getLayoutLoader().createComponentLoader(element);
+        componentLoader.initComponent();
+
+        pendingLoadComponents.add(componentLoader);
+        return componentLoader.getResultComponent();
+    }
+
+    @Override
+    protected boolean isChildElementIgnored(Element subElement) {
+        return "startSlot".equals(subElement.getName())
+                || "middleSlot".equals(subElement.getName())
+                || "endSlot".equals(subElement.getName());
     }
 }

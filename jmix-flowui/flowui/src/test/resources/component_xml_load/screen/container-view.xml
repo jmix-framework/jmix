@@ -76,6 +76,24 @@
             <checkbox id="selfAlignChild" alignSelf="END"/>
         </hbox>
 
+        <hbox id="hboxWithItemsAlignmentId">
+            <startSlot>
+                <button/>
+                <button id="startButton"/>
+                <button/>
+            </startSlot>
+            <middleSlot>
+                <button/>
+                <button id="middleButton"/>
+                <button/>
+            </middleSlot>
+            <endSlot>
+                <button/>
+                <button id="endButton"/>
+                <button/>
+            </endSlot>
+        </hbox>
+
         <flexLayout id="flexLayoutId"
                     alignItems="STRETCH"
                     classNames="cssClassName1, cssClassName2"

@@ -223,4 +223,12 @@ public final class ViewControllerUtils {
     public static void processBeforeEnterInternal(View<?> view, BeforeEnterEvent event) {
         view.processBeforeEnterInternal(event);
     }
+
+    public static void configureDialogWindowHeader(View<?> view, DialogWindowHeader dialogWindowHeader) {
+        view.configureDialogWindowHeader(dialogWindowHeader);
+    }
+
+    public static void configureDialogWindowFooter(View<?> view, DialogWindowFooter dialogWindowFooter) {
+        view.configureDialogWindowFooter(dialogWindowFooter);
+    }
 }

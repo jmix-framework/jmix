@@ -22,14 +22,18 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
+import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.shared.Registration;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.flowui.UiComponents;
@@ -52,6 +56,7 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
     protected V view;
 
     protected ApplicationContext applicationContext;
+    protected HorizontalLayout headerContent;
 
     // private, lazily initialized
     private EventHub eventHub = null;
@@ -86,7 +91,6 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         String title = view.getPageTitle();
 
         dialog.setHeaderTitle(title);
-        dialog.getHeader().add(createHeaderCloseButton());
 
         dialog.setCloseOnEsc(false);
         dialog.setCloseOnOutsideClick(false);
@@ -100,6 +104,19 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
 
         Component wrapper = createViewWrapper(view);
         dialog.add(wrapper);
+
+        Div headerWrapper = createHeaderWrapper();
+        dialog.getHeader().add(headerWrapper);
+
+        configureDialogWindowHeaderFooter();
+    }
+
+    protected HasComponents getHeaderContent() {
+        return headerContent;
+    }
+
+    protected HasComponents getFooterContent() {
+        return dialog.getFooter();
     }
 
     protected void onDialogCloseAction(Dialog.DialogCloseActionEvent event) {
@@ -143,6 +160,11 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         }
     }
 
+    protected void configureDialogWindowHeaderFooter() {
+        ViewControllerUtils.configureDialogWindowHeader(view, new DialogWindowHeader(this));
+        ViewControllerUtils.configureDialogWindowFooter(view, new DialogWindowFooter(this));
+    }
+
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents().create(JmixButton.class);
         closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
@@ -159,6 +181,23 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
 
     protected void onCloseButtonClicked(ClickEvent<Button> event) {
         view.closeWithDefaultAction();
+    }
+
+    protected Div createHeaderWrapper() {
+        Div headerWrapper = uiComponents().create(Div.class);
+        headerWrapper.setWidthFull();
+        headerWrapper.setClassName(BASE_CLASS_NAME + "-header-wrapper");
+        headerWrapper.addClassNames(LumoUtility.Display.INLINE_FLEX, LumoUtility.Gap.Column.SMALL);
+
+        headerContent = new HorizontalLayout();
+        headerContent.setWidthFull();
+        headerContent.setClassName(BASE_CLASS_NAME + "-header-content");
+        headerContent.setPadding(false);
+
+        headerWrapper.add(headerContent);
+        SlotUtils.setSlot(headerWrapper, "close-button", createHeaderCloseButton());
+
+        return headerWrapper;
     }
 
     protected Component createViewWrapper(V view) {

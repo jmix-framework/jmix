@@ -34,6 +34,7 @@ import io.jmix.reports.exception.ReportingException;
 import io.jmix.reports.runner.ReportRunContext;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.structure.DefaultValueProvider;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
@@ -315,10 +316,22 @@ public class ReportRestControllerManager {
             inputParameterInfo.enumerationClass = parameter.getEnumerationClass();
         }
 
-        if (parameter.getDefaultValue() != null) {
+        if (parameter.getDefaultValueProvider() != null) {
+            inputParameterInfo.defaultValue = transformDefaultValueFromProvider(parameter.getDefaultValueProvider(), parameter);
+        } else if (parameter.getDefaultValue() != null) {
             inputParameterInfo.defaultValue = transformDefaultValue(parameter);
         }
         return inputParameterInfo;
+    }
+
+    @Nullable
+    private String transformDefaultValueFromProvider(DefaultValueProvider<?> defaultValueProvider, ReportInputParameter parameter) {
+        Object defaultValue = defaultValueProvider.getDefaultValue(parameter);
+        if (defaultValue == null) {
+            return null;
+        }
+
+        return objectToStringConverter.convertToString(resolveDatatypeActualClass(parameter), defaultValue);
     }
 
     protected String transformDefaultValue(ReportInputParameter parameter) {

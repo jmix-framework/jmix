@@ -123,8 +123,17 @@ public class ReportTemplate implements io.jmix.reports.yarg.structure.ReportTemp
     @Column(name = "CONTENT")
     protected byte[] content;
 
+    /**
+     * Used internally by Jmix reporting.
+     */
     @Transient
     protected transient CustomReport customReport;
+
+    /**
+     * Custom formatter delegate.
+     */
+    @Transient
+    protected CustomReport delegate; // todo exclude from json
 
     public ReportOutputType getReportOutputType() {
         return ReportOutputType.fromId(reportOutputType);
@@ -325,6 +334,14 @@ public class ReportTemplate implements io.jmix.reports.yarg.structure.ReportTemp
 
     public void setCustomReport(CustomReport customReport) {
         this.customReport = customReport;
+    }
+
+    public CustomReport getDelegate() {
+        return delegate;
+    }
+
+    public void setDelegate(CustomReport delegate) {
+        this.delegate = delegate;
     }
 
     @InstanceName

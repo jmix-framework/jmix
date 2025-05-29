@@ -271,6 +271,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
         initLocaleDetailReportTextField();
         initRoleField();
         initScreenIdField();
+        initSingleDataSetTypeField();
+        initJsonSourceTypeField();
     }
 
     @Supply(to = "templatesDataGrid.alterable", subject = "renderer")
@@ -1125,7 +1127,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @SuppressWarnings("unchecked")
     protected Component dataSetTypeColumnValueProvider(DataSet item) {
         JmixComboBox<DataSetType> field = uiComponents.create(JmixComboBox.class);
-        field.setItems(DataSetType.class);
+        field.setItems(getDataSetTypeOptions());
         field.setValue(item.getType());
         field.setRequired(true);
         field.setStatusChangeHandler(typedTextFieldStatusContext -> {/*do nothing*/});
@@ -1137,6 +1139,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
             dataSetsDataGrid.select(item);
         });
         return field;
+    }
+
+    protected List<DataSetType> getDataSetTypeOptions() {
+        ArrayList<DataSetType> options = new ArrayList<>(Arrays.asList(DataSetType.values()));
+        options.remove(DataSetType.DELEGATE); // can't set it up in runtime editor
+        return options;
     }
 
     protected void updateDataSetsLayout(boolean isMultiDataSet) {
@@ -1570,6 +1578,17 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
 
         ComponentUtils.setItemsMap(rolesField, roles);
+    }
+
+    protected void initSingleDataSetTypeField() {
+        singleDataSetTypeField.setItems(getDataSetTypeOptions());
+    }
+
+    protected void initJsonSourceTypeField() {
+        ArrayList<JsonSourceType> options = new ArrayList<>(Arrays.asList(JsonSourceType.values()));
+        options.remove(JsonSourceType.DELEGATE); // can't set it up in runtime editor
+
+        jsonSourceTypeField.setItems(options);
     }
 
     @Install(to = "rolesDataGrid.exclude", subject = "enabledRule")

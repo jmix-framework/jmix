@@ -15,6 +15,9 @@
  */
 package io.jmix.reports.entity;
 
+import io.jmix.reports.delegate.ParameterTransformer;
+import io.jmix.reports.delegate.ParameterValidator;
+import io.jmix.reports.yarg.structure.DefaultValueProvider;
 import io.jmix.reports.yarg.structure.ReportParameterWithDefaultValue;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -28,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import jakarta.persistence.Id;
 import java.util.UUID;
 
-@JmixEntity(name = "report_ReportInputParameter")
+@JmixEntity(name = "report_ReportInputParameter", annotatedPropertiesOnly = true)
 @SystemLevel
 @SuppressWarnings("unused")
 public class ReportInputParameter implements ReportParameterWithDefaultValue {
@@ -36,6 +39,7 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
     private static final long serialVersionUID = 6231014880104406246L;
 
     @Id
+    @JmixProperty
     @JmixGeneratedValue
     protected UUID id;
 
@@ -101,6 +105,12 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
 
     @JmixProperty
     protected Boolean defaultDateIsCurrent = false;
+
+    protected ParameterValidator<?> validationDelegate; // todo exclude from json
+
+    protected ParameterTransformer<?> transformationDelegate; // todo exclude from json
+
+    protected DefaultValueProvider<?> defaultValueProvider; // todo exclude from json
 
     public UUID getId() {
         return id;
@@ -291,6 +301,14 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
         this.validationOn = validationOn;
     }
 
+    public ParameterValidator<?> getValidationDelegate() {
+        return validationDelegate;
+    }
+
+    public void setValidationDelegate(ParameterValidator<?> validationDelegate) {
+        this.validationDelegate = validationDelegate;
+    }
+
     public Boolean getHidden() {
         return hidden;
     }
@@ -305,5 +323,22 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
 
     public void setDefaultDateIsCurrent(Boolean defaultDateIsCurrent) {
         this.defaultDateIsCurrent = defaultDateIsCurrent;
+    }
+
+    public ParameterTransformer<?> getTransformationDelegate() {
+        return transformationDelegate;
+    }
+
+    public void setTransformationDelegate(ParameterTransformer<?> transformationDelegate) {
+        this.transformationDelegate = transformationDelegate;
+    }
+
+    @Override
+    public DefaultValueProvider<?> getDefaultValueProvider() {
+        return defaultValueProvider;
+    }
+
+    public void setDefaultValueProvider(DefaultValueProvider<?> defaultValueProvider) {
+        this.defaultValueProvider = defaultValueProvider;
     }
 }

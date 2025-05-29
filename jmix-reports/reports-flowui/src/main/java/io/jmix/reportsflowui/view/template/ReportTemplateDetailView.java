@@ -135,6 +135,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 ? messageBundle.getMessage("isGroovyRadioButtonGroup.groovyType")
                 : messageBundle.getMessage("isGroovyRadioButtonGroup.freemarkerType"));
         initOutputTypeList();
+        initCustomDefinedByList();
         initOutputNamePatternField();
         initCustomDefinitionHelpIcon();
     }
@@ -357,6 +358,13 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         outputTypes.remove(ReportOutputType.PIVOT_TABLE);
 
         outputTypeField.setItems(outputTypes);
+    }
+
+    protected void initCustomDefinedByList() {
+        ArrayList<CustomTemplateDefinedBy> options = new ArrayList<>(Arrays.asList(CustomTemplateDefinedBy.values()));
+        options.remove(CustomTemplateDefinedBy.DELEGATE); // can't set it up in runtime editor
+
+        customDefinedByField.setItems(options);
     }
 
     protected void initTemplateEditor(ReportTemplate reportTemplate) {

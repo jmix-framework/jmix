@@ -21,7 +21,11 @@ import io.jmix.core.metamodel.datatype.EnumClass;
 public enum JsonSourceType implements EnumClass<Integer> {
     GROOVY_SCRIPT(10),
     URL(20),
-    PARAMETER(30);
+    PARAMETER(30),
+    /**
+     * Obtain by calling associated {@link io.jmix.reports.delegate.JsonInputProvider}.
+     */
+    DELEGATE(40);
 
     private Integer id;
 

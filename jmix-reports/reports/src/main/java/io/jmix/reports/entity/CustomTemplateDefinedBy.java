@@ -17,11 +17,16 @@
 package io.jmix.reports.entity;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
+import io.jmix.reports.yarg.formatters.CustomReport;
 
 public enum CustomTemplateDefinedBy implements EnumClass<Integer> {
     CLASS(100),
     SCRIPT(200),
-    URL(300);
+    URL(300),
+    /**
+     * Object implementing {@link CustomReport} provided by the user.
+     */
+    DELEGATE(400);
 
     private Integer id;
 

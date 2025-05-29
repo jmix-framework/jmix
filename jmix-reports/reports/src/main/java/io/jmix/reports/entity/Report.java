@@ -15,6 +15,7 @@
  */
 package io.jmix.reports.entity;
 
+import io.jmix.reports.delegate.ParametersCrossValidator;
 import io.jmix.reports.yarg.structure.ReportBand;
 import io.jmix.reports.yarg.structure.ReportFieldFormat;
 import io.jmix.core.annotation.DeletedBy;
@@ -172,6 +173,9 @@ public class Report implements io.jmix.reports.yarg.structure.Report {
     @Transient
     @JmixProperty
     protected Boolean validationOn = false;
+
+    @Transient
+    protected ParametersCrossValidator parametersCrossValidator; // todo exclude from json
 
     public Boolean getIsTmp() {
         return isTmp;
@@ -473,6 +477,14 @@ public class Report implements io.jmix.reports.yarg.structure.Report {
 
     public void setValidationOn(Boolean validationOn) {
         this.validationOn = validationOn;
+    }
+
+    public ParametersCrossValidator getParametersCrossValidator() {
+        return parametersCrossValidator;
+    }
+
+    public void setParametersCrossValidator(ParametersCrossValidator parametersCrossValidator) {
+        this.parametersCrossValidator = parametersCrossValidator;
     }
 
     @InstanceName

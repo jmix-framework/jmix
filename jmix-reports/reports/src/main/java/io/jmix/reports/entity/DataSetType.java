@@ -16,6 +16,7 @@
 package io.jmix.reports.entity;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
+import io.jmix.reports.yarg.loaders.ReportDataLoader;
 
 import java.util.Objects;
 
@@ -49,7 +50,12 @@ public enum DataSetType implements EnumClass<Integer> {
     /**
      * json
      */
-    JSON(60, "json");
+    JSON(60, "json"),
+
+    /**
+     * Delegation to user-defined {@link ReportDataLoader} object.
+     */
+    DELEGATE(70, "delegate");
 
     private Integer id;
 

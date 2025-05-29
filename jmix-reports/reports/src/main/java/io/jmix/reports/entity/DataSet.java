@@ -16,6 +16,8 @@
 package io.jmix.reports.entity;
 
 import io.jmix.reports.delegate.FetchPlanProvider;
+import io.jmix.reports.delegate.JsonInputProvider;
+import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.core.CopyingSystemState;
 import io.jmix.core.FetchPlan;
@@ -38,6 +40,7 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     public static final String DATA_STORE_PARAM_NAME = "dataStore";
     public static final String JSON_SOURCE_TYPE = "jsonSourceType";
     public static final String JSON_SOURCE_TEXT = "jsonSourceText";
+    public static final String JSON_INPUT_PROVIDER = "jsonInputProvider";
     public static final String JSON_PATH_QUERY = "jsonPathQuery";
     public static final String JSON_INPUT_PARAMETER = "jsonSourceInputParameter";
 
@@ -45,6 +48,8 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
 
     protected FetchPlan fetchPlan;
     protected FetchPlanProvider fetchPlanProvider; // todo exclude from gson serialization
+    protected JsonInputProvider jsonInputProvider; // todo exclude from gson serialization
+    protected ReportDataLoader loaderDelegate; // todo exclude from gson serialization
 
     @Id
     @JmixProperty
@@ -238,6 +243,23 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
         this.jsonPathQuery = jsonPathQuery;
     }
 
+    public JsonInputProvider getJsonInputProvider() {
+        return jsonInputProvider;
+    }
+
+    public void setJsonInputProvider(JsonInputProvider jsonInputProvider) {
+        this.jsonInputProvider = jsonInputProvider;
+    }
+
+    @Override
+    public ReportDataLoader getLoaderDelegate() {
+        return loaderDelegate;
+    }
+
+    public void setLoaderDelegate(ReportDataLoader loaderDelegate) {
+        this.loaderDelegate = loaderDelegate;
+    }
+
     @Override
     public Map<String, Object> getAdditionalParams() {
         Map<String, Object> params = new HashMap<>();
@@ -248,6 +270,7 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
         params.put(JSON_SOURCE_TEXT, jsonSourceText);
         params.put(JSON_PATH_QUERY, jsonPathQuery);
         params.put(JSON_INPUT_PARAMETER, jsonSourceInputParameter);
+        params.put(JSON_INPUT_PROVIDER, jsonInputProvider);
 
         return params;
     }

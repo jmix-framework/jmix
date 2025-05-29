@@ -64,6 +64,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     protected LocalDate currentDate;
 
     protected Map<String, StateTree.ExecutionRegistration> itemsDataProvidersExecutionMap = new HashMap<>(2);
+    protected Map<String, StateTree.ExecutionRegistration> callbackDataProvidersExecutionMap = new HashMap<>(2);
     protected StateTree.ExecutionRegistration synchronizeOptionsExecution;
     protected StateTree.ExecutionRegistration incrementalUpdateExecution;
 

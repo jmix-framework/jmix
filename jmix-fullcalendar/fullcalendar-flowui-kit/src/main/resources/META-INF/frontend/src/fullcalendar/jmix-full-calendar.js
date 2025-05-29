@@ -194,6 +194,16 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     /**
      * Server callable function.
      * <p>
+     * Invokes <code>#refetch()</code> function of event source to reload data.
+     * @param context an object contains sourceId
+     */
+    _updateAsyncSourcesData(context) {
+        this.calendar.getEventSourceById(context.sourceId).refetch();
+    }
+
+    /**
+     * Server callable function.
+     * <p>
      * Is used for incremental data updates.
      * @param sourcesData the sources data contains a list of data "records". Each record has operation name and
      * items for performing operation

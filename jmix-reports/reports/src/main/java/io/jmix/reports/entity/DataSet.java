@@ -15,6 +15,7 @@
  */
 package io.jmix.reports.entity;
 
+import io.jmix.reports.delegate.FetchPlanProvider;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.core.CopyingSystemState;
 import io.jmix.core.FetchPlan;
@@ -43,6 +44,8 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     private static final long serialVersionUID = -3706206933129963303L;
 
     protected FetchPlan fetchPlan;
+    protected FetchPlanProvider fetchPlanProvider; // todo exclude from gson serialization
+
     @Id
     @JmixProperty
     @JmixGeneratedValue
@@ -92,6 +95,14 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
 
     public void setFetchPlan(FetchPlan fetchPlan) {
         this.fetchPlan = fetchPlan;
+    }
+
+    public FetchPlanProvider getFetchPlanProvider() {
+        return fetchPlanProvider;
+    }
+
+    public void setFetchPlanProvider(FetchPlanProvider fetchPlanProvider) {
+        this.fetchPlanProvider = fetchPlanProvider;
     }
 
     public Boolean getUseExistingFetchPLan() {

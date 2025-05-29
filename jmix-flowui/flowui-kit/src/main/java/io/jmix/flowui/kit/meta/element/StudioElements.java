@@ -956,7 +956,8 @@ public interface StudioElements {
             name = "Suffix",
             xmlElement = "suffix",
             target = {"com.vaadin.flow.component.shared.HasSuffix"},
-            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
+            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle",
+                    "io.jmix.searchflowui.component.SearchField"},
             documentationLink = "2.1/whats-new/index.html#prefix-and-suffix-components",
             unlimitedCount = false,
             availableChildren = @StudioAvailableChildrenInfo(

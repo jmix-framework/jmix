@@ -106,11 +106,12 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
     @JmixProperty
     protected Boolean defaultDateIsCurrent = false;
 
-    protected ParameterValidator<?> validationDelegate; // todo exclude from json
+    /* The following attributes are excluded from JSON serialization as they aren't meta properties */
+    protected ParameterValidator<?> validationDelegate;
 
-    protected ParameterTransformer<?> transformationDelegate; // todo exclude from json
+    protected ParameterTransformer<?> transformationDelegate;
 
-    protected DefaultValueProvider<?> defaultValueProvider; // todo exclude from json
+    protected DefaultValueProvider<?> defaultValueProvider;
 
     public UUID getId() {
         return id;

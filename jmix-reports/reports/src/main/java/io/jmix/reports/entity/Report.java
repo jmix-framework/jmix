@@ -175,7 +175,7 @@ public class Report implements io.jmix.reports.yarg.structure.Report {
     protected Boolean validationOn = false;
 
     @Transient
-    protected ParametersCrossValidator parametersCrossValidator; // todo exclude from json
+    protected ParametersCrossValidator parametersCrossValidator;
 
     public Boolean getIsTmp() {
         return isTmp;

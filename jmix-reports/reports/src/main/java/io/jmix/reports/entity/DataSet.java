@@ -47,9 +47,11 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     private static final long serialVersionUID = -3706206933129963303L;
 
     protected FetchPlan fetchPlan;
-    protected FetchPlanProvider fetchPlanProvider; // todo exclude from gson serialization
-    protected JsonInputProvider jsonInputProvider; // todo exclude from gson serialization
-    protected ReportDataLoader loaderDelegate; // todo exclude from gson serialization
+
+    /* The following attributes are excluded from JSON serialization as they aren't meta properties */
+    protected FetchPlanProvider fetchPlanProvider;
+    protected JsonInputProvider jsonInputProvider;
+    protected ReportDataLoader loaderDelegate;
 
     @Id
     @JmixProperty

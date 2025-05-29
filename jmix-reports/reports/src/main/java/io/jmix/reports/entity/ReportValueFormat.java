@@ -48,7 +48,7 @@ public class ReportValueFormat implements ReportFieldFormat {
     @JmixProperty
     protected Boolean groovyScript = false;
 
-    protected CustomValueFormatter<?> customFormatter; // todo exclude from json
+    protected CustomValueFormatter<?> customFormatter;
 
     public UUID getId() {
         return id;

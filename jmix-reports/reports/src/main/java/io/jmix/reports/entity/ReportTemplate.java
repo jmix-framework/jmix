@@ -133,7 +133,7 @@ public class ReportTemplate implements io.jmix.reports.yarg.structure.ReportTemp
      * Custom formatter delegate.
      */
     @Transient
-    protected CustomReport delegate; // todo exclude from json
+    protected CustomReport delegate;
 
     public ReportOutputType getReportOutputType() {
         return ReportOutputType.fromId(reportOutputType);

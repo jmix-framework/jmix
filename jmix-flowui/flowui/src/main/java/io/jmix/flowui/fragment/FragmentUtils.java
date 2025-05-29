@@ -24,11 +24,13 @@ import com.vaadin.flow.server.Attributes;
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.UiComponentUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationListener;
 import org.springframework.lang.Nullable;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -264,5 +266,27 @@ public final class FragmentUtils {
         }
 
         return descriptorPath;
+    }
+
+    /**
+     * Returns the list of application event listeners associated with the specified {@link Fragment}.
+     *
+     * @param fragment the {@link Fragment} for which to retrieve the application event listeners
+     * @return a list of application event listeners associated with the specified {@link Fragment}
+     */
+    public static List<ApplicationListener<?>> getApplicationEventListeners(Fragment<?> fragment) {
+        return fragment.getApplicationEventListeners();
+    }
+
+    /**
+     * Sets the application event listeners for the specified {@link Fragment}.
+     *
+     * @param fragment  the {@link Fragment} for which to set the application event listeners
+     * @param listeners a list of application event listeners to be set for the {@link Fragment},
+     *                  or {@code null} if no listeners should be associated
+     */
+    public static void setApplicationEventListeners(Fragment<?> fragment,
+                                                    @Nullable List<ApplicationListener<?>> listeners) {
+        fragment.setApplicationEventListeners(listeners);
     }
 }

@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * Bean contains opened {@link Notification}s in order of opening.
  * <p>
- * Example of the storage order of notifications:
+ * Example of the order in which notifications are stored::
  * <ul>
  *     <li>first opened notification has index {@code 0}</li>
  *     <li>seconds opened notification has index {@code 1}</li>

@@ -34,6 +34,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class provides helper methods for testing.
@@ -68,8 +69,9 @@ public final class UiTestUtils {
      * </pre>
      *
      * @param <T> type of navigated view
-     * @return instance of currently navigated view
+     * @return instance of the currently navigated view
      */
+    @SuppressWarnings("unchecked")
     public static <T extends View<?>> T getCurrentView() {
         List<HasElement> targetsChain = UI.getCurrent().getInternals().getActiveRouterTargetsChain();
         if (CollectionUtils.isEmpty(targetsChain)) {
@@ -84,6 +86,7 @@ public final class UiTestUtils {
      *
      * @throws IllegalArgumentException if not found
      */
+    @SuppressWarnings("unchecked")
     public static <T> T getComponent(View<?> view, String componentId) {
         return (T) UiComponentUtils.getComponent(view, componentId);
     }
@@ -95,13 +98,13 @@ public final class UiTestUtils {
      * @return errors if validation failed, otherwise empty object will be returned
      */
     public static ValidationErrors validateView(StandardDetailView<?> view) {
-        return (ValidationErrors) ReflectionUtils.invokeMethod(VALIDATE_VIEW_METHOD, view);
+        return (ValidationErrors) Objects.requireNonNull(ReflectionUtils.invokeMethod(VALIDATE_VIEW_METHOD, view));
     }
 
     /**
-     * Gets immutable list of {@link NotificationInfo} in order of opening.
+     * Returns an immutable list of {@link NotificationInfo} objects in the order they were opened.
      * <p>
-     * Example of the storage order of notifications:
+     * Example of the order in which notifications are stored:
      * <ul>
      *     <li>first opened notification has index {@code 0}</li>
      *     <li>seconds opened notification has index {@code 1}</li>
@@ -123,9 +126,9 @@ public final class UiTestUtils {
     }
 
     /**
-     * Gets immutable list of {@link DialogInfo}s in order of opening.
+     * Returns an immutable list of {@link DialogInfo} objects in the order they were opened.
      * <p>
-     * Example of the storage order of dialogs:
+     * Example of the order in which dialogs are stored:
      * <ul>
      *     <li>first opened dialog has index {@code 0}</li>
      *     <li>seconds opened dialog has index {@code 1}</li>

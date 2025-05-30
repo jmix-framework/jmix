@@ -46,7 +46,7 @@ import java.lang.annotation.*;
  *         CollectionContainer&lt;User&gt; usersDc = ViewControllerUtils.getViewData(view)
  *                 .getContainer("usersDc");
  *
- *         Assertions.assertTrue(usersDc.getItems().size() &gt; 0);
+ *         Assertions.assertFalse(usersDc.getItems().isEmpty());
  *     }
  * }
  * </pre>
@@ -91,7 +91,7 @@ public @interface UiTest {
     Class<? extends View> initialView() default InitialView.class;
 
     /**
-     * Dummy class. By default, the {@link JmixUiTestExtension} will use {@link SystemAuthenticator}.
+     * Fake class. By default, the {@link JmixUiTestExtension} will use {@link SystemAuthenticator}.
      */
     abstract class DefaultUiTestAuthenticator implements UiTestAuthenticator {
     }

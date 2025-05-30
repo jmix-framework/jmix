@@ -22,6 +22,7 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.Id;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
+import io.jmix.reports.entity.ReportSource;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.exception.ReportingException;
@@ -187,6 +188,9 @@ public class FluentReportRunner {
 
     private Report getReportToUse() {
         if (this.report != null) {
+            if (report.getSource() == ReportSource.ANNOTATED_CLASS) {
+                return this.report;
+            }
             if (report.getIsTmp()) {
                 return this.report;
             }

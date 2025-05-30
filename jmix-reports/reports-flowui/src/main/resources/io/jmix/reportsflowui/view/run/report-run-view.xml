@@ -18,7 +18,7 @@
       title="msg://reportRunView.title"
       focusComponent="reportDataGrid">
 
-    <data>
+    <data readOnly="true">
         <collection id="reportsDc"
                     class="io.jmix.reports.entity.Report"
                     fetchPlan="report.view">
@@ -86,6 +86,7 @@
                 <column property="description"/>
                 <column property="code"/>
                 <column property="updateTs"/>
+                <column property="source"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

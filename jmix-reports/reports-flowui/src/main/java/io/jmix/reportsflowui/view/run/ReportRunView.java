@@ -35,9 +35,11 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
+import io.jmix.reports.entity.ReportSource;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
@@ -95,6 +97,8 @@ public class ReportRunView extends StandardListView<Report> {
     protected List<Report> reports;
     protected MetaClass metaClassParameter;
     protected String screenParameter;
+    @Autowired
+    private ReportRepository reportRepository;
 
     public void setReports(List<Report> reports) {
         this.reports = reports;
@@ -109,10 +113,13 @@ public class ReportRunView extends StandardListView<Report> {
     }
 
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
-    private List<Report> reportsDlLoadDelegate(LoadContext loadContext) {
+    private List<Report> reportsDlLoadDelegate(LoadContext<Report> loadContext) {
         //Pass current grid sort to support settings facet
-        return reportSecurityManager.getAvailableReports(screenParameter, currentUserSubstitution.getEffectiveUser(),
-                metaClassParameter, getReportGridSort());
+        // todo filter, sort etc.
+        List<Report> items = reportRepository.getAllReports().stream().toList();
+        return items;
+        // return reportSecurityManager.getAvailableReports(screenParameter, currentUserSubstitution.getEffectiveUser(),
+        //         metaClassParameter, getReportGridSort());
     }
 
     @Supply(to = "reportDataGrid.name", subject = "renderer")
@@ -135,9 +142,12 @@ public class ReportRunView extends StandardListView<Report> {
             return;
         }
 
-        report = dataManager.load(Id.of(report))
-                .fetchPlan("report.edit")
-                .one();
+        // todo better logic
+        if (report.getSource() == ReportSource.DATABASE) {
+            report = dataManager.load(Id.of(report))
+                    .fetchPlan("report.edit")
+                    .one();
+        }
         FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
                 .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
         try {
@@ -174,8 +184,11 @@ public class ReportRunView extends StandardListView<Report> {
         String codeFilterValue = StringUtils.lowerCase(codeFilter.getTypedValue());
         ReportGroup groupFilterValue = groupFilter.getValue();
         Date dateFilterValue = updatedDateFilter.getTypedValue();
-        List<Report> reports = reportSecurityManager.getAvailableReports(screenParameter,
-                        currentUserSubstitution.getEffectiveUser(), metaClassParameter, getReportGridSort())
+
+        // todo proper logic
+        //List<Report> reports = reportSecurityManager.getAvailableReports(screenParameter,
+        //                currentUserSubstitution.getEffectiveUser(), metaClassParameter, getReportGridSort())
+        List<Report> reports = reportRepository.getAllReports()
                 .stream()
                 .filter(report ->
                         isCandidateReport(nameFilterValue, codeFilterValue, groupFilterValue, dateFilterValue, report)

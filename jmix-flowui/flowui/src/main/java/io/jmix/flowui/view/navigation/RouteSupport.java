@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 /**
  * Utility bean that facilitates url modifications and generations.
  */
-@org.springframework.stereotype.Component("flowui_RouteSupport")
 public class RouteSupport {
 
     private static final Logger log = LoggerFactory.getLogger(RouteSupport.class);

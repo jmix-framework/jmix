@@ -1405,6 +1405,28 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="timePickerStep">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="900s"/>
+                    <xs:enumeration value="15m"/>
+                    <xs:enumeration value="20m"/>
+                    <xs:enumeration value="30m"/>
+                    <xs:enumeration value="2h"/>
+                    <xs:enumeration value="3h"/>
+                    <xs:enumeration value="4h"/>
+                    <xs:enumeration value="6h"/>
+                    <xs:enumeration value="8h"/>
+                    <xs:enumeration value="12h"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="resourceString">
         <xs:union>
             <xs:simpleType>
@@ -3386,7 +3408,7 @@
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="timePickerThemeNames"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
-                <xs:attribute name="step" type="xs:string"/>
+                <xs:attribute name="step" type="timePickerStep"/>
                 <xs:attribute name="max" type="xs:string"/>
                 <xs:attribute name="min" type="xs:string"/>
 
@@ -3445,7 +3467,7 @@
                 <xs:attribute name="datePlaceholder" type="resourceString"/>
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
                 <xs:attribute name="datatype" type="dateTimeDatatypeEnum"/>
-                <xs:attribute name="step" type="xs:string"/>
+                <xs:attribute name="step" type="timePickerStep"/>
                 <xs:attribute name="dateFormat" type="resourceString"/>
                 <xs:attribute name="max" type="xs:string"/>
                 <xs:attribute name="min" type="xs:string"/>

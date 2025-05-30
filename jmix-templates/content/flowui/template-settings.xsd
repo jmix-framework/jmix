@@ -180,6 +180,7 @@
             <xs:enumeration value="EXTEND"/>
             <xs:enumeration value="OVERRIDE"/>
             <xs:enumeration value="BPM"/>
+            <xs:enumeration value="TABBED_MODE"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

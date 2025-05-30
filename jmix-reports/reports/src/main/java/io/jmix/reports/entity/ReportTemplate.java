@@ -16,6 +16,7 @@
 
 package io.jmix.reports.entity;
 
+import io.jmix.core.CopyingSystemState;
 import io.jmix.reports.yarg.formatters.CustomReport;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
@@ -49,7 +50,7 @@ import java.util.UUID;
 @SystemLevel
 @JmixEntity
 @SuppressWarnings("unused")
-public class ReportTemplate implements io.jmix.reports.yarg.structure.ReportTemplate {
+public class ReportTemplate implements io.jmix.reports.yarg.structure.ReportTemplate, CopyingSystemState<ReportTemplate> {
     private static final long serialVersionUID = 3692751073234357754L;
 
     public static final String DEFAULT_TEMPLATE_CODE = "DEFAULT";
@@ -398,5 +399,10 @@ public class ReportTemplate implements io.jmix.reports.yarg.structure.ReportTemp
             setContent(PivotTableDescription.toJsonString(description).getBytes(StandardCharsets.UTF_8));
             setName(".pivot");
         }
+    }
+
+    @Override
+    public void copyFrom(ReportTemplate source) {
+        this.delegate = source.delegate;
     }
 }

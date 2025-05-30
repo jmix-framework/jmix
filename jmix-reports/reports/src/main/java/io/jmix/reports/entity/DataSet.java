@@ -280,5 +280,8 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     @Override
     public void copyFrom(DataSet source) {
         this.fetchPlan = source.fetchPlan;
+        this.fetchPlanProvider = source.fetchPlanProvider;
+        this.jsonInputProvider = source.jsonInputProvider;
+        this.loaderDelegate = source.loaderDelegate;
     }
 }

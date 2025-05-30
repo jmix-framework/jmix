@@ -15,6 +15,7 @@
  */
 package io.jmix.reports.entity;
 
+import io.jmix.core.CopyingSystemState;
 import io.jmix.reports.delegate.ParametersCrossValidator;
 import io.jmix.reports.yarg.structure.ReportBand;
 import io.jmix.reports.yarg.structure.ReportFieldFormat;
@@ -46,7 +47,7 @@ import java.util.*;
 @Listeners("report_ReportDetachListener")
 @JmixEntity
 @SuppressWarnings("unused")
-public class Report implements io.jmix.reports.yarg.structure.Report {
+public class Report implements io.jmix.reports.yarg.structure.Report, CopyingSystemState<Report> {
     private static final long serialVersionUID = -2817764915661205093L;
     protected static final String IDX_SEPARATOR = ",";
 
@@ -176,6 +177,10 @@ public class Report implements io.jmix.reports.yarg.structure.Report {
 
     @Transient
     protected ParametersCrossValidator parametersCrossValidator;
+
+    @Transient
+    @JmixProperty
+    protected ReportSource source;
 
     public Boolean getIsTmp() {
         return isTmp;
@@ -487,9 +492,22 @@ public class Report implements io.jmix.reports.yarg.structure.Report {
         this.parametersCrossValidator = parametersCrossValidator;
     }
 
+    public ReportSource getSource() {
+        return source;
+    }
+
+    public void setSource(ReportSource source) {
+        this.source = source;
+    }
+
     @InstanceName
     @DependsOnProperties({"localeNames", "name"})
     public String getInstanceName(MsgBundleTools msgBundleTools) {
         return msgBundleTools.getLocalizedValue(localeNames, name);
+    }
+
+    @Override
+    public void copyFrom(Report source) {
+        this.parametersCrossValidator = source.parametersCrossValidator;
     }
 }

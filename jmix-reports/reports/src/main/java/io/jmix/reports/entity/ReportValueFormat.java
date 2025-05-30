@@ -15,6 +15,7 @@
  */
 package io.jmix.reports.entity;
 
+import io.jmix.core.CopyingSystemState;
 import io.jmix.reports.yarg.structure.CustomValueFormatter;
 import io.jmix.reports.yarg.structure.ReportFieldFormat;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -27,7 +28,7 @@ import java.util.UUID;
 
 @JmixEntity(name = "report_ReportValueFormat", annotatedPropertiesOnly = true)
 @SystemLevel
-public class ReportValueFormat implements ReportFieldFormat {
+public class ReportValueFormat implements ReportFieldFormat, CopyingSystemState<ReportValueFormat> {
 
     private static final long serialVersionUID = 680180375698449946L;
 
@@ -112,5 +113,10 @@ public class ReportValueFormat implements ReportFieldFormat {
 
     public void setCustomFormatter(CustomValueFormatter<?> customFormatter) {
         this.customFormatter = customFormatter;
+    }
+
+    @Override
+    public void copyFrom(ReportValueFormat source) {
+        this.customFormatter = source.customFormatter;
     }
 }

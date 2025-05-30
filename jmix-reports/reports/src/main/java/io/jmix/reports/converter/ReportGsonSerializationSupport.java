@@ -32,7 +32,8 @@ public class ReportGsonSerializationSupport extends GsonSerializationSupport {
     public ReportGsonSerializationSupport(BeanFactory beanFactory) {
         super(beanFactory);
         exclusionPolicy = (objectClass, propertyName) ->
-                Report.class.isAssignableFrom(objectClass) && "xml".equalsIgnoreCase(propertyName)
+                Report.class.isAssignableFrom(objectClass)
+                                    && ("xml".equalsIgnoreCase(propertyName) || "source".equalsIgnoreCase(propertyName))
                         || ReportTemplate.class.isAssignableFrom(objectClass) && "content".equals(propertyName);
     }
 

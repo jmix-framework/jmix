@@ -15,6 +15,7 @@
  */
 package io.jmix.reports.entity;
 
+import io.jmix.core.CopyingSystemState;
 import io.jmix.reports.delegate.ParameterTransformer;
 import io.jmix.reports.delegate.ParameterValidator;
 import io.jmix.reports.yarg.structure.DefaultValueProvider;
@@ -34,7 +35,7 @@ import java.util.UUID;
 @JmixEntity(name = "report_ReportInputParameter", annotatedPropertiesOnly = true)
 @SystemLevel
 @SuppressWarnings("unused")
-public class ReportInputParameter implements ReportParameterWithDefaultValue {
+public class ReportInputParameter implements ReportParameterWithDefaultValue, CopyingSystemState<ReportInputParameter> {
 
     private static final long serialVersionUID = 6231014880104406246L;
 
@@ -341,5 +342,12 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
 
     public void setDefaultValueProvider(DefaultValueProvider<?> defaultValueProvider) {
         this.defaultValueProvider = defaultValueProvider;
+    }
+
+    @Override
+    public void copyFrom(ReportInputParameter source) {
+        this.validationDelegate = source.validationDelegate;
+        this.transformationDelegate = source.transformationDelegate;
+        this.defaultValueProvider = source.defaultValueProvider;
     }
 }

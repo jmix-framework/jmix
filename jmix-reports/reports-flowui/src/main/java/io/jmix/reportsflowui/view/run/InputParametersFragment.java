@@ -225,10 +225,14 @@ public class InputParametersFragment extends Composite<FormLayout>
         AbstractField field = parameterComponentGenerationStrategy.createField(parameter);
 
         Object value = parameters.get(parameter.getAlias());
-        if (value == null && parameter.getDefaultValue() != null) {
-            Class parameterClass = parameterClassResolver.resolveClass(parameter);
-            if (parameterClass != null) {
-                value = objectToStringConverter.convertFromString(parameterClass, parameter.getDefaultValue());
+        if (value == null) {
+            if (parameter.getDefaultValueProvider() != null) {
+                value = parameter.getDefaultValueProvider().getDefaultValue(parameter);
+            } else if (parameter.getDefaultValue() != null) {
+                Class parameterClass = parameterClassResolver.resolveClass(parameter);
+                if (parameterClass != null) {
+                    value = objectToStringConverter.convertFromString(parameterClass, parameter.getDefaultValue());
+                }
             }
         }
 

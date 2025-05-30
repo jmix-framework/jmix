@@ -93,52 +93,54 @@
             <pagination component="paginationLoggedEntity"/>
         </urlQueryParameters>
     </facets>
-    <layout>
-        <tabSheet id="tabsheet" width="100%">
+    <layout padding="false" classNames="entity-log-wrapper">
+        <tabSheet id="tabsheet" width="100%" height="100%" classNames="entity-log-main-tab-sheet">
             <tab id="view" label="msg://view">
-                <vbox id="viewWrapper" padding="false" width="100%" themeNames="spacing-s">
+                <vbox id="viewWrapper" width="100%" height="100%"
+                      padding="false" themeNames="spacing-s">
                     <details opened="true" width="100%" summaryText="msg://filterParameters">
-                        <formLayout>
-                            <responsiveSteps>
-                                <responsiveStep minWidth="0" columns="1"/>
-                                <responsiveStep minWidth="32em" columns="2"/>
-                                <responsiveStep minWidth="50em" columns="4"/>
-                            </responsiveSteps>
-                            <comboBox id="userField" label="msg://user" autoOpen="true"/>
-                            <comboBox id="substitutedUserField" label="msg://substitutedUser" autoOpen="true"/>
-                            <select id="changeTypeField" label="msg://changeType"/>
-                            <div classNames="datetime-picker-container">
-                                <datePicker id="fromDateField" datatype="localDate"
-                                            label="msg://from"/>
-                                <timePicker id="fromTimeField" datatype="localTime"/>
-                            </div>
+                        <vbox padding="false">
+                            <formLayout>
+                                <responsiveSteps>
+                                    <responsiveStep minWidth="0" columns="1"/>
+                                    <responsiveStep minWidth="40em" columns="2"/>
+                                    <responsiveStep minWidth="75em" columns="4"/>
+                                </responsiveSteps>
+                                <comboBox id="userField" label="msg://user" autoOpen="true"/>
+                                <comboBox id="substitutedUserField" label="msg://substitutedUser" autoOpen="true"/>
+                                <select id="changeTypeField" label="msg://changeType"/>
+                                <div classNames="datetime-picker-container">
+                                    <datePicker id="fromDateField" datatype="localDate"
+                                                label="msg://from"/>
+                                    <timePicker id="fromTimeField" datatype="localTime"/>
+                                </div>
 
-                            <comboBox label="msg://entity" id="filterEntityNameField"/>
-                            <valuePicker id="instancePicker" label="msg://instance" enabled="false">
-                                <actions>
-                                    <action id="selectAction" type="entity_lookup"/>
-                                    <action id="valueClearAction" type="value_clear"/>
-                                </actions>
-                            </valuePicker>
-                            <div classNames="datetime-picker-container">
-                                <datePicker id="tillDateField" datatype="localDate"
-                                            label="msg://till"/>
-                                <timePicker id="tillTimeField" datatype="localTime"/>
-                            </div>
+                                <comboBox label="msg://entity" id="filterEntityNameField"/>
+                                <valuePicker id="instancePicker" label="msg://instance" enabled="false">
+                                    <actions>
+                                        <action id="selectAction" type="entity_lookup"/>
+                                        <action id="valueClearAction" type="value_clear"/>
+                                    </actions>
+                                </valuePicker>
+                                <div classNames="datetime-picker-container">
+                                    <datePicker id="tillDateField" datatype="localDate"
+                                                label="msg://till"/>
+                                    <timePicker id="tillTimeField" datatype="localTime"/>
+                                </div>
+                            </formLayout>
 
-                        </formLayout>
-                        <hbox classNames="mt-s">
-                            <button id="searchBtn" icon="SEARCH" themeNames="primary" text="msg://search"/>
-                            <button id="clearEntityLogTableBtn" icon="ERASER" text="msg://clear"/>
-                            <simplePagination id="paginationEntityLog" dataLoader="entityLogDl"/>
-                        </hbox>
+                            <hbox id="buttonsPanel" classNames="buttons-panel">
+                                <button id="searchBtn" icon="SEARCH" themeNames="primary" text="msg://search"/>
+                                <button id="clearEntityLogTableBtn" icon="ERASER" text="msg://clear"/>
+                                <simplePagination id="paginationEntityLog" dataLoader="entityLogDl"/>
+                            </hbox>
+                        </vbox>
                     </details>
-                    <formLayout>
-                        <responsiveSteps>
-                            <responsiveStep minWidth="0" columns="1"/>
-                            <responsiveStep minWidth="90em" columns="2"/>
-                        </responsiveSteps>
-                        <dataGrid id="entityLogTable" dataContainer="entityLogDc" columnReorderingAllowed="true" classNames="mt-s">
+                    <div width="100%" height="100%" classNames="entity-log-grid-wrapper">
+                        <dataGrid id="entityLogTable" dataContainer="entityLogDc"
+                                  width="100%" height="100%"
+                                  minHeight="20em"
+                                  columnReorderingAllowed="true">
                             <columns resizable="true">
                                 <column property="eventTs"/>
                                 <column property="username"/>
@@ -149,9 +151,10 @@
                                 <column key="entityId" header="msg://entityId"/>
                             </columns>
                         </dataGrid>
-
-                        <dataGrid id="entityLogAttrTable" width="100%" dataContainer="entityLogAttrDc"
-                                  columnReorderingAllowed="true" classNames="mt-s">
+                        <dataGrid id="entityLogAttrTable" dataContainer="entityLogAttrDc"
+                                  width="100%" height="100%"
+                                  minHeight="20em"
+                                  columnReorderingAllowed="true">
                             <columns resizable="true">
                                 <column key="attribute" header="msg://attribute"/>
                                 <column property="value" header="msg://newValue"/>
@@ -160,18 +163,12 @@
                                 <column property="oldValueId"/>
                             </columns>
                         </dataGrid>
-
-                    </formLayout>
-
+                    </div>
                 </vbox>
             </tab>
             <tab id="setup" label="msg://setup">
-                <formLayout id="setupWrapper" width="100%">
-                    <responsiveSteps>
-                        <responsiveStep minWidth="0" columns="1"/>
-                        <responsiveStep minWidth="32em" columns="3"/>
-                    </responsiveSteps>
-                    <vbox id="loggedEntityTableBox"
+                <hbox width="100%" height="100%" classNames="setup-logged-entity-wrapper">
+                    <vbox id="loggedEntityTableBox" width="100%"
                           expand="loggedEntityTable" padding="false">
                         <hbox id="loggedEntityButtonPanel" classNames="buttons-panel">
                             <button id="createBtn" action="loggedEntityTable.create"/>
@@ -200,12 +197,15 @@
                             </actions>
                             <columns resizable="true">
                                 <column property="name"/>
-                                <column property="auto"/>
-                                <column property="manual"/>
+                                <column property="auto" flexGrow="0"/>
+                                <column property="manual" flexGrow="0"/>
                             </columns>
                         </dataGrid>
                     </vbox>
-                    <vbox id="loggedEntityMiscBox" padding="false" expand="attributesBox">
+                    <vbox id="loggedEntityMiscBox" padding="false" expand="attributesBox"
+                          classNames="logged-entity-details-wrapper"
+                          width="unset"
+                          minWidth="30em">
                         <comboBox id="entityNameField" label="msg://name" width="100%" dataContainer="loggedEntityDc"
                                   property="name"/>
                         <hbox id="checkersBox" padding="false" width="100%">
@@ -214,7 +214,7 @@
                             <checkbox id="manualCheckBox" label="msg://manual" dataContainer="loggedEntityDc"
                                       property="manual"/>
                         </hbox>
-                        <vbox id="attributesBox" width="100%" padding="false">
+                        <vbox id="attributesBox" height="100%" width="100%" padding="false">
                             <h5 text="msg://attributes"/>
                             <checkbox id="selectAllCheckBox" label="msg://[all]"/>
                             <scroller id="attributesScroller" scrollBarsDirection="VERTICAL"
@@ -228,7 +228,7 @@
                             <button id="cancelBtn" text="msg://cancel" icon="BAN"/>
                         </hbox>
                     </vbox>
-                </formLayout>
+                </hbox>
             </tab>
         </tabSheet>
 

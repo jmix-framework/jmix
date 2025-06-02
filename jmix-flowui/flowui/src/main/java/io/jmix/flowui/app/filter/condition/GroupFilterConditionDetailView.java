@@ -38,6 +38,7 @@ import org.springframework.lang.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @ViewController("flowui_GroupFilterCondition.detail")
 @ViewDescriptor("group-filter-condition-detail-view.xml")
@@ -189,6 +190,11 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
             Collections.swap(ownConditions, selectedOwnItemIndex, selectedOwnItemIndex + 1);
             refreshMoveButtonsState(selectedCondition);
         }
+    }
+
+    @Install(to = "conditionsTreeDataGrid", subject = "itemSelectableProvider")
+    protected boolean conditionsTreeDataGridItemSelectableProvider(FilterCondition filterCondition) {
+        return !Objects.equals(filterCondition, getEditedEntity());
     }
 
     @Install(to = "operationField", subject = "itemLabelGenerator")

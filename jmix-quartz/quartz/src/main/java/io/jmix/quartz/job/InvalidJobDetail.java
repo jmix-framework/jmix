@@ -75,7 +75,7 @@ public class InvalidJobDetail implements JobDetail {
     }
 
     @Override
-    public boolean isConcurrentExectionDisallowed() {
+    public boolean isConcurrentExecutionDisallowed() {
         return false;
     }
 

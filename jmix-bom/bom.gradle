@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.4.4")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.5.0")
     api platform('software.amazon.awssdk:bom:2.25.60')
 
     def freeVersion = version

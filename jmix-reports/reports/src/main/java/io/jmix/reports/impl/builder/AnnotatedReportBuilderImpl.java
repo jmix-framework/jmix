@@ -81,6 +81,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         report.setTemplates(extractTemplates(report, definitionClass, definitionInstance));
         report.setBands(extractBands(report, definitionClass, definitionInstance));
         report.setValuesFormats(extractValueFormats(report, definitionClass, definitionInstance));
+        // todo roles and views
         return report;
     }
 
@@ -122,7 +123,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         ReportGroup group = annotatedReportGroupProvider.getGroupByCode(groupAnnotation.code());
         if (group == null) {
             throw new InvalidReportDefinitionException(
-                    "Unregistered Report group class: " + annotation.group());
+                    "Unregistered Report group: " + annotation.group());
         }
         report.setGroup(group);
     }

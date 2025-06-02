@@ -23,6 +23,7 @@ import io.jmix.flowui.action.list.RemoveAction;
 import io.jmix.flowui.action.logicalfilter.LogicalFilterEditAction;
 import io.jmix.flowui.action.view.DetailSaveCloseAction;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.select.JmixSelect;
@@ -33,6 +34,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.InstanceContainer.ItemPropertyChangeEvent;
 import io.jmix.flowui.view.*;
 import org.springframework.lang.Nullable;
 
@@ -54,6 +56,8 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
     protected CollectionContainer<FilterCondition> filterConditionsDc;
     @ViewComponent
     protected JmixSelect<LogicalFilterComponent.Operation> operationField;
+    @ViewComponent
+    protected JmixCheckbox operationTextVisibleField;
     @ViewComponent
     protected H4 groupConditionTitle;
 
@@ -122,6 +126,26 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
     @Subscribe
     public void onInitEntity(InitEntityEvent<GroupFilterCondition> event) {
         event.getEntity().setStyleName(GROUP_FILTER_CLASS_NAME);
+    }
+
+    @Override
+    protected void setupEntityToEdit(GroupFilterCondition entityToEdit) {
+        initCheckboxesState(entityToEdit);
+
+        super.setupEntityToEdit(entityToEdit);
+    }
+
+    protected void initCheckboxesState(GroupFilterCondition entityToEdit) {
+        operationTextVisibleField.setVisible(entityToEdit.getVisible());
+    }
+
+    @Subscribe(id = "filterConditionDc", target = Target.DATA_CONTAINER)
+    public void onFilterConditionDcItemPropertyChange(ItemPropertyChangeEvent<GroupFilterCondition> event) {
+        String property = event.getProperty();
+
+        if ("visible".equals(property)) {
+            operationTextVisibleField.setVisible(Boolean.TRUE.equals(event.getValue()));
+        }
     }
 
     @Subscribe

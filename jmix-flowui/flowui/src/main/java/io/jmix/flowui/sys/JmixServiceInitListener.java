@@ -169,12 +169,15 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     }
 
     protected void modifyIndexHtmlResponse(IndexHtmlResponse response) {
+        Element head = response.getDocument().head();
+
+        Element script = createElement("script", getJmixBeforeUploadListenerFunction(), "text/javascript");
+        head.appendChild(script);
+
         List<String> styles = modules.getPropertyValues(IMPORT_STYLES_PROP);
         if (styles.isEmpty()) {
             return;
         }
-
-        Element head = response.getDocument().head();
         styles.forEach(path -> appendStyles(head, path));
     }
 
@@ -206,6 +209,16 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
             log.warn("Unable to read resource '{}'", path, e);
             return null;
         }
+    }
+
+    protected String getJmixBeforeUploadListenerFunction() {
+        // language=javascript
+        return """
+                    jmixBeforeUnloadListener = (event) => {
+                      event.preventDefault();
+                      return (event.returnValue = "");
+                    };
+                """;
     }
 
     protected Element createElement(String tag, @Nullable String content, String... attrs) {

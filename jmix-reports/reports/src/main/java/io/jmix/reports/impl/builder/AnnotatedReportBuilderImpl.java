@@ -26,6 +26,7 @@ import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.table.TemplateTableBand;
 import io.jmix.reports.entity.table.TemplateTableColumn;
 import io.jmix.reports.entity.table.TemplateTableDescription;
+import io.jmix.reports.impl.AnnotatedReportGroupProvider;
 import io.jmix.reports.libintegration.MultiEntityDataLoader;
 import io.jmix.reports.yarg.formatters.CustomReport;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
@@ -54,11 +55,16 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
     private static final Logger log = LoggerFactory.getLogger(AnnotatedReportBuilderImpl.class);
     protected final Metadata metadata;
     protected final MessageTools messageTools;
+    protected final AnnotatedBuilderUtils annotatedBuilderUtils;
+    protected final AnnotatedReportGroupProvider annotatedReportGroupProvider;
     private final Resources resources;
 
-    public AnnotatedReportBuilderImpl(Metadata metadata, MessageTools messageTools, Resources resources) {
+    public AnnotatedReportBuilderImpl(Metadata metadata, MessageTools messageTools, AnnotatedBuilderUtils annotatedBuilderUtils,
+                                      AnnotatedReportGroupProvider annotatedReportGroupProvider, Resources resources) {
         this.metadata = metadata;
         this.messageTools = messageTools;
+        this.annotatedBuilderUtils = annotatedBuilderUtils;
+        this.annotatedReportGroupProvider = annotatedReportGroupProvider;
         this.resources = resources;
     }
 
@@ -68,24 +74,22 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         ReportDef reportAnnotation = definitionClass.getAnnotation(ReportDef.class);
 
         Report report = metadata.create(Report.class);
-        assignReportParameters(report, reportAnnotation);
+        assignReportParameters(report, reportAnnotation, definitionClass);
         assignReportDelegates(report, definitionClass, definitionInstance);
 
         report.setInputParameters(extractInputParameters(report, definitionClass, definitionInstance));
         report.setTemplates(extractTemplates(report, definitionClass, definitionInstance));
         report.setBands(extractBands(report, definitionClass, definitionInstance));
         report.setValuesFormats(extractValueFormats(report, definitionClass, definitionInstance));
-        // todo report group
-        // todo log debug message
         return report;
     }
 
-    protected void assignReportParameters(Report report, ReportDef annotation) {
+    protected void assignReportParameters(Report report, ReportDef annotation, Class<?> definitionClass) {
         String nameValue = annotation.name();
-        report.setName(messageTools.loadString(nameValue, getDefaultLocale()));
+        report.setName(messageTools.loadString(nameValue, messageTools.getDefaultLocale()));
 
         if (nameValue.startsWith(MessageTools.MARK)) {
-            report.setLocaleNames(buildLocaleNames(nameValue));
+            report.setLocaleNames(annotatedBuilderUtils.buildLocaleNames(nameValue));
         }
 
         report.setCode(annotation.code());
@@ -98,10 +102,29 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         }
         // else keep automatically generated random id
 
-        // todo report.setGroup()
         report.setRestAccess(annotation.restAccessible());
         report.setSystem(annotation.system());
         report.setSource(ReportSource.ANNOTATED_CLASS);
+
+        assignGroup(report, annotation);
+    }
+
+    protected void assignGroup(Report report, ReportDef annotation) {
+        if (Void.TYPE.equals(annotation.group())) {
+            return;
+        }
+
+        ReportGroupDef groupAnnotation = annotation.group().getAnnotation(ReportGroupDef.class);
+        if (groupAnnotation == null) {
+            throw new InvalidReportDefinitionException(
+                    "Report group class must be annotated with @ReportGroupDef: " + annotation.group());
+        }
+        ReportGroup group = annotatedReportGroupProvider.getGroupByCode(groupAnnotation.code());
+        if (group == null) {
+            throw new InvalidReportDefinitionException(
+                    "Unregistered Report group class: " + annotation.group());
+        }
+        report.setGroup(group);
     }
 
     protected void assignReportDelegates(Report report, Class<?> reportClass, Object reportDefinition) {
@@ -158,14 +181,14 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         parameter.setAlias(annotation.alias());
 
         String nameValue = annotation.name();
-        parameter.setName(messageTools.loadString(nameValue, getDefaultLocale()));
+        parameter.setName(messageTools.loadString(nameValue, messageTools.getDefaultLocale()));
         if (nameValue.startsWith(MessageTools.MARK)) {
-            parameter.setLocaleNames(buildLocaleNames(nameValue));
+            parameter.setLocaleNames(annotatedBuilderUtils.buildLocaleNames(nameValue));
         }
 
         parameter.setRequired(annotation.required());
         parameter.setType(annotation.type());
-        if (!Void.class.equals(annotation.enumerationClass())) {
+        if (!Void.TYPE.equals(annotation.enumerationClass())) {
             parameter.setEnumerationClass(annotation.enumerationClass().getName());
         }
         if (!annotation.defaultValue().isEmpty()) {
@@ -314,7 +337,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
                 column.setKey(columnDef.key());
 
                 // todo problem: we can't here adjust locale for different users
-                column.setCaption(messageTools.loadString(columnDef.caption(), getDefaultLocale()));
+                column.setCaption(messageTools.loadString(columnDef.caption(), messageTools.getDefaultLocale()));
 
                 band.getColumns().add(column);
             }
@@ -588,21 +611,5 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         if (delegate == null) {
             throw new RuntimeException(String.format("Delegate declaration method returned null: %s", method));
         }
-    }
-
-    protected String buildLocaleNames(String name) {
-        // do reverse logic of io.jmix.reports.util.MsgBundleTools#getLocalizedValue()
-        Map<String, Locale> allLocales = messageTools.getAvailableLocalesMap();
-        Properties properties = new Properties();
-
-        for (Map.Entry<String, Locale> localeEntry : allLocales.entrySet()) {
-            String localizedName = messageTools.loadString(name, localeEntry.getValue());
-            properties.put(localeEntry.getKey(), localizedName);
-        }
-        return properties.toString();
-    }
-
-    protected Locale getDefaultLocale() {
-        return messageTools.getDefaultLocale();
     }
 }

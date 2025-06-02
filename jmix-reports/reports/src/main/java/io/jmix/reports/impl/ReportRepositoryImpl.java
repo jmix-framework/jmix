@@ -17,9 +17,12 @@
 package io.jmix.reports.impl;
 
 import io.jmix.core.DataManager;
-import io.jmix.reports.AnnotatedReportProvider;
+import io.jmix.core.FetchPlan;
 import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportGroup;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -28,12 +31,17 @@ import java.util.List;
 
 @Component("report_ReportRepository")
 public class ReportRepositoryImpl implements ReportRepository {
-    private final AnnotatedReportProvider annotatedReportProvider;
-    private final DataManager dataManager;
 
-    public ReportRepositoryImpl(AnnotatedReportProvider annotatedReportProvider, DataManager dataManager) {
+    protected final AnnotatedReportProvider annotatedReportProvider;
+    protected final DataManager dataManager;
+
+    protected final AnnotatedReportGroupProvider annotatedReportGroupProvider;
+
+    public ReportRepositoryImpl(AnnotatedReportProvider annotatedReportProvider, DataManager dataManager,
+                                AnnotatedReportGroupProvider annotatedReportGroupProvider) {
         this.annotatedReportProvider = annotatedReportProvider;
         this.dataManager = dataManager;
+        this.annotatedReportGroupProvider = annotatedReportGroupProvider;
     }
 
     @Override
@@ -47,11 +55,34 @@ public class ReportRepositoryImpl implements ReportRepository {
         return allReports;
     }
 
-    private List<Report> loadReportsFromDatabase() {
+    protected List<Report> loadReportsFromDatabase() {
         List<Report> reportsFromDb = dataManager.load(Report.class)
                 .all()
                 .fetchPlan("report.run") // todo
                 .list();
         return reportsFromDb;
+    }
+
+    @Override
+    public Collection<ReportGroup> getAllGroups() {
+        Collection<ReportGroup> annotatedGroups = annotatedReportGroupProvider.getAllGroups();
+        List<ReportGroup> groupsFromDb = loadGroupsFromDatabase();
+
+        List<ReportGroup> allGroups = new ArrayList<>(annotatedGroups);
+        allGroups.addAll(groupsFromDb);
+        return allGroups;
+    }
+
+    protected List<ReportGroup> loadGroupsFromDatabase() {
+        return dataManager.load(ReportGroup.class)
+                .all()
+                .fetchPlan(FetchPlan.BASE)
+                .list();
+    }
+
+    @EventListener
+    public void handleApplicationStartedEvent(ApplicationStartedEvent event) {
+        annotatedReportGroupProvider.importGroupDefinitions();
+        annotatedReportProvider.importReportDefinitions();
     }
 }

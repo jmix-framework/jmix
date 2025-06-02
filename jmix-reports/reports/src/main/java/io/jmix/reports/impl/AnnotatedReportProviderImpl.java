@@ -16,15 +16,13 @@
 
 package io.jmix.reports.impl;
 
-import io.jmix.reports.AnnotatedReportProvider;
 import io.jmix.reports.annotation.ReportDef;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.impl.builder.AnnotatedReportBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.event.EventListener;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -32,10 +30,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component("report_AnnotatedReportProvider")
-public class AnnotatedReportProviderImpl implements AnnotatedReportProvider {
+public class AnnotatedReportProviderImpl implements AnnotatedReportProvider, ApplicationContextAware {
     private static final Logger log = LoggerFactory.getLogger(AnnotatedReportProviderImpl.class);
 
     protected final AnnotatedReportBuilder annotatedReportBuilder;
+    protected ApplicationContext applicationContext;
 
     /**
      * Map: report code -> report model object.
@@ -63,16 +62,17 @@ public class AnnotatedReportProviderImpl implements AnnotatedReportProvider {
         log.debug("Imported report definition: name {}, {}", beanName, bean.getClass());
     }
 
-    @EventListener
-    public void handleApplicationStartedEvent(ApplicationStartedEvent event) {
-        importReportsFromContext(event.getApplicationContext());
-    }
-
-    protected void importReportsFromContext(ConfigurableApplicationContext applicationContext) {
+    @Override
+    public void importReportDefinitions() {
         Map<String, Object> reportDefinitions = applicationContext.getBeansWithAnnotation(ReportDef.class);
         for (Map.Entry<String, Object> entry : reportDefinitions.entrySet()) {
             importReportDefinition(entry.getValue(), entry.getKey());
         }
         log.info("Imported {} report definitions", reportDefinitions.size());
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 }

@@ -63,10 +63,10 @@ public @interface ReportDef {
     String uuid() default "";
 
     /**
-     * Class of the report group definition.
+     * Group of the report. Specified as class of the annotated report group definition.
      * @see ReportGroupDef
      */
-    Class<?> group();
+    Class<?> group() default void.class;
 
     /**
      * Whether the report should be accessible via REST API.

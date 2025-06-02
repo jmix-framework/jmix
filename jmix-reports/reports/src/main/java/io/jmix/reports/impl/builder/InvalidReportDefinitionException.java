@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.reports;
+package io.jmix.reports.impl.builder;
 
-import io.jmix.reports.entity.Report;
+/**
+ * Exception thrown if an annotated report or report group definition is invalid.
+ */
+public class InvalidReportDefinitionException extends RuntimeException {
 
-import java.util.Collection;
+    public InvalidReportDefinitionException(String message) {
+        super(message);
+    }
 
-public interface AnnotatedReportProvider {
-    Collection<Report> getAllReports();
+    public InvalidReportDefinitionException(Throwable cause) {
+        super(cause);
+    }
 }

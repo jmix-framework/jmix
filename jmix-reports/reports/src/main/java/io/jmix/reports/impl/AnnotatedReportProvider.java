@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.reports;
+package io.jmix.reports.impl;
 
 import io.jmix.reports.entity.Report;
-import io.jmix.reports.entity.ReportGroup;
 
 import java.util.Collection;
 
-public interface ReportRepository {
+/**
+ * Bean that holds report definitions parsed from annotated classes.
+ */
+public interface AnnotatedReportProvider {
+
     Collection<Report> getAllReports();
 
-    Collection<ReportGroup> getAllGroups();
+    /**
+     * Scan and import report definitions from application context.
+     */
+    void importReportDefinitions();
+
 }

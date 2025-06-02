@@ -17,19 +17,21 @@
 package io.jmix.reports.entity;
 
 /**
- * Defines where the report comes from.
+ * Defines where the report or report group comes from.
  */
 public enum ReportSource {
 
     /**
-     * Report was defined in the project source code.
+     * Report or report group was defined in the project source code.
      * @see io.jmix.reports.annotation.ReportDef
+     * @see io.jmix.reports.annotation.ReportGroupDef
      */
     ANNOTATED_CLASS,
 
     /**
-     * Report is stored as persistent entity in the database.
+     * Report or report group is stored as persistent entity in the database.
      * @see Report
+     * @see ReportGroup
      */
     DATABASE
 }

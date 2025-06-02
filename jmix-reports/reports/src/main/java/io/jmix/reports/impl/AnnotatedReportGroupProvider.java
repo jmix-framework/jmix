@@ -14,15 +14,34 @@
  * limitations under the License.
  */
 
-package io.jmix.reports;
+package io.jmix.reports.impl;
 
-import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
+import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 
-public interface ReportRepository {
-    Collection<Report> getAllReports();
+/**
+ * Bean that holds report group definitions parsed from annotated classes.
+ */
+public interface AnnotatedReportGroupProvider {
 
+    /**
+     * @return collection of all annotated report groups, unsorted
+     */
     Collection<ReportGroup> getAllGroups();
+
+    /**
+     * Find an annotated report group by its unique code.
+     *
+     * @param code group code
+     * @return annotated report group, or null if not found
+     */
+    @Nullable
+    ReportGroup getGroupByCode(String code);
+
+    /**
+     * Scan and import group definitions from application context.
+     */
+    void importGroupDefinitions();
 }

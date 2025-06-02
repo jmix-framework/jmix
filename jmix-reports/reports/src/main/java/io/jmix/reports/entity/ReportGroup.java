@@ -91,6 +91,10 @@ public class ReportGroup {
     @TenantId
     private String sysTenantId;
 
+    @Transient
+    @JmixProperty
+    protected ReportSource source;
+
     public UUID getId() {
         return id;
     }
@@ -187,6 +191,14 @@ public class ReportGroup {
         this.sysTenantId = sysTenantId;
     }
 
+    public ReportSource getSource() {
+        return source;
+    }
+
+    public void setSource(ReportSource source) {
+        this.source = source;
+    }
+
     @JmixProperty
     @DependsOnProperties("code")
     public Boolean getSystemFlag() {
@@ -197,5 +209,10 @@ public class ReportGroup {
     @DependsOnProperties({"title", "localeNames"})
     public String getInstanceName(MsgBundleTools msgBundleTools) {
         return msgBundleTools.getLocalizedValue(localeNames, title);
+    }
+
+    @PostLoad
+    public void postLoad() {
+        this.source = ReportSource.DATABASE;
     }
 }

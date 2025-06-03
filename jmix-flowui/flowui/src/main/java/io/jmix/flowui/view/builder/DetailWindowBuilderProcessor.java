@@ -295,7 +295,7 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     protected <E> E initNewEntity(DetailWindowBuilder<E, ?> builder, @Nullable CollectionContainer<E> container,
                                   @Nullable EntityValueSource<?, ?> entityValueSource, boolean oneToOneComposition) {
         E entity = builder.getNewEntity()
-                .orElse(metadata.create(builder.getEntityClass()));
+                .orElseGet(() -> metadata.create(builder.getEntityClass()));
 
         if (container instanceof Nested) {
             initializeNestedEntity(entity, (Nested) container);

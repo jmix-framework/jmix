@@ -58,7 +58,7 @@ public class UiTestIdSupport {
      * Typically it equals to {@link Component#getId()}, but in certain cases it can be calculated from
      * the component state.
      *
-     * @param component component for adding {@code j-test-id} attribute
+     * @param component component for adding {@link #UI_TEST_ID} attribute
      */
     public void addTestIdListener(Component component) {
         component.addAttachListener(this::testIdListener);
@@ -163,7 +163,7 @@ public class UiTestIdSupport {
                 .or(component::getId)
                 .ifPresentOrElse(
                         id -> setTestId(component, id),
-                        () -> setTestId(component, uiTestIdManager.getUiTestId(component))
+                        () -> setTestId(component, uiTestIdManager.calculateUiTestId(component))
                 );
     }
 

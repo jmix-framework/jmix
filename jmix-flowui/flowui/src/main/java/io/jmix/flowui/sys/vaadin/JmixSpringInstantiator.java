@@ -71,7 +71,7 @@ public class JmixSpringInstantiator extends SpringInstantiator {
             getViewSupport().initView(((View) instance));
         }
 
-        if (Component.class.isAssignableFrom(type) && getUiProperties().isTestMode()) {
+        if (Component.class.isAssignableFrom(type) && getUiProperties().isUiTestMode()) {
             getUiTestIdSupport().addTestIdListener(((Component) instance));
         }
     }

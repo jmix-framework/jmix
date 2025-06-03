@@ -16,6 +16,7 @@
 
 package io.jmix.flowui;
 
+import io.jmix.flowui.sys.UiTestIdSupport;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.lang.Nullable;
@@ -28,9 +29,13 @@ import java.util.Map;
 public class UiProperties {
 
     /**
-     * Enables automatic tests for UI. If {@code true} components add {@code j-test-id} attribute to DOM tree.
+     * Enables automatic generation of static IDs for UI components. Static IDs are required to enable unambiguous
+     * identification of components in UI autotests.
+     * <p>
+     * If {@code true}, the {@link UiTestIdSupport#UI_TEST_ID UI_TEST_ID} attribute is added to the DOM tree
+     * for components created using the {@link UiComponents} factory.
      */
-    boolean testMode;
+    boolean uiTestMode;
 
     /**
      * View that will be used as Login view.
@@ -88,7 +93,7 @@ public class UiProperties {
      */
     boolean websocketRequestSecurityContextProvided;
 
-    public UiProperties(@DefaultValue("false") boolean testMode,
+    public UiProperties(@DefaultValue("false") boolean uiTestMode,
                         @DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
                         @Nullable String defaultViewId,
@@ -103,7 +108,7 @@ public class UiProperties {
                         @DefaultValue("true") boolean useSessionFixationProtection,
                         @DefaultValue("false") boolean websocketRequestSecurityContextProvided
     ) {
-        this.testMode = testMode;
+        this.uiTestMode = uiTestMode;
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;
         this.defaultViewId = defaultViewId;
@@ -120,10 +125,10 @@ public class UiProperties {
     }
 
     /**
-     * @see #testMode
+     * @see #uiTestMode
      */
-    public boolean isTestMode() {
-        return testMode;
+    public boolean isUiTestMode() {
+        return uiTestMode;
     }
 
     /**

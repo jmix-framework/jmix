@@ -200,8 +200,8 @@ public class JSelectors {
         protected String elementPosition;
 
         protected ByDisplayedText(String displayedText, String tagName, String elementPosition) {
-            super("(.//*[contains(text(),'%s')]/ancestor-or-self::%s[@j-test-id])[%s]"
-                    .formatted(displayedText, tagName, elementPosition));
+            super("(.//*[contains(text(),'%s')]/ancestor-or-self::%s[@%s])[%s]"
+                    .formatted(displayedText, tagName, UI_TEST_ID, elementPosition));
 
             this.displayedText = displayedText;
             this.tagName = tagName;

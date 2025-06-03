@@ -97,7 +97,7 @@ public class Notification extends Composite<Notification> {
     }
 
     /**
-     * Theme enumeration of the notification. The values are mapped with {@code theme} dom attribute values.
+     * Theme enumeration of the notification. The values are mapped with {@code theme} DOM attribute values.
      */
     public enum Theme {
 
@@ -119,7 +119,7 @@ public class Notification extends Composite<Notification> {
     }
 
     /**
-     * Theme position of the notification. The values are mapped with {@code slot} dom attribute values
+     * Theme position of the notification. The values are mapped with {@code slot} DOM attribute values
      */
     public enum Position {
 

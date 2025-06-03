@@ -29,5 +29,5 @@ public interface UiTestIdManager {
      * @return UI test ID calculated based on the type and state of the passed component
      */
     @Nullable
-    String calculateUiTestId(Component component);
+    String generateUiTestId(Component component);
 }

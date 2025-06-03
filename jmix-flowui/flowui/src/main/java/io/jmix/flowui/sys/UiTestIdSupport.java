@@ -163,7 +163,7 @@ public class UiTestIdSupport {
                 .or(component::getId)
                 .ifPresentOrElse(
                         id -> setTestId(component, id),
-                        () -> setTestId(component, uiTestIdManager.calculateUiTestId(component))
+                        () -> setTestId(component, uiTestIdManager.generateUiTestId(component))
                 );
     }
 

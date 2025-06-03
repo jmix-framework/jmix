@@ -31,7 +31,7 @@ public class UiTestIdManagerImpl implements UiTestIdManager {
 
     @Nullable
     @Override
-    public String calculateUiTestId(Component component) {
+    public String generateUiTestId(Component component) {
         if (component instanceof JmixButton button && button.getAction() != null) {
             return button.getAction().getId();
         }

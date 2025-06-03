@@ -325,7 +325,7 @@ public class DataGrid extends AbstractComponent<DataGrid> {
 
     /**
      * Abstract class for data grid cell. Supports getting content (linked by a special slot with a
-     * light-dom web-element).
+     * light-DOM web-element).
      *
      * @param <T> inheritor cell class type
      */
@@ -340,7 +340,7 @@ public class DataGrid extends AbstractComponent<DataGrid> {
         }
 
         /**
-         * @return cell related content in light-dom
+         * @return cell related content in light-DOM
          */
         public SelenideElement getCellContent() {
             String slotName = cellWrapper.find(TagNames.SLOT)

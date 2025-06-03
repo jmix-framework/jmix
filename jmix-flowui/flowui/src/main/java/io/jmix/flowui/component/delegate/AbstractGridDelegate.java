@@ -22,12 +22,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.grid.editor.EditorCloseEvent;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
@@ -47,12 +42,14 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.Fragments;
 import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.action.list.ReadAction;
+import io.jmix.flowui.app.datagrid.DataGridEmptyStateByPermissionsFragment;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.SupportsEnterPress.EnterPressEvent;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
@@ -89,7 +86,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected ApplicationContext applicationContext;
 
-    protected UiComponents uiComponents;
+    protected Fragments fragments;
     protected MetadataTools metadataTools;
     protected MessageTools messageTools;
     protected Messages messages;
@@ -152,7 +149,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected void autowireDependencies() {
-        uiComponents = applicationContext.getBean(UiComponents.class);
+        fragments = applicationContext.getBean(Fragments.class);
         metadataTools = applicationContext.getBean(MetadataTools.class);
         messageTools = applicationContext.getBean(MessageTools.class);
         messages = applicationContext.getBean(Messages.class);
@@ -775,9 +772,11 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         updateEmptyState();
     }
 
-    public void setEmptyStateSetters(Consumer<String> emptyStateTextSetter,
-                                     Consumer<Component> emptyStateComponentSetter) {
+    public void setEmptyStateTextSetter(Consumer<String> emptyStateTextSetter) {
         this.componentEmptyStateTextSetter = emptyStateTextSetter;
+    }
+
+    public void setEmptyStateComponentSetter(Consumer<Component> emptyStateComponentSetter) {
         this.componentEmptyStateComponentSetter = emptyStateComponentSetter;
     }
 
@@ -797,26 +796,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected Component createEmptyStateByPermissionsComponent() {
-        HorizontalLayout horizontalLayout = uiComponents.create(HorizontalLayout.class);
-        horizontalLayout.setId("emptyStateByPermissionsComponent");
-        horizontalLayout.setSizeFull();
-        horizontalLayout.setPadding(false);
-
-        horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-        horizontalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-
-        Icon icon = uiComponents.create(Icon.class);
-        icon.setIcon(VaadinIcon.WARNING);
-        icon.setSize("2em");
-
-        icon.setColor("var(--lumo-error-color)");
-
-        H2 emptyStateHeader = uiComponents.create(H2.class);
-        emptyStateHeader.setId("emptyStateHeader");
-        emptyStateHeader.setText(messages.getMessage(getClass(), "gridEmptyStateHeader"));
-
-        horizontalLayout.add(icon, emptyStateHeader);
-        return horizontalLayout;
+        return fragments.create(UiComponentUtils.getView(component), DataGridEmptyStateByPermissionsFragment.class);
     }
 
     public List<Grid.Column<E>> getColumns() {

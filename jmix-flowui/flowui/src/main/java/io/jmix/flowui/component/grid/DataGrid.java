@@ -77,7 +77,8 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     protected void initComponent() {
         gridDelegate = createDelegate();
         gridDelegate.setAfterColumnSecurityApplyHandler(this::onAfterApplyColumnSecurity);
-        gridDelegate.setEmptyStateSetters(super::setEmptyStateText, super::setEmptyStateComponent);
+        gridDelegate.setEmptyStateTextSetter(super::setEmptyStateText);
+        gridDelegate.setEmptyStateComponentSetter(super::setEmptyStateComponent);
     }
 
     @SuppressWarnings("unchecked")

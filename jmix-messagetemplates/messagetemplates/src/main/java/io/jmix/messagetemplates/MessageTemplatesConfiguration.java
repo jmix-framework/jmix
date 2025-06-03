@@ -20,7 +20,6 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,12 +28,4 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
 public class MessageTemplatesConfiguration {
-
-    @Bean("msgtmp_Configuration")
-    public freemarker.template.Configuration configuration(MessageTemplateProperties messageTemplateProperties) {
-        freemarker.template.Configuration configuration
-                = new freemarker.template.Configuration(messageTemplateProperties.getFreemarkerVersion());
-        configuration.setDefaultEncoding("UTF-8");
-        return configuration;
-    }
 }

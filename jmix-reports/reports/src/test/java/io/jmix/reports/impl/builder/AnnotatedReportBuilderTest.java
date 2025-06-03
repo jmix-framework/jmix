@@ -18,8 +18,7 @@ package io.jmix.reports.impl.builder;
 
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.outside_reports.CorrectReportGroup;
-import io.jmix.outside_reports.SimpleReport;
+import io.jmix.outside_reports.*;
 import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.impl.AnnotatedReportGroupHolder;
@@ -40,6 +39,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
 @ContextConfiguration(classes = {ReportsTestConfiguration.class})
@@ -141,6 +141,208 @@ public class AnnotatedReportBuilderTest {
 
         // then
         assertThat(metadataTools.getInstanceName(reportParameter)).isEqualTo(expectedCaption);
+    }
+
+    @Test
+    public void testWrongUuid() {
+        // given
+        WrongUuidReport definition = new WrongUuidReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("Invalid UUID");
+    }
+
+    @Test
+    public void testWrongGroupClass() {
+        // given
+        WrongGroupReport definition = new WrongGroupReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("Report group");
+    }
+
+    @Test
+    public void testNoBands() {
+        // given
+        NoBandsReport definition = new NoBandsReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("at least one band");
+    }
+
+    @Test
+    public void testMissingRootBand() {
+        // given
+        MissingRootBandReport definition = new MissingRootBandReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("root band");
+    }
+
+    @Test
+    public void testTwoRootBands() {
+        // given
+        TwoRootBandsReport definition = new TwoRootBandsReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("More than one root band");
+    }
+
+    @Test
+    public void testInvalidBandParent() {
+        // given
+        InvalidBandParentReport definition = new InvalidBandParentReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("Parent band")
+                .hasMessageContaining("is not defined");
+    }
+
+    @Test
+    public void testMissingDataSetDelegate() {
+        // given
+        MissingDataSetDelegateReport definition = new MissingDataSetDelegateReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("Dataset must have")
+                .hasMessageContaining("delegate");
+    }
+
+    @Test
+    public void testWrongDataSetNameInDelegate() {
+        // given
+        WrongDataSetNameInDelegateReport definition = new WrongDataSetNameInDelegateReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("doesn't contain data set with name");
+    }
+
+    @Test
+    public void testWrongDelegateResultType() {
+        // given
+        WrongDelegateResultTypeReport definition = new WrongDelegateResultTypeReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("Unsupported result type");
+    }
+
+    @Test
+    public void testWrongDataSetTypeForLoaderDelegate() {
+        // given
+        WrongDataSetTypeForDataLoaderReport definition = new WrongDataSetTypeForDataLoaderReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("Dataset type")
+                .hasMessageContaining("expected: DELEGATE");
+    }
+
+    @Test
+    public void testWrongEntityParameterAlias() {
+        // given
+        WrongEntityParameterAliasReport definition = new WrongEntityParameterAliasReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("doesn't contain input parameter with alias");
+    }
+
+    @Test
+    public void testDuplicateParameterAlias() {
+        // given
+        DuplicateParameterAliasReport definition = new DuplicateParameterAliasReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("Duplicate input parameter alias");
+    }
+
+    @Test
+    public void testNoTemplates() {
+        // given
+        NoTemplatesReport definition = new NoTemplatesReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("at least one template");
+    }
+
+    @Test
+    public void testMissingTemplateContent() {
+        // given
+        MissingTemplateContentReport definition = new MissingTemplateContentReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("filePath is mandatory");
+    }
+
+    @Test
+    public void testWrongTemplateFilePath() {
+        // given
+        WrongTemplateFilePathReport definition = new WrongTemplateFilePathReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("file does not exist");
+    }
+
+    @Test
+    public void testGroovyScriptTemplate() {
+        // given
+        GroovyScriptTemplateReport  definition = new GroovyScriptTemplateReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("SCRIPT")
+                .hasMessageContaining("not supported");
+    }
+
+    @Test
+    public void testWrongValueFormatBand() {
+        // given
+        WrongValueFormatBandReport  definition = new WrongValueFormatBandReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("doesn't contain band");
+    }
+
+    @Test
+    public void testMissingFormatString() {
+        // given
+        MissingFormatStringReport  definition = new MissingFormatStringReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("either format string or formatter delegate");
     }
 
     @AfterEach

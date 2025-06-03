@@ -92,7 +92,7 @@ public class AnnotatedGroupBuilderTest {
         // given
         WrongUuidReportGroup definition = new WrongUuidReportGroup();
 
-        // when
+        // when+then
         assertThatThrownBy(() -> annotatedGroupBuilder.createGroupFromDefinition(definition))
                 .isInstanceOf(InvalidReportDefinitionException.class)
                 .hasMessageContaining("Invalid UUID");

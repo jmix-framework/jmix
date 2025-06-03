@@ -33,9 +33,8 @@ import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.structure.CustomValueFormatter;
 import io.jmix.reports.yarg.structure.DefaultValueProvider;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.pdfbox.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
@@ -47,17 +46,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component("report_AnnotatedReportBuilder")
 public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotatedReportBuilderImpl.class);
     protected final Metadata metadata;
     protected final MessageTools messageTools;
     protected final AnnotatedBuilderUtils annotatedBuilderUtils;
     protected final AnnotatedReportGroupHolder annotatedReportGroupHolder;
-    private final Resources resources;
+    protected final Resources resources;
 
     public AnnotatedReportBuilderImpl(Metadata metadata, MessageTools messageTools, AnnotatedBuilderUtils annotatedBuilderUtils,
                                       AnnotatedReportGroupHolder annotatedReportGroupHolder, Resources resources) {
@@ -70,22 +67,21 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
     @Override
     public Report createReportFromDefinition(Object definitionInstance) {
-        Class<?> definitionClass = definitionInstance.getClass();
-        ReportDef reportAnnotation = definitionClass.getAnnotation(ReportDef.class);
+        ReportDef reportAnnotation = definitionInstance.getClass().getAnnotation(ReportDef.class);
 
         Report report = metadata.create(Report.class);
-        assignReportParameters(report, reportAnnotation, definitionClass);
-        assignReportDelegates(report, definitionClass, definitionInstance);
+        assignReportParameters(report, reportAnnotation);
+        assignReportDelegates(report, definitionInstance);
 
-        report.setInputParameters(extractInputParameters(report, definitionClass, definitionInstance));
-        report.setTemplates(extractTemplates(report, definitionClass, definitionInstance));
-        report.setBands(extractBands(report, definitionClass, definitionInstance));
-        report.setValuesFormats(extractValueFormats(report, definitionClass, definitionInstance));
+        report.setInputParameters(extractInputParameters(report, definitionInstance));
+        report.setTemplates(extractTemplates(report, definitionInstance));
+        report.setBands(extractBands(report, definitionInstance));
+        report.setValuesFormats(extractValueFormats(report, definitionInstance));
         // todo roles and views
         return report;
     }
 
-    protected void assignReportParameters(Report report, ReportDef annotation, Class<?> definitionClass) {
+    protected void assignReportParameters(Report report, ReportDef annotation) {
         String nameValue = annotation.name();
         report.setName(messageTools.loadString(nameValue, messageTools.getDefaultLocale()));
 
@@ -93,15 +89,22 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
             report.setLocaleNames(annotatedBuilderUtils.buildLocaleNames(nameValue));
         }
 
+        if (annotation.code().isEmpty()) {
+            throw new InvalidReportDefinitionException("Report code is mandatory");
+        }
         report.setCode(annotation.code());
+
         if (!annotation.description().isEmpty()) {
             report.setDescription(annotation.description());
         }
 
         if (!annotation.uuid().isEmpty()) {
-            report.setId(UUID.fromString(annotation.uuid()));
-        }
-        // else keep automatically generated random id
+            try {
+                report.setId(UUID.fromString(annotation.uuid()));
+            } catch (IllegalArgumentException e) {
+                throw new InvalidReportDefinitionException(e);
+            }
+        } // else keep automatically generated random id
 
         report.setRestAccess(annotation.restAccessible());
         report.setSystem(annotation.system());
@@ -128,8 +131,8 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         report.setGroup(group);
     }
 
-    protected void assignReportDelegates(Report report, Class<?> reportClass, Object reportDefinition) {
-        for (Method method : reportClass.getMethods()) {
+    protected void assignReportDelegates(Report report, Object definitionInstance) {
+        for (Method method : definitionInstance.getClass().getMethods()) {
             if (!method.isAnnotationPresent(ReportDelegate.class)) {
                 continue;
             }
@@ -137,32 +140,32 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
             validateDelegateCommon(method);
 
             if (ParametersCrossValidator.class.equals(method.getReturnType())) {
-                ParametersCrossValidator delegate = obtainDelegateFromDefinition(reportDefinition, method, ParametersCrossValidator.class);
+                ParametersCrossValidator delegate = obtainDelegateFromDefinition(definitionInstance, method, ParametersCrossValidator.class);
                 report.setParametersCrossValidator(delegate);
                 report.setValidationOn(true);
             } else {
-                throw new RuntimeException(String.format("Unsupported return type for delegate: %s", method));
+                throw new InvalidReportDefinitionException(String.format("Unsupported result type for delegate method: %s", method));
             }
         }
     }
 
     protected void validateDelegateCommon(Method method) {
         if (Modifier.isAbstract(method.getModifiers())) {
-            throw new RuntimeException(String.format("Delegate method must be non-abstract: %s", method));
+            throw new InvalidReportDefinitionException(String.format("Delegate method must be non-abstract: %s", method));
         }
 
         if (!Modifier.isPublic(method.getModifiers())) {
-            throw new RuntimeException(String.format("Delegate method must be public: %s", method));
+            throw new InvalidReportDefinitionException(String.format("Delegate method must be public: %s", method));
         }
 
         if (method.getParameterCount() != 0) {
-            throw new RuntimeException(String.format("Delegate declaration method must have zero arguments: %s", method));
+            throw new InvalidReportDefinitionException(String.format("Delegate declaration method must have zero arguments: %s", method));
         }
     }
 
-    protected List<ReportInputParameter> extractInputParameters(Report report, Class<?> reportClass, Object reportDefinition) {
+    protected List<ReportInputParameter> extractInputParameters(Report report, Object definitionInstance) {
         List<ReportInputParameter> inputParameters = new ArrayList<>();
-        InputParameterDef[] annotations = reportClass.getDeclaredAnnotationsByType(InputParameterDef.class);
+        InputParameterDef[] annotations = definitionInstance.getClass().getDeclaredAnnotationsByType(InputParameterDef.class);
 
         int position = 0;
         for (InputParameterDef annotation : annotations) {
@@ -172,9 +175,12 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
             parameter.setPosition(position++);
             inputParameters.add(parameter);
         }
-        // todo validate unique aliases
-        assignInputParameterDelegates(inputParameters, reportClass, reportDefinition);
-        return inputParameters;
+
+        validateUniqueness(inputParameters, ReportInputParameter::getAlias,
+                "Duplicate input parameter alias within report definition");
+        assignInputParameterDelegates(inputParameters, definitionInstance);
+
+        return Collections.unmodifiableList(inputParameters);
     }
 
     protected ReportInputParameter convertToInputParameter(InputParameterDef annotation) {
@@ -190,6 +196,10 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         parameter.setRequired(annotation.required());
         parameter.setType(annotation.type());
         if (!Void.TYPE.equals(annotation.enumerationClass())) {
+            if (!annotation.enumerationClass().isEnum()) {
+                throw new InvalidReportDefinitionException(
+                        "Attribute enumerationClass must reference Enum type: " + annotation.enumerationClass());
+            }
             parameter.setEnumerationClass(annotation.enumerationClass().getName());
         }
         if (!annotation.defaultValue().isEmpty()) {
@@ -204,6 +214,10 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
         EntityParameterDef entityAnnotation = annotation.entity();
         if (annotation.type() == ParameterType.ENTITY || annotation.type() == ParameterType.ENTITY_LIST) {
+            if (Void.TYPE.equals(entityAnnotation.entityClass())) {
+                throw new InvalidReportDefinitionException(
+                        "entity.entityClass attribute is mandatory for " + annotation.type() + " parameter: " + annotation);
+            }
             MetaClass metaClass = metadata.getClass(entityAnnotation.entityClass());
             parameter.setEntityMetaClass(metaClass.getName());
 
@@ -229,9 +243,8 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
     }
 
     @SuppressWarnings("rawtypes")
-    protected void assignInputParameterDelegates(List<ReportInputParameter> inputParameters, Class<?> reportClass,
-                                                 Object reportDefinition) {
-        for (Method method : reportClass.getMethods()) {
+    protected void assignInputParameterDelegates(List<ReportInputParameter> inputParameters, Object definitionInstance) {
+        for (Method method : definitionInstance.getClass().getMethods()) {
             if (!method.isAnnotationPresent(InputParameterDelegate.class)) {
                 continue;
             }
@@ -239,42 +252,59 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
             validateDelegateCommon(method);
             ReportInputParameter inputParameter = findElementInListByUniqueName(inputParameters, annotation.alias(),
-                    ReportInputParameter::getAlias, annotation);
+                    ReportInputParameter::getAlias, annotation, "Report definition doesn't contain input parameter with alias");
 
             if (DefaultValueProvider.class.equals(method.getReturnType())) {
-                DefaultValueProvider delegate = obtainDelegateFromDefinition(reportDefinition, method, DefaultValueProvider.class);
+                DefaultValueProvider delegate = obtainDelegateFromDefinition(definitionInstance, method, DefaultValueProvider.class);
                 inputParameter.setDefaultValueProvider(delegate);
             } else if (ParameterValidator.class.equals(method.getReturnType())) {
-                ParameterValidator delegate = obtainDelegateFromDefinition(reportDefinition, method, ParameterValidator.class);
+                ParameterValidator delegate = obtainDelegateFromDefinition(definitionInstance, method, ParameterValidator.class);
                 inputParameter.setValidationDelegate(delegate);
                 inputParameter.setValidationOn(true);
             } else if (ParameterTransformer.class.equals(method.getReturnType())) {
-                ParameterTransformer delegate = obtainDelegateFromDefinition(reportDefinition, method, ParameterTransformer.class);
+                ParameterTransformer delegate = obtainDelegateFromDefinition(definitionInstance, method, ParameterTransformer.class);
                 inputParameter.setTransformationDelegate(delegate);
             } else {
-                throw new RuntimeException(String.format("Unsupported return type for delegate: %s", method));
+                throw new RuntimeException(String.format("Unsupported result type for delegate: %s", method));
             }
         }
     }
 
-    protected List<ReportTemplate> extractTemplates(Report report, Class<?> reportClass, Object reportDefinition) {
+    protected List<ReportTemplate> extractTemplates(Report report, Object definitionInstance) {
         List<ReportTemplate> templates = new ArrayList<>();
-        TemplateDef[] annotations = reportClass.getDeclaredAnnotationsByType(TemplateDef.class);
+        TemplateDef[] annotations = definitionInstance.getClass().getDeclaredAnnotationsByType(TemplateDef.class);
+        if (annotations.length == 0) {
+            throw new InvalidReportDefinitionException("Report definition must have at least one template: " + definitionInstance.getClass());
+        }
 
+        boolean containsDefault = false;
         for (TemplateDef annotation : annotations) {
             ReportTemplate template = convertToTemplate(annotation);
 
             template.setReport(report);
             if (annotation.isDefault()) {
-                // todo validate unique isDefault
+                if (containsDefault) {
+                    throw new InvalidReportDefinitionException("More than one template definition with 'isDefault' flag set: " + annotation);
+                }
+                containsDefault = true;
                 report.setDefaultTemplate(template);
             }
             templates.add(template);
         }
-        // todo validate unique code
-        assignTemplateDelegates(templates, reportClass, reportDefinition);
-        // todo validate that custom DELEGATE report actually has delegate
-        return templates;
+        validateUniqueness(templates, ReportTemplate::getCode, "Duplicate template code within report definition");
+
+        assignTemplateDelegates(templates, definitionInstance);
+        validateMandatoryTemplateDelegates(templates);
+
+        return Collections.unmodifiableList(templates);
+    }
+
+    private void validateMandatoryTemplateDelegates(List<ReportTemplate> templates) {
+        for (ReportTemplate t : templates) {
+            if (t.isCustom() && t.getCustomDefinedBy() == CustomTemplateDefinedBy.DELEGATE && t.getDelegate() == null) {
+                throw new InvalidReportDefinitionException("Template must have associated CustomReport delegate: " + t.getCode());
+            }
+        }
     }
 
     protected ReportTemplate convertToTemplate(TemplateDef annotation) {
@@ -288,7 +318,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         if (!annotation.filePath().isEmpty()) {
             try (InputStream stream = resources.getResourceAsStream(annotation.filePath())) {
                 if (stream == null) {
-                    throw new RuntimeException("Template file does not exist: " + annotation.filePath());
+                    throw new InvalidReportDefinitionException("Template file does not exist: " + annotation.filePath());
                 }
                 byte[] content = IOUtils.toByteArray(stream);
                 template.setContent(content);
@@ -305,16 +335,34 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
             if (customAnnotation.definedBy() == CustomTemplateDefinedBy.SCRIPT
                 || customAnnotation.definedBy() == CustomTemplateDefinedBy.CLASS) {
-                throw new UnsupportedOperationException(
+                throw new InvalidReportDefinitionException(
                         customAnnotation.definedBy() + " is not supported for reports defined in code, use DELEGATE instead"
                 );
             } else if (customAnnotation.definedBy() == CustomTemplateDefinedBy.URL) {
                 template.setCustomDefinition(customAnnotation.urlScript());
             } else if (customAnnotation.definedBy() == CustomTemplateDefinedBy.DELEGATE) {
-                // todo should we validate here that delegate method exists?
+                // validation that delegate method exists is performed later
             }
             template.setCustomDefinedBy(customAnnotation.definedBy());
         }
+
+        Set<ReportOutputType> requiringFile = Set.of(
+                ReportOutputType.XLS,
+                ReportOutputType.DOC,
+                ReportOutputType.PDF,
+                ReportOutputType.HTML,
+                ReportOutputType.DOCX,
+                ReportOutputType.XLSX,
+                ReportOutputType.CUSTOM,
+                ReportOutputType.CSV
+        );
+
+        if (requiringFile.contains(annotation.outputType())
+                && !customAnnotation.enabled() && annotation.filePath().isEmpty()) {
+            throw new InvalidReportDefinitionException(String.format("Template filePath is mandatory for %s output type. %s",
+                    annotation.outputType(), annotation));
+        }
+
         if (annotation.outputType() == ReportOutputType.TABLE) {
             template.setTemplateTableDescription(convertToTableDescription(annotation.table()));
         }
@@ -323,14 +371,14 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
     private TemplateTableDescription convertToTableDescription(TemplateTableDef table) {
         TemplateTableDescription description = metadata.create(TemplateTableDescription.class);
-        description.setTemplateTableBands(new ArrayList<>());
+        List<TemplateTableBand> tableBands = new ArrayList<>();
         int bandPosition = 0;
         for (TableBandDef bandDef : table.bands()) {
             TemplateTableBand band = metadata.create(TemplateTableBand.class);
             band.setPosition(bandPosition++);
             band.setBandName(bandDef.bandName());
-            band.setColumns(new ArrayList<>());
 
+            List<TemplateTableColumn> tableColumns = new ArrayList<>();
             int columnPosition = 0;
             for (TableColumnDef columnDef : bandDef.columns()) {
                 TemplateTableColumn column = metadata.create(TemplateTableColumn.class);
@@ -340,38 +388,54 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
                 // todo problem: we can't here adjust locale for different users
                 column.setCaption(messageTools.loadString(columnDef.caption(), messageTools.getDefaultLocale()));
 
-                band.getColumns().add(column);
+                tableColumns.add(column);
             }
-
-            description.getTemplateTableBands().add(band);
+            band.setColumns(Collections.unmodifiableList(tableColumns));
+            tableBands.add(band);
         }
+
+        description.setTemplateTableBands(Collections.unmodifiableList(tableBands));
         return description;
     }
 
-    protected void assignTemplateDelegates(List<ReportTemplate> templates, Class<?> reportClass, Object reportDefinition) {
-        for (Method method : reportClass.getMethods()) {
+    protected void assignTemplateDelegates(List<ReportTemplate> templates, Object definitionInstance) {
+        for (Method method : definitionInstance.getClass().getMethods()) {
             if (!method.isAnnotationPresent(TemplateDelegate.class)) {
                 continue;
             }
             TemplateDelegate annotation = method.getAnnotation(TemplateDelegate.class);
 
             validateDelegateCommon(method);
-            ReportTemplate template = findElementInListByUniqueName(templates, annotation.code(), ReportTemplate::getCode, annotation);
+            ReportTemplate template = findElementInListByUniqueName(templates, annotation.code(), ReportTemplate::getCode,
+                    annotation, "Report definition doesn't contain template with code");
 
             if (CustomReport.class.equals(method.getReturnType())) {
-                CustomReport delegate = obtainDelegateFromDefinition(reportDefinition, method, CustomReport.class);
+                CustomReport delegate = obtainDelegateFromDefinition(definitionInstance, method, CustomReport.class);
+                if (!template.isCustom()) {
+                    throw new InvalidReportDefinitionException(
+                            "Wrong delegate target. Template must have custom.enabled set to true. " + method);
+                }
+                if (template.getCustomDefinedBy() != CustomTemplateDefinedBy.DELEGATE) {
+                    throw new InvalidReportDefinitionException(
+                            String.format("Wrong delegate target. Template custom.definedBy - %s, expected: %s. %s",
+                                    template.getCustomDefinedBy(), CustomTemplateDefinedBy.DELEGATE, method));
+                }
                 template.setDelegate(delegate);
             } else {
-                throw new RuntimeException(String.format("Unsupported return type for delegate: %s", method));
+                throw new InvalidReportDefinitionException(String.format("Unsupported result type for delegate: %s", method));
             }
         }
     }
 
-    private Set<BandDefinition> extractBands(Report report, Class<?> definitionClass, Object definitionInstance) {
+    private Set<BandDefinition> extractBands(Report report, Object definitionInstance) {
         Set<BandDefinition> bands = new LinkedHashSet<>();
-        BandDef[] annotations = definitionClass.getDeclaredAnnotationsByType(BandDef.class);
+        BandDef[] annotations = definitionInstance.getClass().getDeclaredAnnotationsByType(BandDef.class);
+        if (annotations.length == 0) {
+            throw new InvalidReportDefinitionException("Report definition must have at least one band: " + definitionInstance.getClass());
+        }
 
         int position = 0;
+        boolean hasRoot = false;
         for (BandDef annotation : annotations) {
             BandDefinition band = metadata.create(BandDefinition.class);
             band.setName(annotation.name());
@@ -381,48 +445,82 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
             if (!annotation.parent().isEmpty()) {
                 if (annotation.root()) {
-                   throw new RuntimeException(String.format("Root band cannot have parent: %s", annotation));
+                   throw new InvalidReportDefinitionException(String.format("Root band cannot have parent: %s", annotation));
                 }
                 band.setParentBandDefinition(bands.stream()
                         .filter(b -> annotation.parent().equals(b.getName()))
                         .findAny()
-                        .orElseThrow(() -> new RuntimeException(String.format(
-                                "Band with name '%s' referenced from '%s' is not defined, or defined below its child",
+                        .orElseThrow(() -> new InvalidReportDefinitionException(String.format(
+                                "Parent band with name '%s' referenced from '%s' is not defined, or defined below its child",
                                 annotation.parent(), annotation)
                         ))
                 );
             } else {
+                // no parent == root
                 if (!annotation.root()) {
-                    throw new RuntimeException(String.format("Non-root band must have parent: %s", annotation));
+                    throw new InvalidReportDefinitionException(String.format("Non-root band must have parent: %s", annotation));
                 }
+                if (hasRoot) {
+                    throw new InvalidReportDefinitionException(String.format("More than one root band defined in report: %s", annotation));
+                }
+                hasRoot = true;
             }
 
-            band.setDataSets(extractDataSets(report, band, definitionClass, annotation.dataSets(), definitionInstance));
+            band.setDataSets(extractDataSets(report, band, annotation.dataSets(), definitionInstance));
             band.setMultiDataSet(band.getDataSets().size() > 1);
             bands.add(band);
-            // todo validate root is unique
-            // todo validate unique band names
         }
+
+        validateUniqueness(bands, BandDefinition::getName, "Duplicate band name within report definition");
 
         for (BandDefinition parentBand: bands) {
             parentBand.setChildrenBandDefinitions(bands.stream()
                     .filter(childBand -> parentBand.equals(childBand.getParentBandDefinition()))
-                    .collect(Collectors.toList())
+                    .toList()
             );
         }
 
-        assignDataSetDelegates(bands, definitionClass, definitionInstance);
+        assignDataSetDelegates(bands, definitionInstance);
+        validateMandatoryDelegates(bands);
 
-        return bands;
+        return Collections.unmodifiableSet(bands);
     }
 
-    private List<DataSet> extractDataSets(Report report, BandDefinition bandDefinition, Class<?> definitionClass,
-                                          DataSetDef[] dataSetDefs, Object definitionInstance) {
+    protected void validateMandatoryDelegates(Set<BandDefinition> bands) {
+        for (BandDefinition band : bands) {
+            for (DataSet dataSet : band.getDataSets()) {
+                if (dataSet.getType() == DataSetType.DELEGATE && dataSet.getLoaderDelegate() == null) {
+                    throw new InvalidReportDefinitionException("Dataset must have associated ReportDataLoader delegate: " + dataSet.getName());
+                }
+                if (dataSet.getType() == DataSetType.JSON && dataSet.getJsonSourceType() == JsonSourceType.DELEGATE
+                        && dataSet.getJsonInputProvider() == null) {
+                    throw new InvalidReportDefinitionException("Dataset must have associated JsonInputProvider delegate: " + dataSet.getName());
+                }
+                if ((dataSet.getType() == DataSetType.SINGLE || dataSet.getType() == DataSetType.MULTI)
+                        && BooleanUtils.isNotTrue(dataSet.getUseExistingFetchPLan())
+                        && dataSet.getFetchPlanProvider() == null) {
+                    throw new InvalidReportDefinitionException("Dataset must have associated FetchPlanProvider delegate: " + dataSet.getName());
+                }
+            }
+        }
+    }
+
+    private List<DataSet> extractDataSets(Report report, BandDefinition bandDefinition, DataSetDef[] dataSetDefs, Object definitionInstance) {
         List<DataSet> dataSets = new ArrayList<>();
 
         for (DataSetDef annotation : dataSetDefs) {
             DataSet dataSet = metadata.create(DataSet.class);
-            dataSet.setName(annotation.name());
+
+            if (!annotation.name().isEmpty()) {
+                dataSet.setName(annotation.name());
+            } else {
+                // allow to omit data set name for single data sets
+                if (dataSetDefs.length == 1) {
+                    dataSet.setName(bandDefinition.getName());
+                } else {
+                    throw new InvalidReportDefinitionException("Data set name is required for multiple data sets: " + annotation);
+                }
+            }
             dataSet.setType(annotation.type());
             if (!annotation.linkParameterName().isEmpty()) {
                 dataSet.setLinkParameterName(annotation.linkParameterName());
@@ -431,26 +529,28 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
                 dataSet.setDataStore(annotation.dataStore());
             }
             dataSet.setProcessTemplate(annotation.processTemplate());
-            dataSet.setText(annotation.query());
+            if (!annotation.query().isEmpty()) {
+                dataSet.setText(annotation.query());
+            }
 
             if (annotation.type() == DataSetType.JSON) {
                 extractJsonDataSetParameters(report, annotation.json(), dataSet);
             }
 
             if (annotation.type() == DataSetType.SINGLE || annotation.type() == DataSetType.MULTI) {
-                extractEntityDataSetParameters(annotation, dataSet, annotation.entity());
+                extractEntityDataSetParameters(annotation, report, dataSet, annotation.entity());
             }
 
             dataSet.setBandDefinition(bandDefinition);
             dataSets.add(dataSet);
         }
 
-        return dataSets;
+        return Collections.unmodifiableList(dataSets);
     }
 
     private void extractJsonDataSetParameters(Report report, JsonDataSetParameters jsonAnnotation, DataSet dataSet) {
         if (jsonAnnotation.source() == JsonSourceType.GROOVY_SCRIPT) {
-            throw new UnsupportedOperationException(
+            throw new InvalidReportDefinitionException(
                     jsonAnnotation.source() + " is not supported for reports defined in code, use DELEGATE instead"
             );
         }
@@ -459,17 +559,25 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
         if (jsonAnnotation.source() == JsonSourceType.PARAMETER) {
             ReportInputParameter inputParameter = findElementInListByUniqueName(report.getInputParameters(),
-                    jsonAnnotation.inputParameter(), ReportInputParameter::getAlias, jsonAnnotation);
+                    jsonAnnotation.inputParameter(), ReportInputParameter::getAlias, jsonAnnotation,
+                    "Report definition doesn't contain input parameter with alias");
 
             dataSet.setJsonSourceInputParameter(inputParameter);
         }
 
         if (jsonAnnotation.source() == JsonSourceType.URL) {
+            if (jsonAnnotation.url().isEmpty()) {
+                throw new InvalidReportDefinitionException("Url is required for JSON/URL data set: " + jsonAnnotation);
+            }
             dataSet.setJsonSourceText(jsonAnnotation.url());
         }
     }
 
-    private void extractEntityDataSetParameters(DataSetDef annotation, DataSet dataSet, EntityDataSetDef entityAnnotation) {
+    private void extractEntityDataSetParameters(DataSetDef annotation, Report report, DataSet dataSet, EntityDataSetDef entityAnnotation) {
+        findElementInListByUniqueName(report.getInputParameters(),
+                entityAnnotation.parameterAlias(), ReportInputParameter::getAlias, entityAnnotation,
+                "Report definition doesn't contain input parameter with alias");
+
         if (annotation.type() == DataSetType.SINGLE) {
             dataSet.setEntityParamName(entityAnnotation.parameterAlias());
         } else {
@@ -487,59 +595,85 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
             dataSet.setUseExistingFetchPLan(true);
             dataSet.setFetchPlanName(entityAnnotation.fetchPlanName());
         } else {
-            dataSet.setUseExistingFetchPLan(false); // fetch plan provider will be set later
+            dataSet.setUseExistingFetchPLan(false); // fetch plan provider is set and validated later
         }
     }
 
-    private void assignDataSetDelegates(Set<BandDefinition> bands, Class<?> definitionClass, Object definitionInstance) {
+    private void assignDataSetDelegates(Set<BandDefinition> bands, Object definitionInstance) {
         List<DataSet> allDataSets = bands.stream()
                 .flatMap(band -> band.getDataSets().stream())
                 .toList();
 
-        for (Method method : definitionClass.getMethods()) {
+        for (Method method : definitionInstance.getClass().getMethods()) {
             if (!method.isAnnotationPresent(DataSetDelegate.class)) {
                 continue;
             }
             DataSetDelegate annotation = method.getAnnotation(DataSetDelegate.class);
 
             validateDelegateCommon(method);
-            DataSet dataSet = findElementInListByUniqueName(allDataSets, annotation.name(), DataSet::getName, annotation);
+            DataSet dataSet = findElementInListByUniqueName(allDataSets, annotation.name(), DataSet::getName, annotation,
+                    "Report definition doesn't contain data set with name");
 
             if (ReportDataLoader.class.equals(method.getReturnType())) {
                 ReportDataLoader delegate = obtainDelegateFromDefinition(definitionInstance, method, ReportDataLoader.class);
+                if (dataSet.getType() != DataSetType.DELEGATE) {
+                    throw new InvalidReportDefinitionException(
+                            String.format("Wrong delegate target. Dataset type: %s, expected: %s. %s",
+                                    dataSet.getType(), DataSetType.DELEGATE, method));
+                }
                 dataSet.setLoaderDelegate(delegate);
             } else if (FetchPlanProvider .class.equals(method.getReturnType())) {
                 FetchPlanProvider delegate = obtainDelegateFromDefinition(definitionInstance, method, FetchPlanProvider.class);
+                if (dataSet.getType() != DataSetType.SINGLE && dataSet.getType() != DataSetType.MULTI) {
+                    throw new InvalidReportDefinitionException(
+                            String.format("Wrong delegate target. Dataset type: %s, expected: %s or %s. %s",
+                                    dataSet.getType(), DataSetType.SINGLE, DataSetType.MULTI, method));
+                }
                 dataSet.setFetchPlanProvider(delegate);
             } else if (JsonInputProvider.class.equals(method.getReturnType())) {
                 JsonInputProvider delegate = obtainDelegateFromDefinition(definitionInstance, method, JsonInputProvider.class);
+                if (dataSet.getType() != DataSetType.JSON) {
+                    throw new InvalidReportDefinitionException(
+                            String.format("Wrong delegate target. Dataset type: %s, expected: %s. %s",
+                                    dataSet.getType(), DataSetType.JSON, method));
+                }
+                if (dataSet.getJsonSourceType() != JsonSourceType.DELEGATE) {
+                    throw new InvalidReportDefinitionException(
+                            String.format("Wrong delegate target. Dataset json.source: %s, expected: %s. %s",
+                                    dataSet.getJsonSourceType(), JsonSourceType.DELEGATE, method));
+                }
                 dataSet.setJsonInputProvider(delegate);
             } else {
-                throw new RuntimeException(String.format("Unsupported return type for delegate: %s", method));
+                throw new InvalidReportDefinitionException(String.format("Unsupported result type for delegate: %s", method));
             }
         }
-        // todo validate that JSON / DELEGATE data sets have delegate assigned
-        // todo validate that fetchPlan delegate exists
     }
 
-    private List<ReportValueFormat> extractValueFormats(Report report, Class<?> definitionClass, Object definitionInstance) {
+    private List<ReportValueFormat> extractValueFormats(Report report, Object definitionInstance) {
         List<ReportValueFormat> formats = new ArrayList<>();
-        ValueFormatDef[] annotations = definitionClass.getDeclaredAnnotationsByType(ValueFormatDef.class);
+        ValueFormatDef[] annotations = definitionInstance.getClass().getDeclaredAnnotationsByType(ValueFormatDef.class);
 
         for (ValueFormatDef annotation : annotations) {
-            ReportValueFormat format = convertToValueFormat(annotation);
+            ReportValueFormat format = convertToValueFormat(report, annotation);
 
             format.setReport(report);
             formats.add(format);
         }
-        // todo validate uniqueness of band + field
-        assignValueFormatDelegates(formats, definitionClass, definitionInstance);
-        return formats;
+
+        validateUniqueness(formats, ReportValueFormat::getValueName, "Duplicate value format name within report definition");
+        assignValueFormatDelegates(formats, definitionInstance);
+        validateMandatoryFormatDelegates(formats);
+        return Collections.unmodifiableList(formats);
     }
 
-    private ReportValueFormat convertToValueFormat(ValueFormatDef annotation) {
+    private ReportValueFormat convertToValueFormat(Report report, ValueFormatDef annotation) {
         ReportValueFormat format = metadata.create(ReportValueFormat.class);
 
+        if (!annotation.band().isEmpty()) {
+            findElementInListByUniqueName(report.getBands(),
+                    annotation.band(), BandDefinition::getName, annotation,
+                    "Report definition doesn't contain band with name");
+        }
         format.setValueName(getValueName(annotation.band(), annotation.field()));
 
         if (!annotation.format().isEmpty()) {
@@ -559,8 +693,8 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         return valueName;
     }
 
-    private void assignValueFormatDelegates(List<ReportValueFormat> formats, Class<?> definitionClass, Object definitionInstance) {
-        for (Method method : definitionClass.getMethods()) {
+    protected void assignValueFormatDelegates(List<ReportValueFormat> formats, Object definitionInstance) {
+        for (Method method : definitionInstance.getClass().getMethods()) {
             if (!method.isAnnotationPresent(ValueFormatDelegate.class)) {
                 continue;
             }
@@ -571,34 +705,37 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
                     formats,
                     getValueName(annotation.band(), annotation.field()),
                     ReportValueFormat::getValueName,
-                    annotation
+                    annotation,
+                    "Report definition doesn't contain value format with name"
             );
 
             if (CustomValueFormatter.class.equals(method.getReturnType())) {
                 CustomValueFormatter delegate = obtainDelegateFromDefinition(definitionInstance, method, CustomValueFormatter.class);
                 format.setCustomFormatter(delegate);
             } else {
-                throw new RuntimeException(String.format("Unsupported return type for delegate: %s", method));
+                throw new InvalidReportDefinitionException(String.format("Unsupported result type for delegate: %s", method));
             }
         }
+    }
 
-        // validate that all objects have some sort of format value assigned
+    protected void validateMandatoryFormatDelegates(List<ReportValueFormat> formats) {
         for (ReportValueFormat format : formats) {
             if (format.getFormatString() == null && format.getCustomFormatter() == null) {
-                throw new RuntimeException(String.format(
+                throw new InvalidReportDefinitionException(String.format(
                         "Value Format '%s' must have either format string or formatter delegate assigned", format.getValueName()));
             }
         }
     }
 
-    private <E, A extends Annotation> E findElementInListByUniqueName(List<E> elements, String name,
-                                                                      Function<E, String> elementNameExtractor, A annotation) {
+    protected <E, A extends Annotation> E findElementInListByUniqueName(Collection<E> elements, String name, Function<E, String> elementNameExtractor,
+                                                                      A annotation, String errorMessagePrefix) {
         return elements.stream()
                 .filter(t -> name.equals(elementNameExtractor.apply(t)))
                 .findAny()
-                .orElseThrow(() -> new RuntimeException(
-                        String.format("Report definition doesn't contain element with name '%s', requested by annotation '%s'",
-                                name, annotation)
+                .orElseThrow(() -> new InvalidReportDefinitionException(
+                        // Report definition doesn't contain element with name
+                        String.format("%s '%s', requested by annotation '%s'",
+                                errorMessagePrefix, name, annotation)
                 ));
     }
 
@@ -610,7 +747,19 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
     protected void validateDelegateInstanceCommon(Method method, @Nullable Object delegate) {
         if (delegate == null) {
-            throw new RuntimeException(String.format("Delegate declaration method returned null: %s", method));
+            throw new InvalidReportDefinitionException(String.format("Delegate declaration method returned null: %s", method));
+        }
+    }
+
+    protected <T> void validateUniqueness(Collection<T> objects, Function<T, String> uniqueAttributeGetter,
+                                           String errorMessage) {
+        Set<String> values = new HashSet<>();
+        for (T object : objects) {
+            String value = uniqueAttributeGetter.apply(object);
+            boolean didNotAlreadyContain = values.add(value);
+            if (!didNotAlreadyContain) {
+                throw new InvalidReportDefinitionException(String.format("%s: '%s'", errorMessage, value));
+            }
         }
     }
 }

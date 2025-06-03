@@ -22,7 +22,7 @@ import test_support.spec.FlowuiTestSpecification
 
 import static io.jmix.flowui.sys.UiTestIdSupport.UI_TEST_ID
 
-@SpringBootTest(properties = "jmix.ui.test-mode=true")
+@SpringBootTest(properties = "jmix.ui.ui-test-mode=true")
 class TestIdGenerationTest extends FlowuiTestSpecification {
 
     @Override

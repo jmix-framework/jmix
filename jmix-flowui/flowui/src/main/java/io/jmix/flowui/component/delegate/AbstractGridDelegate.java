@@ -111,8 +111,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected String emptyStateTextInternal;
     protected Component emptyStateComponentInternal;
 
-    protected Consumer<String> componentEmptyStateTextSetter;
-    protected Consumer<Component> componentEmptyStateComponentSetter;
+    protected Consumer<String> componentEmptyStateTextDelegate;
+    protected Consumer<Component> componentEmptyStateComponentDelegate;
 
     protected boolean aggregatable;
     protected EnhancedDataGrid.AggregationPosition aggregationPosition = EnhancedDataGrid.AggregationPosition.BOTTOM;
@@ -772,26 +772,26 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         updateEmptyState();
     }
 
-    public void setEmptyStateTextDelegate(Consumer<String> emptyStateTextSetter) {
-        this.componentEmptyStateTextSetter = emptyStateTextSetter;
+    public void setEmptyStateTextDelegate(Consumer<String> emptyStateTextDelegate) {
+        this.componentEmptyStateTextDelegate = emptyStateTextDelegate;
     }
 
-    public void setEmptyStateComponentDelegate(Consumer<Component> emptyStateComponentSetter) {
-        this.componentEmptyStateComponentSetter = emptyStateComponentSetter;
+    public void setEmptyStateComponentDelegate(Consumer<Component> emptyStateComponentDelegate) {
+        this.componentEmptyStateComponentDelegate = emptyStateComponentDelegate;
     }
 
     protected void updateEmptyState() {
         if (!CollectionUtils.containsAny(component.getColumns(), propertyColumns.keySet())) {
             Component emptyStateByPermissionsComponent = createEmptyStateByPermissionsComponent();
 
-            componentEmptyStateComponentSetter.accept(emptyStateByPermissionsComponent);
+            componentEmptyStateComponentDelegate.accept(emptyStateByPermissionsComponent);
         } else if (emptyStateComponentInternal != null) {
-            componentEmptyStateComponentSetter.accept(emptyStateComponentInternal);
+            componentEmptyStateComponentDelegate.accept(emptyStateComponentInternal);
         } else if (emptyStateTextInternal != null) {
-            componentEmptyStateTextSetter.accept(emptyStateTextInternal);
+            componentEmptyStateTextDelegate.accept(emptyStateTextInternal);
         } else {
             // to remove any empty state component
-            componentEmptyStateComponentSetter.accept(null);
+            componentEmptyStateComponentDelegate.accept(null);
         }
     }
 

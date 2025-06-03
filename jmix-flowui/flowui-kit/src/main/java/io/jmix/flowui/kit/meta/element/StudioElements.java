@@ -1138,4 +1138,50 @@ public interface StudioElements {
             }
     )
     void fragmentRenderer();
+
+    @StudioElement(
+            name = "StartSlot",
+            icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            xmlElement = "startSlot",
+            target = "com.vaadin.flow.component.orderedlayout.HorizontalLayout",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void startSlot();
+
+    @StudioElement(
+            name = "MiddleSlot",
+            icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            xmlElement = "middleSlot",
+            target = "com.vaadin.flow.component.orderedlayout.HorizontalLayout",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void middleSlot();
+
+    @StudioElement(
+            name = "EndSlot",
+            icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            xmlElement = "endSlot",
+            target = "com.vaadin.flow.component.orderedlayout.HorizontalLayout",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void endSlot();
+
 }

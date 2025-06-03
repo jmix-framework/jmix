@@ -53,6 +53,9 @@ public class ContainerView extends StandardView {
     public HorizontalLayout hboxId;
 
     @ViewComponent
+    public HorizontalLayout hboxWithItemsAlignmentId;
+
+    @ViewComponent
     public FlexLayout flexLayoutId;
 
     @ViewComponent

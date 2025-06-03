@@ -16,20 +16,18 @@
 
 package io.jmix.reports.impl;
 
-import io.jmix.reports.entity.Report;
-
-import java.util.Collection;
-
-/**
- * Bean that holds report definitions parsed from annotated classes.
- */
-public interface AnnotatedReportProvider {
-
-    Collection<Report> getAllReports();
+public interface AnnotatedReportScanner {
+    /**
+     * Scan and import group definitions from application context.
+     * Imported definitions are stored in {@link AnnotatedReportGroupHolder}.
+     * @see io.jmix.reports.annotation.ReportGroupDef
+     */
+    void importGroupDefinitions();
 
     /**
      * Scan and import report definitions from application context.
+     * Imported definitions are stored in {@link AnnotatedReportHolder}.
+     * @see io.jmix.reports.annotation.ReportDef
      */
     void importReportDefinitions();
-
 }

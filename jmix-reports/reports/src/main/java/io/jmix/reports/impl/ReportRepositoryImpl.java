@@ -32,21 +32,22 @@ import java.util.List;
 @Component("report_ReportRepository")
 public class ReportRepositoryImpl implements ReportRepository {
 
-    protected final AnnotatedReportProvider annotatedReportProvider;
+    protected final AnnotatedReportHolder annotatedReportHolder;
+    protected final AnnotatedReportGroupHolder annotatedReportGroupHolder;
+    protected final AnnotatedReportScanner reportScanner;
     protected final DataManager dataManager;
 
-    protected final AnnotatedReportGroupProvider annotatedReportGroupProvider;
-
-    public ReportRepositoryImpl(AnnotatedReportProvider annotatedReportProvider, DataManager dataManager,
-                                AnnotatedReportGroupProvider annotatedReportGroupProvider) {
-        this.annotatedReportProvider = annotatedReportProvider;
+    public ReportRepositoryImpl(AnnotatedReportHolder annotatedReportHolder, AnnotatedReportScanner reportScanner, DataManager dataManager,
+                                AnnotatedReportGroupHolder annotatedReportGroupHolder) {
+        this.annotatedReportHolder = annotatedReportHolder;
+        this.reportScanner = reportScanner;
         this.dataManager = dataManager;
-        this.annotatedReportGroupProvider = annotatedReportGroupProvider;
+        this.annotatedReportGroupHolder = annotatedReportGroupHolder;
     }
 
     @Override
     public Collection<Report> getAllReports() {
-        Collection<Report> annotatedReports = annotatedReportProvider.getAllReports();
+        Collection<Report> annotatedReports = annotatedReportHolder.getAllReports();
 
         List<Report> reportsFromDb = loadReportsFromDatabase();
 
@@ -65,7 +66,7 @@ public class ReportRepositoryImpl implements ReportRepository {
 
     @Override
     public Collection<ReportGroup> getAllGroups() {
-        Collection<ReportGroup> annotatedGroups = annotatedReportGroupProvider.getAllGroups();
+        Collection<ReportGroup> annotatedGroups = annotatedReportGroupHolder.getAllGroups();
         List<ReportGroup> groupsFromDb = loadGroupsFromDatabase();
 
         List<ReportGroup> allGroups = new ArrayList<>(annotatedGroups);
@@ -82,7 +83,7 @@ public class ReportRepositoryImpl implements ReportRepository {
 
     @EventListener
     public void handleApplicationStartedEvent(ApplicationStartedEvent event) {
-        annotatedReportGroupProvider.importGroupDefinitions();
-        annotatedReportProvider.importReportDefinitions();
+        reportScanner.importGroupDefinitions();
+        reportScanner.importReportDefinitions();
     }
 }

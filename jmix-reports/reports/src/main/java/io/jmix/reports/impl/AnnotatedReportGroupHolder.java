@@ -24,7 +24,7 @@ import java.util.Collection;
 /**
  * Bean that holds report group definitions parsed from annotated classes.
  */
-public interface AnnotatedReportGroupProvider {
+public interface AnnotatedReportGroupHolder {
 
     /**
      * @return collection of all annotated report groups, unsorted
@@ -41,7 +41,14 @@ public interface AnnotatedReportGroupProvider {
     ReportGroup getGroupByCode(String code);
 
     /**
-     * Scan and import group definitions from application context.
+     * Put a group to storage.
+     * @param group report group to store
+     * @throws IllegalArgumentException if group with this code is already stored
      */
-    void importGroupDefinitions();
+    void put(ReportGroup group);
+
+    /**
+     * Clear all stored objects.
+     */
+    void clear();
 }

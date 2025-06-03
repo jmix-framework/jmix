@@ -16,24 +16,17 @@
 
 package io.jmix.reports.impl;
 
-import io.jmix.reports.annotation.ReportGroupDef;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.impl.builder.AnnotatedGroupBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component("reports_AnnotatedReportGroupProvider")
-public class AnnotatedReportGroupProviderImpl implements AnnotatedReportGroupProvider, ApplicationContextAware {
-
-    private static final Logger log = LoggerFactory.getLogger(AnnotatedReportGroupProviderImpl.class);
+public class AnnotatedReportGroupHolderImpl implements AnnotatedReportGroupHolder {
 
     protected final AnnotatedGroupBuilder annotatedGroupBuilder;
     protected ApplicationContext applicationContext;
@@ -43,9 +36,9 @@ public class AnnotatedReportGroupProviderImpl implements AnnotatedReportGroupPro
      */
     protected Map<String, ReportGroup> groupsByCode;
 
-    public AnnotatedReportGroupProviderImpl(AnnotatedGroupBuilder annotatedGroupBuilder) {
+    public AnnotatedReportGroupHolderImpl(AnnotatedGroupBuilder annotatedGroupBuilder) {
         this.annotatedGroupBuilder = annotatedGroupBuilder;
-        this.groupsByCode = new HashMap<>();
+        this.groupsByCode = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -58,28 +51,18 @@ public class AnnotatedReportGroupProviderImpl implements AnnotatedReportGroupPro
         return groupsByCode.get(code);
     }
 
-    protected void importGroupDefinition(Object bean, String beanName) {
-        ReportGroup group = annotatedGroupBuilder.createGroupFromDefinition(bean);
+    @Override
+    public void put(ReportGroup group) {
         if (groupsByCode.containsKey(group.getCode())) {
             throw new IllegalStateException(
-                    String.format("Duplicate group code: %s, bean name: %s", group.getCode(), beanName)
+                    String.format("Duplicate group code: %s", group.getCode())
             );
         }
         groupsByCode.put(group.getCode(), group);
-        log.debug("Imported group definition: name {}, {}", beanName, bean.getClass());
     }
 
     @Override
-    public void importGroupDefinitions() {
-        Map<String, Object> groupDefinitions = applicationContext.getBeansWithAnnotation(ReportGroupDef.class);
-        for (Map.Entry<String, Object> entry : groupDefinitions.entrySet()) {
-            importGroupDefinition(entry.getValue(), entry.getKey());
-        }
-        log.info("Imported {} group definitions", groupDefinitions.size());
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    public void clear() {
+        groupsByCode.clear();
     }
 }

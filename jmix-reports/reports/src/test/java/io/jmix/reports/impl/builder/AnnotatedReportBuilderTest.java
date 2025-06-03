@@ -22,9 +22,11 @@ import io.jmix.outside_reports.CorrectReportGroup;
 import io.jmix.outside_reports.SimpleReport;
 import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.*;
-import io.jmix.reports.impl.AnnotatedReportGroupProvider;
+import io.jmix.reports.impl.AnnotatedReportGroupHolder;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.test_support.CurrentAuthenticationMock;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,7 +36,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.convention.TestBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Collection;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -48,21 +49,25 @@ public class AnnotatedReportBuilderTest {
     private AnnotatedReportBuilder annotatedReportBuilder;
 
     @Autowired
-    private MetadataTools metadataTools;
+    private AnnotatedReportGroupHolder reportGroupHolder;
 
-    // test stub for AnnotatedReportGroupProvider which is requested to provide ReportGroup when report is imported
-    @TestBean(name = "reports_AnnotatedReportGroupProvider", methodName = "groupProviderMockBean")
-    private AnnotatedReportGroupProvider annotatedReportGroupProvider;
+    @Autowired
+    private MetadataTools metadataTools;
 
     @TestBean(name = "core_CurrentAuthentication", methodName = "currentAuthenticationMock")
     private CurrentAuthentication currentAuthentication;
 
-    static AnnotatedReportGroupProvider groupProviderMockBean() {
-        return new MockingAnnotatedReportGroupProvider();
-    }
+    private ReportGroup correctGroup;
 
     static CurrentAuthentication currentAuthenticationMock() {
         return new CurrentAuthenticationMock();
+    }
+
+    @BeforeEach
+    void setUp() {
+        correctGroup = new ReportGroup();
+        correctGroup.setCode(CorrectReportGroup.CODE);
+        reportGroupHolder.put(correctGroup);
     }
 
     @Test
@@ -81,7 +86,7 @@ public class AnnotatedReportBuilderTest {
         assertThat(report.getRestAccess()).isTrue();
 
         // then: group
-        assertThat(report.getGroup().getCode()).isEqualTo(CorrectReportGroup.CODE);
+        assertThat(report.getGroup()).isEqualTo(correctGroup);
 
         // then: input parameters
         assertThat(report.getInputParameters()).hasSize(1);
@@ -138,27 +143,8 @@ public class AnnotatedReportBuilderTest {
         assertThat(metadataTools.getInstanceName(reportParameter)).isEqualTo(expectedCaption);
     }
 
-    private static class MockingAnnotatedReportGroupProvider implements AnnotatedReportGroupProvider {
-
-        @Override
-        public Collection<ReportGroup> getAllGroups() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public ReportGroup getGroupByCode(String code) {
-            // support just one test group
-            if (code.equals(CorrectReportGroup.CODE)) {
-                ReportGroup group = new ReportGroup();
-                group.setCode(code);
-                return group;
-            }
-            return null;
-        }
-
-        @Override
-        public void importGroupDefinitions() {
-            throw new UnsupportedOperationException();
-        }
+    @AfterEach
+    void tearDown() {
+        reportGroupHolder.clear();
     }
 }

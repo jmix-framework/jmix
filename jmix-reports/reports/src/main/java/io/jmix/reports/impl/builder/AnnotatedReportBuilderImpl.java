@@ -26,7 +26,7 @@ import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.table.TemplateTableBand;
 import io.jmix.reports.entity.table.TemplateTableColumn;
 import io.jmix.reports.entity.table.TemplateTableDescription;
-import io.jmix.reports.impl.AnnotatedReportGroupProvider;
+import io.jmix.reports.impl.AnnotatedReportGroupHolder;
 import io.jmix.reports.libintegration.MultiEntityDataLoader;
 import io.jmix.reports.yarg.formatters.CustomReport;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
@@ -56,15 +56,15 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
     protected final Metadata metadata;
     protected final MessageTools messageTools;
     protected final AnnotatedBuilderUtils annotatedBuilderUtils;
-    protected final AnnotatedReportGroupProvider annotatedReportGroupProvider;
+    protected final AnnotatedReportGroupHolder annotatedReportGroupHolder;
     private final Resources resources;
 
     public AnnotatedReportBuilderImpl(Metadata metadata, MessageTools messageTools, AnnotatedBuilderUtils annotatedBuilderUtils,
-                                      AnnotatedReportGroupProvider annotatedReportGroupProvider, Resources resources) {
+                                      AnnotatedReportGroupHolder annotatedReportGroupHolder, Resources resources) {
         this.metadata = metadata;
         this.messageTools = messageTools;
         this.annotatedBuilderUtils = annotatedBuilderUtils;
-        this.annotatedReportGroupProvider = annotatedReportGroupProvider;
+        this.annotatedReportGroupHolder = annotatedReportGroupHolder;
         this.resources = resources;
     }
 
@@ -120,7 +120,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
             throw new InvalidReportDefinitionException(
                     "Report group class must be annotated with @ReportGroupDef: " + annotation.group());
         }
-        ReportGroup group = annotatedReportGroupProvider.getGroupByCode(groupAnnotation.code());
+        ReportGroup group = annotatedReportGroupHolder.getGroupByCode(groupAnnotation.code());
         if (group == null) {
             throw new InvalidReportDefinitionException(
                     "Unregistered Report group: " + annotation.group());

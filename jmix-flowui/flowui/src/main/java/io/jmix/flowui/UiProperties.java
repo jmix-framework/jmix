@@ -17,6 +17,7 @@
 package io.jmix.flowui;
 
 import io.jmix.flowui.exception.ExceptionDialog;
+import io.jmix.flowui.sys.UiTestIdSupport;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.lang.Nullable;
@@ -27,6 +28,15 @@ import java.util.Map;
 
 @ConfigurationProperties(prefix = "jmix.ui")
 public class UiProperties {
+
+    /**
+     * Enables automatic generation of static IDs for UI components. Static IDs are required to enable unambiguous
+     * identification of components in UI autotests.
+     * <p>
+     * If {@code true}, the {@link UiTestIdSupport#UI_TEST_ID UI_TEST_ID} attribute is added to the DOM tree
+     * for components created using the {@link UiComponents} factory.
+     */
+    boolean uiTestMode;
 
     /**
      * View that will be used as Login view.
@@ -89,7 +99,8 @@ public class UiProperties {
      */
     boolean exceptionDialogModal;
 
-    public UiProperties(@DefaultValue("login") String loginViewId,
+    public UiProperties(@DefaultValue("false") boolean uiTestMode,
+                        @DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
                         @Nullable String defaultViewId,
                         @DefaultValue("true") boolean compositeMenu,
@@ -104,6 +115,7 @@ public class UiProperties {
                         @DefaultValue("false") boolean websocketRequestSecurityContextProvided,
                         @DefaultValue("true") boolean exceptionDialogModal
     ) {
+        this.uiTestMode = uiTestMode;
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;
         this.defaultViewId = defaultViewId;
@@ -118,6 +130,13 @@ public class UiProperties {
         this.useSessionFixationProtection = useSessionFixationProtection;
         this.websocketRequestSecurityContextProvided = websocketRequestSecurityContextProvided;
         this.exceptionDialogModal = exceptionDialogModal;
+    }
+
+    /**
+     * @see #uiTestMode
+     */
+    public boolean isUiTestMode() {
+        return uiTestMode;
     }
 
     /**

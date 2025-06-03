@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.sys.vaadin;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.router.NavigationEvent;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.spring.SpringInstantiator;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.sys.BeforeNavigationInitializer;
+import io.jmix.flowui.sys.UiTestIdSupport;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +34,9 @@ public class JmixSpringInstantiator extends SpringInstantiator {
 
     protected ApplicationContext applicationContext;
     protected Collection<BeforeNavigationInitializer> beforeNavigationInitializers;
+
+    protected UiProperties uiProperties;
+    protected UiTestIdSupport uiTestIdSupport;
 
     /**
      * Creates a new spring instantiator instance.
@@ -64,6 +70,10 @@ public class JmixSpringInstantiator extends SpringInstantiator {
         if (View.class.isAssignableFrom(type)) {
             getViewSupport().initView(((View) instance));
         }
+
+        if (Component.class.isAssignableFrom(type) && getUiProperties().isUiTestMode()) {
+            getUiTestIdSupport().addTestIdListener(((Component) instance));
+        }
     }
 
     protected <T> void initBeforeNavigation(Class<T> routeTargetType, NavigationEvent event, T instance) {
@@ -76,5 +86,21 @@ public class JmixSpringInstantiator extends SpringInstantiator {
 
     private ViewSupport getViewSupport() {
         return applicationContext.getBean(ViewSupport.class);
+    }
+
+    protected UiTestIdSupport getUiTestIdSupport() {
+        if (uiTestIdSupport == null) {
+            uiTestIdSupport = applicationContext.getBean(UiTestIdSupport.class);
+        }
+
+        return uiTestIdSupport;
+    }
+
+    protected UiProperties getUiProperties() {
+        if (uiProperties == null) {
+            uiProperties = applicationContext.getBean(UiProperties.class);
+        }
+
+        return uiProperties;
     }
 }

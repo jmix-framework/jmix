@@ -171,6 +171,8 @@ dependencies {
         api "io.jmix.localfs:jmix-localfs:$freeVersion"
         api "io.jmix.localfs:jmix-localfs-starter:$freeVersion"
 
+        api "io.jmix.masquerade:jmix-masquerade:$freeVersion"
+
         api "io.jmix.messagetemplates:jmix-messagetemplates:$freeVersion"
         api "io.jmix.messagetemplates:jmix-messagetemplates-starter:$freeVersion"
         api "io.jmix.messagetemplates:jmix-messagetemplates-flowui-kit:$freeVersion"
@@ -319,6 +321,8 @@ dependencies {
 
         api 'io.swagger.core.v3:swagger-models-jakarta:2.2.17'
         api 'io.swagger.core.v3:swagger-core-jakarta:2.2.17'
+
+        api 'com.codeborne:selenide:7.9.1'
 
         api 'com.icegreen:greenmail:2.0.0'
 

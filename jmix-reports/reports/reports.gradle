@@ -133,6 +133,7 @@ dependencies {
     api 'jakarta.xml.bind:jakarta.xml.bind-api'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.spockframework:spock-spring"

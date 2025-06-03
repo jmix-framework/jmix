@@ -12,16 +12,15 @@ import java.util.List;
 import java.util.Map;
 
 @ReportDef(
-        name = "msg://io.jmix.outside_reports/SimpleReport.title",
+        name = "Simple report",
         code = "simple-report",
         uuid = "01973162-6761-71a1-9d6b-b4ef0bea42f0",
-        // todo testing groups is inconvenient
-        //  group = CorrectReportGroup.class,
+        group = CorrectReportGroup.class,
         restAccessible = true
 )
 @InputParameterDef(
         alias = "afterDate",
-        name = "After",
+        name = "msg://io.jmix.outside_reports/SimpleReport.afterDate",
         type = ParameterType.DATETIME,
         required = true
 )

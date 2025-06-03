@@ -17,18 +17,24 @@
 package io.jmix.reports.impl.builder;
 
 import io.jmix.core.MetadataTools;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.outside_reports.CorrectReportGroup;
 import io.jmix.outside_reports.WrongUuidReportGroup;
 import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportSource;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
+import io.jmix.reports.test_support.CurrentAuthenticationMock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.convention.TestBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,6 +50,13 @@ public class AnnotatedGroupBuilderTest {
     @Autowired
     private MetadataTools metadataTools;
 
+    @TestBean(name = "core_CurrentAuthentication", methodName = "currentAuthenticationMock")
+    private CurrentAuthentication currentAuthentication;
+
+    static CurrentAuthentication currentAuthenticationMock() {
+        return new CurrentAuthenticationMock();
+    }
+
     @Test
     public void testSuccessfulGroupImport() {
         // given
@@ -54,14 +67,16 @@ public class AnnotatedGroupBuilderTest {
 
         // then
         assertThat(group).isNotNull();
-        assertThat(group.getCode()).isEqualTo("CORRECT");
+        assertThat(group.getCode()).isEqualTo(CorrectReportGroup.CODE);
         assertThat(group.getId()).isEqualTo(UUID.fromString("12424a52-09fc-4de7-e08a-b8abf3155f15"));
         assertThat(group.getSource()).isEqualTo(ReportSource.ANNOTATED_CLASS);
     }
 
-    @Test
-    public void testLocalizedTitle() {
+    @ParameterizedTest
+    @CsvSource({"en,Test group", "fr,Groupe de test"})
+    public void testLocalizedTitle(String localeCode, String expectedCaption) {
         // given
+        ((CurrentAuthenticationMock) currentAuthentication).setLocale(Locale.forLanguageTag(localeCode));
         CorrectReportGroup definition = new CorrectReportGroup();
 
         // when
@@ -69,10 +84,7 @@ public class AnnotatedGroupBuilderTest {
 
         // then
         assertThat(metadataTools.getInstanceName(group))
-                .isEqualTo("Test group");
-
-        assertThat(group.getLocaleNames())
-                .contains("fr=Groupe de test");
+                .isEqualTo(expectedCaption);
     }
 
     @Test

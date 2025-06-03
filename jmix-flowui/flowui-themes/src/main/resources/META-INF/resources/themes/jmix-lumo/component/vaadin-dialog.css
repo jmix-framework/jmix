@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
-.jmix-dialog-window-header-wrapper > [slot='close-button'] {
+.jmix-dialog-window-header-wrapper {
+    display: inline-flex;
+    column-gap: var(--lumo-space-s);
+}
+
+.jmix-dialog-window-header-wrapper > .jmix-dialog-window-close-button {
     margin-inline-start: auto;
 }

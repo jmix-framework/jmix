@@ -27,13 +27,11 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
-import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.flowui.UiComponents;
@@ -107,8 +105,6 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
 
         Div headerWrapper = createHeaderWrapper();
         dialog.getHeader().add(headerWrapper);
-
-        configureDialogWindowHeaderFooter();
     }
 
     protected HasComponents getHeaderContent() {
@@ -189,17 +185,17 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         Div headerWrapper = uiComponents().create(Div.class);
         headerWrapper.setWidthFull();
         headerWrapper.setClassName(BASE_CLASS_NAME + "-header-wrapper");
-        headerWrapper.addClassNames(LumoUtility.Display.INLINE_FLEX, LumoUtility.Gap.Column.SMALL);
 
-        headerContent = new HorizontalLayout();
+        headerContent = uiComponents().create(HorizontalLayout.class);
         headerContent.setWidthFull();
         headerContent.setClassName(BASE_CLASS_NAME + "-header-content");
         headerContent.setPadding(false);
 
         headerWrapper.add(headerContent);
+
         Button closeButton = createHeaderCloseButton();
         if (closeButton != null) {
-            SlotUtils.setSlot(headerWrapper, "close-button", closeButton);
+            headerWrapper.add(closeButton);
         }
 
         return headerWrapper;
@@ -229,6 +225,8 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
      * Opens the dialog.
      */
     public void open() {
+        configureDialogWindowHeaderFooter();
+
         // In case of dynamic title, we can obtain it after
         // all possible dependant properties are set
         postInitDialog(dialog);

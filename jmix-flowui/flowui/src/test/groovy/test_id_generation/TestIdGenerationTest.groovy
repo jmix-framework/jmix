@@ -38,7 +38,7 @@ class TestIdGenerationTest extends FlowuiTestSpecification {
         def button_1 = view.button_1
 
         then: "ID must be calculated based on the action ID"
-        button_1.element.getAttribute(UI_TEST_ID) == view.actionId.getId()
+        button_1.element.getAttribute(UI_TEST_ID) == view.actionId.id
 
         when: "UiTestId is calculated for a Button with a text"
         def button_2 = view.button_2

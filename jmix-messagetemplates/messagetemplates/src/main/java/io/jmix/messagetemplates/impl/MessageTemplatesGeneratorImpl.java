@@ -48,9 +48,11 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
     protected Configuration defaultConfiguration;
 
     public MessageTemplatesGeneratorImpl(DataManager dataManager,
-                                         MessageTemplateProperties messageTemplateProperties) {
+                                         MessageTemplateProperties messageTemplateProperties,
+                                         Configuration configuration) {
         this.dataManager = dataManager;
         this.version = messageTemplateProperties.getFreemarkerVersion();
+        this.defaultConfiguration = configuration;
     }
 
     @Override
@@ -68,9 +70,6 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
                 return super.wrap(obj);
             }
         };
-
-        defaultConfiguration = new Configuration(version);
-        defaultConfiguration.setDefaultEncoding("UTF-8");
     }
 
     @Override

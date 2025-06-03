@@ -32,9 +32,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * Provides fluent interface for navigating to views.
+ * Provides a fluent interface for navigating to views.
  */
-@org.springframework.stereotype.Component("flowui_ViewNavigators")
 public class ViewNavigators {
 
     protected DetailViewNavigationProcessor detailViewNavigationProcessor;

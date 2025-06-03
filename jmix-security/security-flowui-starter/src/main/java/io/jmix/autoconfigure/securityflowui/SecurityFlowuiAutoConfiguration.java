@@ -20,6 +20,7 @@ import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securityflowui.SecurityFlowuiConfiguration;
+import io.jmix.securityflowui.authentication.LoginViewSupport;
 import io.jmix.securityflowui.security.FlowuiVaadinWebSecurity;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,5 +50,11 @@ public class SecurityFlowuiAutoConfiguration {
                 new RequestAttributeSecurityContextRepository(),
                 new HttpSessionSecurityContextRepository()
         );
+    }
+
+    @Bean("flowui_LoginViewSupport")
+    @ConditionalOnMissingBean
+    public LoginViewSupport loginViewSupport() {
+        return new LoginViewSupport();
     }
 }

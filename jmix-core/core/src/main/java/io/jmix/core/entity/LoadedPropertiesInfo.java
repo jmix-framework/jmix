@@ -32,4 +32,6 @@ public interface LoadedPropertiesInfo extends Serializable {
     boolean isLoaded(Object entity, String property, PersistentAttributesLoadChecker checker);
 
     void registerProperty(String name, boolean loaded);
+
+    LoadedPropertiesInfo copy();
 }

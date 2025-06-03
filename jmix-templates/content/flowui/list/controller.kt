@@ -28,7 +28,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         return repository.findAll(buildPageRequest(context), buildRepositoryContext(context)).content
     }<%if (tableActions.contains("remove")) {%>
 
-    @Install(to = "${tableId}.remove", subject = "delegate")
+    @Install(to = "${tableId}.removeAction", subject = "delegate")
     private fun ${tableId}RemoveDelegate(collection: Collection<${entity.className}>) {
         repository.deleteAll(collection)
     }<%}%><%}%>

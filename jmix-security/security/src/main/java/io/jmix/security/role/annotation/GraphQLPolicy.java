@@ -17,24 +17,8 @@
 package io.jmix.security.role.annotation;
 
 import java.lang.annotation.*;
-/**
- * Defines GraphQL resource policy in annotated resource role (see {@link ResourceRole}). Multiple {@code GraphQLPolicy} annotations may be placed on a
- * single method. {@code SpecificPolicy} annotation may present on multiple methods of the same class. Annotated method
- * may have any name and return type.
- * <p>
- * Example:
- * <pre>
- * &#064;ResourceRole(name = "My Role", code = "myRole")
- * public interface MyRole {
- *
- *     &#064;GraphQLPolicy(operations = {"userInfo", "testQuery"})
- *     void graphQL();
- * }
- * </pre>
- *
- * @see ResourceRole
- * @see io.jmix.security.model.ResourcePolicy
- */
+
+@Deprecated(forRemoval = true)
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(GraphQLPolicyContainer.class)

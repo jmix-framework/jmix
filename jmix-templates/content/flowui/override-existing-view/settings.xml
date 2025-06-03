@@ -17,7 +17,8 @@
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_blank.svg"
-          name="Override an existing view">
+          name="Override an existing view"
+          order="160">
     <tags>
         <tag>OVERRIDE</tag>
     </tags>

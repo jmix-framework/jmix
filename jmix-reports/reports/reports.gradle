@@ -39,7 +39,6 @@ dependencies {
 
     api 'org.apache.httpcomponents:httpclient'
 
-    api 'commons-logging:commons-logging'
     api 'org.apache.commons:commons-lang3'
     api 'commons-io:commons-io'
     api('org.dom4j:dom4j') {
@@ -52,8 +51,6 @@ dependencies {
     api 'org.openoffice:juh'
     api 'org.openoffice:ridl'
     api 'org.openoffice:unoil'
-    api 'org.apache.avalon.framework:avalon-framework-api'
-    api 'org.apache.avalon.framework:avalon-framework-impl'
 
     api 'javax.media.jai:com.springsource.javax.media.jai.core'
 
@@ -118,7 +115,6 @@ dependencies {
     api 'org.jsoup:jsoup'
     api 'com.jayway.jsonpath:json-path'
     api 'com.opencsv:opencsv'
-    api 'org.olap4j:olap4j'
 
     api('net.sf.jasperreports:jasperreports') {
         exclude group: 'org.apache.lucene'

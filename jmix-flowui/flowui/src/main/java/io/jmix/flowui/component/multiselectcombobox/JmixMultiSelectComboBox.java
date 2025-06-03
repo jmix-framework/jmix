@@ -41,6 +41,7 @@ import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.util.FetchCallbackAdapter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -86,6 +87,8 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
 
         fieldDelegate.addValueBindingChangeListener(event ->
                 dataViewDelegate.valueBindingChanged(event));
+
+        dataViewDelegate.addDataRefreshListener(this::onDataProviderDataRefresh);
 
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
 
@@ -404,5 +407,12 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
     @SuppressWarnings("unchecked")
     protected DataViewDelegate<JmixMultiSelectComboBox<V>, V> createDataViewDelegate() {
         return applicationContext.getBean(DataViewDelegate.class, this);
+    }
+
+    protected void onDataProviderDataRefresh(DataChangeEvent.DataRefreshEvent<V> event) {
+        if (CollectionUtils.isNotEmpty(getValue())
+                && getValue().contains(event.getItem())) {
+            refreshValue();
+        }
     }
 }

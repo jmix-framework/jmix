@@ -181,7 +181,8 @@ public interface Dialogs {
         Dialog open();
     }
 
-    interface InputDialogBuilder extends DialogBuilder<InputDialogBuilder> {
+    interface InputDialogBuilder extends DialogBuilder<InputDialogBuilder>,
+            Draggable<InputDialogBuilder> {
 
         /**
          * Adds input parameter to the dialog. InputParameter describes field which will be used in the input dialog.
@@ -392,6 +393,7 @@ public interface Dialogs {
     interface BackgroundTaskDialogBuilder<T extends Number, V> extends
             HasHeader<BackgroundTaskDialogBuilder<T, V>>,
             HasText<BackgroundTaskDialogBuilder<T, V>>,
+            HasPosition<BackgroundTaskDialogBuilder<T, V>>,
             HasTheme<BackgroundTaskDialogBuilder<T, V>>,
             HasStyle<BackgroundTaskDialogBuilder<T, V>>,
             HasContent<BackgroundTaskDialogBuilder<T, V>>,
@@ -460,7 +462,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
-    interface DialogBuilder<T extends DialogBuilder> extends HasHeader<T>, HasSize<T> {
+    interface DialogBuilder<T extends DialogBuilder> extends HasHeader<T>, HasSize<T>, HasPosition<T> {
     }
 
     /**
@@ -515,6 +517,54 @@ public interface Dialogs {
          * @return dialog height value
          */
         String getHeight();
+    }
+
+    /**
+     * Represents Dialog Builders that have position setting.
+     *
+     * @param <T> return type of fluent API methods
+     */
+    interface HasPosition<T> {
+
+        /**
+         * Gets the left position of the dialog.
+         *
+         * @return the left position of the dialog
+         */
+        String getLeft();
+
+        /**
+         * Sets the distance of the dialog from the left of its container. If a
+         * unitless number is provided, pixels are assumed.
+         * <p>
+         * Note that the dialog left edge may not be the same as the viewport left
+         * edge (e.g. the {@code Lumo} theme defines some spacing to prevent the dialog
+         * from stretching all the way to the left of the viewport).
+         *
+         * @param left the left position of the dialog
+         * @return {@code builder}
+         */
+        T withLeft(String left);
+
+        /**
+         * Gets the top position of the dialog.
+         *
+         * @return the top position of the dialog
+         */
+        String getTop();
+
+        /**
+         * Sets the top position of the dialog. If a unitless number is provided,
+         * pixels are assumed.
+         * <p>
+         * Note that the dialog top edge may not be the same as the viewport top
+         * edge (e.g. the {@code Lumo} theme defines some spacing to prevent the dialog
+         * from stretching all the way to the top of the viewport).
+         *
+         * @param top the top position of the dialog
+         * @return {@code builder}
+         */
+        T withTop(String top);
     }
 
     /**
@@ -689,6 +739,18 @@ public interface Dialogs {
          * @return {@code true} if dragging is enabled, {@code false} otherwise
          */
         boolean isDraggable();
+
+        /**
+         * Adds a listener that is called after user finishes dragging the dialog.
+         * It is called only if dragging is enabled.
+         * <p>
+         * Note: By default, the component will sync the top/left values after every dragging.
+         *
+         * @param listener the listener to add
+         * @return {@code builder}
+         * @see #withDraggable(boolean)
+         */
+        T withDraggedListener(ComponentEventListener<Dialog.DialogDraggedEvent> listener);
     }
 
     /**
@@ -763,5 +825,18 @@ public interface Dialogs {
          * @return dialog max height value
          */
         String getMaxHeight();
+
+        /**
+         * Adds a listener that is called after user finishes resizing the dialog.
+         * It is called only if resizing is enabled (see
+         * {@link #withResizable(boolean)}).
+         * <p>
+         * Note: By default, the component will sync the width/height and top/left
+         * values after every resizing.
+         *
+         * @param listener the listener to add
+         * @return registration for removal of listener
+         */
+        T withResizeListener(ComponentEventListener<Dialog.DialogResizeEvent> listener);
     }
 }

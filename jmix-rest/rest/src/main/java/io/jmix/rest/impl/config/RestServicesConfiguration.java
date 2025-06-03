@@ -17,6 +17,7 @@
 package io.jmix.rest.impl.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.common.util.Dom4j;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
@@ -35,13 +36,11 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
-
-import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,9 +68,8 @@ public class RestServicesConfiguration {
     private static final Logger log = LoggerFactory.getLogger(RestServicesConfiguration.class);
 
     /**
-     * @deprecated Use {@link RestProperties#getServicesConfig()}
+     * Corresponds to {@link RestProperties#getServicesConfig()}
      */
-    @Deprecated(forRemoval = true)
     public static final String JMIX_REST_SERVICES_CONFIG_PROP_NAME = "jmix.rest.services-config";
 
     protected Map<String, RestServiceInfo> serviceInfosMap = new ConcurrentHashMap<>();
@@ -84,13 +82,13 @@ public class RestServicesConfiguration {
     protected Resources resources;
 
     @Autowired
-    protected RestProperties restProperties;
-
-    @Autowired
     protected BeanFactory beanFactory;
 
     @Autowired
     protected JmixModulesClasspathScanner jmixModulesClasspathScanner;
+
+    @Autowired
+    protected JmixModules jmixModules;
 
     @Nullable
     public RestMethodInfo getRestMethodInfo(String serviceName, String methodName, String httpMethod, List<String> methodParamNames) {
@@ -153,18 +151,20 @@ public class RestServicesConfiguration {
     }
 
     protected void loadConfig() {
-        String configName = restProperties.getServicesConfig();
-        StringTokenizer tokenizer = new StringTokenizer(configName);
-        for (String location : tokenizer.getTokenArray()) {
-            Resource resource = resources.getResource(location);
-            if (resource.exists()) {
-                try (InputStream stream = resource.getInputStream()) {
-                    loadConfig(Dom4j.readDocument(stream).getRootElement());
-                } catch (IOException e) {
-                    throw new RuntimeException("Error on parsing rest services config", e);
+        List<String> moduleConfigs = jmixModules.getPropertyValues(JMIX_REST_SERVICES_CONFIG_PROP_NAME);
+        for (String moduleConfig : moduleConfigs) {
+            StringTokenizer tokenizer = new StringTokenizer(moduleConfig);
+            for (String location : tokenizer.getTokenArray()) {
+                Resource resource = resources.getResource(location);
+                if (resource.exists()) {
+                    try (InputStream stream = resource.getInputStream()) {
+                        loadConfig(Dom4j.readDocument(stream).getRootElement());
+                    } catch (IOException e) {
+                        throw new RuntimeException("Error on parsing rest services config", e);
+                    }
+                } else {
+                    log.warn("Resource {} not found, ignore it", location);
                 }
-            } else {
-                log.warn("Resource {} not found, ignore it", location);
             }
         }
     }

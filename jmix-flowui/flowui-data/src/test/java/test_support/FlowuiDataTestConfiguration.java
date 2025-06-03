@@ -34,6 +34,7 @@ import io.jmix.flowui.testassist.vaadin.TestServletContext;
 import io.jmix.flowuidata.FlowuiDataConfiguration;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.servlet.ServletContext;
+import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -108,6 +109,14 @@ public class FlowuiDataTestConfiguration {
     @Primary
     public ServletContext servletContext() {
         return new TestServletContext();
+    }
+
+    @Bean("liquibase")
+    public SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource);
+        liquibase.setChangeLog("test_support/liquibase/test-changelog.xml");
+        return liquibase;
     }
 
     @Bean("test_UserSettingsCache")

@@ -33,6 +33,7 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.ViewRegistry;
@@ -71,6 +72,7 @@ public class ExceptionDialog implements InitializingBean {
     protected Element stackTraceTextArea;
 
     protected boolean isStackTraceVisible = false;
+    protected boolean exceptionDialogModal = true;
 
     public ExceptionDialog(Throwable throwable) {
         this.throwable = throwable;
@@ -96,6 +98,11 @@ public class ExceptionDialog implements InitializingBean {
         this.notifications = notifications;
     }
 
+    @Autowired
+    public void setUiProperties(UiProperties uiProperties) {
+        exceptionDialogModal = uiProperties.isExceptionDialogModal();
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         initDialog();
@@ -119,6 +126,7 @@ public class ExceptionDialog implements InitializingBean {
         dialog.setCloseOnOutsideClick(false);
         dialog.setDraggable(true);
 
+        dialog.setModal(exceptionDialogModal);
         dialog.setWidth(WIDTH);
 
         dialog.addThemeVariants(DialogVariant.LUMO_NO_PADDING);

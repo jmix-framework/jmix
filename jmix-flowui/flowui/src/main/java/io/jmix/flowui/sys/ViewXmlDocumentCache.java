@@ -18,11 +18,13 @@ package io.jmix.flowui.sys;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import io.jmix.core.annotation.Internal;
 import org.dom4j.Document;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
 
+@Internal
 @Component("flowui_ViewXmlDocumentCache")
 public class ViewXmlDocumentCache {
 

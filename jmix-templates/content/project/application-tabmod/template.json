@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "name": "Experimental: Full-Stack Application with Tabbed Mode add-on (Java)",
-  "order": 200,
+  "name": "Full-Stack Application with Tabbed Mode add-on (Java)",
+  "order": 120,
   "addon": false,
-  "description": "<html>Jmix web application in Java. Application views are opened in tabs inside the main view.<p>Contains User Interface, Security, File Storage subsystems, Data Tools and the Tabbed Mode add-ons.<br>Uses embedded HSQL database.<p>You can change the database and include add-ons from the Marketplace at any time when working with the project.<p>CAUTION: the Tabbed Mode add-on is currently in the experimental state and can change significantly in the next Jmix release.</html>",
+  "description": "<html>Jmix web application in Java. Application views are opened in tabs inside the main view.<p>Contains User Interface, Security, File Storage subsystems, Data Tools and the Tabbed Mode add-ons.<br>Uses embedded HSQL database.<p>You can change the database and include add-ons from the Marketplace at any time when working with the project.</html>",
   "params": [
     {
       "name": "projectId",

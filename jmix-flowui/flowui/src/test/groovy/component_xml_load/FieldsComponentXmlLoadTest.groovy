@@ -119,6 +119,55 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         }
     }
 
+    def "Load switch component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ComponentView.class)
+
+        then: "Switch attributes will be loaded"
+        verifyAll(componentView.switchId) {
+            id.get() == "switchId"
+            autofocus
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
+            ariaLabel.get() == "ariaLabelString"
+            enabled
+            height == "50px"
+            label == "labelString"
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            readOnly
+            tabIndex == 3
+            value
+            visible
+            width == "100px"
+
+            tooltip.text == "tooltipText"
+            tooltip.focusDelay == 1
+            tooltip.hideDelay == 2
+            tooltip.hoverDelay == 3
+            tooltip.manual
+            tooltip.opened
+            tooltip.position == Tooltip.TooltipPosition.BOTTOM
+        }
+    }
+
+    def "Load switch component with datasource from XML"() {
+        given: "An entity with some property"
+        def order = dataManager.load(Order).all().one()
+
+        when: "Open the ComponentView and load data"
+        def componentView = navigateToView(ComponentView.class)
+        componentView.loadData()
+
+        then: "Switch will be will be loaded with the value of the property"
+        verifyAll(componentView.switchWithDataId) {
+            getId().get() == "switchWithDataId"
+            value == order.user.active
+        }
+    }
+
     def "Load comboBox component with datasource from XML"() {
         given: "An entity with some property"
         def order = dataManager.load(Order).all().one()

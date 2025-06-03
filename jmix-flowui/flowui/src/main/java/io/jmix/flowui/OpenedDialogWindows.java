@@ -41,7 +41,21 @@ public class OpenedDialogWindows {
     protected Map<UI, List<View<?>>> openedDialogs = new HashMap<>();
 
     /**
-     * Gets list of {@link View}s that opened in {@link OpenMode#DIALOG} for current {@link UI}
+     * Returns a list of {@link View}s that were opened in {@link OpenMode#DIALOG} for the current {@link UI}.
+     * <p>
+     * <strong>Note that the last opened dialog will be the last item in the returned list.</strong> For instance,
+     * if the user opens views as dialogs in the following order:
+     * <ol>
+     *     <li>
+     *         Order lookup view - will be first in the returned list (0 index);
+     *     </li>
+     *     <li>
+     *         Order detail view -will be second in the returned list (1 index);
+     *     </li>
+     *     <li>
+     *         and so on.
+     *     </li>
+     * </ol>
      *
      * @return list of {@link View}s
      */
@@ -50,13 +64,43 @@ public class OpenedDialogWindows {
     }
 
     /**
-     * Gets list of {@link View}s that opened in {@link OpenMode#DIALOG} for the provided {@link UI}.
+     * Returns a list of {@link View}s that were opened in {@link OpenMode#DIALOG} for the provided {@link UI}.
+     * <p>
+     * <strong>Note that the last opened dialog will be the last item in the returned list.</strong> For instance,
+     * if the user opens views as dialogs in the following order:
+     * <ol>
+     *     <li>
+     *         Order lookup view - will be first in the returned list (0 index);
+     *     </li>
+     *     <li>
+     *         Order detail view -will be second in the returned list (1 index);
+     *     </li>
+     *     <li>
+     *         and so on.
+     *     </li>
+     * </ol>
      *
      * @param ui the UI contains opened {@link View}s
      * @return list of {@link View}s
      */
     public List<View<?>> getDialogs(UI ui) {
         return Collections.unmodifiableList(openedDialogs.getOrDefault(ui, Collections.emptyList()));
+    }
+
+    /**
+     * @return the currently opened {@link View} in {@link OpenMode#DIALOG} for the current {@link UI}.
+     */
+    public Optional<View<?>> getCurrentDialog() {
+        return getCurrentDialog(UI.getCurrent());
+    }
+
+    /**
+     * @param ui the UI contains the currently opened {@link View}
+     * @return the currently opened {@link View} in {@link OpenMode#DIALOG} for the provided {@link UI}.
+     */
+    public Optional<View<?>> getCurrentDialog(UI ui) {
+        List<View<?>> dialogs = getDialogs(ui);
+        return dialogs.isEmpty() ? Optional.empty() : Optional.of(dialogs.get(dialogs.size() - 1));
     }
 
     @EventListener

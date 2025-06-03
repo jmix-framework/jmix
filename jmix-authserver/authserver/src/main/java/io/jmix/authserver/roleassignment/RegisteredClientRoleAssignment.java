@@ -16,6 +16,7 @@
 
 package io.jmix.authserver.roleassignment;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -64,7 +65,11 @@ public record RegisteredClientRoleAssignment(String registrationId,
         }
 
         public RegisteredClientRoleAssignment build() {
-            return new RegisteredClientRoleAssignment(registrationId, clientId, resourceRoles, rowLevelRoles);
+            return new RegisteredClientRoleAssignment(
+                    registrationId,
+                    clientId,
+                    resourceRoles == null ? Collections.emptyList() : resourceRoles,
+                    rowLevelRoles == null ? Collections.emptyList() : rowLevelRoles);
         }
     }
 }

@@ -3,6 +3,7 @@ package io.jmix.securityflowui.view.roleassignment;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.*;
@@ -14,6 +15,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataContext;
+import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
@@ -154,12 +156,34 @@ public class RoleAssignmentView extends StandardView {
                 && getDataContext().hasChanges()) {
             UnknownOperationResult result = new UnknownOperationResult();
 
-            getViewValidation().showUnsavedChangesDialog(this)
-                    .onDiscard(() -> result.resume(close(StandardOutcome.DISCARD)))
-                    .onCancel(result::fail);
+            if (action instanceof NavigateCloseAction navigateCloseAction) {
+                BeforeLeaveEvent beforeLeaveEvent = navigateCloseAction.getBeforeLeaveEvent();
+                BeforeLeaveEvent.ContinueNavigationAction navigationAction = beforeLeaveEvent.postpone();
+
+                getViewValidation().showUnsavedChangesDialog(this)
+                        .onDiscard(() -> result.resume(navigateWithDiscard(navigationAction)))
+                        .onCancel(() -> {
+                            result.otherwise(navigationAction::cancel);
+                            result.fail();
+                        });
+            } else {
+                getViewValidation().showUnsavedChangesDialog(this)
+                        .onDiscard(() -> result.resume(close(StandardOutcome.DISCARD)))
+                        .onCancel(result::fail);
+            }
 
             event.preventClose(result);
         }
+    }
+
+    private OperationResult navigateWithDiscard(BeforeLeaveEvent.ContinueNavigationAction navigationAction) {
+        navigationAction.proceed();
+
+        CloseAction closeAction = StandardOutcome.DISCARD.getCloseAction();
+        AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
+        fireEvent(afterCloseEvent);
+
+        return OperationResult.success();
     }
 
     private void loadData() {

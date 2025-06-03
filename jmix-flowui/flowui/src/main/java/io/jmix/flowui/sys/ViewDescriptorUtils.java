@@ -18,6 +18,7 @@ package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,6 +26,7 @@ import org.springframework.lang.Nullable;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+@Internal
 public final class ViewDescriptorUtils {
 
     private ViewDescriptorUtils() {

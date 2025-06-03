@@ -39,5 +39,6 @@ public interface PolicyStore {
 
     Stream<ResourcePolicy> getSpecificResourcePolicies(String resourceName);
 
+    @Deprecated(forRemoval = true)
     Stream<ResourcePolicy> getGraphQLResourcePolicies(String resourceName);
 }

@@ -56,16 +56,20 @@ public class ViewNavigationSupport {
         return findCurrentNavigationTarget(navigationTarget);
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends Component> Optional<T> findCurrentNavigationTarget(Class<? extends T> navigationTarget) {
-        // CAUTION: copied from com.vaadin.flow.component.UI.findCurrentNavigationTarget [last update Vaadin 24.6.3]
-        List<HasElement> activeRouterTargetsChain = UI.getCurrent().getInternals()
-                .getActiveRouterTargetsChain();
+        return findCurrentNavigationTarget(UI.getCurrent(), navigationTarget);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Component> Optional<T> findCurrentNavigationTarget(UI ui, Class<? extends T> navigationTarget) {
+        // CAUTION: copied from com.vaadin.flow.component.UI.findCurrentNavigationTarget [last update Vaadin 24.7.3]
+        List<HasElement> activeRouterTargetsChain = ui.getInternals().getActiveRouterTargetsChain();
         for (HasElement element : activeRouterTargetsChain) {
             if (navigationTarget.isAssignableFrom(element.getClass())) {
                 return Optional.of((T) element);
             }
         }
+
         return Optional.empty();
     }
 

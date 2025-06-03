@@ -31,6 +31,7 @@ import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterMetadataTools;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
@@ -41,10 +42,14 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.entity.filter.FilterValueComponent;
 import io.jmix.flowui.entity.filter.PropertyFilterCondition;
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.InstanceContainer.ItemPropertyChangeEvent;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -63,6 +68,11 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
     protected JmixSelect<PropertyFilter.Operation> operationField;
     @ViewComponent
     protected HorizontalLayout defaultValueBox;
+
+    @ViewComponent
+    protected JmixCheckbox operationEditableField;
+    @ViewComponent
+    protected JmixCheckbox operationTextVisibleField;
 
     @Autowired
     protected FilterMetadataTools filterMetadataTools;
@@ -100,54 +110,51 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
         propertiesFilterPredicate = currentConfiguration.getOwner().getPropertyFiltersPredicate();
     }
 
-    @Subscribe
-    protected void onReady(@SuppressWarnings("unused") ReadyEvent event) {
-        initPropertyField();
-        initOperationField();
-        initDefaultValueField();
+    @Override
+    protected void setupEntityToEdit(PropertyFilterCondition entityToEdit) {
+        initPropertyField(entityToEdit);
+        initOperationField(entityToEdit);
+        initDefaultValueField(entityToEdit);
+        initCheckboxesState(entityToEdit);
+
+        super.setupEntityToEdit(entityToEdit);
     }
 
-    protected void initPropertyField() {
+    protected void initPropertyField(PropertyFilterCondition entityToEdit) {
         if (filterMetaClass != null) {
             List<String> properties = filterMetadataTools.getPropertyPaths(currentConfiguration.getOwner()).stream()
                     .map(MetaPropertyPath::toPathString)
                     .collect(Collectors.toList());
 
-            Optional<String> previousValue = propertyField.getOptionalValue();
             propertyField.setItems(properties);
-
-            previousValue.ifPresent(propertyField::setValue);
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected void initOperationField() {
+    protected void initOperationField(PropertyFilterCondition entityToEdit) {
         List<PropertyFilter.Operation> operations;
 
-        if (filterMetaClass != null && getEditedEntity().getProperty() != null) {
+        if (filterMetaClass != null && entityToEdit.getProperty() != null) {
             EnumSet<PropertyFilter.Operation> availableOperations =
-                    propertyFilterSupport.getAvailableOperations(filterMetaClass, getEditedEntity().getProperty());
+                    propertyFilterSupport.getAvailableOperations(filterMetaClass, entityToEdit.getProperty());
 
             operations = new ArrayList<>(availableOperations);
         } else {
             operations = Collections.EMPTY_LIST;
         }
 
-        Optional<PropertyFilter.Operation> previousValue = operationField.getOptionalValue();
         operationField.setItems(operations);
-
-        previousValue.ifPresent(operationField::setValue);
     }
 
     @SuppressWarnings({"unchecked"})
-    protected void initDefaultValueField() {
-        String property = getEditedEntity().getProperty();
-        PropertyFilter.Operation operation = getEditedEntity().getOperation();
+    protected void initDefaultValueField(PropertyFilterCondition entityToEdit) {
+        String property = entityToEdit.getProperty();
+        PropertyFilter.Operation operation = entityToEdit.getOperation();
 
         if (filterMetaClass != null && property != null && operation != null) {
             defaultValueField = singleFilterSupport.generateValueComponent(filterMetaClass, property, operation);
 
-            FilterValueComponent valueComponent = getEditedEntity().getValueComponent();
+            FilterValueComponent valueComponent = entityToEdit.getValueComponent();
             if (valueComponent != null && valueComponent.getDefaultValue() != null) {
                 String modelDefaultValue = valueComponent.getDefaultValue();
                 MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(filterMetaClass,
@@ -197,7 +204,7 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
             }
 
             resetDefaultValue();
-            initDefaultValueField();
+            initDefaultValueField(getEditedEntity());
         }
 
         operationField.setEnabled(!Strings.isNullOrEmpty(property));
@@ -210,7 +217,7 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
 
         if (operation != null && event.isFromClient()) {
             resetDefaultValue();
-            initDefaultValueField();
+            initDefaultValueField(getEditedEntity());
         }
     }
 
@@ -228,6 +235,25 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
         FilterValueComponent valueComponent = getEditedEntity().getValueComponent();
         if (valueComponent != null) {
             valueComponent.setDefaultValue(null);
+        }
+    }
+
+    protected void initCheckboxesState(PropertyFilterCondition entityToEdit) {
+        operationEditableField.setVisible(entityToEdit.getVisible());
+        operationTextVisibleField.setVisible(entityToEdit.getVisible());
+
+        operationTextVisibleField.setEnabled(!entityToEdit.getOperationEditable());
+    }
+
+    @Subscribe(id = "filterConditionDc", target = Target.DATA_CONTAINER)
+    public void onFilterConditionDcItemPropertyChange(ItemPropertyChangeEvent<PropertyFilterCondition> event) {
+        String property = event.getProperty();
+
+        if ("visible".equals(property)) {
+            operationEditableField.setVisible(Boolean.TRUE.equals(event.getValue()));
+            operationTextVisibleField.setVisible(Boolean.TRUE.equals(event.getValue()));
+        } else if ("operationEditable".equals(property)) {
+            operationTextVisibleField.setEnabled(Boolean.FALSE.equals(event.getValue()));
         }
     }
 

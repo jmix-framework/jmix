@@ -24,6 +24,7 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.editor.Editor;
+import com.vaadin.flow.component.grid.editor.EditorCloseEvent;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -52,6 +53,7 @@ import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
+import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.aggregation.Aggregation;
@@ -827,7 +829,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         if (item != null) {
             // have to select clicked item to make action work, otherwise
             // consecutive clicks on the same item deselect it
-            component.select(item);
+            // selection from client is mandatory due to programmatic selection ignores selectableProvider
+            component.getSelectionModel().selectFromClient(item);
         }
 
         if (enterPressHandler != null) {
@@ -861,6 +864,16 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         }
 
         return null;
+    }
+
+    public DataGridEditorImpl<E> createEditor() {
+        DataGridEditorImpl<E> editor = new DataGridEditorImpl<>(component, applicationContext);
+        editor.addCloseListener(this::onGridEditorClose);
+        return editor;
+    }
+
+    protected void onGridEditorClose(EditorCloseEvent<E> eEditorCloseEvent) {
+        updateAggregationRow();
     }
 
     public static class ColumnSecurityContext<E> {

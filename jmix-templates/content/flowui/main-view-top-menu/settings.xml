@@ -20,11 +20,14 @@
           name="Main view with top menu"
           order="80"
           enabled="true">
+    <exclude>
+        <tag>TABBED_MODE</tag>
+    </exclude>
     <description>
         <![CDATA[<html>Main view with top menu.</html>]]>
     </description>
 
-    <locMessages key="${id}.title">
+    <locMessages key="mainViewTopMenuTitle" expressionKey="${studioUtils.decapitalize(controllerName)}.title">
         <message lang="default"><![CDATA[${project.getName()} application]]></message>
     </locMessages>
 

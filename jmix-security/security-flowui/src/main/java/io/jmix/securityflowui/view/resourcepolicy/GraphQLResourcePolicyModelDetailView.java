@@ -3,6 +3,7 @@ package io.jmix.securityflowui.view.resourcepolicy;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.ResourcePolicyModel;
 
+@Deprecated(forRemoval = true)
 @ViewController("sec_GraphQLResourcePolicyModel.detail")
 @ViewDescriptor("graphql-resource-policy-model-detail-view.xml")
 @EditedEntityContainer("resourcePolicyModelDc")

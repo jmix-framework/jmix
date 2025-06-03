@@ -143,4 +143,6 @@ public @interface StudioComponent {
      *  Studio also can resolve {@code %VERSION%} placeholder.
      */
     String documentationLink() default "";
+
+    String EMPTY_INJECTION_IDENTIFIER = "__empty__";
 }

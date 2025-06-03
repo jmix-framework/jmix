@@ -19,9 +19,7 @@ package io.jmix.flowui.view.navigation;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
-import org.springframework.stereotype.Component;
 
-@Component("flowui_ViewNavigationProcessor")
 public class ViewNavigationProcessor extends AbstractNavigationProcessor<ViewNavigator> {
 
     public ViewNavigationProcessor(ViewSupport viewSupport,

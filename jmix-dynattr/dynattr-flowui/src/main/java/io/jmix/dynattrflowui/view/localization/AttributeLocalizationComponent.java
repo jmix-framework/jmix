@@ -22,6 +22,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.editor.Editor;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -95,12 +96,12 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
     protected VerticalLayout initContent() {
         VerticalLayout content = super.initContent();
         content.add(localizedValuesDataGrid);
-        content.setMargin(false);
         content.setPadding(false);
+        content.setHeightFull();
         return content;
     }
 
-    private void initData() {
+    protected void initData() {
         localizedValuesDc = this.dataComponents.createCollectionContainer(AttributeLocalizedValue.class);
         localizedValuesDl = this.dataComponents.createCollectionLoader();
         localizedValuesDc.addItemChangeListener(e -> Optional.ofNullable(e.getItem()).ifPresent(val -> dataContext.setModified(val, true)));
@@ -108,19 +109,26 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
         localizedValuesDl.setContainer(localizedValuesDc);
     }
 
-    private void initComponentUi() {
+    protected void initComponentUi() {
         localizedValuesDataGrid = new Grid<>(AttributeLocalizedValue.class, false);
+        localizedValuesDataGrid.setHeightFull();
+        localizedValuesDataGrid.setMinHeight("20em");
         localizedValuesDataGrid.setDataProvider(new ContainerDataGridItems<>(localizedValuesDc));
 
-        Grid.Column<AttributeLocalizedValue> languageColumn = localizedValuesDataGrid.addColumn(LANG_PROPERTY);
-        languageColumn.setHeader(messageTools.getPropertyCaption(metadata.getClass(AttributeLocalizedValue.class), LANG_PROPERTY));
-        languageColumn.setRenderer(new ComponentRenderer<>(item -> new Text(item.getLanguage() + "|" + item.getLocale())));
+        localizedValuesDataGrid.addColumn(LANG_PROPERTY)
+                .setSortable(false)
+                .setHeader(messageTools.getPropertyCaption(metadata.getClass(AttributeLocalizedValue.class), LANG_PROPERTY))
+                .setRenderer(new ComponentRenderer<>(item -> new Text(item.getLanguage() + "|" + item.getLocale())))
+                .setFlexGrow(0)
+                .setAutoWidth(true);
 
-        Grid.Column<AttributeLocalizedValue> nameCol = localizedValuesDataGrid.addColumn(NAME_PROPERTY);
-        nameCol.setHeader(messageTools.getPropertyCaption(metadata.getClass(AttributeLocalizedValue.class), NAME_PROPERTY));
+        Grid.Column<AttributeLocalizedValue> nameCol = localizedValuesDataGrid.addColumn(NAME_PROPERTY)
+                .setSortable(false)
+                .setHeader(messageTools.getPropertyCaption(metadata.getClass(AttributeLocalizedValue.class), NAME_PROPERTY));
 
-        Grid.Column<AttributeLocalizedValue> descriptionCol = localizedValuesDataGrid.addColumn(DESCRIPTION_PROPERTY);
-        descriptionCol.setHeader(messageTools.getPropertyCaption(metadata.getClass(AttributeLocalizedValue.class), DESCRIPTION_PROPERTY));
+        Grid.Column<AttributeLocalizedValue> descriptionCol = localizedValuesDataGrid.addColumn(DESCRIPTION_PROPERTY)
+                .setSortable(false)
+                .setHeader(messageTools.getPropertyCaption(metadata.getClass(AttributeLocalizedValue.class), DESCRIPTION_PROPERTY));
 
         Editor<AttributeLocalizedValue> editor = localizedValuesDataGrid.getEditor();
         editor.addSaveListener(e -> {
@@ -128,7 +136,7 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
         });
 
         Grid.Column<AttributeLocalizedValue> editColumn = localizedValuesDataGrid.addComponentColumn(attributeLocalizedValue -> {
-                    Button editButton = new Button(messages.getMessage("actions.Edit"));
+                    Button editButton = new Button(new Icon(VaadinIcon.PENCIL));
                     editButton.setEnabled(true);
                     editButton.addClickListener(e -> {
                         if (editor.isOpen()) {
@@ -139,7 +147,7 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
                     editButton.setEnabled(true);
                     return editButton;
                 })
-                .setWidth("16em")
+                .setWidth("8em")
                 .setFlexGrow(0);
 
         Binder<AttributeLocalizedValue> binder = new Binder<>(AttributeLocalizedValue.class);

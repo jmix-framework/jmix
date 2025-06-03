@@ -34,8 +34,10 @@ import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewChildrenVisitResult;
+import io.jmix.flowui.view.ViewControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationListener;
 import org.springframework.lang.Nullable;
 
 import java.io.ByteArrayInputStream;
@@ -728,10 +730,6 @@ public final class UiComponentUtils {
         return null;
     }
 
-    public static void walkComponents(View<?> view, Consumer<ViewChildrenVisitResult> viewChildrenVisitResultConsumer) {
-        __walkComponentsInternal(view, UiComponentUtils.getComponents(view), viewChildrenVisitResultConsumer, new HashSet<Component>());
-    }
-
     /**
      * Gets JavaScript function for copying a value to the clipboard. A temporary invisible
      * {@code textarea} DOM element is used for copying.
@@ -753,6 +751,15 @@ public final class UiComponentUtils {
                 """;
     }
 
+    /**
+     * @deprecated Use {@link #traverseComponents(Component, Consumer)} instead.
+     */
+    @Deprecated(since = "2.6", forRemoval = true)
+    public static void walkComponents(View<?> view, Consumer<ViewChildrenVisitResult> viewChildrenVisitResultConsumer) {
+        __walkComponentsInternal(view, UiComponentUtils.getComponents(view), viewChildrenVisitResultConsumer, new HashSet<Component>());
+    }
+
+    @Deprecated(since = "2.6", forRemoval = true)
     private static void __walkComponentsInternal(View<?> view,
                                                  Collection<Component> currentChildrenComponents,
                                                  Consumer<ViewChildrenVisitResult> callback,
@@ -816,6 +823,49 @@ public final class UiComponentUtils {
                     refreshActionsState(actionsHolder);
                 }
             });
+        }
+    }
+
+    /**
+     * Returns the application event listeners associated with the specified component.
+     * This method identifies the type of the component and delegates the retrieval of
+     * event listeners to the appropriate utility class based on whether the component
+     * is a View or a Fragment. If the component type is unsupported, an exception is thrown.
+     *
+     * @param component the component for which to retrieve application event listeners.
+     *                  Must be an instance of {@link View} or {@link Fragment}
+     * @return a list of application event listeners associated with the specified component
+     * @throws IllegalArgumentException if the component type is unsupported
+     */
+    public static List<ApplicationListener<?>> getApplicationEventListeners(Component component) {
+        if (component instanceof View<?> view) {
+            return ViewControllerUtils.getApplicationEventListeners(view);
+        } else if (component instanceof Fragment<?> fragment) {
+            return FragmentUtils.getApplicationEventListeners(fragment);
+        } else {
+            throw new IllegalArgumentException(component.getClass().getSimpleName() +
+                    " has no API to set application event listeners");
+        }
+    }
+
+    /**
+     * Sets the application event listeners for the provided component if it supports event
+     * listener registration.
+     *
+     * @param component the component for which the application event listeners will be set.
+     *                  Must be an instance of {@link View} or {@link Fragment}
+     * @param listeners a list of application listeners to set for the given component
+     * @throws IllegalArgumentException if the component type is unsupported
+     */
+    public static void setApplicationEventListeners(Component component,
+                                                    @Nullable List<ApplicationListener<?>> listeners) {
+        if (component instanceof View<?> view) {
+            ViewControllerUtils.setApplicationEventListeners(view, listeners);
+        } else if (component instanceof Fragment<?> fragment) {
+            FragmentUtils.setApplicationEventListeners(fragment, listeners);
+        } else {
+            throw new IllegalArgumentException(component.getClass().getSimpleName() +
+                    " has no API to set application event listeners");
         }
     }
 }

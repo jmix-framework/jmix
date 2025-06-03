@@ -413,7 +413,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     @Override
     protected DataGridEditor<E> createEditor() {
         editorCreated = true;
-        return new DataGridEditorImpl<>(this, applicationContext);
+        return gridDelegate.createEditor();
     }
 
     @SuppressWarnings({"unchecked"})

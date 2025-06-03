@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mainView xmlns="http://jmix.io/schema/tabmod/main-view"
+          title="${messageKeys['mainViewTopMenuTitle']}">
+    <actions>
+        <action id="logoutAction"
+                type="logout"/>
+    </actions>
+    <appLayout classNames="jmix-main-view-top-menu-app-layout">
+        <navigationBar>
+            <vbox id="navigationBarBox"
+                  classNames="jmix-main-view-top-menu-navigation-bar-box">
+                <header id="navigationHeader"
+                        classNames="jmix-main-view-top-menu-header">
+                    <image id="logoImage"
+                           resource="icons/icon.png"
+                           classNames="jmix-main-view-top-menu-logo mx-m"/>
+                    <nav id="navigation"
+                         classNames="jmix-main-view-top-menu-navigation">
+                        <horizontalMenu id="horizontalMenu"
+                                        tabNavigation="true"
+                                        width="100%"/>
+                    </nav>
+                    <hbox id="userHeaderBox"
+                          classNames="jmix-main-view-top-menu-user-box">
+                        <userIndicator id="userIndicator"/>
+                        <button id="logoutButton"
+                                action="logoutAction"
+                                classNames="jmix-logout-button"/>
+                    </hbox>
+                </header>
+            </vbox>
+        </navigationBar>
+        <workArea id="workArea"
+                  classNames="jmix-work-area">
+            <mainTabSheet id="mainTabSheet"
+                          classNames="jmix-main-tabsheet"
+                          tabsDraggable="true"
+                          width="100%" height="100%">
+                <actions>
+                    <action id="closeThisTabAction" type="tabmod_closeThisTab"/>
+                    <action id="closeOthersTabsAction" type="tabmod_closeOtherTabs"/>
+                    <action id="closeAllTabsAction" type="tabmod_closeAllTabs"/>
+                </actions>
+            </mainTabSheet>
+            <initialLayout id="initialLayout"
+                           classNames="jmix-initial-layout"
+                           width="100%" height="100%">
+            </initialLayout>
+        </workArea>
+    </appLayout>
+</mainView>

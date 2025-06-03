@@ -131,6 +131,11 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
     }
 
     @Override
+    public void saveWithoutReload(Object... entities) {
+        save(new SaveContext().saving(entities).setDiscardSaved(true));
+    }
+
+    @Override
     public EntitySet saveAll(Collection<?> entities) {
         return save(new SaveContext().saving(entities));
     }

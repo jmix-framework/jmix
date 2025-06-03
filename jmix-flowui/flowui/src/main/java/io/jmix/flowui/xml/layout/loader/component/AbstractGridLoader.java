@@ -29,8 +29,6 @@ import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
 import io.jmix.core.*;
@@ -235,22 +233,19 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         HorizontalLayout actions = new HorizontalLayout();
         actions.setPadding(false);
 
-        Button saveButton = loadEditorButton(columnElement, "saveButton",
-                null, VaadinIcon.CHECK.create());
+        Button saveButton = loadEditorButton(columnElement, "saveButton");
         if (saveButton != null) {
             saveButton.addClickListener(__ -> editor.save());
             actions.add(saveButton);
         }
 
-        Button cancelButton = loadEditorButton(columnElement, "cancelButton",
-                "actions.Cancel", VaadinIcon.BAN.create());
+        Button cancelButton = loadEditorButton(columnElement, "cancelButton");
         if (cancelButton != null) {
             cancelButton.addClickListener(__ -> editor.cancel());
             actions.add(cancelButton);
         }
 
-        Button closeButton = loadEditorButton(columnElement, "closeButton",
-                null, VaadinIcon.BAN.create());
+        Button closeButton = loadEditorButton(columnElement, "closeButton");
         if (closeButton != null) {
             closeButton.addClickListener(__ -> editor.closeEditor());
             actions.add(closeButton);
@@ -274,8 +269,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected Grid.Column<?> createEditColumn(T resultComponent, Element columnElement, Editor editor) {
         return resultComponent.addComponentColumn(item -> {
-            Button editButton = loadEditorButton(columnElement, "editButton",
-                    "actions.Edit", VaadinIcon.PENCIL.create());
+            Button editButton = loadEditorButton(columnElement, "editButton");
             if (editButton != null) {
                 editButton.addClickListener(__ -> {
                     if (editor.isOpen()) {
@@ -292,16 +286,13 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     @Nullable
-    protected Button loadEditorButton(Element columnElement, String buttonElementName,
-                                      @Nullable String defaultMessage, Icon defaultIcon) {
+    protected Button loadEditorButton(Element columnElement, String buttonElementName) {
         Element buttonElement = columnElement.element(buttonElementName);
         if (buttonElement != null) {
             JmixButton button = factory.create(JmixButton.class);
 
-            loadResourceString(buttonElement, "text", context.getMessageGroup())
-                    .ifPresentOrElse(button::setText, () -> button.setText(loadMessage(defaultMessage)));
-            componentLoader().loadIcon(buttonElement)
-                    .ifPresentOrElse(button::setIcon, () -> button.setIcon(defaultIcon));
+            loadResourceString(buttonElement, "text", context.getMessageGroup(), button::setText);
+            componentLoader().loadIcon(buttonElement, button::setIcon);
             componentLoader().loadTitle(button, buttonElement, context);
             componentLoader().loadClassNames(button, buttonElement);
             componentLoader().loadThemeNames(button, buttonElement);

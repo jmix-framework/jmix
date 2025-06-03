@@ -16,6 +16,7 @@
 
 package io.jmix.samples.rest.service;
 
+import io.jmix.core.FileRef;
 import io.jmix.samples.rest.entity.ModelEntity;
 import io.jmix.samples.rest.entity.driver.Car;
 import io.jmix.samples.rest.entity.driver.NotPersistentStringIdEntity;
@@ -106,4 +107,6 @@ public interface RestTestService {
     String overloadedMethodWithOptionalArgs(String arg1);
 
     String overloadedMethodWithOptionalArgs(String arg1, String arg2);
+
+    FileRef fileRefMethod(FileRef fileRef);
 }

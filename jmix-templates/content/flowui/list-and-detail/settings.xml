@@ -18,7 +18,7 @@
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/browser_and_editor.svg"
           name="Entity list and detail views"
-          order="30">
+          order="20">
     <tags>
         <tag>ENTITY</tag>
         <tag>JPA</tag>

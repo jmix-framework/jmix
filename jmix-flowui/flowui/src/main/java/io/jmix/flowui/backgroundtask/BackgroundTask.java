@@ -16,9 +16,13 @@
 
 package io.jmix.flowui.backgroundtask;
 
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.server.Command;
+import com.vaadin.flow.server.VaadinService;
+import com.vaadin.flow.server.VaadinSession;
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,12 +31,13 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Background task for execute by {@link BackgroundWorker}.
- * <br>
- * If the task is associated with a view through "view" constructor parameter, it will be canceled when
- * the view is closed.
- * <br>
- * If timeout passed to constructor is exceeded, the task is canceled by special {@link BackgroundTaskWatchDog} thread.
- * <br>
+ * <p>
+ * If the task is associated with a view through "view" constructor parameter,
+ * it will be canceled when the view is closed.
+ * <p>
+ * If timeout passed to constructor is exceeded, the task is canceled by special
+ * {@link BackgroundTaskWatchDog} thread.
+ * <p>
  * Simplest usage example:
  * <pre>
  *    BackgroundTask&lt;Integer, Void&gt; task = new BackgroundTask&lt;Integer, Void&gt;(10, this) {
@@ -119,51 +124,107 @@ public abstract class BackgroundTask<T, V> {
      *
      * @param taskLifeCycle lifecycle object that allows the main method to interact with the execution environment
      * @return task result
-     * @throws Exception exception in working thread
+     * @throws Exception exception in a working thread
      */
     public abstract V run(TaskLifeCycle<T> taskLifeCycle) throws Exception;
 
     /**
-     * Called by the execution environment in UI thread when the task is completed.
+     * Provides exclusive access to this UI from outside a request handling thread
+     * when the task is completed.
+     * <p>
+     * Please note that the command might be invoked on a different thread or
+     * later on the current thread, which means that custom thread locals might
+     * not have the expected values when the command is executed.
+     * {@link UI#getCurrent()}, {@link VaadinSession#getCurrent()} and
+     * {@link VaadinService#getCurrent()} are set according to this UI before
+     * executing the command. Other standard CurrentInstance values such as
+     * {@link VaadinService#getCurrentRequest()} and
+     * {@link VaadinService#getCurrentResponse()} will not be defined.
      *
      * @param result result of execution returned by {@link #run(TaskLifeCycle)} method
+     * @see UI#access(Command)
      */
     public void done(V result) {
     }
 
     /**
-     * Called by the execution environment in UI thread if the task is canceled by
-     * {@link BackgroundTaskHandler#cancel()} invocation.
-     * <br>
+     * Provides exclusive access to this UI from outside a request handling thread when
+     * the task is canceled by {@link BackgroundTaskHandler#cancel()} invocation.
+     * <p>
      * This method is not called in case of timeout expiration or owner view closing.
+     * <p>
+     * Please note that the command might be invoked on a different thread or
+     * later on the current thread, which means that custom thread locals might
+     * not have the expected values when the command is executed.
+     * {@link UI#getCurrent()}, {@link VaadinSession#getCurrent()} and
+     * {@link VaadinService#getCurrent()} are set according to this UI before
+     * executing the command. Other standard CurrentInstance values such as
+     * {@link VaadinService#getCurrentRequest()} and
+     * {@link VaadinService#getCurrentResponse()} will not be defined.
+     *
+     * @see UI#access(Command)
      */
     public void canceled() {
     }
 
     /**
-     * Called by the execution environment in UI thread if the task timeout is exceeded.
+     * Provides exclusive access to this UI from outside a request handling thread
+     * if the task timeout is exceeded.
+     * <p>
+     * Please note that the command might be invoked on a different thread or
+     * later on the current thread, which means that custom thread locals might
+     * not have the expected values when the command is executed.
+     * {@link UI#getCurrent()}, {@link VaadinSession#getCurrent()} and
+     * {@link VaadinService#getCurrent()} are set according to this UI before
+     * executing the command. Other standard CurrentInstance values such as
+     * {@link VaadinService#getCurrentRequest()} and
+     * {@link VaadinService#getCurrentResponse()} will not be defined.
      *
-     * @return true if this method implementation actually handles this event. Used for chaining handlers.
+     * @return true if this method implementation actually handles this event.
+     * Used for chaining handlers.
+     * @see UI#access(Command)
      */
     public boolean handleTimeoutException() {
         return false;
     }
 
     /**
-     * Called by the execution environment in UI thread if the task {@link #run(TaskLifeCycle)} method raised an
-     * exception.
+     * Provides exclusive access to this UI from outside a request handling thread
+     * if the task {@link #run(TaskLifeCycle)} method raised an exception.
+     * <p>
+     * Please note that the command might be invoked on a different thread or
+     * later on the current thread, which means that custom thread locals might
+     * not have the expected values when the command is executed.
+     * {@link UI#getCurrent()}, {@link VaadinSession#getCurrent()} and
+     * {@link VaadinService#getCurrent()} are set according to this UI before
+     * executing the command. Other standard CurrentInstance values such as
+     * {@link VaadinService#getCurrentRequest()} and
+     * {@link VaadinService#getCurrentResponse()} will not be defined.
      *
      * @param ex exception
-     * @return true if this method implementation actually handles the exception. Used for chaining handlers.
+     * @return true if this method implementation actually handles the exception.
+     * Used for chaining handlers.
+     * @see UI#access(Command)
      */
     public boolean handleException(Exception ex) {
         return false;
     }
 
     /**
-     * Called by the execution environment in UI thread on progress change.
+     * Provides exclusive access to this UI from outside a request handling thread
+     * on progress change.
+     * <p>
+     * Please note that the command might be invoked on a different thread or
+     * later on the current thread, which means that custom thread locals might
+     * not have the expected values when the command is executed.
+     * {@link UI#getCurrent()}, {@link VaadinSession#getCurrent()} and
+     * {@link VaadinService#getCurrent()} are set according to this UI before
+     * executing the command. Other standard CurrentInstance values such as
+     * {@link VaadinService#getCurrentRequest()} and
+     * {@link VaadinService#getCurrentResponse()} will not be defined.
      *
      * @param changes list of changes since previous invocation
+     * @see UI#access(Command)
      */
     public void progress(List<T> changes) {
     }
@@ -241,21 +302,57 @@ public abstract class BackgroundTask<T, V> {
     public interface ProgressListener<T, V> {
 
         /**
-         * Called by the execution environment in UI thread on progress change.
+         * Provides exclusive access to this UI from outside a request handling thread
+         * on progress change.
+         * <p>
+         * Please note that the command might be invoked on a different thread or
+         * later on the current thread, which means that custom thread locals might
+         * not have the expected values when the command is executed.
+         * {@link UI#getCurrent()}, {@link VaadinSession#getCurrent()} and
+         * {@link VaadinService#getCurrent()} are set according to this UI before
+         * executing the command. Other standard CurrentInstance values such as
+         * {@link VaadinService#getCurrentRequest()} and
+         * {@link VaadinService#getCurrentResponse()} will not be defined.
          *
          * @param changes list of changes since previous invocation
+         * @see UI#access(Command)
          */
         void onProgress(List<T> changes);
 
         /**
-         * Called by the execution environment in UI thread when the task is completed.
+         * Provides exclusive access to this UI from outside a request handling thread
+         * when the task is completed.
+         * <p>
+         * Please note that the command might be invoked on a different thread or
+         * later on the current thread, which means that custom thread locals might
+         * not have the expected values when the command is executed.
+         * {@link UI#getCurrent()}, {@link VaadinSession#getCurrent()} and
+         * {@link VaadinService#getCurrent()} are set according to this UI before
+         * executing the command. Other standard CurrentInstance values such as
+         * {@link VaadinService#getCurrentRequest()} and
+         * {@link VaadinService#getCurrentResponse()} will not be defined.
          *
          * @param result result of execution returned by {@link #run(TaskLifeCycle)} method
+         * @see UI#access(Command)
          */
         void onDone(V result);
 
         /**
-         * Called by the execution environment in UI thread if the task is canceled.
+         * Provides exclusive access to this UI from outside a request handling thread when
+         * the task is canceled by {@link BackgroundTaskHandler#cancel()} invocation.
+         * <p>
+         * This method is not called in case of timeout expiration or owner view closing.
+         * <p>
+         * Please note that the command might be invoked on a different thread or
+         * later on the current thread, which means that custom thread locals might
+         * not have the expected values when the command is executed.
+         * {@link UI#getCurrent()}, {@link VaadinSession#getCurrent()} and
+         * {@link VaadinService#getCurrent()} are set according to this UI before
+         * executing the command. Other standard CurrentInstance values such as
+         * {@link VaadinService#getCurrentRequest()} and
+         * {@link VaadinService#getCurrentResponse()} will not be defined.
+         *
+         * @see UI#access(Command)
          */
         void onCancel();
     }

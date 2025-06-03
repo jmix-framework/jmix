@@ -16,6 +16,7 @@
 
 package io.jmix.flowui;
 
+import io.jmix.flowui.exception.ExceptionDialog;
 import io.jmix.flowui.sys.UiTestIdSupport;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -93,6 +94,11 @@ public class UiProperties {
      */
     boolean websocketRequestSecurityContextProvided;
 
+    /**
+     * Whether {@link ExceptionDialog} will open modal or modeless.
+     */
+    boolean exceptionDialogModal;
+
     public UiProperties(@DefaultValue("false") boolean uiTestMode,
                         @DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
@@ -106,7 +112,8 @@ public class UiProperties {
                         @DefaultValue("3600") int fileDownloaderCacheMaxAgeSec,
                         @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
                         @DefaultValue("true") boolean useSessionFixationProtection,
-                        @DefaultValue("false") boolean websocketRequestSecurityContextProvided
+                        @DefaultValue("false") boolean websocketRequestSecurityContextProvided,
+                        @DefaultValue("true") boolean exceptionDialogModal
     ) {
         this.uiTestMode = uiTestMode;
         this.loginViewId = loginViewId;
@@ -122,6 +129,7 @@ public class UiProperties {
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.useSessionFixationProtection = useSessionFixationProtection;
         this.websocketRequestSecurityContextProvided = websocketRequestSecurityContextProvided;
+        this.exceptionDialogModal = exceptionDialogModal;
     }
 
     /**
@@ -215,5 +223,12 @@ public class UiProperties {
      */
     public boolean isWebsocketRequestSecurityContextProvided() {
         return websocketRequestSecurityContextProvided;
+    }
+
+    /**
+     * @see #exceptionDialogModal
+     */
+    public boolean isExceptionDialogModal() {
+        return exceptionDialogModal;
     }
 }

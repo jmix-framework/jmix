@@ -187,6 +187,7 @@ public class TypedTextField<V> extends TextField
             }
 
             if (modelValue == null) {
+                fieldDelegate.setConversionInvalid(false);
                 modelValue = convertToModel(presentationValue);
             }
 

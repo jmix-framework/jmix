@@ -218,6 +218,39 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
+     * Initiates data fetching from the given data provider.
+     *
+     * @param dataProvider data provider to refetch
+     * @throws IllegalArgumentException if data provider does not belong to a given calendar
+     */
+    public void refetchDataProvider(CalendarDataProvider dataProvider) {
+        Preconditions.checkNotNullArgument(dataProvider);
+
+        refetchDataProvider(dataProvider.getId());
+    }
+
+    /**
+     * Finds the data provider by ID and initiates data fetching.
+     *
+     * @param id data provider ID
+     * @throws IllegalArgumentException if there is no data provider with the given ID
+     */
+    public void refetchDataProvider(String id) {
+        Preconditions.checkNotEmptyString(id);
+
+        CalendarDataProvider dataProvider = getDataProvider(id);
+        if (dataProvider == null) {
+            throw new IllegalArgumentException("There is no data provider with the given ID: '%s'".formatted(id));
+        }
+
+        if (dataProvider instanceof ItemsCalendarDataProvider) {
+            requestUpdateItemDataProvider(id);
+        } else if (dataProvider instanceof CallbackCalendarDataProvider) {
+            requestUpdateCallbackDataProvider(id);
+        }
+    }
+
+    /**
      * @return {@code true} if business hours used as event constraint
      */
     public boolean isEventConstraintBusinessHoursEnabled() {
@@ -1008,6 +1041,30 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         getElement().callJsFunction("_updateSyncSourcesData", resultJson);
 
         itemsDataProvidersExecutionMap.remove(dataProviderId);
+    }
+
+    protected void requestUpdateCallbackDataProvider(String dataProviderId) {
+        if (callbackDataProvidersExecutionMap.containsKey(dataProviderId)) {
+            return;
+        }
+        getUI().ifPresent(ui -> {
+            StateTree.ExecutionRegistration executionRegistration = ui.beforeClientResponse(this,
+                    (context) -> performUpdateCallbackDataProvider(dataProviderId));
+            callbackDataProvidersExecutionMap.put(dataProviderId, executionRegistration);
+        });
+    }
+
+    protected void performUpdateCallbackDataProvider(String dataProviderId) {
+        JsonObject resultJson = new JreJsonFactory().createObject();
+
+        CallbackDataProviderManager dataProviderManager =
+                (CallbackDataProviderManager) dataProvidersMap.get(dataProviderId);
+
+        resultJson.put("sourceId", dataProviderManager.getSourceId());
+
+        getElement().callJsFunction("_updateAsyncSourcesData", resultJson);
+
+        callbackDataProvidersExecutionMap.remove(dataProviderId);
     }
 
     @Override

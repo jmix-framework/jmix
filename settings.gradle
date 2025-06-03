@@ -42,9 +42,6 @@ includeProject('data-autoconfigure', 'jmix-data/data-autoconfigure')
 includeProject('eclipselink', 'jmix-data/eclipselink')
 includeProject('eclipselink-starter', 'jmix-data/eclipselink-starter')
 
-includeProject('dashboards', 'jmix-dashboards/dashboards')
-includeProject('dashboards-starter', 'jmix-dashboards/dashboards-starter')
-
 includeProject('dataimport', 'jmix-dataimport/dataimport')
 includeProject('dataimport-starter', 'jmix-dataimport/dataimport-starter')
 
@@ -64,9 +61,6 @@ includeProject('email-starter', 'jmix-email/email-starter')
 includeProject('email-flowui', 'jmix-email/email-flowui')
 includeProject('email-flowui-starter', 'jmix-email/email-flowui-starter')
 
-includeProject('emailtemplates', 'jmix-emailtemplates/emailtemplates')
-includeProject('emailtemplates-starter', 'jmix-emailtemplates/emailtemplates-starter')
-
 includeProject('flowui', 'jmix-flowui/flowui')
 includeProject('flowui-starter', 'jmix-flowui/flowui-starter')
 includeProject('flowui-kit', 'jmix-flowui/flowui-kit')
@@ -82,15 +76,8 @@ includeProject('fullcalendar-flowui', 'jmix-fullcalendar/fullcalendar-flowui')
 includeProject('fullcalendar-flowui-kit', 'jmix-fullcalendar/fullcalendar-flowui-kit')
 includeProject('fullcalendar-flowui-starter', 'jmix-fullcalendar/fullcalendar-flowui-starter')
 
-//todo SB3 restore graphql modules
-//includeProject('graphql', 'jmix/jmix-graphql/graphql')
-//includeProject('graphql-starter', 'jmix/jmix-graphql/graphql-starter')
-
 includeProject('gridexport-flowui', 'jmix-gridexport/gridexport-flowui')
 includeProject('gridexport-flowui-starter', 'jmix-gridexport/gridexport-flowui-starter')
-
-includeProject('imap', 'jmix-imap/imap')
-includeProject('imap-starter', 'jmix-imap/imap-starter')
 
 includeProject('ldap', 'jmix-ldap/ldap')
 includeProject('ldap-starter', 'jmix-ldap/ldap-starter')

@@ -264,7 +264,7 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
             setManaged(entry.isManaged());
             setRemoved(entry.isRemoved());
 
-            loadedPropertiesInfo = entry.getLoadedPropertiesInfo();
+            setLoadedPropertiesInfo(entry.getLoadedPropertiesInfo() == null ? null : entry.getLoadedPropertiesInfo().copy());
 
             if (entry instanceof BaseEntityEntry baseEntityEntry && baseEntityEntry.propertyChangeListeners != null) {
                 for (EntityPropertyChangeListener listener : baseEntityEntry.propertyChangeListeners) {

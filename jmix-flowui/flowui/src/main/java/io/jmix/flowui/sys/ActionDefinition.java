@@ -16,6 +16,9 @@
 
 package io.jmix.flowui.sys;
 
+import io.jmix.core.annotation.Internal;
+
+@Internal
 public final class ActionDefinition {
 
     private final String id;

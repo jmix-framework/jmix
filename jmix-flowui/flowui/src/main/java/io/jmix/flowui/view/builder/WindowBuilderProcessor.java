@@ -16,17 +16,13 @@
 
 package io.jmix.flowui.view.builder;
 
-import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.Views;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
-@Internal
-@Component("flowui_WindowBuilderProcessor")
 public class WindowBuilderProcessor extends AbstractWindowBuilderProcessor {
 
     public WindowBuilderProcessor(ApplicationContext applicationContext,

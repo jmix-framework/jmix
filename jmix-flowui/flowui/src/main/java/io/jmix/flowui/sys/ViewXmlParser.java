@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.sys;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Dom4j;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
@@ -30,6 +31,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Parses view XML taking into account 'assign' elements.
  */
+@Internal
 @Component("flowui_ViewXmlParser")
 public class ViewXmlParser {
 

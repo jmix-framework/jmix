@@ -16,10 +16,12 @@
 
 package io.jmix.core.impl.scanning;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.stereotype.Component;
 
+@Internal
 @Component("core_EntityDetector")
 public class EntityDetector implements ClasspathScanCandidateDetector {
 

@@ -28,6 +28,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.JmixModules;
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.Resources;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.backgroundtask.BackgroundTaskManager;
 import io.jmix.flowui.component.error.JmixInternalServerError;
 import io.jmix.flowui.exception.UiExceptionHandlers;
@@ -52,6 +53,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Internal
 @Component("flowui_JmixServiceInitListener")
 public class JmixServiceInitListener implements VaadinServiceInitListener, ApplicationContextAware {
 

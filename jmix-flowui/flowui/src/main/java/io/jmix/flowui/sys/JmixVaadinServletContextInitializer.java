@@ -17,6 +17,7 @@
 package io.jmix.flowui.sys;
 
 import com.vaadin.flow.spring.VaadinServletContextInitializer;
+import io.jmix.core.annotation.Internal;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -31,6 +32,7 @@ import org.springframework.context.ApplicationContext;
  * Also see issue and comments:
  * <a href="https://github.com/jmix-framework/jmix/issues/1571">jmix-framework/jmix#1571</a>
  */
+@Internal
 public class JmixVaadinServletContextInitializer extends VaadinServletContextInitializer {
 
     protected ApplicationContext applicationContext;

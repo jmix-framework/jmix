@@ -16,11 +16,13 @@
 
 package io.jmix.flowui.sys;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+@Internal
 public final class BeanUtil {
 
     private BeanUtil() {

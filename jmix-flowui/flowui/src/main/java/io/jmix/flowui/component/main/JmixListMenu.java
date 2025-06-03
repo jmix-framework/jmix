@@ -78,6 +78,11 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         getContent().addClassNames(JMIX_LIST_MENU_CLASS_NAME, LIST_NONE_CLASS_NAME);
     }
 
+    @Override
+    protected RouterLink createRouterLink() {
+        return uiComponents.create(RouterLink.class);
+    }
+
     /**
      * Loads menu items from {@link MenuConfig}.
      */

@@ -16,12 +16,14 @@
 
 package io.jmix.core.impl.scanning;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
+@Internal
 @Component("core_EnumDetector")
 public class EnumDetector implements ClasspathScanCandidateDetector {
 

@@ -22,7 +22,6 @@ import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
-import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -41,7 +40,6 @@ import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -49,8 +47,6 @@ import java.util.function.Consumer;
 import static io.jmix.flowui.view.ViewControllerUtils.getViewData;
 
 
-@Internal
-@Component("flowui_DetailWindowBuilderProcessor")
 public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor {
 
     protected Metadata metadata;
@@ -299,7 +295,7 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     protected <E> E initNewEntity(DetailWindowBuilder<E, ?> builder, @Nullable CollectionContainer<E> container,
                                   @Nullable EntityValueSource<?, ?> entityValueSource, boolean oneToOneComposition) {
         E entity = builder.getNewEntity()
-                .orElse(metadata.create(builder.getEntityClass()));
+                .orElseGet(() -> metadata.create(builder.getEntityClass()));
 
         if (container instanceof Nested) {
             initializeNestedEntity(entity, (Nested) container);

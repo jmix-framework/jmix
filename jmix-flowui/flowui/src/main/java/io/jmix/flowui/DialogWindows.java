@@ -38,9 +38,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * Provides fluent interface for opening views in dialog windows.
+ * Provides a fluent interface for opening views in dialog windows.
  */
-@org.springframework.stereotype.Component("flowui_DialogWindows")
 public class DialogWindows {
 
     protected WindowBuilderProcessor windowBuilderProcessor;

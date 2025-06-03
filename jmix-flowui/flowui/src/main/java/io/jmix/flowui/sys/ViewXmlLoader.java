@@ -18,6 +18,7 @@ package io.jmix.flowui.sys;
 
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Resources;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.view.View;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
@@ -33,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Loads view XML descriptors.
  */
+@Internal
 @Component("flowui_ViewXmlLoader")
 public class ViewXmlLoader {
 

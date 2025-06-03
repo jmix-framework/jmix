@@ -18,6 +18,7 @@ package io.jmix.flowui.sys;
 
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import io.jmix.core.AccessManager;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.accesscontext.UiMenuContext;
 import io.jmix.flowui.accesscontext.UiShowViewContext;
@@ -35,6 +36,7 @@ import java.util.function.Function;
 /**
  * Class checks UI access permission.
  */
+@Internal
 @Component("flowui_UiAccessChecker")
 public class UiAccessChecker {
 

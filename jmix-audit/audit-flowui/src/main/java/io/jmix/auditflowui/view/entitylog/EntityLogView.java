@@ -24,12 +24,14 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
@@ -143,8 +145,6 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected VerticalLayout loggedEntityTableBox;
     @ViewComponent
-    protected FormLayout setupWrapper;
-    @ViewComponent
     protected VerticalLayout loggedEntityMiscBox;
     @ViewComponent
     protected CheckboxGroup<String> attributesCheckboxGroup;
@@ -236,42 +236,30 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         filterEntityNameField.setItems(entityMetaClassesMap.values());
         instancePicker.setFormatter(value -> value != null ? metadataTools.getInstanceName(value) : null);
 
-        disableControls();
+        updateControls(false);
         setDateFieldTime();
-
-        setupWrapper.setColspan(loggedEntityTableBox, 2);
     }
 
-    @SuppressWarnings({"ResultOfMethodCallIgnored"})
     protected Stream<String> onUserFieldFetchCallback(Query<String, String> query) {
-        // Ignore offset and limit since methods called to avoid exception
-        query.getOffset();
-        query.getLimit();
+        log.debug("EntityLogView.userField Search {}", query.getFilter());
 
-        String enteredValue = query.getFilter().orElse(null);
-
-        log.debug("EntityLogView.userField Search {}", enteredValue);
-
-        return searchUsers(enteredValue);
+        return searchUsers(query);
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     protected Stream<String> onSubstitutedUserFetchCallback(Query<String, String> query) {
-        // Ignore offset and limit since methods called to avoid exception
-        query.getOffset();
-        query.getLimit();
+        log.debug("EntityLogView.substitutedUserField Search {}", query.getFilter().orElse(""));
 
-        String enteredValue = query.getFilter().orElse(null);
-
-        log.debug("EntityLogView.substitutedUserField Search {}", enteredValue);
-
-        return searchUsers(enteredValue);
+        return searchUsers(query);
     }
 
-    protected Stream<String> searchUsers(@Nullable String searchString) {
-        return StringUtils.isNotBlank(searchString)
-                ? userRepository.getByUsernameLike(searchString).stream().map(UserDetails::getUsername)
-                : Stream.empty();
+    protected Stream<String> searchUsers(Query<String, String> query) {
+        String enteredValue = query.getFilter().orElse("");
+
+        return userRepository.getByUsernameLike(enteredValue)
+                .stream()
+                .skip(query.getOffset())
+                .limit(query.getLimit())
+                .map(UserDetails::getUsername);
     }
 
     @Supply(to = "entityLogAttrTable.oldValue", subject = "renderer")
@@ -475,20 +463,13 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         return options;
     }
 
-    protected void enableControls() {
-        entityNameField.setRequired(true);
-        loggedEntityTableBox.setEnabled(false);
-        loggedEntityMiscBox.setEnabled(true);
-        attributesCheckboxGroup.setEnabled(true);
-        actionsPaneLayout.setVisible(true);
-    }
-
-    protected void disableControls() {
-        entityNameField.setRequired(false);
-        loggedEntityTableBox.setEnabled(true);
-        loggedEntityMiscBox.setEnabled(false);
-        attributesCheckboxGroup.setEnabled(false);
-        actionsPaneLayout.setVisible(false);
+    protected void updateControls(boolean editing) {
+        entityNameField.setRequired(editing);
+        loggedEntityTableBox.setEnabled(!editing);
+        loggedEntityTable.getActions().forEach(action -> action.setEnabled(!editing));
+        loggedEntityMiscBox.setEnabled(editing);
+        attributesCheckboxGroup.setEnabled(editing);
+        actionsPaneLayout.setVisible(editing);
     }
 
     protected void fillAttributes(String metaClassName, LoggedEntity item, boolean editable) {
@@ -651,7 +632,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         loggedEntityTable.setEnabled(true);
         loggedEntityTable.select(entity);
 
-        enableControls();
+        updateControls(true);
 
         entityNameField.setEnabled(true);
         entityNameField.focus();
@@ -659,10 +640,36 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
     @Subscribe("loggedEntityTable.edit")
     protected void onLoggedEntityTableEdit(ActionPerformedEvent event) {
-        enableControls();
+        updateControls(true);
 
         loggedEntityTable.setEnabled(false);
         cancelBtn.focus();
+    }
+
+    @Supply(to = "loggedEntityTable.auto", subject = "renderer")
+    protected Renderer<LoggedEntity> loggedEntityTableAutoRenderer() {
+        return new ComponentRenderer<>(entity ->
+                createCheckboxIconByAttributeValue(entity.getAuto())
+        );
+    }
+
+    @Supply(to = "loggedEntityTable.manual", subject = "renderer")
+    protected Renderer<LoggedEntity> loggedEntityTableManualRenderer() {
+        return new ComponentRenderer<>(entity ->
+                createCheckboxIconByAttributeValue(entity.getManual())
+        );
+    }
+
+    protected Icon createCheckboxIconByAttributeValue(Boolean attributeValue) {
+        Icon icon = uiComponents.create(Icon.class);
+
+        if (Boolean.TRUE.equals(attributeValue)) {
+            icon.setIcon(VaadinIcon.CHECK_SQUARE_O);
+        } else {
+            icon.setIcon(VaadinIcon.THIN_SQUARE);
+        }
+
+        return icon;
     }
 
     @Subscribe("searchBtn")
@@ -810,7 +817,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         selectedEntity.setAttributes(enabledAttributes);
         loggedEntityDc.replaceItem(selectedEntity);
         dataContext.save();
-        disableControls();
+        updateControls(false);
         loggedEntityTable.setEnabled(true);
         loggedEntityTable.focus();
 
@@ -847,7 +854,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @Subscribe("cancelBtn")
     protected void onCancelBtnClick(ClickEvent<Button> event) {
         loggedEntityDl.load();
-        disableControls();
+        updateControls(false);
         loggedEntityTable.setEnabled(true);
         loggedEntityTable.deselectAll();
         loggedEntityTable.focus();

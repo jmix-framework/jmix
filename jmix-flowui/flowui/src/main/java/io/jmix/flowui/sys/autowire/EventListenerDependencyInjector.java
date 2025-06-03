@@ -17,10 +17,9 @@
 package io.jmix.flowui.sys.autowire;
 
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.JmixOrder;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.sys.event.UiEventListenerMethodAdapter;
-import io.jmix.flowui.sys.event.UiEventsManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.EventListener;
@@ -65,13 +64,16 @@ public class EventListenerDependencyInjector implements DependencyInjector {
                     .map(m -> new UiEventListenerMethodAdapter(composite, compositeClass, m, applicationContext))
                     .collect(Collectors.toList());
 
-
-            UiEventsManager eventsMulticaster = VaadinSession.getCurrent().getAttribute(UiEventsManager.class);
-            eventsMulticaster.removeApplicationListeners(composite);
-            for (ApplicationListener<?> listener : listeners) {
-                eventsMulticaster.addApplicationListener(composite, listener);
-            }
+            setEventListenersInternal(composite, listeners);
         }
+    }
+
+    protected void setEventListenersInternal(Composite<?> composite, List<ApplicationListener<?>> listeners) {
+        if (listeners.isEmpty()) {
+            return;
+        }
+
+        UiComponentUtils.setApplicationEventListeners(composite, listeners);
     }
 
     @Override

@@ -23,19 +23,14 @@ import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 
 /**
  * Class provides mechanism for setting/getting attributes that uses {@link VaadinSession} as store.
  * Class instance should be initialized with {@link View} id.
  */
-@Component("flowui_ViewAttributes")
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ViewAttributes {
 
     protected String viewId;

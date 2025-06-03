@@ -31,6 +31,7 @@ import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterMetadataTools;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
@@ -41,10 +42,14 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.entity.filter.FilterValueComponent;
 import io.jmix.flowui.entity.filter.PropertyFilterCondition;
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.InstanceContainer.ItemPropertyChangeEvent;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -63,6 +68,11 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
     protected JmixSelect<PropertyFilter.Operation> operationField;
     @ViewComponent
     protected HorizontalLayout defaultValueBox;
+
+    @ViewComponent
+    protected JmixCheckbox operationEditableField;
+    @ViewComponent
+    protected JmixCheckbox operationTextVisibleField;
 
     @Autowired
     protected FilterMetadataTools filterMetadataTools;
@@ -105,6 +115,7 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
         initPropertyField(entityToEdit);
         initOperationField(entityToEdit);
         initDefaultValueField(entityToEdit);
+        initCheckboxesState(entityToEdit);
 
         super.setupEntityToEdit(entityToEdit);
     }
@@ -224,6 +235,25 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
         FilterValueComponent valueComponent = getEditedEntity().getValueComponent();
         if (valueComponent != null) {
             valueComponent.setDefaultValue(null);
+        }
+    }
+
+    protected void initCheckboxesState(PropertyFilterCondition entityToEdit) {
+        operationEditableField.setVisible(entityToEdit.getVisible());
+        operationTextVisibleField.setVisible(entityToEdit.getVisible());
+
+        operationTextVisibleField.setEnabled(!entityToEdit.getOperationEditable());
+    }
+
+    @Subscribe(id = "filterConditionDc", target = Target.DATA_CONTAINER)
+    public void onFilterConditionDcItemPropertyChange(ItemPropertyChangeEvent<PropertyFilterCondition> event) {
+        String property = event.getProperty();
+
+        if ("visible".equals(property)) {
+            operationEditableField.setVisible(Boolean.TRUE.equals(event.getValue()));
+            operationTextVisibleField.setVisible(Boolean.TRUE.equals(event.getValue()));
+        } else if ("operationEditable".equals(property)) {
+            operationTextVisibleField.setEnabled(Boolean.FALSE.equals(event.getValue()));
         }
     }
 

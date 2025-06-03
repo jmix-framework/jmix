@@ -23,4 +23,6 @@ dependencies {
     api('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+
+    api 'org.junit.platform:junit-platform-launcher'
 }

@@ -46,6 +46,7 @@ dependencies {
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.apache.commons:commons-dbcp2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'ch.qos.logback:logback-classic'

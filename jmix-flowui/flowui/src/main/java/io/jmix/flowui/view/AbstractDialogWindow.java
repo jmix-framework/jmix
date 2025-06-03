@@ -165,6 +165,7 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         ViewControllerUtils.configureDialogWindowFooter(view, new DialogWindowFooter(this));
     }
 
+    @Nullable
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents().create(JmixButton.class);
         closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
@@ -176,6 +177,7 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         closeButton.setClassName(BASE_CLASS_NAME + "-close-button");
         closeButton.setTitle(messages().getMessage("dialogWindow.closeButton.description"));
         closeButton.addClickListener(this::onCloseButtonClicked);
+
         return closeButton;
     }
 
@@ -195,7 +197,10 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         headerContent.setPadding(false);
 
         headerWrapper.add(headerContent);
-        SlotUtils.setSlot(headerWrapper, "close-button", createHeaderCloseButton());
+        Button closeButton = createHeaderCloseButton();
+        if (closeButton != null) {
+            SlotUtils.setSlot(headerWrapper, "close-button", closeButton);
+        }
 
         return headerWrapper;
     }

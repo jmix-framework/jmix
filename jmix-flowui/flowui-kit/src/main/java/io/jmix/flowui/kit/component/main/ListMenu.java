@@ -294,7 +294,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     }
 
     protected RouterLink createMenuItemComponent(MenuItem menuItem) {
-        RouterLink routerLink = new RouterLink();
+        RouterLink routerLink = createRouterLink();
         routerLink.addClassNames(JMIX_MENU_ITEM_LINK_CLASS_NAME, FLEX_CLASS_NAME);
         routerLink.addClassNames(menuItem.getClassNames().toArray(new String[0]));
         routerLink.setHighlightCondition(HighlightConditions.never());
@@ -319,6 +319,10 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         setSuffixComponent(routerLink, menuItem.getSuffixComponent(), null);
 
         return routerLink;
+    }
+
+    protected RouterLink createRouterLink() {
+        return new RouterLink();
     }
 
     protected void addMenuOpenedChangeListener(Details details, MenuItem menuItem) {

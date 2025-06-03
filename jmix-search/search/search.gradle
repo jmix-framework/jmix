@@ -73,4 +73,5 @@ dependencies {
     testImplementation "org.spockframework:spock-core"
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

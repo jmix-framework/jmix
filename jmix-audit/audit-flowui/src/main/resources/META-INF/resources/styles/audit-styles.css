@@ -1,0 +1,45 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+jmix-tabsheet.entity-log-main-tab-sheet::part(content) {
+    padding: var(--lumo-space-s) var(--lumo-space-m) var(--lumo-space-m) var(--lumo-space-m);
+}
+
+.entity-log-grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(42rem, 1fr));
+    gap: var(--lumo-space-m);
+}
+
+.setup-logged-entity-wrapper {
+    flex-direction: column;
+}
+
+.entity-log-wrapper {
+    container-type: inline-size;
+    container-name: entity-log-wrapper;
+}
+
+@container entity-log-wrapper (min-width: 65em) {
+
+    .setup-logged-entity-wrapper {
+        flex-direction: row;
+    }
+
+    .logged-entity-details-wrapper {
+        width: 100%;
+    }
+}

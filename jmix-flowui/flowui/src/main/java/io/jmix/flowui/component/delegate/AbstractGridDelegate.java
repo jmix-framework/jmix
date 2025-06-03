@@ -772,11 +772,11 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         updateEmptyState();
     }
 
-    public void setEmptyStateTextSetter(Consumer<String> emptyStateTextSetter) {
+    public void setEmptyStateTextDelegate(Consumer<String> emptyStateTextSetter) {
         this.componentEmptyStateTextSetter = emptyStateTextSetter;
     }
 
-    public void setEmptyStateComponentSetter(Consumer<Component> emptyStateComponentSetter) {
+    public void setEmptyStateComponentDelegate(Consumer<Component> emptyStateComponentSetter) {
         this.componentEmptyStateComponentSetter = emptyStateComponentSetter;
     }
 

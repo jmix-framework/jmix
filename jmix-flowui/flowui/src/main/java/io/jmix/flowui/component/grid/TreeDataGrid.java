@@ -76,8 +76,8 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     protected void initComponent() {
         gridDelegate = createDelegate();
         gridDelegate.setAfterColumnSecurityApplyHandler(this::onAfterApplyColumnSecurity);
-        gridDelegate.setEmptyStateTextSetter(super::setEmptyStateText);
-        gridDelegate.setEmptyStateComponentSetter(super::setEmptyStateComponent);
+        gridDelegate.setEmptyStateTextDelegate(super::setEmptyStateText);
+        gridDelegate.setEmptyStateComponentDelegate(super::setEmptyStateComponent);
     }
 
     @SuppressWarnings("unchecked")

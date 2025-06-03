@@ -385,8 +385,8 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
                 column.setPosition(columnPosition++);
                 column.setKey(columnDef.key());
 
-                // todo problem: we can't here adjust locale for different users
-                column.setCaption(messageTools.loadString(columnDef.caption(), messageTools.getDefaultLocale()));
+                // note: no localization here, since reporting model itself doesn't support localization
+                column.setCaption(columnDef.caption());
 
                 tableColumns.add(column);
             }

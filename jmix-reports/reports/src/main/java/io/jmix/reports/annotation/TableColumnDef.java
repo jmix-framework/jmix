@@ -25,7 +25,6 @@ public @interface TableColumnDef {
 
     /**
      * Column caption.
-     * Use <code>msg://group/key</code> format if localization is required.
      */
     String caption();
 }

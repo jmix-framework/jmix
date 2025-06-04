@@ -26,4 +26,14 @@ dependencies {
 
     compileOnly project(':gridexport-flowui')
     compileOnly project(':security-flowui')
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.springframework:spring-test'
+    testImplementation 'ch.qos.logback:logback-classic'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation project(':flowui-test-assist')
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.slf4j:slf4j-simple'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
 }

@@ -35,6 +35,7 @@ import io.jmix.reports.yarg.structure.DefaultValueProvider;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.pdfbox.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
@@ -55,14 +56,21 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
     protected final AnnotatedBuilderUtils annotatedBuilderUtils;
     protected final AnnotatedReportGroupHolder annotatedReportGroupHolder;
     protected final Resources resources;
+    protected final AnnotatedReportRoleExtractor roleExtractor;
+    // nullable
+    protected final AnnotatedReportScreenExtractor screenExtractor;
 
     public AnnotatedReportBuilderImpl(Metadata metadata, MessageTools messageTools, AnnotatedBuilderUtils annotatedBuilderUtils,
-                                      AnnotatedReportGroupHolder annotatedReportGroupHolder, Resources resources) {
+                                      AnnotatedReportGroupHolder annotatedReportGroupHolder, Resources resources,
+                                      AnnotatedReportRoleExtractor roleExtractor,
+                                      @Autowired(required = false) AnnotatedReportScreenExtractor screenExtractor) {
         this.metadata = metadata;
         this.messageTools = messageTools;
         this.annotatedBuilderUtils = annotatedBuilderUtils;
         this.annotatedReportGroupHolder = annotatedReportGroupHolder;
         this.resources = resources;
+        this.roleExtractor = roleExtractor;
+        this.screenExtractor = screenExtractor;
     }
 
     @Override
@@ -77,7 +85,15 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         report.setTemplates(extractTemplates(report, definitionInstance));
         report.setBands(extractBands(report, definitionInstance));
         report.setValuesFormats(extractValueFormats(report, definitionInstance));
-        // todo roles and views
+        report.setReportRoles(roleExtractor.extractRoles(definitionInstance, report));
+
+        // extractor implementation is located in another, optional module
+        if (screenExtractor != null) {
+            report.setReportScreens(screenExtractor.extractScreens(definitionInstance, report));
+        } else {
+            // just skip by assuming that the application doesn't need this part of report structure
+        }
+
         return report;
     }
 

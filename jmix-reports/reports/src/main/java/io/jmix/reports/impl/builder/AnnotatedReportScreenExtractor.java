@@ -16,22 +16,22 @@
 
 package io.jmix.reports.impl.builder;
 
-import io.jmix.reports.annotation.ReportDef;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportScreen;
+
+import java.util.List;
 
 /**
- * Bean responsible for parsing, validating report definition
- * and creating a model object that can be used by the application.
+ * Part of the {@link AnnotatedReportBuilder}.
+ * Performs extracting screens from the report definition.
  */
-public interface AnnotatedReportBuilder {
+public interface AnnotatedReportScreenExtractor {
 
     /**
-     * Parse, validate given annotated report definition.
-     * Construct and return a model object.
-     *
-     * @param reportDefinition instance of class annotated with {@link ReportDef} and other annotations
-     * @return constructed Report model object
-     * @throws InvalidReportDefinitionException if the definition has errors
+     * Extract screens from the report definition, analyzing {@link io.jmix.reports.annotation.AvailableInViews} annotation.
+     * @param definitionInstance annotated definition object
+     * @param report report model object being constructed
+     * @return list of report screens
      */
-    Report createReportFromDefinition(Object reportDefinition);
+    List<ReportScreen> extractScreens(Object definitionInstance, Report report);
 }

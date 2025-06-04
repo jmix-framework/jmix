@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.impl.builder;
+package io.jmix.reports.test_support.role;
 
-/**
- * Exception thrown if an annotated report or report group definition is invalid.
- */
-public class InvalidReportDefinitionException extends RuntimeException {
+import io.jmix.security.role.annotation.RowLevelRole;
 
-    public InvalidReportDefinitionException(String message) {
-        super(message);
-    }
-
-    public InvalidReportDefinitionException(Throwable cause) {
-        super(cause);
-    }
-
-    public InvalidReportDefinitionException(String message, Throwable cause) {
-        super(message, cause);
-    }
+@RowLevelRole(name = "Test role 3", code = TestRowLevelRole3.CODE)
+public interface TestRowLevelRole3 {
+    String CODE = "role-3";
 }

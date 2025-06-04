@@ -16,22 +16,23 @@
 
 package io.jmix.reports.impl.builder;
 
-import io.jmix.reports.annotation.ReportDef;
+import io.jmix.reports.annotation.AvailableForRoles;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportRole;
+
+import java.util.Set;
 
 /**
- * Bean responsible for parsing, validating report definition
- * and creating a model object that can be used by the application.
+ * Part of the {@link AnnotatedReportBuilder}.
+ * Performs extracting roles from the report definition.
  */
-public interface AnnotatedReportBuilder {
+public interface AnnotatedReportRoleExtractor {
 
     /**
-     * Parse, validate given annotated report definition.
-     * Construct and return a model object.
-     *
-     * @param reportDefinition instance of class annotated with {@link ReportDef} and other annotations
-     * @return constructed Report model object
-     * @throws InvalidReportDefinitionException if the definition has errors
+     * Extract roles from the report definition, analyzing {@link AvailableForRoles} annotation.
+     * @param definitionInstance annotated definition object
+     * @param report report model object being constructed
+     * @return set of report roles
      */
-    Report createReportFromDefinition(Object reportDefinition);
+    Set<ReportRole> extractRoles(Object definitionInstance, Report report);
 }

@@ -144,6 +144,24 @@ public class AnnotatedReportBuilderTest {
     }
 
     @Test
+    public void testReportRoles() {
+        // given
+        ReportWithRoles definition = new ReportWithRoles();
+
+        // when
+        Report report = annotatedReportBuilder.createReportFromDefinition(definition);
+
+        // then
+        assertThat(report.getReportRoles()).hasSize(2);
+
+        assertThat(report.getReportRoles())
+                .anyMatch(rr -> rr.getRoleCode().equals("role-1") && rr.getRoleName().equals("Test role 1"));
+
+        assertThat(report.getReportRoles())
+                .anyMatch(rr -> rr.getRoleCode().equals("role-2") && rr.getRoleName().equals("Test role 2"));
+    }
+
+    @Test
     public void testWrongUuid() {
         // given
         WrongUuidReport definition = new WrongUuidReport();
@@ -343,6 +361,18 @@ public class AnnotatedReportBuilderTest {
         assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
                 .isInstanceOf(InvalidReportDefinitionException.class)
                 .hasMessageContaining("either format string or formatter delegate");
+    }
+
+    @Test
+    public void testWrongRoles() {
+        // given
+        WrongRolesReport definition = new WrongRolesReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("Resource role")
+                .hasMessageContaining("is not registered");
     }
 
     @AfterEach

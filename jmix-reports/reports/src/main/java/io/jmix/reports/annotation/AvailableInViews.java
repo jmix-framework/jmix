@@ -23,6 +23,7 @@ public @interface AvailableInViews {
 
     /**
      * View controllers where this report will be available via standard actions.
+     * Controller class must be annotated with @ViewController.
      */
     Class[] viewClasses() default {};
 }

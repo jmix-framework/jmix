@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.impl.builder;
+package io.jmix.reportsflowui.view;
 
-/**
- * Exception thrown if an annotated report or report group definition is invalid.
- */
-public class InvalidReportDefinitionException extends RuntimeException {
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.ViewController;
 
-    public InvalidReportDefinitionException(String message) {
-        super(message);
-    }
-
-    public InvalidReportDefinitionException(Throwable cause) {
-        super(cause);
-    }
-
-    public InvalidReportDefinitionException(String message, Throwable cause) {
-        super(message, cause);
-    }
+@ViewController("reports_test_View1")
+public class TestReportView1 extends StandardView {
 }

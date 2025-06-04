@@ -25,6 +25,7 @@ dependencies {
     api project(':data')
     api project(':security')
     api project(':eclipselink')
+    api project(':flowui')
 
     compileOnly project(':dynattr')
 

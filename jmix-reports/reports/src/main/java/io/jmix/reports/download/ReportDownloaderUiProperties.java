@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui;
+package io.jmix.reports.download;
 
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.exception.ExceptionDialog;
 import io.jmix.flowui.sys.UiTestIdSupport;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -26,9 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@ConfigurationProperties(prefix = "jmix.ui")
-public class UiProperties {
-
+@ConfigurationProperties(prefix = "jmix.reports.downloader")
+public class ReportDownloaderUiProperties {
     /**
      * Enables automatic generation of static IDs for UI components. Static IDs are required to enable unambiguous
      * identification of components in UI autotests.
@@ -99,7 +99,7 @@ public class UiProperties {
      */
     boolean exceptionDialogModal;
 
-    public UiProperties(@DefaultValue("false") boolean uiTestMode,
+    public ReportDownloaderUiProperties(@DefaultValue("false") boolean uiTestMode,
                         @DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
                         @Nullable String defaultViewId,
@@ -108,7 +108,7 @@ public class UiProperties {
                         @Nullable Map<String, Integer> entityMaxFetchSize,
                         @DefaultValue("50") Integer defaultPageSize,
                         @Nullable Map<String, Integer> entityPageSize,
-                        @DefaultValue({"jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
+                        @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
                         @DefaultValue("3600") int fileDownloaderCacheMaxAgeSec,
                         @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
                         @DefaultValue("true") boolean useSessionFixationProtection,

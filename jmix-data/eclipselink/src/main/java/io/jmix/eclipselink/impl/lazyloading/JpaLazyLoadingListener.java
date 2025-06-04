@@ -150,7 +150,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
 
             AbstractValueHolder wrappedValueHolder;
             if (eclipselinkProperties.isDisableLazyLoading()) {
-                wrappedValueHolder = new DisabledValueHolder(beanFactory, (ValueHolderInterface) valueHolder, owner, property);
+                wrappedValueHolder = new NonLoadingValueHolder(beanFactory, (ValueHolderInterface) valueHolder, owner, property);
             } else {
                 wrappedValueHolder = new CollectionValuePropertyHolder(beanFactory, (ValueHolderInterface) valueHolder, owner, property);
                 wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
@@ -167,7 +167,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
             AbstractValueHolder wrappedValueHolder = null;
 
             if (eclipselinkProperties.isDisableLazyLoading()) {
-                wrappedValueHolder = new DisabledValueHolder(beanFactory, (ValueHolderInterface) originalValueHolder, owner, property);
+                wrappedValueHolder = new NonLoadingValueHolder(beanFactory, (ValueHolderInterface) originalValueHolder, owner, property);
             } else if (metadataTools.isOwningSide(property)) {
                 QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(originalValueHolder);
                 if (queryBasedValueHolder != null) {
@@ -207,7 +207,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                 AbstractValueHolder wrappedValueHolder;
 
                 if (eclipselinkProperties.isDisableLazyLoading()) {
-                    wrappedValueHolder = new DisabledValueHolder(beanFactory, (ValueHolderInterface) originalValueHolder, owner, property);
+                    wrappedValueHolder = new NonLoadingValueHolder(beanFactory, (ValueHolderInterface) originalValueHolder, owner, property);
                 } else {
                     Object entityId;
                     MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(property.getRange().asClass());

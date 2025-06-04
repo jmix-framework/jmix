@@ -20,10 +20,10 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.springframework.beans.factory.BeanFactory;
 
-public class DisabledValueHolder extends AbstractValueHolder {
-    public DisabledValueHolder(BeanFactory beanFactory,
-                               ValueHolderInterface originalValueHolder,
-                               Object owner, MetaProperty metaProperty) {
+public class NonLoadingValueHolder extends AbstractValueHolder {
+    public NonLoadingValueHolder(BeanFactory beanFactory,
+                                 ValueHolderInterface originalValueHolder,
+                                 Object owner, MetaProperty metaProperty) {
         //todo [jmix-framework/jmix#3936] whether to preserve parameters?
         super(beanFactory, originalValueHolder, owner, metaProperty);
     }

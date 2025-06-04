@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.quartzflowui.accesscontext;
 
-group = 'io.jmix.quartz'
-archivesBaseName = 'jmix-quartz-flowui'
+import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
-dependencies {
-    api project(':quartz')
-    api project(':flowui')
+public class UiQuartzAdministrationAccessContext extends SpecificOperationAccessContext {
 
-    compileOnly project(':security-flowui')
+    public static final String NAME = "quartz.administration";
+
+    public UiQuartzAdministrationAccessContext() {
+        super(NAME);
+    }
 }

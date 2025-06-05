@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Id;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportSource;
@@ -71,6 +72,8 @@ public class FluentReportRunner {
     private DataManager dataManager;
     @Autowired
     private EntityStates entityStates;
+    @Autowired
+    private ReportRepository reportRepository;
 
     private ReportRunner reportRunner;
 
@@ -178,14 +181,6 @@ public class FluentReportRunner {
         return reportRunner.run(buildContext());
     }
 
-    private Optional<Report> loadReportByCode(String reportCode) {
-        return dataManager.load(Report.class)
-                .query("e.code = :code")
-                .parameter("code", reportCode)
-                .fetchPlan(REPORT_RUN_FETCH_PLAN)
-                .optional();
-    }
-
     private Report getReportToUse() {
         if (this.report != null) {
             if (report.getSource() == ReportSource.ANNOTATED_CLASS) {
@@ -203,9 +198,9 @@ public class FluentReportRunner {
             }
         }
         if (!Strings.isNullOrEmpty(reportCode)) {
-            Optional<Report> reportOpt = loadReportByCode(this.reportCode);
-            if (reportOpt.isPresent()) {
-                return reportOpt.get();
+            Report entity = reportRepository.loadFullReportByCode(this.reportCode);
+            if (entity != null) {
+                return entity;
             }
             throw new ReportingException(String.format("Cannot find report with code %s", reportCode));
         }

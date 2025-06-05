@@ -18,11 +18,13 @@ package io.jmix.reports.impl;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import java.util.List;
 
 @Component("report_ReportRepository")
 public class ReportRepositoryImpl implements ReportRepository {
+    public static final String FULL_FETCH_PLAN = "report.edit";
 
     protected final AnnotatedReportHolder annotatedReportHolder;
     protected final AnnotatedReportGroupHolder annotatedReportGroupHolder;
@@ -79,6 +82,23 @@ public class ReportRepositoryImpl implements ReportRepository {
                 .all()
                 .fetchPlan(FetchPlan.BASE)
                 .list();
+    }
+
+    @Nullable
+    @Override
+    public Report loadFullReportByCode(String reportCode) {
+        Report report = annotatedReportHolder.getByCode(reportCode);
+        if (report != null) {
+            return report;
+        }
+        report = dataManager.load(Report.class)
+                .condition(PropertyCondition.equal("code", reportCode))
+                .parameter("code", reportCode)
+                .fetchPlan(FULL_FETCH_PLAN)
+                .optional()
+                .orElse(null);
+
+        return report;
     }
 
     @EventListener

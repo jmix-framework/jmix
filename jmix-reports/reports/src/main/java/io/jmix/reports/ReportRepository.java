@@ -18,6 +18,7 @@ package io.jmix.reports;
 
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
+import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 
@@ -25,4 +26,13 @@ public interface ReportRepository {
     Collection<Report> getAllReports();
 
     Collection<ReportGroup> getAllGroups();
+
+    /**
+     * Load by code a full report object with all details, suitable for passing it to the running engine.
+
+     * @param reportCode report's unique code
+     * @return full report object with all details, or null if no such report
+     */
+    @Nullable
+    Report loadFullReportByCode(String reportCode);
 }

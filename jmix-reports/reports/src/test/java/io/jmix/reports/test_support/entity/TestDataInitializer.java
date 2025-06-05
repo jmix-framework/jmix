@@ -150,7 +150,8 @@ public class TestDataInitializer {
                 {"shelton", "Modern Warfare 3", ldt("2025-03-11 00:00")},
 
                 {"lola18", "Tetris", ldt("2025-04-12 00:00")},
-                {"lola18", "Mario Kart DS", ldt("2025-05-12 00:00")}
+                {"lola18", "Mario Kart DS", ldt("2025-05-12 00:00")},
+                {"lola18", "Assassin's Creed", ldt("2025-05-30 00:00")}
         };
         return Arrays.stream(data)
                 .map(datum -> {

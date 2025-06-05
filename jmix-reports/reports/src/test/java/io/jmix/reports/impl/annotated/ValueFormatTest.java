@@ -16,14 +16,14 @@
 
 package io.jmix.reports.impl.annotated;
 
+import com.opencsv.CSVReader;
 import io.jmix.reports.test_support.entity.UserRegistration;
+import io.jmix.reports.test_support.report.RevenueByGameReport;
 import io.jmix.reports.test_support.report.UsersAndAchievementsReport;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
-import io.jmix.reports.yarg.structure.ReportOutputType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,5 +58,34 @@ public class ValueFormatTest extends BaseAnnotatedReportExecutionTest {
         }
     }
 
+    @Test
+    public void testCustomValueFormatter() throws Exception {
+        // given
+        String reportCode = RevenueByGameReport.CODE;
 
+        // when
+        ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
+                .run();
+
+        // then
+        CSVReader csvReader = readCsvContent(outputDocument);
+        csvReader.readNext(); // title
+
+        String[] line = csvReader.readNext();
+        assertThat(line[0]).isEqualTo("Assassin's Creed");
+        assertThat(line[2]).isEqualTo("$54.00");
+
+        line = csvReader.readNext();
+        assertThat(line[0]).isEqualTo("Mario Kart DS");
+        assertThat(line[2]).isEqualTo("$8.00");
+
+        line = csvReader.readNext();
+        assertThat(line[0]).isEqualTo("Tetris");
+        assertThat(line[2]).isEqualTo("$5.00");
+
+        line = csvReader.readNext();
+        assertThat(line).isNull();
+
+        csvReader.close();
+    }
 }

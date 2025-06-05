@@ -16,7 +16,9 @@
 
 package io.jmix.reports.impl.annotated;
 
+import com.opencsv.CSVReader;
 import io.jmix.reports.test_support.entity.UserRegistration;
+import io.jmix.reports.test_support.report.RevenueByGameReport;
 import io.jmix.reports.test_support.report.UsersAndAchievementsReport;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reports.yarg.structure.ReportOutputType;
@@ -105,5 +107,36 @@ public class DataSetTest extends BaseAnnotatedReportExecutionTest {
         for (Object[] entry : expectedCells) {
             assertThat(stringCellValue(firstSheet, (Integer) entry[0], (Integer) entry[1])).isEqualTo(entry[2]);
         }
+    }
+
+    @Test
+    public void testDelegateDataSet() throws Exception {
+        // given
+        String reportCode = RevenueByGameReport.CODE;
+
+        // when
+        ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
+                .run();
+
+        // then
+        CSVReader csvReader = readCsvContent(outputDocument);
+        csvReader.readNext(); // title
+
+        String[] line = csvReader.readNext();
+        assertThat(line[0]).isEqualTo("Assassin's Creed");
+        assertThat(line[1]).isEqualTo("2");
+
+        line = csvReader.readNext();
+        assertThat(line[0]).isEqualTo("Mario Kart DS");
+        assertThat(line[1]).isEqualTo("1");
+
+        line = csvReader.readNext();
+        assertThat(line[0]).isEqualTo("Tetris");
+        assertThat(line[1]).isEqualTo("1");
+
+        line = csvReader.readNext();
+        assertThat(line).isNull();
+
+        csvReader.close();
     }
 }

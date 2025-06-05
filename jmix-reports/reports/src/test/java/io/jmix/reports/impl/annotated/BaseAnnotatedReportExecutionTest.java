@@ -16,6 +16,7 @@
 
 package io.jmix.reports.impl.annotated;
 
+import com.opencsv.CSVReader;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.impl.AnnotatedReportHolder;
@@ -23,6 +24,7 @@ import io.jmix.reports.impl.AnnotatedReportScanner;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.test_support.entity.TestDataInitializer;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,6 +35,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 @ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
 @ContextConfiguration(classes = {ReportsTestConfiguration.class})
@@ -73,6 +77,11 @@ public abstract class BaseAnnotatedReportExecutionTest {
 
     protected String stringCellValue(Sheet sheet, int row, int column) {
         return sheet.getRow(row).getCell(column).getStringCellValue();
+    }
+
+    protected CSVReader readCsvContent(ReportOutputDocument outputDocument) {
+        return new CSVReader(new InputStreamReader(
+                new ByteArrayInputStream(outputDocument.getContent()), StandardCharsets.UTF_8));
     }
 
 }

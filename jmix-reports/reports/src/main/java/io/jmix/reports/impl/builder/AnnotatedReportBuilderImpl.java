@@ -20,6 +20,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.Resources;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.reports.ParameterClassResolver;
 import io.jmix.reports.annotation.*;
 import io.jmix.reports.delegate.*;
 import io.jmix.reports.entity.*;
@@ -57,12 +58,13 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
     protected final AnnotatedReportGroupHolder annotatedReportGroupHolder;
     protected final Resources resources;
     protected final AnnotatedReportRoleExtractor roleExtractor;
+    protected final ParameterClassResolver parameterClassResolver;
     @Nullable
     protected final AnnotatedReportScreenExtractor screenExtractor;
 
     public AnnotatedReportBuilderImpl(Metadata metadata, MessageTools messageTools, AnnotatedBuilderUtils annotatedBuilderUtils,
                                       AnnotatedReportGroupHolder annotatedReportGroupHolder, Resources resources,
-                                      AnnotatedReportRoleExtractor roleExtractor,
+                                      AnnotatedReportRoleExtractor roleExtractor, ParameterClassResolver parameterClassResolver,
                                       @Autowired(required = false) @Nullable AnnotatedReportScreenExtractor screenExtractor) {
         this.metadata = metadata;
         this.messageTools = messageTools;
@@ -70,6 +72,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         this.annotatedReportGroupHolder = annotatedReportGroupHolder;
         this.resources = resources;
         this.roleExtractor = roleExtractor;
+        this.parameterClassResolver = parameterClassResolver;
         this.screenExtractor = screenExtractor;
     }
 
@@ -254,6 +257,9 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
                 }
             }
         }
+
+        // used for default value parsing
+        parameter.setParameterClass(parameterClassResolver.resolveClass(parameter));
 
         return parameter;
     }

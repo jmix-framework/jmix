@@ -16,7 +16,9 @@
 
 package io.jmix.reports.impl.annotated;
 
+import com.opencsv.CSVReader;
 import io.jmix.reports.test_support.entity.UserRegistration;
+import io.jmix.reports.test_support.report.RevenueByGameReport;
 import io.jmix.reports.test_support.report.UsersAndAchievementsReport;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reports.yarg.structure.ReportOutputType;
@@ -27,7 +29,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OutputTypeTest extends BaseAnnotatedReportExecutionTest {
+public class OutputContentTest extends BaseAnnotatedReportExecutionTest {
 
     @Test
     public void testXlsxOutput() {
@@ -131,5 +133,28 @@ public class OutputTypeTest extends BaseAnnotatedReportExecutionTest {
         for (Object[] entry : expectedCells) {
             assertThat(stringCellValue(firstSheet, (Integer) entry[0], (Integer) entry[1])).isEqualTo(entry[2]);
         }
+    }
+
+    @Test
+    public void testCsvOutput() throws Exception {
+        // given
+        String reportCode = RevenueByGameReport.CODE;
+
+        // when
+        ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
+                .run();
+
+        // then
+        assertThat(outputDocument.getDocumentName()).endsWith(".csv");
+        assertThat(outputDocument.getReportOutputType()).isEqualTo(ReportOutputType.csv);
+        assertThat(outputDocument.getContent()).isNotNull();
+
+        // few basic checks of content
+        CSVReader csvReader = readCsvContent(outputDocument);
+        String[] line = csvReader.readNext();
+        assertThat(line).isEqualTo(new String[]{"Game title", "Purchase count", "Revenue"});
+        assertThat(csvReader.readAll()).hasSize(3); // 3 games were purchased during that period
+
+        csvReader.close();
     }
 }

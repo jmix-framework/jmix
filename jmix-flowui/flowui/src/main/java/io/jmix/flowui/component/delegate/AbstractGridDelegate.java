@@ -781,7 +781,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected void updateEmptyState() {
-        if (!CollectionUtils.containsAny(component.getColumns(), propertyColumns.keySet())) {
+        if (MapUtils.isNotEmpty(propertyColumns) &&
+                !CollectionUtils.containsAny(component.getColumns(), propertyColumns.keySet())) {
             Component emptyStateByPermissionsComponent = createEmptyStateByPermissionsComponent();
 
             componentEmptyStateComponentDelegate.accept(emptyStateByPermissionsComponent);

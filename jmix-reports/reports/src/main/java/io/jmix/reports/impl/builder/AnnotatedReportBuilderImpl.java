@@ -57,13 +57,13 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
     protected final AnnotatedReportGroupHolder annotatedReportGroupHolder;
     protected final Resources resources;
     protected final AnnotatedReportRoleExtractor roleExtractor;
-    // nullable
+    @Nullable
     protected final AnnotatedReportScreenExtractor screenExtractor;
 
     public AnnotatedReportBuilderImpl(Metadata metadata, MessageTools messageTools, AnnotatedBuilderUtils annotatedBuilderUtils,
                                       AnnotatedReportGroupHolder annotatedReportGroupHolder, Resources resources,
                                       AnnotatedReportRoleExtractor roleExtractor,
-                                      @Autowired(required = false) AnnotatedReportScreenExtractor screenExtractor) {
+                                      @Autowired(required = false) @Nullable AnnotatedReportScreenExtractor screenExtractor) {
         this.metadata = metadata;
         this.messageTools = messageTools;
         this.annotatedBuilderUtils = annotatedBuilderUtils;
@@ -482,7 +482,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
                 hasRoot = true;
             }
 
-            band.setDataSets(extractDataSets(report, band, annotation.dataSets(), definitionInstance));
+            band.setDataSets(extractDataSets(report, band, annotation.dataSets()));
             band.setMultiDataSet(band.getDataSets().size() > 1);
             bands.add(band);
         }
@@ -521,7 +521,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         }
     }
 
-    private List<DataSet> extractDataSets(Report report, BandDefinition bandDefinition, DataSetDef[] dataSetDefs, Object definitionInstance) {
+    private List<DataSet> extractDataSets(Report report, BandDefinition bandDefinition, DataSetDef[] dataSetDefs) {
         List<DataSet> dataSets = new ArrayList<>();
 
         for (DataSetDef annotation : dataSetDefs) {
@@ -756,15 +756,19 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
     }
 
     protected <T> T obtainDelegateFromDefinition(Object reportDefinition, Method method, Class<T> delegateClass) {
-        T delegate = delegateClass.cast(ReflectionUtils.invokeMethod(method, reportDefinition));
-        validateDelegateInstanceCommon(method, delegate);
-        return delegate;
-    }
+        T delegate;
+        try {
+            Object delegateObject = ReflectionUtils.invokeMethod(method, reportDefinition);
+            delegate = delegateClass.cast(delegateObject);
+        } catch (Exception e) {
+            throw new InvalidReportDefinitionException(
+                    String.format("Unexpected exception thrown by delegate declaration method: %s", method), e);
+        }
 
-    protected void validateDelegateInstanceCommon(Method method, @Nullable Object delegate) {
         if (delegate == null) {
             throw new InvalidReportDefinitionException(String.format("Delegate declaration method returned null: %s", method));
         }
+        return delegate;
     }
 
     protected <T> void validateUniqueness(Collection<T> objects, Function<T, String> uniqueAttributeGetter,

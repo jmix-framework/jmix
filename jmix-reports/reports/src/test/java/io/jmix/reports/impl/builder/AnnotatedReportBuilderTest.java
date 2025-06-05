@@ -375,6 +375,30 @@ public class AnnotatedReportBuilderTest {
                 .hasMessageContaining("is not registered");
     }
 
+    @Test
+    public void testNullDelegate() {
+        // given
+        NullDelegateReport definition = new NullDelegateReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("Delegate")
+                .hasMessageContaining("returned null");
+    }
+
+    @Test
+    public void testDelegateException() {
+        // given
+        DelegateThrowsExceptionReport definition = new DelegateThrowsExceptionReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("delegate")
+                .hasMessageContaining("exception thrown");
+    }
+
     @AfterEach
     void tearDown() {
         reportGroupHolder.clear();

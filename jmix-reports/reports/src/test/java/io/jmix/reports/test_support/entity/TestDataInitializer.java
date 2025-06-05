@@ -17,13 +17,10 @@
 package io.jmix.reports.test_support.entity;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.UnconstrainedDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.ContextStartedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.event.BeforeTestClassEvent;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,16 +33,15 @@ import java.util.List;
 public class TestDataInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(TestDataInitializer.class);
-    private final DataManager dataManager;
+    private final UnconstrainedDataManager unconstrainedDataManager;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public TestDataInitializer(DataManager dataManager) {
-        this.dataManager = dataManager;
+    public TestDataInitializer(DataManager unconstrainedDataManager) {
+        this.unconstrainedDataManager = unconstrainedDataManager;
     }
 
-    // todo not working @EventListener
-    public void handleBeforeTestClassEvent(BeforeTestClassEvent event) {
-        if (!dataManager.load(Publisher.class).all().list().isEmpty()) {
+    public void init() {
+        if (!unconstrainedDataManager.load(Publisher.class).all().list().isEmpty()) {
             log.info("Test data already created");
             return;
         }
@@ -70,9 +66,9 @@ public class TestDataInitializer {
 
         return Arrays.stream(data)
                 .map(datum -> {
-                    Publisher p = dataManager.create(Publisher.class);
+                    Publisher p = unconstrainedDataManager.create(Publisher.class);
                     p.setName((String) datum[0]);
-                    return dataManager.save(p);
+                    return unconstrainedDataManager.save(p);
                 })
                 .toList();
     }
@@ -88,12 +84,12 @@ public class TestDataInitializer {
 
         return Arrays.stream(data)
                 .map(datum -> {
-                    GameTitle g = dataManager.create(GameTitle.class);
+                    GameTitle g = unconstrainedDataManager.create(GameTitle.class);
                     g.setName((String) datum[0]);
                     g.setReleaseDate((LocalDate) datum[1]);
                     g.setPrice((BigDecimal) datum[2]);
                     g.setPublisher(publishers.stream().filter(p -> p.getName().equals(datum[3])).findAny().orElseThrow());
-                    return dataManager.save(g);
+                    return unconstrainedDataManager.save(g);
                 })
                 .toList();
     }
@@ -115,10 +111,10 @@ public class TestDataInitializer {
 
         return Arrays.stream(data)
                 .map(datum -> {
-                    Achievement a = dataManager.create(Achievement.class);
+                    Achievement a = unconstrainedDataManager.create(Achievement.class);
                     a.setName((String) datum[0]);
                     a.setGame(games.stream().filter(g -> g.getName().equals(datum[1])).findAny().orElseThrow());
-                    return dataManager.save(a);
+                    return unconstrainedDataManager.save(a);
                 })
                 .toList();
     }
@@ -133,12 +129,12 @@ public class TestDataInitializer {
 
         return Arrays.stream(data)
                 .map(datum -> {
-                    UserRegistration ur = dataManager.create(UserRegistration.class);
+                    UserRegistration ur = unconstrainedDataManager.create(UserRegistration.class);
                     ur.setFirstName((String) datum[0]);
                     ur.setLastName(((String) datum[1]));
                     ur.setUsername((String) datum[2]);
                     ur.setRegistrationDate((LocalDateTime) datum[3]);
-                    return dataManager.save(ur);
+                    return unconstrainedDataManager.save(ur);
                 })
                 .toList();
     }
@@ -158,11 +154,11 @@ public class TestDataInitializer {
         };
         return Arrays.stream(data)
                 .map(datum -> {
-                    PurchasedGame pg = dataManager.create(PurchasedGame.class);
+                    PurchasedGame pg = unconstrainedDataManager.create(PurchasedGame.class);
                     pg.setUser(users.stream().filter(u -> u.getUsername().equals(datum[0])).findAny().orElseThrow());
                     pg.setGame(games.stream().filter(g -> g.getName().equals(datum[1])).findAny().orElseThrow());
                     pg.setPurchaseDate((LocalDateTime) datum[2]);
-                    return dataManager.save(pg);
+                    return unconstrainedDataManager.save(pg);
                 })
                 .toList();
     }
@@ -187,7 +183,7 @@ public class TestDataInitializer {
         };
         return Arrays.stream(data)
                 .map(datum -> {
-                    UserAchievement ua = dataManager.create(UserAchievement.class);
+                    UserAchievement ua = unconstrainedDataManager.create(UserAchievement.class);
                     ua.setPurchasedGame(purchases.stream()
                             .filter(pg -> pg.getUser().getUsername().equals(datum[0]) && pg.getGame().getName().equals(datum[1]))
                             .findAny()
@@ -197,7 +193,7 @@ public class TestDataInitializer {
                             .findAny()
                             .orElseThrow());
                     ua.setDate((LocalDateTime) datum[3]);
-                    return dataManager.save(ua);
+                    return unconstrainedDataManager.save(ua);
                 })
                 .toList();
     }

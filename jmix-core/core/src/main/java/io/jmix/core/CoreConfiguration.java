@@ -43,7 +43,7 @@ import java.util.Set;
 /**
  * Configuration of the core module.
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {})

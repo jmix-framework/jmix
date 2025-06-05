@@ -149,6 +149,11 @@ public class ReportsProperties {
      */
     boolean multilineStringsProcessingEnabled;
 
+    /**
+     * File extensions that can be opened for viewing in a reports.
+     */
+    List<String> viewFileExtensions;
+
     public ReportsProperties(@DefaultValue("/") String officePath,
                              @DefaultValue({"8100", "8101", "8102", "8103"}) List<Integer> officePorts,
                              @DefaultValue("20") int docFormatterTimeout,
@@ -172,7 +177,8 @@ public class ReportsProperties {
                              @DefaultValue("3") int countOfRetry,
                              @DefaultValue("false") boolean useOfficeForDocumentConversion,
                              @DefaultValue("false") boolean formulasPostProcessingEvaluationEnabled,
-                             @DefaultValue("false") boolean multilineStringsProcessingEnabled) {
+                             @DefaultValue("false") boolean multilineStringsProcessingEnabled,
+                             @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions) {
         this.officePath = officePath;
         this.officePorts = officePorts;
         this.docFormatterTimeout = docFormatterTimeout;
@@ -197,7 +203,10 @@ public class ReportsProperties {
         this.useOfficeForDocumentConversion = useOfficeForDocumentConversion;
         this.formulasPostProcessingEvaluationEnabled = formulasPostProcessingEvaluationEnabled;
         this.multilineStringsProcessingEnabled = multilineStringsProcessingEnabled;
+        this.viewFileExtensions = viewFileExtensions;
     }
+
+    public List<String> getViewFileExtensions() { return viewFileExtensions; }
 
     /**
      * @see #officePath

@@ -65,6 +65,7 @@ import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.ReportsPersistence;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.*;
@@ -215,7 +216,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Autowired
     protected Downloader downloader;
     @Autowired
-    protected UiProperties uiProperties;
+    protected ReportsProperties reportsProperties;
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired
@@ -274,6 +275,14 @@ public class ReportDetailView extends StandardDetailView<Report> {
         initLocaleDetailReportTextField();
         initRoleField();
         initScreenIdField();
+
+        downloader.setInlineChecker((fileExtension) -> {
+            if (StringUtils.isEmpty(fileExtension)) {
+                return false;
+            }
+
+            return reportsProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExtension));
+        });
     }
 
     @Supply(to = "templatesDataGrid.alterable", subject = "renderer")

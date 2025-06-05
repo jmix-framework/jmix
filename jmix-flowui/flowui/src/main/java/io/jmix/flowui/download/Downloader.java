@@ -21,6 +21,8 @@ import io.jmix.core.FileStorage;
 
 import org.springframework.lang.Nullable;
 
+import java.util.function.Function;
+
 /**
  * Generic interface to download data from the system.
  */
@@ -45,6 +47,15 @@ public interface Downloader {
      * @param showNewWindow {@code true} if downloader opens new window, otherwise {@code false}
      */
     void setShowNewWindow(boolean showNewWindow);
+
+    /**
+     * Sets a delegate that checks for the file extension in the list of supported formats.
+     * @param inlineChecker delegate for applying checking.
+     *                      That takes a {@link String} value, representing the file format,
+     *                      and returns {@code true} if file format is included in any file format list,
+     *                      otherwise {@code false}
+     */
+    void setInlineChecker(Function<String, Boolean> inlineChecker);
 
     /**
      * Downloads an arbitrary resource defined by a DownloadDataProvider.

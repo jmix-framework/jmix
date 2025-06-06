@@ -26,6 +26,11 @@ import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy;
+import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy.ClassFqnStrategy;
+import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy.XmlStrategy;
+
+import static io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy.XmlStrategy.PARENT_COMPONENT_TAG_PLACEHOLDER;
 
 @StudioUiKit
 public interface StudioElements {
@@ -162,11 +167,43 @@ public interface StudioElements {
                     ),
                     @StudioSupplyHandler(
                             methodName = "setEditorComponent",
-                            parameterType = "com.vaadin.flow.component.Component"
+                            parameterType = "com.vaadin.flow.component.Component",
+                            genericResolvingInfo = {
+                                    @GenericResolvingInfo(
+                                            typeParameter = "T",
+                                            resolvingStrategy = @ResolvingStrategy(
+                                                    classFqnStrategy = @ClassFqnStrategy(
+                                                            classFqn = "com.vaadin.flow.component.Component"
+                                                    ),
+                                                    xmlStrategy = @XmlStrategy(parentComponentTag = "")
+                                            )
+                                    )
+                            }
                     ),
                     @StudioSupplyHandler(
                             methodName = "setEditorComponent",
-                            parameterType = "com.vaadin.flow.function.SerializableFunction"
+                            parameterType = "com.vaadin.flow.function.SerializableFunction",
+                            genericResolvingInfo = {
+                                    @GenericResolvingInfo(
+                                            typeParameter = "T",
+                                            resolvingStrategy = @ResolvingStrategy(
+                                                    xmlStrategy = @XmlStrategy(
+                                                            parentComponentTag = PARENT_COMPONENT_TAG_PLACEHOLDER + ":" + PARENT_COMPONENT_TAG_PLACEHOLDER,
+                                                            takeFromTypeParameter = 1
+                                                    ),
+                                                    classFqnStrategy = @ClassFqnStrategy(classFqn = "")
+                                            )
+                                    ),
+                                    @GenericResolvingInfo(
+                                            typeParameter = "R",
+                                            resolvingStrategy = @ResolvingStrategy(
+                                                    classFqnStrategy = @ClassFqnStrategy(
+                                                            classFqn = "com.vaadin.flow.component.Component"
+                                                    ),
+                                                    xmlStrategy = @XmlStrategy(parentComponentTag = "")
+                                            )
+                                    )
+                            }
                     )
             }
     )

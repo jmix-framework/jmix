@@ -16,10 +16,19 @@
 
 package io.jmix.reports.impl.annotated;
 
+import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.reports.test_support.entity.UserRegistration;
 import io.jmix.reports.test_support.report.RevenueByGameReport;
+import io.jmix.reports.test_support.report.UserProfileReport;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.structure.ReportOutputType;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -44,6 +53,33 @@ public class TemplateTest extends BaseAnnotatedReportExecutionTest {
 
         // then
         assertThat(outputDocument.getDocumentName()).isEqualTo("Revenue 15.01 - 08.05.csv");
+    }
+
+    @Test
+    public void testCustomTemplate() throws DocumentException {
+        // given
+        String reportCode = UserProfileReport.CODE;
+        String username = "lola18";
+
+        // when
+        UserRegistration user = unconstrainedDataManager.load(UserRegistration.class)
+                .condition(PropertyCondition.equal("username", username))
+                .one();
+        ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
+                .addParam(UserProfileReport.PARAM_USER, user)
+                // default template
+                .run();
+
+        // then
+        assertThat(outputDocument.getDocumentName()).endsWith(".xml");
+        assertThat(outputDocument.getReportOutputType()).isEqualTo(ReportOutputType.custom);
+        assertThat(outputDocument.getContent()).isNotNull();
+
+        // few basic checks of content, more checks in other tests
+        String xml = new String(outputDocument.getContent(), StandardCharsets.UTF_8);
+        Document document = DocumentHelper.parseText(xml); // valid xml
+        Element root = document.getRootElement();
+        assertThat(root.getName()).isEqualTo("Profile");
     }
 
     private Date parseDate(String isoDateString) {

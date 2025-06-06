@@ -17,14 +17,19 @@
 package io.jmix.reports.impl.annotated;
 
 import com.opencsv.CSVReader;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.reports.test_support.entity.UserRegistration;
 import io.jmix.reports.test_support.report.RevenueByGameReport;
+import io.jmix.reports.test_support.report.UserProfileReport;
 import io.jmix.reports.test_support.report.UsersAndAchievementsReport;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reports.yarg.structure.ReportOutputType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -156,5 +161,41 @@ public class OutputContentTest extends BaseAnnotatedReportExecutionTest {
         assertThat(csvReader.readAll()).hasSize(3); // 3 games were purchased during that period
 
         csvReader.close();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {UserProfileReport.TEMPLATE_HTML_FREEMARKER, UserProfileReport.TEMPLATE_HTML_GROOVY})
+    public void testHtmlOutput(String templateCode) {
+        // given
+        String reportCode = UserProfileReport.CODE;
+        String username = "ken466";
+
+        // when
+        UserRegistration user = unconstrainedDataManager.load(UserRegistration.class)
+                .condition(PropertyCondition.equal("username", username))
+                .one();
+        ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
+                .withTemplateCode(templateCode)
+                .addParam(UserProfileReport.PARAM_USER, user)
+                // default template
+                .run();
+
+        // then
+        assertThat(outputDocument.getDocumentName()).endsWith(".html");
+        assertThat(outputDocument.getReportOutputType()).isEqualTo(ReportOutputType.html);
+        assertThat(outputDocument.getContent()).isNotNull();
+
+        // few basic checks of content
+        String html = new String(outputDocument.getContent(), StandardCharsets.UTF_8);
+        assertThat(html).containsIgnoringWhitespaces("""
+                <td>Kenzie</td>
+                <td>Wall</td>
+                <td>2021-02-03T18:55</td>
+                """);
+        assertThat(html).containsIgnoringWhitespaces("""
+                <td>Assassin's Creed</td>
+                <td>2025-05-17T00:00</td>
+                <td>5</td>
+                """);
     }
 }

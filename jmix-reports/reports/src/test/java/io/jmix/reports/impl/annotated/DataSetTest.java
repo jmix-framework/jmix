@@ -17,15 +17,21 @@
 package io.jmix.reports.impl.annotated;
 
 import com.opencsv.CSVReader;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.reports.test_support.entity.UserRegistration;
 import io.jmix.reports.test_support.report.RevenueByGameReport;
+import io.jmix.reports.test_support.report.UserProfileReport;
 import io.jmix.reports.test_support.report.UsersAndAchievementsReport;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reports.yarg.structure.ReportOutputType;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -138,5 +144,54 @@ public class DataSetTest extends BaseAnnotatedReportExecutionTest {
         assertThat(line).isNull();
 
         csvReader.close();
+    }
+
+    @Test
+    public void testNestedCollectionDataSet() throws DocumentException {
+        // given
+        String reportCode = UserProfileReport.CODE;
+        String username = "lola18";
+
+        // when
+        UserRegistration user = unconstrainedDataManager.load(UserRegistration.class)
+                .condition(PropertyCondition.equal("username", username))
+                .one();
+        ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
+                .addParam(UserProfileReport.PARAM_USER, user)
+                // default template
+                .run();
+
+        // then
+        String xml = new String(outputDocument.getContent(), StandardCharsets.UTF_8);
+        Document document = DocumentHelper.parseText(xml);
+        Element root = document.getRootElement();
+
+        assertThat(root.elements()).hasSize(1);  // parent band
+        assertThat(root.elements().get(0).getName()).isEqualTo("User");
+
+        assertThat(root.elements().get(0).elements()).hasSize(3); // exactly 3 rows in nested collection band
+        assertThat(root.elements().get(0).elements()).allMatch(e -> e.getName().equals("Purchase"));
+    }
+
+    @Test
+    public void testFetchPlanProvider() {
+        // given
+        String reportCode = UserProfileReport.CODE;
+        String username = "lola18";
+
+        // when
+        UserRegistration user = unconstrainedDataManager.load(UserRegistration.class)
+                .condition(PropertyCondition.equal("username", username))
+                .one();
+        ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
+                .addParam(UserProfileReport.PARAM_USER, user)
+                // default template
+                .run();
+
+        // then
+        String xml = new String(outputDocument.getContent(), StandardCharsets.UTF_8);
+        assertThat(xml).contains("""
+                <Purchase game="Mario Kart DS" purchaseDate="2025-05-12T00:00:00" userRating="8"/>
+                """);
     }
 }

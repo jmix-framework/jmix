@@ -141,17 +141,17 @@ public class TestDataInitializer {
 
     private List<PurchasedGame> createPurchasedGames(List<UserRegistration> users, List<GameTitle> games) {
         Object[][] data = new Object[][]{
-                {"lmedrano", "Mario Kart DS", ldt("2025-01-15 00:00")},
-                {"lmedrano", "Destiny", ldt("2025-02-25 00:00")},
+                {"lmedrano", "Mario Kart DS", ldt("2025-01-15 00:00"), 9},
+                {"lmedrano", "Destiny", ldt("2025-02-25 00:00"), 8},
 
-                {"ken466", "Assassin's Creed", ldt("2025-05-17 00:00")},
+                {"ken466", "Assassin's Creed", ldt("2025-05-17 00:00"), 5},
 
-                {"shelton", "Mario Kart DS", ldt("2025-02-03 00:00")},
-                {"shelton", "Modern Warfare 3", ldt("2025-03-11 00:00")},
+                {"shelton", "Mario Kart DS", ldt("2025-02-03 00:00"), 7},
+                {"shelton", "Modern Warfare 3", ldt("2025-03-11 00:00"), 6},
 
-                {"lola18", "Tetris", ldt("2025-04-12 00:00")},
-                {"lola18", "Mario Kart DS", ldt("2025-05-12 00:00")},
-                {"lola18", "Assassin's Creed", ldt("2025-05-30 00:00")}
+                {"lola18", "Tetris", ldt("2025-04-12 00:00"), null},
+                {"lola18", "Mario Kart DS", ldt("2025-05-12 00:00"), 8},
+                {"lola18", "Assassin's Creed", ldt("2025-05-30 00:00"), 9}
         };
         return Arrays.stream(data)
                 .map(datum -> {
@@ -159,6 +159,7 @@ public class TestDataInitializer {
                     pg.setUser(users.stream().filter(u -> u.getUsername().equals(datum[0])).findAny().orElseThrow());
                     pg.setGame(games.stream().filter(g -> g.getName().equals(datum[1])).findAny().orElseThrow());
                     pg.setPurchaseDate((LocalDateTime) datum[2]);
+                    pg.setUserRating(((Integer) datum[3]));
                     return unconstrainedDataManager.save(pg);
                 })
                 .toList();

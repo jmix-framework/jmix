@@ -21,14 +21,11 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
@@ -55,6 +52,18 @@ public class UserRegistration {
     @NotNull
     @Column(name = "LAST_NAME", nullable = false)
     private String lastName;
+
+    @OrderBy("purchaseDate")
+    @OneToMany(mappedBy = "user")
+    private List<PurchasedGame> games;
+
+    public List<PurchasedGame> getGames() {
+        return games;
+    }
+
+    public void setGames(List<PurchasedGame> games) {
+        this.games = games;
+    }
 
     public String getLastName() {
         return lastName;

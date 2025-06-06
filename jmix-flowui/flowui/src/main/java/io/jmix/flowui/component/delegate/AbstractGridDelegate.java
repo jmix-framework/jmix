@@ -66,6 +66,7 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.sys.BeanUtil;
+import io.jmix.flowui.view.View;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeansException;
@@ -797,7 +798,12 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected Component createEmptyStateByPermissionsComponent() {
-        return fragments.create(UiComponentUtils.getView(component), DataGridEmptyStateByPermissionsFragment.class);
+        View<?> view = UiComponentUtils.findView(component);
+        if (view == null) {
+            view = UiComponentUtils.getCurrentView();
+        }
+
+        return fragments.create(view, DataGridEmptyStateByPermissionsFragment.class);
     }
 
     public List<Grid.Column<E>> getColumns() {

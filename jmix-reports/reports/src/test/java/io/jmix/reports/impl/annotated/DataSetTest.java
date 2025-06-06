@@ -19,6 +19,7 @@ package io.jmix.reports.impl.annotated;
 import com.opencsv.CSVReader;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.reports.test_support.entity.UserRegistration;
+import io.jmix.reports.test_support.report.GameCriticScoresReport;
 import io.jmix.reports.test_support.report.RevenueByGameReport;
 import io.jmix.reports.test_support.report.UserProfileReport;
 import io.jmix.reports.test_support.report.UsersAndAchievementsReport;
@@ -193,5 +194,29 @@ public class DataSetTest extends BaseAnnotatedReportExecutionTest {
         assertThat(xml).contains("""
                 <Purchase game="Mario Kart DS" purchaseDate="2025-05-12T00:00:00" userRating="8"/>
                 """);
+    }
+
+    @Test
+    public void testJsonDataSetWithLinkParameter() throws Exception {
+        // given
+        String reportCode = GameCriticScoresReport.CODE;
+        String publisherName = "tendo"; // nintendo
+
+        // when
+        ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
+                .addParam(GameCriticScoresReport.PARAM_PUBLISHER_NAME, publisherName)
+                .run();
+
+        // then
+        CSVReader csvReader = readCsvContent(outputDocument);
+
+        List<String[]> averageScores = csvReader.readAll();
+        assertThat(averageScores)
+                .contains(
+                        new String[]{"Tetris", "5", "9.9"},
+                        new String[]{"Mario Kart DS", "8", "9.1"}
+                );
+
+        csvReader.close();
     }
 }

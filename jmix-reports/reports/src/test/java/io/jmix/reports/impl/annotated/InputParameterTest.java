@@ -16,10 +16,16 @@
 
 package io.jmix.reports.impl.annotated;
 
+import com.opencsv.CSVReader;
 import io.jmix.reports.exception.ReportingException;
+import io.jmix.reports.test_support.report.GameCriticScoresReport;
 import io.jmix.reports.test_support.report.UserProfileReport;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class InputParameterTest extends BaseAnnotatedReportExecutionTest {
@@ -37,5 +43,45 @@ public class InputParameterTest extends BaseAnnotatedReportExecutionTest {
                 .hasMessageContaining("not found");
 
     }
-}
 
+    @Test
+    public void testDefaultValueProvider() throws Exception {
+        // given
+        String reportCode = GameCriticScoresReport.CODE;
+
+        // when
+        ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
+                // with default parameter value
+                .run();
+
+        // then
+        CSVReader csvReader = readCsvContent(outputDocument);
+
+        List<String> titles = csvReader.readAll().stream().map(array -> array[0]).toList();
+        assertThat(titles).hasSize(1 + 2);
+        assertThat(titles).contains("Modern Warfare 3", "Destiny");
+
+        csvReader.close();
+    }
+
+    @Test
+    public void testTransformer() throws Exception {
+        // given
+        String reportCode = GameCriticScoresReport.CODE;
+        String publisherName = "tendo"; // nintendo
+
+        // when
+        ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
+                .addParam(GameCriticScoresReport.PARAM_PUBLISHER_NAME, publisherName)
+                .run();
+
+        // then
+        CSVReader csvReader = readCsvContent(outputDocument);
+
+        List<String> firstValues = csvReader.readAll().stream().map(array -> array[0]).toList();
+        assertThat(firstValues)
+                .contains("Tetris", "Mario Kart DS");
+
+        csvReader.close();
+    }
+}

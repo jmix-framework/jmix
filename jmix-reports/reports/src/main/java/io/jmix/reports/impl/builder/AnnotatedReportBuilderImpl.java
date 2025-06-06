@@ -335,7 +335,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         template.setReportOutputType(annotation.outputType());
         template.setAlterable(annotation.alterableOutput());
         template.setOutputNamePattern(annotation.outputNamePattern());
-        template.setGroovy(annotation.templateEngine() == HtmlTemplateEngine.GROOVY);
+        template.setGroovy(annotation.templateEngine() == TemplateMarkupEngine.GROOVY);
 
         if (!annotation.filePath().isEmpty()) {
             try (InputStream stream = resources.getResourceAsStream(annotation.filePath())) {

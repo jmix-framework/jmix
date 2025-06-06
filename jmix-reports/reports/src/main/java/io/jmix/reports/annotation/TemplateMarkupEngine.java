@@ -1,11 +1,11 @@
 package io.jmix.reports.annotation;
 
 /**
- * Type of the engine to be used to process the HTML template.
+ * Type of the engine to be used to process the contents of the text template.
  *
  * @see TemplateDef
  */
-public enum HtmlTemplateEngine {
+public enum TemplateMarkupEngine {
     /**
      * Groovy templates.
      */

@@ -63,8 +63,9 @@ public @interface TemplateDef {
     TemplateTableDef table() default @TemplateTableDef(bands = {});
 
     /**
-     * Template engine used in the HTML template file.
+     * Template engine used to process contents of text templates.
+     * Used for HTML template files (with various output types).
      */
-    HtmlTemplateEngine templateEngine() default HtmlTemplateEngine.FREEMARKER;
+    TemplateMarkupEngine templateEngine() default TemplateMarkupEngine.FREEMARKER;
 
 }

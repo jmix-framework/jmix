@@ -19,10 +19,7 @@ package io.jmix.reports.impl.annotated;
 import com.opencsv.CSVReader;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.reports.test_support.entity.UserRegistration;
-import io.jmix.reports.test_support.report.GameCriticScoresReport;
-import io.jmix.reports.test_support.report.RevenueByGameReport;
-import io.jmix.reports.test_support.report.UserProfileReport;
-import io.jmix.reports.test_support.report.UsersAndAchievementsReport;
+import io.jmix.reports.test_support.report.*;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reports.yarg.structure.ReportOutputType;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -33,6 +30,10 @@ import org.dom4j.Element;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -219,4 +220,44 @@ public class DataSetTest extends BaseAnnotatedReportExecutionTest {
 
         csvReader.close();
     }
+
+    @Test
+    public void testCrossTab() {
+        // given
+        String reportCode = RevenueByPublisherReport.CODE;
+        Date startDate = parseDate("2025-03-10");
+        Date endDate = parseDate("2025-05-31");
+
+        // when
+        ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
+                .addParam(RevenueByPublisherReport.PARAM_START_DATE, startDate)
+                .addParam(RevenueByPublisherReport.PARAM_END_DATE, endDate)
+                .run();
+
+        // then
+        Object[][] expectedCells = new Object[][] {
+                // row, then cells' content in the row
+                {0, "Revenue", "March", "April", "May"},
+                {1, "Activision", 18.0, "", ""},
+                {2, "Nintendo", "", 5.0, 8.0},
+                {3, "Ubisoft", "", "", 54.0}
+        };
+        Sheet firstSheet = readFirstSheetFromBytes(outputDocument.getContent());
+        for (Object[] entry : expectedCells) {
+            for (int column = 0; column < entry.length - 1; column++) {
+                Object expectedValue = entry[column + 1];
+                Object cellValue = cellValue(firstSheet, (Integer) entry[0], column);
+                assertThat(cellValue).isEqualTo(expectedValue);
+            }
+        }
+    }
+
+    private Date parseDate(String isoDateString) {
+        return Date.from(
+                LocalDate.parse(isoDateString, DateTimeFormatter.ISO_LOCAL_DATE)
+                        .atTime(0, 0)
+                        .toInstant(ZoneOffset.UTC)
+        );
+    }
+
 }

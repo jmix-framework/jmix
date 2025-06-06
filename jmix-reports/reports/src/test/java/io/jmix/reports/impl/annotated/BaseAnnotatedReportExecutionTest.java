@@ -25,6 +25,8 @@ import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.test_support.entity.TestDataInitializer;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -76,7 +78,16 @@ public abstract class BaseAnnotatedReportExecutionTest {
     }
 
     protected String stringCellValue(Sheet sheet, int row, int column) {
-        return sheet.getRow(row).getCell(column).getStringCellValue();
+        Cell cell = sheet.getRow(row).getCell(column);
+        return cell.getStringCellValue();
+    }
+
+    protected Object cellValue(Sheet sheet, int row, int column) {
+        Cell cell = sheet.getRow(row).getCell(column);
+        if (cell.getCellType() == CellType.NUMERIC) {
+            return cell.getNumericCellValue();
+        }
+        return cell.getStringCellValue();
     }
 
     protected CSVReader readCsvContent(ReportOutputDocument outputDocument) {

@@ -1,7 +1,7 @@
 package io.jmix.reports.annotation;
 
 import io.jmix.reports.entity.DataSetType;
-import io.jmix.reports.yarg.loaders.ReportDataLoader;
+import io.jmix.reports.entity.Orientation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -20,6 +20,11 @@ public @interface DataSetDef {
 
     /**
      * Data set name (optional).
+     * <br/>
+     * For Crosstab {@link Orientation#CROSS}) bands, its data sets must be named strictly according to convention:
+     *  <li>Column headers - <code>${band_name}_dynamic_header</code></li>
+     *  <li>Row headers - <code>${band_name}_master_data</code></li>
+     *  <li>Main content - <code>${band_name}</code></li>
      */
     String name() default "";
 

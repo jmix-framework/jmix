@@ -41,6 +41,7 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.*;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
@@ -152,6 +153,8 @@ public class ReportWizardCreatorView extends StandardView {
     @Autowired
     protected UiProperties uiProperties;
     @Autowired
+    protected ReportsProperties reportsProperties;
+    @Autowired
     protected CoreProperties coreProperties;
     @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
@@ -199,6 +202,14 @@ public class ReportWizardCreatorView extends StandardView {
         initEntityLookupField();
         initReportParameterDataGrid();
         updateWizardDescription();
+
+        downloader.setInlineChecker((fileExtension) -> {
+            if (StringUtils.isEmpty(fileExtension)) {
+                return false;
+            }
+
+            return reportsProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExtension));
+        });
     }
 
     protected void initItem() {

@@ -18,6 +18,7 @@ package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.server.*;
+import io.jmix.core.annotation.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -35,6 +36,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Holds vaadin sessions for all users
  */
+@Internal
 @Component("flowui_SessionHolder")
 public class SessionHolder implements VaadinServiceInitListener {
 

@@ -23,6 +23,7 @@ import com.vaadin.flow.internal.Pair;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.MessageTools;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.monitoring.ViewLifeCycle;
@@ -53,7 +54,7 @@ import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
 import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
 import static io.jmix.flowui.view.ViewControllerUtils.getPackage;
 
-
+@Internal
 @Component("flowui_ViewSupport")
 public class ViewSupport {
 

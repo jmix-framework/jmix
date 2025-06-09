@@ -204,10 +204,11 @@ public interface StudioElements {
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "PENCIL",
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
+                            initialValue = "PENCIL",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.Edit"),
+                            initialValue = "msg:///actions.Edit"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "whiteSpace", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
@@ -230,7 +231,8 @@ public interface StudioElements {
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "CHECK",
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
+                            initialValue = "CHECK",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
@@ -255,7 +257,8 @@ public interface StudioElements {
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "BAN",
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
+                            initialValue = "BAN",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
@@ -280,10 +283,11 @@ public interface StudioElements {
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "BAN",
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
+                            initialValue = "BAN",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.Cancel"),
+                            initialValue = "msg:///actions.Cancel"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "whiteSpace", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
@@ -1134,4 +1138,50 @@ public interface StudioElements {
             }
     )
     void fragmentRenderer();
+
+    @StudioElement(
+            name = "StartSlot",
+            icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            xmlElement = "startSlot",
+            target = "com.vaadin.flow.component.orderedlayout.HorizontalLayout",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void startSlot();
+
+    @StudioElement(
+            name = "MiddleSlot",
+            icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            xmlElement = "middleSlot",
+            target = "com.vaadin.flow.component.orderedlayout.HorizontalLayout",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void middleSlot();
+
+    @StudioElement(
+            name = "EndSlot",
+            icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            xmlElement = "endSlot",
+            target = "com.vaadin.flow.component.orderedlayout.HorizontalLayout",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void endSlot();
+
 }

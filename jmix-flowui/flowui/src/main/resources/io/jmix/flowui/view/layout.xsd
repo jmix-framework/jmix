@@ -1643,7 +1643,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="checkboxValidatorType">
         <xs:all>
             <xs:element name="custom" minOccurs="0" type="customValidatorType"/>
@@ -4921,7 +4921,7 @@
 
                 <!-- Layout -->
                 <xs:element name="vbox" type="componentLayout"/>
-                <xs:element name="hbox" type="componentLayout"/>
+                <xs:element name="hbox" type="hboxComponent"/>
                 <xs:element name="flexLayout" type="flexLayoutComponent"/>
                 <xs:element name="formLayout" type="formLayoutComponent"/>
                 <xs:element name="scroller" type="scrollerContainer"/>
@@ -5020,6 +5020,18 @@
     <xs:complexType name="rootLayout">
         <xs:complexContent>
             <xs:extension base="baseLayout">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="hboxComponent">
+        <xs:complexContent>
+            <xs:extension base="componentLayout">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="startSlot" type="singleLayoutOrComponentType"/>
+                    <xs:element name="middleSlot" type="singleLayoutOrComponentType"/>
+                    <xs:element name="endSlot" type="singleLayoutOrComponentType"/>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

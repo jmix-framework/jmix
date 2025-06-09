@@ -16,11 +16,27 @@
 
 package io.jmix.autoconfigure.messagetemplates;
 
+import io.jmix.messagetemplates.MessageTemplateConfigurer;
+import io.jmix.messagetemplates.MessageTemplateProperties;
 import io.jmix.messagetemplates.MessageTemplatesConfiguration;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties;
+import org.springframework.boot.autoconfigure.freemarker.FreeMarkerVariablesCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 @AutoConfiguration
 @Import({MessageTemplatesConfiguration.class})
 public class MessageTemplatesAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean(FreeMarkerConfig.class)
+    public MessageTemplateConfigurer configuration(MessageTemplateProperties messageTemplateProperties,
+                                                   FreeMarkerProperties freeMarkerProperties,
+                                                   ObjectProvider<FreeMarkerVariablesCustomizer> variablesCustomizers) {
+        return new MessageTemplateConfigurer(messageTemplateProperties, freeMarkerProperties, variablesCustomizers);
+    }
 }

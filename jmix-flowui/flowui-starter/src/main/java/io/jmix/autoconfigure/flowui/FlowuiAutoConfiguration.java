@@ -18,15 +18,13 @@ package io.jmix.autoconfigure.flowui;
 
 import io.jmix.core.*;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
-import io.jmix.flowui.FlowuiConfiguration;
-import io.jmix.flowui.UiViewProperties;
-import io.jmix.flowui.ViewNavigators;
-import io.jmix.flowui.Views;
+import io.jmix.flowui.*;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.sys.vaadin.SecurityContextHolderAtmosphereInterceptor;
+import io.jmix.flowui.view.ViewAttributes;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.builder.DetailWindowBuilderProcessor;
 import io.jmix.flowui.view.builder.EditedEntityTransformer;
@@ -34,12 +32,16 @@ import io.jmix.flowui.view.builder.LookupWindowBuilderProcessor;
 import io.jmix.flowui.view.builder.WindowBuilderProcessor;
 import io.jmix.flowui.view.navigation.*;
 import jakarta.servlet.ServletContext;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 
 import java.util.Collections;
@@ -114,6 +116,17 @@ public class FlowuiAutoConfiguration {
         return new ListViewNavigationProcessor(viewSupport, viewRegistry, navigationSupport);
     }
 
+    @Bean("flowui_DialogWindows")
+    @ConditionalOnMissingBean
+    public DialogWindows dialogWindows(
+            WindowBuilderProcessor windowBuilderProcessor,
+            DetailWindowBuilderProcessor detailBuilderProcessor,
+            LookupWindowBuilderProcessor lookupBuilderProcessor,
+            @Autowired(required = false) ObjectProvider<OpenedDialogWindows> openedDialogWindows) {
+        return new DialogWindows(windowBuilderProcessor, detailBuilderProcessor,
+                lookupBuilderProcessor, openedDialogWindows);
+    }
+
     @Bean("flowui_WindowBuilderProcessor")
     @ConditionalOnMissingBean
     public WindowBuilderProcessor windowBuilderProcessor(ApplicationContext applicationContext,
@@ -161,5 +174,12 @@ public class FlowuiAutoConfiguration {
     @ConditionalOnMissingBean
     public RouteSupport routeSupport(UrlParamSerializer urlParamSerializer, ServletContext servletContext) {
         return new RouteSupport(urlParamSerializer, servletContext);
+    }
+
+    @Bean("flowui_ViewAttributes")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    @ConditionalOnMissingBean
+    public ViewAttributes viewAttributes(String viewId) {
+        return new ViewAttributes(viewId);
     }
 }

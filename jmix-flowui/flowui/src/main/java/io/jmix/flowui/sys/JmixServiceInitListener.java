@@ -28,6 +28,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.JmixModules;
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.Resources;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.backgroundtask.BackgroundTaskManager;
 import io.jmix.flowui.component.error.JmixInternalServerError;
 import io.jmix.flowui.exception.UiExceptionHandlers;
@@ -52,6 +53,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Internal
 @Component("flowui_JmixServiceInitListener")
 public class JmixServiceInitListener implements VaadinServiceInitListener, ApplicationContextAware {
 
@@ -169,12 +171,15 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     }
 
     protected void modifyIndexHtmlResponse(IndexHtmlResponse response) {
+        Element head = response.getDocument().head();
+
+        Element script = createElement("script", getJmixBeforeUploadListenerFunction(), "text/javascript");
+        head.appendChild(script);
+
         List<String> styles = modules.getPropertyValues(IMPORT_STYLES_PROP);
         if (styles.isEmpty()) {
             return;
         }
-
-        Element head = response.getDocument().head();
         styles.forEach(path -> appendStyles(head, path));
     }
 
@@ -206,6 +211,16 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
             log.warn("Unable to read resource '{}'", path, e);
             return null;
         }
+    }
+
+    protected String getJmixBeforeUploadListenerFunction() {
+        // language=javascript
+        return """
+                    jmixBeforeUnloadListener = (event) => {
+                      event.preventDefault();
+                      return (event.returnValue = "");
+                    };
+                """;
     }
 
     protected Element createElement(String tag, @Nullable String content, String... attrs) {

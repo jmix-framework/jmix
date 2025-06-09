@@ -189,6 +189,24 @@ public class View<T extends Component> extends Composite<T>
         // Hook to be implemented
     }
 
+    /**
+     * Configures the {@link DialogWindow} header if the view is opened in {@link OpenMode#DIALOG}.
+     *
+     * @param header header for adding components
+     */
+    protected void configureDialogWindowHeader(DialogWindowHeader header) {
+        // Hook to be implemented
+    }
+
+    /**
+     * Configures the {@link DialogWindow} footer if the view is opened in {@link OpenMode#DIALOG}.
+     *
+     * @param footer footer for adding components
+     */
+    protected void configureDialogWindowFooter(DialogWindowFooter footer) {
+        // Hook to be implemented
+    }
+
     @Override
     public void beforeLeave(BeforeLeaveEvent event) {
         if (!event.isPostponed()) {

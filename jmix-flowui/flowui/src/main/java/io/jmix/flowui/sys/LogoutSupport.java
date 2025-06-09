@@ -19,6 +19,7 @@ package io.jmix.flowui.sys;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.spring.security.AuthenticationContext;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.util.WebBrowserTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;
 import jakarta.servlet.ServletContext;
 
+@Internal
 @Component("flowui_LogoutSupport")
 public class LogoutSupport {
 

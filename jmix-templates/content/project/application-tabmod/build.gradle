@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '2.5.0-RC1'
+    id 'io.jmix' version '2.6.0-M1'
     id 'java'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.9'
 }

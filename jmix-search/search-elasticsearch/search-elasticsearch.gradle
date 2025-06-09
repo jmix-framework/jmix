@@ -46,4 +46,5 @@ dependencies {
     testImplementation 'org.mockito:mockito-core'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

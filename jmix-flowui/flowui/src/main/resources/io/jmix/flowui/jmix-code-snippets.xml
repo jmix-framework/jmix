@@ -16,6 +16,667 @@
   -->
 <jmixCodeSnippets xmlns="http://jmix.io/schema/core/code-snippets">
 
+    <category name="UI: notifications and dialogs">
+
+        <codeSnippet name="Show notification" contextTypes="controller">
+            <inject variable="notifications" classQualifiedName="io.jmix.flowui.Notifications"/>
+            <text language="java">
+                notifications.create("Hello World")
+                    .withType(io.jmix.flowui.Notifications.Type.DEFAULT)
+                    .withPosition(com.vaadin.flow.component.notification.Notification.Position.BOTTOM_END)
+                    .show();
+            </text>
+            <text language="kotlin">
+                notifications.create("Hello World")
+                    .withType(io.jmix.flowui.Notifications.Type.DEFAULT)
+                    .withPosition(com.vaadin.flow.component.notification.Notification.Position.BOTTOM_END)
+                    .show()
+            </text>
+            <description>
+                <![CDATA[
+                Show a notification popup.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/notifications.html">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Show message dialog with plain text" contextTypes="controller">
+            <inject variable="dialogs" classQualifiedName="io.jmix.flowui.Dialogs"/>
+            <text language="java">
+                dialogs.createMessageDialog()
+                    .withHeader("Greeting")
+                    .withText("Hello World")
+                    .open();
+            </text>
+            <text language="kotlin">
+                dialogs.createMessageDialog()
+                    .withHeader("Greeting")
+                    .withText("Hello World")
+                    .open()
+            </text>
+            <description>
+                <![CDATA[
+                Show a message dialog with plain text content.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/dialogs.html#message-dialog">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Show message dialog with HTML" contextTypes="controller">
+            <inject variable="dialogs" classQualifiedName="io.jmix.flowui.Dialogs"/>
+            <text language="java">
+                <![CDATA[
+                dialogs.createMessageDialog()
+                    .withHeader("Greeting")
+                    .withContent(new com.vaadin.flow.component.Html("<p>Hello,<br><strong>World</strong>!</p>"))
+                    .open();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                dialogs.createMessageDialog()
+                    .withHeader("Greeting")
+                    .withContent(com.vaadin.flow.component.Html("<p>Hello,<br><strong>World</strong>!</p>"))
+                    .open()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Show a message dialog with plain text content.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/dialogs.html#message-dialog">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Show option dialog" contextTypes="controller">
+            <inject variable="dialogs" classQualifiedName="io.jmix.flowui.Dialogs"/>
+            <text language="java">
+                <![CDATA[
+                dialogs.createOptionDialog()
+                        .withHeader("Confirm")
+                        .withText("Are you sure?")
+                        .withActions(
+                                new io.jmix.flowui.action.DialogAction(DialogAction.Type.YES)
+                                        .withVariant(io.jmix.flowui.kit.action.ActionVariant.PRIMARY)
+                                        .withHandler(e -> {
+                                            // do something on "Yes" click
+                                        }),
+                                new io.jmix.flowui.action.DialogAction(DialogAction.Type.NO)
+                        )
+                        .open();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                dialogs.createOptionDialog()
+                    .withHeader("Confirm")
+                    .withText("Are you sure?")
+                    .withActions(
+                        io.jmix.flowui.action.DialogAction(DialogAction.Type.YES)
+                            .withVariant(io.jmix.flowui.kit.action.ActionVariant.PRIMARY)
+                            .withHandler { e: ActionPerformedEvent? -> },
+                        io.jmix.flowui.action.DialogAction(DialogAction.Type.NO)
+                    )
+                    .open()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Show a Yes/No options dialog.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/dialogs.html#option-dialog">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Show input dialog" contextTypes="controller">
+            <inject variable="dialogs" classQualifiedName="io.jmix.flowui.Dialogs"/>
+            <text language="java">
+                <![CDATA[
+                dialogs.createInputDialog(this)
+                        .withHeader("Enter values")
+                        .withParameters(
+                                io.jmix.flowui.app.inputdialog.InputParameter.stringParameter("name").withLabel("Name").withRequired(true),
+                                io.jmix.flowui.app.inputdialog.InputParameter.intParameter("amount").withLabel("Amount").withDefaultValue(1)
+                                // other simple types, entities and enums are supported as well
+                        )
+                        .withActions(io.jmix.flowui.app.inputdialog.DialogActions.OK_CANCEL)
+                        .withCloseListener(closeEvent -> {
+                            if (closeEvent.closedWith(io.jmix.flowui.app.inputdialog.DialogOutcome.OK)) {
+                                String name = closeEvent.getValue("name");
+                                Integer amount = closeEvent.getValue("amount");
+                                // process entered values...
+                            }
+                        })
+                        .open();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                dialogs.createInputDialog(this)
+                    .withHeader("Enter values")
+                    .withParameters(
+                        io.jmix.flowui.app.inputdialog.InputParameter.stringParameter("name").withLabel("Name").withRequired(true),
+                        io.jmix.flowui.app.inputdialog.InputParameter.intParameter("amount").withLabel("Amount")
+                            .withDefaultValue(1) // other simple types, entities and enums are supported as well
+                    )
+                    .withActions(io.jmix.flowui.app.inputdialog.DialogActions.OK_CANCEL)
+                    .withCloseListener { closeEvent ->
+                        if (closeEvent.closedWith(io.jmix.flowui.app.inputdialog.DialogOutcome.OK)) {
+                            val name = closeEvent.getValue<String?>("name")
+                            val amount = closeEvent.getValue<Int?>("amount")
+                            // process entered values...
+                        }
+                    }
+                    .open()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Show an input dialog with multiple parameters.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/dialogs.html#input-dialog">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+    </category>
+
+    <category name="UI: opening views and fragments">
+
+        <codeSnippet name="Navigate to view" contextTypes="controller">
+            <inject variable="viewNavigators" classQualifiedName="io.jmix.flowui.ViewNavigators"/>
+            <classInputParameter code="viewClass" text="View class" superClass="io.jmix.flowui.view.StandardView"/>
+            <text language="java">
+                <![CDATA[
+                viewNavigators.view(this, ${viewClass}.class).navigate();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                viewNavigators.view(this, ${viewClass}::class.java).navigate()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Navigate to an arbitrary view by its class.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/views/opening-views.html#navigation">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Navigate to entity list view" contextTypes="controller">
+            <inject variable="viewNavigators" classQualifiedName="io.jmix.flowui.ViewNavigators"/>
+            <classInputParameter code="entityClass" text="Entity class" jmixEntity="true"/>
+            <text language="java">
+                <![CDATA[
+                viewNavigators.listView(this, ${entityClass}.class).navigate();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                viewNavigators.listView(this, ${entityClass}::class.java).navigate()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Navigate to an entity list view by the entity class.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/views/opening-views.html#navigation">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Navigate to entity detail view and create new instance" contextTypes="controller">
+            <inject variable="viewNavigators" classQualifiedName="io.jmix.flowui.ViewNavigators"/>
+            <classInputParameter code="entityClass" text="Entity class" jmixEntity="true"/>
+            <text language="java">
+                <![CDATA[
+                viewNavigators.detailView(this, ${entityClass}.class)
+                        .newEntity()
+                        .navigate();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                viewNavigators.detailView(this, ${entityClass}::class.java)
+                    .newEntity()
+                    .navigate()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Navigate to an entity detail view and create a new entity instance.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/views/opening-views.html#navigation">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Navigate to entity detail view from list component" contextTypes="controller">
+            <inject variable="viewNavigators" classQualifiedName="io.jmix.flowui.ViewNavigators"/>
+            <text language="java">
+                <![CDATA[
+                viewNavigators.detailView(someDataGrid).navigate();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                viewNavigators.detailView(someDataGrid).navigate()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Navigate to an entity detail view from a list component (e.g. DataGrid).<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/views/opening-views.html#navigation">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Open view in dialog and pass parameters" contextTypes="controller">
+            <inject variable="dialogWindows" classQualifiedName="io.jmix.flowui.DialogWindows"/>
+            <classInputParameter code="viewClass" text="View class" superClass="io.jmix.flowui.view.StandardView"/>
+            <text language="java">
+                <![CDATA[
+                ${IS_FINAL}io.jmix.flowui.view.DialogWindow<${viewClass}> window = dialogWindows.view(this, ${viewClass}.class).build();
+                ${IS_FINAL}${viewClass} view = window.getView();
+                // invoke setters on the view instance, e.g. `view.setFoo(42);`
+                window.open();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                val window = dialogWindows.view<${viewClass}?>(this, ${viewClass}::class.java).build()
+                val view = window.getView() // invoke setters on the view instance, e.g. `view.setFoo(42);`
+                window.open()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Open an arbitrary view in dialog window by the view class and pass parameters to the view instance.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/views/opening-views.html#dialog-windows">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Open lookup view in dialog to select entities" contextTypes="controller">
+            <inject variable="dialogWindows" classQualifiedName="io.jmix.flowui.DialogWindows"/>
+            <classInputParameter code="entityClass" text="Entity class" jmixEntity="true"/>
+            <classInputParameter code="viewClass" text="View class" superClass="io.jmix.flowui.view.StandardListView"/>
+            <text language="java">
+                <![CDATA[
+                dialogWindows.lookup(this, ${entityClass}.class)
+                        .withViewClass(${viewClass}.class)
+                        .withSelectHandler(entities -> {
+                            // handle selected entities
+                        })
+                        .open();
+        ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                dialogWindows.lookup<${entityClass}?, View<*>?>(this, ${entityClass}::class.java)
+                    .withViewClass(${viewClass}::class.java)
+                    .withSelectHandler { entities -> }
+                    .open()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Open an entity lookup view and return selected entities.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/views/opening-views.html#dialog-windows">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Open entity detail view from list component" contextTypes="controller">
+            <inject variable="dialogWindows" classQualifiedName="io.jmix.flowui.DialogWindows"/>
+            <classInputParameter code="entityClass" text="Entity class" jmixEntity="true"/>
+            <text language="java">
+                <![CDATA[
+                dialogWindows.detail(someDataGrid).open();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                dialogWindows.detail<${entityClass}?, View<*>?>(someDataGrid).open()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Open an entity detail view from a list component (e.g. DataGrid).<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/views/opening-views.html#dialog-windows">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Add fragment to the view" contextTypes="controller">
+            <inject variable="fragments" classQualifiedName="io.jmix.flowui.Fragments"/>
+            <classInputParameter code="fragmentClass" text="Fragment class" superClass="io.jmix.flowui.fragment.Fragment"/>
+            <text language="java">
+                <![CDATA[
+                ${IS_FINAL}${fragmentClass} fragment = fragments.create(this, ${fragmentClass}.class);
+                getContent().add(fragment);
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                val fragment = fragments.create(this, ${fragmentClass}::class.java)
+                getContent().add(fragment)
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Create a fragment and add it to the current view layout.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/fragments/using-fragments.html#programmatic-usage">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+    </category>
+
+    <category name="UI: asynchronous execution">
+
+        <codeSnippet name="Show background task dialog" contextTypes="controller">
+            <inject variable="dialogs" classQualifiedName="io.jmix.flowui.Dialogs"/>
+            <text language="java">
+                <![CDATA[
+                dialogs.createBackgroundTaskDialog(
+                    new io.jmix.flowui.backgroundtask.BackgroundTask<Integer, Void>(15, this) {
+                        @Override
+                        public Void run(io.jmix.flowui.backgroundtask.TaskLifeCycle<Integer> taskLifeCycle) throws Exception {
+                            for (int i = 1; i <= 10; i++) {
+                                // do something in the background thread
+                                Thread.sleep(1000);
+                                // update progress
+                                taskLifeCycle.publish(i);
+                            }
+                            return null;
+                        }
+                    }
+                )
+                .withHeader("Background task running")
+                .withText("Please wait until the task is complete")
+                .withTotal(10)
+                .withShowProgressInPercentage(true)
+                .withCancelAllowed(true)
+                .open();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                dialogs.createBackgroundTaskDialog<Int?, Void>(
+                    object : io.jmix.flowui.backgroundtask.BackgroundTask<Int?, Void>(15, this) {
+                        override fun run(taskLifeCycle: io.jmix.flowui.backgroundtask.TaskLifeCycle<Int?>): Void? {
+                            for (i in 1..10) {
+                                // do something in the background thread
+                                Thread.sleep(1000)
+                                // update progress
+                                taskLifeCycle.publish(i)
+                            }
+                            return null
+                        }
+                    }
+                )
+                .withHeader("Background task running")
+                .withText("Please wait until the task is complete")
+                .withTotal(10)
+                .withShowProgressInPercentage(true)
+                .withCancelAllowed(true)
+                .open()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Show a background task dialog.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/dialogs.html#background-task-dialog">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Start background task" contextTypes="controller">
+            <inject variable="backgroundWorker" classQualifiedName="io.jmix.flowui.backgroundtask.BackgroundWorker"/>
+            <inject variable="notifications" classQualifiedName="io.jmix.flowui.Notifications"/>
+            <text language="java">
+                <![CDATA[
+                notifications.show("Started background task. Please wait a few seconds.");
+                ${IS_FINAL}io.jmix.flowui.backgroundtask.BackgroundTaskHandler<String> taskHandler = backgroundWorker.handle(new io.jmix.flowui.backgroundtask.BackgroundTask<Integer, String>(15, this) {
+                    @Override
+                    public String run(io.jmix.flowui.backgroundtask.TaskLifeCycle<Integer> taskLifeCycle) throws Exception {
+                        for (int i = 1; i <= 10; i++) {
+                            // do something in the background thread
+                            Thread.sleep(1000);
+                            // update progress
+                            taskLifeCycle.publish(i);
+                        }
+                        return "Done!";
+                    }
+
+                    @Override
+                    public void progress(java.util.List<Integer> changes) {
+                        // show progress in the UI
+                        double lastValue = changes.get(changes.size() - 1);
+                        // progressBar.setValue(lastValue / 10);
+                    }
+
+                    @Override
+                    public void done(String result) {
+                        // show result in the UI
+                        notifications.show(result);
+                    }
+                });
+                taskHandler.execute();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                notifications.show("Started background task. Please wait a few seconds.")
+                val taskHandler = backgroundWorker.handle<Int?, String?>(object : io.jmix.flowui.backgroundtask.BackgroundTask<Int?, String?>(15, this) {
+                    override fun run(taskLifeCycle: io.jmix.flowui.backgroundtask.TaskLifeCycle<Int?>): String {
+                        for (i in 1..10) {
+                            // do something in the background thread
+                            Thread.sleep(1000)
+                            // update progress
+                            taskLifeCycle.publish(i)
+                        }
+                        return "Done!"
+                    }
+
+                    override fun progress(changes: MutableList<Int?>) {
+                        // show progress in the UI
+                        val lastValue = changes.get(changes.size - 1)!!.toDouble()
+                        progressBar.setValue(lastValue / 10);
+                    }
+
+                    fun done(result: String) {
+                        // show result in the UI
+                        notifications.show(result)
+                    }
+                })
+                taskHandler.execute()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Start a background task and show its progress and result in UI.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/background-tasks.html">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Start asynchronous task" contextTypes="controller">
+            <inject variable="uiAsyncTasks" classQualifiedName="io.jmix.flowui.asynctask.UiAsyncTasks"/>
+            <inject variable="notifications" classQualifiedName="io.jmix.flowui.Notifications"/>
+            <text language="java">
+                <![CDATA[
+                notifications.show("Started async task. Please wait a few seconds.");
+                uiAsyncTasks.supplierConfigurer(() -> {
+                                    // do something in a background thread
+                                    try {
+                                        Thread.sleep(3000);
+                                    } catch (InterruptedException e) {
+                                        Thread.currentThread().interrupt();
+                                    }
+                                    return 42;
+                                }
+                        )
+                        .withResultHandler(result -> {
+                            notifications.show("Done! Result: " + result);
+                        })
+                        .supplyAsync();
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                notifications.show("Started async task. Please wait a few seconds.")
+                uiAsyncTasks.supplierConfigurer {
+                    // do something in a background thread
+                    Thread.sleep(3000)
+                    42
+                }
+                .withResultHandler { result ->
+                    notifications.show("Done! Result: $result")
+                }
+                .supplyAsync()
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Start an asynchronous task and show its result in UI.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/async-tasks.html">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+    </category>
+
+    <category name="UI: API examples">
+
+        <codeSnippet name="Create horizontal layout with buttons" contextTypes="controller">
+            <inject variable="uiComponents" classQualifiedName="io.jmix.flowui.UiComponents"/>
+            <text language="java">
+                <![CDATA[
+                ${IS_FINAL}com.vaadin.flow.component.orderedlayout.HorizontalLayout horizontalLayout = uiComponents.create(com.vaadin.flow.component.orderedlayout.HorizontalLayout.class);
+                ${IS_FINAL}com.vaadin.flow.component.button.Button button1 = uiComponents.create(com.vaadin.flow.component.button.Button.class);
+                button1.setText("Button 1");
+                button1.addClickListener(e -> {
+                    // handle button1 click
+                });
+                ${IS_FINAL}com.vaadin.flow.component.button.Button button2 = uiComponents.create(com.vaadin.flow.component.button.Button.class);
+                button2.setText("Button 2");
+                button2.addClickListener(e -> {
+                    // handle button2 click
+                });
+                horizontalLayout.add(button1, button2);
+                getContent().add(horizontalLayout);
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                val horizontalLayout = uiComponents.create(com.vaadin.flow.component.orderedlayout.HorizontalLayout::class.java)
+                val button1 = uiComponents.create(com.vaadin.flow.component.button.Button::class.java)
+                button1.setText("Button 1")
+                button1.addClickListener { e ->
+                    // handle button1 click
+                }
+                val button2 = uiComponents.create(com.vaadin.flow.component.button.Button::class.java)
+                button2.setText("Button 2")
+                button2.addClickListener { e ->
+                    // handle button2 click
+                }
+                horizontalLayout.add(button1, button2)
+                getContent().add(horizontalLayout)
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Programmatically create a horizontal layout with two buttons and add it to the view.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/visual-components.html">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Get component by ID" contextTypes="controller">
+            <text language="java">
+                <![CDATA[
+                ${IS_FINAL}com.vaadin.flow.component.button.Button button = (com.vaadin.flow.component.button.Button) io.jmix.flowui.component.UiComponentUtils.getComponent(this, "button1");
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                val button = io.jmix.flowui.component.UiComponentUtils.getComponent(this, "button1") as com.vaadin.flow.component.button.Button
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Get a component of the current view by the component ID.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/visual-components.html">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Find optional component by ID" contextTypes="controller">
+            <text language="java">
+                <![CDATA[
+                io.jmix.flowui.component.UiComponentUtils.findComponent(this, "button1").ifPresent(component -> {
+                    // do something with the component
+                });
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                io.jmix.flowui.component.UiComponentUtils.findComponent(this, "button1").ifPresent { component ->
+                    // do something with the component
+                }
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Find an optional component of the current view by the component ID.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/visual-components.html">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Get nested components" contextTypes="controller">
+            <variableInputParameter code="container" text="Component container"/>
+            <text language="java">
+                <![CDATA[
+                ${IS_FINAL}java.util.Collection<com.vaadin.flow.component.Component> components = UiComponentUtils.getComponents(${container});
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                val components = io.jmix.flowui.component.UiComponentUtils.getComponents(${container})
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Get a collection of all components within a component container (e.g. <code>VerticalLayout</code>).<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/visual-components.html">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Copy string to clipboard" contextTypes="controller">
+            <inject variable="notifications" classQualifiedName="io.jmix.flowui.Notifications"/>
+            <text language="java">
+                <![CDATA[
+                io.jmix.flowui.component.UiComponentUtils.copyToClipboard("Hello World")
+                        .then(jsonValue -> notifications.show("Copied!"));
+                ]]>
+            </text>
+            <text language="kotlin">
+                <![CDATA[
+                io.jmix.flowui.component.UiComponentUtils.copyToClipboard("Hello World")
+                    .then { _ -> notifications.show("Copied!") }
+                ]]>
+            </text>
+            <description>
+                <![CDATA[
+                Copy a string to the user's clipboard.<br>
+                <a href="https://docs.jmix.io/jmix/flow-ui/visual-components.html">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+    </category>
+
     <category name="Localization">
 
         <codeSnippet name="Get localized message" contextTypes="controller" expressionResultType="String">
@@ -52,6 +713,30 @@
 
             <description>
                 Open a web page in a new browser tab
+            </description>
+        </codeSnippet>
+
+    </category>
+
+    <category name="Events">
+
+        <codeSnippet name="Publish UI event" contextTypes="service,controller">
+            <inject variable="uiEventPublisher" classQualifiedName="io.jmix.flowui.UiEventPublisher"/>
+            <classInputParameter code="eventClass" text="Event class"
+                                 superClass="org.springframework.context.ApplicationEvent" includeLibraries="true"/>
+
+            <text language="java">
+                uiEventPublisher.publishEvent(new ${eventClass}(this));
+            </text>
+            <text language="kotlin">
+                uiEventPublisher.publishEvent(${eventClass}(this))
+            </text>
+
+            <description>
+                <![CDATA[
+                    Send an application event to all browser tabs for the current user session.<br>
+                    <a href="https://docs.jmix.io/jmix/flow-ui/ui-events.html">Jmix Documentation</a>
+                    ]]>
             </description>
         </codeSnippet>
 

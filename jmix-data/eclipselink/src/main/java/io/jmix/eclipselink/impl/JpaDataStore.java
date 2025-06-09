@@ -35,6 +35,7 @@ import io.jmix.data.impl.EntityChangedEventInfo;
 import io.jmix.data.impl.EntityEventManager;
 import io.jmix.data.impl.JpqlQueryBuilder;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.eclipselink.EclipselinkProperties;
 import io.jmix.eclipselink.impl.lazyloading.LazyLoadingContext;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.*;
@@ -75,10 +76,17 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     public static final String LOAD_TX_PREFIX = "JpaDataStore-load-";
     public static final String SAVE_TX_PREFIX = "JpaDataStore-save-";
 
+    
+    public static final int CASCADE_PROPERTY_FETCH_DEPTH = 3;
+    
+
     private static final Logger log = LoggerFactory.getLogger(JpaDataStore.class);
 
     @Autowired
     protected DataProperties properties;
+
+    @Autowired
+    protected EclipselinkProperties eclipselinkProperties;
 
     @Autowired
     protected FetchPlans fetchPlans;
@@ -239,39 +247,36 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     private void completeContextWithCascadeOperations(JpaSaveContext context) {
         Set<Object> cascadeSaved = new HashSet<>();
         for (Object entityToSave : context.getEntitiesToSave()) {
-            processCascadeOperation(entityToSave, cascadeSaved, context.getEntitiesToSave(), entityStates.isNew(entityToSave) ? PERSIST : MERGE);
+            processCascadeOperation(entityToSave,
+                    cascadeSaved,
+                    context.getEntitiesToSave(),
+                    entityStates.isNew(entityToSave) ? PERSIST : MERGE,
+                    context);
         }
         context.getEntitiesToSave().addAll(cascadeSaved);
         context.getCascadeAffectedEntities().addAll(cascadeSaved);
 
         Set<Object> cascadeRemoved = new HashSet<>();
         for (Object entityToRemove : context.getEntitiesToRemove()) {
-            processCascadeOperation(entityToRemove, cascadeRemoved, context.getEntitiesToRemove(), REMOVE);
+            processCascadeOperation(entityToRemove, cascadeRemoved, context.getEntitiesToRemove(), REMOVE, context);
         }
         context.getEntitiesToRemove().addAll(cascadeRemoved);
         context.getCascadeAffectedEntities().addAll(cascadeRemoved);
     }
 
 
-    private void processCascadeOperation(Object entity, Set<Object> result, Collection<Object> contextEntities, CascadeType type) {
+    private void processCascadeOperation(Object entity, Set<Object> result, Collection<Object> contextEntities, CascadeType type, SaveContext context) {
         List<MetaProperty> properties = metadataTools.getCascadeProperties(metadata.getClass(entity), type);
         for (MetaProperty property : properties) {
-            if (type == REMOVE || entityStates.isLoaded(entity, property.getName())) {
-                Collection<?> referencedEntities;
-                if (property.getRange().getCardinality().isMany()) {
-                    referencedEntities = EntityValues.getValue(entity, property.getName());
-                } else {
-                    referencedEntities = Collections.singletonList(EntityValues.getValue(entity, property.getName()));
-                }
+            Collection<?> referencedEntities = getReferencedEntitiesForCascadeOperation(entity, property, type, context);
 
-                if (referencedEntities != null) {
-                    for (Object referencedEntity : referencedEntities) {
-                        if (referencedEntity != null
-                                && !contextEntities.contains(referencedEntity)
-                                && !result.contains(referencedEntity)) {
-                            processCascadeOperation(referencedEntity, result, contextEntities, type);
-                            result.add(referencedEntity);
-                        }
+            if (referencedEntities != null) {
+                for (Object referencedEntity : referencedEntities) {
+                    if (referencedEntity != null
+                            && !contextEntities.contains(referencedEntity)
+                            && !result.contains(referencedEntity)) {
+                        processCascadeOperation(referencedEntity, result, contextEntities, type, context);
+                        result.add(referencedEntity);
                     }
                 }
             }
@@ -281,11 +286,74 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             if (entityStates.isLoaded(entity, propertyName)) {
                 Object embeddedPropertyValue = EntityValues.getValue(entity, propertyName);
                 if (embeddedPropertyValue != null) {
-                    processCascadeOperation(embeddedPropertyValue, result, contextEntities, type);
+                    processCascadeOperation(embeddedPropertyValue, result, contextEntities, type, context);
                 }
             }
         }
     }
+
+    /**
+     * Looks for references with {@link CascadeType} == {@code type}. Returns such referenced entities if they are loaded
+     * or loads them if {@code type} is {@link CascadeType#REMOVE}.
+     * @return loaded referenced entities or null if no suitable references present.
+     */
+    @Nullable
+    private Collection<?> getReferencedEntitiesForCascadeOperation(Object entity, MetaProperty property, CascadeType type, SaveContext context) {
+        if (entityStates.isLoaded(entity, property.getName())) {
+            return getCollectionValue(entity, property);
+        }
+        if (type == REMOVE) {
+            return eclipselinkProperties.isDisableLazyLoading()
+                    ? loadReferencedEntitiesForRemove(entity, property, context)
+                    : getCollectionValue(entity, property);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private Collection<?> loadReferencedEntitiesForRemove(Object entity, MetaProperty property, SaveContext context) {
+        MetaClass metaClass = metadata.getClass(entity);
+        FetchPlan fetchPlan = buildCascadeRemoveFetchPlan(metaClass, property);
+        LoadContext<?> loadContext = new LoadContext<>(metaClass)
+                .setId(Id.of(entity))
+                .setFetchPlan(fetchPlan)
+                .setAccessConstraints(context.getAccessConstraints())
+                .setHints(context.getHints());
+
+        return getCollectionValue(Objects.requireNonNull(load(loadContext)), property);
+    }
+
+    @Nullable
+    private Collection<?> getCollectionValue(Object entity, MetaProperty property) {
+        if (property.getRange().getCardinality().isMany()) {
+            return EntityValues.getValue(entity, property.getName());
+        } else {
+            return Collections.singletonList(EntityValues.getValue(entity, property.getName()));
+        }
+    }
+
+    private FetchPlan buildCascadeRemoveFetchPlan(MetaClass metaClass, MetaProperty property) {
+        return fetchPlans.builder(metaClass.getJavaClass())
+                .add(property.getName(), fpBuilder -> includeNestedCascadeRemoveProperties(fpBuilder, property, 0))
+                .build();
+    }
+
+    private void includeNestedCascadeRemoveProperties(FetchPlanBuilder currentBuilder, MetaProperty currentProperty, int depth) {
+        if (depth > CASCADE_PROPERTY_FETCH_DEPTH) {
+            log.debug("The depth of cascade remove properties exceeded the limit ({}). This might indicate cyclic cascade dependencies.",
+                    CASCADE_PROPERTY_FETCH_DEPTH);
+            return;
+        }
+
+        MetaClass currentMetaClass = currentProperty.getRange().asClass();
+        List<MetaProperty> nestedCascadeRemoveProperties = metadataTools.getCascadeProperties(currentMetaClass, CascadeType.REMOVE);
+
+        for (MetaProperty nestedProperty : nestedCascadeRemoveProperties) {
+            currentBuilder.add(nestedProperty.getName(), fpBuilder -> includeNestedCascadeRemoveProperties(fpBuilder, nestedProperty, depth + 1));
+        }
+    }
+
 
     @Override
     protected Set<Object> saveAll(SaveContext context) {

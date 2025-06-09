@@ -103,7 +103,7 @@ public class DialogsImpl implements Dialogs {
     }
 
     protected Button createButton(Action action, Dialog dialog) {
-        Button button = new Button();
+        Button button = uiComponents.create(Button.class);
 
         if (action instanceof DialogAction dialogAction) {
             DialogAction.Type type = dialogAction.getType();

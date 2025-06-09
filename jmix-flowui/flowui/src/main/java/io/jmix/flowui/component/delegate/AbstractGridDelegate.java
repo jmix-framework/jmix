@@ -34,7 +34,6 @@ import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.common.util.Preconditions;
@@ -90,7 +89,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected Fragments fragments;
     protected MetadataTools metadataTools;
     protected MessageTools messageTools;
-    protected Messages messages;
     protected AccessManager accessManager;
     protected Aggregations aggregations;
     protected AggregatableDelegate<Object> aggregatableDelegate;
@@ -153,7 +151,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         fragments = applicationContext.getBean(Fragments.class);
         metadataTools = applicationContext.getBean(MetadataTools.class);
         messageTools = applicationContext.getBean(MessageTools.class);
-        messages = applicationContext.getBean(Messages.class);
         accessManager = applicationContext.getBean(AccessManager.class);
         aggregations = applicationContext.getBean(Aggregations.class);
     }

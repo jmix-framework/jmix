@@ -20,8 +20,10 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.Stores;
+import io.jmix.core.annotation.MessageSourceBasenames;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
+import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;
@@ -30,17 +32,24 @@ import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.Views;
+import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.testassist.vaadin.TestServletContext;
+import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.flowui.view.builder.WindowBuilderProcessor;
 import io.jmix.reports.ReportsConfiguration;
+import io.jmix.reportsflowui.test_support.TestWindowBuilderProcessor;
+import io.jmix.reportsflowui.test_support.role.FullAccessRole;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.servlet.ServletContext;
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -55,13 +64,20 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
-import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @Import({CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class, SecurityConfiguration.class,
         ReportsConfiguration.class, FlowuiConfiguration.class, ReportsFlowuiConfiguration.class})
 @EnableWebSecurity
+@PropertySource("classpath:/test_support/test-app.properties")
+@MessageSourceBasenames({"test_support/messages"})
 public class ReportsFlowuiTestConfiguration {
+
+    @Bean
+    public MessageSource messageSource(JmixModules modules, Resources resources) {
+        return new JmixMessageSource(modules, resources);
+    }
 
     @Bean
     @Primary
@@ -93,6 +109,14 @@ public class ReportsFlowuiTestConfiguration {
     }
 
     @Bean
+    public SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource);
+        liquibase.setChangeLog("test_support/liquibase/test-changelog.xml");
+        return liquibase;
+    }
+
+    @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
     }
@@ -103,12 +127,12 @@ public class ReportsFlowuiTestConfiguration {
     }
 
     @Bean
-    public UserRepository userRepository() {
+    public UserRepository userRepository(RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
         InMemoryUserRepository repository = new InMemoryUserRepository();
         repository.addUser(User.builder()
                 .username("admin")
                 .password("{noop}admin")
-                .authorities(Collections.emptyList())
+                .authorities(List.of(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.NAME)))
                 .build());
         return repository;
     }
@@ -126,5 +150,12 @@ public class ReportsFlowuiTestConfiguration {
     @Bean
     public ServletContext servletContext() {
         return new TestServletContext();
+    }
+
+    @Bean
+    @Primary
+    public WindowBuilderProcessor windowBuilderProcessor(ApplicationContext applicationContext, Views views, ViewRegistry viewRegistry,
+                                                         UiAccessChecker uiAccessChecker) {
+        return new TestWindowBuilderProcessor(applicationContext, views, viewRegistry, uiAccessChecker);
     }
 }

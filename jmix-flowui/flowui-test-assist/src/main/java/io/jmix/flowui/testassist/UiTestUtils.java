@@ -41,7 +41,8 @@ import java.util.Objects;
  */
 public final class UiTestUtils {
 
-    private static final Method VALIDATE_VIEW_METHOD = ReflectionUtils.findMethod(StandardDetailView.class, "validateView");
+    private static final Method VALIDATE_VIEW_METHOD =
+            Objects.requireNonNull(ReflectionUtils.findMethod(StandardDetailView.class, "validateView"));
     private static ApplicationContext applicationContext;
 
     static {
@@ -107,7 +108,7 @@ public final class UiTestUtils {
      * Example of the order in which notifications are stored:
      * <ul>
      *     <li>first opened notification has index {@code 0}</li>
-     *     <li>seconds opened notification has index {@code 1}</li>
+     *     <li>second opened notification has index {@code 1}</li>
      *     <li>last opened notification has index {@code openedNotifications.size() - 1}</li>
      * </ul>
      *
@@ -131,7 +132,7 @@ public final class UiTestUtils {
      * Example of the order in which dialogs are stored:
      * <ul>
      *     <li>first opened dialog has index {@code 0}</li>
-     *     <li>seconds opened dialog has index {@code 1}</li>
+     *     <li>second opened dialog has index {@code 1}</li>
      *     <li>last opened dialog has index {@code openedDialogs.size() - 1}</li>
      * </ul>
      *

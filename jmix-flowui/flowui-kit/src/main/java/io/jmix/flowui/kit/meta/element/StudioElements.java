@@ -167,18 +167,7 @@ public interface StudioElements {
                     ),
                     @StudioSupplyHandler(
                             methodName = "setEditorComponent",
-                            parameterType = "com.vaadin.flow.component.Component",
-                            genericResolvingInfo = {
-                                    @GenericResolvingInfo(
-                                            typeParameter = "T",
-                                            resolvingStrategy = @ResolvingStrategy(
-                                                    classFqnStrategy = @ClassFqnStrategy(
-                                                            classFqn = "com.vaadin.flow.component.Component"
-                                                    ),
-                                                    xmlStrategy = @XmlStrategy(parentComponentTag = "")
-                                            )
-                                    )
-                            }
+                            parameterType = "com.vaadin.flow.component.Component"
                     ),
                     @StudioSupplyHandler(
                             methodName = "setEditorComponent",

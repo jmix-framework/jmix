@@ -16,6 +16,7 @@
 
 package io.jmix.reports.impl;
 
+import io.jmix.core.ClassManager;
 import io.jmix.reports.annotation.ReportDef;
 import io.jmix.reports.annotation.ReportGroupDef;
 import io.jmix.reports.entity.Report;
@@ -25,8 +26,14 @@ import io.jmix.reports.impl.builder.AnnotatedReportBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -40,12 +47,16 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
     protected final AnnotatedReportHolder reportHolder;
     protected final AnnotatedGroupBuilder groupBuilder;
     protected final AnnotatedReportGroupHolder reportGroupHolder;
+    protected final ClassManager classManager;
 
-    public AnnotatedReportScannerImpl(AnnotatedReportBuilder reportBuilder, AnnotatedReportHolder reportHolder, AnnotatedGroupBuilder groupBuilder, AnnotatedReportGroupHolder reportGroupHolder) {
+    public AnnotatedReportScannerImpl(AnnotatedReportBuilder reportBuilder, AnnotatedReportHolder reportHolder,
+                                      AnnotatedGroupBuilder groupBuilder, AnnotatedReportGroupHolder reportGroupHolder,
+                                      ClassManager classManager) {
         this.reportBuilder = reportBuilder;
         this.reportHolder = reportHolder;
         this.groupBuilder = groupBuilder;
         this.reportGroupHolder = reportGroupHolder;
+        this.classManager = classManager;
     }
 
     @Override
@@ -92,5 +103,76 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void loadReportGroupClass(String className) {
+        Class<?> reportGroupClass = classManager.loadClass(className);
+        if (!reportGroupClass.isAnnotationPresent(ReportGroupDef.class)) {
+            log.error("Group class not annotated with @{}: {}", ReportGroupDef.class.getSimpleName(), className);
+            return;
+        }
+
+        AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
+        Object definitionInstance = beanFactory.createBean(reportGroupClass);
+
+        // test that definition is correct,
+        //   to fail-fast without loosing cache if it's invalid
+        groupBuilder.createGroupFromDefinition(definitionInstance);
+
+        String beanName = getBeanName((BeanDefinitionRegistry) beanFactory, reportGroupClass);
+        replaceBeanInContext(beanFactory, definitionInstance, beanName);
+
+        log.info("Rescanning annotated groups and reports");
+        reportHolder.clear();
+        reportGroupHolder.clear();
+
+        importGroupDefinitions();
+        importReportDefinitions();
+    }
+
+    @Override
+    public void loadReportClass(String className) {
+        Class<?> reportClass = classManager.loadClass(className);
+        if (!reportClass.isAnnotationPresent(ReportDef.class)) {
+            log.error("Report class not annotated with @{}: {}", ReportDef.class.getSimpleName(), className);
+            return;
+        }
+
+        AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
+        Object definitionInstance = beanFactory.createBean(reportClass);
+
+        // test that definition is correct,
+        //   to fail-fast without loosing cache if it's invalid
+        reportBuilder.createReportFromDefinition(definitionInstance);
+
+        String beanName = getBeanName((BeanDefinitionRegistry) beanFactory, reportClass);
+        replaceBeanInContext(beanFactory, definitionInstance, beanName);
+
+        log.info("Rescanning annotated reports");
+        reportHolder.clear();
+        importReportDefinitions();
+    }
+
+    protected void replaceBeanInContext(AutowireCapableBeanFactory beanFactory, Object definitionInstance, String beanName) {
+        DefaultSingletonBeanRegistry registry = (DefaultSingletonBeanRegistry) beanFactory;
+
+        registry.destroySingleton(beanName);
+        registry.registerSingleton(beanName, definitionInstance);
+
+        log.info("Bean replaced in context: name {}, {}", beanName, definitionInstance.getClass());
+    }
+
+    protected String getBeanName(BeanDefinitionRegistry beanFactory, Class<?> reportGroupClass) {
+        AnnotationBeanNameGenerator beanNameGenerator = getBeanNameGenerator();
+
+        BeanDefinition beanDefinition = new AnnotatedGenericBeanDefinition(reportGroupClass);
+
+        String beanName = beanNameGenerator.generateBeanName(beanDefinition, beanFactory);
+        return beanName;
+    }
+
+    protected AnnotationBeanNameGenerator getBeanNameGenerator() {
+        return AnnotationBeanNameGenerator.INSTANCE;
     }
 }

@@ -30,4 +30,18 @@ public interface AnnotatedReportScanner {
      * @see io.jmix.reports.annotation.ReportDef
      */
     void importReportDefinitions();
+
+
+    /**
+     * Reloads annotated report group definition for hot-deploy.
+     * @param className fully-qualified name of the annotated report group class
+     */
+    void loadReportGroupClass(String className);
+
+    /**
+     * Reloads annotated report definition for hot-deploy.
+     * @param className fully-qualified name of the annotated report class
+     */
+    void loadReportClass(String className);
+
 }

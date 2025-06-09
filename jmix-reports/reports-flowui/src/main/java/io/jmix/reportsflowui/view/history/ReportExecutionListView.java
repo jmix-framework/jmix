@@ -26,6 +26,7 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import org.apache.commons.collections4.CollectionUtils;
@@ -52,9 +53,26 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     @Autowired
     protected Downloader downloader;
     @Autowired
+    protected ReportsProperties reportsProperties;
+    @Autowired
     protected SecondsToTextFormatter durationFormatter;
 
     protected List<Report> filterByReports;
+
+    @Subscribe
+    protected void onInit(InitEvent event) {
+        setDownloaderViewFileAllowanceDelegate();
+    }
+
+    protected void setDownloaderViewFileAllowanceDelegate() {
+        downloader.setViewFileAllowanceDelegate((fileExtension) -> {
+            if (StringUtils.isEmpty(fileExtension)) {
+                return false;
+            }
+
+            return reportsProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExtension));
+        });
+    }
 
     @Supply(to = "executionsDataGrid.executionTimeSec", subject = "renderer")
     protected Renderer<ReportExecution> executionsDataGridExecutionTimeRenderer() {

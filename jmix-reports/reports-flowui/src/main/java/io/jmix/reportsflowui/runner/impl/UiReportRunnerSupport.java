@@ -20,12 +20,14 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.view.DialogWindow;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reportsflowui.runner.UiReportRunContext;
 import io.jmix.reportsflowui.view.run.ReportTableView;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;
 
@@ -38,10 +40,24 @@ public class UiReportRunnerSupport {
 
     protected final DialogWindows dialogWindows;
     protected final Downloader downloader;
+    protected final ReportsProperties reportsProperties;
 
-    public UiReportRunnerSupport(DialogWindows dialogWindows, Downloader downloader) {
+    public UiReportRunnerSupport(DialogWindows dialogWindows, Downloader downloader, ReportsProperties reportsProperties) {
         this.dialogWindows = dialogWindows;
         this.downloader = downloader;
+        this.reportsProperties = reportsProperties;
+
+        setDownloaderViewFileAllowanceDelegate();
+    }
+
+    protected void setDownloaderViewFileAllowanceDelegate() {
+        downloader.setViewFileAllowanceDelegate((fileExtension) -> {
+            if (StringUtils.isEmpty(fileExtension)) {
+                return false;
+            }
+
+            return reportsProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExtension));
+        });
     }
 
     protected void showResult(ReportOutputDocument document, UiReportRunContext context) {

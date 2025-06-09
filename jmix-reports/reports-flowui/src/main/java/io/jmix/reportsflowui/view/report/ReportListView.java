@@ -37,6 +37,7 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportImportExport;
 import io.jmix.reports.ReportsPersistence;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
@@ -49,6 +50,7 @@ import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -97,6 +99,8 @@ public class ReportListView extends StandardListView<Report> {
     @Autowired
     protected UiProperties uiProperties;
     @Autowired
+    protected ReportsProperties reportsProperties;
+    @Autowired
     protected CoreProperties coreProperties;
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
@@ -115,7 +119,19 @@ public class ReportListView extends StandardListView<Report> {
 
     @Subscribe
     protected void onInit(InitEvent event) {
+        setDownloaderViewFileAllowanceDelegate();
+
         initReportsDataGridCreate();
+    }
+
+    protected void setDownloaderViewFileAllowanceDelegate() {
+        downloader.setViewFileAllowanceDelegate((fileExtension) -> {
+            if (StringUtils.isEmpty(fileExtension)) {
+                return false;
+            }
+
+            return reportsProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExtension));
+        });
     }
 
     private void initReportsDataGridCreate() {

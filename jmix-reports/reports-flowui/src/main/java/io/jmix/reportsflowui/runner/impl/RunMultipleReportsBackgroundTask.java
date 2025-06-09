@@ -21,6 +21,7 @@ import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.view.View;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.runner.ReportRunContext;
 import io.jmix.reports.runner.ReportRunner;
@@ -28,6 +29,7 @@ import io.jmix.reports.util.ReportZipUtils;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reportsflowui.runner.UiReportRunContext;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -38,6 +40,7 @@ public class RunMultipleReportsBackgroundTask extends BackgroundTask<Integer, Li
     protected ReportRunner reportRunner;
     protected ReportZipUtils reportZipUtils;
     protected Downloader downloader;
+    protected ReportsProperties reportsProperties;
 
     protected final UiReportRunContext context;
     protected final Report targetReport;
@@ -55,6 +58,9 @@ public class RunMultipleReportsBackgroundTask extends BackgroundTask<Integer, Li
     }
 
     @Autowired
+    public void setReportsProperties(ReportsProperties reportsProperties) { this.reportsProperties = reportsProperties; }
+
+    @Autowired
     public void setReportZipUtils(ReportZipUtils reportZipUtils) {
         this.reportZipUtils = reportZipUtils;
     }
@@ -62,6 +68,18 @@ public class RunMultipleReportsBackgroundTask extends BackgroundTask<Integer, Li
     @Autowired
     public void setDownloader(Downloader downloader) {
         this.downloader = downloader;
+
+        setDownloaderViewFileAllowanceDelegate();
+    }
+
+    protected void setDownloaderViewFileAllowanceDelegate() {
+        downloader.setViewFileAllowanceDelegate((fileExtension) -> {
+            if (StringUtils.isEmpty(fileExtension)) {
+                return false;
+            }
+
+            return reportsProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExtension));
+        });
     }
 
     @Autowired

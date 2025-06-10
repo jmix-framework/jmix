@@ -16,20 +16,20 @@
 package io.jmix.reports.entity;
 
 import io.jmix.core.CopyingSystemState;
-import io.jmix.reports.delegate.ParameterTransformer;
-import io.jmix.reports.delegate.ParameterValidator;
-import io.jmix.reports.yarg.structure.DefaultValueProvider;
-import io.jmix.reports.yarg.structure.ReportParameterWithDefaultValue;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
+import io.jmix.reports.delegate.ParameterTransformer;
+import io.jmix.reports.delegate.ParameterValidator;
 import io.jmix.reports.util.MsgBundleTools;
+import io.jmix.reports.yarg.structure.DefaultValueProvider;
+import io.jmix.reports.yarg.structure.ReportParameterWithDefaultValue;
+import jakarta.persistence.Id;
 import org.apache.commons.lang3.StringUtils;
 
-import jakarta.persistence.Id;
 import java.util.UUID;
 
 @JmixEntity(name = "report_ReportInputParameter", annotatedPropertiesOnly = true)
@@ -106,6 +106,12 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue, Co
 
     @JmixProperty
     protected Boolean defaultDateIsCurrent = false;
+
+    /**
+     * Message key for localized caption. Used by annotated reports.
+     */
+    @JmixProperty
+    protected String nameMessageKey;
 
     /* The following attributes are excluded from JSON serialization as they aren't meta properties */
     protected ParameterValidator<?> validationDelegate;
@@ -232,7 +238,7 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue, Co
     @InstanceName
     @DependsOnProperties({"localeNames", "name"})
     public String getInstanceName(MsgBundleTools msgBundleTools) {
-        return msgBundleTools.getLocalizedValue(localeNames, name);
+        return msgBundleTools.getLocalizedValue(nameMessageKey, localeNames, name);
     }
 
     @Override
@@ -342,6 +348,14 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue, Co
 
     public void setDefaultValueProvider(DefaultValueProvider<?> defaultValueProvider) {
         this.defaultValueProvider = defaultValueProvider;
+    }
+
+    public String getNameMessageKey() {
+        return nameMessageKey;
+    }
+
+    public void setNameMessageKey(String nameMessageKey) {
+        this.nameMessageKey = nameMessageKey;
     }
 
     @Override

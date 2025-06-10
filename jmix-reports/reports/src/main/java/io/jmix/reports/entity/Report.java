@@ -182,6 +182,13 @@ public class Report implements io.jmix.reports.yarg.structure.Report, CopyingSys
     @JmixProperty
     protected ReportSource source;
 
+    /**
+     * Message key for localized caption. Used by annotated reports.
+     */
+    @Transient
+    @JmixProperty
+    protected String nameMessageKey;
+
     public Boolean getIsTmp() {
         return isTmp;
     }
@@ -500,10 +507,18 @@ public class Report implements io.jmix.reports.yarg.structure.Report, CopyingSys
         this.source = source;
     }
 
+    public String getNameMessageKey() {
+        return nameMessageKey;
+    }
+
+    public void setNameMessageKey(String nameMessageKey) {
+        this.nameMessageKey = nameMessageKey;
+    }
+
     @InstanceName
     @DependsOnProperties({"localeNames", "name"})
     public String getInstanceName(MsgBundleTools msgBundleTools) {
-        return msgBundleTools.getLocalizedValue(localeNames, name);
+        return msgBundleTools.getLocalizedValue(nameMessageKey, localeNames, name);
     }
 
     @Override

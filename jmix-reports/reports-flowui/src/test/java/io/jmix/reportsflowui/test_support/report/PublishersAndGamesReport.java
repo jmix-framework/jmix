@@ -102,8 +102,14 @@ import java.util.Date;
                         @TableBandDef(
                                 bandName = "Publishers",
                                 columns = {
-                                        @TableColumnDef(key = "name", caption = "Name"),
-                                        @TableColumnDef(key = "gameCount", caption = "Game count")
+                                        @TableColumnDef(
+                                                key = "name",
+                                                caption = "msg://io.jmix.reportsflowui.test_support.report/report.publishersGames.columns.name"
+                                        ),
+                                        @TableColumnDef(
+                                                key = "gameCount",
+                                                caption = "msg://io.jmix.reportsflowui.test_support.report/report.publishersGames.columns.gameCount"
+                                        )
                                 }
                         ),
                         @TableBandDef(

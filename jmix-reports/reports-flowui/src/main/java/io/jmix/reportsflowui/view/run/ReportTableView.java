@@ -352,7 +352,10 @@ public class ReportTableView extends StandardView {
                 if (columnInfo.getPosition() != null) {
                     table.setColumnPosition(column, columnInfo.getPosition());
                 }
-                column.setHeader(columnInfo.getCaption());
+                column.setHeader(columnInfo.getCaptionMessageKey() != null
+                        ? messages.getMessage(columnInfo.getCaptionMessageKey())
+                        : columnInfo.getCaption()
+                );
             }
         }
     }

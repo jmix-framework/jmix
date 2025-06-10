@@ -29,13 +29,9 @@ import java.util.UUID;
 public class AnnotatedGroupBuilderImpl implements AnnotatedGroupBuilder {
 
     protected final Metadata metadata;
-    protected final MessageTools messageTools;
-    protected final AnnotatedBuilderUtils annotatedBuilderUtils;
 
-    public AnnotatedGroupBuilderImpl(Metadata metadata, MessageTools messageTools, AnnotatedBuilderUtils annotatedBuilderUtils) {
+    public AnnotatedGroupBuilderImpl(Metadata metadata) {
         this.metadata = metadata;
-        this.messageTools = messageTools;
-        this.annotatedBuilderUtils = annotatedBuilderUtils;
     }
 
     @Override
@@ -56,9 +52,10 @@ public class AnnotatedGroupBuilderImpl implements AnnotatedGroupBuilder {
         } // else keep random auto-generated id
 
         String titleValue = annotation.title();
-        group.setTitle(messageTools.loadString(titleValue, messageTools.getDefaultLocale()));
         if (titleValue.startsWith(MessageTools.MARK)) {
-            group.setLocaleNames(annotatedBuilderUtils.buildLocaleNames(titleValue));
+            group.setTitleMessageKey(titleValue.substring(MessageTools.MARK.length()));
+        } else {
+            group.setTitle(titleValue);
         }
 
         return group;

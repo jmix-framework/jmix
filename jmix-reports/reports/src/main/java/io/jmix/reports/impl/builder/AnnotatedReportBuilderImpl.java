@@ -55,7 +55,6 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
     protected final Metadata metadata;
     protected final MessageTools messageTools;
-    protected final AnnotatedBuilderUtils annotatedBuilderUtils;
     protected final AnnotatedReportGroupHolder annotatedReportGroupHolder;
     protected final Resources resources;
     protected final AnnotatedReportRoleExtractor roleExtractor;
@@ -64,14 +63,13 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
     protected final AnnotatedReportScreenExtractor screenExtractor;
     protected final ClassManager classManager;
 
-    public AnnotatedReportBuilderImpl(Metadata metadata, MessageTools messageTools, AnnotatedBuilderUtils annotatedBuilderUtils,
+    public AnnotatedReportBuilderImpl(Metadata metadata, MessageTools messageTools,
                                       AnnotatedReportGroupHolder annotatedReportGroupHolder, Resources resources,
                                       AnnotatedReportRoleExtractor roleExtractor, ParameterClassResolver parameterClassResolver,
                                       @Autowired(required = false) @Nullable AnnotatedReportScreenExtractor screenExtractor,
                                       ClassManager classManager) {
         this.metadata = metadata;
         this.messageTools = messageTools;
-        this.annotatedBuilderUtils = annotatedBuilderUtils;
         this.annotatedReportGroupHolder = annotatedReportGroupHolder;
         this.resources = resources;
         this.roleExtractor = roleExtractor;
@@ -106,10 +104,10 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
     protected void assignReportParameters(Report report, ReportDef annotation) {
         String nameValue = annotation.name();
-        report.setName(messageTools.loadString(nameValue, messageTools.getDefaultLocale()));
-
         if (nameValue.startsWith(MessageTools.MARK)) {
-            report.setLocaleNames(annotatedBuilderUtils.buildLocaleNames(nameValue));
+            report.setNameMessageKey(nameValue.substring(MessageTools.MARK.length()));
+        } else {
+            report.setName(nameValue);
         }
 
         if (annotation.code().isEmpty()) {
@@ -219,9 +217,10 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         parameter.setAlias(annotation.alias());
 
         String nameValue = annotation.name();
-        parameter.setName(messageTools.loadString(nameValue, messageTools.getDefaultLocale()));
         if (nameValue.startsWith(MessageTools.MARK)) {
-            parameter.setLocaleNames(annotatedBuilderUtils.buildLocaleNames(nameValue));
+            parameter.setNameMessageKey(nameValue.substring(MessageTools.MARK.length()));
+        } else {
+            parameter.setName(nameValue);
         }
 
         parameter.setRequired(annotation.required());
@@ -419,8 +418,12 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
                 column.setPosition(columnPosition++);
                 column.setKey(columnDef.key());
 
-                // note: no localization here, since reporting model itself doesn't support localization
-                column.setCaption(columnDef.caption());
+                String captionValue = columnDef.caption();
+                if (captionValue.startsWith(MessageTools.MARK)) {
+                    column.setCaptionMessageKey(captionValue.substring(MessageTools.MARK.length()));
+                } else {
+                    column.setCaption(captionValue);
+                }
 
                 tableColumns.add(column);
             }

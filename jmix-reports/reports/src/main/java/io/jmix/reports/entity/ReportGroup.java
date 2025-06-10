@@ -95,6 +95,13 @@ public class ReportGroup {
     @JmixProperty
     protected ReportSource source;
 
+    /**
+     * Message key for localized caption. Used by annotated groups.
+     */
+    @Transient
+    @JmixProperty
+    protected String titleMessageKey;
+
     public UUID getId() {
         return id;
     }
@@ -199,6 +206,14 @@ public class ReportGroup {
         this.source = source;
     }
 
+    public String getTitleMessageKey() {
+        return titleMessageKey;
+    }
+
+    public void setTitleMessageKey(String titleMessageKey) {
+        this.titleMessageKey = titleMessageKey;
+    }
+
     @JmixProperty
     @DependsOnProperties("code")
     public Boolean getSystemFlag() {
@@ -208,7 +223,7 @@ public class ReportGroup {
     @InstanceName
     @DependsOnProperties({"title", "localeNames"})
     public String getInstanceName(MsgBundleTools msgBundleTools) {
-        return msgBundleTools.getLocalizedValue(localeNames, title);
+        return msgBundleTools.getLocalizedValue(titleMessageKey, localeNames, title);
     }
 
     @PostLoad

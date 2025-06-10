@@ -16,6 +16,11 @@
 
 package io.jmix.reports.impl;
 
+/**
+ * Performs the following tasks:
+ * <li>scanning and importing annotated report definitions</li>
+ * <li>reloading hot-deployed definitions</li>
+ */
 public interface AnnotatedReportScanner {
     /**
      * Scan and import group definitions from application context.
@@ -30,7 +35,6 @@ public interface AnnotatedReportScanner {
      * @see io.jmix.reports.annotation.ReportDef
      */
     void importReportDefinitions();
-
 
     /**
      * Reloads annotated report group definition for hot-deploy.

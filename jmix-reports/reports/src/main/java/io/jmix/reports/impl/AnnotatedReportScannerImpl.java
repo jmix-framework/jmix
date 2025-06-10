@@ -34,8 +34,12 @@ import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.AnnotationBeanNameGenerator;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Component("reports_AnnotatedReportScanner")
@@ -120,8 +124,9 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
         //   to fail-fast without loosing cache if it's invalid
         groupBuilder.createGroupFromDefinition(definitionInstance);
 
-        String beanName = getBeanName((BeanDefinitionRegistry) beanFactory, reportGroupClass);
-        replaceBeanInContext(beanFactory, definitionInstance, beanName);
+        String beanName = getBeanName(beanFactory, reportGroupClass);
+        List<String> beanNamesToDelete = getBeanNamesToDelete(beanName, className, ReportGroupDef.class);
+        replaceBeanInContext(beanFactory, definitionInstance, beanName, beanNamesToDelete);
 
         log.info("Rescanning annotated groups and reports");
         reportHolder.clear();
@@ -146,29 +151,65 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
         //   to fail-fast without loosing cache if it's invalid
         reportBuilder.createReportFromDefinition(definitionInstance);
 
-        String beanName = getBeanName((BeanDefinitionRegistry) beanFactory, reportClass);
-        replaceBeanInContext(beanFactory, definitionInstance, beanName);
+        String beanName = getBeanName(beanFactory, reportClass);
+        List<String> beanNamesToDelete = getBeanNamesToDelete(beanName, className, ReportDef.class);
+        replaceBeanInContext(beanFactory, definitionInstance, beanName, beanNamesToDelete);
 
         log.info("Rescanning annotated reports");
         reportHolder.clear();
         importReportDefinitions();
     }
 
-    protected void replaceBeanInContext(AutowireCapableBeanFactory beanFactory, Object definitionInstance, String beanName) {
+    protected void replaceBeanInContext(AutowireCapableBeanFactory beanFactory, Object definitionInstance,
+                                        String beanName, List<String> beanNamesToDelete) {
         DefaultSingletonBeanRegistry registry = (DefaultSingletonBeanRegistry) beanFactory;
 
-        registry.destroySingleton(beanName);
+        for (String beanToDelete : beanNamesToDelete) {
+            registry.destroySingleton(beanToDelete);
+
+            if (!beanName.equals(beanToDelete)) {
+                ((BeanDefinitionRegistry) beanFactory).removeBeanDefinition(beanToDelete);
+            }
+        }
         registry.registerSingleton(beanName, definitionInstance);
 
-        log.info("Bean replaced in context: name {}, {}", beanName, definitionInstance.getClass());
+        log.info("Bean {} replaced in context with: {}, {}", beanNamesToDelete, beanName, definitionInstance.getClass());
     }
 
-    protected String getBeanName(BeanDefinitionRegistry beanFactory, Class<?> reportGroupClass) {
+    /*
+     * Handle also case when bean name is changed with hot deploy (but class name remains the same).
+     */
+    protected List<String> getBeanNamesToDelete(String beanName, String className, Class<? extends Annotation> annotationMarkerClass) {
+        List<String> beanNamesToDelete = new ArrayList<>();
+        if (applicationContext.containsBean(beanName)) {
+            beanNamesToDelete.add(beanName);
+        }
+        String anotherBeanName = findExistingBeanNameByClassName(className, annotationMarkerClass);
+        if (anotherBeanName != null && !anotherBeanName.equals(beanName)) {
+            beanNamesToDelete.add(anotherBeanName);
+        }
+        return beanNamesToDelete;
+    }
+
+    @Nullable
+    protected String findExistingBeanNameByClassName(String className, Class<? extends Annotation> annotationMarkerClass) {
+        String[] beanNames = applicationContext.getBeanNamesForAnnotation(annotationMarkerClass);
+
+        for (String beanName : beanNames) {
+            Class<?> beanClass = applicationContext.getType(beanName);
+            if (beanClass != null && className.equals(beanClass.getName())) {
+                return beanName;
+            }
+        }
+        return null;
+    }
+
+    protected String getBeanName(AutowireCapableBeanFactory beanFactory, Class<?> reportGroupClass) {
         AnnotationBeanNameGenerator beanNameGenerator = getBeanNameGenerator();
 
         BeanDefinition beanDefinition = new AnnotatedGenericBeanDefinition(reportGroupClass);
 
-        String beanName = beanNameGenerator.generateBeanName(beanDefinition, beanFactory);
+        String beanName = beanNameGenerator.generateBeanName(beanDefinition, (BeanDefinitionRegistry) beanFactory);
         return beanName;
     }
 

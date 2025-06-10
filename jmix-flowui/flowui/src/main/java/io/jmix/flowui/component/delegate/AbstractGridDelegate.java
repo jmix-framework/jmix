@@ -65,7 +65,6 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.sys.BeanUtil;
-import io.jmix.flowui.view.View;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeansException;
@@ -112,6 +111,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected Consumer<String> componentEmptyStateTextDelegate;
     protected Consumer<Component> componentEmptyStateComponentDelegate;
+    protected Registration emptyStateByPermissionRegistration;
 
     protected boolean aggregatable;
     protected EnhancedDataGrid.AggregationPosition aggregationPosition = EnhancedDataGrid.AggregationPosition.BOTTOM;
@@ -779,11 +779,14 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected void updateEmptyState() {
+        if (emptyStateByPermissionRegistration != null) {
+            emptyStateByPermissionRegistration.remove();
+            emptyStateByPermissionRegistration = null;
+        }
+
         if (MapUtils.isNotEmpty(propertyColumns) &&
                 !CollectionUtils.containsAny(component.getColumns(), propertyColumns.keySet())) {
-            Component emptyStateByPermissionsComponent = createEmptyStateByPermissionsComponent();
-
-            componentEmptyStateComponentDelegate.accept(emptyStateByPermissionsComponent);
+            setupEmptyStateByPermissionComponent();
         } else if (emptyStateComponentInternal != null) {
             componentEmptyStateComponentDelegate.accept(emptyStateComponentInternal);
         } else if (emptyStateTextInternal != null) {
@@ -794,13 +797,23 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         }
     }
 
-    protected Component createEmptyStateByPermissionsComponent() {
-        View<?> view = UiComponentUtils.findView(component);
-        if (view == null) {
-            view = UiComponentUtils.getCurrentView();
-        }
+    protected void setupEmptyStateByPermissionComponent() {
+        if (component.isAttached()) {
+            initEmptyStateByPermissionsComponent();
+        } else {
+            emptyStateByPermissionRegistration = component.addAttachListener(event -> {
+                event.unregisterListener();
+                emptyStateByPermissionRegistration = null;
 
-        return fragments.create(view, DataGridEmptyStateByPermissionsFragment.class);
+                initEmptyStateByPermissionsComponent();
+            });
+        }
+    }
+
+    protected void initEmptyStateByPermissionsComponent() {
+        DataGridEmptyStateByPermissionsFragment gridEmptyStateFragment =
+                fragments.create(UiComponentUtils.getView(component), DataGridEmptyStateByPermissionsFragment.class);
+        componentEmptyStateComponentDelegate.accept(gridEmptyStateFragment);
     }
 
     public List<Grid.Column<E>> getColumns() {

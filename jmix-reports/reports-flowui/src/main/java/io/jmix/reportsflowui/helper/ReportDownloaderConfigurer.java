@@ -19,12 +19,15 @@ package io.jmix.reportsflowui.helper;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.reports.ReportsProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("report_ReportDownloaderConfigurer")
 public class ReportDownloaderConfigurer {
+    @Autowired
+    protected ReportsProperties reportsProperties;
 
-    public void configureDownloader(Downloader downloader, ReportsProperties reportsProperties) {
+    public void configureDownloader(Downloader downloader) {
         downloader.setViewFilePredicate((fileExtension) -> {
             if (StringUtils.isEmpty(fileExtension)) {
                 return false;

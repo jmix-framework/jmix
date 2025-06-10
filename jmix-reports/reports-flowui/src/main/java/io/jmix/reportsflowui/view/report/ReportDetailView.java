@@ -65,7 +65,6 @@ import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.ReportsPersistence;
-import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.*;
@@ -221,8 +220,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Autowired
     protected UiProperties uiProperties;
     @Autowired
-    protected ReportsProperties reportsProperties;
-    @Autowired
     protected CoreProperties coreProperties;
     @Autowired
     protected EntityStates entityStates;
@@ -261,7 +258,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe
     public void onInit(InitEvent event) {
-        reportDownloaderConfigurer.configureDownloader(downloader, reportsProperties);
+        reportDownloaderConfigurer.configureDownloader(downloader);
 
         dataSetsDataGridLayout.setWidth(null);
 

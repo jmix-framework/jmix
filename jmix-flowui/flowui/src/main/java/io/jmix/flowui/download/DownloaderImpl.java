@@ -73,7 +73,7 @@ public class DownloaderImpl implements Downloader {
     // Use flags from app.properties for show/download files
     protected boolean useViewList;
 
-    // Predicate for file type property checking
+    // Predicate for open/download files check
     protected Predicate<String> viewFilePredicate = this::defaultViewFilePredicate;
 
     /**

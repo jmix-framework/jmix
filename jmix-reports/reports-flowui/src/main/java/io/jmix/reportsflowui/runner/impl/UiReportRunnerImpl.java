@@ -27,7 +27,6 @@ import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
-import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
@@ -74,7 +73,6 @@ public class UiReportRunnerImpl implements UiReportRunner {
     protected final ObjectProvider<FluentUiReportRunner> fluentUiReportRunners;
     protected final Notifications notifications;
     protected final ReportsClientProperties reportsClientProperties;
-    protected final ReportsProperties reportsProperties;
 
     public UiReportRunnerImpl(ReportRunner reportRunner,
                               DialogWindows dialogWindows,
@@ -87,8 +85,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
                               ReportsUtils reportsUtils,
                               ObjectProvider<FluentUiReportRunner> fluentUiReportRunners,
                               Notifications notifications,
-                              ReportsClientProperties reportsClientProperties,
-                              ReportsProperties reportsProperties) {
+                              ReportsClientProperties reportsClientProperties) {
         this.reportRunner = reportRunner;
         this.dialogWindows = dialogWindows;
         this.downloader = downloader;
@@ -101,9 +98,8 @@ public class UiReportRunnerImpl implements UiReportRunner {
         this.fluentUiReportRunners = fluentUiReportRunners;
         this.notifications = notifications;
         this.reportsClientProperties = reportsClientProperties;
-        this.reportsProperties = reportsProperties;
 
-        reportDownloaderConfigurer.configureDownloader(downloader, reportsProperties);
+        reportDownloaderConfigurer.configureDownloader(downloader);
     }
 
     @Override

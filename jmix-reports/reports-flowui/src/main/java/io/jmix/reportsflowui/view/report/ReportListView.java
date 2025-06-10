@@ -37,7 +37,6 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportImportExport;
 import io.jmix.reports.ReportsPersistence;
-import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
@@ -101,8 +100,6 @@ public class ReportListView extends StandardListView<Report> {
     @Autowired
     protected UiProperties uiProperties;
     @Autowired
-    protected ReportsProperties reportsProperties;
-    @Autowired
     protected CoreProperties coreProperties;
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
@@ -121,7 +118,7 @@ public class ReportListView extends StandardListView<Report> {
 
     @Subscribe
     protected void onInit(InitEvent event) {
-        reportDownloaderConfigurer.configureDownloader(downloader, reportsProperties);
+        reportDownloaderConfigurer.configureDownloader(downloader);
 
         initReportsDataGridCreate();
     }

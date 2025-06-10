@@ -20,7 +20,6 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.view.DialogWindow;
-import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
@@ -41,18 +40,15 @@ public class UiReportRunnerSupport {
     protected final DialogWindows dialogWindows;
     protected final Downloader downloader;
     protected final ReportDownloaderConfigurer reportDownloaderConfigurer;
-    protected final ReportsProperties reportsProperties;
 
     public UiReportRunnerSupport(DialogWindows dialogWindows,
                                  Downloader downloader,
-                                 ReportDownloaderConfigurer reportDownloaderConfigurer,
-                                 ReportsProperties reportsProperties) {
+                                 ReportDownloaderConfigurer reportDownloaderConfigurer) {
         this.dialogWindows = dialogWindows;
         this.downloader = downloader;
         this.reportDownloaderConfigurer = reportDownloaderConfigurer;
-        this.reportsProperties = reportsProperties;
 
-        reportDownloaderConfigurer.configureDownloader(downloader, reportsProperties);
+        reportDownloaderConfigurer.configureDownloader(downloader);
     }
 
     protected void showResult(ReportOutputDocument document, UiReportRunContext context) {

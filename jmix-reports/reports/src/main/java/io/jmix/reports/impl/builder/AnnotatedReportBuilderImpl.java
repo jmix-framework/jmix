@@ -16,6 +16,7 @@
 
 package io.jmix.reports.impl.builder;
 
+import io.jmix.core.ClassManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.Resources;
@@ -61,11 +62,13 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
     protected final ParameterClassResolver parameterClassResolver;
     @Nullable
     protected final AnnotatedReportScreenExtractor screenExtractor;
+    protected final ClassManager classManager;
 
     public AnnotatedReportBuilderImpl(Metadata metadata, MessageTools messageTools, AnnotatedBuilderUtils annotatedBuilderUtils,
                                       AnnotatedReportGroupHolder annotatedReportGroupHolder, Resources resources,
                                       AnnotatedReportRoleExtractor roleExtractor, ParameterClassResolver parameterClassResolver,
-                                      @Autowired(required = false) @Nullable AnnotatedReportScreenExtractor screenExtractor) {
+                                      @Autowired(required = false) @Nullable AnnotatedReportScreenExtractor screenExtractor,
+                                      ClassManager classManager) {
         this.metadata = metadata;
         this.messageTools = messageTools;
         this.annotatedBuilderUtils = annotatedBuilderUtils;
@@ -74,6 +77,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         this.roleExtractor = roleExtractor;
         this.parameterClassResolver = parameterClassResolver;
         this.screenExtractor = screenExtractor;
+        this.classManager = classManager;
     }
 
     @Override
@@ -137,7 +141,15 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
             return;
         }
 
-        ReportGroupDef groupAnnotation = annotation.group().getAnnotation(ReportGroupDef.class);
+        // load class indirectly, to support hot deploy (case: group was reloaded via hot-deploy, while report was not)
+        Class<?> reportGroupClass;
+        try {
+            reportGroupClass = classManager.loadClass(annotation.group().getName());
+        } catch (IllegalStateException e) {
+            throw new InvalidReportDefinitionException("Can't load report group class", e);
+        }
+
+        ReportGroupDef groupAnnotation = reportGroupClass.getAnnotation(ReportGroupDef.class);
         if (groupAnnotation == null) {
             throw new InvalidReportDefinitionException(
                     "Report group class must be annotated with @ReportGroupDef: " + annotation.group());

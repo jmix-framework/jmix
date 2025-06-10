@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefiniti
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.AnnotationBeanNameGenerator;
@@ -118,15 +117,16 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
         }
 
         AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
-        Object definitionInstance = beanFactory.createBean(reportGroupClass);
 
         // test that definition is correct,
         //   to fail-fast without loosing cache if it's invalid
+        Object definitionInstance = beanFactory.createBean(reportGroupClass);
         groupBuilder.createGroupFromDefinition(definitionInstance);
 
-        String beanName = getBeanName(beanFactory, reportGroupClass);
+        BeanDefinition beanDefinition = new AnnotatedGenericBeanDefinition(reportGroupClass);
+        String beanName = getBeanName(beanFactory, beanDefinition);
         List<String> beanNamesToDelete = getBeanNamesToDelete(beanName, className, ReportGroupDef.class);
-        replaceBeanInContext(beanFactory, definitionInstance, beanName, beanNamesToDelete);
+        replaceBeanInContext(beanFactory, beanDefinition, beanName, beanNamesToDelete);
 
         log.info("Rescanning annotated groups and reports");
         reportHolder.clear();
@@ -145,35 +145,31 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
         }
 
         AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
-        Object definitionInstance = beanFactory.createBean(reportClass);
 
         // test that definition is correct,
         //   to fail-fast without loosing cache if it's invalid
+        Object definitionInstance = beanFactory.createBean(reportClass);
         reportBuilder.createReportFromDefinition(definitionInstance);
 
-        String beanName = getBeanName(beanFactory, reportClass);
+        BeanDefinition beanDefinition = new AnnotatedGenericBeanDefinition(reportClass);
+        String beanName = getBeanName(beanFactory, beanDefinition);
         List<String> beanNamesToDelete = getBeanNamesToDelete(beanName, className, ReportDef.class);
-        replaceBeanInContext(beanFactory, definitionInstance, beanName, beanNamesToDelete);
+        replaceBeanInContext(beanFactory, beanDefinition, beanName, beanNamesToDelete);
 
         log.info("Rescanning annotated reports");
         reportHolder.clear();
         importReportDefinitions();
     }
 
-    protected void replaceBeanInContext(AutowireCapableBeanFactory beanFactory, Object definitionInstance,
+    protected void replaceBeanInContext(AutowireCapableBeanFactory beanFactory, BeanDefinition beanDefinition,
                                         String beanName, List<String> beanNamesToDelete) {
-        DefaultSingletonBeanRegistry registry = (DefaultSingletonBeanRegistry) beanFactory;
-
+        BeanDefinitionRegistry beanRegistry = (BeanDefinitionRegistry) beanFactory;
         for (String beanToDelete : beanNamesToDelete) {
-            registry.destroySingleton(beanToDelete);
-
-            if (!beanName.equals(beanToDelete)) {
-                ((BeanDefinitionRegistry) beanFactory).removeBeanDefinition(beanToDelete);
-            }
+            beanRegistry.removeBeanDefinition(beanToDelete);
         }
-        registry.registerSingleton(beanName, definitionInstance);
+        beanRegistry.registerBeanDefinition(beanName, beanDefinition);
 
-        log.info("Bean {} replaced in context with: {}, {}", beanNamesToDelete, beanName, definitionInstance.getClass());
+        log.info("Bean definition {} replaced in context with: {}, {}", beanNamesToDelete, beanName, beanDefinition.getBeanClassName());
     }
 
     /*
@@ -204,11 +200,8 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
         return null;
     }
 
-    protected String getBeanName(AutowireCapableBeanFactory beanFactory, Class<?> reportGroupClass) {
+    protected String getBeanName(AutowireCapableBeanFactory beanFactory, BeanDefinition beanDefinition) {
         AnnotationBeanNameGenerator beanNameGenerator = getBeanNameGenerator();
-
-        BeanDefinition beanDefinition = new AnnotatedGenericBeanDefinition(reportGroupClass);
-
         String beanName = beanNameGenerator.generateBeanName(beanDefinition, (BeanDefinitionRegistry) beanFactory);
         return beanName;
     }

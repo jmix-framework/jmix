@@ -26,6 +26,8 @@ import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy;
+import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy.ClassFqnStrategy;
 
 @StudioUiKit
 public interface StudioElements {
@@ -166,7 +168,26 @@ public interface StudioElements {
                     ),
                     @StudioSupplyHandler(
                             methodName = "setEditorComponent",
-                            parameterType = "com.vaadin.flow.function.SerializableFunction"
+                            parameterType = "com.vaadin.flow.function.SerializableFunction",
+                            genericResolvingInfo = {
+                                    @GenericResolvingInfo(
+                                            typeParameter = "T",
+                                            resolvingStrategy = @ResolvingStrategy(
+                                                    parentTagByDepthStrategy = @ResolvingStrategy.ParentTagByDepthStrategy(
+                                                            parentTagDepth = 2, // columns -> grid
+                                                            takeFromTypeParameter = "E" // E parameter from Grid<E>
+                                                    )
+                                            )
+                                    ),
+                                    @GenericResolvingInfo(
+                                            typeParameter = "R",
+                                            resolvingStrategy = @ResolvingStrategy(
+                                                    classFqnStrategy = @ClassFqnStrategy(
+                                                            classFqn = "com.vaadin.flow.component.Component"
+                                                    )
+                                            )
+                                    )
+                            }
                     )
             }
     )

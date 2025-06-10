@@ -23,4 +23,6 @@ public @interface StudioSupplyHandler {
     String methodName();
 
     String parameterType();
+
+    GenericResolvingInfo[] genericResolvingInfo() default {};
 }

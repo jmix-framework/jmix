@@ -17,8 +17,6 @@
 package io.jmix.reports.impl;
 
 import io.jmix.reports.entity.ReportGroup;
-import io.jmix.reports.impl.builder.AnnotatedGroupBuilder;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -28,16 +26,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component("reports_AnnotatedReportGroupProvider")
 public class AnnotatedReportGroupHolderImpl implements AnnotatedReportGroupHolder {
 
-    protected final AnnotatedGroupBuilder annotatedGroupBuilder;
-    protected ApplicationContext applicationContext;
-
     /**
      * Map: group code -> group model object.
      */
     protected Map<String, ReportGroup> groupsByCode;
 
-    public AnnotatedReportGroupHolderImpl(AnnotatedGroupBuilder annotatedGroupBuilder) {
-        this.annotatedGroupBuilder = annotatedGroupBuilder;
+    public AnnotatedReportGroupHolderImpl() {
         this.groupsByCode = new ConcurrentHashMap<>();
     }
 

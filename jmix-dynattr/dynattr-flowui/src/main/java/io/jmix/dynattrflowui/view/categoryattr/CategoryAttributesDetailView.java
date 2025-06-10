@@ -312,6 +312,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 .one();
     }
 
+    @Override
+    public String getPageTitle() {
+        return super.getPageTitle().formatted(metadataTools.getInstanceName(getEditedEntity().getCategory()));
+    }
+
     protected void initDefaultEnumField() {
         defaultEnumValues.addAll(getEnumValues());
         defaultEnumField.setItems(defaultEnumValues);

@@ -20,7 +20,7 @@ import java.util.Map;
 )
 @InputParameterDef(
         alias = "afterDate",
-        name = "msg://io.jmix.outside_reports/SimpleReport.afterDate",
+        name = "msg://SimpleReport.afterDate",
         type = ParameterType.DATETIME,
         required = true
 )

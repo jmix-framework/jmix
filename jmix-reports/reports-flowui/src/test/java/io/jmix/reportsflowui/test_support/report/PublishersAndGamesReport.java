@@ -104,18 +104,21 @@ import java.util.Date;
                                 columns = {
                                         @TableColumnDef(
                                                 key = "name",
-                                                caption = "msg://io.jmix.reportsflowui.test_support.report/report.publishersGames.columns.name"
+                                                caption = "msg:///reports.columns.name"
                                         ),
                                         @TableColumnDef(
                                                 key = "gameCount",
-                                                caption = "msg://io.jmix.reportsflowui.test_support.report/report.publishersGames.columns.gameCount"
+                                                caption = "msg://report.publishersGames.columns.gameCount"
                                         )
                                 }
                         ),
                         @TableBandDef(
                                 bandName = "Games",
                                 columns = {
-                                        @TableColumnDef(key = "name", caption = "Name"),
+                                        @TableColumnDef(
+                                                key = "name",
+                                                caption = "msg:///reports.columns.name"
+                                        ),
                                         @TableColumnDef(key = "purchaseCount", caption = "Purchase count")
                                 }
                         )

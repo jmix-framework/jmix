@@ -29,9 +29,11 @@ import java.util.UUID;
 public class AnnotatedGroupBuilderImpl implements AnnotatedGroupBuilder {
 
     protected final Metadata metadata;
+    protected final AnnotatedBuilderUtils annotatedBuilderUtils;
 
-    public AnnotatedGroupBuilderImpl(Metadata metadata) {
+    public AnnotatedGroupBuilderImpl(Metadata metadata, AnnotatedBuilderUtils annotatedBuilderUtils) {
         this.metadata = metadata;
+        this.annotatedBuilderUtils = annotatedBuilderUtils;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class AnnotatedGroupBuilderImpl implements AnnotatedGroupBuilder {
 
         String titleValue = annotation.title();
         if (titleValue.startsWith(MessageTools.MARK)) {
-            group.setTitleMessageKey(titleValue.substring(MessageTools.MARK.length()));
+            group.setTitleMessageKey(annotatedBuilderUtils.extractMessageKey(titleValue, definitionClass));
         } else {
             group.setTitle(titleValue);
         }

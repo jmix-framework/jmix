@@ -36,7 +36,9 @@ public @interface ReportDef {
 
     /**
      * Report name.
-     * Use <code>msg://group/key</code> format if localization is required.
+     * <br/>
+     * Use <code>msg://</code> format if localization is required.
+     * Default message group is inferred from the declaration class's package.
      */
     String name();
 

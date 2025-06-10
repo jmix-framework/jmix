@@ -24,7 +24,10 @@ public @interface InputParameterDef {
     String alias();
 
     /**
-     * Human-readable parameter name. Use <code>msg://group/key</code> format if localization is required.
+     * Human-readable parameter name.
+     * <br/>
+     * Use <code>msg://</code> format if localization is required.
+     * Default message group is inferred from the declaration class's package.
      */
     String name() default "";
 

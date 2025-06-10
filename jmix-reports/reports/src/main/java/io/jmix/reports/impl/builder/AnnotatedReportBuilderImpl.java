@@ -54,7 +54,6 @@ import java.util.function.Function;
 public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
     protected final Metadata metadata;
-    protected final MessageTools messageTools;
     protected final AnnotatedReportGroupHolder annotatedReportGroupHolder;
     protected final Resources resources;
     protected final AnnotatedReportRoleExtractor roleExtractor;
@@ -62,20 +61,21 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
     @Nullable
     protected final AnnotatedReportScreenExtractor screenExtractor;
     protected final ClassManager classManager;
+    protected final AnnotatedBuilderUtils annotatedBuilderUtils;
 
-    public AnnotatedReportBuilderImpl(Metadata metadata, MessageTools messageTools,
+    public AnnotatedReportBuilderImpl(Metadata metadata, AnnotatedBuilderUtils annotatedBuilderUtils,
                                       AnnotatedReportGroupHolder annotatedReportGroupHolder, Resources resources,
                                       AnnotatedReportRoleExtractor roleExtractor, ParameterClassResolver parameterClassResolver,
                                       @Autowired(required = false) @Nullable AnnotatedReportScreenExtractor screenExtractor,
                                       ClassManager classManager) {
         this.metadata = metadata;
-        this.messageTools = messageTools;
         this.annotatedReportGroupHolder = annotatedReportGroupHolder;
         this.resources = resources;
         this.roleExtractor = roleExtractor;
         this.parameterClassResolver = parameterClassResolver;
         this.screenExtractor = screenExtractor;
         this.classManager = classManager;
+        this.annotatedBuilderUtils = annotatedBuilderUtils;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         ReportDef reportAnnotation = definitionInstance.getClass().getAnnotation(ReportDef.class);
 
         Report report = metadata.create(Report.class);
-        assignReportParameters(report, reportAnnotation);
+        assignReportParameters(report, reportAnnotation, definitionInstance.getClass());
         assignReportDelegates(report, definitionInstance);
 
         report.setInputParameters(extractInputParameters(report, definitionInstance));
@@ -102,10 +102,10 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         return report;
     }
 
-    protected void assignReportParameters(Report report, ReportDef annotation) {
+    protected void assignReportParameters(Report report, ReportDef annotation, Class<?> definitionClass) {
         String nameValue = annotation.name();
         if (nameValue.startsWith(MessageTools.MARK)) {
-            report.setNameMessageKey(nameValue.substring(MessageTools.MARK.length()));
+            report.setNameMessageKey(annotatedBuilderUtils.extractMessageKey(nameValue, definitionClass));
         } else {
             report.setName(nameValue);
         }
@@ -198,7 +198,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
         int position = 0;
         for (InputParameterDef annotation : annotations) {
-            ReportInputParameter parameter = convertToInputParameter(annotation);
+            ReportInputParameter parameter = convertToInputParameter(annotation, definitionInstance.getClass());
 
             parameter.setReport(report);
             parameter.setPosition(position++);
@@ -212,13 +212,13 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         return Collections.unmodifiableList(inputParameters);
     }
 
-    protected ReportInputParameter convertToInputParameter(InputParameterDef annotation) {
+    protected ReportInputParameter convertToInputParameter(InputParameterDef annotation, Class<?> definitionClass) {
         ReportInputParameter parameter = metadata.create(ReportInputParameter.class);
         parameter.setAlias(annotation.alias());
 
         String nameValue = annotation.name();
         if (nameValue.startsWith(MessageTools.MARK)) {
-            parameter.setNameMessageKey(nameValue.substring(MessageTools.MARK.length()));
+            parameter.setNameMessageKey(annotatedBuilderUtils.extractMessageKey(nameValue, definitionClass));
         } else {
             parameter.setName(nameValue);
         }
@@ -312,7 +312,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
         boolean containsDefault = false;
         for (TemplateDef annotation : annotations) {
-            ReportTemplate template = convertToTemplate(annotation);
+            ReportTemplate template = convertToTemplate(annotation, definitionInstance.getClass());
 
             template.setReport(report);
             if (annotation.isDefault()) {
@@ -340,7 +340,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         }
     }
 
-    protected ReportTemplate convertToTemplate(TemplateDef annotation) {
+    protected ReportTemplate convertToTemplate(TemplateDef annotation, Class<?> definitionClass) {
         ReportTemplate template = metadata.create(ReportTemplate.class);
         template.setCode(annotation.code());
         template.setReportOutputType(annotation.outputType());
@@ -397,12 +397,12 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         }
 
         if (annotation.outputType() == ReportOutputType.TABLE) {
-            template.setTemplateTableDescription(convertToTableDescription(annotation.table()));
+            template.setTemplateTableDescription(convertToTableDescription(annotation.table(), definitionClass));
         }
         return template;
     }
 
-    private TemplateTableDescription convertToTableDescription(TemplateTableDef table) {
+    private TemplateTableDescription convertToTableDescription(TemplateTableDef table, Class<?> definitionClass) {
         TemplateTableDescription description = metadata.create(TemplateTableDescription.class);
         List<TemplateTableBand> tableBands = new ArrayList<>();
         int bandPosition = 0;
@@ -420,7 +420,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
                 String captionValue = columnDef.caption();
                 if (captionValue.startsWith(MessageTools.MARK)) {
-                    column.setCaptionMessageKey(captionValue.substring(MessageTools.MARK.length()));
+                    column.setCaptionMessageKey(annotatedBuilderUtils.extractMessageKey(captionValue, definitionClass));
                 } else {
                     column.setCaption(captionValue);
                 }

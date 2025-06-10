@@ -37,27 +37,36 @@ public @interface GenericResolvingInfo {
 
     /**
      * Describes how generic value can be resolved.
-     * For example, we can resolve generic type from XML (see {@link XmlStrategy})
-     * or define a class FQN (see {@link ClassFqnStrategy})
+     * For example, we can resolve generic type from XML
+     * (see {@link ParentTagByNameStrategy}, {@link ParentTagByDepthStrategy})
+     * or define a concrete class FQN (see {@link ClassFqnStrategy})
      *
-     * @see XmlStrategy
      * @see ClassFqnStrategy
+     * @see ParentTagByNameStrategy
+     * @see ParentTagByDepthStrategy
      */
     @interface ResolvingStrategy {
 
         /**
-         * Describes resolving from XML.
+         * Describes resolving from XML by parent tag name.
          *
-         * @see XmlStrategy
+         * @see ParentTagByNameStrategy
          */
-        XmlStrategy xmlStrategy() default @XmlStrategy;
+        ParentTagByNameStrategy parentTagByNameStrategy() default @ParentTagByNameStrategy(parentTagName = "");
+
+        /**
+         * Describes resolving from XML by parent tag depth.
+         *
+         * @see ParentTagByNameStrategy
+         */
+        ParentTagByDepthStrategy parentTagByDepthStrategy() default @ParentTagByDepthStrategy(parentTagDepth = -1);
 
         /**
          * Describes resolving from concrete class FQN.
          *
          * @see ClassFqnStrategy
          */
-        ClassFqnStrategy classFqnStrategy() default @ClassFqnStrategy;
+        ClassFqnStrategy classFqnStrategy() default @ClassFqnStrategy(classFqn = "");
 
         /**
          * Describes type from concrete class FQN with type parameters.
@@ -67,7 +76,7 @@ public @interface GenericResolvingInfo {
             /**
              * Class FQN of type.
              */
-            String classFqn() default "";
+            String classFqn();
 
             /**
              * Class FQNs of type parameters (if needed).
@@ -76,20 +85,11 @@ public @interface GenericResolvingInfo {
         }
 
         /**
-         * Describes type from component that should be extracted from XML.
+         * Describes type from parent component that should be extracted from XML by tag name.
          */
-        @interface XmlStrategy {
+        @interface ParentTagByNameStrategy {
 
-            String PARENT_COMPONENT_TAG_PLACEHOLDER = "${PARENT_TAG}";
-
-            /**
-             * Parent component tag local name.
-             * Supports {@link XmlStrategy#PARENT_COMPONENT_TAG_PLACEHOLDER} placeholder.
-             * <p>
-             * Can be combined with <code>:</code> char.
-             * For example <code>${PARENT_TAG}:${PARENT_TAG}</code>.
-             */
-            String parentComponentTag() default "";
+            String parentTagName();
 
             /**
              * Class FQNs of type parameters.
@@ -97,14 +97,35 @@ public @interface GenericResolvingInfo {
             String[] typeParametersFqn() default {};
 
             /**
-             * Index of type parameter from resolved type.
+             * Name of type parameter from resolved type.
              * <p>
-             * If value is negative or zero, then a resolved type will be used.
+             * If value is empty, then a resolved type will be used.
              * <p>
-             * If value is positive, then a type parameter (with index from value)
-             * from the resolved type will be used.
+             * If value is not empty, then a type parameter from the resolved type will be used.
              */
-            int takeFromTypeParameter() default -1;
+            String takeFromTypeParameter() default "";
+        }
+
+        /**
+         * Describes type from parent component that should be extracted from XML by tag depth.
+         */
+        @interface ParentTagByDepthStrategy {
+
+            int parentTagDepth();
+
+            /**
+             * Class FQNs of type parameters.
+             */
+            String[] typeParametersFqn() default {};
+
+            /**
+             * Name of type parameter from resolved type.
+             * <p>
+             * If value is empty, then a resolved type will be used.
+             * <p>
+             * If value is not empty, then a type parameter from the resolved type will be used.
+             */
+            String takeFromTypeParameter() default "";
         }
     }
 }

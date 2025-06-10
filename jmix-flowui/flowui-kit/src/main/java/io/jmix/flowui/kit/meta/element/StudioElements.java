@@ -28,9 +28,6 @@ import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy;
 import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy.ClassFqnStrategy;
-import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy.XmlStrategy;
-
-import static io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy.XmlStrategy.PARENT_COMPONENT_TAG_PLACEHOLDER;
 
 @StudioUiKit
 public interface StudioElements {
@@ -176,9 +173,9 @@ public interface StudioElements {
                                     @GenericResolvingInfo(
                                             typeParameter = "T",
                                             resolvingStrategy = @ResolvingStrategy(
-                                                    xmlStrategy = @XmlStrategy(
-                                                            parentComponentTag = PARENT_COMPONENT_TAG_PLACEHOLDER + ":" + PARENT_COMPONENT_TAG_PLACEHOLDER,
-                                                            takeFromTypeParameter = 1
+                                                    parentTagByDepthStrategy = @ResolvingStrategy.ParentTagByDepthStrategy(
+                                                            parentTagDepth = 2, // columns -> grid
+                                                            takeFromTypeParameter = "E" // E parameter from Grid<E>
                                                     )
                                             )
                                     ),

@@ -16,8 +16,6 @@
 
 package io.jmix.flowui.kit.meta;
 
-import java.lang.annotation.Annotation;
-
 /**
  * Describes how generics should be resolved.
  */
@@ -52,14 +50,14 @@ public @interface GenericResolvingInfo {
          *
          * @see XmlStrategy
          */
-        XmlStrategy xmlStrategy();
+        XmlStrategy xmlStrategy() default @XmlStrategy;
 
         /**
          * Describes resolving from concrete class FQN.
          *
          * @see ClassFqnStrategy
          */
-        ClassFqnStrategy classFqnStrategy();
+        ClassFqnStrategy classFqnStrategy() default @ClassFqnStrategy;
 
         /**
          * Describes type from concrete class FQN with type parameters.
@@ -69,7 +67,7 @@ public @interface GenericResolvingInfo {
             /**
              * Class FQN of type.
              */
-            String classFqn();
+            String classFqn() default "";
 
             /**
              * Class FQNs of type parameters (if needed).
@@ -91,7 +89,7 @@ public @interface GenericResolvingInfo {
              * Can be combined with <code>:</code> char.
              * For example <code>${PARENT_TAG}:${PARENT_TAG}</code>.
              */
-            String parentComponentTag();
+            String parentComponentTag() default "";
 
             /**
              * Class FQNs of type parameters.

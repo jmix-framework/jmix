@@ -179,8 +179,7 @@ public interface StudioElements {
                                                     xmlStrategy = @XmlStrategy(
                                                             parentComponentTag = PARENT_COMPONENT_TAG_PLACEHOLDER + ":" + PARENT_COMPONENT_TAG_PLACEHOLDER,
                                                             takeFromTypeParameter = 1
-                                                    ),
-                                                    classFqnStrategy = @ClassFqnStrategy(classFqn = "")
+                                                    )
                                             )
                                     ),
                                     @GenericResolvingInfo(
@@ -188,8 +187,7 @@ public interface StudioElements {
                                             resolvingStrategy = @ResolvingStrategy(
                                                     classFqnStrategy = @ClassFqnStrategy(
                                                             classFqn = "com.vaadin.flow.component.Component"
-                                                    ),
-                                                    xmlStrategy = @XmlStrategy(parentComponentTag = "")
+                                                    )
                                             )
                                     )
                             }

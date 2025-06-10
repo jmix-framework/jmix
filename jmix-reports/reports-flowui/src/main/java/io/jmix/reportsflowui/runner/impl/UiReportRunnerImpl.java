@@ -39,6 +39,7 @@ import io.jmix.reports.util.ReportZipUtils;
 import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.helper.ReportDownloaderConfigurer;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunContext;
@@ -64,6 +65,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
     protected final ReportRunner reportRunner;
     protected final DialogWindows dialogWindows;
     protected final Downloader downloader;
+    protected final ReportDownloaderConfigurer reportDownloaderConfigurer;
     protected final MetadataTools metadataTools;
     protected final Messages messages;
     protected final Dialogs dialogs;
@@ -77,6 +79,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
     public UiReportRunnerImpl(ReportRunner reportRunner,
                               DialogWindows dialogWindows,
                               Downloader downloader,
+                              ReportDownloaderConfigurer reportDownloaderConfigurer,
                               MetadataTools metadataTools,
                               Messages messages,
                               Dialogs dialogs,
@@ -89,6 +92,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
         this.reportRunner = reportRunner;
         this.dialogWindows = dialogWindows;
         this.downloader = downloader;
+        this.reportDownloaderConfigurer = reportDownloaderConfigurer;
         this.metadataTools = metadataTools;
         this.messages = messages;
         this.dialogs = dialogs;
@@ -99,17 +103,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
         this.reportsClientProperties = reportsClientProperties;
         this.reportsProperties = reportsProperties;
 
-        setDownloaderViewFileAllowanceDelegate();
-    }
-
-    protected void setDownloaderViewFileAllowanceDelegate() {
-        downloader.setViewFileAllowanceDelegate((fileExtension) -> {
-            if (StringUtils.isEmpty(fileExtension)) {
-                return false;
-            }
-
-            return reportsProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExtension));
-        });
+        reportDownloaderConfigurer.configureDownloader(downloader, reportsProperties);
     }
 
     @Override

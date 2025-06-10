@@ -75,6 +75,7 @@ import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.constant.ReportStyleConstants;
+import io.jmix.reportsflowui.helper.ReportDownloaderConfigurer;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.view.region.ReportRegionWizardDetailView;
@@ -216,6 +217,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Autowired
     protected Downloader downloader;
     @Autowired
+    protected ReportDownloaderConfigurer reportDownloaderConfigurer;
+    @Autowired
     protected UiProperties uiProperties;
     @Autowired
     protected ReportsProperties reportsProperties;
@@ -258,7 +261,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe
     public void onInit(InitEvent event) {
-        setDownloaderViewFileAllowanceDelegate();
+        reportDownloaderConfigurer.configureDownloader(downloader, reportsProperties);
 
         dataSetsDataGridLayout.setWidth(null);
 
@@ -279,16 +282,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         initLocaleDetailReportTextField();
         initRoleField();
         initScreenIdField();
-    }
-
-    protected void setDownloaderViewFileAllowanceDelegate() {
-        downloader.setViewFileAllowanceDelegate((fileExtension) -> {
-            if (StringUtils.isEmpty(fileExtension)) {
-                return false;
-            }
-
-            return reportsProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExtension));
-        });
     }
 
     @Supply(to = "templatesDataGrid.alterable", subject = "renderer")

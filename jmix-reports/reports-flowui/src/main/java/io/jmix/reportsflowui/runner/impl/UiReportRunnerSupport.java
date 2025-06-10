@@ -25,9 +25,9 @@ import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reportsflowui.helper.ReportDownloaderConfigurer;
 import io.jmix.reportsflowui.runner.UiReportRunContext;
 import io.jmix.reportsflowui.view.run.ReportTableView;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;
 
@@ -40,24 +40,19 @@ public class UiReportRunnerSupport {
 
     protected final DialogWindows dialogWindows;
     protected final Downloader downloader;
+    protected final ReportDownloaderConfigurer reportDownloaderConfigurer;
     protected final ReportsProperties reportsProperties;
 
-    public UiReportRunnerSupport(DialogWindows dialogWindows, Downloader downloader, ReportsProperties reportsProperties) {
+    public UiReportRunnerSupport(DialogWindows dialogWindows,
+                                 Downloader downloader,
+                                 ReportDownloaderConfigurer reportDownloaderConfigurer,
+                                 ReportsProperties reportsProperties) {
         this.dialogWindows = dialogWindows;
         this.downloader = downloader;
+        this.reportDownloaderConfigurer = reportDownloaderConfigurer;
         this.reportsProperties = reportsProperties;
 
-        setDownloaderViewFileAllowanceDelegate();
-    }
-
-    protected void setDownloaderViewFileAllowanceDelegate() {
-        downloader.setViewFileAllowanceDelegate((fileExtension) -> {
-            if (StringUtils.isEmpty(fileExtension)) {
-                return false;
-            }
-
-            return reportsProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExtension));
-        });
+        reportDownloaderConfigurer.configureDownloader(downloader, reportsProperties);
     }
 
     protected void showResult(ReportOutputDocument document, UiReportRunContext context) {

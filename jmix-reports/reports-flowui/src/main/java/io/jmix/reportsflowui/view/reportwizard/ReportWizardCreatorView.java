@@ -51,6 +51,7 @@ import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.helper.PackageHelper;
+import io.jmix.reportsflowui.helper.ReportDownloaderConfigurer;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
@@ -161,6 +162,8 @@ public class ReportWizardCreatorView extends StandardView {
     @Autowired
     protected Downloader downloader;
     @Autowired
+    protected ReportDownloaderConfigurer reportDownloaderConfigurer;
+    @Autowired
     protected OutputFormatTools outputFormatTools;
     @Autowired
     protected JmixObjectToStringConverter jmixObjectToStringConverter;
@@ -194,7 +197,7 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe
     public void onInit(InitEvent event) {
-        setDownloaderViewFileAllowanceDelegate();
+        reportDownloaderConfigurer.configureDownloader(downloader, reportsProperties);
 
         initItem();
         initFragments();
@@ -204,16 +207,6 @@ public class ReportWizardCreatorView extends StandardView {
         initEntityLookupField();
         initReportParameterDataGrid();
         updateWizardDescription();
-    }
-
-    protected void setDownloaderViewFileAllowanceDelegate() {
-        downloader.setViewFileAllowanceDelegate((fileExtension) -> {
-            if (StringUtils.isEmpty(fileExtension)) {
-                return false;
-            }
-
-            return reportsProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExtension));
-        });
     }
 
     protected void initItem() {

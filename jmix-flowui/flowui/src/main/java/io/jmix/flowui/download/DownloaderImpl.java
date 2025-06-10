@@ -45,7 +45,7 @@ import org.springframework.lang.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
@@ -73,8 +73,8 @@ public class DownloaderImpl implements Downloader {
     // Use flags from app.properties for show/download files
     protected boolean useViewList;
 
-    // Delegate for file type property checking
-    protected Function<String, Boolean> inlineChecker = this::defaultInlineCheck;
+    // Predicate for file type property checking
+    protected Predicate<String> viewFilePredicate = this::defaultViewFilePredicate;
 
     /**
      * Constructor with newWindow=false
@@ -125,7 +125,7 @@ public class DownloaderImpl implements Downloader {
         log.warn("The passed value is ignored. Actual file storage is obtained from " + FileRef.class.getSimpleName());
     }
 
-    protected boolean defaultInlineCheck(String fileExtension) {
+    protected boolean defaultViewFilePredicate(String fileExtension) {
         if (StringUtils.isEmpty(fileExtension)) {
             return false;
         }
@@ -134,8 +134,8 @@ public class DownloaderImpl implements Downloader {
     }
 
     @Override
-    public void setViewFileAllowanceDelegate(Function<String, Boolean> inlineChecker) {
-        this.inlineChecker = inlineChecker;
+    public void setViewFilePredicate(Predicate<String> viewFilePredicate) {
+        this.viewFilePredicate = viewFilePredicate;
     }
 
     @Override
@@ -181,7 +181,7 @@ public class DownloaderImpl implements Downloader {
                 fileExt = FilenameUtils.getExtension(resourceName);
             }
 
-            showNewWindow = inlineChecker.apply(StringUtils.lowerCase(fileExt));
+            showNewWindow = viewFilePredicate.test(StringUtils.lowerCase(fileExt));
         }
 
         if (downloadFormat != null) {

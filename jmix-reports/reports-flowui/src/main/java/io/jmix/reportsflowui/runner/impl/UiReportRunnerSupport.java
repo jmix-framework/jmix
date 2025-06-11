@@ -18,13 +18,12 @@ package io.jmix.reportsflowui.runner.impl;
 
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.download.DownloadFormat;
-import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
-import io.jmix.reportsflowui.helper.ReportDownloaderConfigurer;
+import io.jmix.reportsflowui.download.ReportDownloader;
 import io.jmix.reportsflowui.runner.UiReportRunContext;
 import io.jmix.reportsflowui.view.run.ReportTableView;
 import org.springframework.stereotype.Component;
@@ -38,17 +37,12 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class UiReportRunnerSupport {
 
     protected final DialogWindows dialogWindows;
-    protected final Downloader downloader;
-    protected final ReportDownloaderConfigurer reportDownloaderConfigurer;
+    protected final ReportDownloader downloader;
 
     public UiReportRunnerSupport(DialogWindows dialogWindows,
-                                 Downloader downloader,
-                                 ReportDownloaderConfigurer reportDownloaderConfigurer) {
+                                 ReportDownloader downloader) {
         this.dialogWindows = dialogWindows;
         this.downloader = downloader;
-        this.reportDownloaderConfigurer = reportDownloaderConfigurer;
-
-        reportDownloaderConfigurer.configureDownloader(downloader);
     }
 
     protected void showResult(ReportOutputDocument document, UiReportRunContext context) {

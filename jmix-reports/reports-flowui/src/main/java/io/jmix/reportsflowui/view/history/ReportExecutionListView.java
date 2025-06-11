@@ -22,13 +22,12 @@ import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.FileRef;
 import io.jmix.flowui.component.grid.DataGrid;
-import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
-import io.jmix.reportsflowui.helper.ReportDownloaderConfigurer;
+import io.jmix.reportsflowui.download.ReportDownloader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,18 +50,11 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
-    protected Downloader downloader;
-    @Autowired
-    protected ReportDownloaderConfigurer reportDownloaderConfigurer;
+    protected ReportDownloader downloader;
     @Autowired
     protected SecondsToTextFormatter durationFormatter;
 
     protected List<Report> filterByReports;
-
-    @Subscribe
-    protected void onInit(InitEvent event) {
-        reportDownloaderConfigurer.configureDownloader(downloader);
-    }
 
     @Supply(to = "executionsDataGrid.executionTimeSec", subject = "renderer")
     protected Renderer<ReportExecution> executionsDataGridExecutionTimeRenderer() {

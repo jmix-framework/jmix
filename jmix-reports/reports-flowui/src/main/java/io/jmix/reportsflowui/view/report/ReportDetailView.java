@@ -54,7 +54,6 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
-import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -74,7 +73,6 @@ import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.constant.ReportStyleConstants;
-import io.jmix.reportsflowui.helper.ReportDownloaderConfigurer;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.view.region.ReportRegionWizardDetailView;
@@ -214,10 +212,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Autowired
     protected PolicyStore policyStore;
     @Autowired
-    protected Downloader downloader;
-    @Autowired
-    protected ReportDownloaderConfigurer reportDownloaderConfigurer;
-    @Autowired
     protected UiProperties uiProperties;
     @Autowired
     protected CoreProperties coreProperties;
@@ -258,8 +252,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe
     public void onInit(InitEvent event) {
-        reportDownloaderConfigurer.configureDownloader(downloader);
-
         dataSetsDataGridLayout.setWidth(null);
 
         hideAllDataSetEditComponents();

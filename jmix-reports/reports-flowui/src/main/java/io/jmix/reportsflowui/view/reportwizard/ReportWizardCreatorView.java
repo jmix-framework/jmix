@@ -33,7 +33,6 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
-import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -49,8 +48,8 @@ import io.jmix.reports.entity.wizard.*;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.download.ReportDownloader;
 import io.jmix.reportsflowui.helper.PackageHelper;
-import io.jmix.reportsflowui.helper.ReportDownloaderConfigurer;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
@@ -157,9 +156,7 @@ public class ReportWizardCreatorView extends StandardView {
     @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
     @Autowired
-    protected Downloader downloader;
-    @Autowired
-    protected ReportDownloaderConfigurer reportDownloaderConfigurer;
+    protected ReportDownloader downloader;
     @Autowired
     protected OutputFormatTools outputFormatTools;
     @Autowired
@@ -194,8 +191,6 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe
     public void onInit(InitEvent event) {
-        reportDownloaderConfigurer.configureDownloader(downloader);
-
         initItem();
         initFragments();
         initFragmentDescription();

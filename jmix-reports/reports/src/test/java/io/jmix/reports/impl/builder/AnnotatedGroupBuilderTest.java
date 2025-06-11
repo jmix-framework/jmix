@@ -88,6 +88,19 @@ public class AnnotatedGroupBuilderTest {
     }
 
     @Test
+    public void testTitleTakenFromDefaultLocale() {
+        // given
+        CorrectReportGroup definition = new CorrectReportGroup();
+
+        // when
+        ReportGroup group = annotatedGroupBuilder.createGroupFromDefinition(definition);
+
+        // then
+        assertThat(group.getTitle())
+                .isEqualTo("Test group");
+    }
+
+    @Test
     public void testWrongUuid() {
         // given
         WrongUuidReportGroup definition = new WrongUuidReportGroup();

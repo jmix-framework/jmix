@@ -144,6 +144,19 @@ public class AnnotatedReportBuilderTest {
     }
 
     @Test
+    public void testNameFromDefaultLocale() {
+        // given
+        SimpleReport definition = new SimpleReport();
+
+        // when
+        Report report = annotatedReportBuilder.createReportFromDefinition(definition);
+        ReportInputParameter reportParameter = report.getInputParameters().get(0);
+
+        // then
+        assertThat(reportParameter.getName()).isEqualTo("After");
+    }
+
+    @Test
     public void testReportRoles() {
         // given
         ReportWithRoles definition = new ReportWithRoles();

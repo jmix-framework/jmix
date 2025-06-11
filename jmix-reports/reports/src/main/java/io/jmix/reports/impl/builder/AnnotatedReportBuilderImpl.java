@@ -16,10 +16,7 @@
 
 package io.jmix.reports.impl.builder;
 
-import io.jmix.core.ClassManager;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Metadata;
-import io.jmix.core.Resources;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.ParameterClassResolver;
 import io.jmix.reports.annotation.*;
@@ -54,6 +51,8 @@ import java.util.function.Function;
 public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
     protected final Metadata metadata;
+    protected final Messages messages;
+    protected final MessageTools messageTools;
     protected final AnnotatedReportGroupHolder annotatedReportGroupHolder;
     protected final Resources resources;
     protected final AnnotatedReportRoleExtractor roleExtractor;
@@ -63,12 +62,14 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
     protected final ClassManager classManager;
     protected final AnnotatedBuilderUtils annotatedBuilderUtils;
 
-    public AnnotatedReportBuilderImpl(Metadata metadata, AnnotatedBuilderUtils annotatedBuilderUtils,
+    public AnnotatedReportBuilderImpl(Metadata metadata, Messages messages, MessageTools messageTools, AnnotatedBuilderUtils annotatedBuilderUtils,
                                       AnnotatedReportGroupHolder annotatedReportGroupHolder, Resources resources,
                                       AnnotatedReportRoleExtractor roleExtractor, ParameterClassResolver parameterClassResolver,
                                       @Autowired(required = false) @Nullable AnnotatedReportScreenExtractor screenExtractor,
                                       ClassManager classManager) {
         this.metadata = metadata;
+        this.messages = messages;
+        this.messageTools = messageTools;
         this.annotatedReportGroupHolder = annotatedReportGroupHolder;
         this.resources = resources;
         this.roleExtractor = roleExtractor;
@@ -106,6 +107,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         String nameValue = annotation.name();
         if (nameValue.startsWith(MessageTools.MARK)) {
             report.setNameMessageKey(annotatedBuilderUtils.extractMessageKey(nameValue, definitionClass));
+            report.setName(messages.getMessage(report.getNameMessageKey(), messageTools.getDefaultLocale()));
         } else {
             report.setName(nameValue);
         }
@@ -219,6 +221,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         String nameValue = annotation.name();
         if (nameValue.startsWith(MessageTools.MARK)) {
             parameter.setNameMessageKey(annotatedBuilderUtils.extractMessageKey(nameValue, definitionClass));
+            parameter.setName(messages.getMessage(parameter.getNameMessageKey(), messageTools.getDefaultLocale()));
         } else {
             parameter.setName(nameValue);
         }
@@ -421,6 +424,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
                 String captionValue = columnDef.caption();
                 if (captionValue.startsWith(MessageTools.MARK)) {
                     column.setCaptionMessageKey(annotatedBuilderUtils.extractMessageKey(captionValue, definitionClass));
+                    column.setCaption(messages.getMessage(column.getCaptionMessageKey(), messageTools.getDefaultLocale()));
                 } else {
                     column.setCaption(captionValue);
                 }

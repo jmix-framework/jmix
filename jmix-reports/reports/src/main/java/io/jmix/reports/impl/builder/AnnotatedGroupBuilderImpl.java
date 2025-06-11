@@ -17,6 +17,7 @@
 package io.jmix.reports.impl.builder;
 
 import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.reports.annotation.ReportGroupDef;
 import io.jmix.reports.entity.ReportGroup;
@@ -30,10 +31,15 @@ public class AnnotatedGroupBuilderImpl implements AnnotatedGroupBuilder {
 
     protected final Metadata metadata;
     protected final AnnotatedBuilderUtils annotatedBuilderUtils;
+    protected final Messages messages;
+    protected final MessageTools messageTools;
 
-    public AnnotatedGroupBuilderImpl(Metadata metadata, AnnotatedBuilderUtils annotatedBuilderUtils) {
+    public AnnotatedGroupBuilderImpl(Metadata metadata, AnnotatedBuilderUtils annotatedBuilderUtils, Messages messages,
+                                     MessageTools messageTools) {
         this.metadata = metadata;
         this.annotatedBuilderUtils = annotatedBuilderUtils;
+        this.messages = messages;
+        this.messageTools = messageTools;
     }
 
     @Override
@@ -56,6 +62,7 @@ public class AnnotatedGroupBuilderImpl implements AnnotatedGroupBuilder {
         String titleValue = annotation.title();
         if (titleValue.startsWith(MessageTools.MARK)) {
             group.setTitleMessageKey(annotatedBuilderUtils.extractMessageKey(titleValue, definitionClass));
+            group.setTitle(messages.getMessage(group.getTitleMessageKey(), messageTools.getDefaultLocale()));
         } else {
             group.setTitle(titleValue);
         }

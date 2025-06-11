@@ -16,10 +16,7 @@
 
 package io.jmix.reports;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.JmixModules;
-import io.jmix.core.Resources;
-import io.jmix.core.Stores;
+import io.jmix.core.*;
 import io.jmix.core.annotation.MessageSourceBasenames;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
@@ -31,8 +28,10 @@ import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
+import io.jmix.reports.test_support.TestFileStorage;
 import io.jmix.security.SecurityConfiguration;
 import jakarta.persistence.EntityManagerFactory;
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
@@ -102,13 +101,13 @@ public class ReportsTestConfiguration {
         return new TransactionTemplate(transactionManager);
     }
 
-/*    @Bean
+    @Bean
     public SpringLiquibase liquibase(DataSource dataSource) {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog("test_support/liquibase/test-changelog.xml");
         return liquibase;
-    }*/
+    }
 
     @Bean
     public CacheManager cacheManager() {
@@ -140,4 +139,10 @@ public class ReportsTestConfiguration {
     public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
         return new LocalApplicationEventChannelSupplier();
     }
+
+    @Bean
+    public FileStorage testFileStorage() {
+        return new TestFileStorage();
+    }
+
 }

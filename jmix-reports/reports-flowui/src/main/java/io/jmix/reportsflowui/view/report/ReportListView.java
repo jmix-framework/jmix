@@ -35,8 +35,10 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportImportExport;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportSource;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.util.ReportsUtils;
@@ -53,6 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredByTemplates;
@@ -112,6 +115,8 @@ public class ReportListView extends StandardListView<Report> {
     private Messages messages;
     @Autowired
     private EntityUuidGenerator entityUuidGenerator;
+    @Autowired
+    protected ReportRepository reportRepository;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -279,10 +284,21 @@ public class ReportListView extends StandardListView<Report> {
     }
 
     private Report reloadReport(Report report, FetchPlan fetchPlan) {
+        // todo better logic, like full report object should be obtained from repository
+        if (report.getSource() == ReportSource.ANNOTATED_CLASS) {
+            return report;
+        }
         MetaClass metaClass = metadata.getClass(Report.class);
         LoadContext<Report> loadContext = new LoadContext<>(metaClass);
         loadContext.setId(report.getId());
         loadContext.setFetchPlan(fetchPlan);
         return dataManager.load(loadContext);
+    }
+
+    @Install(to = "reportsDl", target = Target.DATA_LOADER)
+    private List<Report> reportsDlLoadDelegate(final LoadContext<Report> loadContext) {
+        // todo filter, sort etc.
+        List<Report> items = reportRepository.getAllReports().stream().toList();
+        return items;
     }
 }

@@ -18,7 +18,7 @@
 <view xmlns="http://jmix.io/schema/flowui/view" xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="msg://ReportExecutionListView.title"
       focusComponent="executionsDataGrid">
-    <data>
+    <data readOnly="true">
         <collection id="executionsDc"
                     class="io.jmix.reports.entity.ReportExecution"
                     fetchPlan="reportExecution.view">
@@ -27,7 +27,7 @@
                     <![CDATA[select e from report_ReportExecution e order by e.startTime desc]]>
                     <condition>
                         <c:jpql>
-                            <c:where>{E}.report.id in :reportIds</c:where>
+                            <c:where>{E}.reportCode in :reportCodes</c:where>
                         </c:jpql>
                     </condition>
                 </query>

@@ -3,23 +3,11 @@
       xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="msg://reportListView.title"
       focusComponent="reportsDataGrid">
-    <data>
+    <data readOnly="true">
         <collection id="reportsDc"
                     class="io.jmix.reports.entity.Report"
                     fetchPlan="report.view">
-            <loader id="reportsDl">
-                <query>select r from report_Report r
-                    <!--todo rp condition?-->
-                    <condition>
-                        <and>
-                            <c:jpql>
-                                <c:join>report_ReportInputParameter p</c:join>
-                                <c:where>p.report.id = r.id and p.className like :javaClassName</c:where>
-                            </c:jpql>
-                        </and>
-                    </condition>
-                </query>
-            </loader>
+            <loader id="reportsDl"/>
         </collection>
     </data>
     <facets>
@@ -74,6 +62,7 @@
                 <column property="group"/>
                 <column property="description"/>
                 <column property="code"/>
+                <column property="source"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

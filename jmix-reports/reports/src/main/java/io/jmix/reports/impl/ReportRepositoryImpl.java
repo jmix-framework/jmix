@@ -93,7 +93,6 @@ public class ReportRepositoryImpl implements ReportRepository {
         }
         report = dataManager.load(Report.class)
                 .condition(PropertyCondition.equal("code", reportCode))
-                .parameter("code", reportCode)
                 .fetchPlan(FULL_FETCH_PLAN)
                 .optional()
                 .orElse(null);

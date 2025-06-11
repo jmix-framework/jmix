@@ -46,6 +46,9 @@ public class ReportExecution {
     @CreatedBy
     private String createdBy;
 
+    /**
+     * Link to the persistent Report entity, if the report was defined in database.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "REPORT_ID")
     private Report report;

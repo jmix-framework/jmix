@@ -142,6 +142,7 @@ dependencies {
     testImplementation 'org.springframework:spring-orm'
     testImplementation 'ch.qos.logback:logback-classic'
     testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.liquibase:liquibase-core'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'

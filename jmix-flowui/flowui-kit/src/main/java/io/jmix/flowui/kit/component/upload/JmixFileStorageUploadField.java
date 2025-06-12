@@ -18,6 +18,13 @@ package io.jmix.flowui.kit.component.upload;
 
 import com.google.common.base.Strings;
 
+/**
+ * JmixFileStorageUploadField is a component for file upload functionality that integrates with a file storage system.
+ * This field provides options for handling file upload operations and storing files into the file storage.
+ *
+ * @param <C> the type of the upload field
+ * @param <V> the value type of the upload field
+ */
 public class JmixFileStorageUploadField<C extends AbstractSingleUploadField<C, V>, V>
         extends AbstractSingleUploadField<C, V> {
 

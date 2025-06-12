@@ -20,6 +20,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -31,13 +32,14 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import jakarta.annotation.Nullable;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+/**
+ * ComboButton is a UI component that provides a combination of a button and a dropdown menu,
+ * allowing users to trigger an action or open a menu of options.
+ */
 public class ComboButton extends AbstractDropdownButton
-        implements ClickNotifier<MenuItem>, HasAction, HasShortcutCombination {
+        implements ClickNotifier<MenuItem>, HasAction, HasShortcutCombination, HasThemeVariant<ComboButtonVariant> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-combo-button-icon";
 
@@ -132,11 +134,21 @@ public class ComboButton extends AbstractDropdownButton
         return getActionSupport().getAction();
     }
 
+    /**
+     * Returns the icon to be displayed in the dropdown area of the component.
+     *
+     * @return the icon to be displayed in the dropdown area of the component
+     */
     @Nullable
     public Icon getDropdownIcon() {
         return dropdownIcon;
     }
 
+    /**
+     * Sets the icon to be displayed in the dropdown area of the component.
+     *
+     * @param icon the icon to be set, or {@code null} to remove the dropdown icon
+     */
     public void setDropdownIcon(@Nullable Icon icon) {
         if (dropdownIcon != null) {
             dropdownIcon.getParent()
@@ -171,22 +183,6 @@ public class ComboButton extends AbstractDropdownButton
     @Override
     public KeyCombination getShortcutCombination() {
         return shortcutCombination;
-    }
-
-    public void addThemeVariants(ComboButtonVariant... variants) {
-        List<String> variantsToAdd = Stream.of(variants)
-                .map(ComboButtonVariant::getVariantName)
-                .collect(Collectors.toList());
-
-        getThemeNames().addAll(variantsToAdd);
-    }
-
-    public void removeThemeVariants(ComboButtonVariant... variants) {
-        List<String> variantsToRemove = Stream.of(variants)
-                .map(ComboButtonVariant::getVariantName)
-                .collect(Collectors.toList());
-
-        getThemeNames().removeAll(variantsToRemove);
     }
 
     protected ComboButtonActionSupport getActionSupport() {

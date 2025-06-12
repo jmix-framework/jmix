@@ -20,6 +20,9 @@ import com.vaadin.flow.component.notification.Notification.Position;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+/**
+ * Configuration properties for UI views in the application.
+ */
 @ConfigurationProperties(prefix = "jmix.ui.view")
 public class UiViewProperties {
 
@@ -125,7 +128,7 @@ public class UiViewProperties {
     /**
      * @see #preventBrowserTabClosing
      */
-    public boolean isPreventBrowserTabClosing()  {
+    public boolean isPreventBrowserTabClosing() {
         return preventBrowserTabClosing;
     }
 }

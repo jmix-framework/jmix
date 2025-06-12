@@ -26,6 +26,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Configuration properties for the UI module of a Jmix application.
+ */
 @ConfigurationProperties(prefix = "jmix.ui")
 public class UiProperties {
 

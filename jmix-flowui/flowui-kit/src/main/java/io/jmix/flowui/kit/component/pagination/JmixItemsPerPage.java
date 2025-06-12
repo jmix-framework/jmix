@@ -26,6 +26,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * A component for managing the number of items displayed per page in a paginated interface.
+ * It provides a label and a dropdown selection for users to specify or adjust the number of items per page.
+ */
 public class JmixItemsPerPage extends Composite<Div> {
 
     protected static final String BASE_CLASS_NAME = "jmix-items-per-page";
@@ -52,8 +56,9 @@ public class JmixItemsPerPage extends Composite<Div> {
     }
 
     /**
+     * Returns the default value for the number of items displayed per page.
      *
-     * @return
+     * @return the default value for the number of items per page, or null if no default value is set
      */
     @Nullable
     public Integer getItemsPerPageDefaultValue() {
@@ -61,56 +66,71 @@ public class JmixItemsPerPage extends Composite<Div> {
     }
 
     /**
+     * Sets the default value for the number of items displayed per page.
      *
-     * @param itemsPerPageDefaultValue
+     * @param itemsPerPageDefaultValue the default number of items to be displayed per page,
+     *                                or {@code null} if no default value is set
      */
     public void setItemsPerPageDefaultValue(@Nullable Integer itemsPerPageDefaultValue) {
         this.itemsPerPageDefaultValue = itemsPerPageDefaultValue;
     }
 
     /**
+     * Returns the collection of items that represent the available options
+     * for the number of items displayed per page.
      *
-     * @return
+     * @return a collection of integers representing the available options
+     *         for the items-per-page selection
      */
     public Collection<Integer> getItemsPerPageItems() {
         return itemsPerPageItems;
     }
 
     /**
+     * Sets the collection of items that represent the available options for the number of items displayed per page.
+     * Items less than or equal to 0 are ignored, and options greater than the entity's maximum fetch size
+     * will be replaced by the maximum fetch size.
      *
-     * @param itemsPerPageItems
+     * @param itemsPerPageItems a list of integers representing the available options for items-per-page selection
      */
     public void setItemsPerPageItems(List<Integer> itemsPerPageItems) {
         this.itemsPerPageItems = new ArrayList<>(itemsPerPageItems);
     }
 
     /**
+     * Determines whether the "unlimited" item is visible in the items-per-page selection.
      *
-     * @return
+     * @return true if the "unlimited" item is visible, false otherwise
      */
     public boolean isItemsPerPageUnlimitedItemVisible() {
         return itemsPerPageSelect.isEmptySelectionAllowed();
     }
 
     /**
+     * Sets whether the "unlimited" option for items-per-page selection is visible.
+     * If {@code true}, the "unlimited" option is displayed.
+     * If {@code false}, the "unlimited" option is not displayed.
      *
-     * @param unlimitedItemVisible
+     * @param unlimitedItemVisible a boolean indicating whether the "unlimited" option
+     *                              should be visible in the items-per-page selection
      */
     public void setItemsPerPageUnlimitedItemVisible(boolean unlimitedItemVisible) {
         itemsPerPageSelect.setEmptySelectionAllowed(unlimitedItemVisible);
     }
 
     /**
+     * Returns the text of the associated label.
      *
-     * @return
+     * @return the text content of the label as a String
      */
     public String getLabelText() {
         return labelSpan.getText();
     }
 
     /**
+     * Sets the text of the label.
      *
-     * @param text
+     * @param text the text to set for the label
      */
     public void setLabelText(String text) {
         labelSpan.setText(text);

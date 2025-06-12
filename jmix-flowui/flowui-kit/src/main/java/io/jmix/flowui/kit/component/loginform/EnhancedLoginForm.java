@@ -22,10 +22,24 @@ import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.internal.JsonSerializer;
 import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.Nullable;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * The EnhancedLoginForm is an extension of the LoginForm component that provides
+ * additional functionality such as "Remember Me" checkbox visibility and localization support.
+ * <p>
+ * This component allows users to:
+ * - Manage username and password input fields.
+ * - Show or hide "Remember Me" and language locale selection components.
+ * - Handle locale selection from a predefined set of locales.
+ * - Respond to configuration changes in "Remember Me" option and locale selection via event listeners.
+ */
 @Tag("jmix-login-form")
 @JsModule("./src/login-form/jmix-login-form.js")
 public class EnhancedLoginForm extends LoginForm {

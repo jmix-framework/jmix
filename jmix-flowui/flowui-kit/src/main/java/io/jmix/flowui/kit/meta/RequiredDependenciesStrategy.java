@@ -16,6 +16,18 @@
 
 package io.jmix.flowui.kit.meta;
 
+/**
+ * Enum representing the strategy for evaluating required dependencies in Studio.
+ * <p>
+ * The strategy determines how the dependencies specified in annotations like {@code StudioUiKit}
+ * are treated when determining whether a component or feature can be used in Studio.
+ * <ul>
+ *     <li>{@code OR}: Any one of the specified dependencies must be present.</li>
+ *     <li>{@code AND}: All of the specified dependencies must be present.</li>
+ * </ul>
+ * This enum is typically used in annotations to specify the criteria under which certain
+ * functionality should be available based on dependencies.
+ */
 public enum RequiredDependenciesStrategy {
     OR, AND
 }

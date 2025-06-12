@@ -29,6 +29,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
 
+/**
+ * Responsible for converting relative date interval expressions to {@link BaseDateInterval} objects and vice versa.
+ * Supports the operations defined in {@link RelativeDateInterval.Operation} and formats date intervals
+ * that match the relative interval pattern.
+ */
 @Internal
 @Component("flowui_UiDataRelativeIntervalConverter")
 public class RelativeIntervalConverter implements DateIntervalConverter {

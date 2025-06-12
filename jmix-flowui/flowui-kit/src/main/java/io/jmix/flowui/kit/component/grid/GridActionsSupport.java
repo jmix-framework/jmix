@@ -24,6 +24,13 @@ import io.jmix.flowui.kit.component.delegate.AbstractActionsHolderSupport;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A support class for managing actions in grids, providing functionality for binding
+ * actions to grid components and displaying them in a context menu.
+ *
+ * @param <C> the type of grid component
+ * @param <T> the type of items within the grid
+ */
 public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHolderSupport<C> {
 
     protected Map<Action, GridMenuItemActionWrapper<T>> actionBinding = new HashMap<>();
@@ -110,16 +117,18 @@ public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHol
     }
 
     /**
-     * @return true if actions are showed in grid context menu, false otherwise
+     * @return {@code true} if actions are shown in the grid context menu, {@code false} otherwise
      */
     public boolean isShowActionsInContextMenuEnabled() {
         return showActionsInContextMenuEnabled;
     }
 
     /**
-     * Sets whether to show actions in grid context menu.
+     * Enables or disables the display of actions in the grid's context menu.
      *
-     * @param showActionsInContextMenuEnabled true if actions should be showed to context menu, false otherwise
+     * @param showActionsInContextMenuEnabled a boolean flag indicating whether actions should be
+     *                                        displayed in the context menu. If {@code true}, actions
+     *                                        will be shown; if {@code false}, they will be hidden
      */
     public void setShowActionsInContextMenuEnabled(boolean showActionsInContextMenuEnabled) {
         this.showActionsInContextMenuEnabled = showActionsInContextMenuEnabled;

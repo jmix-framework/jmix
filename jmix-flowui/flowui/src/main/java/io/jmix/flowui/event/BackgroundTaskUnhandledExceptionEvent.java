@@ -31,6 +31,12 @@ public class BackgroundTaskUnhandledExceptionEvent extends AbstractBackgroundTas
         this.exception = exception;
     }
 
+    /**
+     * Returns the exception that occurred during the execution of the background task
+     * if the task's {@code done(Object)} method fails and the executor is unable to handle it.
+     *
+     * @return the exception that caused the failure
+     */
     public Exception getException() {
         return exception;
     }

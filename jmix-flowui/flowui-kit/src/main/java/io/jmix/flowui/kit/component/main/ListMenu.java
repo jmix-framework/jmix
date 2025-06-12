@@ -523,6 +523,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
      * Describes menu item.
      */
     public static class MenuItem implements io.jmix.flowui.kit.component.menu.MenuItem {
+
         protected static final String MENU_ITEM_CLASS_NAME = "className";
         protected static final String MENU_ITEM_PREFIX_COMPONENT = "prefixComponent";
         protected static final String MENU_ITEM_SUFFIX_COMPONENT = "suffixComponent";

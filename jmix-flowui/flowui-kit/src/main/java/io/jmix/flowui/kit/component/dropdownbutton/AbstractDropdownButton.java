@@ -31,12 +31,17 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.event.EventBus;
-
 import jakarta.annotation.Nullable;
+
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ * An abstract base class for dropdown button components, providing functionality for managing dropdown items,
+ * icons, styles, and various component behaviors. It serves as a customizable foundation for components such
+ * as dropdown buttons and combo buttons.
+ */
 public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         implements DropdownButtonComponent, AttachNotifier, DetachNotifier,
         HasTitle, HasSize, HasTheme, HasEnabled, HasStyle, HasOverlayClassName, HasText,

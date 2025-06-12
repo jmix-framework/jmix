@@ -37,8 +37,13 @@ import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**
- * @param <C> type of upload field
- * @param <V> value type
+ * Abstract base class for creating single file upload fields.
+ * This class handles configuration and customization of upload functionality,
+ * including file selection display, upload button components, and related
+ * events like file upload progress, completion, failure, or rejection.
+ *
+ * @param <C> the type of the component implementing this field
+ * @param <V> the value type of the upload field
  */
 @Tag("jmix-upload-field")
 @JsModule("./src/uploadfield/jmix-upload-field.js")

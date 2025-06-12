@@ -42,6 +42,18 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * JmixTwinColumn is a customizable UI component designed for selecting multiple items
+ * from one column to another. It is particularly useful in scenarios where users need
+ * to manage a large collection of items while keeping the selection process organized.
+ * <p>
+ * The component consists of:
+ * - An "items column" containing the available items.
+ * - A "selected items column" displaying the chosen items.
+ * - Buttons or actions for transferring items between the two columns.
+ *
+ * @param <V> the type of the items managed by the component
+ */
 @Tag("jmix-twin-column")
 @JsModule("./src/twin-column/jmix-twin-column.js")
 public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collection<V>>

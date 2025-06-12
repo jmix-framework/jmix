@@ -24,22 +24,24 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.valuepicker.PickerAction;
+import io.jmix.flowui.component.EntityPickerComponent;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.flowui.component.UiComponentUtils.getEmptyValue;
 
+/**
+ * An action responsible for clearing the value of an {@link EntityPickerComponent}.
+ */
 @ActionType(EntityClearAction.ID)
 public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, EntityPickerComponent<E>, E> {
 

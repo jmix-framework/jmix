@@ -139,6 +139,7 @@ public class UserSettingsServiceImpl implements UserSettingsService {
                 .list();
         return result.isEmpty() ? null : result.get(0);
     }
+
     protected boolean notAuthenticated() {
         return SecurityContextHelper.getAuthentication() == null;
     }

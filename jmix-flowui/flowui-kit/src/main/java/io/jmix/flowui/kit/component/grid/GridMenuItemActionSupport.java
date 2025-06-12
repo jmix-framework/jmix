@@ -27,6 +27,11 @@ import jakarta.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 
+/**
+ * A helper class that enhances the behavior of a menu item in the context of a grid or data table
+ * by associating it with an {@link Action}. It synchronizes the properties and behavior of the menu item
+ * with the associated action and handles user interactions through action listeners.
+ */
 public class GridMenuItemActionSupport {
 
     protected final GridMenuItemActionWrapper<?> menuItem;
@@ -46,10 +51,23 @@ public class GridMenuItemActionSupport {
         return action;
     }
 
+    /**
+     * Sets the {@link Action} for this menu item and optionally configures it to override
+     * the component properties such as text, tooltip, enabled state, and icon.
+     *
+     * @param action the action to set, or {@code null} to remove the current action
+     */
     public void setAction(@Nullable Action action) {
         setAction(action, true);
     }
 
+    /**
+     * Sets the {@link Action} for this menu item and optionally configures it to override
+     * the component properties such as text, tooltip, enabled state, and icon.
+     *
+     * @param action                      the action to set, or {@code null} to remove the current action
+     * @param overrideComponentProperties whether the action should override the component's properties
+     */
     public void setAction(@Nullable Action action, boolean overrideComponentProperties) {
         if (Objects.equals(this.action, action) && this.overrideComponentProperties == overrideComponentProperties) {
             return;

@@ -29,8 +29,8 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.*;
 import io.jmix.flowui.kit.component.HasPlaceholder;
 import io.jmix.flowui.kit.component.formatter.Formatter;
-
 import jakarta.annotation.Nullable;
+
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,6 +38,20 @@ import java.util.Optional;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.vaadin.flow.data.value.ValueChangeMode.eventForMode;
 
+/**
+ * Base class for components that allow picking and editing of values with optional custom value support.
+ * <p>
+ * This class serves as the foundational implementation for value picker components, providing functionality
+ * for managing value formatting, validation, and custom value handling. It extends the {@link AbstractField}
+ * class and implements a variety of interfaces to support advanced features such as formatter control,
+ * user actions, validation properties, and accessibility settings.
+ * <p>
+ * The class is intended to be extended by specific implementations of value pickers with specialized
+ * behaviors or extended features.
+ *
+ * @param <C> the type of the component extending this class
+ * @param <V> the type of the value being picked or edited
+ */
 @Tag("jmix-value-picker")
 @JsModule("./src/value-picker/jmix-value-picker.js")
 public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>

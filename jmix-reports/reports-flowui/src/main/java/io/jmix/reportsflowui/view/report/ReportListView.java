@@ -30,7 +30,6 @@ import io.jmix.flowui.action.list.CreateAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
-import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
@@ -42,6 +41,7 @@ import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.download.ReportDownloader;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
@@ -91,7 +91,7 @@ public class ReportListView extends StandardListView<Report> {
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
-    protected Downloader downloader;
+    protected ReportDownloader downloader;
     @Autowired
     protected ReportImportExport reportImportExport;
     @Autowired

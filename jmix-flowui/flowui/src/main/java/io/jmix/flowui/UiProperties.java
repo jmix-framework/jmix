@@ -111,7 +111,7 @@ public class UiProperties {
                         @Nullable Map<String, Integer> entityMaxFetchSize,
                         @DefaultValue("50") Integer defaultPageSize,
                         @Nullable Map<String, Integer> entityPageSize,
-                        @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
+                        @DefaultValue({"jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
                         @DefaultValue("3600") int fileDownloaderCacheMaxAgeSec,
                         @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
                         @DefaultValue("true") boolean useSessionFixationProtection,

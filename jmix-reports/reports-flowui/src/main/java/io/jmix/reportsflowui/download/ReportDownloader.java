@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,49 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.download;
+package io.jmix.reportsflowui.download;
 
 import io.jmix.core.FileRef;
-import io.jmix.core.FileStorage;
-
+import io.jmix.flowui.download.DownloadDataProvider;
+import io.jmix.flowui.download.DownloadFormat;
 import org.springframework.lang.Nullable;
 
-import java.util.function.Predicate;
-
 /**
- * Generic interface to download data from the system.
+ * Generic interface to download report data from the system.
  */
-public interface Downloader {
-
-    /**
-     * Sets a file storage where the files will be downloaded from.
-     *
-     * @param fileStorage file storage
-     */
-    @Deprecated(since = "2.3", forRemoval = true)
-    void setFileStorage(FileStorage fileStorage);
-
-    /**
-     * @return {@code true} if downloader should open a new window with the file content
-     */
-    boolean isShowNewWindow();
-
-    /**
-     * Sets explicit new window option.
-     *
-     * @param showNewWindow {@code true} if downloader opens new window, otherwise {@code false}
-     */
-    void setShowNewWindow(boolean showNewWindow);
-
-    /**
-     * Sets a predicate that checks if file is allowed to be opened.
-     * It takes file extension as an input parameter and returns {@code true} if file is allowed to be opened or
-     * {@code false} if file should be downloaded.
-     *
-     * @param viewFilePredicate predicate
-     */
-    default void setViewFilePredicate(Predicate<String> viewFilePredicate) {}
-
+public interface ReportDownloader {
     /**
      * Downloads an arbitrary resource defined by a DownloadDataProvider.
      *

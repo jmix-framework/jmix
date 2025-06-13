@@ -94,6 +94,11 @@ public class ReportsProperties {
     List<String> wizardPropertiesExcludedBlackList;
 
     /**
+     * File extensions that can be opened for viewing in a browser.
+     */
+    List<String> viewFileExtensions;
+
+    /**
      * Maximum depth of entity model that is used in report wizard and report dataset fetchPlan editor.
      */
     int entityTreeModelMaxDepth;
@@ -172,7 +177,8 @@ public class ReportsProperties {
                              @DefaultValue("3") int countOfRetry,
                              @DefaultValue("false") boolean useOfficeForDocumentConversion,
                              @DefaultValue("false") boolean formulasPostProcessingEvaluationEnabled,
-                             @DefaultValue("false") boolean multilineStringsProcessingEnabled) {
+                             @DefaultValue("false") boolean multilineStringsProcessingEnabled,
+                             @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions) {
         this.officePath = officePath;
         this.officePorts = officePorts;
         this.docFormatterTimeout = docFormatterTimeout;
@@ -197,7 +203,13 @@ public class ReportsProperties {
         this.useOfficeForDocumentConversion = useOfficeForDocumentConversion;
         this.formulasPostProcessingEvaluationEnabled = formulasPostProcessingEvaluationEnabled;
         this.multilineStringsProcessingEnabled = multilineStringsProcessingEnabled;
+        this.viewFileExtensions = viewFileExtensions;
     }
+
+    /**
+     * @see #viewFileExtensions
+     */
+    public List<String> getViewFileExtensions() { return viewFileExtensions; }
 
     /**
      * @see #officePath

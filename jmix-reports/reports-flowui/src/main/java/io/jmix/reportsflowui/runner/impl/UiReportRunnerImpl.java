@@ -24,7 +24,6 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.download.DownloadFormat;
-import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.*;
@@ -38,6 +37,7 @@ import io.jmix.reports.util.ReportZipUtils;
 import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.download.ReportDownloader;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunContext;
@@ -62,7 +62,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
 
     protected final ReportRunner reportRunner;
     protected final DialogWindows dialogWindows;
-    protected final Downloader downloader;
+    protected final ReportDownloader downloader;
     protected final MetadataTools metadataTools;
     protected final Messages messages;
     protected final Dialogs dialogs;
@@ -74,7 +74,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
 
     public UiReportRunnerImpl(ReportRunner reportRunner,
                               DialogWindows dialogWindows,
-                              Downloader downloader,
+                              ReportDownloader downloader,
                               MetadataTools metadataTools,
                               Messages messages,
                               Dialogs dialogs,
@@ -94,6 +94,8 @@ public class UiReportRunnerImpl implements UiReportRunner {
         this.fluentUiReportRunners = fluentUiReportRunners;
         this.notifications = notifications;
         this.reportsClientProperties = reportsClientProperties;
+
+
     }
 
     @Override

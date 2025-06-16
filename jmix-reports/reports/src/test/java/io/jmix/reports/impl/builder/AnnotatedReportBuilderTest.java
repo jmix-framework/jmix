@@ -157,6 +157,53 @@ public class AnnotatedReportBuilderTest {
     }
 
     @Test
+    public void testImportFromClassHierarchy() {
+        // given
+        InheritanceChildReport definition = new InheritanceChildReport();
+
+        // when
+        Report report = annotatedReportBuilder.createReportFromDefinition(definition);
+
+        // then
+        assertThat(report).isNotNull();
+        assertThat(report.getCode()).isEqualTo("inheritance-report");
+
+        // then: input parameters
+        assertThat(report.getInputParameters()).hasSize(1);
+        assertThat(report.getInputParameters().get(0).getAlias()).isEqualTo("afterDate");
+        assertThat(report.getInputParameters().get(0).getDefaultValueProvider()).isNotNull();
+
+        // then: bands
+        assertThat(report.getBands()).hasSize(2);
+
+        assertThat(report.getRootBandDefinition()).isNotNull();
+        assertThat(report.getRootBandDefinition().getName()).isEqualTo("Root");
+
+        var childBand = report.getRootBandDefinition().getChildrenBandDefinitions().get(0);
+        assertThat(childBand.getName()).isEqualTo("title");
+
+        DataSet dataSet = childBand.getDataSets().get(0);
+        assertThat(dataSet.getName()).isEqualTo("title");
+        assertThat(dataSet.getType()).isEqualTo(DataSetType.DELEGATE);
+        assertThat(dataSet.getLoaderDelegate()).isNotNull();
+
+        // then: template
+        assertThat(report.getTemplates()).hasSize(1);
+        var template = report.getTemplates().get(0);
+        assertThat(template.getCode()).isEqualTo("default");
+        assertThat(template.getReportOutputType()).isEqualTo(ReportOutputType.CSV);
+
+        // then: value format
+        assertThat(report.getValuesFormats()).hasSize(2);
+
+        assertThat(report.getValuesFormats().get(0).getValueName()).isEqualTo("title.date");
+        assertThat(report.getValuesFormats().get(0).getCustomFormatter()).isNotNull();
+
+        assertThat(report.getValuesFormats().get(1).getValueName()).isEqualTo("title.caption");
+        assertThat(report.getValuesFormats().get(1).getCustomFormatter()).isNotNull();
+    }
+
+    @Test
     public void testReportRoles() {
         // given
         ReportWithRoles definition = new ReportWithRoles();

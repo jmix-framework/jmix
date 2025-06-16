@@ -35,6 +35,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.pdfbox.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
@@ -196,7 +197,8 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
     protected List<ReportInputParameter> extractInputParameters(Report report, Object definitionInstance) {
         List<ReportInputParameter> inputParameters = new ArrayList<>();
-        InputParameterDef[] annotations = definitionInstance.getClass().getDeclaredAnnotationsByType(InputParameterDef.class);
+        Set<InputParameterDef> annotations = AnnotatedElementUtils.findMergedRepeatableAnnotations(
+                definitionInstance.getClass(), InputParameterDef.class);
 
         int position = 0;
         for (InputParameterDef annotation : annotations) {
@@ -308,8 +310,9 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 
     protected List<ReportTemplate> extractTemplates(Report report, Object definitionInstance) {
         List<ReportTemplate> templates = new ArrayList<>();
-        TemplateDef[] annotations = definitionInstance.getClass().getDeclaredAnnotationsByType(TemplateDef.class);
-        if (annotations.length == 0) {
+        Set<TemplateDef> annotations = AnnotatedElementUtils.findMergedRepeatableAnnotations(
+                definitionInstance.getClass(), TemplateDef.class);
+        if (annotations.isEmpty()) {
             throw new InvalidReportDefinitionException("Report definition must have at least one template: " + definitionInstance.getClass());
         }
 
@@ -335,7 +338,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         return Collections.unmodifiableList(templates);
     }
 
-    private void validateMandatoryTemplateDelegates(List<ReportTemplate> templates) {
+    protected void validateMandatoryTemplateDelegates(List<ReportTemplate> templates) {
         for (ReportTemplate t : templates) {
             if (t.isCustom() && t.getCustomDefinedBy() == CustomTemplateDefinedBy.DELEGATE && t.getDelegate() == null) {
                 throw new InvalidReportDefinitionException("Template must have associated CustomReport delegate: " + t.getCode());
@@ -405,7 +408,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         return template;
     }
 
-    private TemplateTableDescription convertToTableDescription(TemplateTableDef table, Class<?> definitionClass) {
+    protected TemplateTableDescription convertToTableDescription(TemplateTableDef table, Class<?> definitionClass) {
         TemplateTableDescription description = metadata.create(TemplateTableDescription.class);
         List<TemplateTableBand> tableBands = new ArrayList<>();
         int bandPosition = 0;
@@ -468,10 +471,11 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         }
     }
 
-    private Set<BandDefinition> extractBands(Report report, Object definitionInstance) {
+    protected Set<BandDefinition> extractBands(Report report, Object definitionInstance) {
         Set<BandDefinition> bands = new LinkedHashSet<>();
-        BandDef[] annotations = definitionInstance.getClass().getDeclaredAnnotationsByType(BandDef.class);
-        if (annotations.length == 0) {
+        Set<BandDef> annotations = AnnotatedElementUtils.findMergedRepeatableAnnotations(
+                definitionInstance.getClass(), BandDef.class);
+        if (annotations.isEmpty()) {
             throw new InvalidReportDefinitionException("Report definition must have at least one band: " + definitionInstance.getClass());
         }
 
@@ -546,7 +550,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         }
     }
 
-    private List<DataSet> extractDataSets(Report report, BandDefinition bandDefinition, DataSetDef[] dataSetDefs) {
+    protected List<DataSet> extractDataSets(Report report, BandDefinition bandDefinition, DataSetDef[] dataSetDefs) {
         List<DataSet> dataSets = new ArrayList<>();
 
         for (DataSetDef annotation : dataSetDefs) {
@@ -589,7 +593,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         return Collections.unmodifiableList(dataSets);
     }
 
-    private void extractJsonDataSetParameters(Report report, JsonDataSetParameters jsonAnnotation, DataSet dataSet) {
+    protected void extractJsonDataSetParameters(Report report, JsonDataSetParameters jsonAnnotation, DataSet dataSet) {
         if (jsonAnnotation.source() == JsonSourceType.GROOVY_SCRIPT) {
             throw new InvalidReportDefinitionException(
                     jsonAnnotation.source() + " is not supported for reports defined in code, use DELEGATE instead"
@@ -614,7 +618,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         }
     }
 
-    private void extractEntityDataSetParameters(DataSetDef annotation, Report report, DataSet dataSet, EntityDataSetDef entityAnnotation) {
+    protected void extractEntityDataSetParameters(DataSetDef annotation, Report report, DataSet dataSet, EntityDataSetDef entityAnnotation) {
         findElementInListByUniqueName(report.getInputParameters(),
                 entityAnnotation.parameterAlias(), ReportInputParameter::getAlias, entityAnnotation,
                 "Report definition doesn't contain input parameter with alias");
@@ -640,7 +644,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         }
     }
 
-    private void assignDataSetDelegates(Set<BandDefinition> bands, Object definitionInstance) {
+    protected void assignDataSetDelegates(Set<BandDefinition> bands, Object definitionInstance) {
         List<DataSet> allDataSets = bands.stream()
                 .flatMap(band -> band.getDataSets().stream())
                 .toList();
@@ -690,9 +694,10 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         }
     }
 
-    private List<ReportValueFormat> extractValueFormats(Report report, Object definitionInstance) {
+    protected List<ReportValueFormat> extractValueFormats(Report report, Object definitionInstance) {
         List<ReportValueFormat> formats = new ArrayList<>();
-        ValueFormatDef[] annotations = definitionInstance.getClass().getDeclaredAnnotationsByType(ValueFormatDef.class);
+        Set<ValueFormatDef> annotations = AnnotatedElementUtils.findMergedRepeatableAnnotations(
+                definitionInstance.getClass(), ValueFormatDef.class);
 
         for (ValueFormatDef annotation : annotations) {
             ReportValueFormat format = convertToValueFormat(report, annotation);
@@ -707,7 +712,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
         return Collections.unmodifiableList(formats);
     }
 
-    private ReportValueFormat convertToValueFormat(Report report, ValueFormatDef annotation) {
+    protected ReportValueFormat convertToValueFormat(Report report, ValueFormatDef annotation) {
         ReportValueFormat format = metadata.create(ReportValueFormat.class);
 
         if (!annotation.band().isEmpty()) {

@@ -16,63 +16,32 @@
 
 package io.jmix.reports.execution;
 
-import io.jmix.core.*;
-import io.jmix.reports.ReportsTestConfiguration;
+import io.jmix.core.FileStorage;
+import io.jmix.core.FileStorageLocator;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reports.impl.builder.AnnotatedReportBuilder;
 import io.jmix.reports.runner.ReportRunner;
-import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
-@ContextConfiguration(classes = {ReportsTestConfiguration.class})
 @TestPropertySource(properties = {
         "jmix.reports.history-recording-enabled=true",
         "jmix.reports.save-output-documents-to-history=true"
 })
-public class ExecutionHistoryWithSavingDocumentsTest {
-    @Autowired
-    FetchPlans fetchPlans;
-    @Autowired
-    JdbcTemplate jdbcTemplate;
-    @Autowired
-    UnconstrainedDataManager unconstrainedDataManager;
+public class ExecutionHistoryWithSavingDocumentsTest extends BaseExecutionHistoryTest {
     @Autowired
     FileStorageLocator fileStorageLocator;
     @Autowired
     ReportRunner reportRunner;
     @Autowired
     AnnotatedReportBuilder annotatedReportBuilder;
-
-    protected FetchPlan fetchPlan;
-
-    @BeforeEach
-    public void setup() {
-        fetchPlan = fetchPlans.builder(ReportExecution.class)
-                .addFetchPlan(FetchPlan.BASE)
-                .add("outputDocument", FetchPlan.LOCAL)
-                .build();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        jdbcTemplate.update("delete from REPORT_EXECUTION");
-    }
 
     @Test
     public void testHistoryWithSaveDocument() throws Exception {
@@ -96,15 +65,5 @@ public class ExecutionHistoryWithSavingDocumentsTest {
         String csv = new String(bytes, StandardCharsets.UTF_8);
         assertThat(csv).contains("Output");
         assertThat(csv).contains("10");
-    }
-
-    @Nullable
-    private ReportExecution loadExecution(UnconstrainedDataManager unconstrainedDataManager, String reportCode) {
-        return unconstrainedDataManager.load(ReportExecution.class)
-                .query("select e from report_ReportExecution e where e.reportCode = :code")
-                .parameter("code", reportCode)
-                .fetchPlan(fetchPlan)
-                .optional()
-                .orElse(null);
     }
 }

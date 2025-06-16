@@ -45,6 +45,7 @@ import org.springframework.lang.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
@@ -71,6 +72,9 @@ public class DownloaderImpl implements Downloader {
 
     // Use flags from app.properties for show/download files
     protected boolean useViewList;
+
+    // Predicate for open/download files check
+    protected Predicate<String> viewFilePredicate = this::defaultViewFilePredicate;
 
     /**
      * Constructor with newWindow=false
@@ -121,6 +125,19 @@ public class DownloaderImpl implements Downloader {
         log.warn("The passed value is ignored. Actual file storage is obtained from " + FileRef.class.getSimpleName());
     }
 
+    protected boolean defaultViewFilePredicate(String fileExtension) {
+        if (StringUtils.isEmpty(fileExtension)) {
+            return false;
+        }
+
+        return uiProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExtension));
+    }
+
+    @Override
+    public void setViewFilePredicate(Predicate<String> viewFilePredicate) {
+        this.viewFilePredicate = viewFilePredicate;
+    }
+
     @Override
     public boolean isShowNewWindow() {
         return newWindow;
@@ -164,7 +181,7 @@ public class DownloaderImpl implements Downloader {
                 fileExt = FilenameUtils.getExtension(resourceName);
             }
 
-            showNewWindow = uiProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExt));
+            showNewWindow = viewFilePredicate.test(StringUtils.lowerCase(fileExt));
         }
 
         if (downloadFormat != null) {

@@ -22,6 +22,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportTemplate;
 import org.springframework.beans.factory.BeanFactory;
 
@@ -34,7 +35,8 @@ public class ReportGsonSerializationSupport extends GsonSerializationSupport {
         exclusionPolicy = (objectClass, propertyName) ->
                 Report.class.isAssignableFrom(objectClass)
                                     && ("xml".equalsIgnoreCase(propertyName) || "source".equalsIgnoreCase(propertyName))
-                        || ReportTemplate.class.isAssignableFrom(objectClass) && "content".equals(propertyName);
+                        || ReportTemplate.class.isAssignableFrom(objectClass) && "content".equals(propertyName)
+                        || ReportGroup.class.isAssignableFrom(objectClass) && "source".equals(propertyName);
     }
 
     @Override

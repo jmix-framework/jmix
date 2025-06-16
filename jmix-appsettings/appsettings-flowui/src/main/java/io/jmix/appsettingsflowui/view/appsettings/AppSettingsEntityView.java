@@ -309,8 +309,7 @@ public class AppSettingsEntityView extends StandardView {
                         continue;
                     }
                     if (metaProperty.getType() != MetaProperty.Type.ENUM
-                            && (metaProperty.getRange().asDatatype().getJavaClass().equals(byte[].class) ||
-                            metaProperty.getRange().asDatatype().getJavaClass().equals(UUID.class))) {
+                            && metaProperty.getRange().asDatatype().getJavaClass().equals(byte[].class)) {
                         continue;
                     }
                     if (metadataTools.isAnnotationPresent(item, metaProperty.getName(), Convert.class)) {

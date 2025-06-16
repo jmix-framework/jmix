@@ -23,6 +23,7 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.impl.builder.AnnotatedGroupBuilder;
 import io.jmix.reports.impl.builder.AnnotatedReportBuilder;
+import io.jmix.reports.impl.builder.InvalidReportDefinitionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -72,7 +73,14 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
     }
 
     protected void importGroupDefinition(Object bean, String beanName) {
-        ReportGroup group = groupBuilder.createGroupFromDefinition(bean);
+        ReportGroup group;
+        try {
+            group = groupBuilder.createGroupFromDefinition(bean);
+        } catch (InvalidReportDefinitionException e) {
+            throw new RuntimeException(
+                    String.format("Failed to import annotated group definition: bean=%s, class=%s",
+                            beanName, bean.getClass().getName()), e);
+        }
         if (reportGroupHolder.getGroupByCode(group.getCode()) != null) {
             throw new IllegalStateException(
                     String.format("Duplicate group code: %s, bean name: %s", group.getCode(), beanName)
@@ -92,7 +100,14 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
     }
 
     protected void importReportDefinition(Object bean, String beanName) {
-        Report report = reportBuilder.createReportFromDefinition(bean);
+        Report report;
+        try {
+            report = reportBuilder.createReportFromDefinition(bean);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    String.format("Failed to import annotated report definition: bean=%s, class=%s",
+                            beanName, bean.getClass().getName()), e);
+        }
 
         if (reportHolder.getByCode(report.getCode()) != null) {
             throw new IllegalStateException(

@@ -29,7 +29,9 @@ import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.reports.test_support.TestFileStorage;
+import io.jmix.reports.test_support.role.FullAccessRole;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import jakarta.persistence.EntityManagerFactory;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.cache.CacheManager;
@@ -45,6 +47,7 @@ import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -52,6 +55,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @Import({CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class,
@@ -120,8 +124,18 @@ public class ReportsTestConfiguration {
     }
 
     @Bean
-    public UserRepository userRepository() {
-        InMemoryUserRepository repository = new InMemoryUserRepository();
+    public UserRepository userRepository(RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
+        InMemoryUserRepository repository = new InMemoryUserRepository() {
+            @Override
+            protected UserDetails createSystemUser() {
+                return User.builder()
+                        .username("system")
+                        .password("{noop}")
+                        .authorities(List.of(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.NAME)))
+                        .build();
+            }
+        };
+
         repository.addUser(User.builder()
                 .username("admin")
                 .password("{noop}admin")

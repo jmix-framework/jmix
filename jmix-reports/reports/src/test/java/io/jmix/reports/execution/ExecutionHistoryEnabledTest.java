@@ -20,6 +20,8 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reports.impl.builder.AnnotatedReportBuilder;
 import io.jmix.reports.runner.ReportRunner;
+import io.jmix.reports.test_support.RuntimeReportUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
@@ -37,6 +39,14 @@ public class ExecutionHistoryEnabledTest extends BaseExecutionHistoryTest {
     ReportRunner reportRunner;
     @Autowired
     AnnotatedReportBuilder annotatedReportBuilder;
+    @Autowired
+    RuntimeReportUtil runtimeReportUtil;
+
+    @AfterEach
+    public void cleanupDatabaseReports() {
+        cleanup();
+        runtimeReportUtil.cleanupDatabaseReports();
+    }
 
     @Test
     public void testSuccess() {
@@ -98,4 +108,43 @@ public class ExecutionHistoryEnabledTest extends BaseExecutionHistoryTest {
         assertThat(execution.getSuccess()).isTrue();
         assertThat(execution.getOutputDocument()).isNull();
     }
+
+    @Test
+    public void testRuntimeReportSuccessBeforePersisting() {
+        // given
+        Report report = runtimeReportUtil.constructSimpleRuntimeReport(); // not persisted to db yet
+
+        // when
+        reportRunner.byReportEntity(report)
+                .run();
+
+        // then
+        ReportExecution execution = loadExecutionByName(unconstrainedDataManager, RuntimeReportUtil.SIMPLE_RUNTIME_REPORT_NAME);
+        assertThat(execution).isNotNull();
+        assertThat(execution.getReport()).isNull(); // !!!
+        assertThat(execution.getReportName()).isEqualTo(RuntimeReportUtil.SIMPLE_RUNTIME_REPORT_NAME);
+        assertThat(execution.getSuccess()).isTrue();
+    }
+
+    @Test
+    public void testRuntimeReportSuccess() {
+        // given
+        Report report = runtimeReportUtil.createAndSaveSimpleRuntimeReport();
+
+        // when
+        reportRunner.byReportEntity(report)
+                .run();
+
+        // then
+        ReportExecution execution = loadExecutionByName(unconstrainedDataManager, RuntimeReportUtil.SIMPLE_RUNTIME_REPORT_NAME);
+        assertThat(execution).isNotNull();
+        assertThat(execution.getReport()).isEqualTo(report); // !!!
+        assertThat(execution.getFinishTime()).isNotNull();
+        assertThat(execution.getReportName()).isEqualTo(RuntimeReportUtil.SIMPLE_RUNTIME_REPORT_NAME);
+        assertThat(execution.getReportCode()).isNull();
+        assertThat(execution.getSuccess()).isTrue();
+        assertThat(execution.getCancelled()).isFalse();
+        assertThat(execution.getErrorMessage()).isNull();
+    }
+
 }

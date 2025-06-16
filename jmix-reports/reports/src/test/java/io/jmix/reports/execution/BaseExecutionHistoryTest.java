@@ -69,6 +69,15 @@ public abstract class BaseExecutionHistoryTest {
                 .list();
     }
 
+    protected List<ReportExecution> loadExecutionsByName(String reportName) {
+        return unconstrainedDataManager.load(ReportExecution.class)
+                .query("select e from report_ReportExecution e" +
+                       " where e.reportName = :name order by e.startTime asc")
+                .parameter("name", reportName)
+                .fetchPlan(fetchPlan)
+                .list();
+    }
+
     @Nullable
     protected ReportExecution loadExecution(UnconstrainedDataManager unconstrainedDataManager, String reportCode) {
         return unconstrainedDataManager.load(ReportExecution.class)
@@ -80,10 +89,19 @@ public abstract class BaseExecutionHistoryTest {
     }
 
     @Nullable
+    protected ReportExecution loadExecutionByName(UnconstrainedDataManager unconstrainedDataManager, String reportName) {
+        return unconstrainedDataManager.load(ReportExecution.class)
+                .query("select e from report_ReportExecution e where e.reportName = :name")
+                .parameter("name", reportName)
+                .fetchPlan(fetchPlan)
+                .optional()
+                .orElse(null);
+    }
+
+    @Nullable
     protected ReportExecution reload(ReportExecution execution) {
         return unconstrainedDataManager.load(Id.of(execution))
                 .optional()
                 .orElse(null);
     }
-
 }

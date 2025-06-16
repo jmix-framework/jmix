@@ -19,10 +19,13 @@ package io.jmix.reports.execution;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.reports.ReportExecutionHistoryRecorder;
+import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reports.impl.AnnotatedReportHolder;
 import io.jmix.reports.impl.AnnotatedReportScanner;
 import io.jmix.reports.runner.ReportRunner;
+import io.jmix.reports.test_support.RuntimeReportUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,8 @@ public class ExecutionHistoryCleanPerReportTest extends BaseExecutionHistoryTest
     AnnotatedReportScanner annotatedReportScanner;
     @Autowired
     ReportRunner reportRunner;
+    @Autowired
+    RuntimeReportUtil runtimeReportUtil;
 
     @BeforeEach
     public void setup() {
@@ -58,8 +63,14 @@ public class ExecutionHistoryCleanPerReportTest extends BaseExecutionHistoryTest
         }
     }
 
+    @AfterEach
+    public void cleanupDatabaseReports() {
+        cleanup();
+        runtimeReportUtil.cleanupDatabaseReports();
+    }
+
     @Test
-    public void testCleanItemsPerReport() {
+    public void testCleanItemsPerAnnotatedReport() {
         // given
         String reportCode = ReportForHistory.CODE;
 
@@ -83,6 +94,36 @@ public class ExecutionHistoryCleanPerReportTest extends BaseExecutionHistoryTest
 
         assertThat(reload(executions.get(1))).isNull();
         assertThat(fileStorage.fileExists(executions.get(1).getOutputDocument())).isFalse();
+
+        assertThat(reload(executions.get(2))).isNotNull();
+        assertThat(fileStorage.fileExists(executions.get(2).getOutputDocument())).isTrue();
+    }
+
+    @Test
+    public void testCleanItemsPerDatabaseReport() {
+        // given
+        Report report = runtimeReportUtil.createAndSaveSimpleRuntimeReport();
+
+        for (int i = 0; i < 3; i++) {
+            reportRunner.byReportEntity(report)
+                    .run();
+        }
+
+        List<ReportExecution> executions = loadExecutionsByName(RuntimeReportUtil.SIMPLE_RUNTIME_REPORT_NAME);
+        assertThat(executions).hasSize(3);
+        FileStorage fileStorage = fileStorageLocator.getDefault();
+
+        // when
+        String deleted = executionHistoryRecorder.cleanupHistory();
+
+        // then
+        assertThat(deleted).isEqualTo("1");
+
+        assertThat(reload(executions.get(0))).isNull();
+        assertThat(fileStorage.fileExists(executions.get(0).getOutputDocument())).isFalse();
+
+        assertThat(reload(executions.get(1))).isNotNull();
+        assertThat(fileStorage.fileExists(executions.get(1).getOutputDocument())).isTrue();
 
         assertThat(reload(executions.get(2))).isNotNull();
         assertThat(fileStorage.fileExists(executions.get(2).getOutputDocument())).isTrue();

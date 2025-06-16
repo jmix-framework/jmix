@@ -16,6 +16,7 @@
 
 package io.jmix.reports.entity;
 
+import io.jmix.core.CopyingSystemState;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.TenantId;
@@ -40,7 +41,7 @@ import java.util.UUID;
 @Table(name = "REPORT_GROUP")
 @JmixEntity
 @SuppressWarnings("unused")
-public class ReportGroup {
+public class ReportGroup implements CopyingSystemState<ReportGroup> {
 
     private static final long serialVersionUID = 5399528790289039413L;
 
@@ -229,5 +230,10 @@ public class ReportGroup {
     @PostLoad
     public void postLoad() {
         this.source = ReportSource.DATABASE;
+    }
+
+    @Override
+    public void copyFrom(ReportGroup source) {
+        this.source = source.source;
     }
 }

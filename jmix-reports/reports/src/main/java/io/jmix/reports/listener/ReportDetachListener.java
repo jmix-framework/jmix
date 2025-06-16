@@ -52,8 +52,8 @@ public class ReportDetachListener implements BeforeDetachEntityListener<Report> 
 
             setRelevantReferencesToReport(entity);
             sortRootChildrenBands(entity);
-            entity.setSource(ReportSource.DATABASE);
         }
+        entity.setSource(ReportSource.DATABASE);
     }
 
     protected void sortRootChildrenBands(Report entity) {

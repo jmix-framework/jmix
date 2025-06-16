@@ -16,7 +16,7 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://ReportExecutionDialogView.title">
-    <data>
+    <data readOnly="true">
         <collection id="reportsDc"
                     class="io.jmix.reports.entity.Report"
                     fetchPlan="report.view">
@@ -35,16 +35,13 @@
 
     <facets>
         <settings auto="true"/>
+        <dataLoadCoordinator auto="true"/>
     </facets>
 
     <actions>
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>
     </actions>
-
-    <facets>
-        <dataLoadCoordinator auto="true"/>
-    </facets>
 
     <layout>
         <formLayout id="gridFilter">

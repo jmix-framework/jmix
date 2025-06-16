@@ -33,11 +33,15 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reportsflowui.download.ReportDownloader;
 import io.jmix.reportsflowui.view.run.ReportExcelHelper;
+import io.jmix.reports.entity.ReportSource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Route(value = "reports/executions", layout = DefaultMainViewParent.class)
@@ -143,8 +147,20 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     public void setFilterByReports(List<Report> filterByReports) {
         this.filterByReports = filterByReports;
 
-        if (CollectionUtils.isNotEmpty(filterByReports)) {
-            List<String> reportCodes = filterByReports.stream().map(Report::getCode).toList();
+        Set<UUID> reportIds = new HashSet<>();
+        Set<String> reportCodes = new HashSet<>();
+
+        for (Report filterByReport : filterByReports) {
+            if (filterByReport.getSource() == ReportSource.DATABASE) {
+                reportIds.add(filterByReport.getId());
+            } else {
+                reportCodes.add(filterByReport.getCode());
+            }
+        }
+        if (!reportIds.isEmpty()) {
+            executionsDl.setParameter("reportIds", reportIds);
+        }
+        if (!reportCodes.isEmpty()) {
             executionsDl.setParameter("reportCodes", reportCodes);
         }
     }

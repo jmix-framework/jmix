@@ -524,5 +524,6 @@ public class Report implements io.jmix.reports.yarg.structure.Report, CopyingSys
     @Override
     public void copyFrom(Report source) {
         this.parametersCrossValidator = source.parametersCrossValidator;
+        this.source = source.source;
     }
 }

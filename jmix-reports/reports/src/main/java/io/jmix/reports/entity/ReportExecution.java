@@ -30,7 +30,11 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity(name = "report_ReportExecution")
-@Table(name = "REPORT_EXECUTION")
+@Table(name = "REPORT_EXECUTION", indexes = {
+        @Index(name = "IDX_REPORT_EXEC_REPORT_ID", columnList = "REPORT_ID"),
+        @Index(name = "IDX_REPORT_EXEC_START_TIME", columnList = "START_TIME"),
+        @Index(name = "IDX_REPORT_EXEC_REPORT_CODE", columnList = "REPORT_CODE")
+})
 @JmixEntity
 public class ReportExecution {
     @Id
@@ -60,7 +64,8 @@ public class ReportExecution {
     private String reportName;
 
     /**
-     * De-normalized field in case if report code will change in the future
+     * De-normalized field for database-stored reports.
+     * Also used as a report identifier for annotated reports.
      */
     @Column(name = "REPORT_CODE")
     private String reportCode;

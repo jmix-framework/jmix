@@ -17,11 +17,12 @@
 
 <fragment xmlns="http://jmix.io/schema/flowui/fragment">
     <content>
-        <hbox id="emptyStateByPermissionsLayout" height="100%" padding="false"
+        <hbox id="emptyStateByPermissionsLayout" height="100%" padding="false" spacing="false"
+              classNames="gap-x-s"
               justifyContent="CENTER" alignItems="CENTER">
             <icon id="emptyStateIcon" icon="WARNING"
-                  color="var(--lumo-error-color)" size="2em"/>
-            <h2 id="emptyStateHeader" text="msg://gridEmptyStateHeader"/>
+                  color="var(--lumo-error-contrast)" size="1em"/>
+            <h4 id="emptyStateHeader" text="msg://gridEmptyStateHeader"/>
         </hbox>
     </content>
 </fragment>

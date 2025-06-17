@@ -17,11 +17,12 @@
 package io.jmix.reports.impl;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlan;
+import io.jmix.core.Metadata;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
-import io.jmix.reports.entity.ReportGroup;
+import io.jmix.reports.entity.ReportGroupInfo;
+import io.jmix.reports.entity.ReportSource;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
@@ -30,22 +31,23 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Component("report_ReportRepository")
 public class ReportRepositoryImpl implements ReportRepository {
     public static final String FULL_FETCH_PLAN = "report.edit";
 
     protected final AnnotatedReportHolder annotatedReportHolder;
-    protected final AnnotatedReportGroupHolder annotatedReportGroupHolder;
     protected final AnnotatedReportScanner reportScanner;
     protected final DataManager dataManager;
+    protected final Metadata metadata;
 
     public ReportRepositoryImpl(AnnotatedReportHolder annotatedReportHolder, AnnotatedReportScanner reportScanner, DataManager dataManager,
-                                AnnotatedReportGroupHolder annotatedReportGroupHolder) {
+                                Metadata metadata) {
         this.annotatedReportHolder = annotatedReportHolder;
         this.reportScanner = reportScanner;
         this.dataManager = dataManager;
-        this.annotatedReportGroupHolder = annotatedReportGroupHolder;
+        this.metadata = metadata;
     }
 
     @Override
@@ -67,23 +69,6 @@ public class ReportRepositoryImpl implements ReportRepository {
         return reportsFromDb;
     }
 
-    @Override
-    public Collection<ReportGroup> getAllGroups() {
-        Collection<ReportGroup> annotatedGroups = annotatedReportGroupHolder.getAllGroups();
-        List<ReportGroup> groupsFromDb = loadGroupsFromDatabase();
-
-        List<ReportGroup> allGroups = new ArrayList<>(annotatedGroups);
-        allGroups.addAll(groupsFromDb);
-        return allGroups;
-    }
-
-    protected List<ReportGroup> loadGroupsFromDatabase() {
-        return dataManager.load(ReportGroup.class)
-                .all()
-                .fetchPlan(FetchPlan.BASE)
-                .list();
-    }
-
     @Nullable
     @Override
     public Report loadFullReportByCode(String reportCode) {
@@ -98,6 +83,25 @@ public class ReportRepositoryImpl implements ReportRepository {
                 .orElse(null);
 
         return report;
+    }
+
+    @Override
+    public boolean existsReportByGroup(ReportGroupInfo group) {
+        if (group.getSource() == ReportSource.ANNOTATED_CLASS) {
+            for (Report report : annotatedReportHolder.getAllReports()) {
+                if (report.getGroup() != null && report.getGroup().getCode().equals(group.getCode())) {
+                    return true;
+                }
+            }
+        }
+
+        Optional<Report> report = dataManager.load(Report.class)
+                .query("select r from report_Report r where r.group.id = :groupId")
+                .parameter("groupId", group.getId())
+                .fetchPlan("report.view")
+                .optional();
+
+        return report.isPresent();
     }
 
     @EventListener

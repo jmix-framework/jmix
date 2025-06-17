@@ -17,15 +17,13 @@
 package io.jmix.reports;
 
 import io.jmix.reports.entity.Report;
-import io.jmix.reports.entity.ReportGroup;
+import io.jmix.reports.entity.ReportGroupInfo;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 
 public interface ReportRepository {
     Collection<Report> getAllReports();
-
-    Collection<ReportGroup> getAllGroups();
 
     /**
      * Load by code a full report object with all details, suitable for passing it to the running engine.
@@ -35,4 +33,12 @@ public interface ReportRepository {
      */
     @Nullable
     Report loadFullReportByCode(String reportCode);
+
+    /**
+     * Check if any reports are connected to the given group.
+     *
+     * @param group report group
+     * @return true if there is a report connected to this group, false otherwise
+     */
+    boolean existsReportByGroup(ReportGroupInfo group);
 }

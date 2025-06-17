@@ -18,8 +18,8 @@
         title="msg://reportGroupListView.title"
         focusComponent="reportGroupsDataGrid">
 
-    <data readOnly="true">
-        <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup">
+    <data>
+        <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroupInfo">
             <loader id="groupsDl"/>
         </collection>
     </data>
@@ -38,7 +38,25 @@
     </facets>
 
     <layout>
-        <genericFilter id="genericFilter" dataLoader="groupsDl" opened="false"/>
+        <formLayout id="filterPanel">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="40em" columns="3"/>
+                <responsiveStep minWidth="80em" columns="5"/>
+            </responsiveSteps>
+            <textField id="titleFilter" datatype="string" label="msg://io.jmix.reports.entity/ReportGroup.title"/>
+            <textField id="codeFilter" datatype="string" label="msg://io.jmix.reports.entity/ReportGroup.code"/>
+            <hbox>
+                <button id="searchBtn"
+                        text="msg://io.jmix.reportsflowui.view/filter.search"
+                        icon="SEARCH"/>
+                <button id="clearBtn"
+                        text="msg://io.jmix.reportsflowui.view/filter.clear"
+                        themeNames="error"
+                        icon="TRASH"/>
+            </hbox>
+        </formLayout>
+
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button action="reportGroupsDataGrid.create"/>
             <button action="reportGroupsDataGrid.edit"/>
@@ -49,20 +67,13 @@
                   columnReorderingAllowed="true"
                   width="100%" minHeight="20em">
             <actions>
-                <action id="create" type="list_create">
-                    <properties>
-                        <property name="openMode" value="DIALOG"/>
-                    </properties>
-                </action>
-                <action id="edit" type="list_edit">
-                    <properties>
-                        <property name="openMode" value="DIALOG"/>
-                    </properties>
-                </action>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column key="title" header="msg://title"/>
+                <column property="localizedTitle"/>
+                <column property="code"/>
                 <column property="systemFlag"/>
                 <column property="source"/>
             </columns>

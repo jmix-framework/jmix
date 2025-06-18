@@ -24,14 +24,14 @@ public class AppSettingsUiProperties {
     /**
      * Defines whether uuid fields are displayed in the Application Settings view
      */
-    final Boolean showUuidFields;
+    final boolean showUuidFields;
 
-    public AppSettingsUiProperties(@DefaultValue("true") Boolean showUuidFields) {
+    public AppSettingsUiProperties(@DefaultValue("true") boolean showUuidFields) {
         this.showUuidFields = showUuidFields;
     }
 
     /**
      * @see #showUuidFields
      */
-    public Boolean isShowUuidFields() { return showUuidFields; }
+    public boolean isShowUuidFields() { return showUuidFields; }
  }

@@ -31,7 +31,10 @@ import org.springframework.stereotype.Component;
 /**
  * An implementation of the {@link EntityAttributeSerializationExtension} interface, designed to provide
  * specific serialization and deserialization logic for entity attributes of type {@link LogicalFilterCondition}.
+ * <p>
+ * DEPRECATED since 2.6 as not needed anymore, will be removed in 3.0.
  */
+@Deprecated(forRemoval = true)
 @Component("flowui_FilterConditionAttributeSerializationExtension")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 public class FilterConditionAttributeSerializationExtension implements EntityAttributeSerializationExtension {

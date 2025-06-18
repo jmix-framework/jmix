@@ -30,6 +30,7 @@ import com.vaadin.flow.router.*;
 import io.jmix.appsettings.AppSettings;
 import io.jmix.appsettings.AppSettingsTools;
 import io.jmix.appsettings.entity.AppSettingsEntity;
+import io.jmix.appsettingsflowui.AppSettingsUiProperties;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -81,6 +82,8 @@ public class AppSettingsEntityView extends StandardView {
 
     @Autowired
     protected AppSettings appSettings;
+    @Autowired
+    protected AppSettingsUiProperties appSettingsUiProperties;
     @Autowired
     protected EntityStates entityStates;
     @Autowired
@@ -310,7 +313,8 @@ public class AppSettingsEntityView extends StandardView {
                     }
                     if (metaProperty.getType() != MetaProperty.Type.ENUM
                             && (metaProperty.getRange().asDatatype().getJavaClass().equals(byte[].class) ||
-                            metaProperty.getRange().asDatatype().getJavaClass().equals(UUID.class))) {
+                            metaProperty.getRange().asDatatype().getJavaClass().equals(UUID.class) &&
+                            !appSettingsUiProperties.isShowUuidFields())) {
                         continue;
                     }
                     if (metadataTools.isAnnotationPresent(item, metaProperty.getName(), Convert.class)) {

@@ -22,15 +22,14 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
 import io.jmix.core.security.UserRepository;
 import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.view.*;
 import io.jmix.security.usersubstitution.UserSubstitutionModel;
 import io.jmix.security.usersubstitution.UserSubstitutionPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 @ViewController("sec_UserSubstitution.detail")
@@ -41,6 +40,8 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
 
     @ViewComponent
     protected JmixComboBox<String> substitutedUsernameField;
+    @ViewComponent
+    private TypedTextField<String> usernameField;
 
     @Autowired
     protected EntityStates entityStates;
@@ -50,6 +51,15 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
     protected MessageBundle messagesBundle;
     @Autowired(required = false)
     protected UserSubstitutionPersistence userSubstitutionPersistence;
+    @Autowired(required = false)
+    protected List<UserSubstitutionCandidatesFilter> userSubstitutionCandidatesFilters = Collections.emptyList();
+
+    protected UserSubstitutionCandidatesFilter compositeUserSubstitutionCandidatesFilter;
+
+    @Subscribe
+    public void onInit(final InitEvent event) {
+        compositeUserSubstitutionCandidatesFilter = combineFilterPredicates(userSubstitutionCandidatesFilters);
+    }
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -61,7 +71,12 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
         String enteredValue = query.getFilter()
                 .orElse("");
 
+        String targetUsername = usernameField.getValue();
+        UserDetails targetUser = userRepository.loadUserByUsername(targetUsername);
         return userRepository.getByUsernameLike(enteredValue).stream()
+                .filter(substitutionCandidate ->
+                        compositeUserSubstitutionCandidatesFilter.test(targetUser, substitutionCandidate)
+                )
                 .map(UserDetails::getUsername)
                 .filter(name -> !name.equals(getEditedEntity().getUsername()))
                 .skip(query.getOffset())
@@ -94,5 +109,20 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
             throw new IllegalStateException("UserSubstitutionPersistence is not available");
         }
         return userSubstitutionPersistence;
+    }
+
+    protected UserSubstitutionCandidatesFilter combineFilterPredicates(List<UserSubstitutionCandidatesFilter> predicates) {
+        return (user1, user2) -> {
+            /*
+                Using loop instead of 'and()' to work with custom type of predicates
+                and to mitigate possible stack overflow due to undetermined amount of predicates (low probability)
+             */
+            for (UserSubstitutionCandidatesFilter p : predicates) {
+                if (!p.test(user1, user2)) {
+                    return false;
+                }
+            }
+            return true;
+        };
     }
 }

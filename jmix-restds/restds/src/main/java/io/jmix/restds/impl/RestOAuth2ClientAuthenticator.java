@@ -1,8 +1,6 @@
 package io.jmix.restds.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -13,12 +11,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Component("restds_RestOAuth2ClientAuthenticator")
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+/**
+ * A bean of this type is created in autoconfiguration if the spring-security-oauth2-client dependency is present.
+ */
 public class RestOAuth2ClientAuthenticator implements RestAuthenticator {
 
     @Autowired

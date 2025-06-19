@@ -16,11 +16,9 @@
 
 package io.jmix.reports.runner.impl;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.EntityStates;
-import io.jmix.core.Id;
 import io.jmix.reports.PrototypesLoader;
 import io.jmix.reports.ReportExecutionHistoryRecorder;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reports.entity.Report;
@@ -32,7 +30,6 @@ import io.jmix.reports.libintegration.CustomFormatter;
 import io.jmix.reports.runner.FluentReportRunner;
 import io.jmix.reports.runner.ReportRunContext;
 import io.jmix.reports.runner.ReportRunner;
-import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reports.yarg.exception.OpenOfficeException;
 import io.jmix.reports.yarg.exception.ReportingInterruptedException;
 import io.jmix.reports.yarg.formatters.impl.doc.connector.NoFreePortsException;
@@ -63,15 +60,11 @@ public class ReportRunnerImpl implements ReportRunner {
     @Autowired
     protected ObjectProvider<FluentReportRunner> fluentReportRunners;
     @Autowired
-    protected EntityStates entityStates;
-    @Autowired
-    protected DataManager dataManager;
-    @Autowired
     protected ReportsProperties reportsProperties;
     @Autowired
     protected ReportExecutionHistoryRecorder executionHistoryRecorder;
     @Autowired
-    protected ReportsUtils reportsUtils;
+    protected ReportRepository reportRepository;
     @Autowired
     protected ApplicationContext applicationContext;
 
@@ -172,20 +165,14 @@ public class ReportRunnerImpl implements ReportRunner {
 
     protected void prepareContext(ReportRunContext context) {
         Report report = context.getReport();
-        context.setReport(reportsUtils.reloadReportIfNeeded(report, "report.edit"));
+        context.setReport(reportRepository.reloadForRunning(report));
 
         ReportTemplate template = context.getReportTemplate();
         if (template == null) {
             template = getDefaultTemplate(report);
-            context.setReportTemplate(template);
         }
-
-        if (!entityStates.isLoadedWithFetchPlan(template, "template.edit")) {
-            template = dataManager.load(Id.of(template))
-                    .fetchPlan("template.edit")
-                    .one();
-            context.setReportTemplate(template);
-        }
+        template = reportRepository.reloadTemplateForRunning(template);
+        context.setReportTemplate(template);
     }
 
     protected ReportTemplate getDefaultTemplate(Report report) {

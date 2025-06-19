@@ -17,13 +17,9 @@
 package io.jmix.reports.runner;
 
 import com.google.common.base.Strings;
-import io.jmix.core.DataManager;
-import io.jmix.core.EntityStates;
-import io.jmix.core.Id;
 import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
-import io.jmix.reports.entity.ReportSource;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.exception.ReportingException;
@@ -38,7 +34,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Class is used to run a report using various additional criteria:
@@ -56,8 +51,6 @@ import java.util.Optional;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FluentReportRunner {
 
-    private static final String REPORT_RUN_FETCH_PLAN = "report.edit";
-
     private static final Logger log = LoggerFactory.getLogger(FluentReportRunner.class);
 
     private Report report;
@@ -68,13 +61,7 @@ public class FluentReportRunner {
     private ReportOutputType outputType;
     private String outputNamePattern;
 
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private EntityStates entityStates;
-    @Autowired
     private ReportRepository reportRepository;
-
     private ReportRunner reportRunner;
 
     public FluentReportRunner(Report report) {
@@ -88,6 +75,11 @@ public class FluentReportRunner {
     @Autowired
     public void setReportRunner(ReportRunner reportRunner) {
         this.reportRunner = reportRunner;
+    }
+
+    @Autowired
+    public void setReportRepository(ReportRepository reportRepository) {
+        this.reportRepository = reportRepository;
     }
 
     /**
@@ -183,22 +175,10 @@ public class FluentReportRunner {
 
     private Report getReportToUse() {
         if (this.report != null) {
-            if (report.getSource() == ReportSource.ANNOTATED_CLASS) {
-                return this.report;
-            }
-            if (report.getIsTmp()) {
-                return this.report;
-            }
-            if (!entityStates.isLoadedWithFetchPlan(this.report, REPORT_RUN_FETCH_PLAN)) {
-                return dataManager.load(Id.of(report))
-                        .fetchPlan(REPORT_RUN_FETCH_PLAN)
-                        .one();
-            } else {
-                return this.report;
-            }
+            return reportRepository.reloadForRunning(report);
         }
         if (!Strings.isNullOrEmpty(reportCode)) {
-            Report entity = reportRepository.loadFullReportByCode(this.reportCode);
+            Report entity = reportRepository.loadForRunningByCode(this.reportCode);
             if (entity != null) {
                 return entity;
             }
@@ -210,12 +190,7 @@ public class FluentReportRunner {
 
     private ReportTemplate getReportTemplateToUse(Report report) {
         if (this.template != null) {
-            if (!entityStates.isLoadedWithFetchPlan(this.template, "template.edit")) {
-                return dataManager.load(Id.of(template))
-                        .fetchPlan("template.edit")
-                        .one();
-            }
-            return this.template;
+            return reportRepository.reloadTemplateForRunning(template);
         }
         if (!Strings.isNullOrEmpty(templateCode)) {
             ReportTemplate templateByCode = report.getTemplateByCode(templateCode);

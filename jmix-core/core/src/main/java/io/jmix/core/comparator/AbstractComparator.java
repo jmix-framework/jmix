@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.flowui.model.impl;
+package io.jmix.core.comparator;
 
 import io.jmix.core.Entity;
 import io.jmix.core.Metadata;

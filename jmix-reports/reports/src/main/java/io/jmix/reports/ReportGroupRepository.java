@@ -24,6 +24,7 @@ import java.util.List;
 
 /**
  * Provides unified access to both types of report groups: stored in database and defined in code.
+ * Loading and modification operations apply registered security constraints.
  * <br/>
  * Application should generally should use this interface to work with groups, instead of DataManager.
  */

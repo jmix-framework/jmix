@@ -21,7 +21,6 @@ import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import io.jmix.core.FetchPlan;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.UiComponents;
@@ -29,16 +28,13 @@ import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionLoader;
-import io.jmix.flowui.model.DataComponents;
 import io.jmix.reports.ParameterClassResolver;
 import io.jmix.reports.ReportPrintHelper;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.reportsflowui.view.validators.ReportCollectionValidator;
 import io.jmix.reportsflowui.view.validators.ReportParamFieldValidator;
@@ -59,20 +55,18 @@ public class InputParametersFragment extends Composite<FormLayout>
         implements ApplicationContextAware, HasSize, HasEnabled, InitializingBean {
 
     //Components
-    protected CollectionContainer<ReportTemplate> templateReportsDc;
     protected EntityComboBox<ReportTemplate> templateComboBox;
     protected JmixComboBox<ReportOutputType> outputTypeComboBox;
     protected FormLayout formLayout;
 
     // Autowired
-    private ReportsUtils reportsUtils;
+    protected ReportRepository reportRepository;
     protected UiComponents uiComponents;
     protected Messages messages;
     protected Metadata metadata;
     protected ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
     protected ParameterClassResolver parameterClassResolver;
     protected ObjectToStringConverter objectToStringConverter;
-    protected DataComponents dataComponents;
     protected ApplicationContext applicationContext;
 
     protected Report report;
@@ -84,11 +78,10 @@ public class InputParametersFragment extends Composite<FormLayout>
     private void initComponent() {
         this.uiComponents = applicationContext.getBean(UiComponents.class);
         this.messages = applicationContext.getBean(Messages.class);
-        this.reportsUtils = applicationContext.getBean(ReportsUtils.class);
+        this.reportRepository = applicationContext.getBean(ReportRepository.class);
         this.parameterComponentGenerationStrategy = applicationContext.getBean(ParameterComponentGenerationStrategy.class);
         this.parameterClassResolver = applicationContext.getBean(ParameterClassResolver.class);
         this.objectToStringConverter = applicationContext.getBean(ObjectToStringConverter.class);
-        this.dataComponents = applicationContext.getBean(DataComponents.class);
         this.metadata = applicationContext.getBean(Metadata.class);
     }
 
@@ -144,23 +137,11 @@ public class InputParametersFragment extends Composite<FormLayout>
                 new FormLayout.ResponsiveStep("50em", 3)
         );
 
-        createTemplateReportDc();
-
         updateOutputTypes();
 
         onInit();
 
         return formLayout;
-    }
-
-    private void createTemplateReportDc() {
-        templateReportsDc = dataComponents.createCollectionContainer(ReportTemplate.class);
-        CollectionLoader<ReportTemplate> loader = dataComponents.createCollectionLoader();
-
-        loader.setQuery("select e from report_ReportTemplate e");
-        loader.setFetchPlan(FetchPlan.INSTANCE_NAME);
-        loader.setContainer(templateReportsDc);
-        loader.load();
     }
 
     @Override
@@ -191,7 +172,7 @@ public class InputParametersFragment extends Composite<FormLayout>
 
     protected void initLayout() {
         if (report != null) {
-            report = reportsUtils.reloadReportIfNeeded(report, "report.edit");
+            report = reportRepository.reloadForRunning(report);
             if (parameters == null) {
                 parameters = Collections.emptyMap();
             }
@@ -203,9 +184,6 @@ public class InputParametersFragment extends Composite<FormLayout>
                     }
                     createComponent(parameter, BooleanUtils.isNotTrue(parameter.getHidden()));
                 }
-            }
-            if (report.getTemplates() != null && report.getTemplates().size() > 1) {
-                templateReportsDc.getMutableItems().addAll(report.getTemplates());
             }
         }
     }

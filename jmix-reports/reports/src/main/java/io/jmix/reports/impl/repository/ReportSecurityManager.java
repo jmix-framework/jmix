@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reports;
+package io.jmix.reports.impl.repository;
 
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -22,18 +22,23 @@ import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
+import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation detail. Use {@link io.jmix.reports.ReportRepository} instead.
+ */
 @Component("report_ReportSecurityManager")
 public class ReportSecurityManager {
     @Autowired
@@ -46,7 +51,7 @@ public class ReportSecurityManager {
     protected RoleAssignmentRepository roleAssignmentRepository;
 
     @Autowired
-    protected FetchPlans fetchPlans;
+    protected FetchPlanRepository fetchPlanRepository;
 
     @Autowired
     protected Metadata metadata;
@@ -61,7 +66,7 @@ public class ReportSecurityManager {
      * @param screen screen id
      * @param userDetails user details
      */
-    public void applySecurityPolicies(LoadContext lc, @Nullable String screen, @Nullable UserDetails userDetails) {
+    public void applySecurityPolicies(LoadContext<Report> lc, @Nullable String screen, @Nullable UserDetails userDetails) {
         QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
         if (screen != null) {
             transformer.addWhereAsIs("r.screensIdx like :screen escape '\\'");
@@ -69,6 +74,7 @@ public class ReportSecurityManager {
         }
         if (userDetails != null) {
             List<BaseRole> roles = roleAssignmentRepository.getAssignmentsByUsername(userDetails.getUsername()).stream()
+                    .filter(roleAssignment -> roleAssignment.getRoleType().equals(RoleAssignmentRoleType.RESOURCE))
                     .map(roleAssignment -> resourceRoleRepository.findRoleByCode(roleAssignment.getRoleCode()))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
@@ -90,7 +96,7 @@ public class ReportSecurityManager {
      * @param lc load context
      * @param inputValueMetaClass meta class of input parameter value
      */
-    public void applyPoliciesByEntityParameters(LoadContext lc, @Nullable MetaClass inputValueMetaClass) {
+    protected void applyPoliciesByEntityParameters(LoadContext<Report> lc, @Nullable MetaClass inputValueMetaClass) {
         if (inputValueMetaClass != null) {
             QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
             StringBuilder parameterTypeCondition = new StringBuilder("r.inputEntityTypesIdx like :type escape '\\'");
@@ -108,16 +114,20 @@ public class ReportSecurityManager {
     }
 
     /**
-     * Returns a list of reports, available for certain screen, user and input parameter
-     *
-     * @param screenId            - id of the screen
-     * @param user                - caller user
-     * @param inputValueMetaClass - meta class of report input parameter
-     * @return list of available reports
+     * Apply condition to the query: report must have at least one template with given output type.
      */
-    public List<Report> getAvailableReports(@Nullable String screenId, @Nullable UserDetails user,
-                                            @Nullable MetaClass inputValueMetaClass) {
-        return getAvailableReports(screenId, user, inputValueMetaClass, null);
+    protected void applyOutputType(LoadContext<Report> lc, @Nullable ReportOutputType outputType) {
+        if (outputType != null) {
+            QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
+
+            String join = "join {E}.templates rtmpl";
+            String where = "rtmpl.reportOutputType = :templateOutputType";
+            transformer.addJoinAndWhere(join, where);
+            transformer.addDistinct(); // because we are joining one-to-many relation
+
+            lc.getQuery().setQueryString(transformer.getResult());
+            lc.getQuery().setParameter("templateOutputType", outputType);
+        }
     }
 
     /**
@@ -127,33 +137,41 @@ public class ReportSecurityManager {
      * @param user                - caller user
      * @param inputValueMetaClass - meta class of report input parameter
      * @param sort                - sorting type for the reports list
+     * @param system              - system flag
      * @return list of available reports
      */
     public List<Report> getAvailableReports(@Nullable String screenId, @Nullable UserDetails user,
-                                            @Nullable MetaClass inputValueMetaClass, @Nullable Sort sort) {
+                                            @Nullable MetaClass inputValueMetaClass, @Nullable Boolean system,
+                                            @Nullable ReportOutputType outputType,
+                                            @Nullable Sort sort) {
         MetaClass metaClass = metadata.getClass(Report.class);
         LoadContext<Report> lc = new LoadContext<>(metaClass);
         lc.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
-        FetchPlan fetchPlan = fetchPlans.builder(Report.class)
-                .add("name")
-                .add("localeNames")
-                .add("description")
-                .add("code")
-                .add("group", FetchPlan.LOCAL)
-                .add("updateTs")
-                .build();
+        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(Report.class, "report.view");
 
         lc.setFetchPlan(fetchPlan);
-        LoadContext.Query query = lc.setQueryString("select r from report_Report r where r.system <> true");
+        String queryString = "select r from report_Report r";
+
+        if (system != null) {
+            if (system) {
+                queryString += " where r.system = true";
+            } else {
+                queryString += " where r.system <> true";
+            }
+        }
+
+        LoadContext.Query query = lc.setQueryString(queryString);
         if (sort != null) {
             query.setSort(sort);
         }
         applySecurityPolicies(lc, screenId, user);
         applyPoliciesByEntityParameters(lc, inputValueMetaClass);
+        applyOutputType(lc, outputType);
         return dataManager.loadList(lc);
     }
 
     protected String wrapCodeParameterForSearch(String value) {
         return "%," + QueryUtils.escapeForLike(value) + ",%";
     }
+
 }

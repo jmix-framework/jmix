@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.ParameterClassResolver;
-import io.jmix.reports.ReportSecurityManager;
+import io.jmix.reports.impl.repository.ReportSecurityManager;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
 import io.jmix.reports.exception.NoOpenOfficeFreePortsException;

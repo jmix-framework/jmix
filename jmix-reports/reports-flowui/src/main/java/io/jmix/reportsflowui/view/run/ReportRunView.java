@@ -16,14 +16,14 @@
 
 package io.jmix.reportsflowui.view.run;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.grid.GridSortOrder;
-import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.*;
+import io.jmix.core.LoadContext;
+import io.jmix.core.Messages;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.Sort;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.Notifications;
@@ -32,26 +32,24 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
+import io.jmix.reports.ReportFilter;
+import io.jmix.reports.ReportLoadContext;
 import io.jmix.reports.ReportRepository;
-import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
-import io.jmix.reports.entity.ReportSource;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.helper.GridSortHelper;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
-import org.springframework.lang.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 @Route(value = "reports/run", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportRunView")
@@ -63,8 +61,6 @@ public class ReportRunView extends StandardListView<Report> {
     @ViewComponent
     protected DataGrid<Report> reportDataGrid;
     @ViewComponent
-    protected CollectionContainer<Report> reportsDc;
-    @ViewComponent
     protected TypedTextField<String> nameFilter;
     @ViewComponent
     protected TypedTextField<String> codeFilter;
@@ -74,15 +70,15 @@ public class ReportRunView extends StandardListView<Report> {
     protected TypedDatePicker<Date> updatedDateFilter;
     @ViewComponent
     protected FormLayout filterPanel;
+    @ViewComponent
+    protected CollectionLoader<Report> reportsDl;
 
     @Autowired
-    protected ReportSecurityManager reportSecurityManager;
+    protected ReportRepository reportRepository;
     @Autowired
     protected CurrentUserSubstitution currentUserSubstitution;
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
-    @Autowired
-    protected DataManager dataManager;
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired
@@ -93,12 +89,12 @@ public class ReportRunView extends StandardListView<Report> {
     protected Notifications notifications;
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected GridSortHelper gridSortHelper;
 
     protected List<Report> reports;
     protected MetaClass metaClassParameter;
     protected String screenParameter;
-    @Autowired
-    private ReportRepository reportRepository;
 
     public void setReports(List<Report> reports) {
         this.reports = reports;
@@ -112,14 +108,36 @@ public class ReportRunView extends StandardListView<Report> {
         this.screenParameter = screenParameter;
     }
 
+    @Subscribe
+    public void onInit(final InitEvent event) {
+        codeFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
+        nameFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
+        groupFilter.addValueChangeListener(e -> onFilterFieldValueChange());
+        updatedDateFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
+    }
+
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
-    private List<Report> reportsDlLoadDelegate(LoadContext<Report> loadContext) {
-        //Pass current grid sort to support settings facet
-        // todo filter, sort etc.
-        List<Report> items = reportRepository.getAllReports().stream().toList();
+    private List<Report> reportsDlLoadDelegate(LoadContext<Report> ignored) {
+        if (reports != null) {
+            return reports;
+        }
+
+        ReportFilter filter = new ReportFilter();
+        // ui filters
+        filter.setNameContains(nameFilter.getTypedValue());
+        filter.setCodeContains(codeFilter.getTypedValue());
+        filter.setGroup(groupFilter.getValue());
+        filter.setUpdatedAfter(updatedDateFilter.getTypedValue());
+        // access filters
+        filter.setViewId(screenParameter);
+        filter.setUser(currentUserSubstitution.getEffectiveUser());
+        filter.setInputValueMetaClass(metaClassParameter);
+        filter.setSystem(false);
+
+        Sort sort = getReportGridSort();
+        ReportLoadContext context = new ReportLoadContext(filter, sort);
+        List<Report> items = reportRepository.loadList(context);
         return items;
-        // return reportSecurityManager.getAvailableReports(screenParameter, currentUserSubstitution.getEffectiveUser(),
-        //         metaClassParameter, getReportGridSort());
     }
 
     @Supply(to = "reportDataGrid.name", subject = "renderer")
@@ -142,12 +160,6 @@ public class ReportRunView extends StandardListView<Report> {
             return;
         }
 
-        // todo better logic
-        if (report.getSource() == ReportSource.DATABASE) {
-            report = dataManager.load(Id.of(report))
-                    .fetchPlan("report.edit")
-                    .one();
-        }
         FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
                 .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
         try {
@@ -164,80 +176,14 @@ public class ReportRunView extends StandardListView<Report> {
         }
     }
 
-    @Subscribe("searchBtn")
-    protected void onFilterReports(ClickEvent<JmixButton> event) {
-        filterReports();
-    }
-
-    @Subscribe("clearBtn")
-    protected void onClearFilter(ClickEvent<JmixButton> event) {
-        nameFilter.clear();
-        codeFilter.clear();
-        updatedDateFilter.clear();
-        groupFilter.clear();
-
-        filterReports();
-    }
-
-    protected void filterReports() {
-        String nameFilterValue = StringUtils.lowerCase(nameFilter.getTypedValue());
-        String codeFilterValue = StringUtils.lowerCase(codeFilter.getTypedValue());
-        ReportGroup groupFilterValue = groupFilter.getValue();
-        Date dateFilterValue = updatedDateFilter.getTypedValue();
-
-        // todo proper logic
-        //List<Report> reports = reportSecurityManager.getAvailableReports(screenParameter,
-        //                currentUserSubstitution.getEffectiveUser(), metaClassParameter, getReportGridSort())
-        List<Report> reports = reportRepository.getAllReports()
-                .stream()
-                .filter(report ->
-                        isCandidateReport(nameFilterValue, codeFilterValue, groupFilterValue, dateFilterValue, report)
-                )
-                .toList();
-
-        reportsDc.setItems(reports);
-    }
-
-    @Nullable
     protected Sort getReportGridSort() {
-        if (reportDataGrid.getSortOrder().isEmpty()) {
-            return null;
-        }
-
-        GridSortOrder<Report> reportGridSortOrder = reportDataGrid.getSortOrder().get(0);
-        return Sort.by(SortDirection.ASCENDING == reportGridSortOrder.getDirection()
-                        ? Sort.Direction.ASC
-                        : Sort.Direction.DESC,
-                reportGridSortOrder.getSorted().getKey());
+        return gridSortHelper.convertSortOrders(
+                reportDataGrid.getSortOrder(),
+                Map.of("name", ReportLoadContext.LOCALIZED_NAME_SORT_KEY) // custom cell renderer
+        );
     }
 
-    protected boolean isCandidateReport(@Nullable String nameFilterValue, @Nullable String codeFilterValue,
-                                        @Nullable ReportGroup groupFilterValue, @Nullable Date dateFilterValue,
-                                        Report report) {
-        if (nameFilterValue != null
-                && !report.getName().toLowerCase().contains(nameFilterValue)) {
-            return false;
-        }
-
-        if (codeFilterValue != null) {
-            if (report.getCode() == null
-                    || (report.getCode() != null
-                    && !report.getCode().toLowerCase().contains(codeFilterValue))) {
-                return false;
-            }
-        }
-
-        if (groupFilterValue != null
-                && !Objects.equals(report.getGroup(), groupFilterValue)) {
-            return false;
-        }
-
-        if (dateFilterValue != null
-                && report.getUpdateTs() != null
-                && !report.getUpdateTs().after(dateFilterValue)) {
-            return false;
-        }
-
-        return true;
+    protected void onFilterFieldValueChange() {
+        reportsDl.load();
     }
 }

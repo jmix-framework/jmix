@@ -3,11 +3,19 @@
       xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="msg://reportListView.title"
       focusComponent="reportsDataGrid">
-    <data readOnly="true">
+    <data>
         <collection id="reportsDc"
-                    class="io.jmix.reports.entity.Report"
-                    fetchPlan="report.view">
+                    class="io.jmix.reports.entity.Report">
             <loader id="reportsDl"/>
+        </collection>
+        <collection id="reportGroupsDc"
+                    class="io.jmix.reports.entity.ReportGroup"
+                    fetchPlan="_local">
+            <loader id="reportGroupDl">
+                <query>
+                    <![CDATA[select e from report_ReportGroup e]]>
+                </query>
+            </loader>
         </collection>
     </data>
     <facets>
@@ -22,7 +30,25 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <genericFilter id="genericFilter" dataLoader="reportsDl" opened="false"/>
+        <details id="filterDetails"
+                 summaryText="msg://io.jmix.reportsflowui.view/filter"
+                 opened="true"
+                 width="100%">
+            <formLayout id="filterPanel">
+                <responsiveSteps>
+                    <responsiveStep minWidth="0" columns="1"/>
+                    <responsiveStep minWidth="40em" columns="3"/>
+                    <responsiveStep minWidth="80em" columns="5"/>
+                </responsiveSteps>
+                <textField id="nameFilter" datatype="string" label="msg://io.jmix.reports.entity/Report.name"/>
+                <entityComboBox id="groupFilter" itemsContainer="reportGroupsDc" metaClass="report_ReportGroup"
+                                label="msg://io.jmix.reports.entity/Report.group"/>
+                <textField id="codeFilter" datatype="string" label="msg://io.jmix.reports.entity/Report.code"/>
+                <datePicker id="updatedDateFilter" datatype="date" label="msg://filter.updatedDate"/>
+                <select id="outputTypeFilter" itemsEnum="io.jmix.reports.entity.ReportOutputType"
+                        label="msg://filter.outputType" emptySelectionAllowed="true"/>
+            </formLayout>
+        </details>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <dropdownButton id="dropdownCreateBtn" icon="PLUS" text="msg://dropdownCreateBtn.text" themeNames="primary">
                 <items>
@@ -63,6 +89,8 @@
                 <column property="description"/>
                 <column property="code"/>
                 <column property="source"/>
+                <column property="updateTs"/>
+                <column property="system"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

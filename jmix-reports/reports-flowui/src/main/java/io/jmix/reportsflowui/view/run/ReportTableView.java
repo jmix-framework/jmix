@@ -22,16 +22,14 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.Entity;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
@@ -45,6 +43,9 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.model.KeyValueCollectionContainer;
 import io.jmix.flowui.view.*;
+import io.jmix.reports.ReportFilter;
+import io.jmix.reports.ReportLoadContext;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.JmixTableData;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
@@ -103,6 +104,10 @@ public class ReportTableView extends StandardView {
     protected Notifications notifications;
     @Autowired(required = false)
     protected ReportExcelHelper reportExcelHelper;
+    @Autowired
+    protected ReportRepository reportRepository;
+    @Autowired
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     protected String templateCode;
     protected Map<String, Object> reportParameters;
@@ -174,8 +179,23 @@ public class ReportTableView extends StandardView {
         }
     }
 
+    @Install(to = "reportsDl", target = Target.DATA_LOADER)
+    protected List<Report> reportsDlLoadDelegate(final LoadContext<Report> ignored) {
+        ReportFilter filter = createFilter();
+        return reportRepository.loadList(new ReportLoadContext(filter, Sort.by(ReportLoadContext.LOCALIZED_NAME_SORT_KEY)));
+    }
+
+    protected ReportFilter createFilter() {
+        ReportFilter filter = new ReportFilter();
+        filter.setUser(currentUserSubstitution.getEffectiveUser());
+        filter.setSystem(false);
+        filter.setOutputType(ReportOutputType.TABLE);
+        return filter;
+    }
 
     private void openReportParameters(Report report) {
+        report = reportRepository.reloadForRunning(report);
+
         parametersFrameHolder.removeAll();
 
         inputParametersFrame = uiComponents.create(InputParametersFragment.class);

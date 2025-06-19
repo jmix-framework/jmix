@@ -17,9 +17,11 @@
 package io.jmix.reports.impl.repository;
 
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.reports.ReportGroupFilter;
 import io.jmix.reports.ReportGroupLoadContext;
 import io.jmix.reports.ReportGroupRepository;
+import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportGroupInfo;
 import io.jmix.reports.entity.ReportSource;
@@ -28,6 +30,8 @@ import io.jmix.reports.util.MsgBundleTools;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -39,17 +43,19 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
     protected final Metadata metadata;
     protected final MsgBundleTools msgBundleTools;
     protected final EntityStates entityStates;
-    protected final InMemoryRepositoryUtils inMemoryRepositoryUtils;
+    protected final RepositoryUtil repositoryUtil;
+    protected final AccessManager accessManager;
 
     public ReportGroupRepositoryImpl(AnnotatedReportGroupHolder annotatedReportGroupHolder, DataManager dataManager,
                                      Metadata metadata, MsgBundleTools msgBundleTools,
-                                     EntityStates entityStates, InMemoryRepositoryUtils inMemoryRepositoryUtils) {
+                                     EntityStates entityStates, RepositoryUtil repositoryUtil, AccessManager accessManager) {
         this.annotatedReportGroupHolder = annotatedReportGroupHolder;
         this.dataManager = dataManager;
         this.metadata = metadata;
         this.msgBundleTools = msgBundleTools;
         this.entityStates = entityStates;
-        this.inMemoryRepositoryUtils = inMemoryRepositoryUtils;
+        this.repositoryUtil = repositoryUtil;
+        this.accessManager = accessManager;
     }
 
     @Override
@@ -65,6 +71,9 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
 
     @Override
     public List<ReportGroupInfo> loadList(ReportGroupLoadContext loadContext) {
+        if (!isReadPermitted()) {
+            return Collections.emptyList();
+        }
         Collection<ReportGroup> annotatedGroups = annotatedReportGroupHolder.getAllGroups();
         List<ReportGroup> dbGroups = loadGroupsFromDatabase();
 
@@ -81,6 +90,9 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
 
     @Override
     public int getTotalCount(ReportGroupFilter filter) {
+        if (!isReadPermitted()) {
+            return 0;
+        }
         Collection<ReportGroup> annotatedGroups = annotatedReportGroupHolder.getAllGroups();
         List<ReportGroup> dbGroups = loadGroupsFromDatabase();
 
@@ -96,7 +108,9 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
         Stream<ReportGroupInfo> stream = infoStream.filter(rg -> satisfies(rg, loadContext.filter()));
 
         if (loadContext.sort() != null && !loadContext.sort().getOrders().isEmpty()) {
-            stream = stream.sorted(inMemoryRepositoryUtils.createBeanComparator(loadContext.sort(), ReportGroupInfo.class));
+            Comparator<ReportGroupInfo> comparator = repositoryUtil.comparatorBuilder(ReportGroupInfo.class)
+                    .build(loadContext.sort());
+            stream = stream.sorted(comparator);
         }
 
         if (loadContext.firstResult() != 0) {
@@ -111,8 +125,8 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
     }
 
     private boolean satisfies(ReportGroupInfo group, ReportGroupFilter filter) {
-        return inMemoryRepositoryUtils.containsIgnoreCase(group.getCode(), filter.codeContains())
-               && inMemoryRepositoryUtils.containsIgnoreCase(group.getLocalizedTitle(), filter.titleContains());
+        return repositoryUtil.containsIgnoreCase(group.getCode(), filter.codeContains())
+               && repositoryUtil.containsIgnoreCase(group.getLocalizedTitle(), filter.titleContains());
     }
 
     protected List<ReportGroup> loadGroupsFromDatabase() {
@@ -157,5 +171,12 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
         }
 
         dataManager.remove(info.toEntityId());
+    }
+
+    protected boolean isReadPermitted() {
+        CrudEntityContext showScreenContext = new CrudEntityContext(metadata.getClass(Report.class));
+        accessManager.applyRegisteredConstraints(showScreenContext);
+
+        return showScreenContext.isReadPermitted();
     }
 }

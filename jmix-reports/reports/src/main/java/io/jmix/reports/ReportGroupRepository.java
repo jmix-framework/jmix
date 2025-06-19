@@ -16,9 +16,7 @@
 
 package io.jmix.reports;
 
-import io.jmix.core.NoResultException;
 import io.jmix.reports.entity.ReportGroup;
-import io.jmix.reports.entity.ReportGroupInfo;
 
 import java.util.List;
 
@@ -31,17 +29,17 @@ import java.util.List;
 public interface ReportGroupRepository {
 
     /**
-     * Load all known report groups.
+     * Load all report groups, sorted by localized title.
      * @return list of groups
      */
-    List<ReportGroupInfo> loadAll();
+    List<ReportGroup> loadAll();
 
     /**
-     * Load list of known groups, with filtering, pagination and sorting options available.
+     * Load list of report groups, with filtering, pagination and sorting options available.
      * @param loadContext context containing filtering, pagination and sorting options
      * @return list of groups
      */
-    List<ReportGroupInfo> loadList(ReportGroupLoadContext loadContext);
+    List<ReportGroup> loadList(ReportGroupLoadContext loadContext);
 
     /**
      * Calculate total count of entities that conform to passed filter.
@@ -49,27 +47,4 @@ public interface ReportGroupRepository {
      * @return count of suitable entities
      */
     int getTotalCount(ReportGroupFilter filter);
-
-    /**
-     * Convert model object into short info object.
-     * @param group group entity (annotated or from database)
-     * @return short group info
-     */
-    ReportGroupInfo convertToInfo(ReportGroup group);
-
-    /**
-     * Load full ReportGroup model object by given short info.
-     *
-     * @param reportGroupInfo short group info
-     * @return full model object, either from database or from annotated group storage
-     * @throws NoResultException if nothing was loaded
-     */
-    ReportGroup loadModelObject(ReportGroupInfo reportGroupInfo);
-
-    /**
-     * Remove group from database.
-     * Applicable only to database-originated groups.
-     * @param info group to remove
-     */
-    void remove(ReportGroupInfo info);
 }

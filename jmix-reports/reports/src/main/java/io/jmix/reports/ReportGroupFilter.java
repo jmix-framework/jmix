@@ -20,12 +20,43 @@ import org.springframework.lang.Nullable;
 
 /**
  * Contains possible filtering conditions when loading groups from {@link ReportGroupRepository}.
- *
- * @param titleContains filter by "localized title contains", case-insensitive
- * @param codeContains filter by "code contains", case-insensitive
  */
-public record ReportGroupFilter(
-        @Nullable String titleContains,
-        @Nullable String codeContains
-) {
+public class ReportGroupFilter {
+    /**
+     * filter by "localized title contains", case-insensitive
+     */
+    @Nullable
+    protected String titleContains;
+
+    /**
+     * filter by "code contains", case-insensitive
+     */
+    @Nullable
+    protected String codeContains;
+
+    @Nullable
+    public String getTitleContains() {
+        return titleContains;
+    }
+
+    public void setTitleContains(@Nullable String titleContains) {
+        this.titleContains = titleContains;
+    }
+
+    @Nullable
+    public String getCodeContains() {
+        return codeContains;
+    }
+
+    public void setCodeContains(@Nullable String codeContains) {
+        this.codeContains = codeContains;
+    }
+
+    @Override
+    public String toString() {
+        return "ReportGroupFilter[" +
+               "titleContains=" + titleContains + ", " +
+               "codeContains=" + codeContains + ']';
+    }
+
 }

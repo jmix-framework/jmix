@@ -8,13 +8,6 @@
             </collection>
             <collection id="queryParametersDc" property="queryParameters"/>
         </instance>
-        <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup" fetchPlan="_local">
-            <loader id="groupsDl">
-                <query>
-                    <![CDATA[select rg from report_ReportGroup rg order by rg.createTs asc]]>
-                </query>
-            </loader>
-        </collection>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>

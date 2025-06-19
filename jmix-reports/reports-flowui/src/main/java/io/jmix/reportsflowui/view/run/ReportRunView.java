@@ -35,6 +35,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportFilter;
+import io.jmix.reports.ReportGroupRepository;
 import io.jmix.reports.ReportLoadContext;
 import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
@@ -91,6 +92,8 @@ public class ReportRunView extends StandardListView<Report> {
     protected Messages messages;
     @Autowired
     protected GridSortHelper gridSortHelper;
+    @Autowired
+    protected ReportGroupRepository reportGroupRepository;
 
     protected List<Report> reports;
     protected MetaClass metaClassParameter;
@@ -117,11 +120,19 @@ public class ReportRunView extends StandardListView<Report> {
     }
 
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
-    private List<Report> reportsDlLoadDelegate(LoadContext<Report> ignored) {
+    protected List<Report> reportsDlLoadDelegate(LoadContext<Report> ignored) {
         if (reports != null) {
             return reports;
         }
 
+        ReportFilter filter = createFilter();
+        Sort sort = getReportGridSort();
+        ReportLoadContext context = new ReportLoadContext(filter, sort);
+        List<Report> items = reportRepository.loadList(context);
+        return items;
+    }
+
+    protected ReportFilter createFilter() {
         ReportFilter filter = new ReportFilter();
         // ui filters
         filter.setNameContains(nameFilter.getTypedValue());
@@ -133,17 +144,18 @@ public class ReportRunView extends StandardListView<Report> {
         filter.setUser(currentUserSubstitution.getEffectiveUser());
         filter.setInputValueMetaClass(metaClassParameter);
         filter.setSystem(false);
-
-        Sort sort = getReportGridSort();
-        ReportLoadContext context = new ReportLoadContext(filter, sort);
-        List<Report> items = reportRepository.loadList(context);
-        return items;
+        return filter;
     }
 
     @Supply(to = "reportDataGrid.name", subject = "renderer")
     private Renderer<Report> nameCellRenderer() {
         return new TextRenderer<>(report ->
                 metadataTools.getInstanceName(report));
+    }
+
+    @Install(to = "reportGroupsDl", target = Target.DATA_LOADER)
+    protected List<ReportGroup> reportGroupsDlLoadDelegate(final LoadContext<ReportGroup> ignored) {
+        return reportGroupRepository.loadAll();
     }
 
     @Subscribe

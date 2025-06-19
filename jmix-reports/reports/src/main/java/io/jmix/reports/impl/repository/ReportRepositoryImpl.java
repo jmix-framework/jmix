@@ -287,13 +287,13 @@ public class ReportRepositoryImpl implements ReportRepository {
     }
 
     @Override
-    public boolean existsReportByGroup(ReportGroupInfo group) {
+    public boolean existsReportByGroup(ReportGroup group) {
         if (!isReadPermitted()) {
             return false;
         }
         if (group.getSource() == ReportSource.ANNOTATED_CLASS) {
             for (Report report : annotatedReportHolder.getAllReports()) {
-                if (report.getGroup() != null && report.getGroup().getCode().equals(group.getCode())) {
+                if (report.getGroup() != null && report.getGroup().equals(group)) {
                     return true;
                 }
             }

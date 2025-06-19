@@ -35,11 +35,7 @@
 
         <collection id="availableParentBandsDc" class="io.jmix.reports.entity.BandDefinition"/>
         <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup">
-            <loader id="groupsDl">
-                <query>
-                    <![CDATA[select rg from report_ReportGroup rg order by rg.createTs asc]]>
-                </query>
-            </loader>
+            <loader id="groupsDl"/>
         </collection>
     </data>
     <facets>

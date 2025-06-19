@@ -30,6 +30,7 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportFilter;
+import io.jmix.reports.ReportGroupRepository;
 import io.jmix.reports.ReportLoadContext;
 import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
@@ -64,6 +65,8 @@ public class ReportExecutionDialog extends StandardListView<Report> {
     protected MetadataTools metadataTools;
     @Autowired
     protected GridSortHelper gridSortHelper;
+    @Autowired
+    protected ReportGroupRepository reportGroupRepository;
     @ViewComponent
     protected MessageBundle messageBundle;
     @ViewComponent
@@ -117,6 +120,11 @@ public class ReportExecutionDialog extends StandardListView<Report> {
                 reportsDataGrid.getSortOrder(),
                 Map.of("name", ReportLoadContext.LOCALIZED_NAME_SORT_KEY) // custom cell renderer
         );
+    }
+
+    @Install(to = "reportGroupsDl", target = Target.DATA_LOADER)
+    protected List<ReportGroup> reportGroupDlLoadDelegate(final LoadContext<ReportGroup> ignored) {
+        return reportGroupRepository.loadAll();
     }
 
     protected void onFilterFieldValueChange() {

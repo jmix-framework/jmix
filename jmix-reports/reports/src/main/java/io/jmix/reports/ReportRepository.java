@@ -17,7 +17,7 @@
 package io.jmix.reports;
 
 import io.jmix.reports.entity.Report;
-import io.jmix.reports.entity.ReportGroupInfo;
+import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportTemplate;
 import org.springframework.lang.Nullable;
 
@@ -73,7 +73,7 @@ public interface ReportRepository {
      * @param group report group
      * @return true if there is a report connected to this group, false otherwise
      */
-    boolean existsReportByGroup(ReportGroupInfo group);
+    boolean existsReportByGroup(ReportGroup group);
 
     /**
      * Saves Report entity to the database.

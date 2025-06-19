@@ -37,10 +37,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
-import io.jmix.reports.ReportFilter;
-import io.jmix.reports.ReportImportExport;
-import io.jmix.reports.ReportLoadContext;
-import io.jmix.reports.ReportRepository;
+import io.jmix.reports.*;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.util.ReportsUtils;
@@ -124,6 +121,8 @@ public class ReportListView extends StandardListView<Report> {
     protected GridSortHelper gridSortHelper;
     @Autowired
     protected OutputTypeHelper outputTypeHelper;
+    @Autowired
+    protected ReportGroupRepository reportGroupRepository;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -345,5 +344,10 @@ public class ReportListView extends StandardListView<Report> {
 
     protected void onFilterFieldValueChange() {
         reportsDl.load();
+    }
+
+    @Install(to = "reportGroupsDl", target = Target.DATA_LOADER)
+    protected List<ReportGroup> reportGroupsDlLoadDelegate(final LoadContext<ReportGroup> ignored) {
+        return reportGroupRepository.loadAll();
     }
 }

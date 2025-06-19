@@ -24,15 +24,9 @@
             <loader id="reportsDl"/>
         </collection>
 
-        <!-- todo load from repository -->
         <collection id="reportGroupsDc"
-                    class="io.jmix.reports.entity.ReportGroup"
-                    fetchPlan="_local">
-            <loader id="reportGroupDl">
-                <query>
-                    <![CDATA[select e from report_ReportGroup e]]>
-                </query>
-            </loader>
+                    class="io.jmix.reports.entity.ReportGroup">
+            <loader id="reportGroupsDl"/>
         </collection>
     </data>
 

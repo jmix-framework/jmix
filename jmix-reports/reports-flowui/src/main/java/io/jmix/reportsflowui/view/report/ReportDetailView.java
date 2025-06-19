@@ -62,6 +62,7 @@ import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
+import io.jmix.reports.ReportGroupRepository;
 import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsSerialization;
@@ -245,6 +246,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected DataManager dataManager;
     @Autowired
     private EntityUuidGenerator entityUuidGenerator;
+    @Autowired
+    protected ReportGroupRepository reportGroupRepository;
 
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
@@ -294,6 +297,14 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Supply(to = "inputParametersDataGrid.validationOn", subject = "renderer")
     protected Renderer<ReportInputParameter> inputParametersDataGridValidationOnRenderer() {
         return new ComponentRenderer<>(parameter -> createCheckbox(parameter.getValidationOn()));
+    }
+
+    @Install(to = "groupsDl", target = Target.DATA_LOADER)
+    private List<ReportGroup> groupsDlLoadDelegate(final LoadContext<ReportGroup> ignored) {
+        return reportGroupRepository.loadAll().stream()
+                // for now, we support only db-based groups in this view
+                .filter(group -> group.getSource() == ReportSource.DATABASE)
+                .toList();
     }
 
     protected Checkbox createCheckbox(Boolean value) {

@@ -30,6 +30,15 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Class responsible for handling exceptions that occur in the UI context.
+ * It acts as a chain of responsibility for a list of {@link UiExceptionHandler}
+ * implementations to manage exceptions. If none of the handlers can process the
+ * exception, the {@link DefaultUiExceptionHandler} is used as the fallback mechanism.
+ * <p>
+ * This class ensures that exceptions are logged and appropriately managed to
+ * maintain application stability.
+ */
 @Component("flowui_ExceptionHandlers")
 public class UiExceptionHandlers implements ErrorHandler, ApplicationContextAware {
 

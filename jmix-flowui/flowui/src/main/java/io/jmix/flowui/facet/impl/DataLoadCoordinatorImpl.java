@@ -45,6 +45,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the {@link DataLoadCoordinator} interface.
+ * This class is responsible for managing data loading triggers in a UI view. It provides
+ * mechanisms to configure triggers and associate them with data loaders, components, or instance containers.
+ * These triggers allow automatic data loading by observing changes in specific sources or events.
+ */
 public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCoordinator {
 
     protected static final Pattern LIKE_PATTERN = Pattern.compile("\\s+like\\s+:([\\w$]+)");

@@ -29,6 +29,10 @@ import static io.jmix.flowui.view.StandardDetailView.MODE_PARAM;
 import static io.jmix.flowui.view.StandardDetailView.MODE_READONLY;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * The navigation processor implementation that is responsible for processing navigation
+ * to specific views using a {@link DetailViewNavigator} instance.
+ */
 public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<DetailViewNavigator<?>> {
 
     protected RouteSupport routeSupport;

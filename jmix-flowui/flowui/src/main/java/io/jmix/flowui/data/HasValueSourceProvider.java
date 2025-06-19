@@ -20,13 +20,26 @@ import io.jmix.flowui.kit.meta.StudioIgnore;
 import org.springframework.lang.Nullable;
 
 /**
- * An object having a ValueSourceProvider.
+ * An object having a {@link ValueSourceProvider}.
  */
 public interface HasValueSourceProvider {
 
+    /**
+     * Returns the {@link ValueSourceProvider} associated with this object.
+     * The {@link ValueSourceProvider} is responsible for providing instances
+     * of {@link ValueSource}, typically for child components or properties.
+     *
+     * @return the associated {@link ValueSourceProvider}, or {@code null} if none is set
+     */
     @Nullable
     ValueSourceProvider getValueSourceProvider();
 
+    /**
+     * Sets a {@link ValueSourceProvider} for the implementing object. The {@link ValueSourceProvider} is responsible
+     * for supplying {@link ValueSource} instances, often for use with child components or properties.
+     *
+     * @param provider the {@link ValueSourceProvider} to set, or {@code null} to remove the current provider
+     */
     @StudioIgnore
     void setValueSourceProvider(@Nullable ValueSourceProvider provider);
 }

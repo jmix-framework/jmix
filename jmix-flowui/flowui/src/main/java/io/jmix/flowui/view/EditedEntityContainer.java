@@ -29,5 +29,10 @@ import java.lang.annotation.*;
 @Inherited
 public @interface EditedEntityContainer {
 
+    /**
+     * Specifies the ID of the data container that holds the edited entity.
+     *
+     * @return the ID of the data container
+     */
     String value();
 }

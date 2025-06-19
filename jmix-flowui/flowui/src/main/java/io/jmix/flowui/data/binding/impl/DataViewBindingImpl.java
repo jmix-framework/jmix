@@ -28,7 +28,6 @@ import io.jmix.flowui.data.EntityItems;
 import io.jmix.flowui.data.binding.DataViewBinding;
 import io.jmix.flowui.data.binding.SuspendableBinding;
 import io.jmix.flowui.data.binding.SuspendableBindingAware;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -36,6 +35,14 @@ import java.util.List;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * Implementation of the {@link DataViewBinding} interface that binds a specific
+ * component and data provider.
+ *
+ * @param <C> the type of the component, which must extend {@link Component} and implement
+ *            {@link HasDataView}
+ * @param <V> the type of data provided by the {@link DataProvider}
+ */
 public class DataViewBindingImpl<C extends Component & HasDataView<V, ?, ?>, V>
         implements DataViewBinding<C, V>, SuspendableBindingAware {
 

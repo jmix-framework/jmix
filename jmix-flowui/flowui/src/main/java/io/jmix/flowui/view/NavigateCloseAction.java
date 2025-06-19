@@ -18,6 +18,10 @@ package io.jmix.flowui.view;
 
 import com.vaadin.flow.router.BeforeLeaveEvent;
 
+/**
+ * A specialized close action that represents navigation away from a view, potentially checking for unsaved changes
+ * and handling events related to leaving the current view.
+ */
 public class NavigateCloseAction extends StandardCloseAction {
 
     public static final String ID = "navigate";
@@ -40,6 +44,12 @@ public class NavigateCloseAction extends StandardCloseAction {
         this.beforeLeaveEvent = beforeLeaveEvent;
     }
 
+    /**
+     * Returns the {@link BeforeLeaveEvent} associated with this action.
+     *
+     * @return the {@link BeforeLeaveEvent} instance tied to this action, which contains information
+     * about the navigation event and allows handling or vetoing the leave action
+     */
     public BeforeLeaveEvent getBeforeLeaveEvent() {
         return beforeLeaveEvent;
     }

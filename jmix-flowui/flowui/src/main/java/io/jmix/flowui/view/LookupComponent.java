@@ -16,8 +16,8 @@
 
 package io.jmix.flowui.view;
 
-import java.lang.annotation.Target;
 import java.lang.annotation.*;
+import java.lang.annotation.Target;
 
 /**
  * Annotation for lookup view controllers which specifies ID of a UI component to be used for getting a value
@@ -30,5 +30,11 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Inherited
 public @interface LookupComponent {
+
+    /**
+     * Specifies the ID of a UI component to be used for retrieving the value returned from the lookup.
+     *
+     * @return the ID of the UI component used for value retrieval
+     */
     String value();
 }

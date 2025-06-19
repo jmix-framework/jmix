@@ -17,12 +17,30 @@
 package io.jmix.flowui.component;
 
 import org.springframework.lang.Nullable;
+
 import java.time.ZoneId;
 
+/**
+ * Defines a contract for components that support working with a {@link ZoneId}.
+ * <p>
+ * Implementations of this interface allow getting and setting a time zone identifier,
+ * typically for handling date or time-related values with respect to a specific time zone.
+ */
 public interface HasZoneId {
 
+    /**
+     * Returns the {@link ZoneId} associated with this component.
+     *
+     * @return the {@link ZoneId} of this component, or {@code null} if no ZoneId is set
+     */
     @Nullable
     ZoneId getZoneId();
 
+    /**
+     * Sets the {@link ZoneId} for this component.
+     *
+     * @param zoneId the {@link ZoneId} to be set for this component,
+     *               or {@code null} to unset the current ZoneId
+     */
     void setZoneId(@Nullable ZoneId zoneId);
 }

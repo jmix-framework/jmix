@@ -22,9 +22,19 @@ import io.jmix.flowui.facet.SettingsFacet;
 
 import java.util.Collection;
 
+/**
+ * Utility class for applying settings to components using the {@link SettingsFacet}.
+ */
 @Internal
 public final class SettingsFacetUtils {
 
+    /**
+     * Applies settings to the specified components using the provided {@link SettingsFacet} instance.
+     *
+     * @param settingsFacet the settings facet used to apply settings to the components
+     * @param components    the collection of components to which the settings are to be applied
+     * @throws UnsupportedOperationException if the provided settings facet is not of a supported type
+     */
     public static void applySettings(SettingsFacet settingsFacet, Collection<Component> components) {
         if (settingsFacet instanceof SettingsFacetImpl settingsFacetImpl) {
             settingsFacetImpl.applyViewSettings(settingsFacetImpl.getManagedComponentsFromCollection(components));

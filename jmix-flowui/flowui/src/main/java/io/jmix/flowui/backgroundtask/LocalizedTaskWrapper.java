@@ -75,11 +75,25 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
         this.notifications = notifications;
     }
 
+    /**
+     * Returns the close view handler, which is a consumer that is executed when a particular
+     * view or task needs to be closed.
+     *
+     * @return the close view handler as a {@link Consumer} of {@link CloseViewContext},
+     *         or {@code null} if no handler is set.
+     */
     @Nullable
     public Consumer<CloseViewContext> getCloseViewHandler() {
         return closeViewHandler;
     }
 
+    /**
+     * Sets a consumer as the close view handler. The provided handler defines the actions
+     * to execute when a view needs to be closed.
+     *
+     * @param closeViewHandler a {@link Consumer} of {@link CloseViewContext} that handles view closure,
+     *                         or {@code null} to remove an existing handler.
+     */
     public void setCloseViewHandler(@Nullable Consumer<CloseViewContext> closeViewHandler) {
         this.closeViewHandler = closeViewHandler;
     }
@@ -179,6 +193,10 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
         }
     }
 
+    /**
+     * Encapsulates the context in which a localized task is executed, providing access
+     * to the associated {@link LocalizedTaskWrapper}.
+     */
     public static class CloseViewContext {
 
         protected LocalizedTaskWrapper taskWrapper;

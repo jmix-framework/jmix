@@ -21,7 +21,11 @@ import com.vaadin.flow.shared.Registration;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
+/**
+ * Represents a data unit responsible for holding and managing data binding state within a UI component.
+ */
 public interface DataUnit {
+
     /**
      * @return a state of this source
      */
@@ -51,6 +55,11 @@ public interface DataUnit {
             return (DataUnit) super.getSource();
         }
 
+        /**
+         * Returns the current state of the binding.
+         *
+         * @return the current state of the binding.
+         */
         public BindingState getState() {
             return state;
         }

@@ -16,11 +16,26 @@
 
 package io.jmix.flowui.data.binding;
 
+/**
+ * Represents a binding mechanism that can be suspended and resumed.
+ */
 public interface SuspendableBinding {
 
+    /**
+     * Suspends the current binding, temporarily pausing its operation.
+     */
     void suspend();
 
+    /**
+     * Resumes the operation of the binding mechanism, restoring it to its active state
+     * after being previously suspended.
+     */
     void resume();
 
+    /**
+     * Indicates whether the current binding is in a suspended state.
+     *
+     * @return {@code true} if the binding is currently suspended, {@code false} otherwise
+     */
     boolean suspended();
 }

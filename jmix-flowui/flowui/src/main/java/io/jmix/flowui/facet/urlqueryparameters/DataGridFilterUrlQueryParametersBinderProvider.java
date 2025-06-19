@@ -19,6 +19,7 @@ package io.jmix.flowui.facet.urlqueryparameters;
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
@@ -32,6 +33,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+/**
+ * Provider for binding URL query parameters to {@link DataGrid} filters.
+ */
 @Component("flowui_DataGridFilterUrlQueryParametersBinderProvider")
 public class DataGridFilterUrlQueryParametersBinderProvider extends AbstractUrlQueryParametersBinderProvider
         implements ApplicationContextAware {
@@ -64,6 +68,10 @@ public class DataGridFilterUrlQueryParametersBinderProvider extends AbstractUrlQ
         ));
     }
 
+    /**
+     * A task for initializing and registering a binder of type
+     * {@link DataGridFilterUrlQueryParametersBinder} to a {@link UrlQueryParametersFacet}.
+     */
     public static class DataGridFilterQueryParametersBinderInitTask implements ComponentLoader.InitTask {
 
         protected final UrlQueryParametersFacet facet;

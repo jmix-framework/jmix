@@ -21,10 +21,12 @@ import io.jmix.core.common.util.SilentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-
+/**
+ * Handles exceptions of type {@link SilentException} by suppressing them without notifying the user.
+ */
 @Component("flowui_SilentExceptionHandler")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 100)
 public class SilentExceptionHandler extends AbstractUiExceptionHandler {

@@ -25,6 +25,11 @@ import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Interface defining methods for managing pagination when loading entity data.
+ * Provides functionality to control the number of records fetched, the start position of the data,
+ * and tracking changes in the data collection.
+ */
 public interface PaginationDataLoader {
 
     /**

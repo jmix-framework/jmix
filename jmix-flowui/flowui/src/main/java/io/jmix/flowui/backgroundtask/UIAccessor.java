@@ -22,6 +22,7 @@ package io.jmix.flowui.backgroundtask;
  * @see BackgroundWorker#getUIAccessor()
  */
 public interface UIAccessor {
+
     /**
      * Provides exclusive access to UI state from outside a UI event handling thread.
      * <p>

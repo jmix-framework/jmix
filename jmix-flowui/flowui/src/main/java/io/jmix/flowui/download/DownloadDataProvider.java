@@ -23,6 +23,11 @@ import java.io.InputStream;
  */
 public interface DownloadDataProvider {
 
+    /**
+     * Provides an input stream for data downloading purposes.
+     *
+     * @return an {@link InputStream} containing the data to be downloaded
+     */
     InputStream getStream();
 
 }

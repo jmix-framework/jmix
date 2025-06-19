@@ -29,6 +29,11 @@ import org.dom4j.Element;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+/**
+ * Provides a binder implementation for URL query parameters specifically designed
+ * for pagination components. Binds URL query parameter values to a pagination
+ * component's state and vice versa.
+ */
 @Component("flowui_PaginationUrlQueryParametersBinderProvider")
 public class PaginationUrlQueryParametersBinderProvider extends AbstractUrlQueryParametersBinderProvider {
 
@@ -54,6 +59,10 @@ public class PaginationUrlQueryParametersBinderProvider extends AbstractUrlQuery
         ));
     }
 
+    /**
+     * A task that initializes and registers a {@link PaginationUrlQueryParametersBinder} for components
+     * capable of handling pagination behavior.
+     */
     public static class PaginationQueryParametersBinderInitTask implements ComponentLoader.InitTask {
 
         protected final UrlQueryParametersFacet facet;

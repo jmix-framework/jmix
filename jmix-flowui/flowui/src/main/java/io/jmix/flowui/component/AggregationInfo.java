@@ -29,11 +29,38 @@ import org.springframework.lang.Nullable;
  */
 public class AggregationInfo implements SupportsFormatter<Object> {
 
+    /**
+     * Represents the type of aggregation to be performed.
+     */
     public enum Type {
+        /**
+         * Represents a "SUM" type of aggregation, which calculates the total
+         * sum of the values within a collection.
+         */
         SUM,
+
+        /**
+         * Represents an "AVG" type of aggregation, which calculates the average
+         * of the values within a collection.
+         */
         AVG,
+
+        /**
+         * Represents a "COUNT" type of aggregation, which calculates the total
+         * number of items within a collection.
+         */
         COUNT,
+
+        /**
+         * Represents a "MIN" type of aggregation, which calculates the minimum
+         * value within a collection.
+         */
         MIN,
+
+        /**
+         * Represents a "MAX" type of aggregation, which calculates the maximum
+         * value within a collection.
+         */
         MAX,
 
         /**
@@ -50,20 +77,42 @@ public class AggregationInfo implements SupportsFormatter<Object> {
 
     protected String cellTitle;
 
+    /**
+     * Returns the {@link MetaPropertyPath} used for aggregation.
+     *
+     * @return the {@code MetaPropertyPath}, or {@code null} if not set
+     */
     @Nullable
     public MetaPropertyPath getPropertyPath() {
         return propertyPath;
     }
 
+    /**
+     * Sets the {@link MetaPropertyPath} used for aggregation.
+     *
+     * @param propertyPath the {@code MetaPropertyPath} representing the path to the property,
+     *                     or {@code null} if no property path is set
+     */
     public void setPropertyPath(@Nullable MetaPropertyPath propertyPath) {
         this.propertyPath = propertyPath;
     }
 
+
+    /**
+     * Returns the type of aggregation.
+     *
+     * @return the type of aggregation, or {@code null} if it is not set.
+     */
     @Nullable
     public Type getType() {
         return type;
     }
 
+    /**
+     * Sets the type of aggregation.
+     *
+     * @param type the type to set
+     */
     public void setType(Type type) {
         this.type = type;
     }
@@ -80,11 +129,22 @@ public class AggregationInfo implements SupportsFormatter<Object> {
         this.formatter = formatter;
     }
 
+    /**
+     * Returns the current aggregation strategy in use.
+     *
+     * @return the aggregation strategy if present, or {@code null} if no strategy is set
+     */
     @Nullable
     public AggregationStrategy<?, ?> getStrategy() {
         return strategy;
     }
 
+    /**
+     * Sets the aggregation strategy to be used. If a non-null strategy is provided,
+     * the type is set to CUSTOM. This method allows customization of aggregation logic.
+     *
+     * @param strategy the aggregation strategy to set; can be {@code null} to indicate no strategy
+     */
     public void setStrategy(@Nullable AggregationStrategy<?, ?> strategy) {
         if (strategy != null) {
             setType(Type.CUSTOM);
@@ -92,11 +152,21 @@ public class AggregationInfo implements SupportsFormatter<Object> {
         this.strategy = strategy;
     }
 
+    /**
+     * Returns the title of the cell, if available.
+     *
+     * @return the cell title, or {@code null} if no title is set
+     */
     @Nullable
     public String getCellTitle() {
         return cellTitle;
     }
 
+    /**
+     * Sets the title of the cell.
+     *
+     * @param cellTitle the title to set for the cell
+     */
     public void setCellTitle(String cellTitle) {
         this.cellTitle = cellTitle;
     }

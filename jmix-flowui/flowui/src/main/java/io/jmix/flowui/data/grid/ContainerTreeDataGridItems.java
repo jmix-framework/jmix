@@ -22,10 +22,15 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.model.CollectionContainer;
-
 import org.springframework.lang.Nullable;
+
 import java.util.stream.Stream;
 
+/**
+ * A specialized implementation of {@link ContainerDataGridItems} designed to handle hierarchical data structures.
+ *
+ * @param <E> the type of entity contained in the associated {@link CollectionContainer}
+ */
 public class ContainerTreeDataGridItems<E> extends ContainerDataGridItems<E>
         implements TreeDataGridItems<E>, HierarchicalDataProvider<E, Void> {
 
@@ -67,6 +72,14 @@ public class ContainerTreeDataGridItems<E> extends ContainerDataGridItems<E>
                 .limit(query.getLimit());
     }
 
+    /**
+     * Retrieves the children of the specified item in a hierarchical structure.
+     * If the provided item is null, it retrieves the root-level items.
+     * If the provided item is not null, it retrieves the direct children of the specified item.
+     *
+     * @param item the item whose children are to be retrieved, or null to retrieve root-level items
+     * @return a stream of child items associated with the specified parent item or root items if null
+     */
     public Stream<E> getChildren(@Nullable E item) {
         if (item == null) {
             // root items
@@ -94,6 +107,14 @@ public class ContainerTreeDataGridItems<E> extends ContainerDataGridItems<E>
                 });
     }
 
+    /**
+     * Determines the hierarchical level of the given item within a tree structure.
+     * The root level is represented as 0, with each subsequent level increasing by 1.
+     *
+     * @param item the item whose hierarchical level is to be determined
+     * @return the level of the specified item, where 0 represents the root level
+     * @throws IllegalArgumentException if the specified item is not contained within the data provider
+     */
     public int getLevel(E item) {
         if (!containsItem(item)) {
             throw new IllegalArgumentException("Data provider doesn't contain the item passed to the method");

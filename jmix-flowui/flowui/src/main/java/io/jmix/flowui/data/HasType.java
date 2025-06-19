@@ -16,6 +16,11 @@
 
 package io.jmix.flowui.data;
 
+/**
+ * Represents a data unit that provides the type information of its value.
+ *
+ * @param <T> the type associated with the value
+ */
 public interface HasType<T> {
 
     /**

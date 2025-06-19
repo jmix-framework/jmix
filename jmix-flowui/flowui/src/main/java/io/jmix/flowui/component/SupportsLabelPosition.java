@@ -16,9 +16,25 @@
 
 package io.jmix.flowui.component;
 
+/**
+ * Interface for components that support managing the position of their associated label.
+ * Components implementing this interface can specify where the label should be displayed
+ * relative to the component.
+ */
 public interface SupportsLabelPosition {
 
+    /**
+     * Returns the current label position of the component.
+     *
+     * @return the label position indicating the position of the label
+     */
     LabelPosition getLabelPosition();
+
+    /**
+     * Sets the position of the label for the component.
+     *
+     * @param labelPosition the label position to define the position of the label
+     */
     void setLabelPosition(LabelPosition labelPosition);
 
     /**

@@ -25,6 +25,7 @@ import org.springframework.lang.Nullable;
  */
 @Deprecated(since = "2.6", forRemoval = true)
 public class ViewChildrenVisitResult {
+
     private View<?> view;
     @Nullable
     private String componentId;

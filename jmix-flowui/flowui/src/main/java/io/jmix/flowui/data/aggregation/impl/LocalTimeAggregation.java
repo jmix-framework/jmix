@@ -17,6 +17,7 @@
 package io.jmix.flowui.data.aggregation.impl;
 
 import io.jmix.flowui.component.AggregationInfo;
+import io.jmix.flowui.data.aggregation.Aggregation;
 import io.jmix.flowui.data.aggregation.NumberAggregationHelper;
 import org.springframework.lang.Nullable;
 
@@ -25,6 +26,9 @@ import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.EnumSet;
 
+/**
+ * Implementation of {@link Aggregation} intended for aggregating {@link LocalTime} values.
+ */
 public class LocalTimeAggregation extends CountAggregation<LocalTime> {
 
     public LocalTimeAggregation() {

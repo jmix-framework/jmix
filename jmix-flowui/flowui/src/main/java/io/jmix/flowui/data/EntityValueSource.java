@@ -23,10 +23,19 @@ import org.springframework.lang.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
+/**
+ * A specialized {@link ValueSource} that represents a data source tied to an entity instance
+ * and its properties within a data-aware context.
+ *
+ * @param <E> the type of the entity tied to this value source
+ * @param <V> the type of the value provided by this value source
+ */
 public interface EntityValueSource<E, V> extends ValueSource<V>, EntityDataUnit {
 
     /**
-     * @return entity
+     * Returns the current item associated with the source.
+     *
+     * @return the current item if available, or null if not set
      */
     @Nullable
     E getItem();
@@ -41,6 +50,12 @@ public interface EntityValueSource<E, V> extends ValueSource<V>, EntityDataUnit 
      */
     boolean isDataModelSecurityEnabled();
 
+    /**
+     * Registers a listener that will be notified when the related entity instance is changed.
+     *
+     * @param listener the listener to add
+     * @return a {@link Registration} instance that allows the removal of the listener
+     */
     Registration addInstanceChangeListener(Consumer<InstanceChangeEvent<E>> listener);
 
     /**

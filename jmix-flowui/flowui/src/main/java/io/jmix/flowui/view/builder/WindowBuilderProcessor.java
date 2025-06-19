@@ -23,6 +23,9 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import org.springframework.context.ApplicationContext;
 
+/**
+ * Processes and builds {@link DialogWindow} instances for views using a {@link WindowBuilder}.
+ */
 public class WindowBuilderProcessor extends AbstractWindowBuilderProcessor {
 
     public WindowBuilderProcessor(ApplicationContext applicationContext,

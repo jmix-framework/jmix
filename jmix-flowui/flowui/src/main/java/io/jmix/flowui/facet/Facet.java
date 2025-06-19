@@ -17,7 +17,6 @@
 package io.jmix.flowui.facet;
 
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
 
 /**
@@ -25,9 +24,19 @@ import org.springframework.lang.Nullable;
  */
 public interface Facet {
 
+    /**
+     * Returns the identifier associated with this oject.
+     *
+     * @return the ID if it exists, {@code null} otherwise.
+     */
     @Nullable
     String getId();
 
+    /**
+     * Sets the identifier for this object.
+     *
+     * @param id the unique identifier to be set
+     */
     void setId(@Nullable String id);
 
     /**
@@ -36,5 +45,10 @@ public interface Facet {
     @Nullable
     View<?> getOwner();
 
+    /**
+     * Sets a view containing this facet.
+     *
+     * @param owner a view containing this facet
+     */
     void setOwner(@Nullable View<?> owner);
 }

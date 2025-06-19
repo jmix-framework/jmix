@@ -45,6 +45,11 @@ import org.springframework.lang.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * A base class representing a generic dialog window that can display a view.
+ *
+ * @param <V> the type of view to be displayed in the dialog
+ */
 public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasTheme, HasStyle,
         ApplicationContextAware, InitializingBean {
 

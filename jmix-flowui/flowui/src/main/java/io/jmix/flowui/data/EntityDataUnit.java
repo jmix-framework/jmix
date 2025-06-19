@@ -18,6 +18,10 @@ package io.jmix.flowui.data;
 
 import io.jmix.core.metamodel.model.MetaClass;
 
+/**
+ * Represents a data unit that includes information about the metadata class
+ * of an entity contained in the source.
+ */
 public interface EntityDataUnit extends DataUnit {
 
     /**

@@ -19,6 +19,7 @@ package io.jmix.flowui.exception;
  * Interface to be implemented by exception handlers
  */
 public interface UiExceptionHandler {
+
     /**
      * Handle an exception. Implementation class should either handle the exception and return {@code true}, or return
      * {@code false} to delegate execution to the next handler in the chain of responsibility.

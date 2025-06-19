@@ -23,6 +23,9 @@ import org.springframework.boot.convert.DurationUnit;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Configuration properties for managing background tasks in the UI.
+ */
 @ConfigurationProperties(prefix = "jmix.ui.background-task")
 public class UiBackgroundTaskProperties {
 

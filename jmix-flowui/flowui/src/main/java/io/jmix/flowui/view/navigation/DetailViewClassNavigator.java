@@ -24,6 +24,14 @@ import org.springframework.lang.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Facilitates navigation to a detail view of a specific type with additional configuration options.
+ * This class extends {@link DetailViewNavigator} to provide the ability to specify a particular view class
+ * and handle additional navigation scenarios like executing a callback after successful navigation to a view.
+ *
+ * @param <E> the type of the entity managed by the detail view
+ * @param <V> the type of the view being navigated to, which extends {@link View}
+ */
 public class DetailViewClassNavigator<E, V extends View<?>> extends DetailViewNavigator<E>
         implements SupportsAfterViewNavigationHandler<V> {
 

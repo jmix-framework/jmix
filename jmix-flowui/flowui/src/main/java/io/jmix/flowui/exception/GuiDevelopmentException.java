@@ -22,6 +22,9 @@ import org.springframework.lang.Nullable;
 
 import java.util.Map;
 
+/**
+ * Exception thrown during the development of UI, such as incorrect view layout markup.
+ */
 public class GuiDevelopmentException extends DevelopmentException {
 
     protected String originId;
@@ -47,6 +50,11 @@ public class GuiDevelopmentException extends DevelopmentException {
         this.context = context;
     }
 
+    /**
+     * Returns the origin identifier.
+     *
+     * @return the origin identifier
+     */
     @Nullable
     public String getOriginId() {
         return originId != null

@@ -20,6 +20,8 @@ import java.util.Set;
 
 /**
  * A component which can be set as lookup component for a view.
+ *
+ * @param <T> the type of items contained within the lookup component
  */
 public interface LookupComponent<T> {
 
@@ -28,12 +30,28 @@ public interface LookupComponent<T> {
      */
     Set<T> getSelectedItems();
 
+    /**
+     * Interface representing a multi-select lookup component.
+     *
+     * @param <T> the type of items contained within the lookup component
+     */
     interface MultiSelectLookupComponent<T> extends LookupComponent<T> {
 
+        /**
+         * Enables multi-selection functionality for the component.
+         * <p>
+         * This method sets the component to allow the selection of multiple items
+         * simultaneously by internally invoking {@code setMultiSelect(true)}.
+         */
         default void enableMultiSelect() {
             setMultiSelect(true);
         }
 
+        /**
+         * Sets whether the component allows multi-selection or not.
+         *
+         * @param multiSelect if {@code true}, multi-selection is enabled; otherwise, multi-selection is disabled
+         */
         void setMultiSelect(boolean multiSelect);
     }
 }

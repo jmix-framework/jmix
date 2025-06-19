@@ -16,9 +16,18 @@
 
 package io.jmix.flowui.data.binding;
 
+/**
+ * Defines the contract for binding mechanisms.
+ */
 public interface JmixBinding {
 
+    /**
+     * Processes the binding operation.
+     */
     void bind();
 
+    /**
+     * Processes the unbinding operation.
+     */
     void unbind();
 }

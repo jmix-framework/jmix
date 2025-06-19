@@ -20,6 +20,7 @@ package io.jmix.flowui.data;
  * Exception that can be thrown during value conversion methods of UI components.
  */
 public class ConversionException extends RuntimeException {
+
     public ConversionException(String message) {
         super(message);
     }

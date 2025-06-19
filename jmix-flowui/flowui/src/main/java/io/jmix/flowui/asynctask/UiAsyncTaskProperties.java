@@ -42,14 +42,29 @@ public class UiAsyncTaskProperties {
         this.defaultTimeoutSec = defaultTimeoutSec;
     }
 
+    /**
+     * Returns the configuration for the executor service used for UI asynchronous tasks.
+     *
+     * @return the executor service configuration
+     */
     public ExecutorServiceConfig getExecutorService() {
         return executorService;
     }
 
+    /**
+     * Returns the default timeout in seconds for produced completable futures.
+     * The default value is 300 seconds (5 minutes).
+     *
+     * @return the default timeout in seconds
+     */
     public int getDefaultTimeoutSec() {
         return defaultTimeoutSec;
     }
 
+    /**
+     * Represents the configuration for an executor service used for handling UI asynchronous tasks.
+     * Provides settings such as the maximum pool size for the thread pool.
+     */
     public static class ExecutorServiceConfig {
 
         /**
@@ -62,6 +77,11 @@ public class UiAsyncTaskProperties {
             this.maximumPoolSize = maximumPoolSize;
         }
 
+        /**
+         * Retrieves the maximum pool size for the executor service.
+         *
+         * @return the maximum number of threads allowed in the pool
+         */
         public int getMaximumPoolSize() {
             return maximumPoolSize;
         }

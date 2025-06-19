@@ -20,6 +20,7 @@ package io.jmix.flowui.data;
  * Data binding state.
  */
 public enum BindingState {
+
     /**
      * Binding is active and UI component can read data
      */

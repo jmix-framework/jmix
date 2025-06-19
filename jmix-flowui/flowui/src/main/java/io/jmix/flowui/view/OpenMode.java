@@ -16,9 +16,19 @@
 
 package io.jmix.flowui.view;
 
+/**
+ * Standard open modes of {@link io.jmix.flowui.view.View Views}.
+ */
 public enum OpenMode {
 
+    /**
+     * Represents the navigation open mode, where a view is displayed by replacing
+     * the content of the main application area.
+     */
     NAVIGATION,
 
+    /**
+     * Represents an open mode where a view is displayed as a modal dialog.
+     */
     DIALOG
 }

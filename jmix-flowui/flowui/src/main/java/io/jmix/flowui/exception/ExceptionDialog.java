@@ -47,6 +47,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * A class provides a user interface component for displaying an exception dialog
+ * with detailed information about the error. The dialog supports features such as
+ * showing the exception message, viewing the stack trace, and copying the stack
+ * trace to clipboard.
+ */
 public class ExceptionDialog implements InitializingBean {
 
     protected static final String BASE_CLASS_NAME = "jmix-exception-dialog-window";

@@ -18,6 +18,17 @@ package io.jmix.flowui.data;
 
 import io.jmix.flowui.model.CollectionContainer;
 
+/**
+ * Represents a data unit connected to a {@link CollectionContainer}.
+ *
+ * @param <E> the type of entity contained in the {@link CollectionContainer}
+ */
 public interface ContainerDataUnit<E> extends EntityDataUnit {
+
+    /**
+     * Returns the {@link CollectionContainer} associated with this data unit.
+     *
+     * @return the container that holds a collection of entity instances
+     */
     CollectionContainer<E> getContainer();
 }

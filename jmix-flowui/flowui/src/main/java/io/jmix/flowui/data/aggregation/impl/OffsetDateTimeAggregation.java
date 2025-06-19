@@ -17,6 +17,7 @@
 package io.jmix.flowui.data.aggregation.impl;
 
 import io.jmix.flowui.component.AggregationInfo;
+import io.jmix.flowui.data.aggregation.Aggregation;
 import io.jmix.flowui.data.aggregation.NumberAggregationHelper;
 import org.springframework.lang.Nullable;
 
@@ -27,6 +28,9 @@ import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.EnumSet;
 
+/**
+ * Implementation of {@link Aggregation} intended for aggregating {@link OffsetDateTime} values.
+ */
 public class OffsetDateTimeAggregation extends CountAggregation<OffsetDateTime> {
 
     protected ZoneOffset currentOffset = ZoneId.systemDefault().getRules().getOffset(Instant.now());

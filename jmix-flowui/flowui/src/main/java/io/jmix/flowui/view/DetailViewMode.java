@@ -20,6 +20,14 @@ package io.jmix.flowui.view;
  * Defines a detail view purpose: to create a new entity instance or to edit an existing one.
  */
 public enum DetailViewMode {
+
+    /**
+     * Represents the mode for creating a new entity instance in a detail view.
+     */
     CREATE,
+
+    /**
+     * Represents the mode for editing an existing entity instance in a detail view.
+     */
     EDIT
 }

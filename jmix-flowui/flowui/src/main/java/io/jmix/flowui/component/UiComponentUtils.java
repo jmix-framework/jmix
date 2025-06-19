@@ -662,7 +662,6 @@ public final class UiComponentUtils {
      * @param <V>       value type
      * @return the current component value
      */
-    @SuppressWarnings("unchecked")
     @Nullable
     public static <V> V getValue(HasValue<?, V> component) {
         return component instanceof SupportsTypedValue
@@ -677,7 +676,6 @@ public final class UiComponentUtils {
      * @param value     the value to set
      * @param <V>       value type
      */
-    @SuppressWarnings("unchecked")
     public static <V> void setValue(HasValue<?, V> component, @Nullable V value) {
         if (component instanceof SupportsTypedValue) {
             ((SupportsTypedValue<?, ?, V, ?>) component).setTypedValue(value);

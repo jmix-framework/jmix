@@ -32,6 +32,11 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+/**
+ * Provides an implementation of a URL query parameter binder provider for a generic filter component.
+ * This class is responsible for creating and configuring instances of
+ * {@link GenericFilterUrlQueryParametersBinder} and integrating them with a {@link UrlQueryParametersFacet}.
+ */
 @Component("flowui_GenericFilterUrlQueryParametersBinderProvider")
 public class GenericFilterUrlQueryParametersBinderProvider extends AbstractUrlQueryParametersBinderProvider
         implements ApplicationContextAware {
@@ -65,6 +70,10 @@ public class GenericFilterUrlQueryParametersBinderProvider extends AbstractUrlQu
         ));
     }
 
+    /**
+     * A task for initializing and configuring a {@link GenericFilterUrlQueryParametersBinder}
+     * that binds a {@link GenericFilter} component to URL query parameters.
+     */
     public static class GenericFilterQueryParametersBinderInitTask implements ComponentLoader.InitTask {
 
         protected final UrlQueryParametersFacet facet;

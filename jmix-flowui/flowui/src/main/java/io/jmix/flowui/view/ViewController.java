@@ -31,6 +31,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ViewController {
+
     String ID_ATTRIBUTE = "id";
     String VALUE_ATTRIBUTE = "value";
 

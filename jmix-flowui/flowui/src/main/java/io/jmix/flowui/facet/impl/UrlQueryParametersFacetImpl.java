@@ -35,6 +35,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Implementation of the {@link UrlQueryParametersFacet} interface, which manages
+ * URL query parameters and provides the ability to bind these parameters to UI components.
+ */
 public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQueryParametersFacet {
 
     private static final Logger log = LoggerFactory.getLogger(UrlQueryParametersFacetImpl.class);

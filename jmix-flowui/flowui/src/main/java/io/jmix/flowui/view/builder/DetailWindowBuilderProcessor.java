@@ -47,6 +47,9 @@ import java.util.function.Consumer;
 import static io.jmix.flowui.view.ViewControllerUtils.getViewData;
 
 
+/**
+ * Processes and builds {@link DialogWindow} instances for views using a {@link DetailWindowBuilder}.
+ */
 public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor {
 
     protected Metadata metadata;

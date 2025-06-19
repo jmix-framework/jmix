@@ -35,6 +35,11 @@ import java.util.*;
 
 import static io.jmix.flowui.kit.component.ComponentUtils.findActionIndexById;
 
+/**
+ * Implementation of the {@link ViewActions} interface for managing actions associated
+ * with a view in the application. This class provides methods to add, remove, and retrieve actions
+ * tied to a specific view. It also handles action shortcuts and their lifecycle.
+ */
 @Component("flowui_ViewActions")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ViewActionsImpl implements ViewActions {
@@ -132,7 +137,7 @@ public class ViewActionsImpl implements ViewActions {
                                                                                                    ShortcutEventListener shortcutEventListener,
                                                                                                    KeyCombination keyCombination) {
         ShortcutRegistration shortcutRegistration = Shortcuts.addShortcutListener(viewLayout, shortcutEventListener,
-                        keyCombination.getKey(), keyCombination.getKeyModifiers());
+                keyCombination.getKey(), keyCombination.getKeyModifiers());
         shortcutRegistration.setResetFocusOnActiveElement(keyCombination.isResetFocusOnActiveElement());
         return shortcutRegistration;
     }

@@ -40,6 +40,9 @@ import org.springframework.lang.Nullable;
 
 import java.util.*;
 
+/**
+ * Processes and builds {@link DialogWindow} instances for views using a {@link LookupWindowBuilder}.
+ */
 public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor {
 
     protected Metadata metadata;

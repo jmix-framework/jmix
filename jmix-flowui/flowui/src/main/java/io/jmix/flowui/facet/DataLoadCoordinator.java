@@ -19,10 +19,15 @@ package io.jmix.flowui.facet;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
-
 import org.springframework.lang.Nullable;
+
 import java.util.List;
 
+/**
+ * A non-visual component for coordinating data loading operations in a view.
+ * Manages the association of data loaders to various triggers, such as view
+ * events, container item changes, or component value changes.
+ */
 public interface DataLoadCoordinator extends Facet {
 
     String NAME = "dataLoadCoordinator";
@@ -84,6 +89,12 @@ public interface DataLoadCoordinator extends Facet {
      * Load trigger.
      */
     interface Trigger {
+
+        /**
+         * Returns the {@link DataLoader} associated with the trigger.
+         *
+         * @return the associated {@link DataLoader}
+         */
         DataLoader getLoader();
     }
 

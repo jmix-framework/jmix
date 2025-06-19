@@ -21,9 +21,27 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.HasDataView;
 
+/**
+ * Represents a binding between a UI component and a data provider. This interface is used to
+ * manage and synchronize data between the UI and the underlying data source.
+ *
+ * @param <C> the type of the component, which must extend {@link Component} and implement
+ *            {@link HasDataView}
+ * @param <V> the type of data provided by the {@link DataProvider}
+ */
 public interface DataViewBinding<C extends Component & HasDataView<V, ?, ?>, V> extends JmixBinding {
 
+    /**
+     * Returns the component associated with this binding.
+     *
+     * @return the component associated with this binding
+     */
     C getComponent();
 
+    /**
+     * Retrieves the data provider associated with this binding.
+     *
+     * @return the data provider managing the data, or {@code null} if no data provider is bound
+     */
     DataProvider<V, ?> getDataProvider();
 }

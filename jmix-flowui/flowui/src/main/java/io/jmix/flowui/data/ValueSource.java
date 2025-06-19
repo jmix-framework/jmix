@@ -17,8 +17,8 @@
 package io.jmix.flowui.data;
 
 import com.vaadin.flow.shared.Registration;
-
 import org.springframework.lang.Nullable;
+
 import java.util.EventObject;
 import java.util.function.Consumer;
 
@@ -27,11 +27,26 @@ import java.util.function.Consumer;
  */
 public interface ValueSource<V> extends DataUnit, HasType<V> {
 
+    /**
+     * Returns the current value stored in the value source.
+     *
+     * @return the current value, or {@code null} if no value is set
+     */
     @Nullable
     V getValue();
 
+    /**
+     * Sets the given value to this value source.
+     *
+     * @param value the value to be set
+     */
     void setValue(@Nullable V value);
 
+    /**
+     * Checks whether the value source is read-only.
+     *
+     * @return {@code true} if the value source is read-only, {@code false} otherwise
+     */
     boolean isReadOnly();
 
     /**
@@ -48,6 +63,7 @@ public interface ValueSource<V> extends DataUnit, HasType<V> {
      * @param <V> value type
      */
     class ValueChangeEvent<V> extends EventObject {
+
         private final V prevValue;
         private final V value;
 
@@ -63,11 +79,21 @@ public interface ValueSource<V> extends DataUnit, HasType<V> {
             return (ValueSource<V>) super.getSource();
         }
 
+        /**
+         * Returns the previous value associated with the {@link ValueSource}.
+         *
+         * @return the previous value, or {@code null} if no previous value exists
+         */
         @Nullable
         public V getPrevValue() {
             return prevValue;
         }
 
+        /**
+         * Returns the current value stored in the {@link ValueSource}.
+         *
+         * @return the current value, or {@code null} if no value is set
+         */
         @Nullable
         public V getValue() {
             return value;

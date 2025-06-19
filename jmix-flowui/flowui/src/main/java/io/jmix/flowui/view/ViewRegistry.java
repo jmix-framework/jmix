@@ -29,6 +29,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.exception.NoSuchViewException;
 import io.jmix.flowui.sys.*;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -40,7 +41,6 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -636,6 +636,12 @@ public class ViewRegistry implements ApplicationContextAware {
         return Collections.emptyList();
     }
 
+    /**
+     * Куегкты the route configuration associated with the registry.
+     *
+     * @return the route configuration instance
+     * @throws IllegalStateException if the route configuration is not initialized
+     */
     public RouteConfiguration getRouteConfiguration() {
         if (routeConfiguration == null) {
             throw new IllegalStateException(RouteConfiguration.class.getSimpleName() + " isn't initialized");
@@ -644,6 +650,11 @@ public class ViewRegistry implements ApplicationContextAware {
         return routeConfiguration;
     }
 
+    /**
+     * Sets the route configuration for the view registry.
+     *
+     * @param routeConfiguration the route configuration to set
+     */
     public void setRouteConfiguration(RouteConfiguration routeConfiguration) {
         this.routeConfiguration = routeConfiguration;
     }

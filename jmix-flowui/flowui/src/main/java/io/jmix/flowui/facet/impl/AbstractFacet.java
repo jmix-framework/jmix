@@ -18,9 +18,12 @@ package io.jmix.flowui.facet.impl;
 
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
 
+/**
+ * An abstract implementation of the {@link Facet} interface, providing
+ * base functionality for non-visual components associated with views.
+ */
 public abstract class AbstractFacet implements Facet {
 
     protected String id;

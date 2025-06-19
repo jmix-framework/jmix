@@ -21,9 +21,9 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EmptyDataUnit;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -31,6 +31,11 @@ import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+/**
+ * A class representing an empty data container for {@link DataGrid} items.
+ *
+ * @param <T> the type of items
+ */
 public class EmptyDataGridItems<T> extends AbstractDataProvider<T, Void>
         implements EntityDataGridItems<T>, DataGridItems.Sortable<T>, EmptyDataUnit {
 
@@ -79,7 +84,8 @@ public class EmptyDataGridItems<T> extends AbstractDataProvider<T, Void>
 
     @Override
     public Registration addStateChangeListener(Consumer<StateChangeEvent> listener) {
-        return () -> {};
+        return () -> {
+        };
     }
 
     @Override

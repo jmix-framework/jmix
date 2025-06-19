@@ -35,6 +35,12 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.Optional;
 
+/**
+ * Abstract base class for implementing navigation processors that handle
+ * navigation to specific views using a defined navigator.ting between views.
+ *
+ * @param <N> the type of navigator this processor handles
+ */
 public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigator> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractNavigationProcessor.class);
@@ -55,6 +61,12 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
         this.navigationSupport = navigationSupport;
     }
 
+    /**
+     * Processes navigation logic based on the provided navigator instance.
+     *
+     * @param navigator the navigator instance containing the context and information
+     *                  required for processing the navigation.
+     */
     @SuppressWarnings("rawtypes")
     public void processNavigation(N navigator) {
         Class<? extends View> viewClass = getViewClass(navigator);

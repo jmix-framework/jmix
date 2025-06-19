@@ -17,6 +17,7 @@
 package io.jmix.flowui.data.grid;
 
 import com.vaadin.flow.data.provider.AbstractDataProvider;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Sort;
@@ -24,6 +25,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.event.EventBus;
@@ -33,7 +35,6 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.HasLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -42,6 +43,13 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of {@link DataProvider} that connects a {@link CollectionContainer}
+ * to a {@link DataGrid}. This class allows seamless synchronization
+ * between the container and the grid, supporting selection, sorting, and event listeners.
+ *
+ * @param <T> the type of entity contained in the associated {@link CollectionContainer}
+ */
 public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
         implements ContainerDataUnit<T>, EntityDataGridItems<T>, DataGridItems.Sortable<T> {
 

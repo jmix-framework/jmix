@@ -22,6 +22,9 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
+/**
+ * Configures and schedules the periodic task for cleaning up expired or inactive background tasks.
+ */
 @Component("flowui_BackgroundTaskWatchDogScheduleConfigurer")
 public class BackgroundTaskWatchDogScheduleConfigurer {
 

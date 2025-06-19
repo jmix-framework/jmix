@@ -20,6 +20,11 @@ import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.ValueSourceProvider;
 import io.jmix.flowui.model.InstanceContainer;
 
+/**
+ * A provider of {@link ValueSource} instances based on a given {@link InstanceContainer}.
+ *
+ * @param <E> the type of entity that the associated {@link InstanceContainer} works with
+ */
 public class ContainerValueSourceProvider<E> implements ValueSourceProvider {
 
     protected final InstanceContainer<E> container;
@@ -28,6 +33,11 @@ public class ContainerValueSourceProvider<E> implements ValueSourceProvider {
         this.container = container;
     }
 
+    /**
+     * Returns the {@link InstanceContainer} associated with this provider.
+     *
+     * @return the associated {@link InstanceContainer}
+     */
     public InstanceContainer<E> getContainer() {
         return container;
     }

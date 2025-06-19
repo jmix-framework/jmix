@@ -17,11 +17,21 @@
 package io.jmix.flowui.data;
 
 import com.vaadin.flow.data.provider.DataProvider;
-
 import org.springframework.lang.Nullable;
 
+/**
+ * Defines a contract for components that support the use of a {@link DataProvider} to manage and provide their data.
+ *
+ * @param <V> the type of item provided by the {@link DataProvider}
+ */
 public interface SupportsDataProvider<V> {
 
+    /**
+     * Returns the {@link DataProvider} associated with this component.
+     *
+     * @return the {@link DataProvider} instance used for managing and providing data,
+     * or {@code null} if no data provider is set
+     */
     @Nullable
     DataProvider<V, ?> getDataProvider();
 }

@@ -16,8 +16,12 @@
 
 package io.jmix.flowui.data.aggregation.impl;
 
+import io.jmix.flowui.data.aggregation.Aggregation;
 import org.springframework.lang.Nullable;
 
+/**
+ * Implementation of {@link Aggregation} intended for aggregating {@link Double} values.
+ */
 public class DoubleAggregation extends AbstractNumberAggregation<Double> {
 
     public DoubleAggregation() {

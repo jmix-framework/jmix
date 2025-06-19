@@ -18,6 +18,13 @@ package io.jmix.flowui.exception;
 
 import com.vaadin.flow.component.Component;
 
+/**
+ * Represents a validation exception that is specifically related to a UI {@link Component}.
+ * <p>
+ * This exception is intended to be used in cases where a validation failure needs to be directly
+ * associated with a particular {@link Component} in the UI. It provides a reference to
+ * the associated component to facilitate handling or error reporting.
+ */
 public class ComponentValidationException extends ValidationException
         implements ValidationException.HasRelatedComponent {
 

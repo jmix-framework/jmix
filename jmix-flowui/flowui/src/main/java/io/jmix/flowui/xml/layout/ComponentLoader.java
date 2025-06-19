@@ -32,8 +32,18 @@ import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
+/**
+ * Defines the contract for loading and initializing UI components from XML descriptors.
+ *
+ * @param <T> the type of component being loaded
+ */
 public interface ComponentLoader<T extends Component> {
 
+    /**
+     * Represents a context for loading and initializing UI components. The context
+     * provides access to the component being processed, its lifecycle tasks, and
+     * associated data or actions holders.
+     */
     interface Context {
 
         /**
@@ -81,6 +91,9 @@ public interface ComponentLoader<T extends Component> {
         HasDataComponents getDataHolder();
     }
 
+    /**
+     * Represents a context for loading and initializing UI components in {@link View}.
+     */
     interface ComponentContext extends Context {
 
         /**
@@ -150,6 +163,9 @@ public interface ComponentLoader<T extends Component> {
         void executeAutowireTasks();
     }
 
+    /**
+     * Represents a context for loading and initializing UI components in {@link Fragment}.
+     */
     interface FragmentContext extends Context {
 
         /**
@@ -199,26 +215,82 @@ public interface ComponentLoader<T extends Component> {
         void execute(ComponentContext componentContext);
     }
 
+    /**
+     * Returns the context associated with the current component loading and initialization process.
+     *
+     * @return the {@link Context} instance
+     */
     Context getContext();
 
+    /**
+     * Sets the context for loading and initializing UI components.
+     *
+     * @param context the {@link Context} instance to set
+     */
     void setContext(Context context);
 
+    /**
+     * Returns the factory for creating UI components.
+     *
+     * @return the {@link UiComponents} instance
+     */
     UiComponents getFactory();
 
+    /**
+     * Sets the factory used for creating UI components.
+     *
+     * @param factory the {@link UiComponents} instance to set
+     */
     void setFactory(UiComponents factory);
 
+    /**
+     * Returns the {@link LoaderResolver} instance used to resolve component and view loaders
+     * during the XML-based component initialization process.
+     *
+     * @return the {@link LoaderResolver} instance
+     */
     LoaderResolver getLoaderResolver();
 
+    /**
+     * Sets the {@link LoaderResolver} instance used to resolve component and view loaders
+     * during the XML-based component initialization process.
+     *
+     * @param loaderResolver the {@link LoaderResolver} instance to set
+     */
     void setLoaderResolver(LoaderResolver loaderResolver);
 
+    /**
+     * Returns the {@link LoaderSupport} instance used to provide support functionalities
+     * for loading and initializing components.
+     *
+     * @return the {@link LoaderSupport} instance
+     */
     LoaderSupport getLoaderSupport();
 
+    /**
+     * Sets the {@link LoaderSupport} instance used to provide supporting functionalities
+     * for loading and initializing components.
+     *
+     * @param loaderSupport the {@link LoaderSupport} instance to set
+     */
     void setLoaderSupport(LoaderSupport loaderSupport);
 
+    @Deprecated(since = "2.6", forRemoval = true)
     Element getElement(Element element);
 
+    /**
+     * Sets the specified XML element to be associated with the component loader.
+     *
+     * @param element the {@link Element} instance representing the XML configuration
+     *                for a UI component
+     */
     void setElement(Element element);
 
+    /**
+     * Sets the application context for the current component loader.
+     *
+     * @param applicationContext the {@link ApplicationContext} instance to set
+     */
     void setApplicationContext(ApplicationContext applicationContext);
 
     /**

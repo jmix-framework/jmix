@@ -58,6 +58,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+/**
+ * Abstract implementation of {@link ValueBinding}. Provides basic mechanisms to bind
+ * a UI component to a {@link ValueSource} and manage their interactions, such as value
+ * changes and state changes.
+ *
+ * @param <V> the type of value managed by this binding
+ */
 public abstract class AbstractValueBinding<V> implements ValueBinding<V>, SuspendableBinding {
 
     protected ApplicationContext applicationContext;
@@ -371,7 +378,6 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
 
     protected abstract void setComponentValue(@Nullable V value);
 
-    @SuppressWarnings("unchecked")
     protected Registration addComponentValueChangeListener(Runnable listener) {
         if (component instanceof SupportsTypedValue) {
             return ((SupportsTypedValue<?, ?, V, ?>) component).addTypedValueChangeListener(event -> listener.run());

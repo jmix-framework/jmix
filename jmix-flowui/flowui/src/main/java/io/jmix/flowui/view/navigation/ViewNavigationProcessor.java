@@ -20,6 +20,10 @@ import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 
+/**
+ * The navigation processor implementation that is responsible for processing navigation
+ * to specific views using a {@link ViewNavigator} instance.
+ */
 public class ViewNavigationProcessor extends AbstractNavigationProcessor<ViewNavigator> {
 
     public ViewNavigationProcessor(ViewSupport viewSupport,

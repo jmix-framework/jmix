@@ -21,12 +21,18 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.data.ValueSource;
+import io.jmix.flowui.data.binding.ValueBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+/**
+ * Implementation of {@link ValueBinding} for working with checkbox components.
+ *
+ * @param <V> the type of the value managed by this binding
+ */
 @Component("flowui_CheckboxValueBinding")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CheckboxValueBinding<V> extends AbstractValueBinding<V> {

@@ -20,13 +20,19 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.HasType;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
+/**
+ * Represents a data grid source of items. Provides methods for accessing,
+ * modifying, and listening to changes in the collection of items as well as
+ * managing selected items in the grid.
+ *
+ * @param <T> the type of items contained within the data grid
+ */
 public interface DataGridItems<T> extends DataUnit, HasType<T> {
 
     /**
@@ -42,7 +48,7 @@ public interface DataGridItems<T> extends DataUnit, HasType<T> {
     T getItem(Object itemId);
 
     /**
-     * @param itemId the item id
+     * @param itemId     the item id
      * @param propertyId the property id
      * @return the item value
      */
@@ -99,13 +105,29 @@ public interface DataGridItems<T> extends DataUnit, HasType<T> {
      */
     interface Sortable<T> extends DataGridItems<T> {
 
+        /**
+         * Sorts the items based on the specified property IDs and sort order.
+         *
+         * @param propertyId an array of property IDs by which the items should be sorted
+         * @param ascending  an array indicating the sort order for each property ID,
+         *                   where true represents ascending order and false represents descending order
+         */
         void sort(Object[] propertyId, boolean[] ascending);
 
+        /**
+         * Resets the sort order of the items to the default state or removes any applied sorting.
+         */
         void resetSortOrder();
 
+        /**
+         * Suppresses the automatic sorting functionality for the data grid items.
+         */
         default void suppressSorting() {
         }
 
+        /**
+         * Enables the sorting functionality for the data grid items.
+         */
         default void enableSorting() {
         }
     }

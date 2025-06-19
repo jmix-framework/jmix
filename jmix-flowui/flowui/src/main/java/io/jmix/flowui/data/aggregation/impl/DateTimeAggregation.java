@@ -17,13 +17,18 @@
 package io.jmix.flowui.data.aggregation.impl;
 
 import io.jmix.flowui.component.AggregationInfo;
+import io.jmix.flowui.data.aggregation.Aggregation;
 import io.jmix.flowui.data.aggregation.NumberAggregationHelper;
 import org.springframework.lang.Nullable;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
 
+/**
+ * Implementation of {@link Aggregation} intended for aggregating {@link Date date-time} values.
+ */
 public class DateTimeAggregation extends AbstractAggregation<Date> {
 
     public DateTimeAggregation() {

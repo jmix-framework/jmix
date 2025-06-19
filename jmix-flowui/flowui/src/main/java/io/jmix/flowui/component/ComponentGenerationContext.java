@@ -87,31 +87,66 @@ public class ComponentGenerationContext {
         return this;
     }
 
+    /**
+     * Returns the {@link DataProvider} instance to use as a component's items
+     *
+     * @return the {@link DataProvider} instance to use as a component's items
+     */
     @Nullable
     public DataProvider getItems() {
         return items;
     }
 
+    /**
+     * Sets the {@link DataProvider} instance to be used as the component's items.
+     *
+     * @param items the {@link DataProvider} instance to be set as items; can be {@code null}
+     * @return this object
+     */
     public ComponentGenerationContext setItems(@Nullable DataProvider items) {
         this.items = items;
         return this;
     }
 
+    /**
+     * Returns the enum class to be used as the component's items.
+     *
+     * @return a {@code Class} object representing the enum items, or {@code null} if not set
+     */
     @Nullable
     public Class<?> getEnumItems() {
         return enumItems;
     }
 
+    /**
+     * Sets the enum class to be used as the component's items.
+     *
+     * @param enumItems the {@code Class} representing the enum items; can be {@code null}
+     * @return this object
+     */
     public ComponentGenerationContext setEnumItems(@Nullable Class<?> enumItems) {
         this.enumItems = enumItems;
         return this;
     }
 
+    /**
+     * Returns a collection container holding entity instances to be used as the component's items.
+     *
+     * @return a {@link CollectionContainer} instance containing the collection of entities,
+     * or {@code null} if not set.
+     */
     @Nullable
     public CollectionContainer<?> getCollectionItems() {
         return collectionItems;
     }
 
+    /**
+     * Sets a collection container to be used as the component's items.
+     *
+     * @param collectionItems the {@link CollectionContainer} instance containing the collection of entities;
+     *                        can be {@code null}
+     * @return this object
+     */
     public ComponentGenerationContext setCollectionItems(@Nullable CollectionContainer<?> collectionItems) {
         this.collectionItems = collectionItems;
         return this;

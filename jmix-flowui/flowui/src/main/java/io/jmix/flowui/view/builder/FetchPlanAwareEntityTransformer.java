@@ -27,6 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+/**
+ * Implementation of {@link EditedEntityTransformer} that transforms an entity to ensure it is
+ * fetched with a specified fetch plan, if applicable.
+ */
 @Internal
 @Component("flowui_FetchPlanAwareEntityTransformer")
 @Order(100)

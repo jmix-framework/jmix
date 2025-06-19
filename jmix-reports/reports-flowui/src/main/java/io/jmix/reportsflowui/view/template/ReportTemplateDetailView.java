@@ -50,6 +50,7 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reportsflowui.constant.ReportStyleConstants;
+import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
@@ -120,6 +121,8 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     protected UiComponents uiComponents;
     @Autowired
     protected ReportScriptEditor reportScriptEditor;
+    @Autowired
+    protected OutputTypeHelper outputTypeHelper;
 
     protected Icon customDefinitionHelpIcon;
     protected TableEditFragment tableEditComposite;
@@ -351,13 +354,8 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     }
 
     protected void initOutputTypeList() {
-        ArrayList<ReportOutputType> outputTypes = new ArrayList<>(Arrays.asList(ReportOutputType.values()));
-
-        // Unsupported types for now
-        outputTypes.remove(ReportOutputType.CHART);
-        outputTypes.remove(ReportOutputType.PIVOT_TABLE);
-
-        outputTypeField.setItems(outputTypes);
+        List<ReportOutputType> supportedOutputTypes = outputTypeHelper.getSupportedOutputTypes();
+        outputTypeField.setItems(supportedOutputTypes);
     }
 
     protected void initCustomDefinedByList() {

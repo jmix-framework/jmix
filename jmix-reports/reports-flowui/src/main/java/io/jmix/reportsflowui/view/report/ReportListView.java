@@ -47,6 +47,7 @@ import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.download.ReportDownloader;
 import io.jmix.reportsflowui.helper.GridSortHelper;
+import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
@@ -121,16 +122,24 @@ public class ReportListView extends StandardListView<Report> {
     protected ReportRepository reportRepository;
     @Autowired
     protected GridSortHelper gridSortHelper;
+    @Autowired
+    protected OutputTypeHelper outputTypeHelper;
 
     @Subscribe
     protected void onInit(InitEvent event) {
         initReportsDataGridCreate();
+        initOutputTypeList();
 
         codeFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
         nameFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
         groupFilter.addValueChangeListener(e -> onFilterFieldValueChange());
         updatedDateFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
         outputTypeFilter.addValueChangeListener(e -> onFilterFieldValueChange());
+    }
+
+    protected void initOutputTypeList() {
+        List<ReportOutputType> supportedOutputTypes = outputTypeHelper.getSupportedOutputTypes();
+        outputTypeFilter.setItems(supportedOutputTypes);
     }
 
     private void initReportsDataGridCreate() {

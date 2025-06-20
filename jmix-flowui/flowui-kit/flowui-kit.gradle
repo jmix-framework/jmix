@@ -24,7 +24,5 @@ dependencies {
     api 'org.dom4j:dom4j'
     api 'com.google.guava:guava'
     api 'jakarta.annotation:jakarta.annotation-api'
-    api("com.vaadin:vaadin-core") {
-        exclude module: "vaadin-dev-server"
-    }
+    api("com.vaadin:vaadin-core")
 }

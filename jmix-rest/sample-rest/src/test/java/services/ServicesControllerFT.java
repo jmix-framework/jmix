@@ -18,6 +18,7 @@ package services;
 
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
+import io.jmix.core.FileRef;
 import io.jmix.samples.rest.service.RestTestService;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -721,7 +722,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext readContext = parseResponse(response);
             assertEquals("jmix_RestTestService", readContext.read("$.name"));
-            assertEquals(32, readContext.<Collection>read("$.methods").size());
+            assertEquals(33, readContext.<Collection>read("$.methods").size());
             assertEquals(2, readContext.read("$.methods[?(@.name == 'sum')].params.length()", List.class).get(0));
 
             assertEquals("number1", readContext.read("$.methods[?(@.name == 'sum')].params[0].name", List.class).get(0));
@@ -788,6 +789,30 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
             assertEquals(2, readContext.<Collection>read("$").size());
             assertEquals((Integer) 1, readContext.read("$.[0].key1", Integer.class));
             assertEquals((Integer) 2, readContext.read("$.[1].key2", Integer.class));
+        }
+    }
+
+    @Test
+    public void methodAcceptsAndReturnsFileRef() throws Exception {
+        Map<String, String> params = new LinkedHashMap<>();
+        FileRef fileRef = FileRef.create("fs", "/some/path", "file.txt");
+        params.put("fileRef", fileRef.toString());
+
+        try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/fileRefMethod", oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            assertEquals("text/plain;charset=UTF-8", responseContentType(response));
+            assertEquals(fileRef.toString(), responseToString(response));
+        }
+
+        String requestBody = """
+                {
+                  "fileRef": "%s"
+                }
+                """.formatted(fileRef.toString());
+        try (CloseableHttpResponse response = sendPost(baseUrl + "/services/" + RestTestService.NAME + "/fileRefMethod", oauthToken, requestBody, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            assertEquals("text/plain;charset=UTF-8", responseContentType(response));
+            assertEquals(fileRef.toString(), responseToString(response));
         }
     }
 

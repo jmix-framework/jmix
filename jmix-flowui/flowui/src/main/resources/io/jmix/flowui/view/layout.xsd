@@ -1405,6 +1405,28 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="timePickerStep">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="900s"/>
+                    <xs:enumeration value="15m"/>
+                    <xs:enumeration value="20m"/>
+                    <xs:enumeration value="30m"/>
+                    <xs:enumeration value="2h"/>
+                    <xs:enumeration value="3h"/>
+                    <xs:enumeration value="4h"/>
+                    <xs:enumeration value="6h"/>
+                    <xs:enumeration value="8h"/>
+                    <xs:enumeration value="12h"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="resourceString">
         <xs:union>
             <xs:simpleType>
@@ -1621,7 +1643,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="checkboxValidatorType">
         <xs:all>
             <xs:element name="custom" minOccurs="0" type="customValidatorType"/>
@@ -2878,10 +2900,6 @@
     <xs:complexType name="drawerToggleComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
-
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="buttonThemeNames"/>
 
@@ -3168,6 +3186,34 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- Switch -->
+    <xs:complexType name="switchComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="validators" type="checkboxValidatorType"/>
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:sequence>
+
+                <xs:attribute name="value" type="xs:boolean"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasValidation"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- TwinColumn -->
     <xs:complexType name="twinColumnComponent">
         <xs:complexContent>
@@ -3362,7 +3408,7 @@
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="timePickerThemeNames"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
-                <xs:attribute name="step" type="xs:string"/>
+                <xs:attribute name="step" type="timePickerStep"/>
                 <xs:attribute name="max" type="xs:string"/>
                 <xs:attribute name="min" type="xs:string"/>
 
@@ -3421,7 +3467,7 @@
                 <xs:attribute name="datePlaceholder" type="resourceString"/>
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
                 <xs:attribute name="datatype" type="dateTimeDatatypeEnum"/>
-                <xs:attribute name="step" type="xs:string"/>
+                <xs:attribute name="step" type="timePickerStep"/>
                 <xs:attribute name="dateFormat" type="resourceString"/>
                 <xs:attribute name="max" type="xs:string"/>
                 <xs:attribute name="min" type="xs:string"/>
@@ -4106,6 +4152,10 @@
                 <xs:attribute name="fontSize" type="xs:string"/>
                 <xs:attribute name="textWrap" type="xs:boolean"/>
                 <xs:attribute name="useSoftTabs" type="xs:boolean"/>
+
+                <xs:attribute name="defaultSuggestionsEnabled" type="xs:boolean"/>
+                <xs:attribute name="liveSuggestionsEnabled" type="xs:boolean"/>
+                <xs:attribute name="suggestOn" type="xs:string"/>
 
                 <xs:attribute name="mode" type="codeEditorMode"/>
                 <xs:attribute name="theme" type="codeEditorTheme"/>
@@ -4828,7 +4878,7 @@
     </xs:complexType>
 
     <xs:complexType name="settingsComponentType">
-        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="componentId" type="xs:string" use="required"/>
         <xs:attribute name="enabled" type="xs:boolean"/>
     </xs:complexType>
 
@@ -4871,7 +4921,7 @@
 
                 <!-- Layout -->
                 <xs:element name="vbox" type="componentLayout"/>
-                <xs:element name="hbox" type="componentLayout"/>
+                <xs:element name="hbox" type="hboxComponent"/>
                 <xs:element name="flexLayout" type="flexLayoutComponent"/>
                 <xs:element name="formLayout" type="formLayoutComponent"/>
                 <xs:element name="scroller" type="scrollerContainer"/>
@@ -4891,6 +4941,7 @@
                 <xs:element name="select" type="selectComponent"/>
                 <xs:element name="details" type="detailsComponent"/>
                 <xs:element name="checkbox" type="checkboxComponent"/>
+                <xs:element name="switch" type="switchComponent"/>
                 <xs:element name="datePicker" type="datePickerComponent"/>
                 <xs:element name="textArea" type="textAreaComponent"/>
                 <xs:element name="textField" type="textFieldComponent"/>
@@ -4969,6 +5020,18 @@
     <xs:complexType name="rootLayout">
         <xs:complexContent>
             <xs:extension base="baseLayout">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="hboxComponent">
+        <xs:complexContent>
+            <xs:extension base="componentLayout">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="startSlot" type="singleLayoutOrComponentType"/>
+                    <xs:element name="middleSlot" type="singleLayoutOrComponentType"/>
+                    <xs:element name="endSlot" type="singleLayoutOrComponentType"/>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

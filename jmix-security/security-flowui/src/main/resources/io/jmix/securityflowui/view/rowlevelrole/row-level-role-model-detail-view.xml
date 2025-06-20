@@ -23,9 +23,7 @@
                   class="io.jmix.security.model.RowLevelRoleModel">
             <collection id="rowLevelPoliciesDc" property="rowLevelPolicies"/>
         </instance>
-        <collection id="childRolesDc" class="io.jmix.security.model.RowLevelRoleModel">
-            <loader id="childRolesDl"/>
-        </collection>
+        <collection id="childRolesDc" class="io.jmix.security.model.RowLevelRoleModel"/>
     </data>
     <facets>
         <settings auto="true"/>

@@ -1,4 +1,4 @@
-// CAUTION: copied from @vaadin/tabsheet/theme/material/vaadin-tabsheet-styles.js [last update Vaadin 24.6.3]
+// CAUTION: copied from @vaadin/tabsheet/theme/material/vaadin-tabsheet-styles.js [last update Vaadin 24.7.3]
 import '@vaadin/vaadin-material-styles/color.js';
 import '@vaadin/vaadin-material-styles/typography.js';
 import { loader } from '@vaadin/vaadin-material-styles/mixins/loader.js';

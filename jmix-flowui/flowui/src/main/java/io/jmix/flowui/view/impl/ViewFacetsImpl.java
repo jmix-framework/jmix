@@ -21,15 +21,19 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewFacets;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * Implementation of the {@link ViewFacets} interface. This class manages a collection of facets
+ * associated with a specific {@link View}.
+ */
 @Component("flowui_ViewFacets")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ViewFacetsImpl implements ViewFacets {

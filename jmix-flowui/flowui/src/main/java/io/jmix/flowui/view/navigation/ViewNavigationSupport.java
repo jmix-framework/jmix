@@ -29,6 +29,9 @@ import io.jmix.flowui.view.ViewRegistry;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Utility class that provides support for navigating between views.
+ */
 @org.springframework.stereotype.Component("flowui_ViewNavigationSupport")
 public class ViewNavigationSupport {
 
@@ -38,15 +41,42 @@ public class ViewNavigationSupport {
         this.viewRegistry = viewRegistry;
     }
 
+    /**
+     * Navigates to the specified navigation target with empty route and query parameters.
+     *
+     * @param <T>              the type of the navigation target
+     * @param navigationTarget the class of the component to navigate to
+     * @return an {@link Optional} containing the view instance, if navigation actually happened,
+     * otherwise an empty {@link Optional}
+     */
     public <T extends Component> Optional<T> navigate(Class<? extends T> navigationTarget) {
         return navigate(navigationTarget, RouteParameters.empty(), QueryParameters.empty());
     }
 
+    /**
+     * Navigates to the specified navigation target using the provided route parameters.
+     *
+     * @param <T>              the type of the navigation target
+     * @param navigationTarget the class of the component to navigate to
+     * @param routeParameters  the route parameters to be used during navigation
+     * @return an {@link Optional} containing the view instance, if navigation actually happened,
+     * otherwise an empty {@link Optional}
+     */
     public <T extends Component> Optional<T> navigate(Class<? extends T> navigationTarget,
                                                       RouteParameters routeParameters) {
         return navigate(navigationTarget, routeParameters, QueryParameters.empty());
     }
 
+    /**
+     * Navigates to the specified navigation target using the provided route and query parameters.
+     *
+     * @param <T>              the type of the navigation target
+     * @param navigationTarget the class of the component to navigate to
+     * @param routeParameters  the route parameters to be used during navigation
+     * @param queryParameters  the query parameters to be used during navigation
+     * @return an {@link Optional} containing the view instance, if navigation actually happened,
+     * otherwise an empty {@link Optional}
+     */
     public <T extends Component> Optional<T> navigate(Class<? extends T> navigationTarget,
                                                       RouteParameters routeParameters,
                                                       QueryParameters queryParameters) {
@@ -56,41 +86,100 @@ public class ViewNavigationSupport {
         return findCurrentNavigationTarget(navigationTarget);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Finds the current navigation target of the specified type in the current UI's
+     * active router target chain.
+     *
+     * @param <T>              the type of the navigation target
+     * @param navigationTarget the class of the component representing the navigation target
+     * @return an {@link Optional} containing the found navigation target if available,
+     * otherwise an empty {@link Optional}
+     */
     public <T extends Component> Optional<T> findCurrentNavigationTarget(Class<? extends T> navigationTarget) {
-        // CAUTION: copied from com.vaadin.flow.component.UI.findCurrentNavigationTarget [last update Vaadin 24.6.3]
-        List<HasElement> activeRouterTargetsChain = UI.getCurrent().getInternals()
-                .getActiveRouterTargetsChain();
+        return findCurrentNavigationTarget(UI.getCurrent(), navigationTarget);
+    }
+
+    /**
+     * Finds the current navigation target of the specified type in the provided UI's
+     * active router target chain.
+     *
+     * @param <T>              the type of the navigation target
+     * @param ui               the UI instance in which the search is performed
+     * @param navigationTarget the class of the component representing the navigation target
+     * @return an {@link Optional} containing the found navigation target if available,
+     * otherwise an empty {@link Optional}
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Component> Optional<T> findCurrentNavigationTarget(UI ui, Class<? extends T> navigationTarget) {
+        // CAUTION: copied from com.vaadin.flow.component.UI.findCurrentNavigationTarget [last update Vaadin 24.7.3]
+        List<HasElement> activeRouterTargetsChain = ui.getInternals().getActiveRouterTargetsChain();
         for (HasElement element : activeRouterTargetsChain) {
             if (navigationTarget.isAssignableFrom(element.getClass())) {
                 return Optional.of((T) element);
             }
         }
+
         return Optional.empty();
     }
 
+    /**
+     * Navigates to the specified view identified by its ID
+     * with empty route and query parameters.
+     *
+     * @param viewId the identifier of the view to navigate to
+     */
     public void navigate(String viewId) {
         navigate(viewId, RouteParameters.empty(), QueryParameters.empty());
     }
 
+    /**
+     * Navigates to the specified view identified by its ID using the provided route parameters
+     * and empty query parameters.
+     *
+     * @param viewId          the identifier of the view to navigate to
+     * @param routeParameters the route parameters to be used during navigation
+     */
     public void navigate(String viewId, RouteParameters routeParameters) {
         navigate(viewId, routeParameters, QueryParameters.empty());
     }
 
-    public void navigate(String viewId,
-                         RouteParameters routeParameters,
-                         QueryParameters queryParameters) {
-
+    /**
+     * Navigates to the specified view identified by its ID using the provided route
+     * and query parameters.
+     *
+     * @param viewId          the identifier of the view to navigate to
+     * @param routeParameters the route parameters to be used during navigation
+     * @param queryParameters the query parameters to be used during navigation
+     */
+    public void navigate(String viewId, RouteParameters routeParameters, QueryParameters queryParameters) {
         ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
         navigate(viewInfo.getControllerClass(), routeParameters, queryParameters);
     }
 
+    /**
+     * Navigates to the specified navigation target using the given parameter.
+     *
+     * @param navigationTarget the class of the component to navigate to
+     * @param parameter        the parameter to pass to the navigation target
+     * @param <T>              the type of the parameter used for navigation
+     * @param <C>              the type of the navigation target
+     */
     public <T, C extends Component & HasUrlParameter<T>> void navigate(Class<? extends C> navigationTarget,
                                                                        T parameter) {
 
         navigate(navigationTarget, parameter, QueryParameters.empty());
     }
 
+    /**
+     * Navigates to the specified navigation target using the provided parameter
+     * and query parameters.
+     *
+     * @param navigationTarget the class of the component to navigate to
+     * @param parameter        the parameter to pass to the navigation target
+     * @param queryParameters  the query parameters to be used during navigation
+     * @param <T>              the type of the parameter used for navigation
+     * @param <C>              the type of the navigation target
+     */
     public <T, C extends Component & HasUrlParameter<T>> void navigate(Class<? extends C> navigationTarget,
                                                                        T parameter,
                                                                        QueryParameters queryParameters) {

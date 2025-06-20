@@ -29,7 +29,6 @@ import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
 import java.util.Collections;
@@ -117,7 +116,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
         Map<String, Boolean> result = new HashMap<>(components.size());
 
         for (Element element : components) {
-            String id = element.attributeValue("id");
+            String id = element.attributeValue("componentId");
             if (id == null) {
                 throw new GuiDevelopmentException("Component in " + SettingsFacet.class.getSimpleName()
                         + " does not define an id", context);

@@ -289,12 +289,13 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     }
 
     protected void registerMenuItem(MenuItem menuItem, ListItem menuItemComponent) {
+        menuItemComponent.setId(menuItem.getId());
         registrations.put(menuItem.getId(), Pair.of(menuItem, menuItemComponent));
         menuItem.addPropertyChangeListener(menuItemPropertyChangeListener);
     }
 
     protected RouterLink createMenuItemComponent(MenuItem menuItem) {
-        RouterLink routerLink = new RouterLink();
+        RouterLink routerLink = createRouterLink();
         routerLink.addClassNames(JMIX_MENU_ITEM_LINK_CLASS_NAME, FLEX_CLASS_NAME);
         routerLink.addClassNames(menuItem.getClassNames().toArray(new String[0]));
         routerLink.setHighlightCondition(HighlightConditions.never());
@@ -319,6 +320,10 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         setSuffixComponent(routerLink, menuItem.getSuffixComponent(), null);
 
         return routerLink;
+    }
+
+    protected RouterLink createRouterLink() {
+        return new RouterLink();
     }
 
     protected void addMenuOpenedChangeListener(Details details, MenuItem menuItem) {
@@ -518,6 +523,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
      * Describes menu item.
      */
     public static class MenuItem implements io.jmix.flowui.kit.component.menu.MenuItem {
+
         protected static final String MENU_ITEM_CLASS_NAME = "className";
         protected static final String MENU_ITEM_PREFIX_COMPONENT = "prefixComponent";
         protected static final String MENU_ITEM_SUFFIX_COMPONENT = "suffixComponent";

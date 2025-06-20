@@ -193,7 +193,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     /**
      * Sets visibility of unlimited (null) option value in the items per page select component. If unlimited (null) option
      * is selected component will try to load data with {@link UiProperties#getEntityMaxFetchSize(String)}
-     * limitation. The default value is true.
+     * limitation. The default value is {@code true}.
      *
      * @param unlimitedItemVisible whether unlimited option should be visible
      */
@@ -600,37 +600,10 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     }
 
     protected BackgroundTask<Long, Integer> getLoadCountTask() {
-        return new BackgroundTask<>(30, UiComponentUtils.getView(this)) {
-            @Override
-            public Integer run(TaskLifeCycle<Long> taskLifeCycle) {
-                return loader.getCount();
-            }
-
-            @Override
-            public void done(Integer result) {
-                setTotalCountLabelText(result);
-            }
-
-            @Override
-            public void canceled() {
-                log.debug("Loading items count for View '{}' is canceled", getViewId());
-            }
-
-            @Override
-            public boolean handleTimeoutException() {
-                log.warn("Time out while loading items count for View '{}'", getViewId());
-                return true;
-            }
-
-            @Nullable
-            private String getViewId() {
-                View<?> ownerView = getOwnerView();
-                if (ownerView != null) {
-                    return ownerView.getId().orElse(null);
-                }
-                return null;
-            }
-        };
+        View<?> view = UiComponentUtils.findView(this);
+        return view == null
+                ? new LoadCountTask(30)
+                : new LoadCountTask(30, view);
     }
 
     protected void setTotalCountLabelText(int totalCount) {
@@ -705,5 +678,45 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
 
     protected boolean isKeyValueEntity() {
         return loader.getEntityMetaClass() instanceof KeyValueMetaClass;
+    }
+
+    private class LoadCountTask extends BackgroundTask<Long, Integer> {
+
+        public LoadCountTask(long timeoutSeconds) {
+            super(timeoutSeconds);
+        }
+
+        public LoadCountTask(long timeoutSeconds, View<?> view) {
+            super(timeoutSeconds, view);
+        }
+
+        @Override
+        public Integer run(TaskLifeCycle<Long> taskLifeCycle) {
+            return loader.getCount();
+        }
+
+        @Override
+        public void done(Integer result) {
+            setTotalCountLabelText(result);
+        }
+
+        @Override
+        public boolean handleTimeoutException() {
+            log.warn("Time out while loading items count for View '{}'", getViewId());
+            return true;
+        }
+
+        @Override
+        public void canceled() {
+            log.debug("Loading items count for View '{}' is canceled", getViewId());
+        }
+
+        private String getViewId() {
+            View<?> ownerView = getOwnerView();
+            if (ownerView != null) {
+                return ownerView.getId().orElse("");
+            }
+            return "";
+        }
     }
 }

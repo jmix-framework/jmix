@@ -10,31 +10,43 @@ import io.jmix.flowui.view.DefaultMainViewParent;
 <%} else {%>
 import ${routeLayout.getControllerFqn()};
 <%}%>import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.Route;
+import io.jmix.core.AccessManager;
+import io.jmix.core.EntityStates;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
+import io.jmix.flowui.UiComponentProperties;
+import io.jmix.flowui.UiViewProperties;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.UiComponentUtils;
-import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%} else {%> : io.jmix.flowui.component.grid.TreeDataGrid <%}%>;
+import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%} else {%> io.jmix.flowui.component.grid.TreeDataGrid <%}%>;
+import io.jmix.flowui.data.EntityValueSource;
+import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.*;
+import io.jmix.flowui.util.OperationResult;
+import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
+import org.springframework.beans.factory.annotation.Autowired;
 <%if (useDataRepositories){%>
 import java.util.Collection;
 import java.util.List;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
 import static io.jmix.core.repository.JmixDataRepositoryUtils.*;<%}%>
+import static io.jmix.flowui.component.delegate.AbstractFieldDelegate.PROPERTY_INVALID;
 <%if (classComment) {%>
 ${classComment}
 <%}%>@Route(value = "${listRoute}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent.class <%} else {%>${routeLayout.getControllerClassName()}.class<%}%>)
@@ -71,6 +83,23 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @ViewComponent
     private HorizontalLayout detailActions;
 
+    @Autowired
+    private AccessManager accessManager;
+
+    @Autowired
+    private EntityStates entityStates;
+
+    @Autowired
+    private UiViewProperties uiViewProperties;
+
+    @Autowired
+    private ViewValidation viewValidation;
+
+    @Autowired
+    private UiComponentProperties uiComponentProperties;
+
+    private boolean modifiedAfterEdit;
+
     @Subscribe
     public void onInit(final InitEvent event) {
         ${tableId}.getActions().forEach(action -> {
@@ -81,12 +110,24 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     }
 
     @Subscribe
+    public void onReady(final ReadyEvent event) {
+        setupModifiedTracking();
+    }
+
+    @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         updateControls(false);
+    }
+
+    @Subscribe
+    private void onBeforeClose(final BeforeCloseEvent event) {
+        preventUnsavedChanges(event);
     }<%if (tableActions.contains("create")) {%>
 
     @Subscribe("${tableId}.createAction")
     public void on${tableId.capitalize()}CreateAction(final ActionPerformedEvent event) {
+        prepareFormForValidation();
+
         dataContext.clear();
         ${entity.className} entity = dataContext.create(${entity.className}.class);
         ${detailDc}.setItem(entity);
@@ -100,29 +141,30 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     @Subscribe("saveButton")
     public void onSaveButtonClick(final ClickEvent<JmixButton> event) {
-        ${entity.className} item = ${detailDc}.getItem();
-        ValidationErrors validationErrors = validateView(item);
-        if (!validationErrors.isEmpty()) {
-            ViewValidation viewValidation = getViewValidation();
-            viewValidation.showValidationErrors(validationErrors);
-            viewValidation.focusProblemComponent(validationErrors);
-            return;
-        }
-        dataContext.save();
-        ${tableDc}.replaceItem(item);
-        updateControls(false);
+        saveEditedEntity();
     }
 
     @Subscribe("cancelButton")
     public void onCancelButtonClick(final ClickEvent<JmixButton> event) {
-        dataContext.clear();
-        ${detailDc}.setItem(null);
-        ${detailDl}.load();
-        updateControls(false);
+        if (!hasUnsavedChanges()) {
+            discardEditedEntity();
+            return;
+        }
+
+        if (uiViewProperties.isUseSaveConfirmation()) {
+            viewValidation.showSaveConfirmationDialog(this)
+                    .onSave(this::saveEditedEntity)
+                    .onDiscard(this::discardEditedEntity);
+        } else {
+            viewValidation.showUnsavedChangesDialog(this)
+                    .onDiscard(this::discardEditedEntity);
+        }
     }
 
     @Subscribe(id = "${tableDc}", target = Target.DATA_CONTAINER)
     public void on${tableDc.capitalize()}ItemChange(final InstanceContainer.ItemChangeEvent<${entity.className}> event) {
+        prepareFormForValidation();
+
         ${entity.className} entity = event.getItem();
         dataContext.clear();
         if (entity != null) {
@@ -135,8 +177,50 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         updateControls(false);
     }
 
-    protected ValidationErrors validateView(${entity.className} entity) {
-        ViewValidation viewValidation = getViewValidation();
+    private void prepareFormForValidation() {
+        // all components shouldn't be readonly due to validation passing correctly
+        UiComponentUtils.getComponents(form).forEach(component -> {
+            if (component instanceof HasValueAndElement<?, ?> field) {
+                field.setReadOnly(false);
+            }
+        });
+    }
+
+    private OperationResult saveEditedEntity() {
+        ${entity.className} item = ${detailDc}.getItem();
+        ValidationErrors validationErrors = validateView(item);
+
+        if (!validationErrors.isEmpty()) {
+            viewValidation.showValidationErrors(validationErrors);
+            viewValidation.focusProblemComponent(validationErrors);
+            return OperationResult.fail();
+        }
+
+        dataContext.save();
+        ${tableDc}.replaceItem(item);
+        updateControls(false);
+        return OperationResult.success();
+    }
+
+    private void discardEditedEntity() {
+        resetFormInvalidState();
+
+        dataContext.clear();
+        ${detailDc}.setItem(null);
+        ${detailDl}.load();
+        updateControls(false);
+    }
+
+    private void resetFormInvalidState() {
+        UiComponentUtils.getComponents(form).forEach(component -> {
+            if (component instanceof HasValidation hasValidation && hasValidation.isInvalid()) {
+                component.getElement().setProperty(PROPERTY_INVALID, false);
+                component.getElement().executeJs("this.invalid = \$0", false);
+            }
+        });
+    }
+
+    private ValidationErrors validateView(${entity.className} entity) {
         ValidationErrors validationErrors = viewValidation.validateUiComponents(form);
         if (!validationErrors.isEmpty()) {
             return validationErrors;
@@ -147,18 +231,126 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     private void updateControls(boolean editing) {
         UiComponentUtils.getComponents(form).forEach(component -> {
-            if (component instanceof HasValueAndElement<?, ?> field) {
-                field.setReadOnly(!editing);
+            if (component instanceof SupportsValueSource<?> valueSourceComponent
+                    && valueSourceComponent.getValueSource() instanceof EntityValueSource<?, ?> entityValueSource
+                    && component instanceof HasValueAndElement<?, ?> field) {
+                field.setReadOnly(!editing || !isUpdatePermitted(entityValueSource));
             }
         });
 
+        modifiedAfterEdit = false;
         detailActions.setVisible(editing);
         listLayout.setEnabled(!editing);
         ${tableId}.getActions().forEach(Action::refreshState);
+
+        if (!uiComponentProperties.isImmediateRequiredValidationEnabled() && editing) {
+            resetFormInvalidState();
+        }
     }
 
-    private ViewValidation getViewValidation() {
-        return getApplicationContext().getBean(ViewValidation.class);
+    private boolean isUpdatePermitted(EntityValueSource<?, ?> valueSource) {
+        UiEntityAttributeContext context = new UiEntityAttributeContext(valueSource.getMetaPropertyPath());
+        accessManager.applyRegisteredConstraints(context);
+        return context.canModify();
+    }
+
+    private boolean hasUnsavedChanges() {
+        for (Object modified : dataContext.getModified()) {
+            if (!entityStates.isNew(modified)) {
+                return true;
+            }
+        }
+
+        return modifiedAfterEdit;
+    }
+
+    private void setupModifiedTracking() {
+        dataContext.addChangeListener(this::onChangeEvent);
+        dataContext.addPostSaveListener(this::onPostSaveEvent);
+    }
+
+    private void onChangeEvent(DataContext.ChangeEvent changeEvent) {
+        modifiedAfterEdit = true;
+    }
+
+    private void onPostSaveEvent(DataContext.PostSaveEvent postSaveEvent) {
+        modifiedAfterEdit = false;
+    }
+
+    private void preventUnsavedChanges(BeforeCloseEvent event) {
+        CloseAction closeAction = event.getCloseAction();
+
+        if (closeAction instanceof ChangeTrackerCloseAction trackerCloseAction
+                && trackerCloseAction.isCheckForUnsavedChanges()
+                && hasUnsavedChanges()) {
+            UnknownOperationResult result = new UnknownOperationResult();
+
+            if (closeAction instanceof NavigateCloseAction navigateCloseAction) {
+                BeforeLeaveEvent beforeLeaveEvent = navigateCloseAction.getBeforeLeaveEvent();
+                BeforeLeaveEvent.ContinueNavigationAction navigationAction = beforeLeaveEvent.postpone();
+
+                if (uiViewProperties.isUseSaveConfirmation()) {
+                    viewValidation.showSaveConfirmationDialog(this)
+                            .onSave(() -> result.resume(navigateWithSave(navigationAction)))
+                            .onDiscard(() -> result.resume(navigateWithDiscard(navigationAction)))
+                            .onCancel(() -> {
+                                result.otherwise(() -> cancelNavigation(navigationAction));
+                                result.fail();
+                            });
+                } else {
+                    viewValidation.showUnsavedChangesDialog(this)
+                            .onDiscard(() -> result.resume(navigateWithDiscard(navigationAction)))
+                            .onCancel(() -> {
+                                result.otherwise(() -> cancelNavigation(navigationAction));
+                                result.fail();
+                            });
+                }
+            } else {
+                if (uiViewProperties.isUseSaveConfirmation()) {
+                    viewValidation.showSaveConfirmationDialog(this)
+                            .onSave(() -> result.resume(closeWithSave()))
+                            .onDiscard(() -> result.resume(closeWithDiscard()))
+                            .onCancel(result::fail);
+                } else {
+                    viewValidation.showUnsavedChangesDialog(this)
+                            .onDiscard(() -> result.resume(closeWithDiscard()))
+                            .onCancel(result::fail);
+                }
+            }
+
+            event.preventClose(result);
+        }
+    }
+
+    private OperationResult navigateWithDiscard(BeforeLeaveEvent.ContinueNavigationAction navigationAction) {
+        return navigate(navigationAction, StandardOutcome.DISCARD.getCloseAction());
+    }
+
+    private OperationResult navigateWithSave(BeforeLeaveEvent.ContinueNavigationAction navigationAction) {
+        return saveEditedEntity()
+                .compose(() -> navigate(navigationAction, StandardOutcome.SAVE.getCloseAction()));
+    }
+
+    private void cancelNavigation(BeforeLeaveEvent.ContinueNavigationAction navigationAction) {
+        // Because of using React Router, we need to call
+        // 'BeforeLeaveEvent.ContinueNavigationAction.cancel'
+        // explicitly, otherwise navigation process hangs
+        navigationAction.cancel();
+    }
+
+    private OperationResult navigate(BeforeLeaveEvent.ContinueNavigationAction navigationAction,
+                                     CloseAction closeAction) {
+        navigationAction.proceed();
+
+        AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
+        fireEvent(afterCloseEvent);
+
+        return OperationResult.success();
+    }
+
+    private OperationResult closeWithSave() {
+        return saveEditedEntity()
+                .compose(() -> close(StandardOutcome.SAVE));
     }<%if (useDataRepositories){%>
 
     @Install(to = "${tableDl}", target = Target.DATA_LOADER)
@@ -166,7 +358,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         return repository.findAll(buildPageRequest(context), buildRepositoryContext(context)).getContent();
     }<%if (tableActions.contains("remove")) {%>
 
-    @Install(to = "${tableId}.remove", subject = "delegate")
+    @Install(to = "${tableId}.removeAction", subject = "delegate")
     private void ${tableId}RemoveDelegate(final Collection<${entity.className}> collection) {
         repository.deleteAll(collection);
     }<%}%>

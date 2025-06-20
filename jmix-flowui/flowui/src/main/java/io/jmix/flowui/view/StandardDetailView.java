@@ -426,7 +426,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         }
     }
 
-    private void preventUnsavedChanges(BeforeCloseEvent event) {
+    protected void preventUnsavedChanges(BeforeCloseEvent event) {
         CloseAction action = event.getCloseAction();
 
         if (action instanceof ChangeTrackerCloseAction

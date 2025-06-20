@@ -16,6 +16,7 @@
 
 import 'ace-builds/src-noconflict/ace.js';
 import 'ace-builds/esm-resolver.js';
+import {keyWordCompleter, snippetCompleter, textCompleter} from 'ace-builds/src-noconflict/ext-language_tools.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ResizeMixin} from '@vaadin/component-base/src/resize-mixin.js';
@@ -133,10 +134,43 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 observer: '_onUseSoftTabsChange'
             },
 
+            defaultSuggestionsEnabled: {
+                type: Boolean,
+                value: false,
+                observer: '_onDefaultSuggestionsEnabledChange'
+            },
+
+            liveSuggestionsEnabled: {
+                type: Boolean,
+                value: false,
+                observer: '_onLiveSuggestionsEnabledChange'
+            },
+
+            /**
+             * Regular expression pattern for suggesting from server.
+             */
+            suggestOn: String,
+
+            /**
+             * Regular expression dependent on #suggestOn property.
+             */
+            suggestOnRegExp: {
+                type: Object,
+                computed: '_computeSuggestOnRegExp(suggestOn)'
+            },
+
+            /**
+             * Flag for tracking the presence of a suggester on the server side.
+             * Required to avoid unnecessary client-server interaction.
+             */
+            serverSuggesterSet: {
+                type: Boolean,
+                value: false,
+                observer: '_onServerSuggesterSetChange'
+            },
+
             /** @private */
-            _editor: {
-                type: Object
-            }
+            _editor: Object
         }
     }
 
@@ -167,6 +201,8 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             fontSize: this.fontSize,
             wrap: this.textWrap,
             useSoftTabs: this.useSoftTabs,
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: this.liveSuggestionsEnabled,
             useWorker: false
         });
 
@@ -176,6 +212,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         this.addController(this._tooltipController);
 
         this._editor.on('blur', () => {
+            this.value = this._editor.getValue();
             const customEvent = new CustomEvent('value-changed', {detail: {value: this._editor.getValue()}});
             this.dispatchEvent(customEvent);
 
@@ -187,6 +224,9 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         });
 
         this._setFocusElement(this._editor.textInput.getElement());
+
+        this.initSuggestionListeners();
+        this.updateSuggestions();
     }
 
     initApplicationThemeObserver() {
@@ -203,6 +243,79 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         this._applicationThemeObserver.observe(document.documentElement, {
             attributes: true
         });
+    }
+
+    /**
+     * Initializes the required listeners and values for suggestion mechanism to work.
+     */
+    initSuggestionListeners() {
+        // initial value
+        this._cursorPosition = 0;
+
+        this._editor.session.selection.on('changeCursor', (e) => {
+            this._internalValue = this._editor.getValue();
+            const cursor = this._editor.selection.getCursor();
+
+            this._cursorPosition = this._calculateAbsoluteCursorPosition(this._internalValue, cursor);
+
+            // processing the flag set in the `change` handler
+            if (this._autocompleteRequested) {
+                this._autocompleteRequested = false;
+                this._editor.execCommand('startAutocomplete');
+            }
+        });
+
+        this._editor.session.on('change', (e) => {
+            if (this.suggestOnRegExp
+                && this._editor.getValue()
+                // +1 because the cursor change happens later than the value change
+                && this.suggestOnRegExp.test(this._editor.getValue().substring(0, this._cursorPosition + 1))) {
+
+                // set a flag to invoke autocompletion during a subsequent `changeCursor` (due to current user input)
+                this._autocompleteRequested = true;
+            }
+        });
+    }
+
+    /**
+     * Updates the list of auto-completions depending on the current state of the editor.
+     */
+    updateSuggestions() {
+        const suggesters = this.defaultSuggestionsEnabled
+            ? [textCompleter, keyWordCompleter, snippetCompleter]
+            : [];
+
+        if (this.serverSuggesterSet) {
+            suggesters.push(this._getServerSuggester());
+        }
+
+        this._editor.completers = suggesters;
+    }
+
+    /**
+     * @returns suggester object that requests autocompletes from the server-side
+     * @private
+     */
+    _getServerSuggester() {
+        return {
+            $server: this.$server,
+            getValue: () => this._internalValue,
+            getCursorPosition: () => this._cursorPosition,
+            getCompletions: function (editor, session, pos, prefix, callback) {
+                this.$server.getSuggestions(this.getValue() ?? '', this.getCursorPosition(), prefix)
+                    .then(suggestions => {
+                        suggestions = suggestions.map(this.suggestionMapper);
+                        callback(null, suggestions);
+                    });
+            },
+            suggestionMapper: function (suggestion) {
+                return {
+                    caption: suggestion.displayText,
+                    value: suggestion.suggestionText,
+                    meta: suggestion.descriptionText
+                }
+            }
+        };
     }
 
     /**
@@ -371,6 +484,46 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     }
 
     /**
+     * @private
+     */
+    _onDefaultSuggestionsEnabledChange() {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this.updateSuggestions();
+    }
+
+    /**
+     * @private
+     */
+    _onLiveSuggestionsEnabledChange(liveSuggestionsEnabled) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.setOption('enableLiveAutocompletion', liveSuggestionsEnabled);
+    }
+
+    /**
+     * @private
+     */
+    _computeSuggestOnRegExp(suggestOn) {
+        return new RegExp(suggestOn + '$')
+    }
+
+    /**
+     * @private
+     */
+    _onServerSuggesterSetChange(serverSuggesterSet) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this.updateSuggestions();
+    }
+
+    /**
      * @protected
      */
     _onPrintMarginColumnChange(printMarginColumn) {
@@ -379,6 +532,27 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.setPrintMarginColumn(printMarginColumn);
+    }
+
+    /**
+     * Calculates the absolute value of the cursor position, taking into account all entered rows and columns.
+     *
+     * @return absolute cursor position index
+     * @private
+     */
+    _calculateAbsoluteCursorPosition(value, cursor) {
+        const lines = value.split('\n', -1);
+
+        let currentLine = 0;
+        let pos = 0;
+
+        while (currentLine < cursor.row) {
+            pos += lines[currentLine].length + 1;
+            ++currentLine;
+        }
+
+        pos += cursor.column;
+        return pos;
     }
 
     get clearElement() {

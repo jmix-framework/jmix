@@ -310,7 +310,7 @@ class EntityStatesIsLoadedTest extends DataSpec {
         then:
         // detached
         ['id', 'version', 'deleteTs', 'deletedBy', 'updateTs', 'updatedBy', 'createTs', 'createdBy', 'number', 'date', 'amount',
-         'user'].each {
+         'user', 'customer'].each {
             assert entityStates.isLoaded(order, it)
         }
         def mergedDetachedOrder = transaction.execute {

@@ -38,7 +38,6 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.TreeGridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
-import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
 import io.jmix.flowui.data.grid.TreeDataGridItems;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
@@ -77,6 +76,8 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     protected void initComponent() {
         gridDelegate = createDelegate();
         gridDelegate.setAfterColumnSecurityApplyHandler(this::onAfterApplyColumnSecurity);
+        gridDelegate.setEmptyStateTextDelegate(super::setEmptyStateText);
+        gridDelegate.setEmptyStateComponentDelegate(super::setEmptyStateComponent);
     }
 
     @SuppressWarnings("unchecked")
@@ -413,7 +414,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     @Override
     protected DataGridEditor<E> createEditor() {
         editorCreated = true;
-        return new DataGridEditorImpl<>(this, applicationContext);
+        return gridDelegate.createEditor();
     }
 
     @SuppressWarnings({"unchecked"})
@@ -426,6 +427,9 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         if (!context.isPropertyEnabled()) {
             // Remove column from component while GridDelegate stores this column
             super.removeColumn(context.getColumn());
+
+            // Remove column from aggregation mechanism
+            gridDelegate.removeAggregationInfo(context.getColumn());
         }
     }
 
@@ -442,6 +446,28 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     public GridContextMenu<E> addContextMenu() {
         throw new UnsupportedOperationException(getClass().getSimpleName() +
                 " can have only one context menu attached, use getContextMenu() to retrieve it");
+    }
+
+    @Nullable
+    @Override
+    public String getEmptyStateText() {
+        return gridDelegate.getEmptyStateText();
+    }
+
+    @Override
+    public void setEmptyStateText(String emptyStateText) {
+        gridDelegate.setEmptyStateText(emptyStateText);
+    }
+
+    @Nullable
+    @Override
+    public Component getEmptyStateComponent() {
+        return gridDelegate.getEmptyStateComponent();
+    }
+
+    @Override
+    public void setEmptyStateComponent(Component emptyStateComponent) {
+        gridDelegate.setEmptyStateComponent(emptyStateComponent);
     }
 
     @Nullable

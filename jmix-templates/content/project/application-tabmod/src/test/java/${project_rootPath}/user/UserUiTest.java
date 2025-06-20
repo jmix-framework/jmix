@@ -4,18 +4,16 @@ import ${project_rootPackage}.${project_classPrefix}Application;
 import ${project_rootPackage}.entity.User;
 import ${project_rootPackage}.view.user.UserDetailView;
 import ${project_rootPackage}.view.user.UserListView;
-import com.vaadin.flow.component.Component;
 import io.jmix.core.DataManager;
-import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
-import io.jmix.flowui.testassist.UiTest;
-import io.jmix.flowui.testassist.UiTestUtils;
-import io.jmix.flowui.view.View;
+import io.jmix.tabbedmode.ViewBuilders;
+import io.jmix.tabbedmode.testassist.TabbedModeTestAssistConfiguration;
+import io.jmix.tabbedmode.testassist.UiTest;
+import io.jmix.tabbedmode.testassist.UiTestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,19 +24,19 @@ import org.springframework.boot.test.context.SpringBootTest;
  * Sample UI integration test for the User entity.
  */
 @UiTest
-@SpringBootTest(classes = {${project_classPrefix}Application.class, FlowuiTestAssistConfiguration.class})
+@SpringBootTest(classes = {${project_classPrefix}Application.class, TabbedModeTestAssistConfiguration.class})
 public class UserUiTest {
 
     @Autowired
     DataManager dataManager;
 
     @Autowired
-    ViewNavigators viewNavigators;
+    ViewBuilders viewBuilders;
 
     @Test
     void test_createUser() {
         // Navigate to user list view
-        viewNavigators.view(UiTestUtils.getCurrentView(), UserListView.class).navigate();
+        viewBuilders.view(UiTestUtils.getCurrentView(), UserListView.class).open();
 
         UserListView userListView = UiTestUtils.getCurrentView();
 

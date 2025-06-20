@@ -287,7 +287,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         if (!enableDeleteInSoftDeleteMode && PersistenceHints.isSoftDeletion(entityManager) && isDeleteQuery) {
             if (metadataTools.isSoftDeletable(referenceClass)) {
                 throw new UnsupportedOperationException("Delete queries are not supported with enabled soft deletion. " +
-                        "Use 'cuba.enableDeleteStatementInSoftDeleteMode' application property to roll back to legacy behavior.");
+                        "Use 'jmix.data.enable-delete-statement-in-soft-delete-mode' application property to roll back to legacy behavior.");
             }
         }
         // In some cache configurations (in particular, when shared cache is on, but for some entities cache is set to ISOLATED),

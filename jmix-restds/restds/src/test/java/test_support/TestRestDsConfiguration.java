@@ -85,7 +85,6 @@ public class TestRestDsConfiguration {
     }
 
     @Bean
-    @Primary
     RestTokenHolder restTokenHolder() {
         return new ThreadLocalRestTokenHolder();
     }

@@ -8,7 +8,7 @@ Join us at https://forum.jmix.io or ask questions on StackOverflow with the `jmi
 
 ## Reporting Bugs
 
-We use Github [issues](https://github.com/jmix-framework/jmix/issues) for a backlog of bugs, improvements and feature requests related to the framework. The backlog contains issues for both open-source and premium modules. 
+We use GitHub [issues](https://github.com/jmix-framework/jmix/issues) for a backlog of bugs, improvements and feature requests related to the framework and add-ons. The backlog contains issues for both open-source and premium modules. 
 
 If you found a bug in Jmix Studio, report it on the [forum](https://forum.jmix.io) with the `studio` tag. Studio [bugtracker](https://youtrack.jmix.io/issues/JST) is read-only for the public, so we'll create an issue based on your report, and you will be able to track its progress.
 
@@ -21,13 +21,13 @@ The process:
 1. Fork the repository
 1. Fix an issue or create an issue and fix it
 1. Create a pull request, check "Allow edits from maintainers"
-1. Sign a CLA
+1. Sign the CLA
 1. Respond to review comments
 1. Wait for merge and release
 
 ### Working with Code
 
-- Install JDK 11
+- Install JDK 17
 - Install latest IntelliJ IDEA
 - Import `build.gradle` file of the project into the IDE
 - Work on your issue
@@ -36,4 +36,4 @@ The process:
 
 ### Working with Documentation
 
-Fork the [jmix-docs](https://github.com/jmix-framework/jmix-docs) repository and see building instructions in its README. 
+Fork the [jmix-docs](https://github.com/jmix-framework/jmix-docs) repository and follow building instructions in its README. 

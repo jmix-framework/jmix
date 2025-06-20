@@ -47,7 +47,6 @@
             <xsd:element name="classInputParameter" type="classInputParameterType"/>
             <xsd:element name="optionsInputParameter" type="optionsInputParameterType"/>
             <xsd:element name="jpqlQueryParameter" type="jpqlQueryParameterType"/>
-            <xsd:element name="graphQLInputParameter" type="graphQLInputParameterType"/>
             <xsd:element name="reactScreenInputParameter" type="commonInputParameterType"/>
             <xsd:element name="reactScreenRouteInputParameter" type="commonInputParameterType"/>
         </xsd:sequence>
@@ -100,14 +99,6 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="graphQLInputParameter">
-        <xsd:complexContent>
-            <xsd:extension base="commonInputParameterType">
-                <xsd:attribute name="oneEntity" type="xsd:boolean"/>
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
-
     <xsd:complexType name="variableInputParameterType">
         <xsd:complexContent>
             <xsd:extension base="commonInputParameterType">
@@ -140,11 +131,4 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="graphQLInputParameterType">
-        <xsd:complexContent>
-            <xsd:extension base="commonInputParameterType">
-                <xsd:attribute name="oneEntity" type="xsd:boolean"/>
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
 </xsd:schema>

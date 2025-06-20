@@ -16,9 +16,24 @@
 
 package io.jmix.flowui.kit.component.dropdownbutton;
 
+/**
+ * Represents a text-based item that can be included in a dropdown button component.
+ * The {@code TextItem} interface allows setting and retrieving the textual content
+ * associated with an item in the dropdown menu.
+ */
 public interface TextItem extends DropdownButtonItem {
 
+    /**
+     * Sets the text displayed on the component.
+     *
+     * @param text the text to be displayed
+     */
     void setText(String text);
 
+    /**
+     * Returns the text associated with this component.
+     *
+     * @return the current text of the component
+     */
     String getText();
 }

@@ -36,7 +36,6 @@ import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -44,6 +43,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * An action that sets an entity to the entity picker using the entity lookup view.
+ *
+ * @param <E> entity type
+ */
 @ActionType(EntityLookupAction.ID)
 public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, EntityPickerComponent<E>, E>
         implements ViewOpeningAction {
@@ -87,10 +91,22 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
         this.shortcutCombination = KeyCombination.create(uiComponentProperties.getPickerLookupShortcut());
     }
 
+    /**
+     * Sets a validator for validating the selection in the lookup view.
+     *
+     * @param selectValidator a predicate that determines if the selection is valid.
+     *                        It takes a {@link LookupView.ValidationContext} as input and returns a boolean
+     */
     public void setSelectValidator(Predicate<LookupView.ValidationContext<E>> selectValidator) {
         this.selectValidator = selectValidator;
     }
 
+    /**
+     * Sets the transformation function that processes a collection of entities.
+     *
+     * @param transformation a function that takes a collection of entities as input
+     *                       and returns a transformed collection of entities
+     */
     public void setTransformation(Function<Collection<E>, Collection<E>> transformation) {
         this.transformation = transformation;
     }
@@ -215,11 +231,17 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
         return this;
     }
 
+    /**
+     * @see #setSelectValidator(Predicate)
+     */
     public EntityLookupAction<E> withSelectValidator(Predicate<LookupView.ValidationContext<E>> selectValidator) {
         setSelectValidator(selectValidator);
         return this;
     }
 
+    /**
+     * @see #setTransformation(Function)
+     */
     public EntityLookupAction<E> withTransformation(Function<Collection<E>, Collection<E>> transformation) {
         setTransformation(transformation);
         return this;

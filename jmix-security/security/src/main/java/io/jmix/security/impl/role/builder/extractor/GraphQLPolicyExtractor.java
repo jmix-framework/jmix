@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+@Deprecated(forRemoval = true)
 @Component("sec_graphQLPolicyExtractor")
 public class GraphQLPolicyExtractor implements ResourcePolicyExtractor {
 

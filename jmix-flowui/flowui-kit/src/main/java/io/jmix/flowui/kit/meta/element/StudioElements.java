@@ -26,6 +26,8 @@ import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
 import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy;
+import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy.ClassFqnStrategy;
 
 @StudioUiKit
 public interface StudioElements {
@@ -159,11 +161,37 @@ public interface StudioElements {
                     @StudioSupplyHandler(
                             methodName = "setRenderer",
                             parameterType = "com.vaadin.flow.data.renderer.Renderer"
+                    ),
+                    @StudioSupplyHandler(
+                            methodName = "setEditorComponent",
+                            parameterType = "com.vaadin.flow.component.Component"
+                    ),
+                    @StudioSupplyHandler(
+                            methodName = "setEditorComponent",
+                            parameterType = "com.vaadin.flow.function.SerializableFunction",
+                            genericResolvingInfo = {
+                                    @GenericResolvingInfo(
+                                            typeParameter = "T",
+                                            resolvingStrategy = @ResolvingStrategy(
+                                                    parentTagByDepthStrategy = @ResolvingStrategy.ParentTagByDepthStrategy(
+                                                            parentTagDepth = 2, // columns -> grid
+                                                            takeFromTypeParameter = "E" // E parameter from Grid<E>
+                                                    )
+                                            )
+                                    ),
+                                    @GenericResolvingInfo(
+                                            typeParameter = "R",
+                                            resolvingStrategy = @ResolvingStrategy(
+                                                    classFqnStrategy = @ClassFqnStrategy(
+                                                            classFqn = "com.vaadin.flow.component.Component"
+                                                    )
+                                            )
+                                    )
+                            }
                     )
             }
     )
     Grid.Column column();
-
 
     @StudioElement(
             name = "EditorActionsColumn",
@@ -197,10 +225,11 @@ public interface StudioElements {
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "PENCIL",
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
+                            initialValue = "PENCIL",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.Edit"),
+                            initialValue = "msg:///actions.Edit"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "whiteSpace", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
@@ -223,7 +252,8 @@ public interface StudioElements {
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "CHECK",
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
+                            initialValue = "CHECK",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
@@ -248,7 +278,8 @@ public interface StudioElements {
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "BAN",
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
+                            initialValue = "BAN",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
@@ -273,10 +304,11 @@ public interface StudioElements {
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "BAN",
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
+                            initialValue = "BAN",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.Cancel"),
+                            initialValue = "msg:///actions.Cancel"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "whiteSpace", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
@@ -544,7 +576,6 @@ public interface StudioElements {
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
-                    "com.vaadin.flow.component.applayout.DrawerToggle",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
@@ -950,7 +981,8 @@ public interface StudioElements {
             name = "Suffix",
             xmlElement = "suffix",
             target = {"com.vaadin.flow.component.shared.HasSuffix"},
-            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
+            unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle",
+                    "io.jmix.searchflowui.component.SearchField"},
             documentationLink = "2.1/whats-new/index.html#prefix-and-suffix-components",
             unlimitedCount = false,
             availableChildren = @StudioAvailableChildrenInfo(
@@ -967,9 +999,11 @@ public interface StudioElements {
             xmlElement = "component",
             target = "io.jmix.flowui.facet.SettingsFacet",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "componentId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN)
-            }
+            },
+            isInjectable = false,
+            injectionIdentifier = StudioComponent.EMPTY_INJECTION_IDENTIFIER
     )
     void settingsFacetComponent();
 
@@ -1125,4 +1159,50 @@ public interface StudioElements {
             }
     )
     void fragmentRenderer();
+
+    @StudioElement(
+            name = "StartSlot",
+            icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            xmlElement = "startSlot",
+            target = "com.vaadin.flow.component.orderedlayout.HorizontalLayout",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void startSlot();
+
+    @StudioElement(
+            name = "MiddleSlot",
+            icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            xmlElement = "middleSlot",
+            target = "com.vaadin.flow.component.orderedlayout.HorizontalLayout",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void middleSlot();
+
+    @StudioElement(
+            name = "EndSlot",
+            icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            xmlElement = "endSlot",
+            target = "com.vaadin.flow.component.orderedlayout.HorizontalLayout",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void endSlot();
+
 }

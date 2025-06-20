@@ -68,6 +68,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("multiSelectListBox", MultiSelectListBoxLoader.class);
         loaders.put("textArea", TextAreaLoader.class);
         loaders.put("checkbox", CheckboxLoader.class);
+        loaders.put("switch", SwitchLoader.class);
         loaders.put("comboBox", ComboBoxLoader.class);
         loaders.put("multiSelectComboBox", MultiSelectComboBoxLoader.class);
         loaders.put("multiSelectComboBoxPicker", MultiSelectComboBoxPickerLoader.class);

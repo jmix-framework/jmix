@@ -370,7 +370,7 @@ public class FetchGroupManager {
                         }
                         if (result.isEmpty()) {
                             result.add(toManyField.path() + "." + inverseProp.getName() + "."
-                                    + metadataTools.getPrimaryKeyName(inverseProp.getDomain()));
+                                    + metadataTools.getPrimaryKeyName(inverseProp.getRange().asClass()));
                         }
                     } else {
                         result.add(toManyField.path() + "." + inverseProp.getName());

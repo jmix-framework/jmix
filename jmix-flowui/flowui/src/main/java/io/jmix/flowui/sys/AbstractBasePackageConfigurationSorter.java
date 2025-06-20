@@ -18,6 +18,7 @@ package io.jmix.flowui.sys;
 
 import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
+import io.jmix.core.annotation.Internal;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
  * using configuration base packages.
  * @param <T> type of specific scan configuration
  */
+@Internal
 public abstract class AbstractBasePackageConfigurationSorter<T extends AbstractScanConfiguration> {
 
     protected JmixModules jmixModules;

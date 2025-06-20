@@ -16,8 +16,12 @@
 
 package io.jmix.flowui.data.aggregation.impl;
 
+import io.jmix.flowui.data.aggregation.Aggregation;
 import org.springframework.lang.Nullable;
 
+/**
+ * Implementation of {@link Aggregation} intended for aggregating {@link Long} values.
+ */
 public class LongAggregation extends AbstractNumberAggregation<Long> {
 
     public LongAggregation() {

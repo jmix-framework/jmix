@@ -23,12 +23,18 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import io.jmix.flowuidata.entity.FilterConditionConverter;
+import jakarta.persistence.Convert;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-import jakarta.persistence.Convert;
-
+/**
+ * An implementation of the {@link EntityAttributeSerializationExtension} interface, designed to provide
+ * specific serialization and deserialization logic for entity attributes of type {@link LogicalFilterCondition}.
+ * <p>
+ * DEPRECATED since 2.6 as not needed anymore, will be removed in 3.0.
+ */
+@Deprecated(forRemoval = true)
 @Component("flowui_FilterConditionAttributeSerializationExtension")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 public class FilterConditionAttributeSerializationExtension implements EntityAttributeSerializationExtension {

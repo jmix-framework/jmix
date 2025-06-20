@@ -24,7 +24,6 @@
             <fetchPlan extends="_local">
                 <property name="valueComponent" fetchPlan="_local"/>
             </fetchPlan>
-            <loader/>
             <instance id="valueComponentDc" property="valueComponent"/>
         </instance>
     </data>

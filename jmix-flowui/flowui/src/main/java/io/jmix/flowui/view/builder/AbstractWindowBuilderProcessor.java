@@ -24,6 +24,10 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import org.springframework.context.ApplicationContext;
 
+/**
+ * Abstract base class for processing and constructing {@link DialogWindow} instances
+ * using {@link DialogWindowBuilder}.
+ */
 public abstract class AbstractWindowBuilderProcessor {
 
     protected ApplicationContext applicationContext;
@@ -73,6 +77,8 @@ public abstract class AbstractWindowBuilderProcessor {
     protected <V extends View<?>> void initDialog(DialogWindowBuilder<V> builder, DialogWindow<V> dialog) {
         builder.getAfterOpenListener().ifPresent(dialog::addAfterOpenListener);
         builder.getAfterCloseListener().ifPresent(dialog::addAfterCloseListener);
+        builder.getDraggedListener().ifPresent(dialog::addDraggedListener);
+        builder.getResizeListener().ifPresent(dialog::addResizeListener);
         builder.getViewConfigurer().ifPresent(configurer -> configurer.accept(dialog.getView()));
     }
 }

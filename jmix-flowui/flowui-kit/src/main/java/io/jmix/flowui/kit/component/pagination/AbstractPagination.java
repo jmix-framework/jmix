@@ -26,6 +26,11 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 
 import jakarta.annotation.Nullable;
 
+/**
+ * Abstract base class for implementing pagination components.
+ * Provides a structure for creating navigational buttons and an inner component
+ * to manage pagination functionality, such as displaying data in pages or managing item counts.
+ */
 public abstract class AbstractPagination extends Composite<Div> implements HasStyle {
 
     public static final String BASE_BUTTON_CLASS_NAME = "-navigation-button";

@@ -24,7 +24,6 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.*;
 import com.vaadin.flow.server.auth.NavigationAccessControl;
-import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
@@ -84,7 +83,6 @@ import static org.springframework.security.web.authentication.rememberme.Abstrac
  *
  * @see AuthDetails
  */
-@SpringComponent("flowui_LoginViewSupport")
 public class LoginViewSupport {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewSupport.class);

@@ -48,6 +48,7 @@ import io.jmix.core.metamodel.model.Session;
 import io.jmix.data.PersistenceHints;
 import io.jmix.datatools.EntityRestore;
 import io.jmix.datatoolsflowui.DatatoolsUiProperties;
+import io.jmix.datatoolsflowui.accesscontext.UiImportExportEntityContext;
 import io.jmix.datatoolsflowui.action.ShowEntityInfoAction;
 import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorDataGridBuilder;
 import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorExportHelper;
@@ -194,18 +195,40 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected CollectionLoader entitiesDl;
     protected CollectionContainer entitiesDc;
 
+    protected boolean importExportAvailableBySpecificUiPermission;
+
     protected String entityName;
-    protected boolean isDialogMode = true;
 
     @Subscribe
     public void onInit(InitEvent event) {
         showMode.setValue(ShowMode.NON_REMOVED);
         getViewData().setDataContext(dataComponents.createDataContext());
         ComponentUtils.setItemsMap(entitiesLookup, getEntitiesLookupFieldOptions());
+        applySecurityConstrains();
+    }
+
+    protected void applySecurityConstrains() {
+        UiImportExportEntityContext context = new UiImportExportEntityContext();
+        accessManager.applyRegisteredConstraints(context);
+
+        importExportAvailableBySpecificUiPermission = context.isPermitted();
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
+        applyQueryParameters(event);
+
+        super.beforeEnter(event);
+    }
+
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        applyQueryParameters(event);
+
+        super.processBeforeEnterInternal(event);
+    }
+
+    protected void applyQueryParameters(BeforeEnterEvent event) {
         initialParameters = event.getLocation().getQueryParameters();
         Map<String, List<String>> parameters = initialParameters.getParameters();
 
@@ -220,10 +243,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
                     .findAny()
                     .ifPresent(this::setShowMode);
         }
-
-        isDialogMode = false;
-
-        super.beforeEnter(event);
     }
 
     //to handle the usage of entityName public setter
@@ -238,12 +257,12 @@ public class EntityInspectorListView extends StandardListView<Object> {
             entitiesDl.load();
         }
 
-        lookupBox.setVisible(!isDialogMode);
+        lookupBox.setVisible(!UiComponentUtils.isComponentAttachedToDialog(this));
     }
 
     @Subscribe
     public void onReady(ReadyEvent event) {
-        if (!isDialogMode) {
+        if (!UiComponentUtils.isComponentAttachedToDialog(this)) {
             entitiesLookup.addValueChangeListener(this::entityChangeListener);
             showMode.addValueChangeListener(this::showModeChangeListener);
         }
@@ -513,6 +532,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         refreshButton.setAction(refreshAction);
 
         DropdownButton exportDropdownButton = uiComponents.create(DropdownButton.class);
+        exportDropdownButton.setEnabled(importExportAvailableBySpecificUiPermission);
         exportDropdownButton.setText(messages.getMessage(EntityInspectorListView.class, "export"));
         exportDropdownButton.setIcon(VaadinIcon.DOWNLOAD.create());
 
@@ -533,6 +553,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         exportDropdownButton.addItem("exportZip", exportZipAction);
 
         FileUploadField importUpload = uiComponents.create(FileUploadField.class);
+        importUpload.setEnabled(importExportAvailableBySpecificUiPermission);
         importUpload.setAcceptedFileTypes(".json", ".zip");
         importUpload.setUploadIcon(VaadinIcon.UPLOAD.create());
         importUpload.setUploadText(messages.getMessage(EntityInspectorListView.class, "import"));
@@ -1044,6 +1065,12 @@ public class EntityInspectorListView extends StandardListView<Object> {
         @Override
         protected void setMetadata(Metadata metadata) {
             this.metadata = metadata;
+        }
+
+        @Override
+        public boolean isEnabledByUiPermissions() {
+            return importExportAvailableBySpecificUiPermission
+                    && super.isEnabledByUiPermissions();
         }
 
         @Override

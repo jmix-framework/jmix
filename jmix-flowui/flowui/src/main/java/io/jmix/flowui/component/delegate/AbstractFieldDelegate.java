@@ -201,6 +201,10 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
 
     public void setRequiredMessage(@Nullable String requiredMessage) {
         this.requiredMessage = requiredMessage;
+
+        if (isInvalid() && isEmptyAndRequired()) {
+            setComponentRequiredErrorState();
+        }
     }
 
     @Nullable
@@ -254,8 +258,10 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     public void setConversionInvalid(boolean conversionInvalid) {
         this.conversionInvalid = conversionInvalid;
 
-        if (explicitlyInvalid || conversionInvalid || isEmptyAndRequired()) {
+        if (explicitlyInvalid || conversionInvalid) {
             updateInvalidState();
+        } else if (isEmptyAndRequired()) {
+            updateRequiredState();
         } else {
             setInvalidInternal(false);
         }

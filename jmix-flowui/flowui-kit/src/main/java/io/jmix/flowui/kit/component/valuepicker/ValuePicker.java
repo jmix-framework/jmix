@@ -21,7 +21,11 @@ import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.shared.Registration;
 
-
+/**
+ * A component that allows the selection and editing of values, with support for custom value input.
+ *
+ * @param <V> the type of value handled by the component
+ */
 public class ValuePicker<V> extends ValuePickerBase<ValuePicker<V>, V> implements HasPrefix, HasSuffix {
 
     public boolean isAllowCustomValue() {

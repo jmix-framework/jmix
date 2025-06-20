@@ -33,6 +33,7 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.ViewRegistry;
@@ -46,6 +47,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * A class provides a user interface component for displaying an exception dialog
+ * with detailed information about the error. The dialog supports features such as
+ * showing the exception message, viewing the stack trace, and copying the stack
+ * trace to clipboard.
+ */
 public class ExceptionDialog implements InitializingBean {
 
     protected static final String BASE_CLASS_NAME = "jmix-exception-dialog-window";
@@ -71,6 +78,7 @@ public class ExceptionDialog implements InitializingBean {
     protected Element stackTraceTextArea;
 
     protected boolean isStackTraceVisible = false;
+    protected boolean exceptionDialogModal = true;
 
     public ExceptionDialog(Throwable throwable) {
         this.throwable = throwable;
@@ -96,6 +104,11 @@ public class ExceptionDialog implements InitializingBean {
         this.notifications = notifications;
     }
 
+    @Autowired
+    public void setUiProperties(UiProperties uiProperties) {
+        exceptionDialogModal = uiProperties.isExceptionDialogModal();
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         initDialog();
@@ -119,6 +132,7 @@ public class ExceptionDialog implements InitializingBean {
         dialog.setCloseOnOutsideClick(false);
         dialog.setDraggable(true);
 
+        dialog.setModal(exceptionDialogModal);
         dialog.setWidth(WIDTH);
 
         dialog.addThemeVariants(DialogVariant.LUMO_NO_PADDING);

@@ -23,8 +23,8 @@ import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
@@ -35,7 +35,6 @@ import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
 
 import java.util.function.Consumer;
@@ -43,6 +42,12 @@ import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkState;
 
+/**
+ * Represents an action that allows opening a {@link DetailView} for the entity associated with
+ * an {@link EntityPickerComponent}.
+ *
+ * @param <E> the type of entity being handled by this action
+ */
 @ActionType(EntityOpenAction.ID)
 public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, EntityPickerComponent<E>, E>
         implements ViewOpeningAction {
@@ -102,10 +107,21 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         super.setTarget(target);
     }
 
+    /**
+     * Sets a handler that will be executed after the entity is saved.
+     *
+     * @param afterSaveHandler a {@link Consumer} that defines the action to be performed
+     *                         with the entity after it is saved
+     */
     public void setAfterSaveHandler(Consumer<E> afterSaveHandler) {
         this.afterSaveHandler = afterSaveHandler;
     }
 
+    /**
+     * Sets a transformation function to be applied to the entity.
+     *
+     * @param transformation a {@link Function} that takes an entity as input and returns the transformed entity.
+     */
     public void setTransformation(Function<E, E> transformation) {
         this.transformation = transformation;
     }
@@ -246,11 +262,17 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         return this;
     }
 
+    /**
+     * @see #setAfterSaveHandler(Consumer)
+     */
     public EntityOpenAction<E> withAfterSaveHandler(Consumer<E> afterSaveHandler) {
         setAfterSaveHandler(afterSaveHandler);
         return this;
     }
 
+    /**
+     * @see #setTransformation(Function)
+     */
     public EntityOpenAction<E> withTransformation(Function<E, E> transformation) {
         setTransformation(transformation);
         return this;

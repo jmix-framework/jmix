@@ -23,6 +23,11 @@ import jakarta.annotation.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Provides support for associating and managing an {@link Action} with a {@link ValuePickerButton}.
+ * This class handles updating the button's properties (such as title, icon, and visibility) based
+ * on the associated action, and facilitates event registration and cleanup.
+ */
 public class ValuePickerButtonActionSupport {
 
     protected final ValuePickerButton button;
@@ -36,6 +41,14 @@ public class ValuePickerButtonActionSupport {
         this.button = button;
     }
 
+    /**
+     * Sets the {@link Action} for the associated component and updates the component's
+     * properties based on the action's state if specified.
+     *
+     * @param action                      the action to set; may be null
+     * @param overrideComponentProperties a flag indicating whether to update the component's
+     *                                    properties based on the action's state
+     */
     public void setAction(@Nullable Action action, boolean overrideComponentProperties) {
         if (Objects.equals(this.action, action)) {
             return;
@@ -46,6 +59,7 @@ public class ValuePickerButtonActionSupport {
         this.action = action;
 
         if (action != null && overrideComponentProperties) {
+            button.setId(action.getId());
             button.setTitle(generateTitle(action));
             button.setEnabled(action.isEnabled());
             button.setVisible(action.isVisible());
@@ -56,6 +70,11 @@ public class ValuePickerButtonActionSupport {
         }
     }
 
+    /**
+     * Returns the current {@link Action} associated with the component.
+     *
+     * @return the current action, or {@code null} if no action is set
+     */
     @Nullable
     public Action getAction() {
         return action;

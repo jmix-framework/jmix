@@ -602,7 +602,7 @@ public class ReflectionCacheManager {
             if (Modifier.isPublic(m.getModifiers())
                     && m.getParameterCount() == 1
                     && m.getName().startsWith("set")
-                    && m.getName().contains("Renderer")) {
+                    && (m.getName().contains("Renderer") || m.getName().contains("EditorComponent"))) {
 
                 m.trySetAccessible();
                 MethodHandle methodHandle;

@@ -16,13 +16,12 @@
 
 package io.jmix.reportsflowui.autoconfiguration;
 
-import io.jmix.gridexportflowui.GridExportFlowuiConfiguration;
 import io.jmix.reports.ReportsConfiguration;
 import io.jmix.reportsflowui.ReportsFlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
-@Import({ReportsFlowuiConfiguration.class, ReportsConfiguration.class, GridExportFlowuiConfiguration.class})
+@Import({ReportsFlowuiConfiguration.class, ReportsConfiguration.class})
 public class ReportsFlowuiAutoConfiguration {
 }

@@ -50,18 +50,44 @@ public class AuthServerProperties {
      */
     String loginPageViewName;
 
+    /**
+     * Actual 'authorize' endpoint. Default: /oauth2/authorize
+     * <p>
+     * NOTE: This property should be specified if default endpoint has been remapped via Spring Security configuration.
+     * Changing this property itself doesn't change actual authorize endpoint.
+     */
+    String authorizeEndpoint;
+
+    /**
+     * Name of url parameter within logout request which contains url to redirect to after logout
+     */
+    String postLogoutUrlRedirectParameterName;
+
+    /**
+     * Whether referer header value can be used as a target URL after logout.
+     * <p>
+     * Note: URL specified within {@link #postLogoutUrlRedirectParameterName} parameter has more priority
+     */
+    boolean useRefererPostLogout;
+
     public AuthServerProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
             @DefaultValue("false") boolean useInMemoryAuthorizationService,
             @DefaultValue Map<String, JmixClient> client,
             @DefaultValue("/as-login") String loginPageUrl,
-            @DefaultValue("as-login.html") String loginPageViewName
-            ) {
+            @DefaultValue("as-login.html") String loginPageViewName,
+            @DefaultValue("/oauth2/authorize") String authorizeEndpoint,
+            @DefaultValue("false") boolean useRefererPostLogout,
+            String postLogoutUrlRedirectParameterName
+    ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.useInMemoryAuthorizationService = useInMemoryAuthorizationService;
         this.client = client;
         this.loginPageUrl = loginPageUrl;
         this.loginPageViewName = loginPageViewName;
+        this.authorizeEndpoint = authorizeEndpoint;
+        this.postLogoutUrlRedirectParameterName = postLogoutUrlRedirectParameterName;
+        this.useRefererPostLogout = useRefererPostLogout;
     }
 
     public boolean isUseDefaultConfiguration() {
@@ -82,6 +108,18 @@ public class AuthServerProperties {
 
     public String getLoginPageViewName() {
         return loginPageViewName;
+    }
+
+    public String getAuthorizeEndpoint() {
+        return authorizeEndpoint;
+    }
+
+    public String getPostLogoutUrlRedirectParameterName() {
+        return postLogoutUrlRedirectParameterName;
+    }
+
+    public boolean isUseRefererPostLogout() {
+        return useRefererPostLogout;
     }
 
     /**

@@ -16,14 +16,22 @@
 
 package io.jmix.flowuidata.genericfilter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.jmix.core.DataManager;
+import io.jmix.core.DevelopmentException;
 import io.jmix.core.EntityStates;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.security.event.UserRemovedEvent;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.component.genericfilter.FilterConfigurationPersistence;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
+import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import io.jmix.flowuidata.entity.FilterConfiguration;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -31,39 +39,47 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
 
+@Internal
 @Component("flowui_DatabaseFilterConfigurationPersistence")
 public class DatabaseFilterConfigurationPersistence implements FilterConfigurationPersistence {
 
-    private final DataManager dataManager;
-    private final EntityStates entityStates;
+    protected final DataManager dataManager;
+    protected final EntityStates entityStates;
 
-    public DatabaseFilterConfigurationPersistence(DataManager dataManager, EntityStates entityStates) {
+    protected final CurrentUserSubstitution currentUserSubstitution;
+
+    protected ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
+            .build()
+            .configure(SerializationFeature.INDENT_OUTPUT, true);
+
+
+    public DatabaseFilterConfigurationPersistence(DataManager dataManager, EntityStates entityStates,
+                                                  CurrentUserSubstitution currentUserSubstitution) {
         this.dataManager = dataManager;
         this.entityStates = entityStates;
+        this.currentUserSubstitution = currentUserSubstitution;
     }
 
     @Override
     public void remove(FilterConfigurationModel configurationModel) {
-        dataManager.remove(modelToEntity(configurationModel));
+        dataManager.remove(modelToEntity(configurationModel, null));
     }
 
     @Override
     public void save(FilterConfigurationModel configurationModel) {
-        dataManager.save(modelToEntity(configurationModel));
+        FilterConfiguration entity = loadInternal(configurationModel.getConfigurationId(),
+                configurationModel.getComponentId(),
+                currentUserSubstitution.getEffectiveUser().getUsername());
+
+        entity = modelToEntity(configurationModel, entity);
+
+        dataManager.save(entity);
     }
 
     @Override
     @Nullable
     public FilterConfigurationModel load(String configurationId, String componentId, String username) {
-        FilterConfiguration entity = dataManager.load(FilterConfiguration.class)
-                .condition(LogicalCondition.and()
-                        .add(PropertyCondition.equal("configurationId", configurationId).skipNullOrEmpty())
-                        .add(PropertyCondition.equal("componentId", componentId).skipNullOrEmpty())
-                        .add(LogicalCondition.or()
-                                .add(PropertyCondition.isSet("username", false).skipNullOrEmpty())
-                                .add(PropertyCondition.equal("username", username).skipNullOrEmpty())))
-                .optional()
-                .orElse(null);
+        FilterConfiguration entity = loadInternal(configurationId, componentId, username);
 
         return entity == null ? null : entityToModel(entity);
     }
@@ -83,6 +99,19 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
                 .toList();
     }
 
+    @Nullable
+    protected FilterConfiguration loadInternal(String configurationId, String componentId, String username) {
+        return dataManager.load(FilterConfiguration.class)
+                .condition(LogicalCondition.and()
+                        .add(PropertyCondition.equal("configurationId", configurationId).skipNullOrEmpty())
+                        .add(PropertyCondition.equal("componentId", componentId).skipNullOrEmpty())
+                        .add(LogicalCondition.or()
+                                .add(PropertyCondition.isSet("username", false).skipNullOrEmpty())
+                                .add(PropertyCondition.equal("username", username).skipNullOrEmpty())))
+                .optional()
+                .orElse(null);
+    }
+
     @SuppressWarnings({"SpringEventListenerInspection"})
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
     protected void onUserRemove(UserRemovedEvent event) {
@@ -93,8 +122,13 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
         dataManager.remove(configurations.toArray());
     }
 
-    private FilterConfiguration modelToEntity(FilterConfigurationModel model) {
-        FilterConfiguration entity = dataManager.create(FilterConfiguration.class);
+    protected FilterConfiguration modelToEntity(FilterConfigurationModel model, @Nullable FilterConfiguration destination) {
+        FilterConfiguration entity = destination;
+        if (entity == null) {
+            entity = dataManager.create(FilterConfiguration.class);
+            entity.setId(model.getId());
+            entityStates.setNew(entity, entityStates.isNew(model));
+        }
 
         entity.setId(model.getId());
         entity.setComponentId(model.getComponentId());
@@ -103,14 +137,13 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
         entity.setUsername(model.getUsername());
         entity.setDefaultForAll(model.getDefaultForAll());
         entity.setDefaultForMe(model.getDefaultForMe());
-        entity.setRootCondition(model.getRootCondition());
+        entity.setRootCondition(filterConditionToJson(model.getRootCondition()));
         entity.setSysTenantId(model.getSysTenantId());
 
-        entityStates.setNew(entity, entityStates.isNew(model));
         return entity;
     }
 
-    private FilterConfigurationModel entityToModel(FilterConfiguration entity) {
+    protected FilterConfigurationModel entityToModel(FilterConfiguration entity) {
         FilterConfigurationModel model = dataManager.create(FilterConfigurationModel.class);
 
         model.setId(entity.getId());
@@ -120,10 +153,26 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
         model.setUsername(entity.getUsername());
         model.setDefaultForAll(entity.getDefaultForAll());
         model.setDefaultForMe(entity.getDefaultForMe());
-        model.setRootCondition(entity.getRootCondition());
+        model.setRootCondition(filterConditionFromJson(entity.getRootCondition()));
         model.setSysTenantId(entity.getSysTenantId());
 
         entityStates.setNew(model, false);
         return model;
+    }
+
+    protected String filterConditionToJson(LogicalFilterCondition filterCondition) {
+        try {
+            return objectMapper.writeValueAsString(filterCondition);
+        } catch (JsonProcessingException e) {
+            throw new DevelopmentException(e.getMessage(), e);
+        }
+    }
+
+    protected LogicalFilterCondition filterConditionFromJson(String json) {
+        try {
+            return objectMapper.readValue(json, LogicalFilterCondition.class);
+        } catch (JsonProcessingException e) {
+            throw new DevelopmentException(e.getMessage(), e);
+        }
     }
 }

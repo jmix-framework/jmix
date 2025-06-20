@@ -18,6 +18,7 @@ package io.jmix.core.impl.scanning;
 
 import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
+import io.jmix.core.annotation.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  * Detected class names are stored and available through the {@link #getClassNames(Class)} method. This method
  * accepts a {@code ClasspathScanCandidateDetector} type and returns names of classes selected by this detector.
  */
+@Internal
 @Component("core_JmixModulesClasspathScanner")
 public class JmixModulesClasspathScanner extends AbstractClasspathScanner {
 

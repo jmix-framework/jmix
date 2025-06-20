@@ -16,6 +16,12 @@
 
 package io.jmix.flowui.data.aggregation.impl;
 
+/**
+ * Implementation of {@link AbstractAggregation} that provides the foundation
+ * for performing aggregation operations by counting the number of items within a collection.
+ *
+ * @param <T> the type of the items being aggregated
+ */
 public class CountAggregation<T> extends AbstractAggregation<T> {
 
     public CountAggregation(Class<T> clazz) {

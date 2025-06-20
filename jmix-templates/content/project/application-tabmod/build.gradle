@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '2.5.0-M2'
+    id 'io.jmix' version '2.6.0-M1'
     id 'java'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.9'
 }
@@ -18,7 +18,19 @@ version = '${project_version}'
 repositories {
     mavenCentral()<%if (project_additionalRepositories) {
     project_additionalRepositories.each { additionalRepository ->%>
-${additionalRepository}<%}}%>
+${additionalRepository}<%if (additionalRepository.contains("jmix.io")) {
+        def pattern = "url\\s*=?\\s*'(.*?)'"
+        def matcher = additionalRepository =~ pattern
+        if (matcher.find()) {
+            def publicUrl = matcher[0][1] as String
+            def premiumUrl = publicUrl.replace("public", "premium")%>
+    maven {
+        url = '$premiumUrl'
+        credentials {
+            username = rootProject['premiumRepoUser']
+            password = rootProject['premiumRepoPass']
+        }
+    }<%}}}}%>
 }
 
 dependencies {
@@ -42,7 +54,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-    testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
+    testImplementation 'io.jmix.tabbedmode:jmix-tabbedmode-test-assist'
 }
 
 configurations.implementation {

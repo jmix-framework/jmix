@@ -15,6 +15,7 @@
  */
 package io.jmix.flowui.sys;
 
+import io.jmix.core.annotation.Internal;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * Utility class to format and parse component paths.
  */
+@Internal
 public final class ValuePathHelper {
 
     private ValuePathHelper() {

@@ -18,7 +18,16 @@ package io.jmix.flowui.data.binding;
 
 import org.springframework.lang.Nullable;
 
+/**
+ * Interface defining a contract for objects that support suspendable bindings.
+ */
 public interface SuspendableBindingAware {
 
+    /**
+     * Sets the {@link SuspendableBinding} instance to be associated with this object.
+     *
+     * @param suspendableBinding the {@link SuspendableBinding} instance to set;
+     *                           may be {@code null} to clear the current binding
+     */
     void setSuspendableBinding(@Nullable SuspendableBinding suspendableBinding);
 }

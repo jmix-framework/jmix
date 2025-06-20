@@ -18,12 +18,10 @@ package io.jmix.flowui.component.delegate;
 
 import com.google.common.base.Strings;
 import com.google.common.primitives.Booleans;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.Shortcuts;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.editor.Editor;
+import com.vaadin.flow.component.grid.editor.EditorCloseEvent;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -43,15 +41,19 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.Fragments;
 import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.action.list.ReadAction;
+import io.jmix.flowui.app.datagrid.DataGridEmptyStateByPermissionsFragment;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.SupportsEnterPress.EnterPressEvent;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
+import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.aggregation.Aggregation;
@@ -83,6 +85,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected ApplicationContext applicationContext;
 
+    protected Fragments fragments;
     protected MetadataTools metadataTools;
     protected MessageTools messageTools;
     protected AccessManager accessManager;
@@ -102,6 +105,13 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected Consumer<EnterPressEvent<C>> enterPressHandler;
 
     protected Consumer<ColumnSecurityContext<E>> afterColumnSecurityApplyHandler;
+
+    protected String emptyStateTextInternal;
+    protected Component emptyStateComponentInternal;
+
+    protected Consumer<String> componentEmptyStateTextDelegate;
+    protected Consumer<Component> componentEmptyStateComponentDelegate;
+    protected Registration emptyStateByPermissionRegistration;
 
     protected boolean aggregatable;
     protected EnhancedDataGrid.AggregationPosition aggregationPosition = EnhancedDataGrid.AggregationPosition.BOTTOM;
@@ -138,6 +148,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected void autowireDependencies() {
+        fragments = applicationContext.getBean(Fragments.class);
         metadataTools = applicationContext.getBean(MetadataTools.class);
         messageTools = applicationContext.getBean(MessageTools.class);
         accessManager = applicationContext.getBean(AccessManager.class);
@@ -727,12 +738,82 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                                 isPropertyEnabledBySecurity(e.getValue())));
             }
         }
+
+        updateEmptyState();
     }
 
     public boolean isPropertyEnabledBySecurity(MetaPropertyPath mpp) {
         EntityAttributeContext context = new EntityAttributeContext(mpp);
         accessManager.applyRegisteredConstraints(context);
         return context.canView();
+    }
+
+    public String getEmptyStateText() {
+        return emptyStateTextInternal;
+    }
+
+    public void setEmptyStateText(String emptyStateText) {
+        this.emptyStateTextInternal = emptyStateText;
+        this.emptyStateComponentInternal = null;
+
+        updateEmptyState();
+    }
+
+    public Component getEmptyStateComponent() {
+        return emptyStateComponentInternal;
+    }
+
+    public void setEmptyStateComponent(Component emptyStateComponent) {
+        this.emptyStateComponentInternal = emptyStateComponent;
+        this.emptyStateTextInternal = null;
+
+        updateEmptyState();
+    }
+
+    public void setEmptyStateTextDelegate(Consumer<String> emptyStateTextDelegate) {
+        this.componentEmptyStateTextDelegate = emptyStateTextDelegate;
+    }
+
+    public void setEmptyStateComponentDelegate(Consumer<Component> emptyStateComponentDelegate) {
+        this.componentEmptyStateComponentDelegate = emptyStateComponentDelegate;
+    }
+
+    protected void updateEmptyState() {
+        if (emptyStateByPermissionRegistration != null) {
+            emptyStateByPermissionRegistration.remove();
+            emptyStateByPermissionRegistration = null;
+        }
+
+        if (MapUtils.isNotEmpty(propertyColumns) &&
+                !CollectionUtils.containsAny(component.getColumns(), propertyColumns.keySet())) {
+            setupEmptyStateByPermissionComponent();
+        } else if (emptyStateComponentInternal != null) {
+            componentEmptyStateComponentDelegate.accept(emptyStateComponentInternal);
+        } else if (emptyStateTextInternal != null) {
+            componentEmptyStateTextDelegate.accept(emptyStateTextInternal);
+        } else {
+            // to remove any empty state component
+            componentEmptyStateComponentDelegate.accept(null);
+        }
+    }
+
+    protected void setupEmptyStateByPermissionComponent() {
+        if (component.isAttached()) {
+            initEmptyStateByPermissionsComponent();
+        } else {
+            emptyStateByPermissionRegistration = component.addAttachListener(event -> {
+                event.unregisterListener();
+                emptyStateByPermissionRegistration = null;
+
+                initEmptyStateByPermissionsComponent();
+            });
+        }
+    }
+
+    protected void initEmptyStateByPermissionsComponent() {
+        DataGridEmptyStateByPermissionsFragment gridEmptyStateFragment =
+                fragments.create(UiComponentUtils.getView(component), DataGridEmptyStateByPermissionsFragment.class);
+        componentEmptyStateComponentDelegate.accept(gridEmptyStateFragment);
     }
 
     public List<Grid.Column<E>> getColumns() {
@@ -827,7 +908,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         if (item != null) {
             // have to select clicked item to make action work, otherwise
             // consecutive clicks on the same item deselect it
-            component.select(item);
+            // selection from client is mandatory due to programmatic selection ignores selectableProvider
+            component.getSelectionModel().selectFromClient(item);
         }
 
         if (enterPressHandler != null) {
@@ -861,6 +943,16 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         }
 
         return null;
+    }
+
+    public DataGridEditorImpl<E> createEditor() {
+        DataGridEditorImpl<E> editor = new DataGridEditorImpl<>(component, applicationContext);
+        editor.addCloseListener(this::onGridEditorClose);
+        return editor;
+    }
+
+    protected void onGridEditorClose(EditorCloseEvent<E> eEditorCloseEvent) {
+        updateAggregationRow();
     }
 
     public static class ColumnSecurityContext<E> {

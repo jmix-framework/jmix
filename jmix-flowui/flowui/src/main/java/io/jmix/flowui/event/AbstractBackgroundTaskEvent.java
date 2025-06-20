@@ -23,6 +23,7 @@ import org.springframework.context.ApplicationEvent;
  * Base class for events that contain information about {@link BackgroundTask}.
  */
 public abstract class AbstractBackgroundTaskEvent extends ApplicationEvent {
+
     private BackgroundTask<?, ?> task;
     private boolean stopPropagation;
 
@@ -31,14 +32,31 @@ public abstract class AbstractBackgroundTaskEvent extends ApplicationEvent {
         this.task = task;
     }
 
+    /**
+     * Returns the background task associated with this event.
+     *
+     * @return the {@link BackgroundTask} instance associated with the event
+     */
     public BackgroundTask<?, ?> getTask() {
         return task;
     }
 
+    /**
+     * Determines whether the propagation of the event should be stopped.
+     *
+     * @return {@code true} if the propagation of the event should be stopped,
+     *         {@code false} otherwise
+     */
     public boolean isStopPropagation() {
         return stopPropagation;
     }
 
+    /**
+     * Sets whether the propagation of this event should be stopped.
+     *
+     * @param stopPropagation a boolean value indicating whether to stop the propagation
+     *                         of the event. {@code true} to stop propagation, {@code false} otherwise.
+     */
     public void setStopPropagation(boolean stopPropagation) {
         this.stopPropagation = stopPropagation;
     }

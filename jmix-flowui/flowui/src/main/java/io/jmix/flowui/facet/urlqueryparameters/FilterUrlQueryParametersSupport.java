@@ -34,6 +34,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * Provides support for parsing and serializing URL query parameters for filtering data.
+ */
 @Component("flowui_FilterUrlQueryParametersSupport")
 public class FilterUrlQueryParametersSupport {
 
@@ -51,6 +54,15 @@ public class FilterUrlQueryParametersSupport {
         this.urlParamSerializer = urlParamSerializer;
     }
 
+    /**
+     * Parses a provided value string according to the metadata of the given property and its operation type.
+     *
+     * @param metaClass the MetaClass instance representing the entity containing the property
+     * @param property the name of the property to be processed
+     * @param operationType the type of operation being used to process the property value
+     * @param valueString the string representation of the value to be parsed
+     * @return the parsed value for the provided property and operation type
+     */
     public Object parseValue(MetaClass metaClass, String property,
                              Operation.Type operationType, String valueString) {
         MetaPropertyPath mpp = metadataTools.resolveMetaPropertyPath(metaClass, property);
@@ -63,6 +75,17 @@ public class FilterUrlQueryParametersSupport {
         };
     }
 
+    /**
+     * Parses a provided string value based on the metadata of the specified property.
+     * The parsing logic varies depending on the type of the property (datatype, enumeration, or class).
+     *
+     * @param property the name of the property to be parsed
+     * @param valueString the string representation of the value to be parsed
+     * @param mpp the MetaPropertyPath that describes the metadata and type details of the property
+     * @return the parsed value according to the metadata of the specified property
+     * @throws IllegalArgumentException if the entity corresponding to a class-based property is not found
+     * @throws IllegalStateException if the property type is unsupported
+     */
     public Object parseSingleValue(String property, String valueString, MetaPropertyPath mpp) {
         Range mppRange = mpp.getRange();
         if (mppRange.isDatatype()) {
@@ -89,6 +112,16 @@ public class FilterUrlQueryParametersSupport {
         }
     }
 
+    /**
+     * Parses a collection value string into a list of parsed objects based on the metadata
+     * of the specified property. The input string is split by commas, and each value is individually
+     * parsed using the provided property metadata.
+     *
+     * @param property the name of the property to which the collection value corresponds
+     * @param collectionValueString the comma-separated string representation of the collection values
+     * @param mpp the MetaPropertyPath that describes the metadata and type details of the property
+     * @return a list of parsed objects corresponding to the provided collection value string
+     */
     public Object parseCollectionValue(String property, String collectionValueString, MetaPropertyPath mpp) {
         return Arrays.stream(collectionValueString.split(","))
                 .map(valueString -> parseSingleValue(property, valueString, mpp))
@@ -110,10 +143,24 @@ public class FilterUrlQueryParametersSupport {
         return value;
     }
 
+    /**
+     * Replaces occurrences of the predefined separator within the provided value
+     * with a hyphen ("-").
+     *
+     * @param value the input string in which the separator needs to be replaced
+     * @return a new string with the separator replaced by a hyphen
+     */
     public String replaceSeparatorValue(String value) {
         return value.replace(SEPARATOR, "-");
     }
 
+    /**
+     * Restores a string by replacing occurrences of the hyphen ("-") character
+     * with an underscore ("_").
+     *
+     * @param value the input string in which hyphens will be replaced with underscores
+     * @return a new string with all hyphens replaced with underscores
+     */
     public String restoreSeparatorValue(String value) {
         return value.replace("-", "_");
     }

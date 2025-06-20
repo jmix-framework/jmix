@@ -18,21 +18,21 @@ package io.jmix.flowui.view.navigation;
 
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
-import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.DetailViewMode;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
-import org.springframework.stereotype.Component;
 
 import static io.jmix.flowui.view.StandardDetailView.MODE_PARAM;
 import static io.jmix.flowui.view.StandardDetailView.MODE_READONLY;
 import static java.util.Objects.requireNonNull;
 
-@Internal
-@Component("flowui_DetailViewNavigationProcessor")
+/**
+ * The navigation processor implementation that is responsible for processing navigation
+ * to specific views using a {@link DetailViewNavigator} instance.
+ */
 public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<DetailViewNavigator<?>> {
 
     protected RouteSupport routeSupport;

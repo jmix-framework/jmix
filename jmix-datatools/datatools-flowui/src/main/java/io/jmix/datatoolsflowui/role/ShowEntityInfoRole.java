@@ -27,7 +27,7 @@ import io.jmix.security.role.annotation.SpecificPolicy;
 import io.jmix.securityflowui.role.annotation.ViewPolicy;
 
 /**
- * System role that grants permissions for the entity info functionality.
+ * System role that grants permissions for the {@link InfoValue} functionality.
  */
 @ResourceRole(name = "Data Tools: Entity Information view", code = ShowEntityInfoRole.CODE, scope = SecurityScope.UI)
 public interface ShowEntityInfoRole {

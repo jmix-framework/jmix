@@ -28,9 +28,12 @@ import io.jmix.security.SecurityConfiguration
 import io.jmix.security.role.ResourceRoleRepository
 import io.jmix.security.role.RoleGrantedAuthorityUtils
 import io.jmix.security.role.RowLevelRoleRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.test.context.ContextConfiguration
@@ -49,6 +52,8 @@ import static test_support.RestSpecsUtils.getAuthToken
 @SpringBootTest(classes = SampleRestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RestSpec extends Specification {
 
+    private static final Logger log = LoggerFactory.getLogger(RestSpec);
+
     @LocalServerPort
     int port
 
@@ -63,6 +68,9 @@ class RestSpec extends Specification {
 
     @Autowired
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
+
+    @Autowired
+    SessionRegistry sessionRegistry
 
     public DataSet dirtyData = new DataSet()
     public Sql sql
@@ -95,7 +103,36 @@ class RestSpec extends Specification {
         prepareDb()
     }
 
+    protected void killSessions(String username) {
+        killSessions(username, true)
+    }
+
+    protected void killSessions(String username, boolean failIfNoSession) {
+        def principals = sessionRegistry.getAllPrincipals().stream()
+                .filter({ it instanceof UserDetails })
+                .map({ (UserDetails) it })
+                .filter({ it.getUsername() == username })
+                .findAll()
+        if (principals.size() < 1) {
+            if (failIfNoSession) throw new RuntimeException("Unable to find principal")
+        } else {
+            log.trace("{} principal(s) with name '{}' found.", principals.size(), username)
+        }
+
+        for (Object principal : principals) {
+            log.debug("Expiring sessions for principal {}", principal)
+            sessionRegistry.getAllSessions(principal, false)
+                    .stream()
+                    .forEach({
+                        it.expireNow()
+                        log.debug("Session '${it.sessionId}' for user '$username' is marked as 'expired'")
+                    })
+        }
+    }
+
+
     void cleanup() {
+        killSessions(admin.username,false)
         userRepository.removeUser(admin)
         dirtyData.cleanup(sql.connection)
         if (sql != null) {

@@ -43,6 +43,7 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.virtuallist.VirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
@@ -498,6 +499,59 @@ public interface StudioComponents {
             }
     )
     Checkbox checkbox();
+
+    @StudioComponent(
+            name = "Switch",
+            classFqn = "io.jmix.flowui.component.checkbox.Switch",
+            category = "Components",
+            xmlElement = "switch",
+            icon = "io/jmix/flowui/kit/meta/icon/component/checkbox.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/switch.html",
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "autofocus", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "dataContainer", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF),
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "errorMessage", category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "label", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "maxHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "maxWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "minHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "property", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.PROPERTY_REF),
+                    @StudioProperty(xmlAttribute = "readOnly", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "required", category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredMessage", category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "value", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
+            }
+    )
+    JmixSwitch switch_();
 
     @StudioComponent(
             name = "ComboBox",
@@ -976,7 +1030,8 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "required", category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredMessage", category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "step", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "step", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING,
+                            options = {"900s", "15m", "20m", "30m", "2h", "3h", "4h", "6h", "8h", "12h"}),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
@@ -1295,7 +1350,7 @@ public interface StudioComponents {
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "allowCustomValue", type = StudioPropertyType.BOOLEAN,
+                    @StudioProperty(xmlAttribute = "aggregatable", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "aggregationPosition", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.component.grid.EnhancedDataGrid$AggregationPosition",
@@ -1383,6 +1438,11 @@ public interface StudioComponents {
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "aggregatable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "aggregationPosition", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.grid.EnhancedDataGrid$AggregationPosition",
+                            defaultValue = "BOTTOM", options = {"TOP", "BOTTOM"}),
                     @StudioProperty(xmlAttribute = "allRowsVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
@@ -1901,6 +1961,12 @@ public interface StudioComponents {
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
             },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            ),
             propertiesBindings = {
                     @StudioPropertiesBinding(
                             source = "dataContainer",
@@ -2309,7 +2375,8 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "required", category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredMessage", category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "step", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "step", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING,
+                            options = {"900s", "15m", "20m", "30m", "2h", "3h", "4h", "6h", "8h", "12h"}),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
@@ -2464,7 +2531,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "localesVisible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
+                            defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true")
             }
@@ -2516,9 +2583,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "itemsPerPageDefaultValue", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "itemsPerPageItems", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "itemsPerPageItems", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
+                            defaultValue = "20, 50, 100, 500, 1000, 5000",
+                            defaultValueRef = "application_property:jmix.ui.component.pagination-items-per-page-items"),
                     @StudioProperty(xmlAttribute = "itemsPerPageVisible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "itemsPerPageUnlimitedItemVisible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "itemsPerPageUnlimitedItemVisible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "autoLoad", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
@@ -3007,6 +3077,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "dataContainer", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF),
+                    @StudioProperty(xmlAttribute = "defaultSuggestionsEnabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.LOCALIZED_STRING),
@@ -3020,6 +3091,7 @@ public interface StudioComponents {
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "label", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "liveSuggestionsEnabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "maxHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "maxWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "minHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
@@ -3063,6 +3135,7 @@ public interface StudioComponents {
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "showPrintMargin", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "suggestOn", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textWrap", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),

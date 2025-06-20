@@ -32,6 +32,13 @@ import org.springframework.lang.Nullable;
 
 import static com.google.common.base.Preconditions.checkState;
 
+/**
+ * Implementation of the {@link BackgroundTaskHandler} interface, which provides the functionality
+ * to handle and manage the lifecycle of a {@link BackgroundTask}.
+ *
+ * @param <T> the type used to measure progress for the task
+ * @param <V> the type of task's result
+ */
 public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
 
     private static final Logger log = LoggerFactory.getLogger(BackgroundWorker.class);
@@ -244,14 +251,29 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
         return taskExecutor.inProgress() && started;
     }
 
+    /**
+     * Returns the background task associated with this handler.
+     *
+     * @return the background task being managed by this handler
+     */
     public final BackgroundTask<T, V> getTask() {
         return taskExecutor.getTask();
     }
 
+    /**
+     * Returns the timestamp marking the start time of a task.
+     *
+     * @return the start timestamp of the task
+     */
     public long getStartTimeStamp() {
         return startTimeStamp;
     }
 
+    /**
+     * Returns the timeout duration in milliseconds for the associated task.
+     *
+     * @return the timeout duration in milliseconds
+     */
     public long getTimeoutMs() {
         return taskExecutor.getTask().getTimeoutMilliseconds();
     }

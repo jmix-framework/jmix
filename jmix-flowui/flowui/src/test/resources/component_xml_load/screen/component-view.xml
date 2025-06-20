@@ -186,6 +186,34 @@
         </checkbox>
         <checkbox id="checkBoxWithDataId" dataContainer="orderDc" property="user.active"/>
 
+        <switch id="switchId"
+                  ariaLabel="ariaLabelString"
+                  autofocus="true"
+                  classNames="cssClassName1, cssClassName2"
+                  css="color: red;"
+                  enabled="true"
+                  height="50px"
+                  label="labelString"
+                  maxHeight="55px"
+                  maxWidth="120px"
+                  minHeight="40px"
+                  minWidth="80px"
+                  readOnly="true"
+                  tabIndex="3"
+                  value="true"
+                  visible="true"
+                  width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </switch>
+        <switch id="switchWithDataId" dataContainer="orderDc" property="user.active"/>
+
         <comboBox id="comboBoxId"
                   allowCustomValue="true"
                   autoOpen="true"
@@ -942,6 +970,7 @@
         <codeEditor id="codeEditorId"
                     classNames="cssClassName1, cssClassName2"
                     css="color: red;"
+                    defaultSuggestionsEnabled="true"
                     enabled="true"
                     errorMessage="errorMessageString"
                     fontSize="20"
@@ -950,6 +979,7 @@
                     highlightActiveLine="false"
                     highlightGutterLine="false"
                     label="labelString"
+                    liveSuggestionsEnabled="true"
                     maxHeight="55px"
                     maxWidth="120px"
                     minHeight="40px"
@@ -962,6 +992,7 @@
                     showGutter="false"
                     showLineNumbers="false"
                     showPrintMargin="false"
+                    suggestOn="{E}\."
                     tabIndex="3"
                     textWrap="true"
                     useSoftTabs="false"

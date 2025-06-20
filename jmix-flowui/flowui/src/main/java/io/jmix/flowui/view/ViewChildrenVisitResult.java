@@ -23,7 +23,9 @@ import org.springframework.lang.Nullable;
  * ViewChildrenVisitResult data model class that stores results from walk through comonents tree from view
  * @see io.jmix.flowui.component.UiComponentUtils
  */
+@Deprecated(since = "2.6", forRemoval = true)
 public class ViewChildrenVisitResult {
+
     private View<?> view;
     @Nullable
     private String componentId;

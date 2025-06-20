@@ -37,7 +37,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         return repository.findAll(buildPageRequest(context), buildRepositoryContext(context)).getContent();
     }<%if (tableActions.contains("remove")) {%>
 
-    @Install(to = "${tableId}.remove", subject = "delegate")
+    @Install(to = "${tableId}.removeAction", subject = "delegate")
     private void ${tableId}RemoveDelegate(final Collection<${entity.className}> collection) {
         repository.deleteAll(collection);
     }<%}%><%}%>

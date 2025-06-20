@@ -19,6 +19,9 @@ package io.jmix.flowui.view;
 import java.lang.annotation.Target;
 import java.lang.annotation.*;
 
+/**
+ * Annotation to map a field in a {@link View} to a specific view element, e.g. UI components, beans.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Documented

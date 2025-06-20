@@ -16,6 +16,8 @@
 
 package io.jmix.samples.rest.security;
 
+import io.jmix.samples.rest.entity.driver.Car;
+import io.jmix.samples.rest.entity.driver.Model;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
@@ -31,9 +33,13 @@ public interface CarReadRole {
 
     String NAME = "car-read-access";
 
-    @EntityPolicy(entityName = "ref_Car", actions = READ)
-    @EntityAttributePolicy(entityName = "ref_Car", attributes = "vin", action = MODIFY)
-    @EntityAttributePolicy(entityName = "ref_Car", attributes = "model", action = VIEW)
+    // Car entity
+    @EntityPolicy(entityClass = Car.class, actions = READ)
+    @EntityAttributePolicy(entityClass = Car.class, attributes = "vin", action = MODIFY)
+    @EntityAttributePolicy(entityClass = Car.class, attributes = "model", action = VIEW)
+    // Model entity
+    @EntityPolicy(entityClass = Model.class, actions = READ)
+    // rest
     @SpecificPolicy(resources = "rest.enabled")
     void access();
 

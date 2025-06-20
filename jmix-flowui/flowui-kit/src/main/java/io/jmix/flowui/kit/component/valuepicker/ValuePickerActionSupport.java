@@ -27,6 +27,11 @@ import io.jmix.flowui.kit.component.delegate.AbstractActionsHolderSupport;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A support class responsible for managing actions in a value picker component.
+ * This class provides the functionality to add, remove, and manage action buttons for the component
+ * while updating the actions layout dynamically.
+ */
 public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Component> {
 
     protected static final String SLOT_ACTIONS = "actions";
@@ -95,7 +100,7 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
 
     protected void addButton(Action action) {
         int index = actions.indexOf(action);
-        ValuePickerButton button = new ValuePickerButton();
+        ValuePickerButton button = createButton();
         button.setAction(action);
         getActionsLayout().addComponentAtIndex(index, button);
 
@@ -124,6 +129,10 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
         }
 
         return actionsLayout;
+    }
+
+    protected ValuePickerButton createButton() {
+        return new ValuePickerButton();
     }
 
     protected Div createActionsLayout() {

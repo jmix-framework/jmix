@@ -54,7 +54,6 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
-import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -212,8 +211,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected SecureOperations secureOperations;
     @Autowired
     protected PolicyStore policyStore;
-    @Autowired
-    protected Downloader downloader;
     @Autowired
     protected UiProperties uiProperties;
     @Autowired

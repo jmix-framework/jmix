@@ -83,6 +83,7 @@ public class OracleJdbcOAuth2AuthorizationService extends JdbcOAuth2Authorizatio
     private static final String UNKNOWN_TOKEN_TYPE_FILTER = "state = ? " +
             "OR dbms_lob.compare(authorization_code_value,?) = 0 " +
             "OR dbms_lob.compare(access_token_value,?) = 0 " +
+            "OR dbms_lob.compare(oidc_id_token_value,?) = 0 " +
             "OR dbms_lob.compare(refresh_token_value,?) = 0 " +
             "OR dbms_lob.compare(user_code_value,?) = 0 " +
             "OR dbms_lob.compare(device_code_value,?) = 0";

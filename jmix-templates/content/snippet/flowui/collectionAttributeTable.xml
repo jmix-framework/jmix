@@ -37,7 +37,7 @@ def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim(
 %>
 <% if (!isManyToMany || isOwnerAttr) {%>
 <h4 text="msg://${ownerEntity.packageName}/${ownerEntity.className}.${nestedDcProperty}"/>
-<hbox id="buttonsPanel" classNames="buttons-panel">
+<hbox id="${nestedDcProperty}ButtonsPanel" classNames="buttons-panel">
     <% if (isManyToMany) {%>
     <button action="${nestedDcProperty}DataGrid.addAction"/>
     <button action="${nestedDcProperty}DataGrid.excludeAction"/>

@@ -18,6 +18,11 @@ package io.jmix.flowui.accesscontext;
 
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
+/**
+ * Represents an access context for modifying configurations of generic filters in the UI.
+ * This class establishes a permission boundary specifically for operations related
+ * to modifying the configuration of UI components that utilize generic filters.
+ */
 public class UiGenericFilterModifyConfigurationContext extends SpecificOperationAccessContext {
 
     public static final String NAME = "ui.genericfilter.modifyConfiguration";

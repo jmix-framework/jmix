@@ -15,6 +15,9 @@
  */
 package io.jmix.flowui.kit.component.codeeditor;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
@@ -24,7 +27,18 @@ import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.HasValidationProperties;
 import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.shared.Registration;
+import elemental.json.JsonFactory;
+import elemental.json.JsonValue;
+import elemental.json.impl.JreJsonFactory;
 import io.jmix.flowui.kit.component.HasTitle;
+import io.jmix.flowui.kit.component.codeeditor.autocomplete.Suggester;
+import io.jmix.flowui.kit.component.codeeditor.autocomplete.Suggestion;
+import jakarta.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Code Editor is a multi-line text area to display and enter source code featured
@@ -33,13 +47,15 @@ import io.jmix.flowui.kit.component.HasTitle;
 @Tag("jmix-code-editor")
 @NpmPackage(
         value = "ace-builds",
-        version = "1.18.0"
+        version = "1.39.0"
 )
 @JsModule("./src/code-editor/jmix-code-editor.js")
 public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, String>
         implements CompositionNotifier, Focusable<JmixCodeEditor>, HasClientValidation, HasHelper,
         HasLabel, HasTitle, HasSize, HasStyle, HasTooltip, HasValidationProperties,
         HasValidator<String>, InputNotifier, KeyNotifier {
+
+    private static final Logger log = LoggerFactory.getLogger(JmixCodeEditor.class);
 
     protected static final String CODE_EDITOR_VALUE_CHANGED_EVENT = "value-changed";
     protected static final String PROPERTY_THEME_CHANGED_EVENT = "theme-changed";
@@ -61,6 +77,10 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     protected static final String FONT_SIZE_DEFAULT_VALUE = "1rem";
 
     protected CodeEditorValidationSupport validationSupport;
+    protected Suggester suggester;
+
+    protected ObjectMapper objectMapper;
+    protected JsonFactory jsonFactory;
 
     public JmixCodeEditor() {
         super(PROPERTY_VALUE, "", true);
@@ -307,6 +327,106 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
         getValidationSupport().setRequired(required);
     }
 
+    /**
+     * @return {@code true} if default suggestions based on the current editor mode are enabled, {@code false} otherwise
+     * @see #setMode(CodeEditorMode)
+     */
+    public boolean isDefaultSuggestionsEnabled() {
+        return getElement().getProperty("defaultSuggestionsEnabled", false);
+    }
+
+    /**
+     * Sets whether default suggestions based on the current editor mode are enabled.
+     * <p>
+     * For example, if the {@link CodeEditorMode#JAVA} is set, then when prompted for a suggestion,
+     * the standard keywords and local variables and methods defined in the code will be suggested.
+     * <p>
+     * It is allowed to use custom {@link Suggester} with the default suggester at the same time.
+     *
+     * @param defaultSuggestionsEnabled whether to enable default suggestions
+     */
+    public void setDefaultSuggestionsEnabled(boolean defaultSuggestionsEnabled) {
+        getElement().setProperty("defaultSuggestionsEnabled", defaultSuggestionsEnabled);
+    }
+
+    /**
+     * @return {@code true} if live suggestions that are suggested while typing are enabled, {@code false} otherwise
+     */
+    public boolean isLiveSuggestionsEnabled() {
+        return getElement().getProperty("liveSuggestionsEnabled", false);
+    }
+
+    /**
+     * Sets whether live suggestions that are suggested while typing are enabled.
+     * <p>
+     * At least one suggester is required.
+     *
+     * @param liveSuggestionsEnabled whether to enable live suggestions
+     * @see #setSuggester(Suggester)
+     * @see #setDefaultSuggestionsEnabled(boolean)
+     */
+    public void setLiveSuggestionsEnabled(boolean liveSuggestionsEnabled) {
+        getElement().setProperty("liveSuggestionsEnabled", liveSuggestionsEnabled);
+    }
+
+    /**
+     * @return regular expression that triggers the display of a popup with suggestions
+     */
+    @Nullable
+    public String getSuggestOn() {
+        return getElement().getProperty("suggestOn");
+    }
+
+    /**
+     * Sets the regular expression that triggers the display of a popup with suggestions.
+     * If the end-user enters a sequence of characters that matches the regular expression then
+     * a popup with suggestions will open.
+     *
+     * @param suggestOn regular expression that triggers the display of a popup with suggestions
+     */
+    public void setSuggestOn(String suggestOn) {
+        getElement().setProperty("suggestOn", suggestOn);
+    }
+
+    /**
+     * @return the current editor suggester that provides suggestion options on request from the client-side
+     */
+    @Nullable
+    public Suggester getSuggester() {
+        return suggester;
+    }
+
+    /**
+     * Sets the {@link Suggester} that provides {@link Suggestion suggestion options} on request from client-side.
+     *
+     * @param suggester suggester to set
+     * @see #setSuggestOn(String)
+     */
+    public void setSuggester(@Nullable Suggester suggester) {
+        this.suggester = suggester;
+
+        getElement().setProperty("serverSuggesterSet", suggester != null);
+    }
+
+    /**
+     * Returns a serialized list of suggestions for the client-side. The list is generated using a {@link #suggester}
+     * based on the current state of the editor on the client-side.
+     *
+     * @param value          current value from the client-side of the editor (may not match the server-side value)
+     * @param cursorPosition current cursor position in the editor
+     * @param prefix         literal before current cursor position
+     * @return serialized list of suggestions
+     * @see #setSuggester(Suggester)
+     */
+    @ClientCallable
+    protected JsonValue getSuggestions(String value, Double cursorPosition, String prefix) {
+        List<Suggestion> suggestions = suggester == null
+                ? Collections.emptyList()
+                : suggester.getSuggestions(new Suggester.SuggestionContext(value, cursorPosition.intValue(), prefix));
+
+        return serialize(suggestions);
+    }
+
     @Override
     protected void setPresentationValue(String newPresentationValue) {
         getElement().setProperty(PROPERTY_VALUE, newPresentationValue);
@@ -355,6 +475,37 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
         }
 
         return validationSupport;
+    }
+
+    protected JsonValue serialize(Object object) {
+        String rawJson;
+
+        try {
+            rawJson = getObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Cannot serialize", e);
+        }
+
+        log.debug("Serialized {}", rawJson);
+
+        return getJsonFactory().parse(rawJson);
+    }
+
+    protected ObjectMapper getObjectMapper() {
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        }
+
+        return objectMapper;
+    }
+
+    protected JsonFactory getJsonFactory() {
+        if (jsonFactory == null) {
+            jsonFactory = new JreJsonFactory();
+        }
+
+        return jsonFactory;
     }
 
     /**

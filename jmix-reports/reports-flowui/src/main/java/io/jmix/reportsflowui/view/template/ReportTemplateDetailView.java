@@ -72,6 +72,7 @@ import java.util.List;
 public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate> {
 
     public static final String CUSTOM_DEFINE_BY_PROPERTY = "customDefinedBy";
+    public static final String REPORT_CONTENT_PROPERTY = "content";
     public static final String CUSTOM_PROPERTY = "custom";
     public static final String REPORT_OUTPUT_TYPE_PROPERTY = "reportOutputType";
 
@@ -333,6 +334,10 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 }
                 break;
             }
+            case REPORT_CONTENT_PROPERTY: {
+                templateFileEditor.setValue(new String(reportTemplate.getContent(), StandardCharsets.UTF_8));
+                break;
+            }
             case CUSTOM_PROPERTY: {
                 setupVisibility(Boolean.TRUE.equals(event.getValue()), reportTemplate.getReportOutputType());
                 break;
@@ -363,11 +368,26 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         ReportOutputType outputType = ReportOutputType.getTypeFromExtension(extension.toUpperCase());
         visibleTemplateEditor(outputType);
         if (hasHtmlCsvTemplateOutput(outputType)) {
-            String templateContent = new String(reportTemplate.getContent(), StandardCharsets.UTF_8);
-            templateFileEditor.setValue(templateContent);
+            templateFileEditor.setValue(new String(reportTemplate.getContent(), StandardCharsets.UTF_8));
         }
         templateFileEditor.setReadOnly(
                 !secureOperations.isEntityUpdatePermitted(metadata.getClass(reportTemplate), policyStore));
+
+        templateFileEditor.addValueChangeListener(e -> {
+            if (hasHtmlCsvTemplateOutput(outputType)) {
+                reportTemplate.setContent(e.getValue().getBytes(StandardCharsets.UTF_8));
+            }
+        });
+
+        templateFileEditor.setMode(getCodeEditorMode(reportTemplate));
+    }
+
+    protected CodeEditorMode getCodeEditorMode(ReportTemplate reportTemplate) {
+        if (io.jmix.reports.yarg.structure.ReportOutputType.html == reportTemplate.getOutputType()) {
+            return CodeEditorMode.HTML;
+        }
+
+        return CodeEditorMode.TEXT;
     }
 
     protected void visibleTemplateEditor(@Nullable ReportOutputType outputType) {
@@ -383,11 +403,14 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     public void onTemplateFileEditorFullScreenBtnClick(final ClickEvent<Button> event) {
         String extension = FilenameUtils.getExtension(templateUploadField.getFileName());
         ReportOutputType outputType = ReportOutputType.getTypeFromExtension(extension.toUpperCase());
+        ReportTemplate reportTemplate = getEditedEntity();
         reportScriptEditor.create(this)
                 .withTitle(messageBundle.getMessage("templateFileEditorFullScreen.title"))
-                .withValue(new String(reportTemplateDc.getItem().getContent(), StandardCharsets.UTF_8))
+                .withValue(new String(reportTemplate.getContent(), StandardCharsets.UTF_8))
                 .withEditorMode(outputType == ReportOutputType.HTML ? CodeEditorMode.HTML : CodeEditorMode.TEXT)
-                .withCloseOnClick(value -> reportTemplateDc.getItem().setContent(value.getBytes(StandardCharsets.UTF_8)))
+                .withCloseOnClick(value -> {
+                    reportTemplate.setContent(value.getBytes(StandardCharsets.UTF_8));
+                })
                 .withHelpOnClick(() -> {
                 })
                 .open();

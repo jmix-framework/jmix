@@ -22,13 +22,16 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.dom.ThemeList;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.flowui.UiComponents;
@@ -42,6 +45,11 @@ import org.springframework.lang.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * A base class representing a generic dialog window that can display a view.
+ *
+ * @param <V> the type of view to be displayed in the dialog
+ */
 public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasTheme, HasStyle,
         ApplicationContextAware, InitializingBean {
 
@@ -51,6 +59,7 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
     protected V view;
 
     protected ApplicationContext applicationContext;
+    protected HorizontalLayout headerContent;
 
     // private, lazily initialized
     private EventHub eventHub = null;
@@ -85,7 +94,6 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         String title = view.getPageTitle();
 
         dialog.setHeaderTitle(title);
-        dialog.getHeader().add(createHeaderCloseButton());
 
         dialog.setCloseOnEsc(false);
         dialog.setCloseOnOutsideClick(false);
@@ -99,6 +107,17 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
 
         Component wrapper = createViewWrapper(view);
         dialog.add(wrapper);
+
+        Div headerWrapper = createHeaderWrapper();
+        dialog.getHeader().add(headerWrapper);
+    }
+
+    protected HasComponents getHeaderContent() {
+        return headerContent;
+    }
+
+    protected HasComponents getFooterContent() {
+        return dialog.getFooter();
     }
 
     protected void onDialogCloseAction(Dialog.DialogCloseActionEvent event) {
@@ -130,6 +149,9 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
             setValueIfPresent(dialogMode.height(), this::setHeight);
             setValueIfPresent(dialogMode.maxHeight(), this::setMaxHeight);
             setValueIfPresent(dialogMode.minHeight(), this::setMinHeight);
+
+            setValueIfPresent(dialogMode.left(), this::setLeft);
+            setValueIfPresent(dialogMode.top(), this::setTop);
         }
     }
 
@@ -139,6 +161,12 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         }
     }
 
+    protected void configureDialogWindowHeaderFooter() {
+        ViewControllerUtils.configureDialogWindowHeader(view, new DialogWindowHeader(this));
+        ViewControllerUtils.configureDialogWindowFooter(view, new DialogWindowFooter(this));
+    }
+
+    @Nullable
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents().create(JmixButton.class);
         closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
@@ -150,11 +178,32 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         closeButton.setClassName(BASE_CLASS_NAME + "-close-button");
         closeButton.setTitle(messages().getMessage("dialogWindow.closeButton.description"));
         closeButton.addClickListener(this::onCloseButtonClicked);
+
         return closeButton;
     }
 
     protected void onCloseButtonClicked(ClickEvent<Button> event) {
         view.closeWithDefaultAction();
+    }
+
+    protected Div createHeaderWrapper() {
+        Div headerWrapper = uiComponents().create(Div.class);
+        headerWrapper.setWidthFull();
+        headerWrapper.setClassName(BASE_CLASS_NAME + "-header-wrapper");
+
+        headerContent = uiComponents().create(HorizontalLayout.class);
+        headerContent.setWidthFull();
+        headerContent.setClassName(BASE_CLASS_NAME + "-header-content");
+        headerContent.setPadding(false);
+
+        headerWrapper.add(headerContent);
+
+        Button closeButton = createHeaderCloseButton();
+        if (closeButton != null) {
+            headerWrapper.add(closeButton);
+        }
+
+        return headerWrapper;
     }
 
     protected Component createViewWrapper(V view) {
@@ -181,6 +230,8 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
      * Opens the dialog.
      */
     public void open() {
+        configureDialogWindowHeaderFooter();
+
         // In case of dynamic title, we can obtain it after
         // all possible dependant properties are set
         postInitDialog(dialog);
@@ -212,6 +263,35 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
     @Override
     public Element getElement() {
         return dialog.getElement();
+    }
+
+    /**
+     * Adds a listener that is called after user finishes dragging the dialog.
+     * It is called only if dragging is enabled.
+     * <p>
+     * Note: By default, the component will sync the top/left values after every dragging.
+     *
+     * @param listener the listener to add
+     * @return a Registration for removing the event listener
+     * @see #setDraggable(boolean)
+     */
+    public Registration addDraggedListener(ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+        return dialog.addDraggedListener(listener);
+    }
+
+    /**
+     * Adds a listener that is called after user finishes resizing the dialog.
+     * It is called only if resizing is enabled (see
+     * {@link #setResizable(boolean)}.
+     * <p>
+     * Note: By default, the component will sync the width/height and top/left
+     * values after every resizing.
+     *
+     * @param listener the listener to add
+     * @return registration for removal of listener
+     */
+    public Registration addResizeListener(ComponentEventListener<Dialog.DialogResizeEvent> listener) {
+        return dialog.addResizeListener(listener);
     }
 
     /**
@@ -294,6 +374,52 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
      */
     public void setResizable(boolean resizable) {
         dialog.setResizable(resizable);
+    }
+
+    /**
+     * Gets the left position of the overlay.
+     *
+     * @return the left position of the overlay
+     */
+    public String getLeft() {
+        return dialog.getLeft();
+    }
+
+    /**
+     * Sets the distance of the overlay from the left of its container. If a
+     * unitless number is provided, pixels are assumed.
+     * <p>
+     * Note that the overlay left edge may not be the same as the viewport left
+     * edge (e.g. the {@code Lumo} theme defines some spacing to prevent the overlay
+     * from stretching all the way to the left of the viewport).
+     *
+     * @param left the left position of the overlay
+     */
+    public void setLeft(String left) {
+        dialog.setLeft(left);
+    }
+
+    /**
+     * Gets the top position of the overlay.
+     *
+     * @return the top position of the overlay
+     */
+    public String getTop() {
+        return dialog.getTop();
+    }
+
+    /**
+     * Sets the top position of the overlay. If a unitless number is provided,
+     * pixels are assumed.
+     * <p>
+     * Note that the overlay top edge may not be the same as the viewport top
+     * edge (e.g. the {@code Lumo} theme defines some spacing to prevent the overlay
+     * from stretching all the way to the top of the viewport).
+     *
+     * @param top the top position of the overlay
+     */
+    public void setTop(String top) {
+        dialog.setTop(top);
     }
 
     @Override

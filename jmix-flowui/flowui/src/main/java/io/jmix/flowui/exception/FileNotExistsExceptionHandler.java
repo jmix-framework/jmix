@@ -19,10 +19,14 @@ package io.jmix.flowui.exception;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-
+/**
+ * A custom exception handler that handles {@link FileStorageException}.
+ * This handler shows a notification to inform the user when a file cannot
+ * be found in the storage.
+ */
 @Component
 public class FileNotExistsExceptionHandler extends AbstractUiExceptionHandler {
 

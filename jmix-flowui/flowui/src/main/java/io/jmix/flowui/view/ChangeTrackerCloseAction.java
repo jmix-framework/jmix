@@ -20,6 +20,7 @@ package io.jmix.flowui.view;
  * An optional interface of {@link CloseAction}s used in views that may have unsaved changes on closing.
  */
 public interface ChangeTrackerCloseAction {
+
     /**
      * @return true if the view using this action should prevent close if there are unsaved changes
      */

@@ -28,6 +28,12 @@ import io.jmix.flowui.kit.meta.StudioIgnore;
 import jakarta.annotation.Nullable;
 import java.util.Collection;
 
+/**
+ * A customizable grid component that extends the Vaadin {@link Grid} and provides
+ * additional capabilities such as handling actions and sub-parts support.
+ *
+ * @param <T> the type of the items displayed in the grid
+ */
 public class JmixGrid<T> extends Grid<T> implements SelectionChangeNotifier<Grid<T>, T>, HasActions, HasSubParts {
 
     protected GridActionsSupport<JmixGrid<T>, T> actionsSupport;
@@ -78,6 +84,11 @@ public class JmixGrid<T> extends Grid<T> implements SelectionChangeNotifier<Grid
         return super.getDefaultHeaderRow();
     }
 
+    /**
+     * Provides access to the {@link GridActionsSupport} instance associated with this grid component.
+     *
+     * @return the {@link GridActionsSupport} instance associated with this grid
+     */
     public GridActionsSupport<JmixGrid<T>, T> getActionsSupport() {
         if (actionsSupport == null) {
             actionsSupport = createActionsSupport();

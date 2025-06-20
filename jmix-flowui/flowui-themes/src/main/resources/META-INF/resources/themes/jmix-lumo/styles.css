@@ -55,12 +55,14 @@
 @import url('component/vaadin-date-picker.css');
 @import url('component/vaadin-time-picker.css');
 @import url('component/vaadin-date-time-picker.css');
+@import url('component/vaadin-dialog.css');
 @import url('component/vaadin-combo-box.css');
 @import url('component/vaadin-multi-select-combo-box.css');
 @import url('component/vaadin-form-layout.css');
 @import url('component/vaadin-grid.css');
 @import url('component/vaadin-notification-card.css');
 @import url('component/vaadin-split-layout.css');
+@import url('component/vaadin-checkbox.css');
 
 @import url('icons/vaadin-icons/vaadin-icons.css');
 

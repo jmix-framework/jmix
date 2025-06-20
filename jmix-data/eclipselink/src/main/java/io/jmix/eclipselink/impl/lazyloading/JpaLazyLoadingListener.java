@@ -25,6 +25,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.PersistenceHints;
+import io.jmix.eclipselink.EclipselinkProperties;
 import jakarta.persistence.Basic;
 import jakarta.persistence.FetchType;
 import org.eclipse.persistence.expressions.Expression;
@@ -66,6 +67,9 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
     protected ExtendedEntities extendedEntities;
     @Autowired
     protected FetchPlans fetchPlans;
+
+    @Autowired
+    protected EclipselinkProperties eclipselinkProperties;
 
     @Override
     public void afterEntityLoad(DataStoreAfterEntityLoadEvent event) {
@@ -143,10 +147,14 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
     protected void processCollectionValueHolder(Object owner, MetaProperty property, LoadOptions loadOptions) {
         Object valueHolder = getCollectionValueHolder(owner, property.getName());
         if (valueHolder != null && !(valueHolder instanceof AbstractValueHolder)) {
-            AbstractValueHolder wrappedValueHolder =
-                    new CollectionValuePropertyHolder(beanFactory, (ValueHolderInterface) valueHolder, owner, property);
 
-            wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
+            AbstractValueHolder wrappedValueHolder;
+            if (eclipselinkProperties.isDisableLazyLoading()) {
+                wrappedValueHolder = new NonLoadingValueHolder(beanFactory, (ValueHolderInterface) valueHolder, owner, property);
+            } else {
+                wrappedValueHolder = new CollectionValuePropertyHolder(beanFactory, (ValueHolderInterface) valueHolder, owner, property);
+                wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
+            }
 
             setCollectionValueHolder(owner, property.getName(), wrappedValueHolder);
         }
@@ -158,7 +166,9 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
         if (originalValueHolder != null && !(originalValueHolder instanceof AbstractValueHolder)) {
             AbstractValueHolder wrappedValueHolder = null;
 
-            if (metadataTools.isOwningSide(property)) {
+            if (eclipselinkProperties.isDisableLazyLoading()) {
+                wrappedValueHolder = new NonLoadingValueHolder(beanFactory, (ValueHolderInterface) originalValueHolder, owner, property);
+            } else if (metadataTools.isOwningSide(property)) {
                 QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(originalValueHolder);
                 if (queryBasedValueHolder != null) {
                     Object entityId;
@@ -194,20 +204,25 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
         if (originalValueHolder != null && !(originalValueHolder instanceof AbstractValueHolder)) {
             QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(originalValueHolder);
             if (queryBasedValueHolder != null) {
-                Object entityId;
-                MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(property.getRange().asClass());
-                if (pkProperty != null && metadataTools.isEmbedded(pkProperty)) {
-                    entityId = buildEmbeddedIdByValueHolder(pkProperty, queryBasedValueHolder);
+                AbstractValueHolder wrappedValueHolder;
+
+                if (eclipselinkProperties.isDisableLazyLoading()) {
+                    wrappedValueHolder = new NonLoadingValueHolder(beanFactory, (ValueHolderInterface) originalValueHolder, owner, property);
                 } else {
-                    entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
+                    Object entityId;
+                    MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(property.getRange().asClass());
+                    if (pkProperty != null && metadataTools.isEmbedded(pkProperty)) {
+                        entityId = buildEmbeddedIdByValueHolder(pkProperty, queryBasedValueHolder);
+                    } else {
+                        entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
+                    }
+
+                    wrappedValueHolder =
+                            new SingleValueOwningPropertyHolder(beanFactory, (ValueHolderInterface) originalValueHolder,
+                                    owner, property, entityId);
+
+                    wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
                 }
-
-                AbstractValueHolder wrappedValueHolder =
-                        new SingleValueOwningPropertyHolder(beanFactory, (ValueHolderInterface) originalValueHolder,
-                                owner, property, entityId);
-
-                wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
-
                 setSingleValueHolder(owner, property.getName(), wrappedValueHolder);
             }
         }

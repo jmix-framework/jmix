@@ -7,7 +7,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.EntityStates;
-import io.jmix.core.MessageTools;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.view.*;
@@ -34,8 +33,6 @@ public class UserDetailView extends StandardDetailView<User> {
     private ComboBox<String> timeZoneField;
     @ViewComponent
     private MessageBundle messageBundle;
-    @Autowired
-    private MessageTools messageTools;
     @Autowired
     private Notifications notifications;
 
@@ -76,8 +73,7 @@ public class UserDetailView extends StandardDetailView<User> {
         if (entityStates.isNew(getEditedEntity())) {
             getEditedEntity().setPassword(passwordEncoder.encode(passwordField.getValue()));
 
-            String entityCaption = messageTools.getEntityCaption(getEditedEntityContainer().getEntityMetaClass());
-            notifications.create(messageBundle.formatMessage("noAssignedRolesNotification", entityCaption))
+            notifications.create(messageBundle.getMessage("noAssignedRolesNotification"))
                     .withType(Notifications.Type.WARNING)
                     .withPosition(Notification.Position.TOP_END)
                     .show();

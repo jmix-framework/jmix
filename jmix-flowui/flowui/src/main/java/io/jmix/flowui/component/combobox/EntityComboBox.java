@@ -19,10 +19,7 @@ package io.jmix.flowui.component.combobox;
 import com.vaadin.flow.component.combobox.dataview.ComboBoxDataView;
 import com.vaadin.flow.component.combobox.dataview.ComboBoxLazyDataView;
 import com.vaadin.flow.component.combobox.dataview.ComboBoxListDataView;
-import com.vaadin.flow.data.provider.BackEndDataProvider;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.InMemoryDataProvider;
-import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.provider.*;
 import com.vaadin.flow.function.SerializableBiPredicate;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.function.SerializablePredicate;
@@ -80,6 +77,8 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
 
         fieldDelegate.addValueBindingChangeListener(event ->
                 dataViewDelegate.valueBindingChanged(event));
+
+        dataViewDelegate.addDataRefreshListener(this::onDataProviderDataRefresh);
 
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
     }
@@ -235,7 +234,7 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
         return super.setItems(inMemoryDataProvider, filterConverter);
     }
 
-    protected void bindDataProvider(DataProvider<V, ?> dataProvider) {
+    protected void bindDataProvider(@Nullable DataProvider<V, ?> dataProvider) {
         // One of binding methods is called from a constructor so bean can be null
         if (dataViewDelegate != null) {
             dataViewDelegate.bind(dataProvider);
@@ -275,6 +274,12 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
 
     @Override
     protected ValuePickerActionSupport createActionsSupport() {
-        return new JmixValuePickerActionSupport(this);
+        return applicationContext.getBean(JmixValuePickerActionSupport.class, this);
+    }
+
+    protected void onDataProviderDataRefresh(DataChangeEvent.DataRefreshEvent<V> event) {
+        if (valueEquals(event.getItem(), getValue())) {
+            refreshValue();
+        }
     }
 }

@@ -16,23 +16,10 @@
 
 package io.jmix.flowui.devserver.servlet;
 
-import com.vaadin.flow.function.DeploymentConfiguration;
-import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.VaadinServlet;
-import com.vaadin.flow.server.VaadinServletService;
 import jakarta.servlet.annotation.WebServlet;
 
-/**
- * Used in Studio.
- */
+@SuppressWarnings("unused")
 @WebServlet(urlPatterns = "/*")
 public class JmixVaadinServlet extends VaadinServlet {
-    @Override
-    public VaadinServletService createServletService(
-            DeploymentConfiguration deploymentConfiguration
-    ) throws ServiceException {
-        JmixVaadinServletService service = new JmixVaadinServletService(this, deploymentConfiguration);
-        service.init();
-        return service;
-    }
 }

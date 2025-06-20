@@ -179,24 +179,25 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     }
 
     /**
-     * Allows to execute query on a previous query result.
-     *
-     * @return editable list of previous queries
+     * DEPRECATED, will be removed in 3.0.
      */
+    @Deprecated(forRemoval = true)
     public List<Query> getPreviousQueries() {
         return prevQueries;
     }
 
     /**
-     * @return key of the current stack of sequential queries, which is unique for the current user session
+     * DEPRECATED, will be removed in 3.0.
      */
+    @Deprecated(forRemoval = true)
     public int getQueryKey() {
         return queryKey;
     }
 
     /**
-     * @param queryKey key of the current stack of sequential queries, which is unique for the current user session
+     * DEPRECATED, will be removed in 3.0.
      */
+    @Deprecated(forRemoval = true)
     public LoadContext<E> setQueryKey(int queryKey) {
         this.queryKey = queryKey;
         return this;

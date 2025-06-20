@@ -14,7 +14,7 @@
       Website
     </a>
     <span> | </span>
-    <a href="https://www.jmix.io/learn/live-demo/" target="_blank">
+    <a href="https://www.jmix.io/live-demo/" target="_blank">
       Live Demo
     </a>
     <span> | </span>
@@ -28,20 +28,22 @@
 <a href="https://twitter.com/JmixPlatform" target="_blank"><img src="img/icon-tw.svg" height="36px" alt="" title=""></a>
 <a href="https://www.facebook.com/JmixFramework" target="_blank"><img src="img/icon-fb.svg" height="36px" margin-left="20px" alt="" title=""></a>
 <a href="https://www.linkedin.com/company/jmix-platform/" target="_blank"><img src="img/icon-link.svg" height="36px" margin-left="20px" alt="" title=""></a>
-<a href="https://www.youtube.com/c/JmixPlatform" target="_blank"><img src="img/icon-yt.svg" height="36px" margin-left="20px" alt="" title=""></a>
+<a href="https://www.youtube.com/channel/UCEmWc8OwhgHnAV7vVVxtglQ" target="_blank"><img src="img/icon-yt.svg" height="36px" margin-left="20px" alt="" title=""></a>
 </p>
 
 ## Description
-Jmix is a set of libraries and tools to speed up Spring Boot data-centric application development. Jmix provides a lot of ready-to-use functionality out of the box. You can plug in advanced system functionality like complex data security and audit as well as business functionality like reporting or business process execution engine in a few lines of code.
+Jmix is a high-level full-stack framework for enterprise web applications. It comes with advanced tooling and a rich set of functional modules. You can plug in advanced system functionality like complex data access control and audit as well as business functionality like reporting or BPM with just a few lines of code.
+
+Jmix is based on Spring Boot, which means that you can use a lot of third-party libraries and frameworks with minimal configuration, in addition to the functionality provided by Jmix.
 
 ## Using Jmix
-To get started, [download Jmix Studio](https://www.jmix.io/tools) - a plugin for IntelliJ IDEA. It helps you at all stages of the application development: creating and configuring a project, defining data model, generating database migration scripts, developing UI screens in a visual editor. It provides advanced navigation, code completion and inspections specific to Jmix projects.
+To get started, install [Jmix Studio](https://www.jmix.io/tools) - a plugin for IntelliJ IDEA. It helps you at all stages of application development: creating and configuring a project, defining its data model, generating database migration scripts, developing UI views in a visual editor. It provides advanced navigation, code completion and inspections specific to Jmix projects.
 
-To learn Jmix, complete the [tutorial](https://docs.jmix.io/jmix/tutorial/index.html) which walks you through the process of building a full-stack web application. It covers the entire development process, from data modelling to creating UI and managing access rights.
+To learn Jmix, complete the [tutorial](https://docs.jmix.io/jmix/tutorial/index.html) which walks you through the process of building a full-stack web application. It covers the entire development process, from data modeling to creating UI and managing access rights.
 
 ## Building From Source
 
-- Checkout the repository:
+- Clone the repository:
 
     ```bash
     git clone https://github.com/jmix-framework/jmix.git
@@ -68,4 +70,4 @@ If you want to contribute your changes to Jmix, see [CONTRIBUTING](CONTRIBUTING.
 ## License
 Jmix is an open-source project distributed under the [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) license. The same licensing is applied to most of the framework’s add-ons.
 
-The framework is also complemented with commercial tools with separate [licensing and pricing](https://www.jmix.io/subscription-plans-and-prices/) for individuals and companies.
+The framework is complemented with commercial tools with separate [licensing and pricing](https://www.jmix.io/subscription-plans-and-prices/) for individuals and companies.

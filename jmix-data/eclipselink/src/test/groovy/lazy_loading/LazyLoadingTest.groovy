@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.entity_extension.Address
 import test_support.entity.lazyloading.*
+import test_support.entity.lazyloading.cascading.Project
+import test_support.entity.lazyloading.cascading.ResourceAllocation
 import test_support.entity.lazyloading.self_ref_in_param.A
 import test_support.entity.lazyloading.self_ref_in_param.B
 
@@ -32,6 +34,8 @@ class LazyLoadingTest extends DataSpec {
     Metadata metadata
     @Autowired
     FetchPlanRepository fetchPlanRepository
+    @Autowired
+    EntityStates entityStates
 
     def "OneToOne with field test"() {
         setup:
@@ -301,6 +305,37 @@ class LazyLoadingTest extends DataSpec {
         cleanup:
         jdbc.update("delete from TEST_LL_A")
         jdbc.update("delete from TEST_LL_B")
+    }
+
+    def "lazy collections should not be fetched on detach"() {
+        setup:
+        def project = dataManager.create(Project)
+        project.title = "The Project"
+        project.details = "Blah blah"
+
+        def firstResource = dataManager.create(ResourceAllocation)
+        firstResource.name = "One"
+        firstResource.amount = 5
+        firstResource.project = project
+
+        def secondResource = dataManager.create(ResourceAllocation)
+        secondResource.name = "Two"
+        secondResource.amount = 2
+        secondResource.project = project
+
+        dataManager.save(project, firstResource, secondResource)
+
+        when:
+        def loaded = dataManager.load(Id.of(project)).fetchPlan(FetchPlan.INSTANCE_NAME).one()
+
+        then:
+        !entityStates.isLoaded(loaded, "optionalResources")
+        !entityStates.isLoaded(loaded, "mandatoryResources")
+
+        cleanup:
+
+        jdbc.update("delete from TEST_LLC_RESOURCE_ALLOCATION")
+        jdbc.update("delete from TEST_LLC_PROJECT")
     }
 
     boolean checkManyToManyDuplicate(ManyToManySecondEntity entity) {

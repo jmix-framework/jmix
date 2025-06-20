@@ -21,9 +21,9 @@ import io.jmix.core.LoadContext;
 import java.util.List;
 
 /**
- * Supports functionality that allows queries from previously selected results.
- *
+ * DEPRECATED, will be removed in 3.0.
  */
+@Deprecated(forRemoval = true)
 public interface QueryResultsManager {
 
     void savePreviousQueryResults(LoadContext loadContext);

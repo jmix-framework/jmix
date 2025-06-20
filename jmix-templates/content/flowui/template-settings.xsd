@@ -9,6 +9,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="tags" type="tagsType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="exclude" type="tagsType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="description" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="locMessages" type="locMessagesType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="steps" type="stepsType" minOccurs="0" maxOccurs="1"/>
@@ -180,6 +181,7 @@
             <xs:enumeration value="EXTEND"/>
             <xs:enumeration value="OVERRIDE"/>
             <xs:enumeration value="BPM"/>
+            <xs:enumeration value="TABBED_MODE"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

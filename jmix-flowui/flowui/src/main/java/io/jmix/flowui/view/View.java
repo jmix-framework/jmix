@@ -22,6 +22,7 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.UiViewProperties;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
 import io.jmix.flowui.fragment.FragmentOwner;
@@ -34,9 +35,12 @@ import io.jmix.flowui.util.WebBrowserTools;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.lang.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -82,14 +86,26 @@ public class View<T extends Component> extends Composite<T>
     private boolean preventBrowserTabClosing = false;
     private boolean afterNavigationProcessed = false;
 
+    private List<ApplicationListener<?>> applicationEventListeners;     // Global event listeners
+
     private Runnable afterNavigationHandler;
 
     public View() {
         closeDelegate = createDefaultViewDelegate();
+        addReadyListener(this::refreshActionsState);
     }
 
     private Consumer<View<T>> createDefaultViewDelegate() {
         return __ -> getViewSupport().close(this, getReturnParameters());
+    }
+
+    private void refreshActionsState(ReadyEvent event) {
+        // We cannot refresh the state of actions when an EnableRule is added
+        // because the logic of EnableRule may rely on something that will be
+        // initialized in a screen event. To prevent breaking changes, it is
+        // more robust to refresh actions' states in the 'ReadyEvent' listener
+        UiComponentUtils.refreshActionsState(getViewActions());
+        UiComponentUtils.refreshActionsState(getContent());
     }
 
     protected QueryParameters getReturnParameters() {
@@ -173,6 +189,24 @@ public class View<T extends Component> extends Composite<T>
         // Hook to be implemented
     }
 
+    /**
+     * Configures the {@link DialogWindow} header if the view is opened in {@link OpenMode#DIALOG}.
+     *
+     * @param header header for adding components
+     */
+    protected void configureDialogWindowHeader(DialogWindowHeader header) {
+        // Hook to be implemented
+    }
+
+    /**
+     * Configures the {@link DialogWindow} footer if the view is opened in {@link OpenMode#DIALOG}.
+     *
+     * @param footer footer for adding components
+     */
+    protected void configureDialogWindowFooter(DialogWindowFooter footer) {
+        // Hook to be implemented
+    }
+
     @Override
     public void beforeLeave(BeforeLeaveEvent event) {
         if (!event.isPostponed()) {
@@ -211,9 +245,26 @@ public class View<T extends Component> extends Composite<T>
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
+        onAttachInternal();
+
         if (isPreventBrowserTabClosing()) {
             WebBrowserTools.preventBrowserTabClosing(this);
         }
+    }
+
+    @Internal
+    protected void onAttachInternal() {
+        addApplicationListeners();
+    }
+
+    protected void addApplicationListeners() {
+        uiEventsManager().ifPresent(uiEventsManager -> {
+            uiEventsManager.removeApplicationListeners(this);
+            List<ApplicationListener<?>> listeners = getApplicationEventListeners();
+            for (ApplicationListener<?> listener : listeners) {
+                uiEventsManager.addApplicationListener(this, listener);
+            }
+        });
     }
 
     @Override
@@ -242,10 +293,8 @@ public class View<T extends Component> extends Composite<T>
     }
 
     protected void removeApplicationListeners() {
-        VaadinSession session = VaadinSession.getCurrent();
-        if (session != null) {
-            session.getAttribute(UiEventsManager.class).removeApplicationListeners(this);
-        }
+        uiEventsManager().ifPresent(uiEventsManager ->
+                uiEventsManager.removeApplicationListeners(this));
     }
 
     protected void removeViewAttributes() {
@@ -334,6 +383,16 @@ public class View<T extends Component> extends Composite<T>
 
     void setPageTitleDelegate(@Nullable Consumer<String> pageTitleDelegate) {
         this.pageTitleDelegate = pageTitleDelegate;
+    }
+
+    List<ApplicationListener<?>> getApplicationEventListeners() {
+        return applicationEventListeners != null
+                ? Collections.unmodifiableList(applicationEventListeners)
+                : Collections.emptyList();
+    }
+
+    void setApplicationEventListeners(@Nullable List<ApplicationListener<?>> listeners) {
+        this.applicationEventListeners = listeners;
     }
 
     protected ViewData getViewData() {
@@ -774,6 +833,13 @@ public class View<T extends Component> extends Composite<T>
     @Override
     protected ComponentEventBus getEventBus() {
         return super.getEventBus();
+    }
+
+    private Optional<UiEventsManager> uiEventsManager() {
+        VaadinSession session = VaadinSession.getCurrent();
+        return session != null
+                ? Optional.ofNullable(session.getAttribute(UiEventsManager.class))
+                : Optional.empty();
     }
 
     private boolean isContextActive() {

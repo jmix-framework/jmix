@@ -61,7 +61,7 @@
                     <!-- A button that opens and hides a task filter panel.
                         This button also shows a number of applied filters to the user tasks.
                     -->
-                    <div id="filterBtnContainer" classNames="relative inline-flex items-start">
+                    <div id="filterBtnContainer" classNames="relative inline-flex items-start" width="3em">
                         <button id="filterBtn" icon="FILTER" themeNames="primary"/>
                         <span id="appliedFiltersCount" themeNames="badge contrast primary small"
                               css="border-radius: 50%; left: -0.75em" classNames="relative z-10" visible="false"/>
@@ -78,7 +78,7 @@
                         <action id="openTaskForm"
                                 icon="PENCIL"
                                 text="${messageKeys['openTaskFormActionText']}"
-                                type="list_itemTracking"/>
+                                type="list_edit"/>
                     </actions>
                     <columns resizable="true">
                         <column property="name"/>

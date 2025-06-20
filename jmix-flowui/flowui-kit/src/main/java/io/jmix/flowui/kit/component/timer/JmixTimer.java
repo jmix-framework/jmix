@@ -16,14 +16,18 @@
 
 package io.jmix.flowui.kit.component.timer;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.DomEvent;
-import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
 
+/**
+ * The JmixTimer class provides a server-side component for managing timer-based
+ * execution. It enables configuration of delayed actions, optionally repeating
+ * at defined intervals.
+ * <p>
+ * This component is designed to handle timed tasks, which can be triggered
+ * either once after a specified delay or periodically when repeating is enabled.
+ */
 @Tag("jmix-timer")
 @JsModule("./src/timer/jmix-timer.js")
 public class JmixTimer extends Component {

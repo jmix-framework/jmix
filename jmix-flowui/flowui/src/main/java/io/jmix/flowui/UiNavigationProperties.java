@@ -21,6 +21,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.UUID;
 
+/**
+ * Configuration properties for managing navigation-related settings in the UI module.
+ */
 @ConfigurationProperties(prefix = "jmix.ui.navigation")
 public class UiNavigationProperties {
 

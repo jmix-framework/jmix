@@ -53,6 +53,8 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
 
     protected ApplicationEventPublisher applicationEventPublisher;
 
+    protected ThreadLocal<Boolean> findByIdInProgress = new ThreadLocal<>();
+
     public List<SessionAttributePersistenceValidator> getAttributePersistenceValidators() {
         return attributePersistenceValidators;
     }
@@ -69,6 +71,7 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
         this.delegate = delegate;
         this.sessionRegistry = sessionRegistry;
         this.applicationEventPublisher = applicationEventPublisher;
+        findByIdInProgress.set(false);
     }
 
     @Override
@@ -106,19 +109,25 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
         if (session != null) {
             SessionWrapper sessionWrapper = new SessionWrapper(session);
             restoreNonPersistentAttributes(sessionWrapper);
-            try {
-                if (SecurityContextHelper.getAuthentication() != null) {
-                    Object principal = SecurityContextHelper.getAuthentication().getPrincipal();
-                    if (principal != null && sessionRegistry.getSessionInformation(id) == null) {
-                        sessionRegistry.registerNewSession(id, principal);
-                        applicationEventPublisher.publishEvent(new JmixSessionRestoredEvent<>(sessionWrapper));
+
+            if (Boolean.FALSE.equals(findByIdInProgress.get())) {
+                try {
+                    findByIdInProgress.set(true);
+                    if (SecurityContextHelper.getAuthentication() != null) {
+                        Object principal = SecurityContextHelper.getAuthentication().getPrincipal();
+                        if (principal != null && sessionRegistry.getSessionInformation(id) == null) {
+                            sessionRegistry.registerNewSession(id, principal);
+                            applicationEventPublisher.publishEvent(new JmixSessionRestoredEvent<>(sessionWrapper));
+                        }
                     }
-                }
-            } catch (IllegalStateException e) {//todo [jmix-framework/jmix#3915] rework this Vaadin compatibility WA
-                if (e.getMessage().contains("invalidated")) {
-                    log.debug("This IllegalStateException should occur once. In case of frequent exceptions - investigate.");
-                } else {
-                    throw e;
+                } catch (IllegalStateException e) {
+                    if (e.getMessage().contains("invalidated")) {
+                        log.debug("This IllegalStateException should occur once. In case of frequent exceptions - investigate.");
+                    } else {
+                        throw e;
+                    }
+                } finally {
+                    findByIdInProgress.remove();
                 }
             }
             return sessionWrapper;

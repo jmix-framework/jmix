@@ -59,8 +59,6 @@ public interface SecureOperations {
      */
     boolean isSpecificPermitted(String resourceName, PolicyStore policyStore);
 
-    /**
-     * Check if the current user has a permission to the given GraphQL resource.
-     */
+    @Deprecated(forRemoval = true)
     boolean isGraphQLPermitted(String resourceName, PolicyStore policyStore);
 }

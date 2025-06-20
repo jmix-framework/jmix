@@ -36,8 +36,8 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -127,6 +127,7 @@ public class AddConditionView extends StandardListView<FilterCondition> {
 
         propertiesHeaderCondition = getHeaderFilterConditionByCaption(propertiesCaption);
         if (propertiesHeaderCondition != null) {
+            filterConditionsTreeDataGrid.setItemSelectableProvider(item -> !propertiesHeaderCondition.equals(item));
             filterConditionsTreeDataGrid.expand(propertiesHeaderCondition);
         }
     }
@@ -162,9 +163,9 @@ public class AddConditionView extends StandardListView<FilterCondition> {
                     DialogWindow<View<?>> detailView = dialogWindows.detail(this, modelClass)
                             .withViewId(detailViewId)
                             .newEntity(createFilterCondition(modelClass))
+                            .withViewConfigurer(view ->
+                                    applyViewConfigurer(((View<?>) view)))
                             .build();
-
-                    applyViewConfigurer(detailView.getView());
                     detailView.addAfterCloseListener(this::onDetailViewAfterClose);
 
                     detailView.open();

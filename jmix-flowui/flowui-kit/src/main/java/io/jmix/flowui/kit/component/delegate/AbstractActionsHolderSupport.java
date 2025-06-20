@@ -28,6 +28,14 @@ import java.util.*;
 
 import static io.jmix.flowui.kit.component.ComponentUtils.findActionIndexById;
 
+/**
+ * Abstract base class for managing and binding actions to a component. This class provides
+ * support for adding, removing, and managing {@link Action} instances associated with a
+ * component, while also handling shortcut registrations and property change listeners for
+ * these actions.
+ *
+ * @param <C> the type of the component that holds actions
+ */
 public abstract class AbstractActionsHolderSupport<C extends Component> {
 
     protected final C component;
@@ -39,10 +47,22 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
         this.component = component;
     }
 
+    /**
+     * Adds an {@link Action} to the collection of actions at the default position.
+     *
+     * @param action the action to be added; must not be null
+     */
     public void addAction(Action action) {
         addAction(action, actions.size());
     }
 
+    /**
+     * Adds an {@link Action} to the collection of actions at the specified position.
+     *
+     * @param action the action to be added; must not be null
+     * @param index  the position at which the specified action is to be inserted;
+     *               if the action already exists, it will be moved to the new position
+     */
     public void addAction(Action action, int index) {
         Preconditions.checkNotNull(action, Action.class.getSimpleName() + " cannot be null");
 
@@ -106,6 +126,11 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
         }
     }
 
+    /**
+     * Removes the specified {@link Action} from the collection of actions.
+     *
+     * @param action the action to be removed; must not be null
+     */
     public void removeAction(Action action) {
         Preconditions.checkNotNull(action, Action.class.getSimpleName() + " cannot be null");
 
@@ -126,6 +151,13 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
         removeShortcutListener(action);
     }
 
+    /**
+     * Finds an {@link Action} by its identifier.
+     *
+     * @param id the identifier of the action to retrieve; must not be null
+     * @return an {@code Optional} containing the found {@link Action}, or {@code Optional.empty()}
+     * if no action with the specified identifier exists
+     */
     public Optional<Action> getAction(String id) {
         return getActions().stream()
                 .filter(action ->
@@ -133,6 +165,11 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
                 .findFirst();
     }
 
+    /**
+     * Returns a collection of all actions associated with this instance.
+     *
+     * @return an unmodifiable collection of {@link Action} objects
+     */
     public Collection<Action> getActions() {
         return Collections.unmodifiableList(actions);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ public interface StudioPickerActions {
             unsupportedTarget = {
                     "io.jmix.flowui.view.View",
                     "io.jmix.flowui.app.main.StandardMainView",
+                    "io.jmix.tabbedmode.app.main.StandardTabbedModeMainView",
                     "io.jmix.flowui.component.ListDataComponent"
             },
             documentationLink = "%VERSION%/flow-ui/actions/declarative-actions.html",
@@ -75,6 +76,7 @@ public interface StudioPickerActions {
             classFqn = "io.jmix.flowui.action.entitypicker.EntityClearAction",
             unsupportedTarget = {
                     "io.jmix.flowui.app.main.StandardMainView",
+                    "io.jmix.tabbedmode.app.main.StandardTabbedModeMainView",
                     "io.jmix.flowui.component.valuepicker.JmixValuePicker",
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },
@@ -103,6 +105,7 @@ public interface StudioPickerActions {
             classFqn = "io.jmix.flowui.action.entitypicker.EntityLookupAction",
             unsupportedTarget = {
                     "io.jmix.flowui.app.main.StandardMainView",
+                    "io.jmix.tabbedmode.app.main.StandardTabbedModeMainView",
                     "io.jmix.flowui.component.valuepicker.JmixValuePicker",
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },
@@ -135,6 +138,7 @@ public interface StudioPickerActions {
             classFqn = "io.jmix.flowui.action.entitypicker.EntityOpenAction",
             unsupportedTarget = {
                     "io.jmix.flowui.app.main.StandardMainView",
+                    "io.jmix.tabbedmode.app.main.StandardTabbedModeMainView",
                     "io.jmix.flowui.component.valuepicker.JmixValuePicker",
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },
@@ -167,6 +171,7 @@ public interface StudioPickerActions {
             classFqn = "io.jmix.flowui.action.entitypicker.EntityOpenCompositionAction",
             unsupportedTarget = {
                     "io.jmix.flowui.app.main.StandardMainView",
+                    "io.jmix.tabbedmode.app.main.StandardTabbedModeMainView",
                     "io.jmix.flowui.component.valuepicker.JmixValuePicker",
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },

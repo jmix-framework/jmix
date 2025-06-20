@@ -103,7 +103,7 @@ public class DialogsImpl implements Dialogs {
     }
 
     protected Button createButton(Action action, Dialog dialog) {
-        Button button = new Button();
+        Button button = uiComponents.create(Button.class);
 
         if (action instanceof DialogAction dialogAction) {
             DialogAction.Type type = dialogAction.getType();
@@ -258,6 +258,18 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
+        public OptionDialogBuilder withDraggedListener(ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+            dialog.addDraggedListener(listener);
+            return this;
+        }
+
+        @Override
+        public OptionDialogBuilder withResizeListener(ComponentEventListener<Dialog.DialogResizeEvent> listener) {
+            dialog.addResizeListener(listener);
+            return this;
+        }
+
+        @Override
         public OptionDialogBuilder withResizable(boolean resizable) {
             dialog.setResizable(resizable);
             return this;
@@ -310,6 +322,28 @@ public class DialogsImpl implements Dialogs {
         @Override
         public String getMaxHeight() {
             return dialog.getMaxHeight();
+        }
+
+        @Override
+        public String getLeft() {
+            return dialog.getLeft();
+        }
+
+        @Override
+        public OptionDialogBuilder withLeft(String left) {
+            dialog.setLeft(left);
+            return this;
+        }
+
+        @Override
+        public String getTop() {
+            return dialog.getTop();
+        }
+
+        @Override
+        public OptionDialogBuilder withTop(String top) {
+            dialog.setTop(top);
+            return this;
         }
 
         @Override
@@ -576,6 +610,18 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
+        public MessageDialogBuilder withDraggedListener(ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+            dialog.addDraggedListener(listener);
+            return this;
+        }
+
+        @Override
+        public MessageDialogBuilder withResizeListener(ComponentEventListener<Dialog.DialogResizeEvent> listener) {
+            dialog.addResizeListener(listener);
+            return this;
+        }
+
+        @Override
         public MessageDialogBuilder withResizable(boolean resizable) {
             dialog.setResizable(resizable);
             return this;
@@ -628,6 +674,28 @@ public class DialogsImpl implements Dialogs {
         @Override
         public String getMaxHeight() {
             return dialog.getMaxHeight();
+        }
+
+        @Override
+        public String getLeft() {
+            return dialog.getLeft();
+        }
+
+        @Override
+        public MessageDialogBuilder withLeft(String left) {
+            dialog.setLeft(left);
+            return this;
+        }
+
+        @Override
+        public String getTop() {
+            return dialog.getTop();
+        }
+
+        @Override
+        public MessageDialogBuilder withTop(String top) {
+            dialog.setTop(top);
+            return this;
         }
 
         @Override
@@ -711,6 +779,45 @@ public class DialogsImpl implements Dialogs {
         @Override
         public String getHeight() {
             return dialogBuild.getHeight();
+        }
+
+        @Override
+        public String getLeft() {
+            return dialogBuild.getLeft();
+        }
+
+        @Override
+        public InputDialogBuilder withLeft(String left) {
+            dialogBuild.setLeft(left);
+            return this;
+        }
+
+        @Override
+        public String getTop() {
+            return dialogBuild.getTop();
+        }
+
+        @Override
+        public InputDialogBuilder withTop(String top) {
+            dialogBuild.setTop(top);
+            return this;
+        }
+
+        @Override
+        public InputDialogBuilder withDraggable(boolean draggable) {
+            dialogBuild.setDraggable(draggable);
+            return this;
+        }
+
+        @Override
+        public boolean isDraggable() {
+            return dialogBuild.isDraggable();
+        }
+
+        @Override
+        public InputDialogBuilder withDraggedListener(ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+            dialogBuild.addDraggedListener(listener);
+            return this;
         }
 
         @Override
@@ -974,6 +1081,20 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
+        public BackgroundTaskDialogBuilder<T, V> withDraggedListener(
+                ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
+            dialog.addDraggedListener(listener);
+            return this;
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withResizeListener(
+                ComponentEventListener<Dialog.DialogResizeEvent> listener) {
+            dialog.addResizeListener(listener);
+            return this;
+        }
+
+        @Override
         public BackgroundTaskDialogBuilder<T, V> withContent(Component content) {
             if (this.content != null) {
                 layout.remove(this.content);
@@ -1041,6 +1162,28 @@ public class DialogsImpl implements Dialogs {
         @Override
         public String getMaxHeight() {
             return dialog.getMaxHeight();
+        }
+
+        @Override
+        public String getLeft() {
+            return dialog.getLeft();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withLeft(String left) {
+            dialog.setLeft(left);
+            return this;
+        }
+
+        @Override
+        public String getTop() {
+            return dialog.getTop();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withTop(String top) {
+            dialog.setTop(top);
+            return this;
         }
 
         public Dialog build() {

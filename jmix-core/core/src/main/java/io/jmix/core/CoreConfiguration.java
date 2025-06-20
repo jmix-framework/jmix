@@ -43,7 +43,7 @@ import java.util.Set;
 /**
  * Configuration of the core module.
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {})
@@ -64,7 +64,7 @@ public class CoreConfiguration {
     }
 
     @Bean("core_Modules")
-    public JmixModules modules(JmixModulesProcessor processor) {
+    public static JmixModules modules(JmixModulesProcessor processor) {
         return processor.getJmixModules();
     }
 

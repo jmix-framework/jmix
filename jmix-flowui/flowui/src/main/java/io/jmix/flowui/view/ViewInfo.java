@@ -17,8 +17,13 @@
 package io.jmix.flowui.view;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 
+/**
+ * Represents metadata information of a view, including the view's unique identifier,
+ * its controller class, and an optional template path.
+ */
 public class ViewInfo {
 
     protected String id;
@@ -36,18 +41,39 @@ public class ViewInfo {
         this.templatePath = templatePath;
     }
 
+    /**
+     * Returns the unique identifier of the {@link View}.
+     *
+     * @return the unique identifier of the {@link View}
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the name of the controller class associated with the {@link View}.
+     *
+     * @return the name of the controller class
+     */
     public String getControllerClassName() {
         return controllerClassName;
     }
 
+    /**
+     * Returns the controller class associated with the {@link View}.
+     *
+     * @return the controller class associated with the {@link View}
+     */
     public Class<? extends View<?>> getControllerClass() {
         return controllerClass;
     }
 
+    /**
+     * Returns the template path associated with the {@link View}, if available.
+     *
+     * @return an {@link Optional} containing the template path, or an
+     * empty {@link Optional} if the template path is not set
+     */
     public Optional<String> getTemplatePath() {
         return Optional.ofNullable(templatePath);
     }

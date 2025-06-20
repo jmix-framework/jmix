@@ -20,7 +20,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.delegate.FieldDelegate;
+import io.jmix.flowui.component.delegate.CheckboxDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -38,7 +38,7 @@ public class JmixCheckbox extends Checkbox implements SupportsValueSource<Boolea
 
     protected ApplicationContext applicationContext;
 
-    protected FieldDelegate<JmixCheckbox, Boolean, Boolean> fieldDelegate;
+    protected CheckboxDelegate<JmixCheckbox, Boolean, Boolean> fieldDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -54,8 +54,8 @@ public class JmixCheckbox extends Checkbox implements SupportsValueSource<Boolea
         fieldDelegate = createFieldDelegate();
     }
 
-    protected FieldDelegate<JmixCheckbox, Boolean, Boolean> createFieldDelegate() {
-        return applicationContext.getBean(FieldDelegate.class, this);
+    protected CheckboxDelegate<JmixCheckbox, Boolean, Boolean> createFieldDelegate() {
+        return applicationContext.getBean(CheckboxDelegate.class, this);
     }
 
     @Override
@@ -108,6 +108,13 @@ public class JmixCheckbox extends Checkbox implements SupportsValueSource<Boolea
     @Override
     public void setValue(Boolean value) {
         super.setValue(BooleanUtils.toBoolean(value));
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        HasRequired.super.setRequired(required);
+
+        fieldDelegate.updateRequiredState();
     }
 
     @Override

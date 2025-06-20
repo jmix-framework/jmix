@@ -19,6 +19,7 @@ package io.jmix.flowui.accesscontext;
 import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.flowui.menu.MenuItem;
 
+import io.jmix.flowui.view.View;
 import org.springframework.lang.Nullable;
 
 /**
@@ -32,18 +33,37 @@ public class UiMenuContext implements AccessContext {
         this.menuItem = menuItem;
     }
 
+    /**
+     * Retrieves the identifier of the associated menu item.
+     *
+     * @return the menu item ID
+     */
     public String getMenuItemId() {
         return menuItem.getId();
     }
 
+    /**
+     * Retrieves the associated menu item.
+     *
+     * @return the {@link MenuItem} instance associated with the context
+     */
     public MenuItem getMenuItem() {
         return menuItem;
     }
 
+    /**
+     * Determines whether access is permitted in the current context.
+     *
+     * @return {@code true} if access is permitted, {@code false} otherwise
+     */
     public boolean isPermitted() {
         return permitted;
     }
 
+    /**
+     * Denies access for the associated menu item by setting the permission state to false.
+     * This method is used to explicitly restrict access within the current context.
+     */
     public void setDenied() {
         this.permitted = false;
     }

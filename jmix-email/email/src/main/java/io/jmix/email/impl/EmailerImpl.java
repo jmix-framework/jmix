@@ -197,9 +197,6 @@ public class EmailerImpl implements Emailer {
 
         SendingMessage sendingMessage = convertToSendingMessage(emailInfo, null, null);
 
-        List<String> failedAddresses = new ArrayList<>();
-        List<String> errorMessages = new ArrayList<>();
-
         SendingMessage persistedMessage = persistMessageIfPossible(sendingMessage);
 
         try {
@@ -209,15 +206,12 @@ public class EmailerImpl implements Emailer {
             }
         } catch (Exception e) {
             log.warn("Unable to send email to '{}'", sendingMessage.getAddress(), e);
-            failedAddresses.add(sendingMessage.getAddress());
-            errorMessages.add(e.getMessage());
             if (persistedMessage != null) {
                 emailDataProvider.updateStatus(persistedMessage, SendingStatus.NOT_SENT);
             }
-        }
 
-        if (!failedAddresses.isEmpty()) {
-            throw new EmailException(failedAddresses, errorMessages);
+            throw new EmailException("Unable to send email to %s cause: %s".
+                    formatted(sendingMessage.getAddress(), e.getMessage()));
         }
     }
 

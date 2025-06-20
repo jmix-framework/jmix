@@ -26,6 +26,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.rest.RestProperties;
+import io.jmix.rest.annotation.RestHttpMethod;
 import io.jmix.rest.impl.config.RestQueriesConfiguration;
 import io.jmix.rest.impl.config.RestQueriesConfiguration.QueryInfo;
 import io.jmix.rest.impl.config.RestServicesConfiguration;
@@ -480,10 +481,15 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
             String serviceName = serviceInfo.getName();
 
             for (RestMethodInfo methodInfo : serviceInfo.getMethods()) {
-                openAPI.path(String.format(SERVICE_PATH, serviceName, methodInfo.getName()),
-                        new PathItem()
-                                .get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET))
-                                .post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST)));
+                String path = String.format(SERVICE_PATH, serviceName, methodInfo.getName());
+                PathItem pathItem = openAPI.getPaths().getOrDefault(path, new PathItem());
+
+                switch (RestHttpMethod.valueOf(methodInfo.getHttpMethod())) {
+                    case GET -> pathItem.get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET));
+                    case POST -> pathItem.post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST));
+                }
+
+                openAPI.path(path, pathItem);
             }
         }
     }

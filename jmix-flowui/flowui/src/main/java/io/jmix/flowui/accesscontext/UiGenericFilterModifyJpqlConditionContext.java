@@ -18,6 +18,11 @@ package io.jmix.flowui.accesscontext;
 
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
+/**
+ * Defines an access context for modifying JPQL conditions in a generic filter UI.
+ * This context is used to evaluate permissions for operations related to updating
+ * JPQL conditions within the application's generic filter functionality.
+ */
 public class UiGenericFilterModifyJpqlConditionContext extends SpecificOperationAccessContext {
 
     public static final String NAME = "ui.genericfilter.modifyJpqlCondition";

@@ -37,6 +37,15 @@ import java.util.Objects;
 
 import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 
+/**
+ * A URL query parameters binder for {@link PropertyFilter} components. This class enables binding a
+ * {@link PropertyFilter} to URL query parameters, allowing the component's state to be reflected in
+ * and restored from the URL.
+ * <p>
+ * The class listens to changes in the {@link PropertyFilter}, such as value or operation changes,
+ * and updates the corresponding query parameters. It also supports saving and restoring the
+ * {@link PropertyFilter}'s initial state.
+ */
 public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder
         implements HasInitialState {
 
@@ -148,6 +157,13 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
         }
     }
 
+    /**
+     * Returns the value of the parameter. If the parameter is not explicitly set,
+     * it defaults to the filter's ID.
+     *
+     * @return the value of the parameter
+     * @throws IllegalStateException if neither parameter nor filter ID is available
+     */
     public String getParameter() {
         return Strings.isNullOrEmpty(parameter)
                 ? filter.getId().orElseThrow(() ->
@@ -155,6 +171,11 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
                 : parameter;
     }
 
+    /**
+     * Sets the value of the parameter.
+     *
+     * @param parameter the value to set for the parameter
+     */
     public void setParameter(@Nullable String parameter) {
         this.parameter = parameter;
     }

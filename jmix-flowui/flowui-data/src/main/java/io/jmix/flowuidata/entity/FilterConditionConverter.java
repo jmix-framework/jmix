@@ -25,6 +25,14 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+/**
+ * Converts the {@link LogicalFilterCondition} entity to its JSON representation for storing in
+ * the database and vice versa. Implements the {@link AttributeConverter} interface to manage
+ * the conversion process.
+ * <p>
+ * DEPRECATED since 2.6 as not needed anymore, will be removed in 3.0.
+ */
+@Deprecated(forRemoval = true)
 @Converter
 public class FilterConditionConverter implements AttributeConverter<LogicalFilterCondition, String> {
 

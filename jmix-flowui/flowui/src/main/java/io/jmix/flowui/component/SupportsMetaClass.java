@@ -17,13 +17,26 @@
 package io.jmix.flowui.component;
 
 import io.jmix.core.metamodel.model.MetaClass;
-
 import org.springframework.lang.Nullable;
 
+/**
+ * Provides a contract for components that support working with a {@link MetaClass}.
+ */
 public interface SupportsMetaClass {
 
+    /**
+     * Returns the {@link MetaClass} associated with this component or entity.
+     *
+     * @return the {@link MetaClass} object, or {@code null} if no MetaClass is associated
+     */
     @Nullable
     MetaClass getMetaClass();
 
+    /**
+     * Sets the {@link MetaClass} for this component or entity.
+     *
+     * @param metaClass the {@link MetaClass} to associate with this component or entity,
+     *                  or {@code null} to disassociate any currently set MetaClass
+     */
     void setMetaClass(@Nullable MetaClass metaClass);
 }

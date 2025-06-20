@@ -73,7 +73,7 @@ public class ServiceCallTest extends BaseRestDsIntegrationTest {
         String customerJson = entitySerialization.toJson(customer);
 
         String resultJson = restClient.post()
-                .uri("/rest/services/CustomerService/getPreferredContact")
+                .uri("/rest/services/app_Customers/getPreferredContact")
                 .body("""
                         {
                             "customer": %s

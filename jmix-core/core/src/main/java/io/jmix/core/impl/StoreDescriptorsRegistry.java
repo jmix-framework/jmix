@@ -50,13 +50,20 @@ public class StoreDescriptorsRegistry {
 
     protected static final Splitter SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
 
+    protected List<String> additionalDataStoreNames;
+
     @PostConstruct
     protected void initialize() {
+        String property = environment.getProperty("jmix.core.additional-stores");
+        additionalDataStoreNames = !Strings.isNullOrEmpty(property)
+                ? SPLITTER.splitToList(property)
+                : Collections.emptyList();
+
         initUndefinedStoreDescriptor();
         initMainStoreDescriptor();
         initNoopStoreDescriptor();
 
-        for (String storeName : getAdditionalDataStoreNames()) {
+        for (String storeName : additionalDataStoreNames) {
             initAdditionalStoreDescriptor(storeName);
         }
     }
@@ -109,11 +116,6 @@ public class StoreDescriptorsRegistry {
      * @return the list of additional data store names registered in the {@code jmix.core.additional-stores} property
      */
     public List<String> getAdditionalDataStoreNames() {
-        String property = environment.getProperty("jmix.core.additional-stores");
-        if (!Strings.isNullOrEmpty(property)) {
-            return SPLITTER.splitToList(property);
-        } else {
-            return Collections.emptyList();
-        }
+        return additionalDataStoreNames;
     }
 }

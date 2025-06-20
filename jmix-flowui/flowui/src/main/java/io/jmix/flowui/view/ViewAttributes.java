@@ -23,19 +23,14 @@ import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 
 /**
- * Class provides mechanism for setting/getting attributes that uses {@link VaadinSession} as store.
+ * Class provides a mechanism for setting/getting attributes that uses {@link VaadinSession} as store.
  * Class instance should be initialized with {@link View} id.
  */
-@Component("flowui_ViewAttributes")
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ViewAttributes {
 
     protected String viewId;
@@ -179,10 +174,22 @@ public class ViewAttributes {
             this.windowName = windowName;
         }
 
+        /**
+         * Returns the name of the browser window associated with the current UI.
+         *
+         * @return the name of the window
+         */
         public String getWindowName() {
             return windowName;
         }
 
+        /**
+         * Sets an attribute value.
+         *
+         * @param key   the key under which the attribute is stored; must not be null or empty
+         * @param value the value to associate with the specified key; can be null
+         * @throws IllegalArgumentException if the key is null or empty
+         */
         public void setAttribute(String key, Object value) {
             Preconditions.checkNotEmptyString(key);
             if (attributes == null) {
@@ -191,6 +198,13 @@ public class ViewAttributes {
             attributes.put(key, value);
         }
 
+        /**
+         * Returns the value of an attribute associated with the specified key.
+         *
+         * @param key the key identifying the attribute to retrieve; must not be null or empty
+         * @return the value associated with the specified key, or null if the attribute map
+         * is null or does not contain the key
+         */
         @Nullable
         public Object getAttribute(String key) {
             Preconditions.checkNotEmptyString(key);
@@ -200,6 +214,12 @@ public class ViewAttributes {
             return attributes.get(key);
         }
 
+        /**
+         * Removes an attribute corresponding to the specified key.
+         *
+         * @param key the key of the attribute to be removed; must not be null or empty
+         * @throws IllegalArgumentException if the key is null or empty
+         */
         public void removeAttribute(String key) {
             Preconditions.checkNotEmptyString(key);
             if (attributes == null || !attributes.containsKey(key)) {
@@ -208,6 +228,11 @@ public class ViewAttributes {
             attributes.remove(key);
         }
 
+        /**
+         * Checks if the attributes map is empty.
+         *
+         * @return {@code true} if the attributes map contains no entries, {@code false} otherwise
+         */
         public boolean isEmpty() {
             return MapUtils.isEmpty(attributes);
         }

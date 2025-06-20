@@ -1,0 +1,9 @@
+vaadin-checkbox[readonly][has-error-message]::part(error-message),
+vaadin-checkbox[disabled][has-error-message]::part(error-message) {
+    display: none;
+}
+
+vaadin-checkbox[readonly][invalid],
+vaadin-checkbox[disabled][invalid] {
+    --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
+}

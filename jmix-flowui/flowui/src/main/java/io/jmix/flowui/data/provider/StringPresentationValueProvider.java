@@ -20,9 +20,17 @@ import com.vaadin.flow.function.ValueProvider;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-
 import org.springframework.lang.Nullable;
 
+/**
+ * Provides string representations of property values for entities.
+ * <p>
+ * This class implements the {@link ValueProvider} interface to retrieve and format property values
+ * from an entity based on a given {@link MetaPropertyPath}. It utilizes {@link MetadataTools} to
+ * handle the formatting of the property values.
+ *
+ * @param <T> the type of the entity whose property values are being provided
+ */
 public class StringPresentationValueProvider<T> implements ValueProvider<T, String> {
 
     protected MetaPropertyPath propertyPath;

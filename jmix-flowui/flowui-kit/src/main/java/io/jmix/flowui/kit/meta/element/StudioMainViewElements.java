@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public interface StudioMainViewElements {
             classFqn = "com.vaadin.flow.component.orderedlayout.VerticalLayout",
             xmlElement = "initialLayout",
             icon = "io/jmix/flowui/kit/meta/icon/layout/vbox.svg",
-            target = {"com.vaadin.flow.component.applayout.AppLayout"},
+            target = {"com.vaadin.flow.component.applayout.AppLayout", "io.jmix.tabbedmode.component.workarea.WorkArea"},
             unlimitedCount = false,
             visible = true,
             properties = {

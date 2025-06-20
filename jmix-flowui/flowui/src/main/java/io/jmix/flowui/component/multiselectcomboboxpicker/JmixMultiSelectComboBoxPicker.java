@@ -43,6 +43,7 @@ import io.jmix.flowui.kit.component.multiselectcomboboxpicker.MultiSelectComboBo
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.util.FetchCallbackAdapter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -88,6 +89,8 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
         fieldDelegate.addValueBindingChangeListener(event ->
                 dataViewDelegate.valueBindingChanged(event));
+
+        dataViewDelegate.addDataRefreshListener(this::onDataProviderDataRefresh);
 
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
 
@@ -417,6 +420,13 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
     @Override
     protected ValuePickerActionSupport createActionsSupport() {
-        return new JmixValuePickerActionSupport(this);
+        return applicationContext.getBean(JmixValuePickerActionSupport.class, this);
+    }
+
+    protected void onDataProviderDataRefresh(DataChangeEvent.DataRefreshEvent<V> event) {
+        if (CollectionUtils.isNotEmpty(getValue())
+                && getValue().contains(event.getItem())) {
+            refreshValue();
+        }
     }
 }

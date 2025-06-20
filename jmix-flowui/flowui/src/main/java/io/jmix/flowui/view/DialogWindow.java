@@ -19,7 +19,6 @@ package io.jmix.flowui.view;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
 import io.jmix.flowui.view.View.BeforeShowEvent;
 import io.jmix.flowui.view.View.ReadyEvent;
@@ -27,6 +26,11 @@ import io.jmix.flowui.view.View.ReadyEvent;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
+/**
+ * Wrapper class representing a {@link View} opened as a dialog window.
+ *
+ * @param <V> a view type
+ */
 public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
 
     private boolean readyEventFired = false;
@@ -73,7 +77,6 @@ public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
 
     protected void onViewAfterClosed(View.AfterCloseEvent closeEvent) {
         fireViewAfterCloseEvent(closeEvent);
-        fireViewClosedEvent(this.getView());
     }
 
     protected void fireViewAfterCloseEvent(View.AfterCloseEvent closeEvent) {
@@ -83,11 +86,6 @@ public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
 
     protected void fireViewBeforeShowEvent(View<?> view) {
         ViewControllerUtils.fireEvent(view, new BeforeShowEvent(view));
-    }
-
-    protected void fireViewClosedEvent(View<?> view) {
-        ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this.getView());
-        applicationContext.publishEvent(viewClosedEvent);
     }
 
     protected void fireViewOpenedEvent(View<?> view) {
@@ -123,6 +121,11 @@ public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
         return Registration.once(subscription::remove);
     }
 
+    /**
+     * This class represents an event that is triggered after the associated dialog window has been opened.
+     *
+     * @param <V> the type of the view associated with the dialog window
+     */
     public static class AfterOpenEvent<V extends View<?>> extends EventObject {
 
         public AfterOpenEvent(DialogWindow<V> source) {
@@ -135,11 +138,21 @@ public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
             return (DialogWindow<V>) super.getSource();
         }
 
+        /**
+         * Returns the view associated with the dialog window.
+         *
+         * @return the view associated with the dialog window
+         */
         public V getView() {
             return getSource().getView();
         }
     }
 
+    /**
+     * Represents an event that is fired after a dialog window has been closed.
+     *
+     * @param <V> the type of the view associated with the dialog window
+     */
     public static class AfterCloseEvent<V extends View<?>> extends EventObject {
 
         protected final CloseAction closeAction;
@@ -156,14 +169,31 @@ public class DialogWindow<V extends View<?>> extends AbstractDialogWindow<V> {
             return (DialogWindow<V>) super.getSource();
         }
 
+        /**
+         * Returns the view associated with the dialog window.
+         *
+         * @return the view associated with the dialog window
+         */
         public V getView() {
             return getSource().getView();
         }
 
+        /**
+         * Returns the {@link CloseAction} that describes how the associated {@link View} was closed.
+         *
+         * @return the close action associated with the closure of the dialog window
+         */
         public CloseAction getCloseAction() {
             return closeAction;
         }
 
+        /**
+         * Checks if the dialog window was closed with the given {@link StandardOutcome}.
+         *
+         * @param outcome the {@link StandardOutcome} to check against
+         * @return {@code true} if the dialog window was closed with the
+         * specified {@link StandardOutcome}, {@code false} otherwise
+         */
         public boolean closedWith(StandardOutcome outcome) {
             return outcome.getCloseAction().equals(closeAction);
         }

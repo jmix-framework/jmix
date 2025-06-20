@@ -18,7 +18,7 @@ package io.jmix.flowui.exception;
 import io.jmix.flowui.view.View;
 
 /**
- * Raised on attempt to open an unknown view.
+ * This exception is thrown when a specific view cannot be found or is not defined.
  */
 public class NoSuchViewException extends RuntimeException {
 
@@ -30,6 +30,11 @@ public class NoSuchViewException extends RuntimeException {
         this.viewId = viewId;
     }
 
+    /**
+     * Returns the identifier of the view that caused the exception.
+     *
+     * @return the identifier of the view
+     */
     public String getViewId() {
         return viewId;
     }

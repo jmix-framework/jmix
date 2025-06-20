@@ -24,6 +24,7 @@ import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.flowui.component.checkbox.Switch;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
@@ -105,6 +106,12 @@ public class ComponentView extends StandardView {
 
     @ViewComponent
     public JmixCheckbox checkBoxWithDataId;
+
+    @ViewComponent
+    public Switch switchId;
+
+    @ViewComponent
+    public Switch switchWithDataId;
 
     @ViewComponent
     public JmixComboBox<String> comboBoxId;

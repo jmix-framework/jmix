@@ -23,4 +23,6 @@ archivesBaseName = 'jmix-quartz-flowui'
 dependencies {
     api project(':quartz')
     api project(':flowui')
+
+    compileOnly project(':security-flowui')
 }

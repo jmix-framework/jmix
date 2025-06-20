@@ -394,6 +394,7 @@ public class RestServicesConfiguration {
             this.name = name;
         }
 
+        @Nullable
         public String getHttpMethod() {
             return httpMethod;
         }

@@ -484,9 +484,14 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                 String path = String.format(SERVICE_PATH, serviceName, methodInfo.getName());
                 PathItem pathItem = openAPI.getPaths().getOrDefault(path, new PathItem());
 
-                switch (RestHttpMethod.valueOf(methodInfo.getHttpMethod())) {
-                    case GET -> pathItem.get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET));
-                    case POST -> pathItem.post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST));
+                if (methodInfo.getHttpMethod() == null) {
+                    pathItem.get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET))
+                            .post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST));
+                } else {
+                    switch (RestHttpMethod.valueOf(methodInfo.getHttpMethod())) {
+                        case GET -> pathItem.get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET));
+                        case POST -> pathItem.post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST));
+                    }
                 }
 
                 openAPI.path(path, pathItem);

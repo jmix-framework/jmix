@@ -57,6 +57,12 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
                 continue;
             }
 
+            if (column.getParent().isEmpty()) {
+                log.warn("Column with key '{}' not attached to {}. The settings will not be applied.",
+                        sColumn.getKey(), Grid.class.getSimpleName());
+                continue;
+            }
+
             if (sColumn.getWidth() != null) {
                 // Changing the column width manually works only if flexGrow is 0.
                 // If flexGrow is >=1 then the column width is 100px. So we consider that user didn't resize

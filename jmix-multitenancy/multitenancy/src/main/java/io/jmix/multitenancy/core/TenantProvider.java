@@ -19,7 +19,7 @@ package io.jmix.multitenancy.core;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * Provides the current tenant id.
+ * Provides the tenant id for user.
  */
 public interface TenantProvider {
 

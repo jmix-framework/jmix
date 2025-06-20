@@ -52,13 +52,13 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
     @Autowired(required = false)
     protected UserSubstitutionPersistence userSubstitutionPersistence;
     @Autowired(required = false)
-    protected List<UserSubstitutionCandidatesFilter> userSubstitutionCandidatesFilters = Collections.emptyList();
+    protected List<UserSubstitutionCandidatePredicate> userSubstitutionCandidatePredicates = Collections.emptyList();
 
-    protected UserSubstitutionCandidatesFilter compositeUserSubstitutionCandidatesFilter;
+    protected UserSubstitutionCandidatePredicate compositeUserSubstitutionCandidatePredicate;
 
     @Subscribe
     public void onInit(final InitEvent event) {
-        compositeUserSubstitutionCandidatesFilter = combineFilterPredicates(userSubstitutionCandidatesFilters);
+        compositeUserSubstitutionCandidatePredicate = combinePredicates(userSubstitutionCandidatePredicates);
     }
 
     @Subscribe
@@ -75,7 +75,7 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
         UserDetails targetUser = userRepository.loadUserByUsername(targetUsername);
         return userRepository.getByUsernameLike(enteredValue).stream()
                 .filter(substitutionCandidate ->
-                        compositeUserSubstitutionCandidatesFilter.test(targetUser, substitutionCandidate)
+                        compositeUserSubstitutionCandidatePredicate.test(targetUser, substitutionCandidate)
                 )
                 .map(UserDetails::getUsername)
                 .filter(name -> !name.equals(getEditedEntity().getUsername()))
@@ -111,13 +111,13 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
         return userSubstitutionPersistence;
     }
 
-    protected UserSubstitutionCandidatesFilter combineFilterPredicates(List<UserSubstitutionCandidatesFilter> predicates) {
+    protected UserSubstitutionCandidatePredicate combinePredicates(List<UserSubstitutionCandidatePredicate> predicates) {
         return (user1, user2) -> {
             /*
                 Using loop instead of 'and()' to work with custom type of predicates
                 and to mitigate possible stack overflow due to undetermined amount of predicates (low probability)
              */
-            for (UserSubstitutionCandidatesFilter p : predicates) {
+            for (UserSubstitutionCandidatePredicate p : predicates) {
                 if (!p.test(user1, user2)) {
                     return false;
                 }

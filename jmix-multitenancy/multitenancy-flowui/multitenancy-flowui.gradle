@@ -24,7 +24,7 @@ dependencies {
     api project(':multitenancy')
 
     api project(':flowui')
-    api project(':security-flowui')
+    compileOnly project(':security-flowui')
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api'

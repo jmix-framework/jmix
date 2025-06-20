@@ -17,22 +17,20 @@
 package io.jmix.multitenancyflowui.impl;
 
 import io.jmix.multitenancy.core.TenantProvider;
-import io.jmix.securityflowui.view.usersubstitution.UserSubstitutionCandidatesFilter;
+import io.jmix.securityflowui.view.usersubstitution.UserSubstitutionCandidatePredicate;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
 /**
- * Implementation of {@link UserSubstitutionCandidatesFilter}
+ * Implementation of {@link UserSubstitutionCandidatePredicate}
  * that allows user to be substituted by user from the same tenant only.
  */
-@Component("mten_SameTenantUserSubstitutionCandidatesFilter")
-public class SameTenantUserSubstitutionCandidatesFilter implements UserSubstitutionCandidatesFilter {
+public class SameTenantUserSubstitutionCandidatePredicate implements UserSubstitutionCandidatePredicate {
 
     protected final TenantProvider tenantProvider;
 
-    public SameTenantUserSubstitutionCandidatesFilter(TenantProvider tenantProvider) {
+    public SameTenantUserSubstitutionCandidatePredicate(TenantProvider tenantProvider) {
         this.tenantProvider = tenantProvider;
     }
 

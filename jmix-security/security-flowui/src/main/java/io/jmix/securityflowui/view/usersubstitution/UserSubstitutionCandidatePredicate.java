@@ -21,8 +21,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.function.BiPredicate;
 
 /**
- * Interface to provide ability to filter user substitution candidates based on target user.
+ * Interface to provide predicate to test the possibility to use some user as substitution based on target user.
  * Accepts the user to be substituted and another user as substitution candidate.
  */
-public interface UserSubstitutionCandidatesFilter extends BiPredicate<UserDetails, UserDetails> {
+public interface UserSubstitutionCandidatePredicate extends BiPredicate<UserDetails, UserDetails> {
 }

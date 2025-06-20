@@ -32,6 +32,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.data.grid.EntityDataGridItems;
 import io.jmix.flowui.model.InstanceContainer;
@@ -162,7 +163,7 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
                 if (cellComponent instanceof HasText hasText) {
                     cellValue = hasText.getText();
                 } else if (cellComponent instanceof HasValue<?,?> hasValue) {
-                    cellValue = hasValue.getValue();
+                    cellValue = UiComponentUtils.getValue(hasValue);
                 }
             }
         }

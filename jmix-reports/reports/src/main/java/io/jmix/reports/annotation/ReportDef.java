@@ -20,6 +20,10 @@ import java.lang.annotation.Target;
  * Delegate methods are methods implementing some logic for the related report element, such as data loading or parameter validation.
  * These methods are declared in the class body and annotated with {@link InputParameterDelegate} or similar annotations.
  * <br/>
+ * Report definition will inherit element annotations and delegate methods from superclasses and implemented interfaces,
+ * if those contain report element declarations.
+ * The only annotation that can't be inherited and must present on the definition class itself is this one - {@link ReportDef}.
+ * <br/>
  * Report definition is a Spring bean, so it can autowire dependencies necessary for implementing logic in delegates.
  * <br/>
  * Model object is {@link io.jmix.reports.entity.Report}.
@@ -79,9 +83,4 @@ public @interface ReportDef {
      * Whether the report is only for internal system use, i.e. it should be hidden in UI.
      */
     boolean system() default false;
-
-    /**
-     * Groovy script to perform cross-parameter validation of input parameters.
-     */
-    String crossValidationScript() default "";
 }

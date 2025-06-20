@@ -16,7 +16,6 @@
 
 package io.jmix.reportsflowui.view.run;
 
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
@@ -29,6 +28,7 @@ import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
+import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -70,7 +70,7 @@ public class ReportRunView extends StandardListView<Report> {
     @ViewComponent
     protected TypedDatePicker<Date> updatedDateFilter;
     @ViewComponent
-    protected FormLayout filterPanel;
+    protected JmixDetails filterDetails;
     @ViewComponent
     protected CollectionLoader<Report> reportsDl;
 
@@ -161,7 +161,7 @@ public class ReportRunView extends StandardListView<Report> {
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         if (this.reports != null) {
-            filterPanel.setVisible(false);
+            filterDetails.setVisible(false);
         }
     }
 

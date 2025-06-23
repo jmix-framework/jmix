@@ -18,9 +18,26 @@ package io.jmix.reports.entity;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.reports.yarg.structure.BandOrientation;
 
+/**
+ * Band orientation. Relevant only for spreadsheet-like output types (XLS, XLSX).
+ * Determines direction where data entries are copied on the sheet.
+ */
 public enum Orientation implements EnumClass<Integer> {
+    /**
+     * Band entries are copied downwards, may contain sub-bands.
+     */
     HORIZONTAL(0, BandOrientation.HORIZONTAL),
+    /**
+     * Band entries are copied to the right.
+     */
     VERTICAL(1, BandOrientation.VERTICAL),
+    /**
+     * Band entries are copied to the right and downwards as a matrix.
+     * The band must contain three datasets:
+     * <li><code>${band_name}_dynamic_header</code> - the data from this dataset is copied to the right like a vertical band with table columns header</li>
+     * <li><code>${band_name}_master_data</code> - the data from this dataset is copied downwards like a horizontal band with table rows header</li>
+     * <li><code>${band_name}</code> - the dataset named the same as the band, it belongs to; it is the main content band that will fulfill the matrix cells.</li>
+     */
     CROSS(2, BandOrientation.CROSS);
 
     private Integer id;

@@ -20,35 +20,43 @@ import io.jmix.reports.yarg.loaders.ReportDataLoader;
 
 import java.util.Objects;
 
+/**
+ * When running a report, datasets are transformed into lists of rows, where each row contains a map of name-value pairs.
+ * Data set type determines source where the data comes from.
+ */
 public enum DataSetType implements EnumClass<Integer> {
 
     /**
-     * SQL query
+     * Data is produced by SQL query.
      */
     SQL(10, "sql"),
 
     /**
-     * JPQL query
+     * Data is produced by JPQL query.
      */
     JPQL(20, "jpql"),
 
     /**
-     * Groovy script
+     * Data is produced by Groovy script.
      */
     GROOVY(30, "groovy"),
 
     /**
-     * Entity
+     * Data consists of a single row,
+     * and is produced using attributes of an input parameter of the {@link ParameterType#ENTITY} type.
      */
     SINGLE(40, "single"),
 
     /**
-     * Entities list
+     * Data is produced using attributes of an entity list, which is taken from input parameters.
+     * Two options are available:
+     * <li>input parameter of the {@link ParameterType#ENTITY_LIST} type is used as a source</li>
+     * <li>sub-collection attribute of the {@link ParameterType#ENTITY} parameter is used as a source</li>
      */
     MULTI(50, "multi"),
 
     /**
-     * json
+     * Data is produced by applying a JsonPath query to a JSON input.
      */
     JSON(60, "json"),
 

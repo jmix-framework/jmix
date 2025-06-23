@@ -53,6 +53,7 @@ import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.accordion.JmixAccordion;
 import io.jmix.flowui.component.accordion.JmixAccordionPanel;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.flowui.component.checkbox.Switch;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
@@ -71,7 +72,6 @@ import io.jmix.flowui.component.richtexteditor.RichTextEditor;
 import io.jmix.flowui.component.scroller.JmixScroller;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.splitlayout.JmixSplitLayout;
-import io.jmix.flowui.component.checkbox.Switch;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -94,6 +94,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Implementation of the {@link UiComponents} interface for creating UI components.
+ */
 @org.springframework.stereotype.Component("flowui_UiComponents")
 public class UiComponentsImpl implements UiComponents {
 

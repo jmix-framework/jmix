@@ -43,6 +43,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Implementation of the {@link KeyValueInstanceLoader} interface for loading key-value entities.
+ */
 public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
 
     @Autowired

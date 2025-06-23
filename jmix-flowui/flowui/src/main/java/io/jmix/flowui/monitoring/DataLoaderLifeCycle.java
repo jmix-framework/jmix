@@ -16,10 +16,27 @@
 
 package io.jmix.flowui.monitoring;
 
+import io.jmix.flowui.model.DataLoader;
+
+/**
+ * Represents the life cycle stages of a {@link DataLoader}. Can be used to establish monitoring points
+ * and to track the specific stages of data loading processes.
+ */
 public enum DataLoaderLifeCycle {
 
+    /**
+     * Represents the stage before data loading begins.
+     */
     PRE_LOAD("preLoad"),
+
+    /**
+     * Represents the actual data loading process.
+     */
     POST_LOAD("postLoad"),
+
+    /**
+     * Represents the stage after data loading is completed.
+     */
     LOAD("load");
 
     private final String name;
@@ -33,6 +50,11 @@ public enum DataLoaderLifeCycle {
         return name;
     }
 
+    /**
+     * Returns the name associated with the current lifecycle stage.
+     *
+     * @return the name of the lifecycle stage
+     */
     public String getName() {
         return name;
     }

@@ -30,9 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
-
+/**
+ * Implementation of the {@link Facets} interface responsible for creating and managing UI facets.
+ */
 @Component("flowui_Facets")
 public class FacetsImpl implements Facets, ApplicationContextAware {
 

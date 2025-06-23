@@ -33,12 +33,16 @@ import io.jmix.flowui.model.InstanceContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 /**
+ * Implementation of the {@link InstanceContainer} interface.
+ * This class represents a container for a single instance of an entity and provides methods
+ * to manage its state, fetch plans, and property change events.
  *
+ * @param <E> the type of the entity contained in the instance container
  */
 public class InstanceContainerImpl<E> implements InstanceContainer<E>, HasLoader, ItemPropertyChangeNotifier {
 
@@ -114,6 +118,11 @@ public class InstanceContainerImpl<E> implements InstanceContainer<E>, HasLoader
         return fetchPlan;
     }
 
+    /**
+     * Sets the {@link FetchPlan} for the instance container.
+     *
+     * @param fetchPlan the {@link FetchPlan} instance to be set
+     */
     public void setFetchPlan(FetchPlan fetchPlan) {
         this.fetchPlan = fetchPlan;
     }

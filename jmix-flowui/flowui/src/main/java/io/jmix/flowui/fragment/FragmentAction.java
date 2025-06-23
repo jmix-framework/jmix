@@ -30,6 +30,12 @@ import org.springframework.lang.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * Represents an abstract action that operates on a specific {@link Fragment}.
+ *
+ * @param <A> the type of the concrete action implementation
+ * @param <C> the type of the target fragment
+ */
 public abstract class FragmentAction<A extends FragmentAction<A, C>, C extends Fragment<?>>
         extends SecuredBaseAction implements TargetAction<C>, ExecutableAction {
 

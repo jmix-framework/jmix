@@ -27,6 +27,9 @@ import org.springframework.core.annotation.Order;
 
 import java.util.List;
 
+/**
+ * A component responsible for binding and applying {@link TreeDataGridSettings} to a {@link TreeDataGrid}.
+ */
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("flowui_TreeDataGridSettingsBinder")
 public class TreeDataGridSettingsBinder extends AbstractGridSettingsBinder<TreeDataGrid<?>, TreeDataGridSettings> {

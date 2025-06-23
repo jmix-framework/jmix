@@ -16,12 +16,7 @@
 package io.jmix.flowui.menu;
 
 import com.google.common.base.Strings;
-import io.jmix.core.JmixModules;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.Resources;
+import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -41,13 +36,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -91,10 +80,22 @@ public class MenuConfig {
         this.metadataTools = metadataTools;
     }
 
+    /**
+     * Returns the title of a menu item based on its identifier.
+     *
+     * @param id the unique identifier of the menu item
+     * @return the title of the menu item
+     */
     public String getItemTitle(String id) {
         return messages.getMessage("menu-config." + id);
     }
 
+    /**
+     * Returns the title of the specified menu item.
+     *
+     * @param menuItem the {@link MenuItem} object representing the menu item
+     * @return the title of the menu item
+     */
     public String getItemTitle(MenuItem menuItem) {
         String title = menuItem.getTitle();
         if (StringUtils.isNotEmpty(title)) {
@@ -566,6 +567,15 @@ public class MenuConfig {
         }
     }
 
+    /**
+     * Finds a {@link MenuItem} by its identifier within a given {@link MenuItem} hierarchy.
+     * This method searches recursively through the children of the menu item to locate
+     * the menu item with the specified identifier. If the item is not found, {@code null} is returned.
+     *
+     * @param id   the identifier of the desired {@link MenuItem}
+     * @param item the root {@link MenuItem} to start the search from
+     * @return the {@link MenuItem} with the specified identifier, or {@code null} if no such item is found
+     */
     @Nullable
     public MenuItem findItem(String id, MenuItem item) {
         if (id.equals(item.getId())) {

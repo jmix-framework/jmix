@@ -16,9 +16,13 @@
 
 package io.jmix.flowui.facet.settings.component;
 
+import com.vaadin.flow.component.details.Details;
 import io.jmix.flowui.facet.settings.Settings;
 import org.springframework.lang.Nullable;
 
+/**
+ * Represents component settings for {@link Details} component.
+ */
 public class JmixDetailsSettings implements Settings {
 
     protected String id;
@@ -35,11 +39,23 @@ public class JmixDetailsSettings implements Settings {
         this.id = id;
     }
 
+    /**
+     * Returns the opened state of the {@link Details} component settings.
+     *
+     * @return {@code true} if the component is opened, {@code false} if it is closed,
+     * or {@code null} if the state is not defined
+     */
     @Nullable
     public Boolean getOpened() {
         return opened;
     }
 
+    /**
+     * Sets the opened state of the {@link Details} component settings.
+     *
+     * @param opened the new opened state; {@code true} if the component is opened,
+     *               {@code false} if it is closed
+     */
     public void setOpened(Boolean opened) {
         this.opened = opened;
     }

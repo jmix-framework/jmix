@@ -38,10 +38,13 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static io.jmix.flowui.monitoring.UiMonitoring.*;
+import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
+import static io.jmix.flowui.monitoring.UiMonitoring.stopDataLoaderTimerSample;
 
 /**
+ * Implementation of the {@link CollectionLoader} interface used for loading entities into a {@link CollectionContainer}.
  *
+ * @param <E> the type of entities being loaded
  */
 public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 

@@ -25,6 +25,11 @@ import org.springframework.lang.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Binder class for managing the settings of {@link SimplePagination} components. This class is
+ * responsible for applying and saving the data loading settings of a {@link SimplePagination}
+ * component, as well as creating and retrieving {@link SimplePaginationSettings}.
+ */
 @org.springframework.stereotype.Component("flowui_SimplePaginationSettingsBinder")
 public class SimplePaginationSettingsBinder implements
         DataLoadingSettingsBinder<SimplePagination, SimplePaginationSettings> {

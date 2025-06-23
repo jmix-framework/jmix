@@ -25,8 +25,18 @@ import org.springframework.lang.Nullable;
  */
 public interface ViewData extends HasDataComponents {
 
+    /**
+     * Returns the identifier of the {@link View}.
+     *
+     * @return the {@link View} identifier, or {@code null} if it is not set.
+     */
     @Nullable
     String getViewId();
 
+    /**
+     * Sets the identifier of the {@link View}.
+     *
+     * @param viewId the identifier of the {@link View} to set, or {@code null} to remove the identifier
+     */
     void setViewId(@Nullable String viewId);
 }

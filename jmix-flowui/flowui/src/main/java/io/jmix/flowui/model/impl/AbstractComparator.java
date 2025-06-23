@@ -27,6 +27,13 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
 
+/**
+ * An abstract class that provides a base implementation for custom comparators.
+ * This class facilitates comparison of objects, supporting different comparison behaviors
+ * based on attributes such as ascending or descending order and handling of {@code null} values.
+ *
+ * @param <T> the type of objects that this comparator can compare
+ */
 public abstract class AbstractComparator<T> implements Comparator<T> {
 
     protected boolean asc;

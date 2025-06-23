@@ -18,6 +18,10 @@ package io.jmix.flowui.model.impl;
 
 import io.jmix.core.entity.EntityValues;
 
+/**
+ * Represents a key for indexing, which can be created from either an entity instance or its identifier.
+ * This class is used to uniquely identify entities or objects in certain contexts.
+ */
 public class IndexKey {
 
     private Object key;

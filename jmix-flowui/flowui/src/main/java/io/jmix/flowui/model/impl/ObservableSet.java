@@ -27,6 +27,11 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+/**
+ * Class that allows observation of changes to the set's contents.
+ *
+ * @param <T> the type of elements maintained by this set
+ */
 public class ObservableSet<T> extends ForwardingSet<T> implements Serializable {
 
     private static final long serialVersionUID = 7237243645914200614L;

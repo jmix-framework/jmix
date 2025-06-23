@@ -42,6 +42,11 @@ public abstract class BaseContainerSorter implements Sorter {
         this.beanFactory = beanFactory;
     }
 
+    /**
+     * Returns the container holding a collection of entity instances.
+     *
+     * @return the {@link CollectionContainer} instance
+     */
     public CollectionContainer<?> getContainer() {
         return container;
     }

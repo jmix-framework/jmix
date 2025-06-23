@@ -27,6 +27,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Abstract implementation of the {@link HasDataComponents} interface providing a base for managing
+ * data-related components such as {@link DataContext}, {@link InstanceContainer}, and {@link DataLoader}.
+ */
 public abstract class AbstractDataComponentsHolder implements HasDataComponents {
 
     protected DataContext dataContext;

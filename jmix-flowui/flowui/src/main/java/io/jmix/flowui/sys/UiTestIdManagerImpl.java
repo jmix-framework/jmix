@@ -26,6 +26,10 @@ import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import org.springframework.lang.Nullable;
 
+/**
+ * Implementation of the {@link UiTestIdManager} interface that generates unique static ID attributes
+ * for UI components for testing purposes.
+ */
 @org.springframework.stereotype.Component("flowui_UiTestIdManagerImpl")
 public class UiTestIdManagerImpl implements UiTestIdManager {
 

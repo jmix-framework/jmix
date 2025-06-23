@@ -28,6 +28,10 @@ import org.springframework.lang.Nullable;
 
 import java.util.List;
 
+/**
+ * Binds the settings for instances of {@link DataGrid}. Manages the process of
+ * persisting and restoring settings for {@link DataGrid} components using {@link DataGridSettings}.
+ */
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("flowui_DataGridSettingsBinder")
 public class DataGridSettingsBinder extends AbstractGridSettingsBinder<DataGrid<?>, DataGridSettings> {

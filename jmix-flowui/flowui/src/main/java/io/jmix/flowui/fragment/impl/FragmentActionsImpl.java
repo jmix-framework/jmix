@@ -16,8 +16,8 @@
 
 package io.jmix.flowui.fragment.impl;
 
-import io.jmix.flowui.fragment.FragmentActions;
 import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentActions;
 import io.jmix.flowui.kit.action.Action;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -26,6 +26,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
+/**
+ * Implementation of {@link FragmentActions} that manages {@link Action actions}
+ * within a {@link Fragment} context.
+ */
 @Component("flowui_FragmentActions")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FragmentActionsImpl implements FragmentActions {

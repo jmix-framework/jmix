@@ -20,7 +20,7 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 
 /**
- * Interface providing methods for managing {@link Action actions} in a view context.
+ * Interface providing methods for managing {@link Action actions} in a {@link View} context.
  */
 public interface ViewActions extends HasActions {
 }

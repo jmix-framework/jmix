@@ -22,10 +22,21 @@ import java.util.function.Supplier;
  * Operation result object.
  */
 public interface OperationResult {
+
+    /**
+     * Returns a predefined {@link OperationResult} that indicates a failed operation.
+     *
+     * @return an {@link OperationResult} representing failure
+     */
     static OperationResult fail() {
         return FailedOperationResult.INSTANCE;
     }
 
+    /**
+     * Returns a predefined {@link OperationResult} that indicates a successful operation.
+     *
+     * @return an {@link OperationResult} representing success
+     */
     static OperationResult success() {
         return SuccessOperationResult.INSTANCE;
     }
@@ -60,9 +71,24 @@ public interface OperationResult {
      */
     OperationResult otherwise(Runnable runnable);
 
+    /**
+     * Represents the possible statuses of an {@link OperationResult}.
+     */
     enum Status {
+
+        /**
+         * Indicates that the status of the operation is unknown.
+         */
         UNKNOWN,
+
+        /**
+         * Indicates that the operation was completed successfully.
+         */
         SUCCESS,
+
+        /**
+         * Indicates that the operation failed.
+         */
         FAIL
     }
 }

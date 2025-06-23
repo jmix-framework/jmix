@@ -39,6 +39,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Implementation of the {@link InstanceLoader} interface. Provides a mechanism for loading
+ * a single entity instance into an associated {@link InstanceContainer}.
+ *
+ * @param <E> type of the entity being loaded
+ */
 public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
 
     @Autowired
@@ -145,6 +151,11 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         return entityId != null || !Strings.isNullOrEmpty(query);
     }
 
+    /**
+     * Creates and configures a {@link LoadContext} instance for retrieving an entity or entities from the data store.
+     *
+     * @return a configured {@link LoadContext} instance for loading entities
+     */
     public LoadContext<E> createLoadContext() {
         Class<E> entityClass = container.getEntityMetaClass().getJavaClass();
 

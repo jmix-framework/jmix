@@ -18,7 +18,21 @@ package io.jmix.flowui.model.impl;
 
 import io.jmix.core.entity.EntityPropertyChangeEvent;
 
+/**
+ * Interface that defines a contract for handling changes to properties of a particular item.
+ * <p>
+ * Implementations of this interface allow the monitoring and reacting to changes in the properties
+ * of entities, facilitating dynamic updates and maintaining consistency between state and data.
+ */
 public interface ItemPropertyChangeNotifier {
 
+    /**
+     * Handles changes to a specific property of an item.
+     * This method is called whenever a property of an item changes, providing details about
+     * the item, the property, and its old and new values.
+     *
+     * @param e an {@link EntityPropertyChangeEvent} object containing information about
+     *          the changed property
+     */
     void itemPropertyChanged(EntityPropertyChangeEvent e);
 }

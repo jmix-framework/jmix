@@ -32,6 +32,7 @@ import org.springframework.lang.Nullable;
  * <pre>{@code Comparator.comparing(e -> e.getValueEx(propertyPath), EntityValuesComparator.of(asc))}</pre>
  */
 public class EntityValuesComparator<T> extends AbstractComparator<T> {
+
     public EntityValuesComparator(boolean asc, MetaClass metaClass, BeanFactory beanFactory) {
         super(asc);
 

@@ -28,6 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
+/**
+ * Implementation of {@link ViewSettingsComponentManager} that applies, saves, and manages settings for components
+ * using {@link ViewSettingsComponentRegistry} and {@link UserSettingsCache}.
+ */
 @Internal
 @org.springframework.stereotype.Component("flowui_ViewSettingsComponentManagerImpl")
 public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentManager {

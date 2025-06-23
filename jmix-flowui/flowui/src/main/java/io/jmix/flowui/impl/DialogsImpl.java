@@ -57,6 +57,9 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Implementation of the {@link Dialogs} interface, providing methods for creating different types of dialogs.
+ */
 @org.springframework.stereotype.Component("flowui_Dialogs")
 public class DialogsImpl implements Dialogs {
 
@@ -132,6 +135,11 @@ public class DialogsImpl implements Dialogs {
         return button;
     }
 
+    /**
+     * Implementation of the {@link OptionDialogBuilder} that enables configuring and building option dialogs.
+     * This class provides a variety of methods to customize the appearance and behavior of the dialog,
+     * including setting headers, content, dimensions, actions, and event listeners.
+     */
     public class OptionDialogBuilderImpl implements OptionDialogBuilder {
 
         protected Dialog dialog;
@@ -454,6 +462,10 @@ public class DialogsImpl implements Dialogs {
         }
     }
 
+    /**
+     * Implementation of the {@link MessageDialogBuilder} interface that provides functionality
+     * for building and configuring a message dialog in a fluent manner.
+     */
     public class MessageDialogBuilderImpl implements MessageDialogBuilder {
 
         protected Dialog dialog;
@@ -734,6 +746,11 @@ public class DialogsImpl implements Dialogs {
         }
     }
 
+    /**
+     * Implementation of the {@link InputDialogBuilder} interface designed to facilitate the creation and customization
+     * of {@link InputDialog} components. This class provides methods to configure dialog properties such as dimensions,
+     * position, input parameters, actions, and other features.
+     */
     public class InputDialogBuilderImpl implements InputDialogBuilder {
 
         protected InputDialog inputDialog;
@@ -832,24 +849,41 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        /**
+         * Returns the collection of {@link InputParameter} objects associated with the {@code InputDialog}.
+         *
+         * @return a collection of {@link InputParameter} objects
+         */
         public Collection<InputParameter> getParameters() {
             return inputDialog.getParameters();
         }
 
+        @Override
         public InputDialogBuilder withResponsiveSteps(List<ResponsiveStep> responsiveSteps) {
             inputDialog.setResponsiveSteps(responsiveSteps);
             return this;
         }
 
+        /**
+         * Returns a list of responsive steps used in the {@code FormLayout} of the {@code InputDialog}.
+         *
+         * @return a {@code List} of {@link ResponsiveStep} objects representing the responsive steps
+         */
         public List<ResponsiveStep> getResponsiveSteps() {
             return inputDialog.getResponsiveSteps();
         }
 
+        @Override
         public InputDialogBuilder withLabelsPosition(LabelsPosition labelsPosition) {
             inputDialog.setLabelsPosition(labelsPosition);
             return this;
         }
 
+        /**
+         * Returns the position of labels for components in the {@link InputDialog}.
+         *
+         * @return the {@link LabelsPosition} of the labels
+         */
         public LabelsPosition getLabelsPosition() {
             return inputDialog.getLabelsPosition();
         }
@@ -866,6 +900,11 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        /**
+         * Returns the collection of {@link Action} objects associated with the {@link InputDialog}.
+         *
+         * @return a collection of {@link Action} objects
+         */
         public Collection<Action> getActions() {
             return inputDialog.getActions();
         }
@@ -883,6 +922,12 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        /**
+         * Returns the predefined dialog actions associated with the input dialog.
+         * By default, this is {@link DialogActions#OK_CANCEL}.
+         *
+         * @return the predefined dialog actions
+         */
         public DialogActions getDialogActions() {
             return inputDialog.getDialogActions();
         }
@@ -898,6 +943,11 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        /**
+         * Returns the validator function associated with the input dialog.
+         *
+         * @return the validator function associated with the input dialog
+         */
         public Function<InputDialog.ValidationContext, ValidationErrors> getValidator() {
             return inputDialog.getValidator();
         }
@@ -915,6 +965,14 @@ public class DialogsImpl implements Dialogs {
         }
     }
 
+    /**
+     * Implementation of {@link BackgroundTaskDialogBuilder} that facilitates creating and managing
+     * dialogs for running background tasks with progress display, cancel functionality,
+     * and customizable UI elements.
+     *
+     * @param <T> the type of the progress update values provided by the task, extending {@link Number}
+     * @param <V> the result type of the background task
+     */
     public class BackgroundTaskDialogBuilderImpl<T extends Number, V> implements BackgroundTaskDialogBuilder<T, V> {
 
         protected Dialog dialog;
@@ -1186,6 +1244,11 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        /**
+         * Constructs and returns a {@link Dialog} instance, configured based on the current state of the builder.
+         *
+         * @return the configured {@link Dialog} instance
+         */
         public Dialog build() {
             if (isIndeterminateMode()) {
                 progressTextSpan.setVisible(false);

@@ -27,5 +27,10 @@ import java.lang.annotation.*;
 @Documented
 public @interface InstallSubject {
 
+    /**
+     * The subject name, e.g. the method name.
+     *
+     * @return the subject name
+     */
     String value();
 }

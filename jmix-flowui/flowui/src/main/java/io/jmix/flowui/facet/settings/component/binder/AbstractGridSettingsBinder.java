@@ -33,6 +33,13 @@ import java.util.Objects;
 
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
+/**
+ * Abstract implementation of the {@link DataLoadingSettingsBinder} interface for handling settings binding and
+ * persistence in a {@link Grid}.
+ *
+ * @param <V> the type of the grid component extending {@link Grid}
+ * @param <S> the type of the grid settings extending {@link DataGridSettings}
+ */
 public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends DataGridSettings>
         implements DataLoadingSettingsBinder<V, S> {
 

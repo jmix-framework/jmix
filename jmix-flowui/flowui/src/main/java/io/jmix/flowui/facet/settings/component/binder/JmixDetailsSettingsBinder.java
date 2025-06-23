@@ -25,6 +25,10 @@ import org.springframework.core.annotation.Order;
 
 import java.util.Objects;
 
+/**
+ * Binder for applying and saving {@link JmixDetailsSettings} to a {@link JmixDetails} component.
+ * This class integrates component settings management by mapping component states to settings and vice versa.
+ */
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("flowui_JmixDetailsSettingsBinder")
 public class JmixDetailsSettingsBinder implements ComponentSettingsBinder<JmixDetails, JmixDetailsSettings> {

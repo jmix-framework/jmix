@@ -46,7 +46,9 @@ import java.util.stream.Collectors;
 @Component("flowui_ListMenuBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ListMenuBuilder {
+
     private static final Logger log = LoggerFactory.getLogger(ListMenuBuilder.class);
+
     protected static final String GENERATED_SEPARATOR_ID_PREFIX = "separator-";
 
     protected MenuConfig menuConfig;
@@ -70,6 +72,12 @@ public class ListMenuBuilder {
         this.menuItemCommands = menuItemCommands;
     }
 
+    /**
+     * Builds and returns a new {@link JmixListMenu} instance by initializing it
+     * with the necessary configuration.
+     *
+     * @return a newly created {@link JmixListMenu} instance
+     */
     public JmixListMenu build() {
         JmixListMenu listMenu = uiComponents.create(JmixListMenu.class);
 
@@ -78,6 +86,12 @@ public class ListMenuBuilder {
         return listMenu;
     }
 
+    /**
+     * Builds the structure for the provided {@link JmixListMenu} by adding menu items
+     * based on the root items defined in the menu configuration.
+     *
+     * @param listMenu the {@link JmixListMenu} instance to build and populate with menu items
+     */
     public void build(JmixListMenu listMenu) {
         List<MenuItem> rootItems = menuConfig.getRootItems();
 
@@ -87,6 +101,16 @@ public class ListMenuBuilder {
         }
     }
 
+    /**
+     * Creates a {@link JmixListMenu.MenuItem} object from the given {@link MenuItem}, which can represent
+     * a menu hierarchy, separator, or an individual menu item. It recursively processes child menu items
+     * if the given {@link MenuItem} is a menu container.
+     *
+     * @param menuItem the {@link MenuItem} representing the menu structure to be converted
+     * @return an {@link Optional} containing the constructed {@link JmixListMenu.MenuItem},
+     * or {@code Optional.empty()} if the item has no children, is not permitted, or represents a
+     * n invalid structure
+     */
     public Optional<JmixListMenu.MenuItem> createListMenu(MenuItem menuItem) {
         if (menuItem.isMenu()) {
             if (menuItem.getChildren().isEmpty()) {
@@ -257,7 +281,13 @@ public class ListMenuBuilder {
         return GENERATED_SEPARATOR_ID_PREFIX + RandomStringUtils.randomAlphanumeric(8);
     }
 
+    /**
+     * A command executor responsible for handling user interactions with {@link ListMenu.MenuItem}
+     * instances. It associates a specific {@link MenuItem} with the corresponding commands and
+     * manages the execution of these commands when an item is selected.
+     */
     public static class MenuCommandExecutor implements Consumer<ListMenu.MenuItem> {
+
         protected final MenuItem item;
         protected final MenuItemCommands menuItemCommands;
 

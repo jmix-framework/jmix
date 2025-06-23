@@ -42,6 +42,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * Implementation of the {@link Fragments} interface responsible for the creation and initialization of
+ * fragments within the UI flow. This class provides utilities for programmatic fragment creation, descriptor
+ * processing, and lifecycle initialization of fragments.
+ */
 @Component("flowui_Fragments")
 public class FragmentsImpl implements Fragments {
 

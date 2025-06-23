@@ -372,23 +372,44 @@ public class RemoveOperation {
             this.handler = actionHandler;
         }
 
+        /**
+         * Sets the {@link ListDataComponent} to be used by the builder.
+         *
+         * @param listDataComponent the {@link ListDataComponent} instance to be associated with this builder
+         * @return the current instance for method chaining
+         */
         public RemoveBuilder<E> withListDataComponent(ListDataComponent<E> listDataComponent) {
             this.listDataComponent = listDataComponent;
             return this;
         }
 
+        /**
+         * Sets the {@link CollectionContainer} to be used by the builder.
+         *
+         * @param container the {@link CollectionContainer} instance to be associated with this builder
+         * @return the current instance for method chaining
+         */
         public RemoveBuilder<E> withContainer(CollectionContainer<E> container) {
             this.container = container;
             return this;
         }
 
+        /**
+         * Sets the items to be removed by the builder.
+         *
+         * @param items the list of items to be removed
+         * @return the current instance for method chaining
+         */
         public RemoveBuilder<E> withItems(List<E> items) {
             this.items = items;
             return this;
         }
 
         /**
-         * Sets whether to ask confirmation from the user.
+         * Sets whether a confirmation dialog is required before performing the remove operation.
+         *
+         * @param confirmation {@code true} to enable confirmation dialog, {@code false} to disable it
+         * @return the current instance for method chaining
          */
         public RemoveBuilder<E> withConfirmation(boolean confirmation) {
             this.confirmation = confirmation;
@@ -396,7 +417,10 @@ public class RemoveOperation {
         }
 
         /**
-         * Sets confirmation dialog message.
+         * Sets the confirmation message to be displayed in the confirmation dialog for the remove operation.
+         *
+         * @param confirmationMessage the confirmation message to be displayed
+         * @return the current instance for method chaining
          */
         public RemoveBuilder<E> withConfirmationMessage(String confirmationMessage) {
             this.confirmationMessage = confirmationMessage;
@@ -404,87 +428,175 @@ public class RemoveOperation {
         }
 
         /**
-         * Sets confirmation dialog title.
+         * Sets the confirmation title to be displayed in the confirmation dialog for the remove operation.
+         *
+         * @param confirmationTitle the confirmation title to be displayed
+         * @return the current instance for method chaining
          */
         public RemoveBuilder<E> withConfirmationTitle(String confirmationTitle) {
             this.confirmationTitle = confirmationTitle;
             return this;
         }
 
+        /**
+         * Sets a handler to be invoked before the action is performed.
+         *
+         * @param handler a handler to set
+         * @return the current instance for method chaining
+         */
         public RemoveBuilder<E> beforeActionPerformed(Consumer<BeforeActionPerformedEvent<E>> handler) {
             this.beforeActionPerformedHandler = handler;
             return this;
         }
 
+        /**
+         * Sets a handler to be invoked after the action is performed.
+         *
+         * @param handler a handler to set
+         * @return the current instance for method chaining
+         */
         public RemoveBuilder<E> afterActionPerformed(Consumer<AfterActionPerformedEvent<E>> handler) {
             this.afterActionPerformedHandler = handler;
             return this;
         }
 
+        /**
+         * Sets a handler to be invoked when the remove operation is cancelled by the user in the confirmation dialog.
+         *
+         * @param handler a handler to set
+         * @return the current instance for method chaining
+         */
         public RemoveBuilder<E> onCancel(Consumer<ActionCancelledEvent<E>> handler) {
             this.actionCancelledHandler = handler;
             return this;
         }
 
         /**
-         * Sets the delegate to be invoked instead of DataManager to remove the entities from a storage.
+         * Sets the delegate to be invoked instead of {@link DataManager} to remove the entities from a storage.
+         *
+         * @param removeDelegate a delegate to set
+         * @return the current instance for method chaining
          */
         public RemoveBuilder<E> withRemoveDelegate(Consumer<Collection<E>> removeDelegate) {
             this.removeDelegate = removeDelegate;
             return this;
         }
 
+        /**
+         * Returns the {@link ListDataComponent} associated with this builder.
+         *
+         * @return the {@link ListDataComponent} instance, or {@code null} if not set
+         */
         @Nullable
         public ListDataComponent<E> getListDataComponent() {
             return listDataComponent;
         }
 
+        /**
+         * Returns the {@link CollectionContainer} associated with this builder.
+         *
+         * @return the {@link CollectionContainer} instance, or {@code null} if not set
+         */
         @Nullable
         public CollectionContainer<E> getContainer() {
             return container;
         }
 
+        /**
+         * Returns the list of items to be removed associated with this builder.
+         *
+         * @return the list of items, or {@code null} if no items are set
+         */
         @Nullable
         public List<E> getItems() {
             return items;
         }
 
+        /**
+         * Returns the confirmation title to be displayed in the confirmation dialog for the remove operation.
+         *
+         * @return the confirmation title, or {@code null} if not set
+         */
         @Nullable
         public String getConfirmationTitle() {
             return confirmationTitle;
         }
 
+        /**
+         * Returns the confirmation message to be displayed in the confirmation dialog for the remove operation.
+         *
+         * @return the confirmation message, or {@code null} if not set
+         */
         @Nullable
         public String getConfirmationMessage() {
             return confirmationMessage;
         }
 
+        /**
+         * Returns whether a confirmation dialog is required before performing the remove operation.
+         *
+         * @return {@code true} if a confirmation dialog is required; {@code false} otherwise
+         */
         public boolean isConfirmationRequired() {
             return confirmation;
         }
 
+        /**
+         * Returns the {@link View} associated with this builder.
+         *
+         * @return the {@link View} instance
+         */
         public View<?> getOrigin() {
             return origin;
         }
 
+        /**
+         * Returns the class of the entity associated with this builder.
+         *
+         * @return the {@link Class} of the entity
+         */
         public Class<E> getEntityClass() {
             return entityClass;
         }
 
+        /**
+         * Returns the {@link Operation} associated with this builder.
+         *
+         * @return the {@link Operation} instance
+         */
         public Operation getOperation() {
             return operation;
         }
 
+        /**
+         * Returns the handler to be invoked before the action is performed.
+         *
+         * @return the handler to be invoked before the action is performed,
+         * or {@code null} if no handler is set
+         */
         @Nullable
         public Consumer<BeforeActionPerformedEvent<E>> getBeforeActionPerformedHandler() {
             return beforeActionPerformedHandler;
         }
 
+        /**
+         * Returns the handler to be invoked after the action is performed.
+         *
+         * @return the handler to be invoked after the action is performed,
+         * or {@code null} if no handler is set
+         */
         @Nullable
         public Consumer<AfterActionPerformedEvent<E>> getAfterActionPerformedHandler() {
             return afterActionPerformedHandler;
         }
 
+        /**
+         * Returns the handler to be invoked when the remove operation is cancelled
+         * by the user in the confirmation dialog.
+         *
+         * @return the handler to be invoked upon removal cancellation,
+         * or {@code null} if no handler is set
+         */
         @Nullable
         public Consumer<ActionCancelledEvent<E>> getActionCancelledHandler() {
             return actionCancelledHandler;
@@ -509,8 +621,19 @@ public class RemoveOperation {
         }
     }
 
-    protected enum Operation {
+    /**
+     * Represents the possible operations that can be performed by {@link RemoveOperation}.
+     */
+    public enum Operation {
+
+        /**
+         * Removes selected items from from the database.
+         */
         REMOVE,
+
+        /**
+         * Excludes selected items from relation: One-To-Many or Many-To-Many
+         */
         EXCLUDE
     }
 
@@ -518,6 +641,7 @@ public class RemoveOperation {
      * Event sent before selected entities are removed.
      */
     public static class BeforeActionPerformedEvent<E> extends EventObject {
+
         protected final List<E> items;
         protected boolean actionPrevented = false;
 
@@ -558,6 +682,7 @@ public class RemoveOperation {
      * Event sent after selected entities are removed.
      */
     public static class AfterActionPerformedEvent<E> extends EventObject {
+
         protected final List<E> items;
 
         public AfterActionPerformedEvent(View<?> origin, List<E> items) {
@@ -583,6 +708,7 @@ public class RemoveOperation {
      * Event sent when the remove operation is cancelled by user in the confirmation dialog.
      */
     public static class ActionCancelledEvent<E> extends EventObject {
+
         protected final List<E> items;
 
         public ActionCancelledEvent(View<?> origin, List<E> items) {

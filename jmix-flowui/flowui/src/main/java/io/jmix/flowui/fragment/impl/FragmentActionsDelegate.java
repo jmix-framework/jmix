@@ -21,6 +21,10 @@ import io.jmix.flowui.fragment.FragmentAction;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.delegate.AbstractActionsHolderSupport;
 
+/**
+ * Manages and binds {@link Action} instances for a {@link Fragment} component. This class ensures that
+ * {@link FragmentAction} instances are properly attached and detached from their target component.
+ */
 public class FragmentActionsDelegate extends AbstractActionsHolderSupport<Fragment<?>> {
 
     public FragmentActionsDelegate(Fragment<?> component) {

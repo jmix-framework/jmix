@@ -16,6 +16,12 @@
 
 package io.jmix.flowui.facet.settings;
 
+import io.jmix.flowui.view.View;
+
+/**
+ * Abstract base class that partially implements the {@link ViewSettings} interface
+ * and provides common functionality related to managing settings for a specific {@link View}.
+ */
 public abstract class AbstractViewSettings implements ViewSettings {
 
     protected String viewId;

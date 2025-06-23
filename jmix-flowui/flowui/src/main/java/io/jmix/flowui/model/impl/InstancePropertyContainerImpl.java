@@ -20,6 +20,13 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.InstancePropertyContainer;
 
+/**
+ * An implementation of the {@link InstancePropertyContainer} interface.
+ * This class represents a container that holds a single instance of an entity, which is loaded
+ * as a property of another entity.
+ *
+ * @param <E> the type of the entity contained in the instance property container
+ */
 public class InstancePropertyContainerImpl<E>
         extends InstanceContainerImpl<E> implements InstancePropertyContainer<E> {
 

@@ -28,12 +28,6 @@ public @interface DataSetDef {
      */
     String name() default "";
 
-//    /**
-//     * Groovy script that loads data, for {@link DataSetType#GROOVY} type.
-//     * Note: consider declaring {@link ReportDataLoader} delegate instead.
-//     */
-//    String script() default "";
-
     /**
      * Type that determines how band data will be obtained.
      * Note: GROOVY is not supported here, use DELEGATE instead.

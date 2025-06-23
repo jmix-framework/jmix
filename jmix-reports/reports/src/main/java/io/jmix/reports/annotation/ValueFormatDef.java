@@ -34,10 +34,4 @@ public @interface ValueFormatDef {
      * Built-in formats for inserting an image, html blocks and others are also available - check the documentation.
      */
     String format() default "";
-
-//    /**
-//     * Groovy script formatting the field value.
-//     * Note: Consider using {@link io.jmix.reports.yarg.structure.CustomValueFormatter} delegate instead.
-//     */
-//    String script() default "";
 }

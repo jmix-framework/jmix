@@ -35,15 +35,4 @@ public @interface CustomTemplateParameters {
      * Script that accepts parameters map and returns a URL that be called for to generate the output.
      */
     String urlScript() default "";
-//
-//    /**
-//     * Class to be instantiated and invoked for output generation.
-//     * @see CustomReport
-//     */
-//    Class<? extends CustomReport> class_() default CustomReport.class;
-//
-//    /**
-//     * Groovy script text that will be evaluated for output generation.
-//     */
-//    String script() default "";
 }

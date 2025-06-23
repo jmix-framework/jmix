@@ -26,11 +26,6 @@ public @interface JsonDataSetParameters {
      */
     JsonSourceType source() default JsonSourceType.URL;
 
-//    /**
-//     * Groovy script text returning JSON content, for {@link JsonSourceType#GROOVY_SCRIPT} source.
-//     */
-//    String script() default "";
-
     /**
      * URL where the JSON input will be loaded from, for {@link JsonSourceType#URL} source.
      */

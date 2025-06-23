@@ -19,7 +19,6 @@ package io.jmix.reportsflowui.test_support.report;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.reports.annotation.*;
-import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.yarg.structure.DefaultValueProvider;
@@ -44,8 +43,7 @@ import io.jmix.reportsflowui.test_support.entity.Publisher;
 )
 @BandDef(
         name = "Root",
-        root = true,
-        orientation = Orientation.HORIZONTAL
+        root = true
 )
 @TemplateDef(
         code = "default",

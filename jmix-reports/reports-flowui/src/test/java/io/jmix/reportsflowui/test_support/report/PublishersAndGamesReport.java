@@ -21,7 +21,6 @@ import io.jmix.reports.annotation.*;
 import io.jmix.reports.delegate.ParameterValidator;
 import io.jmix.reports.delegate.ParametersCrossValidator;
 import io.jmix.reports.entity.DataSetType;
-import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.exception.ReportParametersValidationException;
@@ -54,13 +53,11 @@ import java.util.Date;
 )
 @BandDef(
         name = "Root",
-        root = true,
-        orientation = Orientation.HORIZONTAL
+        root = true
 )
 @BandDef(
         name = "Publishers",
         parent = "Root",
-        orientation = Orientation.HORIZONTAL,
         dataSets = @DataSetDef(
                 type = DataSetType.JPQL,
                 query = """
@@ -77,7 +74,6 @@ import java.util.Date;
 @BandDef(
         name = "Games",
         parent = "Root",
-        orientation = Orientation.HORIZONTAL,
         dataSets = @DataSetDef(
                 type = DataSetType.JPQL,
                 query = """

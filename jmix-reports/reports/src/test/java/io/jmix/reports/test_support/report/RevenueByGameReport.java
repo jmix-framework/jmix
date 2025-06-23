@@ -3,7 +3,6 @@ package io.jmix.reports.test_support.report;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.reports.annotation.*;
 import io.jmix.reports.entity.DataSetType;
-import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.test_support.entity.GameTitle;
@@ -50,7 +49,6 @@ import java.util.stream.Collectors;
 @BandDef(
         name = "Root",
         root = true,
-        orientation = Orientation.HORIZONTAL,
         dataSets = @DataSetDef(
                 name = "Root",
                 type = DataSetType.DELEGATE
@@ -59,7 +57,6 @@ import java.util.stream.Collectors;
 @BandDef(
         name = "Data",
         parent = "Root",
-        orientation = Orientation.HORIZONTAL,
         dataSets = @DataSetDef(
                 name = "Data",
                 type = DataSetType.DELEGATE

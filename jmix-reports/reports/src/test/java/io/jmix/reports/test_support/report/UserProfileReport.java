@@ -44,13 +44,11 @@ import java.util.Map;
 )
 @BandDef(
         name = "Root",
-        root = true,
-        orientation = Orientation.HORIZONTAL
+        root = true
 )
 @BandDef(
         name = "UserData",
         parent = "Root",
-        orientation = Orientation.HORIZONTAL,
         dataSets = @DataSetDef(
                 type = DataSetType.SINGLE,
                 entity = @EntityDataSetDef(
@@ -62,7 +60,6 @@ import java.util.Map;
 @BandDef(
         name = "GameData",
         parent = "UserData",
-        orientation = Orientation.HORIZONTAL,
         dataSets = @DataSetDef(
                 name = "GameData",
                 type = DataSetType.MULTI,

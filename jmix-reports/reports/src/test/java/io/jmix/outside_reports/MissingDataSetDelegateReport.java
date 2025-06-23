@@ -21,7 +21,6 @@ import io.jmix.reports.annotation.DataSetDef;
 import io.jmix.reports.annotation.ReportDef;
 import io.jmix.reports.annotation.TemplateDef;
 import io.jmix.reports.entity.DataSetType;
-import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.ReportOutputType;
 
 @ReportDef(
@@ -31,7 +30,6 @@ import io.jmix.reports.entity.ReportOutputType;
 @BandDef(
         name = "Root",
         root = true,
-        orientation = Orientation.HORIZONTAL,
         dataSets = @DataSetDef(
                 name = "root",
                 type = DataSetType.DELEGATE // no delegate method defined

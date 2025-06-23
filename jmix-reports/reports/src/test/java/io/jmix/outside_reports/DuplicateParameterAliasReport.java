@@ -16,13 +16,12 @@
 
 package io.jmix.outside_reports;
 
-import io.jmix.reports.annotation.*;
-import io.jmix.reports.entity.DataSetType;
-import io.jmix.reports.entity.Orientation;
+import io.jmix.reports.annotation.BandDef;
+import io.jmix.reports.annotation.InputParameterDef;
+import io.jmix.reports.annotation.ReportDef;
+import io.jmix.reports.annotation.TemplateDef;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportOutputType;
-
-import java.util.Comparator;
 
 @ReportDef(
         name = "Some name",
@@ -42,8 +41,7 @@ import java.util.Comparator;
 )
 @BandDef(
         name = "Root",
-        root = true,
-        orientation = Orientation.HORIZONTAL
+        root = true
 )
 @TemplateDef(
         code = "default",

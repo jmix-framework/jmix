@@ -18,7 +18,6 @@ package io.jmix.outside_reports;
 
 import io.jmix.reports.annotation.*;
 import io.jmix.reports.entity.DataSetType;
-import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.test_support.entity.UserRegistration;
@@ -39,7 +38,6 @@ import io.jmix.reports.test_support.entity.UserRegistration;
 @BandDef(
         name = "Root",
         root = true,
-        orientation = Orientation.HORIZONTAL,
         dataSets = @DataSetDef(
                 type = DataSetType.SINGLE,
                 entity = @EntityDataSetDef(

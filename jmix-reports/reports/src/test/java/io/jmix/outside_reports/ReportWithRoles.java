@@ -1,7 +1,9 @@
 package io.jmix.outside_reports;
 
-import io.jmix.reports.annotation.*;
-import io.jmix.reports.entity.Orientation;
+import io.jmix.reports.annotation.AvailableForRoles;
+import io.jmix.reports.annotation.BandDef;
+import io.jmix.reports.annotation.ReportDef;
+import io.jmix.reports.annotation.TemplateDef;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.test_support.role.TestResourceRole1;
 import io.jmix.reports.test_support.role.TestResourceRole2;
@@ -12,8 +14,7 @@ import io.jmix.reports.test_support.role.TestResourceRole2;
 )
 @BandDef(
         name = "Root",
-        root = true,
-        orientation = Orientation.HORIZONTAL
+        root = true
 )
 @TemplateDef(
         code = "default",

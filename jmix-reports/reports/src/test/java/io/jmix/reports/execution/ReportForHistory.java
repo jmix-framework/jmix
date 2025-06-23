@@ -18,7 +18,6 @@ package io.jmix.reports.execution;
 
 import io.jmix.reports.annotation.*;
 import io.jmix.reports.entity.DataSetType;
-import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
@@ -40,13 +39,11 @@ import java.util.Map;
 )
 @BandDef(
         name = "Root",
-        root = true,
-        orientation = Orientation.HORIZONTAL
+        root = true
 )
 @BandDef(
         name = "Data",
         parent = "Root",
-        orientation = Orientation.HORIZONTAL,
         dataSets = @DataSetDef(
                 name = "Data",
                 type = DataSetType.DELEGATE

@@ -24,13 +24,11 @@ import io.jmix.reports.yarg.structure.DefaultValueProvider;
 )
 @BandDef(
         name = "Root",
-        root = true,
-        orientation = Orientation.HORIZONTAL
+        root = true
 )
 @BandDef(
         name = "Data",
         parent = "Root",
-        orientation = Orientation.HORIZONTAL,
         dataSets = {
                 @DataSetDef(
                         name = "Entity",

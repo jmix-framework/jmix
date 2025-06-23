@@ -19,7 +19,6 @@ package io.jmix.outside_reports;
 import io.jmix.reports.annotation.BandDef;
 import io.jmix.reports.annotation.ReportDef;
 import io.jmix.reports.annotation.TemplateDef;
-import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.ReportOutputType;
 
 @ReportDef(
@@ -27,8 +26,7 @@ import io.jmix.reports.entity.ReportOutputType;
         code = "some-code"
 )
 @BandDef(
-        name = "header",
-        orientation = Orientation.HORIZONTAL
+        name = "header"
 )
 @TemplateDef(
         code = "default",

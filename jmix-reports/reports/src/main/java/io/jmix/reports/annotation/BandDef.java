@@ -34,9 +34,9 @@ public @interface BandDef {
     String parent() default "";
 
     /**
-     * @return band orientation
+     * @return band orientation, applicable to spreadsheet-like output types.
      */
-    Orientation orientation();
+    Orientation orientation() default Orientation.HORIZONTAL;
 
     /**
      * Datasets of the band. May be empty if the band has no data.

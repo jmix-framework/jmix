@@ -24,7 +24,7 @@ import io.jmix.reports.yarg.structure.BandOrientation;
  */
 public enum Orientation implements EnumClass<Integer> {
     /**
-     * Band entries are copied downwards, may contain sub-bands.
+     * Band entries are copied downwards.
      */
     HORIZONTAL(0, BandOrientation.HORIZONTAL),
     /**

@@ -16,10 +16,8 @@
 
 package io.jmix.outside_reports;
 
-import io.jmix.reports.annotation.BandDef;
 import io.jmix.reports.annotation.ReportDef;
 import io.jmix.reports.annotation.TemplateDef;
-import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.ReportOutputType;
 
 @ReportDef(

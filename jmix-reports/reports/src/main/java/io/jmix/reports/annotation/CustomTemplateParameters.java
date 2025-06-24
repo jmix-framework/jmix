@@ -29,7 +29,7 @@ public @interface CustomTemplateParameters {
      * Specify how custom template is invoked.
      * Note: SCRIPT and CLASS are not supported here, use DELEGATE instead.
      */
-    CustomTemplateDefinedBy definedBy() default CustomTemplateDefinedBy.SCRIPT;
+    CustomTemplateDefinedBy definedBy() default CustomTemplateDefinedBy.DELEGATE;
 
     /**
      * Script that accepts parameters map and returns a URL that be called for to generate the output.

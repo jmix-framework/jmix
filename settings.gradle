@@ -159,9 +159,6 @@ includeProject('superset-flowui', 'jmix-superset/superset-flowui')
 includeProject('superset-flowui-kit', 'jmix-superset/superset-flowui-kit')
 includeProject('superset-flowui-starter', 'jmix-superset/superset-flowui-starter')
 
-includeProject('tabbedmode-flowui', 'jmix-tabbedmode/tabbedmode-flowui')
-includeProject('tabbedmode-flowui-starter', 'jmix-tabbedmode/tabbedmode-flowui-starter')
-
 includeProject('pivottable-flowui', 'jmix-pivottable/pivottable-flowui')
 includeProject('pivottable-flowui-kit', 'jmix-pivottable/pivottable-flowui-kit')
 includeProject('pivottable-flowui-starter', 'jmix-pivottable/pivottable-flowui-starter')

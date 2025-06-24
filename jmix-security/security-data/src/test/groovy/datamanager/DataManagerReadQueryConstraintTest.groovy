@@ -258,6 +258,7 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
         when:
         var infosByIssues = dataManager.load(OrderInfo)
                 .query("select i.orderInfo from test_Issue i")
+                .fetchPlan(b -> b.add("order.number"))
                 .list()
 
         then:

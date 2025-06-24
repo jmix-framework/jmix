@@ -84,7 +84,12 @@ public class DatabaseRolePersistence implements RolePersistence {
             }
 
         } else {
-            ResourceRoleEntity roleEntity = dataManager.load(ResourceRoleEntity.class).id(roleModel.getId()).one();
+            ResourceRoleEntity roleEntity = dataManager.load(ResourceRoleEntity.class)
+                    .id(roleModel.getId())
+                    .fetchPlan(b->b
+                            .addFetchPlan(FetchPlan.LOCAL)
+                            .add("resourcePolicies", FetchPlan.LOCAL))
+                    .one();
             resourceRoleModelToEntity(roleModel, roleEntity);
             saveContext.saving(roleEntity);
 
@@ -135,7 +140,12 @@ public class DatabaseRolePersistence implements RolePersistence {
             }
 
         } else {
-            RowLevelRoleEntity roleEntity = dataManager.load(RowLevelRoleEntity.class).id(roleModel.getId()).one();
+            RowLevelRoleEntity roleEntity = dataManager.load(RowLevelRoleEntity.class)
+                    .id(roleModel.getId())
+                    .fetchPlan(b->b
+                            .addFetchPlan(FetchPlan.LOCAL)
+                            .add("rowLevelPolicies", FetchPlan.LOCAL))
+                    .one();
             rowLevelRoleModelToEntity(roleModel, roleEntity);
             saveContext.saving(roleEntity);
 

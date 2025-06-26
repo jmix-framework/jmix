@@ -18,6 +18,10 @@ package io.jmix.flowui.sys;
 
 import io.jmix.core.annotation.Internal;
 
+/**
+ * Represents an internal definition of an action, encapsulating its unique identifier
+ * and associated action class.
+ */
 @Internal
 public final class ActionDefinition {
 
@@ -29,10 +33,20 @@ public final class ActionDefinition {
         this.actionClass = actionClass;
     }
 
+    /**
+     * Returns the unique identifier.
+     *
+     * @return the unique identifier
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the action class associated with this action definition.
+     *
+     * @return the action class
+     */
     public String getActionClass() {
         return actionClass;
     }

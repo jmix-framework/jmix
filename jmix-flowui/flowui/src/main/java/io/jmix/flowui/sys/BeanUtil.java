@@ -22,12 +22,22 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * Utility class for working with Spring application context and bean initialization.
+ */
 @Internal
 public final class BeanUtil {
 
     private BeanUtil() {
     }
 
+    /**
+     * Autowires the specified instance using the {@link ApplicationContext} and performs additional lifecycle
+     * operations if the instance implements specific Spring interfaces.
+     *
+     * @param applicationContext the {@link ApplicationContext} used for dependency injection
+     * @param instance           the instance to be wired and initialized
+     */
     public static void autowireContext(ApplicationContext applicationContext, Object instance) {
         AutowireCapableBeanFactory autowireBeanFactory = applicationContext.getAutowireCapableBeanFactory();
         autowireBeanFactory.autowireBean(instance);

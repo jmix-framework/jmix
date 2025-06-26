@@ -29,9 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -85,6 +85,15 @@ public class XmlInheritanceProcessor {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Retrieves the root of the resulting {@link Element}, taking into account any inheritance
+     * from an ancestor template if specified. If the current document's root element specifies
+     * an "extends" attribute, the method resolves the ancestor template, merges it with
+     * the current template, and processes inheritance. If no "extends" attribute is present,
+     * the root of the current document is returned as is.
+     *
+     * @return the root {@link Element} of the resulting XML structure
+     */
     public Element getResultRoot() {
         Element result;
 
@@ -215,6 +224,7 @@ public class XmlInheritanceProcessor {
 
     protected interface ElementTargetLocator {
         boolean suitableFor(Element extElem);
+
         @Nullable
         Element locate(Element resultParentElem, Element extElem);
     }

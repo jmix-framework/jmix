@@ -21,16 +21,13 @@ import io.jmix.core.JmixModules;
 import io.jmix.core.annotation.Internal;
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
  * Provides base functionality to sort the list of scan configurations in the same order as Jmix modules have been sorted
  * using configuration base packages.
+ *
  * @param <T> type of specific scan configuration
  */
 @Internal
@@ -42,6 +39,12 @@ public abstract class AbstractBasePackageConfigurationSorter<T extends AbstractS
         this.jmixModules = jmixModules;
     }
 
+    /**
+     * Sorts the given list of configurations based on the order of their associated Jmix modules.
+     *
+     * @param configurations the list of configurations to be sorted
+     * @return a new list containing the sorted configurations
+     */
     public List<T> sort(List<T> configurations) {
         List<T> sortedConfigurations = new ArrayList<>(configurations);
         List<JmixModuleDescriptor> sortedJmixModuleDescriptors = jmixModules.getAll();

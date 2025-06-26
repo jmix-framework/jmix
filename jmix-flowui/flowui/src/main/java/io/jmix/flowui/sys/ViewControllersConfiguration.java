@@ -54,26 +54,52 @@ public class ViewControllersConfiguration extends AbstractScanConfiguration {
         this.metadataReaderFactory = metadataReaderFactory;
     }
 
+    /**
+     * Returns the list of base packages to be scanned for {@link ViewController}s.
+     *
+     * @return a {@link List} of base package names
+     */
     public List<String> getBasePackages() {
         return basePackages;
     }
 
+    /**
+     * Sets the list of base packages to be scanned for {@link ViewController}s.
+     *
+     * @param basePackages a list of package names to be scanned
+     */
     public void setBasePackages(List<String> basePackages) {
         checkNotNullArgument(basePackages);
 
         this.basePackages = basePackages;
     }
 
+    /**
+     * Returns the list of explicitly defined {@link ViewControllerDefinition} instances.
+     *
+     * @return a list of {@link ViewControllerDefinition} objects
+     */
     public List<ViewControllerDefinition> getExplicitDefinitions() {
         return explicitDefinitions;
     }
 
+    /**
+     * Sets the list of explicitly defined {@link ViewControllerDefinition} instances.
+     *
+     * @param explicitDefinitions a list of {@link ViewControllerDefinition} instances to set
+     */
     public void setExplicitDefinitions(List<ViewControllerDefinition> explicitDefinitions) {
         checkNotNullArgument(explicitDefinitions);
 
         this.explicitDefinitions = explicitDefinitions;
     }
 
+    /**
+     * Returns a list of {@link ViewControllerDefinition} objects that are composed by scanning the specified base
+     * packages and combining the results with explicitly defined {@link ViewControllerDefinition} instances.
+     *
+     * @return a list of {@link ViewControllerDefinition} instances
+     */
     public List<ViewControllerDefinition> getViewControllers() {
         log.trace("Scanning packages {}", basePackages);
 

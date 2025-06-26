@@ -54,6 +54,11 @@ import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
 import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
 import static io.jmix.flowui.view.ViewControllerUtils.getPackage;
 
+/**
+ * Provides support and utility methods for managing views within the application. This class
+ * handles view initialization, backward navigation management, localized title handling, and
+ * lifecycle events for views, among other responsibilities.
+ */
 @Internal
 @Component("flowui_ViewSupport")
 public class ViewSupport {
@@ -89,6 +94,13 @@ public class ViewSupport {
         this.meterRegistry = meterRegistry;
     }
 
+    /**
+     * Initializes and sets up the given {@link View}.
+     * Performs tasks such as setting IDs, loading XML configurations, injecting dependencies,
+     * and triggering relevant lifecycle events for the view.
+     *
+     * @param view the view instance to initialize
+     */
     public void initView(View<?> view) {
         log.debug("Init view: " + view);
 
@@ -151,10 +163,27 @@ public class ViewSupport {
         componentLoaderContext.executeInitTasks();
     }
 
+    /**
+     * Registers a backward navigation target for a specific view class.
+     * This allows the application to support navigation actions such as returning
+     * to a previous view.
+     *
+     * @param viewClass the type of the view for which backward navigation is being registered
+     * @param url       the {@link URL} used as the navigation target for this view
+     */
     public void registerBackwardNavigation(Class<? extends View> viewClass, URL url) {
         registerBackwardNavigation(UI.getCurrent(), viewClass, url);
     }
 
+    /**
+     * Registers backward navigation for a specific view in the given UI.
+     * This enables the application to support navigation actions, such as navigating
+     * back to a previous view, by associating the view with a specific URL.
+     *
+     * @param ui        the {@link UI} instance to register the backward navigation for
+     * @param viewClass the class of the view to associate with backward navigation
+     * @param url       the {@link URL} that will be used as the navigation target for the view
+     */
     public void registerBackwardNavigation(UI ui, Class<? extends View> viewClass, URL url) {
         retrieveExtendedClientDetails(ui, details ->
                 registerBackwardNavigation(ui.getSession(), details.getWindowName(),
@@ -174,15 +203,44 @@ public class ViewSupport {
         session.setAttribute(BackwardNavigationTargets.class, targets);
     }
 
+    /**
+     * Unregisters backward navigation for the specified view.
+     * This removes the association between the view and any previously
+     * registered backward navigation targets, thus disabling the ability
+     * to navigate back to the view via backward navigation.
+     *
+     * @param view the {@link View} instance for which backward navigation is to be unregistered
+     */
     public void unregisterBackwardNavigation(View<?> view) {
         UI ui = view.getUI().orElse(UI.getCurrent());
         unregisterBackwardNavigation(ui, view.getClass());
     }
 
+    /**
+     * Unregisters backward navigation for the specified view class.
+     * This removes the association between the view class and any previously
+     * registered backward navigation targets, disabling backward navigation
+     * for that particular view class.
+     *
+     * @param viewClass the class of the {@link View} for which backward navigation
+     *                  is to be unregistered
+     */
     public void unregisterBackwardNavigation(Class<? extends View> viewClass) {
         unregisterBackwardNavigation(UI.getCurrent(), viewClass);
     }
 
+    /**
+     * Unregisters backward navigation for the specified UI and view class.
+     * This removes the association between the view class and any previously
+     * registered backward navigation targets for the provided {@link UI},
+     * thereby disabling the ability to navigate back to this view class
+     * in the given UI context.
+     *
+     * @param ui        the {@link UI} instance for which the backward navigation
+     *                  is to be unregistered
+     * @param viewClass the class of the {@link View} for which backward navigation
+     *                  is to be unregistered
+     */
     public void unregisterBackwardNavigation(UI ui, Class<? extends View> viewClass) {
         log.debug("Attempt to unregister backward navigation for '{}'", viewClass);
 
@@ -332,19 +390,43 @@ public class ViewSupport {
         return localizedTitle;
     }
 
+    /**
+     * Closes the specified {@link View}.
+     *
+     * @param view the {@link View} instance to be closed
+     */
     public void close(View<?> view) {
         close(view, QueryParameters.empty());
     }
 
+    /**
+     * Closes the specified {@link View} with the specified {@link QueryParameters}.
+     *
+     * @param view         the {@link View} instance to be closed
+     * @param returnParams the {@link QueryParameters} to be passed upon closing the view
+     */
     public void close(View<?> view, QueryParameters returnParams) {
         UI ui = view.getUI().orElse(UI.getCurrent());
         close(ui, view, returnParams);
     }
 
+    /**
+     * Closes the specified {@link View} in the context of the provided {@link UI}.
+     *
+     * @param ui   the {@link UI} instance
+     * @param view the {@link View} instance to be closed
+     */
     public void close(UI ui, View<?> view) {
         close(ui, view, QueryParameters.empty());
     }
 
+    /**
+     * Closes the specified {@link View} within the context of the given {@link UI}.
+     *
+     * @param ui           the {@link UI} instance in which the {@link View} exists
+     * @param view         the {@link View} instance to be closed
+     * @param returnParams the {@link QueryParameters} to be used upon closing the view
+     */
     public void close(UI ui, View<?> view, QueryParameters returnParams) {
         log.debug("Closing view: " + view);
 
@@ -387,6 +469,12 @@ public class ViewSupport {
         }
     }
 
+    /**
+     * Navigates to the parent layout of the specified view, if a parent layout exists.
+     *
+     * @param view         the {@link View} instance whose parent layout needs to be navigated to
+     * @param returnParams the {@link QueryParameters} to be passed during the navigation
+     */
     public void navigateToParentLayout(View<?> view, QueryParameters returnParams) {
         RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
         List<RouteData> routes = routeConfiguration.getAvailableRoutes();

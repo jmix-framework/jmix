@@ -36,6 +36,11 @@ import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * This class is responsible for scanning specified packages to identify classes annotated
+ * with {@link ActionType} and creating corresponding {@link ActionDefinition} objects for them.
+ * It also supports explicit declaration of {@link ActionDefinition} objects.
+ */
 public class ActionsConfiguration extends AbstractScanConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(ActionsConfiguration.class);
@@ -52,26 +57,51 @@ public class ActionsConfiguration extends AbstractScanConfiguration {
         this.metadataReaderFactory = metadataReaderFactory;
     }
 
+    /**
+     * Returns the list of base packages for scanning.
+     *
+     * @return a list of base package names
+     */
     public List<String> getBasePackages() {
         return basePackages;
     }
 
+    /**
+     * Sets the list of base packages for scanning.
+     *
+     * @param basePackages a list of base package names to be set
+     */
     public void setBasePackages(List<String> basePackages) {
         checkNotNullArgument(basePackages);
 
         this.basePackages = basePackages;
     }
 
+    /**
+     * Returns the list of explicitly defined {@link ActionDefinition} instances.
+     *
+     * @return a list of explicitly defined {@link ActionDefinition} instances
+     */
     public List<ActionDefinition> getExplicitDefinitions() {
         return explicitDefinitions;
     }
 
+    /**
+     * Sets the list of explicitly defined {@link ActionDefinition} instances.
+     *
+     * @param explicitDefinitions a list of {@link ActionDefinition} instances
+     *                            to be set
+     */
     public void setExplicitDefinitions(List<ActionDefinition> explicitDefinitions) {
         checkNotNullArgument(explicitDefinitions);
 
         this.explicitDefinitions = explicitDefinitions;
     }
 
+    /**
+     * Returns a combined list of {@link ActionDefinition} instances, including both scanned
+     * and explicitly defined actions.
+     */
     public List<ActionDefinition> getActions() {
         log.trace("Scanning packages {}", basePackages);
 

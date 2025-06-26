@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+/**
+ * Abstract base class for configuring the scanning of packages to identify classes and metadata.
+ */
 public abstract class AbstractScanConfiguration {
 
     public static final String DEFAULT_CLASS_RESOURCE_PATTERN = "**/*.class";

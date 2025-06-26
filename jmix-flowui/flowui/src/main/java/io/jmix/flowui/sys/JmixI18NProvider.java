@@ -25,6 +25,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * An implementation of {@code I18NProvider} that provides locale and translation support
+ * based on application-specific configurations.
+ */
 @Internal
 @Component("flowui_JmixI18NProvider")
 public class JmixI18NProvider implements I18NProvider {

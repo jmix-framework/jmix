@@ -35,6 +35,13 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 @Component("flowui_ViewXmlParser")
 public class ViewXmlParser {
 
+    /**
+     * Parses the given XML input stream into a {@link Document}.
+     *
+     * @param stream the input stream containing XML data
+     * @return the parsed {@link Document} object
+     * @throws IllegalStateException if an error occurs while reading the stream
+     */
     public Document parseDescriptor(InputStream stream) {
         checkNotNullArgument(stream, "Input stream is null");
 
@@ -48,6 +55,12 @@ public class ViewXmlParser {
         return parseDescriptor(template);
     }
 
+    /**
+     * Parses the provided XML string into a {@link Document}.
+     *
+     * @param template the XML string to be parsed
+     * @return the parsed {@link Document} object
+     */
     public Document parseDescriptor(String template) {
         checkNotNullArgument(template, "template is null");
 

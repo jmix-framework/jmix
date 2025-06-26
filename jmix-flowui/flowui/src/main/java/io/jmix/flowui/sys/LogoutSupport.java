@@ -21,12 +21,14 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.util.WebBrowserTools;
+import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-import jakarta.servlet.ServletContext;
-
+/**
+ * Provides support for logging out a user from the application.
+ */
 @Internal
 @Component("flowui_LogoutSupport")
 public class LogoutSupport {
@@ -44,6 +46,9 @@ public class LogoutSupport {
         this.authenticationContext = authenticationContext;
     }
 
+    /**
+     * Logs out the current user from the application.
+     */
     public void logout() {
         // window's 'beforeunload' event is triggered by changing Page's location,
         // so we need to remove 'beforeunload' event listener, because logout happens

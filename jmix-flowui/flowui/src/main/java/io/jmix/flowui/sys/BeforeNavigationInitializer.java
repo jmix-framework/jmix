@@ -20,9 +20,15 @@ import com.vaadin.flow.router.NavigationEvent;
 import io.jmix.flowui.view.View;
 
 /**
- *
  * Allows to customize view right before navigation occurs.
  */
 public interface BeforeNavigationInitializer {
+
+    /**
+     * Configures the given view instance just before navigation occurs.
+     *
+     * @param instance the view instance to be customized
+     * @param event    the navigation event triggering the initialization
+     */
     void initialize(View<?> instance, NavigationEvent event);
 }

@@ -17,10 +17,14 @@
 package io.jmix.flowui.sys;
 
 import io.jmix.core.annotation.Internal;
+import io.jmix.flowui.view.View;
 import org.springframework.core.io.Resource;
-
 import org.springframework.lang.Nullable;
 
+/**
+ * Represents a definition of a {@link View} Controller in the application. This includes its identifier,
+ * class name of the controller, and optionally associated resource metadata.
+ */
 @Internal
 public final class ViewControllerDefinition {
 
@@ -38,14 +42,29 @@ public final class ViewControllerDefinition {
         this.resource = resource;
     }
 
+    /**
+     * Returns the unique identifier associated with the {@link View}.
+     *
+     * @return the unique identifier
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the class name of the controller associated with the {@link View}.
+     *
+     * @return the controller class name
+     */
     public String getControllerClassName() {
         return controllerClassName;
     }
 
+    /**
+     * Returns the {@link Resource} associated with the {@link View}, or {@code null} if no resource is associated.
+     *
+     * @return the associated {@link Resource}, or {@code null} if there is none
+     */
     @Nullable
     public Resource getResource() {
         return resource;

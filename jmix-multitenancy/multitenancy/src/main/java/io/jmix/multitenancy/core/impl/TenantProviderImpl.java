@@ -46,9 +46,9 @@ public class TenantProviderImpl implements TenantProvider {
     }
 
     /**
-     * Returns the tenant ID of a logged in user.
+     * Returns the tenant ID of a logged-in user.
      *
-     * @return tenant ID of a logged in user, 'no_tenant' if the user doesn't have a tenant ID
+     * @return tenant ID of a logged-in user, 'no_tenant' if the user doesn't have a tenant ID
      */
     @Override
     public String getCurrentUserTenantId() {
@@ -61,6 +61,12 @@ public class TenantProviderImpl implements TenantProvider {
         }
 
         UserDetails userDetails = currentUserSubstitution.getEffectiveUser();
+
+        return getTenantIdForUser(userDetails);
+    }
+
+    @Override
+    public String getTenantIdForUser(UserDetails userDetails) {
         String tenantIdFieldName = getTenantIdFieldName(userDetails.getClass());
 
         if (tenantIdFieldName == null) {

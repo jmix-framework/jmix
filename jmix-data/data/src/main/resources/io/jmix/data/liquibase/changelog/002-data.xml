@@ -26,8 +26,8 @@
                 WHERE SEQUENCE_NAME = upper(seq_name);
 
                 IF (new_value - last_num) = 0 THEN
-					RETURN;
-				END IF;
+                    RETURN;
+                END IF;
 
                 EXECUTE IMMEDIATE 'ALTER SEQUENCE ' || seq_name || ' INCREMENT BY ' || (new_value - last_num);
 

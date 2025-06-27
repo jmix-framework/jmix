@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="data" id="1-oracle-seq-procedure" context="!cuba" dbms="oracle">
+    <changeSet author="data" id="1" context="!cuba" dbms="oracle">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM USER_OBJECTS
@@ -40,7 +40,7 @@
         </sql>
     </changeSet>
 
-    <changeSet author="data" id="2-oracle-seq-function" context="!cuba" dbms="oracle">
+    <changeSet author="data" id="2" context="!cuba" dbms="oracle">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM USER_OBJECTS

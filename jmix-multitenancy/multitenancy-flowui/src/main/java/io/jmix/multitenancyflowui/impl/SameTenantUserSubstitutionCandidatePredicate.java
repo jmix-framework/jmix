@@ -17,7 +17,7 @@
 package io.jmix.multitenancyflowui.impl;
 
 import io.jmix.multitenancy.core.TenantProvider;
-import io.jmix.securityflowui.view.usersubstitution.UserSubstitutionCandidatePredicate;
+import io.jmix.securityflowui.util.UserSubstitutionCandidatePredicate;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Objects;

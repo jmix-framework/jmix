@@ -19,7 +19,7 @@ package io.jmix.autoconfigure.multitenancyflowui;
 import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.multitenancyflowui.MultitenancyFlowuiConfiguration;
 import io.jmix.multitenancyflowui.impl.SameTenantUserSubstitutionCandidatePredicate;
-import io.jmix.securityflowui.view.usersubstitution.UserSubstitutionCandidatePredicate;
+import io.jmix.securityflowui.util.UserSubstitutionCandidatePredicate;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Import;
 public class MultitenancyFlowuiAutoConfiguration {
 
     @Bean("mten_SameTenantUserSubstitutionCandidatePredicate")
-    @ConditionalOnClass(name = "io.jmix.securityflowui.view.usersubstitution.UserSubstitutionCandidatePredicate")
+    @ConditionalOnClass(name = "io.jmix.securityflowui.util.UserSubstitutionCandidatePredicate")
     public UserSubstitutionCandidatePredicate sameTenantUserSubstitutionCandidatePredicate(TenantProvider tenantProvider) {
         return new SameTenantUserSubstitutionCandidatePredicate(tenantProvider);
     }

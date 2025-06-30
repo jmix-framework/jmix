@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.securityflowui.view.usersubstitution;
+package io.jmix.securityflowui.util;
 
 import org.springframework.security.core.userdetails.UserDetails;
 

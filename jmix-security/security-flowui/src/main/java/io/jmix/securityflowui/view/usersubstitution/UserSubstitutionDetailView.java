@@ -26,6 +26,7 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.view.*;
 import io.jmix.security.usersubstitution.UserSubstitutionModel;
 import io.jmix.security.usersubstitution.UserSubstitutionPersistence;
+import io.jmix.securityflowui.util.UserSubstitutionCandidatePredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 

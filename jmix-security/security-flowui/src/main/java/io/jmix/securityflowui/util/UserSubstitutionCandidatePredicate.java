@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
+package io.jmix.securityflowui.util;
 
-group = 'io.jmix.multitenancy'
-archivesBaseName = 'jmix-multitenancy-flowui-starter'
+import org.springframework.security.core.userdetails.UserDetails;
 
-dependencies {
-    api project(':multitenancy-flowui')
+import java.util.function.BiPredicate;
 
-    api 'org.springframework.boot:spring-boot-autoconfigure'
-
-    compileOnly project(':security-flowui')
+/**
+ * Interface to provide predicate to test the possibility to use some user as substitution based on target user.
+ * Accepts the user to be substituted and another user as substitution candidate.
+ */
+public interface UserSubstitutionCandidatePredicate extends BiPredicate<UserDetails, UserDetails> {
 }

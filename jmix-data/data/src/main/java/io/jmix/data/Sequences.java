@@ -39,6 +39,7 @@ public interface Sequences {
      * @param sequence object {@link Sequence}
      * @return          current value
      */
+    @Deprecated
     long getCurrentValue(Sequence sequence);
 
     /**

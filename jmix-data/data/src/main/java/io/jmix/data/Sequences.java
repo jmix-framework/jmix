@@ -33,13 +33,15 @@ public interface Sequences {
     long createNextValue(Sequence sequence);
 
     /**
+     * @deprecated as unused
+     *
      * Returns the current value of the sequence. For some implementations
      * {@link #createNextValue(Sequence)} must be called at least once beforehand.
      *
      * @param sequence object {@link Sequence}
      * @return          current value
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "2.7")
     long getCurrentValue(Sequence sequence);
 
     /**

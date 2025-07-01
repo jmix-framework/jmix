@@ -43,6 +43,8 @@ public class TriggerModel {
     @Positive
     private Long repeatInterval;
 
+    private String timeZoneId;
+
     public UUID getId() {
         return id;
     }
@@ -74,6 +76,10 @@ public class TriggerModel {
     public ScheduleType getScheduleType() {
         return scheduleType;
     }
+
+    public void setTimeZoneId(String timeZone) { this.timeZoneId = timeZone; }
+
+    public String getTimeZoneId() { return timeZoneId; }
 
     @Nullable
     public Date getStartDate() {

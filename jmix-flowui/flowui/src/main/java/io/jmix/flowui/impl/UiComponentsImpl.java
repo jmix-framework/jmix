@@ -21,6 +21,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.card.Card;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -52,6 +53,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.accordion.JmixAccordion;
 import io.jmix.flowui.component.accordion.JmixAccordionPanel;
+import io.jmix.flowui.component.card.JmixCard;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.checkbox.Switch;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
@@ -145,6 +147,7 @@ public class UiComponentsImpl implements UiComponents {
         register(JmixVirtualList.class, VirtualList.class);
         register(RichTextEditor.class, JmixRichTextEditor.class);
         register(JmixFormLayout.class, FormLayout.class);
+        register(JmixCard.class, Card.class);
     }
 
     @SuppressWarnings("unchecked")

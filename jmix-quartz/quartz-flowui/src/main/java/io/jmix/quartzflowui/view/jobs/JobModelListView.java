@@ -51,7 +51,6 @@ import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.JobModel;
 import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
-import io.jmix.quartz.model.TriggerModel;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartzflowui.accesscontext.UiQuartzAdministrationAccessContext;
@@ -142,21 +141,7 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     @Supply(to = "jobModelsTable.jobScheduleDescription", subject = "renderer")
     protected Renderer<JobModel> jobModelTableSceduleDescriptionRenderer() {
-        return new TextRenderer<>(jobModel -> {
-            List<TriggerModel> triggerModels = jobModel.getTriggers();
-
-            if (CollectionUtils.isEmpty(triggerModels)) { return null; }
-
-            return triggerModels.stream()
-                    .map(triggerModel -> {
-                        if (StringUtils.isEmpty(triggerModel.getTimeZoneId())) {
-                            return scheduleDescriptionProvider.getScheduleDescription(triggerModel);
-                        }
-                        return String.format("%s (%s)", scheduleDescriptionProvider.getScheduleDescription(triggerModel),
-                            StringUtils.isEmpty(triggerModel.getTimeZoneId()) ? "" : triggerModel.getTimeZoneId());
-
-                    }).collect(Collectors.joining(", "));
-        });
+        return new TextRenderer<>(scheduleDescriptionProvider::getScheduleDescription);
     }
 
     protected String getFormattedDate(Supplier<Date> dateSupplier) {

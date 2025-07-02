@@ -127,12 +127,14 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
 
     @Supply(to = "triggerModelTable.triggerDescription", subject = "renderer")
     protected Renderer<TriggerModel> triggerModelTableTriggerDescriptionRenderer() {
-        return new TextRenderer<>(scheduleDescriptionProvider::getScheduleDescription);
-    }
+        return new TextRenderer<>(triggerModel -> {
+            if (StringUtils.isEmpty(triggerModel.getTimeZoneId())) {
+                return scheduleDescriptionProvider.getScheduleDescription(triggerModel);
+            }
+            return String.format("%s (%s)", scheduleDescriptionProvider.getScheduleDescription(triggerModel),
+                    StringUtils.isEmpty(triggerModel.getTimeZoneId()) ? "" : triggerModel.getTimeZoneId());
 
-    @Supply(to = "triggerModelTable.timeZoneId", subject = "renderer")
-    protected Renderer<TriggerModel> triggerModelTableTimeZoneIdRenderer() {
-        return new TextRenderer<>(TriggerModel::getTimeZoneId);
+        });
     }
 
     @Supply(to = "triggerModelTable.startDate", subject = "renderer")

@@ -51,7 +51,6 @@
                             <column property="triggerGroup"/>
                             <column property="scheduleType"/>
                             <column key="triggerDescription" header="msg://column.triggerScheduleDescription.header"/>
-                            <column key="timeZoneId" header="msg://column.timeZoneId.header"/>
                             <column key="startDate" header="msg://column.startDate.header"/>
                             <column key="lastFireDate" header="msg://column.lastFireDate.header"/>
                             <column key="nextFireDate" header="msg://column.nextFireDate.header"/>

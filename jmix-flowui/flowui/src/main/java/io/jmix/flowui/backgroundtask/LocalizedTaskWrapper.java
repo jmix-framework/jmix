@@ -21,6 +21,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.exception.DefaultUiExceptionHandler;
 import io.jmix.flowui.impl.DialogsImpl;
 import io.jmix.flowui.view.View;
 import org.slf4j.Logger;
@@ -54,6 +55,7 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
 
     protected Messages messages;
     protected Notifications notifications;
+    protected DefaultUiExceptionHandler defaultUiExceptionHandler;
 
     protected BackgroundTask<T, V> wrappedTask;
     protected Consumer<CloseViewContext> closeViewHandler;
@@ -73,6 +75,11 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
     @Autowired
     public void setNotifications(Notifications notifications) {
         this.notifications = notifications;
+    }
+
+    @Autowired
+    public void setDefaultUiExceptionHandler(DefaultUiExceptionHandler defaultUiExceptionHandler) {
+        this.defaultUiExceptionHandler = defaultUiExceptionHandler;
     }
 
     /**
@@ -171,20 +178,7 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
     }
 
     protected void showExecutionError(Exception ex) {
-        View<?> ownerView = wrappedTask.getOwnerView();
-        if (ownerView != null && UI.getCurrent() != null) {
-            notifications.create(messages.getMessage("localizedTaskWrapper.executionError.message"))
-                    .withType(Notifications.Type.ERROR)
-                    .show();
-
-            /* todo ExceptionDialog */
-            /*Dialogs dialogs = Instantiator.get(UI.getCurrent()).getOrCreate(Dialogs.class);
-            dialogs.createExceptionDialog()
-                    .withThrowable(ex)
-                    .withCaption(messages.getMessage("localizedTaskWrapper.executionError.message"))
-                    .withMessage(ex.getLocalizedMessage())
-                    .show();*/
-        }
+        defaultUiExceptionHandler.handle(ex);
     }
 
     protected void notifyCloseViewHandler() {

@@ -18,11 +18,12 @@ package io.jmix.flowui.component.card;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.card.Card;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.component.HasSubParts;
 import jakarta.annotation.Nullable;
 
 import java.util.Optional;
+
+import static io.jmix.flowui.component.UiComponentUtils.findComponent;
 
 public class JmixCard extends Card implements HasSubParts {
 
@@ -30,39 +31,39 @@ public class JmixCard extends Card implements HasSubParts {
     @Override
     public Object getSubPart(String name) {
         if (getTitle() != null) {
-            Optional<Component> component = UiComponentUtils.findComponent(getTitle(), name);
+            Optional<Component> component = findComponent(getTitle(), name);
             if (component.isPresent()) {
                 return component.get();
             }
         } else if (getSubtitle() != null) {
-            Optional<Component> component = UiComponentUtils.findComponent(getSubtitle(), name);
+            Optional<Component> component = findComponent(getSubtitle(), name);
             if (component.isPresent()) {
                 return component.get();
             }
         } else if (getMedia() != null) {
-            Optional<Component> component = UiComponentUtils.findComponent(getMedia(), name);
+            Optional<Component> component = findComponent(getMedia(), name);
             if (component.isPresent()) {
                 return component.get();
             }
         } else if (getHeaderPrefix() != null) {
-            Optional<Component> component = UiComponentUtils.findComponent(getHeaderPrefix(), name);
+            Optional<Component> component = findComponent(getHeaderPrefix(), name);
             if (component.isPresent()) {
                 return component.get();
             }
         } else if (getHeader() != null) {
-            Optional<Component> component = UiComponentUtils.findComponent(getHeader(), name);
+            Optional<Component> component = findComponent(getHeader(), name);
             if (component.isPresent()) {
                 return component.get();
             }
         } else if (getHeaderSuffix() != null) {
-            Optional<Component> component = UiComponentUtils.findComponent(getHeaderSuffix(), name);
+            Optional<Component> component = findComponent(getHeaderSuffix(), name);
             if (component.isPresent()) {
                 return component.get();
             }
         }
 
         for (Component footerComponent : getFooterComponents()) {
-            Optional<Component> component = UiComponentUtils.findComponent(footerComponent, name);
+            Optional<Component> component = findComponent(footerComponent, name);
             if (component.isPresent()) {
                 return component.get();
             }

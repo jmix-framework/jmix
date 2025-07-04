@@ -56,13 +56,13 @@ class ScheduleDescriptionProviderTest {
         when(triggerMock.getScheduleType()).thenReturn(CRON_EXPRESSION);
         String cronExpression = CRON_EXPRESSION_EXAMPLE;
         String timeZoneId = "UTC";
-        String cronExpressionWithTimeZone = String.format("%s (%s)", cronExpression, timeZoneId);
+        String expectedResult = String.format("%s (%s)", cronExpression, timeZoneId);
 
         when(triggerMock.getTimeZoneId()).thenReturn("UTC");
         when(triggerMock.getCronExpression()).thenReturn(cronExpression);
 
         ScheduleDescriptionProvider service = new ScheduleDescriptionProvider(messagesMock);
-        assertEquals(cronExpressionWithTimeZone, service.getScheduleDescription(triggerMock));
+        assertEquals(expectedResult, service.getScheduleDescription(triggerMock));
     }
 
     @Test
@@ -162,7 +162,7 @@ class ScheduleDescriptionProviderTest {
         JobModel jobModelMock = mock(JobModel.class);
         TriggerModel triggerModelMock = mock(TriggerModel.class);
         String timeZoneId = "UTC";
-        String cronExpressionWithTimeZone = String.format("%s (%s)", CRON_EXPRESSION_EXAMPLE, timeZoneId);
+        String expectedResult = String.format("%s (%s)", CRON_EXPRESSION_EXAMPLE, timeZoneId);
 
         when(triggerModelMock.getTimeZoneId()).thenReturn("UTC");
         when(triggerModelMock.getScheduleType()).thenReturn(CRON_EXPRESSION);
@@ -170,7 +170,7 @@ class ScheduleDescriptionProviderTest {
         when(jobModelMock.getTriggers()).thenReturn(asList(triggerModelMock));
 
         ScheduleDescriptionProvider service = new ScheduleDescriptionProvider(mock(Messages.class));
-        assertEquals(cronExpressionWithTimeZone, service.getScheduleDescription(jobModelMock));
+        assertEquals(expectedResult, service.getScheduleDescription(jobModelMock));
     }
 
     @Test
@@ -180,7 +180,7 @@ class ScheduleDescriptionProviderTest {
         String timeZoneId = "UTC";
         String cronExpressionWithTimeZone1 = String.format("%s (%s)", CRON_EXPRESSION_EXAMPLE, timeZoneId);
         String cronExpressionWithTimeZone2 = String.format("%s (%s)", CRON_EXPRESSION_EXAMPLE_2, timeZoneId);
-        String concatCronExpressionsWithTimeZones = cronExpressionWithTimeZone1+", "+cronExpressionWithTimeZone2;
+        String expectedResult = cronExpressionWithTimeZone1+", "+cronExpressionWithTimeZone2;
 
         when(triggerModelMock.getTimeZoneId()).thenReturn("UTC");
         when(triggerModelMock.getScheduleType()).thenReturn(CRON_EXPRESSION);
@@ -194,7 +194,7 @@ class ScheduleDescriptionProviderTest {
         when(jobModelMock.getTriggers()).thenReturn(asList(triggerModelMock, triggerModelMock2));
 
         ScheduleDescriptionProvider service = new ScheduleDescriptionProvider(mock(Messages.class));
-        assertEquals(concatCronExpressionsWithTimeZones, service.getScheduleDescription(jobModelMock));
+        assertEquals(expectedResult, service.getScheduleDescription(jobModelMock));
     }
 
     @Test

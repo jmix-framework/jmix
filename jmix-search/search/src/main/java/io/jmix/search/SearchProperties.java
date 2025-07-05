@@ -136,6 +136,11 @@ public class SearchProperties {
      */
     protected final boolean wildcardPrefixQueryEnabled;
 
+    /**
+     * Whether the search engine is enabled
+     */
+    protected final boolean enabled;
+
     public SearchProperties(
             @DefaultValue("100") int searchResultPageSize,
             @DefaultValue("100") int maxSearchPageCount,
@@ -155,6 +160,7 @@ public class SearchProperties {
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
             @DefaultValue("0/5 * * * * ?") String indexingQueueProcessingCron,
             @DefaultValue("0/5 * * * * ?") String enqueueingSessionProcessingCron,
+            @DefaultValue("true") boolean enabled,
             @DefaultValue Server server) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
@@ -175,7 +181,13 @@ public class SearchProperties {
         this.minPrefixLength = minPrefixLength;
         this.maxPrefixLength = maxPrefixLength;
         this.wildcardPrefixQueryEnabled = wildcardPrefixQueryEnabled;
+        this.enabled = enabled;
     }
+
+    /**
+     * @see #enabled
+     */
+    public boolean isEnabled() { return enabled; }
 
     /**
      * @see #searchResultPageSize

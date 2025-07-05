@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.lang.Nullable;
@@ -95,6 +96,7 @@ public class SearchOpenSearchAutoConfiguration {
     }
 
     @Bean("search_OpenSearchIndexManager")
+    @ConditionalOnProperty(name = "jmix.search.enabled", havingValue = "true")
     protected IndexManager openSearchIndexManager(OpenSearchClient client,
                                                   IndexStateRegistry indexStateRegistry,
                                                   IndexConfigurationManager indexConfigurationManager,
@@ -115,6 +117,7 @@ public class SearchOpenSearchAutoConfiguration {
     }
 
     @Bean("search_OpenSearchEntityIndexer")
+    @ConditionalOnProperty(name = "jmix.search.enabled", havingValue = "true")
     protected EntityIndexer openSearchEntityIndexer(UnconstrainedDataManager dataManager,
                                                     FetchPlans fetchPlans,
                                                     IndexConfigurationManager indexConfigurationManager,
@@ -136,6 +139,7 @@ public class SearchOpenSearchAutoConfiguration {
     }
 
     @Bean("search_OpenSearchEntitySearcher")
+    @ConditionalOnProperty(name = "jmix.search.enabled", havingValue = "true")
     protected EntitySearcher openSearchEntitySearcher(OpenSearchClient client,
                                                       IndexConfigurationManager indexConfigurationManager,
                                                       Metadata metadata,

@@ -1205,4 +1205,115 @@ public interface StudioElements {
     )
     void endSlot();
 
+    @StudioElement(
+            name = "Title",
+            xmlElement = "title",
+            target = "io.jmix.flowui.component.card.JmixCard",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            )
+    )
+    void cardTitle();
+
+    @StudioElement(
+            name = "Subtitle",
+            xmlElement = "subtitle",
+            target = "io.jmix.flowui.component.card.JmixCard",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            )
+    )
+    void cardSubtitle();
+
+    @StudioElement(
+            name = "Media",
+            xmlElement = "media",
+            target = "io.jmix.flowui.component.card.JmixCard",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            )
+    )
+    void cardMedia();
+
+    @StudioElement(
+            name = "Content",
+            xmlElement = "content",
+            target = "io.jmix.flowui.component.card.JmixCard",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void cardContent();
+
+    @StudioElement(
+            name = "HeaderPrefix",
+            xmlElement = "headerPrefix",
+            target = "io.jmix.flowui.component.card.JmixCard",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            )
+    )
+    void cardHeaderPrefix();
+
+    @StudioElement(
+            name = "Header",
+            xmlElement = "header",
+            target = "io.jmix.flowui.component.card.JmixCard",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            )
+    )
+    void cardHeader();
+
+    @StudioElement(
+            name = "HeaderSuffix",
+            xmlElement = "headerSuffix",
+            target = "io.jmix.flowui.component.card.JmixCard",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            )
+    )
+    void cardHeaderSuffix();
+
+    @StudioElement(
+            name = "Footer",
+            xmlElement = "footer",
+            target = "io.jmix.flowui.component.card.JmixCard",
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 9999
+                    )
+            )
+    )
+    void cardFooter();
 }

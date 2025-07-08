@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.impl.stub;
+package io.jmix.search.index.impl;
 
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.impl.SearchResultImpl;
 
-public class EntitySearcherStub implements EntitySearcher {
+public class NoopEntitySearcher implements EntitySearcher {
 
     @Override
     public SearchResult search(SearchContext searchContext) {

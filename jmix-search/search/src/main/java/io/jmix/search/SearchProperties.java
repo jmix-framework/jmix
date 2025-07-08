@@ -137,7 +137,7 @@ public class SearchProperties {
     protected final boolean wildcardPrefixQueryEnabled;
 
     /**
-     * Whether the search engine is enabled
+     * Whether the search add-on is enabled
      */
     protected final boolean enabled;
 
@@ -154,20 +154,19 @@ public class SearchProperties {
             @DefaultValue("true") boolean useDefaultEnqueueingSessionProcessingQuartzConfiguration,
             @DefaultValue("true") boolean enqueueIndexAllOnStartupIndexRecreationEnabled,
             @DefaultValue("true") boolean wildcardPrefixQueryEnabled,
+            @DefaultValue("true") boolean enabled,
             @DefaultValue("") String enqueueIndexAllOnStartupIndexRecreationEntities,
             @DefaultValue("search_index_") String searchIndexNamePrefix,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
             @DefaultValue("0/5 * * * * ?") String indexingQueueProcessingCron,
             @DefaultValue("0/5 * * * * ?") String enqueueingSessionProcessingCron,
-            @DefaultValue("true") boolean enabled,
             @DefaultValue Server server) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
         this.processQueueBatchSize = processQueueBatchSize;
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
-        this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
         this.useDefaultIndexingQueueProcessingQuartzConfiguration = useDefaultIndexingQueueProcessingQuartzConfiguration;
         this.useDefaultEnqueueingSessionProcessingQuartzConfiguration = useDefaultEnqueueingSessionProcessingQuartzConfiguration;
         this.indexingQueueProcessingCron = indexingQueueProcessingCron;
@@ -182,6 +181,7 @@ public class SearchProperties {
         this.maxPrefixLength = maxPrefixLength;
         this.wildcardPrefixQueryEnabled = wildcardPrefixQueryEnabled;
         this.enabled = enabled;
+        this.changedEntitiesIndexingEnabled = isEnabled() ? changedEntitiesIndexingEnabled : false;
     }
 
     /**

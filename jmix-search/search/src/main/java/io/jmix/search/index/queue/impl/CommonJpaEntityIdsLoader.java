@@ -18,6 +18,8 @@ package io.jmix.search.index.queue.impl;
 
 import io.jmix.core.ValueLoadContext;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.search.SearchProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -28,8 +30,15 @@ import java.util.List;
 @Component("search_CommonJpaEntityIdsLoader")
 public class CommonJpaEntityIdsLoader extends OrderBasedEntityIdsLoader {
 
+    @Autowired
+    protected SearchProperties searchProperties;
+
     @Override
     protected List<KeyValueEntity> loadValues(ValueLoadContext valueLoadContext) {
-        return dataManager.loadValues(valueLoadContext);
+        if (searchProperties.isEnabled()) {
+            return dataManager.loadValues(valueLoadContext);
+        }
+
+        return List.of();
     }
 }

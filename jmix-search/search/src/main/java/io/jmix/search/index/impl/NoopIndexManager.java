@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.impl.stub;
+package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -27,11 +27,11 @@ import org.springframework.lang.NonNull;
 import java.util.Collection;
 import java.util.Map;
 
-public class IndexManagerStub implements IndexManager {
+public class NoopIndexManager implements IndexManager {
 
     protected ObjectMapper objectMapper;
 
-    public IndexManagerStub() {
+    public NoopIndexManager() {
         this.objectMapper = new ObjectMapper();
     }
 
@@ -77,7 +77,7 @@ public class IndexManagerStub implements IndexManager {
 
     @Override
     public IndexValidationStatus validateIndex(IndexConfiguration indexConfiguration) {
-        return IndexValidationStatus.ACTUAL;
+        return IndexValidationStatus.IRRELEVANT;
     }
 
     @Override
@@ -97,6 +97,6 @@ public class IndexManagerStub implements IndexManager {
 
     @Override
     public IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration) {
-        return IndexSynchronizationStatus.ACTUAL;
+        return IndexSynchronizationStatus.IRRELEVANT;
     }
 }

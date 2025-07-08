@@ -38,9 +38,12 @@ import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.StartupIndexSynchronizer;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
+import io.jmix.search.index.queue.IndexingQueueManager;
+import io.jmix.search.index.queue.impl.JpaIndexingQueueManager;
 import io.jmix.security.SecurityConfiguration;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
@@ -69,6 +72,8 @@ public class BaseSearchTestConfiguration {
 
     @Autowired
     SearchProperties searchProperties;
+    @Autowired
+    protected AutowireCapableBeanFactory beanFactory;
 
     // Test Search beans
 
@@ -88,6 +93,11 @@ public class BaseSearchTestConfiguration {
                                      IndexStateRegistry indexStateRegistry,
                                      SearchProperties searchProperties) {
         return new TestNoopIndexManager(indexConfigurationManager, indexStateRegistry, searchProperties);
+    }
+
+    @Bean("search_JpaIndexingQueueManager")
+    public IndexingQueueManager indexingQueueManager() {
+        return beanFactory.createBean(JpaIndexingQueueManager.class);
     }
 
     @Bean

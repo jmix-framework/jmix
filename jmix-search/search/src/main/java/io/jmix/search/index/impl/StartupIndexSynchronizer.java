@@ -52,6 +52,11 @@ public class StartupIndexSynchronizer {
     @PostConstruct
     protected void postConstruct() {
         try {
+            if (!searchProperties.isEnabled()) {
+                log.info("Search add-on disabled");
+                return;
+            }
+
             log.info("Start initial index synchronization");
             Map<IndexConfiguration, IndexSynchronizationStatus> indexSynchronizationResults
                     = indexManager.synchronizeIndexSchemas();

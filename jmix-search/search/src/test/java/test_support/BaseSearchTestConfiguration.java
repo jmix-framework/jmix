@@ -73,7 +73,7 @@ public class BaseSearchTestConfiguration {
     @Autowired
     SearchProperties searchProperties;
     @Autowired
-    protected AutowireCapableBeanFactory beanFactory;
+    AutowireCapableBeanFactory beanFactory;
 
     // Test Search beans
 

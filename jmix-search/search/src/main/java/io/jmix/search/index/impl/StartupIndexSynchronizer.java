@@ -53,7 +53,7 @@ public class StartupIndexSynchronizer {
     protected void postConstruct() {
         try {
             if (!searchProperties.isEnabled()) {
-                log.info("Search add-on disabled");
+                log.info("Unable to start index synchronization: Search add-on disabled");
                 return;
             }
 

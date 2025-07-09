@@ -137,7 +137,7 @@ public class SearchProperties {
     protected final boolean wildcardPrefixQueryEnabled;
 
     /**
-     * Whether the search add-on is enabled
+     * Whether the Search add-on is enabled
      */
     protected final boolean enabled;
 

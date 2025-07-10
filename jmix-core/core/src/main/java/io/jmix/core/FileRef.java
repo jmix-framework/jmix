@@ -109,8 +109,9 @@ public class FileRef implements Serializable {
      */
     public static FileRef fromString(String fileRefString) {
         URI fileRefUri;
+        String whitespaceEncFileRef = fileRefString.replace(" ", "%20");
         try {
-            fileRefUri = new URI(fileRefString);
+            fileRefUri = new URI(whitespaceEncFileRef);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Cannot convert " + fileRefString + " to FileRef", e);
         }

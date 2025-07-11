@@ -638,7 +638,7 @@
             <variableInputParameter code="container" text="Component container"/>
             <text language="java">
                 <![CDATA[
-                ${IS_FINAL}java.util.Collection<com.vaadin.flow.component.Component> components = UiComponentUtils.getComponents(${container});
+                ${IS_FINAL}java.util.Collection<com.vaadin.flow.component.Component> components = io.jmix.flowui.component.UiComponentUtils.getComponents(${container});
                 ]]>
             </text>
             <text language="kotlin">

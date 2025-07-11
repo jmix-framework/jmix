@@ -24,7 +24,6 @@ import io.jmix.core.Entity;
 import io.jmix.core.EntitySerialization;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.common.util.URLEncodeUtils;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -98,8 +97,7 @@ public class RestFilterParser {
     public Condition parse(String filterJson, MetaClass metaClass) throws RestFilterParseException {
         LogicalCondition rootCondition = LogicalCondition.and();
 
-        String decodedJson = URLEncodeUtils.decodeUtf8(filterJson);
-        JsonObject filterObject = JsonParser.parseString(decodedJson).getAsJsonObject();
+        JsonObject filterObject = JsonParser.parseString(filterJson).getAsJsonObject();
         JsonElement conditions = filterObject.get("conditions");
 
         if (conditions != null && conditions.isJsonArray()) {

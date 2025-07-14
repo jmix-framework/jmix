@@ -16,9 +16,7 @@
 
 package io.jmix.search.index.mapping.processor.impl;
 
-import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.method.ContextArgumentResolverComposite;
 import io.jmix.core.impl.method.MethodArgumentsProvider;
@@ -351,8 +349,8 @@ public class AnnotatedIndexDefinitionProcessor {
                                                                            MappingDefinition mappingDefinition,
                                                                            ExtendedSearchSettings extendedSearchSettings) {
 
-        Map<String, MappingFieldDescriptor> staticMappings = mappingDefinition.getElements().stream()
-                .map(item -> staticAttributesGroupProcessor.processMappingDefinitionElement(metaClass, item, extendedSearchSettings))
+        Map<String, MappingFieldDescriptor> staticMappings = mappingDefinition.getStaticGroups().stream()
+                .map(item -> staticAttributesGroupProcessor.processStaticAttributesGroup(metaClass, item, extendedSearchSettings))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
                     int order1 = v1.getOrder();

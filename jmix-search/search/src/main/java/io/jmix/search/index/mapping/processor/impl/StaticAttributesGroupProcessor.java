@@ -17,10 +17,8 @@
 package io.jmix.search.index.mapping.processor.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.FieldConfiguration;
@@ -58,7 +56,7 @@ public class StaticAttributesGroupProcessor {
     }
 
 
-    public List<MappingFieldDescriptor> processMappingDefinitionElement(MetaClass metaClass, MappingDefinitionElement element, ExtendedSearchSettings extendedSearchSettings) {
+    public List<MappingFieldDescriptor> processStaticAttributesGroup(MetaClass metaClass, MappingDefinitionElement element, ExtendedSearchSettings extendedSearchSettings) {
         Map<String, MetaPropertyPath> effectiveProperties = resolveEffectiveProperties(
                 metaClass, element.getIncludedProperties(), element.getExcludedProperties()
         );

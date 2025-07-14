@@ -41,16 +41,13 @@ public class IndexConfiguration {
 
     protected final ExtendedSearchSettings extendedSearchSettings;
 
-    protected final DynamicAttributesIndexingDescriptor dynamicAttributesIndexingDescriptor;
-
     public IndexConfiguration(String entityName,
                               Class<?> entityClass,
                               String indexName,
                               IndexMappingConfiguration mapping,
                               Set<Class<?>> affectedEntityClasses,
                               Predicate<Object> indexablePredicate,
-                              ExtendedSearchSettings extendedSearchSettings,
-                              DynamicAttributesIndexingDescriptor dynamicAttributesIndexingDescriptor) {
+                              ExtendedSearchSettings extendedSearchSettings) {
         this.entityName = entityName;
         this.entityClass = entityClass;
         this.indexName = indexName;
@@ -58,7 +55,6 @@ public class IndexConfiguration {
         this.affectedEntityClasses = affectedEntityClasses;
         this.indexablePredicate = indexablePredicate;
         this.extendedSearchSettings = extendedSearchSettings;
-        this.dynamicAttributesIndexingDescriptor = dynamicAttributesIndexingDescriptor;
     }
 
     /**
@@ -115,9 +111,5 @@ public class IndexConfiguration {
      */
     public Predicate<Object> getIndexablePredicate() {
         return indexablePredicate;
-    }
-
-    public DynamicAttributesIndexingDescriptor getDynamicAttributesIndexingDescriptor() {
-        return dynamicAttributesIndexingDescriptor;
     }
 }

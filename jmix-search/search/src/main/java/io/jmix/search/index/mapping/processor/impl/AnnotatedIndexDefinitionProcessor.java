@@ -35,8 +35,6 @@ import io.jmix.search.index.mapping.processor.MappingFieldAnnotationProcessorsRe
 import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesAnnotationParser;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractorProvider;
 import io.jmix.search.index.mapping.propertyvalue.impl.DisplayedNameValueExtractor;
-import io.jmix.search.index.mapping.strategy.FieldMappingStrategyProvider;
-import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -58,7 +56,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Provides functionality to process index definition interfaces marked with {@link JmixEntitySearchIndex}
@@ -73,7 +70,6 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
     protected final SearchProperties searchProperties;
     protected final MethodArgumentsProvider methodArgumentsProvider;
-    protected final DynamicAttributeDescriptorExtractor dynamicAttributeDescriptorExtractor;
     protected final DynamicAttributesAnnotationParser dynamicAttributesAnnotationParser;
     protected final StaticAttributesGroupProcessor staticAttributesGroupProcessor;
     protected final InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver;
@@ -85,14 +81,12 @@ public class AnnotatedIndexDefinitionProcessor {
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
                                              ContextArgumentResolverComposite resolvers,
-                                             DynamicAttributeDescriptorExtractor dynamicAttributeDescriptorExtractor,
                                              DynamicAttributesAnnotationParser dynamicAttributesAnnotationParser, StaticAttributesGroupProcessor staticAttributesGroupProcessor, InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver) {
         this.metadata = metadata;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
         this.searchProperties = searchProperties;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
-        this.dynamicAttributeDescriptorExtractor = dynamicAttributeDescriptorExtractor;
         this.dynamicAttributesAnnotationParser = dynamicAttributesAnnotationParser;
         this.staticAttributesGroupProcessor = staticAttributesGroupProcessor;
         this.instanceNameRelatedPropertiesResolver = instanceNameRelatedPropertiesResolver;
@@ -127,8 +121,7 @@ public class AnnotatedIndexDefinitionProcessor {
                 indexMappingConfiguration,
                 affectedEntityClasses,
                 indexablePredicate,
-                indexDef.getExtendedSearchSettings(),
-                dynamicAttributeDescriptorExtractor.extract(indexDefClass)
+                indexDef.getExtendedSearchSettings()
         );
     }
 
@@ -157,10 +150,6 @@ public class AnnotatedIndexDefinitionProcessor {
         result.setExtendedSearchSettings(extendedSearchSettings);
 
         Method[] methods = indexDefinitionClass.getDeclaredMethods();
-
-        if(indexDefinitionClass.isAnnotationPresent(DynamicAttributes.class)){
-            result.setDynamicAttributesAnnotation(indexDefinitionClass.getAnnotation(DynamicAttributes.class));
-        }
 
         for (Method method : methods) {
             if (isIndexablePredicateMethod(method)) {
@@ -223,12 +212,6 @@ public class AnnotatedIndexDefinitionProcessor {
             parsedIndexDefinition.getFieldAnnotations().forEach(annotation -> processAnnotation(
                     builder, annotation, parsedIndexDefinitionMetaClass
             ));
-
-            if(parsedIndexDefinition.dynamicAttributesAnnotation != null){
-                builder.addDynamicAttributesGroup(
-                        dynamicAttributesAnnotationParser.createDefinition(parsedIndexDefinition.dynamicAttributesAnnotation)
-                );
-            }
 
             mappingDefinition = builder.build();
         } else {
@@ -402,7 +385,6 @@ public class AnnotatedIndexDefinitionProcessor {
         private Class<?> entityClass;
         private MetaClass metaClass;
         private String indexName;
-        private DynamicAttributes dynamicAttributesAnnotation;
         private final List<Annotation> fieldAnnotations = new ArrayList<>();
         private final List<Method> indexablePredicateMethods = new ArrayList<>();
         private Method mappingDefinitionImplementationMethod = null;
@@ -471,14 +453,6 @@ public class AnnotatedIndexDefinitionProcessor {
 
         private void setExtendedSearchSettings(@Nullable ExtendedSearchSettings extendedSearchSettings) {
             this.extendedSearchSettings = extendedSearchSettings;
-        }
-
-        public DynamicAttributes getDynamicAttributesAnnotation() {
-            return dynamicAttributesAnnotation;
-        }
-
-        public void setDynamicAttributesAnnotation(@Nullable DynamicAttributes dynamicAttributesAnnotation) {
-            this.dynamicAttributesAnnotation = dynamicAttributesAnnotation;
         }
     }
 }

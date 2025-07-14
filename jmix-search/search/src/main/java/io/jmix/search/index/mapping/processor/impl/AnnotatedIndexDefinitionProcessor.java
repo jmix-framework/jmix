@@ -35,7 +35,6 @@ import io.jmix.search.index.mapping.fieldmapper.impl.TextFieldMapper;
 import io.jmix.search.index.mapping.processor.FieldAnnotationProcessor;
 import io.jmix.search.index.mapping.processor.MappingFieldAnnotationProcessorsRegistry;
 import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesAnnotationParser;
-import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesMapper;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractorProvider;
 import io.jmix.search.index.mapping.propertyvalue.impl.DisplayedNameValueExtractor;
@@ -83,7 +82,6 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final SearchProperties searchProperties;
     protected final MethodArgumentsProvider methodArgumentsProvider;
     protected final DynamicAttributeDescriptorExtractor dynamicAttributeDescriptorExtractor;
-    protected final DynamicAttributesMapper dynamicAttributesMapper;
     protected final DynamicAttributesAnnotationParser dynamicAttributesAnnotationParser;
 
     @Autowired
@@ -97,7 +95,6 @@ public class AnnotatedIndexDefinitionProcessor {
                                              SearchProperties searchProperties,
                                              ContextArgumentResolverComposite resolvers,
                                              DynamicAttributeDescriptorExtractor dynamicAttributeDescriptorExtractor,
-                                             DynamicAttributesMapper dynamicAttributesMapper,
                                              DynamicAttributesAnnotationParser dynamicAttributesAnnotationParser) {
         this.metadata = metadata;
         this.metadataTools = metadataTools;
@@ -109,7 +106,6 @@ public class AnnotatedIndexDefinitionProcessor {
         this.searchProperties = searchProperties;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
         this.dynamicAttributeDescriptorExtractor = dynamicAttributeDescriptorExtractor;
-        this.dynamicAttributesMapper = dynamicAttributesMapper;
         this.dynamicAttributesAnnotationParser = dynamicAttributesAnnotationParser;
     }
 
@@ -379,7 +375,9 @@ public class AnnotatedIndexDefinitionProcessor {
         return affectedClasses;
     }
 
-    protected Map<String, MappingFieldDescriptor> processMappingDefinition(MetaClass metaClass, MappingDefinition mappingDefinition, ExtendedSearchSettings extendedSearchSettings) {
+    protected Map<String, MappingFieldDescriptor> processMappingDefinition(MetaClass metaClass,
+                                                                           MappingDefinition mappingDefinition,
+                                                                           ExtendedSearchSettings extendedSearchSettings) {
         return mappingDefinition.getElements().stream()
                 .map(item -> processMappingDefinitionElement(metaClass, item, extendedSearchSettings))
                 .flatMap(Collection::stream)

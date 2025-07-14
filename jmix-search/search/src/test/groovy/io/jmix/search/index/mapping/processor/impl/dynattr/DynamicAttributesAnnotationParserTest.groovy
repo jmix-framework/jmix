@@ -34,7 +34,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
-        parser.createDefinitions(null)
+        parser.createDefinition(null)
 
         then:
         thrown(NullPointerException)
@@ -46,7 +46,8 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
-        DynamicAttributesGroup definition = parser.createDefinitions(extractAnnotation(IndexDefinitionSimple))
+        def annotations = parser.extractAnnotations(IndexDefinitionSimple);
+        DynamicAttributesGroup definition = parser.createDefinition(annotations.iterator().next())
 
         then:
         definition.getFieldMappingStrategyClass() == AutoMappingStrategy
@@ -68,7 +69,8 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
-        DynamicAttributesGroup definition = parser.createDefinitions(extractAnnotation(IndexDefinitionWithExcludes))
+        def annotations = parser.extractAnnotations(IndexDefinitionWithExcludes);
+        DynamicAttributesGroup definition = parser.createDefinition(annotations.iterator().next())
 
         then:
         definition.getExcludedCategories() == new String[]{"cat1", "cat2", "cat3"}
@@ -80,8 +82,9 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
+        def annotations = parser.extractAnnotations(IndexDefinitionWithParameters);
         Map<String, Object> parameters
-                = parser.createDefinitions(extractAnnotation(IndexDefinitionWithParameters)).getParameters()
+                = parser.createDefinition(annotations.iterator().next()).getParameters()
 
         then:
         parameters.get(ParameterKeys.ANALYZER) == SOME_ANALYZER

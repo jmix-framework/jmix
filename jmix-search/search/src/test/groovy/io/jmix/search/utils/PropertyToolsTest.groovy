@@ -28,7 +28,7 @@ import java.lang.reflect.AnnotatedElement
 class PropertyToolsTest extends Specification {
 
     public static final String PATH_STRING_SIMPLE_FIELD = "fieldName"
-    public static final String PATH_STRING_WIELD_FROM_REFERENCE = "ref1.fieldName"
+    public static final String PATH_STRING_FIELD_FROM_REFERENCE = "ref1.fieldName"
 
     //add logging check
     def "FindPropertiesByPath with dynamics and with wildcard"() {
@@ -51,8 +51,8 @@ class PropertyToolsTest extends Specification {
         where:
         pathString                       | metadataToolsResult               || result
         PATH_STRING_SIMPLE_FIELD         | createPathForDynamicAttributes(1) || Map.of(pathString, metadataToolsResult)
-        PATH_STRING_WIELD_FROM_REFERENCE | createPathForDynamicAttributes(2) || Map.of(pathString, metadataToolsResult)
-        PATH_STRING_WIELD_FROM_REFERENCE | null                              || Collections.emptyMap()
+        PATH_STRING_FIELD_FROM_REFERENCE | createPathForDynamicAttributes(2) || Map.of(pathString, metadataToolsResult)
+        PATH_STRING_FIELD_FROM_REFERENCE | null                              || Collections.emptyMap()
 
     }
 

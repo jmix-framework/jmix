@@ -34,7 +34,7 @@ import static java.util.Arrays.stream;
 
 @Component("search_DynamicAttributesAnnotationParser")
 public class DynamicAttributesAnnotationParser {
-    public DynamicAttributesGroup createDefinitions(DynamicAttributes annotation) {
+    public DynamicAttributesGroup createDefinition(DynamicAttributes annotation) {
         Objects.requireNonNull(annotation, "Annotation can't be null.");
 
         return DynamicAttributesGroup

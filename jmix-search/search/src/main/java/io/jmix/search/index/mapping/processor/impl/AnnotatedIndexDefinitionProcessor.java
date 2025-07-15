@@ -31,6 +31,7 @@ import io.jmix.search.index.mapping.fieldmapper.impl.TextFieldMapper;
 import io.jmix.search.index.mapping.processor.FieldAnnotationProcessor;
 import io.jmix.search.index.mapping.processor.MappingFieldAnnotationProcessorsRegistry;
 import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesAnnotationParser;
+import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesGroupProcessor;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractorProvider;
 import io.jmix.search.index.mapping.propertyvalue.impl.DisplayedNameValueExtractor;
 import org.apache.commons.lang3.StringUtils;

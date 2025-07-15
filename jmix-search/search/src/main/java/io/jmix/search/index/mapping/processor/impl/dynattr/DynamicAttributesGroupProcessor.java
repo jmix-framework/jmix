@@ -14,41 +14,46 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.processor.impl;
+package io.jmix.search.index.mapping.processor.impl.dynattr;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.mapping.DynamicAttributesConfigurationGroup;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
-import io.jmix.search.index.mapping.MappingDefinitionElement;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import io.jmix.search.index.mapping.processor.impl.AbstractAttributesGroupProcessor;
 import io.jmix.search.utils.PropertyTools;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProcessor<DynamicAttributesConfigurationGroup> {
 
-    protected DynamicAttributesGroupProcessor(PropertyTools propertyTools) {
+    private final DynamicAttributesResolver dynamicAttributesResolver;
+    private final DynamicAttributesMappingCreator dynamicAttributesMappingCreator;
+
+    protected DynamicAttributesGroupProcessor(PropertyTools propertyTools, DynamicAttributesResolver dynamicAttributesResolver, DynamicAttributesMappingCreator dynamicAttributesMappingCreator) {
         super(propertyTools);
+        this.dynamicAttributesResolver = dynamicAttributesResolver;
+        this.dynamicAttributesMappingCreator = dynamicAttributesMappingCreator;
     }
 
     @Override
     public List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass,
                                                                DynamicAttributesConfigurationGroup group,
                                                                ExtendedSearchSettings extendedSearchSettings) {
-/*        Map<String, MetaPropertyPath> effectiveProperties = resolveEffectiveProperties(
-                metaClass, group.getIncludedProperties(), group.getExcludedProperties()
+        Map<String, MetaPropertyPath> effectiveProperties = dynamicAttributesResolver.resolveEffectiveProperties(
+                metaClass,
+                group.getExcludedCategories(),
+                group.getExcludedProperties()
         );
 
         return effectiveProperties.values().stream()
-                .map(propertyPath -> createMappingFieldDescriptor(propertyPath, group, extendedSearchSettings))
+                .map(propertyPath -> dynamicAttributesMappingCreator.createMappingFieldDescriptor(propertyPath, group, extendedSearchSettings))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList());*/
-
-        return List.of();
+                .collect(Collectors.toList());
     }
+
 }

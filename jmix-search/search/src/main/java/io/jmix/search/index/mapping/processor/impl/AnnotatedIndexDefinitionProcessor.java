@@ -55,6 +55,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Provides functionality to process index definition interfaces marked with {@link JmixEntitySearchIndex}
@@ -353,21 +354,17 @@ public class AnnotatedIndexDefinitionProcessor {
                                                                            MappingDefinition mappingDefinition,
                                                                            ExtendedSearchSettings extendedSearchSettings) {
 
-        Map<String, MappingFieldDescriptor> staticMappings = mappingDefinition.getStaticGroups().stream()
+        List<MappingFieldDescriptor> staticMappings = mappingDefinition.getStaticGroups().stream()
                 .map(item -> staticAttributesGroupProcessor.processAttributesGroup(metaClass, item, extendedSearchSettings))
                 .flatMap(Collection::stream)
-                .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
-                    int order1 = v1.getOrder();
-                    int order2 = v2.getOrder();
-                    if (order1 == order2) {
-                        throw new RuntimeException("Conflicted mapping fields: '" + v1.getIndexPropertyFullName() + "' and '" + v2.getIndexPropertyFullName() + "'");
-                    }
-                    return order1 < order2 ? v2 : v1;
-                }));
+                .toList();
 
-        //TODO подумать о правильном порядке
-        Map<String, MappingFieldDescriptor> dynamicMappings = mappingDefinition.getDynamicGroups().stream()
+        List<MappingFieldDescriptor> dynamicMappings = mappingDefinition.getDynamicGroups().stream()
                 .map(item -> dynamicAttributesGroupProcessor.processAttributesGroup(metaClass, item, extendedSearchSettings))
+                .flatMap(Collection::stream)
+                .toList();
+
+        return Stream.of(staticMappings, dynamicMappings)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
                     int order1 = v1.getOrder();
@@ -377,9 +374,6 @@ public class AnnotatedIndexDefinitionProcessor {
                     }
                     return order1 < order2 ? v2 : v1;
                 }));
-
-        staticMappings.putAll(dynamicMappings);
-        return staticMappings;
     }
 
     protected DisplayedNameDescriptor createDisplayedNameDescriptor(MetaClass metaClass) {

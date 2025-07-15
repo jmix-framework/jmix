@@ -365,7 +365,7 @@ public class AnnotatedIndexDefinitionProcessor {
                 }));
 
         //TODO подумать о правильном порядке
-        Map<String, MappingFieldDescriptor> dynamicMappings = mappingDefinition.getStaticGroups().stream()
+        Map<String, MappingFieldDescriptor> dynamicMappings = mappingDefinition.getDynamicGroups().stream()
                 .map(item -> dynamicAttributesGroupProcessor.processAttributesGroup(metaClass, item, extendedSearchSettings))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {

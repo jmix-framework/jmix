@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class StaticAttributesGroupProcessor {
+public class StaticAttributesGroupProcessor implements AttributesGroupProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(StaticAttributesGroupProcessor.class);
 
@@ -56,13 +56,14 @@ public class StaticAttributesGroupProcessor {
     }
 
 
-    public List<MappingFieldDescriptor> processStaticAttributesGroup(MetaClass metaClass, MappingDefinitionElement element, ExtendedSearchSettings extendedSearchSettings) {
+    @Override
+    public List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass, MappingDefinitionElement group, ExtendedSearchSettings extendedSearchSettings) {
         Map<String, MetaPropertyPath> effectiveProperties = resolveEffectiveProperties(
-                metaClass, element.getIncludedProperties(), element.getExcludedProperties()
+                metaClass, group.getIncludedProperties(), group.getExcludedProperties()
         );
 
         return effectiveProperties.values().stream()
-                .map(propertyPath -> createMappingFieldDescriptor(propertyPath, element, extendedSearchSettings))
+                .map(propertyPath -> createMappingFieldDescriptor(propertyPath, group, extendedSearchSettings))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());

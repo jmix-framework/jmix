@@ -69,7 +69,9 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final SearchProperties searchProperties;
     protected final MethodArgumentsProvider methodArgumentsProvider;
     protected final DynamicAttributesAnnotationParser dynamicAttributesAnnotationParser;
+    //TODO combine two processors?
     protected final StaticAttributesGroupProcessor staticAttributesGroupProcessor;
+    protected final DynamicAttributesGroupProcessor dynamicAttributesGroupProcessor;
     protected final InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver;
 
 
@@ -79,7 +81,7 @@ public class AnnotatedIndexDefinitionProcessor {
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
                                              ContextArgumentResolverComposite resolvers,
-                                             DynamicAttributesAnnotationParser dynamicAttributesAnnotationParser, StaticAttributesGroupProcessor staticAttributesGroupProcessor, InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver) {
+                                             DynamicAttributesAnnotationParser dynamicAttributesAnnotationParser, StaticAttributesGroupProcessor staticAttributesGroupProcessor, DynamicAttributesGroupProcessor dynamicAttributesGroupProcessor, InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver) {
         this.metadata = metadata;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
@@ -87,6 +89,7 @@ public class AnnotatedIndexDefinitionProcessor {
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
         this.dynamicAttributesAnnotationParser = dynamicAttributesAnnotationParser;
         this.staticAttributesGroupProcessor = staticAttributesGroupProcessor;
+        this.dynamicAttributesGroupProcessor = dynamicAttributesGroupProcessor;
         this.instanceNameRelatedPropertiesResolver = instanceNameRelatedPropertiesResolver;
     }
 
@@ -350,7 +353,7 @@ public class AnnotatedIndexDefinitionProcessor {
                                                                            ExtendedSearchSettings extendedSearchSettings) {
 
         Map<String, MappingFieldDescriptor> staticMappings = mappingDefinition.getStaticGroups().stream()
-                .map(item -> staticAttributesGroupProcessor.processStaticAttributesGroup(metaClass, item, extendedSearchSettings))
+                .map(item -> staticAttributesGroupProcessor.processAttributesGroup(metaClass, item, extendedSearchSettings))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
                     int order1 = v1.getOrder();
@@ -361,6 +364,20 @@ public class AnnotatedIndexDefinitionProcessor {
                     return order1 < order2 ? v2 : v1;
                 }));
 
+        //TODO подумать о правильном порядке
+        Map<String, MappingFieldDescriptor> dynamicMappings = mappingDefinition.getStaticGroups().stream()
+                .map(item -> dynamicAttributesGroupProcessor.processAttributesGroup(metaClass, item, extendedSearchSettings))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
+                    int order1 = v1.getOrder();
+                    int order2 = v2.getOrder();
+                    if (order1 == order2) {
+                        throw new RuntimeException("Conflicted mapping fields: '" + v1.getIndexPropertyFullName() + "' and '" + v2.getIndexPropertyFullName() + "'");
+                    }
+                    return order1 < order2 ? v2 : v1;
+                }));
+
+        staticMappings.putAll(dynamicMappings);
         return staticMappings;
     }
 

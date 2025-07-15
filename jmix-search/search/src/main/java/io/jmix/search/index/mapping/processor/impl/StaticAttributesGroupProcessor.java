@@ -68,6 +68,30 @@ public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProce
                 .collect(Collectors.toList());
     }
 
+    protected Map<String, MetaPropertyPath> resolveEffectiveProperties(MetaClass rootEntityMetaClass,
+                                                                       String[] includes,
+                                                                       String[] excludes) {
+        Map<String, MetaPropertyPath> effectiveProperties = new HashMap<>();
+        Arrays.stream(includes)
+                .filter(StringUtils::isNotBlank)
+                .forEach(included -> {
+                    Map<String, MetaPropertyPath> propertyPaths = propertyTools.findPropertiesByPath(rootEntityMetaClass, included);
+                    Map<String, MetaPropertyPath> expandedPropertyPaths = expandEmbeddedProperties(rootEntityMetaClass, propertyPaths);
+                    effectiveProperties.putAll(expandedPropertyPaths);
+                });
+
+        Arrays.stream(excludes)
+                .filter(StringUtils::isNotBlank)
+                .flatMap(excluded -> {
+                    Map<String, MetaPropertyPath> propertyPaths = propertyTools.findPropertiesByPath(rootEntityMetaClass, excluded);
+                    Map<String, MetaPropertyPath> expandedPropertyPaths = expandEmbeddedProperties(rootEntityMetaClass, propertyPaths);
+                    return expandedPropertyPaths.keySet().stream();
+                })
+                .forEach(effectiveProperties::remove);
+
+        return effectiveProperties;
+    }
+
     protected Map<String, MetaPropertyPath> expandEmbeddedProperties(MetaClass rootEntityMetaClass, Map<String, MetaPropertyPath> propertyPaths) {
         return propertyPaths.entrySet().stream()
                 .flatMap(entry -> {

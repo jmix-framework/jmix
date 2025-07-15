@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProcessor {
+public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProcessor<MappingDefinitionElement> {
 
     private static final Logger log = LoggerFactory.getLogger(StaticAttributesGroupProcessor.class);
 

@@ -19,6 +19,7 @@ package io.jmix.search.index.mapping.processor.impl;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.index.mapping.AttributesConfigurationGroup;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +27,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractAttributesGroupProcessor implements AttributesGroupProcessor {
+public abstract class AbstractAttributesGroupProcessor<Group extends AttributesConfigurationGroup>
+        implements AttributesGroupProcessor<Group> {
     protected final PropertyTools propertyTools;
 
     protected AbstractAttributesGroupProcessor(PropertyTools propertyTools) {

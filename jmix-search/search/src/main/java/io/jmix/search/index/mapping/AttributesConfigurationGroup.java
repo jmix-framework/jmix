@@ -16,5 +16,5 @@
 
 package io.jmix.search.index.mapping;
 
-public interface AttributesConfiguarationGroup {
+public interface AttributesConfigurationGroup {
 }

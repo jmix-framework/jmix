@@ -32,7 +32,7 @@ import java.util.Map;
  * Describes details of mapping for entity property or group of properties.
  * Equivalent of single field-mapping annotation.
  */
-public class DynamicAttributesConfigurationGroup {
+public class DynamicAttributesConfigurationGroup implements AttributesConfigurationGroup{
     private final String[] excludedCategories;
     protected final String[] excludedProperties;
     protected final Class<? extends FieldMappingStrategy> fieldMappingStrategyClass;

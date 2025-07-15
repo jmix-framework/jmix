@@ -18,7 +18,7 @@ package io.jmix.search.index.mapping.processor.impl.dynattr
 
 import io.jmix.search.index.annotation.DynamicAttributes
 import io.jmix.search.index.annotation.ReferenceFieldsIndexingMode
-import io.jmix.search.index.mapping.DynamicAttributesGroup
+import io.jmix.search.index.mapping.DynamicAttributesConfigurationGroup
 import io.jmix.search.index.mapping.DynamicAttributesParameterKeys
 import io.jmix.search.index.mapping.ParameterKeys
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy
@@ -47,7 +47,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
 
         when:
         def annotations = parser.extractAnnotations(IndexDefinitionSimple);
-        DynamicAttributesGroup definition = parser.createDefinition(annotations.iterator().next())
+        DynamicAttributesConfigurationGroup definition = parser.createDefinition(annotations.iterator().next())
 
         then:
         definition.getFieldMappingStrategyClass() == AutoMappingStrategy
@@ -70,7 +70,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
 
         when:
         def annotations = parser.extractAnnotations(IndexDefinitionWithExcludes);
-        DynamicAttributesGroup definition = parser.createDefinition(annotations.iterator().next())
+        DynamicAttributesConfigurationGroup definition = parser.createDefinition(annotations.iterator().next())
 
         then:
         definition.getExcludedCategories() == new String[]{"cat1", "cat2", "cat3"}

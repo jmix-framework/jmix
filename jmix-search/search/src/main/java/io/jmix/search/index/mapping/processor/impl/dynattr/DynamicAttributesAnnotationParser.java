@@ -17,7 +17,7 @@
 package io.jmix.search.index.mapping.processor.impl.dynattr;
 
 import io.jmix.search.index.annotation.DynamicAttributes;
-import io.jmix.search.index.mapping.DynamicAttributesGroup;
+import io.jmix.search.index.mapping.DynamicAttributesConfigurationGroup;
 import io.jmix.search.index.mapping.DynamicAttributesParameterKeys;
 import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
@@ -34,10 +34,10 @@ import static java.util.Arrays.stream;
 
 @Component("search_DynamicAttributesAnnotationParser")
 public class DynamicAttributesAnnotationParser {
-    public DynamicAttributesGroup createDefinition(DynamicAttributes annotation) {
+    public DynamicAttributesConfigurationGroup createDefinition(DynamicAttributes annotation) {
         Objects.requireNonNull(annotation, "Annotation can't be null.");
 
-        return DynamicAttributesGroup
+        return DynamicAttributesConfigurationGroup
                 .builder()
                 .excludeCategories(annotation.excludeCategories())
                 .excludeProperties(annotation.excludeFields())

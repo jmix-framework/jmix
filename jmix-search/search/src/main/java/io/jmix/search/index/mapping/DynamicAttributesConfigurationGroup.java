@@ -32,7 +32,7 @@ import java.util.Map;
  * Describes details of mapping for entity property or group of properties.
  * Equivalent of single field-mapping annotation.
  */
-public class DynamicAttributesGroup {
+public class DynamicAttributesConfigurationGroup {
     private final String[] excludedCategories;
     protected final String[] excludedProperties;
     protected final Class<? extends FieldMappingStrategy> fieldMappingStrategyClass;
@@ -41,7 +41,7 @@ public class DynamicAttributesGroup {
     protected final PropertyValueExtractor propertyValueExtractor;
     protected final Map<String, Object> parameters;
 
-    protected DynamicAttributesGroup(DynamicAttributeGroupDefinitionBuilder builder) {
+    protected DynamicAttributesConfigurationGroup(DynamicAttributeGroupDefinitionBuilder builder) {
         this.excludedCategories = builder.excludedCategories;
         this.excludedProperties = builder.excludedProperties;
         this.fieldMappingStrategyClass = builder.fieldMappingStrategyClass;
@@ -79,7 +79,7 @@ public class DynamicAttributesGroup {
      * Can be null if strategy is defined as class (see {@link #getFieldMappingStrategyClass()})
      * or configuration is specified explicitly (see {@link #getFieldConfiguration()})
      * <p>
-     * {@link DynamicAttributesGroup#getFieldMappingStrategyClass()} is ignored if this instance is set.
+     * {@link DynamicAttributesConfigurationGroup#getFieldMappingStrategyClass()} is ignored if this instance is set.
      *
      * @return {@link FieldMappingStrategy} instance
      */
@@ -236,7 +236,7 @@ public class DynamicAttributesGroup {
         /**
          * Defines parameters map.
          * <p>
-         * See {@link DynamicAttributesGroup#getParameters()}.
+         * See {@link DynamicAttributesConfigurationGroup#getParameters()}.
          *
          * @param parameters parameters
          * @return builder
@@ -249,7 +249,7 @@ public class DynamicAttributesGroup {
         /**
          * Adds new parameter to parameters map.
          * <p>
-         * See {@link DynamicAttributesGroup#getParameters()}.
+         * See {@link DynamicAttributesConfigurationGroup#getParameters()}.
          *
          * @param parameterName  parameter name
          * @param parameterValue parameter value
@@ -358,8 +358,8 @@ public class DynamicAttributesGroup {
             return this;
         }
 
-        public DynamicAttributesGroup build() {
-            return new DynamicAttributesGroup(this);
+        public DynamicAttributesConfigurationGroup build() {
+            return new DynamicAttributesConfigurationGroup(this);
         }
     }
 }

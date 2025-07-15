@@ -17,15 +17,37 @@
 package io.jmix.search.index.mapping.processor.impl;
 
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.MappingDefinitionElement;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import io.jmix.search.utils.PropertyTools;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class DynamicAttributesGroupProcessor implements AttributesGroupProcessor {
+public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProcessor {
+
+    protected DynamicAttributesGroupProcessor(PropertyTools propertyTools) {
+        super(propertyTools);
+    }
+
     @Override
-    public List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass, MappingDefinitionElement group, ExtendedSearchSettings extendedSearchSettings) {
+    public List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass,
+                                                               MappingDefinitionElement group,
+                                                               ExtendedSearchSettings extendedSearchSettings) {
+/*        Map<String, MetaPropertyPath> effectiveProperties = resolveEffectiveProperties(
+                metaClass, group.getIncludedProperties(), group.getExcludedProperties()
+        );
+
+        return effectiveProperties.values().stream()
+                .map(propertyPath -> createMappingFieldDescriptor(propertyPath, group, extendedSearchSettings))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());*/
+
         return List.of();
     }
 }

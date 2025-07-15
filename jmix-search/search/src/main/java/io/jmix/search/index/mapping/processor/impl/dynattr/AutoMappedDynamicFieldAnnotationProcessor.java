@@ -18,7 +18,7 @@ package io.jmix.search.index.mapping.processor.impl.dynattr;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.annotation.DynamicAttributes;
-import io.jmix.search.index.mapping.DynamicAttributesGroup;
+import io.jmix.search.index.mapping.DynamicAttributesConfigurationGroup;
 import io.jmix.search.index.mapping.DynamicAttributesParameterKeys;
 import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.ParameterKeys;
@@ -48,11 +48,11 @@ public class AutoMappedDynamicFieldAnnotationProcessor extends AbstractFieldAnno
     }
 
 
-    public DynamicAttributesGroup createDefinition(DynamicAttributes annotation) {
+    public DynamicAttributesConfigurationGroup createDefinition(DynamicAttributes annotation) {
         //TODO think about
         Objects.requireNonNull(annotation, "Annotation can't be null.");
 
-        return DynamicAttributesGroup
+        return DynamicAttributesConfigurationGroup
                 .builder()
                 .excludeCategories(annotation.excludeCategories())
                 .excludeProperties(annotation.excludeFields())

@@ -39,17 +39,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class StaticAttributesGroupProcessor implements AttributesGroupProcessor {
+public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(StaticAttributesGroupProcessor.class);
 
-    protected final PropertyTools propertyTools;
     protected final MetadataTools metadataTools;
     protected final FieldMappingStrategyProvider fieldMappingStrategyProvider;
     protected final InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver;
 
     StaticAttributesGroupProcessor(PropertyTools propertyTools, MetadataTools metadataTools, FieldMappingStrategyProvider fieldMappingStrategyProvider, InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver) {
-        this.propertyTools = propertyTools;
+        super(propertyTools);
         this.metadataTools = metadataTools;
         this.fieldMappingStrategyProvider = fieldMappingStrategyProvider;
         this.instanceNameRelatedPropertiesResolver = instanceNameRelatedPropertiesResolver;
@@ -67,30 +66,6 @@ public class StaticAttributesGroupProcessor implements AttributesGroupProcessor 
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
-    }
-
-    protected Map<String, MetaPropertyPath> resolveEffectiveProperties(MetaClass rootEntityMetaClass,
-                                                                       String[] includes,
-                                                                       String[] excludes) {
-        Map<String, MetaPropertyPath> effectiveProperties = new HashMap<>();
-        Arrays.stream(includes)
-                .filter(StringUtils::isNotBlank)
-                .forEach(included -> {
-                    Map<String, MetaPropertyPath> propertyPaths = propertyTools.findPropertiesByPath(rootEntityMetaClass, included);
-                    Map<String, MetaPropertyPath> expandedPropertyPaths = expandEmbeddedProperties(rootEntityMetaClass, propertyPaths);
-                    effectiveProperties.putAll(expandedPropertyPaths);
-                });
-
-        Arrays.stream(excludes)
-                .filter(StringUtils::isNotBlank)
-                .flatMap(excluded -> {
-                    Map<String, MetaPropertyPath> propertyPaths = propertyTools.findPropertiesByPath(rootEntityMetaClass, excluded);
-                    Map<String, MetaPropertyPath> expandedPropertyPaths = expandEmbeddedProperties(rootEntityMetaClass, propertyPaths);
-                    return expandedPropertyPaths.keySet().stream();
-                })
-                .forEach(effectiveProperties::remove);
-
-        return effectiveProperties;
     }
 
     protected Map<String, MetaPropertyPath> expandEmbeddedProperties(MetaClass rootEntityMetaClass, Map<String, MetaPropertyPath> propertyPaths) {

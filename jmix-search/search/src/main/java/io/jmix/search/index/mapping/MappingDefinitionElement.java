@@ -33,7 +33,7 @@ import java.util.Map;
  * Equivalent of single field-mapping annotation.
  */
 @Deprecated
-public class MappingDefinitionElement {
+public class MappingDefinitionElement implements AttributesConfiguarationGroup{
     protected final String[] includedProperties;
     protected final String[] excludedProperties;
     protected final Class<? extends FieldMappingStrategy> fieldMappingStrategyClass;

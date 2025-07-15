@@ -28,7 +28,7 @@ import static io.jmix.search.index.mapping.DynamicAttributesParameterKeys.REFERE
 import static io.jmix.search.index.mapping.ParameterKeys.ANALYZER
 import static io.jmix.search.index.mapping.ParameterKeys.INDEX_FILE_CONTENT
 
-class DynamicAttributesGroupTest extends Specification {
+class DynamicAttributesConfigurationGroupTest extends Specification {
     private static final String[] EXCLUDED_CATEGORIES = ["category1", "category2", "category3"]
     private static final String[] EXCLUDED_PROPERTIES = ["field1", "field2", "field3"]
     public static final String SOME_ANALYZER = "someNotStandardAnalyzer"
@@ -40,7 +40,7 @@ class DynamicAttributesGroupTest extends Specification {
         def propertyValueExtractorMock = Mock(FilePropertyValueExtractor)
 
         when:
-        def dynamicAttributesGroup = DynamicAttributesGroup.builder()
+        def dynamicAttributesGroup = DynamicAttributesConfigurationGroup.builder()
                 .excludeCategories(EXCLUDED_CATEGORIES)
                 .excludeProperties(EXCLUDED_PROPERTIES)
                 .withParameters(Map.of(REFERENCE_FIELD_INDEXING_MODE, NONE))
@@ -69,7 +69,7 @@ class DynamicAttributesGroupTest extends Specification {
 
         def fieldMappingStrategyMock = Mock(FieldMappingStrategy)
         when:
-        def dynamicAttributesGroup = DynamicAttributesGroup.builder()
+        def dynamicAttributesGroup = DynamicAttributesConfigurationGroup.builder()
                 .excludeCategories(EXCLUDED_CATEGORIES)
                 .excludeProperties(EXCLUDED_PROPERTIES)
                 .withParameters(Map.of(REFERENCE_FIELD_INDEXING_MODE, NONE))
@@ -94,7 +94,7 @@ class DynamicAttributesGroupTest extends Specification {
         FieldConfiguration fieldConfiguration = createFieldConfiguration(SAMPLE_JSON_TEXT);
 
         when:
-        def dynamicAttributesGroup = DynamicAttributesGroup.builder()
+        def dynamicAttributesGroup = DynamicAttributesConfigurationGroup.builder()
                 .excludeCategories(EXCLUDED_CATEGORIES)
                 .excludeProperties(EXCLUDED_PROPERTIES)
                 .withParameters(Map.of(REFERENCE_FIELD_INDEXING_MODE, NONE))
@@ -119,7 +119,7 @@ class DynamicAttributesGroupTest extends Specification {
         ObjectNode fieldConfigurationNode = asNode(SAMPLE_JSON_TEXT);
 
         when:
-        def dynamicAttributesGroup = DynamicAttributesGroup.builder()
+        def dynamicAttributesGroup = DynamicAttributesConfigurationGroup.builder()
                 .excludeCategories(EXCLUDED_CATEGORIES)
                 .excludeProperties(EXCLUDED_PROPERTIES)
                 .withParameters(Map.of(REFERENCE_FIELD_INDEXING_MODE, NONE))
@@ -144,7 +144,7 @@ class DynamicAttributesGroupTest extends Specification {
         ObjectNode fieldConfigurationNode = asNode(SAMPLE_JSON_TEXT_2);
         FieldConfiguration fieldConfiguration = createFieldConfiguration(SAMPLE_JSON_TEXT);
         when:
-        def dynamicAttributesGroup = DynamicAttributesGroup.builder()
+        def dynamicAttributesGroup = DynamicAttributesConfigurationGroup.builder()
                 .excludeCategories(EXCLUDED_CATEGORIES)
                 .excludeProperties(EXCLUDED_PROPERTIES)
                 .withParameters(Map.of(REFERENCE_FIELD_INDEXING_MODE, NONE))

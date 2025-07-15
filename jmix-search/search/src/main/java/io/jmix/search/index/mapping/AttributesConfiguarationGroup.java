@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,5 @@
 
 package io.jmix.search.index.mapping;
 
-public class StaticAttributesGroup  extends MappingDefinitionElement{
-
-    protected StaticAttributesGroup(DynamicAttributeGroupBuilder builder) {
-        super(builder);
-    }
+public interface AttributesConfiguarationGroup {
 }

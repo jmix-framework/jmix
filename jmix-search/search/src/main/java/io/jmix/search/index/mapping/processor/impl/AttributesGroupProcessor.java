@@ -17,12 +17,15 @@
 package io.jmix.search.index.mapping.processor.impl;
 
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.search.index.mapping.AttributesConfiguarationGroup;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.MappingDefinitionElement;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 
 import java.util.List;
 
-public interface AttributesGroupProcessor {
-    List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass, MappingDefinitionElement group, ExtendedSearchSettings extendedSearchSettings);
+public interface AttributesGroupProcessor<Group extends AttributesConfiguarationGroup> {
+    List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass,
+                                                        Group group,
+                                                        ExtendedSearchSettings extendedSearchSettings);
 }

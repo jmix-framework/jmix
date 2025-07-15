@@ -106,6 +106,11 @@ public class CoreProperties {
      */
     boolean skipNullOrEmptyConditionsByDefault;
 
+    /**
+     * Whether to use ancestor's @InstanceName definition in case of unfetched attributes.
+     */
+    boolean allowInstanceNameFallback;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -126,7 +131,8 @@ public class CoreProperties {
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
             @DefaultValue("true") boolean roundDecimalValueByFormat,
-            @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault) {
+            @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault,
+            @DefaultValue("true") boolean allowInstanceNameFallback) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -156,6 +162,7 @@ public class CoreProperties {
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
         this.roundDecimalValueByFormat = roundDecimalValueByFormat;
         this.skipNullOrEmptyConditionsByDefault = skipNullOrEmptyConditionsByDefault;
+        this.allowInstanceNameFallback = allowInstanceNameFallback;
     }
 
     public String getWebHostName() {
@@ -265,5 +272,13 @@ public class CoreProperties {
      */
     public boolean isSkipNullOrEmptyConditionsByDefault() {
         return skipNullOrEmptyConditionsByDefault;
+    }
+
+    /**
+     *
+     * @see #allowInstanceNameFallback
+     */
+    public boolean isAllowInstanceNameFallback() {
+        return allowInstanceNameFallback;
     }
 }

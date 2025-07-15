@@ -25,6 +25,7 @@ import io.jmix.samples.rest.entity.driver.Model;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import test_support.AbstractRestControllerFT;
 
@@ -153,7 +154,8 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             ReadContext ctx = parseResponse(response);
             assertEquals(carUuidString, ctx.read("$.id"));
-            assertNull(ctx.read("$._instanceName"));
+            assertEquals("io.jmix.samples.rest.entity.driver.Car-" + carUuidString + " [detached]",
+                    ctx.read("$._instanceName"));//fallback to base class string representation
         }
     }
 

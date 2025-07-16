@@ -100,5 +100,39 @@ class DynamicAttributesResolverTest extends Specification {
         properties.containsKey("key2")
     }
 
+    def "attributes. get all"() {
+        given:
+        MetaClass metaClass = Mock()
+
+        and:
+        def attributeDefinition1 = Mock(AttributeDefinition)
+        attributeDefinition1.getCode() >> "attr1"
+        attributeDefinition1.getDataType() >> AttributeType.STRING
+
+        and:
+        def attributeDefinition2 = Mock(AttributeDefinition)
+        attributeDefinition2.getCode() >> "attr2"
+        attributeDefinition2.getDataType() >> AttributeType.ENTITY
+
+        and:
+        DynAttrMetadata metadata = Mock()
+        Collection<AttributeDefinition> attributeDefinitions = asList(attributeDefinition1, attributeDefinition2)
+        metadata.getAttributes(metaClass) >> attributeDefinitions
+
+        and:
+        PropertyTools propertyTools = Mock()
+        propertyTools.findPropertiesByPath(metaClass, "attr1", true) >> singletonMap("key1", Mock(MetaPropertyPath))
+        propertyTools.findPropertiesByPath(metaClass, "attr2", true) >> singletonMap("key2", Mock(MetaPropertyPath))
+
+        and:
+        def resolver = new DynamicAttributesResolver(metadata, propertyTools)
+
+        when:
+        def attributes = resolver.getAttributes(metaClass, new String[]{}, new String[]{}, INSTANCE_NAME_ONLY)
+
+        then:
+        attributes.size() == 2
+    }
+
 
 }

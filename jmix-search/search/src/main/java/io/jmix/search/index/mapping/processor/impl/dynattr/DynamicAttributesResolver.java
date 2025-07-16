@@ -62,7 +62,7 @@ public class DynamicAttributesResolver {
 
     }
 
-    private Collection<AttributeDefinition> getAttributes(
+    protected Collection<AttributeDefinition> getAttributes(
             MetaClass metaClass,
             String[] excludedCategories,
             String[] excludedProperties,

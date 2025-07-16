@@ -50,10 +50,10 @@ public class PropertyTools {
      * @return map with effective property path as a key and property itself as a value
      */
     public Map<String, MetaPropertyPath> findPropertiesByPath(MetaClass metaClass, String pathString) {
-        return findPropertiesByPaths(metaClass, pathString, false);
+        return findPropertiesByPath(metaClass, pathString, false);
     }
 
-    public Map<String, MetaPropertyPath> findPropertiesByPaths(MetaClass metaClass, String pathString, boolean useDynamicAttributes) {
+    public Map<String, MetaPropertyPath> findPropertiesByPath(MetaClass metaClass, String pathString, boolean useDynamicAttributes) {
         log.debug("Find properties by path: MetaClass={}, PathString={}", metaClass, pathString);
         if (hasWildcard(pathString)) {
             return findPropertiesByWildcardPath(metaClass, pathString);

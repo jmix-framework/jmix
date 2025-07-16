@@ -43,7 +43,7 @@ class PropertyToolsTest extends Specification {
 
 
         when:
-        def path = tools.findPropertiesByPaths(metaClassMock, pathString, true)
+        def path = tools.findPropertiesByPath(metaClassMock, pathString, true)
 
         then:
         path == result

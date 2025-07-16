@@ -46,7 +46,7 @@ public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProc
     public List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass,
                                                                DynamicAttributesConfigurationGroup group,
                                                                ExtendedSearchSettings extendedSearchSettings) {
-        Map<String, MetaPropertyPath> effectiveProperties = dynamicAttributesResolver.resolveEffectiveProperties(
+        Map<String, MetaPropertyPath> effectiveProperties = dynamicAttributesResolver.resolveEffectivePropertyPaths(
                 metaClass,
                 group.getExcludedCategories(),
                 group.getExcludedProperties(),

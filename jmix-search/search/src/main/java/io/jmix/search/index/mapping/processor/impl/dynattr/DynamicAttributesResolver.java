@@ -27,8 +27,6 @@ import io.jmix.search.utils.PropertyTools;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.INSTANCE_NAME_ONLY;
@@ -52,18 +50,13 @@ public class DynamicAttributesResolver {
             String[] excludedCategories,
             String[] excludedProperties,
             ReferenceFieldsIndexingMode mode) {
-        if (excludedCategories.length == 0 && excludedProperties.length == 0) {
-            Map<String, MetaPropertyPath> effectiveProperties = new HashMap<>();
-            Collection<AttributeDefinition> attributes = getAttributes(metaClass, excludedCategories, excludedProperties, mode);
+        Map<String, MetaPropertyPath> effectiveProperties = new HashMap<>();
+        Collection<AttributeDefinition> attributes = getAttributes(metaClass, excludedCategories, excludedProperties, mode);
 
-            attributes.forEach(attributeDefinition ->
-                    effectiveProperties.putAll(propertyTools.findPropertiesByPath(metaClass, attributeDefinition.getCode(), true))
-            );
-            return effectiveProperties;
-        }
-        //TODO
-        return null;
-
+        attributes.forEach(attributeDefinition ->
+                effectiveProperties.putAll(propertyTools.findPropertiesByPath(metaClass, attributeDefinition.getCode(), true))
+        );
+        return effectiveProperties;
     }
 
     protected Collection<AttributeDefinition> getAttributes(
@@ -77,14 +70,16 @@ public class DynamicAttributesResolver {
                                 attributeDefinition.getDataType() != AttributeType.ENTITY || mode == INSTANCE_NAME_ONLY)
                 .collect(toMap(AttributeDefinition::getCode, identity()));
         if (excludedCategories.length > 0) {
-
-            cleanAttributesForExcludedProperties(metaClass, excludedCategories, attributeDefinitionMap);
+            cleanAttributesForExcludedCategories(metaClass, excludedCategories, attributeDefinitionMap);
+        }
+        if (excludedProperties.length > 0) {
+            cleanAttributesForExcludedProperties(metaClass, excludedProperties, attributeDefinitionMap);
         }
 
         return attributeDefinitionMap.values();
     }
 
-    private void cleanAttributesForExcludedProperties(MetaClass metaClass, String[] excludedCategories, Map<String, AttributeDefinition> attributeDefinitionMap) {
+    private void cleanAttributesForExcludedCategories(MetaClass metaClass, String[] excludedCategories, Map<String, AttributeDefinition> attributeDefinitionMap) {
         Map<String, CategoryDefinition> categories = dynAttrMetadata
                 .getCategories(metaClass)
                 .stream()
@@ -99,5 +94,9 @@ public class DynamicAttributesResolver {
                 .toList();
 
         excludedAttributeCodes.forEach(attributeDefinitionMap::remove);
+    }
+
+    private void cleanAttributesForExcludedProperties(MetaClass metaClass, String[] excludedProperties, Map<String, AttributeDefinition> attributeDefinitionMap) {
+        Stream.of(excludedProperties).forEach(attributeDefinitionMap::remove);
     }
 }

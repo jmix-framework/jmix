@@ -71,8 +71,6 @@ public class DynamicAttributesResolver {
             String[] excludedCategories,
             String[] excludedProperties,
             ReferenceFieldsIndexingMode mode) {
-
-
         Map<String, AttributeDefinition> attributeDefinitionMap = dynAttrMetadata.getAttributes(metaClass).stream()
                 .filter(
                         attributeDefinition ->

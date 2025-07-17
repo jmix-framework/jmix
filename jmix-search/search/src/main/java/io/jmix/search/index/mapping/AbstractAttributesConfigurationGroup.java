@@ -23,7 +23,25 @@ import org.springframework.lang.Nullable;
 
 import java.util.Map;
 
-public interface AttributesConfigurationGroup {
+public abstract class AbstractAttributesConfigurationGroup implements AttributesConfigurationGroup {
+    protected final Class<? extends FieldMappingStrategy> fieldMappingStrategyClass;
+    protected final FieldMappingStrategy fieldMappingStrategy;
+    protected final FieldConfiguration fieldConfiguration;
+    protected final PropertyValueExtractor propertyValueExtractor;
+    protected final Map<String, Object> parameters;
+
+    protected AbstractAttributesConfigurationGroup(
+            Class<? extends FieldMappingStrategy> fieldMappingStrategyClass,
+            FieldMappingStrategy fieldMappingStrategy,
+            FieldConfiguration fieldConfiguration,
+            PropertyValueExtractor propertyValueExtractor,
+            Map<String, Object> parameters) {
+        this.fieldMappingStrategyClass = fieldMappingStrategyClass;
+        this.fieldMappingStrategy = fieldMappingStrategy;
+        this.fieldConfiguration = fieldConfiguration;
+        this.propertyValueExtractor = propertyValueExtractor;
+        this.parameters = parameters;
+    }
 
     /**
      * Provides {@link FieldMappingStrategy} implementation class that should be used to map properties.
@@ -34,7 +52,9 @@ public interface AttributesConfigurationGroup {
      * @return {@link FieldMappingStrategy} implementation class
      */
     @Nullable
-    Class<? extends FieldMappingStrategy> getFieldMappingStrategyClass();
+    public Class<? extends FieldMappingStrategy> getFieldMappingStrategyClass() {
+        return fieldMappingStrategyClass;
+    }
 
     /**
      * Provides {@link FieldMappingStrategy} instance that should be used to map properties.
@@ -47,7 +67,9 @@ public interface AttributesConfigurationGroup {
      * @return {@link FieldMappingStrategy} instance
      */
     @Nullable
-     FieldMappingStrategy getFieldMappingStrategy();
+    public FieldMappingStrategy getFieldMappingStrategy() {
+        return fieldMappingStrategy;
+    }
 
     /**
      * Provides explicit configuration for indexed fields.
@@ -61,7 +83,9 @@ public interface AttributesConfigurationGroup {
      * @return field configuration
      */
     @Nullable
-    FieldConfiguration getFieldConfiguration();
+    public FieldConfiguration getFieldConfiguration() {
+        return fieldConfiguration;
+    }
 
     /**
      * Provides explicit property value extractor.
@@ -74,7 +98,9 @@ public interface AttributesConfigurationGroup {
      * @return property value extractor
      */
     @Nullable
-    PropertyValueExtractor getPropertyValueExtractor();
+    public PropertyValueExtractor getPropertyValueExtractor() {
+        return propertyValueExtractor;
+    }
 
     /**
      * Provides additional parameters related to this element.
@@ -84,8 +110,7 @@ public interface AttributesConfigurationGroup {
      *
      * @return Map with parameters
      */
-    Map<String, Object> getParameters();
-
-
-
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
 }

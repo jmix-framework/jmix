@@ -18,7 +18,7 @@ package io.jmix.search.index.mapping;
 
 public class StaticAttributesConfigurationGroup extends MappingDefinitionElement{
 
-    protected StaticAttributesConfigurationGroup(DynamicAttributeGroupBuilder builder) {
+    protected StaticAttributesConfigurationGroup(StaticAttributeGroupBuilder builder) {
         super(builder);
     }
 }

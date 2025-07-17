@@ -32,18 +32,17 @@ import java.util.Map;
  * Describes details of mapping for entity property or group of properties.
  * Equivalent of single field-mapping annotation.
  */
-public class DynamicAttributesConfigurationGroup extends AbstractAttributesConfigurationGroup{
+public class DynamicAttributesConfigurationGroup extends AbstractAttributesConfigurationGroup {
     protected final String[] excludedCategories;
     protected final String[] excludedProperties;
 
     protected DynamicAttributesConfigurationGroup(DynamicAttributeGroupDefinitionBuilder builder) {
-        super(
-                builder.fieldMappingStrategyClass,
+        super(builder.fieldMappingStrategyClass,
                 builder.fieldMappingStrategy,
                 builder.fieldConfiguration,
                 builder.propertyValueExtractor,
-                builder.parameters == null ? Collections.emptyMap() : builder.parameters
-                );
+                builder.parameters == null ? Collections.emptyMap() : builder.parameters,
+                builder.order);
         this.excludedCategories = builder.excludedCategories;
         this.excludedProperties = builder.excludedProperties;
     }
@@ -62,26 +61,21 @@ public class DynamicAttributesConfigurationGroup extends AbstractAttributesConfi
     }
 
     //TODO
+
     /**
-     * todo
-     *
      * @return
      */
     public String[] getExcludedCategories() {
         return excludedCategories;
     }
 
-    public static class DynamicAttributeGroupDefinitionBuilder {
+    public static class DynamicAttributeGroupDefinitionBuilder
+            extends AbstractAttributeGroupDefinitionBuilder<DynamicAttributesConfigurationGroup> {
 
         private static final ObjectMapper mapper = new ObjectMapper();
 
         private String[] excludedCategories = new String[0];
         private String[] excludedProperties = new String[0];
-        private Class<? extends FieldMappingStrategy> fieldMappingStrategyClass;
-        private FieldMappingStrategy fieldMappingStrategy;
-        private FieldConfiguration fieldConfiguration;
-        private PropertyValueExtractor propertyValueExtractor;
-        private Map<String, Object> parameters = null;
 
         private DynamicAttributeGroupDefinitionBuilder() {
         }
@@ -106,25 +100,7 @@ public class DynamicAttributesConfigurationGroup extends AbstractAttributesConfi
             return this;
         }
 
-
-        /**
-         * Defines explicit {@link PropertyValueExtractor} that should be used to extract values from indexed properties.
-         * <p>
-         * Required if only explicit field configuration is defined.
-         * <p>
-         * Optional if {@link FieldMappingStrategy} is defined (class or instance) - explicit extractor
-         * takes precedence over extractor provided by strategy.
-         *
-         * @param propertyValueExtractor property value extractor
-         * @return builder
-         * @see #withFieldConfiguration(String)
-         * @see #withFieldConfiguration(ObjectNode)
-         */
-        public DynamicAttributeGroupDefinitionBuilder withPropertyValueExtractor(PropertyValueExtractor propertyValueExtractor) {
-            this.propertyValueExtractor = propertyValueExtractor;
-            return this;
-        }
-
+        @Override
         public DynamicAttributesConfigurationGroup build() {
             return new DynamicAttributesConfigurationGroup(this);
         }

@@ -56,16 +56,16 @@ public class DynamicAttributeGroupParser {
     private DescriptorPair createDescriptor(AttributeDefinition attribute,
                                             DynamicAttributesConfigurationGroup group,
                                             ExtendedSearchSettings extendedSettings) {
-        MappingFieldDescriptor fieldDescriptor = new MappingFieldDescriptor();
-        fieldDescriptor.setEntityPropertyFullName(propertyPath.toPathString());
-        fieldDescriptor.setIndexPropertyFullName(propertyPath.toPathString());
-        fieldDescriptor.setMetaPropertyPath(propertyPath);
-        fieldDescriptor.setFieldConfiguration(effectiveFieldConfiguration);
-        fieldDescriptor.setOrder(0);
-        fieldDescriptor.setPropertyValueExtractor(effectivePropertyValueExtractor);
-        fieldDescriptor.setInstanceNameRelatedProperties(instanceNameRelatedProperties);
-        fieldDescriptor.setParameters(group.getParameters());
-        fieldDescriptor.setStandalone(false);
+//        MappingFieldDescriptor fieldDescriptor = new MappingFieldDescriptor();
+//        fieldDescriptor.setEntityPropertyFullName(propertyPath.toPathString());
+//        fieldDescriptor.setIndexPropertyFullName(propertyPath.toPathString());
+//        fieldDescriptor.setMetaPropertyPath(propertyPath);
+//        fieldDescriptor.setFieldConfiguration(effectiveFieldConfiguration);
+//        fieldDescriptor.setOrder(0);
+//        fieldDescriptor.setPropertyValueExtractor(effectivePropertyValueExtractor);
+//        fieldDescriptor.setInstanceNameRelatedProperties(instanceNameRelatedProperties);
+//        fieldDescriptor.setParameters(group.getParameters());
+//        fieldDescriptor.setStandalone(false);
         return null;
     }
 

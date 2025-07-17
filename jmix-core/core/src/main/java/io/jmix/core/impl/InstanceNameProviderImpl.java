@@ -127,8 +127,9 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
             return exception == null;
         }
 
+        //should be called only in case of EvaluationResult#exception is specified
         public String getUnfetchedAttributeName() {
-            String message = Objects.requireNonNull(exception).getMessage();
+            String message = Objects.requireNonNull(exception, "Invalid EvaluationResult usage").getMessage();
             return message.substring(UNFETCHED_EXCEPTION_MESSAGE_PREFIX.length(), message.indexOf("]"));
         }
     }

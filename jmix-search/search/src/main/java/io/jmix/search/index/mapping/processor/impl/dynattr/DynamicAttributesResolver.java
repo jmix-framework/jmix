@@ -20,16 +20,20 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
+import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.search.index.annotation.ReferenceFieldsIndexingMode;
 import io.jmix.search.utils.PropertyTools;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.INSTANCE_NAME_ONLY;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 
 @Component
 public class DynamicAttributesResolver {
@@ -67,11 +71,35 @@ public class DynamicAttributesResolver {
             String[] excludedCategories,
             String[] excludedProperties,
             ReferenceFieldsIndexingMode mode) {
-        return dynAttrMetadata.getAttributes(metaClass).stream()
+
+
+        Map<String, AttributeDefinition> attributeDefinitionMap = dynAttrMetadata.getAttributes(metaClass).stream()
                 .filter(
                         attributeDefinition ->
                                 attributeDefinition.getDataType() != AttributeType.ENTITY || mode == INSTANCE_NAME_ONLY)
+                .collect(toMap(AttributeDefinition::getCode, identity()));
+        if (excludedCategories.length > 0) {
+
+            cleanAttributesForExcludedProperties(metaClass, excludedCategories, attributeDefinitionMap);
+        }
+
+        return attributeDefinitionMap.values();
+    }
+
+    private void cleanAttributesForExcludedProperties(MetaClass metaClass, String[] excludedCategories, Map<String, AttributeDefinition> attributeDefinitionMap) {
+        Map<String, CategoryDefinition> categories = dynAttrMetadata
+                .getCategories(metaClass)
+                .stream()
+                .collect(toMap(CategoryDefinition::getName, identity()));
+
+        List<String> excludedAttributeCodes = Stream.of(excludedCategories)
+                .map(categories::get)
+                .filter(Objects::nonNull)
+                .map(CategoryDefinition::getAttributeDefinitions)
+                .flatMap(Collection::stream)
+                .map(AttributeDefinition::getCode)
                 .toList();
 
+        excludedAttributeCodes.forEach(attributeDefinitionMap::remove);
     }
 }

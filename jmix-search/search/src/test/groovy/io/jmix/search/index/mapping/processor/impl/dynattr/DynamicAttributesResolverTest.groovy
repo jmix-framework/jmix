@@ -20,6 +20,7 @@ import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.core.metamodel.model.MetaPropertyPath
 import io.jmix.dynattr.AttributeDefinition
 import io.jmix.dynattr.AttributeType
+import io.jmix.dynattr.CategoryDefinition
 import io.jmix.dynattr.DynAttrMetadata
 import io.jmix.search.utils.PropertyTools
 import spock.lang.Specification
@@ -100,38 +101,44 @@ class DynamicAttributesResolverTest extends Specification {
         properties.containsKey("key2")
     }
 
-    def "attributes. get all"() {
+    def "attributes. exclude categories"() {
         given:
         MetaClass metaClass = Mock()
 
         and:
         def attributeDefinition1 = Mock(AttributeDefinition)
-        attributeDefinition1.getCode() >> "attr1"
+        attributeDefinition1.getCode() >> "category1attr1"
         attributeDefinition1.getDataType() >> AttributeType.STRING
 
         and:
         def attributeDefinition2 = Mock(AttributeDefinition)
-        attributeDefinition2.getCode() >> "attr2"
+        attributeDefinition2.getCode() >> "category2attr2"
         attributeDefinition2.getDataType() >> AttributeType.ENTITY
+
+        and:
+        CategoryDefinition categoryDefinition1 = Mock()
+        categoryDefinition1.getName() >> "category1"
+        categoryDefinition1.getAttributeDefinitions() >> asList(attributeDefinition1)
+
+        and:
+        CategoryDefinition categoryDefinition2 = Mock()
+        categoryDefinition2.getName() >> "category2"
+        categoryDefinition1.getAttributeDefinitions() >> asList(attributeDefinition2)
 
         and:
         DynAttrMetadata metadata = Mock()
         Collection<AttributeDefinition> attributeDefinitions = asList(attributeDefinition1, attributeDefinition2)
         metadata.getAttributes(metaClass) >> attributeDefinitions
+        metadata.getCategories(metaClass) >> asList(categoryDefinition1, categoryDefinition2)
 
         and:
-        PropertyTools propertyTools = Mock()
-        propertyTools.findPropertiesByPath(metaClass, "attr1", true) >> singletonMap("key1", Mock(MetaPropertyPath))
-        propertyTools.findPropertiesByPath(metaClass, "attr2", true) >> singletonMap("key2", Mock(MetaPropertyPath))
-
-        and:
-        def resolver = new DynamicAttributesResolver(metadata, propertyTools)
+        def resolver = new DynamicAttributesResolver(metadata, Mock(PropertyTools))
 
         when:
-        def attributes = resolver.getAttributes(metaClass, new String[]{}, new String[]{}, INSTANCE_NAME_ONLY)
+        def attributes = resolver.getAttributes(metaClass, new String[]{"category1"}, new String[]{}, INSTANCE_NAME_ONLY)
 
         then:
-        attributes.size() == 2
+        attributes.size() == 1
     }
 
 

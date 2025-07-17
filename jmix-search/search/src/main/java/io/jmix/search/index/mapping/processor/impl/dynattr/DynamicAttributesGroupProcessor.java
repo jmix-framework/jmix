@@ -34,12 +34,12 @@ import static io.jmix.search.index.mapping.DynamicAttributesParameterKeys.REFERE
 public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProcessor<DynamicAttributesConfigurationGroup> {
 
     private final DynamicAttributesResolver dynamicAttributesResolver;
-    private final DynamicAttributesMappingCreator dynamicAttributesMappingCreator;
+    private final FieldMappingCreator fieldMappingCreator;
 
-    protected DynamicAttributesGroupProcessor(PropertyTools propertyTools, DynamicAttributesResolver dynamicAttributesResolver, DynamicAttributesMappingCreator dynamicAttributesMappingCreator) {
+    protected DynamicAttributesGroupProcessor(PropertyTools propertyTools, DynamicAttributesResolver dynamicAttributesResolver, FieldMappingCreator fieldMappingCreator) {
         super(propertyTools);
         this.dynamicAttributesResolver = dynamicAttributesResolver;
-        this.dynamicAttributesMappingCreator = dynamicAttributesMappingCreator;
+        this.fieldMappingCreator = fieldMappingCreator;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProc
         );
 
         return effectiveProperties.values().stream()
-                .map(propertyPath -> dynamicAttributesMappingCreator.createMappingFieldDescriptor(propertyPath, group, extendedSearchSettings))
+                .map(propertyPath -> fieldMappingCreator.createMappingFieldDescriptor(propertyPath, group, extendedSearchSettings))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());

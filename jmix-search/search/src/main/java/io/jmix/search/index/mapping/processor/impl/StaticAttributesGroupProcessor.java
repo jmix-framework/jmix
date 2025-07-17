@@ -20,10 +20,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.search.index.mapping.ExtendedSearchSettings;
-import io.jmix.search.index.mapping.FieldConfiguration;
-import io.jmix.search.index.mapping.MappingDefinitionElement;
-import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import io.jmix.search.index.mapping.*;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategyProvider;
@@ -44,14 +41,10 @@ public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProce
     private static final Logger log = LoggerFactory.getLogger(StaticAttributesGroupProcessor.class);
 
     protected final MetadataTools metadataTools;
-    protected final FieldMappingStrategyProvider fieldMappingStrategyProvider;
-    protected final InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver;
 
-    StaticAttributesGroupProcessor(PropertyTools propertyTools, MetadataTools metadataTools, FieldMappingStrategyProvider fieldMappingStrategyProvider, InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver) {
+    StaticAttributesGroupProcessor(PropertyTools propertyTools, MetadataTools metadataTools) {
         super(propertyTools);
         this.metadataTools = metadataTools;
-        this.fieldMappingStrategyProvider = fieldMappingStrategyProvider;
-        this.instanceNameRelatedPropertiesResolver = instanceNameRelatedPropertiesResolver;
     }
 
 
@@ -111,97 +104,7 @@ public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProce
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, MappingDefinitionElement element, ExtendedSearchSettings extendedSearchSettings) {
-        Optional<FieldMappingStrategy> fieldMappingStrategyOpt = resolveFieldMappingStrategy(element);
-        FieldConfiguration explicitFieldConfiguration = element.getFieldConfiguration();
-        PropertyValueExtractor explicitPropertyValueExtractor = element.getPropertyValueExtractor();
-
-        if (!fieldMappingStrategyOpt.isPresent() && explicitFieldConfiguration == null) {
-            log.error("Unable to create mapping field descriptor for property '{}': neither field mapping strategy nor explicit field configuration is specified", propertyPath);
-            return Optional.empty();
-        }
-
-        FieldConfiguration strategyFieldConfiguration = null;
-        PropertyValueExtractor strategyPropertyValueExtractor = null;
-        if (fieldMappingStrategyOpt.isPresent()) {
-            FieldMappingStrategy fieldMappingStrategy = fieldMappingStrategyOpt.get();
-            if (fieldMappingStrategy.isSupported(propertyPath)) {
-                strategyFieldConfiguration = fieldMappingStrategy.createFieldConfiguration(propertyPath, element.getParameters(), extendedSearchSettings);
-                strategyPropertyValueExtractor = fieldMappingStrategy.getPropertyValueExtractor(propertyPath);
-            } else {
-                log.debug("Property '{}' ('{}') is not supported by field mapping strategy '{}'", propertyPath, propertyPath.getMetaClass(), fieldMappingStrategy);
-            }
-        }
-
-        if (strategyFieldConfiguration == null && explicitFieldConfiguration == null) {
-            log.debug("Property '{}' doesn't have any field mapping configuration", propertyPath);
-            return Optional.empty();
-        }
-
-        if (strategyPropertyValueExtractor == null & explicitPropertyValueExtractor == null) {
-            log.debug("Property '{}' doesn't have any property value extractor", propertyPath);
-            return Optional.empty();
-        }
-
-        FieldConfiguration effectiveFieldConfiguration = resolveEffectiveFieldConfiguration(
-                strategyFieldConfiguration, explicitFieldConfiguration
-        );
-
-        PropertyValueExtractor effectivePropertyValueExtractor = explicitPropertyValueExtractor == null
-                ? strategyPropertyValueExtractor
-                : explicitPropertyValueExtractor;
-
-        List<MetaPropertyPath> instanceNameRelatedProperties = instanceNameRelatedPropertiesResolver.resolveInstanceNameRelatedProperties(propertyPath);
-
-        int effectiveOrder = element.getOrder() == null
-                ? fieldMappingStrategyOpt.map(FieldMappingStrategy::getOrder).orElse(Integer.MIN_VALUE)
-                : element.getOrder();
-
-        MappingFieldDescriptor fieldDescriptor = new MappingFieldDescriptor();
-        fieldDescriptor.setEntityPropertyFullName(propertyPath.toPathString());
-        fieldDescriptor.setIndexPropertyFullName(propertyPath.toPathString());
-        fieldDescriptor.setMetaPropertyPath(propertyPath);
-        fieldDescriptor.setFieldConfiguration(effectiveFieldConfiguration);
-        fieldDescriptor.setOrder(effectiveOrder);
-        fieldDescriptor.setPropertyValueExtractor(effectivePropertyValueExtractor);
-        fieldDescriptor.setInstanceNameRelatedProperties(instanceNameRelatedProperties);
-        fieldDescriptor.setParameters(element.getParameters());
-        fieldDescriptor.setStandalone(false);
-
-        return Optional.of(fieldDescriptor);
-    }
-
-    protected FieldConfiguration resolveEffectiveFieldConfiguration(@Nullable FieldConfiguration strategyFieldConfiguration,
-                                                                    @Nullable FieldConfiguration explicitFieldConfiguration) {
-        FieldConfiguration effectiveFieldConfiguration;
-        if (strategyFieldConfiguration == null) {
-            if (explicitFieldConfiguration == null) {
-                throw new IllegalArgumentException("Strategy and explicit configurations are null");
-            } else {
-                effectiveFieldConfiguration = explicitFieldConfiguration;
-            }
-        } else {
-            if (explicitFieldConfiguration == null) {
-                effectiveFieldConfiguration = strategyFieldConfiguration;
-            } else {
-                ObjectNode strategyRoot = strategyFieldConfiguration.asJson().deepCopy();
-                ObjectNode explicitRoot = explicitFieldConfiguration.asJson().deepCopy();
-                strategyRoot.setAll(explicitRoot);
-
-                effectiveFieldConfiguration = FieldConfiguration.create(strategyRoot);
-            }
-        }
-        return effectiveFieldConfiguration;
-    }
-
-    protected Optional<FieldMappingStrategy> resolveFieldMappingStrategy(MappingDefinitionElement element) {
-        FieldMappingStrategy fieldMappingStrategy = element.getFieldMappingStrategy();
-        if (fieldMappingStrategy != null) {
-            return Optional.of(fieldMappingStrategy);
-        }
-
-        Class<? extends FieldMappingStrategy> fieldMappingStrategyClass = element.getFieldMappingStrategyClass();
-        return fieldMappingStrategyProvider.getFieldMappingStrategyByClass(fieldMappingStrategyClass);
+    protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, AttributesConfigurationGroup element, ExtendedSearchSettings extendedSearchSettings) {
     }
 
 

@@ -86,6 +86,14 @@ public interface AttributesConfigurationGroup {
      */
     Map<String, Object> getParameters();
 
-
+    /**
+     * Provides explicit order.
+     * <p>
+     * See {@link FieldMappingStrategy#getOrder()}
+     *
+     * @return order
+     */
+    @Nullable
+    Integer getOrder();
 
 }

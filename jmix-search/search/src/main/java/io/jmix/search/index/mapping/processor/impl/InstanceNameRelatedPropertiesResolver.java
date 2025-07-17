@@ -58,7 +58,7 @@ public class InstanceNameRelatedPropertiesResolver {
                 .collect(Collectors.toList());
     }
 
-    protected List<MetaPropertyPath> resolveInstanceNameRelatedProperties(MetaPropertyPath propertyPath) {
+    public List<MetaPropertyPath> resolveInstanceNameRelatedProperties(MetaPropertyPath propertyPath) {
         List<MetaPropertyPath> instanceNameRelatedProperties;
         if (propertyPath.getRange().isClass()) {
             instanceNameRelatedProperties = resolveInstanceNameRelatedProperties(propertyPath.getRange().asClass(), propertyPath);

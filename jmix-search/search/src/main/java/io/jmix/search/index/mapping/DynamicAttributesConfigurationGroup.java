@@ -16,17 +16,9 @@
 
 package io.jmix.search.index.mapping;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
-import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
-import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
-import org.springframework.lang.Nullable;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Describes details of mapping for entity property or group of properties.

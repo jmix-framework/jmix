@@ -43,13 +43,13 @@ public class TestCoreProperties extends CoreProperties {
                               Duration triggerFilesProcessInterval,
                               boolean roundDecimalValueByFormat,
                               boolean skipNullOrEmptyConditionsByDefault,
-                              boolean allowInstanceNameFallback) {
+                              boolean instanceNameFallbackEnabled) {
         super(webHostName, webPort, confDir, workDir, tempDir, dbDir, availableLocales,
                 crossDataStoreReferenceLoadingBatchSize, idGenerationForEntitiesInAdditionalDataStoresEnabled,
                 dom4jMaxPoolSize, dom4jMaxBorrowWaitMillis, anonymousAuthenticationTokenKey, defaultFileStorage,
                 entitySerializationTokenRequired, entitySerializationTokenEncryptionKey,
                 legacyFetchPlanSerializationAttributeName, triggerFilesEnabled, triggerFilesProcessInterval,
-                roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault, allowInstanceNameFallback);
+                roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault, instanceNameFallbackEnabled);
     }
 
     public static Builder builder() {
@@ -77,7 +77,7 @@ public class TestCoreProperties extends CoreProperties {
         Duration triggerFilesProcessInterval = Duration.ofSeconds(5000);
         boolean roundDecimalValueByFormat = true;
         boolean skipNullOrEmptyConditionsByDefault = false;
-        boolean allowInstanceNameFallback = true;
+        boolean instanceNameFallbackEnabled = true;
 
         public Builder setWebHostName(String webHostName) {
             this.webHostName = webHostName;
@@ -201,7 +201,7 @@ public class TestCoreProperties extends CoreProperties {
                     this.triggerFilesProcessInterval,
                     this.roundDecimalValueByFormat,
                     this.skipNullOrEmptyConditionsByDefault,
-                    this.allowInstanceNameFallback);
+                    this.instanceNameFallbackEnabled);
         }
     }
 }

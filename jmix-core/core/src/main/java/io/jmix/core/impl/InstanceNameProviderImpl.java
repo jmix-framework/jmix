@@ -47,6 +47,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Component("core_InstanceNameProvider")
 public class InstanceNameProviderImpl implements InstanceNameProvider {
+
     public static final String UNFETCHED_EXCEPTION_MESSAGE_PREFIX = "Cannot get unfetched attribute [";
 
     @Autowired
@@ -108,6 +109,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
     }
 
     protected static class EvaluationResult {
+
         public final String instanceName;
         public final IllegalStateException exception;
 
@@ -173,7 +175,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
             return result.instanceName;
         } else {
             if (metaClass.getAncestor() != null) {
-                if (coreProperties.isAllowInstanceNameFallback()) {
+                if (coreProperties.isInstanceNameFallbackEnabled()) {
                     log.debug("Error getting instance name for {} as instance of {} because of unfetched attribute '{}'. " +
                                     "Trying to get instance name for entity as instance of {}.",
                             instance,
@@ -185,7 +187,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
                     throw new RuntimeException(
                             String.format("Error getting instance name for %s as instance of %s because of unfetched attributes. " +
                                             "Fallback to ancestor instance name definition is disabled " +
-                                            "(see `jmix.core.allowInstanceNameFallback`).",
+                                            "(see `jmix.core.instance-name-fallback-enabled` property). `).",
                                     instance,
                                     metaClass.getName()),
                             result.exception);

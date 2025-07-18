@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import com.google.common.net.UrlEscapers;
 import io.jmix.core.common.util.URLEncodeUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -177,23 +178,12 @@ public class FileRef implements Serializable {
         }
 
         StringBuilder result = new StringBuilder();
-        String[][] characterMatchingTable = {
-                {" ", "(", ")", ",", "/", ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "{", "}"},
-                {"%20", "%28", "%29", "%2C", "%2F", "%3A", "%3B", "%3C", "%3D", "%3E", "%3F", "%40", "%5B", "%5C", "%5D", "%7B", "%7C"}
-        };
+        String escapedExtension = UrlEscapers.urlPathSegmentEscaper().escape(splittedPath[fileExtensionId]);
 
-        for (int i = 0; i < characterMatchingTable[0].length; i++) {
-            if (splittedPath[fileExtensionId].contains(characterMatchingTable[0][i])) {
-                splittedPath[fileExtensionId] = splittedPath[fileExtensionId]
-                        .replace(characterMatchingTable[0][i], characterMatchingTable[1][i]);
-            }
-        }
-
-        result.append(splittedPath[0])
+        return result.append(splittedPath[0])
                 .append(".")
-                .append(splittedPath[fileExtensionId]);
-
-        return result.toString();
+                .append(escapedExtension)
+                .toString();
     }
 
     /**

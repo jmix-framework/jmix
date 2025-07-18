@@ -112,4 +112,8 @@ public class IndexConfiguration {
     public Predicate<Object> getIndexablePredicate() {
         return indexablePredicate;
     }
+
+    public ExtendedSearchSettings getExtendedSearchSettings() {
+        return extendedSearchSettings;
+    }
 }

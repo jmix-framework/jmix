@@ -36,8 +36,6 @@ import io.jmix.search.index.queue.entity.IndexingQueueItem;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -49,37 +47,51 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
-@Component("search_JpaIndexingQueueManager")
 public class JpaIndexingQueueManager implements IndexingQueueManager {
 
     private static final Logger log = LoggerFactory.getLogger(JpaIndexingQueueManager.class);
 
-    @Autowired
-    protected UnconstrainedDataManager dataManager;
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected MetadataTools metadataTools;
-    @Autowired
-    protected EntityIndexer entityIndexer;
-    @Autowired
-    protected StoreAwareLocator storeAwareLocator;
-    @Autowired
-    protected IndexConfigurationManager indexConfigurationManager;
-    @Autowired
-    protected IdSerialization idSerialization;
-    @Autowired
-    protected SystemAuthenticator authenticator;
-    @Autowired
-    protected IndexingLocker locker;
-    @Autowired
-    protected SearchProperties searchProperties;
-    @Autowired
-    protected IndexStateRegistry indexStateRegistry;
-    @Autowired
-    protected EnqueueingSessionManager enqueueingSessionManager;
-    @Autowired
-    protected EntityIdsLoaderProvider entityIdsLoaderProvider;
+    protected final UnconstrainedDataManager dataManager;
+    protected final Metadata metadata;
+    protected final MetadataTools metadataTools;
+    protected final EntityIndexer entityIndexer;
+    protected final StoreAwareLocator storeAwareLocator;
+    protected final IndexConfigurationManager indexConfigurationManager;
+    protected final IdSerialization idSerialization;
+    protected final SystemAuthenticator authenticator;
+    protected final IndexingLocker locker;
+    protected final SearchProperties searchProperties;
+    protected final IndexStateRegistry indexStateRegistry;
+    protected final EnqueueingSessionManager enqueueingSessionManager;
+    protected final EntityIdsLoaderProvider entityIdsLoaderProvider;
+
+    public JpaIndexingQueueManager(SearchProperties searchProperties,
+                                   UnconstrainedDataManager dataManager,
+                                   Metadata metadata,
+                                   MetadataTools metadataTools,
+                                   EntityIndexer entityIndexer,
+                                   StoreAwareLocator storeAwareLocator,
+                                   IndexConfigurationManager indexConfigurationManager,
+                                   IdSerialization idSerialization,
+                                   SystemAuthenticator authenticator,
+                                   IndexingLocker locker,
+                                   IndexStateRegistry indexStateRegistry,
+                                   EnqueueingSessionManager enqueueingSessionManager,
+                                   EntityIdsLoaderProvider entityIdsLoaderProvider) {
+        this.searchProperties = searchProperties;
+        this.dataManager = dataManager;
+        this.metadata = metadata;
+        this.metadataTools = metadataTools;
+        this.entityIndexer = entityIndexer;
+        this.storeAwareLocator = storeAwareLocator;
+        this.indexConfigurationManager = indexConfigurationManager;
+        this.idSerialization = idSerialization;
+        this.authenticator = authenticator;
+        this.locker = locker;
+        this.indexStateRegistry = indexStateRegistry;
+        this.enqueueingSessionManager = enqueueingSessionManager;
+        this.entityIdsLoaderProvider = entityIdsLoaderProvider;
+    }
 
     @Override
     public int emptyQueue() {

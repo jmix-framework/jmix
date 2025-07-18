@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import com.google.common.net.UrlEscapers;
 import io.jmix.core.common.util.URLEncodeUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -145,9 +146,11 @@ public class FileRef implements Serializable {
     @Override
     public String toString() {
         StringBuilder uriStringBuilder = new StringBuilder();
+        String encodedPath = transformFileExtensionToUri();
+
         uriStringBuilder.append(storageName)
                 .append("://")
-                .append(path)
+                .append(encodedPath)
                 .append("?name=")
                 .append(URLEncodeUtils.encodeUtf8(fileName));
         if (parameters != null) {
@@ -155,6 +158,32 @@ public class FileRef implements Serializable {
                     uriStringBuilder.append("&").append(key).append("=").append(URLEncodeUtils.encodeUtf8(value)));
         }
         return uriStringBuilder.toString();
+    }
+
+    /**
+     * Transforms file extension in path in according to the RFC 7230 standard if presents. <br>
+     * Expects the {@link FileRef#path} to have an extension at the end or not. <br>
+     * Example with file extension:
+     * <pre>
+     *     1970/01/01/12345678-1234-5678-0000-123456xxxxxx.extension
+     * </pre>
+     */
+    private String transformFileExtensionToUri() {
+        String[] splittedPath = path.split("\\.");
+        int fileExtensionId = splittedPath.length-1;
+
+        // checks for missing file extension
+        if (fileExtensionId == 0) {
+            return splittedPath[0];
+        }
+
+        StringBuilder result = new StringBuilder();
+        String escapedExtension = UrlEscapers.urlPathSegmentEscaper().escape(splittedPath[fileExtensionId]);
+
+        return result.append(splittedPath[0])
+                .append(".")
+                .append(escapedExtension)
+                .toString();
     }
 
     /**

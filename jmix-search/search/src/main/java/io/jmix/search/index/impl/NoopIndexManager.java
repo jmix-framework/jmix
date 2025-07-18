@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class NoopIndexManager implements IndexManager {
 
-    protected ObjectMapper objectMapper;
+    protected final ObjectMapper objectMapper;
 
     public NoopIndexManager() {
         this.objectMapper = new ObjectMapper();

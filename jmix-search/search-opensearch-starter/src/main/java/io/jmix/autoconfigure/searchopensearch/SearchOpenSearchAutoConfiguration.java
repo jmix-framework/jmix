@@ -96,7 +96,7 @@ public class SearchOpenSearchAutoConfiguration {
     }
 
     @Bean("search_OpenSearchIndexManager")
-    @ConditionalOnProperty(name = "jmix.search.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "jmix.search.enabled", matchIfMissing = true)
     protected IndexManager openSearchIndexManager(OpenSearchClient client,
                                                   IndexStateRegistry indexStateRegistry,
                                                   IndexConfigurationManager indexConfigurationManager,
@@ -117,7 +117,7 @@ public class SearchOpenSearchAutoConfiguration {
     }
 
     @Bean("search_OpenSearchEntityIndexer")
-    @ConditionalOnProperty(name = "jmix.search.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "jmix.search.enabled", matchIfMissing = true)
     protected EntityIndexer openSearchEntityIndexer(UnconstrainedDataManager dataManager,
                                                     FetchPlans fetchPlans,
                                                     IndexConfigurationManager indexConfigurationManager,
@@ -139,7 +139,7 @@ public class SearchOpenSearchAutoConfiguration {
     }
 
     @Bean("search_OpenSearchEntitySearcher")
-    @ConditionalOnProperty(name = "jmix.search.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "jmix.search.enabled", matchIfMissing = true)
     protected EntitySearcher openSearchEntitySearcher(OpenSearchClient client,
                                                       IndexConfigurationManager indexConfigurationManager,
                                                       Metadata metadata,

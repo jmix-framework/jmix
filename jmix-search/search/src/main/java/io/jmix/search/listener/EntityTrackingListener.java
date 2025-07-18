@@ -189,7 +189,7 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
     }
 
     protected boolean isChangeTrackingEnabled() {
-        return searchProperties.isChangedEntitiesIndexingEnabled();
+        return searchProperties.isEnabled() ? searchProperties.isChangedEntitiesIndexingEnabled() : false;
     }
 
     protected boolean isRemovedEntityProcessingRequired(Object entity) {

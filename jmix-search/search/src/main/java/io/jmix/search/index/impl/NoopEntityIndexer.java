@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class NoopEntityIndexer implements EntityIndexer {
+
     @Override
     public IndexResult index(Object entityInstance) {
         return new IndexResult(0, Collections.emptyList());

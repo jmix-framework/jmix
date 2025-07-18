@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class NoopIndexingQueueManager implements IndexingQueueManager {
+
     @Override
     public int emptyQueue() {
         return 0;

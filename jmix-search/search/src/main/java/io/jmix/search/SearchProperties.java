@@ -181,7 +181,7 @@ public class SearchProperties {
         this.maxPrefixLength = maxPrefixLength;
         this.wildcardPrefixQueryEnabled = wildcardPrefixQueryEnabled;
         this.enabled = enabled;
-        this.changedEntitiesIndexingEnabled = isEnabled() ? changedEntitiesIndexingEnabled : false;
+        this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
     }
 
     /**

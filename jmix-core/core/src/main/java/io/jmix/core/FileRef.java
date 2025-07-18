@@ -109,9 +109,8 @@ public class FileRef implements Serializable {
      */
     public static FileRef fromString(String fileRefString) {
         URI fileRefUri;
-        String whitespaceEncFileRef = fileRefString.replace(" ", "%20");
         try {
-            fileRefUri = new URI(whitespaceEncFileRef);
+            fileRefUri = new URI(fileRefString);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Cannot convert " + fileRefString + " to FileRef", e);
         }
@@ -146,9 +145,11 @@ public class FileRef implements Serializable {
     @Override
     public String toString() {
         StringBuilder uriStringBuilder = new StringBuilder();
+        String encodedPath = transformFileExtensionToUri();
+
         uriStringBuilder.append(storageName)
                 .append("://")
-                .append(path)
+                .append(encodedPath)
                 .append("?name=")
                 .append(URLEncodeUtils.encodeUtf8(fileName));
         if (parameters != null) {
@@ -156,6 +157,43 @@ public class FileRef implements Serializable {
                     uriStringBuilder.append("&").append(key).append("=").append(URLEncodeUtils.encodeUtf8(value)));
         }
         return uriStringBuilder.toString();
+    }
+
+    /**
+     * Transforms file extension in path in according to the RFC 7230 standard if presents. <br>
+     * Expects the {@link FileRef#path} to have an extension at the end or not. <br>
+     * Example with file extension:
+     * <pre>
+     *     1970/01/01/12345678-1234-5678-0000-123456xxxxxx.extension
+     * </pre>
+     */
+    private String transformFileExtensionToUri() {
+        String[] splittedPath = path.split("\\.");
+        int fileExtensionId = splittedPath.length-1;
+
+        // checks for missing file extension
+        if (fileExtensionId == 0) {
+            return splittedPath[0];
+        }
+
+        StringBuilder result = new StringBuilder();
+        String[][] characterMatchingTable = {
+                {" ", "(", ")", ",", "/", ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "{", "}"},
+                {"%20", "%28", "%29", "%2C", "%2F", "%3A", "%3B", "%3C", "%3D", "%3E", "%3F", "%40", "%5B", "%5C", "%5D", "%7B", "%7C"}
+        };
+
+        for (int i = 0; i < characterMatchingTable[0].length; i++) {
+            if (splittedPath[fileExtensionId].contains(characterMatchingTable[0][i])) {
+                splittedPath[fileExtensionId] = splittedPath[fileExtensionId]
+                        .replace(characterMatchingTable[0][i], characterMatchingTable[1][i]);
+            }
+        }
+
+        result.append(splittedPath[0])
+                .append(".")
+                .append(splittedPath[fileExtensionId]);
+
+        return result.toString();
     }
 
     /**

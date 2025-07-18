@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-class FieldMappingCreator {
+public class FieldMappingCreator {
 
     private static final Logger log = LoggerFactory.getLogger(FieldMappingCreator.class);
 

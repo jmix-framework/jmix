@@ -21,4 +21,9 @@ public class StaticAttributesConfigurationGroup extends MappingDefinitionElement
     protected StaticAttributesConfigurationGroup(StaticAttributeGroupBuilder builder) {
         super(builder);
     }
+
+    public static StaticAttributeGroupBuilder builder() {
+        return new StaticAttributeGroupBuilder();
+    }
+
 }

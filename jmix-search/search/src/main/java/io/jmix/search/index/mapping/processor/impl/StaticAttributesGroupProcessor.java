@@ -16,19 +16,15 @@
 
 package io.jmix.search.index.mapping.processor.impl;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.mapping.*;
-import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
-import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
-import io.jmix.search.index.mapping.strategy.FieldMappingStrategyProvider;
+import io.jmix.search.index.mapping.processor.impl.dynattr.FieldMappingCreator;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -41,10 +37,12 @@ public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProce
     private static final Logger log = LoggerFactory.getLogger(StaticAttributesGroupProcessor.class);
 
     protected final MetadataTools metadataTools;
+    protected final FieldMappingCreator fieldMappingCreator;
 
-    StaticAttributesGroupProcessor(PropertyTools propertyTools, MetadataTools metadataTools) {
+    StaticAttributesGroupProcessor(PropertyTools propertyTools, MetadataTools metadataTools, FieldMappingCreator fieldMappingCreator) {
         super(propertyTools);
         this.metadataTools = metadataTools;
+        this.fieldMappingCreator = fieldMappingCreator;
     }
 
 
@@ -55,7 +53,7 @@ public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProce
         );
 
         return effectiveProperties.values().stream()
-                .map(propertyPath -> createMappingFieldDescriptor(propertyPath, group, extendedSearchSettings))
+                .map(propertyPath -> fieldMappingCreator.createMappingFieldDescriptor(propertyPath, group, extendedSearchSettings))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
@@ -103,9 +101,5 @@ public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProce
                 })
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
-
-    protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, AttributesConfigurationGroup element, ExtendedSearchSettings extendedSearchSettings) {
-    }
-
 
 }

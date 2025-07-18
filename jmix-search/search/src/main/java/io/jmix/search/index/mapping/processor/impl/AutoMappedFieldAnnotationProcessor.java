@@ -19,8 +19,8 @@ package io.jmix.search.index.mapping.processor.impl;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.annotation.AutoMappedField;
 import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
-import io.jmix.search.index.mapping.MappingDefinitionElement;
 import io.jmix.search.index.mapping.ParameterKeys;
+import io.jmix.search.index.mapping.StaticAttributesConfigurationGroup;
 import io.jmix.search.index.mapping.processor.AbstractFieldAnnotationProcessor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
@@ -43,7 +43,7 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
                                              MetaClass rootEntityMetaClass,
                                              AutoMappedField annotation) {
         builder.addElement(
-                MappingDefinitionElement.builder()
+                StaticAttributesConfigurationGroup.builder()
                         .includeProperties(annotation.includeProperties())
                         .excludeProperties(annotation.excludeProperties())
                         .withFieldMappingStrategyClass(getFieldMappingStrategyClass())

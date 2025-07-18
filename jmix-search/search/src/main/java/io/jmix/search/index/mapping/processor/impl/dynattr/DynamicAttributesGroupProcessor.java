@@ -24,6 +24,7 @@ import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.mapping.processor.impl.AbstractAttributesGroupProcessor;
 import io.jmix.search.utils.PropertyTools;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*;
 import static io.jmix.search.index.mapping.DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE;
 
+@Component
 public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProcessor<DynamicAttributesConfigurationGroup> {
 
     private final DynamicAttributesResolver dynamicAttributesResolver;

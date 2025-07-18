@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@Component("search_AutoMappedFieldAnnotationProcessor")
+@Component("search_AutoMappedDynamicFieldAnnotationProcessor")
 public class AutoMappedDynamicFieldAnnotationProcessor extends AbstractFieldAnnotationProcessor<DynamicAttributes> {
 
     @Override

@@ -43,6 +43,8 @@ import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.WindowBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -64,6 +66,8 @@ import static io.jmix.flowui.view.StandardOutcome.SELECT;
 public class MultiValueSelectAction<E>
         extends PickerAction<MultiValueSelectAction<E>, PickerComponent<Collection<E>>, Collection<E>>
         implements InitializingBean, ViewOpeningAction {
+
+    private static final Logger log = LoggerFactory.getLogger(MultiValueSelectAction.class);
 
     public static final String ID = "multi_value_select";
     public static final String DEFAULT_MULTI_VALUE_SELECT_VIEW = "multiValueSelectDialog";
@@ -152,7 +156,7 @@ public class MultiValueSelectAction<E>
 
     @Override
     public void setOpenMode(@Nullable OpenMode openMode) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, OpenMode.class.getSimpleName());
     }
 
     /**
@@ -208,7 +212,7 @@ public class MultiValueSelectAction<E>
 
     @Override
     public void setRouteParametersProvider(@Nullable RouteParametersProvider provider) {
-        throw new UnsupportedOperationException("Select view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, RouteParametersProvider.class.getSimpleName());
     }
 
     @Nullable
@@ -220,7 +224,7 @@ public class MultiValueSelectAction<E>
 
     @Override
     public void setQueryParametersProvider(@Nullable QueryParametersProvider provider) {
-        throw new UnsupportedOperationException("Select view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, QueryParametersProvider.class.getSimpleName());
     }
 
     @Override

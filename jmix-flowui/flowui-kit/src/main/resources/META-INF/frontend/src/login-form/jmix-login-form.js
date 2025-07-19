@@ -151,29 +151,6 @@ class JmixLoginForm extends LoginForm {
                 type: Object,
                 value: []
             },
-            /* CAUTION! Copied from LoginMixin */
-            i18n: {
-                type: Object,
-                value: function () {
-                    return {
-                        form: {
-                            title: 'Log in',
-                            username: 'Username',
-                            password: 'Password',
-                            submit: 'Log in',
-                            forgotPassword: 'Forgot password',
-                            rememberMe: 'Remember me'
-                        },
-                        errorMessage: {
-                            title: 'Incorrect username or password',
-                            message: 'Check that you have entered the correct username and password and try again.',
-                            username: 'Username is required',
-                            password: 'Password is required',
-                        }
-                    };
-                },
-                notify: true
-            },
         }
     }
 

@@ -37,6 +37,8 @@ import io.jmix.flowui.view.LookupView;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
@@ -49,6 +51,8 @@ import java.util.function.Predicate;
 @ActionType(AddAction.ID)
 public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
         implements AdjustWhenViewReadOnly, ViewOpeningAction {
+
+    private static final Logger log = LoggerFactory.getLogger(AddAction.class);
 
     public static final String ID = "list_add";
 
@@ -102,7 +106,7 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
 
     @Override
     public void setOpenMode(@Nullable OpenMode openMode) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, OpenMode.class.getSimpleName());
     }
 
     /**
@@ -150,7 +154,7 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
 
     @Override
     public void setRouteParametersProvider(@Nullable RouteParametersProvider provider) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, RouteParametersProvider.class.getSimpleName());
     }
 
     @Nullable
@@ -162,7 +166,7 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
 
     @Override
     public void setQueryParametersProvider(@Nullable QueryParametersProvider provider) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, QueryParametersProvider.class.getSimpleName());
     }
 
     @Override

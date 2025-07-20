@@ -46,6 +46,10 @@ const uploadField = css`
   [class$='container'] {
     width: var(--jmix-upload-field-default-width, var(--vaadin-field-default-width, auto));
   }
+  
+  [part='input-field'] {
+      --vaadin-input-field-hover-highlight-opacity: 0;
+  }
 `;
 
 registerStyles('jmix-upload-field', [inputFieldShared, uploadField], {

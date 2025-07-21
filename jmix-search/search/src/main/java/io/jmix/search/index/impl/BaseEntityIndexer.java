@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.node.*;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
@@ -224,8 +226,10 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                     loaded = entityIds.stream()
                             .map(id -> dataManager
                                     .load(metaClass.getJavaClass())
+                                    //TODO почему грузится по одной записи?
                                     .id(id)
                                     .fetchPlan(fetchPlan)
+                                    .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                                     .optional())
                             .filter(Optional::isPresent)
                             .map(Optional::get)
@@ -238,6 +242,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                             .load(metaClass.getJavaClass())
                             .query(queryString)
                             .parameter("ids", entityIds)
+                            .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                             .fetchPlan(fetchPlan)
                             .list();
                 }
@@ -248,18 +253,24 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
     }
 
     protected FetchPlan createFetchPlan(IndexConfiguration indexConfiguration) {
-        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexConfiguration.getEntityClass());
+        Class<?> entityClass = indexConfiguration.getEntityClass();
+        MetaClass metaClass = metadata.getClass(entityClass);
+        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(entityClass);
         indexConfiguration.getMapping().getFields().values().forEach(field -> {
-            log.trace("Add property to fetch plan: {}", field.getEntityPropertyFullName());
-            fetchPlanBuilder.add(field.getEntityPropertyFullName());
-            field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {
-                log.trace("Add instance name related property to fetch plan: {}", instanceNameRelatedProperty.toPathString());
-                if (instanceNameRelatedProperty.getRange().isClass()) {
-                    fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString(), FetchPlan.INSTANCE_NAME);
-                } else {
-                    fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
-                }
-            });
+            String entityPropertyFullName = field.getEntityPropertyFullName();
+            MetaPropertyPath propertyPath = metaClass.getPropertyPath(entityPropertyFullName);
+            if (propertyPath != null){
+                log.trace("Add property to fetch plan: {}", entityPropertyFullName);
+                fetchPlanBuilder.add(entityPropertyFullName);
+                field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {
+                    log.trace("Add instance name related property to fetch plan: {}", instanceNameRelatedProperty.toPathString());
+                    if (instanceNameRelatedProperty.getRange().isClass()) {
+                        fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString(), FetchPlan.INSTANCE_NAME);
+                    } else {
+                        fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
+                    }
+                });
+            }
         });
 
         indexConfiguration.getMapping()

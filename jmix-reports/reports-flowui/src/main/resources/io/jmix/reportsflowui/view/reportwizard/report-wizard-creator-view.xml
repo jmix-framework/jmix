@@ -78,7 +78,7 @@
                         <action id="up" type="list_itemTracking" icon="ARROW_UP"/>
                         <action id="down" type="list_itemTracking" icon="ARROW_DOWN"/>
                         <action id="remove" type="list_remove"/>
-                        <action id="edit" text="msg://editRegion" icon="PENCIL"/>
+                        <action id="edit" text="msg://editRegion" icon="PENCIL" type="list_itemTracking"/>
                     </actions>
                 </dataGrid>
             </vbox>

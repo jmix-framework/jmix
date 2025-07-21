@@ -22,7 +22,6 @@ import io.jmix.core.IdSerialization;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
-import io.jmix.flowui.component.jpqlfilter.JpqlFilterSupport;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.search.SearchProperties;
@@ -42,7 +41,6 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class FullTextFilter extends SingleFilterComponentBase<String> {
     public static final String NAME = "fullTextFilter";
     protected static final String FULL_TEXT_FILTER_STYLENAME = "jmix-full-text-filter";
-    protected JpqlFilterSupport jpqlFilterSupport;
     protected IdSerialization idSerialization;
     protected EntitySearcher entitySearcher;
     protected String parameterName;
@@ -53,7 +51,6 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
     @Override
     protected void autowireDependencies() {
         super.autowireDependencies();
-        jpqlFilterSupport = applicationContext.getBean(JpqlFilterSupport.class);
         idSerialization = applicationContext.getBean(IdSerialization.class);
         entitySearcher = applicationContext.getBean(EntitySearcher.class);
         searchProperties = applicationContext.getBean(SearchProperties.class);
@@ -168,7 +165,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
 
     @Override
     public String getInnerComponentPrefix() {
-        return jpqlFilterSupport.getJpqlFilterPrefix(getId());
+        return getId().orElse("fullTextFilter") + "_";
     }
 
     @Nullable

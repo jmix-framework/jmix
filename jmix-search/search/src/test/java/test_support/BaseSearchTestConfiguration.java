@@ -16,10 +16,7 @@
 
 package test_support;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.JmixModules;
-import io.jmix.core.Resources;
-import io.jmix.core.Stores;
+import io.jmix.core.*;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.core.impl.JmixMessageSource;
@@ -39,7 +36,6 @@ import io.jmix.search.index.impl.StartupIndexSynchronizer;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import io.jmix.search.index.queue.IndexingQueueManager;
-import io.jmix.search.index.queue.impl.JpaIndexingQueueManager;
 import io.jmix.security.SecurityConfiguration;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +93,12 @@ public class BaseSearchTestConfiguration {
 
     @Bean("search_JpaIndexingQueueManager")
     public IndexingQueueManager indexingQueueManager() {
-        return beanFactory.createBean(JpaIndexingQueueManager.class);
+        return beanFactory.createBean(TestJpaIndexingQueueManager.class);
+    }
+
+    @Bean
+    public TestIndexingQueueItemsTracker testIndexingQueueItemsTracker(IdSerialization idSerialization) {
+        return new TestIndexingQueueItemsTracker(idSerialization);
     }
 
     @Bean

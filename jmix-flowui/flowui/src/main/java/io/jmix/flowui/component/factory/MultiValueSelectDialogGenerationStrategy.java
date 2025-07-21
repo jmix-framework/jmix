@@ -29,24 +29,25 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
-import io.jmix.flowui.app.multivaluepicker.MultiValueSelectView.MultiValueSelectContext;
 import io.jmix.flowui.app.multivaluepicker.MultiValueSelectDialog;
+import io.jmix.flowui.app.multivaluepicker.MultiValueSelectView.MultiValueSelectContext;
 import io.jmix.flowui.component.ComponentGenerationContext;
+import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
+import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
-import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.data.items.EnumDataProvider;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
-
 import org.springframework.lang.Nullable;
+
 import java.sql.Time;
 import java.time.*;
 import java.util.Date;
@@ -163,13 +164,23 @@ public class MultiValueSelectDialogGenerationStrategy<E> extends AbstractCompone
 
     @SuppressWarnings("unchecked")
     public Component createEntityPicker(MultiValueSelectContext<E> context, MetaClass metaClass) {
-        EntityPicker<E> entityPicker = uiComponents.create(EntityPicker.class);
+        JmixMultiSelectComboBoxPicker<E> entityPicker = uiComponents.create(JmixMultiSelectComboBoxPicker.class);
         entityPicker.setMetaClass(metaClass);
+
+        CollectionContainer<E> container = dataComponents.createCollectionContainer(metaClass.getJavaClass());
+        CollectionLoader<E> loader = dataComponents.createCollectionLoader();
+
+        loader.setQuery("select e from " + metaClass.getName() + " e");
+        loader.setFetchPlan(INSTANCE_NAME);
+        loader.setContainer(container);
+        loader.load();
+
+        entityPicker.setItems(container);
 
         EntityLookupAction<E> lookupAction = actions.create(EntityLookupAction.ID);
 
         lookupAction.addActionPerformedListener(context.getEntityPickerActionPerformedEventHandler());
-        lookupAction.setTarget(entityPicker);
+        lookupAction.setTarget(((EntityPickerComponent<E>) entityPicker));
         entityPicker.addAction(lookupAction);
 
         return entityPicker;

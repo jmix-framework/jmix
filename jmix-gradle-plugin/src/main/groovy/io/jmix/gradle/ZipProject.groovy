@@ -53,7 +53,7 @@ class ZipProject extends DefaultTask {
         includeToZip += this.includeToZip
 
         def excludeFromZip = [
-                project.rootDir.name + '/frontend/generated',
+                project.rootDir.name + '/src/main/frontend/generated',
                 'build',
                 'deploy',
                 'bower_components',

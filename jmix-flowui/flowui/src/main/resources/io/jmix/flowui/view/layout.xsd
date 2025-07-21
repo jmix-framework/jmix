@@ -3959,11 +3959,10 @@
                     <xs:group ref="layoutOrComponent"/>
                 </xs:sequence>
 
-                <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="columnMinWidth" type="xs:string"/>
-                <xs:attribute name="gridGap" type="xs:string"/>
+                <xs:attribute name="gap" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasSize"/>

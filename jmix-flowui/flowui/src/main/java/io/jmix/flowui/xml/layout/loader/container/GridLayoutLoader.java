@@ -40,7 +40,7 @@ public class GridLayoutLoader extends AbstractContainerLoader<GridLayout<?>> {
         getDataLoaderSupport().loadItems(resultComponent, element);
 
         loadString(element, "columnMinWidth", resultComponent::setColumnMinWidth);
-        loadString(element, "gridGap", resultComponent::setGap);
+        loadString(element, "gap", resultComponent::setGap);
 
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);

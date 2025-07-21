@@ -188,7 +188,6 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
 
     protected Div createHeaderWrapper() {
         Div headerWrapper = uiComponents().create(Div.class);
-        headerWrapper.setWidthFull();
         headerWrapper.setClassName(BASE_CLASS_NAME + "-header-wrapper");
 
         headerContent = uiComponents().create(HorizontalLayout.class);

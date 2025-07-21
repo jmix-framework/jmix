@@ -123,7 +123,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
 
         dataContext.clear()
         val entity: ${entity.className} = dataContext.create(${entity.className}::class.java)
-        ${detailDc}.item = entity
+        ${detailDc}.setItem(entity)
         updateControls(true)
     }<%}%><%if (tableActions.contains("edit")) {%>
 

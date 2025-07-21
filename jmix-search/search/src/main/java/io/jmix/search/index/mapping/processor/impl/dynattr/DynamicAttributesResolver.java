@@ -54,7 +54,7 @@ public class DynamicAttributesResolver {
         Collection<AttributeDefinition> attributes = getAttributes(metaClass, excludedCategories, excludedProperties, mode);
 
         attributes.forEach(attributeDefinition ->
-                effectiveProperties.putAll(propertyTools.findPropertiesByPath(metaClass, attributeDefinition.getCode(), true))
+                effectiveProperties.putAll(propertyTools.findPropertiesByPath(metaClass, "+" + attributeDefinition.getCode(), true))
         );
         return effectiveProperties;
     }

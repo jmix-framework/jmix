@@ -525,6 +525,8 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
                 DataGridColumn<?> column = menuItem.getColumn();
                 column.setVisible(true);
             }
+
+            getGrid().recalculateColumnWidths();
         }
 
         public void refresh() {
@@ -682,6 +684,9 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         @Override
         public void toggleVisibility() {
             column.setVisible(!column.isVisible());
+            if (column.isVisible()) {
+                column.getGrid().recalculateColumnWidths();
+            }
         }
     }
 }

@@ -52,6 +52,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.accordion.JmixAccordion;
 import io.jmix.flowui.component.accordion.JmixAccordionPanel;
+import io.jmix.flowui.component.gridlayout.GridLayout;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.checkbox.Switch;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
@@ -79,6 +80,7 @@ import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.upload.JmixUpload;
 import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.gridlayout.JmixGridLayout;
 import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
@@ -145,6 +147,7 @@ public class UiComponentsImpl implements UiComponents {
         register(JmixVirtualList.class, VirtualList.class);
         register(RichTextEditor.class, JmixRichTextEditor.class);
         register(JmixFormLayout.class, FormLayout.class);
+        register(GridLayout.class, JmixGridLayout.class);
     }
 
     @SuppressWarnings("unchecked")

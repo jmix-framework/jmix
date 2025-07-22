@@ -30,7 +30,7 @@ import java.util.stream.Collectors
 
 import static java.util.Arrays.stream
 
-class DynamicAttributesAnnotationParserTest extends Specification {
+class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
 
     public static final String SOME_ANALYZER = "ANotStandardAnalyzer"
 
@@ -46,10 +46,10 @@ class DynamicAttributesAnnotationParserTest extends Specification {
 
     def "CreateDefinition. null check"() {
         given:
-        def parser = new DynamicAttributesAnnotationParser()
+        def processor = new AutoMappedDynamicFieldAnnotationProcessor()
 
         when:
-        parser.createDefinition(null)
+        processor.createDefinition(null)
 
         then:
         thrown(NullPointerException)
@@ -58,7 +58,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
 
     def "CreateDefinition. Annotation without parameters"() {
         given:
-        def parser = new DynamicAttributesAnnotationParser()
+        def parser = new AutoMappedDynamicFieldAnnotationProcessor()
 
         when:
         def annotations = extractAnnotations(IndexDefinitionSimple);
@@ -81,7 +81,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
 
     def "CreateDefinition. Excludes"() {
         given:
-        def parser = new DynamicAttributesAnnotationParser()
+        def parser = new AutoMappedDynamicFieldAnnotationProcessor()
 
         when:
         def annotations = extractAnnotations(IndexDefinitionWithExcludes);
@@ -94,7 +94,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
 
     def "CreateDefinition. parameters"() {
         given:
-        def parser = new DynamicAttributesAnnotationParser()
+        def parser = new AutoMappedDynamicFieldAnnotationProcessor()
 
         when:
         def annotations = extractAnnotations(IndexDefinitionWithParameters);
@@ -110,7 +110,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
 
     def "extract from class. simple"() {
         given:
-        def parser = new DynamicAttributesAnnotationParser()
+        def parser = new AutoMappedDynamicFieldAnnotationProcessor()
 
         when:
         def annotations = extractAnnotations(aClass)
@@ -130,7 +130,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
 
     def "extract from class. content check"() {
         given:
-        def parser = new DynamicAttributesAnnotationParser()
+        def parser = new AutoMappedDynamicFieldAnnotationProcessor()
 
         when:
         def annotations = extractAnnotations(IndexDefinitionSomeInSomeMethods)
@@ -142,11 +142,6 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         category << ["cat1", "cat2", "cat3", "cat4", "cat5"]
     }
 
-
-    private static DynamicAttributes extractAnnotation(Class<?> aClass) {
-        return aClass.getAnnotation(DynamicAttributes);
-
-    }
 
     boolean containsAnnotationsWithExcludedCategory(Set<DynamicAttributes> annotations, String categoryToFind) {
         annotations

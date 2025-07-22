@@ -30,7 +30,6 @@ import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.fieldmapper.impl.TextFieldMapper;
 import io.jmix.search.index.mapping.processor.FieldAnnotationProcessor;
 import io.jmix.search.index.mapping.processor.MappingFieldAnnotationProcessorsRegistry;
-import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesAnnotationParser;
 import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesGroupProcessor;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractorProvider;
 import io.jmix.search.index.mapping.propertyvalue.impl.DisplayedNameValueExtractor;
@@ -70,8 +69,6 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
     protected final SearchProperties searchProperties;
     protected final MethodArgumentsProvider methodArgumentsProvider;
-    protected final DynamicAttributesAnnotationParser dynamicAttributesAnnotationParser;
-    //TODO combine two processors?
     protected final StaticAttributesGroupProcessor staticAttributesGroupProcessor;
     protected final DynamicAttributesGroupProcessor dynamicAttributesGroupProcessor;
     protected final InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver;
@@ -83,13 +80,14 @@ public class AnnotatedIndexDefinitionProcessor {
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
                                              ContextArgumentResolverComposite resolvers,
-                                             DynamicAttributesAnnotationParser dynamicAttributesAnnotationParser, StaticAttributesGroupProcessor staticAttributesGroupProcessor, DynamicAttributesGroupProcessor dynamicAttributesGroupProcessor, InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver) {
+                                             StaticAttributesGroupProcessor staticAttributesGroupProcessor,
+                                             DynamicAttributesGroupProcessor dynamicAttributesGroupProcessor,
+                                             InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver) {
         this.metadata = metadata;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
         this.searchProperties = searchProperties;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
-        this.dynamicAttributesAnnotationParser = dynamicAttributesAnnotationParser;
         this.staticAttributesGroupProcessor = staticAttributesGroupProcessor;
         this.dynamicAttributesGroupProcessor = dynamicAttributesGroupProcessor;
         this.instanceNameRelatedPropertiesResolver = instanceNameRelatedPropertiesResolver;

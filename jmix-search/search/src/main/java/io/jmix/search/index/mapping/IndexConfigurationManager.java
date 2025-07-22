@@ -60,14 +60,14 @@ public class IndexConfigurationManager {
 
         this.registry = new Registry(instanceNameProvider, metadataTools);
 
-        registerDefinitions(false);
+        createIndexDefinitions(false);
     }
 
     public void refreshIndexDefinitions() {
-        registerDefinitions(true);
+        createIndexDefinitions(true);
     }
 
-    protected synchronized void registerDefinitions(boolean withClean) {
+    protected synchronized void createIndexDefinitions(boolean withClean) {
         if (withClean) {
             registry.clean();
         }

@@ -105,13 +105,18 @@ public final class UiComponentUtils {
      * or an empty {@link Optional}
      */
     public static Optional<Component> findComponent(Component component, String id) {
-        if (component instanceof View<?> view) {
+        BiPredicate<Component, String> idComparator = findFragment(component) == null
+                ? UiComponentUtils::sameId
+                : FragmentUtils::sameId;
+
+        if (idComparator.test(component, id)) {
+            return Optional.of(component);
+        } else if (component instanceof View<?> view) {
             return UiComponentUtils.findComponent(view, id);
         } else if (component instanceof Fragment<?> fragment) {
             return FragmentUtils.findComponent(fragment, id);
         } else if (UiComponentUtils.isContainer(component)) {
-            return UiComponentUtils.findComponent(component, id,
-                    findFragment(component) == null ? UiComponentUtils::sameId : FragmentUtils::sameId);
+            return UiComponentUtils.findComponent(component, id, idComparator);
         }
         return Optional.empty();
     }

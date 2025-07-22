@@ -364,7 +364,6 @@ public class EntityIndexingManagementFacade {
     @Authenticated
     @ManagedOperation(description = "Drops and creates all search indexes defined in application. All data will be lost.")
     public String recreateIndexes() {
-        indexConfigurationManager.refreshIndexDefinitions();
         Map<IndexConfiguration, Boolean> recreationResult = indexManager.recreateIndexes();
         StringBuilder sb = new StringBuilder("Recreation result:");
         recreationResult.forEach((config, created) -> sb.append(System.lineSeparator()).append("\t")
@@ -433,6 +432,12 @@ public class EntityIndexingManagementFacade {
 
         int deleted = indexingQueueManager.emptyQueue(entityName);
         return String.format("%d items for entity '%s' have been removed from Indexing Queue", deleted, entityName);
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Recalculate all index configurations, including the dynamic attributes analysis")
+    public void refreshLocalIndexConfigurations(){
+        indexConfigurationManager.refreshIndexDefinitions();
     }
 
     protected String formatSingleStatusString(String entityName, String indexName, String status) {

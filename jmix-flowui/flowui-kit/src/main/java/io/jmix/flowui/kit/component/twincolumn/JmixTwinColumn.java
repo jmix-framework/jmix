@@ -417,7 +417,9 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     protected void columnItemDoubleClicked(MultiSelectListBox<V> from,
                                            MultiSelectListBox<V> to,
                                            Integer itemIndex) {
-        moveItems(from, to, Collections.singletonList(from.getListDataView().getItem(itemIndex)));
+        if (!isReadOnly()) {
+            moveItems(from, to, Collections.singletonList(from.getListDataView().getItem(itemIndex)));
+        }
     }
 
     protected void recreateItems(Collection<V> newItems) {

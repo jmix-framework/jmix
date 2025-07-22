@@ -22,6 +22,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -38,8 +39,8 @@ import io.jmix.flowui.data.grid.EntityDataGridItems;
 import io.jmix.flowui.model.InstanceContainer;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -162,8 +163,10 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
                 Component cellComponent = componentRenderer.createComponent(instance);
                 if (cellComponent instanceof HasText hasText) {
                     cellValue = hasText.getText();
-                } else if (cellComponent instanceof HasValue<?,?> hasValue) {
+                } else if (cellComponent instanceof HasValue<?, ?> hasValue) {
                     cellValue = UiComponentUtils.getValue(hasValue);
+                } else if (renderer instanceof TextRenderer<?>) {
+                    cellValue = cellComponent.getElement().getText();
                 }
             }
         }

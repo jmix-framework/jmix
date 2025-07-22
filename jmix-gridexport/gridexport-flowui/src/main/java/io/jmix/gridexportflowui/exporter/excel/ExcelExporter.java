@@ -458,6 +458,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         return sb.toString();
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void formatValueCell(Cell cell, @Nullable Object cellValue, @Nullable MetaPropertyPath metaPropertyPath,
                                    int sizersIndex, int notificationRequired, int level, @Nullable Integer groupChildCount) {
 
@@ -620,8 +621,14 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
-        } else if (cellValue instanceof Collection) {
-            String str = "";
+        } else if (cellValue instanceof Collection<?> entitiesCollection) {
+            // only a collection of entities is supported
+            String instanceName = entitiesCollection.stream()
+                    .map(metadataTools::getInstanceName)
+                    .collect(Collectors.joining(", "));
+
+            String str = sizersIndex == 0 ? createSpaceString(level) + instanceName : instanceName;
+            str = str + childCountValue;
             cell.setCellValue(createStringCellValue(str));
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
                 sizers[sizersIndex].notifyCellValue(str, stdFont);

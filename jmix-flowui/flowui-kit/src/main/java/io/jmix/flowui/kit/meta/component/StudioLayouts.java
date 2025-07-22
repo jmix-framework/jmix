@@ -26,11 +26,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import io.jmix.flowui.kit.component.gridlayout.JmixGridLayout;
-import io.jmix.flowui.kit.meta.StudioComponent;
-import io.jmix.flowui.kit.meta.StudioConvertStrategy;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
 public interface StudioLayouts {
@@ -478,6 +474,12 @@ public interface StudioLayouts {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.ComponentRenderer"
+                    )
             }
     )
     JmixGridLayout<?> gridLayout();

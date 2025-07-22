@@ -138,8 +138,9 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
         searchContext.setEntities(getDataLoader().getContainer().getEntityMetaClass().getName());
         searchContext.setSize(searchProperties.getSearchResultPageSize());
 
-        SearchResult searchResult = searchStrategy == null ? entitySearcher.search(searchContext) :
-                entitySearcher.search(searchContext, searchStrategy);
+        SearchResult searchResult = searchStrategy == null
+                ? entitySearcher.search(searchContext)
+                : entitySearcher.search(searchContext, searchStrategy);
 
         return searchResult.getAllEntries().stream()
                 .map(searchResultEntry -> {

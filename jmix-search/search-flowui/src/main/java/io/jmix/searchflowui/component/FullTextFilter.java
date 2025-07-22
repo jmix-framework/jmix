@@ -139,7 +139,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
         searchContext.setSize(searchProperties.getSearchResultPageSize());
 
         if (searchStrategy == null) {
-            searchStrategy = searchProperties.getDefaultSearchStrategy();
+            entitySearcher.search(searchContext);
         }
 
         SearchResult searchResult = entitySearcher.search(searchContext, searchStrategy);

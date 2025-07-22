@@ -127,6 +127,7 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
 
     @Override
     public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas() {
+        indexConfigurationManager.refreshIndexDefinitions();
         Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
         return synchronizeIndexSchemas(indexConfigurations);
     }

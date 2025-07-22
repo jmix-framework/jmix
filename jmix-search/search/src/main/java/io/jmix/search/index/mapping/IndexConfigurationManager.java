@@ -44,6 +44,8 @@ public class IndexConfigurationManager {
     private static final Logger log = LoggerFactory.getLogger(IndexConfigurationManager.class);
 
     protected final Registry registry;
+    private final AnnotatedIndexDefinitionProcessor indexDefinitionProcessor;
+    private final Set<String> classNames;
 
     @Autowired
     public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
@@ -51,15 +53,27 @@ public class IndexConfigurationManager {
                                      InstanceNameProvider instanceNameProvider,
                                      IndexDefinitionDetector indexDefinitionDetector,
                                      MetadataTools metadataTools) {
+        this.indexDefinitionProcessor = indexDefinitionProcessor;
         Class<? extends IndexDefinitionDetector> detectorClass = indexDefinitionDetector.getClass();
-        Set<String> classNames = classpathScanner.getClassNames(detectorClass);
+        classNames = Collections.unmodifiableSet(classpathScanner.getClassNames(detectorClass));
         log.debug("Create Index Configurations");
 
-        Registry registry = new Registry(instanceNameProvider, metadataTools);
+        this.registry = new Registry(instanceNameProvider, metadataTools);
+
+        registerDefinitions(false);
+    }
+
+    public void refreshIndexDefinitions() {
+        registerDefinitions(true);
+    }
+
+    protected synchronized void registerDefinitions(boolean withClean) {
+        if (withClean) {
+            registry.clean();
+        }
         classNames.stream()
                 .map(indexDefinitionProcessor::createIndexConfiguration)
                 .forEach(registry::registerIndexConfiguration);
-        this.registry = registry;
     }
 
     /**
@@ -265,7 +279,7 @@ public class IndexConfigurationManager {
         }
     }
 
-    private static class Registry {
+    protected static class Registry {
         private final InstanceNameProvider instanceNameProvider;
         private final MetadataTools metadataTools;
 
@@ -499,6 +513,14 @@ public class IndexConfigurationManager {
             return propertyPath.getMetaProperties().length > 1
                     ? createShiftedPropertyPath(propertyPath, 1)
                     : null;
+        }
+
+        public void clean() {
+            indexConfigurationsByEntityName.clear();
+            indexConfigurationsByIndexName.clear();
+            referentiallyAffectedPropertiesForUpdate.clear();
+            referentiallyAffectedPropertiesForDelete.clear();
+            registeredEntityClasses.clear();
         }
     }
 }

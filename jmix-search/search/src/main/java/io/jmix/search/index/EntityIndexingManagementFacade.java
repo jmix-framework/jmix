@@ -364,6 +364,7 @@ public class EntityIndexingManagementFacade {
     @Authenticated
     @ManagedOperation(description = "Drops and creates all search indexes defined in application. All data will be lost.")
     public String recreateIndexes() {
+        indexConfigurationManager.refreshIndexDefinitions();
         Map<IndexConfiguration, Boolean> recreationResult = indexManager.recreateIndexes();
         StringBuilder sb = new StringBuilder("Recreation result:");
         recreationResult.forEach((config, created) -> sb.append(System.lineSeparator()).append("\t")

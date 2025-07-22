@@ -22,12 +22,27 @@ import io.jmix.search.index.mapping.DynamicAttributesConfigurationGroup
 import io.jmix.search.index.mapping.DynamicAttributesParameterKeys
 import io.jmix.search.index.mapping.ParameterKeys
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy
+import org.springframework.core.annotation.MergedAnnotation
+import org.springframework.core.annotation.MergedAnnotations
 import spock.lang.Specification
+
+import java.util.stream.Collectors
+
+import static java.util.Arrays.stream
 
 class DynamicAttributesAnnotationParserTest extends Specification {
 
-
     public static final String SOME_ANALYZER = "ANotStandardAnalyzer"
+
+    private static Set<DynamicAttributes> extractAnnotations(Class<?> indexDefinitionClass) {
+        return stream(indexDefinitionClass.getMethods())
+                .map(MergedAnnotations::from)
+                .flatMap(MergedAnnotations::stream)
+                .map(MergedAnnotation::synthesize)
+                .filter(annotation -> annotation instanceof DynamicAttributes)
+                .map(annotation -> (DynamicAttributes)annotation)
+                .collect(Collectors.toSet());
+    }    
 
     def "CreateDefinition. null check"() {
         given:
@@ -46,7 +61,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
-        def annotations = parser.extractAnnotations(IndexDefinitionSimple);
+        def annotations = extractAnnotations(IndexDefinitionSimple);
         DynamicAttributesConfigurationGroup definition = parser.createDefinition(annotations.iterator().next())
 
         then:
@@ -69,7 +84,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
-        def annotations = parser.extractAnnotations(IndexDefinitionWithExcludes);
+        def annotations = extractAnnotations(IndexDefinitionWithExcludes);
         DynamicAttributesConfigurationGroup definition = parser.createDefinition(annotations.iterator().next())
 
         then:
@@ -82,7 +97,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
-        def annotations = parser.extractAnnotations(IndexDefinitionWithParameters);
+        def annotations = extractAnnotations(IndexDefinitionWithParameters);
         Map<String, Object> parameters
                 = parser.createDefinition(annotations.iterator().next()).getParameters()
 
@@ -98,7 +113,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
-        def annotations = parser.extractAnnotations(aClass)
+        def annotations = extractAnnotations(aClass)
 
         then:
         annotations.size() == size
@@ -118,7 +133,7 @@ class DynamicAttributesAnnotationParserTest extends Specification {
         def parser = new DynamicAttributesAnnotationParser()
 
         when:
-        def annotations = parser.extractAnnotations(IndexDefinitionSomeInSomeMethods)
+        def annotations = extractAnnotations(IndexDefinitionSomeInSomeMethods)
 
         then:
         containsAnnotationsWithExcludedCategory(annotations, category)

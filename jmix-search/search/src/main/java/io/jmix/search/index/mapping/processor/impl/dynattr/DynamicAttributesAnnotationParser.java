@@ -22,15 +22,9 @@ import io.jmix.search.index.mapping.DynamicAttributesParameterKeys;
 import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.annotation.MergedAnnotation;
-import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.Arrays.stream;
-
 
 @Component("search_DynamicAttributesAnnotationParser")
 public class DynamicAttributesAnnotationParser {
@@ -54,15 +48,5 @@ public class DynamicAttributesAnnotationParser {
         parameters.put(DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE, specificAnnotation.referenceFieldsIndexingMode());
         parameters.put(ParameterKeys.INDEX_FILE_CONTENT, specificAnnotation.indexFileContent());
         return parameters;
-    }
-
-    public Set<DynamicAttributes> extractAnnotations(Class<?> indexDefinitionClass) {
-        return stream(indexDefinitionClass.getMethods())
-                .map(MergedAnnotations::from)
-                .flatMap(MergedAnnotations::stream)
-                .map(MergedAnnotation::synthesize)
-                .filter(annotation -> annotation instanceof DynamicAttributes)
-                .map(annotation -> (DynamicAttributes)annotation)
-                .collect(Collectors.toSet());
     }
 }

@@ -39,6 +39,7 @@ import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -72,6 +73,7 @@ import io.jmix.flowui.component.richtexteditor.RichTextEditor;
 import io.jmix.flowui.component.scroller.JmixScroller;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.splitlayout.JmixSplitLayout;
+import io.jmix.flowui.component.tabsheet.JmixTabs;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -145,6 +147,7 @@ public class UiComponentsImpl implements UiComponents {
         register(JmixVirtualList.class, VirtualList.class);
         register(RichTextEditor.class, JmixRichTextEditor.class);
         register(JmixFormLayout.class, FormLayout.class);
+        register(JmixTabs.class, Tabs.class);
     }
 
     @SuppressWarnings("unchecked")

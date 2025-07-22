@@ -1985,7 +1985,7 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "Tabs",
-            classFqn = "com.vaadin.flow.component.tabs.Tabs",
+            classFqn = "io.jmix.flowui.component.tabsheet.JmixTabs",
             category = "Components",
             xmlElement = "tabs",
             icon = "io/jmix/flowui/kit/meta/icon/component/tabs.svg",

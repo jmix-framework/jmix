@@ -42,13 +42,14 @@ public class TestCoreProperties extends CoreProperties {
                               boolean triggerFilesEnabled,
                               Duration triggerFilesProcessInterval,
                               boolean roundDecimalValueByFormat,
-                              boolean skipNullOrEmptyConditionsByDefault) {
+                              boolean skipNullOrEmptyConditionsByDefault,
+                              boolean instanceNameFallbackEnabled) {
         super(webHostName, webPort, confDir, workDir, tempDir, dbDir, availableLocales,
                 crossDataStoreReferenceLoadingBatchSize, idGenerationForEntitiesInAdditionalDataStoresEnabled,
                 dom4jMaxPoolSize, dom4jMaxBorrowWaitMillis, anonymousAuthenticationTokenKey, defaultFileStorage,
                 entitySerializationTokenRequired, entitySerializationTokenEncryptionKey,
                 legacyFetchPlanSerializationAttributeName, triggerFilesEnabled, triggerFilesProcessInterval,
-                roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault);
+                roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault, instanceNameFallbackEnabled);
     }
 
     public static Builder builder() {
@@ -76,6 +77,7 @@ public class TestCoreProperties extends CoreProperties {
         Duration triggerFilesProcessInterval = Duration.ofSeconds(5000);
         boolean roundDecimalValueByFormat = true;
         boolean skipNullOrEmptyConditionsByDefault = false;
+        boolean instanceNameFallbackEnabled = true;
 
         public Builder setWebHostName(String webHostName) {
             this.webHostName = webHostName;
@@ -198,7 +200,8 @@ public class TestCoreProperties extends CoreProperties {
                     this.triggerFilesEnabled,
                     this.triggerFilesProcessInterval,
                     this.roundDecimalValueByFormat,
-                    this.skipNullOrEmptyConditionsByDefault);
+                    this.skipNullOrEmptyConditionsByDefault,
+                    this.instanceNameFallbackEnabled);
         }
     }
 }

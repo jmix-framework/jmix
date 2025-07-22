@@ -106,6 +106,18 @@ public class CoreProperties {
      */
     boolean skipNullOrEmptyConditionsByDefault;
 
+    /**
+     * Whether to use ancestor's @InstanceName definition in case of unfetched attributes.
+     * <p>
+     * Specifies how to proceed when getting the instance name if some required attributes are not loaded.
+     * <ul>
+     *      <li>If set to false, an "unfetched attribute" exception will be thrown.</li>
+     *      <li>If set to true, ancestor instance name definitions will be checked until the value is successfully evaluated
+     * or no ancestor remains to try.</li>
+     * </ul>
+     * */
+    boolean instanceNameFallbackEnabled;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -126,7 +138,8 @@ public class CoreProperties {
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
             @DefaultValue("true") boolean roundDecimalValueByFormat,
-            @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault) {
+            @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault,
+            @DefaultValue("true") boolean instanceNameFallbackEnabled) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -156,6 +169,7 @@ public class CoreProperties {
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
         this.roundDecimalValueByFormat = roundDecimalValueByFormat;
         this.skipNullOrEmptyConditionsByDefault = skipNullOrEmptyConditionsByDefault;
+        this.instanceNameFallbackEnabled = instanceNameFallbackEnabled;
     }
 
     public String getWebHostName() {
@@ -265,5 +279,13 @@ public class CoreProperties {
      */
     public boolean isSkipNullOrEmptyConditionsByDefault() {
         return skipNullOrEmptyConditionsByDefault;
+    }
+
+    /**
+     *
+     * @see #instanceNameFallbackEnabled
+     */
+    public boolean isInstanceNameFallbackEnabled() {
+        return instanceNameFallbackEnabled;
     }
 }

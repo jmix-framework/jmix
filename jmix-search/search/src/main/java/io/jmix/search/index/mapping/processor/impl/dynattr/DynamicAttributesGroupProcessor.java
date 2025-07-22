@@ -23,6 +23,7 @@ import io.jmix.search.index.mapping.DynamicAttributesConfigurationGroup;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.mapping.processor.impl.AbstractAttributesGroupProcessor;
+import io.jmix.search.index.mapping.processor.impl.FieldMappingCreator;
 import io.jmix.search.utils.PropertyTools;
 import org.springframework.stereotype.Component;
 

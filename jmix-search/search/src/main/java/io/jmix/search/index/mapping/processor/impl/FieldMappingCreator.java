@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.processor.impl.dynattr;
+package io.jmix.search.index.mapping.processor.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.mapping.*;
-import io.jmix.search.index.mapping.processor.impl.InstanceNameRelatedPropertiesResolver;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategyProvider;

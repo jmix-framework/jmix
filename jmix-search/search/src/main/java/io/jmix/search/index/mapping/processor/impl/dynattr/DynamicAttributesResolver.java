@@ -73,7 +73,7 @@ public class DynamicAttributesResolver {
             cleanAttributesForExcludedCategories(metaClass, excludedCategories, attributeDefinitionMap);
         }
         if (excludedProperties.length > 0) {
-            cleanAttributesForExcludedProperties(metaClass, excludedProperties, attributeDefinitionMap);
+            cleanAttributesForExcludedProperties(excludedProperties, attributeDefinitionMap);
         }
 
         return attributeDefinitionMap.values();
@@ -96,7 +96,7 @@ public class DynamicAttributesResolver {
         excludedAttributeCodes.forEach(attributeDefinitionMap::remove);
     }
 
-    private void cleanAttributesForExcludedProperties(MetaClass metaClass, String[] excludedProperties, Map<String, AttributeDefinition> attributeDefinitionMap) {
+    private void cleanAttributesForExcludedProperties(String[] excludedProperties, Map<String, AttributeDefinition> attributeDefinitionMap) {
         Stream.of(excludedProperties).forEach(attributeDefinitionMap::remove);
     }
 }

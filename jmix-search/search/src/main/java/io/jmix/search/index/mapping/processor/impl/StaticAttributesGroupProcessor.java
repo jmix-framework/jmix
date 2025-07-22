@@ -20,7 +20,6 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.mapping.*;
-import io.jmix.search.index.mapping.processor.impl.dynattr.FieldMappingCreator;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

@@ -29,6 +29,7 @@ import java.util.stream.Stream
 
 import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*
 import static java.util.Arrays.asList
+import static java.util.Collections.emptyList
 import static java.util.Collections.singletonMap
 
 class DynamicAttributesResolverTest extends Specification {
@@ -103,88 +104,26 @@ class DynamicAttributesResolverTest extends Specification {
         properties.containsKey("key2")
     }
 
-    def "attributes. exclude categories"() {
+    def "there are no dynamic attributes"() {
         given:
         MetaClass metaClass = Mock()
 
-        and:
-        def attributeDefinition1 = Mock(AttributeDefinition)
-        attributeDefinition1.getCode() >> "category1attr1"
-        attributeDefinition1.getDataType() >> AttributeType.STRING
-
-        and:
-        def attributeDefinition2 = Mock(AttributeDefinition)
-        attributeDefinition2.getCode() >> "category2attr2"
-        attributeDefinition2.getDataType() >> AttributeType.ENTITY
-
-        and:
-        CategoryDefinition categoryDefinition1 = Mock()
-        categoryDefinition1.getName() >> "category1"
-        categoryDefinition1.getAttributeDefinitions() >> asList(attributeDefinition1)
-
-        and:
-        CategoryDefinition categoryDefinition2 = Mock()
-        categoryDefinition2.getName() >> "category2"
-        categoryDefinition2.getAttributeDefinitions() >> asList(attributeDefinition2)
 
         and:
         DynAttrMetadata metadata = Mock()
-        Collection<AttributeDefinition> attributeDefinitions = asList(attributeDefinition1, attributeDefinition2)
-        metadata.getAttributes(metaClass) >> attributeDefinitions
-        metadata.getCategories(metaClass) >> asList(categoryDefinition1, categoryDefinition2)
+        metadata.getAttributes(metaClass) >> []
 
         and:
-        def resolver = new DynamicAttributesResolver(metadata, Mock(PropertyTools))
+        PropertyTools propertyTools = Mock()
+
+        and:
+        def resolver = new DynamicAttributesResolver(metadata, propertyTools)
 
         when:
-        def attributes = resolver.getAttributes(metaClass, new String[]{"category1"}, new String[]{}, INSTANCE_NAME_ONLY)
+        def properties = resolver.resolveEffectivePropertyPaths(metaClass, new String[]{}, new String[]{}, INSTANCE_NAME_ONLY)
 
         then:
-        attributes.size() == 1
-    }
-
-    def "attributes. exclude fields"() {
-        given:
-        MetaClass metaClass = Mock()
-
-        and:
-        def attributeDefinition1 = Mock(AttributeDefinition)
-        attributeDefinition1.getCode() >> "category1attr1"
-        attributeDefinition1.getDataType() >> AttributeType.STRING
-
-        and:
-        def attributeDefinition2 = Mock(AttributeDefinition)
-        attributeDefinition2.getCode() >> "category2attr1"
-        attributeDefinition2.getDataType() >> AttributeType.ENTITY
-
-        and:
-        def attributeDefinition3 = Mock(AttributeDefinition)
-        attributeDefinition3.getCode() >> "category2attr2"
-        attributeDefinition3.getDataType() >> AttributeType.INTEGER
-
-        and:
-        CategoryDefinition categoryDefinition1 = Mock()
-        categoryDefinition1.getName() >> "category1"
-        categoryDefinition1.getAttributeDefinitions() >> asList(attributeDefinition1)
-
-        and:
-        CategoryDefinition categoryDefinition2 = Mock()
-        categoryDefinition2.getName() >> "category2"
-        categoryDefinition2.getAttributeDefinitions() >> asList(attributeDefinition2, attributeDefinition3)
-
-        and:
-        DynAttrMetadata metadata = Mock()
-        metadata.getAttributes(metaClass) >> asList(attributeDefinition1, attributeDefinition2, attributeDefinition3)
-        metadata.getCategories(metaClass) >> asList(categoryDefinition1, categoryDefinition2)
-
-        and:
-        def resolver = new DynamicAttributesResolver(metadata, Mock(PropertyTools))
-
-        when:
-        def attributes = resolver.getAttributes(metaClass, new String[]{"category1"}, new String[]{"category2attr2"}, INSTANCE_NAME_ONLY)
-
-        then:
-        attributes.size() == 1
+        properties.size() == 0
     }
 
     def "Attributes of not supported types excluding."() {

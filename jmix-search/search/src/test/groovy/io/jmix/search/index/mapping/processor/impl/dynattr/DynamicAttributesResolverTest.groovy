@@ -25,6 +25,8 @@ import io.jmix.dynattr.DynAttrMetadata
 import io.jmix.search.utils.PropertyTools
 import spock.lang.Specification
 
+import java.util.stream.Stream
+
 import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*
 import static java.util.Arrays.asList
 import static java.util.Collections.singletonMap
@@ -52,8 +54,8 @@ class DynamicAttributesResolverTest extends Specification {
 
         and:
         PropertyTools propertyTools = Mock()
-        propertyTools.findPropertiesByPath(metaClass, "attr1", true) >> singletonMap("key1", Mock(MetaPropertyPath))
-        propertyTools.findPropertiesByPath(metaClass, "attr2", true) >> singletonMap("key2", Mock(MetaPropertyPath))
+        propertyTools.findPropertiesByPath(metaClass, "+attr1", true) >> singletonMap("key1", Mock(MetaPropertyPath))
+        propertyTools.findPropertiesByPath(metaClass, "+attr2", true) >> singletonMap("key2", Mock(MetaPropertyPath))
 
         and:
         def resolver = new DynamicAttributesResolver(metadata, propertyTools)
@@ -87,8 +89,8 @@ class DynamicAttributesResolverTest extends Specification {
 
         and:
         PropertyTools propertyTools = Mock()
-        propertyTools.findPropertiesByPath(metaClass, "attr1", true) >> singletonMap("key1", Mock(MetaPropertyPath))
-        propertyTools.findPropertiesByPath(metaClass, "attr2", true) >> singletonMap("key2", Mock(MetaPropertyPath))
+        propertyTools.findPropertiesByPath(metaClass, "+attr1", true) >> singletonMap("key1", Mock(MetaPropertyPath))
+        propertyTools.findPropertiesByPath(metaClass, "+attr2", true) >> singletonMap("key2", Mock(MetaPropertyPath))
 
         and:
         def resolver = new DynamicAttributesResolver(metadata, propertyTools)
@@ -123,7 +125,7 @@ class DynamicAttributesResolverTest extends Specification {
         and:
         CategoryDefinition categoryDefinition2 = Mock()
         categoryDefinition2.getName() >> "category2"
-        categoryDefinition1.getAttributeDefinitions() >> asList(attributeDefinition2)
+        categoryDefinition2.getAttributeDefinitions() >> asList(attributeDefinition2)
 
         and:
         DynAttrMetadata metadata = Mock()
@@ -168,7 +170,7 @@ class DynamicAttributesResolverTest extends Specification {
         and:
         CategoryDefinition categoryDefinition2 = Mock()
         categoryDefinition2.getName() >> "category2"
-        categoryDefinition1.getAttributeDefinitions() >> asList(attributeDefinition2, attributeDefinition3)
+        categoryDefinition2.getAttributeDefinitions() >> asList(attributeDefinition2, attributeDefinition3)
 
         and:
         DynAttrMetadata metadata = Mock()
@@ -185,6 +187,93 @@ class DynamicAttributesResolverTest extends Specification {
         attributes.size() == 1
     }
 
+    def "Attributes of not supported types excluding."() {
+        given:
+        MetaClass metaClass = Mock()
+        and:
+        def category1 = createCategoryWithAttributes(
+                "category1",
+                Map.of(
+                        "textAttr", AttributeType.STRING,
+                        "intAttr", AttributeType.INTEGER,
+                        "doubleAttr", AttributeType.DOUBLE,
+                        "decimalAttr", AttributeType.DECIMAL,
+                        "dateAttr", AttributeType.DATE,
+                        "dateWithoutTimeAttr", AttributeType.DATE_WITHOUT_TIME,
+                        "booleanAttr", AttributeType.BOOLEAN,
+                        "entityAttr", AttributeType.ENTITY,
+                        "enumerationAttr", AttributeType.ENUMERATION
+                )
+        )
+
+        def category2 = createCategoryWithAttributes(
+                "category2",
+                Map.of(
+                        "textAttr", AttributeType.STRING,
+                        "intAttr", AttributeType.INTEGER,
+                        "doubleAttr", AttributeType.DOUBLE,
+                        "decimalAttr", AttributeType.DECIMAL,
+                        "dateAttr", AttributeType.DATE,
+                        "dateWithoutTimeAttr", AttributeType.DATE_WITHOUT_TIME,
+                        "booleanAttr", AttributeType.BOOLEAN,
+                        "entityAttr", AttributeType.ENTITY,
+                        "enumerationAttr", AttributeType.ENUMERATION
+                )
+        )
+
+        and:
+        DynAttrMetadata metadata = Mock()
+        metadata.getAttributes(metaClass) >> Stream.of(category1, category2)
+                .map { category -> category.getAttributeDefinitions() }
+                .flatMap { col -> col.stream() }
+                .toList()
+
+        metadata.getCategories(metaClass) >> asList(category1, category2)
+
+        and:
+        def resolver = new DynamicAttributesResolver(metadata, Mock(PropertyTools))
+
+        when:
+        def attributes = resolver.getAttributes(metaClass, excludeCategories.toArray() as String[], excludeParameters.toArray() as String[], referenceMode)
+        def attributeNames = attributes
+                .stream()
+                .map { attributeDefinition -> attributeDefinition.getCode() }
+                .toList()
+
+        then:
+        attributeNames == resultAttributes
+
+        where:
+        excludeCategories          | excludeParameters                                 | referenceMode      || resultAttributes
+        []                         | []                                                | NONE               || ["category2textAttr", "category2enumerationAttr", "category1enumerationAttr", "category1textAttr"]
+        []                         | []                                                | INSTANCE_NAME_ONLY || ["category2textAttr", "category2enumerationAttr", "category2entityAttr", "category1enumerationAttr", "category1textAttr", "category1entityAttr"]
+        ["category1"]              | []                                                | NONE               || ["category2textAttr", "category2enumerationAttr"]
+        ["category1"]              | []                                                | INSTANCE_NAME_ONLY || ["category2textAttr", "category2enumerationAttr", "category2entityAttr"]
+        ["category1"]              | ["category2textAttr", "category2enumerationAttr"] | NONE               || []
+        []                         | ["category2textAttr", "category1textAttr"]        | NONE               || ["category2enumerationAttr", "category1enumerationAttr"]
+        ["category1", "category2"] | ["category2textAttr", "category2enumerationAttr"] | NONE               || []
+        ["category1", "category2"] | ["category1textAttr", "category2enumerationAttr"] | NONE               || []
+        ["category2"]              | ["category2textAttr", "category2enumerationAttr"] | NONE               || ["category1enumerationAttr", "category1textAttr"]
 
 
+    }
+
+    CategoryDefinition createCategoryWithAttributes(String categoryName, Map<String, AttributeType> attributes) {
+        Collection<AttributeDefinition> attributeDefinitions = new ArrayList<>();
+        for (Map.Entry<String, AttributeType> attrData : attributes.entrySet()) {
+            attributeDefinitions.add(createAttribute(categoryName + attrData.getKey(), attrData.getValue()))
+        }
+
+        CategoryDefinition categoryDefinition = Mock()
+        categoryDefinition.getName() >> categoryName
+        categoryDefinition.getAttributeDefinitions() >> attributeDefinitions
+        return categoryDefinition
+    }
+
+    AttributeDefinition createAttribute(String attributeCode, AttributeType attributeType) {
+        def attributeDefinition = Mock(AttributeDefinition)
+        attributeDefinition.getCode() >> attributeCode
+        attributeDefinition.getDataType() >> attributeType
+        return attributeDefinition
+    }
 }

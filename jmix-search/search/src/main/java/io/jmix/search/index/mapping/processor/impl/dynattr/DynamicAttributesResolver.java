@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static io.jmix.dynattr.AttributeType.*;
 import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.INSTANCE_NAME_ONLY;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -38,6 +39,7 @@ public class DynamicAttributesResolver {
 
     private final DynAttrMetadata dynAttrMetadata;
     private final PropertyTools propertyTools;
+    private static final List<AttributeType> SUPPORTED_DATA_TYPES = List.of(STRING, ENTITY, ENUMERATION);
 
     public DynamicAttributesResolver(DynAttrMetadata dynAttrMetadata,
                                      PropertyTools propertyTools) {
@@ -66,8 +68,13 @@ public class DynamicAttributesResolver {
             ReferenceFieldsIndexingMode mode) {
         Map<String, AttributeDefinition> attributeDefinitionMap = dynAttrMetadata.getAttributes(metaClass).stream()
                 .filter(
-                        attributeDefinition ->
-                                attributeDefinition.getDataType() != AttributeType.ENTITY || mode == INSTANCE_NAME_ONLY)
+                        attributeDefinition -> {
+                            AttributeType dataType = attributeDefinition.getDataType();
+                            if (!SUPPORTED_DATA_TYPES.contains(dataType)) {
+                                return false;
+                            }
+                            return dataType != AttributeType.ENTITY || mode == INSTANCE_NAME_ONLY;
+                        })
                 .collect(toMap(AttributeDefinition::getCode, identity()));
         if (excludedCategories.length > 0) {
             cleanAttributesForExcludedCategories(metaClass, excludedCategories, attributeDefinitionMap);

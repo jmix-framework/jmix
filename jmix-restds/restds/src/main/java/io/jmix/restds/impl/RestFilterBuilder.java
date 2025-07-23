@@ -22,6 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.*;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -52,6 +55,8 @@ public class RestFilterBuilder {
     private FetchPlans fetchPlans;
     @Autowired
     private EntitySerialization entitySerialization;
+    @Autowired
+    private DatatypeRegistry datatypeRegistry;
 
     @Nullable
     public String build(MetaClass metaClass, List<?> ids) {
@@ -220,11 +225,17 @@ public class RestFilterBuilder {
     }
 
     private String objectToJsonString(@Nullable Object object) throws JsonProcessingException {
-        String stringValue = objectMapper.writeValueAsString(object);
-        if (stringValue.startsWith("\"") && stringValue.endsWith("\"")) {
-            stringValue = stringValue.substring(1, stringValue.length() - 1);
+        if (object == null) {
+            return "null";
         }
-        return stringValue;
+        Datatype<?> datatype = datatypeRegistry.find(object.getClass());
+        if (datatype != null) {
+            return datatype.format(object);
+        }
+        if (object instanceof EnumClass<?> enumValue) {
+            return enumValue.toString();
+        }
+        return objectMapper.writeValueAsString(object);
     }
 
     @Nullable

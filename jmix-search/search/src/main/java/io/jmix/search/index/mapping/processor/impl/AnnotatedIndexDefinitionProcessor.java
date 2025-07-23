@@ -115,7 +115,7 @@ public class AnnotatedIndexDefinitionProcessor {
 
         Predicate<Object> indexablePredicate = createIndexablePredicate(indexDef);
 
-        return new IndexConfiguration(
+        IndexConfiguration indexConfiguration = new IndexConfiguration(
                 indexDef.getMetaClass().getName(),
                 indexDef.getEntityClass(),
                 indexName,
@@ -124,6 +124,9 @@ public class AnnotatedIndexDefinitionProcessor {
                 indexablePredicate,
                 indexDef.getExtendedSearchSettings()
         );
+        log.debug("Index configuration: {}", indexConfiguration);
+
+        return indexConfiguration;
     }
 
     protected Class<?> resolveClass(String className) {

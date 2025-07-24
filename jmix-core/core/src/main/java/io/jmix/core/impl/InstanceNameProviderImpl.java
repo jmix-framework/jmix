@@ -310,7 +310,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
     private void validateInstanceNameAnnotation(MetaClass metaClass,
                                                 List<Method> instanceNameMethods,
                                                 List<MetaProperty> nameProperties,
-                                                MetaProperty selectedNameProperty) {
+                                                @Nullable MetaProperty selectedNameProperty) {
         if (instanceNameMethods.size() > 1) {
             log.warn("Multiple @InstanceName annotated methods found in {} class, method {} will be used for instance name",
                     metaClass.getName(),

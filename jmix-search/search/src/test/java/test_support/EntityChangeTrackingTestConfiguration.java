@@ -31,10 +31,8 @@ package test_support;/*
  */
 
 import io.jmix.core.DataManager;
-import io.jmix.core.IdSerialization;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.search.index.queue.IndexingQueueManager;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -64,17 +62,6 @@ public class EntityChangeTrackingTestConfiguration {
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog("test_support/liquibase/changelog.xml");
         return liquibase;
-    }
-
-    @Bean
-    public TestIndexingQueueItemsTracker testIndexingQueueItemsTracker(IdSerialization idSerialization) {
-        return new TestIndexingQueueItemsTracker(idSerialization);
-    }
-
-    @Bean("search_JpaIndexingQueueManager")
-    @Primary
-    public IndexingQueueManager indexingQueueManager() {
-        return beanFactory.createBean(TestJpaIndexingQueueManager.class);
     }
 
     @Bean

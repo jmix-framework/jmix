@@ -19,7 +19,6 @@ import javax.sql.DataSource
 
 @Push
 @Theme(value = "${project_name}")
-@PWA(name = "${project_projectPrintableName}", shortName = "${project_projectPrintableName}")
 @SpringBootApplication
 open class ${project_classPrefix}Application : AppShellConfigurator {
 

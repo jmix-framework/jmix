@@ -48,12 +48,14 @@ class ZipProject extends DefaultTask {
 
         def tmpDir = "${project.buildDir}/zip"
         def tmpRootDir = "${project.buildDir}/zip/${project.name}"
-
-        def includeToZip = []
+        def includeToZip = [
+                '.gitignore'
+        ]
         includeToZip += this.includeToZip
 
         def excludeFromZip = [
                 project.rootDir.name + '/frontend/generated',
+                project.rootDir.name + '/src/main/frontend/generated',
                 'build',
                 'deploy',
                 'bower_components',

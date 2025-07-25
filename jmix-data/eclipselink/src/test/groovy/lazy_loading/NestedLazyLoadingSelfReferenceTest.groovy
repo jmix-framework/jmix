@@ -19,6 +19,7 @@ package lazy_loading
 import io.jmix.core.DataManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
+import spock.lang.IgnoreIf
 import test_support.DataSpec
 import test_support.entity.lazyloading.self_ref_nested_loading.O2MSelfRefEntity
 import test_support.entity.lazyloading.self_ref_nested_loading.O2OSelfRefEntity
@@ -30,6 +31,7 @@ import javax.sql.DataSource
  * OneToOne owning side and OneToMany relationships have no such vulnerability and covered by test just in case.
  * ManyToMany case is too different and skipped.
  */
+@IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
 class NestedLazyLoadingSelfReferenceTest extends DataSpec {
     @Autowired
     DataManager dataManager

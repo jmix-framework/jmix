@@ -24,12 +24,14 @@ import io.jmix.data.PersistenceHints
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.IgnoreIf
 import test_support.DataSpec
 import test_support.entity.lazyloading.*
 import test_support.entity.lazyloading.soft_deletion_vh_propagation.Activity
 import test_support.entity.lazyloading.soft_deletion_vh_propagation.Customer
 import test_support.entity.lazyloading.soft_deletion_vh_propagation.Details
 
+@IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
 class LazyLoadingSoftDeleteTest extends DataSpec {
 
     @Autowired

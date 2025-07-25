@@ -158,7 +158,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load valuesPicker component with datasource from XML"() {
         given: "An entity with some property"
-        def order = dataManager.load(Order).all().one()
+        def order = dataManager.load(Order).all().fetchPlan(b->b.add("orderLines")).one()
 
         when: "Open the ComponentView and load data"
         def componentView = navigateToView(ComponentView.class)

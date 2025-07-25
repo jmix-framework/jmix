@@ -22,9 +22,11 @@ import io.jmix.core.FetchPlan
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.IgnoreIf
 import test_support.DataSpec
 import test_support.entity.sales.*
 
+@IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
 class EntityStatesIsLoadedTest extends DataSpec {
 
     @Autowired

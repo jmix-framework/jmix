@@ -22,10 +22,12 @@ import io.jmix.core.FetchPlan
 import io.jmix.core.Id
 import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.IgnoreIf
 import test_support.DataSpec
 import test_support.entity.embedded_pk.Branch
 import test_support.entity.embedded_pk.Root
 
+@IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
 class EmbeddedIdReferenceTest extends DataSpec {
 
     @Autowired

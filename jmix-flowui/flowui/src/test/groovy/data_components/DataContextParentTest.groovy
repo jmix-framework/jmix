@@ -24,6 +24,7 @@ import io.jmix.eclipselink.impl.lazyloading.ValueHoldersSupport
 import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.DataContext
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.IgnoreIf
 import spock.lang.Unroll
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
@@ -391,6 +392,7 @@ class DataContextParentTest extends DataContextSpec {
         !ctx1.getModified().contains(param)
     }
 
+    @IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
     def "lazy loading state merged correctly into child context"() {
 
         setup:

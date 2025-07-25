@@ -27,6 +27,7 @@ import io.jmix.flowui.model.MergeOptions
 import org.eclipse.persistence.internal.queries.EntityFetchGroup
 import org.eclipse.persistence.queries.FetchGroupTracker
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.IgnoreIf
 import test_support.entity.TestIdentityIdEntity
 import test_support.entity.TestJpaLifecycleCallbacksEntity
 import test_support.entity.TestReadOnlyPropertyEntity
@@ -803,6 +804,7 @@ class DataContextMergeTest extends DataContextSpec {
         order.customer == customer0
     }
 
+    @IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
     def "merge into entity with not loaded property"() {
         DataContext context = factory.createDataContext()
 
@@ -834,6 +836,7 @@ class DataContextMergeTest extends DataContextSpec {
         dataManager.remove(order2t, customer1)
     }
 
+    @IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
     def "merge into entity with not loaded local property"() {
         DataContext context = factory.createDataContext()
 

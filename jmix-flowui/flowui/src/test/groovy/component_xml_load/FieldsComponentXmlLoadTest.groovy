@@ -20,6 +20,7 @@ import com.vaadin.flow.component.radiobutton.RadioGroupVariant
 import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.ComponentView
 import io.jmix.core.DataManager
+import io.jmix.core.FetchPlan
 import io.jmix.core.SaveContext
 import io.jmix.core.metamodel.datatype.impl.BooleanDatatype
 import io.jmix.core.metamodel.datatype.impl.DateTimeDatatype
@@ -106,7 +107,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load checkBox component with datasource from XML"() {
         given: "An entity with some property"
-        def order = dataManager.load(Order).all().one()
+        def order = dataManager.load(Order).all().fetchPlan(b->b.add("user", FetchPlan.BASE)).one()
 
         when: "Open the ComponentView and load data"
         def componentView = navigateToView(ComponentView.class)
@@ -155,7 +156,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load switch component with datasource from XML"() {
         given: "An entity with some property"
-        def order = dataManager.load(Order).all().one()
+        def order = dataManager.load(Order).all().fetchPlan(b->b.add("user", FetchPlan.BASE)).one()
 
         when: "Open the ComponentView and load data"
         def componentView = navigateToView(ComponentView.class)

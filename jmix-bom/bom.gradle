@@ -90,6 +90,8 @@ dependencies {
         api "gr.netmechanics.jmix:jmix-multilingual-field-starter:1.3.0"
         api "gr.netmechanics.jmix:jmix-google-place:1.2.0"
         api "gr.netmechanics.jmix:jmix-google-place-starter:1.2.0"
+        api 'gr.netmechanics.jmix:jmix-evrete:1.0.0'
+        api 'gr.netmechanics.jmix:jmix-evrete-starter:1.0.0'
         api "de.bytestore:swagger-ui-starter:2.6.0"
         api "de.bytestore:plugin-starter:2.6.0"
         api 'ru.kavlab:dataimportaddon-starter:0.9.3'

@@ -18,11 +18,14 @@ package io.jmix.flowui.xml.layout.inittask;
 
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
@@ -31,6 +34,7 @@ import static io.jmix.flowui.component.UiComponentUtils.findFocusComponent;
 
 public class FocusComponentInitTask implements ComponentLoader.InitTask {
 
+    private static final Logger log = LoggerFactory.getLogger(FocusComponentInitTask.class);
     protected String focusComponentId;
     protected View<?> view;
 
@@ -46,8 +50,23 @@ public class FocusComponentInitTask implements ComponentLoader.InitTask {
             throw new GuiDevelopmentException(View.class.getSimpleName() + " cannot contain components", context);
         }
 
-        getFocusComponent().ifPresent(focusable ->
-                focusable.getElement().setProperty("autofocus", true));
+        getFocusComponent().ifPresent(this::doFocus);
+    }
+
+    protected void doFocus(Focusable<?> focusable) {
+        if (focusable instanceof Grid<?>) {
+            // Using a workaround to focus a Grid, see https://github.com/vaadin/flow-components/issues/2180
+            focusable.getElement().executeJs("""
+                        setTimeout(function() {
+                            $0.shadowRoot.querySelector("tr").focus();
+                        }, 100);
+                    """);
+        } else {
+            // Call `focus` explicitly because not all `com.vaadin.flow.component.Focusable`
+            // components support `autofocus`.
+            focusable.focus();
+            focusable.getElement().setProperty("autofocus", true);
+        }
     }
 
     protected Optional<Focusable<?>> getFocusComponent() {

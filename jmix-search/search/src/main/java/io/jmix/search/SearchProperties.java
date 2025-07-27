@@ -167,6 +167,7 @@ public class SearchProperties {
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
         this.processQueueBatchSize = processQueueBatchSize;
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
+        this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
         this.useDefaultIndexingQueueProcessingQuartzConfiguration = useDefaultIndexingQueueProcessingQuartzConfiguration;
         this.useDefaultEnqueueingSessionProcessingQuartzConfiguration = useDefaultEnqueueingSessionProcessingQuartzConfiguration;
         this.indexingQueueProcessingCron = indexingQueueProcessingCron;
@@ -181,7 +182,6 @@ public class SearchProperties {
         this.maxPrefixLength = maxPrefixLength;
         this.wildcardPrefixQueryEnabled = wildcardPrefixQueryEnabled;
         this.enabled = enabled;
-        this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
     }
 
     /**

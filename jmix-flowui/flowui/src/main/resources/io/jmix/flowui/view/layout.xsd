@@ -3756,7 +3756,7 @@
     <xs:complexType name="scrollerContainer">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:sequence>
+                <xs:sequence minOccurs="0">
                     <xs:group ref="standardComponent"/>
                 </xs:sequence>
 
@@ -3912,7 +3912,7 @@
     </xs:complexType>
 
     <xs:complexType name="formItemType">
-        <xs:sequence>
+        <xs:sequence minOccurs="0">
             <xs:group ref="standardComponent"/>
         </xs:sequence>
 
@@ -3931,11 +3931,11 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
 
-                <xs:sequence>
-                    <xs:element name="responsiveSteps" type="responsiveStepsType" minOccurs="0"/>
-                    <xs:element name="formItem" type="formItemType" minOccurs="0"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element name="responsiveSteps" type="responsiveStepsType"/>
+                    <xs:element name="formItem" type="formItemType"/>
                     <xs:group ref="standardComponent"/>
-                    <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:any namespace="##other" maxOccurs="unbounded"/>
                 </xs:sequence>
 
                 <xs:attribute name="dataContainer" type="xs:string"/>

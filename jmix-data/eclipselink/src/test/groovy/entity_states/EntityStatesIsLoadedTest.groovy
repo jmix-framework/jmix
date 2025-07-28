@@ -26,7 +26,7 @@ import spock.lang.IgnoreIf
 import test_support.DataSpec
 import test_support.entity.sales.*
 
-@IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
+@IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
 class EntityStatesIsLoadedTest extends DataSpec {
 
     @Autowired

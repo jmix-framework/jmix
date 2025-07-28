@@ -31,7 +31,7 @@ import javax.sql.DataSource
  * OneToOne owning side and OneToMany relationships have no such vulnerability and covered by test just in case.
  * ManyToMany case is too different and skipped.
  */
-@IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
+@IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
 class NestedLazyLoadingSelfReferenceTest extends DataSpec {
     @Autowired
     DataManager dataManager

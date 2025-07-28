@@ -35,6 +35,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
@@ -76,6 +77,8 @@ public class DynAttrManagerImpl implements DynAttrManager {
     protected FetchPlans fetchPlans;
     @Autowired
     protected AccessManager accessManager;
+    @Autowired
+    protected ApplicationEventPublisher eventPublisher;
 
     protected String dynamicAttributesStore = Stores.MAIN;
 
@@ -161,7 +164,9 @@ public class DynAttrManagerImpl implements DynAttrManager {
                                     doStoreCollectionValue(attributeValue);
                                 }
                             });
+
                 }
+                eventPublisher.publishEvent(new DynamicAttributeChangeEvent(metaClass, entity, dynamicModel));
             }
             //todo: refresh state
             //state.setValues(mergedValues);

@@ -17,17 +17,21 @@
 package io.jmix.reportsflowui.view.history;
 
 
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.FileRef;
+import io.jmix.flowui.Actions;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reportsflowui.download.ReportDownloader;
+import io.jmix.reportsflowui.view.run.ReportExcelHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,15 +50,35 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     protected CollectionLoader<ReportExecution> executionsDl;
     @ViewComponent
     protected DataGrid<ReportExecution> executionsDataGrid;
+    @ViewComponent
+    private HorizontalLayout buttonsPanel;
+    @ViewComponent
+    private JmixButton downloadBtn;
 
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
+    protected Actions actions;
+    @Autowired
     protected ReportDownloader downloader;
     @Autowired
     protected SecondsToTextFormatter durationFormatter;
+    @Autowired(required = false)
+    protected ReportExcelHelper reportExcelHelper;
 
     protected List<Report> filterByReports;
+
+    @Subscribe
+    public void onBeforeShow(final BeforeShowEvent event) {
+        createExcelButton();
+    }
+
+    protected void createExcelButton() {
+        if (reportExcelHelper != null) {
+            reportExcelHelper.assignExcelExportAction(executionsDataGrid, button ->
+                    buttonsPanel.addComponentAtIndex(buttonsPanel.indexOf(downloadBtn), button));
+        }
+    }
 
     @Supply(to = "executionsDataGrid.executionTimeSec", subject = "renderer")
     protected Renderer<ReportExecution> executionsDataGridExecutionTimeRenderer() {

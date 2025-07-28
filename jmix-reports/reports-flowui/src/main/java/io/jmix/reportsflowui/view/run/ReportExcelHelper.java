@@ -24,9 +24,12 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.gridexportflowui.action.ExcelExportAction;
 import io.jmix.gridexportflowui.exporter.excel.ExcelExporter;
+import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
+
+import java.util.function.Consumer;
 
 /**
  * Helper that provides grid exporter.
@@ -53,5 +56,15 @@ public class ReportExcelHelper {
         excelButton.setAction(excelExportAction);
 
         return excelButton;
+    }
+
+    public void assignExcelExportAction(DataGrid<ReportExecution> dataGrid, Consumer<com.vaadin.flow.component.Component> addMethod) {
+        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.ID);
+        dataGrid.addAction(excelExportAction);
+
+        JmixButton excelExportButton = uiComponents.create(JmixButton.class);
+        excelExportButton.setAction(excelExportAction);
+
+        addMethod.accept(excelExportButton);
     }
 }

@@ -23,7 +23,7 @@ import test_support.role.TestLazyLoadingRole
 
 import javax.sql.DataSource
 
-@IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
+@IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
 class DataManagerLazyLoadingTest extends SecurityDataSpecification {
     @Autowired
     UnconstrainedDataManager dataManager

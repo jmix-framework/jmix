@@ -27,7 +27,7 @@ import test_support.DataSpec
 import test_support.entity.embedded_pk.Branch
 import test_support.entity.embedded_pk.Root
 
-@IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
+@IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
 class EmbeddedIdReferenceTest extends DataSpec {
 
     @Autowired

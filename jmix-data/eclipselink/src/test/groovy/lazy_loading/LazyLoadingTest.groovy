@@ -27,7 +27,7 @@ import test_support.entity.lazyloading.cascading.ResourceAllocation
 import test_support.entity.lazyloading.self_ref_in_param.A
 import test_support.entity.lazyloading.self_ref_in_param.B
 
-@IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
+@IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
 class LazyLoadingTest extends DataSpec {
 
     @Autowired

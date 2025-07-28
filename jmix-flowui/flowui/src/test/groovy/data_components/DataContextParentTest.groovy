@@ -392,7 +392,7 @@ class DataContextParentTest extends DataContextSpec {
         !ctx1.getModified().contains(param)
     }
 
-    @IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
     def "lazy loading state merged correctly into child context"() {
 
         setup:

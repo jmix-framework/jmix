@@ -31,7 +31,7 @@ import test_support.entity.lazyloading.soft_deletion_vh_propagation.Activity
 import test_support.entity.lazyloading.soft_deletion_vh_propagation.Customer
 import test_support.entity.lazyloading.soft_deletion_vh_propagation.Details
 
-@IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
+@IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
 class LazyLoadingSoftDeleteTest extends DataSpec {
 
     @Autowired

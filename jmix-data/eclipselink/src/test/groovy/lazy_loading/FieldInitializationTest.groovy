@@ -9,7 +9,7 @@ import test_support.entity.lazyloading.nullability.AdditionalEntity
 import test_support.entity.lazyloading.nullability.ChildEntity
 import test_support.entity.lazyloading.nullability.ParentEntity
 
-@IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
+@IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
 class FieldInitializationTest extends DataSpec {
     @Autowired
     UnconstrainedDataManager dataManager;

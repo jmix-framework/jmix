@@ -804,7 +804,7 @@ class DataContextMergeTest extends DataContextSpec {
         order.customer == customer0
     }
 
-    @IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
     def "merge into entity with not loaded property"() {
         DataContext context = factory.createDataContext()
 
@@ -836,7 +836,7 @@ class DataContextMergeTest extends DataContextSpec {
         dataManager.remove(order2t, customer1)
     }
 
-    @IgnoreIf({!Boolean.valueOf(properties["jmix.eclipselink.disable-lazy-loading"])})
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
     def "merge into entity with not loaded local property"() {
         DataContext context = factory.createDataContext()
 

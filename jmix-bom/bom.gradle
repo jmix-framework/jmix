@@ -158,6 +158,9 @@ dependencies {
         api "io.jmix.flowui:jmix-flowui-restds-starter:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-devserver:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-test-assist:$freeVersion"
+        api "io.jmix.flowui:vaadin-commercial-components:$freeVersion"
+        api "io.jmix.flowui:vaadin-commercial-components-starter:$freeVersion"
+        api "io.jmix.flowui:vaadin-commercial-components-kit:$freeVersion"
 
         api "io.jmix.fullcalendar:jmix-fullcalendar-flowui-kit:$freeVersion"
         api "io.jmix.fullcalendar:jmix-fullcalendar-flowui:$freeVersion"
@@ -316,6 +319,7 @@ dependencies {
         api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
         api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
+        api "com.vaadin:vaadin-board-flow:$vaadinFlowVersion"
 
         api 'org.spockframework:spock-core:2.3-groovy-4.0'
         api 'org.spockframework:spock-spring:2.3-groovy-4.0'

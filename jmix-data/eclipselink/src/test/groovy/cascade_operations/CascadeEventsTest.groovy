@@ -148,7 +148,7 @@ class CascadeEventsTest extends DataSpec {
 
         then: "All events present for cascade-deleted entity"
 
-        barChangedEvents.size() == (eclipselinkProperties.disableLazyLoading ? 7 : 6) //todo [jmix-framework/jmix#3936] too many events for "check OneToOne cascade operations events"
+        barChangedEvents.size() == (eclipselinkProperties.disableLazyLoading ? 7 : 6)
         //entity should be loaded to be deleted with all events, entity log records e.t.c.
         barChangedEvents.stream().anyMatch(info -> info.message == "EntityLoadingEvent")
 

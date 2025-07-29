@@ -176,13 +176,9 @@ public class FileRef implements Serializable {
             return fileName;
         }
 
-        StringBuilder result = new StringBuilder();
         String escapedExtension = UrlEscapers.urlPathSegmentEscaper().escape(fileExtension);
 
-        return result.append(fileName)
-                .append(".")
-                .append(escapedExtension)
-                .toString();
+        return fileName + "." + escapedExtension;
     }
 
     /**

@@ -305,7 +305,7 @@ public class ReportTableView extends StandardView {
         buttonsPanel.setClassName("buttons-panel");
 
         if (reportExcelHelper != null) {
-            buttonsPanel.add(reportExcelHelper.createExportAction(dataGrid, document));
+            buttonsPanel.add(reportExcelHelper.createExportButton(dataGrid, document));
         }
 
         return buttonsPanel;

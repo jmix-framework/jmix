@@ -16,19 +16,21 @@
 
 package io.jmix.dynattr.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.DynamicAttributes;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.ResolvableTypeProvider;
 
-public class DynamicAttributeChangeEvent extends ApplicationEvent /*implements ResolvableTypeProvider */{
+public class DynamicAttributeChangeEvent<E> extends ApplicationEvent implements ResolvableTypeProvider {
     private final MetaClass metaClass;
     private final DynamicAttributes dynamicAttributes;
 
-    public DynamicAttributeChangeEvent(MetaClass metaClass, Object entity, DynamicAttributes dynamicAttributes) {
+    public DynamicAttributeChangeEvent(MetaClass metaClass, E entity, DynamicAttributes dynamicAttributes) {
         super(entity);
         this.metaClass = metaClass;
         this.dynamicAttributes = dynamicAttributes;
-      //  this.originalMetaClass ;
     }
 
     public DynamicAttributes getDynamicAttributes() {
@@ -39,12 +41,10 @@ public class DynamicAttributeChangeEvent extends ApplicationEvent /*implements R
         return metaClass;
     }
 
-/*
     @Internal
     @Override
     public ResolvableType getResolvableType() {
         return ResolvableType.forClassWithGenerics(getClass(),
-                ResolvableType.forClass(originalMetaClass.getJavaClass()));
+                ResolvableType.forClass(metaClass.getJavaClass()));
     }
-*/
 }

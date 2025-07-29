@@ -75,8 +75,9 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
 
     protected void createExcelButton() {
         if (reportExcelHelper != null) {
-            reportExcelHelper.assignExcelExportAction(executionsDataGrid, button ->
-                    buttonsPanel.addComponentAtIndex(buttonsPanel.indexOf(downloadBtn), button));
+            int replacementId = buttonsPanel.indexOf(downloadBtn);
+            JmixButton exportButton = reportExcelHelper.createExportButton(executionsDataGrid);
+            buttonsPanel.addComponentAtIndex(replacementId, exportButton);
         }
     }
 

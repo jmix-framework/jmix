@@ -29,8 +29,6 @@ import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
-import java.util.function.Consumer;
-
 /**
  * Helper that provides grid exporter.
  */
@@ -47,24 +45,28 @@ public class ReportExcelHelper {
         this.uiComponents = uiComponents;
     }
 
-    public JmixButton createExportAction(DataGrid<KeyValueEntity> dataGrid, ReportOutputDocument document) {
+    protected ExcelExportAction createExportAction(DataGrid<?> dataGrid) {
         ExcelExportAction excelExportAction = actions.create(ExcelExportAction.ID);
-        excelExportAction.withFileName(document.getReport().getName());
         dataGrid.addAction(excelExportAction);
 
+        return excelExportAction;
+    }
+
+    protected JmixButton createExportButton(ExcelExportAction excelExportAction) {
         JmixButton excelButton = uiComponents.create(JmixButton.class);
         excelButton.setAction(excelExportAction);
 
         return excelButton;
     }
 
-    public void assignExcelExportAction(DataGrid<ReportExecution> dataGrid, Consumer<com.vaadin.flow.component.Component> addMethod) {
-        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.ID);
-        dataGrid.addAction(excelExportAction);
+    public JmixButton createExportButton(DataGrid<KeyValueEntity> dataGrid, ReportOutputDocument document) {
+        ExcelExportAction excelExportAction = createExportAction(dataGrid);
+        excelExportAction.withFileName(document.getReport().getName());
 
-        JmixButton excelExportButton = uiComponents.create(JmixButton.class);
-        excelExportButton.setAction(excelExportAction);
+        return createExportButton(excelExportAction);
+    }
 
-        addMethod.accept(excelExportButton);
+    public JmixButton createExportButton(DataGrid<ReportExecution> dataGrid) {
+        return createExportButton(createExportAction(dataGrid));
     }
 }

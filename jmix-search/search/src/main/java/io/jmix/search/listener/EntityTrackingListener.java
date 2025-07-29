@@ -70,14 +70,6 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
             .expireAfterWrite(1, TimeUnit.MINUTES)
             .build();
 
-    @Autowired
-    private DynamicAttributesTracker dynamicAttributesTracker;
-
-    protected enum CheckState {
-        OLD,
-        NEW
-    }
-
     @Override
     public void customize(DataStore dataStore) {
         if (dataStore instanceof AbstractDataStore) {

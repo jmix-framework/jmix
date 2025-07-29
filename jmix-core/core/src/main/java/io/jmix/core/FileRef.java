@@ -146,7 +146,7 @@ public class FileRef implements Serializable {
     @Override
     public String toString() {
         StringBuilder uriStringBuilder = new StringBuilder();
-        String encodedPath = transformFileExtensionToUri();
+        String encodedPath = encodePath(path);
 
         uriStringBuilder.append(storageName)
                 .append("://")
@@ -161,26 +161,25 @@ public class FileRef implements Serializable {
     }
 
     /**
-     * Transforms file extension in path in according to the RFC 7230 standard if presents. <br>
-     * Expects the {@link FileRef#path} to have an extension at the end or not. <br>
+     * Encodes file extension in path in according to the RFC 7230 standard if presents. <br>
      * Example with file extension:
      * <pre>
      *     1970/01/01/12345678-1234-5678-0000-123456xxxxxx.extension
      * </pre>
      */
-    private String transformFileExtensionToUri() {
-        String[] splittedPath = path.split("\\.");
-        int fileExtensionId = splittedPath.length-1;
+    protected String encodePath(String path) {
+        String fileName = FilenameUtils.removeExtension(path);
+        String fileExtension = FilenameUtils.getExtension(path);
 
         // checks for missing file extension
-        if (fileExtensionId == 0) {
-            return splittedPath[0];
+        if (StringUtils.isEmpty(fileExtension)) {
+            return fileName;
         }
 
         StringBuilder result = new StringBuilder();
-        String escapedExtension = UrlEscapers.urlPathSegmentEscaper().escape(splittedPath[fileExtensionId]);
+        String escapedExtension = UrlEscapers.urlPathSegmentEscaper().escape(fileExtension);
 
-        return result.append(splittedPath[0])
+        return result.append(fileName)
                 .append(".")
                 .append(escapedExtension)
                 .toString();

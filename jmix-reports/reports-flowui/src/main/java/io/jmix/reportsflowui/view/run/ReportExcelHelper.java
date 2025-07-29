@@ -45,6 +45,17 @@ public class ReportExcelHelper {
         this.uiComponents = uiComponents;
     }
 
+    public JmixButton createExportButton(DataGrid<KeyValueEntity> dataGrid, ReportOutputDocument document) {
+        ExcelExportAction excelExportAction = createExportAction(dataGrid);
+        excelExportAction.withFileName(document.getReport().getName());
+
+        return createExportButton(excelExportAction);
+    }
+
+    public JmixButton createExportButton(DataGrid<ReportExecution> dataGrid) {
+        return createExportButton(createExportAction(dataGrid));
+    }
+
     protected ExcelExportAction createExportAction(DataGrid<?> dataGrid) {
         ExcelExportAction excelExportAction = actions.create(ExcelExportAction.ID);
         dataGrid.addAction(excelExportAction);
@@ -57,16 +68,5 @@ public class ReportExcelHelper {
         excelButton.setAction(excelExportAction);
 
         return excelButton;
-    }
-
-    public JmixButton createExportButton(DataGrid<KeyValueEntity> dataGrid, ReportOutputDocument document) {
-        ExcelExportAction excelExportAction = createExportAction(dataGrid);
-        excelExportAction.withFileName(document.getReport().getName());
-
-        return createExportButton(excelExportAction);
-    }
-
-    public JmixButton createExportButton(DataGrid<ReportExecution> dataGrid) {
-        return createExportButton(createExportAction(dataGrid));
     }
 }

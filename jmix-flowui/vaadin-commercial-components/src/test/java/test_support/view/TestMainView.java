@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package test_support.view;
 
-group = 'io.jmix.flowui'
-archivesBaseName = 'vaadin-commercial-components'
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.app.main.StandardMainView;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
-dependencies {
-    api project(':flowui')
-    api project(':vaadin-commercial-components-kit')
-
-    testImplementation project(':flowui-test-assist')
+@Route
+@ViewController
+@ViewDescriptor("test-main-view.xml")
+public class TestMainView extends StandardMainView {
 }

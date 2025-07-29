@@ -31,7 +31,7 @@ public interface StudioVaadinCommercialComponents {
             category = "Vaadin Commercial",
             xmlElement = "board",
             xmlns = "http://jmix.io/schema/vaadin-commercial-components/ui",
-            xmlnsAlias = "vdncom",
+            xmlnsAlias = "vcc",
             icon = "io/jmix/vaadincommercialcomponents/kit/meta/icon/component/board.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,

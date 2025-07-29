@@ -27,7 +27,7 @@ public interface StudioVaadinCommercialComponentsElements {
             classFqn = "com.vaadin.flow.component.board.Row",
             xmlElement = "boardRow",
             xmlns = "http://jmix.io/schema/vaadin-commercial-components/ui",
-            xmlnsAlias = "vdncom",
+            xmlnsAlias = "vcc",
             icon = "io/jmix/vaadincommercialcomponents/kit/meta/icon/element/boardRow.svg",
             target = {"com.vaadin.flow.component.board.Row", "com.vaadin.flow.component.board.Board"},
             availableChildren = @StudioAvailableChildrenInfo(

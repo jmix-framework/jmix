@@ -25,7 +25,6 @@ import io.jmix.samples.rest.entity.driver.Model;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import test_support.AbstractRestControllerFT;
 

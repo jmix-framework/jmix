@@ -344,7 +344,8 @@ public class EntityImportExportImpl implements EntityImportExport {
                 //we need to exclude entities marked as @Valid starting checking the references of the root entity
                 if (metaProperty.getRange().isClass()
                         && !metadataTools.isMethodBased(metaProperty)
-                        && metadataTools.isAnnotationPresent(entity, metaProperty.getName(), Valid.class)) {
+                        && metadataTools.isAnnotationPresent(entity, metaProperty.getName(), Valid.class)
+                        && entityStates.isLoaded(entity, metaProperty.getName())) {
                     Object validated = EntityValues.getValue(entity, metaProperty.getName());
                     if (validated != null && !(validated instanceof Collection)) {
                         validated = Collections.singletonList(validated);

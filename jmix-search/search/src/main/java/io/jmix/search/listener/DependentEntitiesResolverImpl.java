@@ -100,6 +100,7 @@ public class DependentEntitiesResolverImpl implements DependentEntitiesResolver 
             for (MetaPropertyPath propertyPath : properties) {
                 log.debug("Load entities '{}' dependent via property '{}'", entityName, propertyPath);
 
+                //TODO think about performance
                 DependentEntitiesQuery dependentEntitiesQuery = new DependentEntitiesQueryBuilder(metadataTools)
                         .loadEntity(entityName)
                         .byProperty(propertyPath)

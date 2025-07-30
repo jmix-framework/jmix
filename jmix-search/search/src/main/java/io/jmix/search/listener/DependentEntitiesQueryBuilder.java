@@ -21,7 +21,6 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.search.utils.PropertyTools;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 
@@ -48,11 +47,12 @@ public class DependentEntitiesQueryBuilder {
 
     private Map<String, Object> parameters;
     private final MetadataTools metadataTools;
-    private final PropertyTools propertyTools;
+    private final DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver;
 
-    DependentEntitiesQueryBuilder(MetadataTools metadataTools, PropertyTools propertyTools) {
+    DependentEntitiesQueryBuilder(MetadataTools metadataTools,
+                                  DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver) {
         this.metadataTools = metadataTools;
-        this.propertyTools = propertyTools;
+        this.dynamicAttributeReferenceFieldResolver = dynamicAttributeReferenceFieldResolver;
     }
 
     protected DependentEntitiesQueryBuilder loadEntity(MetaClass metaClass) {
@@ -98,9 +98,9 @@ public class DependentEntitiesQueryBuilder {
                 .append(currentEntityAlias)
                 .append(" where exists (")
                 .append("select r from dynat_CategoryAttributeValue r where r.entityValue.")
-                .append(propertyTools.resolveField(referencedMetaClass))
+                .append(dynamicAttributeReferenceFieldResolver.getFieldName(referencedMetaClass))
                 .append(" =:ref and r.entity.")
-                .append(propertyTools.resolveField(targetMetaClass))
+                .append(dynamicAttributeReferenceFieldResolver.getFieldName(targetMetaClass))
                 .append(" = ")
                 .append(currentEntityAlias)
                 .append(".")

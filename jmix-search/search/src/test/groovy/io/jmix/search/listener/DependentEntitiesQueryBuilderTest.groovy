@@ -158,7 +158,7 @@ class DependentEntitiesQueryBuilderTest extends Specification {
 
         and:
         def propertyTools = Mock(PropertyTools)
-        propertyTools.resolveField(_) >> "entityId"
+        propertyTools.resolveDynamicAttributeReferenceFieldName(_) >> "entityId"
 
         when:
         def query = new DependentEntitiesQueryBuilder(metadataTools, propertyTools)

@@ -47,14 +47,16 @@ public class DependentEntitiesResolverImpl implements DependentEntitiesResolver 
     private final DataManager dataManager;
     private final MetadataTools metadataTools;
 
-    private final PropertyTools propertyTools;
+    private final DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver;
 
-    public DependentEntitiesResolverImpl(IndexConfigurationManager indexConfigurationManager, DataManager dataManager, MetadataTools metadataTools,
-                                         @Qualifier("search_PropertyTools") PropertyTools propertyTools) {
+    public DependentEntitiesResolverImpl(IndexConfigurationManager indexConfigurationManager,
+                                         DataManager dataManager,
+                                         MetadataTools metadataTools,
+                                         DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.dataManager = dataManager;
         this.metadataTools = metadataTools;
-        this.propertyTools = propertyTools;
+        this.dynamicAttributeReferenceFieldResolver = dynamicAttributeReferenceFieldResolver;
     }
 
     @Override
@@ -108,7 +110,7 @@ public class DependentEntitiesResolverImpl implements DependentEntitiesResolver 
                 log.debug("Load entities '{}' dependent via property '{}'", entityName, propertyPath);
 
                 //TODO think about performance
-                DependentEntitiesQuery dependentEntitiesQuery = new DependentEntitiesQueryBuilder(metadataTools, propertyTools)
+                DependentEntitiesQuery dependentEntitiesQuery = new DependentEntitiesQueryBuilder(metadataTools, dynamicAttributeReferenceFieldResolver)
                         .loadEntity(metaClass)
                         .byProperty(propertyPath)
                         .dependedOn(targetMetaClass, targetEntityId)

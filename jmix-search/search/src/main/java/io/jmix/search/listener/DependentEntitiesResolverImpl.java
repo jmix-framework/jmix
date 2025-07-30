@@ -25,6 +25,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.PersistenceHints;
 import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import org.eclipse.persistence.exceptions.JPQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -108,9 +109,15 @@ public class DependentEntitiesResolverImpl implements DependentEntitiesResolver 
                         .buildQuery();
                 log.debug("{}", dependentEntitiesQuery);
 
-                List<Id<?>> refObjectIds = performLoadingDependentEntityIds(metaClass, dependentEntitiesQuery);
-                log.debug("Loaded primary keys of dependent references ({}): {}", refObjectIds.size(), refObjectIds);
-                result.addAll(refObjectIds);
+                try {
+                    List<Id<?>> refObjectIds = performLoadingDependentEntityIds(metaClass, dependentEntitiesQuery);
+                    log.debug("Loaded primary keys of dependent references ({}): {}", refObjectIds.size(), refObjectIds);
+                    result.addAll(refObjectIds);
+                }
+                catch (JPQLException e){
+                    log.error("Can't execute query", e);
+                    throw e;
+                }
             }
         }
 

@@ -59,7 +59,7 @@ public class PropertyTools {
             return findPropertiesByWildcardPath(metaClass, pathString);
         } else {
             MetaPropertyPath propertyPath;
-            if(useDynamicAttributes){
+            if (useDynamicAttributes) {
                 propertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, pathString);
             } else {
                 propertyPath = metaClass.getPropertyPath(pathString);
@@ -214,9 +214,5 @@ public class PropertyTools {
             return parentProperty.equals(inverseProperty);
         }
         return false;
-    }
-
-    public String resolveField(MetaClass metaClass) {
-        return "entityId";
     }
 }

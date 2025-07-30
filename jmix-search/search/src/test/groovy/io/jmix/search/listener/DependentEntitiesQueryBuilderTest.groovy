@@ -47,6 +47,10 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         metaPropertyPath.getFirstPropertyName() >> "propertyName"
 
         and:
+        def referencedMetaClass = Mock(MetaClass)
+        referencedMetaClass.getName() >> "some_entityName"
+
+        and:
         def targetMetaClass = Mock(MetaClass)
         targetMetaClass.getJavaClass() >> ReferenceEntity
 
@@ -57,7 +61,7 @@ class DependentEntitiesQueryBuilderTest extends Specification {
 
         when:
         def query = new DependentEntitiesQueryBuilder(metadataTools)
-                .loadEntity("some_entityName")
+                .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
                 .buildQuery()
@@ -103,10 +107,13 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         def metadataTools = Mock(MetadataTools)
         metadataTools.getPrimaryKeyName(targetMetaClass) >> "pk_name"
 
+        and:
+        def referencedMetaClass = Mock(MetaClass)
+        referencedMetaClass.getName() >> "some_entityName"
 
         when:
         def query = new DependentEntitiesQueryBuilder(metadataTools)
-                .loadEntity("some_entityName")
+                .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
                 .buildQuery()
@@ -137,6 +144,10 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         metaPropertyPath.getFirstPropertyName() >> "+dynamicPropertyName"
 
         and:
+        def referencedMetaClass = Mock(MetaClass)
+        referencedMetaClass.getName() >> "some_entityName"
+
+        and:
         def targetMetaClass = Mock(MetaClass)
         targetMetaClass.getJavaClass() >> ReferenceEntity
 
@@ -146,7 +157,7 @@ class DependentEntitiesQueryBuilderTest extends Specification {
 
         when:
         def query = new DependentEntitiesQueryBuilder(metadataTools)
-                .loadEntity("some_entityName")
+                .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
                 .buildQuery()
@@ -154,7 +165,9 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         def firstParameter = query.getParameters().iterator().next()
 
         then:
-        query.getQuery() == "select e1 from some_entityName e1 where exists (select r from dynat_CategoryAttributeValue r where r.entityValue.entityId = :ref and r.entity.entityId = e1.pk_name)"
+        query.getQuery() == "select e1 from some_entityName e1 where exists " +
+                "(select r from dynat_CategoryAttributeValue r " +
+                    "where r.entityValue.entityId =:ref and r.entity.entityId = e1.pk_name)"
         query.getParameters().size() == 1
         firstParameter.getKey() == "ref"
         firstParameter.getValue() == targetEntityId

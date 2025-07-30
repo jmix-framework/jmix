@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 public class DependentEntitiesQueryBuilder {
 
     private String entityName;
+    private MetaClass referencedMetaClass;
     private MetaPropertyPath propertyPath;
     private MetaClass targetMetaClass;
     private Id<?> targetEntityId;
@@ -51,8 +52,9 @@ public class DependentEntitiesQueryBuilder {
         this.metadataTools = metadataTools;
     }
 
-    protected DependentEntitiesQueryBuilder loadEntity(String entityName) {
-        this.entityName = entityName;
+    protected DependentEntitiesQueryBuilder loadEntity(MetaClass metaClass) {
+        this.entityName = metaClass.getName();
+        this.referencedMetaClass = metaClass;
         return this;
     }
 
@@ -92,16 +94,20 @@ public class DependentEntitiesQueryBuilder {
                 .append(' ')
                 .append(currentEntityAlias)
                 .append(" where exists (")
-                .append("select r from dynat_CategoryAttributeValue r where ")
-                //TODO
-                .append("r.entityValue.entityId = :ref and ")
-                //TODO
-                .append("r.entity.entityId = ")
+                .append("select r from dynat_CategoryAttributeValue r where r.entityValue.")
+                .append(resolveField(referencedMetaClass))
+                .append(" =:ref and r.entity.")
+                .append(resolveField(targetMetaClass))
+                .append(" = ")
                 .append(currentEntityAlias)
                 .append(".")
                 .append(targetPrimaryKeyName)
                 .append(")");
 
+    }
+
+    private static String resolveField(MetaClass metaClass) {
+        return "entityId";
     }
 
     private boolean isDynamic(MetaPropertyPath propertyPath) {
@@ -132,11 +138,6 @@ public class DependentEntitiesQueryBuilder {
 
     private void processDynamicProperty() {
         parameters.put("ref", targetEntityId.getValue());
-/*        targetPrimaryKeyName = metadataTools.getPrimaryKeyName(targetMetaClass);
-        MetaProperty[] metaProperties = propertyPath.getMetaProperties();
-        propertiesLevels = metaProperties.length;
-        currentLevelPropertyIndex = 0;
-        Stream.of(metaProperties).forEach(this::processPropertyLevel);*/
     }
 
     private void processPropertyLevel(MetaProperty property) {

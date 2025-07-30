@@ -103,7 +103,7 @@ public class DependentEntitiesResolverImpl implements DependentEntitiesResolver 
 
                 //TODO think about performance
                 DependentEntitiesQuery dependentEntitiesQuery = new DependentEntitiesQueryBuilder(metadataTools)
-                        .loadEntity(entityName)
+                        .loadEntity(metaClass)
                         .byProperty(propertyPath)
                         .dependedOn(targetMetaClass, targetEntityId)
                         .buildQuery();

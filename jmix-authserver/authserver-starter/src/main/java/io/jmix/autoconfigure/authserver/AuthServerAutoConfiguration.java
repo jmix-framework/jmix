@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.authserver.AuthServerConfiguration;
 import io.jmix.authserver.AuthServerProperties;
 import io.jmix.authserver.authentication.OAuth2ResourceOwnerPasswordTokenEndpointConfigurer;
+import io.jmix.authserver.authentication.TokenRevocationLogoutHandler;
 import io.jmix.authserver.filter.AsResourceServerEventSecurityFilter;
 import io.jmix.authserver.introspection.AuthorizationServiceOpaqueTokenIntrospector;
 import io.jmix.authserver.introspection.TokenIntrospectorRolesHelper;
@@ -170,7 +171,10 @@ public class AuthServerAutoConfiguration {
 
         @Bean("authsr_AuthorizationServerLogoutSecurityFilterChain")
         @Order(JmixSecurityFilterChainOrder.AUTHSERVER_AUTHORIZATION_SERVER + 5)
-        public SecurityFilterChain logoutSecurityFilterChain(HttpSecurity http, ServerProperties serverProperties) throws Exception {
+        public SecurityFilterChain logoutSecurityFilterChain(HttpSecurity http,
+                                                             ServerProperties serverProperties,
+                                                             OAuth2AuthorizationService authorizationService,
+                                                             AuthServerProperties authServerProperties) throws Exception {
             String sessionCookieName = getSessionCookieName(serverProperties);
 
             http.securityMatcher("/logout")
@@ -180,6 +184,7 @@ public class AuthServerAutoConfiguration {
                             .requestMatchers("/logout").authenticated()
                     ).logout(logout -> logout
                             .logoutUrl("/logout")
+                            .addLogoutHandler(new TokenRevocationLogoutHandler(authorizationService, authServerProperties))
                             .logoutSuccessHandler(createLogoutSuccessHandler())
                             .invalidateHttpSession(true)
                             .clearAuthentication(true)

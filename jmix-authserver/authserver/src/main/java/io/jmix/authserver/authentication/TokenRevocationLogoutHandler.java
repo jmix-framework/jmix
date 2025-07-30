@@ -28,7 +28,8 @@ import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 /**
- * {@link LogoutHandler} that tries to get bearer token request and remove it from token storage.
+ * {@link LogoutHandler} that tries to get bearer token from the request
+ * and removes related OAuth2Authorization from the token storage.
  */
 public class TokenRevocationLogoutHandler implements LogoutHandler {
 

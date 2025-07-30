@@ -32,6 +32,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
@@ -97,6 +98,8 @@ public class SearchResultsView extends StandardView {
     protected SearchFieldContext searchFieldContext;
     protected boolean searchButtonVisible;
     protected boolean settingsButtonVisible;
+    @Autowired
+    private MetadataTools metadataTools;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -303,13 +306,11 @@ public class SearchResultsView extends StandardView {
         List<String> captionParts = new ArrayList<>();
         String[] parts = fieldName.split("\\.");
         MetaClass currentMetaClass = metadata.getClass(entityName);
-        for (int i = 0; i < parts.length; i++) {
-            String part = parts[i];
-            MetaProperty currentMetaProperty = currentMetaClass.findProperty(part);
-            if (currentMetaProperty == null) {
-                break;
-            }
-
+        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(currentMetaClass, fieldName);
+        //TODO null check
+        MetaProperty[] metaProperties = metaPropertyPath.getMetaProperties();
+        for (int i = 0; i < metaProperties.length; i++) {
+            MetaProperty currentMetaProperty = metaProperties[i];
             if (currentMetaProperty.getRange().isDatatype()
                     && (Datatype<?>) currentMetaProperty.getRange().asDatatype() instanceof FileRefDatatype
                     && i + 1 < parts.length) {
@@ -323,12 +324,6 @@ public class SearchResultsView extends StandardView {
                 captionParts.add(propertyCaption);
             } else {
                 captionParts.add(messageTools.getPropertyCaption(currentMetaProperty));
-
-                if (currentMetaProperty.getRange().isClass()) {
-                    currentMetaClass = currentMetaProperty.getRange().asClass();
-                } else {
-                    break;
-                }
             }
         }
         return Joiner.on(".").join(captionParts);

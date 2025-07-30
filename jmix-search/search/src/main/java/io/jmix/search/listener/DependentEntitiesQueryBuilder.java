@@ -21,6 +21,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.utils.PropertyTools;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 
@@ -47,9 +48,11 @@ public class DependentEntitiesQueryBuilder {
 
     private Map<String, Object> parameters;
     private final MetadataTools metadataTools;
+    private final PropertyTools propertyTools;
 
-    DependentEntitiesQueryBuilder(MetadataTools metadataTools) {
+    DependentEntitiesQueryBuilder(MetadataTools metadataTools, PropertyTools propertyTools) {
         this.metadataTools = metadataTools;
+        this.propertyTools = propertyTools;
     }
 
     protected DependentEntitiesQueryBuilder loadEntity(MetaClass metaClass) {
@@ -95,19 +98,15 @@ public class DependentEntitiesQueryBuilder {
                 .append(currentEntityAlias)
                 .append(" where exists (")
                 .append("select r from dynat_CategoryAttributeValue r where r.entityValue.")
-                .append(resolveField(referencedMetaClass))
+                .append(propertyTools.resolveField(referencedMetaClass))
                 .append(" =:ref and r.entity.")
-                .append(resolveField(targetMetaClass))
+                .append(propertyTools.resolveField(targetMetaClass))
                 .append(" = ")
                 .append(currentEntityAlias)
                 .append(".")
                 .append(targetPrimaryKeyName)
                 .append(")");
 
-    }
-
-    private static String resolveField(MetaClass metaClass) {
-        return "entityId";
     }
 
     private boolean isDynamic(MetaPropertyPath propertyPath) {

@@ -25,9 +25,11 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.PersistenceHints;
 import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.utils.PropertyTools;
 import org.eclipse.persistence.exceptions.JPQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -45,10 +47,14 @@ public class DependentEntitiesResolverImpl implements DependentEntitiesResolver 
     private final DataManager dataManager;
     private final MetadataTools metadataTools;
 
-    public DependentEntitiesResolverImpl(IndexConfigurationManager indexConfigurationManager, DataManager dataManager, MetadataTools metadataTools) {
+    private final PropertyTools propertyTools;
+
+    public DependentEntitiesResolverImpl(IndexConfigurationManager indexConfigurationManager, DataManager dataManager, MetadataTools metadataTools,
+                                         @Qualifier("search_PropertyTools") PropertyTools propertyTools) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.dataManager = dataManager;
         this.metadataTools = metadataTools;
+        this.propertyTools = propertyTools;
     }
 
     @Override
@@ -102,7 +108,7 @@ public class DependentEntitiesResolverImpl implements DependentEntitiesResolver 
                 log.debug("Load entities '{}' dependent via property '{}'", entityName, propertyPath);
 
                 //TODO think about performance
-                DependentEntitiesQuery dependentEntitiesQuery = new DependentEntitiesQueryBuilder(metadataTools)
+                DependentEntitiesQuery dependentEntitiesQuery = new DependentEntitiesQueryBuilder(metadataTools, propertyTools)
                         .loadEntity(metaClass)
                         .byProperty(propertyPath)
                         .dependedOn(targetMetaClass, targetEntityId)
@@ -135,4 +141,6 @@ public class DependentEntitiesResolverImpl implements DependentEntitiesResolver 
                 .map(Id::of)
                 .collect(Collectors.toList());
     }
+
+
 }

@@ -215,4 +215,8 @@ public class PropertyTools {
         }
         return false;
     }
+
+    public String resolveField(MetaClass metaClass) {
+        return "entityId";
+    }
 }

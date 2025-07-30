@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity
 import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.core.metamodel.model.MetaProperty
 import io.jmix.core.metamodel.model.MetaPropertyPath
+import io.jmix.search.utils.PropertyTools
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
 import spock.lang.Specification
@@ -60,7 +61,7 @@ class DependentEntitiesQueryBuilderTest extends Specification {
 
 
         when:
-        def query = new DependentEntitiesQueryBuilder(metadataTools)
+        def query = new DependentEntitiesQueryBuilder(metadataTools, Mock(PropertyTools))
                 .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
@@ -112,7 +113,7 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         referencedMetaClass.getName() >> "some_entityName"
 
         when:
-        def query = new DependentEntitiesQueryBuilder(metadataTools)
+        def query = new DependentEntitiesQueryBuilder(metadataTools, Mock(PropertyTools))
                 .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
@@ -155,8 +156,12 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         def metadataTools = Mock(MetadataTools)
         metadataTools.getPrimaryKeyName(targetMetaClass) >> "pk_name"
 
+        and:
+        def propertyTools = Mock(PropertyTools)
+        propertyTools.resolveField(_) >> "entityId"
+
         when:
-        def query = new DependentEntitiesQueryBuilder(metadataTools)
+        def query = new DependentEntitiesQueryBuilder(metadataTools, propertyTools)
                 .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))

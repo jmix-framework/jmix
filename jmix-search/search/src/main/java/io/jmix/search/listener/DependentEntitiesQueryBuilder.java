@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-class DependentEntitiesQueryBuilder {
+public class DependentEntitiesQueryBuilder {
 
     private String entityName;
     private MetaPropertyPath propertyPath;
@@ -68,9 +68,45 @@ class DependentEntitiesQueryBuilder {
     }
 
     protected DependentEntitiesQuery buildQuery() {
-        initQuery();
-        processProperties();
+        if (!isDynamic(propertyPath)) {
+            initQuery();
+            processProperties();
+        } else {
+            initDynamicQuery();
+            processDynamicProperty();
+        }
         return new DependentEntitiesQuery(querySb.toString(), parameters);
+    }
+
+    private void initDynamicQuery() {
+        parameters = new HashMap<>();
+        currentEntityIndex = 1;
+        currentEntityAlias = "e1";
+        targetPrimaryKeyName = metadataTools.getPrimaryKeyName(targetMetaClass);
+        initPropertyPathStringBuilderForCurrentEntity();
+        //TODO
+        querySb = new StringBuilder("select ")
+                .append(currentEntityAlias)
+                .append(" from ")
+                .append(entityName)
+                .append(' ')
+                .append(currentEntityAlias)
+                .append(" where exists (")
+                .append("select r from dynat_CategoryAttributeValue r where ")
+                //TODO
+                .append("r.entityValue.entityId = :ref and ")
+                //TODO
+                .append("r.entity.entityId = ")
+                .append(currentEntityAlias)
+                .append(".")
+                .append(targetPrimaryKeyName)
+                .append(")");
+
+    }
+
+    private boolean isDynamic(MetaPropertyPath propertyPath) {
+        //TODO think about
+        return propertyPath.getFirstPropertyName().contains("+");
     }
 
     private void initQuery() {
@@ -92,6 +128,15 @@ class DependentEntitiesQueryBuilder {
         propertiesLevels = metaProperties.length;
         currentLevelPropertyIndex = 0;
         Stream.of(metaProperties).forEach(this::processPropertyLevel);
+    }
+
+    private void processDynamicProperty() {
+        parameters.put("ref", targetEntityId.getValue());
+/*        targetPrimaryKeyName = metadataTools.getPrimaryKeyName(targetMetaClass);
+        MetaProperty[] metaProperties = propertyPath.getMetaProperties();
+        propertiesLevels = metaProperties.length;
+        currentLevelPropertyIndex = 0;
+        Stream.of(metaProperties).forEach(this::processPropertyLevel);*/
     }
 
     private void processPropertyLevel(MetaProperty property) {

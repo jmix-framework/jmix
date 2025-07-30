@@ -30,6 +30,10 @@ import java.util.stream.Stream;
 
 public class DependentEntitiesQueryBuilder {
 
+    public static final String REFERENCES_WITH_TWO_OR_MORE_LEVELS_ARE_NOT_SUPPORTED_MESSAGE =
+            "References with two or more levels are not supported for dynamic attributes. " +
+                    "The entity type: %s. The property path: %s";
+
     private String entityName;
     private MetaClass referencedMetaClass;
     private MetaPropertyPath propertyPath;
@@ -77,10 +81,17 @@ public class DependentEntitiesQueryBuilder {
             initQuery();
             processProperties();
         } else {
-            initDynamicQuery();
-            processDynamicProperty();
+            if (!hasLevels(propertyPath)) {
+                initDynamicQuery();
+                processDynamicProperty();
+            }
+            throw new IllegalStateException(String.format(REFERENCES_WITH_TWO_OR_MORE_LEVELS_ARE_NOT_SUPPORTED_MESSAGE, referencedMetaClass.getName(), propertyPath.toString()));
         }
         return new DependentEntitiesQuery(querySb.toString(), parameters);
+    }
+
+    private boolean hasLevels(MetaPropertyPath propertyPath) {
+        return propertyPath.getMetaProperties().length > 1;
     }
 
     private void initDynamicQuery() {

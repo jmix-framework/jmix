@@ -15,6 +15,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.*;
+import io.jmix.search.searching.impl.AbstractEntitySearcher;
 import io.jmix.search.searching.impl.SearchResultImpl;
 import io.jmix.search.utils.Constants;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
@@ -33,26 +34,17 @@ import java.util.stream.Collectors;
 /**
  * Implementation for Elasticsearch
  */
-public class ElasticsearchEntitySearcher implements EntitySearcher {
+public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implements EntitySearcher {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchEntitySearcher.class);
-
-    protected static final TypeReference<Map<String, Object>> GENERIC_MAP_TYPE_REF = new TypeReference<>() {
-    };
 
     protected final ElasticsearchClient client;
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final Metadata metadata;
-    protected final MetadataTools metadataTools;
-    protected final DataManager secureDataManager;
     protected final InstanceNameProvider instanceNameProvider;
-    protected final SearchProperties searchProperties;
-    protected final IdSerialization idSerialization;
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
     protected final ElasticsearchSearchStrategyProvider searchStrategyManager;
-
-    protected final ObjectMapper objectMapper;
 
     public ElasticsearchEntitySearcher(ElasticsearchClient client,
                                        IndexConfigurationManager indexConfigurationManager,
@@ -64,20 +56,16 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
                                        IdSerialization idSerialization,
                                        SecureOperations secureOperations,
                                        PolicyStore policyStore,
-                                       ElasticsearchSearchStrategyProvider searchStrategyManager) {
+                                       ElasticsearchSearchStrategyProvider searchStrategyManager,
+                                       SearchUtils searchUtils) {
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.metadata = metadata;
-        this.metadataTools = metadataTools;
-        this.secureDataManager = secureDataManager;
         this.instanceNameProvider = instanceNameProvider;
-        this.searchProperties = searchProperties;
-        this.idSerialization = idSerialization;
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
         this.searchStrategyManager = searchStrategyManager;
-
-        this.objectMapper = new ObjectMapper();
+        this.searchUtils = searchUtils;
     }
 
 
@@ -236,76 +224,10 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
                         String instanceName = (String) source.get(Constants.INSTANCE_NAME_FIELD);
                         displayedName = StringUtils.isEmpty(instanceName) ? entityId : instanceName;
                     }
-                    searchResultImpl.addEntry(createSearchResultEntry(entityId, displayedName, metaClass.getName(), hit));
+                    searchResultImpl.addEntry(createSearchResultEntry(entityId, displayedName, metaClass.getName(), hit.highlight()));
                 }
                 searchResultImpl.incrementOffset();
             }
         }
-    }
-
-    protected boolean isResultFull(SearchResultImpl searchResultImpl, SearchContext searchContext) {
-        return searchResultImpl.getSize() >= searchContext.getSize();
-    }
-
-    @Nullable
-    protected Map<String, Object> objectNodeToMap(@Nullable ObjectNode node) {
-        if (node == null) {
-            return null;
-        }
-        return objectMapper.convertValue(node, GENERIC_MAP_TYPE_REF);
-    }
-
-    protected SearchResultEntry createSearchResultEntry(String entityId, String instanceName, String entityName, Hit<ObjectNode> searchHit) {
-        Map<String, List<String>> highlightFields = searchHit.highlight();
-        List<FieldHit> fieldHits = new ArrayList<>();
-        highlightFields.forEach((f, h) -> {
-            if (isDisplayedField(f)) {
-                String highlights = String.join("...", h);
-                fieldHits.add(new FieldHit(formatFieldName(f), highlights));
-            }
-        });
-        return new SearchResultEntry(entityId, instanceName, entityName, fieldHits);
-    }
-
-    protected boolean isDisplayedField(String fieldName) {
-        return !Constants.INSTANCE_NAME_FIELD.equals(fieldName);
-    }
-
-    protected String formatFieldName(String fieldName) {
-        return StringUtils.removeEnd(fieldName, "." + Constants.INSTANCE_NAME_FIELD);
-    }
-
-    //TODO code duplicate. Move to a separate class
-    protected Set<String> reloadIds(MetaClass metaClass, Collection<Object> entityIds) {
-        Set<String> result = new HashSet<>();
-        String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
-        for (Collection<Object> idsPartition : Iterables.partition(entityIds, searchProperties.getSearchReloadEntitiesBatchSize())) {
-            log.debug("Load instance names for ids: {}", idsPartition);
-
-            List<Object> partitionResult;
-            if (metadataTools.hasCompositePrimaryKey(metaClass)) {
-                partitionResult = idsPartition.stream()
-                        .map(id -> secureDataManager
-                                .load(metaClass.getJavaClass())
-                                .id(id)
-                                .fetchPlanProperties(primaryKeyName)
-                                .optional())
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .collect(Collectors.toList());
-            } else {
-                partitionResult = secureDataManager
-                        .load(metaClass.getJavaClass())
-                        .query("select e from " + metaClass.getName() + " e where e." + primaryKeyName + " in :ids")
-                        .parameter("ids", idsPartition)
-                        .fetchPlanProperties(primaryKeyName)
-                        .list();
-            }
-
-            partitionResult.stream()
-                    .map(instance -> idSerialization.idToString(Id.of(instance)))
-                    .forEach(result::add);
-        }
-        return result;
     }
 }

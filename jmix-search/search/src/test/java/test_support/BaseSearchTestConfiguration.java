@@ -57,7 +57,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import org.springframework.lang.Nullable;
 import jakarta.persistence.EntityManagerFactory;
-
 import javax.sql.DataSource;
 
 @Configuration

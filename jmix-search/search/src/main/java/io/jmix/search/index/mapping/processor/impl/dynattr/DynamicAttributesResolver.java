@@ -34,6 +34,9 @@ import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.INSTAN
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * TODO javadoc
+ */
 @Component
 public class DynamicAttributesResolver {
 

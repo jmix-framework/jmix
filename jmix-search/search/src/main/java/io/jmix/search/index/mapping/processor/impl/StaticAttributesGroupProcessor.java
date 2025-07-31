@@ -30,6 +30,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * TODO javadoc
+ */
 @Component
 public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProcessor<MappingDefinitionElement> {
 
@@ -100,5 +103,4 @@ public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProce
                 })
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
-
 }

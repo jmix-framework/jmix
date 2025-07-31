@@ -18,23 +18,10 @@ package io.jmix.search.listener;
 
 import java.util.Map;
 
-//TODO class-record?
-class DependentEntitiesQuery {
-    private final String query;
-    private final Map<String, Object> parameters;
-
-    protected DependentEntitiesQuery(String query, Map<String, Object> parameters) {
-        this.query = query;
-        this.parameters = parameters;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public Map<String, Object> getParameters() {
-        return parameters;
-    }
+/**
+ * TODO javadoc
+ */
+record DependentEntitiesQuery(String query, Map<String, Object> parameters) {
 
     @Override
     public String toString() {

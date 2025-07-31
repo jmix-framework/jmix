@@ -63,6 +63,9 @@ public class IndexConfigurationManager {
         createIndexDefinitions(false);
     }
 
+    /**
+     * TODO javadoc
+     */
     public void refreshIndexDefinitions() {
         createIndexDefinitions(true);
     }

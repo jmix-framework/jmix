@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * TODO update java doc
  * Contains information about indexed properties defined within index definition interface
  * marked with {@link JmixEntitySearchIndex}
  * <p>

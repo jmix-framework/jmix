@@ -31,7 +31,9 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.Set;
 
-
+/**
+ * TODO javadoc
+ */
 @Component
 public class DynamicAttributesTrackingListener {
 

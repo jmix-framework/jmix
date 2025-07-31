@@ -23,6 +23,9 @@ import io.jmix.search.index.mapping.MappingFieldDescriptor;
 
 import java.util.List;
 
+/**
+ * TODO javadoc
+ */
 public interface AttributesGroupProcessor<Group extends AttributesConfigurationGroup> {
     List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass,
                                                         Group group,

@@ -16,6 +16,9 @@
 
 package io.jmix.search.index.annotation;
 
+/**
+ * TODO javadoc
+ */
 public enum ReferenceFieldsIndexingMode {
     NONE, INSTANCE_NAME_ONLY
 }

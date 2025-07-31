@@ -253,13 +253,10 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
     }
 
     protected FetchPlan createFetchPlan(IndexConfiguration indexConfiguration) {
-        Class<?> entityClass = indexConfiguration.getEntityClass();
-        MetaClass metaClass = metadata.getClass(entityClass);
-        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(entityClass);
+        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexConfiguration.getEntityClass());
         indexConfiguration.getMapping().getFields().values().forEach(field -> {
             String entityPropertyFullName = field.getEntityPropertyFullName();
-            MetaPropertyPath propertyPath = metaClass.getPropertyPath(entityPropertyFullName);
-            if (propertyPath != null){
+            if (containsDynamicAttribute(entityPropertyFullName)){
                 log.trace("Add property to fetch plan: {}", entityPropertyFullName);
                 fetchPlanBuilder.add(entityPropertyFullName);
                 field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {
@@ -286,6 +283,11 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                 });
 
         return fetchPlanBuilder.build();
+    }
+
+    //TODO code duplicate
+    private boolean containsDynamicAttribute(String entityPropertyFullName) {
+        return entityPropertyFullName.contains("+");
     }
 
     // document generation

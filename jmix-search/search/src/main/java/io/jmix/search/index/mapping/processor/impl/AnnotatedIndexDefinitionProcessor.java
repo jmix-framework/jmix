@@ -154,7 +154,6 @@ public class AnnotatedIndexDefinitionProcessor {
         result.setExtendedSearchSettings(extendedSearchSettings);
 
         Method[] methods = indexDefinitionClass.getDeclaredMethods();
-
         for (Method method : methods) {
             if (isIndexablePredicateMethod(method)) {
                 result.addIndexablePredicateMethod(method);
@@ -216,7 +215,6 @@ public class AnnotatedIndexDefinitionProcessor {
             parsedIndexDefinition.getFieldAnnotations().forEach(annotation -> processAnnotation(
                     builder, annotation, parsedIndexDefinitionMetaClass
             ));
-
             mappingDefinition = builder.build();
         } else {
             Class<?> returnType = mappingDefinitionImplementationMethod.getReturnType();

@@ -23,6 +23,9 @@ import org.springframework.lang.Nullable;
 
 import java.util.Map;
 
+/**
+ * TODO javadoc
+ */
 public abstract class AbstractAttributesConfigurationGroup implements AttributesConfigurationGroup {
     protected final Class<? extends FieldMappingStrategy> fieldMappingStrategyClass;
     protected final FieldMappingStrategy fieldMappingStrategy;

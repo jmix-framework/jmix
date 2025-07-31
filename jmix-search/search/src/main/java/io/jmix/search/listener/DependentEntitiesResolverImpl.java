@@ -25,11 +25,9 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.PersistenceHints;
 import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.utils.PropertyTools;
 import org.eclipse.persistence.exceptions.JPQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -134,8 +132,8 @@ public class DependentEntitiesResolverImpl implements DependentEntitiesResolver 
 
     protected List<Id<?>> performLoadingDependentEntityIds(MetaClass metaClass, DependentEntitiesQuery dependentEntitiesQuery) {
         return dataManager.load(metaClass.getJavaClass())
-                .query(dependentEntitiesQuery.getQuery())
-                .parameters(dependentEntitiesQuery.getParameters())
+                .query(dependentEntitiesQuery.query())
+                .parameters(dependentEntitiesQuery.parameters())
                 .hint(PersistenceHints.SOFT_DELETION, false)
                 .joinTransaction(true)
                 .list()

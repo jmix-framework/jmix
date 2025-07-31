@@ -33,6 +33,9 @@ import java.util.stream.Collectors;
 import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*;
 import static io.jmix.search.index.mapping.DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE;
 
+/**
+ * TODO javadoc
+ */
 @Component
 public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProcessor<DynamicAttributesConfigurationGroup> {
 

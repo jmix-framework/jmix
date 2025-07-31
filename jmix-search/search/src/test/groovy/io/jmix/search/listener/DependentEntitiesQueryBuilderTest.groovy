@@ -22,7 +22,6 @@ import io.jmix.core.metamodel.annotation.JmixEntity
 import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.core.metamodel.model.MetaProperty
 import io.jmix.core.metamodel.model.MetaPropertyPath
-import io.jmix.search.utils.PropertyTools
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
 import spock.lang.Specification
@@ -67,11 +66,11 @@ class DependentEntitiesQueryBuilderTest extends Specification {
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
                 .buildQuery()
 
-        def firstParameter = query.getParameters().iterator().next()
+        def firstParameter = query.parameters().iterator().next()
 
         then:
-        query.getQuery() == "select e1 from some_entityName e1 join e1.propertyName e2 where e2.pk_name = :ref"
-        query.getParameters().size() == 1
+        query.query() == "select e1 from some_entityName e1 join e1.propertyName e2 where e2.pk_name = :ref"
+        query.parameters().size() == 1
         firstParameter.getKey() == "ref"
         firstParameter.getValue() == targetEntityId
     }
@@ -119,11 +118,11 @@ class DependentEntitiesQueryBuilderTest extends Specification {
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
                 .buildQuery()
 
-        def firstParameter = query.getParameters().iterator().next()
+        def firstParameter = query.parameters().iterator().next()
 
         then:
-        query.getQuery() == "select e1 from some_entityName e1 join e1.property1Name e2 join e2.property2Name e3 where e3.pk_name = :ref"
-        query.getParameters().size() == 1
+        query.query() == "select e1 from some_entityName e1 join e1.property1Name e2 join e2.property2Name e3 where e3.pk_name = :ref"
+        query.parameters().size() == 1
         firstParameter.getKey() == "ref"
         firstParameter.getValue() == targetEntityId
     }
@@ -167,13 +166,13 @@ class DependentEntitiesQueryBuilderTest extends Specification {
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
                 .buildQuery()
 
-        def firstParameter = query.getParameters().iterator().next()
+        def firstParameter = query.parameters().iterator().next()
 
         then:
-        query.getQuery() == "select e1 from some_entityName e1 where exists " +
+        query.query() == "select e1 from some_entityName e1 where exists " +
                 "(select r from dynat_CategoryAttributeValue r " +
                     "where r.entityValue.entityId =:ref and r.entity.entityId = e1.pk_name)"
-        query.getParameters().size() == 1
+        query.parameters().size() == 1
         firstParameter.getKey() == "ref"
         firstParameter.getValue() == targetEntityId
     }

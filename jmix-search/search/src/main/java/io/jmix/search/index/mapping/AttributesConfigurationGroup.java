@@ -23,6 +23,9 @@ import org.springframework.lang.Nullable;
 
 import java.util.Map;
 
+/**
+ * TODO javadoc
+ */
 public interface AttributesConfigurationGroup {
 
     /**

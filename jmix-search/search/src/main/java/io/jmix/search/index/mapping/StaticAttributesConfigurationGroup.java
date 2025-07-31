@@ -16,6 +16,9 @@
 
 package io.jmix.search.index.mapping;
 
+/**
+ * TODO javadoc
+ */
 public class StaticAttributesConfigurationGroup extends MappingDefinitionElement{
 
     protected StaticAttributesConfigurationGroup(StaticAttributeGroupBuilder builder) {

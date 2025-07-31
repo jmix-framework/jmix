@@ -32,6 +32,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * TODO javadoc
+ */
 @Component("search_AutoMappedDynamicFieldAnnotationProcessor")
 public class AutoMappedDynamicFieldAnnotationProcessor extends AbstractFieldAnnotationProcessor<DynamicAttributes> {
 

@@ -22,6 +22,9 @@ import java.lang.annotation.*;
 
 import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*;
 
+/**
+ * TODO javadoc
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(DynamicAttributes.Container.class)

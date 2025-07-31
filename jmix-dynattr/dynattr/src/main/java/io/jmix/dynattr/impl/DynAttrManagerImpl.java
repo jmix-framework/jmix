@@ -164,7 +164,6 @@ public class DynAttrManagerImpl implements DynAttrManager {
                                     doStoreCollectionValue(attributeValue);
                                 }
                             });
-
                 }
                 eventPublisher.publishEvent(new DynamicAttributeChangeEvent(metaClass, entity, dynamicModel));
             }

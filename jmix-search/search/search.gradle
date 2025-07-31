@@ -25,7 +25,6 @@ dependencies {
     api project(':eclipselink')
     api project(':security')
     api project(':dynattr')
-    testImplementation project(':dynattr')
 
     api 'org.apache.lucene:lucene-queryparser'
 
@@ -67,6 +66,7 @@ dependencies {
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation project(':eclipselink')
+    testImplementation project(':dynattr')
     testImplementation 'org.liquibase:liquibase-core'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'

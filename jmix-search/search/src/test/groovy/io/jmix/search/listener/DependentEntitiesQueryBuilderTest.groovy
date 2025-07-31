@@ -61,7 +61,7 @@ class DependentEntitiesQueryBuilderTest extends Specification {
 
 
         when:
-        def query = new DependentEntitiesQueryBuilder(metadataTools, Mock(PropertyTools))
+        def query = new DependentEntitiesQueryBuilder(metadataTools, Mock(DynamicAttributeReferenceFieldResolver))
                 .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
@@ -113,7 +113,7 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         referencedMetaClass.getName() >> "some_entityName"
 
         when:
-        def query = new DependentEntitiesQueryBuilder(metadataTools, Mock(PropertyTools))
+        def query = new DependentEntitiesQueryBuilder(metadataTools, Mock(DynamicAttributeReferenceFieldResolver))
                 .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
@@ -157,11 +157,11 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         metadataTools.getPrimaryKeyName(targetMetaClass) >> "pk_name"
 
         and:
-        def propertyTools = Mock(PropertyTools)
-        propertyTools.resolveDynamicAttributeReferenceFieldName(_) >> "entityId"
+        def resolver = Mock(DynamicAttributeReferenceFieldResolver)
+        resolver.getFieldName(_) >> "entityId"
 
         when:
-        def query = new DependentEntitiesQueryBuilder(metadataTools, propertyTools)
+        def query = new DependentEntitiesQueryBuilder(metadataTools, resolver)
                 .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))

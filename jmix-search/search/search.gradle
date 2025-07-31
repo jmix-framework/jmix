@@ -24,7 +24,7 @@ dependencies {
     api project(':data')
     api project(':eclipselink')
     api project(':security')
-    compileOnly project(':dynattr')
+    api project(':dynattr')
     testImplementation project(':dynattr')
 
     api 'org.apache.lucene:lucene-queryparser'

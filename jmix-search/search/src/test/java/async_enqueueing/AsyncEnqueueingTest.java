@@ -23,6 +23,7 @@ import io.jmix.search.index.queue.impl.EnqueueingSessionStatus;
 import io.jmix.search.index.queue.impl.IndexingOperation;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -84,8 +84,9 @@ public class DependentEntitiesQueryBuilder {
             if (!hasLevels(propertyPath)) {
                 initDynamicQuery();
                 processDynamicProperty();
+            }else {
+                throw new IllegalStateException(String.format(REFERENCES_WITH_TWO_OR_MORE_LEVELS_ARE_NOT_SUPPORTED_MESSAGE, referencedMetaClass.getName(), propertyPath.toString()));
             }
-            throw new IllegalStateException(String.format(REFERENCES_WITH_TWO_OR_MORE_LEVELS_ARE_NOT_SUPPORTED_MESSAGE, referencedMetaClass.getName(), propertyPath.toString()));
         }
         return new DependentEntitiesQuery(querySb.toString(), parameters);
     }

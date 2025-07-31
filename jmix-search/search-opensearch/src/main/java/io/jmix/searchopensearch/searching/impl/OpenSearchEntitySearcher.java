@@ -255,6 +255,7 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
         return StringUtils.removeEnd(fieldName, "." + Constants.INSTANCE_NAME_FIELD);
     }
 
+    //TODO code duplicate. Move to a separate class
     protected Set<String> reloadIds(MetaClass metaClass, Collection<Object> entityIds) {
         Set<String> result = new HashSet<>();
         String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);

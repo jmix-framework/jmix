@@ -17,10 +17,8 @@
 package io.jmix.vaadincommercialcomponents.kit.meta;
 
 import com.vaadin.flow.component.board.Board;
-import io.jmix.flowui.kit.meta.StudioComponent;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import com.vaadin.flow.component.spreadsheet.Spreadsheet;
+import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit(studioClassloaderDependencies = "io.jmix.flowui:vaadin-commercial-components-kit")
 public interface StudioVaadinCommercialComponents {
@@ -69,4 +67,104 @@ public interface StudioVaadinCommercialComponents {
             }
     )
     Board board();
+
+    @StudioComponent(
+            name = "Spreadsheet",
+            classFqn = "com.vaadin.flow.component.spreadsheet.Spreadsheet",
+            category = "Vaadin Commercial",
+            xmlElement = "spreadsheet",
+            xmlns = "http://jmix.io/schema/vaadin-commercial-components/ui",
+            xmlnsAlias = "vcc",
+            icon = "io/jmix/vaadincommercialcomponents/kit/meta/icon/component/spreadsheet.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                            category = StudioProperty.Category.POSITION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "activeSheetIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "activeSheetWithPOIIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.LOOK_AND_FEEL),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING,
+                            category = StudioProperty.Category.LOOK_AND_FEEL),
+                    @StudioProperty(xmlAttribute = "chartsEnabled", type = StudioPropertyType.BOOLEAN,
+                            category = StudioProperty.Category.GENERAL, defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.POSITION),
+                    @StudioProperty(xmlAttribute = "defaultColumnWidth", type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(xmlAttribute = "defaultRowHeight", type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(xmlAttribute = "defaultColumnCount", type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(xmlAttribute = "defaultRowCount", type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(xmlAttribute = "defaultPercentageFormat", type = StudioPropertyType.STRING,
+                            category = StudioProperty.Category.GENERAL, defaultValue = "0.00%"),
+                    @StudioProperty(xmlAttribute = "functionBarVisible", type = StudioPropertyType.BOOLEAN,
+                            category = StudioProperty.Category.LOOK_AND_FEEL, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE,
+                            category = StudioProperty.Category.SIZE,
+                            defaultValue = "100%"),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE,
+                            category = StudioProperty.Category.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE,
+                            category = StudioProperty.Category.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE,
+                            category = StudioProperty.Category.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE,
+                            category = StudioProperty.Category.SIZE),
+                    @StudioProperty(xmlAttribute = "minimumRowHeightForComponents", type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL, defaultValue = "30"),
+                    @StudioProperty(xmlAttribute = "maxColumns", type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(xmlAttribute = "maxRows", type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(xmlAttribute = "rowBufferSize", type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL, defaultValue = "200"),
+                    @StudioProperty(xmlAttribute = "colBufferSize", type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL, defaultValue = "200"),
+                    @StudioProperty(xmlAttribute = "reportStyle", type = StudioPropertyType.BOOLEAN,
+                            category = StudioProperty.Category.LOOK_AND_FEEL, defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "sheetSelectionBarVisible", type = StudioPropertyType.BOOLEAN,
+                            category = StudioProperty.Category.LOOK_AND_FEEL, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "statusLabelValue", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "invalidFormulaErrorMessage", type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.VALIDATION),
+                    @StudioProperty(xmlAttribute = "selection", type = StudioPropertyType.STRING,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(xmlAttribute = "theme", type = StudioPropertyType.ENUMERATION,
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            classFqn = "com.vaadin.flow.component.spreadsheet.Spreadsheet$SpreadsheetTheme",
+                            options = {"LUMO", "VALO"}, defaultValue = "VALO"),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            category = StudioProperty.Category.GENERAL,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE,
+                            category = StudioProperty.Category.SIZE,
+                            defaultValue = "100%")
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setCellValueHandler",
+                            parameterType = "com.vaadin.flow.component.spreadsheet.Spreadsheet.CellValueHandler"
+                    ),
+                    @StudioSupplyHandler(
+                            methodName = "setCellDeletionHandler",
+                            parameterType = "com.vaadin.flow.component.spreadsheet.Spreadsheet.CellDeletionHandler"
+                    ),
+                    @StudioSupplyHandler(
+                            methodName = "setHyperlinkCellClickHandler",
+                            parameterType = "com.vaadin.flow.component.spreadsheet.Spreadsheet.HyperlinkCellClickHandler"
+                    ),
+                    @StudioSupplyHandler(
+                            methodName = "setSpreadsheetComponentFactory",
+                            parameterType = "com.vaadin.flow.component.spreadsheet.SpreadsheetComponentFactory"
+                    )
+            }
+    )
+    Spreadsheet spreadsheet();
 }

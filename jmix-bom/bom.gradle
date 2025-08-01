@@ -320,6 +320,7 @@ dependencies {
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
         api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
         api "com.vaadin:vaadin-board-flow:$vaadinFlowVersion"
+        api "com.vaadin:vaadin-spreadsheet-flow:$vaadinFlowVersion"
 
         api 'org.spockframework:spock-core:2.3-groovy-4.0'
         api 'org.spockframework:spock-spring:2.3-groovy-4.0'

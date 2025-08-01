@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.vaadincommercialcomponents.component.spreadsheet;
 
-group = 'io.jmix.flowui'
-archivesBaseName = 'vaadin-commercial-components-kit'
+import com.vaadin.flow.component.spreadsheet.Spreadsheet;
+import io.jmix.core.annotation.Internal;
 
-dependencies {
-    api project(':flowui-kit')
+import java.util.Optional;
 
-    api 'com.vaadin:vaadin-board-flow'
-    api 'com.vaadin:vaadin-spreadsheet-flow'
+/**
+ * @deprecated workaround for a <a href="https://github.com/vaadin/flow-components/issues/7765">Vaadin's bug </a>,
+ * use {@link Spreadsheet} instead
+ */
+@Internal
+@Deprecated(since = "2.6", forRemoval = true)
+public class JmixSpreadsheet extends Spreadsheet {
+
+    @Override
+    public Optional<String> getId() {
+        return Optional.ofNullable(getElement().getProperty("id"));
+    }
 }

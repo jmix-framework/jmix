@@ -18,11 +18,34 @@ package io.jmix.autoconfigure.vaadincommercialcomponents;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.vaadincommercialcomponents.VaadinCommercialComponentsConfiguration;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+
+import java.util.List;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class, FlowuiConfiguration.class, VaadinCommercialComponentsConfiguration.class})
 public class VaadinCommercialComponentsAutoConfiguration {
+
+    @Bean
+    public static BeanPostProcessor myServiceModifier() {
+        return new BeanPostProcessor() {
+            @Override
+            public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+                if (bean instanceof ReflectionCacheManager reflectionCacheManager) {
+                    reflectionCacheManager.addSupplyMethodNames(
+                            List.of("CellValueHandler", "CellDeletionHandler",
+                                    "HyperlinkCellClickHandler", "SpreadsheetComponentFactory")
+                    );
+                }
+
+                return bean;
+            }
+        };
+    }
 }

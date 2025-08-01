@@ -53,4 +53,48 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:element name="spreadsheet">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="layout:baseComponent">
+                    <xs:attribute name="chartsEnabled" type="xs:boolean"/>
+                    <xs:attribute name="activeSheetIndex" type="xs:integer"/>
+                    <xs:attribute name="activeSheetWithPOIIndex" type="xs:integer"/>
+
+                    <xs:attribute name="maxColumns" type="xs:integer"/>
+                    <xs:attribute name="maxRows" type="xs:integer"/>
+                    <xs:attribute name="defaultColumnWidth" type="xs:integer"/>
+                    <xs:attribute name="defaultRowHeight" type="xs:integer"/>
+
+                    <xs:attribute name="rowBufferSize" type="xs:integer"/>
+                    <xs:attribute name="colBufferSize" type="xs:integer"/>
+                    <xs:attribute name="defaultRowCount" type="xs:integer"/>
+                    <xs:attribute name="defaultColumnCount" type="xs:integer"/>
+
+                    <xs:attribute name="statusLabelValue" type="layout:resourceString"/>
+                    <xs:attribute name="invalidFormulaErrorMessage" type="layout:resourceString"/>
+
+                    <xs:attribute name="selection" type="xs:string"/>
+                    <xs:attribute name="defaultPercentageFormat" type="xs:string"/>
+                    <xs:attribute name="functionBarVisible" type="xs:boolean"/>
+                    <xs:attribute name="sheetSelectionBarVisible" type="xs:boolean"/>
+                    <xs:attribute name="reportStyle" type="xs:boolean"/>
+
+                    <xs:attribute name="minimumRowHeightForComponents" type="xs:integer"/>
+
+                    <xs:attribute name="theme" type="spreadsheetThemeType"/>
+                    <xs:attributeGroup ref="layout:hasSize"/>
+                    <xs:attributeGroup ref="layout:hasClassNames"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:simpleType name="spreadsheetThemeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LUMO"/>
+            <xs:enumeration value="VALO"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+@NonNullApi
+package io.jmix.autoconfigure.vaadincommercialcomponents;
 
-group = 'io.jmix.flowui'
-archivesBaseName = 'vaadin-commercial-components-kit'
-
-dependencies {
-    api project(':flowui-kit')
-
-    api 'com.vaadin:vaadin-board-flow'
-    api 'com.vaadin:vaadin-spreadsheet-flow'
-}
+import org.springframework.lang.NonNullApi;

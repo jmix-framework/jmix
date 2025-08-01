@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package component_xml_load.view;
 
-group = 'io.jmix.flowui'
-archivesBaseName = 'vaadin-commercial-components-kit'
+import com.vaadin.flow.component.spreadsheet.Spreadsheet;
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.ViewComponent;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
+import test_support.view.TestMainView;
 
-dependencies {
-    api project(':flowui-kit')
+@Route(value = "SpreadsheetXmlLoadTestView", layout = TestMainView.class)
+@ViewController
+@ViewDescriptor("spreadsheet-xml-load-test-view.xml")
+public class SpreadsheetXmlLoadTestView extends StandardView {
 
-    api 'com.vaadin:vaadin-board-flow'
-    api 'com.vaadin:vaadin-spreadsheet-flow'
+    @ViewComponent
+    public Spreadsheet spreadsheet;
 }

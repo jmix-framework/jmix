@@ -18,12 +18,15 @@ package io.jmix.vaadincommercialcomponents;
 
 import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.board.Row;
+import com.vaadin.flow.component.spreadsheet.Spreadsheet;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.registration.ComponentRegistration;
 import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
 import io.jmix.vaadincommercialcomponents.component.loader.BoardLoader;
 import io.jmix.vaadincommercialcomponents.component.loader.RowLoader;
+import io.jmix.vaadincommercialcomponents.component.loader.SpreadsheetLoader;
+import io.jmix.vaadincommercialcomponents.component.spreadsheet.JmixSpreadsheet;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +47,14 @@ public class VaadinCommercialComponentsConfiguration {
     public ComponentRegistration vaadinBoardRow() {
         return ComponentRegistrationBuilder.create(Row.class)
                 .withComponentLoader("boardRow", RowLoader.class)
+                .build();
+    }
+
+    @Bean
+    public ComponentRegistration vaadinSpreadsheet() {
+        return ComponentRegistrationBuilder.create(JmixSpreadsheet.class)
+                .replaceComponent(Spreadsheet.class)
+                .withComponentLoader("spreadsheet", SpreadsheetLoader.class)
                 .build();
     }
 }

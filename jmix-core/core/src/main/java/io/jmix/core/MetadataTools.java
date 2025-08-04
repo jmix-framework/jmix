@@ -127,6 +127,10 @@ public class MetadataTools {
     @Autowired(required = false)
     protected Collection<MetaPropertyPathResolver> metaPropertyPathResolvers;
 
+    @Lazy
+    @Autowired(required = false)
+    protected Collection<MetaPropertyResolver> metaPropertyResolvers;
+
     @Autowired
     protected JmixModulesClasspathScanner classpathScanner;
 
@@ -973,6 +977,29 @@ public class MetadataTools {
         }
         return metaPropertyPath;
     }
+
+    /**
+     * TODO
+     * @param metaClass
+     * @param propertyName
+     * @return
+     */
+    @Nullable
+    public MetaProperty resolveMetaPropertyOrNull(MetaClass metaClass, String propertyName) {
+
+        MetaProperty metaProperty = metaClass.findProperty(propertyName);
+        if (metaProperty == null) {
+            if (metaPropertyPathResolvers != null) {
+                for (MetaPropertyResolver resolver : metaPropertyResolvers) {
+                    metaProperty = resolver.resolveMetaPropertyOrNull(metaClass, propertyName);
+                    if (metaProperty != null) {
+                        break;
+                    }
+                }
+            }
+        }
+        return metaProperty;
+    }    
 
     /**
      * Returns a {@link MetaPropertyPath} which can include the special MetaProperty for a dynamic attribute.

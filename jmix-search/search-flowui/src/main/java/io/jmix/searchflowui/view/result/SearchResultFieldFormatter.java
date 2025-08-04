@@ -21,13 +21,11 @@ import com.google.common.collect.ImmutableMap;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.view.MessageBundle;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -41,7 +39,7 @@ public class SearchResultFieldFormatter {
     protected final MetadataTools metadataTools;
 
 
-    protected static final Map<String, String> systemFieldLabels = ImmutableMap
+    protected static final Map<String, String> SYSTEM_FIELD_LABELS = ImmutableMap
             .of("_file_name", "fileName",
                     "_content", "content");
 
@@ -52,6 +50,10 @@ public class SearchResultFieldFormatter {
     }
 
     public String formatFieldCaption(String entityName, String fieldName, MessageBundle messageBundle) {
+
+        //StringUtils.endsWith()
+        //if ()
+        if (isFile)
         List<String> captionParts = new ArrayList<>();
         MetaClass currentMetaClass = metadata.getClass(entityName);
         MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(currentMetaClass, fieldName);

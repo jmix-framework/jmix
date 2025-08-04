@@ -43,11 +43,11 @@ class SearchResultFieldFormatterTest extends Specification {
 
         and:
         def metadata = Mock(Metadata)
-        metadata.getClass(entityName)>> metaClass
+        metadata.getClass(entityName) >> metaClass
 
         and:
         def messageTools = Mock(MessageTools)
-        messageTools.getPropertyCaption(metaProperty)>>"someFieldNameCaption"
+        messageTools.getPropertyCaption(metaProperty) >> "someFieldNameCaption"
 
         when:
         def formatter = new SearchResultFieldFormatter(metadata, messageTools, metadataTools)
@@ -55,5 +55,71 @@ class SearchResultFieldFormatterTest extends Specification {
 
         then:
         fieldCaption == "someFieldNameCaption"
+    }
+
+    def "a field with two levels"() {
+        given:
+        def fieldName = "firstLevelFieldName.secondLevelFieldName"
+        def metaProperty1 = Mock(MetaProperty)
+        def metaProperty2 = Mock(MetaProperty)
+        def entityName = "some_EntityName"
+        def metaClass = Mock(MetaClass)
+
+        and:
+        def metadataTools = Mock(MetadataTools)
+        def metaPropertyPath = Mock(MetaPropertyPath)
+        metaPropertyPath.getMetaProperties() >> [metaProperty1, metaProperty2].toArray()
+        metadataTools.resolveMetaPropertyPathOrNull(metaClass, fieldName) >> metaPropertyPath
+
+        and:
+        def metadata = Mock(Metadata)
+        metadata.getClass(entityName) >> metaClass
+
+        and:
+        def messageTools = Mock(MessageTools)
+        messageTools.getPropertyCaption(metaProperty1) >> "firstLevelFieldCaption"
+        messageTools.getPropertyCaption(metaProperty2) >> "secondLevelFieldCaption"
+
+        when:
+        def formatter = new SearchResultFieldFormatter(metadata, messageTools, metadataTools)
+        def fieldCaption = formatter.formatFieldCaption(entityName, fieldName, Mock(MessageBundle))
+
+        then:
+        fieldCaption == "firstLevelFieldCaption.secondLevelFieldCaption"
+    }
+
+    def "a field with two levels +"() {
+        given:
+        def fieldName = "firstLevelFieldName.secondLevelFieldName._file_name"
+        def metaProperty1 = Mock(MetaProperty)
+        def metaProperty2 = Mock(MetaProperty)
+        def entityName = "some_EntityName"
+        def metaClass = Mock(MetaClass)
+
+        and:
+        def metadataTools = Mock(MetadataTools)
+        def metaPropertyPath = Mock(MetaPropertyPath)
+        metaPropertyPath.getMetaProperties() >> [metaProperty1, metaProperty2].toArray()
+        metadataTools.resolveMetaPropertyPathOrNull(metaClass, fieldName) >> metaPropertyPath
+
+        and:
+        def metadata = Mock(Metadata)
+        metadata.getClass(entityName) >> metaClass
+
+        and:
+        def messageTools = Mock(MessageTools)
+        messageTools.getPropertyCaption(metaProperty1) >> "firstLevelFieldCaption"
+        messageTools.getPropertyCaption(metaProperty2) >> "secondLevelFieldCaption"
+
+        and:
+        def messageBundle = Mock(MessageBundle)
+        messageBundle.getMessage(SearchResultFieldFormatter.SYSTEM_FIELD_LABELS.get("_file_name")) >> "File name"
+
+        when:
+        def formatter = new SearchResultFieldFormatter(metadata, messageTools, metadataTools)
+        def fieldCaption = formatter.formatFieldCaption(entityName, fieldName, messageBundle)
+
+        then:
+        fieldCaption == "firstLevelFieldCaption.secondLevelFieldCaption.[File name]"
     }
 }

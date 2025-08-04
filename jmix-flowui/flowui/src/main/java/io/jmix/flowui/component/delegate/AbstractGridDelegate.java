@@ -834,7 +834,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     public void removeColumn(Grid.Column<E> column) {
         columns.remove(column);
 
-        propertyColumns.keySet().remove(column);
+        propertyColumns.remove(column);
         removeAggregationInfo(column);
     }
 

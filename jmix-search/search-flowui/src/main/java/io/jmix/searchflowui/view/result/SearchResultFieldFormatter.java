@@ -43,7 +43,7 @@ public class SearchResultFieldFormatter {
 
     protected static final Map<String, String> systemFieldLabels = ImmutableMap
             .of("_file_name", "fileName",
-            "_content", "content");
+                    "_content", "content");
 
     public SearchResultFieldFormatter(Metadata metadata, MessageTools messageTools, MetadataTools metadataTools) {
         this.metadata = metadata;
@@ -53,27 +53,14 @@ public class SearchResultFieldFormatter {
 
     public String formatFieldCaption(String entityName, String fieldName, MessageBundle messageBundle) {
         List<String> captionParts = new ArrayList<>();
-        String[] parts = fieldName.split("\\.");
         MetaClass currentMetaClass = metadata.getClass(entityName);
         MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(currentMetaClass, fieldName);
         //TODO null check
         MetaProperty[] metaProperties = metaPropertyPath.getMetaProperties();
+
         for (int i = 0; i < metaProperties.length; i++) {
             MetaProperty currentMetaProperty = metaProperties[i];
-            if (currentMetaProperty.getRange().isDatatype()
-                    && (Datatype<?>) currentMetaProperty.getRange().asDatatype() instanceof FileRefDatatype
-                    && i + 1 < parts.length) {
-                String propertyCaption = messageTools.getPropertyCaption(currentMetaProperty);
-                String nextPart = parts[i + 1];
-                String labelKey = systemFieldLabels.get(nextPart);
-                if (labelKey != null) {
-                    String labelValue = messageBundle.getMessage(labelKey);
-                    propertyCaption = propertyCaption + "[" + labelValue + "]";
-                }
-                captionParts.add(propertyCaption);
-            } else {
-                captionParts.add(messageTools.getPropertyCaption(currentMetaProperty));
-            }
+            captionParts.add(messageTools.getPropertyCaption(currentMetaProperty));
         }
         return Joiner.on(".").join(captionParts);
     }

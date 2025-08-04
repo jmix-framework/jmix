@@ -28,4 +28,11 @@ dependencies {
 
     compileOnly project(':security')
     compileOnly project(':security-flowui')
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation "org.spockframework:spock-core"
+    testRuntimeOnly 'org.slf4j:slf4j-simple'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

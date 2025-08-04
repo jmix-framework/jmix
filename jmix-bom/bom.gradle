@@ -60,7 +60,7 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinFlowVersion = '24.7.3'
+def vaadinFlowVersion = '24.8.5'
 
 javaPlatform {
     allowDependencies()

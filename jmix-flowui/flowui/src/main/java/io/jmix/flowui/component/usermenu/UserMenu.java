@@ -4,9 +4,9 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
-import io.jmix.flowui.action.usermenu.UserMenuAction;
-import io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem;
+import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
+import io.jmix.flowui.kit.component.usermenu.JmixUserMenuItemsDelegate;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,28 +97,8 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements ApplicationCo
         return null;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void attachItem(UserMenuItem item) {
-        super.attachItem(item);
-
-        if (item instanceof ActionUserMenuItem actionUserMenuItem) {
-            if (actionUserMenuItem.getAction() instanceof UserMenuAction userMenuAction) {
-                userMenuAction.setMenuItem(actionUserMenuItem);
-                userMenuAction.setTarget(this);
-            }
-        }
-    }
-
-    @Override
-    protected void detachItem(UserMenuItem menuItem) {
-        super.detachItem(menuItem);
-
-        if (menuItem instanceof ActionUserMenuItem actionUserMenuItem) {
-            if (actionUserMenuItem.getAction() instanceof UserMenuAction<?, ?> userMenuAction) {
-                userMenuAction.setMenuItem(null);
-                userMenuAction.setTarget(null);
-            }
-        }
+    protected JmixUserMenuItemsDelegate createUserMenuItemsDelegate(JmixSubMenu subMenu) {
+        return new UserMenuItemsDelegate(this, subMenu);
     }
 }

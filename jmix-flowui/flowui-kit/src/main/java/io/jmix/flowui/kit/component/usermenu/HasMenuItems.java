@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+// TODO: gg, split to separate interfaces
 public interface HasMenuItems {
 
     TextUserMenuItem addItem(String id, String text);

@@ -10,7 +10,6 @@ import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.component.delegate.UserMenuItemsDelegate;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
@@ -44,7 +43,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
 
     protected USER user;
 
-    protected UserMenuItemsDelegate itemsDelegate;
+    protected JmixUserMenuItemsDelegate itemsDelegate;
 
     public JmixUserMenu() {
         initUserMenuItem();
@@ -280,24 +279,16 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         return getEventBus().addListener(UserChangedEvent.class, ((ComponentEventListener) listener));
     }
 
-    protected UserMenuItemsDelegate getItemsDelegate() {
+    protected JmixUserMenuItemsDelegate getItemsDelegate() {
         if (itemsDelegate == null) {
-            itemsDelegate = createUserMenuItemsDelegate();
+            itemsDelegate = createUserMenuItemsDelegate(getSubMenu());
         }
 
         return itemsDelegate;
     }
 
-    protected UserMenuItemsDelegate createUserMenuItemsDelegate() {
-        return new UserMenuItemsDelegate(getSubMenu(), this::attachItem, this::detachItem);
-    }
-
-    protected void attachItem(UserMenuItem item) {
-        // Hook to be implemented...
-    }
-
-    protected void detachItem(UserMenuItem menuItem) {
-        // Hook to be implemented...
+    protected JmixUserMenuItemsDelegate createUserMenuItemsDelegate(JmixSubMenu subMenu) {
+        return new JmixUserMenuItemsDelegate(this, subMenu);
     }
 
     public static class UserChangedEvent<USER> extends ComponentEvent<JmixUserMenu<USER>> {
@@ -328,8 +319,8 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         protected String text;
         protected Component icon;
 
-        public TextUserMenuItemImpl(String id, JmixMenuItem item, String text) {
-            super(id, item);
+        public TextUserMenuItemImpl(String id, JmixUserMenu<?> userMenu, JmixMenuItem item, String text) {
+            super(id, userMenu, item);
 
             this.text = text;
         }
@@ -379,8 +370,8 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
 
         protected final Action action;
 
-        public ActionUserMenuItemImpl(String id, JmixMenuItem item, Action action) {
-            super(id, item);
+        public ActionUserMenuItemImpl(String id, JmixUserMenu<?> userMenu, JmixMenuItem item, Action action) {
+            super(id, userMenu, item);
 
             this.action = action;
             initItem(action);
@@ -428,8 +419,8 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
 
         protected Component content;
 
-        public ComponentUserMenuItemImpl(String id, JmixMenuItem item, Component content) {
-            super(id, item);
+        public ComponentUserMenuItemImpl(String id, JmixUserMenu<?> userMenu, JmixMenuItem item, Component content) {
+            super(id, userMenu, item);
 
             this.content = content;
         }
@@ -462,18 +453,18 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
     protected static class AbstractUserMenuItem implements UserMenuItem, HasMenuItem {
 
         protected final String id;
+        protected final JmixUserMenu<?> userMenu;
         protected final JmixMenuItem item;
+
         protected UserMenuItem.SubMenu subMenu;
 
         protected Registration menuItemClickListenerRegistration;
 
         private EventBus eventBus;
 
-        public AbstractUserMenuItem(String id, JmixMenuItem item) {
-            Preconditions.checkArgument(id != null, "Id cannot be null");
-            Preconditions.checkArgument(item != null, "Item cannot be null");
-
+        public AbstractUserMenuItem(String id, JmixUserMenu<?> userMenu, JmixMenuItem item) {
             this.id = id;
+            this.userMenu = userMenu;
             this.item = item;
         }
 
@@ -542,7 +533,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
 
         protected UserMenuItem.SubMenu createSubMenu() {
-            return new JmixUserMenuSubMenu(item.getSubMenu());
+            return new JmixUserMenuSubMenu(userMenu, item.getSubMenu());
         }
 
         protected <ITEM extends UserMenuItem> Registration addClickListenerInternal(
@@ -591,11 +582,13 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
 
     protected static class JmixUserMenuSubMenu implements UserMenuItem.SubMenu {
 
+        protected final JmixUserMenu<?> userMenu;
         protected final JmixSubMenu subMenu;
 
-        protected UserMenuItemsDelegate itemsDelegate;
+        protected JmixUserMenuItemsDelegate itemsDelegate;
 
-        public JmixUserMenuSubMenu(JmixSubMenu subMenu) {
+        public JmixUserMenuSubMenu(JmixUserMenu<?> userMenu, JmixSubMenu subMenu) {
+            this.userMenu = userMenu;
             this.subMenu = subMenu;
         }
 
@@ -709,7 +702,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
             getItemsDelegate().removeAll();
         }
 
-        protected UserMenuItemsDelegate getItemsDelegate() {
+        protected JmixUserMenuItemsDelegate getItemsDelegate() {
             if (itemsDelegate == null) {
                 itemsDelegate = createUserMenuItemsDelegate();
             }
@@ -717,8 +710,8 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
             return itemsDelegate;
         }
 
-        protected UserMenuItemsDelegate createUserMenuItemsDelegate() {
-            return new UserMenuItemsDelegate(subMenu);
+        protected JmixUserMenuItemsDelegate createUserMenuItemsDelegate() {
+            return userMenu.createUserMenuItemsDelegate(subMenu);
         }
     }
 

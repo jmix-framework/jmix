@@ -2,6 +2,9 @@ package io.jmix.flowui.kit.component.usermenu;
 
 import com.vaadin.flow.component.Component;
 
+/**
+ * Represents a user menu item that can contain a custom UI {@link Component} as its content.
+ */
 public interface ComponentUserMenuItem extends UserMenuItem, UserMenuItem.HasClickListener<ComponentUserMenuItem> {
 
     /**

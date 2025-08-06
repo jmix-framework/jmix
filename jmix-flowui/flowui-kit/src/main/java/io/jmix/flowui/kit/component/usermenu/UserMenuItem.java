@@ -98,8 +98,21 @@ public interface UserMenuItem extends HasThemeVariant<UserMenuItemVariant> {
      */
     void setChecked(boolean checked);
 
+    /**
+     * Retrieves the submenu associated with this user menu item.
+     * A submenu is a container for additional menu items, providing
+     * hierarchical structuring of user menu options.
+     *
+     * @return the submenu associated with this user menu item
+     */
     SubMenu getSubMenu();
 
+    /**
+     * Represents a submenu within a user menu.
+     * <p>
+     * A submenu serves as a container for additional menu items, enabling hierarchical
+     * structuring of user menu options.
+     */
     interface SubMenu extends HasMenuItems {
 
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.delegate;
+package io.jmix.flowui.kit.component.usermenu;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -24,7 +24,6 @@ import com.vaadin.flow.component.html.Hr;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
-import io.jmix.flowui.kit.component.usermenu.*;
 import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -33,29 +32,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class UserMenuItemsDelegate implements HasMenuItems {
+/**
+ * Delegate class for managing user menu items within a {@link HasMenuItems} object.
+ */
+public class JmixUserMenuItemsDelegate implements HasMenuItems {
 
+    protected final JmixUserMenu<?> userMenu;
     protected final JmixSubMenu subMenu;
-    protected Consumer<UserMenuItem> attachItem;
-    protected Consumer<UserMenuItem> detachItem;
 
     protected List<UserMenuItem> items = new ArrayList<>();
 
-    public UserMenuItemsDelegate(JmixSubMenu subMenu) {
+    public JmixUserMenuItemsDelegate(JmixUserMenu<?> userMenu, JmixSubMenu subMenu) {
+        this.userMenu = userMenu;
         this.subMenu = subMenu;
-    }
-
-    public UserMenuItemsDelegate(JmixSubMenu subMenu,
-                                 Consumer<UserMenuItem> attachItem,
-                                 Consumer<UserMenuItem> detachItem) {
-        this(subMenu);
-
-        this.attachItem = attachItem;
-        this.detachItem = detachItem;
-    }
-
-    public JmixSubMenu getSubMenu() {
-        return subMenu;
     }
 
     @Override
@@ -112,6 +101,7 @@ public class UserMenuItemsDelegate implements HasMenuItems {
                                                int index) {
         TextUserMenuItem menuItem = new JmixUserMenu.TextUserMenuItemImpl(
                 id,
+                userMenu,
                 createMenuItem(id, new Text(text), index),
                 text
         );
@@ -138,6 +128,7 @@ public class UserMenuItemsDelegate implements HasMenuItems {
     public ActionUserMenuItem addItem(String id, Action action, int index) {
         ActionUserMenuItem menuItem = new JmixUserMenu.ActionUserMenuItemImpl(
                 id,
+                userMenu,
                 createMenuItem(id, new Text(Strings.nullToEmpty(action.getText())), index),
                 action
         );
@@ -175,6 +166,7 @@ public class UserMenuItemsDelegate implements HasMenuItems {
                                                     int index) {
         ComponentUserMenuItem menuItem = new JmixUserMenu.ComponentUserMenuItemImpl(
                 id,
+                userMenu,
                 createMenuItem(id, content, index),
                 content
         );
@@ -190,12 +182,12 @@ public class UserMenuItemsDelegate implements HasMenuItems {
 
     @Override
     public void addSeparator() {
-        getSubMenu().add(new Hr());
+        subMenu.addComponent(new Hr());
     }
 
     @Override
     public void addSeparatorAtIndex(int index) {
-        getSubMenu().addComponentAtIndex(index, new Hr());
+        subMenu.addComponentAtIndex(index, new Hr());
     }
 
     protected void addItemInternal(UserMenuItem item, int index) {
@@ -205,13 +197,14 @@ public class UserMenuItemsDelegate implements HasMenuItems {
             items.add(index, item);
         }
 
-        if (attachItem != null) {
-            attachItem.accept(item);
-        }
+        attachItem(item);
+    }
+
+    protected void attachItem(UserMenuItem item) {
+        // Hook to be implemented...
     }
 
     protected JmixMenuItem createMenuItem(String id, Component content, int index) {
-        JmixSubMenu subMenu = getSubMenu();
         JmixMenuItem menuItem = index < 0
                 ? subMenu.addItem(content)
                 : subMenu.addItemAtIndex(index, content);
@@ -253,16 +246,18 @@ public class UserMenuItemsDelegate implements HasMenuItems {
 
         if (menuItem instanceof JmixUserMenu.HasMenuItem hasMenuItem) {
             if (items.remove(menuItem)) {
-                getSubMenu().remove(hasMenuItem.getItem());
+                subMenu.remove(hasMenuItem.getItem());
 
-                if (detachItem != null) {
-                    detachItem.accept(menuItem);
-                }
+                detachItem(menuItem);
             }
         } else {
             throw new IllegalStateException("%s doesn't contain item"
                     .formatted(menuItem.getClass().getSimpleName()));
         }
+    }
+
+    protected void detachItem(UserMenuItem item) {
+        // Hook to be implemented...
     }
 
     @Override

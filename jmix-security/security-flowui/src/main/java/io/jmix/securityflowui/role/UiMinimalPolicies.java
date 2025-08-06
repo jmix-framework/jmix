@@ -26,7 +26,7 @@ import io.jmix.securityflowui.role.annotation.ViewPolicy;
 
 public interface UiMinimalPolicies {
 
-    @ViewPolicy(viewIds = {"inputDialog", "multiValueSelectDialog"})
+    @ViewPolicy(viewIds = {"inputDialog", "multiValueSelectDialog", "substituteUserView"})
     void systemDialogs();
 
     @EntityPolicy(entityClass = KeyValueEntity.class, actions = EntityPolicyAction.READ)

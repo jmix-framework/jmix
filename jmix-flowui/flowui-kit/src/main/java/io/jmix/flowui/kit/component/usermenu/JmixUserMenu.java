@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.kit.component.usermenu;
 
 import com.google.common.base.Preconditions;
@@ -25,8 +41,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
-        implements HasMenuItems, HasEnabled, HasThemeVariant<UserMenuVariant>, Focusable<JmixUserMenu<USER>>,
-        HasOverlayClassName {
+        implements HasTextMenuItems, HasActionMenuItems, HasComponentMenuItems,
+        HasEnabled, HasOverlayClassName, HasThemeVariant<UserMenuVariant>, Focusable<JmixUserMenu<USER>> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
     protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-user-menu";
@@ -67,11 +83,23 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         return userMenuItem.getSubMenu();
     }
 
+    /**
+     * Returns the current user associated with the user menu.
+     *
+     * @return the current user, or {@code null} if no user is set
+     */
     @Nullable
     public USER getUser() {
         return user;
     }
 
+    /**
+     * Sets the user for the user menu. If the given user is different
+     * from the currently set user, the change is applied, an internal
+     * user change handler is called, and a {@link UserChangedEvent} is fired.
+     *
+     * @param user the user to be set; can be {@code null} to clear the current user
+     */
     public void setUser(@Nullable USER user) {
         if (!Objects.equals(this.user, user)) {
             this.user = user;
@@ -104,6 +132,14 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
     }
 
+    /**
+     * Sets the function to generate the header's content based on the current user.
+     *
+     * @param headerRenderer a function that takes a user object and returns
+     *                       a {@link Component} to be used as the header;
+     *                       can be {@code null}, in which case no header
+     *                       content will be displayed
+     */
     public void setHeaderRenderer(@Nullable Function<USER, Component> headerRenderer) {
         this.headerRenderer = headerRenderer;
 
@@ -260,10 +296,20 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         getItemsDelegate().removeAll();
     }
 
+    /**
+     * Determines whether the user menu opens on hover.
+     *
+     * @return {@code true} if the menu opens on hover, {@code false} otherwise
+     */
     public boolean isOpenOnHover() {
         return getContent().isOpenOnHover();
     }
 
+    /**
+     * Sets whether the user menu should open when hovered.
+     *
+     * @param openOnHover {@code true} to make the menu open on hover, {@code false} to disable this behavior
+     */
     public void setOpenOnHover(boolean openOnHover) {
         getContent().setOpenOnHover(openOnHover);
     }
@@ -291,6 +337,12 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         return new JmixUserMenuItemsDelegate(this, subMenu);
     }
 
+    /**
+     * Represents an event that is triggered when the user associated with the
+     * {@link JmixUserMenu} component changes.
+     *
+     * @param <USER> the type of the user associated with the menu
+     */
     public static class UserChangedEvent<USER> extends ComponentEvent<JmixUserMenu<USER>> {
 
         protected final USER user;
@@ -308,6 +360,11 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
             this.user = user;
         }
 
+        /**
+         * Returns the user associated with the event.
+         *
+         * @return the user associated with the event, or {@code null} if no user is associated
+         */
         @Nullable
         public USER getUser() {
             return user;
@@ -715,6 +772,11 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
     }
 
+    /**
+     * Represents a component that has an associated {@link MenuItem}.
+     * This interface is typically used to provide access to the linked menu item
+     * for components or entities that function as a user menu item.
+     */
     protected interface HasMenuItem {
 
         /**

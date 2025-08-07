@@ -32,6 +32,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * Represents an action for switching visual themes in a user menu.
+ */
 @ActionType(UserMenuThemeSwitchAction.ID)
 public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitchAction, UserMenu> {
 

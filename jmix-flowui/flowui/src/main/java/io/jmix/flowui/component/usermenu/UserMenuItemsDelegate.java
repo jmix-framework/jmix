@@ -23,10 +23,24 @@ import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenuItemsDelegate;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 
-public class UserMenuItemsDelegate extends JmixUserMenuItemsDelegate {
+/**
+ * Delegate class for managing {@link UserMenuItem} collection.
+ */
+public class UserMenuItemsDelegate extends JmixUserMenuItemsDelegate implements HasViewMenuItems {
 
     public UserMenuItemsDelegate(JmixUserMenu<?> userMenu, JmixSubMenu subMenu) {
         super(userMenu, subMenu);
+    }
+
+    @Override
+    public ViewUserMenuItem addItem(String id, Class<?> viewClass) {
+        return addItem(id, viewClass, -1);
+    }
+
+    @Override
+    public ViewUserMenuItem addItem(String id, Class<?> viewClass, int index) {
+        // TODO: gg, implement
+        return null;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -54,6 +68,4 @@ public class UserMenuItemsDelegate extends JmixUserMenuItemsDelegate {
             }
         }
     }
-
-
 }

@@ -33,9 +33,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * Delegate class for managing user menu items within a {@link HasMenuItems} object.
+ * Delegate class for managing {@link UserMenuItem} collection.
  */
-public class JmixUserMenuItemsDelegate implements HasMenuItems {
+public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMenuItems, HasComponentMenuItems {
 
     protected final JmixUserMenu<?> userMenu;
     protected final JmixSubMenu subMenu;

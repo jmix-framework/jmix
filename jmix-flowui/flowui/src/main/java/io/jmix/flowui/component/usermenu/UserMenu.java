@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.component.usermenu;
 
 import io.jmix.core.MetadataTools;
@@ -7,7 +23,6 @@ import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenuItemsDelegate;
-import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -19,7 +34,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Objects;
 
-public class UserMenu extends JmixUserMenu<UserDetails> implements ApplicationContextAware, InitializingBean {
+public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuItems,
+        ApplicationContextAware, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(UserMenu.class);
 
@@ -88,13 +104,19 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements ApplicationCo
         }
     }
 
-    public UserMenuItem addItem(String id, Class<?> viewClass) {
-        return addItem(id, viewClass, -1);
+    @Override
+    public ViewUserMenuItem addItem(String id, Class<?> viewClass) {
+        return getItemsDelegate().addItem(id, viewClass);
     }
 
-    public UserMenuItem addItem(String id, Class<?> viewClass, int index) {
-        // TODO: gg, implement
-        return null;
+    @Override
+    public ViewUserMenuItem addItem(String id, Class<?> viewClass, int index) {
+        return getItemsDelegate().addItem(id, viewClass, -1);
+    }
+
+    @Override
+    protected UserMenuItemsDelegate getItemsDelegate() {
+        return (UserMenuItemsDelegate) super.getItemsDelegate();
     }
 
     @Override

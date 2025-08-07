@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.action.usermenu;
 
 import com.vaadin.flow.component.Component;
@@ -16,6 +32,12 @@ import org.springframework.lang.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * An abstract base class for actions that can be associated with a specific {@link JmixUserMenu}.
+ *
+ * @param <A> the type of the concrete action class extending {@code UserMenuAction}
+ * @param <C> the type of the {@link JmixUserMenu} that the action can be associated with
+ */
 public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends JmixUserMenu<?>> extends SecuredBaseAction
         implements TargetAction<C>, ExecutableAction {
 
@@ -46,11 +68,22 @@ public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends J
         }
     }
 
+    /**
+     * Returns the {@link UserMenuItem} associated with this action.
+     *
+     * @return the associated {@link UserMenuItem}, or {@code null} if no menu item is associated
+     */
     @Nullable
     public UserMenuItem getMenuItem() {
         return menuItem;
     }
 
+    /**
+     * Sets the {@link UserMenuItem} associated with this action.
+     *
+     * @param menuItem the new {@link UserMenuItem} to associate with this action,
+     *                 or {@code null} to disassociate the current menu item
+     */
     public void setMenuItem(@Nullable UserMenuItem menuItem) {
         if (!Objects.equals(this.menuItem, menuItem)) {
             setMenuItemInternal(menuItem);

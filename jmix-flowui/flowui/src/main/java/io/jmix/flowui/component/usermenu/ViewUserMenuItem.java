@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.flowui.action.usermenu;
+package io.jmix.flowui.component.usermenu;
 
-import org.springframework.lang.NonNullApi;
+import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
+import io.jmix.flowui.view.View;
+
+/**
+ * Represents a specific type of {@link UserMenuItem} that is associated with an {@link View}.
+ */
+public interface ViewUserMenuItem extends UserMenuItem {
+
+    // TODO: gg, implement
+}

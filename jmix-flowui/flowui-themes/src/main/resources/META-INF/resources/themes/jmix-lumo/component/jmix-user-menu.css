@@ -16,7 +16,7 @@
 
 vaadin-menu-bar[jmix-role='jmix-user-menu'] vaadin-menu-bar-button.jmix-user-menu-button {
     padding: 0;
-
+    min-width: var(--lumo-button-size);
     height: auto;
 }
 

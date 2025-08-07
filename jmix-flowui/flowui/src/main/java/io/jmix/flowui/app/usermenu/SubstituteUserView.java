@@ -3,15 +3,19 @@ package io.jmix.flowui.app.usermenu;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.listbox.dataview.ListBoxListDataView;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.security.SubstituteUserAction;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
@@ -43,15 +47,17 @@ public class SubstituteUserView extends StandardView {
     @Autowired
     protected Actions actions;
     @Autowired
+    protected Dialogs dialogs;
+    @Autowired
+    protected Messages messages;
+    @Autowired
+    protected UiComponents uiComponents;
+    @Autowired
     protected MetadataTools metadataTools;
     @Autowired
     protected CurrentUserSubstitution currentUserSubstitution;
     @Autowired
     protected UserSubstitutionManager userSubstitutionManager;
-    @Autowired
-    protected Dialogs dialogs;
-    @Autowired
-    protected Messages messages;
 
     protected ListBoxListDataView<UserDetails> usersDataView;
 
@@ -61,7 +67,7 @@ public class SubstituteUserView extends StandardView {
         refreshActions();
     }
 
-    private void initUsersList() {
+    protected void initUsersList() {
         List<UserDetails> currentAndSubstitutedUsers = new ArrayList<>();
         currentAndSubstitutedUsers.add(currentUserSubstitution.getAuthenticatedUser());
         currentAndSubstitutedUsers.addAll(userSubstitutionManager.getCurrentSubstitutedUsers());
@@ -69,6 +75,14 @@ public class SubstituteUserView extends StandardView {
         ListDataProvider<UserDetails> dataProvider = createUsersDataProvider(currentAndSubstitutedUsers);
         usersDataView = usersList.setItems(dataProvider);
         usersList.setValue(currentUserSubstitution.getEffectiveUser());
+    }
+
+    protected String generateUserTitle(UserDetails user) {
+        if (EntityValues.isEntity(user)) {
+            return metadataTools.getInstanceName(user);
+        } else {
+            return user.getUsername();
+        }
     }
 
     protected ListDataProvider<UserDetails> createUsersDataProvider(List<UserDetails> currentAndSubstitutedUsers) {
@@ -79,6 +93,19 @@ public class SubstituteUserView extends StandardView {
                     || StringUtils.containsIgnoreCase(metadataTools.getInstanceName(userDetails), filterString);
         });
         return dataProvider;
+    }
+
+    @Supply(to = "usersList", subject = "renderer")
+    protected ComponentRenderer<?, UserDetails> usersListRenderer() {
+        return new ComponentRenderer<>(userDetails -> {
+            Span valueWrapper = uiComponents.create(Span.class);
+            valueWrapper.setText(generateUserTitle(userDetails));
+            if (userDetails.equals(currentUserSubstitution.getAuthenticatedUser())) {
+                valueWrapper.addClassName("authenticated-user");
+            }
+
+            return valueWrapper;
+        });
     }
 
     @Subscribe("applyAction")

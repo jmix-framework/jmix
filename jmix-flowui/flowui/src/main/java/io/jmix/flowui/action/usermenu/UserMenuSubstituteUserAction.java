@@ -21,15 +21,26 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
+import io.jmix.flowui.Actions;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
+import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.ViewOpeningAction;
+import io.jmix.flowui.action.security.SubstituteUserAction;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.main.JmixUserIndicator;
 import io.jmix.flowui.component.usermenu.UserMenu;
+import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
+import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
@@ -44,7 +55,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 @ActionType(UserMenuSubstituteUserAction.ID)
@@ -56,14 +67,22 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
     public static final String ID = "userMenu_substituteUser";
     public static final String DEFAULT_VIEW = "substituteUserView";
 
-    protected ApplicationContext applicationContext;
+    protected Actions actions;
+    protected Dialogs dialogs;
+    protected Messages messages;
     protected DialogWindows dialogWindows;
+    protected MetadataTools metadataTools;
+    protected ApplicationContext applicationContext;
     protected UserSubstitutionManager substitutionManager;
     protected CurrentUserSubstitution currentUserSubstitution;
 
     protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
 
-    protected boolean hasSubstitutedUsers;
+    protected List<UserDetails> currentSubstitutedUsers;
+    protected int maxSubstitutions;
+
+    protected final Map<String, UserMenuItem> menuItems = new HashMap<>(3);
+    protected UserMenuItem.SubMenu subMenu;
 
     protected Registration attachRegistration;
     protected Registration detachRegistration;
@@ -90,7 +109,19 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
 
     @Autowired
     public void setMessages(Messages messages) {
+        this.messages = messages;
+
         this.text = messages.getMessage("actions.userMenu.SubstituteUser");
+    }
+
+    @Autowired
+    public void setDialogs(Dialogs dialogs) {
+        this.dialogs = dialogs;
+    }
+
+    @Autowired
+    public void setActions(Actions actions) {
+        this.actions = actions;
     }
 
     @Autowired
@@ -106,6 +137,26 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
     @Autowired
     public void setDialogWindowBuilders(DialogWindows dialogWindows) {
         this.dialogWindows = dialogWindows;
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
+    @Autowired
+    public void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        maxSubstitutions = 5;
+    }
+
+    // TODO: gg, javadoc
+    public int getMaxSubstitutions() {
+        return maxSubstitutions;
+    }
+
+    // TODO: gg, javadoc
+    public void setMaxSubstitutions(int maxSubstitutions) {
+        this.maxSubstitutions = maxSubstitutions;
     }
 
     @Nullable
@@ -230,24 +281,114 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
 
     @Override
     public void refreshState() {
-        hasSubstitutedUsers = hasSubstitutedUsers();
+        updateSubstitutedUsers();
+        updateMenuItem();
+
         super.refreshState();
     }
 
-    protected boolean hasSubstitutedUsers() {
-        return target != null
-                && menuItem != null
-                && !substitutionManager.getCurrentSubstitutedUsers().isEmpty();
+    protected void updateSubstitutedUsers() {
+        if (target != null && menuItem != null) {
+            currentSubstitutedUsers = substitutionManager.getCurrentSubstitutedUsers();
+        } else {
+            currentSubstitutedUsers = Collections.emptyList();
+        }
+    }
+
+    protected void updateMenuItem() {
+        if (menuItem == null
+                || currentSubstitutedUsers.isEmpty()
+                || currentSubstitutedUsers.size() > maxSubstitutions) {
+            removeSubMenu();
+
+            return;
+        }
+
+        if (subMenu == null) {
+            subMenu = menuItem.getSubMenu();
+        } else {
+            subMenu.removeAll();
+        }
+
+        UserDetails authenticatedUser = currentUserSubstitution.getAuthenticatedUser();
+        UserMenuItem authenticatedUserMenuItem = createSubMenuItem(authenticatedUser);
+        authenticatedUserMenuItem.addThemeName("authenticated-user");
+        menuItems.put(authenticatedUser.getUsername(), authenticatedUserMenuItem);
+
+        for (UserDetails user : currentSubstitutedUsers) {
+            menuItems.put(user.getUsername(), createSubMenuItem(user));
+        }
+
+        updateState(currentUserSubstitution.getEffectiveUser().getUsername());
+    }
+
+    protected UserMenuItem createSubMenuItem(UserDetails user) {
+        String itemId = "%s_%sUserMenuItem".formatted(ID, user.getUsername());
+        TextUserMenuItem item = subMenu.addItem(itemId, generateUserTitle(user), __ -> {
+            updateState(user.getUsername());
+            substituteUser(user);
+        });
+        item.setCheckable(true);
+
+        return item;
+    }
+
+    protected void substituteUser(UserDetails newUser) {
+        UserDetails prevUser = currentUserSubstitution.getEffectiveUser();
+        if (prevUser.equals(newUser)) {
+            return;
+        }
+
+        dialogs.createOptionDialog()
+                // TODO: gg, duplicate messages
+                .withHeader(messages.getMessage(JmixUserIndicator.class, "substitutionConfirmation.header"))
+                .withText(messages.formatMessage(JmixUserIndicator.class, "substitutionConfirmation.text",
+                        metadataTools.getInstanceName(newUser)))
+                .withActions(
+                        ((SubstituteUserAction) actions.create(SubstituteUserAction.ID))
+                                .withUsers(prevUser, newUser)
+                                .withCancelHandler(userDetails -> updateState(userDetails.getUsername()))
+                                .withText(messages.getMessage("actions.Ok"))
+                                .withIcon(VaadinIcon.CHECK.create())
+                                .withVariant(ActionVariant.PRIMARY),
+                        new DialogAction(DialogAction.Type.CANCEL)
+                                .withHandler(__ -> updateState(prevUser.getUsername()))
+                )
+                .open();
+    }
+
+    protected void updateState(String username) {
+        menuItems.forEach((key, menuItem) ->
+                menuItem.setChecked(key.equals(username)));
+    }
+
+    protected void removeSubMenu() {
+        if (subMenu != null) {
+            subMenu.removeAll();
+            subMenu = null;
+        }
+    }
+
+    protected String generateUserTitle(UserDetails user) {
+        if (EntityValues.isEntity(user)) {
+            return metadataTools.getInstanceName(user);
+        } else {
+            return user.getUsername();
+        }
     }
 
     @Override
     protected void setVisibleInternal(boolean visible) {
-        super.setVisibleInternal(visible && hasSubstitutedUsers);
+        super.setVisibleInternal(visible && !currentSubstitutedUsers.isEmpty());
     }
 
     @Override
     public void execute() {
         checkTarget();
+
+        if (currentSubstitutedUsers.size() <= maxSubstitutions) {
+            return;
+        }
 
         View<?> origin = UiComponentUtils.getView(target);
         WindowBuilder<View<?>> builder = dialogWindows.view(origin, DEFAULT_VIEW);

@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class SubstituteUserView extends StandardView {
     }
 
     private void initUsersList() {
-        List<UserDetails> currentAndSubstitutedUsers = new LinkedList<>();
+        List<UserDetails> currentAndSubstitutedUsers = new ArrayList<>();
         currentAndSubstitutedUsers.add(currentUserSubstitution.getAuthenticatedUser());
         currentAndSubstitutedUsers.addAll(userSubstitutionManager.getCurrentSubstitutedUsers());
 

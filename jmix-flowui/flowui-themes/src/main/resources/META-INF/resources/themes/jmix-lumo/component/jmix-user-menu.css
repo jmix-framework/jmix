@@ -50,3 +50,7 @@ vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-
 vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-checkable']::part(checkmark) {
     display: none;
 }
+
+vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='authenticated-user'] {
+    font-weight: bold;
+}

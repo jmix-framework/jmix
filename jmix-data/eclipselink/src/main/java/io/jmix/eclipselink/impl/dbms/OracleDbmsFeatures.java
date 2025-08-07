@@ -19,6 +19,7 @@ package io.jmix.eclipselink.impl.dbms;
 import io.jmix.data.persistence.DbmsFeatures;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
@@ -30,10 +31,17 @@ public class OracleDbmsFeatures implements DbmsFeatures {
 
     private static final Logger log = LoggerFactory.getLogger(OracleDbmsFeatures.class);
 
+    @Value("${jmix.eclipselink.enable-oracle-legacy-boolean-conversion:false}")
+    protected boolean enableOracleLegacyBooleanConversion;
+
     @Override
     public Map<String, String> getJpaParameters() {
         Map<String, String> params = new HashMap<>();
-        params.put("eclipselink.target-database", "io.jmix.eclipselink.impl.dbms.JmixOraclePlatform");
+        if (enableOracleLegacyBooleanConversion) {
+            params.put("eclipselink.target-database", "io.jmix.eclipselink.impl.dbms.JmixOracle21Platform");
+        } else {
+            params.put("eclipselink.target-database", "io.jmix.eclipselink.impl.dbms.JmixOraclePlatform");
+        }
         return params;
     }
 

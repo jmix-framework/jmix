@@ -16,7 +16,6 @@ import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.security.SubstituteUserAction;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
 import io.jmix.flowui.component.listbox.JmixListBox;
-import io.jmix.flowui.component.main.JmixUserIndicator;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -27,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 @ViewController(id = "substituteUserView")
@@ -93,9 +91,8 @@ public class SubstituteUserView extends StandardView {
         }
 
         dialogs.createOptionDialog()
-                // TODO: gg, duplicate messages
-                .withHeader(messages.getMessage(JmixUserIndicator.class, "substitutionConfirmation.header"))
-                .withText(messages.formatMessage(JmixUserIndicator.class, "substitutionConfirmation.text",
+                .withHeader(messages.getMessage("dialogs.substitutionConfirmation.header"))
+                .withText(messages.formatMessage("dialogs.substitutionConfirmation.text",
                         metadataTools.getInstanceName(newUser)))
                 .withActions(
                         ((SubstituteUserAction) actions.create(SubstituteUserAction.ID))

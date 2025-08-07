@@ -35,7 +35,6 @@ import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.security.SubstituteUserAction;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.main.JmixUserIndicator;
 import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -146,15 +145,26 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
 
     @Autowired
     public void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        maxSubstitutions = 5;
+        maxSubstitutions = uiComponentProperties.getSubstituteUserActionMaxSubstitutions();
     }
 
-    // TODO: gg, javadoc
+    /**
+     * Returns the maximum number of users that can be substituted by the currently authenticated user,
+     * which shows a submenu instead of opening a lookup view.
+     *
+     * @return the maximum number of users that can be substituted by the currently authenticated user,
+     * which shows a submenu instead of opening a lookup view.
+     */
     public int getMaxSubstitutions() {
         return maxSubstitutions;
     }
 
-    // TODO: gg, javadoc
+    /**
+     * Sets the maximum number of users that can be substituted by the currently authenticated user,
+     * which shows a submenu instead of opening a lookup view.
+     *
+     * @param maxSubstitutions number of users until a lookup view is used to select a substitution
+     */
     public void setMaxSubstitutions(int maxSubstitutions) {
         this.maxSubstitutions = maxSubstitutions;
     }
@@ -340,9 +350,8 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
         }
 
         dialogs.createOptionDialog()
-                // TODO: gg, duplicate messages
-                .withHeader(messages.getMessage(JmixUserIndicator.class, "substitutionConfirmation.header"))
-                .withText(messages.formatMessage(JmixUserIndicator.class, "substitutionConfirmation.text",
+                .withHeader(messages.getMessage("dialogs.substitutionConfirmation.header"))
+                .withText(messages.formatMessage("dialogs.substitutionConfirmation.text",
                         metadataTools.getInstanceName(newUser)))
                 .withActions(
                         ((SubstituteUserAction) actions.create(SubstituteUserAction.ID))

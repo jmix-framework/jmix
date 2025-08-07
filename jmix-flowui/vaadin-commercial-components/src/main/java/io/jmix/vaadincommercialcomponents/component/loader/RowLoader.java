@@ -16,14 +16,17 @@
 
 package io.jmix.vaadincommercialcomponents.component.loader;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.board.Row;
+import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.container.AbstractContainerLoader;
+import org.dom4j.Element;
 
 public class RowLoader extends AbstractContainerLoader<Row> {
 
     @Override
     protected Row createComponent() {
-        return factory.create(Row.class) ;
+        return factory.create(Row.class);
     }
 
     @Override
@@ -39,5 +42,21 @@ public class RowLoader extends AbstractContainerLoader<Row> {
         componentLoader().loadClassNames(resultComponent, element);
 
         loadSubComponents();
+    }
+
+    @Override
+    protected void loadSubComponents() {
+        for (ComponentLoader<?> componentLoader : pendingLoadComponents) {
+            componentLoader.loadComponent();
+
+            Element childElement = componentLoader.getElement();
+            Component childComponent = componentLoader.getResultComponent();
+
+            loadInteger(childElement, "colspan",
+                    colspan -> resultComponent.setComponentSpan(childComponent, colspan)
+            );
+        }
+
+        pendingLoadComponents.clear();
     }
 }

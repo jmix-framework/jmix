@@ -18,6 +18,7 @@ package io.jmix.flowui.kit.component.usermenu;
 
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.kit.component.HasSubParts;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -27,7 +28,7 @@ import java.util.function.Consumer;
  * Defines the common behavior for items such as visibility, enabling/disabling,
  * and handling click events.
  */
-public interface UserMenuItem extends HasThemeVariant<UserMenuItemVariant> {
+public interface UserMenuItem extends HasThemeVariant<UserMenuItemVariant>, HasSubParts {
 
     /**
      * Returns the unique identifier of the user menu item.

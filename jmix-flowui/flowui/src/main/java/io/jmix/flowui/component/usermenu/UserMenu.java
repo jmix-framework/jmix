@@ -16,10 +16,15 @@
 
 package io.jmix.flowui.component.usermenu;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenuItemsDelegate;
@@ -29,11 +34,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Objects;
 
+// TODO: gg, add type?
 public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuItems,
         ApplicationContextAware, InitializingBean {
 
@@ -42,9 +49,11 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
     protected static final String SUBSTITUTED_THEME_NAME = "substituted";
 
     protected ApplicationContext applicationContext;
-    protected CurrentUserSubstitution currentUserSubstitution;
-    protected UserRepository userRepository;
+
+    protected UiComponents uiComponents;
     protected MetadataTools metadataTools;
+    protected UserRepository userRepository;
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -58,14 +67,39 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
     }
 
     protected void autowireDependencies() {
-        currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
-        userRepository = applicationContext.getBean(UserRepository.class);
+        uiComponents = applicationContext.getBean(UiComponents.class);
         metadataTools = applicationContext.getBean(MetadataTools.class);
+        userRepository = applicationContext.getBean(UserRepository.class);
+        currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
     }
 
     protected void initComponent() {
+        setButtonRenderer(this::defaultButtonRenderer);
+
         UserDetails user = loadUser();
         setUser(user);
+    }
+
+    @Nullable
+    protected Component defaultButtonRenderer(@Nullable UserDetails userDetails) {
+        if (userDetails == null) {
+            return null;
+        }
+
+        Div wrapper = uiComponents.create(Div.class);
+        wrapper.setClassName(BASE_CLASS_NAME + "-button-content");
+
+        Avatar avatar = uiComponents.create(Avatar.class);
+        avatar.setName(userDetails.getUsername());
+        avatar.getElement().setAttribute("tabindex", "-1");
+        avatar.setClassName(BASE_CLASS_NAME + "-button-content-user-avatar");
+
+        Span name = uiComponents.create(Span.class);
+        name.setText(generateUserName(userDetails));
+        name.setClassName(BASE_CLASS_NAME + "-button-content-user-name");
+
+        wrapper.add(avatar, name);
+        return wrapper;
     }
 
     protected UserDetails loadUser() {
@@ -96,7 +130,7 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
         }
     }
 
-    protected String generateUserTitle(UserDetails user) {
+    protected String generateUserName(UserDetails user) {
         if (EntityValues.isEntity(user)) {
             return metadataTools.getInstanceName(user);
         } else {

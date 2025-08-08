@@ -26,6 +26,7 @@ import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
@@ -42,7 +43,8 @@ import java.util.function.Function;
 
 public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         implements HasTextMenuItems, HasActionMenuItems, HasComponentMenuItems,
-        HasEnabled, HasOverlayClassName, HasThemeVariant<UserMenuVariant>, Focusable<JmixUserMenu<USER>> {
+        HasEnabled, HasOverlayClassName, HasSubParts,
+        HasThemeVariant<UserMenuVariant>, Focusable<JmixUserMenu<USER>> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
     protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-user-menu";
@@ -274,6 +276,12 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
     @Override
     public UserMenuItem getItem(String itemId) {
         return getItemsDelegate().getItem(itemId);
+    }
+
+    @Nullable
+    @Override
+    public UserMenuItem getSubPart(String name) {
+        return findItem(name).orElse(null);
     }
 
     @Override
@@ -587,6 +595,16 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
             }
 
             return subMenu;
+        }
+
+        @Nullable
+        @Override
+        public UserMenuItem getSubPart(String name) {
+            if (subMenu != null) {
+                return subMenu.findItem(name).orElse(null);
+            }
+
+            return null;
         }
 
         protected UserMenuItem.SubMenu createSubMenu() {

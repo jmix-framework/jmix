@@ -77,7 +77,7 @@ public class SubstituteUserView extends StandardView {
         usersList.setValue(currentUserSubstitution.getEffectiveUser());
     }
 
-    protected String generateUserTitle(UserDetails user) {
+    protected String generateUserName(UserDetails user) {
         if (EntityValues.isEntity(user)) {
             return metadataTools.getInstanceName(user);
         } else {
@@ -99,7 +99,7 @@ public class SubstituteUserView extends StandardView {
     protected ComponentRenderer<?, UserDetails> usersListRenderer() {
         return new ComponentRenderer<>(userDetails -> {
             Span valueWrapper = uiComponents.create(Span.class);
-            valueWrapper.setText(generateUserTitle(userDetails));
+            valueWrapper.setText(generateUserName(userDetails));
             if (userDetails.equals(currentUserSubstitution.getAuthenticatedUser())) {
                 valueWrapper.addClassName("authenticated-user");
             }

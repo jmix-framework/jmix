@@ -50,3 +50,57 @@ vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-
 vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-checkable']::part(checkmark) {
     display: none;
 }
+
+/* Default Button Renderer */
+
+.jmix-user-menu-button-content {
+    display: flex;
+    gap: var(--lumo-space-s);
+    align-items: center;
+
+    color: var(--lumo-body-text-color);
+
+    padding: var(--lumo-space-xs) var(--lumo-space-s);
+}
+
+vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content {
+    --jmix-user-menu-avatar-size: var(--vaadin-avatar-size, 64px);
+    --jmix-user-menu-substituted-indicator-size: calc(var(--jmix-user-menu-avatar-size) / 4);
+    --jmix-user-menu-substituted-indicator-border-size: 2px;
+}
+
+vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content:before {
+    content: '';
+
+    position: absolute;
+    bottom: calc(var(--lumo-space-xs) / 2);
+    inset-inline-start: calc(var(--jmix-user-menu-avatar-size) - var(--lumo-space-s) / 2);
+    z-index: 1;
+
+    border-radius: 100%;
+
+    width: calc(var(--jmix-user-menu-substituted-indicator-size) + var(--jmix-user-menu-substituted-indicator-border-size) * 2);
+    height: calc(var(--jmix-user-menu-substituted-indicator-size) + var(--jmix-user-menu-substituted-indicator-border-size) * 2);
+
+    background-color: var(--lumo-base-color);
+}
+
+vaadin-app-layout[primary-section='navbar'] vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content:before {
+    background-image: linear-gradient(var(--lumo-contrast-5pct), var(--lumo-contrast-5pct));
+}
+
+vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content:after {
+    content: '';
+
+    position: absolute;
+    bottom: calc(var(--lumo-space-xs) / 2 + var(--jmix-user-menu-substituted-indicator-border-size));
+    inset-inline-start: calc(var(--jmix-user-menu-avatar-size) - var(--lumo-space-s) / 2 + var(--jmix-user-menu-substituted-indicator-border-size));
+    z-index: 1;
+
+    border-radius: 100%;
+
+    width: var(--jmix-user-menu-substituted-indicator-size);
+    height: var(--jmix-user-menu-substituted-indicator-size);
+
+    background-color: var(--lumo-warning-color);
+}

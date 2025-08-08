@@ -334,7 +334,7 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
 
     protected UserMenuItem createSubMenuItem(UserDetails user) {
         String itemId = "%s_%sUserMenuItem".formatted(ID, user.getUsername());
-        TextUserMenuItem item = subMenu.addItem(itemId, generateUserTitle(user), __ -> {
+        TextUserMenuItem item = subMenu.addItem(itemId, generateUserName(user), __ -> {
             updateState(user.getUsername());
             substituteUser(user);
         });
@@ -378,7 +378,7 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
         }
     }
 
-    protected String generateUserTitle(UserDetails user) {
+    protected String generateUserName(UserDetails user) {
         if (EntityValues.isEntity(user)) {
             return metadataTools.getInstanceName(user);
         } else {

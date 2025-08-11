@@ -334,7 +334,7 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
 
     protected UserMenuItem createSubMenuItem(UserDetails user) {
         String itemId = "%s_%sUserMenuItem".formatted(ID, user.getUsername());
-        TextUserMenuItem item = subMenu.addItem(itemId, generateUserName(user), __ -> {
+        TextUserMenuItem item = subMenu.addTextItem(itemId, generateUserName(user), __ -> {
             updateState(user.getUsername());
             substituteUser(user);
         });

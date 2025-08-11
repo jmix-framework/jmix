@@ -31,7 +31,7 @@ public interface HasActionMenuItems extends HasMenuItems {
      * @param action the {@link Action} to associate with the menu item
      * @return the created {@link ActionUserMenuItem} instance
      */
-    ActionUserMenuItem addItem(String id, Action action);
+    ActionUserMenuItem addActionItem(String id, Action action);
 
     /**
      * Adds a new menu item with the specified identifier, associated action,
@@ -42,5 +42,5 @@ public interface HasActionMenuItems extends HasMenuItems {
      * @param index  the position at which the menu item should be inserted
      * @return the created {@link ActionUserMenuItem} instance
      */
-    ActionUserMenuItem addItem(String id, Action action, int index);
+    ActionUserMenuItem addActionItem(String id, Action action, int index);
 }

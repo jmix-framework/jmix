@@ -18,16 +18,25 @@ package io.jmix.flowui.component.usermenu;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenuItemsDelegate;
+import io.jmix.flowui.view.OpenMode;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.builder.WindowBuilder;
+import io.jmix.flowui.view.navigation.ViewNavigator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -40,7 +49,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Objects;
 
-// TODO: gg, add type?
 public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuItems,
         ApplicationContextAware, InitializingBean {
 
@@ -121,7 +129,6 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
     }
 
     protected void updateSubstitutedState() {
-        // TODO: gg, probably move to the action
         UserDetails authenticatedUser = currentUserSubstitution.getAuthenticatedUser();
         if (user == null || Objects.equals(authenticatedUser.getUsername(), user.getUsername())) {
             getThemeNames().remove(SUBSTITUTED_THEME_NAME);
@@ -139,13 +146,51 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
     }
 
     @Override
-    public ViewUserMenuItem addItem(String id, Class<?> viewClass) {
-        return getItemsDelegate().addItem(id, viewClass);
+    public ViewUserMenuItem addViewItem(String id, Class<? extends View<?>> viewClass, String text) {
+        return getItemsDelegate().addViewItem(id, viewClass, text);
     }
 
     @Override
-    public ViewUserMenuItem addItem(String id, Class<?> viewClass, int index) {
-        return getItemsDelegate().addItem(id, viewClass, -1);
+    public ViewUserMenuItem addViewItem(String id, Class<? extends View<?>> viewClass, String text, int index) {
+        return getItemsDelegate().addViewItem(id, viewClass, text, index);
+    }
+
+    @Override
+    public ViewUserMenuItem addViewItem(String id,
+                                        Class<? extends View<?>> viewClass,
+                                        String text, Component icon) {
+        return getItemsDelegate().addViewItem(id, viewClass, text, icon);
+    }
+
+    @Override
+    public ViewUserMenuItem addViewItem(String id,
+                                        Class<? extends View<?>> viewClass,
+                                        String text, Component icon,
+                                        int index) {
+        return getItemsDelegate().addViewItem(id, viewClass, text, icon, index);
+    }
+
+    @Override
+    public ViewUserMenuItem addViewItem(String id, String viewId, String text) {
+        return getItemsDelegate().addViewItem(id, viewId, text);
+    }
+
+    @Override
+    public ViewUserMenuItem addViewItem(String id, String viewId, String text, int index) {
+        return getItemsDelegate().addViewItem(id, viewId, text, index);
+    }
+
+    @Override
+    public ViewUserMenuItem addViewItem(String id, String viewId,
+                                        String text, Component icon) {
+        return getItemsDelegate().addViewItem(id, viewId, text, icon);
+    }
+
+    @Override
+    public ViewUserMenuItem addViewItem(String id, String viewId,
+                                        String text, Component icon,
+                                        int index) {
+        return getItemsDelegate().addViewItem(id, viewId, text, icon, index);
     }
 
     @Override
@@ -155,6 +200,136 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
 
     @Override
     protected JmixUserMenuItemsDelegate createUserMenuItemsDelegate(JmixSubMenu subMenu) {
-        return new UserMenuItemsDelegate(this, subMenu);
+        return applicationContext.getBean(UserMenuItemsDelegate.class, this, subMenu);
+    }
+
+    protected static class ViewUserMenuItemImpl extends AbstractTextUserMenuItem implements ViewUserMenuItem {
+
+        protected String viewId;
+        protected Class<? extends View<?>> viewClass;
+
+        protected OpenMode openMode;
+
+        protected ViewNavigators viewNavigators;
+        protected DialogWindows dialogWindows;
+
+        public ViewUserMenuItemImpl(String id,
+                                    JmixUserMenu<?> userMenu,
+                                    JmixMenuItem item,
+                                    String text,
+                                    Class<? extends View<?>> viewClass,
+                                    ViewNavigators viewNavigators,
+                                    DialogWindows dialogWindows) {
+            this(id, userMenu, item, text, viewNavigators, dialogWindows);
+
+            this.viewClass = viewClass;
+        }
+
+        public ViewUserMenuItemImpl(String id,
+                                    JmixUserMenu<?> userMenu,
+                                    JmixMenuItem item,
+                                    String text,
+                                    String viewId,
+                                    ViewNavigators viewNavigators,
+                                    DialogWindows dialogWindows) {
+            this(id, userMenu, item, text, viewNavigators, dialogWindows);
+
+            this.viewId = viewId;
+        }
+
+        protected ViewUserMenuItemImpl(String id,
+                                       JmixUserMenu<?> userMenu,
+                                       JmixMenuItem item,
+                                       String text,
+                                       ViewNavigators viewNavigators,
+                                       DialogWindows dialogWindows) {
+            super(id, userMenu, item, text);
+
+            this.viewNavigators = viewNavigators;
+            this.dialogWindows = dialogWindows;
+
+            initItem();
+        }
+
+        protected void initItem() {
+            item.addClickListener(this::openView);
+        }
+
+        protected void openView(com.vaadin.flow.component.ClickEvent<MenuItem> event) {
+            if (viewId == null && viewClass == null) {
+                throw new IllegalStateException("Either 'viewId' or 'viewClass' must be set");
+            }
+
+            if (openMode == OpenMode.DIALOG
+                    || UiComponentUtils.isComponentAttachedToDialog(userMenu)) {
+                openDialog();
+            } else {
+                navigate();
+            }
+        }
+
+        protected void openDialog() {
+            View<?> origin = UiComponentUtils.getView(userMenu);
+
+            WindowBuilder<?> builder = viewId != null
+                    ? dialogWindows.view(origin, viewId)
+                    : dialogWindows.view(origin, viewClass);
+
+            builder.open();
+        }
+
+        protected void navigate() {
+            View<?> origin = UiComponentUtils.getView(userMenu);
+
+            ViewNavigator navigator = viewId != null
+                    ? viewNavigators.view(origin, viewId)
+                    : viewNavigators.view(origin, viewClass);
+
+            navigator.navigate();
+        }
+
+        @Override
+        public String getText() {
+            return super.getText();
+        }
+
+        @Override
+        public void setText(String text) {
+            super.setText(text);
+        }
+
+        @Nullable
+        @Override
+        public Component getIcon() {
+            return super.getIcon();
+        }
+
+        @Override
+        public void setIcon(@Nullable Component icon) {
+            super.setIcon(icon);
+        }
+
+        @Nullable
+        @Override
+        public OpenMode getOpenMode() {
+            return openMode;
+        }
+
+        @Override
+        public void setOpenMode(@Nullable OpenMode openMode) {
+            this.openMode = openMode;
+        }
+
+        @Nullable
+        @Override
+        public String getViewId() {
+            return viewId;
+        }
+
+        @Nullable
+        @Override
+        public Class<? extends View<?>> getViewClass() {
+            return viewClass;
+        }
     }
 }

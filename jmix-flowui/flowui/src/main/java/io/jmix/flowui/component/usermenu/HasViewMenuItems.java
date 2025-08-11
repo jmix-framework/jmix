@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.usermenu;
 
+import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.view.View;
@@ -27,21 +28,90 @@ import io.jmix.flowui.view.View;
 public interface HasViewMenuItems extends HasMenuItems {
 
     /**
-     * Adds a menu item associated with a specified view class to the user menu.
+     * Adds a menu item associated with a specified view class and text.
      *
      * @param id        the unique identifier of the menu item
      * @param viewClass the class of the view to associate with the menu item
+     * @param text      the text to be set for the menu item
      * @return the created {@link ViewUserMenuItem} instance
      */
-    ViewUserMenuItem addItem(String id, Class<?> viewClass);
+    ViewUserMenuItem addViewItem(String id, Class<? extends View<?>> viewClass, String text);
 
     /**
-     * Adds a menu item associated with a specified view class to the user menu at a specific position.
+     * Adds a menu item associated with a specified view class and text at a specific position.
      *
      * @param id        the unique identifier of the menu item
      * @param viewClass the class of the view to associate with the menu item
+     * @param text      the text to be set for the menu item
      * @param index     the position at which the menu item will be added
      * @return the created {@link ViewUserMenuItem} instance
      */
-    ViewUserMenuItem addItem(String id, Class<?> viewClass, int index);
+    ViewUserMenuItem addViewItem(String id, Class<? extends View<?>> viewClass, String text, int index);
+
+    /**
+     * Adds a menu item associated with a specified view class, text and icon.
+     *
+     * @param id        the unique identifier of the menu item
+     * @param viewClass the class of the view to associate with the menu item
+     * @param text      the text to be set for the menu item
+     * @param icon      the icon to be set for the menu item
+     * @return the created {@link ViewUserMenuItem} instance
+     */
+    ViewUserMenuItem addViewItem(String id, Class<? extends View<?>> viewClass, String text, Component icon);
+
+    /**
+     * Adds a menu item associated with a specified view class, text and icon at a specific position.
+     *
+     * @param id        the unique identifier of the menu item
+     * @param viewClass the class of the view to associate with the menu item
+     * @param text      the text to be set for the menu item
+     * @param icon      the icon to be set for the menu item
+     * @param index     the position at which the menu item will be added
+     * @return the created {@link ViewUserMenuItem} instance
+     */
+    ViewUserMenuItem addViewItem(String id, Class<? extends View<?>> viewClass, String text, Component icon, int index);
+
+    /**
+     * Adds a menu item associated with a specified view id and text.
+     *
+     * @param id     the unique identifier of the menu item
+     * @param viewId the id of the view to associate with the menu item
+     * @param text   the text to be set for the menu item
+     * @return the created {@link ViewUserMenuItem} instance
+     */
+    ViewUserMenuItem addViewItem(String id, String viewId, String text);
+
+    /**
+     * Adds a menu item associated with a specified view id and text at a specific position.
+     *
+     * @param id     the unique identifier of the menu item
+     * @param viewId the id of the view to associate with the menu item
+     * @param text   the text to be set for the menu item
+     * @param index  the position at which the menu item will be added
+     * @return the created {@link ViewUserMenuItem} instance
+     */
+    ViewUserMenuItem addViewItem(String id, String viewId, String text, int index);
+
+    /**
+     * Adds a menu item associated with a specified view id, text and icon.
+     *
+     * @param id     the unique identifier of the menu item
+     * @param viewId the id of the view to associate with the menu item
+     * @param text   the text to be set for the menu item
+     * @param icon   the icon to be set for the menu item
+     * @return the created {@link ViewUserMenuItem} instance
+     */
+    ViewUserMenuItem addViewItem(String id, String viewId, String text, Component icon);
+
+    /**
+     * Adds a menu item associated with a specified view id, text and icon at a specific position.
+     *
+     * @param id     the unique identifier of the menu item
+     * @param viewId the id of the view to associate with the menu item
+     * @param text   the text to be set for the menu item
+     * @param icon   the icon to be set for the menu item
+     * @param index  the position at which the menu item will be added
+     * @return the created {@link ViewUserMenuItem} instance
+     */
+    ViewUserMenuItem addViewItem(String id, String viewId, String text, Component icon, int index);
 }

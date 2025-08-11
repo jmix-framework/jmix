@@ -33,7 +33,7 @@ public interface HasTextMenuItems extends HasMenuItems {
      * @param text text to be displayed in the menu item
      * @return newly created menu item
      */
-    TextUserMenuItem addItem(String id, String text);
+    TextUserMenuItem addTextItem(String id, String text);
 
     /**
      * Adds a new menu item with the specified ID and text at the given index.
@@ -43,7 +43,7 @@ public interface HasTextMenuItems extends HasMenuItems {
      * @param index position at which to insert the menu item
      * @return newly created menu item
      */
-    TextUserMenuItem addItem(String id, String text, int index);
+    TextUserMenuItem addTextItem(String id, String text, int index);
 
     /**
      * Adds a new menu item with the specified ID, text and click listener.
@@ -53,8 +53,8 @@ public interface HasTextMenuItems extends HasMenuItems {
      * @param listener callback to be invoked when the menu item is clicked
      * @return newly created menu item
      */
-    TextUserMenuItem addItem(String id, String text,
-                             Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener);
+    TextUserMenuItem addTextItem(String id, String text,
+                                 Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener);
 
     /**
      * Adds a new menu item with the specified ID, text and click listener at the given index.
@@ -65,9 +65,9 @@ public interface HasTextMenuItems extends HasMenuItems {
      * @param index    position at which to insert the menu item
      * @return newly created menu item
      */
-    TextUserMenuItem addItem(String id, String text,
-                             Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener,
-                             int index);
+    TextUserMenuItem addTextItem(String id, String text,
+                                 Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener,
+                                 int index);
 
     /**
      * Adds a new menu item with the specified ID, text and icon.
@@ -77,7 +77,7 @@ public interface HasTextMenuItems extends HasMenuItems {
      * @param icon icon component to be displayed in the menu item
      * @return newly created menu item
      */
-    TextUserMenuItem addItem(String id, String text, Component icon);
+    TextUserMenuItem addTextItem(String id, String text, Component icon);
 
     /**
      * Adds a new menu item with the specified ID, text and icon at the given index.
@@ -88,7 +88,7 @@ public interface HasTextMenuItems extends HasMenuItems {
      * @param index position at which to insert the menu item
      * @return newly created menu item
      */
-    TextUserMenuItem addItem(String id, String text, Component icon, int index);
+    TextUserMenuItem addTextItem(String id, String text, Component icon, int index);
 
     /**
      * Adds a new menu item with the specified ID, text, icon and click listener.
@@ -99,9 +99,9 @@ public interface HasTextMenuItems extends HasMenuItems {
      * @param listener callback to be invoked when the menu item is clicked
      * @return newly created menu item
      */
-    TextUserMenuItem addItem(String id,
-                             String text, Component icon,
-                             Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener);
+    TextUserMenuItem addTextItem(String id,
+                                 String text, Component icon,
+                                 Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener);
 
     /**
      * Adds a new menu item with the specified ID, text, icon and click listener at the given index.
@@ -113,8 +113,8 @@ public interface HasTextMenuItems extends HasMenuItems {
      * @param index    position at which to insert the menu item
      * @return newly created menu item
      */
-    TextUserMenuItem addItem(String id,
-                             String text, Component icon,
-                             Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener,
-                             int index);
+    TextUserMenuItem addTextItem(String id,
+                                 String text, Component icon,
+                                 Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener,
+                                 int index);
 }

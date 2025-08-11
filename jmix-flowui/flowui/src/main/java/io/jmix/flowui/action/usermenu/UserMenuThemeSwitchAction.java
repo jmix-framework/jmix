@@ -104,7 +104,7 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
     protected UserMenuItem createItem(UserMenuItem.SubMenu subMenu, String theme,
                                       Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
         String itemId = "%s_%sUserMenuItem".formatted(ID, theme);
-        UserMenuItem menuItem = subMenu.addItem(itemId,
+        UserMenuItem menuItem = subMenu.addTextItem(itemId,
                 messages.getMessage("%s.%s".formatted(MESSAGE_KEY, theme)),
                 createIcon(theme),
                 listener);

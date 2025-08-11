@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         implements HasTextMenuItems, HasActionMenuItems, HasComponentMenuItems,
@@ -55,9 +54,8 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
 
     protected HasComponents headerWrapper;
 
-    // TODO: gg, functional interfaces?
-    protected Function<USER, Component> buttonRenderer;
-    protected Function<USER, Component> headerRenderer;
+    protected Renderer<USER> buttonRenderer;
+    protected Renderer<USER> headerRenderer;
 
     protected USER user;
 
@@ -116,7 +114,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         updateHeader();
     }
 
-    public void setButtonRenderer(@Nullable Function<USER, Component> buttonRenderer) {
+    public void setButtonRenderer(@Nullable Renderer<USER> buttonRenderer) {
         this.buttonRenderer = buttonRenderer;
 
         updateButton();
@@ -126,7 +124,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         userMenuItem.removeAll();
 
         Component buttonContent = buttonRenderer != null
-                ? buttonRenderer.apply(user)
+                ? buttonRenderer.render(user)
                 : null;
 
         if (buttonContent != null) {
@@ -142,7 +140,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
      *                       can be {@code null}, in which case no header
      *                       content will be displayed
      */
-    public void setHeaderRenderer(@Nullable Function<USER, Component> headerRenderer) {
+    public void setHeaderRenderer(@Nullable Renderer<USER> headerRenderer) {
         this.headerRenderer = headerRenderer;
 
         updateHeader();
@@ -154,7 +152,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
 
         Component headerContent = headerRenderer != null
-                ? headerRenderer.apply(user)
+                ? headerRenderer.render(user)
                 : null;
 
         if (headerContent != null) {
@@ -178,84 +176,84 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text) {
-        return getItemsDelegate().addItem(id, text);
+    public TextUserMenuItem addTextItem(String id, String text) {
+        return getItemsDelegate().addTextItem(id, text);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text, int index) {
-        return getItemsDelegate().addItem(id, text, index);
+    public TextUserMenuItem addTextItem(String id, String text, int index) {
+        return getItemsDelegate().addTextItem(id, text, index);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text,
-                                    Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
-        return getItemsDelegate().addItem(id, text, listener);
+    public TextUserMenuItem addTextItem(String id, String text,
+                                        Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
+        return getItemsDelegate().addTextItem(id, text, listener);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text,
-                                    Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener,
-                                    int index) {
-        return getItemsDelegate().addItem(id, text, listener, index);
+    public TextUserMenuItem addTextItem(String id, String text,
+                                        Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener,
+                                        int index) {
+        return getItemsDelegate().addTextItem(id, text, listener, index);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text, Component icon) {
-        return getItemsDelegate().addItem(id, text, icon);
+    public TextUserMenuItem addTextItem(String id, String text, Component icon) {
+        return getItemsDelegate().addTextItem(id, text, icon);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text, Component icon, int index) {
-        return getItemsDelegate().addItem(id, text, icon, index);
+    public TextUserMenuItem addTextItem(String id, String text, Component icon, int index) {
+        return getItemsDelegate().addTextItem(id, text, icon, index);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id,
-                                    String text, Component icon,
-                                    Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
-        return getItemsDelegate().addItem(id, text, icon, listener);
+    public TextUserMenuItem addTextItem(String id,
+                                        String text, Component icon,
+                                        Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
+        return getItemsDelegate().addTextItem(id, text, icon, listener);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id,
-                                    String text, Component icon,
-                                    Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener,
-                                    int index) {
-        return getItemsDelegate().addItem(id, text, icon, listener, index);
+    public TextUserMenuItem addTextItem(String id,
+                                        String text, Component icon,
+                                        Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener,
+                                        int index) {
+        return getItemsDelegate().addTextItem(id, text, icon, listener, index);
     }
 
     @Override
-    public ActionUserMenuItem addItem(String id, Action action) {
-        return getItemsDelegate().addItem(id, action);
+    public ActionUserMenuItem addActionItem(String id, Action action) {
+        return getItemsDelegate().addActionItem(id, action);
     }
 
     @Override
-    public ActionUserMenuItem addItem(String id, Action action, int index) {
-        return getItemsDelegate().addItem(id, action, index);
+    public ActionUserMenuItem addActionItem(String id, Action action, int index) {
+        return getItemsDelegate().addActionItem(id, action, index);
     }
 
     @Override
-    public ComponentUserMenuItem addItem(String id, Component content) {
-        return getItemsDelegate().addItem(id, content);
+    public ComponentUserMenuItem addComponentItem(String id, Component content) {
+        return getItemsDelegate().addComponentItem(id, content);
     }
 
     @Override
-    public ComponentUserMenuItem addItem(String id, Component content, int index) {
-        return getItemsDelegate().addItem(id, content, index);
+    public ComponentUserMenuItem addComponentItem(String id, Component content, int index) {
+        return getItemsDelegate().addComponentItem(id, content, index);
     }
 
     @Override
-    public ComponentUserMenuItem addItem(String id, Component content,
-                                         Consumer<HasClickListener.ClickEvent<ComponentUserMenuItem>> listener) {
-        return getItemsDelegate().addItem(id, content, listener);
+    public ComponentUserMenuItem addComponentItem(String id, Component content,
+                                                  Consumer<HasClickListener.ClickEvent<ComponentUserMenuItem>> listener) {
+        return getItemsDelegate().addComponentItem(id, content, listener);
     }
 
     @Override
-    public ComponentUserMenuItem addItem(String id, Component content,
-                                         Consumer<HasClickListener.ClickEvent<ComponentUserMenuItem>> listener,
-                                         int index) {
-        return getItemsDelegate().addItem(id, content, listener, index);
+    public ComponentUserMenuItem addComponentItem(String id, Component content,
+                                                  Consumer<HasClickListener.ClickEvent<ComponentUserMenuItem>> listener,
+                                                  int index) {
+        return getItemsDelegate().addComponentItem(id, content, listener, index);
     }
 
     @Override
@@ -379,24 +377,68 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
     }
 
-    protected static class TextUserMenuItemImpl extends AbstractUserMenuItem implements TextUserMenuItem {
+    @FunctionalInterface
+    public interface Renderer<T> {
+
+        @Nullable
+        Component render(@Nullable T item);
+    }
+
+    protected static class TextUserMenuItemImpl extends AbstractTextUserMenuItem implements TextUserMenuItem {
+
+        public TextUserMenuItemImpl(String id,
+                                    JmixUserMenu<?> userMenu,
+                                    JmixMenuItem item,
+                                    String text) {
+            super(id, userMenu, item, text);
+        }
+
+        @Override
+        public String getText() {
+            return super.getText();
+        }
+
+        @Override
+        public void setText(String text) {
+            super.setText(text);
+        }
+
+        @Nullable
+        @Override
+        public Component getIcon() {
+            return super.getIcon();
+        }
+
+        @Override
+        public void setIcon(@Nullable Component icon) {
+            super.setIcon(icon);
+        }
+
+        @Override
+        public Registration addClickListener(Consumer<ClickEvent<TextUserMenuItem>> listener) {
+            return super.addClickListenerInternal(listener);
+        }
+    }
+
+    protected static abstract class AbstractTextUserMenuItem extends AbstractUserMenuItem {
 
         protected String text;
         protected Component icon;
 
-        public TextUserMenuItemImpl(String id, JmixUserMenu<?> userMenu, JmixMenuItem item, String text) {
+        public AbstractTextUserMenuItem(String id,
+                                        JmixUserMenu<?> userMenu,
+                                        JmixMenuItem item,
+                                        String text) {
             super(id, userMenu, item);
 
             this.text = text;
         }
 
-        @Override
-        public String getText() {
+        protected String getText() {
             return text;
         }
 
-        @Override
-        public void setText(String text) {
+        protected void setText(String text) {
             Preconditions.checkArgument(text != null, "Text cannot be null");
 
             this.text = text;
@@ -404,13 +446,11 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
 
         @Nullable
-        @Override
-        public Component getIcon() {
+        protected Component getIcon() {
             return icon;
         }
 
-        @Override
-        public void setIcon(@Nullable Component icon) {
+        protected void setIcon(@Nullable Component icon) {
             if (Objects.equals(this.icon, icon)) {
                 return;
             }
@@ -424,18 +464,17 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
                 item.addComponentAsFirst(icon);
             }
         }
-
-        @Override
-        public Registration addClickListener(Consumer<ClickEvent<TextUserMenuItem>> listener) {
-            return super.addClickListenerInternal(listener);
-        }
     }
 
-    protected static class ActionUserMenuItemImpl extends AbstractUserMenuItem implements ActionUserMenuItem {
+    protected static class ActionUserMenuItemImpl extends AbstractUserMenuItem
+            implements ActionUserMenuItem {
 
         protected final Action action;
 
-        public ActionUserMenuItemImpl(String id, JmixUserMenu<?> userMenu, JmixMenuItem item, Action action) {
+        public ActionUserMenuItemImpl(String id,
+                                      JmixUserMenu<?> userMenu,
+                                      JmixMenuItem item,
+                                      Action action) {
             super(id, userMenu, item);
 
             this.action = action;
@@ -480,11 +519,15 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
     }
 
-    protected static class ComponentUserMenuItemImpl extends AbstractUserMenuItem implements ComponentUserMenuItem {
+    protected static class ComponentUserMenuItemImpl extends AbstractUserMenuItem
+            implements ComponentUserMenuItem {
 
         protected Component content;
 
-        public ComponentUserMenuItemImpl(String id, JmixUserMenu<?> userMenu, JmixMenuItem item, Component content) {
+        public ComponentUserMenuItemImpl(String id,
+                                         JmixUserMenu<?> userMenu,
+                                         JmixMenuItem item,
+                                         Component content) {
             super(id, userMenu, item);
 
             this.content = content;
@@ -515,7 +558,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
     }
 
-    protected static class AbstractUserMenuItem implements UserMenuItem, HasMenuItem {
+    protected static abstract class AbstractUserMenuItem implements UserMenuItem, HasMenuItem {
 
         protected final String id;
         protected final JmixUserMenu<?> userMenu;
@@ -668,73 +711,82 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
 
         @Override
-        public TextUserMenuItem addItem(String id, String text) {
-            return getItemsDelegate().addItem(id, text);
+        public TextUserMenuItem addTextItem(String id, String text) {
+            return getItemsDelegate().addTextItem(id, text);
         }
 
         @Override
-        public TextUserMenuItem addItem(String id, String text, int index) {
-            return getItemsDelegate().addItem(id, text, index);
+        public TextUserMenuItem addTextItem(String id, String text, int index) {
+            return getItemsDelegate().addTextItem(id, text, index);
         }
 
         @Override
-        public TextUserMenuItem addItem(String id, String text, Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
-            return getItemsDelegate().addItem(id, text, listener);
+        public TextUserMenuItem addTextItem(String id, String text,
+                                            Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
+            return getItemsDelegate().addTextItem(id, text, listener);
         }
 
         @Override
-        public TextUserMenuItem addItem(String id, String text, Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener, int index) {
-            return getItemsDelegate().addItem(id, text, listener, index);
+        public TextUserMenuItem addTextItem(String id, String text,
+                                            Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener,
+                                            int index) {
+            return getItemsDelegate().addTextItem(id, text, listener, index);
         }
 
         @Override
-        public TextUserMenuItem addItem(String id, String text, Component icon) {
-            return getItemsDelegate().addItem(id, text, icon);
+        public TextUserMenuItem addTextItem(String id, String text, Component icon) {
+            return getItemsDelegate().addTextItem(id, text, icon);
         }
 
         @Override
-        public TextUserMenuItem addItem(String id, String text, Component icon, int index) {
-            return getItemsDelegate().addItem(id, text, icon, index);
+        public TextUserMenuItem addTextItem(String id, String text, Component icon, int index) {
+            return getItemsDelegate().addTextItem(id, text, icon, index);
         }
 
         @Override
-        public TextUserMenuItem addItem(String id, String text, Component icon, Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
-            return getItemsDelegate().addItem(id, text, icon, listener);
+        public TextUserMenuItem addTextItem(String id, String text, Component icon,
+                                            Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
+            return getItemsDelegate().addTextItem(id, text, icon, listener);
         }
 
         @Override
-        public TextUserMenuItem addItem(String id, String text, Component icon, Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener, int index) {
-            return getItemsDelegate().addItem(id, text, icon, listener, index);
+        public TextUserMenuItem addTextItem(String id, String text, Component icon,
+                                            Consumer<HasClickListener.ClickEvent<TextUserMenuItem>> listener,
+                                            int index) {
+            return getItemsDelegate().addTextItem(id, text, icon, listener, index);
         }
 
         @Override
-        public ActionUserMenuItem addItem(String id, Action action) {
-            return getItemsDelegate().addItem(id, action);
+        public ActionUserMenuItem addActionItem(String id, Action action) {
+            return getItemsDelegate().addActionItem(id, action);
         }
 
         @Override
-        public ActionUserMenuItem addItem(String id, Action action, int index) {
-            return getItemsDelegate().addItem(id, action, index);
+        public ActionUserMenuItem addActionItem(String id, Action action, int index) {
+            return getItemsDelegate().addActionItem(id, action, index);
         }
 
         @Override
-        public ComponentUserMenuItem addItem(String id, Component content) {
-            return getItemsDelegate().addItem(id, content);
+        public ComponentUserMenuItem addComponentItem(String id, Component content) {
+            return getItemsDelegate().addComponentItem(id, content);
         }
 
         @Override
-        public ComponentUserMenuItem addItem(String id, Component content, int index) {
-            return getItemsDelegate().addItem(id, content, index);
+        public ComponentUserMenuItem addComponentItem(String id, Component content, int index) {
+            return getItemsDelegate().addComponentItem(id, content, index);
         }
 
         @Override
-        public ComponentUserMenuItem addItem(String id, Component content, Consumer<HasClickListener.ClickEvent<ComponentUserMenuItem>> listener) {
-            return getItemsDelegate().addItem(id, content, listener);
+        public ComponentUserMenuItem addComponentItem(String id, Component content,
+                                                      Consumer<HasClickListener.ClickEvent<ComponentUserMenuItem>> listener) {
+            return getItemsDelegate().addComponentItem(id, content, listener);
         }
 
         @Override
-        public ComponentUserMenuItem addItem(String id, Component content, Consumer<HasClickListener.ClickEvent<ComponentUserMenuItem>> listener, int index) {
-            return getItemsDelegate().addItem(id, content, listener, index);
+        public ComponentUserMenuItem addComponentItem(String id, Component content,
+                                                      Consumer<HasClickListener.ClickEvent<ComponentUserMenuItem>> listener,
+                                                      int index) {
+            return getItemsDelegate().addComponentItem(id, content, listener, index);
         }
 
         @Override

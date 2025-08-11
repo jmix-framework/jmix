@@ -48,50 +48,50 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text) {
-        return addItem(id, text, -1);
+    public TextUserMenuItem addTextItem(String id, String text) {
+        return addTextItem(id, text, -1);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text, int index) {
+    public TextUserMenuItem addTextItem(String id, String text, int index) {
         return addItemInternal(id, text, null, null, index);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text,
-                                    Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
-        return addItem(id, text, listener, -1);
+    public TextUserMenuItem addTextItem(String id, String text,
+                                        Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
+        return addTextItem(id, text, listener, -1);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text,
-                                    Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener,
-                                    int index) {
+    public TextUserMenuItem addTextItem(String id, String text,
+                                        Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener,
+                                        int index) {
         return addItemInternal(id, text, null, listener, index);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text, Component icon) {
-        return addItem(id, text, icon, -1);
+    public TextUserMenuItem addTextItem(String id, String text, Component icon) {
+        return addTextItem(id, text, icon, -1);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id, String text, Component icon, int index) {
+    public TextUserMenuItem addTextItem(String id, String text, Component icon, int index) {
         return addItemInternal(id, text, icon, null, index);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id,
-                                    String text, Component icon,
-                                    Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
-        return addItem(id, text, icon, listener, -1);
+    public TextUserMenuItem addTextItem(String id,
+                                        String text, Component icon,
+                                        Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
+        return addTextItem(id, text, icon, listener, -1);
     }
 
     @Override
-    public TextUserMenuItem addItem(String id,
-                                    String text, Component icon,
-                                    Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener,
-                                    int index) {
+    public TextUserMenuItem addTextItem(String id,
+                                        String text, Component icon,
+                                        Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener,
+                                        int index) {
         return addItemInternal(id, text, icon, listener, index);
     }
 
@@ -120,12 +120,12 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
     }
 
     @Override
-    public ActionUserMenuItem addItem(String id, Action action) {
-        return addItem(id, action, -1);
+    public ActionUserMenuItem addActionItem(String id, Action action) {
+        return addActionItem(id, action, -1);
     }
 
     @Override
-    public ActionUserMenuItem addItem(String id, Action action, int index) {
+    public ActionUserMenuItem addActionItem(String id, Action action, int index) {
         ActionUserMenuItem menuItem = new JmixUserMenu.ActionUserMenuItemImpl(
                 id,
                 userMenu,
@@ -139,25 +139,25 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
     }
 
     @Override
-    public ComponentUserMenuItem addItem(String id, Component content) {
-        return addItem(id, content, -1);
+    public ComponentUserMenuItem addComponentItem(String id, Component content) {
+        return addComponentItem(id, content, -1);
     }
 
     @Override
-    public ComponentUserMenuItem addItem(String id, Component content, int index) {
+    public ComponentUserMenuItem addComponentItem(String id, Component content, int index) {
         return addItemInternal(id, content, null, index);
     }
 
     @Override
-    public ComponentUserMenuItem addItem(String id, Component content,
-                                         Consumer<UserMenuItem.HasClickListener.ClickEvent<ComponentUserMenuItem>> listener) {
-        return addItem(id, content, listener, -1);
+    public ComponentUserMenuItem addComponentItem(String id, Component content,
+                                                  Consumer<UserMenuItem.HasClickListener.ClickEvent<ComponentUserMenuItem>> listener) {
+        return addComponentItem(id, content, listener, -1);
     }
 
     @Override
-    public ComponentUserMenuItem addItem(String id, Component content,
-                                         Consumer<UserMenuItem.HasClickListener.ClickEvent<ComponentUserMenuItem>> listener,
-                                         int index) {
+    public ComponentUserMenuItem addComponentItem(String id, Component content,
+                                                  Consumer<UserMenuItem.HasClickListener.ClickEvent<ComponentUserMenuItem>> listener,
+                                                  int index) {
         return addItemInternal(id, content, listener, index);
     }
 

@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.component.usermenu;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasClickListener;
 
 import java.util.function.Consumer;
 
@@ -33,7 +34,7 @@ public interface HasComponentMenuItems extends HasMenuItems {
      * @param content the {@link Component} to be set as the content of the menu item
      * @return the created {@link ComponentUserMenuItem} instance
      */
-    ComponentUserMenuItem addItem(String id, Component content);
+    ComponentUserMenuItem addComponentItem(String id, Component content);
 
     /**
      * Adds a new menu item with a unique identifier, a custom UI {@link Component} as its content,
@@ -44,7 +45,7 @@ public interface HasComponentMenuItems extends HasMenuItems {
      * @param index   the position at which the menu item will be inserted
      * @return the created {@link ComponentUserMenuItem} instance
      */
-    ComponentUserMenuItem addItem(String id, Component content, int index);
+    ComponentUserMenuItem addComponentItem(String id, Component content, int index);
 
     /**
      * Adds a new menu item with a unique identifier, a custom UI {@link Component} as its content,
@@ -55,8 +56,8 @@ public interface HasComponentMenuItems extends HasMenuItems {
      * @param listener the {@link Consumer} that handles the click events triggered by the menu item
      * @return the created {@link ComponentUserMenuItem} instance
      */
-    ComponentUserMenuItem addItem(String id, Component content,
-                                  Consumer<UserMenuItem.HasClickListener.ClickEvent<ComponentUserMenuItem>> listener);
+    ComponentUserMenuItem addComponentItem(String id, Component content,
+                                           Consumer<HasClickListener.ClickEvent<ComponentUserMenuItem>> listener);
 
     /**
      * Adds a new menu item with a unique identifier, a custom UI {@link Component} as its content,
@@ -69,7 +70,7 @@ public interface HasComponentMenuItems extends HasMenuItems {
      * @param index    the position at which the menu item will be inserted
      * @return the created {@link ComponentUserMenuItem} instance
      */
-    ComponentUserMenuItem addItem(String id, Component content,
-                                  Consumer<UserMenuItem.HasClickListener.ClickEvent<ComponentUserMenuItem>> listener,
-                                  int index);
+    ComponentUserMenuItem addComponentItem(String id, Component content,
+                                           Consumer<HasClickListener.ClickEvent<ComponentUserMenuItem>> listener,
+                                           int index);
 }

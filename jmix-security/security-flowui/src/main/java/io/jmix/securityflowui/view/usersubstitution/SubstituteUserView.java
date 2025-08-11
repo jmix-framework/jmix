@@ -1,4 +1,4 @@
-package io.jmix.flowui.app.usermenu;
+package io.jmix.securityflowui.view.usersubstitution;
 
 
 import com.google.common.base.Strings;
@@ -32,7 +32,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.List;
 
-@ViewController(id = "substituteUserView")
+@ViewController(id = "sec_SubstituteUserView")
 @ViewDescriptor(path = "substitute-user-view.xml")
 @DialogMode(width = "30em", height = "40em", closeOnEsc = true)
 public class SubstituteUserView extends StandardView {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.action.usermenu;
+package io.jmix.securityflowui.action;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
@@ -34,6 +34,7 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.security.SubstituteUserAction;
+import io.jmix.flowui.action.usermenu.UserMenuAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -63,8 +64,8 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
 
     private static final Logger log = LoggerFactory.getLogger(UserMenuSubstituteUserAction.class);
 
-    public static final String ID = "userMenu_substituteUser";
-    public static final String DEFAULT_VIEW = "substituteUserView";
+    public static final String ID = "sec_UserMenuSubstituteUser";
+    public static final String DEFAULT_VIEW = "sec_SubstituteUserView";
 
     protected Actions actions;
     protected Dialogs dialogs;

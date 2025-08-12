@@ -119,7 +119,7 @@ public class SubstituteUserView extends StandardView {
 
         dialogs.createOptionDialog()
                 .withHeader(messages.getMessage("dialogs.substitutionConfirmation.header"))
-                .withText(messages.formatMessage("dialogs.substitutionConfirmation.text",
+                .withText(messages.formatMessage("", "dialogs.substitutionConfirmation.text",
                         metadataTools.getInstanceName(newUser)))
                 .withActions(
                         ((SubstituteUserAction) actions.create(SubstituteUserAction.ID))

@@ -90,6 +90,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("listMenu", ListMenuLoader.class);
         loaders.put("drawerToggle", DrawerToggleLoader.class);
         loaders.put("userIndicator", UserIndicatorLoader.class);
+        loaders.put("userMenu", UserMenuLoader.class);
         loaders.put("dataGrid", DataGridLoader.class);
         loaders.put("treeDataGrid", TreeDataGridLoader.class);
         loaders.put("loginForm", LoginFormLoader.class);

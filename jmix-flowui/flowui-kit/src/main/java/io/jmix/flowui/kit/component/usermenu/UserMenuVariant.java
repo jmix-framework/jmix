@@ -31,12 +31,7 @@ public enum UserMenuVariant implements ThemeVariant {
     /**
      * Represents a variant that makes the {@link JmixUserMenu}'s button appear in a tertiary style.
      */
-    TERTIARY("tertiary"),
-
-    /**
-     * Represents a variant that aligns this component to the end of the parent.
-     */
-    END_ALIGNED("end-aligned");
+    TERTIARY("tertiary");
 
     private final String variant;
 

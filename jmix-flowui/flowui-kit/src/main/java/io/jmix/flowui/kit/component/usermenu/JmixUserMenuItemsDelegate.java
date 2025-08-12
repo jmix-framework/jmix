@@ -21,13 +21,13 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Hr;
+import com.vaadin.flow.dom.Element;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -183,11 +183,13 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
     @Override
     public void addSeparator() {
         subMenu.addComponent(new Hr());
+        addItemInternal(new SeparatorUserMenuItem(), -1);
     }
 
     @Override
     public void addSeparatorAtIndex(int index) {
         subMenu.addComponentAtIndex(index, new Hr());
+        addItemInternal(new SeparatorUserMenuItem(), index);
     }
 
     protected void addItemInternal(UserMenuItem item, int index) {
@@ -230,7 +232,9 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
 
     @Override
     public List<UserMenuItem> getItems() {
-        return Collections.unmodifiableList(items);
+        return items.stream()
+                .filter(userMenuItem -> !(userMenuItem instanceof SeparatorUserMenuItem))
+                .toList();
     }
 
     @Override
@@ -264,5 +268,68 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
     public void removeAll() {
         // Remove each item individually to handle detachment
         new ArrayList<>(items).forEach(this::remove);
+    }
+
+    /**
+     * Blank item needed for correct insertion by index.
+     */
+    protected static class SeparatorUserMenuItem implements UserMenuItem {
+
+        @Override
+        public String getId() {
+            return "";
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+        }
+
+        @Override
+        public boolean isVisible() {
+            return false;
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
+
+        @Override
+        public boolean isCheckable() {
+            return false;
+        }
+
+        @Override
+        public void setCheckable(boolean checkable) {
+        }
+
+        @Override
+        public boolean isChecked() {
+            return false;
+        }
+
+        @Override
+        public void setChecked(boolean checked) {
+        }
+
+        @Override
+        public SubMenu getSubMenu() {
+            return null;
+        }
+
+        @Override
+        public Element getElement() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public Object getSubPart(String name) {
+            return null;
+        }
     }
 }

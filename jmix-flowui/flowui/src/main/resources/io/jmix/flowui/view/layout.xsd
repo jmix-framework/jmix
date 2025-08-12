@@ -2200,6 +2200,33 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="userMenuThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="non-checkable"/>
+                    <xs:enumeration value="tertiary"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="userMenuItemThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="non-checkable"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <!-- Interfaces -->
     <xs:attributeGroup name="hasId">
         <xs:attribute name="id" type="xs:string"/>
@@ -2371,6 +2398,22 @@
         <xs:attributeGroup ref="hasEnabled"/>
     </xs:complexType>
 
+    <xs:complexType name="noShortcutBaseAction">
+        <xs:sequence>
+            <xs:element name="properties" type="actionProperties" minOccurs="0"/>
+        </xs:sequence>
+
+        <xs:attribute name="type" type="actionTypeEnum"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="text" type="resourceString"/>
+        <xs:attribute name="description" type="resourceString"/>
+        <xs:attribute name="actionVariant" type="actionVariant"/>
+
+        <xs:attributeGroup ref="hasIcon"/>
+        <xs:attributeGroup ref="requiresId"/>
+        <xs:attributeGroup ref="hasEnabled"/>
+    </xs:complexType>
+
     <xs:complexType name="viewAction">
         <xs:complexContent>
             <xs:extension base="baseAction"/>
@@ -2390,19 +2433,15 @@
     </xs:complexType>
 
     <xs:complexType name="dropdownButtonAction">
-        <xs:sequence>
-            <xs:element name="properties" type="actionProperties" minOccurs="0"/>
-        </xs:sequence>
+        <xs:complexContent>
+            <xs:extension base="noShortcutBaseAction"/>
+        </xs:complexContent>
+    </xs:complexType>
 
-        <xs:attribute name="type" type="actionTypeEnum"/>
-        <xs:attribute name="visible" type="xs:boolean"/>
-        <xs:attribute name="text" type="resourceString"/>
-        <xs:attribute name="description" type="resourceString"/>
-        <xs:attribute name="actionVariant" type="actionVariant"/>
-
-        <xs:attributeGroup ref="hasIcon"/>
-        <xs:attributeGroup ref="requiresId"/>
-        <xs:attributeGroup ref="hasEnabled"/>
+    <xs:complexType name="userMenuAction">
+        <xs:complexContent>
+            <xs:extension base="noShortcutBaseAction"/>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="genericFilterAction">
@@ -2924,6 +2963,97 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <!-- <editor-fold desc="UserMenu"> -->
+
+    <xs:complexType name="userMenuComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="items">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="textItem" type="userMenuTextItemType" minOccurs="0"/>
+                                <xs:element name="actionItem" type="userMenuActionItemType" minOccurs="0"/>
+                                <xs:element name="componentItem" type="userMenuComponentItemType" minOccurs="0"/>
+                                <xs:element name="viewItem" type="userMenuViewItemType" minOccurs="0"/>
+                                <xs:element name="separator" minOccurs="0"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+
+
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasOverlayClass"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+
+                <xs:attribute name="themeNames" type="userMenuThemeNames"/>
+                <xs:attribute name="openOnHover" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- BaseItem -->
+    <xs:complexType name="userMenuBaseItemType">
+        <xs:attributeGroup ref="requiresId"/>
+        <xs:attributeGroup ref="hasEnabled"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="themeNames" type="userMenuItemThemeNames"/>
+        <xs:attribute name="checkable" type="xs:boolean"/>
+        <xs:attribute name="checked" type="xs:boolean"/>
+    </xs:complexType>
+
+    <!-- TextItem-->
+    <xs:complexType name="userMenuTextItemType">
+        <xs:complexContent>
+            <xs:extension base="userMenuBaseItemType">
+                <xs:attribute name="text" type="resourceString" use="required"/>
+                <xs:attributeGroup ref="hasIcon"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ActionItem-->
+    <xs:complexType name="userMenuActionItemType">
+        <xs:complexContent>
+            <xs:extension base="userMenuBaseItemType">
+                <xs:choice>
+                    <xs:element name="action" type="userMenuAction"/>
+                </xs:choice>
+
+                <xs:attribute name="ref" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ComponentItem-->
+    <xs:complexType name="userMenuComponentItemType">
+        <xs:complexContent>
+            <xs:extension base="userMenuBaseItemType">
+                <xs:choice>
+                    <xs:group ref="singleLayoutOrComponent"/>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- TextItem-->
+    <xs:complexType name="userMenuViewItemType">
+        <xs:complexContent>
+            <xs:extension base="userMenuBaseItemType">
+                <xs:attribute name="text" type="resourceString"/>
+                <xs:attributeGroup ref="hasIcon"/>
+
+                <xs:attribute name="viewId" type="xs:string"/>
+                <xs:attribute name="viewClass" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- </editor-fold> -->
 
     <xs:complexType name="gridEditorButtonType">
         <xs:attributeGroup ref="hasText"/>
@@ -4932,6 +5062,7 @@
                 <!-- Component -->
                 <xs:element name="drawerToggle" type="drawerToggleComponent"/>
                 <xs:element name="userIndicator" type="userIndicatorComponent"/>
+                <xs:element name="userMenu" type="userMenuComponent"/>
                 <xs:element name="listMenu" type="listMenuComponent"/>
                 <xs:element name="button" type="buttonComponent"/>
                 <xs:element name="avatar" type="avatarComponent"/>

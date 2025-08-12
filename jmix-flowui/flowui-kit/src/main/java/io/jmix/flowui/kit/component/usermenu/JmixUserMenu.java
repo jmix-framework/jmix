@@ -27,6 +27,7 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasSubParts;
+import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
@@ -42,7 +43,7 @@ import java.util.function.Consumer;
 
 public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         implements HasTextMenuItems, HasActionMenuItems, HasComponentMenuItems,
-        HasEnabled, HasOverlayClassName, HasSubParts,
+        HasEnabled, HasTitle, HasOverlayClassName, HasSubParts,
         HasThemeVariant<UserMenuVariant>, Focusable<JmixUserMenu<USER>> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";

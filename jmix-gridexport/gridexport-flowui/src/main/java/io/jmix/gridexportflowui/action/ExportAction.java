@@ -26,6 +26,9 @@ import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.groupgrid.AbstractGroupDataGridAdapter;
+import io.jmix.flowui.component.groupgrid.GroupGrid;
+import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
@@ -35,6 +38,8 @@ import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.ColumnsToExport;
 import io.jmix.gridexportflowui.exporter.DataGridExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -56,6 +61,8 @@ import java.util.function.Predicate;
 @ActionType(ExportAction.ID)
 public class ExportAction extends ListDataComponentAction<ExportAction, Object> implements ApplicationContextAware {
 
+    private static final Logger log = LoggerFactory.getLogger(ExportAction.class);
+
     public static final String ID = "grdexp_export";
 
     protected ApplicationContext applicationContext;
@@ -64,6 +71,7 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     protected MetadataTools metadataTools;
     protected Downloader downloader;
     protected Dialogs dialogs;
+    protected GroupDataGridAdapterFactory groupDataGridFactory;
 
     protected DataGridExporter dataGridExporter;
     protected List<ExportMode> availableExportModes;
@@ -103,6 +111,11 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     @Autowired
     public void setDialogs(Dialogs dialogs) {
         this.dialogs = dialogs;
+    }
+
+    @Autowired
+    public void setGroupDataGridAdapterFactory(GroupDataGridAdapterFactory groupDataGridFactory) {
+        this.groupDataGridFactory = groupDataGridFactory;
     }
 
     @Autowired
@@ -310,6 +323,16 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected void doExport(ExportMode exportMode, Predicate<Grid.Column<Object>> primaryFilterPredicate) {
+        if (getTarget() instanceof GroupGrid groupGrid) {
+            AbstractGroupDataGridAdapter<?> adapter = groupDataGridFactory.getAdapter(groupGrid);
+            if (adapter != null) {
+                dataGridExporter.exportDataGrid(downloader, (Grid) adapter, exportMode, primaryFilterPredicate);
+                return;
+            }
+
+            log.warn("Cannot export {}. There were no adapters created", GroupGrid.class.getSimpleName());
+        }
+
         if (getTarget() instanceof Grid grid) {
             dataGridExporter.exportDataGrid(downloader, grid, exportMode, primaryFilterPredicate);
         } else {

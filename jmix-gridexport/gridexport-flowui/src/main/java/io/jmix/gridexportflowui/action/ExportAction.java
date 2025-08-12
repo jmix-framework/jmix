@@ -27,7 +27,7 @@ import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.groupgrid.AbstractGroupDataGridAdapter;
-import io.jmix.flowui.component.groupgrid.GroupGrid;
+import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.download.Downloader;
@@ -323,14 +323,14 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected void doExport(ExportMode exportMode, Predicate<Grid.Column<Object>> primaryFilterPredicate) {
-        if (getTarget() instanceof GroupGrid groupGrid) {
+        if (getTarget() instanceof GroupListDataComponent groupGrid) {
             AbstractGroupDataGridAdapter<?> adapter = groupDataGridFactory.getAdapter(groupGrid);
             if (adapter != null) {
                 dataGridExporter.exportDataGrid(downloader, (Grid) adapter, exportMode, primaryFilterPredicate);
                 return;
             }
 
-            log.warn("Cannot export {}. There were no adapters created", GroupGrid.class.getSimpleName());
+            log.warn("Cannot export {}. There were no adapters created", GroupListDataComponent.class.getSimpleName());
         }
 
         if (getTarget() instanceof Grid grid) {

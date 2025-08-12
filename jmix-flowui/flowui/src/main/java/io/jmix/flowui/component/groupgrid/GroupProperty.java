@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.component.groupgrid;
 
-import io.jmix.flowui.component.ListDataComponent;
+public interface GroupProperty {
 
-public interface GroupGrid<E> extends ListDataComponent<E> {
+    Object get();
 }

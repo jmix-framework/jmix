@@ -17,11 +17,11 @@
 package io.jmix.flowui.component.groupgrid.adapter;
 
 import io.jmix.flowui.component.groupgrid.AbstractGroupDataGridAdapter;
-import io.jmix.flowui.component.groupgrid.GroupGrid;
+import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import org.springframework.lang.Nullable;
 
 public interface GroupDataGridAdapterFactory {
 
     @Nullable
-    <E> AbstractGroupDataGridAdapter<E> getAdapter(GroupGrid<E> groupGrid);
+    <E> AbstractGroupDataGridAdapter<E> getAdapter(GroupListDataComponent<E> groupGrid);
 }

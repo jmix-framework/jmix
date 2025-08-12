@@ -17,7 +17,7 @@
 package io.jmix.flowui.component.groupgrid.adapter;
 
 import io.jmix.flowui.component.groupgrid.AbstractGroupDataGridAdapter;
-import io.jmix.flowui.component.groupgrid.GroupGrid;
+import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
@@ -34,7 +34,7 @@ public class DefaultGroupDataGridAdapterFactory implements GroupDataGridAdapterF
 
     @Nullable
     @Override
-    public <E> AbstractGroupDataGridAdapter<E> getAdapter(GroupGrid<E> groupGrid) {
+    public <E> AbstractGroupDataGridAdapter<E> getAdapter(GroupListDataComponent<E> groupGrid) {
         if (adapterProviders == null) {
             return null;
         }

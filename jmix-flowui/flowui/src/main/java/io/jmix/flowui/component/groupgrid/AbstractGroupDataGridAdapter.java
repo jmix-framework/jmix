@@ -16,22 +16,115 @@
 
 package io.jmix.flowui.component.groupgrid;
 
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 
-public abstract class AbstractGroupDataGridAdapter<E> extends DataGrid<E> implements ListDataComponent<E>,
+import java.util.List;
+import java.util.function.Consumer;
+
+public abstract class AbstractGroupDataGridAdapter<E> extends DataGrid<E> implements GroupListDataComponent<E>,
         EnhancedDataGrid<E> {
 
-    protected GroupGrid<E> groupGrid;
+    protected GroupListDataComponent<E> groupDataGrid;
 
-    public AbstractGroupDataGridAdapter(GroupGrid<E> groupGrid) {
-        Preconditions.checkNotNullArgument(groupGrid);
-        this.groupGrid = groupGrid;
+    public AbstractGroupDataGridAdapter(GroupListDataComponent<E> groupDataGrid) {
+        Preconditions.checkNotNullArgument(groupDataGrid);
+        this.groupDataGrid = groupDataGrid;
     }
 
-    public GroupGrid<E> getAdaptee() {
-        return groupGrid;
+    public GroupListDataComponent<E> getAdaptee() {
+        return groupDataGrid;
+    }
+
+    @Override
+    public void groupByKeys(String... keys) {
+        groupDataGrid.groupByKeys(keys);
+    }
+
+    @Override
+    public void groupByKeysList(List<String> keys) {
+        groupDataGrid.groupByKeysList(keys);
+    }
+
+    @Override
+    public void ungroup() {
+        groupDataGrid.ungroup();
+    }
+
+    @Override
+    public void ungroupByKeys(String... keys) {
+        groupDataGrid.ungroupByKeys(keys);
+    }
+
+    @Override
+    public void ungroupByKeysList(List<String> keys) {
+        groupDataGrid.ungroupByKeysList(keys);
+    }
+
+    @Override
+    public void expand(GroupInfo group) {
+        groupDataGrid.expand(group);
+    }
+
+    @Override
+    public void expandByPath(E item) {
+        groupDataGrid.expandByPath(item);
+    }
+
+    @Override
+    public void expandAll() {
+        groupDataGrid.expandAll();
+    }
+
+    @Override
+    public void collapse(GroupInfo group) {
+        groupDataGrid.collapse(group);
+    }
+
+    @Override
+    public void collapseByPath(E item) {
+        groupDataGrid.collapseByPath(item);
+    }
+
+    @Override
+    public void collapseAll() {
+        groupDataGrid.collapseAll();
+    }
+
+    @Override
+    public boolean isExpanded(GroupInfo group) {
+        return groupDataGrid.isExpanded(group);
+    }
+
+    @Override
+    public List<GroupInfo> getRootGroups() {
+        return groupDataGrid.getRootGroups();
+    }
+
+    @Override
+    public List<GroupInfo> getChildren(GroupInfo group) {
+        return groupDataGrid.getChildren(group);
+    }
+
+    @Override
+    public boolean hasChildren(GroupInfo groupInfo) {
+        return groupDataGrid.hasChildren(groupInfo);
+    }
+
+    @Override
+    public boolean hasGroups() {
+        return groupDataGrid.hasGroups();
+    }
+
+    @Override
+    public Registration addCollapseListener(Consumer<CollapseEvent<E>> listener) {
+        return groupDataGrid.addCollapseListener(listener);
+    }
+
+    @Override
+    public Registration addExpandListener(Consumer<ExpandEvent<E>> listener) {
+        return groupDataGrid.addExpandListener(listener);
     }
 }

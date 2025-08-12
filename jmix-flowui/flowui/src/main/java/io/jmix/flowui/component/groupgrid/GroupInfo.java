@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.groupgrid.adapter;
+package io.jmix.flowui.component.groupgrid;
 
-import io.jmix.flowui.component.groupgrid.AbstractGroupDataGridAdapter;
-import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import org.springframework.lang.Nullable;
 
-public interface GroupDataGridAdapterProvider {
+public interface GroupInfo {
+
+    GroupProperty getProperty();
 
     @Nullable
-    <E> AbstractGroupDataGridAdapter<E> getAdapter(GroupListDataComponent<E> groupGrid);
+    <T> T getPropertyValue(GroupProperty property);
+
+    <T> T getValue();
 }

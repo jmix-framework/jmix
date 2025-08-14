@@ -2983,7 +2983,6 @@
                     </xs:element>
                 </xs:sequence>
 
-
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasClassNames"/>
@@ -3006,10 +3005,30 @@
         <xs:attribute name="checked" type="xs:boolean"/>
     </xs:complexType>
 
+    <xs:complexType name="userMenuWithSubMenuBaseItemType">
+        <xs:complexContent>
+            <xs:extension base="userMenuBaseItemType">
+                <xs:sequence>
+                    <xs:element name="items" minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="textItem" type="userMenuTextItemType" minOccurs="0"/>
+                                <xs:element name="actionItem" type="userMenuActionItemType" minOccurs="0"/>
+                                <xs:element name="componentItem" type="userMenuComponentItemType" minOccurs="0"/>
+                                <xs:element name="viewItem" type="userMenuViewItemType" minOccurs="0"/>
+                                <xs:element name="separator" minOccurs="0"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- TextItem-->
     <xs:complexType name="userMenuTextItemType">
         <xs:complexContent>
-            <xs:extension base="userMenuBaseItemType">
+            <xs:extension base="userMenuWithSubMenuBaseItemType">
                 <xs:attribute name="text" type="resourceString" use="required"/>
                 <xs:attributeGroup ref="hasIcon"/>
             </xs:extension>
@@ -3032,7 +3051,7 @@
     <!-- ComponentItem-->
     <xs:complexType name="userMenuComponentItemType">
         <xs:complexContent>
-            <xs:extension base="userMenuBaseItemType">
+            <xs:extension base="userMenuWithSubMenuBaseItemType">
                 <xs:choice>
                     <xs:group ref="singleLayoutOrComponent"/>
                 </xs:choice>
@@ -3040,7 +3059,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- TextItem-->
+    <!-- ViewItem-->
     <xs:complexType name="userMenuViewItemType">
         <xs:complexContent>
             <xs:extension base="userMenuBaseItemType">

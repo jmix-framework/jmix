@@ -16,9 +16,10 @@
 
 package io.jmix.flowui.xml.layout.loader.component.usermenu;
 
-import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.usermenu.ComponentUserMenuItem;
+import io.jmix.flowui.kit.component.usermenu.HasComponentMenuItems;
+import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
@@ -42,7 +43,11 @@ public class ComponentUserMenuItemProvider extends AbstractUserMenuItemProvider 
     }
 
     @Override
-    public void loadItem(Element element, UserMenu userMenu, ComponentLoader.Context context) {
+    public void loadItem(Element element, HasMenuItems menu, ComponentLoader.Context context) {
+        if (!(menu instanceof HasComponentMenuItems hasComponentMenuItems)) {
+            throw new GuiDevelopmentException("Menu does not support component items", context);
+        }
+
         String id = loadItemId(element, ComponentUserMenuItem.class, context);
 
         Element subElement = element.elements().stream()
@@ -59,7 +64,7 @@ public class ComponentUserMenuItemProvider extends AbstractUserMenuItemProvider 
 
         com.vaadin.flow.component.Component content = componentLoader.getResultComponent();
 
-        ComponentUserMenuItem item = userMenu.addComponentItem(id, content);
+        ComponentUserMenuItem item = hasComponentMenuItems.addComponentItem(id, content);
         loadItem(element, item, context);
     }
 

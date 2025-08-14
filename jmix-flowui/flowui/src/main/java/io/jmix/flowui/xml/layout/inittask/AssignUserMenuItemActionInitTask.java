@@ -16,30 +16,34 @@
 
 package io.jmix.flowui.xml.layout.inittask;
 
-import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem;
+import io.jmix.flowui.kit.component.usermenu.HasActionMenuItems;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
+import org.springframework.lang.Nullable;
 
 import java.util.function.Consumer;
 
-public class AssignUserMenuItemActionInitTask<C extends UserMenu> extends AbstractAssignActionInitTask<C> {
+public class AssignUserMenuItemActionInitTask<C extends HasActionMenuItems>
+        extends AbstractAssignActionInitTask<C> {
 
     protected final String id;
     protected final int index;
-    protected final Consumer<UserMenuItem> itemConfigurer;
+
+    protected Consumer<UserMenuItem> itemConfigurer;
 
     public AssignUserMenuItemActionInitTask(C component,
                                             String actionId,
                                             String actionItemId,
-                                            int index,
-                                            Consumer<UserMenuItem> itemConfigurer) {
+                                            int index) {
         super(component, actionId);
 
         this.id = actionItemId;
         this.index = index;
+    }
+
+    public void setItemConfigurer(@Nullable Consumer<UserMenuItem> itemConfigurer) {
         this.itemConfigurer = itemConfigurer;
     }
 
@@ -51,6 +55,9 @@ public class AssignUserMenuItemActionInitTask<C extends UserMenu> extends Abstra
     @Override
     protected void addAction(ComponentLoader.Context context, Action action) {
         ActionUserMenuItem item = component.addActionItem(id, action, index);
-        itemConfigurer.accept(item);
+
+        if (itemConfigurer != null) {
+            itemConfigurer.accept(item);
+        }
     }
 }

@@ -17,9 +17,10 @@
 package io.jmix.flowui.xml.layout.loader.component.usermenu;
 
 import io.jmix.core.ClassManager;
-import io.jmix.flowui.component.usermenu.UserMenu;
+import io.jmix.flowui.component.usermenu.HasViewMenuItems;
 import io.jmix.flowui.component.usermenu.ViewUserMenuItem;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
@@ -44,7 +45,11 @@ public class ViewUserMenuItemProvider extends AbstractUserMenuItemProvider {
     }
 
     @Override
-    public void loadItem(Element element, UserMenu userMenu, ComponentLoader.Context context) {
+    public void loadItem(Element element, HasMenuItems menu, ComponentLoader.Context context) {
+        if (!(menu instanceof HasViewMenuItems hasViewMenuItems)) {
+            throw new GuiDevelopmentException("Menu does not support view items", context);
+        }
+
         String id = loadItemId(element, ViewUserMenuItem.class, context);
 
         String text = loaderSupport.loadResourceString(element, "text", context.getMessageGroup())
@@ -53,7 +58,7 @@ public class ViewUserMenuItemProvider extends AbstractUserMenuItemProvider {
                                 .formatted(TextUserMenuItem.class.getSimpleName(), id), context));
 
         ViewUserMenuItem item = loaderSupport.loadString(element, "viewId")
-                .map(viewId -> userMenu.addViewItem(id, viewId, text))
+                .map(viewId -> hasViewMenuItems.addViewItem(id, viewId, text))
                 .orElse(null);
 
         if (item == null) {
@@ -68,7 +73,7 @@ public class ViewUserMenuItemProvider extends AbstractUserMenuItemProvider {
             }
 
             //noinspection unchecked,rawtypes
-            item = userMenu.addViewItem(id, (Class) viewClass, text);
+            item = hasViewMenuItems.addViewItem(id, (Class) viewClass, text);
         }
 
         componentLoader(context).loadIcon(element, item::setIcon);

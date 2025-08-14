@@ -32,6 +32,7 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasClickListener;
+import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasSubMenu;
 import io.jmix.flowui.kit.event.EventBus;
 import jakarta.annotation.Nullable;
 
@@ -416,6 +417,11 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
 
         @Override
+        public SubMenu getSubMenu() {
+            return super.getSubMenu();
+        }
+
+        @Override
         public Registration addClickListener(Consumer<ClickEvent<TextUserMenuItem>> listener) {
             return super.addClickListenerInternal(listener);
         }
@@ -518,6 +524,11 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         public Action getAction() {
             return action;
         }
+
+        @Override
+        public HasSubMenu.SubMenu getSubMenu() {
+            return super.getSubMenu();
+        }
     }
 
     protected static class ComponentUserMenuItemImpl extends AbstractUserMenuItem
@@ -554,6 +565,11 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
 
         @Override
+        public SubMenu getSubMenu() {
+            return super.getSubMenu();
+        }
+
+        @Override
         public Registration addClickListener(Consumer<ClickEvent<ComponentUserMenuItem>> listener) {
             return super.addClickListenerInternal(listener);
         }
@@ -565,7 +581,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         protected final JmixUserMenu<?> userMenu;
         protected final JmixMenuItem item;
 
-        protected UserMenuItem.SubMenu subMenu;
+        protected HasSubMenu.SubMenu subMenu;
 
         protected Registration menuItemClickListenerRegistration;
 
@@ -632,8 +648,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
             item.setChecked(checked);
         }
 
-        @Override
-        public UserMenuItem.SubMenu getSubMenu() {
+        protected HasSubMenu.SubMenu getSubMenu() {
             if (subMenu == null) {
                 subMenu = createSubMenu();
             }
@@ -651,7 +666,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
             return null;
         }
 
-        protected UserMenuItem.SubMenu createSubMenu() {
+        protected HasSubMenu.SubMenu createSubMenu() {
             return new JmixUserMenuSubMenu(userMenu, item.getSubMenu());
         }
 
@@ -697,9 +712,14 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
 
             return eventBus;
         }
+
+        @Override
+        public String toString() {
+            return "%s{id='%s'}".formatted(getClass().getName(), id);
+        }
     }
 
-    protected static class JmixUserMenuSubMenu implements UserMenuItem.SubMenu {
+    protected static class JmixUserMenuSubMenu implements HasSubMenu.SubMenu {
 
         protected final JmixUserMenu<?> userMenu;
         protected final JmixSubMenu subMenu;

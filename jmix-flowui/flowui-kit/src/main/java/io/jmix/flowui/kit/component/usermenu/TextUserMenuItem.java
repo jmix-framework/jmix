@@ -22,7 +22,8 @@ import jakarta.annotation.Nullable;
 /**
  * Represents a user menu item that contains text and an optional icon.
  */
-public interface TextUserMenuItem extends UserMenuItem, UserMenuItem.HasClickListener<TextUserMenuItem> {
+public interface TextUserMenuItem extends UserMenuItem,
+        UserMenuItem.HasSubMenu, UserMenuItem.HasClickListener<TextUserMenuItem> {
 
     /**
      * Returns the text contained within this user menu item.

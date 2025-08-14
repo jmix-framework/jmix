@@ -317,11 +317,6 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
         }
 
         @Override
-        public SubMenu getSubMenu() {
-            return null;
-        }
-
-        @Override
         public Element getElement() {
             return null;
         }

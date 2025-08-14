@@ -16,11 +16,11 @@
 
 package io.jmix.flowui.xml.layout.loader.component.usermenu;
 
-import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
+import io.jmix.flowui.kit.component.usermenu.HasTextMenuItems;
 import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
 import io.jmix.flowui.xml.layout.ComponentLoader;
-import io.jmix.flowui.xml.layout.support.ComponentLoaderSupport;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
@@ -42,7 +42,11 @@ public class TextUserMenuItemProvider extends AbstractUserMenuItemProvider {
     }
 
     @Override
-    public void loadItem(Element element, UserMenu userMenu, ComponentLoader.Context context) {
+    public void loadItem(Element element, HasMenuItems menu, ComponentLoader.Context context) {
+        if (!(menu instanceof HasTextMenuItems hasTextMenuItems)) {
+            throw new GuiDevelopmentException("Menu does not support text items", context);
+        }
+
         String id = loadItemId(element, TextUserMenuItem.class, context);
 
         String text = loaderSupport
@@ -51,7 +55,7 @@ public class TextUserMenuItemProvider extends AbstractUserMenuItemProvider {
                         new GuiDevelopmentException("No 'text' provided for %s(%s)"
                                 .formatted(TextUserMenuItem.class.getSimpleName(), id), context));
 
-        TextUserMenuItem item = userMenu.addTextItem(id, text);
+        TextUserMenuItem item = hasTextMenuItems.addTextItem(id, text);
 
         componentLoader(context).loadIcon(element, item::setIcon);
         loadItem(element, item, context);

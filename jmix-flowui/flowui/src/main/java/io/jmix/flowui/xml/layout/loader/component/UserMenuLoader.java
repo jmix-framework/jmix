@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.usermenu.UserMenu;
+import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.component.usermenu.UserMenuItemLoader;
 import org.dom4j.Element;
@@ -46,15 +47,17 @@ public class UserMenuLoader extends AbstractComponentLoader<UserMenu> {
 
     protected void loadItems() {
         Element items = element.element("items");
-        if (items == null) {
-            return;
+        if (items != null) {
+            loadItems(items, resultComponent);
         }
+    }
 
+    protected void loadItems(Element items, HasMenuItems menu) {
         Map<String, UserMenuItemLoader> itemLoaders = applicationContext.getBeansOfType(UserMenuItemLoader.class);
         for (Element itemElement : items.elements()) {
             for (UserMenuItemLoader itemLoader : itemLoaders.values()) {
                 if (itemLoader.supports(itemElement.getName())) {
-                    itemLoader.loadItem(itemElement, resultComponent, getContext());
+                    itemLoader.loadItem(itemElement, menu, getContext());
                     break;
                 }
             }

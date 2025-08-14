@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.component.usermenu;
 
-import io.jmix.flowui.component.usermenu.UserMenu;
+import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
@@ -24,5 +24,5 @@ public interface UserMenuItemLoader {
 
     boolean supports(String itemName);
 
-    void loadItem(Element element, UserMenu userMenu, ComponentLoader.Context context);
+    void loadItem(Element element, HasMenuItems menu, ComponentLoader.Context context);
 }

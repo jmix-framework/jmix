@@ -41,6 +41,7 @@ import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
+import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasSubMenu;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
@@ -82,7 +83,7 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
     protected int maxSubstitutions;
 
     protected final Map<String, UserMenuItem> menuItems = new HashMap<>(3);
-    protected UserMenuItem.SubMenu subMenu;
+    protected HasSubMenu.SubMenu subMenu;
 
     protected Registration attachRegistration;
     protected Registration detachRegistration;
@@ -316,7 +317,7 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
         }
 
         if (subMenu == null) {
-            subMenu = menuItem.getSubMenu();
+            subMenu = createSubMenu();
         } else {
             subMenu.removeAll();
         }
@@ -331,6 +332,15 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
         }
 
         updateState(currentUserSubstitution.getEffectiveUser().getUsername());
+    }
+
+    protected HasSubMenu.SubMenu createSubMenu() {
+        if (!(menuItem instanceof HasSubMenu hasSubMenu)) {
+            throw new IllegalStateException("%s does not implement %s"
+                    .formatted(menuItem, HasSubMenu.class.getSimpleName()));
+        }
+
+        return hasSubMenu.getSubMenu();
     }
 
     protected UserMenuItem createSubMenuItem(UserDetails user) {

@@ -21,7 +21,7 @@ import io.jmix.flowui.kit.action.Action;
 /**
  * Represents a specific type of {@link UserMenuItem} that is associated with an {@link Action}.
  */
-public interface ActionUserMenuItem extends UserMenuItem {
+public interface ActionUserMenuItem extends UserMenuItem, UserMenuItem.HasSubMenu {
 
     /**
      * Returns the {@link Action} associated with this item.

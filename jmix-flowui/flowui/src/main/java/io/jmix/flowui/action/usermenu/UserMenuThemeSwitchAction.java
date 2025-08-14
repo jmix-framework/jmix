@@ -24,6 +24,7 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
+import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasSubMenu;
 import io.jmix.flowui.kit.theme.ThemeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -48,7 +49,7 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
     protected Messages messages;
 
     protected final Map<String, UserMenuItem> menuItems = new HashMap<>(3);
-    protected UserMenuItem.SubMenu subMenu;
+    protected HasSubMenu.SubMenu subMenu;
 
     public UserMenuThemeSwitchAction() {
         this(ID);
@@ -87,7 +88,12 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
             return;
         }
 
-        subMenu = menuItem.getSubMenu();
+        if (!(menuItem instanceof HasSubMenu hasSubMenu)) {
+            throw new IllegalStateException("%s does not implement %s"
+                    .formatted(menuItem, HasSubMenu.class.getSimpleName()));
+        }
+
+        subMenu = hasSubMenu.getSubMenu();
         initItems(subMenu);
 
         WebStorage.getItem(WebStorage.Storage.LOCAL_STORAGE,
@@ -95,13 +101,13 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
                 this::updateState);
     }
 
-    protected void initItems(UserMenuItem.SubMenu subMenu) {
+    protected void initItems(HasSubMenu.SubMenu subMenu) {
         menuItems.put(SYSTEM_THEME, createItem(subMenu, SYSTEM_THEME, this::selectSystemTheme));
         menuItems.put(LIGHT_THEME, createItem(subMenu, LIGHT_THEME, this::selectLightTheme));
         menuItems.put(DARK_THEME, createItem(subMenu, DARK_THEME, this::selectDarkTheme));
     }
 
-    protected UserMenuItem createItem(UserMenuItem.SubMenu subMenu, String theme,
+    protected UserMenuItem createItem(HasSubMenu.SubMenu subMenu, String theme,
                                       Consumer<UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem>> listener) {
         String itemId = "%s_%sUserMenuItem".formatted(ID, theme);
         UserMenuItem menuItem = subMenu.addTextItem(itemId,

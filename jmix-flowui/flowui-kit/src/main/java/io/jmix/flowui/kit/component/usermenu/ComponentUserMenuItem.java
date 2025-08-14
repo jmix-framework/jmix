@@ -21,7 +21,8 @@ import com.vaadin.flow.component.Component;
 /**
  * Represents a user menu item that can contain a custom UI {@link Component} as its content.
  */
-public interface ComponentUserMenuItem extends UserMenuItem, UserMenuItem.HasClickListener<ComponentUserMenuItem> {
+public interface ComponentUserMenuItem extends UserMenuItem,
+        UserMenuItem.HasSubMenu, UserMenuItem.HasClickListener<ComponentUserMenuItem> {
 
     /**
      * Returns the content component associated with this menu item.

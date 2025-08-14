@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.component.usermenu;
 
-import io.jmix.flowui.component.usermenu.UserMenu;
+import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class SeparatorUserMenuItemProvider implements UserMenuItemLoader {
     }
 
     @Override
-    public void loadItem(Element element, UserMenu userMenu, ComponentLoader.Context context) {
-        userMenu.addSeparator();
+    public void loadItem(Element element, HasMenuItems menu, ComponentLoader.Context context) {
+        menu.addSeparator();
     }
 }

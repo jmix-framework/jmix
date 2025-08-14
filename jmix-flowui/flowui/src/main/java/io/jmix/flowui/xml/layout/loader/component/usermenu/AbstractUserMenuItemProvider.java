@@ -17,12 +17,15 @@
 package io.jmix.flowui.xml.layout.loader.component.usermenu;
 
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.ComponentLoaderSupport;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
+
+import java.util.Map;
 
 
 public abstract class AbstractUserMenuItemProvider implements UserMenuItemLoader {
@@ -46,12 +49,31 @@ public abstract class AbstractUserMenuItemProvider implements UserMenuItemLoader
     }
 
     protected void loadItem(Element element, UserMenuItem item, ComponentLoader.Context context) {
-        loaderSupport.loadBoolean(element, "enabled", item::setEnabled);
         loaderSupport.loadBoolean(element, "visible", item::setVisible);
+        loaderSupport.loadBoolean(element, "enabled", item::setEnabled);
         loaderSupport.loadBoolean(element, "checkable", item::setCheckable);
         loaderSupport.loadBoolean(element, "checked", item::setChecked);
 
         componentLoader(context).loadThemeNames(item, element);
+
+        if (item instanceof UserMenuItem.HasSubMenu hasSubMenu) {
+            Element itemsElement = element.element("items");
+            if (itemsElement != null) {
+                loadItems(itemsElement, hasSubMenu.getSubMenu(), context);
+            }
+        }
+    }
+
+    protected void loadItems(Element items, HasMenuItems menu, ComponentLoader.Context context) {
+        Map<String, UserMenuItemLoader> itemLoaders = applicationContext.getBeansOfType(UserMenuItemLoader.class);
+        for (Element itemElement : items.elements()) {
+            for (UserMenuItemLoader itemLoader : itemLoaders.values()) {
+                if (itemLoader.supports(itemElement.getName())) {
+                    itemLoader.loadItem(itemElement, menu, context);
+                    break;
+                }
+            }
+        }
     }
 
     protected ComponentLoaderSupport componentLoader(ComponentLoader.Context context) {

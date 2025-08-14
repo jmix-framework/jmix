@@ -24,6 +24,7 @@ import io.jmix.reports.impl.AnnotatedReportHolder;
 import io.jmix.reports.impl.AnnotatedReportScanner;
 import io.jmix.reports.runner.ReportRunner;
 import org.apache.commons.lang3.time.DateUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +42,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 })
 public class ExecutionHistoryCleanByDaysTest extends BaseExecutionHistoryTest {
     @Autowired
-    FileStorageLocator fileStorageLocator;
+    protected FileStorageLocator fileStorageLocator;
     @Autowired
-    ReportExecutionHistoryRecorder executionHistoryRecorder;
+    protected ReportExecutionHistoryRecorder executionHistoryRecorder;
     @Autowired
-    AnnotatedReportHolder annotatedReportHolder;
+    protected AnnotatedReportHolder annotatedReportHolder;
     @Autowired
-    AnnotatedReportScanner annotatedReportScanner;
+    protected AnnotatedReportScanner annotatedReportScanner;
     @Autowired
-    ReportRunner reportRunner;
+    protected ReportRunner reportRunner;
 
     @BeforeEach
     public void setup() {
@@ -59,6 +60,10 @@ public class ExecutionHistoryCleanByDaysTest extends BaseExecutionHistoryTest {
         }
     }
 
+    @AfterEach
+    public void tearDown() {
+        annotatedReportHolder.clear();
+    }
 
     @Test
     public void testCleanByDays() {

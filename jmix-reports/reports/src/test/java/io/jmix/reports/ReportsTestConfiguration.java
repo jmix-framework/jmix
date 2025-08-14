@@ -30,8 +30,11 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.reports.test_support.TestFileStorage;
 import io.jmix.reports.test_support.role.FullAccessRole;
+import io.jmix.reports.test_support.role.TestResourceRole4;
+import io.jmix.reports.test_support.role.TestResourceRole5;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
+import io.jmix.securitydata.SecurityDataConfiguration;
 import jakarta.persistence.EntityManagerFactory;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.cache.CacheManager;
@@ -59,7 +62,7 @@ import java.util.List;
 
 @Configuration
 @Import({CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class,
-        SecurityConfiguration.class, ReportsConfiguration.class})
+        SecurityConfiguration.class, SecurityDataConfiguration.class, ReportsConfiguration.class})
 @PropertySource("classpath:/test_support/test-app.properties")
 @EnableWebSecurity
 @MessageSourceBasenames({"test_support/messages"})
@@ -135,6 +138,18 @@ public class ReportsTestConfiguration {
                         .build();
             }
         };
+
+        repository.addUser(User.builder()
+                .username("with-no-access-user")
+                .password("{noop}")
+                .roles(TestResourceRole4.CODE)
+                .build());
+
+        repository.addUser(User.builder()
+                .username("with-access-user")
+                .password("{noop}")
+                .roles(TestResourceRole5.CODE)
+                .build());
 
         repository.addUser(User.builder()
                 .username("admin")

@@ -20,6 +20,9 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
+import io.jmix.reports.impl.AnnotatedReportGroupHolder;
+import io.jmix.reports.impl.AnnotatedReportHolder;
+import io.jmix.reports.impl.builder.AnnotatedGroupBuilder;
 import io.jmix.reports.impl.builder.AnnotatedReportBuilder;
 import io.jmix.reports.runner.ReportRunner;
 import org.apache.commons.io.IOUtils;
@@ -37,11 +40,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 })
 public class ExecutionHistoryWithSavingDocumentsTest extends BaseExecutionHistoryTest {
     @Autowired
-    FileStorageLocator fileStorageLocator;
+    protected FileStorageLocator fileStorageLocator;
     @Autowired
-    ReportRunner reportRunner;
+    protected ReportRunner reportRunner;
     @Autowired
-    AnnotatedReportBuilder annotatedReportBuilder;
+    protected AnnotatedReportBuilder annotatedReportBuilder;
 
     @Test
     public void testHistoryWithSaveDocument() throws Exception {

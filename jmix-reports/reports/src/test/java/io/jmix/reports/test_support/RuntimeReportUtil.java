@@ -17,6 +17,7 @@
 package io.jmix.reports.test_support;
 
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.outside_reports.CorrectReportGroup;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.*;

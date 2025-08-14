@@ -21,6 +21,7 @@ import io.jmix.core.FileStorageLocator;
 import io.jmix.reports.ReportExecutionHistoryRecorder;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
+import io.jmix.reports.impl.AnnotatedReportGroupHolder;
 import io.jmix.reports.impl.AnnotatedReportHolder;
 import io.jmix.reports.impl.AnnotatedReportScanner;
 import io.jmix.reports.runner.ReportRunner;
@@ -43,20 +44,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 })
 public class ExecutionHistoryCleanPerReportTest extends BaseExecutionHistoryTest {
     @Autowired
-    FileStorageLocator fileStorageLocator;
+    protected FileStorageLocator fileStorageLocator;
     @Autowired
-    ReportExecutionHistoryRecorder executionHistoryRecorder;
+    protected ReportExecutionHistoryRecorder executionHistoryRecorder;
     @Autowired
-    AnnotatedReportHolder annotatedReportHolder;
+    protected AnnotatedReportHolder annotatedReportHolder;
     @Autowired
-    AnnotatedReportScanner annotatedReportScanner;
+    protected AnnotatedReportScanner annotatedReportScanner;
     @Autowired
-    ReportRunner reportRunner;
+    protected AnnotatedReportGroupHolder reportGroupHolder;
     @Autowired
-    RuntimeReportUtil runtimeReportUtil;
+    protected ReportRunner reportRunner;
+    @Autowired
+    protected RuntimeReportUtil runtimeReportUtil;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         if (annotatedReportHolder.getAllReports().isEmpty()) {
             annotatedReportScanner.importGroupDefinitions();
             annotatedReportScanner.importReportDefinitions();
@@ -64,8 +67,10 @@ public class ExecutionHistoryCleanPerReportTest extends BaseExecutionHistoryTest
     }
 
     @AfterEach
-    public void cleanupDatabaseReports() {
+    void cleanupDatabaseReports() {
         cleanup();
+        reportGroupHolder.clear();
+        annotatedReportHolder.clear();
         runtimeReportUtil.cleanupDatabaseReports();
     }
 

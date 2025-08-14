@@ -36,11 +36,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class ExecutionHistoryEnabledTest extends BaseExecutionHistoryTest {
 
     @Autowired
-    ReportRunner reportRunner;
+    protected ReportRunner reportRunner;
     @Autowired
-    AnnotatedReportBuilder annotatedReportBuilder;
+    protected AnnotatedReportBuilder annotatedReportBuilder;
     @Autowired
-    RuntimeReportUtil runtimeReportUtil;
+    protected RuntimeReportUtil runtimeReportUtil;
 
     @AfterEach
     public void cleanupDatabaseReports() {

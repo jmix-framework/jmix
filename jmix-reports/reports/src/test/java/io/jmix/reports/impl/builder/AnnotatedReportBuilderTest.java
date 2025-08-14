@@ -35,6 +35,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.convention.TestBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -128,6 +129,8 @@ public class AnnotatedReportBuilderTest {
         assertThat(valueFormat.getFormatString()).isEqualTo("dd.MM.yyyy HH:mm:ss");
     }
 
+    // Begin of InputParameterDef section
+
     @ParameterizedTest
     @CsvSource({"en,After", "fr,Apres"})
     public void testInputParameterLocalization(String localeCode, String expectedCaption) {
@@ -155,6 +158,8 @@ public class AnnotatedReportBuilderTest {
         // then
         assertThat(reportParameter.getName()).isEqualTo("After");
     }
+
+    // End of InputParameterDef section
 
     @Test
     public void testImportFromClassHierarchy() {
@@ -212,7 +217,7 @@ public class AnnotatedReportBuilderTest {
         Report report = annotatedReportBuilder.createReportFromDefinition(definition);
 
         // then
-        assertThat(report.getReportRoles()).hasSize(2);
+        assertThat(report.getReportRoles()).hasSize(3);
 
         assertThat(report.getReportRoles())
                 .anyMatch(rr -> rr.getRoleCode().equals("role-1") && rr.getRoleName().equals("Test role 1"));
@@ -243,6 +248,8 @@ public class AnnotatedReportBuilderTest {
                 .hasMessageContaining("Report group");
     }
 
+    // Begin of BandDef section
+
     @Test
     public void testNoBands() {
         // given
@@ -253,6 +260,33 @@ public class AnnotatedReportBuilderTest {
                 .isInstanceOf(InvalidReportDefinitionException.class)
                 .hasMessageContaining("at least one band");
     }
+
+    @Test
+    public void testNestedIntoNoRootBands() {
+        // given
+        NestedIntoNoRootsBandsReport definition = new NestedIntoNoRootsBandsReport();
+
+        // when
+        Report report = annotatedReportBuilder.createReportFromDefinition(definition);
+
+        assertThat(report.getBands()).hasSize(3);
+
+        assertThat(report.getRootBandDefinition().getName()).isEqualTo("Root");
+        assertThat(report.getRootBandDefinition().getDataSets()).isEmpty();
+        assertThat(report.getRootBandDefinition().getChildrenBandDefinitions()).hasSize(1);
+
+        List<BandDefinition> childBands = report.getRootBandDefinition().getChildrenBandDefinitions();
+        assertThat(childBands.size()).isEqualTo(1);
+
+        List<String> childrenBandNames = List.of("title", "description");
+
+        assertThat(childBands.get(0).getChildrenBandDefinitions().size()).isEqualTo(1);
+
+        for(int i = 0; i < childBands.size(); i++) {
+            assertThat(childBands.get(i).getName()).isEqualTo(childrenBandNames.get(i));
+        }
+    }
+
 
     @Test
     public void testMissingRootBand() {
@@ -288,6 +322,10 @@ public class AnnotatedReportBuilderTest {
                 .hasMessageContaining("is not defined");
     }
 
+    // End of BandDef section
+
+    // Begin of DataSet section
+
     @Test
     public void testMissingDataSetDelegate() {
         // given
@@ -312,17 +350,6 @@ public class AnnotatedReportBuilderTest {
     }
 
     @Test
-    public void testWrongDelegateResultType() {
-        // given
-        WrongDelegateResultTypeReport definition = new WrongDelegateResultTypeReport();
-
-        // when+then
-        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
-                .isInstanceOf(InvalidReportDefinitionException.class)
-                .hasMessageContaining("Unsupported result type");
-    }
-
-    @Test
     public void testWrongDataSetTypeForLoaderDelegate() {
         // given
         WrongDataSetTypeForDataLoaderReport definition = new WrongDataSetTypeForDataLoaderReport();
@@ -333,6 +360,19 @@ public class AnnotatedReportBuilderTest {
                 .hasMessageContaining("Dataset type")
                 .hasMessageContaining("expected: DELEGATE");
     }
+
+    @Test
+    public void testWrongDelegateResultType() {
+        // given
+        WrongDelegateResultTypeReport definition = new WrongDelegateResultTypeReport();
+
+        // when+then
+        assertThatThrownBy(() -> annotatedReportBuilder.createReportFromDefinition(definition))
+                .isInstanceOf(InvalidReportDefinitionException.class)
+                .hasMessageContaining("Unsupported result type");
+    }
+
+    // End of DataSet section
 
     @Test
     public void testWrongEntityParameterAlias() {

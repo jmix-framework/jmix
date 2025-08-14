@@ -18,8 +18,10 @@ package io.jmix.reports.test_support.entity;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.core.security.SystemAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -36,12 +38,15 @@ public class TestDataInitializer {
     private final UnconstrainedDataManager unconstrainedDataManager;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+    @Autowired
+    private SystemAuthenticator systemAuthenticator;
+
     public TestDataInitializer(DataManager unconstrainedDataManager) {
         this.unconstrainedDataManager = unconstrainedDataManager;
     }
 
     public void init() {
-        if (!unconstrainedDataManager.load(Publisher.class).all().list().isEmpty()) {
+        if (!(systemAuthenticator.withSystem(() -> unconstrainedDataManager.load(Publisher.class).all().list().isEmpty()))) {
             log.info("Test data already created");
             return;
         }
@@ -66,9 +71,9 @@ public class TestDataInitializer {
 
         return Arrays.stream(data)
                 .map(datum -> {
-                    Publisher p = unconstrainedDataManager.create(Publisher.class);
+                    Publisher p = (systemAuthenticator.withSystem(() -> unconstrainedDataManager.create(Publisher.class)));
                     p.setName((String) datum[0]);
-                    return unconstrainedDataManager.save(p);
+                    return (systemAuthenticator.withSystem(() -> unconstrainedDataManager.save(p)));
                 })
                 .toList();
     }
@@ -84,12 +89,12 @@ public class TestDataInitializer {
 
         return Arrays.stream(data)
                 .map(datum -> {
-                    GameTitle g = unconstrainedDataManager.create(GameTitle.class);
+                    GameTitle g = (systemAuthenticator.withSystem(() -> unconstrainedDataManager.create(GameTitle.class)));
                     g.setName((String) datum[0]);
                     g.setReleaseDate((LocalDate) datum[1]);
                     g.setPrice((BigDecimal) datum[2]);
                     g.setPublisher(publishers.stream().filter(p -> p.getName().equals(datum[3])).findAny().orElseThrow());
-                    return unconstrainedDataManager.save(g);
+                    return (systemAuthenticator.withSystem(() -> unconstrainedDataManager.save(g)));
                 })
                 .toList();
     }
@@ -111,10 +116,10 @@ public class TestDataInitializer {
 
         return Arrays.stream(data)
                 .map(datum -> {
-                    Achievement a = unconstrainedDataManager.create(Achievement.class);
+                    Achievement a = (systemAuthenticator.withSystem(() -> unconstrainedDataManager.create(Achievement.class)));
                     a.setName((String) datum[0]);
                     a.setGame(games.stream().filter(g -> g.getName().equals(datum[1])).findAny().orElseThrow());
-                    return unconstrainedDataManager.save(a);
+                    return (systemAuthenticator.withSystem(() -> unconstrainedDataManager.save(a)));
                 })
                 .toList();
     }
@@ -129,12 +134,12 @@ public class TestDataInitializer {
 
         return Arrays.stream(data)
                 .map(datum -> {
-                    UserRegistration ur = unconstrainedDataManager.create(UserRegistration.class);
+                    UserRegistration ur = (systemAuthenticator.withSystem(() -> unconstrainedDataManager.create(UserRegistration.class)));
                     ur.setFirstName((String) datum[0]);
                     ur.setLastName(((String) datum[1]));
                     ur.setUsername((String) datum[2]);
                     ur.setRegistrationDate((LocalDateTime) datum[3]);
-                    return unconstrainedDataManager.save(ur);
+                    return (systemAuthenticator.withSystem(() -> unconstrainedDataManager.save(ur)));
                 })
                 .toList();
     }
@@ -155,12 +160,12 @@ public class TestDataInitializer {
         };
         return Arrays.stream(data)
                 .map(datum -> {
-                    PurchasedGame pg = unconstrainedDataManager.create(PurchasedGame.class);
+                    PurchasedGame pg = (systemAuthenticator.withSystem(() -> unconstrainedDataManager.create(PurchasedGame.class)));
                     pg.setUser(users.stream().filter(u -> u.getUsername().equals(datum[0])).findAny().orElseThrow());
                     pg.setGame(games.stream().filter(g -> g.getName().equals(datum[1])).findAny().orElseThrow());
                     pg.setPurchaseDate((LocalDateTime) datum[2]);
                     pg.setUserRating(((Integer) datum[3]));
-                    return unconstrainedDataManager.save(pg);
+                    return (systemAuthenticator.withSystem(() -> unconstrainedDataManager.save(pg)));
                 })
                 .toList();
     }
@@ -185,7 +190,7 @@ public class TestDataInitializer {
         };
         return Arrays.stream(data)
                 .map(datum -> {
-                    UserAchievement ua = unconstrainedDataManager.create(UserAchievement.class);
+                    UserAchievement ua = (systemAuthenticator.withSystem(() -> unconstrainedDataManager.create(UserAchievement.class)));
                     ua.setPurchasedGame(purchases.stream()
                             .filter(pg -> pg.getUser().getUsername().equals(datum[0]) && pg.getGame().getName().equals(datum[1]))
                             .findAny()
@@ -195,7 +200,7 @@ public class TestDataInitializer {
                             .findAny()
                             .orElseThrow());
                     ua.setDate((LocalDateTime) datum[3]);
-                    return unconstrainedDataManager.save(ua);
+                    return (systemAuthenticator.withSystem(() -> unconstrainedDataManager.save(ua)));
                 })
                 .toList();
     }

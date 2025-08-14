@@ -30,9 +30,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DisabledExecutionHistoryTest extends BaseExecutionHistoryTest {
 
     @Autowired
-    AnnotatedReportBuilder annotatedReportBuilder;
+    protected AnnotatedReportBuilder annotatedReportBuilder;
     @Autowired
-    ReportRunner reportRunner;
+    protected ReportRunner reportRunner;
 
     @Test
     public void testHistoryDisabled() {

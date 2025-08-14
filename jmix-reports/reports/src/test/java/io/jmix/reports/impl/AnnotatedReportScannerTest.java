@@ -35,13 +35,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AnnotatedReportScannerTest {
 
     @Autowired
-    AnnotatedReportScanner annotatedReportScanner;
+    protected AnnotatedReportScanner annotatedReportScanner;
 
     @Autowired
-    AnnotatedReportGroupHolder reportGroupHolder;
+    protected AnnotatedReportGroupHolder reportGroupHolder;
 
     @Autowired
-    AnnotatedReportHolder reportHolder;
+    protected AnnotatedReportHolder reportHolder;
 
     @Test
     public void testLoadReportGroupClass() {

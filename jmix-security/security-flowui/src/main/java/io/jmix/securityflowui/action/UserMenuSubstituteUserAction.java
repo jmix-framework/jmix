@@ -29,7 +29,6 @@ import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.ViewOpeningAction;
@@ -47,6 +46,7 @@ import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.WindowBuilder;
+import io.jmix.securityflowui.SecurityUiProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,8 +146,8 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
     }
 
     @Autowired
-    public void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        maxSubstitutions = uiComponentProperties.getSubstituteUserActionMaxSubstitutions();
+    public void setUiComponentProperties(SecurityUiProperties securityUiProperties) {
+        maxSubstitutions = securityUiProperties.getSubstituteUserActionMaxSubstitutions();
     }
 
     /**

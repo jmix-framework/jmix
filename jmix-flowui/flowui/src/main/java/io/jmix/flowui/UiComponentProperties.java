@@ -144,12 +144,6 @@ public class UiComponentProperties {
      */
     boolean checkboxRequiredStateInitializationEnabled;
 
-    /**
-     * Defines the maximum number of users that can be substituted by the currently authenticated user,
-     * which shows a submenu instead of opening a lookup view.
-     */
-    int substituteUserActionMaxSubstitutions;
-
     public UiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -177,8 +171,7 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean showErrorMessageBelowField,
             @DefaultValue("true") boolean immediateRequiredValidationEnabled,
             @DefaultValue("true") boolean defaultTrimEnabled,
-            @DefaultValue("true") boolean checkboxRequiredStateInitializationEnabled,
-            @DefaultValue("5") int substituteUserActionMaxSubstitutions) {
+            @DefaultValue("true") boolean checkboxRequiredStateInitializationEnabled) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -214,8 +207,6 @@ public class UiComponentProperties {
         this.defaultTrimEnabled = defaultTrimEnabled;
 
         this.checkboxRequiredStateInitializationEnabled = checkboxRequiredStateInitializationEnabled;
-
-        this.substituteUserActionMaxSubstitutions = substituteUserActionMaxSubstitutions;
     }
 
     public String getGridCreateShortcut() {
@@ -375,12 +366,5 @@ public class UiComponentProperties {
      */
     public boolean isCheckboxRequiredStateInitializationEnabled() {
         return checkboxRequiredStateInitializationEnabled;
-    }
-
-    /**
-     * @see #substituteUserActionMaxSubstitutions
-     */
-    public int getSubstituteUserActionMaxSubstitutions() {
-        return substituteUserActionMaxSubstitutions;
     }
 }

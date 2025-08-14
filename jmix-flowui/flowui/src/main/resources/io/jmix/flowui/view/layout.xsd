@@ -2964,8 +2964,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- <editor-fold desc="UserMenu"> -->
-
+    <!--region UserMenu-->
     <xs:complexType name="userMenuComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
@@ -3072,7 +3071,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- </editor-fold> -->
+    <!--endregion-->
 
     <xs:complexType name="gridEditorButtonType">
         <xs:attributeGroup ref="hasText"/>

@@ -25,6 +25,7 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
+import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy;
 import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy.ClassFqnStrategy;
@@ -83,6 +84,10 @@ public interface StudioElements {
             xmlElement = "actionItem",
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#actionItem",
             isInjectable = false,
+            target = {
+                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
+                    "io.jmix.flowui.kit.component.combobutton.ComboButton"
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.ACTION_REF)
@@ -397,6 +402,10 @@ public interface StudioElements {
             xmlElement = "componentItem",
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#componentItem",
             isInjectable = false,
+            target = {
+                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
+                    "io.jmix.flowui.kit.component.combobutton.ComboButton"
+            },
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
                             qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
@@ -545,6 +554,10 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.TextItem",
             xmlElement = "textItem",
             isInjectable = false,
+            target = {
+                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
+                    "io.jmix.flowui.kit.component.combobutton.ComboButton"
+            },
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#textItem",
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
@@ -557,9 +570,117 @@ public interface StudioElements {
             name = "Separator",
             classFqn = "io.jmix.flowui.kit.component.stub.DropdownButtonStubSeparator",
             xmlElement = "separator",
+            target = {
+                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
+                    "io.jmix.flowui.kit.component.combobutton.ComboButton"
+            },
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#separator"
     )
     DropdownButtonItem separator();
+
+
+    //region UserMenu
+    @StudioElement(
+            name = "TextItem",
+            classFqn = "io.jmix.flowui.kit.component.usermenu.TextUserMenuItem",
+            xmlElement = "textItem",
+            isInjectable = false,
+            target = {"io.jmix.flowui.component.usermenu.UserMenu"},
+            // TODO: gg, add link when available
+//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#textItem",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING, required = true),
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ICON)
+            }
+    )
+    UserMenuItem textUserItemUserMenuItem();
+
+    @StudioElement(
+            name = "ActionItem",
+            classFqn = "io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem",
+            xmlElement = "actionItem",
+            // TODO: gg, add link when available
+//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#acionItem",
+            isInjectable = false,
+            target = {"io.jmix.flowui.component.usermenu.UserMenu"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.ACTION_REF)
+            }
+    )
+    UserMenuItem actionUserMenuItem();
+
+    @StudioElement(
+            name = "Action",
+            xmlElement = "action",
+            classFqn = "io.jmix.flowui.kit.action.BaseAction",
+            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            target = {"io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem"},
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
+                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
+                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon")
+            }
+    )
+    void actionUserMenuItemAction();
+
+    @StudioElement(
+            name = "ComponentItem",
+            classFqn = "io.jmix.flowui.kit.component.usermenu.ComponentUserMenuItem",
+            xmlElement = "componentItem",
+            // TODO: gg, add link when available
+//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#componentItem",
+            isInjectable = false,
+            target = {"io.jmix.flowui.component.usermenu.UserMenu"},
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            ),
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true)
+            }
+    )
+    UserMenuItem componentUserMenuItem();
+
+    @StudioElement(
+            name = "ViewItem",
+            classFqn = "io.jmix.flowui.component.usermenu.ViewUserMenuItem",
+            xmlElement = "viewItem",
+            isInjectable = false,
+            target = {"io.jmix.flowui.component.usermenu.UserMenu"},
+            // TODO: gg, add link when available
+//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#textItem",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING, required = true),
+                    @StudioProperty(xmlAttribute = "viewId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID), // TODO: gg, VIEW_ID
+                    @StudioProperty(xmlAttribute = "viewClass", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_CLASS), // TODO: gg, VIEW_CLASS?
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ICON),
+            }
+    )
+    UserMenuItem viewUserItemUserMenuItem();
+
+    @StudioElement(
+            name = "Separator",
+            classFqn = "io.jmix.flowui.kit.component.stub.UserMenuStubSeparatorItem",
+            xmlElement = "separator",
+            target = {"io.jmix.flowui.component.usermenu.UserMenu"}
+            // TODO: gg, add link when available
+//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#separator",
+    )
+    UserMenuItem userMenuSeparator();
+    //endregion
 
     @StudioElement(
             name = "Tooltip",

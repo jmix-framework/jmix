@@ -2,7 +2,7 @@
 <mainView xmlns="http://jmix.io/schema/tabmod/main-view"
           title="msg://MainView.title">
     <actions>
-        <action id="logoutAction" type="logout"/>
+        <action id="logoutAction" text="msg:///actions.logout.text" type="logout"/>
     </actions>
     <appLayout primarySection="NAVBAR">
         <navigationBar>
@@ -15,6 +15,19 @@
                     text="msg://applicationTitle.text"
                     classNames="jmix-main-view-application-title">
                 </h2>
+
+                <userMenu id="userMenu"
+                          themeNames="tertiary" classNames="ms-auto me-m">
+                    <items>
+                        <actionItem id="substituteUserMenuItem"
+                                    themeNames="non-checkable">
+                            <action id="substituteUserAction" type="sec_userMenuSubstituteUser"/>
+                        </actionItem>
+                        <separator itemId="substituteUserMenuItem"/>
+                        <actionItem id="logoutMenuItem" ref="logoutAction"
+                                    themeNames="non-checkable"/>
+                    </items>
+                </userMenu>
             </header>
         </navigationBar>
         <drawerLayout>
@@ -24,12 +37,6 @@
                      ariaLabel="msg://navigation.ariaLabel">
                     <listMenu id="menu"/>
                 </nav>
-                <footer id="footer" classNames="jmix-main-view-footer">
-                    <userIndicator id="userIndicator"/>
-                    <button id="logoutButton"
-                            action="logoutAction"
-                            classNames="jmix-logout-button"/>
-                </footer>
             </section>
         </drawerLayout>
         <workArea id="workArea"

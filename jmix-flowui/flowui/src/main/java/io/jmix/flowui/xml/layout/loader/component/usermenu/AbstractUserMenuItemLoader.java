@@ -28,15 +28,15 @@ import org.springframework.context.ApplicationContext;
 import java.util.Map;
 
 
-public abstract class AbstractUserMenuItemProvider implements UserMenuItemLoader {
+public abstract class AbstractUserMenuItemLoader implements UserMenuItemLoader {
 
     protected final ApplicationContext applicationContext;
     protected final LoaderSupport loaderSupport;
 
     protected ComponentLoaderSupport componentLoaderSupport;
 
-    public AbstractUserMenuItemProvider(ApplicationContext applicationContext,
-                                        LoaderSupport loaderSupport) {
+    public AbstractUserMenuItemLoader(ApplicationContext applicationContext,
+                                      LoaderSupport loaderSupport) {
         this.applicationContext = applicationContext;
         this.loaderSupport = loaderSupport;
     }

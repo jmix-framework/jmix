@@ -20,6 +20,7 @@ import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.HasSubParts;
 
+import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
@@ -30,21 +31,17 @@ import java.util.function.Consumer;
  */
 public interface UserMenuItem extends HasThemeVariant<UserMenuItemVariant>, HasSubParts {
 
+    String PROP_ENABLED = "enabled";
+    String PROP_VISIBLE = "visible";
+    String PROP_CHECKABLE = "checkable";
+    String PROP_CHECKED = "checked";
+
     /**
      * Returns the unique identifier of the user menu item.
      *
      * @return the unique identifier of the menu item
      */
     String getId();
-
-    /**
-     * Sets the visibility of the user menu item.
-     * A visible item is rendered and can interact with users,
-     * while an invisible item is not displayed and cannot be interacted with.
-     *
-     * @param visible if true, the item will be visible; otherwise, it will be hidden
-     */
-    void setVisible(boolean visible);
 
     /**
      * Checks whether the user menu item is currently visible.
@@ -56,12 +53,13 @@ public interface UserMenuItem extends HasThemeVariant<UserMenuItemVariant>, HasS
     boolean isVisible();
 
     /**
-     * Enables or disables the user menu item.
-     * When the item is disabled, it cannot be interacted with.
+     * Sets the visibility of the user menu item.
+     * A visible item is rendered and can interact with users,
+     * while an invisible item is not displayed and cannot be interacted with.
      *
-     * @param enabled if {@code true}, the item will be enabled; otherwise, it will be disabled
+     * @param visible if true, the item will be visible; otherwise, it will be hidden
      */
-    void setEnabled(boolean enabled);
+    void setVisible(boolean visible);
 
     /**
      * Checks whether the user menu item is currently enabled.
@@ -70,6 +68,14 @@ public interface UserMenuItem extends HasThemeVariant<UserMenuItemVariant>, HasS
      * @return {@code true} if the item is enabled, {@code false} otherwise
      */
     boolean isEnabled();
+
+    /**
+     * Enables or disables the user menu item.
+     * When the item is disabled, it cannot be interacted with.
+     *
+     * @param enabled if {@code true}, the item will be enabled; otherwise, it will be disabled
+     */
+    void setEnabled(boolean enabled);
 
     /**
      * Returns whether this item toggles a checkmark icon when clicked.
@@ -114,6 +120,14 @@ public interface UserMenuItem extends HasThemeVariant<UserMenuItemVariant>, HasS
      * @throws IllegalStateException if trying to check the item when it's checkable
      */
     void setChecked(boolean checked);
+
+    /**
+     * Adds a listener to be notified about changes in the properties of the action.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener
+     */
+    Registration addPropertyChangeListener(Consumer<PropertyChangeEvent> listener);
 
     /**
      * Represents an interface for menu items that can optionally have a submenu.

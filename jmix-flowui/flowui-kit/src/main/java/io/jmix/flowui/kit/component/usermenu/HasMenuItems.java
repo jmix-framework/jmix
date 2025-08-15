@@ -41,6 +41,30 @@ public interface HasMenuItems {
     void addSeparatorAtIndex(int index);
 
     /**
+     * Adds a separator to the menu that links to the parent menu item.
+     * The separator will change its visibility depending on the state of the parent item.
+     * <p>
+     * A separator is used to visually divide groups of menu items, enhancing organization
+     * and readability.
+     *
+     * @param parentItemId the parent item identifier
+     */
+    void addSeparator(String parentItemId);
+
+    /**
+     * Adds a separator to the menu at the specified index that links to the parent menu item.
+     * The separator will change its visibility depending on the state of the parent item.
+     * <p>
+     * A separator is used to visually divide groups of menu items, enhancing organization
+     * and readability.
+     *
+     * @param index        the position in the menu where the separator will be added.
+     *                     The index must be within the valid range of current menu items
+     * @param parentItemId the parent item identifier
+     */
+    void addSeparatorAtIndex(int index, String parentItemId);
+
+    /**
      * Searches for a user menu item with the specified unique identifier.
      *
      * @param itemId the unique identifier of the menu item to find

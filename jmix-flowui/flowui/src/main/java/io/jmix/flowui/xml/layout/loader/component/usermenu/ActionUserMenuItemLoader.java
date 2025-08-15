@@ -29,15 +29,15 @@ import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-@Component("flowui_ActionUserMenuItemProvider")
-public class ActionUserMenuItemProvider extends AbstractUserMenuItemProvider {
+@Component("flowui_ActionUserMenuItemLoader")
+public class ActionUserMenuItemLoader extends AbstractUserMenuItemLoader {
 
     public static final String NAME = "actionItem";
 
     protected ActionLoaderSupport actionLoaderSupport;
 
-    public ActionUserMenuItemProvider(ApplicationContext applicationContext,
-                                      LoaderSupport loaderSupport) {
+    public ActionUserMenuItemLoader(ApplicationContext applicationContext,
+                                    LoaderSupport loaderSupport) {
         super(applicationContext, loaderSupport);
     }
 

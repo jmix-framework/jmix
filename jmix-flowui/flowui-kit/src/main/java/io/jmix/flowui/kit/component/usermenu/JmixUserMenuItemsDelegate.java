@@ -22,11 +22,13 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import jakarta.annotation.Nullable;
 
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -192,6 +194,31 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
         addItemInternal(new SeparatorUserMenuItem(), index);
     }
 
+    @Override
+    public void addSeparator(String parentItemId) {
+        UserMenuItem item = getItem(parentItemId);
+        subMenu.addComponent(createSeparator(item));
+        addItemInternal(new SeparatorUserMenuItem(), -1);
+    }
+
+    @Override
+    public void addSeparatorAtIndex(int index, String parentItemId) {
+        UserMenuItem item = getItem(parentItemId);
+        subMenu.addComponentAtIndex(index, createSeparator(item));
+        addItemInternal(new SeparatorUserMenuItem(), index);
+    }
+
+    protected Component createSeparator(UserMenuItem item) {
+        Hr separator = new Hr();
+        item.addPropertyChangeListener(event -> {
+            if (UserMenuItem.PROP_VISIBLE.equals(event.getPropertyName())) {
+                separator.setVisible((boolean) event.getNewValue());
+            }
+        });
+
+        return separator;
+    }
+
     protected void addItemInternal(UserMenuItem item, int index) {
         if (index < 0) {
             items.add(item);
@@ -314,6 +341,11 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
 
         @Override
         public void setChecked(boolean checked) {
+        }
+
+        @Override
+        public Registration addPropertyChangeListener(Consumer<PropertyChangeEvent> listener) {
+            return null;
         }
 
         @Override

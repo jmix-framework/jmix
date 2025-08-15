@@ -27,6 +27,10 @@ import org.springframework.lang.Nullable;
  */
 public interface ViewUserMenuItem extends UserMenuItem {
 
+    String PROP_TEXT = "text";
+    String PROP_ICON = "icon";
+    String PROP_OPEN_MODE = "openMode";
+
     /**
      * Returns the text contained within this user menu item.
      *

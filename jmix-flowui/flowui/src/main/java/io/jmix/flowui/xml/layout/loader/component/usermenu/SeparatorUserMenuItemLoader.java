@@ -16,13 +16,14 @@
 
 package io.jmix.flowui.xml.layout.loader.component.usermenu;
 
+import com.google.common.base.Strings;
 import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-@Component("flowui_SeparatorUserMenuItemProvider")
-public class SeparatorUserMenuItemProvider implements UserMenuItemLoader {
+@Component("flowui_SeparatorUserMenuItemLoader")
+public class SeparatorUserMenuItemLoader implements UserMenuItemLoader {
 
     public static final String NAME = "separator";
 
@@ -33,6 +34,11 @@ public class SeparatorUserMenuItemProvider implements UserMenuItemLoader {
 
     @Override
     public void loadItem(Element element, HasMenuItems menu, ComponentLoader.Context context) {
-        menu.addSeparator();
+        String itemId = element.attributeValue("itemId");
+        if (Strings.isNullOrEmpty(itemId)) {
+            menu.addSeparator();
+        } else {
+            menu.addSeparator(itemId);
+        }
     }
 }

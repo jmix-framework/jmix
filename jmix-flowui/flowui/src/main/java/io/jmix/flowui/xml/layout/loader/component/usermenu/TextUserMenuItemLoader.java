@@ -26,13 +26,13 @@ import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-@Component("flowui_TextUserMenuItemProvider")
-public class TextUserMenuItemProvider extends AbstractUserMenuItemProvider {
+@Component("flowui_TextUserMenuItemLoader")
+public class TextUserMenuItemLoader extends AbstractUserMenuItemLoader {
 
     public static final String NAME = "textItem";
 
-    public TextUserMenuItemProvider(ApplicationContext applicationContext,
-                                    LoaderSupport loaderSupport) {
+    public TextUserMenuItemLoader(ApplicationContext applicationContext,
+                                  LoaderSupport loaderSupport) {
         super(applicationContext, loaderSupport);
     }
 

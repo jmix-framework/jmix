@@ -298,7 +298,11 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
 
         @Override
         public void setText(String text) {
-            super.setText(text);
+            String oldValue = getText();
+            if (!Objects.equals(oldValue, text)) {
+                super.setText(text);
+                firePropertyChange(ViewUserMenuItem.PROP_TEXT, oldValue, text);
+            }
         }
 
         @Nullable
@@ -309,7 +313,11 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
 
         @Override
         public void setIcon(@Nullable Component icon) {
-            super.setIcon(icon);
+            Component oldValue = getIcon();
+            if (!Objects.equals(oldValue, icon)) {
+                super.setIcon(icon);
+                firePropertyChange(ViewUserMenuItem.PROP_ICON, oldValue, icon);
+            }
         }
 
         @Nullable
@@ -320,7 +328,11 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
 
         @Override
         public void setOpenMode(@Nullable OpenMode openMode) {
-            this.openMode = openMode;
+            OpenMode oldValue = getOpenMode();
+            if (!Objects.equals(oldValue, openMode)) {
+                this.openMode = openMode;
+                firePropertyChange(ViewUserMenuItem.PROP_OPEN_MODE, oldValue, openMode);
+            }
         }
 
         @Nullable

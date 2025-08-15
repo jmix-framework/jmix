@@ -2976,7 +2976,7 @@
                                 <xs:element name="actionItem" type="userMenuActionItemType" minOccurs="0"/>
                                 <xs:element name="componentItem" type="userMenuComponentItemType" minOccurs="0"/>
                                 <xs:element name="viewItem" type="userMenuViewItemType" minOccurs="0"/>
-                                <xs:element name="separator" minOccurs="0"/>
+                                <xs:element name="separator" type="userMenuSeparatorType" minOccurs="0"/>
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
@@ -3015,7 +3015,7 @@
                                 <xs:element name="actionItem" type="userMenuActionItemType" minOccurs="0"/>
                                 <xs:element name="componentItem" type="userMenuComponentItemType" minOccurs="0"/>
                                 <xs:element name="viewItem" type="userMenuViewItemType" minOccurs="0"/>
-                                <xs:element name="separator" minOccurs="0"/>
+                                <xs:element name="separator" type="userMenuSeparatorType" minOccurs="0"/>
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
@@ -3069,6 +3069,11 @@
                 <xs:attribute name="viewClass" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Separator -->
+    <xs:complexType name="userMenuSeparatorType">
+        <xs:attribute name="itemId" type="xs:string"/>
     </xs:complexType>
 
     <!--endregion-->

@@ -25,6 +25,9 @@ import jakarta.annotation.Nullable;
 public interface TextUserMenuItem extends UserMenuItem,
         UserMenuItem.HasSubMenu, UserMenuItem.HasClickListener<TextUserMenuItem> {
 
+    String PROP_TEXT = "text";
+    String PROP_ICON = "icon";
+
     /**
      * Returns the text contained within this user menu item.
      *

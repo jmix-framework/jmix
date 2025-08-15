@@ -37,6 +37,7 @@ import io.jmix.flowui.kit.event.EventBus;
 import jakarta.annotation.Nullable;
 
 import java.beans.PropertyChangeEvent;
+import java.util.EventObject;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -274,6 +275,16 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
     }
 
     @Override
+    public void addSeparator(String parentItemId) {
+        getItemsDelegate().addSeparator(parentItemId);
+    }
+
+    @Override
+    public void addSeparatorAtIndex(int index, String parentItemId) {
+        getItemsDelegate().addSeparatorAtIndex(index, parentItemId);
+    }
+
+    @Override
     public Optional<UserMenuItem> findItem(String itemId) {
         return getItemsDelegate().findItem(itemId);
     }
@@ -407,7 +418,11 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
 
         @Override
         public void setText(String text) {
-            super.setText(text);
+            String oldValue = getText();
+            if (!Objects.equals(oldValue, text)) {
+                super.setText(text);
+                firePropertyChange(TextUserMenuItem.PROP_TEXT, oldValue, text);
+            }
         }
 
         @Nullable
@@ -418,7 +433,11 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
 
         @Override
         public void setIcon(@Nullable Component icon) {
-            super.setIcon(icon);
+            Component oldValue = getIcon();
+            if (!Objects.equals(oldValue, icon)) {
+                super.setIcon(icon);
+                firePropertyChange(TextUserMenuItem.PROP_ICON, oldValue, icon);
+            }
         }
 
         @Override
@@ -614,23 +633,31 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
 
         @Override
-        public void setVisible(boolean visible) {
-            item.setVisible(visible);
-        }
-
-        @Override
         public boolean isVisible() {
             return item.isVisible();
         }
 
         @Override
-        public void setEnabled(boolean enabled) {
-            item.setEnabled(enabled);
+        public void setVisible(boolean visible) {
+            boolean oldValue = isVisible();
+            if (!Objects.equals(oldValue, visible)) {
+                item.setVisible(visible);
+                firePropertyChange(UserMenuItem.PROP_VISIBLE, oldValue, visible);
+            }
         }
 
         @Override
         public boolean isEnabled() {
             return item.isEnabled();
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {
+            boolean oldValue = isEnabled();
+            if (!Objects.equals(oldValue, enabled)) {
+                item.setEnabled(enabled);
+                firePropertyChange(UserMenuItem.PROP_ENABLED, oldValue, enabled);
+            }
         }
 
         @Override
@@ -640,7 +667,11 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
 
         @Override
         public void setCheckable(boolean checkable) {
-            item.setCheckable(checkable);
+            boolean oldValue = isCheckable();
+            if (!Objects.equals(oldValue, checkable)) {
+                item.setCheckable(checkable);
+                firePropertyChange(UserMenuItem.PROP_CHECKABLE, oldValue, checkable);
+            }
         }
 
         @Override
@@ -650,7 +681,16 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
 
         @Override
         public void setChecked(boolean checked) {
-            item.setChecked(checked);
+            boolean oldValue = isChecked();
+            if (!Objects.equals(oldValue, checked)) {
+                item.setChecked(checked);
+                firePropertyChange(UserMenuItem.PROP_CHECKED, oldValue, checked);
+            }
+        }
+
+        @Override
+        public Registration addPropertyChangeListener(Consumer<PropertyChangeEvent> listener) {
+            return getEventBus().addListener(PropertyChangeEvent.class, listener);
         }
 
         protected HasSubMenu.SubMenu getSubMenu() {
@@ -716,6 +756,17 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
             }
 
             return eventBus;
+        }
+
+        protected boolean hasListener(Class<? extends EventObject> eventType) {
+            return eventBus != null && eventBus.hasListener(eventType);
+        }
+
+        protected void firePropertyChange(String propertyName, @Nullable Object oldValue, @Nullable Object newValue) {
+            if (hasListener(PropertyChangeEvent.class)) {
+                PropertyChangeEvent event = new PropertyChangeEvent(this, propertyName, oldValue, newValue);
+                getEventBus().fireEvent(event);
+            }
         }
 
         @Override
@@ -823,6 +874,16 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         @Override
         public void addSeparatorAtIndex(int index) {
             getItemsDelegate().addSeparatorAtIndex(index);
+        }
+
+        @Override
+        public void addSeparator(String parentItemId) {
+            getItemsDelegate().addSeparator(parentItemId);
+        }
+
+        @Override
+        public void addSeparatorAtIndex(int index, String parentItemId) {
+            getItemsDelegate().addSeparatorAtIndex(index, parentItemId);
         }
 
         @Override

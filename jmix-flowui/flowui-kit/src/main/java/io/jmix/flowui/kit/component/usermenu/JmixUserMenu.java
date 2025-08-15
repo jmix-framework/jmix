@@ -42,6 +42,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * A component that displays a user menu as a dropdown.
+ *
+ * @param <USER> the type of the user associated with the menu
+ */
 public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         implements HasTextMenuItems, HasActionMenuItems, HasComponentMenuItems,
         HasEnabled, HasTitle, HasOverlayClassName, HasSubParts,

@@ -34,7 +34,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Represents an action for switching visual themes in a user menu.
+ * An action for switching visual themes in a user menu. It requires the
+ * {@code @JsModule("./src/theme/color-scheme-switching-support.js")} import to be
+ * added to the main application class.
  */
 @ActionType(UserMenuThemeSwitchAction.ID)
 public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitchAction, UserMenu> {
@@ -72,8 +74,6 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
 
         this.text = messages.getMessage(MESSAGE_KEY);
     }
-
-    // TODO: gg, available variants
 
     @Override
     protected void setMenuItemInternal(@Nullable UserMenuItem menuItem) {

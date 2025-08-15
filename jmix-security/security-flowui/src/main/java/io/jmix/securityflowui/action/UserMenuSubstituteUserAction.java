@@ -31,7 +31,6 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
-import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.security.SubstituteUserAction;
 import io.jmix.flowui.action.usermenu.UserMenuAction;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -41,14 +40,8 @@ import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasSubMenu;
-import io.jmix.flowui.sys.ActionViewInitializer;
-import io.jmix.flowui.view.DialogWindow;
-import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.builder.WindowBuilder;
 import io.jmix.securityflowui.SecurityUiProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -57,13 +50,14 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
-import java.util.function.Consumer;
 
+/**
+ * An action that, depending on the number of substituted users, either opens a lookup view
+ * to select a substituted user or shows a submenu with the substituted users.
+ */
 @ActionType(UserMenuSubstituteUserAction.ID)
 public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstituteUserAction, UserMenu>
-        implements ApplicationListener<UserSubstitutionsChangedEvent>, ViewOpeningAction {
-
-    private static final Logger log = LoggerFactory.getLogger(UserMenuSubstituteUserAction.class);
+        implements ApplicationListener<UserSubstitutionsChangedEvent> {
 
     public static final String ID = "sec_UserMenuSubstituteUser";
     public static final String DEFAULT_VIEW = "sec_SubstituteUserView";
@@ -76,8 +70,6 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
     protected ApplicationContext applicationContext;
     protected UserSubstitutionManager substitutionManager;
     protected CurrentUserSubstitution currentUserSubstitution;
-
-    protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
 
     protected List<UserDetails> currentSubstitutedUsers;
     protected int maxSubstitutions;
@@ -146,7 +138,7 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
     }
 
     @Autowired
-    public void setUiComponentProperties(SecurityUiProperties securityUiProperties) {
+    public void setSecurityUiProperties(SecurityUiProperties securityUiProperties) {
         maxSubstitutions = securityUiProperties.getSubstituteUserActionMaxSubstitutions();
     }
 
@@ -169,86 +161,6 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
      */
     public void setMaxSubstitutions(int maxSubstitutions) {
         this.maxSubstitutions = maxSubstitutions;
-    }
-
-    @Nullable
-    @Override
-    public OpenMode getOpenMode() {
-        // User substitute view opens in a dialog window only
-        return OpenMode.DIALOG;
-    }
-
-    @Override
-    public void setOpenMode(@Nullable OpenMode openMode) {
-        log.warn("{} doesn't support setting {}", ID, OpenMode.class.getSimpleName());
-    }
-
-    @Nullable
-    @Override
-    public String getViewId() {
-        return viewInitializer.getViewId();
-    }
-
-    @Override
-    public void setViewId(@Nullable String viewId) {
-        viewInitializer.setViewId(viewId);
-    }
-
-    @Nullable
-    @Override
-    public Class<? extends View> getViewClass() {
-        return viewInitializer.getViewClass();
-    }
-
-    @Override
-    public void setViewClass(@Nullable Class<? extends View> viewClass) {
-        viewInitializer.setViewClass(viewClass);
-    }
-
-    @Nullable
-    @Override
-    public RouteParametersProvider getRouteParametersProvider() {
-        // User substitute view opens in a dialog window only
-        return null;
-    }
-
-    @Override
-    public void setRouteParametersProvider(@Nullable RouteParametersProvider routeParameters) {
-        log.warn("{} doesn't support setting {}", ID, RouteParametersProvider.class.getSimpleName());
-    }
-
-    @Nullable
-    @Override
-    public QueryParametersProvider getQueryParametersProvider() {
-        // User substitute view opens in a dialog window only
-        return null;
-    }
-
-    @Override
-    public void setQueryParametersProvider(@Nullable QueryParametersProvider queryParameters) {
-        log.warn("{} doesn't support setting {}", ID, QueryParametersProvider.class.getSimpleName());
-    }
-
-    @Nullable
-    @Override
-    public <V extends View<?>> Consumer<DialogWindow.AfterCloseEvent<V>> getAfterCloseHandler() {
-        return viewInitializer.getAfterCloseHandler();
-    }
-
-    @Override
-    public <V extends View<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler) {
-        viewInitializer.setAfterCloseHandler(afterCloseHandler);
-    }
-
-    @Nullable
-    @Override
-    public <V extends View<?>> Consumer<V> getViewConfigurer() {
-        return viewInitializer.getViewConfigurer();
-    }
-
-    @Override
-    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
-        viewInitializer.setViewConfigurer(viewConfigurer);
     }
 
     @Override
@@ -411,10 +323,8 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
         }
 
         View<?> origin = UiComponentUtils.getView(target);
-        WindowBuilder<View<?>> builder = dialogWindows.view(origin, DEFAULT_VIEW);
-
-        builder = viewInitializer.initWindowBuilder(builder);
-        builder.open();
+        dialogWindows.view(origin, DEFAULT_VIEW)
+                .open();
     }
 
     @Override

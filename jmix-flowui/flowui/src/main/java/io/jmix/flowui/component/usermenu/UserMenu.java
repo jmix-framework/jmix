@@ -49,6 +49,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Objects;
 
+/**
+ * A component that displays a user menu as a dropdown.
+ */
 public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuItems,
         ApplicationContextAware, InitializingBean {
 

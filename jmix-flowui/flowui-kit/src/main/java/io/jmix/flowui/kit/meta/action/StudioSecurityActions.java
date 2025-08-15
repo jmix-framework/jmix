@@ -16,7 +16,10 @@
 
 package io.jmix.flowui.kit.meta.action;
 
-import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.StudioAction;
+import io.jmix.flowui.kit.meta.StudioProperty;
+import io.jmix.flowui.kit.meta.StudioPropertyType;
+import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit(requiredDependencies = "io.jmix.security:jmix-security-flowui-starter")
 public interface StudioSecurityActions {
@@ -141,4 +144,29 @@ public interface StudioSecurityActions {
             }
     )
     void resetPasswordAction();
+
+    @StudioAction(
+            type = "sec_UserMenuSubstituteUser",
+            description = "An action that, depending on the number of substituted users, either opens a lookup view " +
+                    "to select a substituted user or shows a submenu with the substituted users.",
+            classFqn = "io.jmix.securityflowui.action.UserMenuSubstituteUserAction",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.COMPONENT_ID, required = true,
+                            initialValue = "substituteUserAction"),
+                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
+                            defaultValue = "msg:///actions.userMenu.SubstituteUser"),
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon", defaultValue = "EXCHANGE"),
+                    @StudioProperty(xmlAttribute = "maxSubstitutions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
+                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
+                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"})
+            }
+    )
+    void userMenuSubstituteUser();
 }

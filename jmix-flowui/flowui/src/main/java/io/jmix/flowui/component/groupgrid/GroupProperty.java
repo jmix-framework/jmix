@@ -16,7 +16,30 @@
 
 package io.jmix.flowui.component.groupgrid;
 
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+
+import java.util.Objects;
+
 public interface GroupProperty {
 
     Object get();
+
+    default boolean is(Object property) {
+        Object value = get();
+
+        if (property instanceof String) {
+            if (value instanceof MetaPropertyPath mpp) {
+                return Objects.equals(mpp.toPathString(), property);
+            }
+            return Objects.equals(value.toString(), property);
+        }
+        if (property instanceof MetaPropertyPath mpp) {
+            if (value instanceof String) {
+                return Objects.equals(value, mpp.toPathString());
+            }
+            return Objects.equals(value, mpp);
+        }
+
+        return Objects.equals(value, property);
+    }
 }

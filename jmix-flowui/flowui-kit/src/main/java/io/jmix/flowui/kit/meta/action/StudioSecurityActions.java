@@ -146,7 +146,7 @@ public interface StudioSecurityActions {
     void resetPasswordAction();
 
     @StudioAction(
-            type = "sec_UserMenuSubstituteUser",
+            type = "sec_userMenuSubstituteUser",
             description = "An action that, depending on the number of substituted users, either opens a lookup view " +
                     "to select a substituted user or shows a submenu with the substituted users.",
             classFqn = "io.jmix.securityflowui.action.UserMenuSubstituteUserAction",

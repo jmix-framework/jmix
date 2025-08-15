@@ -59,7 +59,7 @@ import java.util.*;
 public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstituteUserAction, UserMenu>
         implements ApplicationListener<UserSubstitutionsChangedEvent> {
 
-    public static final String ID = "sec_UserMenuSubstituteUser";
+    public static final String ID = "sec_userMenuSubstituteUser";
     public static final String DEFAULT_VIEW = "sec_SubstituteUserView";
 
     protected Actions actions;

@@ -104,12 +104,15 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
         avatar.setName(userDetails.getUsername());
         avatar.getElement().setAttribute("tabindex", "-1");
         avatar.setClassName(BASE_CLASS_NAME + "-button-content-user-avatar");
+        Div avatarWrapper = uiComponents.create(Div.class);
+        avatarWrapper.setClassName(BASE_CLASS_NAME + "-button-content-user-avatar-wrapper");
+        avatarWrapper.add(avatar);
 
         Span name = uiComponents.create(Span.class);
         name.setText(generateUserName(userDetails));
         name.setClassName(BASE_CLASS_NAME + "-button-content-user-name");
 
-        wrapper.add(avatar, name);
+        wrapper.add(avatarWrapper, name);
         return wrapper;
     }
 

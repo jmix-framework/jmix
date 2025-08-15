@@ -66,15 +66,21 @@ vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-
 vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content {
     --jmix-user-menu-avatar-size: var(--vaadin-avatar-size, 64px);
     --jmix-user-menu-substituted-indicator-size: calc(var(--jmix-user-menu-avatar-size) / 4);
-    --jmix-user-menu-substituted-indicator-border-size: 2px;
+    --jmix-user-menu-substituted-indicator-border-size: var(--vaadin-focus-ring-width, 2px);
+    --jmix-user-menu-substituted-indicator-posotion: 1px;
 }
 
-vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content:before {
+.jmix-user-menu-button-content-user-avatar-wrapper {
+    display: flex;
+    position: relative;
+}
+
+vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content-user-avatar:before {
     content: '';
 
     position: absolute;
-    bottom: calc(var(--lumo-space-xs) / 2);
-    inset-inline-start: calc(var(--jmix-user-menu-avatar-size) - var(--lumo-space-s) / 2);
+    inset-inline-end: calc(-1 * var(--jmix-user-menu-substituted-indicator-border-size) + var(--jmix-user-menu-substituted-indicator-posotion));
+    bottom: calc(-1 * var(--jmix-user-menu-substituted-indicator-border-size) + var(--jmix-user-menu-substituted-indicator-posotion));
     z-index: 1;
 
     border-radius: 100%;
@@ -85,16 +91,16 @@ vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-men
     background-color: var(--lumo-base-color);
 }
 
-vaadin-app-layout[primary-section='navbar'] vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content:before {
+vaadin-app-layout[primary-section='navbar'] vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content-user-avatar:before {
     background-image: linear-gradient(var(--lumo-contrast-5pct), var(--lumo-contrast-5pct));
 }
 
-vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content:after {
+vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content-user-avatar:after {
     content: '';
 
     position: absolute;
-    bottom: calc(var(--lumo-space-xs) / 2 + var(--jmix-user-menu-substituted-indicator-border-size));
-    inset-inline-start: calc(var(--jmix-user-menu-avatar-size) - var(--lumo-space-s) / 2 + var(--jmix-user-menu-substituted-indicator-border-size));
+    inset-inline-end: var(--jmix-user-menu-substituted-indicator-posotion);
+    bottom: var(--jmix-user-menu-substituted-indicator-posotion);
     z-index: 1;
 
     border-radius: 100%;

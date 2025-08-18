@@ -256,7 +256,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexConfiguration.getEntityClass());
         indexConfiguration.getMapping().getFields().values().forEach(field -> {
             String entityPropertyFullName = field.getEntityPropertyFullName();
-            if (containsDynamicAttribute(entityPropertyFullName)){
+            if (!containsDynamicAttribute(entityPropertyFullName)){
                 log.trace("Add property to fetch plan: {}", entityPropertyFullName);
                 fetchPlanBuilder.add(entityPropertyFullName);
                 field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {

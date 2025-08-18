@@ -32,7 +32,6 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
@@ -61,7 +60,7 @@ public class SearchResultsView extends StandardView {
     public static final String QUERY_PARAM_SEARCH_BUTTON_VISIBLE = "searchButtonVisible";
     public static final String QUERY_PARAM_SETTINGS_BUTTON_VISIBLE = "settingsButtonVisible";
 
-    protected static final Map<String, String> systemFieldLabels = ImmutableMap.<String, String>builder()
+    protected static final Map<String, String> SYSTEM_FIELD_LABELS = ImmutableMap.<String, String>builder()
             .put("_file_name", "fileName")
             .put("_content", "content")
             .build();
@@ -306,17 +305,19 @@ public class SearchResultsView extends StandardView {
         List<String> captionParts = new ArrayList<>();
         String[] parts = fieldName.split("\\.");
         MetaClass currentMetaClass = metadata.getClass(entityName);
-        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(currentMetaClass, fieldName);
-        //TODO null check
-        MetaProperty[] metaProperties = metaPropertyPath.getMetaProperties();
-        for (int i = 0; i < metaProperties.length; i++) {
-            MetaProperty currentMetaProperty = metaProperties[i];
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            MetaProperty currentMetaProperty = metadataTools.resolveMetaPropertyOrNull(currentMetaClass, part);
+            if (currentMetaProperty == null) {
+                break;
+            }
+
             if (currentMetaProperty.getRange().isDatatype()
                     && (Datatype<?>) currentMetaProperty.getRange().asDatatype() instanceof FileRefDatatype
                     && i + 1 < parts.length) {
                 String propertyCaption = messageTools.getPropertyCaption(currentMetaProperty);
                 String nextPart = parts[i + 1];
-                String labelKey = systemFieldLabels.get(nextPart);
+                String labelKey = SYSTEM_FIELD_LABELS.get(nextPart);
                 if (labelKey != null) {
                     String labelValue = messageBundle.getMessage(labelKey);
                     propertyCaption = propertyCaption + "[" + labelValue + "]";
@@ -324,6 +325,12 @@ public class SearchResultsView extends StandardView {
                 captionParts.add(propertyCaption);
             } else {
                 captionParts.add(messageTools.getPropertyCaption(currentMetaProperty));
+
+                if (currentMetaProperty.getRange().isClass()) {
+                    currentMetaClass = currentMetaProperty.getRange().asClass();
+                } else {
+                    break;
+                }
             }
         }
         return Joiner.on(".").join(captionParts);

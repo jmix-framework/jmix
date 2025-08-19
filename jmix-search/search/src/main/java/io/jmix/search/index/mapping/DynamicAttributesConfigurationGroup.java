@@ -161,7 +161,7 @@ public class DynamicAttributesConfigurationGroup extends AbstractAttributesConfi
         /**
          * Defines parameters map.
          * <p>
-         * See {@link MappingDefinitionElement#getParameters()}.
+         * See {@link DynamicAttributesConfigurationGroup#getParameters()}.
          *
          * @param parameters parameters
          * @return builder

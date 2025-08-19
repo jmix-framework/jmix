@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  * TODO javadoc
  */
 @Component
-public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProcessor<MappingDefinitionElement> {
+public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProcessor<StaticAttributesConfigurationGroup> {
 
     private static final Logger log = LoggerFactory.getLogger(StaticAttributesGroupProcessor.class);
 
@@ -49,7 +49,7 @@ public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProce
 
 
     @Override
-    public List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass, MappingDefinitionElement group, ExtendedSearchSettings extendedSearchSettings) {
+    public List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass, StaticAttributesConfigurationGroup group, ExtendedSearchSettings extendedSearchSettings) {
         Map<String, MetaPropertyPath> effectiveProperties = resolveEffectiveProperties(
                 metaClass, group.getIncludedProperties(), group.getExcludedProperties()
         );

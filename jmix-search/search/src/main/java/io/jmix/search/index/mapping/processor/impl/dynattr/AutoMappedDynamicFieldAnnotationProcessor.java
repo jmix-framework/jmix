@@ -58,7 +58,7 @@ public class AutoMappedDynamicFieldAnnotationProcessor extends AbstractFieldAnno
         return DynamicAttributesConfigurationGroup
                 .builder()
                 .excludeCategories(annotation.excludeCategories())
-                .excludeProperties(annotation.excludeFields())
+                .excludeProperties(annotation.excludeAttributes())
                 .withParameters(createParameters(annotation))
                 .withFieldMappingStrategyClass(AutoMappingStrategy.class)
                 .build();
@@ -71,7 +71,7 @@ public class AutoMappedDynamicFieldAnnotationProcessor extends AbstractFieldAnno
         if (StringUtils.isNotBlank(specificAnnotation.analyzer())) {
             parameters.put(ParameterKeys.ANALYZER, specificAnnotation.analyzer());
         }
-        parameters.put(DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE, specificAnnotation.referenceFieldsIndexingMode());
+        parameters.put(DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE, specificAnnotation.referenceAttributesIndexingMode());
         parameters.put(ParameterKeys.INDEX_FILE_CONTENT, specificAnnotation.indexFileContent());
         return parameters;
     }

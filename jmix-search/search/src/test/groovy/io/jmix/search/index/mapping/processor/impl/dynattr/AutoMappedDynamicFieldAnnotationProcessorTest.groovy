@@ -152,14 +152,14 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
     }
 
     private interface IndexDefinitionWithExcludes {
-        @DynamicAttributes(excludeCategories = ["cat1", "cat2", "cat3"], excludeFields = ["field1", "field2"])
+        @DynamicAttributes(excludeCategories = ["cat1", "cat2", "cat3"], excludeAttributes = ["field1", "field2"])
         void method();
 
     }
 
     private interface IndexDefinitionWithParameters {
         @DynamicAttributes(
-                referenceFieldsIndexingMode = ReferenceFieldsIndexingMode.NONE,
+                referenceAttributesIndexingMode = ReferenceFieldsIndexingMode.NONE,
                 analyzer = SOME_ANALYZER,
                 indexFileContent = false
         )
@@ -190,7 +190,7 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
 
     private interface IndexDefinitionSomeOnOneMethod {
         @DynamicAttributes
-        @DynamicAttributes(excludeCategories = ["cat1", "cat2", "cat3"], excludeFields = ["field1", "field2"])
+        @DynamicAttributes(excludeCategories = ["cat1", "cat2", "cat3"], excludeAttributes = ["field1", "field2"])
         void method();
 
         void method2();

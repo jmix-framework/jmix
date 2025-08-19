@@ -35,10 +35,11 @@ public @interface DynamicAttributes {
     String[] excludeCategories() default {};
 
     @Nullable
-    String[] excludeFields() default {};
+    String[] excludeAttributes() default {};
 
+    //TODO
     @Nullable
-    ReferenceFieldsIndexingMode referenceFieldsIndexingMode() default INSTANCE_NAME_ONLY;
+    ReferenceFieldsIndexingMode referenceAttributesIndexingMode() default INSTANCE_NAME_ONLY;
 
     String analyzer() default "";
 

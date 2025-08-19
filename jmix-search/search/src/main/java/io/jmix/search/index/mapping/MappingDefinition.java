@@ -103,7 +103,7 @@ public class MappingDefinition {
      *
      * @return List of {@link MappingDefinitionElement}
      */
-    public List<MappingDefinitionElement> getStaticGroups() {
+    public List<MappingDefinitionElement> getElements() {
         return elements;
     }
     public List<DynamicAttributesConfigurationGroup> getDynamicGroups() {

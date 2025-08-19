@@ -43,7 +43,7 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
                                              MetaClass rootEntityMetaClass,
                                              AutoMappedField annotation) {
         builder.addStaticAttributesGroup(
-                (StaticAttributesConfigurationGroup) StaticAttributesConfigurationGroup.builder()
+                StaticAttributesConfigurationGroup.builder()
                         .includeProperties(annotation.includeProperties())
                         .excludeProperties(annotation.excludeProperties())
                         .withFieldMappingStrategyClass(getFieldMappingStrategyClass())

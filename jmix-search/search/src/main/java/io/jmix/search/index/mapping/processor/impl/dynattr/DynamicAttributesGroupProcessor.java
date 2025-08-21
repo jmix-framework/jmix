@@ -26,7 +26,6 @@ import io.jmix.search.index.mapping.processor.impl.AbstractAttributesGroupProces
 import io.jmix.search.index.mapping.processor.impl.FieldMappingCreator;
 import io.jmix.search.utils.PropertyTools;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -42,10 +41,12 @@ import static io.jmix.search.index.mapping.DynamicAttributesParameterKeys.REFERE
 @Component
 public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProcessor<DynamicAttributesConfigurationGroup> {
 
-    private final ObjectProvider<DynamicAttributesResolver> dynamicAttributesResolver;
+    private final DynamicAttributesResolver dynamicAttributesResolver;
     private final FieldMappingCreator fieldMappingCreator;
 
-    protected DynamicAttributesGroupProcessor(PropertyTools propertyTools, ObjectProvider<DynamicAttributesResolver> dynamicAttributesResolver, FieldMappingCreator fieldMappingCreator) {
+    protected DynamicAttributesGroupProcessor(PropertyTools propertyTools,
+                                              @Lazy DynamicAttributesResolver dynamicAttributesResolver,
+                                              FieldMappingCreator fieldMappingCreator) {
         super(propertyTools);
         this.dynamicAttributesResolver = dynamicAttributesResolver;
         this.fieldMappingCreator = fieldMappingCreator;
@@ -55,7 +56,7 @@ public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProc
     public List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass,
                                                                DynamicAttributesConfigurationGroup group,
                                                                ExtendedSearchSettings extendedSearchSettings) {
-        Map<String, MetaPropertyPath> effectiveProperties = dynamicAttributesResolver.getIfAvailable().resolveEffectivePropertyPaths(
+        Map<String, MetaPropertyPath> effectiveProperties = dynamicAttributesResolver.resolveEffectivePropertyPaths(
                 metaClass,
                 group.getExcludedCategories(),
                 group.getExcludedProperties(),

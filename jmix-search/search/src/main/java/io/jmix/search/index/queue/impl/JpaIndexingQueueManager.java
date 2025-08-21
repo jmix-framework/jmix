@@ -37,6 +37,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -50,6 +51,7 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 @Component("search_JpaIndexingQueueManager")
+@Primary
 public class JpaIndexingQueueManager implements IndexingQueueManager {
 
     private static final Logger log = LoggerFactory.getLogger(JpaIndexingQueueManager.class);

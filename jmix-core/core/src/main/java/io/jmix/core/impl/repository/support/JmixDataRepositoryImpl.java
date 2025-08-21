@@ -23,9 +23,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.repository.JmixDataRepository;
 import io.jmix.core.repository.JmixDataRepositoryContext;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -222,6 +220,11 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
     }
 
     @Override
+    public Slice<T> findAllSlice(Pageable pageable, FetchPlan fetchPlan) {
+        return findAllSlice(pageable, JmixDataRepositoryContext.plan(fetchPlan).build());
+    }
+
+    @Override
     public Page<T> findAll(Pageable pageable, JmixDataRepositoryContext jmixContext) {
         FluentLoader.ByCondition<T> loader = conditionOrAllLoader(jmixContext.condition())
                 .fetchPlan(jmixContext.fetchPlan())
@@ -235,6 +238,21 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
 
         long total = count(jmixContext);
         return new PageImpl<>(results, pageable, total);
+    }
+
+    @Override
+    public Slice<T> findAllSlice(Pageable pageable, JmixDataRepositoryContext jmixContext) {
+        FluentLoader.ByCondition<T> loader = conditionOrAllLoader(jmixContext.condition())
+                .fetchPlan(jmixContext.fetchPlan())
+                .hints(getHints())
+                .hints(jmixContext.hints());
+
+        LoaderHelper.applyPageableForConditionLoader(loader, pageable);
+        loader.sort(springToJmixSort(pageable.getSort()));
+
+        List<T> results = loader.list();
+
+        return new SliceImpl<>(results, pageable, results.size() == pageable.getPageSize());
     }
 
     public long count(JmixDataRepositoryContext jmixContext) {

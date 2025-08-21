@@ -353,7 +353,7 @@ public class AnnotatedIndexDefinitionProcessor {
                                                                            MappingDefinition mappingDefinition,
                                                                            ExtendedSearchSettings extendedSearchSettings) {
 
-        List<MappingFieldDescriptor> staticMappings = mappingDefinition.getElements().stream()
+        List<MappingFieldDescriptor> staticMappings = mappingDefinition.getStaticGroups().stream()
                 .map(item -> staticAttributesGroupProcessor.processAttributesGroup(metaClass, item, extendedSearchSettings))
                 .flatMap(Collection::stream)
                 .toList();

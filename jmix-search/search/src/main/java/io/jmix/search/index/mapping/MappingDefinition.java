@@ -90,22 +90,35 @@ import java.util.List;
  */
 public class MappingDefinition {
 
-    protected List<StaticAttributesConfigurationGroup> elements;
+    protected List<StaticAttributesConfigurationGroup> staticGroups;
     protected List<DynamicAttributesConfigurationGroup> dynamicGroups;
 
     protected MappingDefinition(MappingDefinitionBuilder builder) {
-        this.elements = builder.elements;
+        this.staticGroups = builder.elements;
         this.dynamicGroups = builder.dynamicGroups;
     }
 
     /**
-     * Gets all {@link MappingDefinitionElement}
+     * Gets all {@link StaticAttributesConfigurationGroup}
+     * use the {@link MappingDefinition#getStaticGroups()}
      *
      * @return List of {@link MappingDefinitionElement}
      */
+    @Deprecated
     public List<StaticAttributesConfigurationGroup> getElements() {
-        return elements;
+        return staticGroups;
     }
+
+    /**
+     * Gets all {@link StaticAttributesConfigurationGroup}
+     *
+     * @return List of {@link StaticAttributesConfigurationGroup}
+     */
+    public List<StaticAttributesConfigurationGroup> getStaticGroups() {
+        return staticGroups;
+    }
+
+
     public List<DynamicAttributesConfigurationGroup> getDynamicGroups() {
         return dynamicGroups;
     }

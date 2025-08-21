@@ -3,6 +3,7 @@ package io.jmix.search.listener
 import io.jmix.core.MetadataTools
 import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.core.metamodel.model.MetaProperty
+import io.jmix.search.listener.dynattr.DynamicAttributeReferenceFieldResolver
 import spock.lang.Specification
 
 class DynamicAttributeReferenceFieldResolverTest extends Specification {

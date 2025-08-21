@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.listener;
+package io.jmix.search.listener.dynattr;
 
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
@@ -23,7 +23,6 @@ import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.dynattr.impl.DynamicAttributeChangeEvent;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
-import io.jmix.search.listener.dynattr.DynamicReferenceDependentEntitiesResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;

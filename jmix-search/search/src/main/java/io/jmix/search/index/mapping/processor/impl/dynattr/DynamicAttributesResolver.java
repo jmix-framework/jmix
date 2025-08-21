@@ -18,30 +18,31 @@ package io.jmix.search.index.mapping.processor.impl.dynattr;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-//import io.jmix.dynattr.AttributeDefinition;
-//import io.jmix.dynattr.AttributeType;
-//import io.jmix.dynattr.CategoryDefinition;
-//import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattr.AttributeDefinition;
+import io.jmix.dynattr.AttributeType;
+import io.jmix.dynattr.CategoryDefinition;
+import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.search.index.annotation.ReferenceFieldsIndexingMode;
-//import io.jmix.search.utils.PropertyTools;
+import io.jmix.search.utils.PropertyTools;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-//import java.util.stream.Stream;
-//
-//import static io.jmix.dynattr.AttributeType.*;
-//import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.INSTANCE_NAME_ONLY;
-//import static java.util.function.Function.identity;
-//import static java.util.stream.Collectors.toMap;
+import java.util.stream.Stream;
+
+import static io.jmix.dynattr.AttributeType.*;
+import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.INSTANCE_NAME_ONLY;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * TODO javadoc
  */
 @Component
+@Lazy
 public class DynamicAttributesResolver {
 
-/*    private final DynAttrMetadata dynAttrMetadata;
+    private final DynAttrMetadata dynAttrMetadata;
     private final PropertyTools propertyTools;
     private static final List<AttributeType> SUPPORTED_DATA_TYPES = List.of(STRING, ENTITY, ENUMERATION);
 
@@ -49,24 +50,23 @@ public class DynamicAttributesResolver {
                                      PropertyTools propertyTools) {
         this.dynAttrMetadata = dynAttrMetadata;
         this.propertyTools = propertyTools;
-    }*/
+    }
 
     public Map<String, MetaPropertyPath> resolveEffectivePropertyPaths(
             MetaClass metaClass,
             String[] excludedCategories,
             String[] excludedProperties,
             ReferenceFieldsIndexingMode mode) {
-/*        Map<String, MetaPropertyPath> effectiveProperties = new HashMap<>();
+        Map<String, MetaPropertyPath> effectiveProperties = new HashMap<>();
         Collection<AttributeDefinition> attributes = getAttributes(metaClass, excludedCategories, excludedProperties, mode);
 
         attributes.forEach(attributeDefinition ->
                 effectiveProperties.putAll(propertyTools.findPropertiesByPath(metaClass, "+" + attributeDefinition.getCode(), true))
         );
-        return effectiveProperties;*/
-    return null;
+        return effectiveProperties;
     }
 
-/*    protected Collection<AttributeDefinition> getAttributes(
+    protected Collection<AttributeDefinition> getAttributes(
             MetaClass metaClass,
             String[] excludedCategories,
             String[] excludedProperties,
@@ -110,5 +110,5 @@ public class DynamicAttributesResolver {
 
     private void cleanAttributesForExcludedProperties(String[] excludedProperties, Map<String, AttributeDefinition> attributeDefinitionMap) {
         Stream.of(excludedProperties).forEach(attributeDefinitionMap::remove);
-    }*/
+    }
 }

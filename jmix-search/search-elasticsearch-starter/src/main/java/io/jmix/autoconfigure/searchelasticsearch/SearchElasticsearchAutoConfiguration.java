@@ -27,6 +27,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesModuleChecker;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.utils.SslConfigurer;
@@ -62,7 +63,7 @@ import java.util.Collection;
         DataConfiguration.class,
         SearchConfiguration.class,
         SearchElasticsearchConfiguration.class})
-public class SearchElasticsearchAutoConfiguration {
+    public class SearchElasticsearchAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(SearchElasticsearchAutoConfiguration.class);
 
@@ -127,7 +128,8 @@ public class SearchElasticsearchAutoConfiguration {
                                                        IndexStateRegistry indexStateRegistry,
                                                        MetadataTools metadataTools,
                                                        SearchProperties searchProperties,
-                                                       ElasticsearchClient client) {
+                                                       ElasticsearchClient client,
+                                                       DynamicAttributesModuleChecker dynamicAttributesModuleChecker) {
         return new ElasticsearchEntityIndexer(dataManager,
                 fetchPlans,
                 indexConfigurationManager,
@@ -136,7 +138,8 @@ public class SearchElasticsearchAutoConfiguration {
                 indexStateRegistry,
                 metadataTools,
                 searchProperties,
-                client);
+                client,
+                dynamicAttributesModuleChecker);
     }
 
     @Bean("search_ElasticsearchEntitySearcher")

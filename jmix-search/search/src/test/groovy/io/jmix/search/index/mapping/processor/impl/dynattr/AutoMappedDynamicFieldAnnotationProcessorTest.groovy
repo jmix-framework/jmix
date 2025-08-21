@@ -17,7 +17,7 @@
 package io.jmix.search.index.mapping.processor.impl.dynattr
 
 import io.jmix.search.index.annotation.DynamicAttributes
-import io.jmix.search.index.annotation.ReferenceFieldsIndexingMode
+import io.jmix.search.index.annotation.ReferenceAttributesIndexingMode
 import io.jmix.search.index.mapping.DynamicAttributesConfigurationGroup
 import io.jmix.search.index.mapping.DynamicAttributesParameterKeys
 import io.jmix.search.index.mapping.ParameterKeys
@@ -73,7 +73,7 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
         definition.getPropertyValueExtractor() == null
         definition.getParameters() == Map.of(
                 DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE,
-                ReferenceFieldsIndexingMode.INSTANCE_NAME_ONLY,
+                ReferenceAttributesIndexingMode.INSTANCE_NAME_ONLY,
 
                 ParameterKeys.INDEX_FILE_CONTENT, true
         )
@@ -105,7 +105,7 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
         parameters.get(ParameterKeys.ANALYZER) == SOME_ANALYZER
         parameters.get(ParameterKeys.INDEX_FILE_CONTENT) == false
         parameters.get(DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE)
-                == ReferenceFieldsIndexingMode.NONE
+                == ReferenceAttributesIndexingMode.NONE
     }
 
     def "extract from class. simple"() {
@@ -159,7 +159,7 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
 
     private interface IndexDefinitionWithParameters {
         @DynamicAttributes(
-                referenceAttributesIndexingMode = ReferenceFieldsIndexingMode.NONE,
+                referenceAttributesIndexingMode = ReferenceAttributesIndexingMode.NONE,
                 analyzer = SOME_ANALYZER,
                 indexFileContent = false
         )

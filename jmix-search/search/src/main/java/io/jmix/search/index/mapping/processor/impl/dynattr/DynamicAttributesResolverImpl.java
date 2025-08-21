@@ -22,7 +22,7 @@ import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.search.index.annotation.ReferenceFieldsIndexingMode;
+import io.jmix.search.index.annotation.ReferenceAttributesIndexingMode;
 import io.jmix.search.utils.PropertyTools;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static io.jmix.dynattr.AttributeType.*;
-import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.INSTANCE_NAME_ONLY;
+import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.INSTANCE_NAME_ONLY;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
@@ -57,7 +57,7 @@ public class DynamicAttributesResolverImpl implements DynamicAttributesResolver 
             MetaClass metaClass,
             String[] excludedCategories,
             String[] excludedProperties,
-            ReferenceFieldsIndexingMode mode) {
+            ReferenceAttributesIndexingMode mode) {
         Map<String, MetaPropertyPath> effectiveProperties = new HashMap<>();
         Collection<AttributeDefinition> attributes = getAttributes(metaClass, excludedCategories, excludedProperties, mode);
 
@@ -71,7 +71,7 @@ public class DynamicAttributesResolverImpl implements DynamicAttributesResolver 
             MetaClass metaClass,
             String[] excludedCategories,
             String[] excludedProperties,
-            ReferenceFieldsIndexingMode mode) {
+            ReferenceAttributesIndexingMode mode) {
         Map<String, AttributeDefinition> attributeDefinitionMap = dynAttrMetadata.getAttributes(metaClass).stream()
                 .filter(
                         attributeDefinition -> {

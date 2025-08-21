@@ -20,7 +20,7 @@ import com.drew.lang.annotations.Nullable;
 
 import java.lang.annotation.*;
 
-import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*;
+import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*;
 
 /**
  * TODO javadoc
@@ -37,9 +37,8 @@ public @interface DynamicAttributes {
     @Nullable
     String[] excludeAttributes() default {};
 
-    //TODO
     @Nullable
-    ReferenceFieldsIndexingMode referenceAttributesIndexingMode() default INSTANCE_NAME_ONLY;
+    ReferenceAttributesIndexingMode referenceAttributesIndexingMode() default INSTANCE_NAME_ONLY;
 
     String analyzer() default "";
 

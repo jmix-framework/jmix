@@ -23,7 +23,7 @@ import io.jmix.search.index.mapping.strategy.FieldMappingStrategy
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy
 import spock.lang.Specification
 
-import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*
+import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*
 import static io.jmix.search.index.mapping.DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE
 import static io.jmix.search.index.mapping.ParameterKeys.ANALYZER
 import static io.jmix.search.index.mapping.ParameterKeys.INDEX_FILE_CONTENT

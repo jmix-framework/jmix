@@ -27,7 +27,7 @@ import spock.lang.Specification
 
 import java.util.stream.Stream
 
-import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*
+import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*
 import static java.util.Arrays.asList
 import static java.util.Collections.singletonMap
 

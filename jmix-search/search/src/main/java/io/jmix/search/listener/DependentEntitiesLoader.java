@@ -22,6 +22,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.PersistenceHints;
+import io.jmix.search.listener.dynattr.DynamicAttributeReferenceFieldResolver;
 import org.eclipse.persistence.exceptions.JPQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

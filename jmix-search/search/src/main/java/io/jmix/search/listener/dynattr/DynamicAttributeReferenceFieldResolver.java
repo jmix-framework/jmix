@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.listener;
+package io.jmix.search.listener.dynattr;
 
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;

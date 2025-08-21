@@ -21,6 +21,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.listener.dynattr.DynamicAttributeReferenceFieldResolver;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 

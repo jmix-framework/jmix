@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity
 import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.core.metamodel.model.MetaProperty
 import io.jmix.core.metamodel.model.MetaPropertyPath
+import io.jmix.search.listener.dynattr.DynamicAttributeReferenceFieldResolver
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
 import spock.lang.Specification

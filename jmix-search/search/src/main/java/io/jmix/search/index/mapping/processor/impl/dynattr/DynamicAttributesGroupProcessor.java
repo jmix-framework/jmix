@@ -18,21 +18,20 @@ package io.jmix.search.index.mapping.processor.impl.dynattr;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.search.index.annotation.ReferenceFieldsIndexingMode;
+import io.jmix.search.index.annotation.ReferenceAttributesIndexingMode;
 import io.jmix.search.index.mapping.DynamicAttributesConfigurationGroup;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.mapping.processor.impl.AbstractAttributesGroupProcessor;
 import io.jmix.search.index.mapping.processor.impl.FieldMappingCreator;
 import io.jmix.search.utils.PropertyTools;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*;
+import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*;
 import static io.jmix.search.index.mapping.DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE;
 
 /**
@@ -70,11 +69,11 @@ public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProc
                 .collect(Collectors.toList());
     }
 
-    private ReferenceFieldsIndexingMode extractReferenceFieldsIndexingMode(DynamicAttributesConfigurationGroup group) {
+    private ReferenceAttributesIndexingMode extractReferenceFieldsIndexingMode(DynamicAttributesConfigurationGroup group) {
         if (group.getParameters() != null){
             Object mode = group.getParameters().get(REFERENCE_FIELD_INDEXING_MODE);
             if(mode != null){
-                return (ReferenceFieldsIndexingMode) mode;
+                return (ReferenceAttributesIndexingMode) mode;
             }
         }
         return NONE;

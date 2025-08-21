@@ -18,7 +18,7 @@ package io.jmix.search.index.mapping.processor.impl.dynattr;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.search.index.annotation.ReferenceFieldsIndexingMode;
+import io.jmix.search.index.annotation.ReferenceAttributesIndexingMode;
 
 import java.util.Map;
 
@@ -27,5 +27,5 @@ public interface DynamicAttributesResolver {
             MetaClass metaClass,
             String[] excludedCategories,
             String[] excludedProperties,
-            ReferenceFieldsIndexingMode mode);
+            ReferenceAttributesIndexingMode mode);
 }

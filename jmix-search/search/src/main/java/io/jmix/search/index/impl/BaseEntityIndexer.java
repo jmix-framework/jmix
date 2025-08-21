@@ -26,7 +26,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexResult;
-import io.jmix.search.index.impl.dynattr.DynAttrUtils;
+import io.jmix.search.index.impl.dynattr.DynAttrConstants;
 import io.jmix.search.index.impl.dynattr.DynamicAttributesModuleChecker;
 import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
@@ -262,7 +262,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
         if (!dynamicAttributesModuleChecker.isDynamicAttributesUsing()){
             return emptyMap();
         }
-        return Map.of(DynAttrUtils.LOAD_DYN_ATTR, true);
+        return Map.of(DynAttrConstants.LOAD_DYN_ATTR, true);
     }
 
     protected FetchPlan createFetchPlan(IndexConfiguration indexConfiguration) {

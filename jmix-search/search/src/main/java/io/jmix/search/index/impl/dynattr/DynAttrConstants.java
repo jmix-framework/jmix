@@ -16,7 +16,10 @@
 
 package io.jmix.search.index.impl.dynattr;
 
-public class DynAttrUtils {
-    //TODO javadoc
-    public static String LOAD_DYN_ATTR = "jmix.dynattr";
+public interface DynAttrConstants {
+    /**
+     * The duplicate of the io.jmix.dynattr.DynAttrQueryHints#LOAD_DYN_ATTR
+     * This duplication is need because of independence of the Dynamic Attributes Add-on
+     */
+    String LOAD_DYN_ATTR = "jmix.dynattr";
 }

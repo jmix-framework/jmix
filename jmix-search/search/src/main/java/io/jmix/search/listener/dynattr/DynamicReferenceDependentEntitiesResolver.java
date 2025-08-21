@@ -14,54 +14,40 @@
  * limitations under the License.
  */
 
-package io.jmix.search.listener;
+package io.jmix.search.listener.dynattr;
 
-import io.jmix.core.DataManager;
 import io.jmix.core.Id;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.data.PersistenceHints;
 import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import org.eclipse.persistence.exceptions.JPQLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.jmix.search.listener.DependentEntitiesLoader;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
-public class DependentEntitiesResolverImpl implements DependentEntitiesResolver {
+@Lazy
+public class DynamicReferenceDependentEntitiesResolver {
 
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final DependentEntitiesLoader dependentEntitiesLoader;
 
-    public DependentEntitiesResolverImpl(IndexConfigurationManager indexConfigurationManager, DependentEntitiesLoader dependentEntitiesLoader) {
+    public DynamicReferenceDependentEntitiesResolver(IndexConfigurationManager indexConfigurationManager,
+                                                     DependentEntitiesLoader dependentEntitiesLoader) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.dependentEntitiesLoader = dependentEntitiesLoader;
     }
 
-    @Override
-    public Set<Id<?>> getEntityIdsDependentOnUpdatedEntity(Id<?> updatedEntityId, MetaClass metaClass, AttributeChanges changes) {
+
+    public Set<Id<?>> getEntityIdsDependentOnUpdatedEntity(Id<Object> updatedEntityId, MetaClass metaClass, DynamicAttributes dynamicAttributes) {
         return getEntityIdsDependentOnUpdatedEntityInternal(
                 updatedEntityId,
                 metaClass,
                 updatedEntityId.getEntityClass(),
-                changes.getAttributes());
-    }
-
-    @Override
-    public Set<Id<?>> getEntityIdsDependentOnRemovedEntity(Id<?> removedEntityId, MetaClass metaClass) {
-        Class<?> entityClass = removedEntityId.getEntityClass();
-        Map<MetaClass, Set<MetaPropertyPath>> dependenciesMetaData;
-        dependenciesMetaData = indexConfigurationManager.getDependenciesMetaDataForDelete(entityClass);
-        return dependentEntitiesLoader.loadDependentEntityIds(removedEntityId, metaClass, dependenciesMetaData);
+                dynamicAttributes.getKeys());
     }
 
     protected Set<Id<?>> getEntityIdsDependentOnUpdatedEntityInternal(Id<?> updatedEntityId, MetaClass metaClass, Class<?> entityClass, Set<String> attributes) {
@@ -69,6 +55,4 @@ public class DependentEntitiesResolverImpl implements DependentEntitiesResolver 
         dependenciesMetaData = indexConfigurationManager.getDependenciesMetaDataForUpdate(entityClass, attributes);
         return dependentEntitiesLoader.loadDependentEntityIds(updatedEntityId, metaClass, dependenciesMetaData);
     }
-
-
 }

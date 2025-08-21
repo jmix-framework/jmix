@@ -23,8 +23,10 @@ import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.dynattr.impl.DynamicAttributeChangeEvent;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
+import io.jmix.search.listener.dynattr.DynamicReferenceDependentEntitiesResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -35,19 +37,22 @@ import java.util.Set;
  * TODO javadoc
  */
 @Component
+@Lazy
 public class DynamicAttributesTrackingListener {
 
     private static final Logger log = LoggerFactory.getLogger(DynamicAttributesTrackingListener.class);
 
     private final IndexConfigurationManager indexConfigurationManager;
     private final IndexingQueueManager indexingQueueManager;
-    private final DependentEntitiesResolver dependentEntitiesResolver;
+    private final DynamicReferenceDependentEntitiesResolver dependentEntitiesResolver;
     private final EntityStates entityStates;
     private final MetadataTools metadataTools;
 
     public DynamicAttributesTrackingListener(IndexConfigurationManager indexConfigurationManager,
                                              IndexingQueueManager indexingQueueManager,
-                                             DependentEntitiesResolver dependentEntitiesResolver, EntityStates entityStates, MetadataTools metadataTools) {
+                                             DynamicReferenceDependentEntitiesResolver dependentEntitiesResolver,
+                                             EntityStates entityStates,
+                                             MetadataTools metadataTools) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.indexingQueueManager = indexingQueueManager;
         this.dependentEntitiesResolver = dependentEntitiesResolver;

@@ -51,7 +51,6 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 @Component("search_JpaIndexingQueueManager")
-@Primary
 public class JpaIndexingQueueManager implements IndexingQueueManager {
 
     private static final Logger log = LoggerFactory.getLogger(JpaIndexingQueueManager.class);

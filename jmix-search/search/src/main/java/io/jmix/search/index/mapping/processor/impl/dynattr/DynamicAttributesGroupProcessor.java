@@ -40,21 +40,27 @@ import static io.jmix.search.index.mapping.DynamicAttributesParameterKeys.REFERE
 @Component
 public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProcessor<DynamicAttributesConfigurationGroup> {
 
-    private final DynamicAttributesResolver dynamicAttributesResolver;
-    private final FieldMappingCreator fieldMappingCreator;
+    protected final DynamicAttributesResolver dynamicAttributesResolver;
+    protected final FieldMappingCreator fieldMappingCreator;
+    protected final DynamicAttributesConfigurationGroupChecker groupChecker;
 
     protected DynamicAttributesGroupProcessor(PropertyTools propertyTools,
                                               @Lazy DynamicAttributesResolver dynamicAttributesResolver,
-                                              FieldMappingCreator fieldMappingCreator) {
+                                              FieldMappingCreator fieldMappingCreator,
+                                              DynamicAttributesConfigurationGroupChecker groupChecker) {
         super(propertyTools);
         this.dynamicAttributesResolver = dynamicAttributesResolver;
         this.fieldMappingCreator = fieldMappingCreator;
+        this.groupChecker = groupChecker;
     }
 
     @Override
     public List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass,
                                                                DynamicAttributesConfigurationGroup group,
                                                                ExtendedSearchSettings extendedSearchSettings) {
+
+        groupChecker.check(group);
+
         Map<String, MetaPropertyPath> effectiveProperties = dynamicAttributesResolver.resolveEffectivePropertyPaths(
                 metaClass,
                 group.getExcludedCategories(),

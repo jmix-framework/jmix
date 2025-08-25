@@ -287,6 +287,11 @@ public interface ComponentLoader<T extends Component> {
     void setElement(Element element);
 
     /**
+     * @return XML element associated with the component loader
+     */
+    Element getElement();
+
+    /**
      * Sets the application context for the current component loader.
      *
      * @param applicationContext the {@link ApplicationContext} instance to set

@@ -52,10 +52,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 import static io.jmix.flowui.sys.ValuePathHelper.*;
 import static java.lang.reflect.Proxy.newProxyInstance;
@@ -711,6 +708,31 @@ public final class AutowireUtils {
         return newProxyInstance(classLoader, new Class[]{targetObjectType},
                 new InstalledProxyHandler(component, method)
         );
+    }
+
+    /**
+     * Converts the provided methods to a {@link AnnotatedMethod}, applying a filter.
+     *
+     * @param <T>                   the type of the annotation class
+     * @param annotationClass       the class of the annotation
+     * @param uniqueDeclaredMethods an array of methods to process
+     * @param filter                a predicate used to filter methods
+     * @return a list of {@link AnnotatedMethod} objects that match the filter
+     */
+    public static <T extends Annotation> List<AnnotatedMethod<T>> getAnnotatedMethodsNotCached(
+            Class<T> annotationClass, Method[] uniqueDeclaredMethods, Predicate<Method> filter
+    ) {
+        List<AnnotatedMethod<T>> annotatedMethods = new ArrayList<>();
+        for (Method method : uniqueDeclaredMethods) {
+            if (filter.test(method)) {
+                AnnotatedMethod<T> annotatedMethod = AutowireUtils.createAnnotatedMethod(annotationClass, method);
+                if (annotatedMethod != null) {
+                    annotatedMethods.add(annotatedMethod);
+                }
+            }
+        }
+
+        return annotatedMethods;
     }
 
     @Nullable

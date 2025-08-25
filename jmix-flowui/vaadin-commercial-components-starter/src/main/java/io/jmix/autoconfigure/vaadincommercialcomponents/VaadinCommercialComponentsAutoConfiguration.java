@@ -33,7 +33,7 @@ import java.util.List;
 public class VaadinCommercialComponentsAutoConfiguration {
 
     @Bean
-    public static BeanPostProcessor myServiceModifier() {
+    public static BeanPostProcessor reflectionCacheManagerPostProcessor() {
         return new BeanPostProcessor() {
             @Override
             public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {

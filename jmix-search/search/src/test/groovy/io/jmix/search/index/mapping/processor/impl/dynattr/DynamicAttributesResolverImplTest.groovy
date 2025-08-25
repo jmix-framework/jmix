@@ -196,6 +196,74 @@ class DynamicAttributesResolverImplTest extends Specification {
 
     }
 
+    def "Using wildcards"() {
+        given:
+        MetaClass metaClass = Mock()
+        and:
+        def category1 = createCategoryWithAttributes(
+                "category1",
+                Map.of(
+                        "textAttr", AttributeType.STRING,
+                        "intAttr", AttributeType.INTEGER,
+                        "doubleAttr", AttributeType.DOUBLE,
+                        "decimalAttr", AttributeType.DECIMAL,
+                        "dateAttr", AttributeType.DATE,
+                        "dateWithoutTimeAttr", AttributeType.DATE_WITHOUT_TIME,
+                        "booleanAttr", AttributeType.BOOLEAN,
+                        "entityAttr", AttributeType.ENTITY,
+                        "enumerationAttr", AttributeType.ENUMERATION
+                )
+        )
+
+        def category2 = createCategoryWithAttributes(
+                "category2",
+                Map.of(
+                        "textAttr", AttributeType.STRING,
+                        "intAttr", AttributeType.INTEGER,
+                        "doubleAttr", AttributeType.DOUBLE,
+                        "decimalAttr", AttributeType.DECIMAL,
+                        "dateAttr", AttributeType.DATE,
+                        "dateWithoutTimeAttr", AttributeType.DATE_WITHOUT_TIME,
+                        "booleanAttr", AttributeType.BOOLEAN,
+                        "entityAttr", AttributeType.ENTITY,
+                        "enumerationAttr", AttributeType.ENUMERATION
+                )
+        )
+
+        and:
+        DynAttrMetadata metadata = Mock()
+        metadata.getAttributes(metaClass) >> Stream.of(category1, category2)
+                .map { category -> category.getAttributeDefinitions() }
+                .flatMap { col -> col.stream() }
+                .toList()
+
+        metadata.getCategories(metaClass) >> asList(category1, category2)
+
+        and:
+        def resolver = new DynamicAttributesResolverImpl(metadata, Mock(PropertyTools), new WildcardResolver())
+
+        when:
+        def attributes = resolver.getAttributes(metaClass, excludeCategories.toArray() as String[], excludeParameters.toArray() as String[], referenceMode)
+        def attributeNames = attributes
+                .stream()
+                .map { attributeDefinition -> attributeDefinition.getCode() }
+                .toList()
+
+        then:
+        attributeNames == resultAttributes
+
+        where:
+        excludeCategories | excludeParameters    | referenceMode      || resultAttributes
+        []                | []                   | NONE               || ["category2textAttr", "category2enumerationAttr", "category1enumerationAttr", "category1textAttr"]
+        []                | ["*enumerationAttr"] | NONE               || ["category2textAttr", "category1textAttr"]
+        ["*2"]            | []                   | NONE               || ["category1enumerationAttr", "category1textAttr"]
+        ["*2"]            | ["*enumerationAttr"] | NONE               || ["category1textAttr"]
+        []                | []                   | INSTANCE_NAME_ONLY || ["category2textAttr", "category2enumerationAttr", "category2entityAttr", "category1enumerationAttr", "category1textAttr", "category1entityAttr"]
+        []                | ["*enumerationAttr"] | INSTANCE_NAME_ONLY || ["category2textAttr", "category2entityAttr", "category1textAttr", "category1entityAttr"]
+        ["*2"]            | []                   | INSTANCE_NAME_ONLY || ["category1enumerationAttr", "category1textAttr", "category1entityAttr"]
+        ["*2"]            | ["*enumerationAttr"] | INSTANCE_NAME_ONLY || ["category1textAttr", "category1entityAttr"]
+    }
+
     CategoryDefinition createCategoryWithAttributes(String categoryName, Map<String, AttributeType> attributes) {
         Collection<AttributeDefinition> attributeDefinitions = new ArrayList<>();
         for (Map.Entry<String, AttributeType> attrData : attributes.entrySet()) {

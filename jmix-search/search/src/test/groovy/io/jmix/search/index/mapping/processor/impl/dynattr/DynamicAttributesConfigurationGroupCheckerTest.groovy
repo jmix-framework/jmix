@@ -19,8 +19,8 @@ package io.jmix.search.index.mapping.processor.impl.dynattr
 import spock.lang.Specification
 
 class DynamicAttributesConfigurationGroupCheckerTest extends Specification {
-    def "Check. Not supported symbols in categories"() {
 
+    def "Check. Not supported symbols in categories"() {
         when:
         def checker = new DynamicAttributesConfigurationGroupChecker()
         checker.checkCategory(categoryName)
@@ -31,17 +31,64 @@ class DynamicAttributesConfigurationGroupCheckerTest extends Specification {
 
         where:
         categoryName || message
-        "*"          || "The '*' symbol is denied in the category name"
-        "*suffix"    || "The '*' symbol is denied in the category name"
-        "prefix*"    || "The '*' symbol is denied in the category name"
-        "in*fix"     || "The '*' symbol is denied in the category name"
-        "+"          || "The '+' symbol is denied in the category name"
-        "+suffix"    || "The '+' symbol is denied in the category name"
-        "prefix+"    || "The '+' symbol is denied in the category name"
-        "in+fix"     || "The '+' symbol is denied in the category name"
-        "."          || "The '.' symbol is denied in the category name"
-        ".suffix"    || "The '.' symbol is denied in the category name"
-        "prefix."    || "The '.' symbol is denied in the category name"
-        "in.fix"     || "The '.' symbol is denied in the category name"
+        ""           || "Category name can't be empty"
+        "*"          || "Category name can't be a wildcard without any text. But wildcards like '*abc', 'abc*', 'a*b*c' are supported."
+        "+"          || "The '+' symbol is denied in the category name. Category name value is '+'"
+        "+suffix"    || "The '+' symbol is denied in the category name. Category name value is '+suffix'"
+        "prefix+"    || "The '+' symbol is denied in the category name. Category name value is 'prefix+'"
+        "in+fix"     || "The '+' symbol is denied in the category name. Category name value is 'in+fix'"
+        "."          || "The '.' symbol is denied in the category name. Category name value is '.'"
+        ".suffix"    || "The '.' symbol is denied in the category name. Category name value is '.suffix'"
+        "prefix."    || "The '.' symbol is denied in the category name. Category name value is 'prefix.'"
+        "in.fix"     || "The '.' symbol is denied in the category name. Category name value is 'in.fix'"
     }
+
+    def "Check. Not supported symbols in attributes"() {
+
+        when:
+        def checker = new DynamicAttributesConfigurationGroupChecker()
+        checker.checkAttribute(categoryName)
+
+        then:
+        def throwable = thrown(IllegalStateException)
+        throwable.getMessage() == message
+
+        where:
+        categoryName || message
+        ""           || "Attribute name can't be empty"
+        "*"          || "Attribute name can't be a wildcard without any text. But wildcards like '*abc', 'abc*', 'a*b*c' are supported."
+        "+"          || "The '+' symbol is denied in the attribute name. Attribute name value is '+'"
+        "+suffix"    || "The '+' symbol is denied in the attribute name. Attribute name value is '+suffix'"
+        "prefix+"    || "The '+' symbol is denied in the attribute name. Attribute name value is 'prefix+'"
+        "in+fix"     || "The '+' symbol is denied in the attribute name. Attribute name value is 'in+fix'"
+        "."          || "The '.' symbol is denied in the attribute name. Attribute name value is '.'"
+        ".suffix"    || "The '.' symbol is denied in the attribute name. Attribute name value is '.suffix'"
+        "prefix."    || "The '.' symbol is denied in the attribute name. Attribute name value is 'prefix.'"
+        "in.fix"     || "The '.' symbol is denied in the attribute name. Attribute name value is 'in.fix'"
+    }
+
+    def "Check. Supported symbols in categories"() {
+        when:
+        def checker = new DynamicAttributesConfigurationGroupChecker()
+        checker.checkCategory(categoryName)
+
+        then:
+        notThrown(IllegalStateException)
+
+        where:
+        categoryName<< ["*suffix", "prefix*", "in*fix", "tw*is*e"]
+    }
+
+    def "Check. Supported symbols in attributes"() {
+        when:
+        def checker = new DynamicAttributesConfigurationGroupChecker()
+        checker.checkAttribute(categoryName)
+
+        then:
+        notThrown(IllegalStateException)
+
+        where:
+        categoryName<< ["*suffix", "prefix*", "in*fix", "tw*is*e"]
+    }
+
 }

@@ -22,9 +22,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesConfigurationGroupChecker.ArgumentType.*;
+
 @Component
 public class DynamicAttributesConfigurationGroupChecker {
-    protected static List<String> deniedSymbols = List.of("+", "*", ".");
+    protected static List<String> deniedSymbols = List.of("+", ".");
 
     public void check(DynamicAttributesConfigurationGroup group) {
         Stream.of(group.getExcludedCategories()).forEach(this::checkCategory);
@@ -32,15 +34,51 @@ public class DynamicAttributesConfigurationGroupChecker {
     }
 
     protected void checkCategory(String categoryName) {
-        deniedSymbols.forEach(symbol-> {
-            if (categoryName.contains(symbol)) {
-                throw new IllegalStateException(String.format("The '%s' symbol is denied in the category name", symbol));
+        checkIsNotEmpty(categoryName, CATEGORY);
+        checkDeniedSymbols(categoryName, CATEGORY);
+        checkThatNotIsTheWildcard(categoryName, CATEGORY);
+    }
+
+    protected void checkAttribute(String attributeName) {
+        checkIsNotEmpty(attributeName, ATTRIBUTE);
+        checkDeniedSymbols(attributeName, ATTRIBUTE);
+        checkThatNotIsTheWildcard(attributeName, ATTRIBUTE);
+    }
+
+    protected void checkDeniedSymbols(String name, ArgumentType argumentType) {
+        deniedSymbols.forEach(symbol -> {
+            if (name.contains(symbol)) {
+                throw new IllegalStateException(String.format("The '%s' symbol is denied in the %s name. %s name value is '%s'",
+                        symbol,
+                        argumentType.name,
+                        argumentType.nameWithCapitalLetter,
+                        name));
             }
         });
     }
 
-    protected void checkAttribute(String attributeName) {
-
+    private void checkIsNotEmpty(String name, ArgumentType argumentType) {
+        if("".equals(name)){
+            throw new IllegalStateException(String.format("%s name can't be empty", argumentType.nameWithCapitalLetter));
+        }
     }
 
+    protected void checkThatNotIsTheWildcard(String name, ArgumentType argumentType) {
+        if ("*".equals(name)){
+            throw new IllegalStateException(String.format("%s name can't be a wildcard without any text. But wildcards like '*abc', 'abc*', 'a*b*c' are supported.", argumentType.nameWithCapitalLetter));
+        }
+    }
+
+    protected enum ArgumentType{
+        CATEGORY("category", "Category"),
+        ATTRIBUTE("attribute", "Attribute");
+
+        private final String name;
+        private final String nameWithCapitalLetter;
+
+        ArgumentType(String name, String nameWithCapitalLetter) {
+            this.name = name;
+            this.nameWithCapitalLetter = nameWithCapitalLetter;
+        }
+    }
 }

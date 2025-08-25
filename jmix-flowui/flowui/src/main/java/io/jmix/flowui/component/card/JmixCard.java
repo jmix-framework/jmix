@@ -18,12 +18,15 @@ package io.jmix.flowui.component.card;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.card.Card;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.HasSubParts;
 import jakarta.annotation.Nullable;
 
 import java.util.Optional;
+import java.util.function.BiPredicate;
 
-import static io.jmix.flowui.component.UiComponentUtils.findComponent;
+import static io.jmix.flowui.component.UiComponentUtils.findFragment;
 
 public class JmixCard extends Card implements HasSubParts {
 
@@ -70,5 +73,17 @@ public class JmixCard extends Card implements HasSubParts {
         }
 
         return null;
+    }
+
+    protected Optional<Component> findComponent(Component component, String id) {
+        BiPredicate<Component, String> idComparator = findFragment(component) == null
+                ? UiComponentUtils::sameId
+                : FragmentUtils::sameId;
+
+        if (idComparator.test(component, id)) {
+            return Optional.of(component);
+        }
+
+        return UiComponentUtils.findComponent(component, id);
     }
 }

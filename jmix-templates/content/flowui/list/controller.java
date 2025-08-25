@@ -12,8 +12,9 @@ import ${routeLayout.getControllerFqn()};
 <%}%>
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.view.*;
-<%if (useDataRepositories){%>import io.jmix.core.LoadContext;
+<%if (useDataRepositories){%>import io.jmix.core.repository.JmixDataRepositoryContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,13 +33,18 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Autowired
     private ${repository.getQualifiedName()} repository;
 
-    @Install(to = "${tableDl}", target = Target.DATA_LOADER)
-    private List<${entity.className}> loadDelegate(LoadContext<${entity.className}> context){
-        return repository.findAll(buildPageRequest(context), buildRepositoryContext(context)).getContent();
+    @Install(to = "${tableDl}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
+    private List<${entity.className}> loadDelegate(Pageable pageable, JmixDataRepositoryContext context){
+        return repository.findAll(pageable, context).getContent();
     }<%if (tableActions.contains("remove")) {%>
 
     @Install(to = "${tableId}.removeAction", subject = "delegate")
     private void ${tableId}RemoveDelegate(final Collection<${entity.className}> collection) {
         repository.deleteAll(collection);
+    }
+
+    @Install(to = "pagination", subject = "totalCountByRepositoryDelegate")
+    private Long paginationTotalCountByRepositoryDelegate(final JmixDataRepositoryContext context) {
+        return repository.count(context);
     }<%}%><%}%>
 }

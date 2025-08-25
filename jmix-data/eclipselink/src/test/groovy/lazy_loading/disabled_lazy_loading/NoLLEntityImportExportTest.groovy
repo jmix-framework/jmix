@@ -22,7 +22,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.test.context.TestPropertySource
+import spock.lang.IgnoreIf
 
-@TestPropertySource(properties = ["jmix.eclipselink.disableLazyLoading = true"])
+@TestPropertySource(properties = ["jmix.eclipselink.disable-lazy-loading = true"])
 class NoLLEntityImportExportTest extends EntityImportExportTest {
 }

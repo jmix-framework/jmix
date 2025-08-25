@@ -73,8 +73,8 @@
                     </actions>
                     <columns resizable="true">
                         <column property="roleCode"/>
-                        <column key="roleName" header="msg://column.roleName.header"/>
-                        <column key="roleScopes" header="msg://column.roleScopes.header" flexGrow="0"/>
+                        <column key="roleName" header="msg://column.roleName.header" sortable="false"/>
+                        <column key="roleScopes" header="msg://column.roleScopes.header" flexGrow="0" sortable="false"/>
                     </columns>
                 </dataGrid>
             </vbox>
@@ -103,7 +103,7 @@
                     </actions>
                     <columns resizable="true">
                         <column property="roleCode"/>
-                        <column key="roleName" header="msg://column.roleName.header"/>
+                        <column key="roleName" header="msg://column.roleName.header" sortable="false"/>
                     </columns>
                 </dataGrid>
             </vbox>

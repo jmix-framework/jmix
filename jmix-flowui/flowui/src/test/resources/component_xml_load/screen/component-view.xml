@@ -21,6 +21,7 @@
                   class="test_support.entity.sales.Order">
             <fetchPlan extends="_base">
                 <property name="user" fetchPlan="_base"/>
+                <property name="orderLines" fetchPlan="_base"/>
             </fetchPlan>
             <loader id="orderDl">
                 <query>

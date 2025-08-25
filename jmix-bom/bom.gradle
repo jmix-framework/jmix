@@ -60,14 +60,14 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinFlowVersion = '24.7.3'
+def vaadinFlowVersion = '24.8.5'
 
 javaPlatform {
     allowDependencies()
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.5.0")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.5.3")
     api platform('software.amazon.awssdk:bom:2.25.60')
 
     def freeVersion = version

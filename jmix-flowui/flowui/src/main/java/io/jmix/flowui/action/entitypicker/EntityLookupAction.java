@@ -35,6 +35,8 @@ import io.jmix.flowui.view.LookupView;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
@@ -51,6 +53,8 @@ import java.util.function.Predicate;
 @ActionType(EntityLookupAction.ID)
 public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, EntityPickerComponent<E>, E>
         implements ViewOpeningAction {
+
+    private static final Logger log = LoggerFactory.getLogger(EntityLookupAction.class);
 
     public static final String ID = "entity_lookup";
 
@@ -120,7 +124,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
 
     @Override
     public void setOpenMode(@Nullable OpenMode openMode) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, OpenMode.class.getSimpleName());
     }
 
     @Nullable
@@ -154,7 +158,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
 
     @Override
     public void setRouteParametersProvider(@Nullable RouteParametersProvider provider) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, RouteParametersProvider.class.getSimpleName());
     }
 
     @Nullable
@@ -166,7 +170,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
 
     @Override
     public void setQueryParametersProvider(@Nullable QueryParametersProvider provider) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, QueryParametersProvider.class.getSimpleName());
     }
 
     @Override

@@ -110,6 +110,7 @@ public class QuartzService {
 
                         if (trigger instanceof CronTrigger) {
                             triggerModel.setCronExpression(((CronTrigger) trigger).getCronExpression());
+                            triggerModel.setTimeZoneId(((CronTrigger) trigger).getTimeZone().getID());
                         } else if (trigger instanceof SimpleTrigger simpleTrigger) {
                             triggerModel.setRepeatCount(simpleTrigger.getRepeatCount());
                             triggerModel.setRepeatInterval(simpleTrigger.getRepeatInterval());

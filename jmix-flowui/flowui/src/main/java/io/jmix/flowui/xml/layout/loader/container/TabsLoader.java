@@ -19,14 +19,15 @@ package io.jmix.flowui.xml.layout.loader.container;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import io.jmix.flowui.component.tabsheet.JmixTabs;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import org.dom4j.Element;
 
-public class TabsLoader extends AbstractTabsLoader<Tabs> {
+public class TabsLoader extends AbstractTabsLoader<JmixTabs> {
 
     @Override
-    protected Tabs createComponent() {
-        return factory.create(Tabs.class);
+    protected JmixTabs createComponent() {
+        return factory.create(JmixTabs.class);
     }
 
     @Override

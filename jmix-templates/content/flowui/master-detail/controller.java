@@ -19,6 +19,7 @@ import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.AccessManager;
 import io.jmix.core.EntityStates;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.UiComponentProperties;
@@ -168,7 +169,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         ${entity.className} entity = event.getItem();
         dataContext.clear();
         if (entity != null) {
-            ${detailDl}.setEntityId(entity.getId());
+            ${detailDl}.setEntityId(EntityValues.getId(entity));
             ${detailDl}.load();
         } else {
             ${detailDl}.setEntityId(null);

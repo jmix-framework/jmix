@@ -69,7 +69,14 @@ public class StandardListView<E> extends StandardView implements LookupView<E>, 
     protected void lookupEnterPress(EnterPressEvent<?> enterPressEvent) {
         Collection<E> selectedItems = getLookupComponent().getSelectedItems();
         if (!selectedItems.isEmpty()) {
-            handleSelection();
+            getSelectAction().ifPresentOrElse(
+                    selectAction -> {
+                        if (selectAction.isEnabled()) {
+                            selectAction.actionPerform(enterPressEvent.getSource());
+                        }
+                    },
+                    this::handleSelection
+            );
         }
     }
 

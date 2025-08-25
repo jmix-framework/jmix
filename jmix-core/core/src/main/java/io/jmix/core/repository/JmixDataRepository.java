@@ -21,6 +21,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.annotation.Experimental;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -117,7 +118,10 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
 
     /**
      * Returns a {@link Page} of entities meeting the paging restriction provided in the {@code Pageable} object.
-     * Entities will be loaded according to passed {@code fetchPlan}
+     * Entities will be loaded according to passed {@code fetchPlan}.
+     * <p>
+     * Consider using {@link #findAllSlice(Pageable, FetchPlan)} if you don't need the total number of items and pages
+     * to avoid additional request for count to the database.
      *
      * @param fetchPlan to load entities. {@link FetchPlan#BASE} will be used if {@code fetchPlan == null}
      * @return a page of entities
@@ -125,14 +129,35 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
     Page<T> findAll(Pageable pageable, @Nullable FetchPlan fetchPlan);
 
     /**
+     * Returns a {@link Slice} of entities meeting the paging restriction provided in the {@code Pageable} object.
+     * Entities will be loaded according to passed {@code fetchPlan}
+     *
+     * @param fetchPlan to load entities. {@link FetchPlan#BASE} will be used if {@code fetchPlan == null}
+     * @return a page of entities
+     */
+    Slice<T> findAllSlice(Pageable pageable, @Nullable FetchPlan fetchPlan);
+
+    /**
      * Returns a {@link Page} of entities meeting the paging restriction provided in the {@code Pageable} object.
      * Entities will be loaded according to passed {@code params}
+     * <p>
+     * Consider using {@link #findAllSlice(Pageable, FetchPlan)} if you don't need the total number of items and pages
+     * to avoid additional request for count to the database.
      *
      * @param jmixContext {@link JmixDataRepositoryContext} to load entities.
      * @return a page of entities
      */
     @Experimental
     Page<T> findAll(Pageable pageable, JmixDataRepositoryContext jmixContext);
+
+    /**
+     * Returns a {@link Slice} of entities meeting the paging restriction provided in the {@code Pageable} object.
+     * Entities will be loaded according to passed {@code params}
+     *
+     * @param jmixContext {@link JmixDataRepositoryContext} to load entities.
+     * @return a page of entities
+     */
+    Slice<T> findAllSlice(Pageable pageable, JmixDataRepositoryContext jmixContext);
 
     /**
      * Returns the number of entities satisfying {@code context} available.

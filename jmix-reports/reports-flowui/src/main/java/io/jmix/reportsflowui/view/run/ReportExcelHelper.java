@@ -24,6 +24,7 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.gridexportflowui.action.ExcelExportAction;
 import io.jmix.gridexportflowui.exporter.excel.ExcelExporter;
+import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
@@ -44,11 +45,25 @@ public class ReportExcelHelper {
         this.uiComponents = uiComponents;
     }
 
-    public JmixButton createExportAction(DataGrid<KeyValueEntity> dataGrid, ReportOutputDocument document) {
-        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.ID);
+    public JmixButton createExportButton(DataGrid<KeyValueEntity> dataGrid, ReportOutputDocument document) {
+        ExcelExportAction excelExportAction = createExportAction(dataGrid);
         excelExportAction.withFileName(document.getReport().getName());
+
+        return createExportButton(excelExportAction);
+    }
+
+    public JmixButton createExportButton(DataGrid<ReportExecution> dataGrid) {
+        return createExportButton(createExportAction(dataGrid));
+    }
+
+    protected ExcelExportAction createExportAction(DataGrid<?> dataGrid) {
+        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.ID);
         dataGrid.addAction(excelExportAction);
 
+        return excelExportAction;
+    }
+
+    protected JmixButton createExportButton(ExcelExportAction excelExportAction) {
         JmixButton excelButton = uiComponents.create(JmixButton.class);
         excelButton.setAction(excelExportAction);
 

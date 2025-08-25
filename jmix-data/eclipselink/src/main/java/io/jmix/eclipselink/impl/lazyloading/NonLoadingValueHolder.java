@@ -24,7 +24,6 @@ public class NonLoadingValueHolder extends AbstractValueHolder {
     public NonLoadingValueHolder(BeanFactory beanFactory,
                                  ValueHolderInterface originalValueHolder,
                                  Object owner, MetaProperty metaProperty) {
-        //todo [jmix-framework/jmix#3936] whether to preserve parameters?
         super(beanFactory, originalValueHolder, owner, metaProperty);
     }
 

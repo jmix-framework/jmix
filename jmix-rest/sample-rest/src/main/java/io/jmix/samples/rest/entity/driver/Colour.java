@@ -22,6 +22,7 @@ import io.jmix.samples.rest.entity.StandardEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 
 @Entity(name = "ref$Colour")
 @JmixEntity
@@ -32,6 +33,7 @@ public class Colour extends StandardEntity {
 
     @InstanceName
     @Column(name = "NAME")
+    @Size(min = 3)//not used separately
     private String name;
 
     @Column(name = "DESCRIPTION")

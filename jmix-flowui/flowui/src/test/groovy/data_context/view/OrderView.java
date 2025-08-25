@@ -77,7 +77,7 @@ public class OrderView extends StandardView implements HasUrlParameter<String> {
     @Override
     public void setParameter(BeforeEvent event, String parameter) {
         Object orderId = urlParamSerializer.deserialize(UUID.class, parameter);
-        order = dataManager.load(Order.class).id(orderId).one();
+        order = dataManager.load(Order.class).id(orderId).fetchPlan(b->b.add("orderLines")).one();
     }
 
     @Subscribe

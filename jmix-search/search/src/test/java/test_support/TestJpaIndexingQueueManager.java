@@ -16,10 +16,19 @@
 
 package test_support;
 
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.data.StoreAwareLocator;
+import io.jmix.search.SearchProperties;
+import io.jmix.search.index.EntityIndexer;
+import io.jmix.search.index.impl.IndexStateRegistry;
+import io.jmix.search.index.impl.IndexingLocker;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.entity.IndexingQueueItem;
+import io.jmix.search.index.queue.impl.EnqueueingSessionManager;
+import io.jmix.search.index.queue.impl.EntityIdsLoaderProvider;
 import io.jmix.search.index.queue.impl.JpaIndexingQueueManager;
-
 import jakarta.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +42,23 @@ public class TestJpaIndexingQueueManager extends JpaIndexingQueueManager {
 
     protected long idsProcessingDelay = 0;
 
-    public TestJpaIndexingQueueManager(TestIndexingQueueItemsTracker indexingQueueItemsTracker) {
+    public TestJpaIndexingQueueManager(TestIndexingQueueItemsTracker indexingQueueItemsTracker,
+                                       SearchProperties searchProperties,
+                                       UnconstrainedDataManager dataManager,
+                                       Metadata metadata,
+                                       MetadataTools metadataTools,
+                                       EntityIndexer entityIndexer,
+                                       StoreAwareLocator storeAwareLocator,
+                                       IndexConfigurationManager indexConfigurationManager,
+                                       IdSerialization idSerialization,
+                                       SystemAuthenticator authenticator,
+                                       IndexingLocker locker,
+                                       IndexStateRegistry indexStateRegistry,
+                                       EnqueueingSessionManager enqueueingSessionManager,
+                                       EntityIdsLoaderProvider entityIdsLoaderProvider) {
+        super(searchProperties, dataManager, metadata, metadataTools, entityIndexer, storeAwareLocator,
+                indexConfigurationManager, idSerialization, authenticator, locker, indexStateRegistry,
+                enqueueingSessionManager, entityIdsLoaderProvider);
         this.indexingQueueItemsTracker = indexingQueueItemsTracker;
     }
 

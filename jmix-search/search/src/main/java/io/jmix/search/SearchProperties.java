@@ -136,6 +136,11 @@ public class SearchProperties {
      */
     protected final boolean wildcardPrefixQueryEnabled;
 
+    /**
+     * Whether the Search add-on is enabled
+     */
+    protected final boolean enabled;
+
     public SearchProperties(
             @DefaultValue("100") int searchResultPageSize,
             @DefaultValue("100") int maxSearchPageCount,
@@ -149,6 +154,7 @@ public class SearchProperties {
             @DefaultValue("true") boolean useDefaultEnqueueingSessionProcessingQuartzConfiguration,
             @DefaultValue("true") boolean enqueueIndexAllOnStartupIndexRecreationEnabled,
             @DefaultValue("true") boolean wildcardPrefixQueryEnabled,
+            @DefaultValue("true") boolean enabled,
             @DefaultValue("") String enqueueIndexAllOnStartupIndexRecreationEntities,
             @DefaultValue("search_index_") String searchIndexNamePrefix,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
@@ -175,7 +181,13 @@ public class SearchProperties {
         this.minPrefixLength = minPrefixLength;
         this.maxPrefixLength = maxPrefixLength;
         this.wildcardPrefixQueryEnabled = wildcardPrefixQueryEnabled;
+        this.enabled = enabled;
     }
+
+    /**
+     * @see #enabled
+     */
+    public boolean isEnabled() { return enabled; }
 
     /**
      * @see #searchResultPageSize

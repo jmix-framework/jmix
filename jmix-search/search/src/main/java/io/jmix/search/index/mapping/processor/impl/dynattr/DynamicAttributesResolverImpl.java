@@ -48,7 +48,8 @@ public class DynamicAttributesResolverImpl implements DynamicAttributesResolver 
     private final WildcardResolver wildcardResolver;
 
     public DynamicAttributesResolverImpl(DynAttrMetadata dynAttrMetadata,
-                                         PropertyTools propertyTools, WildcardResolver wildcardResolver) {
+                                         PropertyTools propertyTools,
+                                         WildcardResolver wildcardResolver) {
         this.dynAttrMetadata = dynAttrMetadata;
         this.propertyTools = propertyTools;
         this.wildcardResolver = wildcardResolver;

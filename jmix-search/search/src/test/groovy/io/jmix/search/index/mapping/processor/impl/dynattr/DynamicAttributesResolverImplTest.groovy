@@ -31,7 +31,7 @@ import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*
 import static java.util.Arrays.asList
 import static java.util.Collections.singletonMap
 
-class DynamicAttributesResolverTest extends Specification {
+class DynamicAttributesResolverImplTest extends Specification {
 
     def "all attributes without references"() {
         given:

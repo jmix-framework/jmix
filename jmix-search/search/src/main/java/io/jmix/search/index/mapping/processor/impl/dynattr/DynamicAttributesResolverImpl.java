@@ -45,11 +45,13 @@ public class DynamicAttributesResolverImpl implements DynamicAttributesResolver 
     private final DynAttrMetadata dynAttrMetadata;
     private final PropertyTools propertyTools;
     private static final List<AttributeType> SUPPORTED_DATA_TYPES = List.of(STRING, ENTITY, ENUMERATION);
+    private final WildcardResolver wildcardResolver;
 
     public DynamicAttributesResolverImpl(DynAttrMetadata dynAttrMetadata,
-                                         PropertyTools propertyTools) {
+                                         PropertyTools propertyTools, WildcardResolver wildcardResolver) {
         this.dynAttrMetadata = dynAttrMetadata;
         this.propertyTools = propertyTools;
+        this.wildcardResolver = wildcardResolver;
     }
 
     @Override
@@ -79,7 +81,7 @@ public class DynamicAttributesResolverImpl implements DynamicAttributesResolver 
                             if (!SUPPORTED_DATA_TYPES.contains(dataType)) {
                                 return false;
                             }
-                            return dataType != AttributeType.ENTITY || mode == INSTANCE_NAME_ONLY;
+                            return dataType != ENTITY || mode == INSTANCE_NAME_ONLY;
                         })
                 .collect(toMap(AttributeDefinition::getCode, identity()));
         if (excludedCategories.length > 0) {
@@ -98,9 +100,11 @@ public class DynamicAttributesResolverImpl implements DynamicAttributesResolver 
                 .stream()
                 .collect(toMap(CategoryDefinition::getName, identity()));
 
-        List<String> excludedAttributeCodes = Stream.of(excludedCategories)
-                .map(categories::get)
-                .filter(Objects::nonNull)
+        Collection<CategoryDefinition> categoriesToRemove = wildcardResolver.getMatchingElements(categories, List.of(excludedCategories));
+
+
+        List<String> excludedAttributeCodes = categoriesToRemove
+                .stream()
                 .map(CategoryDefinition::getAttributeDefinitions)
                 .flatMap(Collection::stream)
                 .map(AttributeDefinition::getCode)
@@ -109,7 +113,11 @@ public class DynamicAttributesResolverImpl implements DynamicAttributesResolver 
         excludedAttributeCodes.forEach(attributeDefinitionMap::remove);
     }
 
-    private void cleanAttributesForExcludedProperties(String[] excludedProperties, Map<String, AttributeDefinition> attributeDefinitionMap) {
-        Stream.of(excludedProperties).forEach(attributeDefinitionMap::remove);
+    private void cleanAttributesForExcludedProperties(String[] excludedAttributes, Map<String, AttributeDefinition> attributeDefinitionMap) {
+        Collection<AttributeDefinition> attributesToRemove = wildcardResolver.getMatchingElements(attributeDefinitionMap, List.of(excludedAttributes));
+
+        attributesToRemove.forEach(
+                attributeDefinition -> attributeDefinitionMap.remove(attributeDefinition.getCode())
+        );
     }
 }

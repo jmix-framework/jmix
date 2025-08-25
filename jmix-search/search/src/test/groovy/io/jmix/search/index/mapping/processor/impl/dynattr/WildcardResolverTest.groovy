@@ -45,6 +45,7 @@ class WildcardResolverTest extends Specification {
         ["*3"]                     || ["name3Element"]
         ["n*3"]                    || ["name3Element"]
         ["*ame*"]                  || ["nameElement", "name2Element", "name3Element"]
+        ["*ame"]                   || ["nameElement"]
         ["*ame*2"]                 || ["name2Element"]
     }
 }

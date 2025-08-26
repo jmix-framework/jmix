@@ -75,7 +75,7 @@ public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProc
                 .collect(Collectors.toList());
     }
 
-    private ReferenceAttributesIndexingMode extractReferenceFieldsIndexingMode(DynamicAttributesConfigurationGroup group) {
+    protected ReferenceAttributesIndexingMode extractReferenceFieldsIndexingMode(DynamicAttributesConfigurationGroup group) {
         if (group.getParameters() != null){
             Object mode = group.getParameters().get(REFERENCE_FIELD_INDEXING_MODE);
             if(mode != null){

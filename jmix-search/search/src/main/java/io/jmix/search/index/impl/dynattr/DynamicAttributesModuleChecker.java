@@ -19,7 +19,7 @@ package io.jmix.search.index.impl.dynattr;
 import io.jmix.core.JmixModules;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("search_DynamicAttributesModuleChecker")
 public class DynamicAttributesModuleChecker {
 
     private final JmixModules modules;

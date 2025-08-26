@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-@Component
+@Component("search_WildcardResolver")
 public class WildcardResolver {
     public <T> Collection<T> getMatchingElements(Map<String, T> elementsWithNames, List<String> excludedNames) {
         ArrayList<T> result = new ArrayList<>();

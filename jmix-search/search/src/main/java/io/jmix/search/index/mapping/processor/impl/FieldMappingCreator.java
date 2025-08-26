@@ -33,7 +33,7 @@ import java.util.Optional;
 /**
  * TODO javadoc
  */
-@Component
+@Component("search_FieldMappingCreator")
 public class FieldMappingCreator {
 
     private static final Logger log = LoggerFactory.getLogger(FieldMappingCreator.class);

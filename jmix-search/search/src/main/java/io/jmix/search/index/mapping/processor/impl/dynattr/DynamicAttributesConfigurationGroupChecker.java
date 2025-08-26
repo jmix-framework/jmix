@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesConfigurationGroupChecker.ArgumentType.*;
 
-@Component
+@Component("search_DynamicAttributesConfigurationGroupChecker")
 public class DynamicAttributesConfigurationGroupChecker {
     protected static List<String> deniedSymbols = List.of("+", ".");
 

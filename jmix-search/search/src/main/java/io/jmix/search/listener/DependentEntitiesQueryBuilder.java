@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static io.jmix.search.index.impl.dynattr.DynAttrUtils.isDynamicAttributeName;
+
 public class DependentEntitiesQueryBuilder {
 
     public static final String REFERENCES_WITH_TWO_OR_MORE_LEVELS_ARE_NOT_SUPPORTED_MESSAGE =
@@ -102,7 +104,6 @@ public class DependentEntitiesQueryBuilder {
         currentEntityAlias = "e1";
         targetPrimaryKeyName = metadataTools.getPrimaryKeyName(targetMetaClass);
         initPropertyPathStringBuilderForCurrentEntity();
-        //TODO
         querySb = new StringBuilder("select ")
                 .append(currentEntityAlias)
                 .append(" from ")
@@ -119,12 +120,10 @@ public class DependentEntitiesQueryBuilder {
                 .append(".")
                 .append(targetPrimaryKeyName)
                 .append(")");
-
     }
 
     private boolean isDynamic(MetaPropertyPath propertyPath) {
-        //TODO think about
-        return propertyPath.getFirstPropertyName().contains("+");
+        return isDynamicAttributeName(propertyPath.getFirstPropertyName());
     }
 
     private void initQuery() {

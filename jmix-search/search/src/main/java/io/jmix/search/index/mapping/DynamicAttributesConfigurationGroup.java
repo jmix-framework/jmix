@@ -58,9 +58,8 @@ public class DynamicAttributesConfigurationGroup extends AbstractAttributesConfi
         return new DynamicAttributeGroupDefinitionBuilder();
     }
 
-    //TODO
-
     /**
+     * TODO javadoc
      * @return
      */
     public String[] getExcludedCategories() {

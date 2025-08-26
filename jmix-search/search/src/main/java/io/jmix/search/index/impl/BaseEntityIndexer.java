@@ -40,6 +40,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static io.jmix.search.index.impl.dynattr.DynAttrUtils.isDynamicAttributeName;
 import static java.util.Collections.emptyMap;
 
 /**
@@ -232,7 +233,6 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                     loaded = entityIds.stream()
                             .map(id -> dataManager
                                     .load(metaClass.getJavaClass())
-                                    //TODO почему грузится по одной записи?
                                     .id(id)
                                     .fetchPlan(fetchPlan)
                                     .hints(getHints())
@@ -269,7 +269,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexConfiguration.getEntityClass());
         indexConfiguration.getMapping().getFields().values().forEach(field -> {
             String entityPropertyFullName = field.getEntityPropertyFullName();
-            if (!containsDynamicAttribute(entityPropertyFullName)){
+            if (!isDynamicAttributeName(entityPropertyFullName)){
                 log.trace("Add property to fetch plan: {}", entityPropertyFullName);
                 fetchPlanBuilder.add(entityPropertyFullName);
                 field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {
@@ -296,11 +296,6 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                 });
 
         return fetchPlanBuilder.build();
-    }
-
-    //TODO code duplicate
-    private boolean containsDynamicAttribute(String entityPropertyFullName) {
-        return entityPropertyFullName.contains("+");
     }
 
     // document generation

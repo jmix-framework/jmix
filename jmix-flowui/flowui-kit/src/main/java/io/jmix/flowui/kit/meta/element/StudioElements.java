@@ -585,7 +585,6 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.kit.component.usermenu.TextUserMenuItem",
             xmlElement = "textItem",
             isInjectable = false,
-            target = {"io.jmix.flowui.component.usermenu.UserMenu"},
             // TODO: gg, add link when available
 //            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#textItem",
             properties = {
@@ -603,7 +602,6 @@ public interface StudioElements {
             // TODO: gg, add link when available
 //            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#acionItem",
             isInjectable = false,
-            target = {"io.jmix.flowui.component.usermenu.UserMenu"},
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.ACTION_REF)
@@ -640,7 +638,6 @@ public interface StudioElements {
             // TODO: gg, add link when available
 //            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#componentItem",
             isInjectable = false,
-            target = {"io.jmix.flowui.component.usermenu.UserMenu"},
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
                             qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
@@ -658,7 +655,6 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.component.usermenu.ViewUserMenuItem",
             xmlElement = "viewItem",
             isInjectable = false,
-            target = {"io.jmix.flowui.component.usermenu.UserMenu"},
             // TODO: gg, add link when available
 //            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#textItem",
             properties = {
@@ -675,7 +671,6 @@ public interface StudioElements {
             name = "Separator",
             classFqn = "io.jmix.flowui.kit.component.stub.UserMenuStubSeparatorItem",
             xmlElement = "separator",
-            target = {"io.jmix.flowui.component.usermenu.UserMenu"},
             // TODO: gg, add link when available
 //            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#separator",
             properties = {

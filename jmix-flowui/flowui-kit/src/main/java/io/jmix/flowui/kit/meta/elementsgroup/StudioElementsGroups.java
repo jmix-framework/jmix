@@ -75,7 +75,11 @@ public interface StudioElementsGroups {
             name = "Items",
             elementClassFqn = "io.jmix.flowui.kit.component.usermenu.UserMenuItem",
             xmlElement = "items",
-            target = {"io.jmix.flowui.kit.component.usermenu.UserMenuItem"}
+            target = {"io.jmix.flowui.kit.component.usermenu.UserMenuItem"},
+            unsupportedTarget = {
+                    "io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem",
+                    "io.jmix.flowui.component.usermenu.ViewUserMenuItem",
+            }
 //            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#_elements"
     )
     void userMenuItemItems();

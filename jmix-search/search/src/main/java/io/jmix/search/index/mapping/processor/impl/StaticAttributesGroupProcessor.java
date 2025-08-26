@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 /**
  * TODO javadoc
  */
-@Component
+@Component("search_StaticAttributesGroupProcessor")
 public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProcessor<StaticAttributesConfigurationGroup> {
 
     private static final Logger log = LoggerFactory.getLogger(StaticAttributesGroupProcessor.class);

@@ -35,7 +35,7 @@ import java.util.Set;
 /**
  * TODO javadoc
  */
-@Component
+@Component("search_DynamicAttributesTrackingListener")
 @Lazy
 public class DynamicAttributesTrackingListener {
 

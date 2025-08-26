@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Set;
 
-@Component
+@Component("search_DynamicReferenceDependentEntitiesResolver")
 @Lazy
 public class DynamicReferenceDependentEntitiesResolver {
 

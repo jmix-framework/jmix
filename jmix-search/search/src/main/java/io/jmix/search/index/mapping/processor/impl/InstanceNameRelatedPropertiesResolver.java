@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 /**
  * TODO javadoc
  */
-@Component
+@Component("search_InstanceNameRelatedPropertiesResolver")
 public class InstanceNameRelatedPropertiesResolver {
 
     private static final Logger log = LoggerFactory.getLogger(InstanceNameRelatedPropertiesResolver.class);

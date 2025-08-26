@@ -37,7 +37,7 @@ import static io.jmix.search.index.mapping.DynamicAttributesParameterKeys.REFERE
 /**
  * TODO javadoc
  */
-@Component
+@Component("search_DynamicAttributesGroupProcessor")
 public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProcessor<DynamicAttributesConfigurationGroup> {
 
     protected final DynamicAttributesResolver dynamicAttributesResolver;

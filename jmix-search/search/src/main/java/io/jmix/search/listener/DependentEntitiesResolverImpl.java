@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
+@Component("search_DependentEntitiesResolver")
 public class DependentEntitiesResolverImpl implements DependentEntitiesResolver {
 
     protected final IndexConfigurationManager indexConfigurationManager;

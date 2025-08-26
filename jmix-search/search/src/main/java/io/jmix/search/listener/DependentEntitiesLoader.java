@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
+@Component("search_DependentEntitiesLoader")
 public class DependentEntitiesLoader {
 
     protected static final Logger log = LoggerFactory.getLogger(DependentEntitiesLoader.class);

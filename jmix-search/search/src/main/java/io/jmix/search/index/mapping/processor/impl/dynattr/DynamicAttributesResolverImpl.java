@@ -38,7 +38,7 @@ import static java.util.stream.Collectors.toMap;
 /**
  * TODO javadoc
  */
-@Component
+@Component("search_DynamicAttributesResolver")
 @Lazy
 public class DynamicAttributesResolverImpl implements DynamicAttributesResolver {
 

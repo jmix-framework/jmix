@@ -23,8 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.UUID;
 
-@Component
-//TODO rename
+@Component("search_DynamicAttributeReferenceFieldResolver")
 public class DynamicAttributeReferenceFieldResolver {
 
     public static final String COMPOSITE_KEYS_ARE_NOT_SUPPORTED_MESSAGE = "Composite keys are not supported in the dynamic attributes. The entity type is %s.";

@@ -118,6 +118,15 @@ public class EmailerProperties {
      */
     boolean cleanFileStorage;
 
+    OAuth2 oauth2;
+
+    //TODO remove
+    String entraClientId;
+    String entraSecret;
+    String entraTenantId;
+    String provider;
+    String registrationId;
+
     public EmailerProperties(@DefaultValue("DoNotReply@localhost") String fromAddress,
                              @DefaultValue("2") int scheduledSendingDelayCallCount,
                              @DefaultValue("100") int messageQueueCapacity,
@@ -131,7 +140,13 @@ public class EmailerProperties {
                              @DefaultValue("0") int maxAgeOfImportantMessages,
                              @DefaultValue("0") int maxAgeOfNonImportantMessages,
                              @DefaultValue("0 0 0 * * ?") String emailCleaningCron,
-                             @DefaultValue("false") boolean cleanFileStorage) {
+                             @DefaultValue("false") boolean cleanFileStorage,
+                             @DefaultValue OAuth2 oauth2,
+                             String entraClientId,
+                             String entraSecret,
+                             String entraTenantId,
+                             String provider,
+                             String registrationId) {
         this.fromAddress = fromAddress;
         this.scheduledSendingDelayCallCount = scheduledSendingDelayCallCount;
         this.messageQueueCapacity = messageQueueCapacity;
@@ -146,6 +161,14 @@ public class EmailerProperties {
         this.maxAgeOfNonImportantMessages = maxAgeOfNonImportantMessages;
         this.emailCleaningCron = emailCleaningCron;
         this.cleanFileStorage = cleanFileStorage;
+
+        this.oauth2 = oauth2;
+
+        this.entraClientId = entraClientId;
+        this.entraSecret = entraSecret;
+        this.entraTenantId = entraTenantId;
+        this.provider = provider;
+        this.registrationId = registrationId;
     }
 
     /**
@@ -258,5 +281,57 @@ public class EmailerProperties {
      */
     public boolean getCleanFileStorage() {
         return cleanFileStorage;
+    }
+
+    public OAuth2 getOAuth2() {
+        return oauth2;
+    }
+
+    public String getEntraClientId() {
+        return entraClientId;
+    }
+
+    public String getEntraSecret() {
+        return entraSecret;
+    }
+
+    public String getEntraTenantId() {
+        return entraTenantId;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public String getRegistrationId() {
+        return registrationId;
+    }
+
+    public static class OAuth2 {
+
+        protected final String clientId;
+        protected final String secret;
+        protected final String refreshToken;
+        //private String tenantId; todo
+
+        public OAuth2(@DefaultValue("client") String clientId,
+                      @DefaultValue("secret") String secret,
+                      @DefaultValue("") String refreshToken) {
+            this.clientId = clientId;
+            this.secret = secret;
+            this.refreshToken = refreshToken;
+        }
+
+        public String getClientId() {
+            return clientId;
+        }
+
+        public String getSecret() {
+            return secret;
+        }
+
+        public String getRefreshToken() {
+            return refreshToken;
+        }
     }
 }

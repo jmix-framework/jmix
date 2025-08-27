@@ -18,5 +18,7 @@
     <menu id="email">
         <item view="email_sendingMessageView"
               title="msg://io.jmix.emailflowui.view.sendingmessage/sendingMessageView.menu"/>
+        <item view="AdministrativeView"
+              title="msg://io.jmix.emailflowui.view.sendingmessage.administrative/administrativeView.title"/>
     </menu>
 </menu-config>

@@ -30,6 +30,11 @@ dependencies {
     //todo SB3 check email sending. Do we need this starter?
     api 'org.springframework.boot:spring-boot-starter-mail'
 
+    //TODO compile only
+    implementation 'com.microsoft.azure:msal4j:1.21.0'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.19.0'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'

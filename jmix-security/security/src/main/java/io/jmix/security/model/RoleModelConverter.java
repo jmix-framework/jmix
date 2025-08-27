@@ -81,6 +81,7 @@ public class RoleModelConverter {
         roleModel.setSource(RoleSourceType.fromId(role.getSource()));
         roleModel.setChildRoles(role.getChildRoles());
         roleModel.setCustomProperties(role.getCustomProperties());
+        roleModel.setTenantId(role.getTenantId());
     }
 
     protected List<ResourcePolicyModel> createResourcePolicyModels(Collection<ResourcePolicy> resourcePolicies) {

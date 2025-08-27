@@ -33,6 +33,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static io.jmix.securityflowui.util.PredicateUtils.combineUserSubstitutionPredicates;
+
 @ViewController("sec_UserSubstitution.detail")
 @ViewDescriptor("user-substitution-detail-view.xml")
 @EditedEntityContainer("userSubstitutionDc")
@@ -59,7 +61,7 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
 
     @Subscribe
     public void onInit(final InitEvent event) {
-        compositeUserSubstitutionCandidatePredicate = combinePredicates(userSubstitutionCandidatePredicates);
+        compositeUserSubstitutionCandidatePredicate = combineUserSubstitutionPredicates(userSubstitutionCandidatePredicates);
     }
 
     @Subscribe
@@ -112,12 +114,12 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
         return userSubstitutionPersistence;
     }
 
-    protected UserSubstitutionCandidatePredicate combinePredicates(List<UserSubstitutionCandidatePredicate> predicates) {
+    /*protected UserSubstitutionCandidatePredicate combinePredicates(List<UserSubstitutionCandidatePredicate> predicates) {
         return (user1, user2) -> {
-            /*
+            *//*
                 Using loop instead of 'and()' to work with custom type of predicates
                 and to mitigate possible stack overflow due to undetermined amount of predicates (low probability)
-             */
+             *//*
             for (UserSubstitutionCandidatePredicate p : predicates) {
                 if (!p.test(user1, user2)) {
                     return false;
@@ -125,5 +127,5 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
             }
             return true;
         };
-    }
+    }*/
 }

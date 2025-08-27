@@ -32,22 +32,33 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport;
+import io.jmix.security.model.BaseRole;
 import io.jmix.security.model.BaseRoleModel;
 import io.jmix.security.model.ResourceRoleModel;
 import io.jmix.security.model.RowLevelRoleModel;
+import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentPersistence;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import io.jmix.securityflowui.util.RoleAssignmentCandidatePredicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static io.jmix.securityflowui.util.PredicateUtils.combineRoleAssignmentPredicates;
 
 @ActionType(AssignToUsersAction.ID)
 public class AssignToUsersAction<E extends BaseRoleModel>
         extends SecuredListDataComponentAction<AssignToUsersAction<E>, E> {
+
+    private static final Logger log = LoggerFactory.getLogger(AssignToUsersAction.class);
 
     public static final String ID = "sec_assignToUsers";
 
@@ -59,6 +70,13 @@ public class AssignToUsersAction<E extends BaseRoleModel>
 
     protected RoleAssignmentPersistence roleAssignmentPersistence;
     protected UserRepository userRepository;
+
+    protected List<RoleAssignmentCandidatePredicate> roleAssignmentCandidatePredicates = Collections.emptyList();
+    protected RoleAssignmentCandidatePredicate compositeRoleAssignmentCandidatePredicate;
+
+    //TODO IVGA
+    protected ResourceRoleRepository resourceRoleRepository;
+    protected RowLevelRoleRepository rowLevelRoleRepository;
 
     protected E selectedItem;
 
@@ -75,6 +93,7 @@ public class AssignToUsersAction<E extends BaseRoleModel>
         super.initAction();
 
         this.icon = ComponentUtils.convertToIcon(VaadinIcon.USERS);
+        this.compositeRoleAssignmentCandidatePredicate = combineRoleAssignmentPredicates(roleAssignmentCandidatePredicates);
     }
 
     @Autowired
@@ -85,6 +104,23 @@ public class AssignToUsersAction<E extends BaseRoleModel>
     @Autowired
     public void setNotifications(Notifications notifications) {
         this.notifications = notifications;
+    }
+
+    @Autowired(required = false)
+    public void setRoleAssignmentCandidatePredicates(List<RoleAssignmentCandidatePredicate> roleAssignmentCandidatePredicates) {
+        this.roleAssignmentCandidatePredicates = roleAssignmentCandidatePredicates == null
+                ? Collections.emptyList()
+                : roleAssignmentCandidatePredicates;
+    }
+
+    @Autowired
+    public void setResourceRoleRepository(ResourceRoleRepository resourceRoleRepository) {
+        this.resourceRoleRepository = resourceRoleRepository;
+    }
+
+    @Autowired
+    public void setRowLevelRoleRepository(RowLevelRoleRepository rowLevelRoleRepository) {
+        this.rowLevelRoleRepository = rowLevelRoleRepository;
     }
 
     @Autowired
@@ -139,9 +175,38 @@ public class AssignToUsersAction<E extends BaseRoleModel>
             throw new IllegalStateException(message);
         }
 
+        String roleTenantId = selectedItem.getTenantId();
+
+
+        Class<? extends BaseRoleModel> roleClass = selectedItem.getClass();
+        BaseRole baseRole = null;
+        if (ResourceRoleModel.class.isAssignableFrom(roleClass)) {
+            baseRole = resourceRoleRepository.findRoleByCode(selectedItem.getCode());
+        } else if (RowLevelRoleModel.class.isAssignableFrom(roleClass)) {
+            baseRole = rowLevelRoleRepository.findRoleByCode(selectedItem.getCode());
+        }
+
+        final BaseRole finalBaseRole = baseRole;
+
         DialogWindow<View<?>> dialog = dialogWindows
                 .lookup(UiComponentUtils.getView(((Component) target)), userClass)
                 .withSelectHandler(this::selectHandler)
+                .withSelectValidator(validationContext -> {
+                    if (finalBaseRole == null) {
+                        return true;
+                    }
+                    Collection<?> selectedItems = validationContext.getSelectedItems();
+                    for (Object item : selectedItems) {
+                        if (item instanceof UserDetails userDetails) {
+                            boolean applicable = compositeRoleAssignmentCandidatePredicate.test(userDetails, finalBaseRole);
+                            if (!applicable) {
+                                log.info("[IVGA] Role '{}' can't be assigned to user '{}'", finalBaseRole.getName(), userDetails.getUsername());
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                })
                 .withAfterCloseListener(this::showNotification)
                 .build();
 
@@ -154,6 +219,10 @@ public class AssignToUsersAction<E extends BaseRoleModel>
         configureViewLoader(viewLoader);
 
         dialog.open();
+    }
+
+    protected String getFakeTenantId(UserDetails userDetails) {
+        return "NO_TENANT"; //todo ivga
     }
 
     protected void configureViewLoader(DataLoader loader) {

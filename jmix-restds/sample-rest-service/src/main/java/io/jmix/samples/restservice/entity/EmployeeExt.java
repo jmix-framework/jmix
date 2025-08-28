@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
-package test_support;
+package io.jmix.samples.restservice.entity;
 
-import java.util.UUID;
+import io.jmix.core.entity.annotation.ReplaceEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
-public class TestSupport {
+@JmixEntity
+@Entity
+@ReplaceEntity(Employee.class)
+public class EmployeeExt extends Employee {
 
-    public static final UUID UUID_1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    @Column(name = "EXT_INFO")
+    private String extInfo;
 
-    public static final UUID UUID_10 = UUID.fromString("00000000-0000-0000-0000-000000000010");
+    public String getExtInfo() {
+        return extInfo;
+    }
+
+    public void setExtInfo(String extInfo) {
+        this.extInfo = extInfo;
+    }
 
 }

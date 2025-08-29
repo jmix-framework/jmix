@@ -19,10 +19,13 @@ package io.jmix.flowui.model;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.LoadContext;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.flowui.view.Subscribe;
+import org.springframework.data.domain.Pageable;
 
 import java.util.EventObject;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -84,6 +87,10 @@ public interface CollectionLoader<E> extends BaseCollectionLoader {
      * Sets a function which will be used to load data instead of standard implementation.
      */
     void setLoadDelegate(Function<LoadContext<E>, List<E>> delegate);
+
+    BiFunction<Pageable, JmixDataRepositoryContext, List<E>> getLoadFromRepositoryDelegate();
+
+    void setLoadFromRepositoryDelegate(BiFunction<Pageable, JmixDataRepositoryContext, List<E>> delegate);
 
     /**
      * Event sent before loading entities.

@@ -23,6 +23,8 @@ import io.jmix.flowui.view.Subscribe;
 
 import org.springframework.lang.Nullable;
 import java.util.EventObject;
+import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -79,6 +81,10 @@ public interface InstanceLoader<E> extends DataLoader {
      * Sets a function which will be used to load data instead of standard implementation.
      */
     void setLoadDelegate(Function<LoadContext<E>, E> delegate);
+
+    BiFunction<Object, FetchPlan, Optional<E>> getLoadFromRepositoryDelegate();
+
+    void setLoadFromRepositoryDelegate(BiFunction<Object, FetchPlan, Optional<E>> delegate);
 
     /**
      * Event sent before loading an entity instance.

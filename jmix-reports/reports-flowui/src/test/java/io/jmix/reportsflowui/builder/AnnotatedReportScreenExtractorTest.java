@@ -41,7 +41,7 @@ public class AnnotatedReportScreenExtractorTest {
     @Test
     public void testAvailableInViews() {
         // given
-        ReportWithViews  definition = new ReportWithViews ();
+        ReportWithViews definition = new ReportWithViews();
 
         // when
         Report report = annotatedReportBuilder.createReportFromDefinition(definition);

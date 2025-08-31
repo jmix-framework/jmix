@@ -17,44 +17,19 @@
 package io.jmix.reportsflowui.impl.annotated;
 
 import com.vaadin.flow.component.html.Div;
-import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
-import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.Report;
-import io.jmix.reportsflowui.ReportsFlowuiTestConfiguration;
-import io.jmix.reportsflowui.test_support.AuthenticatedAsAdmin;
-import io.jmix.reportsflowui.test_support.OpenedDialogViewsTracker;
-import io.jmix.reportsflowui.test_support.entity.TestDataInitializer;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.run.InputParametersFragment;
 import io.jmix.reportsflowui.view.run.ReportRunView;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@UiTest
-@SpringBootTest(classes = {ReportsFlowuiTestConfiguration.class})
-@ExtendWith({AuthenticatedAsAdmin.class})
-public abstract class BaseRunReportUiTest {
-
-    @Autowired
-    private ViewNavigators viewNavigators;
-
-    @BeforeAll
-    public static void setup(@Autowired TestDataInitializer testDataInitializer) {
-        testDataInitializer.init();
-    }
+public abstract class BaseRunReportUiTest extends BaseReportUiTest {
 
     protected void launchReportFromRunView(String reportCode) {
         viewNavigators.view(UiTestUtils.getCurrentView(), ReportRunView.class).navigate();
@@ -75,15 +50,6 @@ public abstract class BaseRunReportUiTest {
         JmixButton runBtn = findComponent(reportRunView, "runReport");
         assertThat(runBtn.isEnabled()).isTrue();
         runBtn.click();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected static <T> T findComponent(View<?> view, String componentId) {
-        return (T) UiComponentUtils.getComponent(view, componentId);
-    }
-
-    protected LocalDate parseDate(String isoDateString) {
-        return LocalDate.parse(isoDateString, DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
     @SuppressWarnings("unchecked")

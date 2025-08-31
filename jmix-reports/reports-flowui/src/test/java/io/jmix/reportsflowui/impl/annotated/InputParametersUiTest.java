@@ -24,11 +24,9 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.testassist.notification.NotificationInfo;
 import io.jmix.reportsflowui.test_support.OpenedDialogViewsTracker;
-import io.jmix.reportsflowui.test_support.entity.TestDataInitializer;
 import io.jmix.reportsflowui.test_support.report.PublishersAndGamesReport;
 import io.jmix.reportsflowui.test_support.report.SampleDefaultValueReport;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,11 +39,6 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
 
     @Autowired
     MetadataTools metadataTools;
-
-    @BeforeAll
-    public static void setup(@Autowired TestDataInitializer testDataInitializer) {
-        testDataInitializer.init();
-    }
 
     @Test
     public void testRequired() {

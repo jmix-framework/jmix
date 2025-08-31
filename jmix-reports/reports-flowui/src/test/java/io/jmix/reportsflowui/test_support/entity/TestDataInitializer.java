@@ -18,8 +18,10 @@ package io.jmix.reportsflowui.test_support.entity;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.core.security.SystemAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -31,17 +33,20 @@ import java.util.List;
 
 @Component
 public class TestDataInitializer {
+    @Autowired
+    private SystemAuthenticator authenticator;
 
     private static final Logger log = LoggerFactory.getLogger(TestDataInitializer.class);
     private final UnconstrainedDataManager unconstrainedDataManager;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private final String login = "admin";
 
     public TestDataInitializer(DataManager unconstrainedDataManager) {
         this.unconstrainedDataManager = unconstrainedDataManager;
     }
 
     public void init() {
-        if (!unconstrainedDataManager.load(Publisher.class).all().list().isEmpty()) {
+        if (!authenticator.withUser(login, () -> unconstrainedDataManager.load(Publisher.class).all().list().isEmpty())) {
             log.info("Test data already created");
             return;
         }
@@ -64,9 +69,9 @@ public class TestDataInitializer {
 
         return Arrays.stream(data)
                 .map(datum -> {
-                    Publisher p = unconstrainedDataManager.create(Publisher.class);
+                    Publisher p = authenticator.withUser(login, () -> unconstrainedDataManager.create(Publisher.class));
                     p.setName((String) datum[0]);
-                    return unconstrainedDataManager.save(p);
+                    return authenticator.withUser(login, () -> unconstrainedDataManager.save(p));
                 })
                 .toList();
     }
@@ -82,12 +87,12 @@ public class TestDataInitializer {
 
         return Arrays.stream(data)
                 .map(datum -> {
-                    GameTitle g = unconstrainedDataManager.create(GameTitle.class);
+                    GameTitle g = authenticator.withUser(login, () -> unconstrainedDataManager.create(GameTitle.class));
                     g.setName((String) datum[0]);
                     g.setReleaseDate((LocalDate) datum[1]);
                     g.setPrice((BigDecimal) datum[2]);
                     g.setPublisher(publishers.stream().filter(p -> p.getName().equals(datum[3])).findAny().orElseThrow());
-                    return unconstrainedDataManager.save(g);
+                    return authenticator.withUser(login, () -> unconstrainedDataManager.save(g));
                 })
                 .toList();
     }
@@ -102,12 +107,13 @@ public class TestDataInitializer {
 
         return Arrays.stream(data)
                 .map(datum -> {
-                    UserRegistration ur = unconstrainedDataManager.create(UserRegistration.class);
+                    UserRegistration ur = authenticator.withUser(login,
+                            () -> unconstrainedDataManager.create(UserRegistration.class));
                     ur.setFirstName((String) datum[0]);
                     ur.setLastName(((String) datum[1]));
                     ur.setUsername((String) datum[2]);
                     ur.setRegistrationDate((LocalDateTime) datum[3]);
-                    return unconstrainedDataManager.save(ur);
+                    return authenticator.withUser(login, () -> unconstrainedDataManager.save(ur));
                 })
                 .toList();
     }
@@ -128,12 +134,12 @@ public class TestDataInitializer {
         };
         return Arrays.stream(data)
                 .map(datum -> {
-                    PurchasedGame pg = unconstrainedDataManager.create(PurchasedGame.class);
+                    PurchasedGame pg = authenticator.withUser(login, () -> unconstrainedDataManager.create(PurchasedGame.class));
                     pg.setUser(users.stream().filter(u -> u.getUsername().equals(datum[0])).findAny().orElseThrow());
                     pg.setGame(games.stream().filter(g -> g.getName().equals(datum[1])).findAny().orElseThrow());
                     pg.setPurchaseDate((LocalDateTime) datum[2]);
                     pg.setUserRating(((Integer) datum[3]));
-                    return unconstrainedDataManager.save(pg);
+                    return authenticator.withUser(login, () -> unconstrainedDataManager.save(pg));
                 })
                 .toList();
     }

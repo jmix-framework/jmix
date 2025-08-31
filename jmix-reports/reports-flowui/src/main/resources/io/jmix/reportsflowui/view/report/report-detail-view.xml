@@ -58,11 +58,12 @@
                             <responsiveStep minWidth="50em" columns="2"/>
                         </responsiveSteps>
                         <textField id="nameField" property="name"
-                                   requiredMessage="msg://detailsTab.nameField.requiredMessage"/>
+                                   requiredMessage="msg://detailsTab.nameField.requiredMessage" required="true"/>
                         <entityComboBox id="groupField"
                                         property="group"
                                         itemsContainer="groupsDc"/>
-                        <textField id="codeField" property="code"/>
+                        <textField id="codeField" property="code"
+                                   requiredMessage="msg://detailsTab.nameField.codeFieldIsEmpty.text" required="true"/>
                         <hbox padding="false" alignItems="BASELINE">
                             <checkbox id="systemField" label="msg://io.jmix.reports.entity/Report.system"
                                       property="system"/>

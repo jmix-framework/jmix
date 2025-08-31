@@ -44,6 +44,12 @@
                                required="true"
                                requiredMessage="msg://fillReportNameMsg"
                                width="100%"/>
+                    <textField id="reportCodeField"
+                               property="code"
+                               label="msg://reportCode"
+                               required="true"
+                               requiredMessage="msg://fillReportCodeMsg"
+                               width="100%"/>
                     <radioButtonGroup id="reportTypeGenerateField"
                                       themeNames="vertical"
                                       label="msg://reportBuildType"/>

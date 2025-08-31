@@ -67,6 +67,8 @@ public interface ReportRepository {
     @Nullable
     Report loadForRunningByCode(String reportCode);
 
+    boolean existsReportByCode(String reportCode);
+
     /**
      * Check if any reports are connected to the given group.
      *

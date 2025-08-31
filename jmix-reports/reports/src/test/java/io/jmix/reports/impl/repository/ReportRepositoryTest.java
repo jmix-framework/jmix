@@ -32,6 +32,7 @@ import io.jmix.reports.impl.AnnotatedReportHolder;
 import io.jmix.reports.impl.AnnotatedReportScanner;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.test_support.RuntimeReportUtil;
+import io.jmix.reports.test_support.report.GameCriticScoresReport;
 import io.jmix.reports.test_support.report.UsersAndAchievementsReport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,8 +72,6 @@ public class ReportRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        //annotatedReportScanner.importReportDefinitions();
-
         correctGroup = dataManager.create(ReportGroup.class);
         correctGroup.setCode(CorrectReportGroup.CODE);
         correctGroup.setTitle("Correct group");
@@ -84,7 +83,6 @@ public class ReportRepositoryTest {
         reportGroupHolder.clear();
         annotatedReportHolder.clear();
         runtimeReportUtil.cleanupDatabaseReports();
-
     }
 
     @Test
@@ -99,9 +97,8 @@ public class ReportRepositoryTest {
 
         List<Report> reportsList = (List<Report>) reportRepository.getAllReports();
 
-
         // After adding to repository
-        assertThat(reportsList.size()).isEqualTo(7);
+        assertThat(reportsList).size().isEqualTo(7);
     }
 
     @Test
@@ -111,13 +108,13 @@ public class ReportRepositoryTest {
 
         // TODO: make the ReportRepositoryImpl#isReadPermitted() flag triggered
         // The user does not have read permissions to receive all reports with the roles set
-        assertThat(systemAuthenticator.withUser("with-no-access-user", () -> reportRepository.getAllReports().size()))
+        assertThat(systemAuthenticator.withUser("with-no-access-user", () -> reportRepository.getAllReports()))
+                .size()
                 .isEqualTo(0);
     }
 
     @Test
     public void testExistingReportByGroup() {
-        //Report createdAnnotatedReport = annotatedReportScanner.loadReportClass();
         Report createdRuntimeReport = runtimeReportUtil.constructSimpleRuntimeReport();
         ReportGroup notAssignedCorrectReportGroup = dataManager.create(ReportGroup.class);
 
@@ -140,6 +137,32 @@ public class ReportRepositoryTest {
     }
 
     @Test
+    public void testExistsReportByCode() {
+        annotatedReportScanner.importReportDefinitions();
+        Report report = runtimeReportUtil.constructSimpleRuntimeReport();
+        reportRepository.save(report);
+
+        String runtimeReportCode = report.getCode();
+        String designTimeReportCode = GameCriticScoresReport.CODE;
+        String unexistingCode = "UNEXISTING_CODE";
+
+        assertThat(reportRepository.existsReportByCode(runtimeReportCode)).isEqualTo(true);
+        assertThat(reportRepository.existsReportByCode(designTimeReportCode)).isEqualTo(true);
+        assertThat(reportRepository.existsReportByCode(unexistingCode)).isEqualTo(false);
+    }
+
+    @Test
+    public void testExistsReportByCodeWithoutRights() {
+        Report report = runtimeReportUtil.constructSimpleRuntimeReport();
+        String runtimeReportCode = report.getCode();
+        reportRepository.save(report);
+
+        assertThatThrownBy(() -> systemAuthenticator.withUser("with-no-access-user", () -> reportRepository.existsReportByCode(runtimeReportCode)))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessageContaining("entity");
+    }
+
+    @Test
     public void testLoadList() {
         ReportFilter reportFilter = new ReportFilter();
         ReportLoadContext reportLoadContext = new ReportLoadContext(reportFilter);
@@ -156,7 +179,7 @@ public class ReportRepositoryTest {
         report2.setCode("report-code-2");
 
         // before saving to repository
-        assertThat(reportRepository.loadList(reportLoadContext).size()).isEqualTo(0);
+        assertThat(reportRepository.loadList(reportLoadContext)).size().isEqualTo(0);
 
         reportRepository.save(report1);
         reportRepository.save(report2);
@@ -164,7 +187,7 @@ public class ReportRepositoryTest {
         List<Report> resultList = reportRepository.loadList(reportLoadContext);
 
         // after saving to repository
-        assertThat(resultList.size()).isEqualTo(2);
+        assertThat(resultList).size().isEqualTo(2);
         assertThat(resultList).anyMatch(r -> r.getName().equals(reportName1));
         assertThat(resultList).anyMatch(r -> r.getName().equals(reportName2));
     }
@@ -177,7 +200,8 @@ public class ReportRepositoryTest {
 
         reportRepository.save(report);
 
-        assertThat(systemAuthenticator.withUser("with-no-access-user", () -> reportRepository.loadList(reportLoadContext).size()))
+        assertThat(systemAuthenticator.withUser("with-no-access-user", () -> reportRepository.loadList(reportLoadContext)))
+                .size()
                 .isEqualTo(0);
     }
 
@@ -310,7 +334,7 @@ public class ReportRepositoryTest {
                 .filter(r -> r.getCode().equals(UsersAndAchievementsReport.CODE))
                 .findAny();
         //Report savedReport = reportRepository.save(report);
-        assertThat(annotatedReport.get()).isNotNull();
+        assertThat(annotatedReport).isPresent();
 
         // isLoadedWithFetchPlan case
         assertThat(reportRepository.reloadForRunning(savedRuntimeReport))

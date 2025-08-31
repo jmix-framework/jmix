@@ -40,8 +40,11 @@ import io.jmix.flowui.view.builder.WindowBuilderProcessor;
 import io.jmix.reports.ReportsConfiguration;
 import io.jmix.reportsflowui.test_support.TestWindowBuilderProcessor;
 import io.jmix.reportsflowui.test_support.role.FullAccessRole;
+import io.jmix.reportsflowui.test_support.role.TestResourceRole2;
+import io.jmix.reportsflowui.test_support.role.TestResourceRole4;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
+import io.jmix.securitydata.SecurityDataConfiguration;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.servlet.ServletContext;
 import liquibase.integration.spring.SpringLiquibase;
@@ -50,6 +53,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -68,7 +72,7 @@ import java.util.List;
 
 @Configuration
 @Import({CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class, SecurityConfiguration.class,
-        ReportsConfiguration.class, FlowuiConfiguration.class, ReportsFlowuiConfiguration.class})
+        SecurityDataConfiguration.class, ReportsConfiguration.class, FlowuiConfiguration.class, ReportsFlowuiConfiguration.class})
 @EnableWebSecurity
 @PropertySource("classpath:/test_support/test-app.properties")
 @MessageSourceBasenames({"test_support/messages"})
@@ -86,6 +90,12 @@ public class ReportsFlowuiTestConfiguration {
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL)
                 .build();
+    }
+
+    @Bean
+    @Primary
+    JdbcTemplate jdbcTemplate() {
+        return new JdbcTemplate(dataSource());
     }
 
     @Bean
@@ -134,6 +144,19 @@ public class ReportsFlowuiTestConfiguration {
                 .password("{noop}admin")
                 .authorities(List.of(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.NAME)))
                 .build());
+
+        repository.addUser(User.builder()
+                .username("with-no-access-user")
+                .password("{noop}")
+                .roles(TestResourceRole4.CODE)
+                .build());
+
+        repository.addUser(User.builder()
+                .username("with-access-user")
+                .password("{noop}")
+                .roles(TestResourceRole2.CODE)
+                .build());
+
         return repository;
     }
 

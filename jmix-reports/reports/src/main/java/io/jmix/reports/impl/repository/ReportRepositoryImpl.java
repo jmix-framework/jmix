@@ -287,6 +287,27 @@ public class ReportRepositoryImpl implements ReportRepository {
     }
 
     @Override
+    public boolean existsReportByCode(String reportCode) {
+        if (!isReadPermitted()) {
+            throw new AccessDeniedException("entity", metadata.getClass(Report.class).getName(), EntityOp.READ.getId());
+        }
+
+        for (Report report : annotatedReportHolder.getAllReports()) {
+            if (report.getCode() != null && report.getCode().equals(reportCode)) {
+                return true;
+            }
+        }
+
+        Optional<Report> report = dataManager.load(Report.class)
+                .query("select r from report_Report r where r.code = :reportCode")
+                .parameter("reportCode", reportCode)
+                .fetchPlan(FetchPlan.INSTANCE_NAME)
+                .optional();
+
+        return report.isPresent();
+    }
+
+    @Override
     public boolean existsReportByGroup(ReportGroup group) {
         if (!isReadPermitted()) {
             return false;

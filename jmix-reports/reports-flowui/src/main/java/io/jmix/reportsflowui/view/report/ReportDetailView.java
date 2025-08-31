@@ -33,6 +33,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -42,6 +43,7 @@ import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.*;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -51,6 +53,7 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
@@ -62,10 +65,7 @@ import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
-import io.jmix.reports.ReportGroupRepository;
-import io.jmix.reports.ReportPrintHelper;
-import io.jmix.reports.ReportsPersistence;
-import io.jmix.reports.ReportsSerialization;
+import io.jmix.reports.*;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.wizard.ReportData;
@@ -121,6 +121,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected TreeDataGrid<BandDefinition> bandsTreeDataGrid;
     @ViewComponent
     protected TypedTextField<String> bandNameField;
+    @ViewComponent
+    private TypedTextField<String> codeField;
     @ViewComponent
     protected JmixSelect<Orientation> orientationField;
     @ViewComponent
@@ -191,6 +193,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected CollectionPropertyContainer<ReportRole> reportRolesDc;
     @ViewComponent
     protected DataGrid<ReportInputParameter> inputParametersDataGrid;
+    @ViewComponent
+    protected JmixTabSheet mainTabSheet;
+    @ViewComponent("mainTabSheet.detailsTab")
+    protected Tab mainTabSheetDetailsTab;
 
     @Autowired
     protected ReportsPersistence reportsPersistence;
@@ -248,6 +254,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     private EntityUuidGenerator entityUuidGenerator;
     @Autowired
     protected ReportGroupRepository reportGroupRepository;
+    @Autowired
+    protected ReportRepository reportRepository;
 
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
@@ -630,8 +638,44 @@ public class ReportDetailView extends StandardDetailView<Report> {
         validateTemplate(event.getErrors());
     }
 
+    protected void markFieldAndPreventSave(TypedTextField<?> field, String messageBundleKey, BeforeSaveEvent event) {
+        event.preventSave();
+        field.setErrorMessage(messageBundle.getMessage(messageBundleKey));
+        field.setInvalid(true);
+    }
+
+    protected void showNotificationIfAnotherTab(Tab tab, ValidationErrors errors, Component component, String messageBundleKey) {
+        if (!tab.isSelected()) {
+            errors.add(component, messageBundle.getMessage(messageBundleKey));
+        }
+    }
+
     @Subscribe
     protected void onBeforeSave(BeforeSaveEvent event) {
+        ValidationErrors errors = new ValidationErrors();
+        String newReportCode = codeField.getTypedValue();
+
+        try {
+            if (newReportCode == null) {
+                markFieldAndPreventSave(codeField, "detailsTab.nameField.codeFieldIsEmpty.text", event);
+                showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.nameField.codeFieldIsEmpty.text");
+                return;
+            }
+            if (reportRepository.existsReportByCode(newReportCode)) {
+                markFieldAndPreventSave(codeField, "detailsTab.nameField.codeAlreadyExists.text", event);
+                showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.nameField.codeAlreadyExists.text");
+                return;
+            }
+        } catch (AccessDeniedException ade) {
+            event.preventSave();
+            showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.notification.notReadAccessRights.text");
+            return;
+        } finally {
+            if (!errors.isEmpty()) {
+                viewValidation.showValidationErrors(errors);
+            }
+        }
+
         setupReportXml();
     }
 

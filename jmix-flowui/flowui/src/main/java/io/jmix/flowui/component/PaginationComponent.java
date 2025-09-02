@@ -20,6 +20,7 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.DataLoadContext;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.kit.component.pagination.AbstractPagination;
 
@@ -65,6 +66,10 @@ public interface PaginationComponent<T extends AbstractPagination> {
      * @param totalCountDelegate total count delegate to set
      */
     void setTotalCountDelegate(@Nullable Function<DataLoadContext, Integer> totalCountDelegate);
+
+    Function<JmixDataRepositoryContext, Long> getTotalCountByRepositoryDelegate();
+
+    void setTotalCountByRepositoryDelegate(Function<JmixDataRepositoryContext, Long> delegate);
 
     /**
      * Adds before refresh listener. It is invoked when data should be refreshed after user actions:

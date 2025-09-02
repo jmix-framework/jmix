@@ -16,17 +16,13 @@
 
 package io.jmix.core.repository;
 
-
 import io.jmix.core.FetchPlan;
-import io.jmix.core.annotation.Experimental;
 import io.jmix.core.querycondition.Condition;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
-
-
 
 /**
  * Accumulates jmix-specific parameters. Supported by standard {@link JmixDataRepository} methods and as query parameter.
@@ -35,7 +31,6 @@ import java.util.Map;
  * @param condition {@link Condition} to filter entities
  * @param hints query hints, e.g. from {@code io.jmix.data.PersistenceHints}
  */
-@Experimental
 public record JmixDataRepositoryContext(@Nullable FetchPlan fetchPlan,
                                         @Nullable Condition condition,
                                         @Nullable Map<String, Serializable> hints) implements Serializable {

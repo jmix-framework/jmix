@@ -81,6 +81,9 @@ dependencies {
 
         // community add-ons
 
+        api 'ru.cs_consult:datamodelbrowseaddon-starter:1.0.0'
+        api 'ru.cs_consult:datamodelbrowseaddon:1.0.0'
+
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

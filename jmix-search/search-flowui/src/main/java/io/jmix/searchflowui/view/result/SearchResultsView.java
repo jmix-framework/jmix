@@ -60,7 +60,7 @@ public class SearchResultsView extends StandardView {
     public static final String QUERY_PARAM_SEARCH_BUTTON_VISIBLE = "searchButtonVisible";
     public static final String QUERY_PARAM_SETTINGS_BUTTON_VISIBLE = "settingsButtonVisible";
 
-    protected static final Map<String, String> systemFieldLabels = ImmutableMap.<String, String>builder()
+    protected static final Map<String, String> SYSTEM_FIELD_LABELS = ImmutableMap.<String, String>builder()
             .put("_file_name", "fileName")
             .put("_content", "content")
             .build();
@@ -97,6 +97,8 @@ public class SearchResultsView extends StandardView {
     protected SearchFieldContext searchFieldContext;
     protected boolean searchButtonVisible;
     protected boolean settingsButtonVisible;
+    @Autowired
+    private MetadataTools metadataTools;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -306,7 +308,7 @@ public class SearchResultsView extends StandardView {
         MetaClass currentMetaClass = metadata.getClass(entityName);
         for (int i = 0; i < parts.length; i++) {
             String part = parts[i];
-            MetaProperty currentMetaProperty = currentMetaClass.findProperty(part);
+            MetaProperty currentMetaProperty = metadataTools.resolveMetaPropertyOrNull(currentMetaClass, part);
             if (currentMetaProperty == null) {
                 break;
             }
@@ -316,7 +318,7 @@ public class SearchResultsView extends StandardView {
                     && i + 1 < parts.length) {
                 String propertyCaption = messageTools.getPropertyCaption(currentMetaProperty);
                 String nextPart = parts[i + 1];
-                String labelKey = systemFieldLabels.get(nextPart);
+                String labelKey = SYSTEM_FIELD_LABELS.get(nextPart);
                 if (labelKey != null) {
                     String labelValue = messageBundle.getMessage(labelKey);
                     propertyCaption = propertyCaption + "[" + labelValue + "]";

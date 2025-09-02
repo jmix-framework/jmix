@@ -178,6 +178,12 @@ public class MappingFieldDescriptor {
                 "entityPropertyFullName='" + entityPropertyFullName + '\'' +
                 ", indexPropertyFullName='" + indexPropertyFullName + '\'' +
                 ", metaPropertyPath=" + metaPropertyPath +
+                ", standalone=" + standalone +
+                ", fieldConfiguration=" + fieldConfiguration +
+                ", propertyValueExtractor=" + propertyValueExtractor +
+                ", order=" + order +
+                ", instanceNameRelatedProperties=" + instanceNameRelatedProperties +
+                ", parameters=" + parameters +
                 '}';
     }
 }

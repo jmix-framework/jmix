@@ -59,4 +59,13 @@ public class DisplayedNameDescriptor {
     public JsonNode getValue(Object entity) {
         return propertyValueExtractor.getValue(entity, null, Collections.emptyMap());
     }
+
+    @Override
+    public String toString() {
+        return "DisplayedNameDescriptor{" +
+                "fieldConfiguration=" + fieldConfiguration +
+                ", propertyValueExtractor=" + propertyValueExtractor +
+                ", instanceNameRelatedProperties=" + instanceNameRelatedProperties +
+                '}';
+    }
 }

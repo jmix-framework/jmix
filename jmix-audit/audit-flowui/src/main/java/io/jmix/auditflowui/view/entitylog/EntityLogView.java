@@ -756,7 +756,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
             return false;
         }
         if (range.isClass() && range.getCardinality().isMany()) {
-            return false;
+            return metadataTools.isOwningSide(metaProperty);
         }
         return true;
     }

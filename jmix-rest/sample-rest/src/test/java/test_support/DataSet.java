@@ -59,6 +59,8 @@ public class DataSet {
     private Set<Long> compositeKeyEntityIds = new HashSet<>();
     private Set<Integer> compositeKeyEntityTenantIds = new HashSet<>();
     private Set<Integer> nonStandardIdNameEntityIds = new HashSet<>();
+    private Set<UUID> rootEntityIds = new HashSet<>();
+    private Set<UUID> nestedEntityIds = new HashSet<>();
 
     private static AtomicLong compositeKeyEntityIdGen = new AtomicLong();
     private static AtomicInteger compositeKeyEntityTenantIdGen = new AtomicInteger();
@@ -205,6 +207,26 @@ public class DataSet {
         deleteInstances(conn, "REST_SECRET_ENTITY", secretEntityIds);
         deleteStringInstances(conn, "REF_CURRENCY", "CODE", currencyIds);
         deleteNonStandardIdEntities(conn);
+        deleteRootEntities(conn);
+        deleteNestedEntities(conn);
+    }
+
+    private void deleteRootEntities(Connection conn) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement("delete from rest_root_entity where id = ?")) {
+            for (UUID uuid : rootEntityIds) {
+                stmt.setObject(1, uuid);
+                stmt.executeUpdate();
+            }
+        }
+    }
+
+    private void deleteNestedEntities(Connection conn) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement("delete from rest_nested_entity where id = ?")) {
+            for (UUID uuid : nestedEntityIds) {
+                stmt.setObject(1, uuid);
+                stmt.executeUpdate();
+            }
+        }
     }
 
     private void deleteSellers(Connection conn) throws SQLException {
@@ -673,6 +695,18 @@ public class DataSet {
     public UUID createSecretEntityId() {
         UUID result = UUID.randomUUID();
         secretEntityIds.add(result);
+        return result;
+    }
+
+    public UUID createRootEntityId() {
+        UUID result = UUID.randomUUID();
+        rootEntityIds.add(result);
+        return result;
+    }
+
+    public UUID createNestedEntityId() {
+        UUID result = UUID.randomUUID();
+        nestedEntityIds.add(result);
         return result;
     }
 }

@@ -30,10 +30,7 @@ import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.Views;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.kit.component.SupportsUserAction;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.Nested;
+import io.jmix.flowui.model.*;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
@@ -111,7 +108,7 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
                 E entityFromDetail = getSavedEntity(detailView, parentDataContext);
                 E reloadedEntity = transformForCollectionContainer(entityFromDetail, container);
                 E savedEntity = transform(reloadedEntity, builder);
-                E mergedEntity = merge(savedEntity, builder.getOrigin(), parentDataContext);
+                E mergedEntity = merge(savedEntity, builder.getOrigin(), parentDataContext, container);
 
                 if (builder.getMode() == DetailViewMode.CREATE) {
                     boolean addsFirst = false;
@@ -384,13 +381,26 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         return editedEntity;
     }
 
-    protected <E> E merge(E entity, View<?> origin, @Nullable DataContext parentDataContext) {
-        if (parentDataContext == null) {
+    protected <E> E merge(E entity, View<?> origin, @Nullable DataContext parentDataContext,
+                          @Nullable CollectionContainer<E> container) {
+        if (parentDataContext == null && isContainerLinkedWithDataContext(container)) {
             DataContext thisDataContext = getViewData(origin).getDataContextOrNull();
             if (thisDataContext != null) {
                 return thisDataContext.merge(entity);
             }
         }
         return entity;
+    }
+
+    protected <E> boolean isContainerLinkedWithDataContext(@Nullable InstanceContainer<E> container) {
+        if (container instanceof HasLoader standaloneContainer) {
+            DataLoader loader = standaloneContainer.getLoader();
+            return loader != null && loader.getDataContext() != null;
+        }
+        if (container instanceof Nested nestedContainer) {
+            InstanceContainer<?> masterContainer = nestedContainer.getMaster();
+            return isContainerLinkedWithDataContext(masterContainer);
+        }
+        return false;
     }
 }

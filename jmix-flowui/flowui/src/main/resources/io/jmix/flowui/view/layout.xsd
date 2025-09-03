@@ -2227,6 +2227,13 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="userMenuViewItemOpenModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NAVIGATION"/>
+            <xs:enumeration value="DIALOG"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- Interfaces -->
     <xs:attributeGroup name="hasId">
         <xs:attribute name="id" type="xs:string"/>
@@ -3067,6 +3074,7 @@
 
                 <xs:attribute name="viewId" type="xs:string"/>
                 <xs:attribute name="viewClass" type="xs:string"/>
+                <xs:attribute name="openMode" type="userMenuViewItemOpenModeType"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

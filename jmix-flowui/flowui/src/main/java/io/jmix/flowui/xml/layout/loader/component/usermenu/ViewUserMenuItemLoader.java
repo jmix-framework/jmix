@@ -22,6 +22,7 @@ import io.jmix.flowui.component.usermenu.ViewUserMenuItem;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
+import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
@@ -77,6 +78,7 @@ public class ViewUserMenuItemLoader extends AbstractUserMenuItemLoader {
         }
 
         componentLoader(context).loadIcon(element, item::setIcon);
+        loaderSupport.loadEnum(element, OpenMode.class, "openMode", item::setOpenMode);
         loadItem(element, item, context);
     }
 }

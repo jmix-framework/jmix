@@ -188,22 +188,22 @@
         <checkbox id="checkBoxWithDataId" dataContainer="orderDc" property="user.active"/>
 
         <switch id="switchId"
-                  ariaLabel="ariaLabelString"
-                  autofocus="true"
-                  classNames="cssClassName1, cssClassName2"
-                  css="color: red;"
-                  enabled="true"
-                  height="50px"
-                  label="labelString"
-                  maxHeight="55px"
-                  maxWidth="120px"
-                  minHeight="40px"
-                  minWidth="80px"
-                  readOnly="true"
-                  tabIndex="3"
-                  value="true"
-                  visible="true"
-                  width="100px">
+                ariaLabel="ariaLabelString"
+                autofocus="true"
+                classNames="cssClassName1, cssClassName2"
+                css="color: red;"
+                enabled="true"
+                height="50px"
+                label="labelString"
+                maxHeight="55px"
+                maxWidth="120px"
+                minHeight="40px"
+                minWidth="80px"
+                readOnly="true"
+                tabIndex="3"
+                value="true"
+                visible="true"
+                width="100px">
             <tooltip text="tooltipText"
                      focusDelay="1"
                      hideDelay="2"
@@ -876,6 +876,32 @@
         </entityComboBox>
 
         <entityComboBox id="metaClassComboBoxId" metaClass="test_Order"/>
+
+        <userMenu id="userMenu"
+                  classNames="cssClassName1, cssClassName2"
+                  css="color: red;"
+                  enabled="true"
+                  openOnHover="true"
+                  tabIndex="3"
+                  themeNames="small primary"
+                  title="dropdownButtonTitle"
+                  visible="true"
+                  overlayClass="overlayClassName">
+            <items>
+                <actionItem id="firstActionItem">
+                    <action id="action2" icon="DIPLOMA"/>
+                </actionItem>
+                <separator/>
+                <actionItem id="secondActionItem" ref="buttonAction"/>
+                <componentItem id="componentItem">
+                    <span text="content"/>
+                </componentItem>
+                <textItem id="textItem" text="textItemContent" icon="FILE"/>
+                <viewItem id="viewItem" text="viewItemText"
+                          viewClass="component_xml_load.screen.ComponentView"
+                          openMode="DIALOG"/>
+            </items>
+        </userMenu>
 
         <dropdownButton id="dropdownButtonId"
                         classNames="cssClassName1, cssClassName2"

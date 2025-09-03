@@ -14,29 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.usermenu;
+package io.jmix.flowui.kit.component;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.kit.component.HasContent;
 
 /**
- * Represents a user menu item that can contain a custom UI {@link Component} as its content.
+ * Interface to be implemented by UI components that have an associated content component.
  */
-public interface ComponentUserMenuItem extends UserMenuItem,
-        UserMenuItem.HasSubMenu, UserMenuItem.HasClickListener<ComponentUserMenuItem>, HasContent {
+public interface HasContent {
 
     /**
-     * Returns the content component associated with this menu item.
+     * Returns the content component associated with this object.
      *
      * @return the {@link Component} currently set as the content
      */
-    @Override
     Component getContent();
-
-    /**
-     * Sets the content component for the menu item.
-     *
-     * @param content the {@link Component} to be set as the content
-     */
-    void setContent(Component content);
 }

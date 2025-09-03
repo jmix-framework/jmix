@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.usermenu;
+package io.jmix.flowui.kit.component;
 
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.component.ActionHolder;
+import jakarta.annotation.Nullable;
 
 /**
- * Represents a specific type of {@link UserMenuItem} that is associated with an {@link Action}.
+ * Interface to be implemented by UI components or their sub-parts that have an action.
  */
-public interface ActionUserMenuItem extends UserMenuItem, UserMenuItem.HasSubMenu, ActionHolder {
+public interface ActionHolder {
 
     /**
-     * Returns the {@link Action} associated with this item.
+     * Returns the {@link Action} associated with this object.
      *
      * @return the associated action
      */
-    @Override
     Action getAction();
 }

@@ -106,7 +106,6 @@ public class ReportRepositoryTest {
         Report runtimeReport = runtimeReportUtil.constructSimpleRuntimeReport();
         reportRepository.save(runtimeReport);
 
-        // TODO: make the ReportRepositoryImpl#isReadPermitted() flag triggered
         // The user does not have read permissions to receive all reports with the roles set
         assertThat(systemAuthenticator.withUser("with-no-access-user", () -> reportRepository.getAllReports()))
                 .size()
@@ -322,7 +321,7 @@ public class ReportRepositoryTest {
                 .hasMessageContaining("entity");
     }
 
-//    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+//
     @Test
     public void testReloadForRunning() {
         Report savedRuntimeReport = runtimeReportUtil.createAndSaveSimpleRuntimeReport();
@@ -333,7 +332,6 @@ public class ReportRepositoryTest {
         Optional<Report> annotatedReport = annotatedReportsList.stream()
                 .filter(r -> r.getCode().equals(UsersAndAchievementsReport.CODE))
                 .findAny();
-        //Report savedReport = reportRepository.save(report);
         assertThat(annotatedReport).isPresent();
 
         // isLoadedWithFetchPlan case

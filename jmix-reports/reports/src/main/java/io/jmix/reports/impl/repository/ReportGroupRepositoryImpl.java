@@ -18,6 +18,8 @@ package io.jmix.reports.impl.repository;
 
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.core.security.AccessDeniedException;
+import io.jmix.core.security.EntityOp;
 import io.jmix.reports.ReportGroupFilter;
 import io.jmix.reports.ReportGroupLoadContext;
 import io.jmix.reports.ReportGroupRepository;
@@ -26,10 +28,7 @@ import io.jmix.reports.impl.AnnotatedReportGroupHolder;
 import io.jmix.reports.util.MsgBundleTools;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Component("report_ReportGroupRepository")
@@ -77,8 +76,7 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
                 dbGroups.stream()
         );
 
-        List<ReportGroup> result = applyFilterSortPagination(stream, loadContext);
-        return result;
+        return applyFilterSortPagination(stream, loadContext);
     }
 
     @Override
@@ -117,6 +115,27 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
         }
 
         return stream.toList();
+    }
+
+    @Override
+    public boolean existsGroupByCode(String reportGroupCode) {
+        if (!isReadPermitted()) {
+            throw new AccessDeniedException("entity", metadata.getClass(ReportGroup.class).getName(), EntityOp.READ.getId());
+        }
+
+        for (ReportGroup group : annotatedReportGroupHolder.getAllGroups()) {
+            if (group.getCode() != null && group.getCode().equals(reportGroupCode)) {
+                return true;
+            }
+        }
+
+        Optional<ReportGroup> report = dataManager.load(ReportGroup.class)
+            .query("select rg from report_ReportGroup rg where rg.code = :reportGroupCode")
+            .parameter("reportGroupCode", reportGroupCode)
+            .fetchPlan(FetchPlan.INSTANCE_NAME)
+            .optional();
+
+        return report.isPresent();
     }
 
     private boolean satisfies(ReportGroup group, ReportGroupFilter filter) {

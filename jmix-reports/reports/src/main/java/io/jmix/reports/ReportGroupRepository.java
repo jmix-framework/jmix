@@ -47,4 +47,12 @@ public interface ReportGroupRepository {
      * @return count of suitable entities
      */
     int getTotalCount(ReportGroupFilter filter);
+
+    /**
+     * Checks if there are any report groups with the given code.
+     *
+     * @param code report group code
+     * @return true if a report group with the given code exists, false otherwise
+     */
+    boolean existsGroupByCode(String code);
 }

@@ -197,11 +197,11 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected JmixTabSheet mainTabSheet;
     @ViewComponent("mainTabSheet.detailsTab")
     protected Tab mainTabSheetDetailsTab;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected ReportsPersistence reportsPersistence;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -657,13 +657,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         try {
             if (newReportCode == null) {
-                markFieldAndPreventSave(codeField, "detailsTab.nameField.codeFieldIsEmpty.text", event);
-                showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.nameField.codeFieldIsEmpty.text");
+                markFieldAndPreventSave(codeField, "detailsTab.codeField.isEmpty.text", event);
+                showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.isEmpty.text");
                 return;
             }
             if (reportRepository.existsReportByCode(newReportCode)) {
-                markFieldAndPreventSave(codeField, "detailsTab.nameField.codeAlreadyExists.text", event);
-                showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.nameField.codeAlreadyExists.text");
+                markFieldAndPreventSave(codeField, "detailsTab.codeField.alreadyExists.text", event);
+                showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.alreadyExists.text");
                 return;
             }
         } catch (AccessDeniedException ade) {

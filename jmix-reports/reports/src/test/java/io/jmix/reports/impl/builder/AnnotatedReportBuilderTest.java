@@ -129,8 +129,6 @@ public class AnnotatedReportBuilderTest {
         assertThat(valueFormat.getFormatString()).isEqualTo("dd.MM.yyyy HH:mm:ss");
     }
 
-    // Begin of InputParameterDef section
-
     @ParameterizedTest
     @CsvSource({"en,After", "fr,Apres"})
     public void testInputParameterLocalization(String localeCode, String expectedCaption) {
@@ -158,8 +156,6 @@ public class AnnotatedReportBuilderTest {
         // then
         assertThat(reportParameter.getName()).isEqualTo("After");
     }
-
-    // End of InputParameterDef section
 
     @Test
     public void testImportFromClassHierarchy() {
@@ -248,8 +244,6 @@ public class AnnotatedReportBuilderTest {
                 .hasMessageContaining("Report group");
     }
 
-    // Begin of BandDef section
-
     @Test
     public void testNoBands() {
         // given
@@ -322,10 +316,6 @@ public class AnnotatedReportBuilderTest {
                 .hasMessageContaining("is not defined");
     }
 
-    // End of BandDef section
-
-    // Begin of DataSet section
-
     @Test
     public void testMissingDataSetDelegate() {
         // given
@@ -371,8 +361,6 @@ public class AnnotatedReportBuilderTest {
                 .isInstanceOf(InvalidReportDefinitionException.class)
                 .hasMessageContaining("Unsupported result type");
     }
-
-    // End of DataSet section
 
     @Test
     public void testWrongEntityParameterAlias() {

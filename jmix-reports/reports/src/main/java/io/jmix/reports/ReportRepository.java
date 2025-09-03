@@ -67,10 +67,16 @@ public interface ReportRepository {
     @Nullable
     Report loadForRunningByCode(String reportCode);
 
-    boolean existsReportByCode(String reportCode);
+    /**
+     * Checks if there are any reports with the given code.
+     *
+     * @param code report code
+     * @return true if a report with this code exists, false otherwise
+     */
+    boolean existsReportByCode(String code);
 
     /**
-     * Check if any reports are connected to the given group.
+     * Checks if any reports are connected to the given group.
      *
      * @param group report group
      * @return true if there is a report connected to this group, false otherwise
@@ -86,13 +92,13 @@ public interface ReportRepository {
     Report save(Report report);
 
     /*
-     * Reload report if necessary.
+     * Reloads report if necessary.
      * Loads all details necessary for passing it to the rendering engine.
      */
     Report reloadForRunning(Report report);
 
     /*
-     * Reload template if necessary.
+     * Reloads template if necessary.
      * Loads all details necessary for passing it to the rendering engine.
      */
     ReportTemplate reloadTemplateForRunning(ReportTemplate template);

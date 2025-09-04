@@ -190,22 +190,24 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
 
     @Override
     public void addSeparatorAtIndex(int index) {
-        subMenu.addComponentAtIndex(index, new Hr());
+        subMenu.addComponentAtIndex(adjustPhysicalIndex(index), new Hr());
         addItemInternal(new SeparatorUserMenuItem(), index);
     }
 
     @Override
-    public void addSeparator(String parentItemId) {
-        UserMenuItem item = getItem(parentItemId);
-        subMenu.addComponent(createSeparator(item));
-        addItemInternal(new SeparatorUserMenuItem(), -1);
+    public void addSeparator(UserMenuItem parentItem) {
+        if (getItems().contains(parentItem)) {
+            subMenu.addComponent(createSeparator(parentItem));
+            addItemInternal(new SeparatorUserMenuItem(), -1);
+        }
     }
 
     @Override
-    public void addSeparatorAtIndex(int index, String parentItemId) {
-        UserMenuItem item = getItem(parentItemId);
-        subMenu.addComponentAtIndex(index, createSeparator(item));
-        addItemInternal(new SeparatorUserMenuItem(), index);
+    public void addSeparatorAtIndex(int index, UserMenuItem parentItem) {
+        if (getItems().contains(parentItem)) {
+            subMenu.addComponentAtIndex(adjustPhysicalIndex(index), createSeparator(parentItem));
+            addItemInternal(new SeparatorUserMenuItem(), index);
+        }
     }
 
     protected Component createSeparator(UserMenuItem item) {
@@ -238,7 +240,7 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
     protected JmixMenuItem createMenuItem(String id, Component content, int index) {
         JmixMenuItem menuItem = index < 0
                 ? subMenu.addItem(content)
-                : subMenu.addItemAtIndex(index, content);
+                : subMenu.addItemAtIndex(adjustPhysicalIndex(index), content);
 
         menuItem.setId(id);
 
@@ -297,6 +299,15 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
     public void removeAll() {
         // Remove each item individually to handle detachment
         new ArrayList<>(items).forEach(this::remove);
+    }
+
+    protected int adjustPhysicalIndex(int index) {
+        // if a header wrapper is added, then we need to increase a component index by 1
+        if (userMenu.headerWrapper != null) {
+            index++;
+        }
+        
+        return index;
     }
 
     /**

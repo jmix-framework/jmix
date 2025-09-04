@@ -64,7 +64,6 @@ public class ActionUserMenuItemLoader extends AbstractUserMenuItemLoader {
             loadItem(element, item, context);
         } else if (ref != null) {
             int index = element.getParent().elements().indexOf(element);
-
             AssignUserMenuItemActionInitTask<HasActionMenuItems> initTask = new AssignUserMenuItemActionInitTask<>(
                     hasActionMenuItems,
                     ref,

@@ -210,6 +210,8 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
 
     protected Component createSeparator(UserMenuItem item) {
         Hr separator = new Hr();
+        separator.setVisible(item.isVisible());
+
         item.addPropertyChangeListener(event -> {
             if (UserMenuItem.PROP_VISIBLE.equals(event.getPropertyName())) {
                 separator.setVisible((boolean) event.getNewValue());

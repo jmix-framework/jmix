@@ -357,8 +357,14 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         return itemsDelegate;
     }
 
+    /* For internal use only. */
     protected JmixUserMenuItemsDelegate createUserMenuItemsDelegate(JmixSubMenu subMenu) {
         return new JmixUserMenuItemsDelegate(this, subMenu);
+    }
+
+    /* For internal use only. */
+    protected HasSubMenu.SubMenu createSubMenu(JmixSubMenu subMenu) {
+        return new JmixUserMenuSubMenu(this, subMenu);
     }
 
     /**
@@ -712,7 +718,8 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
 
         protected HasSubMenu.SubMenu createSubMenu() {
-            return new JmixUserMenuSubMenu(userMenu, item.getSubMenu());
+            // Delegate creation for easier overriding in subclasses
+            return userMenu.createSubMenu(item.getSubMenu());
         }
 
         protected <ITEM extends UserMenuItem> Registration addClickListenerInternal(
@@ -925,6 +932,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
 
         protected JmixUserMenuItemsDelegate createUserMenuItemsDelegate() {
+            // Delegate creation for easier overriding in subclasses
             return userMenu.createUserMenuItemsDelegate(subMenu);
         }
     }

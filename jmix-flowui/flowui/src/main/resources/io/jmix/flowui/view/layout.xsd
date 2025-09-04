@@ -3069,7 +3069,7 @@
     <xs:complexType name="userMenuViewItemType">
         <xs:complexContent>
             <xs:extension base="userMenuBaseItemType">
-                <xs:attribute name="text" type="resourceString"/>
+                <xs:attribute name="text" type="resourceString" use="required"/>
                 <xs:attributeGroup ref="hasIcon"/>
 
                 <xs:attribute name="viewId" type="xs:string"/>

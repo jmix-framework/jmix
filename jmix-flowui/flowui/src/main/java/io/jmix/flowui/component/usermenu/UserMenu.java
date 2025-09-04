@@ -16,12 +16,14 @@
 
 package io.jmix.flowui.component.usermenu;
 
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
@@ -33,6 +35,7 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenuItemsDelegate;
+import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.WindowBuilder;
@@ -204,9 +207,16 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
         return (UserMenuItemsDelegate) super.getItemsDelegate();
     }
 
+    @Internal
     @Override
-    protected JmixUserMenuItemsDelegate createUserMenuItemsDelegate(JmixSubMenu subMenu) {
+    protected UserMenuItemsDelegate createUserMenuItemsDelegate(JmixSubMenu subMenu) {
         return applicationContext.getBean(UserMenuItemsDelegate.class, this, subMenu);
+    }
+
+    @Internal
+    @Override
+    protected UserMenuItem.HasSubMenu.SubMenu createSubMenu(JmixSubMenu subMenu) {
+        return new UserMenuSubMenu(this, subMenu);
     }
 
     protected static class ViewUserMenuItemImpl extends AbstractTextUserMenuItem implements ViewUserMenuItem {
@@ -261,7 +271,7 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
             item.addClickListener(this::openView);
         }
 
-        protected void openView(com.vaadin.flow.component.ClickEvent<MenuItem> event) {
+        protected void openView(ClickEvent<MenuItem> event) {
             if (viewId == null && viewClass == null) {
                 throw new IllegalStateException("Either 'viewId' or 'viewClass' must be set");
             }
@@ -348,6 +358,58 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
         @Override
         public Class<? extends View<?>> getViewClass() {
             return viewClass;
+        }
+    }
+
+    protected static class UserMenuSubMenu extends JmixUserMenuSubMenu implements HasViewMenuItems {
+
+        public UserMenuSubMenu(UserMenu userMenu, JmixSubMenu subMenu) {
+            super(userMenu, subMenu);
+        }
+
+        @Override
+        protected UserMenuItemsDelegate getItemsDelegate() {
+            return ((UserMenuItemsDelegate) super.getItemsDelegate());
+        }
+
+        @Override
+        public ViewUserMenuItem addViewItem(String id, Class<? extends View<?>> viewClass, String text) {
+            return getItemsDelegate().addViewItem(id, viewClass, text);
+        }
+
+        @Override
+        public ViewUserMenuItem addViewItem(String id, Class<? extends View<?>> viewClass, String text, int index) {
+            return getItemsDelegate().addViewItem(id, viewClass, text, index);
+        }
+
+        @Override
+        public ViewUserMenuItem addViewItem(String id, Class<? extends View<?>> viewClass, String text, Component icon) {
+            return getItemsDelegate().addViewItem(id, viewClass, text, icon);
+        }
+
+        @Override
+        public ViewUserMenuItem addViewItem(String id, Class<? extends View<?>> viewClass, String text, Component icon, int index) {
+            return getItemsDelegate().addViewItem(id, viewClass, text, icon, index);
+        }
+
+        @Override
+        public ViewUserMenuItem addViewItem(String id, String viewId, String text) {
+            return getItemsDelegate().addViewItem(id, viewId, text);
+        }
+
+        @Override
+        public ViewUserMenuItem addViewItem(String id, String viewId, String text, int index) {
+            return getItemsDelegate().addViewItem(id, viewId, text, index);
+        }
+
+        @Override
+        public ViewUserMenuItem addViewItem(String id, String viewId, String text, Component icon) {
+            return getItemsDelegate().addViewItem(id, viewId, text, icon);
+        }
+
+        @Override
+        public ViewUserMenuItem addViewItem(String id, String viewId, String text, Component icon, int index) {
+            return getItemsDelegate().addViewItem(id, viewId, text, icon, index);
         }
     }
 }

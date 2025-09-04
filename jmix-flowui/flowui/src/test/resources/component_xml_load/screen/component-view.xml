@@ -903,6 +903,46 @@
             </items>
         </userMenu>
 
+        <!-- Tests correct loading of nested items -->
+        <userMenu id="userMenu4"
+                  themeNames="tertiary">
+            <items>
+                <textItem id="textItem" text="Text Item" icon="FILE_FONT"
+                          themeNames="non-checkable">
+                    <items>
+                        <actionItem id="actionItem"
+                                    themeNames="non-checkable">
+                            <action id="actionItemAction" text="Action Item" icon="FILE_CODE"/>
+                        </actionItem>
+
+                        <componentItem id="componentItem"
+                                       themeNames="non-checkable">
+                            <hbox>
+                                <icon icon="FILE_MOVIE"/>
+                                <span text="Component Item"/>
+                            </hbox>
+
+                            <items>
+                                <textItem id="nestedTextItem" text="Nested Text Item" icon="FILE_CODE"/>
+
+                                <viewItem id="viewItem"
+                                          text="View Item"
+                                          icon="USERS"
+                                          viewClass="component_xml_load.screen.ComponentView"
+                                          openMode="DIALOG"
+                                          themeNames="non-checkable"/>
+                            </items>
+                        </componentItem>
+                    </items>
+                </textItem>
+
+                <separator/>
+
+                <textItem id="textItem2" text="Text Item" icon="FILE_FONT"
+                          themeNames="non-checkable"/>
+            </items>
+        </userMenu>
+
         <dropdownButton id="dropdownButtonId"
                         classNames="cssClassName1, cssClassName2"
                         css="color: red;"

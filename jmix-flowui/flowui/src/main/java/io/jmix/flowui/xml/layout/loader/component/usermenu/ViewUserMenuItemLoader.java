@@ -21,7 +21,6 @@ import io.jmix.flowui.component.usermenu.HasViewMenuItems;
 import io.jmix.flowui.component.usermenu.ViewUserMenuItem;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
-import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
@@ -56,7 +55,7 @@ public class ViewUserMenuItemLoader extends AbstractUserMenuItemLoader {
         String text = loaderSupport.loadResourceString(element, "text", context.getMessageGroup())
                 .orElseThrow(() ->
                         new GuiDevelopmentException("No 'text' provided for %s(%s)"
-                                .formatted(TextUserMenuItem.class.getSimpleName(), id), context));
+                                .formatted(ViewUserMenuItem.class.getSimpleName(), id), context));
 
         ViewUserMenuItem item = loaderSupport.loadString(element, "viewId")
                 .map(viewId -> hasViewMenuItems.addViewItem(id, viewId, text))

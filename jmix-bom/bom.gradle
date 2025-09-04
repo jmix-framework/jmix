@@ -161,6 +161,7 @@ dependencies {
         api "io.jmix.flowui:vaadin-commercial-components:$freeVersion"
         api "io.jmix.flowui:vaadin-commercial-components-starter:$freeVersion"
         api "io.jmix.flowui:vaadin-commercial-components-kit:$freeVersion"
+        api "io.jmix.flowui:vaadin-commercial-components-devserver-kit:$freeVersion"
 
         api "io.jmix.fullcalendar:jmix-fullcalendar-flowui-kit:$freeVersion"
         api "io.jmix.fullcalendar:jmix-fullcalendar-flowui:$freeVersion"

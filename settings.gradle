@@ -74,6 +74,7 @@ includeProject('flowui-test-assist', 'jmix-flowui/flowui-test-assist')
 includeProject('vaadin-commercial-components', 'jmix-flowui/vaadin-commercial-components')
 includeProject('vaadin-commercial-components-starter', 'jmix-flowui/vaadin-commercial-components-starter')
 includeProject('vaadin-commercial-components-kit', 'jmix-flowui/vaadin-commercial-components-kit')
+includeProject('vaadin-commercial-components-devserver-kit', 'jmix-flowui/vaadin-commercial-components-devserver-kit')
 
 includeProject('fullcalendar-flowui', 'jmix-fullcalendar/fullcalendar-flowui')
 includeProject('fullcalendar-flowui-kit', 'jmix-fullcalendar/fullcalendar-flowui-kit')

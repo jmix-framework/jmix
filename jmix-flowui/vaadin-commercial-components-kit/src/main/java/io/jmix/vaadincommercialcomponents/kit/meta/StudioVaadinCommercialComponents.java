@@ -20,7 +20,7 @@ import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.spreadsheet.Spreadsheet;
 import io.jmix.flowui.kit.meta.*;
 
-@StudioUiKit(studioClassloaderDependencies = "io.jmix.flowui:vaadin-commercial-components-kit")
+@StudioUiKit(studioClassloaderDependencies = "io.jmix.flowui:vaadin-commercial-components-devserver-kit")
 public interface StudioVaadinCommercialComponents {
 
     @StudioComponent(

@@ -75,6 +75,11 @@ vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-men
     position: relative;
 }
 
+.jmix-user-menu-button-content-user-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content-user-avatar:before {
     content: '';
 

@@ -54,64 +54,45 @@ vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-
 /* Default Button Renderer */
 
 .jmix-user-menu-button-content {
-    display: flex;
-    gap: var(--lumo-space-s);
-    align-items: center;
+    display: grid;
+    grid-template: "avatar username"
+                   "avatar subtext";
+    grid-template-columns: auto 1fr;
+    width: max-content;
 
     color: var(--lumo-body-text-color);
-
     padding: var(--lumo-space-xs) var(--lumo-space-s);
 }
 
-vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content {
-    --jmix-user-menu-avatar-size: var(--vaadin-avatar-size, 64px);
-    --jmix-user-menu-substituted-indicator-size: calc(var(--jmix-user-menu-avatar-size) / 4);
-    --jmix-user-menu-substituted-indicator-border-size: var(--vaadin-focus-ring-width, 2px);
-    --jmix-user-menu-substituted-indicator-posotion: 1px;
+.jmix-user-menu-button-content > .jmix-user-menu-button-content-user-avatar {
+    grid-area: avatar;
+    align-self: center;
+
+    margin-inline-end: var(--lumo-space-s);
 }
 
-.jmix-user-menu-button-content-user-avatar-wrapper {
-    display: flex;
-    position: relative;
-}
+.jmix-user-menu-button-content > .jmix-user-menu-button-content-user-name {
+    grid-row: username / subtext;
+    align-self: center;
+    justify-self: start;
 
-.jmix-user-menu-button-content-user-name {
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content-user-avatar:before {
-    content: '';
-
-    position: absolute;
-    inset-inline-end: calc(-1 * var(--jmix-user-menu-substituted-indicator-border-size) + var(--jmix-user-menu-substituted-indicator-posotion));
-    bottom: calc(-1 * var(--jmix-user-menu-substituted-indicator-border-size) + var(--jmix-user-menu-substituted-indicator-posotion));
-    z-index: 1;
-
-    border-radius: 100%;
-
-    width: calc(var(--jmix-user-menu-substituted-indicator-size) + var(--jmix-user-menu-substituted-indicator-border-size) * 2);
-    height: calc(var(--jmix-user-menu-substituted-indicator-size) + var(--jmix-user-menu-substituted-indicator-border-size) * 2);
-
-    background-color: var(--lumo-base-color);
+vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content > .jmix-user-menu-button-content-user-name {
+    grid-row: username;
 }
 
-vaadin-app-layout[primary-section='navbar'] vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content-user-avatar:before {
-    background-image: linear-gradient(var(--lumo-contrast-5pct), var(--lumo-contrast-5pct));
+.jmix-user-menu-button-content > .jmix-user-menu-button-content-subtext {
+    grid-area: subtext;
+    align-self: center;
+    justify-self: start;
+
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-xs);
 }
 
-vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-menu-button-content-user-avatar:after {
-    content: '';
-
-    position: absolute;
-    inset-inline-end: var(--jmix-user-menu-substituted-indicator-posotion);
-    bottom: var(--jmix-user-menu-substituted-indicator-posotion);
-    z-index: 1;
-
-    border-radius: 100%;
-
-    width: var(--jmix-user-menu-substituted-indicator-size);
-    height: var(--jmix-user-menu-substituted-indicator-size);
-
-    background-color: var(--lumo-warning-color);
+vaadin-menu-bar[jmix-role='jmix-user-menu']:not([theme~='substituted']) .jmix-user-menu-button-content > .jmix-user-menu-button-content-subtext {
+    display: none;
 }

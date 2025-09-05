@@ -275,16 +275,6 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
     }
 
     @Override
-    public void addSeparator(UserMenuItem parentItem) {
-        getItemsDelegate().addSeparator(parentItem);
-    }
-
-    @Override
-    public void addSeparatorAtIndex(int index, UserMenuItem parentItem) {
-        getItemsDelegate().addSeparatorAtIndex(index, parentItem);
-    }
-
-    @Override
     public Optional<UserMenuItem> findItem(String itemId) {
         return getItemsDelegate().findItem(itemId);
     }
@@ -881,16 +871,6 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         @Override
         public void addSeparatorAtIndex(int index) {
             getItemsDelegate().addSeparatorAtIndex(index);
-        }
-
-        @Override
-        public void addSeparator(UserMenuItem parentItem) {
-            getItemsDelegate().addSeparator(parentItem);
-        }
-
-        @Override
-        public void addSeparatorAtIndex(int index, UserMenuItem parentItem) {
-            getItemsDelegate().addSeparatorAtIndex(index, parentItem);
         }
 
         @Override

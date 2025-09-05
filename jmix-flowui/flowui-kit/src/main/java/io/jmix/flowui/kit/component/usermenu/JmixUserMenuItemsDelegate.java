@@ -194,35 +194,6 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
         addItemInternal(new SeparatorUserMenuItem(), index);
     }
 
-    @Override
-    public void addSeparator(UserMenuItem parentItem) {
-        if (getItems().contains(parentItem)) {
-            subMenu.addComponent(createSeparator(parentItem));
-            addItemInternal(new SeparatorUserMenuItem(), -1);
-        }
-    }
-
-    @Override
-    public void addSeparatorAtIndex(int index, UserMenuItem parentItem) {
-        if (getItems().contains(parentItem)) {
-            subMenu.addComponentAtIndex(adjustPhysicalIndex(index), createSeparator(parentItem));
-            addItemInternal(new SeparatorUserMenuItem(), index);
-        }
-    }
-
-    protected Component createSeparator(UserMenuItem item) {
-        Hr separator = new Hr();
-        separator.setVisible(item.isVisible());
-
-        item.addPropertyChangeListener(event -> {
-            if (UserMenuItem.PROP_VISIBLE.equals(event.getPropertyName())) {
-                separator.setVisible((boolean) event.getNewValue());
-            }
-        });
-
-        return separator;
-    }
-
     protected void addItemInternal(UserMenuItem item, int index) {
         if (index < 0) {
             items.add(item);
@@ -306,7 +277,7 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
         if (userMenu.headerWrapper != null) {
             index++;
         }
-        
+
         return index;
     }
 

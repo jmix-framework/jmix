@@ -3080,9 +3080,7 @@
     </xs:complexType>
 
     <!-- Separator -->
-    <xs:complexType name="userMenuSeparatorType">
-        <xs:attribute name="itemId" type="xs:string"/>
-    </xs:complexType>
+    <xs:complexType name="userMenuSeparatorType"/>
 
     <!--endregion-->
 

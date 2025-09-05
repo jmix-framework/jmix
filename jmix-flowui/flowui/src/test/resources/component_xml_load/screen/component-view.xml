@@ -907,7 +907,7 @@
         <userMenu id="userMenu4"
                   themeNames="tertiary">
             <items>
-                <separator itemId="textItem"/>
+                <separator/>
 
                 <textItem id="textItem" text="Text Item" icon="FILE_FONT"
                           themeNames="non-checkable">
@@ -942,7 +942,7 @@
                     </items>
                 </textItem>
 
-                <separator itemId="textItem"/>
+                <separator/>
 
                 <textItem id="textItem2" text="Text Item" icon="FILE_FONT"
                           themeNames="non-checkable"/>

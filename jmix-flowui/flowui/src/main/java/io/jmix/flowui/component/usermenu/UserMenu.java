@@ -22,6 +22,7 @@ import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
@@ -34,7 +35,6 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
-import io.jmix.flowui.kit.component.usermenu.JmixUserMenuItemsDelegate;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
@@ -61,9 +61,11 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
     private static final Logger log = LoggerFactory.getLogger(UserMenu.class);
 
     protected static final String SUBSTITUTED_THEME_NAME = "substituted";
+    protected static final String BUTTON_CONTENT_CLASS_NAME = BASE_CLASS_NAME + "-button-content";
 
     protected ApplicationContext applicationContext;
 
+    protected Messages messages;
     protected UiComponents uiComponents;
     protected MetadataTools metadataTools;
     protected UserRepository userRepository;
@@ -81,6 +83,7 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
     }
 
     protected void autowireDependencies() {
+        messages = applicationContext.getBean(Messages.class);
         uiComponents = applicationContext.getBean(UiComponents.class);
         metadataTools = applicationContext.getBean(MetadataTools.class);
         userRepository = applicationContext.getBean(UserRepository.class);
@@ -101,21 +104,27 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
         }
 
         Div wrapper = uiComponents.create(Div.class);
-        wrapper.setClassName(BASE_CLASS_NAME + "-button-content");
+        wrapper.setClassName(BUTTON_CONTENT_CLASS_NAME);
 
         Avatar avatar = uiComponents.create(Avatar.class);
         avatar.setName(userDetails.getUsername());
         avatar.getElement().setAttribute("tabindex", "-1");
-        avatar.setClassName(BASE_CLASS_NAME + "-button-content-user-avatar");
-        Div avatarWrapper = uiComponents.create(Div.class);
-        avatarWrapper.setClassName(BASE_CLASS_NAME + "-button-content-user-avatar-wrapper");
-        avatarWrapper.add(avatar);
+        avatar.setClassName(BUTTON_CONTENT_CLASS_NAME + "-user-avatar");
 
         Span name = uiComponents.create(Span.class);
         name.setText(generateUserName(userDetails));
-        name.setClassName(BASE_CLASS_NAME + "-button-content-user-name");
+        name.setClassName(BUTTON_CONTENT_CLASS_NAME + "-user-name");
 
-        wrapper.add(avatarWrapper, name);
+        wrapper.add(avatar, name);
+
+        if (isSubstituted()) {
+            Span subtext = uiComponents.create(Span.class);
+            subtext.setText(messages.getMessage("userMenu.substituted"));
+            subtext.setClassName(BUTTON_CONTENT_CLASS_NAME + "-subtext");
+
+            wrapper.add(subtext);
+        }
+
         return wrapper;
     }
 
@@ -137,12 +146,16 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
         updateSubstitutedState();
     }
 
-    protected void updateSubstitutedState() {
+    protected boolean isSubstituted() {
         UserDetails authenticatedUser = currentUserSubstitution.getAuthenticatedUser();
-        if (user == null || Objects.equals(authenticatedUser.getUsername(), user.getUsername())) {
-            getThemeNames().remove(SUBSTITUTED_THEME_NAME);
-        } else {
+        return user != null && !Objects.equals(authenticatedUser.getUsername(), user.getUsername());
+    }
+
+    protected void updateSubstitutedState() {
+        if (isSubstituted()) {
             getThemeNames().add(SUBSTITUTED_THEME_NAME);
+        } else {
+            getThemeNames().remove(SUBSTITUTED_THEME_NAME);
         }
     }
 

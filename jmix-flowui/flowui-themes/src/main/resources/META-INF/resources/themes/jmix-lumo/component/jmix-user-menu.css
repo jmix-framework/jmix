@@ -58,7 +58,9 @@ vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-
     grid-template: "avatar username"
                    "avatar subtext";
     grid-template-columns: auto 1fr;
+
     width: max-content;
+    box-sizing: border-box;
 
     color: var(--lumo-body-text-color);
     padding: var(--lumo-space-xs) var(--lumo-space-s);
@@ -74,8 +76,9 @@ vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-
 .jmix-user-menu-button-content > .jmix-user-menu-button-content-user-name {
     grid-row: username / subtext;
     align-self: center;
-    justify-self: start;
+    text-align: start;
 
+    width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -87,10 +90,14 @@ vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .jmix-user-men
 .jmix-user-menu-button-content > .jmix-user-menu-button-content-subtext {
     grid-area: subtext;
     align-self: center;
-    justify-self: start;
+    text-align: start;
 
     color: var(--lumo-secondary-text-color);
     font-size: var(--lumo-font-size-xs);
+
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 vaadin-menu-bar[jmix-role='jmix-user-menu']:not([theme~='substituted']) .jmix-user-menu-button-content > .jmix-user-menu-button-content-subtext {

@@ -16,11 +16,12 @@
                 <userMenu id="userMenu"
                           themeNames="tertiary" classNames="ms-auto me-m">
                     <items>
+                        <separator/>
                         <actionItem id="substituteUserMenuItem"
                                     themeNames="non-checkable">
                             <action id="substituteUserAction" type="sec_userMenuSubstituteUser"/>
                         </actionItem>
-                        <separator itemId="substituteUserMenuItem"/>
+                        <separator/>
                         <actionItem id="logoutMenuItem" ref="logoutAction"
                                     themeNames="non-checkable"/>
                     </items>

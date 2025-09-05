@@ -93,6 +93,10 @@ public class UuidMappingProcessor implements MappingProcessor {
             field.setSqlType(Types.VARCHAR);
             field.setType(String.class);
             field.setColumnDefinition("varchar(32)");
+        } else if (session.getPlatform() instanceof MariaDBPlatform) {
+            field.setSqlType(Types.VARCHAR);
+            field.setType(String.class);
+            field.setColumnDefinition("varchar(32)");
         } else if (session.getPlatform() instanceof HSQLPlatform) {
             field.setSqlType(Types.VARCHAR);
             field.setType(String.class);

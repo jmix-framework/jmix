@@ -59,15 +59,15 @@ public class DbmsType {
 
     protected Map<String, String> types = new ConcurrentHashMap<>(4);
 
-    protected static final Map<DatabaseDriver, Database> driverToDbMap = new EnumMap<>(DatabaseDriver.class);;
+    protected static final Map<DatabaseDriver, String> driverToDbMap = new EnumMap<>(DatabaseDriver.class);;
 
     static {
-        driverToDbMap.put(DatabaseDriver.HSQLDB, Database.HSQL);
-        driverToDbMap.put(DatabaseDriver.MYSQL, Database.MYSQL);
-        driverToDbMap.put(DatabaseDriver.MARIADB, Database.MYSQL);
-        driverToDbMap.put(DatabaseDriver.ORACLE, Database.ORACLE);
-        driverToDbMap.put(DatabaseDriver.POSTGRESQL, Database.POSTGRESQL);
-        driverToDbMap.put(DatabaseDriver.SQLSERVER, Database.SQL_SERVER);
+        driverToDbMap.put(DatabaseDriver.HSQLDB, Database.HSQL.name());
+        driverToDbMap.put(DatabaseDriver.MYSQL, Database.MYSQL.name());
+        driverToDbMap.put(DatabaseDriver.MARIADB, "MARIADB");
+        driverToDbMap.put(DatabaseDriver.ORACLE, Database.ORACLE.name());
+        driverToDbMap.put(DatabaseDriver.POSTGRESQL, Database.POSTGRESQL.name());
+        driverToDbMap.put(DatabaseDriver.SQLSERVER, Database.SQL_SERVER.name());
     }
 
     public String getType() {
@@ -77,9 +77,9 @@ public class DbmsType {
     public String getType(String storeName) {
         return types.computeIfAbsent(storeName, s -> {
             DataSource dataSource = storeAwareLocator.getDataSource(s);
-            Database database = getDatabase(dataSource);
+            String database = getDatabase(dataSource);
             if (database != null) {
-                return database.name();
+                return database;
             }
 
             String propName = "jmix.data.dbms-type";
@@ -106,7 +106,7 @@ public class DbmsType {
     }
 
     @Nullable
-    protected static Database getDatabase(DataSource dataSource) {
+    protected static String getDatabase(DataSource dataSource) {
         try {
             String url = JdbcUtils.extractDatabaseMetaData(dataSource, DatabaseMetaData::getURL);
             DatabaseDriver driver = DatabaseDriver.fromJdbcUrl(url);

@@ -40,6 +40,7 @@ import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.upload.JmixUpload;
+import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.component.valuepicker.JmixValuePicker;
@@ -181,6 +182,9 @@ public class ComponentView extends StandardView {
 
     @ViewComponent
     public EntityComboBox<?> metaClassComboBoxId;
+
+    @ViewComponent
+    public UserMenu userMenu;
 
     @ViewComponent
     public DropdownButton dropdownButtonId;

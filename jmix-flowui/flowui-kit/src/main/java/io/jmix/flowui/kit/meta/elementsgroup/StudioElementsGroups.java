@@ -63,6 +63,28 @@ public interface StudioElementsGroups {
     void items();
 
     @StudioElementsGroup(
+            name = "Items",
+            elementClassFqn = "io.jmix.flowui.kit.component.usermenu.UserMenuItem",
+            xmlElement = "items",
+            target = {"io.jmix.flowui.component.usermenu.UserMenu"}
+//            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#_elements"
+    )
+    void userMenuItems();
+
+    @StudioElementsGroup(
+            name = "Items",
+            elementClassFqn = "io.jmix.flowui.kit.component.usermenu.UserMenuItem",
+            xmlElement = "items",
+            target = {"io.jmix.flowui.kit.component.usermenu.UserMenuItem"},
+            unsupportedTarget = {
+                    "io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem",
+                    "io.jmix.flowui.component.usermenu.ViewUserMenuItem",
+            }
+//            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#_elements"
+    )
+    void userMenuItemItems();
+
+    @StudioElementsGroup(
             name = "ResponsiveSteps",
             elementClassFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveSteps",

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://substituteUserView.title">
+    <actions>
+        <action id="applyAction"
+                text="msg:///actions.Apply"
+                icon="CHECK"
+                actionVariant="PRIMARY"/>
+        <action id="cancelAction"
+                type="view_close"/>
+    </actions>
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="usersListWrapper">
+
+        <textField id="userFilter"
+                   datatype="string"
+                   placeholder="msg://userFilter.placeholder"
+                   width="100%" maxWidth="30em"
+                   classNames="pt-m px-m box-border"
+                   clearButtonVisible="true">
+            <prefix>
+                <icon icon="SEARCH"/>
+            </prefix>
+        </textField>
+
+        <vbox id="usersListWrapper"
+              classNames="overflow-auto">
+            <listBox id="usersList" width="100%"/>
+        </vbox>
+
+        <hbox id="actionsBox"
+              classNames="px-m py-s bg-contrast-5">
+            <button id="applyButton" action="applyAction"/>
+            <button id="cancelButton" action="cancelAction"/>
+        </hbox>
+    </layout>
+</view>

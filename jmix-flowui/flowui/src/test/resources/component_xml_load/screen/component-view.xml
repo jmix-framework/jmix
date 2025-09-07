@@ -927,7 +927,13 @@
                             </hbox>
 
                             <items>
-                                <textItem id="nestedTextItem" text="Nested Text Item" icon="FILE_CODE"/>
+                                <textItem id="nestedTextItem" text="Nested Text Item" icon="FILE_CODE">
+                                    <items>
+                                        <textItem id="nestedTextItem1" text="Nested Text Item"/>
+                                        <separator/>
+                                        <actionItem id="nestedActionItem1" ref="buttonAction"/>
+                                    </items>
+                                </textItem>
 
                                 <separator/>
 

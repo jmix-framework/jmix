@@ -174,6 +174,8 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
             getSubMenu().remove((Component) headerWrapper);
             headerWrapper = null;
         }
+
+        getItemsDelegate().updateItemsVisibility();
     }
 
     protected HasComponents createHeaderWrapper() {

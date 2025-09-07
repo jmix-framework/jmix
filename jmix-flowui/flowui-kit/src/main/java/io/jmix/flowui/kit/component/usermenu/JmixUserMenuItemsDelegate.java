@@ -29,9 +29,7 @@ import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import jakarta.annotation.Nullable;
 
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -43,6 +41,7 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
     protected final JmixSubMenu subMenu;
 
     protected List<UserMenuItem> items = new ArrayList<>();
+    protected Map<UserMenuItem, Registration> propertyChangeRegistrations = new HashMap<>();
 
     public JmixUserMenuItemsDelegate(JmixUserMenu<?> userMenu, JmixSubMenu subMenu) {
         this.userMenu = userMenu;
@@ -184,14 +183,16 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
 
     @Override
     public void addSeparator() {
-        subMenu.addComponent(new Hr());
-        addItemInternal(new SeparatorUserMenuItem(), -1);
+        Hr separator = new Hr();
+        subMenu.addComponent(separator);
+        addItemInternal(new SeparatorUserMenuItem(separator), -1);
     }
 
     @Override
     public void addSeparatorAtIndex(int index) {
-        subMenu.addComponentAtIndex(adjustPhysicalIndex(index), new Hr());
-        addItemInternal(new SeparatorUserMenuItem(), index);
+        Hr separator = new Hr();
+        subMenu.addComponentAtIndex(adjustPhysicalIndex(index), separator);
+        addItemInternal(new SeparatorUserMenuItem(separator), index);
     }
 
     protected void addItemInternal(UserMenuItem item, int index) {
@@ -205,7 +206,65 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
     }
 
     protected void attachItem(UserMenuItem item) {
-        // Hook to be implemented...
+        Registration registration = item.addPropertyChangeListener(this::onItemPropertyChange);
+        if (registration != null) {
+            propertyChangeRegistrations.put(item, registration);
+        }
+
+        updateItemsVisibility();
+    }
+
+    protected void onItemPropertyChange(PropertyChangeEvent propertyChangeEvent) {
+        if (UserMenuItem.PROP_VISIBLE.equals(propertyChangeEvent.getPropertyName())) {
+            updateItemsVisibility();
+        }
+    }
+
+    /**
+     * Updates the visibility of menu items based on their properties and position.
+     */
+    public void updateItemsVisibility() {
+        List<UserMenuItem> visibleItems = items.stream()
+                .filter(item ->
+                        item instanceof SeparatorUserMenuItem
+                                || item.isVisible()
+                )
+                .toList();
+
+        if (visibleItems.isEmpty()) {
+            return;
+        }
+
+        int i = 0;
+        // When the physical children's count equals the number of menu
+        // items, it means that the header content is not set and the
+        // separator component does not separate it from the menu items.
+        // This means we need to hide all beginning separators.
+        if (subMenu.getChildren().count() == items.size()) {
+            for (; i < visibleItems.size(); i++) {
+                UserMenuItem item = visibleItems.get(i);
+                if (item instanceof SeparatorUserMenuItem separator) {
+                    separator.setVisible(false);
+                } else {
+                    break;
+                }
+            }
+        }
+
+        for (; i < visibleItems.size(); i++) {
+            UserMenuItem item = visibleItems.get(i);
+            if (item instanceof SeparatorUserMenuItem separator) {
+                separator.setVisible(true);
+
+                if ((i + 1) < visibleItems.size()
+                        // Several separators are located one by one
+                        && visibleItems.get(i + 1) instanceof SeparatorUserMenuItem) {
+                    separator.setVisible(false);
+                } else if (i == visibleItems.size() - 1) {
+                    separator.setVisible(false);
+                }
+            }
+        }
     }
 
     protected JmixMenuItem createMenuItem(String id, Component content, int index) {
@@ -263,7 +322,13 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
     }
 
     protected void detachItem(UserMenuItem item) {
-        // Hook to be implemented...
+        Registration registration = propertyChangeRegistrations.remove(item);
+        // SeparatorUserMenuItem returns null
+        if (registration != null) {
+            registration.remove();
+        }
+
+        updateItemsVisibility();
     }
 
     @Override
@@ -273,8 +338,10 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
     }
 
     protected int adjustPhysicalIndex(int index) {
-        // if a header wrapper is added, then we need to increase a component index by 1
-        if (userMenu.headerWrapper != null) {
+        // If the physical children's count is greater than the number of
+        // menu items, it means that the header content has been set and
+        // we need to increase the component index by 1.
+        if (subMenu.getChildren().count() > items.size()) {
             index++;
         }
 
@@ -286,6 +353,12 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
      */
     protected static class SeparatorUserMenuItem implements UserMenuItem {
 
+        protected final Component separator;
+
+        protected SeparatorUserMenuItem(Component separator) {
+            this.separator = separator;
+        }
+
         @Override
         public String getId() {
             return "";
@@ -293,11 +366,12 @@ public class JmixUserMenuItemsDelegate implements HasTextMenuItems, HasActionMen
 
         @Override
         public void setVisible(boolean visible) {
+            separator.setVisible(visible);
         }
 
         @Override
         public boolean isVisible() {
-            return false;
+            return separator.isVisible();
         }
 
         @Override

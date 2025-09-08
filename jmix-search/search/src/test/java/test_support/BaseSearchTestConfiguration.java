@@ -16,10 +16,7 @@
 
 package test_support;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.JmixModules;
-import io.jmix.core.Resources;
-import io.jmix.core.Stores;
+import io.jmix.core.*;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.core.impl.JmixMessageSource;
@@ -38,9 +35,11 @@ import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.StartupIndexSynchronizer;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
+import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.security.SecurityConfiguration;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
@@ -69,6 +68,8 @@ public class BaseSearchTestConfiguration {
 
     @Autowired
     SearchProperties searchProperties;
+    @Autowired
+    AutowireCapableBeanFactory beanFactory;
 
     // Test Search beans
 
@@ -88,6 +89,16 @@ public class BaseSearchTestConfiguration {
                                      IndexStateRegistry indexStateRegistry,
                                      SearchProperties searchProperties) {
         return new TestNoopIndexManager(indexConfigurationManager, indexStateRegistry, searchProperties);
+    }
+
+    @Bean("search_JpaIndexingQueueManager")
+    public IndexingQueueManager indexingQueueManager() {
+        return beanFactory.createBean(TestJpaIndexingQueueManager.class);
+    }
+
+    @Bean
+    public TestIndexingQueueItemsTracker testIndexingQueueItemsTracker(IdSerialization idSerialization) {
+        return new TestIndexingQueueItemsTracker(idSerialization);
     }
 
     @Bean

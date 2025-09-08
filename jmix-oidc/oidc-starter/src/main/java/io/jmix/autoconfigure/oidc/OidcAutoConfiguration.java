@@ -125,6 +125,7 @@ public class OidcAutoConfiguration {
 
             JmixHttpSecurityUtils.configureAnonymous(http);
             JmixHttpSecurityUtils.configureFrameOptions(http);
+            JmixHttpSecurityUtils.configureSessionManagement(http);
 
             OidcResourceServerEventSecurityFilter resourceServerEventSecurityFilter =
                     new OidcResourceServerEventSecurityFilter(applicationEventPublisher);

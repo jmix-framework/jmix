@@ -3,11 +3,13 @@ package lazy_loading
 import io.jmix.core.Id
 import io.jmix.core.UnconstrainedDataManager
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.IgnoreIf
 import test_support.DataSpec
 import test_support.entity.lazyloading.nullability.AdditionalEntity
 import test_support.entity.lazyloading.nullability.ChildEntity
 import test_support.entity.lazyloading.nullability.ParentEntity
 
+@IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
 class FieldInitializationTest extends DataSpec {
     @Autowired
     UnconstrainedDataManager dataManager;

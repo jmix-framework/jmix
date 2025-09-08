@@ -295,7 +295,10 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
             MetaClass metaClass = metadata.getClass(entityName);
             MetaPropertyPath propertyPath = metaClass.getPropertyPath(property);
 
-            if (propertyPath == null) {
+            // in case of dynamic attributes
+            if (property.startsWith("+")) {
+                return condition.copy();
+            } else if (propertyPath == null) {
                 return null;
             }
 

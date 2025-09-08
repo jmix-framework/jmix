@@ -343,7 +343,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
          * @param condition root query condition
          * @return this query instance for chaining
          */
-        public Query setCondition(Condition condition) {
+        public Query setCondition(@Nullable Condition condition) {
             this.condition = condition;
             return this;
         }

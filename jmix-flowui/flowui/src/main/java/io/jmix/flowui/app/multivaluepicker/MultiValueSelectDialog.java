@@ -33,11 +33,8 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
-import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.UiComponentsGenerator;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.validation.Validator;
-import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.BaseAction;
@@ -221,22 +218,30 @@ public class MultiValueSelectDialog<E> extends StandardListView<E> implements Mu
         values.add(value);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected void lookupActionPerformed(ActionPerformedEvent event) {
         //noinspection unchecked
-        EntityPicker<E> entityPicker = (EntityPicker<E>) ((EntityLookupAction<E>) event.getSource()).getTarget();
+        EntityPickerComponent<E> entityPicker = ((EntityLookupAction<E>) event.getSource()).getTarget();
 
-        LookupWindowBuilder<E, View<?>> lookupBuilder = dialogWindows.lookup(Objects.requireNonNull(entityPicker))
-                .withSelectHandler(items -> {
-                    if (CollectionUtils.isNotEmpty(items)) {
-                        for (E item : items) {
-                            if (item != null && !valueExists(item)) {
-                                this.addValueToLayout(item);
-                            }
-                        }
+        LookupWindowBuilder<E, View<?>> lookupBuilder;
+        if (entityPicker instanceof EntityMultiPickerComponent multiPickerComponent) {
+            lookupBuilder = dialogWindows.lookup(Objects.requireNonNull(multiPickerComponent))
+                    .withLookupComponentMultiSelect(true);
+        } else {
+            lookupBuilder = dialogWindows.lookup(Objects.requireNonNull(entityPicker));
+        }
+
+        lookupBuilder.withSelectHandler(items -> {
+            if (CollectionUtils.isNotEmpty(items)) {
+                for (E item : items) {
+                    if (item != null && !valueExists(item)) {
+                        this.addValueToLayout(item);
                     }
+                }
+            }
 
-                    entityPicker.clear();
-                });
+            ((HasValue<?, ?>) entityPicker).clear();
+        });
 
         if (!Strings.isNullOrEmpty(context.getLookupViewId())) {
             lookupBuilder = lookupBuilder.withViewId(context.getLookupViewId());

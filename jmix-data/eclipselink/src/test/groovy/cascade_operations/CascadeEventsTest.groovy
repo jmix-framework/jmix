@@ -25,6 +25,8 @@ import io.jmix.data.impl.EntityListenerManager
 import io.jmix.eclipselink.EclipselinkProperties
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.cascade_operations.JpaCascadeBar
@@ -36,6 +38,7 @@ import test_support.listeners.cascade_operations.TestCascadeFooEventListener
 import test_support.listeners.cascade_operations.TestCascadeItemEventListener
 
 class CascadeEventsTest extends DataSpec {
+    private static final Logger log = LoggerFactory.getLogger(CascadeEventsTest.class);
 
     @Autowired
     private EntityListenerManager entityListenerManager
@@ -148,7 +151,9 @@ class CascadeEventsTest extends DataSpec {
 
         then: "All events present for cascade-deleted entity"
 
-        barChangedEvents.size() == (eclipselinkProperties.disableLazyLoading ? 7 : 6) //todo [jmix-framework/jmix#3936] too many events for "check OneToOne cascade operations events"
+        log.info("Lazy loading disabled: ${eclipselinkProperties.disableLazyLoading}")
+
+        barChangedEvents.size() == (eclipselinkProperties.disableLazyLoading ? 7 : 6)
         //entity should be loaded to be deleted with all events, entity log records e.t.c.
         barChangedEvents.stream().anyMatch(info -> info.message == "EntityLoadingEvent")
 

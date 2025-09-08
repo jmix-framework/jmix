@@ -1190,8 +1190,7 @@ public interface StudioComponents {
             documentationLink = "%VERSION%/flow-ui/vc/components/entityComboBox.html",
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "comboBox"),
-                    @StudioConvertStrategy.TagInfo(qualifiedName = "entityPicker"),
-                    @StudioConvertStrategy.TagInfo(qualifiedName = "multiSelectComboBoxPicker")
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "entityPicker")
             }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -1281,8 +1280,7 @@ public interface StudioComponents {
                                     qualifiedName = "itemsContainer",
                                     value = ""
                             )
-                    }),
-                    @StudioConvertStrategy.TagInfo(qualifiedName = "multiSelectComboBoxPicker")
+                    })
             }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -1987,7 +1985,7 @@ public interface StudioComponents {
 
     @StudioComponent(
             name = "Tabs",
-            classFqn = "com.vaadin.flow.component.tabs.Tabs",
+            classFqn = "io.jmix.flowui.component.tabsheet.JmixTabs",
             category = "Components",
             xmlElement = "tabs",
             icon = "io/jmix/flowui/kit/meta/icon/component/tabs.svg",

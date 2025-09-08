@@ -47,7 +47,7 @@ import {LoginForm} from '@vaadin/login/src/vaadin-login-form.js';
  * @fires {CustomEvent} remember-me-changed - Fired when "rememberMeCheckbox" is checked or unchecked.
  * @fires {CustomEvent} locale-selection-changed - Fired when selection in "localesSelect" is changed
  */
-// CAUTION: copied from @vaadin/login [last update Vaadin 24.7.3]
+// CAUTION: copied from @vaadin/login [last update Vaadin 24.8.3]
 class JmixLoginForm extends LoginForm {
     static get template() {
         return html`
@@ -60,15 +60,15 @@ class JmixLoginForm extends LoginForm {
               id="vaadinLoginFormWrapper"
               theme$="[[_theme]]"
               error="[[error]]"
-              i18n="[[i18n]]"
+              i18n="[[__effectiveI18n]]"
               heading-level="[[headingLevel]]"
             >
                 <form method="POST" action$="[[action]]" on-formdata="_onFormData" slot="form">
                     <input id="csrf" type="hidden"/>
                     <vaadin-text-field
                             name="username"
-                            label="[[i18n.form.username]]"
-                            error-message="[[i18n.errorMessage.username]]"
+                            label="[[__effectiveI18n.form.username]]"
+                            error-message="[[__effectiveI18n.errorMessage.username]]"
                             id="vaadinLoginUsername"
                             required
                             on-keydown="_handleInputKeydown"
@@ -84,8 +84,8 @@ class JmixLoginForm extends LoginForm {
 
                     <vaadin-password-field
                             name="password"
-                            label="[[i18n.form.password]]"
-                            error-message="[[i18n.errorMessage.password]]"
+                            label="[[__effectiveI18n.form.password]]"
+                            error-message="[[__effectiveI18n.errorMessage.password]]"
                             id="vaadinLoginPassword"
                             required
                             on-keydown="_handleInputKeydown"
@@ -99,7 +99,7 @@ class JmixLoginForm extends LoginForm {
 
                     <div id="additionalFields" class="jmix-login-form-additional-fields-container">
                         <vaadin-checkbox id="rememberMeCheckbox"
-                                         label="[[i18n.form.rememberMe]]"
+                                         label="[[__effectiveI18n.form.rememberMe]]"
                                          class="jmix-login-form-remember-me"></vaadin-checkbox>
                         <vaadin-select id="localesSelect"
                                        class="jmix-login-form-locales-select">
@@ -108,7 +108,7 @@ class JmixLoginForm extends LoginForm {
                 </form>
 
                 <vaadin-button slot="submit" theme="primary contained submit" on-click="submit" disabled$="[[disabled]]">
-                    [[i18n.form.submit]]
+                    [[__effectiveI18n.form.submit]]
                 </vaadin-button>
 
                 <vaadin-button
@@ -117,7 +117,7 @@ class JmixLoginForm extends LoginForm {
                         on-click="_onForgotPasswordClick"
                         hidden$="[[noForgotPassword]]"
                 >
-                    [[i18n.form.forgotPassword]]
+                    [[__effectiveI18n.form.forgotPassword]]
                 </vaadin-button>
             </vaadin-login-form-wrapper>
         `;
@@ -150,29 +150,6 @@ class JmixLoginForm extends LoginForm {
             locales: {
                 type: Object,
                 value: []
-            },
-            /* CAUTION! Copied from LoginMixin */
-            i18n: {
-                type: Object,
-                value: function () {
-                    return {
-                        form: {
-                            title: 'Log in',
-                            username: 'Username',
-                            password: 'Password',
-                            submit: 'Log in',
-                            forgotPassword: 'Forgot password',
-                            rememberMe: 'Remember me'
-                        },
-                        errorMessage: {
-                            title: 'Incorrect username or password',
-                            message: 'Check that you have entered the correct username and password and try again.',
-                            username: 'Username is required',
-                            password: 'Password is required',
-                        }
-                    };
-                },
-                notify: true
             },
         }
     }

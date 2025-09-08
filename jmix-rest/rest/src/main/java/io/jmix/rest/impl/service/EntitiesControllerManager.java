@@ -543,7 +543,7 @@ public class EntitiesControllerManager {
         Collection<Pair<Object, Object>> referencesToExclude = new ArrayList<>();
         for (Object entity : entities) {
             for (MetaProperty metaProperty : metadata.getClass(entity).getProperties()) {
-                if (metaProperty.getRange().isClass()) {
+                if (metaProperty.getRange().isClass() && entityStates.isLoaded(entity, metaProperty.getName())) {
                     Object reference = EntityValues.getValue(entity, metaProperty.getName());
                     if (reference != null && !(reference instanceof Collection)) {
                         reference = Collections.singletonList(reference);

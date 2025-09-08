@@ -41,7 +41,10 @@ public class TestTaskChangedListener {
             Id<Object> projectId = event.getChanges().getOldReferenceId("project");
             project = (Project) dataManager.load(projectId).one();
         } else {
-            Task task = dataManager.load(event.getEntityId()).one();
+            Task task = dataManager.load(event.getEntityId())
+                    .fetchPlan(b ->
+                            b.addAll("project.tasks.estimatedEfforts", "project.totalEstimatedEfforts"))
+                    .one();
             project = task.getProject();
         }
 

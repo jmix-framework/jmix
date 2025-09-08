@@ -16,6 +16,7 @@
 
 package email_cleaner
 
+import io.jmix.core.FetchPlan
 import io.jmix.core.FileRef
 import io.jmix.core.Metadata
 import io.jmix.core.TimeSource
@@ -103,7 +104,14 @@ class EmailCleanerTest extends EmailSpecification {
     }
 
     private List<SendingMessage> loadAllSendingMessages() {
-        return dataManager.load(SendingMessage).all().hint(PersistenceHints.SOFT_DELETION, false).list();
+        return dataManager.load(SendingMessage)
+                .all()
+                .hint(PersistenceHints.SOFT_DELETION, false)
+                .fetchPlan(b ->
+                        b.addFetchPlan(FetchPlan.LOCAL)
+                        .addAll("attachments.contentFile"))
+
+                .list();
     }
 
     private static List<FileRef> collectFileRefs(List<SendingMessage> sendingMessages) {

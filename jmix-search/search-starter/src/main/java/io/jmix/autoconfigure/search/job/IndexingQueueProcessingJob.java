@@ -16,6 +16,7 @@
 
 package io.jmix.autoconfigure.search.job;
 
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -25,10 +26,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class IndexingQueueProcessingJob implements Job {
 
     @Autowired
+    protected SearchProperties searchProperties;
+    @Autowired
     private IndexingQueueManager indexingQueueManager;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        indexingQueueManager.processNextBatch();
+        if (searchProperties.isEnabled()) {
+            indexingQueueManager.processNextBatch();
+        }
     }
 }

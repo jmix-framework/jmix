@@ -24,6 +24,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
@@ -80,6 +81,10 @@ public class ReflectionCacheManager {
 
     protected final Function<Class<?>, MethodHandles.Lookup> lambdaLookupProvider;
 
+    protected final Set<String> supplyMethodsNames = Sets.newHashSet(
+            "Renderer", "EditorComponent"
+    );
+
     public ReflectionCacheManager() {
         MethodHandles.Lookup original = MethodHandles.lookup();
 
@@ -105,6 +110,15 @@ public class ReflectionCacheManager {
                 throw new RuntimeException("Unable to get private lookup in class " + clazz, t);
             }
         };
+    }
+
+    /**
+     * Adds a collection of supply method names to be cached.
+     *
+     * @param supplyMethodNames the collection of supply method names to add
+     */
+    public void addSupplyMethodNames(Collection<String> supplyMethodNames) {
+        supplyMethodsNames.addAll(supplyMethodNames);
     }
 
     /**
@@ -463,7 +477,7 @@ public class ReflectionCacheManager {
 
     protected List<AnnotatedMethod<Subscribe>> getAnnotatedSubscribeMethodsNotCached(Method[] uniqueDeclaredMethods) {
         List<AnnotatedMethod<Subscribe>> annotatedMethods =
-                getAnnotatedMethodsNotCached(Subscribe.class, uniqueDeclaredMethods,
+                AutowireUtils.getAnnotatedMethodsNotCached(Subscribe.class, uniqueDeclaredMethods,
                         m -> m.getParameterCount() == 1
                                 && EventObject.class.isAssignableFrom(m.getParameterTypes()[0]));
 
@@ -474,13 +488,13 @@ public class ReflectionCacheManager {
 
     protected List<AnnotatedMethod<Install>> getAnnotatedInstallMethodsNotCached(Method[] uniqueDeclaredMethods) {
         List<AnnotatedMethod<Install>> annotatedMethods =
-                getAnnotatedMethodsNotCached(Install.class, uniqueDeclaredMethods, method -> true);
+                AutowireUtils.getAnnotatedMethodsNotCached(Install.class, uniqueDeclaredMethods, method -> true);
         return ImmutableList.copyOf(annotatedMethods);
     }
 
     protected List<AnnotatedMethod<Supply>> getAnnotatedSupplyMethodsNotCached(Method[] uniqueDeclaredMethods) {
         List<AnnotatedMethod<Supply>> annotatedMethods =
-                getAnnotatedMethodsNotCached(Supply.class, uniqueDeclaredMethods,
+                AutowireUtils.getAnnotatedMethodsNotCached(Supply.class, uniqueDeclaredMethods,
                         method -> method.getParameterCount() == 0);
         return ImmutableList.copyOf(annotatedMethods);
     }
@@ -490,22 +504,6 @@ public class ReflectionCacheManager {
                 .filter(m -> findMergedAnnotation(m, EventListener.class) != null)
                 .peek(AccessibleObject::trySetAccessible)
                 .collect(ImmutableList.toImmutableList());
-    }
-
-    protected <T extends Annotation> List<AnnotatedMethod<T>> getAnnotatedMethodsNotCached(Class<T> annotationClass,
-                                                                                           Method[] uniqueDeclaredMethods,
-                                                                                           Predicate<Method> filter) {
-        List<AnnotatedMethod<T>> annotatedMethods = new ArrayList<>();
-        for (Method method : uniqueDeclaredMethods) {
-            if (filter.test(method)) {
-                AnnotatedMethod<T> annotatedMethod = AutowireUtils.createAnnotatedMethod(annotationClass, method);
-                if (annotatedMethod != null) {
-                    annotatedMethods.add(annotatedMethod);
-                }
-            }
-        }
-
-        return annotatedMethods;
     }
 
     protected Map<SubscribeMethodSignature, MethodHandle> getAddListenerMethodsNotCached(Method[] uniqueDeclaredMethods) {
@@ -602,7 +600,7 @@ public class ReflectionCacheManager {
             if (Modifier.isPublic(m.getModifiers())
                     && m.getParameterCount() == 1
                     && m.getName().startsWith("set")
-                    && (m.getName().contains("Renderer") || m.getName().contains("EditorComponent"))) {
+                    && supplyMethodsNames.stream().anyMatch(m.getName()::contains)) {
 
                 m.trySetAccessible();
                 MethodHandle methodHandle;

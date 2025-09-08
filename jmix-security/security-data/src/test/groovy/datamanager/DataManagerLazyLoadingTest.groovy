@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
+import spock.lang.IgnoreIf
 import test_support.SecurityDataSpecification
 import test_support.entity.ManyToManyFirstEntity
 import test_support.entity.ManyToManySecondEntity
@@ -22,6 +23,7 @@ import test_support.role.TestLazyLoadingRole
 
 import javax.sql.DataSource
 
+@IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
 class DataManagerLazyLoadingTest extends SecurityDataSpecification {
     @Autowired
     UnconstrainedDataManager dataManager

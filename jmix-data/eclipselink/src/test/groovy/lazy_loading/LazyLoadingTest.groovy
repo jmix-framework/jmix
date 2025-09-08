@@ -18,6 +18,7 @@ package lazy_loading
 
 import io.jmix.core.*
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.IgnoreIf
 import test_support.DataSpec
 import test_support.entity.entity_extension.Address
 import test_support.entity.lazyloading.*
@@ -26,6 +27,7 @@ import test_support.entity.lazyloading.cascading.ResourceAllocation
 import test_support.entity.lazyloading.self_ref_in_param.A
 import test_support.entity.lazyloading.self_ref_in_param.B
 
+@IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
 class LazyLoadingTest extends DataSpec {
 
     @Autowired

@@ -22,6 +22,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.HttpServerErrorException;
 import test_support.BaseRestDsIntegrationTest;
 import test_support.entity.ContactType;
 import test_support.entity.Customer;
@@ -34,12 +35,10 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class RemoteServiceTest extends BaseRestDsIntegrationTest {
 
@@ -128,6 +127,9 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
         byte[] resultBytes = sampleService.binaryMethod("hello".getBytes(StandardCharsets.UTF_8));
         assertThat(resultBytes).isEqualTo("hello".getBytes(StandardCharsets.UTF_8));
 
+        String[] resultStrings = sampleService.stringArrayMethod(new String[]{"hello", "world"});
+        assertThat(resultStrings).isEqualTo(new String[]{"hello", "world"});
+
         URI uri = new URI("https://jmix.io");
         URI resultUri = sampleService.uriMethod(uri);
         assertThat(resultUri).isEqualTo(uri);
@@ -163,9 +165,29 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
         Customer resultCustomer1 = sampleService.entityMethod(null);
         assertThat(resultCustomer1).isNull();
 
-        List<Customer> customers = sampleService.entityCollectionMethod(List.of(customer));
-        assertThat(customers).isNotEmpty();
-        assertThat(customers.get(0)).isEqualTo(customer);
+    }
+
+    @Test
+    void testCollections() {
+        List<Customer> customerList = sampleService.entityListMethod(List.of(customer));
+        assertThat(customerList).isNotEmpty();
+        assertThat(customerList.get(0)).isEqualTo(customer);
+
+        SampleService.SamplePojoWithEntity pojoWithEntity = new SampleService.SamplePojoWithEntity();
+        pojoWithEntity.setName("John");
+        pojoWithEntity.setCustomer(customer);
+        List<SampleService.SamplePojoWithEntity> pojoList = sampleService.pojoWithEntityListMethod(List.of(pojoWithEntity));
+        assertThat(pojoList).isNotEmpty();
+        assertThat(pojoList.get(0).getName()).isEqualTo("John");
+        assertThat(pojoList.get(0).getCustomer()).isEqualTo(customer);
+
+        // Set of entities is not supported
+        assertThatThrownBy(() -> sampleService.entitySetMethod(Set.of(customer)))
+                .isInstanceOf(HttpServerErrorException.InternalServerError.class);
+
+        // Map of entities is not supported
+        assertThatThrownBy(() -> sampleService.entityMapMethod(Map.of("c1", contact1, "c2", contact2)))
+                .isInstanceOf(HttpServerErrorException.InternalServerError.class);
     }
 
     @Test

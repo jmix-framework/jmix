@@ -20,14 +20,12 @@ import io.jmix.core.FileRef;
 import io.jmix.restds.annotation.RemoteService;
 import test_support.entity.ContactType;
 import test_support.entity.Customer;
+import test_support.entity.CustomerContact;
 
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @RemoteService(store = "restService1")
 public interface SampleService {
@@ -46,6 +44,8 @@ public interface SampleService {
 
     byte[] binaryMethod(byte[] param);
 
+    String[] stringArrayMethod(String[] param);
+
     FileRef fileRefMethod(FileRef param);
 
     Date dateMethod(Date param);
@@ -60,7 +60,11 @@ public interface SampleService {
 
     Customer entityMethod(Customer param);
 
-    List<Customer> entityCollectionMethod(List<Customer> param);
+    List<Customer> entityListMethod(List<Customer> param);
+
+    Set<Customer> entitySetMethod(Set<Customer> param);
+
+    Map<String, CustomerContact> entityMapMethod(Map<String, CustomerContact> param);
 
     ContactType enumMethod(ContactType param);
 
@@ -73,6 +77,8 @@ public interface SampleService {
     SampleRecordWithEntity recordWithEntityMethod(SampleRecordWithEntity param);
 
     MultipleParamsPojo multipleParamsMethod(int number, String str, Customer entity, SamplePojo pojo);
+
+    List<SamplePojoWithEntity> pojoWithEntityListMethod(List<SamplePojoWithEntity> param);
 
     record MultipleParamsPojo(int number, String str, Customer entity, SamplePojo pojo) {}
 

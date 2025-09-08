@@ -22,14 +22,12 @@ import io.jmix.rest.annotation.RestMethod;
 import io.jmix.rest.annotation.RestService;
 import io.jmix.samples.restservice.entity.ContactType;
 import io.jmix.samples.restservice.entity.Customer;
+import io.jmix.samples.restservice.entity.CustomerContact;
 
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @RestService("SampleService")
 public class SampleService {
@@ -75,6 +73,11 @@ public class SampleService {
     }
 
     @RestMethod
+    public String[] stringArrayMethod(String[] param) {
+        return param;
+    }
+
+    @RestMethod
     public FileRef fileRefMethod(FileRef param) {
         return param;
     }
@@ -110,7 +113,27 @@ public class SampleService {
     }
 
     @RestMethod
-    public List<Customer> entityCollectionMethod(List<Customer> param) {
+    public List<Customer> entityListMethod(List<Customer> param) {
+        for (Customer customer : param) {
+            assert customer.getId() != null;
+        }
+        return param;
+    }
+
+    @RestMethod
+    public Set<Customer> entitySetMethod(Set<Customer> param) {
+        for (Customer customer : param) {
+            assert customer.getId() != null;
+        }
+        return param;
+    }
+
+    @RestMethod
+    public Map<String, CustomerContact> entityMapMethod(Map<String, CustomerContact> param) {
+        for (Map.Entry<String, CustomerContact> entry : param.entrySet()) {
+            UUID id = entry.getValue().getId();
+            assert id != null;
+        }
         return param;
     }
 
@@ -162,6 +185,17 @@ public class SampleService {
     @RestMethod
     public MultipleParamsPojo multipleParamsMethod(int number, String str, Customer entity, SamplePojo pojo) {
         return new MultipleParamsPojo(number, str, entity, pojo);
+    }
+
+    @RestMethod
+    public List<SamplePojoWithEntity> pojoWithEntityListMethod(List<SamplePojoWithEntity> param) {
+        for (SamplePojoWithEntity pojo : param) {
+            assert pojo.getName() != null;
+            if (pojo.getCustomer() != null) {
+                assert pojo.getCustomer().getId() != null;
+            }
+        }
+        return param;
     }
 
     public record MultipleParamsPojo(int number, String str, Customer entity, SamplePojo pojo) {}

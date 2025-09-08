@@ -28,7 +28,7 @@ import test_support.DataSpec
 import test_support.entity.sales.*
 
 
-@TestPropertySource(properties = ["jmix.eclipselink.disableLazyLoading = true"])
+@TestPropertySource(properties = ["jmix.eclipselink.disable-lazy-loading = true"])
 class NoLLEntityStatesIsLoadedTest extends DataSpec {
 
     @Autowired
@@ -127,7 +127,7 @@ class NoLLEntityStatesIsLoadedTest extends DataSpec {
         exception2.getMessage().contains(order.class.name)
     }
 
-    @Ignore("till back reference setting will be fixed")//todo [jmix-framework/jmix#3936]
+    @Ignore("till back reference setting will be implemented")//todo [jmix-framework/jmix#4611]
     def "test fetching back references"() {
         when:
         def order = dataManager.load(Order).id(this.anotherOrder.id).fetchPlan(b -> {

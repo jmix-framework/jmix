@@ -2876,7 +2876,7 @@ public interface StudioComponents {
                             options = {"EQUAL", "NOT_EQUAL", "GREATER",
                                     "GREATER_OR_EQUAL", "LESS", "LESS_OR_EQUAL", "CONTAINS", "NOT_CONTAINS",
                                     "STARTS_WITH", "ENDS_WITH", "IS_SET", "IN_LIST", "NOT_IN_LIST", "IN_INTERVAL",
-                                    "IS_COLLECTION_EMPTY", "MEMBER_OF_COLLECTION",
+                                    "DATE_EQUALS", "IS_COLLECTION_EMPTY", "MEMBER_OF_COLLECTION",
                                     "NOT_MEMBER_OF_COLLECTION"}, required = true),
                     @StudioProperty(xmlAttribute = "operationEditable", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),

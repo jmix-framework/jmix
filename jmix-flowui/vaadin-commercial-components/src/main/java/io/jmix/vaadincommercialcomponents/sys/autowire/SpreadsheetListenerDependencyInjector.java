@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.sys.autowire;
+package io.jmix.vaadincommercialcomponents.sys.autowire;
 
 import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableList;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.data.selection.SelectionEvent;
-import com.vaadin.flow.data.selection.SelectionListener;
+import com.vaadin.flow.component.spreadsheet.Spreadsheet;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.JmixOrder;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
+import io.jmix.flowui.sys.autowire.*;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager.AnnotatedMethod;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.Target;
 import io.jmix.flowui.view.View;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
@@ -43,30 +41,36 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.Proxy;
 import java.util.Collection;
-import java.util.EventObject;
 import java.util.List;
+import java.util.Map;
 
 import static io.jmix.flowui.view.Target.COMPONENT;
 
 /**
- * An injector that autowires {@link SelectionListener} methods that are annotated by the {@link Subscribe} annotation.
- * A special dependency injector is required because {@link SelectionEvent} is not an inheritor of {@link EventObject}.
+ * An injector that autowires listener methods that are annotated by the {@link Subscribe}
+ * annotation. A special dependency injector is required because {@link Spreadsheet} listeners is not an inheritor of
+ * {@link ComponentEventListener}.
  */
-@Order(JmixOrder.LOWEST_PRECEDENCE - 110)
-@Component("flowui_SelectionListenerDependencyInjector")
-public class SelectionListenerDependencyInjector implements DependencyInjector {
+@Order(JmixOrder.LOWEST_PRECEDENCE - 120)
+@Component("vcc_SpreadsheetListenerDependencyInjector")
+public class SpreadsheetListenerDependencyInjector implements DependencyInjector {
 
-    private static final Logger log = LoggerFactory.getLogger(SelectionListenerDependencyInjector.class);
+    private static final Logger log = LoggerFactory.getLogger(SpreadsheetListenerDependencyInjector.class);
 
     protected ReflectionCacheManager reflectionCacheManager;
 
-    protected final LoadingCache<Class<?>, List<AnnotatedMethod<Subscribe>>> selectionListenerIntrospectionCache =
-            CacheBuilder.newBuilder()
-                    .weakKeys()
-                    .build(CacheLoader.from(this::getSelectionListenersMethodsNotCached));
+    Map<Class<?>, Class<?>> eventToListenerMap = Map.of(
+            Spreadsheet.SelectionChangeEvent.class, Spreadsheet.SelectionChangeListener.class,
+            Spreadsheet.CellValueChangeEvent.class, Spreadsheet.CellValueChangeListener.class,
+            Spreadsheet.FormulaValueChangeEvent.class, Spreadsheet.FormulaValueChangeListener.class,
+            Spreadsheet.ProtectedEditEvent.class, Spreadsheet.ProtectedEditListener.class,
+            Spreadsheet.SheetChangeEvent.class, Spreadsheet.SheetChangeListener.class,
+            Spreadsheet.RowHeaderDoubleClickEvent.class, Spreadsheet.RowHeaderDoubleClickListener.class
+    );
 
-    protected SelectionListenerDependencyInjector(ReflectionCacheManager reflectionCacheManager) {
+    protected SpreadsheetListenerDependencyInjector(ReflectionCacheManager reflectionCacheManager) {
         this.reflectionCacheManager = reflectionCacheManager;
     }
 
@@ -76,7 +80,8 @@ public class SelectionListenerDependencyInjector implements DependencyInjector {
         //noinspection rawtypes
         Class<? extends Composite> compositeClass = composite.getClass();
 
-        List<AnnotatedMethod<Subscribe>> selectionListenersMethods = getSelectionListenersMethods(compositeClass);
+        List<AnnotatedMethod<Subscribe>> selectionListenersMethods =
+                reflectionCacheManager.getSubscribeMethods(compositeClass);
         Collection<Object> autowired = autowireContext.getAutowired();
 
         for (AnnotatedMethod<Subscribe> annotatedMethod : selectionListenersMethods) {
@@ -98,10 +103,11 @@ public class SelectionListenerDependencyInjector implements DependencyInjector {
 
         String targetId = ViewDescriptorUtils.getInferredSubscribeId(annotation);
 
-
         if (Strings.isNullOrEmpty(targetId)
                 || !COMPONENT.equals(annotation.target())
-                || !(SelectionEvent.class.isAssignableFrom(eventType))) {
+                || eventToListenerMap.keySet().stream()
+                .noneMatch(subscribeMethodParam -> subscribeMethodParam.isAssignableFrom(eventType))
+        ) {
             return;
         }
 
@@ -119,13 +125,14 @@ public class SelectionListenerDependencyInjector implements DependencyInjector {
             return;
         }
 
-        MethodHandle addListenerMethod = getTargetAddListenerMethod(eventTarget.getClass());
+        MethodHandle addListenerMethod = getTargetAddListenerMethod(eventTarget.getClass(), eventType);
         if (addListenerMethod == null) {
             throw new DevelopmentException(String.format("Target %s does not support event type %s",
                     eventTarget.getClass().getName(), eventType));
         }
 
-        SelectionListener<?, ?> listener = getSelectionEventListener(getClass(), composite, annotatedMethod, eventType);
+        Object listener = getEventListener(getClass(), composite, annotatedMethod,
+                eventType, eventToListenerMap.get(eventType));
 
         try {
             addListenerMethod.invoke(eventTarget, listener);
@@ -157,10 +164,11 @@ public class SelectionListenerDependencyInjector implements DependencyInjector {
     }
 
     @Nullable
-    protected MethodHandle getTargetAddListenerMethod(Class<?> targetClass) {
+    protected MethodHandle getTargetAddListenerMethod(Class<?> targetClass, Class<?> eventType) {
         Method[] uniqueDeclaredMethods = ReflectionUtils.getUniqueDeclaredMethods(targetClass, m ->
                 m.getParameterCount() == 1
-                        && SelectionListener.class.isAssignableFrom(m.getParameterTypes()[0]));
+                        && eventToListenerMap.get(eventType).isAssignableFrom(m.getParameterTypes()[0])
+        );
         if (uniqueDeclaredMethods.length != 1) {
             return null;
         }
@@ -177,57 +185,53 @@ public class SelectionListenerDependencyInjector implements DependencyInjector {
         return methodHandle;
     }
 
-    protected SelectionListener<?, ?> getSelectionEventListener(Class<?> callerClass,
-                                                                com.vaadin.flow.component.Component component,
-                                                                AnnotatedMethod<Subscribe> annotatedMethod,
-                                                                Class<?> eventType) {
-        SelectionListener<?, ?> listener;
+    protected <T> T getEventListener(Class<?> callerClass,
+                                     com.vaadin.flow.component.Component component,
+                                     AnnotatedMethod<Subscribe> annotatedMethod,
+                                     Class<?> eventType,
+                                     Class<T> listenerClass) {
+        T listener;
 
-        // If component class was hot-deployed, then it will be loaded
-        // by different class loader. This will make impossible to create lambda
+        // If a component class was hot-deployed, then it will be loaded
+        // by a different class loader. This will make it impossible to create a lambda
         // using LambdaMetaFactory for producing the listener method in Java 17+
         if (callerClass.getClassLoader() == component.getClass().getClassLoader()) {
+            String methodName = StringUtils.capitalize(
+                    listenerClass.getSimpleName()
+                            .replaceFirst("add", "")
+                            .replace("Listener", "")
+            );
+
             MethodHandle consumerMethodFactory = reflectionCacheManager.getEventListenerMethodFactory(
-                    component.getClass(), annotatedMethod,
-                    "selectionChange", SelectionListener.class, eventType
+                    component.getClass(), annotatedMethod, "on%s".formatted(methodName), listenerClass, eventType
             );
 
             try {
-                listener = (SelectionListener<?, ?>) consumerMethodFactory.invoke(component);
+                //noinspection unchecked
+                listener = (T) consumerMethodFactory.invoke(component);
             } catch (Error e) {
                 throw e;
             } catch (Throwable e) {
                 throw new RuntimeException(String.format("Unable to bind %s handler",
-                        SelectionListener.class.getSimpleName()), e);
+                        listenerClass.getSimpleName()), e);
             }
         } else {
-            listener = event -> {
-                try {
-                    annotatedMethod.getMethodHandle().invoke(component, event);
-                } catch (Throwable e) {
-                    throw new RuntimeException(String.format("Error subscribe %s listener method invocation",
-                            SelectionListener.class.getSimpleName()), e);
-                }
-            };
+            //noinspection SuspiciousInvocationHandlerImplementation
+            listener = listenerClass.cast(
+                    Proxy.newProxyInstance(listenerClass.getClassLoader(), new Class<?>[]{listenerClass},
+                            (proxy, method, args) -> {
+                                try {
+                                    annotatedMethod.getMethodHandle().invoke(component, args[0]);
+                                    return null;
+                                } catch (Throwable e) {
+                                    throw new RuntimeException(String.format("Error subscribe %s listener method invocation",
+                                            listenerClass.getSimpleName()), e);
+                                }
+                            }
+                    )
+            );
         }
 
         return listener;
-    }
-
-    protected List<AnnotatedMethod<Subscribe>> getSelectionListenersMethods(Class<?> compositeClass) {
-        return selectionListenerIntrospectionCache.getUnchecked(compositeClass);
-    }
-
-    protected List<AnnotatedMethod<Subscribe>> getSelectionListenersMethodsNotCached(Class<?> compositeClass) {
-        Method[] uniqueDeclaredMethods = ReflectionUtils.getUniqueDeclaredMethods(compositeClass, method ->
-                method.getParameterCount() == 1
-                        && SelectionEvent.class.isAssignableFrom(method.getParameterTypes()[0]));
-
-        List<AnnotatedMethod<Subscribe>> annotatedMethods =
-                AutowireUtils.getAnnotatedMethodsNotCached(Subscribe.class, uniqueDeclaredMethods, m -> true);
-
-        annotatedMethods.sort(AutowireUtils::compareMethods);
-
-        return ImmutableList.copyOf(annotatedMethods);
     }
 }

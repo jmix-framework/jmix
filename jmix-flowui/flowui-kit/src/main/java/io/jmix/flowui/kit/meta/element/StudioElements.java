@@ -1150,7 +1150,8 @@ public interface StudioElements {
                     "io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup",
                     "io.jmix.flowui.component.select.JmixSelect",
                     "io.jmix.flowui.component.listbox.JmixListBox",
-                    "io.jmix.flowui.component.listbox.JmixMultiSelectListBox"
+                    "io.jmix.flowui.component.listbox.JmixMultiSelectListBox",
+                    "io.jmix.flowui.component.gridlayout.GridLayout"
             },
             unlimitedCount = false,
             properties = {

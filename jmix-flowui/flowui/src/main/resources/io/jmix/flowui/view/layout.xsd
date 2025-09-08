@@ -3998,6 +3998,26 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- GridLayout -->
+    <xs:complexType name="gridLayoutComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
+                    <xs:group ref="layoutOrComponent"/>
+                </xs:sequence>
+
+                <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
+                <xs:attribute name="columnMinWidth" type="xs:string"/>
+                <xs:attribute name="gap" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
     <!-- Login -->
 
@@ -4977,6 +4997,7 @@
                 <xs:element name="tabs" type="tabsContainer"/>
                 <xs:element name="accordion" type="accordionContainer"/>
                 <xs:element name="card" type="cardContainer"/>
+                <xs:element name="gridLayout" type="gridLayoutComponent"/>
 
                 <!-- Component -->
                 <xs:element name="drawerToggle" type="drawerToggleComponent"/>

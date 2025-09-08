@@ -77,7 +77,7 @@ public class DataViewBindingImpl<C extends Component & HasDataView<V, ?, ?>, V>
     @Override
     public void bind() {
         if (dataProvider instanceof EntityItems) {
-            if ( component instanceof HasValue) {
+            if (component instanceof HasValue) {
                 this.componentValueChangeRegistration = addComponentValueChangeListener();
             }
 

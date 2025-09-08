@@ -24,4 +24,11 @@ export const gridItemStyles = css`
     :host([hidden]) {
         display: none !important;
     }
+    
+    [part='content'] {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+    }
 `;

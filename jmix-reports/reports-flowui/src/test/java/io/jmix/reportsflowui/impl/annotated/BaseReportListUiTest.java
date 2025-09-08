@@ -19,21 +19,34 @@ package io.jmix.reportsflowui.impl.annotated;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.testassist.UiTestUtils;
-import io.jmix.reports.entity.Report;
-import io.jmix.reportsflowui.view.report.ReportListView;
+import io.jmix.flowui.view.StandardListView;
 
-public class BaseReportListUiTest extends BaseReportUiTest {
+public class BaseReportListUiTest<R,V extends StandardListView<R>> extends BaseReportUiTest {
 
-    protected ReportListView reportListView;
+    protected DataGridItems<R> dataGridItems;
+    protected final String dataGridId;
+    protected V listView;
+    protected Class<V> listViewClass;
 
-    protected DataGrid<Report> getMainDataGrid() {
-        viewNavigators.view(UiTestUtils.getCurrentView(), ReportListView.class).navigate();
-        reportListView = UiTestUtils.getCurrentView();
-
-        return findComponent(reportListView, "reportsDataGrid");
+    protected BaseReportListUiTest(String dataGridId, Class<V> listViewClass) {
+        this.dataGridId = dataGridId;
+        this.listViewClass = listViewClass;
     }
 
-    protected DataGridItems<Report> getDataGridItems() {
+    protected V getListView() {
+        viewNavigators.view(UiTestUtils.getCurrentView(), listViewClass).navigate();
+        listView = UiTestUtils.getCurrentView();
+
+        return listView;
+    }
+
+    protected DataGrid<R> getMainDataGrid() {
+        getListView();
+
+        return findComponent(listView, dataGridId);
+    }
+
+    protected DataGridItems<R> getDataGridItems() {
         return getMainDataGrid().getItems();
     }
 }

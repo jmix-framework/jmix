@@ -17,8 +17,11 @@
 package io.jmix.reportsflowui.impl.annotated;
 
 import com.vaadin.flow.data.provider.Query;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.data.grid.DataGridItems;
@@ -26,10 +29,15 @@ import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportOutputType;
+import io.jmix.reports.entity.ReportSource;
 import io.jmix.reports.impl.AnnotatedReportGroupHolder;
+import io.jmix.reports.impl.AnnotatedReportHolder;
+import io.jmix.reports.impl.AnnotatedReportScanner;
 import io.jmix.reportsflowui.test_support.RuntimeReportUtil;
 import io.jmix.reportsflowui.test_support.report.ReportWithRoles;
-import io.jmix.reportsflowui.test_support.report.SimpleReportGroup;
+import io.jmix.reportsflowui.test_support.report.SampleReportGroup;
+import io.jmix.reportsflowui.view.report.ReportListView;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,81 +45,211 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ReportListUiTest extends BaseReportListUiTest {
+public class ReportListUiTest extends BaseReportListUiTest<Report, ReportListView> {
 
     @Autowired
     protected AnnotatedReportGroupHolder annotatedGroupHolder;
     @Autowired
+    protected AnnotatedReportHolder annotatedReportHolder;
+    @Autowired
+    protected AnnotatedReportScanner annotatedReportScanner;
+    @Autowired
     protected RuntimeReportUtil runtimeReportUtil;
     @Autowired
     protected ReportRepository reportRepository;
+    @Autowired
+    protected SystemAuthenticator systemAuthenticator;
 
-    private DataGridItems<Report> dataGridItems;
+    protected ReportListUiTest() {
+        super("reportsDataGrid", ReportListView.class);
+    }
 
     @BeforeEach
     public void setUp() {
+        if (annotatedReportHolder.getAllReports().isEmpty()) {
+            annotatedReportScanner.importReportDefinitions();
+        }
+
         dataGridItems = getDataGridItems();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        runtimeReportUtil.cleanupDatabaseReports();
+    }
+
+    @Test
+    public void testDataGridFilling() {
+        Report report = annotatedReportHolder.getByCode(ReportWithRoles.CODE);
+
+        assertThat(dataGridItems).isNotNull();
+        assertThat(report).isNotNull();
+
+        assertThat(dataGridItems).isNotNull();
+        assertThat(dataGridItems.containsItem(report))
+                .isInstanceOf(Boolean.class)
+                .isEqualTo(true);
+    }
+
+    @Test
+    public void testDataGridColumns() {
+        assertThat(dataGridItems).isNotNull();
+
+        DataGrid<Report> dataGrid = getMainDataGrid();
+
+        // name column
+        DataGridColumn<Report> column = dataGrid.getColumnByKey("name");
+        assertThat(column).isNotNull();
+
+        List<Report> reportList = (List<Report>) dataGridItems.getItems();
+
+        assertThat(reportList).isNotEmpty();
+        assertThat(reportList).anyMatch(r -> r.getName().equals(ReportWithRoles.NAME));
+
+        // code column
+        column = dataGrid.getColumnByKey("name");
+        assertThat(column).isNotNull();
+
+        assertThat(reportList).anyMatch(r -> r.getCode().equals(ReportWithRoles.CODE));
+
+        // description column
+        column = dataGrid.getColumnByKey("description");
+        assertThat(column).isNotNull();
+
+        assertThat(reportList)
+                .filteredOn(r -> r.getDescription() != null)
+                .anyMatch(r -> r.getDescription().contains("Report description"));
+
+        // group column
+        column = dataGrid.getColumnByKey("group");
+        assertThat(column).isNotNull();
+
+        assertThat(reportList)
+                .filteredOn(r -> Objects.nonNull(r.getGroup()))
+                .anyMatch(r -> r.getGroup().getCode().equals(SampleReportGroup.CODE));
+
+        // system column
+        column = dataGrid.getColumnByKey("system");
+        assertThat(column).isNotNull();
+
+        assertThat(reportList)
+                .anyMatch(r -> r.getSystem().equals(true));
+        assertThat(reportList)
+                .anyMatch(r -> r.getSystem().equals(false));
+
+        // updatedAt column
+        column = dataGrid.getColumnByKey("updateTs");
+        assertThat(column).isNotNull();
+    }
+
+    @Test
+    public void testDataGridSourceColumn() {
+        Report report = runtimeReportUtil.createAndSaveSimpleRuntimeReport();
+
+        assertThat(report.getName()).isEqualTo(RuntimeReportUtil.SIMPLE_RUNTIME_REPORT_NAME);
+
+        dataGridItems = getDataGridItems();
+
+        assertThat(dataGridItems).isNotNull();
+
+        List<Report> reportList = (List<Report>) dataGridItems.getItems();
+
+        assertThat(reportList).isNotEmpty();
+        assertThat(reportList)
+                .anyMatch(r -> r.getSource().equals(ReportSource.DATABASE));
+        assertThat(reportList)
+                .anyMatch(r -> r.getSource().equals(ReportSource.ANNOTATED_CLASS));
+    }
+
+    @Test
+    public void testDataGridViewRole() {
+        DataGridItems<Report> dataGridItems = systemAuthenticator.withUser(
+                "with-no-access-user",
+                this::getDataGridItems);
+
+        assertThat(dataGridItems).isNotNull();
+
+        List<Report> reportList = (List<Report>) dataGridItems.getItems();
+
+        assertThat(reportList).isEmpty();
     }
 
     @Test
     public void testNameFilter() {
         runtimeReportUtil.createAndSaveSimpleRuntimeReport();
 
-        TypedTextField<String> nameFilter = findComponent(reportListView, "nameFilter");
+        dataGridItems = getDataGridItems();
+
+        TypedTextField<String> nameFilter = findComponent(listView, "nameFilter");
         nameFilter.setValue("roles");
 
-        assertThat(dataGridItems.getItems()).size().isEqualTo(1);
+        assertThat(dataGridItems).isNotNull();
 
-        runtimeReportUtil.cleanupDatabaseReports();
+        List<Report> reportList = (List<Report>) dataGridItems.getItems();
+        assertThat(reportList).isNotEmpty();
+        assertThat(reportList).size().isEqualTo(1);
     }
 
     @Test
     public void testGroupFilter() {
-        EntityComboBox<ReportGroup> groupFilter = findComponent(reportListView, "groupFilter");
+        EntityComboBox<ReportGroup> groupFilter = findComponent(listView, "groupFilter");
 
         List<ReportGroup> reportGroups = groupFilter.getDataProvider().fetch(new Query<>()).toList();
-        assertThat(reportGroups).size().isEqualTo(2);
+        assertThat(reportGroups).size().isEqualTo(1);
 
-        groupFilter.setValue(annotatedGroupHolder.getGroupByCode(SimpleReportGroup.CODE));
-        assertThat(groupFilter.getSelectedItems()).anyMatch(r -> r.getCode().equals(SimpleReportGroup.CODE));
+        groupFilter.setValue(annotatedGroupHolder.getGroupByCode(SampleReportGroup.CODE));
+        assertThat(groupFilter.getSelectedItems()).anyMatch(r -> r.getCode().equals(SampleReportGroup.CODE));
 
-        assertThat(dataGridItems.getItems().size()).isEqualTo(1);
-        assertThat(dataGridItems.getItems()).anyMatch(r -> r.getCode().equals(ReportWithRoles.CODE));
+        List<Report> reportList = (List<Report>) dataGridItems.getItems();
+
+        assertThat(reportList).isNotEmpty();
+        assertThat(reportList).size().isEqualTo(1);
+        assertThat(reportList).anyMatch(r -> r.getCode().equals(ReportWithRoles.CODE));
     }
 
     @Test
     public void testSystemCodeFilter() {
-        TypedTextField<String> codeFilterField = findComponent(reportListView, "codeFilter");
+        TypedTextField<String> codeFilterField = findComponent(listView, "codeFilter");
         codeFilterField.setValue("roles");
 
-        assertThat(dataGridItems.getItems().size()).isEqualTo(1);
+        List<Report> reportList = (List<Report>) dataGridItems.getItems();
+
+        assertThat(reportList).isNotEmpty();
+        assertThat(reportList).size().isEqualTo(1);
     }
 
     @Test
-    public void testUpdatedAfter() {
+    public void testUpdatedAfterFilter() {
         Report runtimeReport = runtimeReportUtil.constructSimpleRuntimeReport();
-        TypedDatePicker<Date> updatedDateFilter = findComponent(reportListView, "updatedDateFilter");
+        TypedDatePicker<Date> updatedDateFilter = findComponent(listView, "updatedDateFilter");
 
         runtimeReport.setUpdateTs(new Date());
         reportRepository.save(runtimeReport);
 
         updatedDateFilter.setValue(LocalDate.of(2025, 8, 11));
 
-        assertThat(dataGridItems.getItems()).size().isEqualTo(1);
+        List<Report> reportList = (List<Report>) dataGridItems.getItems();
+
+        assertThat(reportList).isNotEmpty();
+        assertThat(reportList).size().isEqualTo(1);
     }
 
     @Test
     public void testOutputType() {
-        JmixSelect<ReportOutputType> outputTypeFilter = findComponent(reportListView, "outputTypeFilter");
+        JmixSelect<ReportOutputType> outputTypeFilter = findComponent(listView, "outputTypeFilter");
         List<ReportOutputType> reportGroups = outputTypeFilter.getDataProvider().fetch(new Query<>()).toList();
 
         assertThat(reportGroups).size().isEqualTo(9);
 
         outputTypeFilter.setValue(ReportOutputType.TABLE);
 
-        assertThat(dataGridItems.getItems()).size().isEqualTo(1);
+        List<Report> reportList = (List<Report>) dataGridItems.getItems();
+
+        assertThat(reportList).isNotEmpty();
+        assertThat(reportList).size().isEqualTo(1);
     }
 }

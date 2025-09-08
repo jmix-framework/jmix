@@ -19,11 +19,15 @@ package io.jmix.reportsflowui.test_support.report;
 import io.jmix.reports.annotation.ReportGroupDef;
 
 @ReportGroupDef(
-        title = "msg://SimpleReportGroup.title",
-        code = SimpleReportGroup.CODE,
-        uuid = "15c81a52-09fc-4de7-e08a-b8a9a9155f15",
-        beanName = "sample_demoReportGroup"
+        title = SampleReportGroup.TITLE,
+        code = SampleReportGroup.CODE,
+        uuid = SampleReportGroup.UUID,
+        beanName = SampleReportGroup.BEAN_NAME
 )
-public class SimpleReportGroup {
+public class SampleReportGroup {
+    //public static final String TITLE = "msg://io.jmix.reportsflowui.test_support.report/SampleReportGroup.title";
+    public static final String TITLE = "Sample report";
     public static final String CODE = "GROUP-1";
+    public static final String UUID = "15c81a52-09fc-4de7-e08a-b8a9a9155f15";
+    public static final String BEAN_NAME = "sample_demoReportGroup";
 }

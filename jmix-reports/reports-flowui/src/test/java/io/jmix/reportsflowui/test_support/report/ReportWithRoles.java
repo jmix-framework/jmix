@@ -24,7 +24,7 @@ import io.jmix.reportsflowui.view.run.ReportRunView;
 @ReportDef(
         name = ReportWithRoles.NAME,
         code = ReportWithRoles.CODE,
-        group = SimpleReportGroup.class,
+        group = SampleReportGroup.class,
         system = true,
         description = """
                 Report description

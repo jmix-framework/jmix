@@ -59,6 +59,7 @@ import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
 import io.jmix.flowui.kit.component.twincolumn.JmixTwinColumn;
 import io.jmix.flowui.kit.component.upload.JmixFileStorageUploadField;
 import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
+import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.meta.*;
@@ -808,6 +809,39 @@ public interface StudioComponents {
             }
     )
     MultiSelectComboBoxPicker multiSelectComboBoxPicker();
+
+    @StudioComponent(
+            name = "UserMenu",
+            classFqn = "io.jmix.flowui.component.usermenu.UserMenu",
+            category = "Components",
+            xmlElement = "userMenu",
+            icon = "io/jmix/flowui/kit/meta/icon/mainview/userIndicator.svg",
+            // TODO: gg, add link when available
+//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "openOnHover", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "overlayClass", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
+                            options = {"tertiary", "non-checkable"}),
+                    @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    JmixUserMenu<?> userMenu();
 
     @StudioComponent(
             name = "DropdownButton",

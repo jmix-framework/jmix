@@ -76,7 +76,9 @@ class FragmentSubscribeDependencyInjectorTest extends FlowuiTestSpecification {
                 "ReadyEvent",
                 "ActionPerformedEvent", "PropertyChangeEvent",
                 "TypedValueChangeEvent", "ComponentValueChangeEvent", "SelectedChangeEvent",
-                "HasActionComponent.ActionPerformedEvent", "DropdownButton.NestedElement.ClickEvent"
+                "HasActionComponent.ActionPerformedEvent", "DropdownButton.NestedElement.ClickEvent",
+                "userMenu.textItem2.componentItem.button.ClickEvent",
+                "userMenu.textItem2.actionItem.testAction.ActionPerformedEvent"
         ]
     }
 }

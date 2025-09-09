@@ -18,11 +18,13 @@ package autowire.fragment;
 
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.HasOrderedComponents;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
@@ -31,6 +33,10 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
+import io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem;
+import io.jmix.flowui.kit.component.usermenu.ComponentUserMenuItem;
+import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
+import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataContext;
@@ -70,6 +76,8 @@ public class SubscribeDependencyInjectorFragment extends Fragment<VerticalLayout
     protected EntityPicker<Customer> hasActionComponent;
     @ViewComponent
     protected DropdownButton dropdownButton;
+    @ViewComponent
+    protected UserMenu userMenu;
 
     protected ReadyEvent readyEvent;
 
@@ -103,6 +111,11 @@ public class SubscribeDependencyInjectorFragment extends Fragment<VerticalLayout
         Objects.requireNonNull(hasActionComponent.getAction("testAction")).actionPerform(hasActionComponent);
         // publish ClickEvent
         ((JmixButton) ((ComponentItem) Objects.requireNonNull(dropdownButton.getItem("componentItem"))).getContent()).click();
+
+        UserMenuItem.HasSubMenu.SubMenu textItem2SubMenu = ((TextUserMenuItem) userMenu.getItem("textItem2")).getSubMenu();
+        ComponentUserMenuItem componentItem = ((ComponentUserMenuItem) textItem2SubMenu.getItem("componentItem"));
+        ((JmixButton) ((HasOrderedComponents) componentItem.getContent()).getComponentAt(0)).click();
+        ((ActionUserMenuItem) textItem2SubMenu.getItem("actionItem")).getAction().actionPerform(null);
     }
 
     @Subscribe
@@ -179,6 +192,16 @@ public class SubscribeDependencyInjectorFragment extends Fragment<VerticalLayout
     @Subscribe("dropdownButton.componentItem.button")
     protected void onDropdownButtonComponentItemChildClick(ClickEvent<JmixButton> event) {
         markAsExecuted("DropdownButton.NestedElement.ClickEvent");
+    }
+
+    @Subscribe(id = "userMenu.textItem2.componentItem.button", subject = "clickListener")
+    public void onUserMenuTextItem2ComponentItemButtonClick(final ClickEvent<JmixButton> event) {
+        markAsExecuted("userMenu.textItem2.componentItem.button.ClickEvent");
+    }
+
+    @Subscribe("userMenu.textItem2.actionItem.testAction")
+    public void onUserMenuTextItem2ActionItemTestAction(final ActionPerformedEvent event) {
+        markAsExecuted("userMenu.textItem2.actionItem.testAction.ActionPerformedEvent");
     }
 
     protected void markAsExecuted(Object event) {

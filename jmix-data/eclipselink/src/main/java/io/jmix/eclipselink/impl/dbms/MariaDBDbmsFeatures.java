@@ -38,7 +38,7 @@ import java.util.Map;
  * To enable {@code UUID} column support (by {@link JmixMariaDB107Platform}), follow these steps:
  * <ul>
  *     <li>Set {@code jmix.eclipselink.use-mariadb-uuid-id} application property to {@code true}.</li>
- *     <li>Add `implementation 'org.liquibase:liquibase-core:4.31.1!!'` (or later) to build.gradle.</li>
+ *     <li>Add `implementation 'org.liquibase:liquibase-core:4.26.0!!'` (4.25.1 or later) to build.gradle.</li>
  *     <li>Use UUID with hyphens for MariaDB in Liquibase scripts (WARNING: manual editing and applying of script
  *     `io/jmix/reports/liquibase/changelog/001-reports.xml` will be required if reports add-on is used).</li>
  * </ul>

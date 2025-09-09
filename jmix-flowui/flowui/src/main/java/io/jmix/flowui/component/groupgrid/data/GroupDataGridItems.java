@@ -16,13 +16,16 @@
 
 package io.jmix.flowui.component.groupgrid.data;
 
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.groupgrid.GroupInfo;
 import io.jmix.flowui.component.groupgrid.GroupProperty;
 import io.jmix.flowui.data.grid.DataGridItems;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
+import java.util.EventObject;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Represents a group data grid source of items. Provides methods for grouping data by properties,
@@ -135,4 +138,22 @@ public interface GroupDataGridItems<T> extends DataGridItems<T> {
      * Removes all group property descriptors previously added for grouping.
      */
     void removeAllGroupPropertyProviders();
+
+    Registration addGroupPropertyDescriptorsChangeListener(Consumer<GroupPropertyDescriptorsChangedEvent<T>> listener);
+
+    class GroupPropertyDescriptorsChangedEvent<T> extends EventObject {
+
+        protected final Collection<GroupPropertyDescriptor<T>> groupPropertyDescriptors;
+
+        public GroupPropertyDescriptorsChangedEvent(Object source,
+                                                    Collection<GroupPropertyDescriptor<T>> groupPropertyDescriptors) {
+            super(source);
+
+            this.groupPropertyDescriptors = groupPropertyDescriptors;
+        }
+
+        public Collection<GroupPropertyDescriptor<T>> getGroupPropertyDescriptors() {
+            return groupPropertyDescriptors;
+        }
+    }
 }

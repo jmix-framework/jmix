@@ -420,6 +420,8 @@ dependencies {
         api 'com.google.protobuf:protobuf-java:3.25.6'
         api 'com.fasterxml.woodstox:woodstox-core:6.4.0'
         api 'org.apache.lucene:lucene-queryparser:9.12.1'
+
+        api 'org.liquibase:liquibase-core:4.25.0!!'
     }
 }
 

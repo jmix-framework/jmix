@@ -17,6 +17,7 @@
 package io.jmix.data.impl.dbms;
 
 import io.jmix.data.persistence.DbTypeConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -25,6 +26,9 @@ import java.util.UUID;
 
 @Component("mariadbDbTypeConverter")
 public class MariaDBDbTypeConverter implements DbTypeConverter {
+
+    @Value("${jmix.eclipselink.use-mariadb-uuid-id:false}")
+    protected boolean useMariaDbUuidId;
 
     @Override
     public Object getJavaObject(ResultSet resultSet, int columnIndex) {
@@ -48,7 +52,8 @@ public class MariaDBDbTypeConverter implements DbTypeConverter {
         if (value instanceof Date)
             return new Timestamp(((Date) value).getTime());
         if (value instanceof UUID)
-            return value.toString().replace("-", "");
+            return useMariaDbUuidId ? value.toString() : value.toString().replace("-", "");
+
         return value;
     }
 
@@ -57,7 +62,7 @@ public class MariaDBDbTypeConverter implements DbTypeConverter {
         if (javaClass == Date.class)
             return Types.TIMESTAMP;
         else if (javaClass == UUID.class)
-            return Types.VARCHAR;
+            return useMariaDbUuidId ? Types.OTHER : Types.VARCHAR;
         else if (javaClass == Boolean.class)
             return Types.BIT;
         else if (javaClass == String.class)

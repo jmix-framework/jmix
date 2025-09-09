@@ -196,32 +196,30 @@ public class JmixGridLayout<T> extends Component implements HasSize, HasItemComp
     protected void rebuild() {
         removeAll();
 
-        synchronized (dataProvider) {
-            final AtomicInteger itemCounter = new AtomicInteger(0);
-            items = (List<T>) getDataProvider()
-                    .fetch(DataViewUtils.getQuery(this))
-                    .collect(Collectors.toList());
-            items.stream()
-                    .map(this::createItemComponent)
-                    .forEach(component -> {
-                        add(component);
-                        itemCounter.incrementAndGet();
-                    });
+        final AtomicInteger itemCounter = new AtomicInteger(0);
+        items = (List<T>) getDataProvider()
+                .fetch(DataViewUtils.getQuery(this))
+                .collect(Collectors.toList());
+        items.stream()
+                .map(this::createItemComponent)
+                .forEach(component -> {
+                    add(component);
+                    itemCounter.incrementAndGet();
+                });
 
-            lastFetchedDataSize = items.size();
+        lastFetchedDataSize = itemCounter.get();
 
-            // Ignore new size requests unless the last one has been executed
-            // to void multiple beforeClientResponses.
-            if (sizeRequest != null) {
-                sizeRequest = ui -> {
-                    fireSizeEvent();
-                    sizeRequest = null;
-                };
+        // Ignore new size requests unless the last one has been executed
+        // to void multiple beforeClientResponses.
+        if (sizeRequest != null) {
+            sizeRequest = ui -> {
+                fireSizeEvent();
+                sizeRequest = null;
+            };
 
-                // Size event is fired before client response to avoid multiple size change events
-                // during server round trips
-                runBeforeClientResponse(sizeRequest);
-            }
+            // Size event is fired before client response to avoid multiple size change events
+            // during server round trips
+            runBeforeClientResponse(sizeRequest);
         }
     }
 
@@ -273,7 +271,7 @@ public class JmixGridLayout<T> extends Component implements HasSize, HasItemComp
      * <b>Note!</b> Using a {@link ListDataProvider} instead of a {@link InMemoryDataProvider} is recommended to get
      * access to {@link GridLayoutListDataView} API by using {@link HasListDataView#setItems(ListDataProvider)}.
      *
-     * @param dataProvider InMemoryDataProvider to use, not {@code null}
+     * @param inMemoryDataProvider data provider to use, not {@code null}
      * @return {@link GridLayoutDataView} providing information on the data
      */
     @Override

@@ -16,13 +16,16 @@
 
 package io.jmix.flowui.component.groupgrid.adapter;
 
-import io.jmix.flowui.component.groupgrid.AbstractGroupDataGridAdapter;
 import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
 
+/**
+ * Default implementation of {@link GroupDataGridAdapterFactory}. Collects all {@link GroupDataGridAdapterProvider}}
+ * and iterates over them to find the first suitable adapter.
+ */
 public class DefaultGroupDataGridAdapterFactory implements GroupDataGridAdapterFactory {
 
     protected List<GroupDataGridAdapterProvider> adapterProviders;
@@ -40,6 +43,10 @@ public class DefaultGroupDataGridAdapterFactory implements GroupDataGridAdapterF
         }
 
         for (GroupDataGridAdapterProvider adapterProvider : adapterProviders) {
+            if (!adapterProvider.isSupported(groupGrid)) {
+                continue;
+            }
+
             AbstractGroupDataGridAdapter<E> adapter = adapterProvider.getAdapter(groupGrid);
             if (adapter != null) {
                 return adapter;

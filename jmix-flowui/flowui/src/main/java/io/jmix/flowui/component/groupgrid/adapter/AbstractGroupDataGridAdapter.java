@@ -14,16 +14,32 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.groupgrid;
+package io.jmix.flowui.component.groupgrid.adapter;
 
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
+import io.jmix.flowui.component.groupgrid.GroupColumn;
+import io.jmix.flowui.component.groupgrid.GroupInfo;
+import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
+import io.jmix.flowui.component.groupgrid.data.GroupDataGridItems;
+import org.springframework.lang.Nullable;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+/**
+ * A base abstract class that adapts an implementation of {@link GroupListDataComponent} to use it as a
+ * {@link DataGrid} in other components and modules (e.g., in export actions).
+ *
+ * @param <E> the type of items
+ * @see GroupDataGridAdapterFactory
+ * @see GroupDataGridAdapterProvider
+ */
 public abstract class AbstractGroupDataGridAdapter<E> extends DataGrid<E> implements GroupListDataComponent<E>,
         EnhancedDataGrid<E> {
 
@@ -34,8 +50,38 @@ public abstract class AbstractGroupDataGridAdapter<E> extends DataGrid<E> implem
         this.groupDataGrid = groupDataGrid;
     }
 
+    /**
+     * @return the underlying {@link GroupListDataComponent} instance that is adapted
+     */
     public GroupListDataComponent<E> getAdaptee() {
         return groupDataGrid;
+    }
+
+    /**
+     * @return the collection of columns that are used for grouping data in the grid
+     */
+    public abstract Collection<Column<E>> getGroupingColumns();
+
+    /**
+     * Checks whether the given column is an implementation of {@link GroupColumn}.
+     *
+     * @param column the column to check
+     * @return {@code true} if the column is a group column
+     */
+    public abstract boolean isGroupColumn(Column<E> column);
+
+    /**
+     * Checks whether the given column participates in grouping data in the grid.
+     *
+     * @param column the column to check
+     * @return {@code true} if the column is a grouping column
+     */
+    public abstract boolean isGroupingColumn(Column<E> column);
+
+    @Nullable
+    @Override
+    public GroupDataGridItems<E> getItems() {
+        return getItemsInternal();
     }
 
     @Override
@@ -127,4 +173,15 @@ public abstract class AbstractGroupDataGridAdapter<E> extends DataGrid<E> implem
     public Registration addExpandListener(Consumer<ExpandEvent<E>> listener) {
         return groupDataGrid.addExpandListener(listener);
     }
+
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected BiFunction<Renderer<E>, String, Column<E>> getDefaultColumnFactory() {
+        return (BiFunction) getDefaultColumnFactoryInternal();
+    }
+
+    protected abstract BiFunction<Renderer<E>, String, AbstractGroupDataGridColumnAdapter<E>> getDefaultColumnFactoryInternal();
+
+    @Nullable
+    protected abstract GroupDataGridItems<E> getItemsInternal();
 }

@@ -24,6 +24,11 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * A component that provides grouping functionality for a list of items.
+ *
+ * @param <E> item type
+ */
 public interface GroupListDataComponent<E> extends ListDataComponent<E> {
 
     /**

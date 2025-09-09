@@ -16,12 +16,21 @@
 
 package io.jmix.flowui.component.groupgrid.adapter;
 
-import io.jmix.flowui.component.groupgrid.AbstractGroupDataGridAdapter;
 import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import org.springframework.lang.Nullable;
 
+/**
+ * Factory for creating {@link AbstractGroupDataGridAdapter} instances.
+ */
 public interface GroupDataGridAdapterFactory {
 
+    /**
+     * Returns an adapter for the given group grid component.
+     *
+     * @param groupGrid the group grid component
+     * @param <E>       the item type
+     * @return an adapter instance or {@code null} if no adapter is available
+     */
     @Nullable
     <E> AbstractGroupDataGridAdapter<E> getAdapter(GroupListDataComponent<E> groupGrid);
 }

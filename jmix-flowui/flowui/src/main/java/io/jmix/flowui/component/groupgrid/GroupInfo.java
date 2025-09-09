@@ -18,12 +18,38 @@ package io.jmix.flowui.component.groupgrid;
 
 import org.springframework.lang.Nullable;
 
+/**
+ * Represents a group of items in the {@link GroupListDataComponent}.
+ */
 public interface GroupInfo {
 
+    /**
+     * @return parent group or {@code null} if this is a root group
+     */
+    @Nullable
+    GroupInfo getParent();
+
+    /**
+     * @return group property
+     */
     GroupProperty getProperty();
 
+    /**
+     * Returns the value by group property. If the group is a child, it also provides property values
+     * of the parent groups.
+     *
+     * @param property group property
+     * @param <T>      property value type
+     * @return group property value or {@code null}
+     */
     @Nullable
     <T> T getPropertyValue(GroupProperty property);
 
+    /**
+     * Returns the value of the group property.
+     *
+     * @param <T> property value type
+     * @return group property value
+     */
     <T> T getValue();
 }

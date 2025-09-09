@@ -26,7 +26,7 @@ import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.ListDataComponent;
-import io.jmix.flowui.component.groupgrid.AbstractGroupDataGridAdapter;
+import io.jmix.flowui.component.groupgrid.adapter.AbstractGroupDataGridAdapter;
 import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
 import io.jmix.flowui.data.ContainerDataUnit;

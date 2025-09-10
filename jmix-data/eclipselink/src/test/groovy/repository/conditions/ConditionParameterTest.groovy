@@ -68,7 +68,7 @@ class ConditionParameterTest extends DataSpec {
 
     void "Conditions skipping in findAll for manual skipNullOrEmpty setting"() {
         expect:
-        List<Customer> customers = customerRepository.findAll(Sort.by("name")).toList()
+        List<Customer> customers = customerRepository.findAll(Sort.by("name"))
         customers[0].name == null
         customers[1].name == ""
         customers[2].name == "fullNamedCustomer"

@@ -27,7 +27,7 @@ import java.util.UUID;
 public interface ThirdRepository extends SecondRepository {
 
     @Override
-    Iterable<TestOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
+    List<TestOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
 
     List<TestOrder> findByNumberNotNull();
 

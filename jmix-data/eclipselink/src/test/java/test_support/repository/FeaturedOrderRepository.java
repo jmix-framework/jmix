@@ -37,7 +37,7 @@ public interface FeaturedOrderRepository extends JmixDataRepository<SalesOrder, 
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})
-    Iterable<SalesOrder> findAll();
+    List<SalesOrder> findAll();
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})
@@ -45,15 +45,15 @@ public interface FeaturedOrderRepository extends JmixDataRepository<SalesOrder, 
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})
-    Iterable<SalesOrder> findAll(FetchPlan fetchPlan);
+    List<SalesOrder> findAll(FetchPlan fetchPlan);
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})
-    Iterable<SalesOrder> findAll(Iterable<UUID> uuids, @Nullable FetchPlan fetchPlan);
+    List<SalesOrder> findAll(Iterable<UUID> uuids, @Nullable FetchPlan fetchPlan);
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})
-    Iterable<SalesOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
+    List<SalesOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})
@@ -61,7 +61,7 @@ public interface FeaturedOrderRepository extends JmixDataRepository<SalesOrder, 
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})
-    Iterable<SalesOrder> findAll(Sort sort);
+    List<SalesOrder> findAll(Sort sort);
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})
@@ -77,7 +77,7 @@ public interface FeaturedOrderRepository extends JmixDataRepository<SalesOrder, 
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})
-    Iterable<SalesOrder> findAllById(Iterable<UUID> uuids);
+    List<SalesOrder> findAllById(Iterable<UUID> uuids);
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})

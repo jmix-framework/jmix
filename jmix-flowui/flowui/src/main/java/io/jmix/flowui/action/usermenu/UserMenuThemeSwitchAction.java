@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.action.usermenu;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.page.WebStorage;
@@ -58,14 +59,25 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
     }
 
     public UserMenuThemeSwitchAction(String id) {
-        super(id);
-    }
+        super(id);}
 
     @Override
     protected void initAction() {
+        checkJsImport();
+
         super.initAction();
 
         icon = createIcon(SYSTEM_THEME);
+    }
+
+    protected void checkJsImport() {
+        UI.getCurrent().getPage().executeJs(ThemeUtils.APPLY_THEME_FUNCTION)
+                .then(Void.class, __ -> {
+                }, error -> {
+                    throw new IllegalStateException(ID + " requires the " +
+                            "@JsModule(\"./src/theme/color-scheme-switching-support.js\") " +
+                            "import to be added to the main application class");
+                });
     }
 
     @Autowired

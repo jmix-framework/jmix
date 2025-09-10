@@ -32,9 +32,7 @@ public class MainView extends StandardMainView {
 
     @Install(to = "userMenu", subject = "buttonRenderer")
     private Component userMenuButtonRenderer(final UserDetails userDetails) {
-        User user = (User) userDetails;
-
-        if (user == null) {
+        if (!(userDetails instanceof User user)) {
             return null;
         }
 

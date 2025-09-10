@@ -58,6 +58,7 @@ vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-
     grid-template: "avatar username"
                    "avatar subtext";
     grid-template-columns: auto 1fr;
+    column-gap: var(--lumo-space-s);
 
     width: max-content;
     box-sizing: border-box;
@@ -69,8 +70,6 @@ vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-
 .jmix-user-menu-button-content > .jmix-user-menu-button-content-user-avatar {
     grid-area: avatar;
     align-self: center;
-
-    margin-inline-end: var(--lumo-space-s);
 }
 
 .jmix-user-menu-button-content > .jmix-user-menu-button-content-user-name {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,7 @@
 
 package io.jmix.flowui.kit.component.stub;
 
-import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
-import io.jmix.flowui.kit.meta.StudioIgnore;
-
-import java.util.function.Consumer;
 
 /**
  * For Studio use only.

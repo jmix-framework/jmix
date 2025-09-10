@@ -122,6 +122,14 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         updateHeader();
     }
 
+    /**
+     * Sets the function to generate the button's content based on the current user.
+     *
+     * @param buttonRenderer a function that takes a user object and returns
+     *                       a {@link Component} to be used as the header;
+     *                       can be {@code null}, in which case no header
+     *                       content will be displayed
+     */
     public void setButtonRenderer(@Nullable Renderer<USER> buttonRenderer) {
         this.buttonRenderer = buttonRenderer;
 
@@ -393,9 +401,21 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
     }
 
+    /**
+     * A functional interface representing a renderer that generates a {@link Component}
+     * based on a provided item.
+     *
+     * @param <T> the type of the item to be rendered
+     */
     @FunctionalInterface
     public interface Renderer<T> {
 
+        /**
+         * Renders a {@link Component} based on the provided item.
+         *
+         * @param item the item to be rendered
+         * @return the rendered {@link Component}, or {@code null}
+         */
         @Nullable
         Component render(@Nullable T item);
     }

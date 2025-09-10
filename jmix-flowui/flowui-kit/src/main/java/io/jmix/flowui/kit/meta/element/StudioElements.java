@@ -585,8 +585,7 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.kit.component.usermenu.TextUserMenuItem",
             xmlElement = "textItem",
             isInjectable = false,
-            // TODO: gg, add link when available
-//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#textItem",
+            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#textItem",
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -599,8 +598,7 @@ public interface StudioElements {
             name = "ActionItem",
             classFqn = "io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem",
             xmlElement = "actionItem",
-            // TODO: gg, add link when available
-//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#acionItem",
+            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#actionItem",
             isInjectable = false,
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
@@ -635,8 +633,7 @@ public interface StudioElements {
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.usermenu.ComponentUserMenuItem",
             xmlElement = "componentItem",
-            // TODO: gg, add link when available
-//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#componentItem",
+            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#componentItem",
             isInjectable = false,
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
@@ -655,8 +652,7 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.component.usermenu.ViewUserMenuItem",
             xmlElement = "viewItem",
             isInjectable = false,
-            // TODO: gg, add link when available
-//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#textItem",
+            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#viewItem",
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -674,8 +670,7 @@ public interface StudioElements {
             name = "Separator",
             classFqn = "io.jmix.flowui.kit.component.stub.UserMenuStubSeparatorItem",
             xmlElement = "separator",
-            // TODO: gg, add link when available
-//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#separator",
+            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#separator",
             properties = {
                     @StudioProperty(xmlAttribute = "itemId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING)
             }

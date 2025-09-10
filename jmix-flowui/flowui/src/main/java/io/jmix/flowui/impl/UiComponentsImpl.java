@@ -79,11 +79,13 @@ import io.jmix.flowui.component.textfield.JmixBigDecimalField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.upload.JmixUpload;
+import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
+import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -148,6 +150,7 @@ public class UiComponentsImpl implements UiComponents {
         register(RichTextEditor.class, JmixRichTextEditor.class);
         register(JmixFormLayout.class, FormLayout.class);
         register(JmixTabs.class, Tabs.class);
+        register(UserMenu.class, JmixUserMenu.class);
     }
 
     @SuppressWarnings("unchecked")

@@ -16,10 +16,16 @@
 
 package io.jmix.flowui.xml.layout.loader.component.usermenu;
 
+import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
+import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
+/**
+ * An interface that provides a contract for loading {@link UserMenuItem}
+ * into a {@link UserMenu}.
+ */
 public interface UserMenuItemLoader {
 
     boolean supports(String itemName);

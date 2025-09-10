@@ -75,6 +75,7 @@
     grid-template: "avatar text"
                    "avatar subtext";
     grid-template-columns: auto 1fr;
+    column-gap: var(--lumo-space-s);
 
     width: max-content;
     box-sizing: border-box;
@@ -92,12 +93,6 @@
 .user-menu-header-content > .user-menu-avatar {
     grid-area: avatar;
     align-self: center;
-
-    margin-inline-end: var(--lumo-space-s);
-}
-
-.user-menu-header-content > .user-menu-avatar {
-
 }
 
 .user-menu-button-content > .user-menu-text {
@@ -144,6 +139,6 @@ vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .user-menu-but
     text-overflow: ellipsis;
 }
 
-vaadin-menu-bar[jmix-role='jmix-user-menu']:not([theme~='substituted']) .user-menu-header-content > .user-menu-subtext {
+vaadin-menu-bar[jmix-role='jmix-user-menu']:not([theme~='substituted']) .user-menu-button-content > .user-menu-subtext {
     display: none;
 }

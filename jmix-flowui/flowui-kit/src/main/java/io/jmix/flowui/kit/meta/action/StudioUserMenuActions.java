@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public interface StudioUserMenuActions {
                     @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "showEntityInfo"),
+                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "themeSwitchAction"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.userMenu.ThemeSwitch"),

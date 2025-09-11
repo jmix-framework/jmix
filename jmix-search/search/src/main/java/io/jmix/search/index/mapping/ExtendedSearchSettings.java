@@ -143,4 +143,18 @@ public class ExtendedSearchSettings {
             return new ExtendedSearchSettings(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "ExtendedSearchSettings{" +
+                "enabled=" + enabled +
+                ", edgeNGramMin=" + edgeNGramMin +
+                ", edgeNGramMax=" + edgeNGramMax +
+                ", tokenizer='" + tokenizer + '\'' +
+                ", prefixFilter='" + prefixFilter + '\'' +
+                ", prefixAnalyzer='" + prefixAnalyzer + '\'' +
+                ", prefixSearchAnalyzer='" + prefixSearchAnalyzer + '\'' +
+                ", additionalFilters=" + additionalFilters +
+                '}';
+    }
 }

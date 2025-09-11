@@ -244,17 +244,19 @@ class EnhancingAction implements Action<Task> {
                 String ormRelativeFileName = "$modulePath/${storePrefix}orm.xml";
                 String ormFileName = "$enhancingWorkDir/$ormRelativeFileName"
 
+                Set<String> jpaClasses = filterNonJpaClasses(project, classesInfo.getJpaEntitiesAndConverters(storeName))
+
                 //create persistence.xml in tmp work directory to be processed by orm-provider weaving (e.g. EclipseLink accepts '*/META-INF/persistence.xml' file path only)
                 DescriptorGenerationUtils.constructPersistenceXml(
                         persistenceFileName,
                         storeName,
                         ormRelativeFileName,
-                        classesInfo.getJpaEntitiesAndConverters(storeName),
+                        jpaClasses,
                         classesInfo.getConverters())
 
                 DescriptorGenerationUtils.constructOrmXml(
                         ormFileName,
-                        classesInfo.getJpaEntitiesAndConverters(storeName),
+                        jpaClasses,
                         createClassPool(project, sourceSet))
 
                 //store all generated persistence/orm xml files in temporary resources dir, because output resources dir is not prepared yet
@@ -399,6 +401,15 @@ class EnhancingAction implements Action<Task> {
                 new EntityEntryEnhancingStep(),
                 new SettersEnhancingStep(),
                 new TransientAnnotationEnhancingStep())
+    }
+
+    static Set<String> filterNonJpaClasses(Project project, Set<String> classNames) {
+        List<String> nonJpaPackages = project.jmix.entitiesEnhancing.nonJpaPackages
+        List<String> nonJpaClasses = project.jmix.entitiesEnhancing.nonJpaClasses
+
+        return classNames.findAll {className ->
+            !nonJpaClasses.contains(className) && !nonJpaPackages.find {className.startsWith(it + '.')}
+        }
     }
 
     /**

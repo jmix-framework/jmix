@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'org.springframework.boot'
 apply plugin: 'io.jmix'
 
-group = 'io.jmix.samples'
-version = '0.0.1'
+archivesBaseName = 'sample-rest-common'
 
 dependencies {
-    implementation project(':sample-rest-common-starter')
-
     implementation project(':core-starter')
     implementation project(':eclipselink-starter')
-    implementation project(':rest-starter')
     implementation project(':security-starter')
-    implementation project(':security-data-starter')
-    implementation project(':authserver-starter')
-    implementation project(':localfs-starter')
 
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
 
-    runtimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
 }
 
 test {

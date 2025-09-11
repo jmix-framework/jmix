@@ -21,8 +21,10 @@ import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.model.Store;
 import io.jmix.restds.annotation.RemoteService;
 import io.jmix.restds.util.RestDataStoreUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -54,12 +56,23 @@ public class RemoteServiceInvoker {
 
     @Nullable
     public Object invokeServiceMethod(Class<?> serviceInterface, Method method, @Nullable Object[] args) {
+        String storeName;
+        String serviceName;
         RemoteService remoteServiceAnnotation = serviceInterface.getAnnotation(RemoteService.class);
-        if (remoteServiceAnnotation == null)
-            throw new IllegalStateException("RemoteService annotation is not found for interface " + serviceInterface);
-        String storeName = remoteServiceAnnotation.store();
-        String serviceName = remoteServiceAnnotation.remoteName().isEmpty() ?
-                serviceInterface.getSimpleName() : remoteServiceAnnotation.remoteName();
+        if (remoteServiceAnnotation != null) {
+            storeName = remoteServiceAnnotation.store();
+            serviceName = remoteServiceAnnotation.remoteName().isEmpty() ?
+                    serviceInterface.getSimpleName() : remoteServiceAnnotation.remoteName();
+        } else {
+            storeName = environment.getProperty("jmix.restds.remote-service.store." + serviceInterface.getName());
+            if (storeName == null) {
+                throw new IllegalStateException("Cannot determine store for service interface " + serviceInterface);
+            }
+            serviceName = environment.getProperty("jmix.restds.remote-service.name." + serviceInterface.getName());
+            if (serviceName == null) {
+                serviceName = serviceInterface.getSimpleName();
+            }
+        }
 
         RestClient restClient = restDataStoreUtils.getRestClient(storeName);
 

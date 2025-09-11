@@ -26,14 +26,17 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.env.Environment;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 public class RemoteServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
     private final JmixModules jmixModules;
+    private final Environment environment;
 
-    public RemoteServiceBeanFactoryPostProcessor(JmixModules jmixModules) {
+    public RemoteServiceBeanFactoryPostProcessor(JmixModules jmixModules, Environment environment) {
         this.jmixModules = jmixModules;
+        this.environment = environment;
     }
 
     @Override
@@ -46,6 +49,11 @@ public class RemoteServiceBeanFactoryPostProcessor implements BeanFactoryPostPro
             }
         };
         scanner.addIncludeFilter(new AnnotationTypeFilter(RemoteService.class));
+        scanner.addIncludeFilter((metadataReader, metadataReaderFactory) -> {
+            String className = metadataReader.getClassMetadata().getClassName();
+            String property = environment.getProperty("jmix.restds.remote-service.store." + className);
+            return property != null;
+        });
 
         jmixModules.getAll().stream()
                 .map(JmixModuleDescriptor::getBasePackage)

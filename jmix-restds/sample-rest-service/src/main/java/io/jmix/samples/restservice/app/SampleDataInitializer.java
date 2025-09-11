@@ -4,6 +4,8 @@ import io.jmix.core.DataManager;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.security.Authenticated;
+import io.jmix.samples.restds.common.entity.Product;
+import io.jmix.samples.restds.common.entity.ProductGroup;
 import io.jmix.samples.restservice.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,8 @@ public class SampleDataInitializer {
             List<CustomerRegion> regions = createRegions();
             createCustomers(regions);
             createEmployees();
+            List<ProductGroup> productGroups = createProductGroups();
+            createProducts(productGroups);
         }
         log.info("Ready for testing");
     }
@@ -89,6 +93,26 @@ public class SampleDataInitializer {
         ((EmployeeExt) employee).setExtInfo("Ext info");
         dataManager.save(employee);
         log.info("Employees created");
+    }
+
+    private List<ProductGroup> createProductGroups() {
+        log.info("Creating product groups");
+        ProductGroup productGroup = dataManager.create(ProductGroup.class);
+        productGroup.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+        productGroup.setName("Group 1");
+        dataManager.save(productGroup);
+        log.info("Product groups created");
+        return List.of(productGroup);
+    }
+
+    private void createProducts(List<ProductGroup> productGroups) {
+        log.info("Creating products");
+        Product product = dataManager.create(Product.class);
+        product.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+        product.setName("Product 1");
+        product.setGroup(productGroups.get(0));
+        dataManager.save(product);
+        log.info("Products created");
     }
 
     private FileRef uploadDocument(String name, String content) {

@@ -26,7 +26,9 @@ import io.jmix.flowui.Views;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.PrototypesLoader;
-import io.jmix.reports.ReportSecurityManager;
+import io.jmix.reports.ReportFilter;
+import io.jmix.reports.ReportLoadContext;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
@@ -53,12 +55,10 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Component("report_ReportsActionSupport")
 public class ReportActionSupport {
 
-    protected final ReportSecurityManager reportSecurityManager;
-    protected final DataManager dataManager;
+    protected final ReportRepository reportRepository;
     protected final Messages messages;
     protected final Notifications notifications;
     protected final DialogWindows dialogWindows;
-    protected final FetchPlanRepository fetchPlanRepository;
     protected final CurrentUserSubstitution currentUserSubstitution;
     protected final UiReportRunner uiReportRunner;
     protected final Views views;
@@ -66,24 +66,20 @@ public class ReportActionSupport {
     protected final Metadata metadata;
     protected final ReportsClientProperties reportsClientProperties;
 
-    public ReportActionSupport(ReportSecurityManager reportSecurityManager,
-                               DataManager dataManager,
+    public ReportActionSupport(ReportRepository reportRepository,
                                Messages messages,
                                Notifications notifications,
                                DialogWindows dialogWindows,
-                               FetchPlanRepository fetchPlanRepository,
                                CurrentUserSubstitution currentUserSubstitution,
                                UiReportRunner uiReportRunner,
                                Views views,
                                PrototypesLoader prototypesLoader,
                                Metadata metadata,
                                ReportsClientProperties reportsClientProperties) {
-        this.reportSecurityManager = reportSecurityManager;
-        this.dataManager = dataManager;
+        this.reportRepository = reportRepository;
         this.messages = messages;
         this.notifications = notifications;
         this.dialogWindows = dialogWindows;
-        this.fetchPlanRepository = fetchPlanRepository;
         this.currentUserSubstitution = currentUserSubstitution;
         this.uiReportRunner = uiReportRunner;
         this.views = views;
@@ -98,10 +94,8 @@ public class ReportActionSupport {
 
     public void openRunReportScreen(View<?> view, Object selectedValue, MetaClass inputValueMetaClass,
                                     @Nullable String outputFileName) {
-        List<Report> reports = reportSecurityManager.getAvailableReports(
-                view.getId().orElse(null),
-                currentUserSubstitution.getEffectiveUser(),
-                inputValueMetaClass);
+        ReportFilter filter = createFilter(view, inputValueMetaClass);
+        List<Report> reports = reportRepository.loadList(new ReportLoadContext(filter));
 
         if (reports.size() > 1) {
             DialogWindow<ReportRunView> reportRunScreenDialogWindow = dialogWindows.lookup(view, Report.class)
@@ -115,7 +109,6 @@ public class ReportActionSupport {
                     .build();
 
             ReportRunView reportRunView = reportRunScreenDialogWindow.getView();
-            reportRunView.setMetaClass(inputValueMetaClass);
             reportRunView.setReports(reports);
 
             reportRunScreenDialogWindow.open();
@@ -128,9 +121,18 @@ public class ReportActionSupport {
         }
     }
 
+    protected ReportFilter createFilter(View<?> view, MetaClass inputValueMetaClass) {
+        ReportFilter filter = new ReportFilter();
+        filter.setViewId(view.getId().orElse(null));
+        filter.setUser(currentUserSubstitution.getEffectiveUser());
+        filter.setInputValueMetaClass(inputValueMetaClass);
+        filter.setSystem(false);
+        return filter;
+    }
+
     public void runReport(Report report, View<?> view, Object selectedValue, MetaClass inputValueMetaClass,
                           @Nullable String outputFileName) {
-        Report reloadedReport = reloadReport(report);
+        Report reloadedReport = reportRepository.reloadForRunning(report);
         ReportInputParameter parameter = getParameterAlias(reloadedReport, inputValueMetaClass);
         if (selectedValue instanceof ParameterPrototype) {
             ((ParameterPrototype) selectedValue).setParamName(parameter.getAlias());
@@ -258,12 +260,5 @@ public class ReportActionSupport {
         } else {
             return false;
         }
-    }
-
-    protected Report reloadReport(Report report) {
-        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(Report.class, "report.print");
-        return dataManager.load(Id.of(report))
-                .fetchPlan(fetchPlan)
-                .one();
     }
 }

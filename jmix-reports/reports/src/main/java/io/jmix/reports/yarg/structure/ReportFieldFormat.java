@@ -15,6 +15,8 @@
  */
 package io.jmix.reports.yarg.structure;
 
+import org.springframework.lang.Nullable;
+
 import java.io.Serializable;
 
 /**
@@ -32,6 +34,12 @@ public interface ReportFieldFormat extends Serializable {
      * Example: ##,# for decimals, dd-MM-yyyy for dates, etc.
      */
     String getFormat();
+
+    /**
+     * @return custom formatter object. If it exists, it takes precedence over other format options.
+     */
+    @Nullable
+    CustomValueFormatter<?> getCustomFormatter();
 
     /**
      * @return boolean <code>true</code> if the groovy script, otherwise <code>false</code>

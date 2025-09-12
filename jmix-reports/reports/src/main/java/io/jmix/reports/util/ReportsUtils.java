@@ -53,18 +53,6 @@ public class ReportsUtils {
         return generateReportName(sourceName, 0);
     }
 
-    public Report reloadReportIfNeeded(Report report, String fetchPlanName) {
-        if (report.getIsTmp()) {
-            return report;
-        }
-        if (!entityStates.isLoadedWithFetchPlan(report, fetchPlanName)) {
-            return dataManager.load(Id.of(report))
-                    .fetchPlan(fetchPlanName)
-                    .one();
-        }
-        return report;
-    }
-
     public Date currentDateOrTime(ParameterType parameterType) {
         Date now = timeSource.currentTimestamp();
         switch (parameterType) {

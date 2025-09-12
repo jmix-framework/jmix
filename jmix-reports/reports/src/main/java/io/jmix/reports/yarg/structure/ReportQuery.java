@@ -15,6 +15,9 @@
  */
 package io.jmix.reports.yarg.structure;
 
+import io.jmix.reports.yarg.loaders.ReportDataLoader;
+import org.springframework.lang.Nullable;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -29,6 +32,12 @@ public interface ReportQuery extends Serializable {
      * Sql, groovy or other script which describes logic of data loading
      */
     String getScript();
+
+    /**
+     * @return delegate implementing custom data loading logic
+     */
+    @Nullable
+    ReportDataLoader getLoaderDelegate();
 
     String getLinkParameterName();
 

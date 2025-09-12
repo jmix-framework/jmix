@@ -76,6 +76,7 @@ public class ReportWizard {
         childrenBandsDefinitionForRoot.remove(rootReportBandDefinition);
         rootReportBandDefinition.getChildrenBandDefinitions().addAll(childrenBandsDefinitionForRoot);
         report.setName(reportsUtils.generateReportName(reportData.getName()));
+        report.setCode(reportData.getCode());
         String xml = reportsSerialization.convertToString(report);
         report.setXml(xml);
 

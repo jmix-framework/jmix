@@ -24,7 +24,9 @@ import test_support.DataSpec
 import test_support.entity.TestDateTimeEntity
 
 import java.time.*
-@Ignore("Till Haulmont/jmix-data#124 will be fixed")
+import java.time.temporal.ChronoUnit
+
+@Ignore("Till https://github.com/jmix-framework/jmix/issues/334 will be fixed")
 class DateTimeMacroTest extends DataSpec {
 
     @Autowired
@@ -602,7 +604,102 @@ class DateTimeMacroTest extends DataSpec {
         e == null
     }
 
-    //----------@dateEquals--------
+    //----------@dateBetween--------
+
+    def "@dateBetween for DateTime"() {
+        when:
+        def e = dataManager.load(TestDateTimeEntity)
+                .query('@dateBetween(e.localDate, :param, :param1)')
+                .parameter("param", LocalDate.now().minusDays(1))
+                .parameter("param1", LocalDate.now().plusDays(1))
+                .fetchPlan(FetchPlan.LOCAL)
+                .one()
+        then:
+        e == entity
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@dateBetween(e.localDate, :param, :param1)')
+                .parameter("param", LocalDate.now().plusDays(1))
+                .parameter("param1", LocalDate.now().plusDays(2))
+                .fetchPlan(FetchPlan.LOCAL)
+                .optional()
+                .orElse(null)
+        then:
+        e == null
+    }
+
+
+    def "@dateBetween for LocalDateTime"() {
+        when:
+        def e = dataManager.load(TestDateTimeEntity)
+                .query('@dateBetween(e.localDateTime, :param, :param1)')
+                .parameter("param", LocalDateTime.now().minusDays(1))
+                .parameter("param1", LocalDateTime.now().plusDays(1))
+                .fetchPlan(FetchPlan.LOCAL)
+                .one()
+        then:
+        e == entity
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@dateBetween(e.localDateTime, :param, :param1)')
+                .parameter("param", LocalDateTime.now().plusDays(1))
+                .parameter("param1", LocalDateTime.now().plusDays(2))
+                .fetchPlan(FetchPlan.LOCAL)
+                .optional()
+                .orElse(null)
+        then:
+        e == null
+    }
+
+    def "@dateBetween for OffsetDateTime"() {
+        when:
+        def e = dataManager.load(TestDateTimeEntity)
+                .query('@dateBetween(e.offsetDateTime, :param, :param1)')
+                .parameter('param', OffsetDateTime.now().minusDays(1))
+                .parameter('param1', OffsetDateTime.now().plusDays(1))
+                .fetchPlan(FetchPlan.LOCAL)
+                .one()
+        then:
+        e == entity
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@dateBetween(e.offsetDateTime, :param, :param1)')
+                .parameter('param', OffsetDateTime.now().plusDays(1))
+                .parameter('param1', OffsetDateTime.now().plusDays(2))
+                .fetchPlan(FetchPlan.LOCAL)
+                .optional()
+                .orElse(null)
+        then:
+        e == null
+    }
+
+    def "@dateBetween for Date"() {
+        when:
+        def e = dataManager.load(TestDateTimeEntity)
+                .query('@dateBetween(e.nowDate, :param, :param1)')
+                .parameter("param", Date.from(Instant.now().minus(1, ChronoUnit.DAYS)))
+                .parameter("param1", Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
+                .fetchPlan(FetchPlan.LOCAL)
+                .one()
+        then:
+        e == entity
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@dateBetween(e.nowDate, :param, :param1)')
+                .parameter("param", Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
+                .parameter("param1", Date.from(Instant.now().plus(2, ChronoUnit.DAYS)))
+                .fetchPlan(FetchPlan.LOCAL)
+                .optional()
+                .orElse(null)
+        then:
+        e == null
+    }
+
+    //----------@today--------
 
     def "@today for DateTime"() {
         when:

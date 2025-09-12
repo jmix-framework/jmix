@@ -173,7 +173,7 @@ public class PropertyFilterSupport {
                         NOT_IN_LIST);
             } else if (dateTimeClasses.contains(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
-                        NOT_IN_LIST, IN_INTERVAL);
+                        NOT_IN_LIST, IN_INTERVAL, DATE_EQUALS);
             } else if (timeClasses.contains(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET,
                         IN_INTERVAL);
@@ -246,6 +246,7 @@ public class PropertyFilterSupport {
             case IN_LIST -> PropertyCondition.Operation.IN_LIST;
             case NOT_IN_LIST -> PropertyCondition.Operation.NOT_IN_LIST;
             case IN_INTERVAL -> PropertyCondition.Operation.IN_INTERVAL;
+            case DATE_EQUALS -> PropertyCondition.Operation.DATE_EQUALS;
             case IS_COLLECTION_EMPTY -> PropertyCondition.Operation.IS_COLLECTION_EMPTY;
             case MEMBER_OF_COLLECTION -> PropertyCondition.Operation.MEMBER_OF_COLLECTION;
             case NOT_MEMBER_OF_COLLECTION -> PropertyCondition.Operation.NOT_MEMBER_OF_COLLECTION;

@@ -57,7 +57,7 @@ public class PropertyConditionGenerator implements ConditionGenerator {
     @Override
     public String generateJoin(ConditionGenerationContext context) {
         PropertyCondition propertyCondition = (PropertyCondition) context.getCondition();
-        if (propertyCondition == null||context.getEntityName()==null) {
+        if (propertyCondition == null || context.getEntityName() == null) {
             return "";
         }
 
@@ -147,6 +147,11 @@ public class PropertyConditionGenerator implements ConditionGenerator {
                     PropertyConditionUtils.getJpqlOperation(propertyCondition));
         } else if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)) {
             return PropertyConditionUtils.getJpqlOperation(propertyCondition);
+        } else if (PropertyConditionUtils.isDateEqualsOperation(propertyCondition)) {
+            return PropertyConditionUtils.getJpqlOperation(propertyCondition)
+                    .formatted(entityAlias,
+                            property,
+                            propertyCondition.getParameterName());
         } else if (PropertyConditionUtils.isMemberOfCollectionOperation(propertyCondition)) {
             return String.format(":%s %s %s.%s",
                     propertyCondition.getParameterName(),

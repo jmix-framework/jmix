@@ -19,6 +19,7 @@ package io.jmix.restds.impl.service;
 import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
 import io.jmix.restds.annotation.RemoteService;
+import io.jmix.restds.util.RemoteServiceConfigurationCustomizer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -26,22 +27,23 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.env.Environment;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+
+import java.util.List;
 
 public class RemoteServiceBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
     private final JmixModules jmixModules;
-    private final Environment environment;
+    private final List<RemoteServiceConfigurationCustomizer> customizers;
 
-    public RemoteServiceBeanFactoryPostProcessor(JmixModules jmixModules, Environment environment) {
+    public RemoteServiceBeanFactoryPostProcessor(JmixModules jmixModules,
+                                                 List<RemoteServiceConfigurationCustomizer> customizers) {
         this.jmixModules = jmixModules;
-        this.environment = environment;
+        this.customizers = customizers;
     }
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        // Create scanner that includes interfaces
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false) {
             @Override
             protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
@@ -49,11 +51,10 @@ public class RemoteServiceBeanFactoryPostProcessor implements BeanFactoryPostPro
             }
         };
         scanner.addIncludeFilter(new AnnotationTypeFilter(RemoteService.class));
-        scanner.addIncludeFilter((metadataReader, metadataReaderFactory) -> {
-            String className = metadataReader.getClassMetadata().getClassName();
-            String property = environment.getProperty("jmix.restds.remote-service.store." + className);
-            return property != null;
-        });
+
+        for (RemoteServiceConfigurationCustomizer customizer : customizers) {
+            customizer.getScannerIncludeFilter().ifPresent(scanner::addIncludeFilter);
+        }
 
         jmixModules.getAll().stream()
                 .map(JmixModuleDescriptor::getBasePackage)
@@ -61,7 +62,23 @@ public class RemoteServiceBeanFactoryPostProcessor implements BeanFactoryPostPro
                     scanner.findCandidateComponents(basePackage).forEach(beanDefinition -> {
                         try {
                             Class<?> serviceInterface = Class.forName(beanDefinition.getBeanClassName());
-                            registerRemoteServiceBean((BeanDefinitionRegistry) beanFactory, serviceInterface);
+
+                            String storeName = null;
+                            String serviceName = null;
+                            for (RemoteServiceConfigurationCustomizer customizer : customizers) {
+                                storeName = customizer.getStoreName(serviceInterface).orElse(null);
+                                serviceName = customizer.getServiceName(serviceInterface).orElse(null);
+                            }
+                            if (storeName == null || serviceName == null) {
+                                RemoteService remoteServiceAnnotation = getRemoteServiceAnnotation(serviceInterface);
+                                if (storeName == null)
+                                    storeName = remoteServiceAnnotation.store();
+                                if (serviceName == null)
+                                    serviceName = remoteServiceAnnotation.remoteName().isEmpty() ?
+                                            serviceInterface.getSimpleName() : remoteServiceAnnotation.remoteName();
+                            }
+
+                            registerRemoteServiceBean((BeanDefinitionRegistry) beanFactory, serviceInterface, storeName, serviceName);
                         } catch (ClassNotFoundException e) {
                             throw new RuntimeException(e);
                         }
@@ -69,10 +86,19 @@ public class RemoteServiceBeanFactoryPostProcessor implements BeanFactoryPostPro
                 });
     }
 
-    private void registerRemoteServiceBean(BeanDefinitionRegistry registry, Class<?> serviceInterface) {
+    private RemoteService getRemoteServiceAnnotation(Class<?> serviceInterface) {
+        RemoteService remoteServiceAnnotation = serviceInterface.getAnnotation(RemoteService.class);
+        if (remoteServiceAnnotation == null)
+            throw new IllegalStateException("RemoteService annotation is not found for interface " + serviceInterface);
+        return remoteServiceAnnotation;
+    }
+
+    private void registerRemoteServiceBean(BeanDefinitionRegistry registry, Class<?> serviceInterface, String storeName, String serviceName) {
         GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
         beanDefinition.setBeanClass(RemoteServiceProxyFactoryBean.class);
         beanDefinition.getPropertyValues().add("serviceInterface", serviceInterface);
+        beanDefinition.getPropertyValues().add("storeName", storeName);
+        beanDefinition.getPropertyValues().add("serviceName", serviceName);
 
         String beanName = serviceInterface.getSimpleName().substring(0, 1).toLowerCase() + 
                          serviceInterface.getSimpleName().substring(1);

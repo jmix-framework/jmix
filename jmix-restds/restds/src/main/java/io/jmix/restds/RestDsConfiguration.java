@@ -20,11 +20,13 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.restds.impl.service.RemoteServiceBeanFactoryPostProcessor;
+import io.jmix.restds.util.RemoteServiceConfigurationCustomizer;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+
+import java.util.List;
 
 @Configuration
 @ComponentScan
@@ -34,7 +36,7 @@ public class RestDsConfiguration {
 
     @Bean
     public static RemoteServiceBeanFactoryPostProcessor remoteServiceBeanFactoryPostProcessor(
-            JmixModules jmixModules, Environment environment) {
-        return new RemoteServiceBeanFactoryPostProcessor(jmixModules, environment);
+            JmixModules jmixModules, List<RemoteServiceConfigurationCustomizer> customizers) {
+        return new RemoteServiceBeanFactoryPostProcessor(jmixModules, customizers);
     }
 }

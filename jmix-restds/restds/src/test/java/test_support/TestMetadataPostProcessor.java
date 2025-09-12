@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,38 +14,31 @@
  * limitations under the License.
  */
 
-package io.jmix.flowuirestds;
+package test_support;
 
-import com.google.common.base.Strings;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.MetadataMutationTools;
 import io.jmix.core.MetadataPostProcessor;
-import io.jmix.core.annotation.Internal;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.Session;
-import io.jmix.flowuirestds.genericfilter.FilterConfiguration;
-import io.jmix.flowuirestds.settings.UserSettingsItem;
+import io.jmix.samples.restds.common.entity.Product;
+import org.junit.jupiter.api.Order;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-@Internal
-@Component("flowui_RestDsEntityConfigurer")
-@Order(JmixOrder.LOWEST_PRECEDENCE - 100)
-public class RestDsEntityConfigurer implements MetadataPostProcessor {
-
-    @Value("${jmix.restds.ui-config-store:}")
-    private String uiConfigStore;
+@Component("test_TestMetadataPostProcessor")
+@Order(JmixOrder.HIGHEST_PRECEDENCE - 10)
+public class TestMetadataPostProcessor implements MetadataPostProcessor {
 
     @Autowired
     private MetadataMutationTools metadataMutationTools;
 
     @Override
     public void process(Session session) {
-        if (Strings.isNullOrEmpty(uiConfigStore))
-            return;
-
-        metadataMutationTools.setStore(UserSettingsItem.class, uiConfigStore);
-        metadataMutationTools.setStore(FilterConfiguration.class, uiConfigStore);
+        for (MetaClass metaClass : session.getClasses()) {
+            if (metaClass.getJavaClass().getPackage().equals(Product.class.getPackage())) {
+                metadataMutationTools.setStore(metaClass, "restService1");
+            }
+        }
     }
 }

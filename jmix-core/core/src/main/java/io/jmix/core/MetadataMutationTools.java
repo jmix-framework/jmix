@@ -21,6 +21,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.metamodel.model.impl.MetaClassImpl;
 import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -29,13 +30,8 @@ import org.springframework.stereotype.Component;
 @Component("core_MetadataMutationTools")
 public class MetadataMutationTools {
 
-    private final Metadata metadata;
-    private final Stores stores;
-
-    public MetadataMutationTools(Metadata metadata, Stores stores) {
-        this.metadata = metadata;
-        this.stores = stores;
-    }
+    @Autowired
+    private Stores stores;
 
     /**
      * Sets data store for the given metaclass.
@@ -49,15 +45,5 @@ public class MetadataMutationTools {
         for (MetaProperty property : metaClass.getProperties()) {
             ((MetaPropertyImpl) property).setStore(store);
         }
-    }
-
-    /**
-     * Sets data store for the given entity class.
-     *
-     * @param entityClass entity class
-     * @param storeName store name
-     */
-    public void setStore(Class<?> entityClass, String storeName) {
-        setStore(metadata.getClass(entityClass), storeName);
     }
 }

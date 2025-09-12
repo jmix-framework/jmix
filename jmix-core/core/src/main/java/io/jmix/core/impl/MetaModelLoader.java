@@ -50,7 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.env.Environment;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -95,8 +94,6 @@ public class MetaModelLoader {
             TenantId.class
     );
 
-    protected Environment environment;
-
     protected DatatypeRegistry datatypes;
 
     protected Stores stores;
@@ -107,9 +104,9 @@ public class MetaModelLoader {
 
     private static final Logger log = LoggerFactory.getLogger(MetaModelLoader.class);
 
-    public MetaModelLoader(Environment environment, DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry,
+    @Autowired
+    public MetaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry,
                            Messages messages) {
-        this.environment = environment;
         this.datatypes = datatypes;
         this.stores = stores;
         this.formatStringsRegistry = formatStringsRegistry;
@@ -186,31 +183,23 @@ public class MetaModelLoader {
     }
 
     protected void assignStore(MetaClass metaClass) {
-        String storeName;
+        Store store;
         Class<?> javaClass = metaClass.getJavaClass();
-
-        storeName = environment.getProperty("jmix.core.store." + javaClass.getName());
-        if (storeName == null) {
-            storeName = environment.getProperty("jmix.core.store." + javaClass.getPackageName());
-            if (storeName == null) {
-                io.jmix.core.metamodel.annotation.Store storeAnn = javaClass.getAnnotation(io.jmix.core.metamodel.annotation.Store.class);
-                if (storeAnn != null) {
-                    storeName = storeAnn.name();
+        io.jmix.core.metamodel.annotation.Store storeAnn = javaClass.getAnnotation(io.jmix.core.metamodel.annotation.Store.class);
+        if (storeAnn != null) {
+            store = stores.get(storeAnn.name());
+        } else {
+            if (javaClass.getAnnotation(jakarta.persistence.Entity.class) != null || javaClass.getAnnotation(Embeddable.class) != null) {
+                store = stores.get(Stores.MAIN);
+            } else {
+                if (javaClass.getAnnotation(MappedSuperclass.class) != null) {
+                    store = stores.get(Stores.UNDEFINED);
                 } else {
-                    if (javaClass.getAnnotation(jakarta.persistence.Entity.class) != null || javaClass.getAnnotation(Embeddable.class) != null) {
-                        storeName = Stores.MAIN;
-                    } else {
-                        if (javaClass.getAnnotation(MappedSuperclass.class) != null) {
-                            storeName = Stores.UNDEFINED;
-                        } else {
-                            storeName = Stores.NOOP;
-                        }
-                    }
+                    store = stores.get(Stores.NOOP);
                 }
             }
         }
-
-        ((MetaClassImpl) metaClass).setStore(stores.get(storeName));
+        ((MetaClassImpl) metaClass).setStore(store);
     }
 
     protected void initInheritedProperties(MetaClass metaClass) {

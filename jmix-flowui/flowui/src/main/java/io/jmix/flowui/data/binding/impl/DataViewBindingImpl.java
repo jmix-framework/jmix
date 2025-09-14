@@ -76,8 +76,11 @@ public class DataViewBindingImpl<C extends Component & HasDataView<V, ?, ?>, V>
     @SuppressWarnings("unchecked")
     @Override
     public void bind() {
-        if (dataProvider instanceof EntityItems && component instanceof HasValue) {
-            this.componentValueChangeRegistration = addComponentValueChangeListener();
+        if (dataProvider instanceof EntityItems) {
+            if (component instanceof HasValue) {
+                this.componentValueChangeRegistration = addComponentValueChangeListener();
+            }
+
             this.itemsChangeRegistration = ((EntityItems<V>) dataProvider).addItemsChangeListener(this::onItemsChanged);
         }
     }

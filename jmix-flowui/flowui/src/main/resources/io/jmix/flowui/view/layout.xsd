@@ -2024,6 +2024,23 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="cardThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="elevated"/>
+                    <xs:enumeration value="outlined"/>
+                    <xs:enumeration value="horizontal"/>
+                    <xs:enumeration value="stretch-media"/>
+                    <xs:enumeration value="cover-media"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="splitThemeNames">
         <xs:union>
             <xs:simpleType>
@@ -3911,6 +3928,37 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- Card -->
+    <xs:complexType name="cardContainer">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="title" type="singleLayoutOrComponentType"/>
+                    <xs:element name="subtitle" type="singleLayoutOrComponentType"/>
+
+                    <xs:element name="media" type="singleLayoutOrComponentType"/>
+                    <xs:element name="content" type="singleLayoutOrComponentType"/>
+
+                    <xs:element name="headerPrefix" type="singleLayoutOrComponentType"/>
+                    <xs:element name="header" type="singleLayoutOrComponentType"/>
+                    <xs:element name="headerSuffix" type="singleLayoutOrComponentType"/>
+
+                    <xs:element name="footer" type="singleLayoutOrComponentType"/>
+                </xs:sequence>
+
+                <xs:attribute name="title" type="resourceString"/>
+                <xs:attribute name="subtitle" type="resourceString"/>
+                <xs:attribute name="titleHeadingLevel" type="xs:integer"/>
+                <xs:attribute name="themeNames" type="cardThemeNames"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- Scroller -->
     <xs:complexType name="scrollerContainer">
         <xs:complexContent>
@@ -4109,6 +4157,26 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- GridLayout -->
+    <xs:complexType name="gridLayoutComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
+                    <xs:group ref="layoutOrComponent"/>
+                </xs:sequence>
+
+                <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
+                <xs:attribute name="columnMinWidth" type="xs:string"/>
+                <xs:attribute name="gap" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
     <!-- Login -->
 
@@ -5087,6 +5155,8 @@
                 <xs:element name="split" type="splitContainer"/>
                 <xs:element name="tabs" type="tabsContainer"/>
                 <xs:element name="accordion" type="accordionContainer"/>
+                <xs:element name="card" type="cardContainer"/>
+                <xs:element name="gridLayout" type="gridLayoutComponent"/>
 
                 <!-- Component -->
                 <xs:element name="drawerToggle" type="drawerToggleComponent"/>

@@ -21,19 +21,19 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.annotation.Experimental;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.*;
 import org.springframework.lang.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
  * Central Jmix data repository interface.
  * <p>
- * Extends functionality of {@link PagingAndSortingRepository} by adding FetchPlan parameters to common methods and providing
- * other Jmix-specific methods
+ * Extends functionality of {@link ListPagingAndSortingRepository} and {@link ListCrudRepository} by adding
+ * Jmix-specific parameters and methods.
  *
  * @param <T>  the domain type the repository manages
  * @param <ID> the type of the id of the entity the repository manages
@@ -41,7 +41,7 @@ import java.util.Optional;
  */
 @NoRepositoryBean
 @ApplyConstraints
-public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T, ID>, CrudRepository<T, ID> {
+public interface JmixDataRepository<T, ID> extends ListPagingAndSortingRepository<T, ID>, ListCrudRepository<T, ID> {
 
     /**
      * Instantiate an entity.
@@ -82,7 +82,7 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      *
      * @return all entities
      */
-    Iterable<T> findAll(FetchPlan fetchPlan);
+    List<T> findAll(FetchPlan fetchPlan);
 
     /**
      * Returns all instances of the type {@code T} loaded by {@code context}
@@ -91,7 +91,7 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      * @see JmixDataRepositoryContext
      */
     @Experimental
-    Iterable<T> findAll(JmixDataRepositoryContext context);
+    List<T> findAll(JmixDataRepositoryContext context);
 
     /**
      * Returns all instances of the type {@code T} with the given IDs loaded according to {@code fetchPlan}
@@ -104,7 +104,7 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      * {@literal ids}.
      * @throws IllegalArgumentException in case the given {@link Iterable ids} or one of its items is {@literal null}.
      */
-    Iterable<T> findAll(Iterable<ID> ids, @Nullable FetchPlan fetchPlan);
+    List<T> findAll(Iterable<ID> ids, @Nullable FetchPlan fetchPlan);
 
 
     /**
@@ -113,11 +113,14 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      * @param fetchPlan to load entity. {@link FetchPlan#BASE} will be used if {@code fetchPlan == null}
      * @return all entities sorted by the given options
      */
-    Iterable<T> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
+    List<T> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
 
     /**
      * Returns a {@link Page} of entities meeting the paging restriction provided in the {@code Pageable} object.
-     * Entities will be loaded according to passed {@code fetchPlan}
+     * Entities will be loaded according to passed {@code fetchPlan}.
+     * <p>
+     * Consider using {@link #findAllSlice(Pageable, FetchPlan)} if you don't need the total number of items and pages
+     * to avoid additional request for count to the database.
      *
      * @param fetchPlan to load entities. {@link FetchPlan#BASE} will be used if {@code fetchPlan == null}
      * @return a page of entities
@@ -125,14 +128,35 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
     Page<T> findAll(Pageable pageable, @Nullable FetchPlan fetchPlan);
 
     /**
+     * Returns a {@link Slice} of entities meeting the paging restriction provided in the {@code Pageable} object.
+     * Entities will be loaded according to passed {@code fetchPlan}
+     *
+     * @param fetchPlan to load entities. {@link FetchPlan#BASE} will be used if {@code fetchPlan == null}
+     * @return a page of entities
+     */
+    Slice<T> findAllSlice(Pageable pageable, @Nullable FetchPlan fetchPlan);
+
+    /**
      * Returns a {@link Page} of entities meeting the paging restriction provided in the {@code Pageable} object.
      * Entities will be loaded according to passed {@code params}
+     * <p>
+     * Consider using {@link #findAllSlice(Pageable, FetchPlan)} if you don't need the total number of items and pages
+     * to avoid additional request for count to the database.
      *
      * @param jmixContext {@link JmixDataRepositoryContext} to load entities.
      * @return a page of entities
      */
     @Experimental
     Page<T> findAll(Pageable pageable, JmixDataRepositoryContext jmixContext);
+
+    /**
+     * Returns a {@link Slice} of entities meeting the paging restriction provided in the {@code Pageable} object.
+     * Entities will be loaded according to passed {@code params}
+     *
+     * @param jmixContext {@link JmixDataRepositoryContext} to load entities.
+     * @return a page of entities
+     */
+    Slice<T> findAllSlice(Pageable pageable, JmixDataRepositoryContext jmixContext);
 
     /**
      * Returns the number of entities satisfying {@code context} available.

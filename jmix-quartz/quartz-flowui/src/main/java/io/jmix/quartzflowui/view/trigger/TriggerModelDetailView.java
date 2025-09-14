@@ -29,6 +29,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.select.Select;
 import io.jmix.core.Messages;
+import io.jmix.core.SaveContext;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
@@ -120,6 +121,11 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         if (misfireInstructionId == null) {
             misfireInstructionField.setValue(getDefaultMisfireInstructionId(scheduleTypeField.getValue()));
         }
+    }
+
+    @Install(target = Target.DATA_CONTEXT)
+    private Set<Object> saveDelegate(final SaveContext saveContext) {
+        return saveContext.getEntitiesToSave();
     }
 
     protected String getDefaultMisfireInstructionId(ScheduleType scheduleType) {

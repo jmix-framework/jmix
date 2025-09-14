@@ -73,7 +73,7 @@ public interface DataLoader {
     /**
      * Sets the root condition which will be used together with the query when loading entities.
      */
-    void setCondition(Condition condition);
+    void setCondition(@Nullable Condition condition);
 
     /**
      * Returns the map of query parameters.

@@ -52,6 +52,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("split", SplitLayoutLoader.class);
         loaders.put("formLayout", FormLayoutLoader.class);
         loaders.put("formItem", FormLayoutLoader.FormItemLoader.class);
+        loaders.put("card", CardLoader.class);
+        loaders.put("gridLayout", GridLayoutLoader.class);
 
         /* Components */
         loaders.put("button", ButtonLoader.class);

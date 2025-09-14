@@ -28,7 +28,7 @@ import org.springframework.lang.Nullable;
 
 import java.util.function.Consumer;
 
-public abstract class AbstractAssignActionInitTask<C extends Component> extends AbstractInitTask {
+public abstract class AbstractAssignActionInitTask<C> extends AbstractInitTask {
 
     protected C component;
     protected String actionId;

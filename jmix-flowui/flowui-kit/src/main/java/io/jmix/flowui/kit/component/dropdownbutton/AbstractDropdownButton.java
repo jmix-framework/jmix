@@ -190,7 +190,10 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
 
     @Override
     public List<DropdownButtonItem> getItems() {
-        return Collections.unmodifiableList(items);
+        return items.stream()
+                .filter(userMenuItem -> !(userMenuItem instanceof SeparatorUserMenuItem))
+                .map(hasMenuItem -> (DropdownButtonItem) hasMenuItem)
+                .toList();
     }
 
     @Override

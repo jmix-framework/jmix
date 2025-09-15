@@ -646,7 +646,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         div.className = JMIX_DAY_CELL_BOTTOM_TEXT;
         div.innerText = textInfo.text;
         if (textInfo.classNames) {
-            div.classList.add(textInfo.classNames);
+            div.classList.add(...textInfo.classNames);
         }
         return div;
     }

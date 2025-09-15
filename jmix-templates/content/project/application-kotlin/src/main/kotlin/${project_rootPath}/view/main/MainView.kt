@@ -98,7 +98,7 @@ open class MainView : StandardMainView() {
     }
 
     private fun generateUserName(user: User): String {
-        val userName = "${user.firstName ?: ""} ${user.lastName ?: ""}".trim()
+        val userName = "\${user.firstName ?: ""} \${user.lastName ?: ""}".trim()
 
         if (userName.isEmpty()) {
             return user.username!!

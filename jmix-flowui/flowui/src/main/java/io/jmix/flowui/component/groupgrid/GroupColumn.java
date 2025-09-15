@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.groupgrid;
 
+import com.vaadin.flow.component.icon.Icon;
 import org.springframework.lang.Nullable;
 
 /**
@@ -39,6 +40,9 @@ public interface GroupColumn<E> {
      */
     void setAutoHidden(boolean autoHidden);
 
+    /**
+     * @return {@code true} if the column displays the number of items in each group
+     */
     boolean isDisplayItemsCount();
 
     /**
@@ -49,6 +53,33 @@ public interface GroupColumn<E> {
      * @param displayItemsCount displayItemsCount option
      */
     void setDisplayItemsCount(boolean displayItemsCount);
+
+    /**
+     * @return {@code true} if the column displays a button that opens a popup that manages columns grouping
+     */
+    boolean isDisplayColumnsGrouper();
+
+    /**
+     * Sets whether the column displays a button that opens a popup that manages columns grouping.
+     * <p>
+     * The default value is {@code true}.
+     *
+     * @param displayColumnsGrouper displayColumnsGrouper option
+     */
+    void setDisplayColumnsGrouper(boolean displayColumnsGrouper);
+
+    /**
+     * @return the icon for the columns grouper button or {@code null} if the default icon is used
+     */
+    @Nullable
+    Icon getColumnsGrouperIcon();
+
+    /**
+     * Sets the icon for the columns grouper button.
+     *
+     * @param icon the icon to set, or {@code null} to set the default icon
+     */
+    void setColumnsGrouperIcon(@Nullable Icon icon);
 
     /**
      * @return a formatter for group cell values or {@code null} if no formatter is set.

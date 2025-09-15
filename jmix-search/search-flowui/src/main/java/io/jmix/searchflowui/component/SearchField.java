@@ -241,9 +241,6 @@ public class SearchField extends CustomField<String>
         } else {
             viewNavigators.view(UiComponentUtils.getView(this), SearchResultsView.class)
                     .withBackwardNavigation(true)
-                    .withAfterNavigationHandler(event -> {
-                        event.getView().initView(new SearchFieldContext(this));
-                    })
                     .withQueryParameters(new QueryParameters(
                             Map.of(QUERY_PARAM_VALUE, List.of(searchText),
                                     QUERY_PARAM_ENTITIES, this.getEntities(),

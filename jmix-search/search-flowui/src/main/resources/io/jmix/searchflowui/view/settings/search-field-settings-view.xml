@@ -22,10 +22,10 @@
         <action id="closeAction" type="view_close" icon="BAN"/>
     </actions>
     <layout>
-        <formLayout>
+        <formLayout id="mainForm">
             <select id="searchStrategySelector" label="msg://searchFieldSettingsView.strategy" datatype="string"
                     emptySelectionAllowed="false"/>
-            <integerField id="searchSizeField" label="msg://searchFieldSettingsView.size" min="1" max="1000"/>
+            <integerField id="searchSizeField" label="msg://searchFieldSettingsView.size" min="1" max="10000" required="true"/>
             <multiSelectComboBox id="searchEntitiesComboBox" label="msg://searchFieldSettingsView.entities"
                                  selectedItemsOnTop="true" />
         </formLayout>

@@ -20,8 +20,10 @@ package io.jmix.searchflowui.view.settings;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.Messages;
+import io.jmix.flowui.component.formlayout.JmixFormLayout;
 import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
 import io.jmix.flowui.component.textfield.JmixIntegerField;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
@@ -47,6 +49,8 @@ public class SearchFieldSettingsView extends StandardView {
     protected Select<String> searchStrategySelector;
     @ViewComponent
     protected JmixIntegerField searchSizeField;
+    @ViewComponent
+    protected JmixFormLayout mainForm;
 
     @Autowired
     protected SearchStrategyProvider<? extends SearchStrategy> searchStrategyProvider;
@@ -56,6 +60,8 @@ public class SearchFieldSettingsView extends StandardView {
     protected Messages messages;
     @Autowired
     protected SearchStrategyUtils searchStrategyUtils;
+    @Autowired
+    protected ViewValidation viewValidation;
 
     protected List<String> availableSearchStrategyNames = new ArrayList<>();
 
@@ -110,6 +116,17 @@ public class SearchFieldSettingsView extends StandardView {
     @Subscribe("closeAction")
     public void onCloseAction(final ActionPerformedEvent event) {
         close(StandardOutcome.DISCARD);
+    }
+
+    @Subscribe
+    public void onBeforeClose(final BeforeCloseEvent event) {
+        if (event.closedWith(StandardOutcome.SAVE)) {
+            ValidationErrors validationErrors = viewValidation.validateUiComponents(mainForm);
+            if (!validationErrors.isEmpty()) {
+                viewValidation.showValidationErrors(validationErrors);
+                event.preventClose();
+            }
+        }
     }
 
     protected String getLocalizedStrategyName(String strategyName) {

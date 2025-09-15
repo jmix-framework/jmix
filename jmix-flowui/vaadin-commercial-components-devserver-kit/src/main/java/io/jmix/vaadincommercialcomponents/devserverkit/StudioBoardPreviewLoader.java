@@ -39,14 +39,7 @@ public class StudioBoardPreviewLoader implements StudioPreviewComponentLoader {
         loadEnabled(resultComponent, element);
         loadSizeAttributes(resultComponent, element);
         loadClassNames(resultComponent, element);
-        element.elements("boardRow").forEach(rowElement -> {
-            Row row = new Row();
-            loadEnabled(row, rowElement);
-            loadSizeAttributes(row, rowElement);
-            loadClassNames(row, rowElement);
-            resultComponent.addRow(row);
-        });
 
-        return null;
+        return resultComponent;
     }
 }

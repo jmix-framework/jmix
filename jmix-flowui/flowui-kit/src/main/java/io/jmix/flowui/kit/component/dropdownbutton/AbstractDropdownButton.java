@@ -190,7 +190,10 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
 
     @Override
     public List<DropdownButtonItem> getItems() {
-        return Collections.unmodifiableList(items);
+        return items.stream()
+                .filter(userMenuItem -> !(userMenuItem instanceof SeparatorUserMenuItem))
+                .map(hasMenuItem -> (DropdownButtonItem) hasMenuItem)
+                .toList();
     }
 
     @Override
@@ -227,12 +230,16 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
 
     @Override
     public void addSeparator() {
-        getDropdownItem().getSubMenu().add(new Hr());
+        Hr separator = new Hr();
+        getDropdownItem().getSubMenu().addComponent(separator);
+        addItemInternal(new SeparatorUserMenuItem(separator, this), -1);
     }
 
     @Override
     public void addSeparatorAtIndex(int index) {
-        getDropdownItem().getSubMenu().addComponentAtIndex(index, new Hr());
+        Hr separator = new Hr();
+        getDropdownItem().getSubMenu().addComponentAtIndex(index, separator);
+        addItemInternal(new SeparatorUserMenuItem(separator, this), index);
     }
 
     @Override
@@ -765,5 +772,67 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     protected interface MenuItemProvider<T> {
 
         MenuItem createMenuItem(T content);
+    }
+
+    /**
+     * Blank item needed for correct insertion by index.
+     */
+    protected static class SeparatorUserMenuItem implements HasMenuItem {
+
+        protected final Component separator;
+        protected final DropdownButtonComponent parent;
+
+        public SeparatorUserMenuItem(Component separator,
+                                     DropdownButtonComponent parent) {
+            this.separator = separator;
+            this.parent = parent;
+        }
+
+        @Override
+        public DropdownButtonComponent getParent() {
+            return parent;
+        }
+
+        @Override
+        public void setItem(MenuItem item) {
+            throw new UnsupportedOperationException("%s is not linked with MenuItem"
+                    .formatted(getClass().getSimpleName()));
+        }
+
+        @Override
+        public MenuItem getItem() {
+            throw new UnsupportedOperationException("%s is not linked with MenuItem"
+                    .formatted(getClass().getSimpleName()));
+        }
+
+        @Override
+        public String getId() {
+            return "";
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+            separator.setVisible(visible);
+        }
+
+        @Override
+        public boolean isVisible() {
+            return separator.isVisible();
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {
+
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
+
+        @Override
+        public Registration addClickListener(Consumer<ClickEvent> listener) {
+            return null;
+        }
     }
 }

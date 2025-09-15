@@ -27,12 +27,17 @@ import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer
 import com.vaadin.flow.dom.ElementConstants
 import component_xml_load.screen.ComponentView
 import io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer
+import io.jmix.flowui.component.usermenu.ViewUserMenuItem
 import io.jmix.flowui.data.items.EnumDataProvider
 import io.jmix.flowui.kit.component.KeyCombination
 import io.jmix.flowui.kit.component.dropdownbutton.ActionItem
 import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant
 import io.jmix.flowui.kit.component.dropdownbutton.TextItem
+import io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem
+import io.jmix.flowui.kit.component.usermenu.ComponentUserMenuItem
+import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem
+import io.jmix.flowui.view.OpenMode
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.entity.sec.RoleType
 import test_support.spec.FlowuiTestSpecification
@@ -234,6 +239,36 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             value == 67
             visible
             width == "100px"
+        }
+    }
+
+    def "Load userMenu component from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ComponentView.class)
+
+        then: "UserMenu attributes will be loaded"
+        verifyAll(componentView.userMenu) {
+            id.get() == "userMenu"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            overlayClassName == "jmix-user-menu-overlay overlayClassName" // default class name + custom
+            style.get("color") == "red"
+            enabled
+            openOnHover
+            tabIndex == 3
+            themeNames.containsAll([DropdownButtonVariant.LUMO_SMALL.getVariantName(),
+                                    DropdownButtonVariant.LUMO_PRIMARY.getVariantName()])
+            title == "dropdownButtonTitle"
+            visible
+            getItems().size() == 5
+            (getItem("firstActionItem") as ActionUserMenuItem).getAction().getId() == "action2"
+            (getItem("secondActionItem") as ActionUserMenuItem).getAction().getText() == "Action Text"
+            ((getItem("componentItem") as ComponentUserMenuItem).getContent() as Span).getText() == "content"
+            (getItem("textItem") as TextUserMenuItem).getText() == "textItemContent"
+            (getItem("textItem") as TextUserMenuItem).getIcon().element.getAttribute("icon") ==
+                    VaadinIcon.FILE.create().element.getAttribute("icon")
+            (getItem("viewItem") as ViewUserMenuItem).getText() == "viewItemText"
+            (getItem("viewItem") as ViewUserMenuItem).getViewClass() == ComponentView
+            (getItem("viewItem") as ViewUserMenuItem).getOpenMode() == OpenMode.DIALOG
         }
     }
 

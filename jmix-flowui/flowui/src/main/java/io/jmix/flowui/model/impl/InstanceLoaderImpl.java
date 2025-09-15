@@ -244,7 +244,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     }
 
     @Override
-    public void setCondition(Condition condition) {
+    public void setCondition(@Nullable Condition condition) {
         this.condition = condition;
     }
 

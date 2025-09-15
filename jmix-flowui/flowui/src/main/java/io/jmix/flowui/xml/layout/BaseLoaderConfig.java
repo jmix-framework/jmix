@@ -52,6 +52,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("split", SplitLayoutLoader.class);
         loaders.put("formLayout", FormLayoutLoader.class);
         loaders.put("formItem", FormLayoutLoader.FormItemLoader.class);
+        loaders.put("card", CardLoader.class);
+        loaders.put("gridLayout", GridLayoutLoader.class);
 
         /* Components */
         loaders.put("button", ButtonLoader.class);
@@ -90,6 +92,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("listMenu", ListMenuLoader.class);
         loaders.put("drawerToggle", DrawerToggleLoader.class);
         loaders.put("userIndicator", UserIndicatorLoader.class);
+        loaders.put("userMenu", UserMenuLoader.class);
         loaders.put("dataGrid", DataGridLoader.class);
         loaders.put("treeDataGrid", TreeDataGridLoader.class);
         loaders.put("loginForm", LoginFormLoader.class);

@@ -18,8 +18,10 @@ package io.jmix.flowui.sys.autowire;
 
 import com.vaadin.flow.component.Composite;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager.AutowireElement;
+import io.jmix.flowui.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -56,7 +58,9 @@ public abstract class AbstractElementsDependencyInjector implements DependencyIn
         Object instance = getAutowiredInstance(type, name, view);
 
         if (instance != null) {
-            AutowireUtils.assignValue(autowireElement.getElement(), instance, view);
+            Object target = AopProxyUtils.getSingletonTarget(view);
+
+            AutowireUtils.assignValue(autowireElement.getElement(), instance, target == null ? view : ((View<?>) target));
             autowired.add(autowireElement);
         } else {
             log.trace("Skip autowiring {} of {} because instance not found",

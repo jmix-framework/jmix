@@ -41,5 +41,5 @@ public interface DataLoadContextQuery {
 
     @Nullable
     Condition getCondition();
-    DataLoadContextQuery setCondition(Condition condition);
+    DataLoadContextQuery setCondition(@Nullable Condition condition);
 }

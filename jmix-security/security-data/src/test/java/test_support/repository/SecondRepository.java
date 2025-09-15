@@ -30,7 +30,7 @@ import java.util.UUID;
 @ApplyConstraints(false)
 public interface SecondRepository extends FirstRepository {
     @Override
-    Iterable<TestOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
+    List<TestOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
 
     @Override
     @ApplyConstraints

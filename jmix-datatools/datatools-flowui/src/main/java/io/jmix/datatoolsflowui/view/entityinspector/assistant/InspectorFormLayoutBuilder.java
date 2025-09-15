@@ -123,8 +123,7 @@ public class InspectorFormLayoutBuilder {
                         continue;
                     }
                     if (metaProperty.getType() != MetaProperty.Type.ENUM
-                            && (EntityFormLayoutUtils.isByteArray(metaProperty)
-                            || EntityFormLayoutUtils.isUuid(metaProperty))
+                            && (EntityFormLayoutUtils.isByteArray(metaProperty))
                     ) {
                         continue;
                     }

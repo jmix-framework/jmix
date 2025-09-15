@@ -17,7 +17,6 @@
 package io.jmix.core.repository;
 
 import io.jmix.core.LoadContext;
-import io.jmix.core.annotation.Experimental;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +28,6 @@ import java.util.Map;
 /**
  * Helper class for {@link JmixDataRepository}. Provides methods to build {@link JmixDataRepositoryContext} by {@link LoadContext}.
  */
-@Experimental
 public class JmixDataRepositoryUtils {
     /**
      * @return {@link JmixDataRepositoryContext} with Jmix-specific parameters extracted from {@code context}

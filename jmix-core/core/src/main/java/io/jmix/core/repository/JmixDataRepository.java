@@ -18,7 +18,6 @@ package io.jmix.core.repository;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.annotation.Experimental;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -90,7 +89,6 @@ public interface JmixDataRepository<T, ID> extends ListPagingAndSortingRepositor
      * @return entities by context
      * @see JmixDataRepositoryContext
      */
-    @Experimental
     List<T> findAll(JmixDataRepositoryContext context);
 
     /**
@@ -146,7 +144,6 @@ public interface JmixDataRepository<T, ID> extends ListPagingAndSortingRepositor
      * @param jmixContext {@link JmixDataRepositoryContext} to load entities.
      * @return a page of entities
      */
-    @Experimental
     Page<T> findAll(Pageable pageable, JmixDataRepositoryContext jmixContext);
 
     /**
@@ -163,7 +160,6 @@ public interface JmixDataRepository<T, ID> extends ListPagingAndSortingRepositor
      *
      * @return the number of entities satisfying {@code context}.
      */
-    @Experimental
     long count(JmixDataRepositoryContext context);
 
     /**

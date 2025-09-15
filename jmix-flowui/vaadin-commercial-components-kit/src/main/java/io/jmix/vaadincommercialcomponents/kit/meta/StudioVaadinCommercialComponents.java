@@ -164,6 +164,38 @@ public interface StudioVaadinCommercialComponents {
                             methodName = "setSpreadsheetComponentFactory",
                             parameterType = "com.vaadin.flow.component.spreadsheet.SpreadsheetComponentFactory"
                     )
+            },
+            customSubscriptions = {
+                    @StudioCustomSubscription(
+                            methodName = "addSelectionChangeListener",
+                            parameterType = "com.vaadin.flow.component.spreadsheet.Spreadsheet.SelectionChangeListener",
+                            eventClassFqn = "com.vaadin.flow.component.spreadsheet.Spreadsheet.SelectionChangeEvent"
+                    ),
+                    @StudioCustomSubscription(
+                            methodName = "addCellValueChangeListener",
+                            parameterType = "com.vaadin.flow.component.spreadsheet.Spreadsheet.CellValueChangeListener",
+                            eventClassFqn = "com.vaadin.flow.component.spreadsheet.Spreadsheet.CellValueChangeEvent"
+                    ),
+                    @StudioCustomSubscription(
+                            methodName = "addFormulaValueChangeListener",
+                            parameterType = "com.vaadin.flow.component.spreadsheet.Spreadsheet.FormulaValueChangeListener",
+                            eventClassFqn = "com.vaadin.flow.component.spreadsheet.Spreadsheet.FormulaValueChangeEvent"
+                    ),
+                    @StudioCustomSubscription(
+                            methodName = "addProtectedEditListener",
+                            parameterType = "com.vaadin.flow.component.spreadsheet.Spreadsheet.ProtectedEditListener",
+                            eventClassFqn = "com.vaadin.flow.component.spreadsheet.Spreadsheet.ProtectedEditEvent"
+                    ),
+                    @StudioCustomSubscription(
+                            methodName = "addSheetChangeListener",
+                            parameterType = "com.vaadin.flow.component.spreadsheet.Spreadsheet.SheetChangeListener",
+                            eventClassFqn = "com.vaadin.flow.component.spreadsheet.Spreadsheet.SheetChangeEvent"
+                    ),
+                    @StudioCustomSubscription(
+                            methodName = "addRowHeaderDoubleClickListener",
+                            parameterType = "com.vaadin.flow.component.spreadsheet.Spreadsheet.RowHeaderDoubleClickListener",
+                            eventClassFqn = "com.vaadin.flow.component.spreadsheet.Spreadsheet.RowHeaderDoubleClickEvent"
+                    )
             }
     )
     Spreadsheet spreadsheet();

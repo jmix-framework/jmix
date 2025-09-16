@@ -17,39 +17,38 @@
 package io.jmix.bulkeditor.view.builder;
 
 import com.vaadin.flow.component.Focusable;
-import io.jmix.bulkeditor.view.BulkEditViewContext;
 import io.jmix.bulkeditor.view.BulkEditView;
+import io.jmix.bulkeditor.view.BulkEditViewContext;
+import io.jmix.core.DevelopmentException;
+import io.jmix.core.EntitySet;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.data.ContainerDataUnit;
-import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.DataLoader;
-import io.jmix.flowui.model.HasLoader;
+import io.jmix.flowui.model.DataContext;
+import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.WindowBuilder;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
-
+import static io.jmix.flowui.view.ViewControllerUtils.getViewData;
 
 /**
  * A bean that creates an instance of {@link BulkEditorBuilder}.
  */
 @Component("bulked_BulkEditors")
 public class BulkEditors {
-
-    private static final Logger log = LoggerFactory.getLogger(BulkEditors.class);
 
     protected final DialogWindows dialogWindows;
 
@@ -78,9 +77,10 @@ public class BulkEditors {
                 .withAfterCloseListener(createAfterCloseHandler(builder))
                 .build();
 
+        BulkEditView<E> bulkEditorWindow = dialogWindow.getView();
+        setupParentDataContext(builder, bulkEditorWindow);
 
         BulkEditViewContext<E> context = createBulkEditorContext(builder);
-        BulkEditView<E> bulkEditorWindow = dialogWindow.getView();
         bulkEditorWindow.setBulkEditorContext(context);
 
         return dialogWindow;
@@ -90,30 +90,26 @@ public class BulkEditors {
             BulkEditorBuilder<E> builder) {
         return afterCloseEvent -> {
             ListDataComponent<E> listDataComponent = builder.getListDataComponent();
-            if (afterCloseEvent.closedWith(StandardOutcome.SAVE) && listDataComponent != null) {
-                refreshItems(listDataComponent.getItems());
+            if (afterCloseEvent.closedWith(StandardOutcome.SAVE)
+                    && listDataComponent != null
+                    && listDataComponent.getItems() instanceof ContainerDataUnit<?> containerDataUnit) {
+                replaceItems(containerDataUnit.getContainer(), afterCloseEvent.getView());
             }
-            if (listDataComponent instanceof Focusable<?> focusable) {
+
+            if (builder.getListDataComponent() instanceof Focusable<?> focusable) {
                 focusable.focus();
             }
         };
     }
 
-    protected void refreshItems(@Nullable DataUnit dataUnit) {
-        if (dataUnit instanceof ContainerDataUnit) {
-            CollectionContainer<?> container = ((ContainerDataUnit<?>) dataUnit).getContainer();
-
-            DataLoader loader = null;
-            if (container instanceof HasLoader) {
-                loader = ((HasLoader) container).getLoader();
-            }
-
-            if (loader != null) {
-                loader.load();
-            } else {
-                log.warn("Target container has no loader, refresh is impossible");
-            }
+    protected <E> void replaceItems(CollectionContainer<E> collectionContainer, BulkEditView<?> view) {
+        EntitySet savedItems = view.getSavedItems();
+        if (savedItems == null) {
+            return;
         }
+
+        Collection<E> saved = savedItems.getAll(collectionContainer.getEntityMetaClass().getJavaClass());
+        saved.forEach(collectionContainer::replaceItem);
     }
 
     protected <E> BulkEditViewContext<E> createBulkEditorContext(BulkEditorBuilder<E> builder) {
@@ -126,5 +122,36 @@ public class BulkEditors {
         context.setFieldSorter(builder.getFieldSorter());
 
         return context;
+    }
+
+    protected <E> void setupParentDataContext(BulkEditorBuilder<E> builder, BulkEditView<E> view) {
+        DataContext parentDataContext = builder.getParentDataContext();
+        if (parentDataContext == null && builder.getListDataComponent() != null
+                && builder.getListDataComponent().getItems() instanceof ContainerDataUnit<?> containerDataUnit
+                && containerDataUnit.getContainer() instanceof Nested nestedContainer) {
+            InstanceContainer<?> masterContainer = nestedContainer.getMaster();
+            String property = nestedContainer.getProperty();
+
+            MetaClass masterMetaClass = masterContainer.getEntityMetaClass();
+            MetaProperty metaProperty = masterMetaClass.getProperty(property);
+
+            if (metaProperty.getType() == MetaProperty.Type.COMPOSITION) {
+                parentDataContext = getViewData(builder.getOrigin()).getDataContextOrNull();
+            }
+        }
+
+        if (parentDataContext != null) {
+            DataContext childContext = getViewData(view).getDataContextOrNull();
+            checkDataContext(view, childContext);
+            //noinspection ConstantConditions
+            childContext.setParent(parentDataContext);
+        }
+    }
+
+    protected void checkDataContext(View<?> view, @Nullable DataContext dataContext) {
+        if (dataContext == null) {
+            throw new DevelopmentException(
+                    String.format("No DataContext in view '%s'. Composition editing is impossible.", view.getId()));
+        }
     }
 }

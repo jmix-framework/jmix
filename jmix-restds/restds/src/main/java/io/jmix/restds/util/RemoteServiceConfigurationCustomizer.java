@@ -18,8 +18,7 @@ package io.jmix.restds.util;
 
 import io.jmix.core.JmixOrder;
 import org.springframework.core.type.filter.TypeFilter;
-
-import java.util.Optional;
+import org.springframework.lang.Nullable;
 
 /**
  * Interface for customizing the configuration of services available through the REST DataStore.
@@ -33,23 +32,61 @@ public interface RemoteServiceConfigurationCustomizer {
     /**
      * Returns a filter to include certain classes when searching for remote service interfaces.
      *
-     * @return a filter or empty {@code Optional} for no additional filtering
+     * @return a filter or null for no additional filtering
      */
-    Optional<TypeFilter> getScannerIncludeFilter();
+    @Nullable
+    TypeFilter getScannerIncludeFilter();
 
     /**
-     * Returns the name of the data store for the given remote service.
+     * Returns the service parameters for the given remote service.
      *
      * @param serviceInterface remote service interface
-     * @return data store name or empty {@code Optional} to skip customization
+     * @return service parameters or null to skip customization
      */
-    Optional<String> getStoreName(Class<?> serviceInterface);
+    @Nullable
+    ServiceParameters getServiceParameters(Class<?> serviceInterface);
 
     /**
-     * Returns the remote name for the given remote service.
-     *
-     * @param serviceInterface remote service interface
-     * @return remote name or empty {@code Optional} to skip customization
+     * Service parameters: data store name and remote service name.
      */
-    Optional<String> getServiceName(Class<?> serviceInterface);
+    class ServiceParameters {
+
+        private String storeName;
+        private String serviceName;
+
+        public ServiceParameters() {
+        }
+
+        @Nullable
+        public String getStoreName() {
+            return storeName;
+        }
+
+        @Nullable
+        public String getServiceName() {
+            return serviceName;
+        }
+
+        /**
+         * Sets the data store name.
+         *
+         * @param storeName data store name
+         * @return this instance for chaining
+         */
+        public ServiceParameters withStoreName(String storeName) {
+            this.storeName = storeName;
+            return this;
+        }
+
+        /**
+         * Sets the remote service name.
+         *
+         * @param serviceName remote service name
+         * @return this instance for chaining
+         */
+        public ServiceParameters withServiceName(String serviceName) {
+            this.serviceName = serviceName;
+            return this;
+        }
+    }
 }

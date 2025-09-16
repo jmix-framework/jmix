@@ -28,6 +28,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.core.type.filter.TypeFilter;
 
 import java.util.List;
 
@@ -53,7 +54,9 @@ public class RemoteServiceBeanFactoryPostProcessor implements BeanFactoryPostPro
         scanner.addIncludeFilter(new AnnotationTypeFilter(RemoteService.class));
 
         for (RemoteServiceConfigurationCustomizer customizer : customizers) {
-            customizer.getScannerIncludeFilter().ifPresent(scanner::addIncludeFilter);
+            TypeFilter filter = customizer.getScannerIncludeFilter();
+            if (filter != null)
+                scanner.addIncludeFilter(filter);
         }
 
         jmixModules.getAll().stream()
@@ -65,17 +68,31 @@ public class RemoteServiceBeanFactoryPostProcessor implements BeanFactoryPostPro
 
                             String storeName = null;
                             String serviceName = null;
+
                             for (RemoteServiceConfigurationCustomizer customizer : customizers) {
-                                storeName = customizer.getStoreName(serviceInterface).orElse(null);
-                                serviceName = customizer.getServiceName(serviceInterface).orElse(null);
+                                RemoteServiceConfigurationCustomizer.ServiceParameters serviceParameters =
+                                        customizer.getServiceParameters(serviceInterface);
+                                if (serviceParameters != null) {
+                                    if (serviceParameters.getStoreName() != null)
+                                        storeName = serviceParameters.getStoreName();
+                                    if (serviceParameters.getServiceName() != null)
+                                        serviceName = serviceParameters.getServiceName();
+                                }
                             }
-                            if (storeName == null || serviceName == null) {
-                                RemoteService remoteServiceAnnotation = getRemoteServiceAnnotation(serviceInterface);
-                                if (storeName == null)
-                                    storeName = remoteServiceAnnotation.store();
-                                if (serviceName == null)
-                                    serviceName = remoteServiceAnnotation.remoteName().isEmpty() ?
-                                            serviceInterface.getSimpleName() : remoteServiceAnnotation.remoteName();
+
+                            RemoteService remoteServiceAnnotation = serviceInterface.getAnnotation(RemoteService.class);
+
+                            if (storeName == null) {
+                                if (remoteServiceAnnotation == null)
+                                    throw new IllegalStateException("Cannot determine store for interface " + serviceInterface);
+                                storeName = getRemoteServiceAnnotation(serviceInterface).store();
+                            }
+                            if (serviceName == null) {
+                                if (remoteServiceAnnotation != null && !remoteServiceAnnotation.remoteName().isEmpty()) {
+                                    serviceName = remoteServiceAnnotation.remoteName();
+                                } else {
+                                    serviceName = serviceInterface.getSimpleName();
+                                }
                             }
 
                             registerRemoteServiceBean((BeanDefinitionRegistry) beanFactory, serviceInterface, storeName, serviceName);

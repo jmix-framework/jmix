@@ -23,29 +23,23 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 @Order(JmixOrder.HIGHEST_PRECEDENCE - 10)
 public class TestRemoteServiceConfigurationCustomizer implements RemoteServiceConfigurationCustomizer {
 
     @Override
-    public Optional<TypeFilter> getScannerIncludeFilter() {
-        return Optional.of((metadataReader, metadataReaderFactory) -> {
+    public TypeFilter getScannerIncludeFilter() {
+        return ((metadataReader, metadataReaderFactory) -> {
             String className = metadataReader.getClassMetadata().getClassName();
             return ProductService.class.getName().equals(className);
         });
     }
 
     @Override
-    public Optional<String> getStoreName(Class<?> serviceInterface) {
-        return serviceInterface.equals(ProductService.class) ?
-                Optional.of("restService1") : Optional.empty();
-    }
-
-    @Override
-    public Optional<String> getServiceName(Class<?> serviceInterface) {
-        return serviceInterface.equals(ProductService.class) ?
-                Optional.of("app_Products") : Optional.empty();
+    public ServiceParameters getServiceParameters(Class<?> serviceInterface) {
+        if (serviceInterface.equals(ProductService.class))
+            return new ServiceParameters().withStoreName("restService1").withServiceName("app_Products");
+        else
+            return null;
     }
 }

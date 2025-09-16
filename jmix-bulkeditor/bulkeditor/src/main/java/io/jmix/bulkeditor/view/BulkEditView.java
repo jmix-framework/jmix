@@ -16,13 +16,7 @@
 
 package io.jmix.bulkeditor.view;
 
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Focusable;
-import com.vaadin.flow.component.HasLabel;
-import com.vaadin.flow.component.HasSize;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -34,16 +28,7 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.Route;
 import io.jmix.bulkeditor.view.BulkEditViewDataLoadSupport.LoadDescriptor;
-import io.jmix.core.DataManager;
-import io.jmix.core.EntitySet;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanBuilder;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.FetchPlans;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.SaveContext;
+import io.jmix.core.*;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -65,19 +50,10 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
-import io.jmix.flowui.view.ChangeTrackerCloseAction;
-import io.jmix.flowui.view.CloseAction;
-import io.jmix.flowui.view.DialogMode;
-import io.jmix.flowui.view.MessageBundle;
-import io.jmix.flowui.view.StandardOutcome;
-import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
-import io.jmix.flowui.view.ViewValidation;
+import io.jmix.flowui.view.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.metadata.BeanDescriptor;
 import org.apache.commons.lang3.StringUtils;
@@ -87,14 +63,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -118,7 +87,7 @@ public class BulkEditView<E> extends StandardView {
     @Autowired
     protected BulkEditViewDataLoadSupport dataLoadSupport;
     @Autowired
-    protected DataManager dataManager;
+    protected DataComponents dataComponents;
     @Autowired
     protected Dialogs dialogs;
     @Autowired
@@ -156,6 +125,12 @@ public class BulkEditView<E> extends StandardView {
 
     protected List<E> items;
     protected FetchPlan fetchPlan;
+    protected EntitySet saved;
+
+    @Subscribe
+    public void onInit(InitEvent event) {
+        getViewData().setDataContext(dataComponents.createDataContext());
+    }
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -238,9 +213,14 @@ public class BulkEditView<E> extends StandardView {
         return builder.build();
     }
 
+    @SuppressWarnings("unchecked")
     protected void loadItems() {
-        LoadDescriptor<E> ld = new LoadDescriptor<>(context.getSelectedItems(), context.getMetaClass(), fetchPlan);
-        items = dataLoadSupport.reload(ld);
+        MetaClass metaClass = context.getMetaClass();
+
+        LoadDescriptor<E> ld = new LoadDescriptor<>(context.getSelectedItems(), metaClass, fetchPlan);
+        items = ((List<E>) getViewData().getDataContext()
+                .merge(dataLoadSupport.reload(ld))
+                .getAll(metaClass.getJavaClass()));
     }
 
     protected void createDataComponents() {
@@ -553,7 +533,7 @@ public class BulkEditView<E> extends StandardView {
             }
         }
 
-        EntitySet saved = dataManager.save(new SaveContext().saving(items));
+        saved = getViewData().getDataContext().save(true);
 
         Logger logger = LoggerFactory.getLogger(BulkEditView.class);
         logger.info("Applied bulk editing for {} entries of {}. Changed properties: {}",
@@ -565,5 +545,13 @@ public class BulkEditView<E> extends StandardView {
                 .show();
 
         close(StandardOutcome.SAVE);
+    }
+
+    /**
+     * @return saved items
+     */
+    @Nullable
+    public EntitySet getSavedItems() {
+        return saved;
     }
 }

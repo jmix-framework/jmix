@@ -34,6 +34,7 @@ public class StudioSpreadsheetPreviewLoader implements StudioPreviewComponentLoa
     @Override
     public Component load(Element element, Element viewElement) {
         Spreadsheet resultComponent = new Spreadsheet();
+
         loadBoolean(element, "chartsEnabled", resultComponent::setChartsEnabled);
         loadInteger(element, "activeSheetIndex", resultComponent::setActiveSheetIndex);
         loadInteger(element, "activeSheetWithPOIIndex", resultComponent::setActiveSheetWithPOIIndex);
@@ -65,6 +66,6 @@ public class StudioSpreadsheetPreviewLoader implements StudioPreviewComponentLoa
         loadSizeAttributes(resultComponent, element);
         loadClassNames(resultComponent, element);
 
-        return null;
+        return resultComponent;
     }
 }

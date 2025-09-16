@@ -30,6 +30,7 @@ public interface StudioVaadinCommercialComponentsElements {
             xmlnsAlias = "vcc",
             icon = "io/jmix/vaadincommercialcomponents/kit/meta/icon/element/boardRow.svg",
             target = {"com.vaadin.flow.component.board.Row", "com.vaadin.flow.component.board.Board"},
+            visible = true,
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
                             qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,

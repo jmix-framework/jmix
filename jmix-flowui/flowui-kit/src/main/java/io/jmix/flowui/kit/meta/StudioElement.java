@@ -103,6 +103,16 @@ public @interface StudioElement {
     StudioSupplyHandler[] supplyHandlers() default {};
 
     /**
+     * @see StudioComponent#customSubscriptions
+     */
+    StudioCustomSubscription[] customSubscriptions() default {};
+
+    /**
+     * @see StudioComponent#customInstalls
+     */
+    StudioCustomInstall[] customInstalls() default {};
+
+    /**
      * @see StudioComponent#availableChildren
      */
     StudioAvailableChildrenInfo availableChildren() default @StudioAvailableChildrenInfo();

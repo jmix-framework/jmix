@@ -16,6 +16,8 @@ export const NOW_INDICATOR_CLASS_NAMES = 'nowIndicatorClassNames';
 export const NAV_LINK_DAY_CLICK = 'navLinkDayClick';
 export const NAV_LINK_WEEK_CLICK = 'navLinkWeekClick';
 export const DAY_CELL_BOTTOM_TEXT = 'dayCellBottomText';
+export const CURRENT_DATE = 'currentDate';
+export const CURRENT_SELECTION = 'currentSelection';
 const EVENT_OVERLAP = 'eventOverlap';
 const SELECT_OVERLAP = 'selectOverlap';
 const EVENT_CONSTRAINT = 'eventConstraint';
@@ -27,10 +29,14 @@ const DAY_MAX_EVENT_ROWS = 'dayMaxEventRows';
 const DAY_MAX_EVENTS = 'dayMaxEvents';
 const EVENT_ORDER = 'eventOrder';
 
-const COMPLEX_OPTIONS = [MORE_LINK_CLICK, MORE_LINK_CLASS_NAMES, UNSELECT_CANCEL, DAY_HEADER_CLASS_NAMES,
+/**
+ * Options that should be skipped by default FullCalendar updating and should be updated manually.
+ * Because they don't exist in FullCalendar or have complex content.
+ */
+const SKIP_OPTIONS = [MORE_LINK_CLICK, MORE_LINK_CLASS_NAMES, UNSELECT_CANCEL, DAY_HEADER_CLASS_NAMES,
     DAY_CELL_CLASS_NAMES, SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES, NAV_LINK_DAY_CLICK, NAV_LINK_WEEK_CLICK,
     DAY_CELL_BOTTOM_TEXT, EVENT_OVERLAP, SELECT_OVERLAP, EVENT_CONSTRAINT, BUSINESS_HOURS, SELECT_CONSTRAINT,
-    SELECT_ALLOW, VIEWS, DAY_MAX_EVENT_ROWS, DAY_MAX_EVENTS, EVENT_ORDER];
+    SELECT_ALLOW, VIEWS, DAY_MAX_EVENT_ROWS, DAY_MAX_EVENTS, EVENT_ORDER, CURRENT_SELECTION, CURRENT_DATE];
 
 class Options {
 
@@ -86,6 +92,8 @@ class Options {
             this._updateNavLinkWeekClick(options);
 
             this._updateDyCellBottomText(options);
+            this._updateCurrentDate(options);
+            this._updateCurrentSelection(options);
         });
     }
 
@@ -223,6 +231,12 @@ class Options {
         this._updateDyCellBottomText(options);
         delete options.dayCellBottomText;
 
+        this._updateCurrentDate(options);
+        delete options.currentDate;
+
+        this._updateCurrentSelection(options);
+        delete options.currentSelection;
+
         return options;
     }
 
@@ -297,7 +311,7 @@ class Options {
     }
 
     _skipOption(key) {
-        return COMPLEX_OPTIONS.includes(key);
+        return SKIP_OPTIONS.includes(key);
     }
 
     _getMoreLinkClick(options) {
@@ -696,6 +710,30 @@ class Options {
             textGeneratorEnabled: dayCellBottomText.textGeneratorEnabled,
             classNamesGeneratorEnabled: dayCellBottomText.classNamesGeneratorEnabled
         }
+    }
+
+    _updateCurrentDate(options) {
+        const currentDate = options[CURRENT_DATE];
+
+        if (!currentDate) {
+            return;
+        }
+
+        this.customOptions[CURRENT_DATE] = currentDate;
+    }
+
+    _updateCurrentSelection(options) {
+        const currentSelection = options[CURRENT_SELECTION];
+
+        if (!currentSelection) {
+            return;
+        }
+
+        this.customOptions[CURRENT_SELECTION] = {
+            allDay: currentSelection.allDay,
+            startDateTime: currentSelection.startDateTime,
+            endDateTime: currentSelection.endDateTime
+        };
     }
 
     _onMoreLinkClick(e) {

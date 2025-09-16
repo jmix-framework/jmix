@@ -1206,6 +1206,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Override
     protected void onSelect(SelectDomEvent event) {
+        super.onSelect(event);
+
         DomSelect clientEvent = deserializer.deserialize(event.getContext(), DomSelect.class);
 
         MouseEventDetails mouseEventDetails = clientEvent.getMouseDetails() != null
@@ -1224,6 +1226,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Override
     protected void onUnselect(UnselectDomEvent event) {
+        super.onUnselect(event);
+
         DomUnselect clientEvent = deserializer.deserialize(event.getContext(), DomUnselect.class);
 
         MouseEventDetails mouseEventDetails = clientEvent.getMouseDetails() != null

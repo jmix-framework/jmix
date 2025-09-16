@@ -59,6 +59,8 @@ public class JmixFullCalendarOptions {
         initialOptionsMap.put(WEEK_NUMBER_FORMAT, new SimpleOption<>(WEEK_NUMBER_FORMAT));
 
         optionsMap.put(ALL_DAY_MAINTAIN_DURATION, new SimpleOption<>(ALL_DAY_MAINTAIN_DURATION, false));
+        optionsMap.put(CURRENT_DATE, new SimpleOption<>(CURRENT_DATE, null));
+        optionsMap.put(CURRENT_SELECTION, new CurrentSelection());
         optionsMap.put(DAY_HEADERS, new SimpleOption<>(DAY_HEADERS, true));
         optionsMap.put(DAY_MAX_EVENTS, new DayMaxEvents());
         optionsMap.put(DAY_MAX_EVENT_ROWS, new DayMaxEventRows());
@@ -145,6 +147,14 @@ public class JmixFullCalendarOptions {
 
     public void unmarkAllAsDirty() {
         optionsMap.values().forEach(CalendarOption::unmarkAsDirty);
+    }
+
+    public SimpleOption<LocalDate> getCurrentDate() {
+        return get(CURRENT_DATE);
+    }
+
+    public CurrentSelection getCurrentSelection() {
+        return get(CURRENT_SELECTION);
     }
 
     public SimpleOption<Boolean> getWeekNumbers() {

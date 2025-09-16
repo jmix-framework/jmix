@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta.element;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
@@ -1370,6 +1371,7 @@ public interface StudioElements {
             xmlElement = "content",
             target = "io.jmix.flowui.component.card.JmixCard",
             unlimitedCount = false,
+            visible = true,
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
                             qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
@@ -1377,7 +1379,7 @@ public interface StudioElements {
                     )
             )
     )
-    void cardContent();
+    Div cardContent();
 
     @StudioElement(
             name = "HeaderPrefix",

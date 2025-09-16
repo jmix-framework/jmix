@@ -671,10 +671,7 @@ public interface StudioElements {
             name = "Separator",
             classFqn = "io.jmix.flowui.kit.component.stub.UserMenuStubSeparatorItem",
             xmlElement = "separator",
-            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#separator",
-            properties = {
-                    @StudioProperty(xmlAttribute = "itemId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING)
-            }
+            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#separator"
     )
     UserMenuItem userMenuSeparator();
     //endregion

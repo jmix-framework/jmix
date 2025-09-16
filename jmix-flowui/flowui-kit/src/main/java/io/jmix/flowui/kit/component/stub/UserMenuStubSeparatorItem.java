@@ -16,10 +16,18 @@
 
 package io.jmix.flowui.kit.component.stub;
 
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
+import io.jmix.flowui.kit.meta.StudioIgnore;
+
+import java.beans.PropertyChangeEvent;
+import java.util.function.Consumer;
 
 /**
  * For Studio use only.
  */
 interface UserMenuStubSeparatorItem extends UserMenuItem {
+    @StudioIgnore
+    @Override
+    Registration addPropertyChangeListener(Consumer<PropertyChangeEvent> listener);
 }

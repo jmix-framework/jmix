@@ -60,9 +60,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     protected JsonFactory jsonFactory;
 
-    protected CalendarDisplayMode displayMode;
-    protected LocalDate currentDate;
-
     protected Map<String, StateTree.ExecutionRegistration> itemsDataProvidersExecutionMap = new HashMap<>(2);
     protected Map<String, StateTree.ExecutionRegistration> callbackDataProvidersExecutionMap = new HashMap<>(2);
     protected StateTree.ExecutionRegistration synchronizeOptionsExecution;
@@ -94,6 +91,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         attachMoreLinkClickDomEventListener();
         attachDayNavigationLinkClickDomEventListener();
         attachWeekNavigationLinkClickDomEventListener();
+        attachSelectDomEventListener();
     }
 
     /**
@@ -124,8 +122,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * @return current calendar display mode
      */
     public CalendarDisplayMode getCurrentCalendarDisplayMode() {
-        if (displayMode != null) {
-            return displayMode;
+        CalendarDisplayMode currentDisplayMode = options.getCurrentView().getValue();
+        if (currentDisplayMode != null) {
+            return currentDisplayMode;
         }
         CalendarDisplayMode initialDisplayMode = options.getInitialDisplayMode().getValue();
         if (initialDisplayMode != null) {
@@ -2272,7 +2271,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     protected void onDatesSet(DatesSetDomEvent event) {
-        displayMode = getDisplayMode(event.getViewType());
+        options.getCurrentView().setValue(getDisplayMode(event.getViewType()));
         options.getCurrentDate().setValue(CalendarDateTimeUtils.parseIsoDate(event.getCurrentDate()));
     }
 

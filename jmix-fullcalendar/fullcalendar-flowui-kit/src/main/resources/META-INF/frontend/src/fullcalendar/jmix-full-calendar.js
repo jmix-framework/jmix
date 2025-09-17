@@ -23,6 +23,7 @@ import Options, {
     DAY_CELL_CLASS_NAMES,
     CURRENT_DATE,
     CURRENT_SELECTION,
+    CURRENT_VIEW,
     SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES, NAV_LINK_DAY_CLICK, NAV_LINK_WEEK_CLICK, DAY_CELL_BOTTOM_TEXT
 } from './Options.js';
 
@@ -132,6 +133,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _restoreState() {
+        const currentView = this.jmixOptions.getOption(CURRENT_VIEW);
+        if (currentView) {
+            this.calendar.changeView(currentView);
+        }
         const currentDate = this.jmixOptions.getOption(CURRENT_DATE);
         if (currentDate) {
             this.calendar.gotoDate(currentDate);

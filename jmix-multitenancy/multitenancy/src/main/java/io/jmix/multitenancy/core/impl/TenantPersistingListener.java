@@ -20,6 +20,8 @@ import io.jmix.core.event.EntitySavingEvent;
 import io.jmix.multitenancy.core.TenantEntityOperation;
 import io.jmix.multitenancy.core.TenantProvider;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component("mten_TenantPersistingListener")
@@ -35,6 +37,7 @@ public class TenantPersistingListener {
     }
 
     @EventListener
+    @Order(Ordered.LOWEST_PRECEDENCE - 1000)
     public void beforePersist(EntitySavingEvent event) {
         Object entity = event.getEntity();
         String tenantId = tenantProvider.getCurrentUserTenantId();

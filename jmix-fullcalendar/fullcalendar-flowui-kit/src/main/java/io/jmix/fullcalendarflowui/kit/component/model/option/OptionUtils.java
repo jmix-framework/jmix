@@ -97,17 +97,22 @@ public final class OptionUtils {
     public static final String EVENT_ORDER = "eventOrder";
 
     /**
-     * Jmix custom option. Used for restoring current date when component is reattached.
+     * Jmix option. Used for restoring current date when component is reattached.
      */
     public static final String CURRENT_DATE = "currentDate";
 
     /**
-     * Jmix custom option. Used for restoring current selection when a component is reattached.
+     * Jmix option. Used for restoring current selection when a component is reattached.
      */
     public static final String CURRENT_SELECTION = "currentSelection";
 
     /**
-     * Jmix custom option. Used for generating bottom text in cell and class names for it.
+     * Jmix option. Used for restoring current display mode when a component is reattached.
+     */
+    public static final String CURRENT_VIEW = "currentView";
+
+    /**
+     * Jmix option. Used for generating bottom text in cell and class names for it.
      */
     public static final String DAY_CELL_BOTTOM_TEXT = "dayCellBottomText";
 

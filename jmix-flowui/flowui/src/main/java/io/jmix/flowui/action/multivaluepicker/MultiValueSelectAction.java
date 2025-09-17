@@ -242,6 +242,7 @@ public class MultiValueSelectAction<E>
         viewInitializer.setViewConfigurer(viewConfigurer);
     }
 
+    @Nullable
     @Override
     public <V extends View<?>> Consumer<V> getViewConfigurer() {
         return viewInitializer.getViewConfigurer();

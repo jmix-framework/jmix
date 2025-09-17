@@ -711,18 +711,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
      * @return a registration object for removing an event listener added to a component
      */
     public Registration addSelectListener(ComponentEventListener<SelectEvent> listener) {
-        if (!getEventBus().hasListener(SelectEvent.class)) {
-            attachSelectDomEventListener();
-        }
-
-        Registration registration = getEventBus().addListener(SelectEvent.class, listener);
-
-        return () -> {
-            registration.remove();
-            if (!getEventBus().hasListener(SelectEvent.class)) {
-                detachSelectDomEventListener();
-            }
-        };
+        return getEventBus().addListener(SelectEvent.class, listener);
     }
 
     /**
@@ -1206,6 +1195,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Override
     protected void onSelect(SelectDomEvent event) {
+        super.onSelect(event);
+
         DomSelect clientEvent = deserializer.deserialize(event.getContext(), DomSelect.class);
 
         MouseEventDetails mouseEventDetails = clientEvent.getMouseDetails() != null
@@ -1224,6 +1215,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Override
     protected void onUnselect(UnselectDomEvent event) {
+        super.onUnselect(event);
+
         DomUnselect clientEvent = deserializer.deserialize(event.getContext(), DomUnselect.class);
 
         MouseEventDetails mouseEventDetails = clientEvent.getMouseDetails() != null

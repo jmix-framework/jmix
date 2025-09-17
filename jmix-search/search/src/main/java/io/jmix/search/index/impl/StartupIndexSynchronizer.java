@@ -31,7 +31,6 @@ import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Synchronizes search indexes on application startup.
@@ -53,6 +52,11 @@ public class StartupIndexSynchronizer {
     @PostConstruct
     protected void postConstruct() {
         try {
+            if (!searchProperties.isEnabled()) {
+                log.info("Unable to start index synchronization: Search add-on is disabled");
+                return;
+            }
+
             log.info("Start initial index synchronization");
             Map<IndexConfiguration, IndexSynchronizationStatus> indexSynchronizationResults
                     = indexManager.synchronizeIndexSchemas();

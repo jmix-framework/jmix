@@ -437,7 +437,7 @@ class OrderRepositoryTest extends DataSpec {
         ordersDesc[4] == order1 && ordersDesc[4].customer.address.city == "Samara"//[Samara - Fri Jan 01 00:00:00 SAMT 2010]
 
         when:
-        Iterable<SalesOrder> ordersAll = orderRepository.findAll(Sort.by(Sort.Direction.ASC, "customer.address.city", "date"))
+        List<SalesOrder> ordersAll = orderRepository.findAll(Sort.by(Sort.Direction.ASC, "customer.address.city", "date"))
         then:
         ordersAll[0] == order1
         ordersAll[1] == order2

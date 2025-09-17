@@ -100,6 +100,11 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     @Override
+    public Element getElement() {
+        return element;
+    }
+
+    @Override
     public void setElement(Element element) {
         this.element = element;
     }

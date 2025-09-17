@@ -50,6 +50,7 @@ import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,7 +67,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     protected static final String BASE_SELECT_QUERY = "select e from %s s join s.%s e where s = :editEntity";
     protected static final String SOFT_DELETABLE_SELECT_QUERY =
             "select e from %s s join s.%s e where s = :editEntity and e.%s is null";
-    protected static final String SINGLE_SELECT_QUERY = "select e from %s e where e.id = '%s'";
+    protected static final String SINGLE_SELECT_QUERY = "select e from %s e where e.%s = '%s'";
     public static final String ROUTE_PARAM_NAME = "entityName";
     public static final String ROUTE_PARAM_ID = "entityId";
     public static final String BUTTONS_PANEL_STYLE_NAME = "buttons-panel";
@@ -160,8 +161,9 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
             if (keyProperty != null) {
                 Class<?> idType = keyProperty.getJavaType();
                 Object deserializedId = urlParamSerializer.deserialize(idType, metadataId);
-
-                String queryString = String.format(SINGLE_SELECT_QUERY, metaClass.getName(), deserializedId);
+                String queryString = SINGLE_SELECT_QUERY.formatted(
+                        metaClass.getName(), metadataTools.getPrimaryKeyName(metaClass), deserializedId
+                );
                 Object entity = dataManager.load(metaClass.getJavaClass())
                         .query(queryString)
                         .hint(PersistenceHints.SOFT_DELETION, false)

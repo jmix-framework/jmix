@@ -162,6 +162,7 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
 
     @Subscribe
     protected void onReady(ReadyEvent event) {
+        refreshMoveButtonsState(null);
         getCollectionContainer().addItemChangeListener(itemChangeEvent ->
                 refreshMoveButtonsState(itemChangeEvent.getItem()));
         operationField.addValueChangeListener(valueChangeEvent -> {

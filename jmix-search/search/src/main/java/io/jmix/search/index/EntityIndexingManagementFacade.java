@@ -57,6 +57,11 @@ public class EntityIndexingManagementFacade {
         return indexingQueueManager.getEntityNamesOfEnqueueingSessions();
     }
 
+    @ManagedAttribute(description = "Search status")
+    public String searchStatus() {
+        return searchProperties.isEnabled() ? "Enabled" : "Disabled";
+    }
+
     @Authenticated
     @ManagedOperation(description = "Synchronously enqueues all instances of all indexed entities. Don't use it on a huge amount of data")
     public String enqueueIndexAll() {

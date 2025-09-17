@@ -21,56 +21,82 @@ import io.jmix.core.event.AttributeChanges;
 import org.springframework.lang.Nullable;
 
 /**
- * Allows to log entity lifecycle events: create, modify, delete.
- * <br>
+ * Logs lifecycle events (create, modify, delete) of JPA entities.
+ * <p>
  * Configured by {@link io.jmix.audit.entity.LoggedEntity} and
  * {@link io.jmix.audit.entity.LoggedAttribute} entities.
  */
 public interface EntityLog {
 
+    /**
+     * @return whether entity logging is enabled globally and for the current thread (see {@link #processLoggingForCurrentThread(boolean)})
+     */
     boolean isEnabled();
 
+    /**
+     * Enables/disables entity logging globally.
+     * By default, takes the value from the {@code jmix.audit.enabled} application property.
+     */
     void setEnabled(boolean enabled);
 
     /**
      * Logs creation of an entity which is configured for manual logging (LoggedEntity.auto == false).
+     * Should be called within an active transaction.
+     *
+     * @param entity entity instance
      */
     void registerCreate(Object entity);
 
     /**
-     * Logs creation of an entity which is configured for auto or manual logging
-     * (depending on the {@code auto} parameter).
+     * Logs creation of an entity which is configured for auto or manual logging.
+     * Should be called within an active transaction.
+     *
+     * @param entity entity instance
+     * @param auto   should match the entity configuration for auto (true) or manual (false) logging
      */
     void registerCreate(Object entity, boolean auto);
 
     /**
      * Logs modification of an entity which is configured for manual logging (LoggedEntity.auto == false).
+     * Should be called within an active transaction.
+     *
+     * @param entity entity instance in <b>managed state</b>
      */
     void registerModify(Object entity);
 
     /**
-     * Logs modification of an entity which is configured for auto or manual logging
-     * (depending on the {@code auto} parameter).
+     * Logs modification of an entity which is configured for auto or manual logging.
+     * Should be called within an active transaction.
+     *
+     * @param entity entity instance in <b>managed state</b>
+     * @param auto   should match the entity configuration for auto (true) or manual (false) logging
      */
     void registerModify(Object entity, boolean auto);
 
 
     /**
-     * Logs modification of an entity which is configured for auto or manual logging
-     * (depending on the {@code auto} parameter).
+     * Logs modification of an entity which is configured for auto or manual logging.
+     * Should be called within an active transaction.
      *
+     * @param entity entity instance in <b>managed state</b>
+     * @param auto   should match the entity configuration for auto (true) or manual (false) logging
      * @param changes attribute changes provided by caller
      */
     void registerModify(Object entity, boolean auto, @Nullable AttributeChanges changes);
 
     /**
      * Logs deletion of an entity which is configured for manual logging (LoggedEntity.auto == false).
+     * Should be called within an active transaction.
      */
     void registerDelete(Object entity);
 
     /**
      * Logs deletion of an entity which is configured for auto or manual logging
-     * (depending on the {@code auto} parameter).
+     * Should be called within an active transaction.
+     *
+     * @param entity entity instance
+     * @param auto   should match the entity configuration for auto logging
+     *               (true) or manual logging (false)
      */
     void registerDelete(Object entity, boolean auto);
 
@@ -81,7 +107,7 @@ public interface EntityLog {
     void invalidateCache();
 
     /**
-     * Disables/enables entity logging for current thread.
+     * Disables/enables entity logging for the current thread.
      * Enabled by default.
      *
      * @param enabled entity logging disabled if false, enabled otherwise.

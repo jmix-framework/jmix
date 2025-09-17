@@ -53,5 +53,23 @@
                 </componentItem>
             </items>
         </dropdownButton>
+        <userMenu id="userMenu">
+            <items>
+                <textItem id="textItem1" text="Text Item 1"/>
+                <textItem id="textItem2" text="Text Item 2">
+                    <items>
+                        <textItem id="textItem3" text="Text Item 3"/>
+                        <componentItem id="componentItem">
+                            <div>
+                                <button id="button" text="Button 1"/>
+                            </div>
+                        </componentItem>
+                        <actionItem id="actionItem">
+                            <action id="testAction"/>
+                        </actionItem>
+                    </items>
+                </textItem>
+            </items>
+        </userMenu>
     </layout>
 </view>

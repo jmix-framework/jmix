@@ -60,7 +60,6 @@ public class FileProcessor {
         log.debug("Parser for file {}: {}", fileRef, parser);
 
         StringWriter stringWriter = new StringWriter();
-        ParseContext parseContext = createParseContext();
         try (InputStream stream = fileStorage.openStream(fileRef)) {
             parser.parse(
                     stream,
@@ -73,7 +72,7 @@ public class FileProcessor {
                 parser = new OOXMLParser();
                 try (InputStream secondStream = fileStorage.openStream(fileRef)) {
                     stringWriter = new StringWriter();
-                    parser.parse(secondStream, new BodyContentHandler(stringWriter), new Metadata(), parseContext);
+                    parser.parse(secondStream, new BodyContentHandler(stringWriter), new Metadata(), parsingBundle.parseContext());
                 } catch (Exception e1) {
                     log.error("Unable to parse OOXML file '{}'", fileRef.getFileName(), e1);
                     throw new FileParseException(fileRef.getFileName(), "Fail to parse OOXML file via OOXMLParser", e);

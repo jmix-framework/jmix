@@ -374,6 +374,8 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
             Collection<?> loadedChild = dataManager.load(meta.getJavaClass())
                     .query(query)
                     .parameter("editEntity", parent.getItem())
+                    .fetchPlan(InspectorFetchPlanBuilder.of(getApplicationContext(), meta.getJavaClass())
+                            .build())
                     .list();
             return new ArrayList<>(loadedChild);
         });

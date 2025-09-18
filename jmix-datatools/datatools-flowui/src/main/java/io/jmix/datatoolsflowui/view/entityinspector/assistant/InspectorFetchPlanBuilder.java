@@ -89,20 +89,17 @@ public class InspectorFetchPlanBuilder {
                         MetaClass metaPropertyClass = metaProperty.getRange().asClass();
                         fetchPlanBuilder.add(
                                 metaProperty.getName(),
-                                builder -> createEmbeddedPlan(metaPropertyClass, builder)
+                                builder -> createNestedPlan(metaPropertyClass, builder)
                         );
                     }
                     break;
                 case ASSOCIATION:
                 case COMPOSITION:
-                    if (withEmbedded) {
-                        break;
-                    }
                     if (EntityFormLayoutUtils.isMany(metaProperty)) {
                         if (withCollections) {
+                            MetaClass metaPropertyClass = metaProperty.getRange().asClass();
                             fetchPlanBuilder.add(metaProperty.getName(),
-                                    builder -> builder.addFetchPlan(FetchPlan.LOCAL)
-                                            .addSystem());
+                                    builder -> createNestedPlan(metaPropertyClass,builder));
                         }
                     } else {
                         fetchPlanBuilder.add(metaProperty.getName(),
@@ -116,11 +113,11 @@ public class InspectorFetchPlanBuilder {
         return fetchPlanBuilder.build();
     }
 
-    protected void createEmbeddedPlan(MetaClass metaClass, FetchPlanBuilder builder) {
+    protected void createNestedPlan(MetaClass metaClass, FetchPlanBuilder builder) {
         builder.addFetchPlan(FetchPlan.BASE);
-        for (MetaProperty embeddedNestedProperty : metaClass.getProperties()) {
-            if (embeddedNestedProperty.getRange().isClass() && !EntityFormLayoutUtils.isMany(embeddedNestedProperty)) {
-                builder.add(embeddedNestedProperty.getName(), FetchPlan.INSTANCE_NAME);
+        for (MetaProperty nestedProperty : metaClass.getProperties()) {
+            if (nestedProperty.getRange().isClass() && !EntityFormLayoutUtils.isMany(nestedProperty)) {
+                builder.add(nestedProperty.getName(), FetchPlan.INSTANCE_NAME);
             }
         }
     }

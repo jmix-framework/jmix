@@ -22,9 +22,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import io.jmix.core.Messages;
-import io.jmix.ui.AppUI;
-import io.jmix.ui.Dialogs;
-import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.*;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
@@ -38,8 +36,6 @@ import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
-import io.jmix.ui.UiComponentProperties;
-import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
@@ -75,6 +71,8 @@ public class DialogsImpl implements Dialogs {
     protected Icons icons;
     @Autowired
     protected UiComponentProperties componentProperties;
+    @Autowired
+    protected UiProperties uiProperties;
     @Autowired
     protected UiScreenProperties screenProperties;
     @Autowired
@@ -548,11 +546,6 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public MessageDialogBuilder modal() {
-            return withModal(true);
-        }
-
-        @Override
         public MessageDialogBuilder withWindowMode(WindowMode windowMode) {
             window.setWindowMode(toVaadinWindowMode(windowMode));
             return this;
@@ -657,9 +650,11 @@ public class DialogsImpl implements Dialogs {
     }
 
     public class ExceptionDialogBuilderImpl implements ExceptionDialogBuilder {
+
         protected String message;
         protected String caption;
         protected Throwable throwable;
+        protected boolean modal = uiProperties.isExceptionDialogModal();
 
         @Override
         public ExceptionDialogBuilder withThrowable(Throwable throwable) {
@@ -696,6 +691,17 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
+        public boolean isModal() {
+            return modal;
+        }
+
+        @Override
+        public ExceptionDialogBuilder withModal(boolean modal) {
+            this.modal = modal;
+            return this;
+        }
+
+        @Override
         public void show() {
             if (throwable == null) {
                 throw new IllegalStateException("throwable should not be null");
@@ -707,10 +713,13 @@ public class DialogsImpl implements Dialogs {
             }
 
             ExceptionDialog dialog = new ExceptionDialog(rootCause, caption, message, applicationContext);
-            for (com.vaadin.ui.Window window : ui.getWindows()) {
-                if (window.isModal()) {
-                    dialog.setModal(true);
-                    break;
+            dialog.setModal(modal);
+            if (!modal) {
+                for (com.vaadin.ui.Window window : ui.getWindows()) {
+                    if (window.isModal()) {
+                        dialog.setModal(true);
+                        break;
+                    }
                 }
             }
             ui.addWindow(dialog);

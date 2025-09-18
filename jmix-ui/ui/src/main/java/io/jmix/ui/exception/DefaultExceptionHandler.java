@@ -16,18 +16,17 @@
 package io.jmix.ui.exception;
 
 import com.vaadin.server.ErrorEvent;
-import com.vaadin.ui.Window;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
+import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.widget.ExceptionDialog;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import java.net.SocketException;
 
@@ -41,10 +40,12 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     protected ApplicationContext applicationContext;
 
     protected Messages messages;
+    protected Dialogs dialogs;
 
     public DefaultExceptionHandler(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         messages = applicationContext.getBean(Messages.class);
+        dialogs = applicationContext.getBean(Dialogs.class);
     }
 
     @Override
@@ -97,15 +98,10 @@ public class DefaultExceptionHandler implements ExceptionHandler {
         if (rootCause == null) {
             rootCause = exception;
         }
-        ExceptionDialog dialog = new ExceptionDialog(rootCause, applicationContext);
-        for (Window window : ui.getWindows()) {
-            if (window.isModal()) {
-                dialog.setModal(true);
-                break;
-            }
-        }
-        ui.addWindow(dialog);
-        dialog.focus();
+
+        dialogs.createExceptionDialog()
+                .withThrowable(rootCause)
+                .show();
     }
 
     protected void showNotification(App app, AppUI ui, Throwable exception) {

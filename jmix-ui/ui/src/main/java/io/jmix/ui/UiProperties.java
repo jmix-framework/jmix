@@ -140,6 +140,11 @@ public class UiProperties {
      */
     boolean useSessionFixationProtection;
 
+    /**
+     * Whether the exception dialog is modal by default.
+     */
+    boolean exceptionDialogModal;
+
     public UiProperties(
             boolean testMode,
             boolean performanceTestMode,
@@ -167,7 +172,8 @@ public class UiProperties {
             String initialScreenId,
             @DefaultValue("true") boolean localeSelectVisible,
             @DefaultValue("25") int mainTabCaptionLength,
-            @DefaultValue("true") boolean useSessionFixationProtection
+            @DefaultValue("true") boolean useSessionFixationProtection,
+            @DefaultValue("false") boolean exceptionDialogModal
     ) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
@@ -196,6 +202,7 @@ public class UiProperties {
         this.localeSelectVisible = localeSelectVisible;
         this.mainTabCaptionLength = mainTabCaptionLength;
         this.useSessionFixationProtection = useSessionFixationProtection;
+        this.exceptionDialogModal = exceptionDialogModal;
     }
 
     /**
@@ -367,5 +374,12 @@ public class UiProperties {
      */
     public boolean isUseSessionFixationProtection() {
         return useSessionFixationProtection;
+    }
+
+    /**
+     * @see #exceptionDialogModal
+     */
+    public boolean isExceptionDialogModal() {
+        return exceptionDialogModal;
     }
 }

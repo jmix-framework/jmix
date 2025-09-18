@@ -206,7 +206,8 @@ public interface Dialogs {
      */
     interface ExceptionDialogBuilder extends
             HasCaption<ExceptionDialogBuilder>,
-            HasMessage<ExceptionDialogBuilder> {
+            HasMessage<ExceptionDialogBuilder>,
+            HasModal<ExceptionDialogBuilder> {
         /**
          * Sets exception object.
          *
@@ -618,7 +619,9 @@ public interface Dialogs {
          *
          * @return builder
          */
-        T modal();
+        default T modal() {
+            return withModal(true);
+        }
     }
 
     /**

@@ -336,7 +336,8 @@ public class TablePresentationsImpl implements TablePresentations {
             UserDetails user = currentUserSubstitution.getEffectiveUser();
 
             ctx.setQueryString("select p from ui_TablePresentation p " +
-                    "where p.componentId = :component and (p.username is null or p.username = :username)")
+                            "where p.componentId = :component and (p.username is null or p.username = :username) " +
+                            "order by p.name")
                     .setParameter("component", name)
                     .setParameter("username", user.getUsername());
 

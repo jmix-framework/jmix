@@ -91,6 +91,8 @@ open class UserDetailView : StandardDetailView<User>() {
                 .withThemeVariant(NotificationVariant.LUMO_WARNING)
                 .withPosition(Notification.Position.TOP_END)
                 .show()
+
+            newEntity = false
         }
     }
 }

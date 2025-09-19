@@ -382,6 +382,8 @@ dependencies {
         api "com.openhtmltopdf:openhtmltopdf-rtl-support:$openhtmltopdfVersion"
         api "com.openhtmltopdf:openhtmltopdf-pdfbox:$openhtmltopdfVersion"
 
+        api 'org.apache.pdfbox:pdfbox:3.0.5'
+
         api 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.5.3'
         api 'org.docx4j:docx4j-ImportXHTML:11.4.8'
         api 'org.docx4j:docx4j-export-fo:11.5.3'

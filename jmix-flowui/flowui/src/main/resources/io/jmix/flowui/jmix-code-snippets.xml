@@ -112,10 +112,10 @@
                     .withHeader("Confirm")
                     .withText("Are you sure?")
                     .withActions(
-                        io.jmix.flowui.action.DialogAction(DialogAction.Type.YES)
+                        io.jmix.flowui.action.DialogAction(io.jmix.flowui.action.DialogAction.Type.YES)
                             .withVariant(io.jmix.flowui.kit.action.ActionVariant.PRIMARY)
-                            .withHandler { e: ActionPerformedEvent? -> },
-                        io.jmix.flowui.action.DialogAction(DialogAction.Type.NO)
+                            .withHandler { e: io.jmix.flowui.kit.action.ActionPerformedEvent? -> },
+                        io.jmix.flowui.action.DialogAction(io.jmix.flowui.action.DialogAction.Type.NO)
                     )
                     .open()
                 ]]>

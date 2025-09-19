@@ -19,6 +19,8 @@ package io.jmix.flowui.backgroundtask.impl;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.UIDetachedException;
+import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.TimeSource;
 import io.jmix.core.impl.session.ThreadLocalSessionData;
@@ -162,6 +164,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
 
         private Authentication authentication;
         private final Map<String, Object> sessionAttributes;
+        private final VaadinRequest vaadinRequest;
 
         private String username;
 
@@ -179,6 +182,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
 
             authentication = SecurityContextHelper.getAuthentication();
             sessionAttributes = ThreadLocalSessionData.extractHttpSessionAttributes();
+            vaadinRequest = VaadinService.getCurrentRequest();
 
             this.username = currentAuthentication.getUser().getUsername();
 
@@ -189,6 +193,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
 
                     SecurityContextHelper.setAuthentication(authentication);
                     ThreadLocalSessionData.setAttributes(sessionAttributes);
+                    ThreadLocalVaadinRequest.setRequest(vaadinRequest);
                     try {
                         TaskExecutorImpl.this.ui.access(() ->
                                 handleDone()
@@ -200,6 +205,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
                     } finally {
                         SecurityContextHelper.setAuthentication(previousAuth);
                         ThreadLocalSessionData.clear();
+                        ThreadLocalVaadinRequest.clear();
                     }
                 }
             };

@@ -17,8 +17,8 @@
 package io.jmix.gridexportui.exporter.entitiesloader;
 
 import io.jmix.core.Sort;
-import io.jmix.gridexportui.exporter.EntityExportContext;
 import io.jmix.gridexportui.GridExportProperties;
+import io.jmix.gridexportui.exporter.EntityExportContext;
 import io.jmix.ui.component.data.DataUnit;
 
 import javax.annotation.Nullable;
@@ -35,6 +35,7 @@ public interface AllEntitiesLoader {
 
         /**
          * Export entity to an appropriate format (json, excel)
+         *
          * @param entityExportContext loaded entity
          * @return false if entity cannot be exported
          */
@@ -50,6 +51,14 @@ public interface AllEntitiesLoader {
 
     /**
      * Load entities and export each entity using the {@link ExportedEntityVisitor}
+     *
+     * @deprecated use {@link #loadAll(DataUnit, ExportedEntityVisitor)} instead
      */
+    @Deprecated(forRemoval = true, since = "1.7")
     void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor, @Nullable Sort sort);
+
+    /**
+     * Load entities and export each entity using the {@link ExportedEntityVisitor}
+     */
+    void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor);
 }

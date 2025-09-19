@@ -24,13 +24,11 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.gridexportui.GridExportProperties;
 import io.jmix.gridexportui.exporter.EntityExportContext;
-import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.model.CollectionLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,39 +55,32 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
         return PAGINATION_STRATEGY;
     }
 
-    /**
-     * Generates the load context using the given {@code DataUnit}.
-     *
-     * @param dataUnit data unit linked with the data
-     * @param sort     An optional sorting specification for the data.
-     *                 If {@code null} sorting will be applied by the primary key.
-     */
     @SuppressWarnings("rawtypes")
-    protected LoadContext generateLoadContext(DataUnit dataUnit, @Nullable Sort sort) {
-        CollectionLoader dataLoader = getDataLoader(dataUnit);
-
-        LoadContext loadContext = dataLoader.createLoadContext();
+    protected LoadContext generateLoadContext(CollectionLoader loader) {
+        LoadContext loadContext = loader.createLoadContext();
         LoadContext.Query query = loadContext.getQuery();
         if (query == null) {
-            throw new RuntimeException("Cannot export all rows. Query in LoadContext is null.");
+            throw new IllegalArgumentException("Cannot export all rows. Query in LoadContext is null.");
         }
 
         MetaClass entityMetaClass = loadContext.getEntityMetaClass();
         if (metadataTools.hasCompositePrimaryKey(entityMetaClass)) {
-            throw new RuntimeException("Cannot export all rows. Exporting of entities with composite key is not supported.");
+            throw new IllegalArgumentException(
+                    "Cannot export all rows. Exporting of entities with composite key is not supported.");
         }
 
-        //sort data by primary key. Next batch is loaded using the condition that compares the last primary key value
-        //from the previous batch.
+        //sort data by primary key. The next batch is loaded using the condition that compares the last primary key value
+        //from the previous batch. In some databases (for example, PostgresSQL) it's faster than paging using firstResult
         String primaryKeyName = metadataTools.getPrimaryKeyName(entityMetaClass);
         if (primaryKeyName == null) {
-            throw new RuntimeException("Cannot find a primary key for a meta class " + entityMetaClass.getName());
+            throw new IllegalStateException("Cannot find a primary key for a meta class " + entityMetaClass.getName());
         }
         query.setSort(Sort.by(primaryKeyName));
 
         Condition condition = loadContext.getQuery().getCondition();
 
         LogicalCondition wrappingCondition = new LogicalCondition(LogicalCondition.Type.AND);
+        //noinspection ConstantValue
         if (condition != null) {
             //in case there is no filter on the screen a condition in the query may be null
             wrappingCondition.add(condition);
@@ -105,25 +96,21 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
     }
 
     /**
-     * Method loads all entity instances associated with the given {@code dataUnit} and pass
-     * each loaded entity instance to the {@code exportedEntityVisitor}. Creation of the output file row is the
-     * responsibility of that visitor. Data is loaded in batches, the batch size is configured by the
-     * {@link GridExportProperties#getExportAllBatchSize()}.
-     *
-     * @param dataUnit              data unit linked with the data
-     * @param exportedEntityVisitor function that is responsible for export
-     * @param sort                  An optional sorting specification for the data.
-     *                              If {@code null} sorting will be applied by the primary key.
+     * Sort entities by the primary key, load the first batch and save the last entity primary key value.
+     * Load the next batch with primary keys after the last entity primary key.
+     * @param exportedEntityVisitor {@link ExportedEntityVisitor#visitEntity(EntityExportContext)}
+     * @param loadBatchSize {@link GridExportProperties#getExportAllBatchSize()} number of entities loaded in one query
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes", "unchecked", "ConstantValue"})
     @Override
-    public void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor, @Nullable Sort sort) {
+    protected void loadEntities(CollectionLoader<?> collectionLoader,
+                                ExportedEntityVisitor exportedEntityVisitor,
+                                int loadBatchSize) {
         Preconditions.checkNotNullArgument(exportedEntityVisitor,
                 "Cannot export all rows. ExportedEntityVisitor can't be null");
 
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
         transactionTemplate.executeWithoutResult(transactionStatus -> {
-            int loadBatchSize = gridExportProperties.getExportAllBatchSize();
 
             int rowNumber = 0;
             boolean initialLoading = true;
@@ -132,7 +119,7 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
             boolean lastBatchLoaded = false;
 
             while (!lastBatchLoaded && proceedToExport) {
-                LoadContext loadContext = generateLoadContext(dataUnit, sort);
+                LoadContext loadContext = generateLoadContext(collectionLoader);
 
                 //query is not null - checked when generated load context
                 LoadContext.Query query = Objects.requireNonNull(loadContext.getQuery());
@@ -144,7 +131,6 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
                 }
                 query.setMaxResults(loadBatchSize);
 
-                CollectionLoader<?> collectionLoader = getDataLoader(dataUnit);
 
                 List<?> entities = collectionLoader.getLoadDelegate() == null
                         ? dataManager.loadList(loadContext)

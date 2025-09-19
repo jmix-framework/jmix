@@ -259,8 +259,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                                 return true;
                             }
                             return false;
-                        },
-                        ExporterSortHelper.getSortOrder(table.getSortInfo()));
+                        });
             }
 
             for (int c = 0; c < columns.size(); c++) {
@@ -387,8 +386,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                                 return true;
                             }
                             return false;
-                        },
-                        ExporterSortHelper.getSortOrder(dataGrid.getSortOrder()));
+                        });
             }
 
             for (int c = 0; c < columns.size(); c++) {

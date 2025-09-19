@@ -80,8 +80,7 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
                         JsonObject jsonObject = createJsonObjectFromEntity(table, context.getEntity());
                         jsonElements.add(jsonObject);
                         return true;
-                    },
-                    ExporterSortHelper.getSortOrder(table.getSortInfo()));
+                    });
         } else {
             Collection<Object> items = getItems(table, exportMode);
 
@@ -108,8 +107,7 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
                         JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, context.getEntity());
                         jsonElements.add(jsonObject);
                         return true;
-                    },
-                    ExporterSortHelper.getSortOrder(dataGrid.getSortOrder()));
+                    });
         } else {
             Collection<Object> items = getItems(dataGrid, exportMode);
 

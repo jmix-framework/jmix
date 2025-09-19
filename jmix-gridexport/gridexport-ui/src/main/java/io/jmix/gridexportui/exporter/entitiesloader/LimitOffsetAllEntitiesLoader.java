@@ -20,6 +20,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Sort;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.gridexportui.GridExportProperties;
 import io.jmix.gridexportui.exporter.EntityExportContext;
 import io.jmix.ui.component.data.DataUnit;
@@ -58,15 +59,27 @@ public class LimitOffsetAllEntitiesLoader extends AbstractAllEntitiesLoader {
      * @param dataUnit data unit linked with the data
      * @param sort     An optional sorting specification for the data.
      *                 If {@code null} sorting will be applied by the primary key.
+     * @deprecated use {@link #generateLoadContext(CollectionLoader)} instead
      */
     @SuppressWarnings("rawtypes")
     public LoadContext generateLoadContext(DataUnit dataUnit, @Nullable Sort sort) {
-        CollectionLoader<?> dataLoader = getDataLoader(dataUnit);
+        // for backward capability
+        return super.generateLoadContext(dataUnit, sort);
+    }
 
-        LoadContext loadContext = ((CollectionLoader) dataLoader).createLoadContext();
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected LoadContext generateLoadContext(CollectionLoader loader) {
+        LoadContext loadContext = loader.createLoadContext();
         LoadContext.Query query = loadContext.getQuery();
         if (query == null) {
-            throw new RuntimeException("Cannot export all rows. Query in LoadContext is null.");
+            throw new IllegalArgumentException("Cannot export all rows. Query in LoadContext is null.");
+        }
+
+        MetaClass entityMetaClass = loadContext.getEntityMetaClass();
+        if (metadataTools.hasCompositePrimaryKey(entityMetaClass)) {
+            throw new IllegalArgumentException(
+                    "Cannot export all rows. Exporting of entities with composite key is not supported.");
         }
 
         return loadContext;
@@ -77,24 +90,23 @@ public class LimitOffsetAllEntitiesLoader extends AbstractAllEntitiesLoader {
      *
      * @param exportedEntityVisitor {@link ExportedEntityVisitor#visitEntity(EntityExportContext)}
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes", "ConstantValue"})
     @Override
-    public void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor, @Nullable Sort sort) {
-        int loadBatchSize = gridExportProperties.getExportAllBatchSize();
+    protected void loadEntities(CollectionLoader<?> collectionLoader, ExportedEntityVisitor exportedEntityVisitor,
+                                int loadBatchSize) {
         int rowNumber = 0;
         int firstResultNumber = 0;
         boolean proceedToExport = true;
         boolean lastBatchLoaded = false;
 
         while (!lastBatchLoaded && proceedToExport) {
-            LoadContext<?> loadContext = generateLoadContext(dataUnit, sort);
+            LoadContext<?> loadContext = generateLoadContext(collectionLoader);
 
             //query is not null - checked when generated load context
             LoadContext.Query query = Objects.requireNonNull(loadContext.getQuery());
             query.setFirstResult(firstResultNumber);
             query.setMaxResults(loadBatchSize);
 
-            CollectionLoader<?> collectionLoader = getDataLoader(dataUnit);
             List<?> entities = collectionLoader.getLoadDelegate() == null
                     ? dataManager.loadList(loadContext)
                     : collectionLoader.getLoadDelegate().apply((LoadContext) loadContext);

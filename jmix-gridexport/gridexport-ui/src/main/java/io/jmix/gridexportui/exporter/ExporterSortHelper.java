@@ -28,7 +28,10 @@ import java.util.stream.Collectors;
  * Helper class for extracting sorting information from Jmix UI components.
  * Provides methods to convert sorting information from {@link Table.SortInfo} and
  * {@link DataGrid.SortOrder} to {@link Sort}.
+ *
+ * @deprecated as unused
  */
+@Deprecated(forRemoval = true, since = "1.7")
 public class ExporterSortHelper {
 
     /**

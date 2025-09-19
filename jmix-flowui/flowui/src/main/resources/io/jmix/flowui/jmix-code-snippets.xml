@@ -531,7 +531,7 @@
                     42
                 }
                 .withResultHandler { result ->
-                    notifications.show("Done! Result: $result")
+                    notifications.show("Done! Result: \$result")
                 }
                 .supplyAsync()
                 ]]>

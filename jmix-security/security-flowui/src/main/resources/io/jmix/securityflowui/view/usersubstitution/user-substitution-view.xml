@@ -40,10 +40,7 @@
         </urlQueryParameters>
     </facets>
     <actions>
-        <action id="saveAction" text="msg:///actions.Ok"
-                icon="CHECK"
-                actionVariant="PRIMARY"/>
-        <action id="closeAction" type="view_close"/>
+        <action id="closeAction" type="view_close" text="msg:///actions.Close"/>
     </actions>
     <layout>
         <genericFilter id="genericFilter"
@@ -81,7 +78,6 @@
             </columns>
         </dataGrid>
         <hbox id="detailActions">
-            <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>
     </layout>

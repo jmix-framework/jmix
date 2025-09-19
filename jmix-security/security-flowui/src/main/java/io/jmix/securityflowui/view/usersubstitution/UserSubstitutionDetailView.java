@@ -21,6 +21,7 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.view.*;
 import io.jmix.security.usersubstitution.UserSubstitutionModel;
@@ -86,6 +87,10 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
     @Install(target = Target.DATA_CONTEXT)
     protected Set<Object> saveDelegate(final SaveContext saveContext) {
         UserSubstitutionModel saved = getUserSubstitutionService().save(getEditedEntity());
+
+        UserSubstitutionsChangedEvent event = new UserSubstitutionsChangedEvent(getEditedEntity().getUsername());
+        getApplicationContext().publishEvent(event);
+
         return Set.of(saved);
     }
 

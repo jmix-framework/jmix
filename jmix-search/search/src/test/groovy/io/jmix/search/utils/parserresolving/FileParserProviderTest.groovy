@@ -29,7 +29,7 @@ import java.util.function.Function
 
 import static java.util.Collections.emptyList
 
-class FileParserResolverTest extends Specification {
+class FileParserProviderTest extends Specification {
 
     def "should throw UnsupportedFileExtensionException when the given file of unsupported type"() {
         given:

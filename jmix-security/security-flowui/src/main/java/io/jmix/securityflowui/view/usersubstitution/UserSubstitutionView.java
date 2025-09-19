@@ -90,12 +90,6 @@ public class UserSubstitutionView extends StandardView {
         );
     }
 
-    @Subscribe("saveAction")
-    protected void onSaveAction(ActionPerformedEvent event) {
-        getViewData().getDataContext().save();
-        close(StandardOutcome.SAVE);
-    }
-
     @Subscribe("closeAction")
     protected void onCloseAction(ActionPerformedEvent event) {
         if (getViewData().getDataContext().hasChanges()) {
@@ -126,12 +120,6 @@ public class UserSubstitutionView extends StandardView {
         });
     }
 
-    @Subscribe(target = Target.DATA_CONTEXT)
-    public void onPostSave(DataContext.PostSaveEvent postCommitEvent) {
-        UserSubstitutionsChangedEvent event = new UserSubstitutionsChangedEvent(username);
-        getApplicationContext().publishEvent(event);
-    }
-
     @Install(to = "userSubstitutionsDl", target = Target.DATA_LOADER)
     protected List<UserSubstitutionModel> userSubstitutionsDlLoadDelegate(final LoadContext<UserSubstitutionModel> loadContext) {
         return getUserSubstitutionService().loadSubstitutionsOf(username);
@@ -140,6 +128,9 @@ public class UserSubstitutionView extends StandardView {
     @Install(to = "substitutionDataGrid.remove", subject = "delegate")
     protected void substitutionDataGridRemoveDelegate(final Collection<UserSubstitutionModel> collection) {
         getUserSubstitutionService().remove(collection);
+
+        UserSubstitutionsChangedEvent event = new UserSubstitutionsChangedEvent(username);
+        getApplicationContext().publishEvent(event);
     }
 
     protected UserSubstitutionPersistence getUserSubstitutionService() {

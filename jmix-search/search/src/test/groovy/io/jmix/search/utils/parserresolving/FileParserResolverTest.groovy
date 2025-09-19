@@ -29,7 +29,7 @@ import java.util.function.Function
 
 import static java.util.Collections.emptyList
 
-class FileParserProviderTest extends Specification {
+class FileParserResolverTest extends Specification {
 
     def "should throw UnsupportedFileExtensionException when the given file of unsupported type"() {
         given:
@@ -106,7 +106,7 @@ class FileParserProviderTest extends Specification {
         exception.getMessage() == "There are no any file parser resolvers in the application."
     }
 
-    FileParserResolver createExtensionBasedResolver(String fileExtension, Parser parser) {
+    private FileParserResolver createExtensionBasedResolver(String fileExtension, Parser parser) {
         def resolver = Mock(FileParserResolver)
         resolver.supports(_ as FileRef) >> { FileRef fileRef1 ->
             {

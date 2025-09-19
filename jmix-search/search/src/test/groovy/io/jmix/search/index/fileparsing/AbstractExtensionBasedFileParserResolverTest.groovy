@@ -22,7 +22,7 @@ import spock.lang.Specification
 
 class AbstractExtensionBasedFileParserResolverTest extends Specification {
 
-    def "getParsingBundle. Different bundles are returned each time"() {
+    def "getParserKit. Different kits are returned each time"() {
         given:
         def resolver = new TestExtensionBasedFileParserResolver(Mock(Parser), Mock(Set))
 
@@ -30,7 +30,7 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
         resolver.getParserKit() != resolver.getParserKit()
     }
 
-    def "getParsingBundle. Not the same objects inside of the bundles"() {
+    def "getParserKit. Not the same objects inside of the kits"() {
         given:
         def resolver = new TestExtensionBasedFileParserResolver(Mock(Parser), Mock(Set))
 
@@ -53,9 +53,9 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
 
         where:
         extensions               | criteriaDescription
-        ["ext1"]                 | "Parser: TestExtensionBasedFileParserResolver. Supported extensions: ext1."
-        ["ext1", "ext2"]         | "Parser: TestExtensionBasedFileParserResolver. Supported extensions: ext1, ext2."
-        ["ext1", "ext2", "ext3"] | "Parser: TestExtensionBasedFileParserResolver. Supported extensions: ext1, ext2, ext3."
+        ["ext1"]                 | "File parser resolver: TestExtensionBasedFileParserResolver. Supported extensions: ext1."
+        ["ext1", "ext2"]         | "File parser resolver: TestExtensionBasedFileParserResolver. Supported extensions: ext1, ext2."
+        ["ext1", "ext2", "ext3"] | "File parser resolver: TestExtensionBasedFileParserResolver. Supported extensions: ext1, ext2, ext3."
     }
 
     def "Supports"() {

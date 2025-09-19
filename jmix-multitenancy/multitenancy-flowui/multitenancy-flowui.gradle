@@ -25,6 +25,8 @@ dependencies {
 
     api project(':flowui')
 
+    compileOnly project(':security-flowui')
+
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'

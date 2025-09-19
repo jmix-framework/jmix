@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.multitenancyflowui;
+package io.jmix.securityflowui.authentication;
 
-import com.vaadin.flow.router.Location;
-import org.springframework.lang.Nullable;
+/**
+ * Interface to be implemented by custom validators of {@link AuthDetails}.
+ *
+ * @see LoginViewSupport
+ */
+public interface AuthDetailsValidator {
 
-import java.util.List;
-
-public interface MultitenancyUiSupport {
-
-    String getUsernameByLocation(String username, Location location);
-
-    String getUsernameByTenant(String username, String tenantId);
-
-    List<String> getTenantOptions();
-
-    @Nullable
-    default String extractTenantFromUsername(String username) {
-        return null;
-    }
+    AuthDetailsValidationResult validate(AuthDetails authDetails);
 }

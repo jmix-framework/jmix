@@ -49,6 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
@@ -60,6 +61,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -100,6 +102,7 @@ public class LoginViewSupport {
     protected ApplicationEventPublisher applicationEventPublisher;
     protected VaadinDefaultRequestCache requestCache;
     protected ViewRegistry viewRegistry;
+    protected List<AuthDetailsValidator> authDetailsValidators = Collections.emptyList();
 
     protected AppCookies cookies;
 
@@ -181,6 +184,11 @@ public class LoginViewSupport {
         this.viewRegistry = viewRegistry;
     }
 
+    @Autowired(required = false)
+    public void setAuthDetailsValidators(List<AuthDetailsValidator> authDetailsValidators) {
+        this.authDetailsValidators = authDetailsValidators;
+    }
+
     /**
      * Performs authentication via {@link AuthenticationManager} and uses
      * {@link UsernamePasswordAuthenticationToken} with credentials from {@link AuthDetails}.
@@ -195,6 +203,16 @@ public class LoginViewSupport {
      * @throws AuthenticationException if exception occurs while authentication process
      */
     public Authentication authenticate(AuthDetails authDetails) throws AuthenticationException {
+        for (AuthDetailsValidator validator : authDetailsValidators) {
+            AuthDetailsValidationResult validationResult = validator.validate(authDetails);
+            if (!validationResult.isValid()) {
+                throw new DisabledException(
+                        validationResult.getMessage(),
+                        validationResult.getException()
+                );
+            }
+        }
+
         Authentication authenticationToken = authenticationManager.authenticate(
                 createAuthenticationToken(
                         authDetails.getUsername(),

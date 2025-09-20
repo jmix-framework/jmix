@@ -434,6 +434,12 @@ public class EntityIndexingManagementFacade {
         return String.format("%d items for entity '%s' have been removed from Indexing Queue", deleted, entityName);
     }
 
+    @Authenticated
+    @ManagedOperation(description = "Recalculate all index configurations, including the dynamic attributes analysis")
+    public void refreshLocalIndexConfigurations(){
+        indexConfigurationManager.refreshIndexDefinitions();
+    }
+
     protected String formatSingleStatusString(String entityName, String indexName, String status) {
         return String.format("Entity=%s, Index=%s, Status=%s", entityName, indexName, status);
     }

@@ -53,6 +53,15 @@ public class PropertyConditionUtils {
     }
 
     /**
+     * @param propertyCondition the property condition to check
+     * @return {@code true} if the property condition operation is "DATE_EQUALS", {@code false} otherwise
+     */
+    public static boolean isDateEqualsOperation(PropertyCondition propertyCondition) {
+        String operation = propertyCondition.getOperation();
+        return PropertyCondition.Operation.DATE_EQUALS.equals(operation);
+    }
+
+    /**
      * @param propertyCondition property condition
      * @return true if property condition operation is "member of" operation
      */
@@ -104,6 +113,8 @@ public class PropertyConditionUtils {
                 return Boolean.TRUE.equals(condition.getParameterValue()) ? "is not null" : "is null";
             case PropertyCondition.Operation.IN_INTERVAL:
                 return getInIntervalJpqlOperation(condition);
+            case PropertyCondition.Operation.DATE_EQUALS:
+                return "@dateEquals(%s.%s, :%s)";
             case PropertyCondition.Operation.IS_COLLECTION_EMPTY:
                 return Boolean.TRUE.equals(condition.getParameterValue()) ? "is empty" : "is not empty";
             case PropertyCondition.Operation.MEMBER_OF_COLLECTION:

@@ -286,7 +286,8 @@ date_macro_expression
     | date_before_macro_expression
     | date_after_macro_expression
     | date_equals_macro_expression
-    | date_today_macro_expression;
+    | date_today_macro_expression
+    | custom_date_between_macro_expression;
 
 date_between_macro_expression
     : '@BETWEEN' '(' path_expression ',' 'NOW' (('+' | '-') numeric_literal)? ',' 'NOW' (('+' | '-') numeric_literal)? ',' ('YEAR' | 'MONTH' | 'DAY' | 'HOUR' |'MINUTE' | 'SECOND') (',' 'USER_TIMEZONE')? ')';
@@ -302,6 +303,10 @@ date_equals_macro_expression
 
 date_today_macro_expression
     : '@TODAY' '(' path_expression (',' 'USER_TIMEZONE')? ')';
+
+custom_date_between_macro_expression
+    : '@DATEBETWEEN' '(' path_expression ',' (path_expression | input_parameter | string_literal) ',' (path_expression | input_parameter | string_literal) (',' 'USER_TIMEZONE')? ')';
+
 //End: Here we insert our custom macroses
 
 between_expression

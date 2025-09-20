@@ -315,6 +315,7 @@ public class PropertyCondition extends SkippableCondition<PropertyCondition> {
         public static final String IN_LIST = "in_list";
         public static final String NOT_IN_LIST = "not_in_list";
         public static final String IN_INTERVAL = "in_interval";
+        public static final String DATE_EQUALS = "date_equals";
         public static final String IS_COLLECTION_EMPTY = "is_collection_empty";
         public static final String MEMBER_OF_COLLECTION = "member_of_collection";
         public static final String NOT_MEMBER_OF_COLLECTION = "not_member_of_collection";

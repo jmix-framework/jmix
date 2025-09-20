@@ -69,6 +69,11 @@ public interface BaseDateInterval extends Function<String, String> {
         /**
          * Interval that uses date and time constants (e.g. first day of the current week).
          */
-        RELATIVE
+        RELATIVE,
+
+        /**
+         * Interval from one date to another.
+         */
+        CUSTOM
     }
 }

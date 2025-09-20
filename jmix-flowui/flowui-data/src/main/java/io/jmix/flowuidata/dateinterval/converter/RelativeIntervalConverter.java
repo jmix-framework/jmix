@@ -18,7 +18,6 @@ package io.jmix.flowuidata.dateinterval.converter;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
-import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.app.propertyfilter.dateinterval.converter.DateIntervalConverter;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.flowuidata.dateinterval.RelativeDateTimeMomentProvider;
@@ -34,7 +33,6 @@ import java.util.regex.Pattern;
  * Supports the operations defined in {@link RelativeDateInterval.Operation} and formats date intervals
  * that match the relative interval pattern.
  */
-@Internal
 @Component("flowui_UiDataRelativeIntervalConverter")
 public class RelativeIntervalConverter implements DateIntervalConverter {
 

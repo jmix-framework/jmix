@@ -16,15 +16,19 @@
 
 package io.jmix.flowuidata.view.dateinterval;
 
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval.Type;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.DateInterval;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.predefined.PredefinedDateInterval;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowuidata.dateinterval.RelativeDateTimeMomentProvider;
+import io.jmix.flowuidata.dateinterval.component.DateRangePicker;
 import io.jmix.flowuidata.dateinterval.component.RelativeDateIntervalField;
+import io.jmix.flowuidata.dateinterval.model.CustomDateInterval;
 import io.jmix.flowuidata.dateinterval.model.RelativeDateInterval;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +41,7 @@ public class DateIntervalDialog extends io.jmix.flowui.app.propertyfilter.datein
     protected RelativeDateTimeMomentProvider relativeDateTimeMomentProvider;
 
     protected RelativeDateIntervalField relativeDateIntervalField;
+    protected DateRangePicker dateRangePicker;
 
     @Override
     protected void initComponents() {
@@ -44,7 +49,21 @@ public class DateIntervalDialog extends io.jmix.flowui.app.propertyfilter.datein
         initNextLastIntervalField();
         initRelativeDateIntervalField();
         initPredefinedIntervalsSelect();
+        initDateRangePicker();
         initComponentVisibilityMap();
+    }
+
+    protected void initDateRangePicker() {
+        dateRangePicker = uiComponents.create(DateRangePicker.class);
+        dateRangePicker.setWidthFull();
+
+        contentBox.add(dateRangePicker);
+    }
+
+    @Override
+    public void setMetaPropertyPath(MetaPropertyPath metaPropertyPath) {
+        super.setMetaPropertyPath(metaPropertyPath);
+        dateRangePicker.setMetaPropertyPath(metaPropertyPath);
     }
 
     @Override
@@ -70,6 +89,7 @@ public class DateIntervalDialog extends io.jmix.flowui.app.propertyfilter.datein
         componentVisibilityMap.put(Type.NEXT, nextIntervalField);
         componentVisibilityMap.put(Type.RELATIVE, relativeDateIntervalField);
         componentVisibilityMap.put(Type.PREDEFINED, predefinedIntervalsSelect);
+        componentVisibilityMap.put(Type.CUSTOM, dateRangePicker);
     }
 
     @Override
@@ -112,6 +132,8 @@ public class DateIntervalDialog extends io.jmix.flowui.app.propertyfilter.datein
             } else {
                 nextIntervalField.setValue(dateIntervalValue);
             }
+        } else if (value instanceof CustomDateInterval customDateIntervalValue) {
+            dateRangePicker.setValue(customDateIntervalValue);
         }
     }
 
@@ -123,8 +145,10 @@ public class DateIntervalDialog extends io.jmix.flowui.app.propertyfilter.datein
             value = relativeDateIntervalField.getValue();
         } else if (Type.LAST == type) {
             value = lastIntervalField.getValue();
-        } else {
+        } else if (Type.NEXT == type) {
             value = nextIntervalField.getValue();
+        } else {
+            value = dateRangePicker.getValue();
         }
     }
 }

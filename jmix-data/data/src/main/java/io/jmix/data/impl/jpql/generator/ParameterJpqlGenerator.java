@@ -16,6 +16,7 @@
 
 package io.jmix.data.impl.jpql.generator;
 
+import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +38,16 @@ import java.util.Map;
 public class ParameterJpqlGenerator {
 
     protected ConditionGeneratorResolver resolver;
+    protected InIntervalParametersResolver inIntervalResolver;
 
     @Autowired
     public ParameterJpqlGenerator(ConditionGeneratorResolver resolver) {
         this.resolver = resolver;
+    }
+
+    @Autowired(required = false)
+    public void setInIntervalResolver(InIntervalParametersResolver inIntervalResolver) {
+        this.inIntervalResolver = inIntervalResolver;
     }
 
     /**
@@ -55,10 +63,20 @@ public class ParameterJpqlGenerator {
         List<PropertyCondition> propertyConditions = collectNestedPropertyConditions(actualized);
         for (PropertyCondition propertyCondition : propertyConditions) {
             String parameterName = propertyCondition.getParameterName();
-            if (PropertyConditionUtils.isUnaryOperation(propertyCondition)
-                    || PropertyConditionUtils.isInIntervalOperation(propertyCondition)) {
-                //remove query parameter for unary operations (e.g. IS_NULL) and "in interval" operations
+            if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
+                //remove query parameter for unary operations (e.g. IS_NULL)
                 parameters.remove(parameterName);
+            } else if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)) {
+                //remove query parameter for "in interval" operations
+                parameters.remove(parameterName);
+
+                if (inIntervalResolver != null) {
+                    // trying to resolve parameters for "in interval date between" operation
+                    List<Pair<String, Object>> inIntervalParameters = inIntervalResolver.resolveParameters(propertyCondition);
+                    if (!inIntervalParameters.isEmpty()) {
+                        inIntervalParameters.forEach(p -> parameters.put(p.getFirst(), p.getSecond()));
+                    }
+                }
             } else {
                 //PropertyCondition may take a value from queryParameters collection or from the
                 //PropertyCondition.parameterValue attribute. queryParameters has higher priority.

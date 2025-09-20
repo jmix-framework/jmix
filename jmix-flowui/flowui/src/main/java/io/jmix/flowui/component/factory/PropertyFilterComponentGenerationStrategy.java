@@ -87,7 +87,9 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
         }
 
         PropertyFilterComponentGenerationContext pfContext = (PropertyFilterComponentGenerationContext) context;
-        if (pfContext.getOperation().getType() == Operation.Type.UNARY) {
+        if (pfContext.getOperation().getType() == Operation.Type.DATE) {
+          return createDatePicker(context);
+        } else if (pfContext.getOperation().getType() == Operation.Type.UNARY) {
             return createUnaryField(context);
         } else if (pfContext.getOperation().getType() == Operation.Type.LIST) {
             return createCollectionField(context, mpp);

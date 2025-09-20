@@ -19,8 +19,8 @@ package io.jmix.reports.entity.table;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-
 import jakarta.persistence.Id;
+
 import java.util.UUID;
 
 @JmixEntity(name = "report_TemplateTableColumn")
@@ -35,6 +35,12 @@ public class TemplateTableColumn {
 
     @JmixProperty
     protected String caption;
+
+    /**
+     * Message key for localized caption. Used by annotated reports.
+     */
+    @JmixProperty
+    protected String captionMessageKey;
 
     @JmixProperty
     protected Integer position;
@@ -69,5 +75,13 @@ public class TemplateTableColumn {
 
     public void setCaption(String caption) {
         this.caption = caption;
+    }
+
+    public String getCaptionMessageKey() {
+        return captionMessageKey;
+    }
+
+    public void setCaptionMessageKey(String captionMessageKey) {
+        this.captionMessageKey = captionMessageKey;
     }
 }

@@ -16,6 +16,7 @@ import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
@@ -40,6 +41,7 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.*;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
@@ -132,6 +134,8 @@ public class ReportWizardCreatorView extends StandardView {
     protected JmixButton saveBtn;
     @ViewComponent
     protected JmixComboBox<MetaClass> entityField;
+    @ViewComponent
+    private TypedTextField<String> reportCodeField;
 
     @Autowired
     protected Messages messages;
@@ -179,6 +183,8 @@ public class ReportWizardCreatorView extends StandardView {
     protected ViewValidation viewValidation;
     @Autowired
     private PackageHelper packageHelper;
+    @Autowired
+    private ReportRepository reportRepository;
 
     protected int currentFragmentIdx = 0;
     protected boolean regenerateQuery = false;
@@ -305,6 +311,32 @@ public class ReportWizardCreatorView extends StandardView {
         }
     }
 
+    protected void markFieldAsInvalid(TypedTextField<?> field, String messageBundleKey) {
+        field.setErrorMessage(messageBundle.getMessage(messageBundleKey));
+        field.setInvalid(true);
+    }
+
+    protected boolean isReportCodeUnique() {
+        String newReportCode = reportCodeField.getTypedValue();
+
+        try {
+            if (newReportCode == null) {
+                markFieldAsInvalid(reportCodeField,"codeFieldIsEmptyMsg");
+                return false;
+            }
+            if (reportRepository.existsReportByCode(newReportCode)) {
+                markFieldAsInvalid(reportCodeField, "codeAlreadyExistsMsg");
+                return false;
+            }
+        } catch (AccessDeniedException ade) {
+            notifications.create(messageBundle.getMessage("notReadAccessRightsMsg"))
+                    .show();
+            return false;
+        }
+
+        return true;
+    }
+
     @Subscribe("nextBtn")
     public void onNextBtnClick(ClickEvent<Button> event) {
         if (!validateFragment()) {
@@ -347,6 +379,12 @@ public class ReportWizardCreatorView extends StandardView {
     }
 
     protected void nextFragment() {
+        if (currentFragmentIdx == 0) {
+            if (!isReportCodeUnique()) {
+                return;
+            }
+        }
+
         if (currentFragmentIdx < fragmentsList.size() - 1) {
             fragmentsList.get(currentFragmentIdx).setVisible(false);
             currentFragmentIdx++;
@@ -395,6 +433,8 @@ public class ReportWizardCreatorView extends StandardView {
         }
         return validationErrors.isEmpty();
     }
+
+
 
     @Subscribe("saveBtn")
     public void onSaveBtnClick(ClickEvent<Button> event) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.model.impl;
+package io.jmix.core.comparator;
 
 import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
@@ -29,7 +29,7 @@ import org.springframework.lang.Nullable;
  * <p>
  * For example, to obtain a {@code Comparator} that compares {@code io.jmix.core.Entity} objects
  * by some property that is specified by {@code io.jmix.core.metamodel.model.MetaPropertyPath}:
- * <pre>{@code Comparator.comparing(e -> e.getValueEx(propertyPath), EntityValuesComparator.of(asc))}</pre>
+ * <pre>{@code Comparator.comparing(e -> e.getValueEx(propertyPath), new EntityValuesComparator(asc, metaClass, beanFactory))}</pre>
  */
 public class EntityValuesComparator<T> extends AbstractComparator<T> {
 

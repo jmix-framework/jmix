@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+<head>
+    <title>User Profile</title>
+</head>
+<body>
+
+<h1>Registration data</h1>
+<% def UserData = Root.bands.UserData.first() %>
+<table border="1" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Registration date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>${UserData.fields.username}</td>
+        <td>${UserData.fields.firstName}</td>
+        <td>${UserData.fields.lastName}</td>
+        <td>${UserData.fields.registrationDate}</td>
+    </tr>
+</tbody>
+</table>
+
+<h1>Games</h1>
+<% def GameData = Root.bands.UserData.first().bands.GameData %>
+<table border="1" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Game</th>
+        <th>Purchase date</th>
+        <th>User rating</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% GameData.eachWithIndex{ row, index ->
+    out << "<tr><td>${row.fields.game.name}</td><td>${row.fields.purchaseDate}</td><td>${row.fields.userRating?:''}</td></tr>"
+    } %>
+</tbody>
+</table>
+</body>
+</html>

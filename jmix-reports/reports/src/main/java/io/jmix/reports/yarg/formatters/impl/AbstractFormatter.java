@@ -23,15 +23,13 @@ import io.jmix.reports.yarg.exception.ReportingInterruptedException;
 import io.jmix.reports.yarg.formatters.ReportFormatter;
 import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
 import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
-import io.jmix.reports.yarg.structure.BandData;
-import io.jmix.reports.yarg.structure.ReportFieldFormat;
-import io.jmix.reports.yarg.structure.ReportOutputType;
-import io.jmix.reports.yarg.structure.ReportTemplate;
+import io.jmix.reports.yarg.structure.*;
 import io.jmix.reports.yarg.util.groovy.Scripting;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -130,8 +128,11 @@ public abstract class AbstractFormatter implements ReportFormatter {
     protected String formatValue(Object value, String parameterName, String fullParameterName, String stringFunction) {
         checkThreadInterrupted();
         String valueString;
+        CustomValueFormatter customFormatter = getCustomFormatter(parameterName, fullParameterName);
         String formatString = getFormatString(parameterName, fullParameterName);
-        if (formatString != null) {
+        if (customFormatter != null) {
+            valueString = customFormatter.format(value);
+        } else if (formatString != null) {
             if (Boolean.TRUE.equals(isGroovyScript(parameterName, fullParameterName))) {
                 Map<String, Object> params = groovyScriptParametersProvider.getParametersForFormatterParameters();
                 params.put(VALUE, value);
@@ -173,17 +174,13 @@ public abstract class AbstractFormatter implements ReportFormatter {
         return valueString != null ? valueString : "";
     }
 
+    @Nullable
     protected String getFormatString(String parameterName, String fullParameterName) {
-        Map<String, ReportFieldFormat> formats = rootBand.getReportFieldFormats();
-        String formatString = null;
-        if (formats != null) {
-            if (formats.containsKey(fullParameterName)) {
-                formatString = formats.get(fullParameterName).getFormat();
-            } else if (formats.containsKey(parameterName)) {
-                formatString = formats.get(parameterName).getFormat();
-            }
+        ReportFieldFormat reportFieldFormat = getReportFieldFormat(parameterName, fullParameterName);
+        if (reportFieldFormat != null) {
+            return reportFieldFormat.getFormat();
         }
-        return formatString;
+        return null;
     }
 
     protected boolean hasFormat(BandData bandData, String parameterName) {
@@ -191,17 +188,35 @@ public abstract class AbstractFormatter implements ReportFormatter {
         return format != null;
     }
 
+    @Nullable
     protected Boolean isGroovyScript(String parameterName, String fullParameterName) {
+        ReportFieldFormat reportFieldFormat = getReportFieldFormat(parameterName, fullParameterName);
+        if (reportFieldFormat != null) {
+            return reportFieldFormat.isGroovyScript();
+        }
+        return false;
+    }
+
+    @Nullable
+    protected CustomValueFormatter<?> getCustomFormatter(String parameterName, String fullParameterName) {
+        ReportFieldFormat reportFieldFormat = getReportFieldFormat(parameterName, fullParameterName);
+        if (reportFieldFormat != null) {
+            return reportFieldFormat.getCustomFormatter();
+        }
+        return null;
+    }
+
+    @Nullable
+    protected ReportFieldFormat getReportFieldFormat(String parameterName, String fullParameterName) {
         Map<String, ReportFieldFormat> formats = rootBand.getReportFieldFormats();
-        Boolean groovyFormat = false;
         if (formats != null) {
             if (formats.containsKey(fullParameterName)) {
-                groovyFormat = formats.get(fullParameterName).isGroovyScript();
+                return formats.get(fullParameterName);
             } else if (formats.containsKey(parameterName)) {
-                groovyFormat = formats.get(parameterName).isGroovyScript();
+                return formats.get(parameterName);
             }
         }
-        return groovyFormat;
+        return null;
     }
 
     protected String applyStringFunction(String valueString, String stringFunction) {

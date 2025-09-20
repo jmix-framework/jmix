@@ -47,6 +47,10 @@ public class ReportData {
 
     @JmixProperty
     @Transient
+    protected String code;
+
+    @JmixProperty
+    @Transient
     protected String entityName;
 
     @JmixProperty
@@ -166,8 +170,14 @@ public class ReportData {
         return name;
     }
 
+    public String getCode() { return code; }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public EntityTreeNode getEntityTreeRootNode() {

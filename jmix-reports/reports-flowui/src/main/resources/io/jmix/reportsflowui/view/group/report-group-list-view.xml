@@ -15,16 +15,12 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-        title="msg://reportGroupListView.title"
-        focusComponent="reportGroupsDataGrid">
+      title="msg://reportGroupListView.title"
+      focusComponent="reportGroupsDataGrid">
 
     <data>
-        <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup" fetchPlan="_local">
-            <loader id="groupsDl">
-                <query>
-                    <![CDATA[select e from report_ReportGroup e]]>
-                </query>
-            </loader>
+        <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup">
+            <loader id="groupsDl"/>
         </collection>
     </data>
 
@@ -42,7 +38,21 @@
     </facets>
 
     <layout>
-        <genericFilter id="genericFilter" dataLoader="groupsDl" opened="false"/>
+        <details id="filterDetails"
+                 summaryText="msg://io.jmix.reportsflowui.view/filter"
+                 opened="true"
+                 width="100%">
+            <formLayout id="filterPanel">
+                <responsiveSteps>
+                    <responsiveStep minWidth="0" columns="1"/>
+                    <responsiveStep minWidth="40em" columns="3"/>
+                    <responsiveStep minWidth="80em" columns="5"/>
+                </responsiveSteps>
+                <textField id="titleFilter" datatype="string" label="msg://io.jmix.reports.entity/ReportGroup.title"/>
+                <textField id="codeFilter" datatype="string" label="msg://io.jmix.reports.entity/ReportGroup.code"/>
+            </formLayout>
+        </details>
+
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button action="reportGroupsDataGrid.create"/>
             <button action="reportGroupsDataGrid.edit"/>
@@ -66,8 +76,10 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column key="title" header="msg://title"/>
+                <column property="title"/>
+                <column property="code"/>
                 <column property="systemFlag"/>
+                <column property="source"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

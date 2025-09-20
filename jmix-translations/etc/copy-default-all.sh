@@ -60,7 +60,7 @@
 ./copy-default-file.sh jmix-quartz/quartz-flowui io/jmix/quartzflowui
 
 ./copy-default-file.sh jmix-reports/reports io/jmix/reports
-./copy-default-file.sh jmix-reports/reports-ui io/jmix/reportsui
+./copy-default-file.sh jmix-reports/reports-flowui io/jmix/reportsflowui
 
 ./copy-default-file.sh jmix-search/search io/jmix/search
 ./copy-default-file.sh jmix-search/search-ui io/jmix/searchui

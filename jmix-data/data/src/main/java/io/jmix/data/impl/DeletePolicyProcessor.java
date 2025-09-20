@@ -24,19 +24,19 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.persistence.DbmsSpecifics;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import org.springframework.lang.Nullable;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import javax.sql.DataSource;
 import java.util.*;
 
@@ -376,7 +376,7 @@ public class DeletePolicyProcessor {
     }
 
     protected boolean isPersistent(MetaClass metaClass) {
-        return metaClass.getJavaClass().isAnnotationPresent(jakarta.persistence.Entity.class);
+        return metadataTools.isJpaEntity(metaClass);
     }
 
     protected void cascade(String entityName, MetaProperty property) {

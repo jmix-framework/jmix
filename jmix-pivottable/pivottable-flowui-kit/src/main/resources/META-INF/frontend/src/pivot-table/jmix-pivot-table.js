@@ -1,4 +1,4 @@
-/*
+    /*
  * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,6 +48,9 @@ registerStyles('jmix-pivot-table', [jmixPivotTableStyles], {moduleId: 'jmix-pivo
  * {@link https://github.com/nicolaskruchten/pivottable}[Pivot]
  */
 export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(PolymerElement))) {
+
+    static pivotTableCount = 1;
+
     static get is() {
         return 'jmix-pivot-table';
     }
@@ -106,6 +109,8 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     _layout() {
         const container = document.createElement('div');
         container.className = 'pivot-table-output';
+        this.pivotTableId = JmixPivotTable.pivotTableCount++;
+        container.id = "pivot-table-" + this.pivotTableId;
         return container;
     }
 
@@ -165,7 +170,6 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             aggregation = this._options.aggregation.mode;
         }
 
-        
         let reflectedProperties = {};
         if (this._options.properties) {
             for (let property in this._options.properties) {
@@ -180,9 +184,9 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
                     result[i] = reflectedProperties[properties[i]];
                 }
             }
-            return result;                    
+            return result;
         };
-        
+
         function reflectMapProperties(properties, reflectedProperties) {
             let result = {};
             if (properties) {
@@ -237,19 +241,26 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             "value-a-to-z": "key-a-to-z",
             "value-z-to-a": "value-a-to-z"
         };
-        this.$jQuery(orderElementClassName).val("").html("");
+
+        var pivotTableOutputElement = this._findPivotTableOutputElement();
+
+        pivotTableOutputElement.find(orderElementClassName).val("").html("");
 
         let currentOrder = order.replace(/_/g, '-');
-        this.$jQuery(orderElementClassName).removeClass(nextToCurrent[currentOrder]);
-        this.$jQuery(orderElementClassName).addClass(currentOrder);
+        pivotTableOutputElement.find(orderElementClassName).removeClass(nextToCurrent[currentOrder]);
+        pivotTableOutputElement.find(orderElementClassName).addClass(currentOrder);
     }
 
     _onRendererChange() {
         this._recreatePivot();
     }
 
+    _findPivotTableOutputElement() {
+        return this.$jQuery("#pivot-table-" + this.pivotTableId + ".pivot-table-output");
+    }
+
     _recreatePivot() {
-        let outputDiv = this.$jQuery("div.pivot-table-output");
+        let outputDiv = this._findPivotTableOutputElement();
         if (this._options) {
             if (!this._items || Object.keys(this._items).length == 0) {
                 outputDiv.html(this._options.emptyDataMessage);
@@ -285,10 +296,12 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
           select.disabled = true;
         });
 
-        this.$jQuery('.pvtAxisContainer').sortable('disable');
-        this.$jQuery('span.pvtAttr, li.ui-sortable-handle').addClass('disabled');
+        var pivotTableOutputElement = this._findPivotTableOutputElement();;
 
-        this.$jQuery('a.pvtRowOrder, a.pvtColOrder').unbind("click").addClass('disabled');
+        pivotTableOutputElement.find('.pvtAxisContainer').sortable('disable');
+        pivotTableOutputElement.find('span.pvtAttr, li.ui-sortable-handle').addClass('disabled');
+
+        pivotTableOutputElement.find('a.pvtRowOrder, a.pvtColOrder').unbind("click").addClass('disabled');
     }
 
     _preparePivotTableOptions() {

@@ -110,7 +110,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         const container = document.createElement('div');
         container.className = 'pivot-table-output';
         this.pivotTableId = JmixPivotTable.pivotTableCount++;
-        container.id = "pivot-table-" + this.pivotTableId;
+        container.classList.add("pivot-table-output-" + this.pivotTableId);
         return container;
     }
 
@@ -256,7 +256,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     }
 
     _findPivotTableOutputElement() {
-        return this.$jQuery("#pivot-table-" + this.pivotTableId + ".pivot-table-output");
+        return this.$jQuery("div.pivot-table-output-" + this.pivotTableId);
     }
 
     _recreatePivot() {

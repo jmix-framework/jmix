@@ -5122,6 +5122,7 @@
                 <xs:element name="span" type="baseClickableHtmlContainer"/>
                 <xs:element name="section" type="sectionHtmlComponent"/>
                 <xs:element name="pre" type="baseClickableHtmlContainer"/>
+                <xs:element name="code" type="baseHtmlContainer"/>
                 <xs:element name="p" type="baseClickableHtmlContainer"/>
                 <xs:element name="nav" type="clickableHtmlContainerWithArea"/>
                 <xs:element name="param" type="paramHtmlComponent"/>

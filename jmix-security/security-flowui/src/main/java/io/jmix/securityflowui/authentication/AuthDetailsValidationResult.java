@@ -16,14 +16,17 @@
 
 package io.jmix.securityflowui.authentication;
 
+import io.jmix.core.common.util.Preconditions;
 import org.springframework.lang.Nullable;
 
+/**
+ * Class that contains result of {@link AuthDetails} validation.
+ * Validation is optional in general and can be provided by different implementations of {@link AuthDetailsValidator}.
+ */
 public class AuthDetailsValidationResult {
 
     protected final boolean valid;
-    @Nullable
     protected final String message;
-    @Nullable
     protected final Exception exception;
 
     private AuthDetailsValidationResult(boolean valid, @Nullable String message, @Nullable Exception exception) {
@@ -41,18 +44,28 @@ public class AuthDetailsValidationResult {
     }
 
     public static AuthDetailsValidationResult createInvalid(String message, @Nullable Exception exception) {
+        Preconditions.checkNotNullArgument(message);
         return new AuthDetailsValidationResult(false, message, exception);
     }
 
+    /**
+     * @return true if validation has no violations
+     */
     public boolean isValid() {
         return valid;
     }
 
+    /**
+     * @return description of validation violation
+     */
     @Nullable
     public String getMessage() {
         return message;
     }
 
+    /**
+     * @return exception related to validation violation
+     */
     @Nullable
     public Exception getException() {
         return exception;

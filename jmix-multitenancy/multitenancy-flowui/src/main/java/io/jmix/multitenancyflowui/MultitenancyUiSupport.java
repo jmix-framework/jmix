@@ -29,6 +29,12 @@ public interface MultitenancyUiSupport {
 
     List<String> getTenantOptions();
 
+    /**
+     * Extracts tenant id from provided full username (e.g. "t1|user1" -> "t1").
+     *
+     * @param username username
+     * @return tenant id if exists, null otherwise
+     */
     @Nullable
     default String extractTenantFromUsername(String username) {
         return null;

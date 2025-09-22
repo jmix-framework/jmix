@@ -19,7 +19,7 @@ package io.jmix.autoconfigure.multitenancyflowui;
 import io.jmix.core.DataManager;
 import io.jmix.multitenancyflowui.MultitenancyFlowuiConfiguration;
 import io.jmix.multitenancyflowui.MultitenancyUiSupport;
-import io.jmix.multitenancyflowui.impl.AuthDetailsTenantValidator;
+import io.jmix.multitenancyflowui.impl.TenantAuthDetailsValidator;
 import io.jmix.securityflowui.authentication.AuthDetailsValidator;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -35,10 +35,10 @@ public class MultitenancyFlowuiAutoConfiguration {
     @ConditionalOnClass(AuthDetailsValidator.class)
     public static class MultitenancyUiLoginConfiguration {
 
-        @Bean("mten_AuthDetailsTenantValidator")
-        public AuthDetailsValidator authDetailsTenantValidator(DataManager dataManager,
+        @Bean("mten_TenantAuthDetailsValidator")
+        public AuthDetailsValidator tenantAuthDetailsValidator(DataManager dataManager,
                                                                MultitenancyUiSupport multitenancyUiSupport) {
-            return new AuthDetailsTenantValidator(dataManager, multitenancyUiSupport);
+            return new TenantAuthDetailsValidator(dataManager, multitenancyUiSupport);
         }
     }
 }

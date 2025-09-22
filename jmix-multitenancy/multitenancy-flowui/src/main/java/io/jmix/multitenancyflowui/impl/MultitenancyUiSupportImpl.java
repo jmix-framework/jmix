@@ -24,6 +24,7 @@ import io.jmix.multitenancy.MultitenancyProperties;
 import io.jmix.multitenancy.entity.Tenant;
 import io.jmix.multitenancyflowui.MultitenancyUiSupport;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -94,6 +95,7 @@ public class MultitenancyUiSupportImpl implements MultitenancyUiSupport {
     }
 
     @Override
+    @Nullable
     public String extractTenantFromUsername(String username) {
         if (username.contains(TENANT_USERNAME_SEPARATOR)) {
             return StringUtils.substringBefore(username, TENANT_USERNAME_SEPARATOR);

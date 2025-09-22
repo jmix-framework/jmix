@@ -30,12 +30,12 @@ import java.util.Optional;
 /**
  * Implementation of {@link AuthDetailsValidator} - it checks if tenant of user exists.
  */
-public class AuthDetailsTenantValidator implements AuthDetailsValidator {
+public class TenantAuthDetailsValidator implements AuthDetailsValidator {
 
     protected final DataManager dataManager;
     protected final MultitenancyUiSupport multitenancyUiSupport;
 
-    public AuthDetailsTenantValidator(DataManager dataManager,
+    public TenantAuthDetailsValidator(DataManager dataManager,
                                       MultitenancyUiSupport multitenancyUiSupport) {
         this.dataManager = dataManager;
         this.multitenancyUiSupport = multitenancyUiSupport;

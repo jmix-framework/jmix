@@ -35,14 +35,34 @@ public class AuthDetailsValidationResult {
         this.exception = exception;
     }
 
+    /**
+     * Creates valid {@link AuthDetailsValidationResult} without violation message and exception.
+     *
+     * @return Valid {@link AuthDetailsValidationResult}
+     */
     public static AuthDetailsValidationResult createValid() {
         return new AuthDetailsValidationResult(true, null, null);
     }
 
+    /**
+     * Creates invalid {@link AuthDetailsValidationResult} with provided message.
+     *
+     * @param message description of validation violation
+     * @return invalid {@link AuthDetailsValidationResult}
+     *
+     * @see #createInvalid(String, Exception)
+     */
     public static AuthDetailsValidationResult createInvalid(String message) {
         return createInvalid(message, null);
     }
 
+    /**
+     * Creates invalid {@link AuthDetailsValidationResult} with provided message and optional exception.
+     *
+     * @param message   description of validation violation
+     * @param exception optional related exception
+     * @return invalid {@link AuthDetailsValidationResult}
+     */
     public static AuthDetailsValidationResult createInvalid(String message, @Nullable Exception exception) {
         Preconditions.checkNotNullArgument(message);
         return new AuthDetailsValidationResult(false, message, exception);

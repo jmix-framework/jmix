@@ -33,7 +33,7 @@ import org.springframework.lang.Nullable;
  * no longer needed.
  */
 @Internal
-public class ThreadLocalVaadinRequest {
+public class ThreadLocalVaadinRequestHolder {
 
     private static final ThreadLocal<VaadinRequest> requestHolder = new ThreadLocal<>();
 

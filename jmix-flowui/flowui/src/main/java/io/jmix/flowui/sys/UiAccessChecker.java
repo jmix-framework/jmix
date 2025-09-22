@@ -23,7 +23,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.accesscontext.UiMenuContext;
 import io.jmix.flowui.accesscontext.UiShowViewContext;
-import io.jmix.flowui.backgroundtask.ThreadLocalVaadinRequest;
+import io.jmix.flowui.backgroundtask.ThreadLocalVaadinRequestHolder;
 import io.jmix.flowui.menu.MenuItem;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
@@ -84,8 +84,8 @@ public class UiAccessChecker {
         // is attempting to open a view from a background task. In this case, we should use the
         // stored request to check permissions. Otherwise, AccessAnnotationChecker#hasAccess(Class)
         // will throw an exception indicating that there is no active VaadinServletRequest.
-        if (ThreadLocalVaadinRequest.getRequest() != null) {
-            VaadinRequest request = ThreadLocalVaadinRequest.getRequest();
+        if (ThreadLocalVaadinRequestHolder.getRequest() != null) {
+            VaadinRequest request = ThreadLocalVaadinRequestHolder.getRequest();
             return isViewPermitted(target, request.getUserPrincipal(), request::isUserInRole);
         }
 

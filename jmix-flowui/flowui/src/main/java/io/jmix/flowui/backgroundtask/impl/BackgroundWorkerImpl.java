@@ -193,7 +193,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
 
                     SecurityContextHelper.setAuthentication(authentication);
                     ThreadLocalSessionData.setAttributes(sessionAttributes);
-                    ThreadLocalVaadinRequest.setRequest(vaadinRequest);
+                    ThreadLocalVaadinRequestHolder.setRequest(vaadinRequest);
                     try {
                         TaskExecutorImpl.this.ui.access(() ->
                                 handleDone()
@@ -205,7 +205,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
                     } finally {
                         SecurityContextHelper.setAuthentication(previousAuth);
                         ThreadLocalSessionData.clear();
-                        ThreadLocalVaadinRequest.clear();
+                        ThreadLocalVaadinRequestHolder.clear();
                     }
                 }
             };

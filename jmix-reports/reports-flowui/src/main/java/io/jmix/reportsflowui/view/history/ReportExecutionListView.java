@@ -30,6 +30,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
+import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reportsflowui.download.ReportDownloader;
@@ -69,6 +70,8 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     protected ReportExcelHelper reportExcelHelper;
     @Autowired
     protected CurrentAuthentication currentAuthentication;
+    @Autowired
+    private TenantProvider tenantProvider;
 
     protected List<Report> filterByReports;
 
@@ -131,33 +134,18 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
             throw new IllegalStateException("Query for entities loading has not set");
         }
 
-        filterByReportIds(loadQuery);
         filterByCurrentUsername(loadQuery);
     }
 
-    // TODO: for deleting if 4740 is needed
-//    @Subscribe
-//    public void onQueryParametersChange(final QueryParametersChangeEvent event) {
-//        if (CollectionUtils.isNotEmpty(filterByReports)) {
-//            executionsDl.setParameter("reportIds", filterByReports);
-//        }
-//    }
-
-    protected void filterByReportIds(LoadContext.Query query) {
+    @Subscribe
+    public void onQueryParametersChange(final QueryParametersChangeEvent event) {
         if (CollectionUtils.isNotEmpty(filterByReports)) {
-            query.setParameter("reportIds", filterByReports);
+            executionsDl.setParameter("reportIds", filterByReports);
         }
     }
 
     protected void filterByCurrentUsername(LoadContext.Query query) {
-        // The administrator of the entire application can see a list of all executed reports for all users.
-        String adminRoleCode = "ROLE_system-full-access";
-
-        if (currentAuthentication
-                .getUser()
-                .getAuthorities()
-                .stream()
-                .noneMatch(e -> e.getAuthority().equals(adminRoleCode))) {
+        if (!tenantProvider.getCurrentUserTenantId().equals(TenantProvider.NO_TENANT)) {
             query.setParameter("currentUsername", currentAuthentication.getUser().getUsername());
         }
     }

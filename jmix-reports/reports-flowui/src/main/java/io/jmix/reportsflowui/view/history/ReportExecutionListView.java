@@ -22,6 +22,8 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.FileRef;
+import io.jmix.core.LoadContext;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -65,6 +67,8 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     protected SecondsToTextFormatter durationFormatter;
     @Autowired(required = false)
     protected ReportExcelHelper reportExcelHelper;
+    @Autowired
+    protected CurrentAuthentication currentAuthentication;
 
     protected List<Report> filterByReports;
 
@@ -119,10 +123,42 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
         return super.getPageTitle();
     }
 
-    @Subscribe
-    public void onQueryParametersChange(final QueryParametersChangeEvent event) {
+    @Subscribe(id = "executionsDl", target = Target.DATA_LOADER)
+    public void onExecutionsDlPreLoad(final CollectionLoader.PreLoadEvent<ReportExecution> event) {
+        LoadContext.Query loadQuery = event.getLoadContext().getQuery();
+
+        if (loadQuery == null) {
+            throw new IllegalStateException("Query for entities loading has not set");
+        }
+
+        filterByReportIds(loadQuery);
+        filterByCurrentUsername(loadQuery);
+    }
+
+    // TODO: for deleting if 4740 is needed
+//    @Subscribe
+//    public void onQueryParametersChange(final QueryParametersChangeEvent event) {
+//        if (CollectionUtils.isNotEmpty(filterByReports)) {
+//            executionsDl.setParameter("reportIds", filterByReports);
+//        }
+//    }
+
+    protected void filterByReportIds(LoadContext.Query query) {
         if (CollectionUtils.isNotEmpty(filterByReports)) {
-            executionsDl.setParameter("reportIds", filterByReports);
+            query.setParameter("reportIds", filterByReports);
+        }
+    }
+
+    protected void filterByCurrentUsername(LoadContext.Query query) {
+        // The administrator of the entire application can see a list of all executed reports for all users.
+        String adminRoleCode = "ROLE_system-full-access";
+
+        if (currentAuthentication
+                .getUser()
+                .getAuthorities()
+                .stream()
+                .noneMatch(e -> e.getAuthority().equals(adminRoleCode))) {
+            query.setParameter("currentUsername", currentAuthentication.getUser().getUsername());
         }
     }
 

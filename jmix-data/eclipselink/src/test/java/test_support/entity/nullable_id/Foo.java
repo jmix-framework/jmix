@@ -32,7 +32,7 @@ public class Foo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
-    protected Long id;
+    protected Long longId;
 
     @Version
     @Column(name = "VERSION", nullable = false)
@@ -62,12 +62,12 @@ public class Foo {
         this.version = version;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLongId(Long longId) {
+        this.longId = longId;
     }
 
-    public Long getId() {
-        return id;
+    public Long getLongId() {
+        return longId;
     }
 
     public String getName() {

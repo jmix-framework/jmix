@@ -149,6 +149,7 @@ class DataManagerCommitTest extends DataSpec {
         def foo1 = dataManager.load(Id.of(foo)).fetchPlan { fp -> fp.addAll('parts.name') }.one()
 
         then:
+        noExceptionThrown()
         savedSet.size() == 2
         savedSet.get(foo) == foo
         savedSet.get(part) == part

@@ -76,7 +76,51 @@ public class SearchUtils {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * without security
+     * @param requestedEntities
+     * @return
+     */
+    @Deprecated
     public Set<String> resolveEffectiveSearchFields(Collection<String> requestedEntities) {
+        List<String> allowedEntities = resolveEntitiesAllowedToSearch(requestedEntities);
+
+        Set<String> effectiveFieldsToSearch = new HashSet<>();
+        for (String targetEntity : allowedEntities) {
+            IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(targetEntity);
+            IndexMappingConfiguration mapping = indexConfiguration.getMapping();
+            Map<String, MappingFieldDescriptor> fields = mapping.getFields();
+
+            for (Map.Entry<String, MappingFieldDescriptor> entry : fields.entrySet()) {
+                String fieldName = entry.getKey();
+                MappingFieldDescriptor mappingFieldDescriptor = entry.getValue();
+                MetaPropertyPath metaPropertyPath = mappingFieldDescriptor.getMetaPropertyPath();
+                if (isFileRefProperty(metaPropertyPath)) {
+                    // Add nested fields created by FileFieldMapper
+                    effectiveFieldsToSearch.add(fieldName + "._file_name");
+                    effectiveFieldsToSearch.add(fieldName + "._content");
+                } else if (isReferenceProperty(metaPropertyPath)) {
+                    // Add nested instanceName field for pure reference property
+                    effectiveFieldsToSearch.add(fieldName + "." + Constants.INSTANCE_NAME_FIELD);
+                } else {
+                    effectiveFieldsToSearch.add(fieldName);
+                }
+            }
+        }
+
+        // Add root instanceName field
+        effectiveFieldsToSearch.add(Constants.INSTANCE_NAME_FIELD);
+
+        return effectiveFieldsToSearch;
+    }
+
+    /**
+     * TODO
+     * @param requestedEntities
+     * @return
+     */
+    @Deprecated
+    public Set<String> resolveEffectiveSearchFieldsWithSecurity(Collection<String> requestedEntities) {
         List<String> allowedEntities = resolveEntitiesAllowedToSearch(requestedEntities);
 
         Set<String> effectiveFieldsToSearch = new HashSet<>();

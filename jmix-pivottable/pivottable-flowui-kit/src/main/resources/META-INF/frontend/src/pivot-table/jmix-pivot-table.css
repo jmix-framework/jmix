@@ -324,27 +324,27 @@ jmix-pivot-table {
     }
 
     a.pvtRowOrder.key-a-to-z::before {
-        content: '\e754';
-    }
-
-    a.pvtRowOrder.value-a-to-z::before {
-        content: '\e74e';
-    }
-
-    a.pvtRowOrder.value-z-to-a::before {
-        content: '\e753';
-    }
-
-    a.pvtColOrder.key-a-to-z::before {
         content: '\e751';
     }
 
-    a.pvtColOrder.value-a-to-z::before {
+    a.pvtRowOrder.value-a-to-z::before {
         content: '\e752';
     }
 
-    a.pvtColOrder.value-z-to-a::before {
+    a.pvtRowOrder.value-z-to-a::before {
         content: '\e74f';
+    }
+
+    a.pvtColOrder.key-a-to-z::before {
+        content: '\e754';
+    }
+
+    a.pvtColOrder.value-a-to-z::before {
+        content: '\e74e';
+    }
+
+    a.pvtColOrder.value-z-to-a::before {
+        content: '\e753';
     }
 
     a.pvtRowOrder.disabled, a.pvtColOrder.disabled {

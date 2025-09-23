@@ -1,4 +1,4 @@
-    /*
+/*
  * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,8 +49,6 @@ registerStyles('jmix-pivot-table', [jmixPivotTableStyles], {moduleId: 'jmix-pivo
  */
 export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(PolymerElement))) {
 
-    static pivotTableCount = 1;
-
     static get is() {
         return 'jmix-pivot-table';
     }
@@ -98,9 +96,9 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     ready() {
         super.ready();
 
-        const layout = this._layout();
-        layout.setAttribute('slot', 'pivot-table');
-        this.appendChild(layout);
+        this._outputDiv = this._layout();
+        this._outputDiv.setAttribute('slot', 'pivot-table');
+        this.appendChild(this._outputDiv);
 
         this.initApplicationThemeObserver();
     }
@@ -109,8 +107,6 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
     _layout() {
         const container = document.createElement('div');
         container.className = 'pivot-table-output';
-        this.pivotTableId = JmixPivotTable.pivotTableCount++;
-        container.classList.add("pivot-table-output-" + this.pivotTableId);
         return container;
     }
 
@@ -242,7 +238,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             "value-z-to-a": "value-a-to-z"
         };
 
-        var pivotTableOutputElement = this._findPivotTableOutputElement();
+        let pivotTableOutputElement = this.$jQuery(this._outputDiv);
 
         pivotTableOutputElement.find(orderElementClassName).val("").html("");
 
@@ -255,13 +251,9 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         this._recreatePivot();
     }
 
-    _findPivotTableOutputElement() {
-        return this.$jQuery("div.pivot-table-output-" + this.pivotTableId);
-    }
-
     _recreatePivot() {
-        let outputDiv = this._findPivotTableOutputElement();
-        if (this._options) {
+        if (this._options && this._outputDiv) {
+            let outputDiv = this.$jQuery(this._outputDiv);
             if (!this._items || Object.keys(this._items).length == 0) {
                 outputDiv.html(this._options.emptyDataMessage);
                 return;
@@ -296,11 +288,10 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
           select.disabled = true;
         });
 
-        var pivotTableOutputElement = this._findPivotTableOutputElement();;
+        let pivotTableOutputElement = this.$jQuery(this._outputDiv);
 
         pivotTableOutputElement.find('.pvtAxisContainer').sortable('disable');
         pivotTableOutputElement.find('span.pvtAttr, li.ui-sortable-handle').addClass('disabled');
-
         pivotTableOutputElement.find('a.pvtRowOrder, a.pvtColOrder').unbind("click").addClass('disabled');
     }
 

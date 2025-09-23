@@ -30,10 +30,10 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
-import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reportsflowui.download.ReportDownloader;
+import io.jmix.reportsflowui.view.run.MultitenancyHelper;
 import io.jmix.reportsflowui.view.run.ReportExcelHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -70,8 +70,8 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     protected ReportExcelHelper reportExcelHelper;
     @Autowired
     protected CurrentAuthentication currentAuthentication;
-    @Autowired
-    private TenantProvider tenantProvider;
+    @Autowired(required = false)
+    protected MultitenancyHelper multitenancyHelper;
 
     protected List<Report> filterByReports;
 
@@ -145,7 +145,11 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     }
 
     protected void filterByCurrentUsername(LoadContext.Query query) {
-        if (!tenantProvider.getCurrentUserTenantId().equals(TenantProvider.NO_TENANT)) {
+        if (multitenancyHelper == null) {
+            return;
+        }
+
+        if (multitenancyHelper.isCurrentUserTenant()) {
             query.setParameter("currentUsername", currentAuthentication.getUser().getUsername());
         }
     }

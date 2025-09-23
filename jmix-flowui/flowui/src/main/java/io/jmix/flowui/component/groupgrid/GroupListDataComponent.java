@@ -160,8 +160,8 @@ public interface GroupListDataComponent<E> extends ListDataComponent<E> {
      */
     class CollapseEvent<E> extends EventObject {
 
-        protected boolean isFromClient;
-        protected Collection<E> collapsedItems;
+        protected final boolean isFromClient;
+        protected final Collection<E> collapsedItems;
 
         public CollapseEvent(GroupListDataComponent<E> source, boolean isFromClient, Collection<E> collapsedItems) {
             super(source);
@@ -200,8 +200,8 @@ public interface GroupListDataComponent<E> extends ListDataComponent<E> {
      */
     class ExpandEvent<E> extends EventObject {
 
-        protected boolean isFromClient;
-        protected Collection<E> expandedItems;
+        protected final boolean isFromClient;
+        protected final Collection<E> expandedItems;
 
         public ExpandEvent(GroupListDataComponent<E> source, boolean isFromClient, Collection<E> expandedItems) {
             super(source);

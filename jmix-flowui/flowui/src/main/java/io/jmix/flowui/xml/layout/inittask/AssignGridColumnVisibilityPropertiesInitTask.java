@@ -25,8 +25,11 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.gridcolumnvisibility.JmixGridColumnVisibility;
+import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
+import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.ComponentLoader;
+import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
@@ -35,20 +38,36 @@ import java.util.Map;
 public class AssignGridColumnVisibilityPropertiesInitTask extends AbstractInitTask {
 
     protected DeferredLoadContext loadContext;
+    protected ApplicationContext applicationContext;
 
     public AssignGridColumnVisibilityPropertiesInitTask(DeferredLoadContext loadContext) {
         this.loadContext = loadContext;
+
+        applicationContext = loadContext.getApplicationContext();
     }
 
     @Override
     public void execute(ComponentLoader.Context context) {
         String dataGridId = loadContext.getDataGridId();
         Component gridComponent = UiComponentUtils.findComponent(context.getOrigin(), dataGridId).orElse(null);
-        if (!(gridComponent instanceof DataGrid<?>) && !(gridComponent instanceof TreeDataGrid<?>)) {
+        if (!(gridComponent instanceof DataGrid<?>)
+                && !(gridComponent instanceof TreeDataGrid<?>)
+                && !(gridComponent instanceof GroupListDataComponent<?>)) {
             throw new GuiDevelopmentException("Failed to find a grid with specified id", context, "Data Grid", dataGridId);
         }
 
-        Grid<?> grid = (Grid<?>) gridComponent;
+        Grid<?> grid;
+        if (gridComponent instanceof GroupListDataComponent<?> groupGrid) {
+            GroupDataGridAdapterFactory adapterFactory = applicationContext.getBean(GroupDataGridAdapterFactory.class);
+            grid = adapterFactory.getAdapter(groupGrid);
+            if (grid == null) {
+                throw new GuiDevelopmentException("Failed to find a grid adapter for group grid",
+                        context, "GroupDataGrid", dataGridId);
+            }
+        } else {
+            grid = (Grid<?>) gridComponent;
+        }
+
         JmixGridColumnVisibility columnVisibilityComponent = loadContext.getComponent();
         columnVisibilityComponent.setGrid(grid);
 
@@ -97,15 +116,18 @@ public class AssignGridColumnVisibilityPropertiesInitTask extends AbstractInitTa
 
     public static class DeferredLoadContext {
 
+        protected ApplicationContext applicationContext;
         protected String dataGridId;
         protected JmixGridColumnVisibility component;
         protected String includeColumns;
         protected String excludeColumns;
         protected Map<String, MenuItem> menuItems;
 
-        public DeferredLoadContext(JmixGridColumnVisibility component, String dataGridId) {
+        public DeferredLoadContext(JmixGridColumnVisibility component, String dataGridId,
+                                   ApplicationContext applicationContext) {
             this.component = component;
             this.dataGridId = dataGridId;
+            this.applicationContext = applicationContext;
         }
 
         public String getDataGridId() {
@@ -138,6 +160,10 @@ public class AssignGridColumnVisibilityPropertiesInitTask extends AbstractInitTa
 
         public void setMenuItems(Map<String, MenuItem> menuItems) {
             this.menuItems = menuItems;
+        }
+
+        public ApplicationContext getApplicationContext() {
+            return applicationContext;
         }
     }
 

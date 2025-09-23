@@ -57,7 +57,7 @@ public interface GroupColumn<E> {
     /**
      * @return {@code true} if the column displays a button that opens a popup that manages columns grouping
      */
-    boolean isDisplayColumnsGrouper();
+    boolean isDisplayColumnsGrouperOnIconClick();
 
     /**
      * Sets whether the column displays a button that opens a popup that manages columns grouping.
@@ -66,20 +66,24 @@ public interface GroupColumn<E> {
      *
      * @param displayColumnsGrouper displayColumnsGrouper option
      */
-    void setDisplayColumnsGrouper(boolean displayColumnsGrouper);
+    void setDisplayColumnsGrouperOnIconClick(boolean displayColumnsGrouper);
 
     /**
      * @return the icon for the columns grouper button or {@code null} if the default icon is used
      */
     @Nullable
-    Icon getColumnsGrouperIcon();
+    Icon getGroupIcon();
 
     /**
      * Sets the icon for the columns grouper button.
      *
      * @param icon the icon to set, or {@code null} to set the default icon
      */
-    void setColumnsGrouperIcon(@Nullable Icon icon);
+    void setGroupIcon(@Nullable Icon icon);
+
+    boolean isGroupIconVisible();
+
+    void setGroupIconVisible(boolean visible);
 
     /**
      * @return a formatter for group cell values or {@code null} if no formatter is set.

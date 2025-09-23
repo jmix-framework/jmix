@@ -30,7 +30,7 @@ import java.util.function.Function;
  * the following code can be used:
  * <pre>
  * customersDataGrid.getItems().addGroupPropertyDescriptor(
- *         new BaseGroupPropertyDescriptor<Customer>("fullName", context -> {
+ *         new BaseGroupPropertyDescriptor&lt;Customer&gt;("fullName", context -> {
  *             Customer item = context.getItem();
  *             return item.getFirstName() + " " + item.getLastName();
  *         }).withSortProperties(List.of("firstName", "lastName")));

@@ -31,7 +31,7 @@ import java.util.Collection;
  * For instance setting formatter for group column cell value:
  * <pre>
  * &#064;Install(to  = "customersDataGrid.group", subject = "groupCellValueFormatter")
- * public String groupColumnCellFormatter(GroupCellValueFormatter.GroupCellContext<Customer> context) {
+ * public String groupColumnCellFormatter(GroupCellValueFormatter.GroupCellContext&lt;Customer&gt; context) {
  *     GroupInfo groupInfo = context.getGroupInfo();
  *     GroupProperty property = groupInfo.getProperty();
  *

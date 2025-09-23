@@ -115,6 +115,15 @@ public interface GroupDataGridItems<T> extends DataGridItems<T> {
     /**
      * Adds a group property descriptor for a custom grouping property. This method enables defining
      * custom logic for computing property values during data grouping.
+     * <p>
+     * For instance:
+     * <pre>
+     * customersDataGrid.getItems().addGroupPropertyDescriptor(
+     *         new BaseGroupPropertyDescriptor&lt;Customer&gt;("fullName", context -> {
+     *             Customer item = context.getItem();
+     *             return item.getFirstName() + " " + item.getLastName();
+     *         }).withSortProperties(List.of("firstName", "lastName")));
+     * </pre>
      *
      * @param groupPropertyDescriptor implementation of {@link GroupPropertyDescriptor}
      */
@@ -139,8 +148,19 @@ public interface GroupDataGridItems<T> extends DataGridItems<T> {
      */
     void removeAllGroupPropertyProviders();
 
-    Registration addGroupPropertyDescriptorsChangeListener(Consumer<GroupPropertyDescriptorsChangedEvent<T>> listener);
+    /**
+     * Adds a listener to be notified when the group property descriptors are changed.
+     *
+     * @param listener the listener to add
+     * @return a registration object for removing the listener
+     */
+    Registration addGroupPropertyDescriptorsChangedListener(Consumer<GroupPropertyDescriptorsChangedEvent<T>> listener);
 
+    /**
+     * Event is fired when the group property descriptors count is changed (removed/ added).
+     *
+     * @param <T> item type
+     */
     class GroupPropertyDescriptorsChangedEvent<T> extends EventObject {
 
         protected final Collection<GroupPropertyDescriptor<T>> groupPropertyDescriptors;
@@ -152,6 +172,9 @@ public interface GroupDataGridItems<T> extends DataGridItems<T> {
             this.groupPropertyDescriptors = groupPropertyDescriptors;
         }
 
+        /**
+         * @return the collection of group property descriptors currently used in the group data grid items
+         */
         public Collection<GroupPropertyDescriptor<T>> getGroupPropertyDescriptors() {
             return groupPropertyDescriptors;
         }

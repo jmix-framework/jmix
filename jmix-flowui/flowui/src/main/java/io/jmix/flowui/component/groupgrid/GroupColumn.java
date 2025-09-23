@@ -69,20 +69,30 @@ public interface GroupColumn<E> {
     void setDisplayColumnsGrouperOnIconClick(boolean displayColumnsGrouper);
 
     /**
-     * @return the icon for the columns grouper button or {@code null} if the default icon is used
+     * @return the icon for the Columns Grouper button or {@code null} if the default icon is used
      */
     @Nullable
     Icon getGroupIcon();
 
     /**
-     * Sets the icon for the columns grouper button.
+     * Sets the icon for the Columns Grouper button.
      *
      * @param icon the icon to set, or {@code null} to set the default icon
      */
     void setGroupIcon(@Nullable Icon icon);
 
+    /**
+     * @return {@code true} if the icon for the Columns Grouper button is visible
+     */
     boolean isGroupIconVisible();
 
+    /**
+     * Sets whether the icon for the Columns Grouper button is visible.
+     * <p>
+     * The default value is {@code true}.
+     *
+     * @param visible visible option
+     */
     void setGroupIconVisible(boolean visible);
 
     /**

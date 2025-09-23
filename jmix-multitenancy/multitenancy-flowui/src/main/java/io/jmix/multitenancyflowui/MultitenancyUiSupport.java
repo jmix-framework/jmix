@@ -17,6 +17,7 @@
 package io.jmix.multitenancyflowui;
 
 import com.vaadin.flow.router.Location;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -27,4 +28,15 @@ public interface MultitenancyUiSupport {
     String getUsernameByTenant(String username, String tenantId);
 
     List<String> getTenantOptions();
+
+    /**
+     * Extracts tenant id from provided full username (e.g. "t1|user1" -> "t1").
+     *
+     * @param username username
+     * @return tenant id if exists, null otherwise
+     */
+    @Nullable
+    default String extractTenantFromUsername(String username) {
+        return null;
+    }
 }

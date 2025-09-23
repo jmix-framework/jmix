@@ -16,27 +16,28 @@
 
 package metadata
 
-import io.jmix.core.InstanceNameProvider
 import io.jmix.core.CoreConfiguration
+import io.jmix.core.InstanceNameProvider
 import io.jmix.core.Metadata
+import io.jmix.core.metamodel.annotation.InstanceName
+import io.jmix.core.metamodel.model.MetaProperty
 import io.jmix.core.security.ClientDetails
 import io.jmix.core.security.SystemAuthenticationToken
+import io.jmix.core.security.SystemAuthenticator
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Ignore
 import spock.lang.Specification
-
 import test_support.addon1.TestAddon1Configuration
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.Address
 import test_support.app.entity.Owner
-import io.jmix.core.security.SystemAuthenticator
-
-import org.springframework.beans.factory.annotation.Autowired
 import test_support.app.entity.instance_name.GPSDeviceWithFieldName
 import test_support.app.entity.instance_name.GPSDeviceWithMethodName
 import test_support.app.entity.instance_name.GPSDeviceWithOverridedMethodName
+import test_support.app.entity.instance_name_inheritance.ExtExtEntity
 import test_support.base.TestBaseConfiguration
 
 import java.util.stream.Collectors
@@ -132,6 +133,28 @@ class InstanceNameTest extends Specification {
 
         expect:
         instanceNameProvider.getInstanceName(device) == "gps"
+
+        cleanup:
+        authenticator.end()
+    }
+
+    def "use instance name property from extended class instead of the one from base class"() {
+        def demoResourceClass = metadata.create(ExtExtEntity)
+        demoResourceClass.code = "code"
+        demoResourceClass.fullCode = "fullCode"
+
+        authenticator.begin()
+        expect:
+        //1. Make sure wrong @InstanceName property is first in the list.
+        // It means it will be taken by default before declaring class check
+        List<MetaProperty> nameProperties = metadata.getClass(ExtExtEntity).getProperties().stream()
+                .filter(p -> p.getAnnotatedElement().getAnnotation(InstanceName.class) != null)
+                .collect(Collectors.toList());
+        nameProperties[0].name == "code"
+        nameProperties[1].name == "fullCode"
+
+        //2. Make sure correct (the latest in extends hierarchy) @InstanceName property will be chosen
+        instanceNameProvider.getInstanceName(demoResourceClass) == "fullCode"
 
         cleanup:
         authenticator.end()

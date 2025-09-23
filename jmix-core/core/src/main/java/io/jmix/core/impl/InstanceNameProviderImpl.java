@@ -181,7 +181,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
     @Nullable
     public InstanceNameRec parseNamePattern(MetaClass metaClass) {
         Method method = null;
-        MetaProperty nameProperty = null;
+        MetaProperty selectedNameProperty = null;
         List<Method> instanceNameMethods = Stream.of(metaClass.getJavaClass().getMethods())
                 .filter(m -> AnnotatedElementUtils.findMergedAnnotation(m, InstanceName.class) != null)
                 .collect(Collectors.toList());
@@ -191,18 +191,30 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
         if (!instanceNameMethods.isEmpty()) {
             method = instanceNameMethods.get(0);
         } else if (!nameProperties.isEmpty()) {
-            nameProperty = nameProperties.get(0);
+            selectedNameProperty = nameProperties.get(0);
+
+            for (int i = 1; i < nameProperties.size(); i++) {
+                MetaProperty current = nameProperties.get(i);
+                //check for null just in case: should not happen for @InstanceName-annotated property
+                if (selectedNameProperty.getDeclaringClass() != null && current.getDeclaringClass() != null
+                        && !current.getDeclaringClass().isAssignableFrom(selectedNameProperty.getDeclaringClass())) {
+                    selectedNameProperty = current;//use the one declared in extending class
+                }
+            }
         }
         if (instanceNameMethods.isEmpty() && nameProperties.isEmpty()) {
             return null;
         }
-        validateInstanceNameAnnotation(metaClass, instanceNameMethods, nameProperties);
+        validateInstanceNameAnnotation(metaClass, instanceNameMethods, nameProperties, selectedNameProperty);
         return new InstanceNameRec("%s", method,
-                getInstanceNameProperties(metaClass, method, nameProperty).stream()
+                getInstanceNameProperties(metaClass, method, selectedNameProperty).stream()
                         .toArray(MetaProperty[]::new));
     }
 
-    private void validateInstanceNameAnnotation(MetaClass metaClass, List<Method> instanceNameMethods, List<MetaProperty> nameProperties) {
+    private void validateInstanceNameAnnotation(MetaClass metaClass,
+                                                List<Method> instanceNameMethods,
+                                                List<MetaProperty> nameProperties,
+                                                MetaProperty selectedNameProperty) {
         if (instanceNameMethods.size() > 1) {
             log.warn("Multiple @InstanceName annotated methods found in {} class, method {} will be used for instance name",
                     metaClass.getName(),
@@ -216,7 +228,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
         } else if (nameProperties.size() > 1) {
             log.warn("Multiple @InstanceName annotated properties found in {} class, property {} will be used for instance name",
                     metaClass.getName(),
-                    nameProperties.get(0));
+                    selectedNameProperty);
         }
     }
 }

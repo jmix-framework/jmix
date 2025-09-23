@@ -24,7 +24,6 @@ dependencies {
     api project(':reports')
     api project(':flowui')
 
-    compileOnly project(':multitenancy')
     compileOnly project(':gridexport-flowui')
     compileOnly project(':security-flowui')
 }

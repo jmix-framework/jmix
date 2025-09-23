@@ -22,8 +22,6 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.FileRef;
-import io.jmix.core.LoadContext;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -33,7 +31,6 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reportsflowui.download.ReportDownloader;
-import io.jmix.reportsflowui.view.run.MultitenancyHelper;
 import io.jmix.reportsflowui.view.run.ReportExcelHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,10 +65,6 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     protected SecondsToTextFormatter durationFormatter;
     @Autowired(required = false)
     protected ReportExcelHelper reportExcelHelper;
-    @Autowired
-    protected CurrentAuthentication currentAuthentication;
-    @Autowired(required = false)
-    protected MultitenancyHelper multitenancyHelper;
 
     protected List<Report> filterByReports;
 
@@ -126,31 +119,14 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
         return super.getPageTitle();
     }
 
-    @Subscribe(id = "executionsDl", target = Target.DATA_LOADER)
-    public void onExecutionsDlPreLoad(final CollectionLoader.PreLoadEvent<ReportExecution> event) {
-        LoadContext.Query loadQuery = event.getLoadContext().getQuery();
-
-        if (loadQuery == null) {
-            throw new IllegalStateException("Query for entities loading has not set");
-        }
-
-        filterByCurrentUsername(loadQuery);
-    }
-
     @Subscribe
     public void onQueryParametersChange(final QueryParametersChangeEvent event) {
-        if (CollectionUtils.isNotEmpty(filterByReports)) {
-            executionsDl.setParameter("reportIds", filterByReports);
-        }
+        updateReportIdsParameter();
     }
 
-    protected void filterByCurrentUsername(LoadContext.Query query) {
-        if (multitenancyHelper == null) {
-            return;
-        }
-
-        if (multitenancyHelper.isCurrentUserTenant()) {
-            query.setParameter("currentUsername", currentAuthentication.getUser().getUsername());
+    protected void updateReportIdsParameter() {
+        if (CollectionUtils.isNotEmpty(filterByReports)) {
+            executionsDl.setParameter("reportIds", filterByReports);
         }
     }
 
@@ -174,5 +150,6 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
 
     public void setFilterByReports(List<Report> filterByReports) {
         this.filterByReports = filterByReports;
+        updateReportIdsParameter();
     }
 }

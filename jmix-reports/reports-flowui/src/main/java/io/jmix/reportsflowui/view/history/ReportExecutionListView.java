@@ -121,6 +121,10 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
 
     @Subscribe
     public void onQueryParametersChange(final QueryParametersChangeEvent event) {
+        updateReportIdsParameter();
+    }
+
+    protected void updateReportIdsParameter() {
         if (CollectionUtils.isNotEmpty(filterByReports)) {
             executionsDl.setParameter("reportIds", filterByReports);
         }
@@ -146,5 +150,6 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
 
     public void setFilterByReports(List<Report> filterByReports) {
         this.filterByReports = filterByReports;
+        updateReportIdsParameter();
     }
 }

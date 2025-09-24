@@ -149,10 +149,6 @@ public interface StudioVaadinCommercialComponents {
             },
             supplyHandlers = {
                     @StudioSupplyHandler(
-                            methodName = "setCellValueHandler",
-                            parameterType = "com.vaadin.flow.component.spreadsheet.Spreadsheet.CellValueHandler"
-                    ),
-                    @StudioSupplyHandler(
                             methodName = "setCellDeletionHandler",
                             parameterType = "com.vaadin.flow.component.spreadsheet.Spreadsheet.CellDeletionHandler"
                     ),

@@ -39,8 +39,7 @@ public class VaadinCommercialComponentsAutoConfiguration {
             public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
                 if (bean instanceof ReflectionCacheManager reflectionCacheManager) {
                     reflectionCacheManager.addSupplyMethodNames(
-                            List.of("CellValueHandler", "CellDeletionHandler",
-                                    "HyperlinkCellClickHandler", "SpreadsheetComponentFactory")
+                            List.of("CellDeletionHandler", "HyperlinkCellClickHandler", "SpreadsheetComponentFactory")
                     );
                 }
 

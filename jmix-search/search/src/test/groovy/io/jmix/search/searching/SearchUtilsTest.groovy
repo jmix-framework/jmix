@@ -17,82 +17,75 @@
 package io.jmix.search.searching
 
 import io.jmix.core.Metadata
-import io.jmix.core.metamodel.datatype.Datatype
-import io.jmix.core.metamodel.datatype.impl.FileRefDatatype
 import io.jmix.core.metamodel.model.MetaPropertyPath
-import io.jmix.core.metamodel.model.Range
 import io.jmix.search.index.IndexConfiguration
 import io.jmix.search.index.mapping.IndexConfigurationManager
 import io.jmix.search.index.mapping.IndexMappingConfiguration
 import io.jmix.search.index.mapping.MappingFieldDescriptor
+import io.jmix.search.searching.impl.SearchFieldsAdapter
 import io.jmix.security.constraint.PolicyStore
 import io.jmix.security.constraint.SecureOperations
 import spock.lang.Specification
 
 class SearchUtilsTest extends Specification {
-    def "Getting effective fields with security"() {
-/*        given:
-        def mapping = Mock(IndexMappingConfiguration)
 
+    public static final String FIELD_NAME_1 = "field1"
+    public static final String FIELD_NAME_2 = "field2"
+    public static final String FIELD_NAME_3 = "field3"
+
+    def "Getting effective fields with security"() {
+        given:
+        def metaPropertyPath1 = Mock(MetaPropertyPath)
+        def mappingFieldDescriptor1 = Mock(MappingFieldDescriptor)
+        mappingFieldDescriptor1.getMetaPropertyPath() >> metaPropertyPath1
+
+        and:
+        def metaPropertyPath2 = Mock(MetaPropertyPath)
+        def mappingFieldDescriptor2 = Mock(MappingFieldDescriptor)
+        mappingFieldDescriptor2.getMetaPropertyPath() >> metaPropertyPath2
+
+        and:
+        def metaPropertyPath3 = Mock(MetaPropertyPath)
+        def mappingFieldDescriptor3 = Mock(MappingFieldDescriptor)
+        mappingFieldDescriptor3.getMetaPropertyPath() >> metaPropertyPath3
+
+        and:
+        def mapping = Mock(IndexMappingConfiguration)
         mapping.getFields() >> Map.of(
-                "field1", Mock(MappingFieldDescriptor),
-                "field2", Mock(MappingFieldDescriptor)
+                FIELD_NAME_1, mappingFieldDescriptor1,
+                FIELD_NAME_2, mappingFieldDescriptor2,
+                FIELD_NAME_3, mappingFieldDescriptor3
         )
 
+        and:
         IndexConfiguration indexConfiguration = Mock()
         indexConfiguration.getMapping() >> mapping
 
         and:
+        def searchFieldsAdapter = Mock(SearchFieldsAdapter)
+        searchFieldsAdapter.getFieldsForIndexByPath(metaPropertyPath1, FIELD_NAME_1) >> Set.of(FIELD_NAME_1 + ".subfield1", FIELD_NAME_1 + ".subfield2")
+        searchFieldsAdapter.getFieldsForIndexByPath(metaPropertyPath3, FIELD_NAME_3) >> Set.of(FIELD_NAME_3)
+
+
+        and:
+        def secureOperations = Mock(SecureOperations)
+        def policyStore = Mock(PolicyStore)
+        secureOperations.isEntityAttrReadPermitted(metaPropertyPath1, policyStore) >> true
+        secureOperations.isEntityAttrReadPermitted(metaPropertyPath2, policyStore) >> false
+        secureOperations.isEntityAttrReadPermitted(metaPropertyPath3, policyStore) >> true
+
+        and:
         SearchUtils searchUtils = new SearchUtils(
                 Mock(IndexConfigurationManager),
-                Mock(SecureOperations),
-                Mock(PolicyStore),
-                Mock(Metadata))
+                secureOperations,
+                policyStore,
+                Mock(Metadata),
+                searchFieldsAdapter)
 
         when:
         def fieldsForIndex = searchUtils.resolveEffectiveSearchFieldsForIndex(indexConfiguration)
 
         then:
-        fieldsForIndex == ["field1", "field2"]*/
-
-
-    }
-
-    def "resolve index fields by property path"() {
-
-        given:
-        SearchUtils searchUtils = new SearchUtils(
-                Mock(IndexConfigurationManager),
-                Mock(SecureOperations),
-                Mock(PolicyStore),
-                Mock(Metadata))
-
-        when:
-        def metaPropertyPath = createMetaPropertyPath(isDatatype, dataType, isClass)
-        def actualResult = searchUtils.getFieldsForIndexByPath(metaPropertyPath, "fieldName")
-
-        then:
-        actualResult == expectedResult
-
-        where:
-        isDatatype | dataType              | isClass || expectedResult
-        true       | Mock(FileRefDatatype) | false   || Set.of("fieldName._content", "fieldName._file_name")
-        false      | null                  | true    || Set.of("fieldName._instance_name")
-        false      | null                  | false   || Set.of("fieldName")
-        true       | Mock(Datatype)        | false   || Set.of("fieldName")
-    }
-
-    MetaPropertyPath createMetaPropertyPath(boolean isDatatype, Datatype<?> dataType, boolean isClass) {
-        def mock = Mock(MetaPropertyPath)
-        def rangeMock = Mock(Range)
-        mock.getRange() >> rangeMock
-        if (!isDatatype) {
-            rangeMock.asDatatype() >> { throw new RuntimeException() }
-        } else {
-            rangeMock.asDatatype() >> dataType
-        }
-        rangeMock.isDatatype() >> isDatatype
-        rangeMock.isClass() >> isClass
-        return mock
+        fieldsForIndex == Set.of("field1.subfield1", "field1.subfield2", "_instance_name", "field3")
     }
 }

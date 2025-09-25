@@ -20,6 +20,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.impl.ExtendedSearchConstants;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
@@ -145,7 +146,15 @@ public class SearchUtils {
         return effectiveFieldsToSearch;
     }
 
-
+    public Set<String> resolveEffectiveSearchFieldsForIndexWithPrefixes(IndexConfiguration indexConfiguration) {
+        Set<String> result = new HashSet<>();
+        Set<String> fields = resolveEffectiveSearchFieldsForIndex(indexConfiguration);
+        for(String fieldName: fields){
+            result.add(fieldName);
+            result.add(fieldName+"."+ ExtendedSearchConstants.PREFIX_SUBFIELD_NAME);
+        }
+        return result;
+    }
 
     protected static void addRootInstanceField(Set<String> effectiveFieldsToSearch) {
         effectiveFieldsToSearch.add(Constants.INSTANCE_NAME_FIELD);

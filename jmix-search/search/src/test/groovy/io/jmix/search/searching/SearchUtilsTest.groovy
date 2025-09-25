@@ -88,4 +88,68 @@ class SearchUtilsTest extends Specification {
         then:
         fieldsForIndex == Set.of("field1.subfield1", "field1.subfield2", "_instance_name", "field3")
     }
+
+    def "Getting effective fields with security with prefixes"() {
+        given:
+        def metaPropertyPath1 = Mock(MetaPropertyPath)
+        def mappingFieldDescriptor1 = Mock(MappingFieldDescriptor)
+        mappingFieldDescriptor1.getMetaPropertyPath() >> metaPropertyPath1
+
+        and:
+        def metaPropertyPath2 = Mock(MetaPropertyPath)
+        def mappingFieldDescriptor2 = Mock(MappingFieldDescriptor)
+        mappingFieldDescriptor2.getMetaPropertyPath() >> metaPropertyPath2
+
+        and:
+        def metaPropertyPath3 = Mock(MetaPropertyPath)
+        def mappingFieldDescriptor3 = Mock(MappingFieldDescriptor)
+        mappingFieldDescriptor3.getMetaPropertyPath() >> metaPropertyPath3
+
+        and:
+        def mapping = Mock(IndexMappingConfiguration)
+        mapping.getFields() >> Map.of(
+                FIELD_NAME_1, mappingFieldDescriptor1,
+                FIELD_NAME_2, mappingFieldDescriptor2,
+                FIELD_NAME_3, mappingFieldDescriptor3
+        )
+
+        and:
+        IndexConfiguration indexConfiguration = Mock()
+        indexConfiguration.getMapping() >> mapping
+
+        and:
+        def searchFieldsAdapter = Mock(SearchFieldsAdapter)
+        searchFieldsAdapter.getFieldsForIndexByPath(metaPropertyPath1, FIELD_NAME_1) >> Set.of(FIELD_NAME_1 + ".subfield1", FIELD_NAME_1 + ".subfield2")
+        searchFieldsAdapter.getFieldsForIndexByPath(metaPropertyPath3, FIELD_NAME_3) >> Set.of(FIELD_NAME_3)
+
+
+        and:
+        def secureOperations = Mock(SecureOperations)
+        def policyStore = Mock(PolicyStore)
+        secureOperations.isEntityAttrReadPermitted(metaPropertyPath1, policyStore) >> true
+        secureOperations.isEntityAttrReadPermitted(metaPropertyPath2, policyStore) >> false
+        secureOperations.isEntityAttrReadPermitted(metaPropertyPath3, policyStore) >> true
+
+        and:
+        SearchUtils searchUtils = new SearchUtils(
+                Mock(IndexConfigurationManager),
+                secureOperations,
+                policyStore,
+                Mock(Metadata),
+                searchFieldsAdapter)
+
+        when:
+        def fieldsForIndex = searchUtils.resolveEffectiveSearchFieldsForIndexWithPrefixes(indexConfiguration)
+
+        then:
+        fieldsForIndex == Set.of(
+                "field1.subfield1",
+                "field1.subfield1.prefix",
+                "field1.subfield2",
+                "field1.subfield2.prefix",
+                "_instance_name",
+                "_instance_name.prefix",
+                "field3",
+                "field3.prefix")
+    }
 }

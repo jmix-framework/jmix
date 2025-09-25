@@ -21,8 +21,8 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.util.ObjectBuilder;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.searching.AbstractSearchQueryConfigurator;
 import io.jmix.search.searching.SearchUtils;
-import io.jmix.search.searching.impl.SearchFieldsResolver;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -30,43 +30,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
-public class ElasticSearchQueryConfigurator {
+public class ElasticSearchQueryConfigurator extends AbstractSearchQueryConfigurator<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
 
-    protected final SearchUtils searchUtils;
-    protected final IndexConfigurationManager indexConfigurationManager;
-
-    public ElasticSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager, SearchFieldsResolver searchFieldsResolver) {
-        this.searchUtils = searchUtils;
-        this.indexConfigurationManager = indexConfigurationManager;
+    public ElasticSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager) {
+        super(searchUtils, indexConfigurationManager);
     }
 
     public void configureRequest(
             SearchRequest.Builder requestBuilder,
             List<String> entities,
             Function<IndexConfiguration, Set<String>> fieldResolving,
-            TargetBuilder targetBuilder) {
-        requestBuilder.query(createQuery(targetBuilder, getEntitiesWithFields(entities, fieldResolving)));
+            TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) {
+        requestBuilder.query(createQuery(targetQueryBuilder, getEntitiesWithFields(entities, fieldResolving)));
     }
 
-    protected Query createQuery(TargetBuilder targetBuilder, Map<String, Set<String>> indexesWithFields) {
+    protected Query createQuery(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
         return Query.of(rootBoolBuilder ->
                 rootBoolBuilder.bool(rootShouldBuilder ->
-                        rootShouldBuilder.should(createSubqueriesForIndexes(indexesWithFields, targetBuilder)))
+                        rootShouldBuilder.should(createSubqueriesForIndexes(indexesWithFields, targetQueryBuilder)))
         );
     }
 
-    private Map<String, Set<String>> getEntitiesWithFields(List<String> entities, Function<IndexConfiguration, Set<String>> fieldResolving) {
-        return searchUtils
-                .resolveEntitiesAllowedToSearch(entities)
-                .stream()
-                .map(indexConfigurationManager::getIndexConfigurationByEntityName)
-                .collect(Collectors.toMap(IndexConfiguration::getIndexName, fieldResolving));
-    }
-
-    private List<Query> createSubqueriesForIndexes(Map<String, Set<String>> indexesWithFields, TargetBuilder targetQueryBuilder) {
+    private List<Query> createSubqueriesForIndexes(Map<String, Set<String>> indexesWithFields, TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) {
         return indexesWithFields
                 .entrySet()
                 .stream()
@@ -74,7 +61,7 @@ public class ElasticSearchQueryConfigurator {
                 .toList();
     }
 
-    private Query createQueryForSingleIndex(String indexName, Set<String> fields, TargetBuilder targetQueryBuilder) {
+    private Query createQueryForSingleIndex(String indexName, Set<String> fields, TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) {
         return Query.of(root ->
                 root.bool(b -> b
                         .must(m -> m.term(t -> t.field("_index").value(indexName)))
@@ -82,7 +69,4 @@ public class ElasticSearchQueryConfigurator {
                 ));
     }
 
-    public interface TargetBuilder {
-        ObjectBuilder<Query> apply(Query.Builder queryBuilder, List<String> fields);
-    }
 }

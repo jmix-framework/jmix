@@ -17,6 +17,7 @@
 package io.jmix.flowui.devserver;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -29,7 +30,13 @@ import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
+import org.eclipse.jetty.util.resource.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Used in Studio.
+ */
 @SuppressWarnings("unused")
 public class FlowJettyServer extends Server {
 
@@ -38,6 +45,8 @@ public class FlowJettyServer extends Server {
     private static final String EXTRA_CLASSPATH_ATTR = "ExtraClassPath";
     private static final String PROJECT_BASE_DIR_ATTR = "ProjectBaseDir";
 
+    private static final Logger log = LoggerFactory.getLogger(FlowJettyServer.class);
+
     private final Map<String, Object> params;
 
     public FlowJettyServer(int port, Map<String, Object> params) {
@@ -45,11 +54,35 @@ public class FlowJettyServer extends Server {
         this.params = params;
     }
 
-    public void initAndStart() throws Exception {
-        init();
+    /**
+     * Will be invoked via reflection by Studio.
+     */
+    public void initAndStart() {
+        runSafely("initialize jetty server", this::init);
         // uncomment to debug server state
         // FrontendUtils.console(FrontendUtils.BRIGHT_BLUE, dump(), false);
-        start();
+        runSafely("start jetty server", this::sneakyThrowsStart);
+    }
+
+    private void sneakyThrowsStart() {
+        try {
+            start();
+        } catch (Throwable e) {
+            throw new IllegalStateException("Exception when starting jetty server", e);
+        }
+    }
+
+    @Override
+    protected void doStart() {
+        runSafely("do start jetty server", this::sneakyThrowsDoStart);
+    }
+
+    private void sneakyThrowsDoStart() {
+        try {
+            super.doStart();
+        } catch (Throwable e) {
+            throw new IllegalStateException("Exception when starting jetty server", e);
+        }
     }
 
     private void init() {
@@ -73,20 +106,60 @@ public class FlowJettyServer extends Server {
     }
 
     private WebAppContext createContext() {
-        WebAppContext context = new WebAppContext();
+        WebAppContext context = new MyWebAppContext();
         context.setContextPath("/");
         context.setConfigurationDiscovered(true);
         context.getContext().setExtendedListenerTypes(true);
         context.setClassLoader(FlowJettyServer.class.getClassLoader());
         context.setParentLoaderPriority(true);
-        context.setExtraClasspath((String) params.get(EXTRA_CLASSPATH_ATTR));
-        context.setBaseResourceAsString((String) params.get(PROJECT_BASE_DIR_ATTR));
+        configureExtraClassPath(context);
+        configureBaseResource(context);
 
         JakartaWebSocketServletContainerInitializer.configure(context, null);
 
         context.addEventListener(new JmixServletContextListener(params));
 
         return context;
+    }
+
+    private class MyWebAppContext extends WebAppContext {
+
+        @Override
+        public void doStart() {
+            runSafely("starting WebAppContext", this::sneakyThrowsDoStart);
+        }
+
+        private void sneakyThrowsDoStart() {
+            try {
+                super.doStart();
+            } catch (Throwable e) {
+                throw new IllegalStateException("Exception when starting WebAppContext", e);
+            }
+        }
+
+        @Override
+        public boolean isThrowUnavailableOnStartupException() {
+            return true;
+        }
+    }
+
+    private void configureExtraClassPath(WebAppContext context) {
+        String extraClasspath = (String) params.get(EXTRA_CLASSPATH_ATTR);
+        List<Resource> resources = context.getResourceFactory().split(extraClasspath, ",", true);
+        context.setExtraClasspath(resources);
+    }
+
+    private void configureBaseResource(WebAppContext context) {
+        context.setBaseResourceAsString((String) params.get(PROJECT_BASE_DIR_ATTR));
+    }
+
+    private void runSafely(String action, Runnable runnable) {
+        try {
+            runnable.run();
+        } catch (Throwable e) {
+            String msg = "Exception when trying to %s".formatted(action);
+            log.warn(msg, e);
+        }
     }
 
     private FlowJettyServer() {

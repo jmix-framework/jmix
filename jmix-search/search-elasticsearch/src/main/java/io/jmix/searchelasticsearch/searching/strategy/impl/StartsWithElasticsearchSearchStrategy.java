@@ -25,6 +25,7 @@ import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchUtils;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
+import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
@@ -33,7 +34,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -48,19 +49,23 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractSearchStrateg
     protected final PolicyStore policyStore;
     protected final Metadata metadata;
     protected final SearchUtils searchUtils;
+    protected final ElasticSearchQueryConfigurator elasticSearchQueryConfigurator;
+    protected final SearchFieldsResolver searchFieldsResolver;
 
     public StartsWithElasticsearchSearchStrategy(IndexConfigurationManager indexConfigurationManager,
                                                  SearchProperties searchProperties,
                                                  SecureOperations secureOperations,
                                                  PolicyStore policyStore,
                                                  Metadata metadata,
-                                                 SearchUtils searchUtils) {
+                                                 SearchUtils searchUtils, ElasticSearchQueryConfigurator elasticSearchQueryConfigurator, SearchFieldsResolver searchFieldsResolver) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.searchProperties = searchProperties;
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
         this.metadata = metadata;
         this.searchUtils = searchUtils;
+        this.elasticSearchQueryConfigurator = elasticSearchQueryConfigurator;
+        this.searchFieldsResolver = searchFieldsResolver;
     }
 
     @Override
@@ -71,40 +76,47 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractSearchStrateg
     @Override
     public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
         int maxPrefixSize = searchProperties.getMaxPrefixLength();
+        List<String> entities = searchContext.getEntities();
         if (isSearchTermExceedMaxPrefixSize(searchContext.getSearchText(), maxPrefixSize)
                 && searchProperties.isWildcardPrefixQueryEnabled()) {
-            Set<String> effectiveFieldsToSearch = searchUtils.resolveEffectiveSearchFields(searchContext.getEntities());
-            configureWildcardQuery(requestBuilder, searchContext, effectiveFieldsToSearch);
+            configureWildcardQuery(requestBuilder, searchContext, entities);
         } else {
-            configureTermsQuery(requestBuilder, searchContext);
+            configureTermsQuery(requestBuilder, searchContext, entities);
         }
     }
 
-    protected void configureTermsQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
-        requestBuilder.query(queryBuilder ->
-                queryBuilder.multiMatch(multiMatchQueryBuilder ->
-                        multiMatchQueryBuilder.fields("*")
-                                .query(searchContext.getEscapedSearchText())
-                                .type(TextQueryType.BestFields)
-                )
+    protected void configureTermsQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext, List<String> entities) {
+        elasticSearchQueryConfigurator.configureRequest(
+                requestBuilder,
+                entities,
+                searchFieldsResolver::resolveFieldsWithPrefixes,
+                (queryBuilder, fields) ->
+                        queryBuilder.multiMatch(multiMatchQueryBuilder ->
+                                multiMatchQueryBuilder.fields(new ArrayList<>(fields))
+                                        .query(searchContext.getEscapedSearchText())
+                                        .type(TextQueryType.BestFields)
+                        )
         );
     }
 
-    protected void configureWildcardQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext, Set<String> effectiveFieldsToSearch) {
+    protected void configureWildcardQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext, List<String> entities) {
         String searchText = searchContext.getEscapedSearchText();
         String[] searchTerms = searchText.split("\\s+");
         String queryText = Arrays.stream(searchTerms)
                 .filter(StringUtils::isNotBlank)
                 .map(term -> term + "*")
                 .collect(Collectors.joining(" "));
-
-        requestBuilder.query(queryBuilder ->
-                queryBuilder.queryString(queryStringQueryBuilder ->
-                        queryStringQueryBuilder
-                                .fields(new ArrayList<>(effectiveFieldsToSearch))
-                                .analyzeWildcard(true)
-                                .query(queryText)
-                )
+        elasticSearchQueryConfigurator.configureRequest(
+                requestBuilder,
+                entities,
+                searchFieldsResolver::resolveFields,
+                (queryBuilder, fields) ->
+                        queryBuilder.queryString(queryStringQueryBuilder ->
+                                queryStringQueryBuilder
+                                        .fields(fields)
+                                        .analyzeWildcard(true)
+                                        .query(queryText)
+                        )
         );
     }
 

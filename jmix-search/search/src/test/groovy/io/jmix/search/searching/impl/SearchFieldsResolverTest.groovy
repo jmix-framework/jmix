@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching
+package io.jmix.search.searching.impl
 
-import io.jmix.core.Metadata
+
 import io.jmix.core.metamodel.model.MetaPropertyPath
 import io.jmix.search.index.IndexConfiguration
 import io.jmix.search.index.mapping.IndexConfigurationManager
 import io.jmix.search.index.mapping.IndexMappingConfiguration
 import io.jmix.search.index.mapping.MappingFieldDescriptor
-import io.jmix.search.searching.impl.SearchFieldsAdapter
 import io.jmix.security.constraint.PolicyStore
 import io.jmix.security.constraint.SecureOperations
 import spock.lang.Specification
 
-class SearchUtilsTest extends Specification {
-
+class SearchFieldsResolverTest extends Specification {
     public static final String FIELD_NAME_1 = "field1"
     public static final String FIELD_NAME_2 = "field2"
     public static final String FIELD_NAME_3 = "field3"
@@ -75,15 +73,14 @@ class SearchUtilsTest extends Specification {
         secureOperations.isEntityAttrReadPermitted(metaPropertyPath3, policyStore) >> true
 
         and:
-        SearchUtils searchUtils = new SearchUtils(
+        SearchFieldsResolver resolver = new SearchFieldsResolver(
                 Mock(IndexConfigurationManager),
                 secureOperations,
                 policyStore,
-                Mock(Metadata),
                 searchFieldsAdapter)
 
         when:
-        def fieldsForIndex = searchUtils.resolveEffectiveSearchFieldsForIndex(indexConfiguration)
+        def fieldsForIndex = resolver.resolveFields(indexConfiguration)
 
         then:
         fieldsForIndex == Set.of("field1.subfield1", "field1.subfield2", "_instance_name", "field3")
@@ -131,15 +128,14 @@ class SearchUtilsTest extends Specification {
         secureOperations.isEntityAttrReadPermitted(metaPropertyPath3, policyStore) >> true
 
         and:
-        SearchUtils searchUtils = new SearchUtils(
+        SearchFieldsResolver resolver = new SearchFieldsResolver(
                 Mock(IndexConfigurationManager),
                 secureOperations,
                 policyStore,
-                Mock(Metadata),
                 searchFieldsAdapter)
 
         when:
-        def fieldsForIndex = searchUtils.resolveEffectiveSearchFieldsForIndexWithPrefixes(indexConfiguration)
+        def fieldsForIndex = resolver.resolveFieldsWithPrefixes(indexConfiguration)
 
         then:
         fieldsForIndex == Set.of(
@@ -152,4 +148,5 @@ class SearchUtilsTest extends Specification {
                 "field3",
                 "field3.prefix")
     }
+
 }

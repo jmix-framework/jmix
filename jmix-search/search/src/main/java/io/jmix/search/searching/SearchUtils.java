@@ -20,7 +20,6 @@ import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.impl.ExtendedSearchConstants;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
@@ -31,7 +30,6 @@ import io.jmix.security.constraint.SecureOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component("search_SearchUtils")
@@ -101,62 +99,7 @@ public class SearchUtils {
                 effectiveFieldsToSearch.addAll(searchFieldsAdapter.getFieldsForIndexByPath(metaPropertyPath, fieldName));
             }
         }
-
-        addRootInstanceField(effectiveFieldsToSearch);
-
-        return effectiveFieldsToSearch;
-    }
-
-    /**
-     * TODO
-     * @param requestedEntities
-     * @return
-     */
-    public Map<String, Set<String>> resolveEffectiveSearchFieldsWithSecurity(Collection<String> requestedEntities) {
-        return resolveEntitiesAllowedToSearch(requestedEntities)
-                .stream()
-                .collect(Collectors.toMap(Function.identity(), this::resolveEffectiveSearchFieldsForEntity));
-    }
-
-    /**
-     *
-     * @param targetEntity
-     * @return
-     */
-    public Set<String> resolveEffectiveSearchFieldsForEntity(String targetEntity) {
-        return resolveEffectiveSearchFieldsForIndex(indexConfigurationManager.getIndexConfigurationByEntityName(targetEntity));
-    }
-
-    /**
-     *
-     * @param indexConfiguration
-     * @return
-     */
-    public Set<String> resolveEffectiveSearchFieldsForIndex(IndexConfiguration indexConfiguration) {
-        Set<String> effectiveFieldsToSearch = new HashSet<>();
-        Map<String, MappingFieldDescriptor> fields = indexConfiguration.getMapping().getFields();
-
-        for (Map.Entry<String, MappingFieldDescriptor> entry : fields.entrySet()) {
-            MetaPropertyPath metaPropertyPath = entry.getValue().getMetaPropertyPath();
-            if(secureOperations.isEntityAttrReadPermitted(metaPropertyPath, policyStore)){
-                effectiveFieldsToSearch.addAll(searchFieldsAdapter.getFieldsForIndexByPath(metaPropertyPath, entry.getKey()));
-            }
-        }
-        addRootInstanceField(effectiveFieldsToSearch);
-        return effectiveFieldsToSearch;
-    }
-
-    public Set<String> resolveEffectiveSearchFieldsForIndexWithPrefixes(IndexConfiguration indexConfiguration) {
-        Set<String> result = new HashSet<>();
-        Set<String> fields = resolveEffectiveSearchFieldsForIndex(indexConfiguration);
-        for(String fieldName: fields){
-            result.add(fieldName);
-            result.add(fieldName+"."+ ExtendedSearchConstants.PREFIX_SUBFIELD_NAME);
-        }
-        return result;
-    }
-
-    protected static void addRootInstanceField(Set<String> effectiveFieldsToSearch) {
         effectiveFieldsToSearch.add(Constants.INSTANCE_NAME_FIELD);
+        return effectiveFieldsToSearch;
     }
 }

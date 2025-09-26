@@ -21,7 +21,14 @@ import io.jmix.search.searching.SearchStrategy;
 /**
  * Base class for all search strategies.
  */
-public abstract class AbstractSearchStrategy implements SearchStrategy {
+public abstract class AbstractSearchStrategy<FC> implements SearchStrategy {
+    protected final SearchFieldsResolver searchFieldsResolver;
+    protected final FC queryConfigurator;
+
+    protected AbstractSearchStrategy(SearchFieldsResolver searchFieldsResolver, FC queryConfigurator) {
+        this.searchFieldsResolver = searchFieldsResolver;
+        this.queryConfigurator = queryConfigurator;
+    }
 
     @Override
     public String toString() {

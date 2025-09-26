@@ -22,6 +22,7 @@ import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchUtils;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
+import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
 
@@ -34,13 +35,11 @@ import java.util.Set;
  */
 @Deprecated(since = "2.4", forRemoval = true)
 @Component("search_AllTermsAnyFieldElasticsearchSearchStrategy")
-public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractSearchStrategy
+public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy
         implements ElasticsearchSearchStrategy {
 
-    protected final SearchUtils searchUtils;
-
-    public AllTermsAnyFieldElasticsearchSearchStrategy(SearchUtils searchUtils) {
-        this.searchUtils = searchUtils;
+    protected AllTermsAnyFieldElasticsearchSearchStrategy(SearchFieldsResolver searchFieldsResolver, ElasticSearchQueryConfigurator queryConfigurator) {
+        super(searchFieldsResolver, queryConfigurator);
     }
 
     @Override
@@ -50,13 +49,17 @@ public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractSearchS
 
     @Override
     public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
-        Set<String> effectiveFieldsToSearch = searchUtils.resolveEffectiveSearchFields(searchContext.getEntities());
-        requestBuilder.query(queryBuilder ->
-                queryBuilder.simpleQueryString(simpleQueryStringQueryBuilder ->
-                        simpleQueryStringQueryBuilder.fields(new ArrayList<>(effectiveFieldsToSearch))
-                                .query(searchContext.getEscapedSearchText())
-                                .defaultOperator(Operator.And)
-                )
+
+        queryConfigurator.configureRequest(
+                requestBuilder,
+                searchContext.getEntities(),
+                searchFieldsResolver::resolveFields,
+                (queryBuilder, fields) ->
+                        queryBuilder.simpleQueryString(simpleQueryStringQueryBuilder ->
+                                simpleQueryStringQueryBuilder.fields(fields)
+                                        .query(searchContext.getEscapedSearchText())
+                                        .defaultOperator(Operator.And)
+                        )
         );
     }
 }

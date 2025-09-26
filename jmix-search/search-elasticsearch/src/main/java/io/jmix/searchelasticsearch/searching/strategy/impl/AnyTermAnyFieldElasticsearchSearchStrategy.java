@@ -14,15 +14,11 @@ import org.springframework.stereotype.Component;
  * with at least one field matches at least one input word.
  */
 @Component("search_AnyTermAnyFieldElasticsearchSearchStrategy")
-public class AnyTermAnyFieldElasticsearchSearchStrategy extends AbstractSearchStrategy
+public class AnyTermAnyFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy
         implements ElasticsearchSearchStrategy {
 
-    protected final ElasticSearchQueryConfigurator elasticSearchQueryConfigurator;
-    protected final SearchFieldsResolver searchFieldsResolver;
-
-    public AnyTermAnyFieldElasticsearchSearchStrategy(ElasticSearchQueryConfigurator elasticSearchQueryConfigurator, SearchFieldsResolver searchFieldsResolver) {
-        this.elasticSearchQueryConfigurator = elasticSearchQueryConfigurator;
-        this.searchFieldsResolver = searchFieldsResolver;
+    protected AnyTermAnyFieldElasticsearchSearchStrategy(SearchFieldsResolver searchFieldsResolver, ElasticSearchQueryConfigurator queryConfigurator) {
+        super(searchFieldsResolver, queryConfigurator);
     }
 
     @Override
@@ -32,7 +28,7 @@ public class AnyTermAnyFieldElasticsearchSearchStrategy extends AbstractSearchSt
 
     @Override
     public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
-        elasticSearchQueryConfigurator.configureRequest(
+        queryConfigurator.configureRequest(
                 requestBuilder,
                 searchContext.getEntities(),
                 searchFieldsResolver::resolveFields,

@@ -20,8 +20,8 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.SearchUtils;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
+import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
 
@@ -34,13 +34,11 @@ import java.util.Set;
  */
 @Deprecated(since = "2.4", forRemoval = true)
 @Component("search_AllTermsSingleFieldElasticsearchSearchStrategy")
-public class AllTermsSingleFieldElasticsearchSearchStrategy extends AbstractSearchStrategy
+public class AllTermsSingleFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy
         implements ElasticsearchSearchStrategy {
 
-    protected final SearchUtils searchUtils;
-
-    public AllTermsSingleFieldElasticsearchSearchStrategy(SearchUtils searchUtils) {
-        this.searchUtils = searchUtils;
+    protected AllTermsSingleFieldElasticsearchSearchStrategy(SearchFieldsResolver searchFieldsResolver, ElasticSearchQueryConfigurator queryConfigurator) {
+        super(searchFieldsResolver, queryConfigurator);
     }
 
     @Override
@@ -50,13 +48,16 @@ public class AllTermsSingleFieldElasticsearchSearchStrategy extends AbstractSear
 
     @Override
     public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
-        Set<String> effectiveFieldsToSearch = searchUtils.resolveEffectiveSearchFields(searchContext.getEntities());
-        requestBuilder.query(queryBuilder ->
-                queryBuilder.multiMatch(multiMatchQueryBuilder ->
-                        multiMatchQueryBuilder.fields(new ArrayList<>(effectiveFieldsToSearch))
-                                .query(searchContext.getEscapedSearchText())
-                                .operator(Operator.And)
-                )
+        queryConfigurator.configureRequest(
+                requestBuilder,
+                searchContext.getEntities(),
+                searchFieldsResolver::resolveFields,
+                (queryBuilder, fields) ->
+                        queryBuilder.multiMatch(multiMatchQueryBuilder ->
+                                multiMatchQueryBuilder.fields(fields)
+                                        .query(searchContext.getEscapedSearchText())
+                                        .operator(Operator.And)
+                        )
         );
     }
 }

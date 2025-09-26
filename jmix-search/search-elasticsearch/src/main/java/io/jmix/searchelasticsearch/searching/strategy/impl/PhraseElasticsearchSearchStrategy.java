@@ -14,14 +14,10 @@ import org.springframework.stereotype.Component;
  * matches the entire phrase - all input words in provided order.
  */
 @Component("search_PhraseElasticsearchSearchStrategy")
-public class PhraseElasticsearchSearchStrategy extends AbstractSearchStrategy implements ElasticsearchSearchStrategy {
+public class PhraseElasticsearchSearchStrategy extends AbstractElasticSearchStrategy implements ElasticsearchSearchStrategy {
 
-    protected final ElasticSearchQueryConfigurator elasticSearchQueryConfigurator;
-    protected final SearchFieldsResolver searchFieldsResolver;
-
-    public PhraseElasticsearchSearchStrategy(ElasticSearchQueryConfigurator elasticSearchQueryConfigurator, SearchFieldsResolver searchFieldsResolver) {
-        this.elasticSearchQueryConfigurator = elasticSearchQueryConfigurator;
-        this.searchFieldsResolver = searchFieldsResolver;
+    protected PhraseElasticsearchSearchStrategy(SearchFieldsResolver searchFieldsResolver, ElasticSearchQueryConfigurator queryConfigurator) {
+        super(searchFieldsResolver, queryConfigurator);
     }
 
     @Override
@@ -31,7 +27,7 @@ public class PhraseElasticsearchSearchStrategy extends AbstractSearchStrategy im
 
     @Override
     public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
-        elasticSearchQueryConfigurator.configureRequest(
+        queryConfigurator.configureRequest(
                 requestBuilder,
                 searchContext.getEntities(),
                 searchFieldsResolver::resolveFields,

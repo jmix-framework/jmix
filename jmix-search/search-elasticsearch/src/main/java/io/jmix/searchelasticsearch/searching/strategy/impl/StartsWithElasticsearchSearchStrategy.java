@@ -18,17 +18,11 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import io.jmix.core.Metadata;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.SearchUtils;
-import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
-import io.jmix.security.constraint.PolicyStore;
-import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -41,31 +35,15 @@ import java.util.stream.Collectors;
  * Class that encapsulates logic of {@link SearchStrategy} that searches documents by prefix.
  */
 @Component("search_StartsWithElasticsearchSearchStrategy")
-public class StartsWithElasticsearchSearchStrategy extends AbstractSearchStrategy implements ElasticsearchSearchStrategy {
+public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearchStrategy implements ElasticsearchSearchStrategy {
 
-    protected final IndexConfigurationManager indexConfigurationManager;
     protected final SearchProperties searchProperties;
-    protected final SecureOperations secureOperations;
-    protected final PolicyStore policyStore;
-    protected final Metadata metadata;
-    protected final SearchUtils searchUtils;
-    protected final ElasticSearchQueryConfigurator elasticSearchQueryConfigurator;
-    protected final SearchFieldsResolver searchFieldsResolver;
 
-    public StartsWithElasticsearchSearchStrategy(IndexConfigurationManager indexConfigurationManager,
-                                                 SearchProperties searchProperties,
-                                                 SecureOperations secureOperations,
-                                                 PolicyStore policyStore,
-                                                 Metadata metadata,
-                                                 SearchUtils searchUtils, ElasticSearchQueryConfigurator elasticSearchQueryConfigurator, SearchFieldsResolver searchFieldsResolver) {
-        this.indexConfigurationManager = indexConfigurationManager;
+    public StartsWithElasticsearchSearchStrategy(SearchProperties searchProperties,
+                                                 ElasticSearchQueryConfigurator elasticSearchQueryConfigurator,
+                                                 SearchFieldsResolver searchFieldsResolver) {
+        super(searchFieldsResolver, elasticSearchQueryConfigurator);
         this.searchProperties = searchProperties;
-        this.secureOperations = secureOperations;
-        this.policyStore = policyStore;
-        this.metadata = metadata;
-        this.searchUtils = searchUtils;
-        this.elasticSearchQueryConfigurator = elasticSearchQueryConfigurator;
-        this.searchFieldsResolver = searchFieldsResolver;
     }
 
     @Override
@@ -86,7 +64,7 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractSearchStrateg
     }
 
     protected void configureTermsQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext, List<String> entities) {
-        elasticSearchQueryConfigurator.configureRequest(
+       queryConfigurator.configureRequest(
                 requestBuilder,
                 entities,
                 searchFieldsResolver::resolveFieldsWithPrefixes,
@@ -106,7 +84,7 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractSearchStrateg
                 .filter(StringUtils::isNotBlank)
                 .map(term -> term + "*")
                 .collect(Collectors.joining(" "));
-        elasticSearchQueryConfigurator.configureRequest(
+        queryConfigurator.configureRequest(
                 requestBuilder,
                 entities,
                 searchFieldsResolver::resolveFields,

@@ -17,17 +17,21 @@
 package io.jmix.reports.impl;
 
 import com.google.common.collect.Sets;
-import io.jmix.reports.yarg.reporting.ReportOutputDocument;
-import io.jmix.reports.yarg.structure.ReportOutputType;
 import io.jmix.core.*;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.PersistenceHints;
 import io.jmix.reports.ReportExecutionHistoryRecorder;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
+import io.jmix.reports.entity.ReportSource;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.structure.ReportOutputType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -37,15 +41,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component("report_ExecutionHistoryRecorder")
 public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistoryRecorder {
-    private static Logger log = LoggerFactory.getLogger(ReportExecutionHistoryRecorderImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ReportExecutionHistoryRecorderImpl.class);
 
     @Autowired
     protected Metadata metadata;
@@ -67,6 +68,8 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
     protected EntityStates entityStates;
     @Autowired
     protected SystemAuthenticator systemAuthenticator;
+    @Autowired
+    protected ReportRepository reportRepository;
 
     protected FileStorage fileStorage;
 
@@ -74,13 +77,12 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
     public ReportExecution startExecution(Report report, Map<String, Object> params) {
         ReportExecution execution = metadata.create(ReportExecution.class);
 
-        execution.setReport(report);
         execution.setReportName(report.getName());
         execution.setReportCode(report.getCode());
         execution.setUsername(currentAuthentication.getUser().getUsername());
         execution.setStartTime(timeSource.currentTimestamp());
         setParametersString(execution, params);
-        handleNewReportEntity(execution);
+        assignLinkToReportEntity(execution, report);
 
         execution = dataManager.save(execution);
         return execution;
@@ -138,17 +140,17 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
         reportExecution.setParams(builder.toString());
     }
 
-    private void handleNewReportEntity(ReportExecution entity) {
-        Report report = entity.getReport();
-
-        // handle case when user runs report that isn't saved yet from Report Editor
-        if (entityStates.isNew(report)) {
-            Report reloaded = dataManager.load(Id.of(report))
-                    .fetchPlan(FetchPlan.INSTANCE_NAME)
-                    .optional()
-                    .orElse(null);
-            entity.setReport(reloaded);
+    private void assignLinkToReportEntity(ReportExecution entity, Report report) {
+        if (report.getSource() == ReportSource.ANNOTATED_CLASS) {
+            return;
         }
+        // reload the entity to avoid problems with cascade persisting of possibly not yet saved entities
+        // when user runs report that isn't saved yet from Report Editor
+        Report reloaded = dataManager.load(Id.of(report))
+                .fetchPlan(FetchPlan.INSTANCE_NAME)
+                .optional()
+                .orElse(null);
+        entity.setReport(reloaded);
     }
 
     // can be used as extension point
@@ -187,7 +189,8 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
         int deleted = 0;
 
         deleted += deleteHistoryByDays();
-        deleted += deleteHistoryGroupedByReport();
+        deleted += deleteHistoryGroupedByAnnotatedReport();
+        deleted += deleteHistoryGroupedByDatabaseReport();
 
         return deleted > 0 ? String.valueOf(deleted) : StringUtils.EMPTY;
     }
@@ -238,7 +241,29 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
         }
     }
 
-    private int deleteHistoryGroupedByReport() {
+    private int deleteHistoryGroupedByAnnotatedReport() {
+        int maxItemsPerReport = reportsProperties.getHistoryCleanupMaxItemsPerReport();
+        if (maxItemsPerReport <= 0) {
+            return 0;
+        }
+
+        List<String> annotatedReportCodes = reportRepository.getAllReports()
+                .stream()
+                .filter(r -> r.getSource() == ReportSource.ANNOTATED_CLASS && r.getCode() != null)
+                .map(Report::getCode)
+                .toList();
+
+        log.debug("Deleting annotated reports' executions for every report, older than {}th execution", maxItemsPerReport);
+        int total = 0;
+        for (String reportCode : annotatedReportCodes) {
+            int deleted = deleteForOneReport(maxItemsPerReport,
+                    "e.report is null and e.reportCode = :reportCode", "reportCode", reportCode);
+            total += deleted;
+        }
+        return total;
+    }
+
+    private int deleteHistoryGroupedByDatabaseReport() {
         int maxItemsPerReport = reportsProperties.getHistoryCleanupMaxItemsPerReport();
         if (maxItemsPerReport <= 0) {
             return 0;
@@ -249,18 +274,20 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
                 .list()
                 .stream()
                 .map(kve -> (UUID) kve.getValue("id"))
-                .collect(Collectors.toList());
+                .toList();
 
-        log.debug("Deleting report executions for every report, older than {}th execution", maxItemsPerReport);
+        log.debug("Deleting runtime reports' executions for every report, older than {}th execution", maxItemsPerReport);
         int total = 0;
         for (UUID reportId : allReportIds) {
-            int deleted = deleteForOneReport(reportId, maxItemsPerReport);
+            int deleted = deleteForOneReport(maxItemsPerReport,
+                    "e.report.id = :reportId", "reportId", reportId);
             total += deleted;
         }
         return total;
     }
 
-    private int deleteForOneReport(UUID reportId, int maxItemsPerReport) {
+    private int deleteForOneReport(int maxItemsPerReport, String whereCondition,
+                                   String parameterName, Object parameterValue) {
         List<FileRef> fileRefs = new ArrayList<>();
         Integer deleted = transaction.execute(status -> {
             try {
@@ -268,9 +295,10 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
                 int rows = 0;
                 List<Date> datesList = entityManager.createQuery(
                         "select e.startTime from report_ReportExecution e"
-                                + " where e.report.id = :reportId"
+                                + " where"
+                                + " " + whereCondition
                                 + " order by e.startTime desc", Date.class)
-                        .setParameter("reportId", reportId)
+                        .setParameter(parameterName, parameterValue)
                         .setFirstResult(maxItemsPerReport)
                         .setMaxResults(1)
                         .getResultList();
@@ -279,15 +307,19 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
 
                 if (borderStartTime != null) {
                     List<FileRef> fileRefs1 = entityManager.createQuery("select e.outputDocument from report_ReportExecution e"
-                            + " where e.outputDocument is not null and e.report.id = :reportId and e.startTime <= :borderTime", FileRef.class)
-                            .setParameter("reportId", reportId)
+                            + " where e.outputDocument is not null"
+                            + " and " + whereCondition
+                            + " and e.startTime <= :borderTime", FileRef.class)
+                            .setParameter(parameterName, parameterValue)
                             .setParameter("borderTime", borderStartTime)
                             .getResultList();
                     fileRefs.addAll(fileRefs1);
 
                     rows = entityManager.createQuery("delete from report_ReportExecution e"
-                            + " where e.report.id = :reportId and e.startTime <= :borderTime")
-                            .setParameter("reportId", reportId)
+                            + " where"
+                            + " " + whereCondition
+                            + " and e.startTime <= :borderTime")
+                            .setParameter(parameterName, parameterValue)
                             .setParameter("borderTime", borderStartTime)
                             .executeUpdate();
                 }

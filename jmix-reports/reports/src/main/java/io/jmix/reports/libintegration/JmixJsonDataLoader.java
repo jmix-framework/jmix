@@ -16,6 +16,7 @@
 
 package io.jmix.reports.libintegration;
 
+import io.jmix.reports.delegate.JsonInputProvider;
 import io.jmix.reports.yarg.loaders.impl.JsonDataLoader;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
@@ -34,6 +35,7 @@ import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -74,6 +76,9 @@ public class JmixJsonDataLoader extends JsonDataLoader {
                 break;
             case PARAMETER:
                 result = loadDataFromParameter(reportQuery, reportParams);
+                break;
+            case DELEGATE:
+                result = loadDataFromDelegate(reportQuery, parentBand, reportParams);
                 break;
         }
 
@@ -153,8 +158,26 @@ public class JmixJsonDataLoader extends JsonDataLoader {
         return (String) reportQuery.getAdditionalParams().get(JSON_PATH_QUERY);
     }
 
+    @Nullable
+    protected JsonInputProvider getJsonInputProvider(ReportQuery reportQuery) {
+        return (JsonInputProvider) reportQuery.getAdditionalParams().get(JSON_INPUT_PROVIDER);
+    }
+
     protected String readJsonFromParameter(ReportQuery reportQuery, Map<String, Object> reportParams) {
         ReportInputParameter jsonSourceInputParameter = (ReportInputParameter) reportQuery.getAdditionalParams().get(JSON_INPUT_PARAMETER);
         return reportParams.get(jsonSourceInputParameter.getAlias()).toString();
+    }
+
+    protected List<Map<String, Object>> loadDataFromDelegate(ReportQuery reportQuery, BandData parentBand,
+                                                             Map<String, Object> reportParams) {
+        String jsonPathScript = getJsonPathScript(reportQuery);
+
+        JsonInputProvider inputProvider = getJsonInputProvider(reportQuery);
+        if (inputProvider == null) {
+            throw new RuntimeException("JsonInputProvider must have been set for the ReportQuery");
+        }
+
+        String json = inputProvider.load(reportQuery, parentBand, reportParams);
+        return super.extractScriptResult(json, jsonPathScript, reportQuery);
     }
 }

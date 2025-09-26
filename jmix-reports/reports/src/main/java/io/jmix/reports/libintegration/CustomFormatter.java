@@ -36,6 +36,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.lang.Nullable;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.scripting.support.StaticScriptSource;
@@ -108,6 +109,8 @@ public class CustomFormatter implements CustomReport {
             return generateReportWithScript(rootBand, customDefinition);
         } else if (CustomTemplateDefinedBy.URL == definedBy) {
             return generateReportWithUrl(rootBand, customDefinition);
+        } else if (CustomTemplateDefinedBy.DELEGATE == definedBy) {
+            return generateReportWithDelegate(rootBand, template.getDelegate());
         } else {
             throw new ReportingException(
                     format("The value of \"Defined by\" field is not supported [%s]", definedBy));
@@ -196,6 +199,13 @@ public class CustomFormatter implements CustomReport {
         } catch (TimeoutException e) {
             throw new ReportingException(format("Reading data from url [%s] has been terminated by timeout", url), e);
         }
+    }
+
+    private byte[] generateReportWithDelegate(BandData rootBand, @Nullable CustomReport delegate) {
+        if (delegate == null) {
+            throw new ReportingException("Custom template must have Delegate set");
+        }
+        return delegate.createReport(report, rootBand, params);
     }
 
     protected static class FormattedDate extends Date {

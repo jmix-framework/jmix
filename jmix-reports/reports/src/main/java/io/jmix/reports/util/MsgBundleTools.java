@@ -19,6 +19,7 @@ package io.jmix.reports.util;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import io.jmix.core.LocaleResolver;
+import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,26 @@ import java.util.Properties;
 public class MsgBundleTools {
     @Autowired
     private CurrentAuthentication currentAuthentication;
+    @Autowired
+    private Messages messages;
 
+    /**
+     * Get localized caption for the reports model object.
+     * Rules:
+     * 1 - if <code>messageKey</code> is specified, take caption from global message bundle using current locale.
+     * 2 - if <code>msgBundle</code> contains caption for current locale, use this caption.
+     * 3 - otherwise, use <code>defaultValue</code>
+     *
+     * @param messageKey optional key for the message in the global bundle.
+     * @param msgBundle bundle in  {@link java.util.Properties} format
+     * @param defaultValue default value
+     * @return localized caption
+     */
     @Nullable
-    public String getLocalizedValue(String msgBundle, String defaultValue) {
+    public String getLocalizedValue(@Nullable String messageKey, String msgBundle, String defaultValue) {
+        if (messageKey != null && !messageKey.isEmpty()) {
+            return messages.getMessage(messageKey);
+        }
         String key = LocaleResolver.localeToString(currentAuthentication.getLocale());
         Map<String, String> localizedValues = getMsgBundleValues(msgBundle);
         if (localizedValues.containsKey(key)) {

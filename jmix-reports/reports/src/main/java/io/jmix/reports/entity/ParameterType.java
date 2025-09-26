@@ -17,15 +17,55 @@ package io.jmix.reports.entity;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
+/**
+ * Data type of the report's input parameter.
+ * Determines type of the input value that will be passed to the data sets and further.
+ * Also determines the UI component which will be used to enter the value when launching report in UI.
+ *
+ * @see ReportInputParameter
+ * @see io.jmix.reports.annotation.InputParameterDef
+ */
 public enum ParameterType implements EnumClass<Integer> {
+    /**
+     * Date, without time.
+     * Value class: {@link java.util.Date}
+     */
     DATE(10),
+    /**
+     * Text string.
+     * Value class: {@link String}
+     */
     TEXT(20),
+    /**
+     * A single entity instance (persistent or DTO).
+     */
     ENTITY(30),
+    /**
+     * {@link Boolean} value.
+     */
     BOOLEAN(40),
+    /**
+     * Number with an optional decimal part.
+     * Value class: {@link Double}
+     */
     NUMERIC(50),
+    /**
+     * A {@link java.util.Collection} of entity instances (persistent or DTO).
+     */
     ENTITY_LIST(60),
+    /**
+     * Enumeration value, descendant of {@link Enum}.
+     */
     ENUMERATION(70),
+    /**
+     * Date with time.
+     * Value class: {@link java.util.Date}
+     */
     DATETIME(80),
+    /**
+     * Time.
+     * Value class: {@link java.util.Date}
+     */
     TIME(90);
 
     private Integer id;

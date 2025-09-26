@@ -27,7 +27,7 @@ import spock.lang.Specification
 import static java.nio.charset.StandardCharsets.*
 
 class ElasticSearchQueryConfiguratorTest extends Specification {
-    def "configureRequest"() {
+    def "configureRequest. multiple indexes"() {
         given:
         Map<String, Set<String>> indexesWithFields = new LinkedHashMap<>()
 
@@ -46,7 +46,7 @@ class ElasticSearchQueryConfiguratorTest extends Specification {
                 , indexesWithFields)
 
         then:
-        jsonEquals(toJson (query), readResourceAsString("requests/request_multiple_queries.json"))
+        jsonEquals(toJson(query), readResourceAsString("request_multiple_indexes"))
     }
 
     private static LinkedHashSet<String> createLinkedSet(String... fields) {
@@ -68,14 +68,12 @@ class ElasticSearchQueryConfiguratorTest extends Specification {
     }
 
     private static String readResourceAsString(String resourcePath) {
-        InputStream is = ElasticSearchQueryConfiguratorTest.class.classLoader.getResourceAsStream(resourcePath)
-        assert is != null : "Resource not found: $resourcePath"
+        InputStream is = ElasticSearchQueryConfiguratorTest.class.classLoader.getResourceAsStream("requests/" + resourcePath + ".json")
+        assert is != null: "Resource not found: $resourcePath"
         try {
             return new String(is.readAllBytes(), UTF_8)
         } finally {
             is.close()
         }
     }
-
-
 }

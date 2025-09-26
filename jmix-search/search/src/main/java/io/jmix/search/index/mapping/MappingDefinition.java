@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * TODO update java doc
  * Contains information about indexed properties defined within index definition interface
  * marked with {@link JmixEntitySearchIndex}
  * <p>
@@ -89,19 +90,37 @@ import java.util.List;
  */
 public class MappingDefinition {
 
-    protected List<MappingDefinitionElement> elements;
+    protected List<StaticAttributesConfigurationGroup> staticGroups;
+    protected List<DynamicAttributesConfigurationGroup> dynamicGroups;
 
     protected MappingDefinition(MappingDefinitionBuilder builder) {
-        this.elements = builder.elements;
+        this.staticGroups = builder.elements;
+        this.dynamicGroups = builder.dynamicGroups;
     }
 
     /**
-     * Gets all {@link MappingDefinitionElement}
+     * Gets all {@link StaticAttributesConfigurationGroup}
+     * use the {@link MappingDefinition#getStaticGroups()}
      *
      * @return List of {@link MappingDefinitionElement}
      */
-    public List<MappingDefinitionElement> getElements() {
-        return elements;
+    @Deprecated
+    public List<StaticAttributesConfigurationGroup> getElements() {
+        return staticGroups;
+    }
+
+    /**
+     * Gets all {@link StaticAttributesConfigurationGroup}
+     *
+     * @return List of {@link StaticAttributesConfigurationGroup}
+     */
+    public List<StaticAttributesConfigurationGroup> getStaticGroups() {
+        return staticGroups;
+    }
+
+
+    public List<DynamicAttributesConfigurationGroup> getDynamicGroups() {
+        return dynamicGroups;
     }
 
     public static MappingDefinitionBuilder builder() {
@@ -109,10 +128,23 @@ public class MappingDefinition {
     }
 
     public static class MappingDefinitionBuilder {
-        private final List<MappingDefinitionElement> elements = new ArrayList<>();
 
-        public MappingDefinitionBuilder addElement(MappingDefinitionElement element) {
+        private final List<StaticAttributesConfigurationGroup> elements = new ArrayList<>();
+        private final List<DynamicAttributesConfigurationGroup> dynamicGroups = new ArrayList<>();
+
+        @Deprecated
+        public MappingDefinitionBuilder addElement(StaticAttributesConfigurationGroup element) {
             elements.add(element);
+            return this;
+        }
+
+        public MappingDefinitionBuilder addStaticAttributesGroup(StaticAttributesConfigurationGroup group) {
+            elements.add(group);
+            return this;
+        }
+
+        public MappingDefinitionBuilder addDynamicAttributesGroup(DynamicAttributesConfigurationGroup group) {
+            dynamicGroups.add(group);
             return this;
         }
 

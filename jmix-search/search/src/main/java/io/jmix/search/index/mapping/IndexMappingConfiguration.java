@@ -51,4 +51,13 @@ public class IndexMappingConfiguration {
     public DisplayedNameDescriptor getDisplayedNameDescriptor() {
         return displayedNameDescriptor;
     }
+
+    @Override
+    public String toString() {
+        return "IndexMappingConfiguration{" +
+                "entityMetaClass=" + entityMetaClass +
+                ", fields=" + fields +
+                ", displayedNameDescriptor=" + displayedNameDescriptor +
+                '}';
+    }
 }

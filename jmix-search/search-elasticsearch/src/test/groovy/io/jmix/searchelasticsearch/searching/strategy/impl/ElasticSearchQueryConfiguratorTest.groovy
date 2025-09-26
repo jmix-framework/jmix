@@ -21,10 +21,12 @@ import co.elastic.clients.json.JsonpMapper
 import co.elastic.clients.json.JsonpSerializable
 import co.elastic.clients.json.jackson.JacksonJsonpMapper
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.jmix.core.DevelopmentException
 import jakarta.json.spi.JsonProvider
 import spock.lang.Specification
 
 import static java.nio.charset.StandardCharsets.*
+import static java.util.Collections.emptyMap
 
 class ElasticSearchQueryConfiguratorTest extends Specification {
     def "configureRequest. multiple indexes"() {
@@ -67,6 +69,25 @@ class ElasticSearchQueryConfiguratorTest extends Specification {
 
         then:
         jsonEquals(toJson(query), readResourceAsString("request_single_index"))
+    }
+
+    def "configureRequest. multiple indexes"() {
+        given:
+        Map<String, Set<String>> indexesWithFields = emptyMap()
+
+        and:
+        def configurator = new ElasticSearchQueryConfigurator(null, null)
+
+        when:
+        def query = configurator.createQuery(
+                (b, fields) ->
+                        b.multiMatch(m ->
+                                m.fields(fields).query("search text").operator(Operator.Or)
+                        )
+                , indexesWithFields)
+
+        then:
+        thrown(DevelopmentException)
     }
 
     private static LinkedHashSet<String> createLinkedSet(String... fields) {

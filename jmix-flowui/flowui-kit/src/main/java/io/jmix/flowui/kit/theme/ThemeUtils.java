@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class related to theme handling.
+ * Utility class related to theme handling. It requires the
+ * '@JsModule("./src/theme/color-scheme-switching-support.js")'
+ * import to be added to the main application class.
  */
 public final class ThemeUtils {
 
@@ -17,6 +19,8 @@ public final class ThemeUtils {
      * The web storage key for which the theme value will be set
      */
     public static final String THEME_STORAGE_KEY = "jmix.app.theme";
+
+    public static final String APPLY_THEME_FUNCTION = "window.applyTheme()";
 
     private static final String STORAGE = "localStorage";
 
@@ -99,7 +103,7 @@ public final class ThemeUtils {
                 ? ui.getPage().executeJs("window[$0].setItem($1,$2)", STORAGE, THEME_STORAGE_KEY, theme)
                 : ui.getPage().executeJs("window[$0].removeItem($1)", STORAGE, THEME_STORAGE_KEY)
         ).then(__ -> {
-            ui.getPage().executeJs("window.applyTheme()");
+            ui.getPage().executeJs(APPLY_THEME_FUNCTION);
         });
     }
 }

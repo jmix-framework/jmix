@@ -60,14 +60,14 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinFlowVersion = '24.8.5'
+def vaadinFlowVersion = '24.9.0'
 
 javaPlatform {
     allowDependencies()
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.5.3")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.5.6")
     api platform('software.amazon.awssdk:bom:2.25.60')
 
     def freeVersion = version
@@ -158,6 +158,10 @@ dependencies {
         api "io.jmix.flowui:jmix-flowui-restds-starter:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-devserver:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-test-assist:$freeVersion"
+        api "io.jmix.flowui:vaadin-commercial-components:$freeVersion"
+        api "io.jmix.flowui:vaadin-commercial-components-starter:$freeVersion"
+        api "io.jmix.flowui:vaadin-commercial-components-kit:$freeVersion"
+        api "io.jmix.flowui:vaadin-commercial-components-devserver-kit:$freeVersion"
 
         api "io.jmix.fullcalendar:jmix-fullcalendar-flowui-kit:$freeVersion"
         api "io.jmix.fullcalendar:jmix-fullcalendar-flowui:$freeVersion"
@@ -316,6 +320,8 @@ dependencies {
         api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
         api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
+        api "com.vaadin:vaadin-board-flow:$vaadinFlowVersion"
+        api "com.vaadin:vaadin-spreadsheet-flow:$vaadinFlowVersion"
 
         api 'org.spockframework:spock-core:2.3-groovy-4.0'
         api 'org.spockframework:spock-spring:2.3-groovy-4.0'
@@ -375,6 +381,8 @@ dependencies {
         api "com.openhtmltopdf:openhtmltopdf-core:$openhtmltopdfVersion"
         api "com.openhtmltopdf:openhtmltopdf-rtl-support:$openhtmltopdfVersion"
         api "com.openhtmltopdf:openhtmltopdf-pdfbox:$openhtmltopdfVersion"
+
+        api 'org.apache.pdfbox:pdfbox:3.0.5'
 
         api 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.5.3'
         api 'org.docx4j:docx4j-ImportXHTML:11.4.8'

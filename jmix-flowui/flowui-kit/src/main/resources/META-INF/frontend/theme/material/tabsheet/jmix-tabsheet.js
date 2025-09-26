@@ -1,4 +1,4 @@
-// CAUTION: copied from @vaadin/tabsheet/theme/material/vaadin-tabsheet.js [last update Vaadin 24.8.3]
+// CAUTION: copied from @vaadin/tabsheet/theme/material/vaadin-tabsheet.js [last update Vaadin 24.9.0]
 import '@vaadin/tabs/theme/material/vaadin-tabs.js';
 import '@vaadin/scroller/theme/material/vaadin-scroller.js';
 import './jmix-tabsheet-styles.js';

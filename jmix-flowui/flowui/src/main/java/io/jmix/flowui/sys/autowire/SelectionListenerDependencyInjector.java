@@ -224,7 +224,7 @@ public class SelectionListenerDependencyInjector implements DependencyInjector {
                         && SelectionEvent.class.isAssignableFrom(method.getParameterTypes()[0]));
 
         List<AnnotatedMethod<Subscribe>> annotatedMethods =
-                reflectionCacheManager.getAnnotatedMethodsNotCached(Subscribe.class, uniqueDeclaredMethods, m -> true);
+                AutowireUtils.getAnnotatedMethodsNotCached(Subscribe.class, uniqueDeclaredMethods, m -> true);
 
         annotatedMethods.sort(AutowireUtils::compareMethods);
 

@@ -32,6 +32,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -39,6 +40,8 @@ import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+
+import static io.jmix.flowui.view.ViewControllerUtils.getViewData;
 
 /**
  * Standard action for changing attribute values for several entity instances at once.
@@ -212,6 +215,12 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
 
         BulkEditorBuilder<?> builder = bulkEditors.builder(metaClass, target.getSelectedItems(), origin)
                 .withListDataComponent(target);
+
+        ViewData originData = getViewData(origin);
+
+        if (originData.getDataContextOrNull() != null) {
+            builder = builder.withParentDataContext(originData.getDataContext());
+        }
 
         if (exclude != null) {
             builder = builder.withExclude(exclude);

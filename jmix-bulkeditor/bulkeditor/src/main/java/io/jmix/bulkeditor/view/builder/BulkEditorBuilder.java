@@ -17,10 +17,12 @@
 package io.jmix.bulkeditor.view.builder;
 
 import io.jmix.bulkeditor.view.BulkEditView;
+import io.jmix.core.DataManager;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.validation.Validator;
+import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import org.springframework.lang.Nullable;
@@ -50,6 +52,7 @@ public class BulkEditorBuilder<E> {
     protected List<Validator<E>> modelValidators;
     protected boolean useConfirmDialog = true;
     protected Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter;
+    protected DataContext parentDataContext;
     protected View<?> origin;
 
     public BulkEditorBuilder(BulkEditorBuilder<E> builder) {
@@ -159,6 +162,18 @@ public class BulkEditorBuilder<E> {
     }
 
     /**
+     * Sets parent {@link DataContext} for the {@link BulkEditView}.
+     * The view will save data to the parent context instead of directly to {@link DataManager}.
+     *
+     * @param parentDataContext parent data context to set
+     * @return this builder
+     */
+    public BulkEditorBuilder<E> withParentDataContext(DataContext parentDataContext) {
+        this.parentDataContext = parentDataContext;
+        return this;
+    }
+
+    /**
      * @return a {@link MetaClass} of items
      */
     public MetaClass getMetaClass() {
@@ -226,6 +241,14 @@ public class BulkEditorBuilder<E> {
     @Nullable
     public Function<List<MetaProperty>, Map<MetaProperty, Integer>> getFieldSorter() {
         return fieldSorter;
+    }
+
+    /**
+     * @return parent data context
+     */
+    @Nullable
+    public DataContext getParentDataContext() {
+        return parentDataContext;
     }
 
     /**

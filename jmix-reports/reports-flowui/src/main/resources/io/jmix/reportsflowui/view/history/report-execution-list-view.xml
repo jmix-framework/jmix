@@ -58,7 +58,7 @@
         <dataGrid id="executionsDataGrid" dataContainer="executionsDc" width="100%" selectionMode="MULTI"
                   columnReorderingAllowed="true">
             <actions>
-                <action id="download" text="msg://action.download.text" icon="DOWNLOAD"/>
+                <action id="download" text="msg://action.download.text" icon="DOWNLOAD" type="list_itemTracking"/>
             </actions>
             <columns resizable="true">
                 <column property="startTime"/>

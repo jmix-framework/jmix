@@ -196,7 +196,7 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     }
 
     @Override
-    public void setCondition(Condition condition) {
+    public void setCondition(@Nullable Condition condition) {
         this.condition = condition;
     }
 

@@ -38,6 +38,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.*;
 import io.jmix.searchflowui.component.SearchField;
 import io.jmix.searchflowui.component.SearchFieldContext;
@@ -85,6 +86,8 @@ public class SearchResultsView extends StandardView {
     protected DialogWindows dialogWindows;
     @Autowired
     protected Notifications notifications;
+    @Autowired
+    protected SearchProperties searchProperties;
 
     protected SearchResult searchResult;
     protected String searchStrategy;
@@ -197,7 +200,7 @@ public class SearchResultsView extends StandardView {
         getContent().removeAll();
         getContent().add(createSearchField(searchResult));
         if (searchResult.isEmpty()) {
-            notifications.create(messageBundle.getMessage("noResults"))
+            notifications.create(messageBundle.getMessage(searchProperties.isEnabled() ? "noResults" : "searchDisabled"))
                     .show();
         } else {
             VirtualList<SearchResultEntry> virtualList = uiComponents.create(VirtualList.class);

@@ -30,6 +30,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static com.vaadin.flow.server.frontend.FrontendUtils.BRIGHT_BLUE;
 import static com.vaadin.flow.server.frontend.FrontendUtils.RED;
 import static com.vaadin.flow.server.frontend.FrontendUtils.console;
 import static io.jmix.flowui.devserver.servlet.JmixSystemPropertiesLifeCycleListener.STUDIO_VIEW_DESIGNER_DIR_PROPERTY;
@@ -49,7 +50,10 @@ public final class JmixLoggerUtils {
                 throw new RuntimeException(e);
             }
         }
-        logFile.ifPresent(file -> logInFile(file, text));
+        logFile.ifPresentOrElse(
+                file -> logInFile(file, text),
+                () -> console(BRIGHT_BLUE, text)
+        );
     }
 
     private static void logInFile(@Nonnull File logFile, String text) {

@@ -32,10 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -69,6 +67,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     protected String fetchPlanName;
     protected Map<String, Serializable> hints = new HashMap<>();
     protected Function<LoadContext<E>, E> delegate;
+    protected BiFunction<Object, FetchPlan, Optional<E>> loadFromRepositoryDelegate;
     protected EventHub events = new EventHub();
     protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider = __ -> DataLoaderMonitoringInfo.empty();
 
@@ -106,7 +105,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         if (!needLoad())
             return;
 
-        if (delegate == null) {
+        if (loadFromRepositoryDelegate == null && delegate == null) {
             if (!sendPreLoadEvent(loadContext)) {
                 return;
             }
@@ -128,7 +127,11 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
 
             Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
 
-            entity = delegate.apply(createLoadContext());
+            if (loadFromRepositoryDelegate != null) {
+                entity = loadFromRepositoryDelegate.apply(entityId, resolveFetchPlan()).orElse(null);
+            } else {
+                entity = delegate.apply(createLoadContext());
+            }
 
             DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
             UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
@@ -241,7 +244,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     }
 
     @Override
-    public void setCondition(Condition condition) {
+    public void setCondition(@Nullable Condition condition) {
         this.condition = condition;
     }
 
@@ -302,6 +305,16 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     @Override
     public void setLoadDelegate(Function<LoadContext<E>, E> delegate) {
         this.delegate = delegate;
+    }
+
+    @Override
+    public BiFunction<Object, FetchPlan, Optional<E>> getLoadFromRepositoryDelegate() {
+        return loadFromRepositoryDelegate;
+    }
+
+    @Override
+    public void setLoadFromRepositoryDelegate(BiFunction<Object, FetchPlan, Optional<E>> delegate) {
+        this.loadFromRepositoryDelegate = delegate;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

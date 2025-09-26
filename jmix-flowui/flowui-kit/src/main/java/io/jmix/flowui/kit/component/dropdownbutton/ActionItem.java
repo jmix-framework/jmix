@@ -18,6 +18,7 @@ package io.jmix.flowui.kit.component.dropdownbutton;
 
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.ActionHolder;
 import io.jmix.flowui.kit.meta.StudioIgnore;
 
 import java.util.function.Consumer;
@@ -27,13 +28,14 @@ import java.util.function.Consumer;
  * This interface provides functionalities for retrieving the related action
  * and delegates click event handling to the encapsulated action logic.
  */
-public interface ActionItem extends DropdownButtonItem {
+public interface ActionItem extends DropdownButtonItem, ActionHolder {
 
     /**
      * Returns the {@link Action} associated with this item.
      *
      * @return the associated action, or null if no action is set
      */
+    @Override
     Action getAction();
 
     /**

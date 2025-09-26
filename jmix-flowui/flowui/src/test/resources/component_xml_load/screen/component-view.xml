@@ -188,22 +188,22 @@
         <checkbox id="checkBoxWithDataId" dataContainer="orderDc" property="user.active"/>
 
         <switch id="switchId"
-                  ariaLabel="ariaLabelString"
-                  autofocus="true"
-                  classNames="cssClassName1, cssClassName2"
-                  css="color: red;"
-                  enabled="true"
-                  height="50px"
-                  label="labelString"
-                  maxHeight="55px"
-                  maxWidth="120px"
-                  minHeight="40px"
-                  minWidth="80px"
-                  readOnly="true"
-                  tabIndex="3"
-                  value="true"
-                  visible="true"
-                  width="100px">
+                ariaLabel="ariaLabelString"
+                autofocus="true"
+                classNames="cssClassName1, cssClassName2"
+                css="color: red;"
+                enabled="true"
+                height="50px"
+                label="labelString"
+                maxHeight="55px"
+                maxWidth="120px"
+                minHeight="40px"
+                minWidth="80px"
+                readOnly="true"
+                tabIndex="3"
+                value="true"
+                visible="true"
+                width="100px">
             <tooltip text="tooltipText"
                      focusDelay="1"
                      hideDelay="2"
@@ -876,6 +876,84 @@
         </entityComboBox>
 
         <entityComboBox id="metaClassComboBoxId" metaClass="test_Order"/>
+
+        <userMenu id="userMenu"
+                  classNames="cssClassName1, cssClassName2"
+                  css="color: red;"
+                  enabled="true"
+                  openOnHover="true"
+                  tabIndex="3"
+                  themeNames="small primary"
+                  title="dropdownButtonTitle"
+                  visible="true"
+                  overlayClass="overlayClassName">
+            <items>
+                <actionItem id="firstActionItem">
+                    <action id="action2" icon="DIPLOMA"/>
+                </actionItem>
+                <separator/>
+                <actionItem id="secondActionItem" ref="buttonAction"/>
+                <componentItem id="componentItem">
+                    <span text="content"/>
+                </componentItem>
+                <textItem id="textItem" text="textItemContent" icon="FILE"/>
+                <viewItem id="viewItem" text="viewItemText"
+                          viewClass="component_xml_load.screen.ComponentView"
+                          openMode="DIALOG"/>
+            </items>
+        </userMenu>
+
+        <!-- Tests correct loading of nested items -->
+        <userMenu id="userMenu4"
+                  themeNames="tertiary">
+            <items>
+                <separator/>
+
+                <textItem id="textItem" text="Text Item" icon="FILE_FONT"
+                          themeNames="non-checkable">
+                    <items>
+                        <actionItem id="actionItem"
+                                    themeNames="non-checkable">
+                            <action id="actionItemAction" text="Action Item" icon="FILE_CODE"/>
+                        </actionItem>
+
+                        <separator/>
+
+                        <componentItem id="componentItem"
+                                       themeNames="non-checkable">
+                            <hbox>
+                                <icon icon="FILE_MOVIE"/>
+                                <span text="Component Item"/>
+                            </hbox>
+
+                            <items>
+                                <textItem id="nestedTextItem" text="Nested Text Item" icon="FILE_CODE">
+                                    <items>
+                                        <textItem id="nestedTextItem1" text="Nested Text Item"/>
+                                        <separator/>
+                                        <actionItem id="nestedActionItem1" ref="buttonAction"/>
+                                    </items>
+                                </textItem>
+
+                                <separator/>
+
+                                <viewItem id="viewItem"
+                                          text="View Item"
+                                          icon="USERS"
+                                          viewClass="component_xml_load.screen.ComponentView"
+                                          openMode="DIALOG"
+                                          themeNames="non-checkable"/>
+                            </items>
+                        </componentItem>
+                    </items>
+                </textItem>
+
+                <separator/>
+
+                <textItem id="textItem2" text="Text Item" icon="FILE_FONT"
+                          themeNames="non-checkable"/>
+            </items>
+        </userMenu>
 
         <dropdownButton id="dropdownButtonId"
                         classNames="cssClassName1, cssClassName2"

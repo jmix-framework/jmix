@@ -50,6 +50,9 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.client.RestClient;
+
+import io.micrometer.observation.ObservationRegistry;
 import test_support.security.TestInMemoryUserRepository;
 import test_support.security.TestRestUserRepository;
 
@@ -153,5 +156,17 @@ public class TestRestDsConfiguration {
     @Primary
     public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
         return new LocalApplicationEventChannelSupplier();
+    }
+
+    @Bean
+    @Primary
+    public RestClient.Builder restClientBuilder(ObservationRegistry observationRegistry) {
+        return RestClient.builder().observationRegistry(observationRegistry);
+    }
+
+    @Bean
+    @Primary
+    public ObservationRegistry observationRegistry() {
+        return ObservationRegistry.NOOP;
     }
 }

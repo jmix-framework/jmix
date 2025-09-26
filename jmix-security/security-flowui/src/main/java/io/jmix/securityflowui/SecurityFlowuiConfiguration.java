@@ -23,6 +23,7 @@ import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.security.SecurityConfiguration;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,7 @@ import org.springframework.context.annotation.PropertySource;
 import java.util.Collections;
 
 @Configuration
+@ConfigurationPropertiesScan
 @JmixModule(dependsOn = {SecurityConfiguration.class, FlowuiConfiguration.class})
 @PropertySource(name = "io.jmix.securityflowui", value = "classpath:/io/jmix/securityflowui/module.properties")
 @Import(StandardSecurityFlowuiConfiguration.class)

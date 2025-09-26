@@ -29,6 +29,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 @Target(ElementType.TYPE)
 public @interface ViewController {
 

@@ -19,6 +19,7 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.util.ObjectBuilder;
+import io.jmix.core.DevelopmentException;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.AbstractSearchQueryConfigurator;
@@ -47,10 +48,22 @@ public class ElasticSearchQueryConfigurator extends AbstractSearchQueryConfigura
     }
 
     protected Query createQuery(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
-        return Query.of(rootBoolBuilder ->
-                rootBoolBuilder.bool(rootShouldBuilder ->
-                        rootShouldBuilder.should(createSubqueriesForIndexes(indexesWithFields, targetQueryBuilder)))
-        );
+        if (indexesWithFields.size() > 1){
+            return Query.of(rootBoolBuilder ->
+                    rootBoolBuilder.bool(rootShouldBuilder ->
+                            rootShouldBuilder.should(createSubqueriesForIndexes(indexesWithFields, targetQueryBuilder)))
+            );
+        }else if (indexesWithFields.size() ==1){
+            Query.Builder builder = new Query.Builder();
+            return targetQueryBuilder
+                    .apply(
+                            builder,
+                            new ArrayList<>(indexesWithFields.entrySet().iterator().next().getValue()))
+                    .build();
+        }
+
+        //TODO messages
+        throw new DevelopmentException("There are not indexes for searching.");
     }
 
     private List<Query> createSubqueriesForIndexes(Map<String, Set<String>> indexesWithFields, TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) {

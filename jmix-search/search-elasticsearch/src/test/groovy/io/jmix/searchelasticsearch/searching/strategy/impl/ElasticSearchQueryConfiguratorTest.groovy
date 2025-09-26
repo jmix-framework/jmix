@@ -49,6 +49,26 @@ class ElasticSearchQueryConfiguratorTest extends Specification {
         jsonEquals(toJson(query), readResourceAsString("request_multiple_indexes"))
     }
 
+    def "configureRequest. multiple indexes"() {
+        given:
+        Map<String, Set<String>> indexesWithFields = new LinkedHashMap<>()
+        indexesWithFields.put("index1", createLinkedSet("field1_1", "field1_2", "field1_3"))
+
+        and:
+        def configurator = new ElasticSearchQueryConfigurator(null, null)
+
+        when:
+        def query = configurator.createQuery(
+                (b, fields) ->
+                        b.multiMatch(m ->
+                                m.fields(fields).query("search text").operator(Operator.Or)
+                        )
+                , indexesWithFields)
+
+        then:
+        jsonEquals(toJson(query), readResourceAsString("request_single_index"))
+    }
+
     private static LinkedHashSet<String> createLinkedSet(String... fields) {
         new LinkedHashSet<>(List.of(fields))
     }

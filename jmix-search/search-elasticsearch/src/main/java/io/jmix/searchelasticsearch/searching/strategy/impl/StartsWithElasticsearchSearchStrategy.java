@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -54,19 +53,18 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearch
     @Override
     public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
         int maxPrefixSize = searchProperties.getMaxPrefixLength();
-        List<String> entities = searchContext.getEntities();
         if (isSearchTermExceedMaxPrefixSize(searchContext.getSearchText(), maxPrefixSize)
                 && searchProperties.isWildcardPrefixQueryEnabled()) {
-            configureWildcardQuery(requestBuilder, searchContext, entities);
+            configureWildcardQuery(requestBuilder, searchContext);
         } else {
-            configureTermsQuery(requestBuilder, searchContext, entities);
+            configureTermsQuery(requestBuilder, searchContext);
         }
     }
 
-    protected void configureTermsQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext, List<String> entities) {
+    protected void configureTermsQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
        queryConfigurator.configureRequest(
                 requestBuilder,
-                entities,
+                searchContext.getEntities(),
                 searchFieldsResolver::resolveFieldsWithPrefixes,
                 (queryBuilder, fields) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
@@ -77,7 +75,7 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearch
         );
     }
 
-    protected void configureWildcardQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext, List<String> entities) {
+    protected void configureWildcardQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
         String searchText = searchContext.getEscapedSearchText();
         String[] searchTerms = searchText.split("\\s+");
         String queryText = Arrays.stream(searchTerms)
@@ -86,7 +84,7 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearch
                 .collect(Collectors.joining(" "));
         queryConfigurator.configureRequest(
                 requestBuilder,
-                entities,
+                searchContext.getEntities(),
                 searchFieldsResolver::resolveFields,
                 (queryBuilder, fields) ->
                         queryBuilder.queryString(queryStringQueryBuilder ->

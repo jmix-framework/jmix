@@ -43,7 +43,7 @@ public class ElasticSearchQueryConfigurator extends AbstractSearchQueryConfigura
             List<String> entities,
             Function<IndexConfiguration, Set<String>> fieldResolving,
             TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) {
-        requestBuilder.query(createQuery(targetQueryBuilder, getEntitiesWithFields(entities, fieldResolving)));
+        requestBuilder.query(createQuery(targetQueryBuilder, getIndexNamesWithFields(entities, fieldResolving)));
     }
 
     protected Query createQuery(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {

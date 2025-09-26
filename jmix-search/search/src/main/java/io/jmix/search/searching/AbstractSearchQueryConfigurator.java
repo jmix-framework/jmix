@@ -35,7 +35,7 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
         this.indexConfigurationManager = indexConfigurationManager;
     }
 
-    protected Map<String, Set<String>> getEntitiesWithFields(List<String> entities, Function<IndexConfiguration, Set<String>> fieldResolving) {
+    protected Map<String, Set<String>> getIndexNamesWithFields(List<String> entities, Function<IndexConfiguration, Set<String>> fieldResolving) {
         return searchUtils
                 .resolveEntitiesAllowedToSearch(entities)
                 .stream()

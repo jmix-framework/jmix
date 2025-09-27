@@ -16,6 +16,9 @@
 
 package io.jmix.flowui.devserver;
 
+import java.net.URI;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,8 @@ public class FlowJettyServer extends Server {
     private static final String PROJECT_BASE_DIR_ATTR = "ProjectBaseDir";
 
     private static final Logger log = LoggerFactory.getLogger(FlowJettyServer.class);
+
+    private static final String extraClassPathResourcesSeparator = ",";
 
     private final Map<String, Object> params;
 
@@ -144,9 +149,17 @@ public class FlowJettyServer extends Server {
     }
 
     private void configureExtraClassPath(WebAppContext context) {
-        String extraClasspath = (String) params.get(EXTRA_CLASSPATH_ATTR);
-        List<Resource> resources = context.getResourceFactory().split(extraClasspath, ",", true);
+        List<Resource> resources = context.getResourceFactory().split(getExtraClassPathString(), extraClassPathResourcesSeparator, true);
         context.setExtraClasspath(resources);
+    }
+
+    private String getExtraClassPathString() {
+        final String extraClasspath = (String) params.get(EXTRA_CLASSPATH_ATTR);
+        final List<String> normalizedClasspathList = Arrays.stream(extraClasspath.split(extraClassPathResourcesSeparator))
+                .map(pathStr -> Paths.get(pathStr).toUri())
+                .map(URI::toASCIIString)
+                .toList();
+        return String.join(",", normalizedClasspathList);
     }
 
     private void configureBaseResource(WebAppContext context) {

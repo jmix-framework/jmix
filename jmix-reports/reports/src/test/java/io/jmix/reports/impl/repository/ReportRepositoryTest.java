@@ -139,6 +139,7 @@ public class ReportRepositoryTest {
     public void testExistsReportByCode() {
         annotatedReportScanner.importReportDefinitions();
         Report report = runtimeReportUtil.constructSimpleRuntimeReport();
+        report.setCode("runtime_code");
         reportRepository.save(report);
 
         String runtimeReportCode = report.getCode();

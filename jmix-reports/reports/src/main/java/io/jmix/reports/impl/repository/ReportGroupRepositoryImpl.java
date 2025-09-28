@@ -26,6 +26,9 @@ import io.jmix.reports.ReportGroupRepository;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.impl.AnnotatedReportGroupHolder;
 import io.jmix.reports.util.MsgBundleTools;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -123,19 +126,42 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
             throw new AccessDeniedException("entity", metadata.getClass(ReportGroup.class).getName(), EntityOp.READ.getId());
         }
 
+        if (StringUtils.isEmpty(reportGroupCode)) {
+            throw new IllegalStateException("Report group code should not be empty");
+        }
+
         for (ReportGroup group : annotatedReportGroupHolder.getAllGroups()) {
-            if (group.getCode() != null && group.getCode().equals(reportGroupCode)) {
+            if (group.getCode().equals(reportGroupCode)) {
                 return true;
             }
         }
 
-        Optional<ReportGroup> report = dataManager.load(ReportGroup.class)
-            .query("select rg from report_ReportGroup rg where rg.code = :reportGroupCode")
-            .parameter("reportGroupCode", reportGroupCode)
-            .fetchPlan(FetchPlan.INSTANCE_NAME)
-            .optional();
+        return dataManager
+                .loadValue("select case when count (rg) > 0 then true else false end from report_ReportGroup rg where rg.code = :reportGroupCode", Boolean.class)
+                .parameter("reportGroupCode", reportGroupCode)
+                .one();
+    }
 
-        return report.isPresent();
+    @Override
+    public Optional<UUID> loadGroupIdByCode(String reportGroupCode) {
+        if (!isReadPermitted()) {
+            throw new AccessDeniedException("entity", metadata.getClass(ReportGroup.class).getName(), EntityOp.READ.getId());
+        }
+
+        if (StringUtils.isEmpty(reportGroupCode)) {
+            throw new IllegalStateException("Report group code should not be empty");
+        }
+
+        for (ReportGroup group : annotatedReportGroupHolder.getAllGroups()) {
+            if (group.getCode().equals(reportGroupCode)) {
+                return Optional.ofNullable(group.getId());
+            }
+        }
+
+        return dataManager
+                .loadValue("select rg.id from report_ReportGroup rg where rg.code = :reportGroupCode", UUID.class)
+                .parameter("reportGroupCode", reportGroupCode)
+                .optional();
     }
 
     private boolean satisfies(ReportGroup group, ReportGroupFilter filter) {

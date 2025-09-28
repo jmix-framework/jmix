@@ -35,6 +35,7 @@ import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
@@ -292,19 +293,42 @@ public class ReportRepositoryImpl implements ReportRepository {
             throw new AccessDeniedException("entity", metadata.getClass(Report.class).getName(), EntityOp.READ.getId());
         }
 
+        if (StringUtils.isEmpty(reportCode)) {
+            throw new IllegalStateException("Report code should not be empty");
+        }
+
         for (Report report : annotatedReportHolder.getAllReports()) {
-            if (report.getCode() != null && report.getCode().equals(reportCode)) {
+            if (report.getCode().equals(reportCode)) {
                 return true;
             }
         }
 
-        Optional<Report> report = dataManager.load(Report.class)
-                .query("select r from report_Report r where r.code = :reportCode")
+        return dataManager
+                .loadValue("select case when count (r) > 0 then true else false end from report_Report r where r.code = :reportCode", Boolean.class)
                 .parameter("reportCode", reportCode)
-                .fetchPlan(FetchPlan.INSTANCE_NAME)
-                .optional();
+                .one();
+    }
 
-        return report.isPresent();
+    @Override
+    public Optional<UUID> loadReportIdByCode(String reportCode) {
+        if (!isReadPermitted()) {
+            throw new AccessDeniedException("entity", metadata.getClass(Report.class).getName(), EntityOp.READ.getId());
+        }
+
+        if (StringUtils.isEmpty(reportCode)) {
+            throw new IllegalStateException("Report code should not be empty");
+        }
+
+        for (Report report : annotatedReportHolder.getAllReports()) {
+            if (report.getCode().equals(reportCode)) {
+                return Optional.ofNullable(report.getId());
+            }
+        }
+
+        return dataManager
+                .loadValue("select r.id from report_Report r where r.code = :reportCode", UUID.class)
+                .parameter("reportCode", reportCode)
+                .optional();
     }
 
     @Override

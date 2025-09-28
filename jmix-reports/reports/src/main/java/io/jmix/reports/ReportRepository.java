@@ -23,6 +23,8 @@ import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Provides unified access to both types of reports: stored in database and defined in code.
@@ -74,6 +76,14 @@ public interface ReportRepository {
      * @return true if a report with this code exists, false otherwise
      */
     boolean existsReportByCode(String code);
+
+    /**
+     * Loads report id by its code.
+     *
+     * @param code report code.
+     * @return {@link Optional} id for report.
+     */
+    Optional<UUID> loadReportIdByCode(String code);
 
     /**
      * Checks if any reports are connected to the given group.

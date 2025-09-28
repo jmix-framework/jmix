@@ -650,32 +650,50 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
     }
 
-    @Subscribe
-    protected void onBeforeSave(BeforeSaveEvent event) {
+    protected void checkReportCode(BeforeSaveEvent event) {
         ValidationErrors errors = new ValidationErrors();
-        String newReportCode = codeField.getTypedValue();
+        String reportCode = codeField.getTypedValue();
+        Report editedReport = getEditedEntity();
+        Optional<UUID> reportId;
+
+        if (reportCode == null) {
+            markFieldAndPreventSave(codeField, "detailsTab.codeField.isEmpty.text", event);
+            showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.isEmpty.text");
+            return;
+        }
 
         try {
-            if (newReportCode == null) {
-                markFieldAndPreventSave(codeField, "detailsTab.codeField.isEmpty.text", event);
-                showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.isEmpty.text");
-                return;
+            if (entityStates.isNew(editedReport)) {
+                if (reportRepository.existsReportByCode(reportCode)) {
+                    markFieldAndPreventSave(codeField, "detailsTab.codeField.alreadyExists.text", event);
+                    showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.alreadyExists.text");
+                    return;
+                }
             }
-            if (reportRepository.existsReportByCode(newReportCode)) {
-                markFieldAndPreventSave(codeField, "detailsTab.codeField.alreadyExists.text", event);
-                showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.alreadyExists.text");
-                return;
+
+            reportId = reportRepository.loadReportIdByCode(reportCode);
+
+            if (reportId.isPresent()) {
+                if (!editedReport.getId().equals(reportId.get())) {
+                    if (reportRepository.existsReportByCode(reportCode)) {
+                        markFieldAndPreventSave(codeField, "detailsTab.codeField.alreadyExists.text", event);
+                        showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.alreadyExists.text");
+                    }
+                }
             }
         } catch (AccessDeniedException ade) {
             event.preventSave();
             showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.notification.notReadAccessRights.text");
-            return;
         } finally {
             if (!errors.isEmpty()) {
                 viewValidation.showValidationErrors(errors);
             }
         }
+    }
 
+    @Subscribe
+    protected void onBeforeSave(BeforeSaveEvent event) {
+        checkReportCode(event);
         setupReportXml();
     }
 

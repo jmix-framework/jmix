@@ -1,6 +1,7 @@
 package io.jmix.reportsflowui.view.group;
 
 import com.vaadin.flow.router.Route;
+import io.jmix.core.EntityStates;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.action.view.DetailSaveCloseAction;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -9,6 +10,9 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportGroupRepository;
 import io.jmix.reports.entity.ReportGroup;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Route(value = "reports/groups/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportGroup.detail")
@@ -27,6 +31,8 @@ public class ReportGroupDetailView extends StandardDetailView<ReportGroup> {
     protected ReportGroupRepository groupRepository;
     @Autowired
     protected ViewValidation viewValidation;
+    @Autowired
+    private EntityStates entityStates;
 
     protected void markFieldAndPreventSave(TypedTextField<?> field, String messageBundleKey, BeforeSaveEvent event) {
         event.preventSave();
@@ -34,19 +40,32 @@ public class ReportGroupDetailView extends StandardDetailView<ReportGroup> {
         field.setInvalid(true);
     }
 
-    @Subscribe
-    protected void onBeforeSave(BeforeSaveEvent event) {
+    protected void checkReportGroupCode(BeforeSaveEvent event) {
         ValidationErrors errors = new ValidationErrors();
-        String newGroupCode = codeField.getTypedValue();
+        String groupCode = codeField.getTypedValue();
+        ReportGroup editedGroup = getEditedEntity();
+        Optional<UUID> groupId;
 
-        if (newGroupCode == null) {
+        if (groupCode == null) {
             markFieldAndPreventSave(codeField, "reportGroupDetailView.codeField.isEmpty.text", event);
             return;
         }
 
         try {
-            if (groupRepository.existsGroupByCode(newGroupCode)) {
-                markFieldAndPreventSave(codeField, "reportGroupDetailView.codeField.alreadyExists.text", event);
+            if (entityStates.isNew(editedGroup)) {
+                if (groupRepository.existsGroupByCode(groupCode)) {
+                    markFieldAndPreventSave(codeField, "reportGroupDetailView.codeField.alreadyExists.text", event);
+                    return;
+                }
+            }
+
+            groupId = groupRepository.loadGroupIdByCode(groupCode);
+            if (groupId.isPresent()) {
+                if (!editedGroup.getId().equals(groupId.get())) {
+                    if (groupRepository.existsGroupByCode(groupCode)) {
+                        markFieldAndPreventSave(codeField, "reportGroupDetailView.codeField.alreadyExists.text", event);
+                    }
+                }
             }
         } catch (AccessDeniedException ade) {
             event.preventSave();
@@ -56,6 +75,11 @@ public class ReportGroupDetailView extends StandardDetailView<ReportGroup> {
                 viewValidation.showValidationErrors(errors);
             }
         }
+    }
+
+    @Subscribe
+    protected void onBeforeSave(BeforeSaveEvent event) {
+        checkReportGroupCode(event);
     }
 
     @Override

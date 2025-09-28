@@ -17,8 +17,11 @@
 package io.jmix.reports;
 
 import io.jmix.reports.entity.ReportGroup;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Provides unified access to both types of report groups: stored in database and defined in code.
@@ -55,4 +58,12 @@ public interface ReportGroupRepository {
      * @return true if a report group with the given code exists, false otherwise
      */
     boolean existsGroupByCode(String code);
+
+    /**
+     * Loads report group id by its code.
+     *
+     * @param code report group code
+     * @return {@link Optional} id for report group.
+     */
+    Optional<UUID> loadGroupIdByCode(String code);
 }

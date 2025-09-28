@@ -76,26 +76,37 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
         jobModelsDc.setItems(sortedJobs);
     }
 
+    @Install(to = "jobModelsTable.jobState", subject = "partNameGenerator")
+    protected String jobStatePartNameGenerator(final JobModel entity) {
+        if (entity != null && JobState.INVALID.equals(entity.getJobState())) {
+            return "quartz-job-invalid";
+        }
+        return null;
+    }
+
     @Install(to = "jobModelsTable.executeNow", subject = "enabledRule")
     private boolean jobModelsTableExecuteNowEnabledRule() {
+        JobModel selectedJobModel = jobModelsTable.getSingleSelected();
         return !CollectionUtils.isEmpty(jobModelsTable.getSelected())
-                && !isJobActive(jobModelsTable.getSelected().iterator().next());
+                && !isJobActive(selectedJobModel)
+                && !isJobInvalid(selectedJobModel);
     }
 
     @Install(to = "jobModelsTable.activate", subject = "enabledRule")
     private boolean jobModelsTableActivateEnabledRule() {
-        if (CollectionUtils.isEmpty(jobModelsTable.getSelected())) {
-            return false;
-        }
-
         JobModel selectedJobModel = jobModelsTable.getSelected().iterator().next();
-        return !isJobActive(selectedJobModel) && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers());
+        return selectedJobModel != null
+                && !isJobActive(selectedJobModel)
+                && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers())
+                && !isJobInvalid(selectedJobModel);
     }
 
     @Install(to = "jobModelsTable.deactivate", subject = "enabledRule")
     private boolean jobModelsTableDeactivateEnabledRule() {
-        return !CollectionUtils.isEmpty(jobModelsTable.getSelected())
-                && isJobActive(jobModelsTable.getSelected().iterator().next());
+        JobModel selectedJobModel = jobModelsTable.getSingleSelected();
+        return selectedJobModel != null
+                && isJobActive(selectedJobModel)
+                && !isJobInvalid(selectedJobModel);
     }
 
     @Install(to = "jobModelsTable.remove", subject = "enabledRule")
@@ -175,6 +186,10 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
 
     private boolean isJobActive(JobModel jobModel) {
         return jobModel != null && jobModel.getJobState() == JobState.NORMAL;
+    }
+
+    protected boolean isJobInvalid(JobModel jobModel) {
+        return jobModel != null && jobModel.getJobState() == JobState.INVALID;
     }
 
     @Subscribe("applyFilter")

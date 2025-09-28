@@ -91,6 +91,7 @@ public class JobModelEdit extends StandardEditor<JobModel> {
     public void onBeforeShow(BeforeShowEvent event) {
         //allow editing only not active and user-defined jobs
         boolean readOnly = JobState.NORMAL.equals(getEditedEntity().getJobState())
+                || JobState.INVALID.equals(getEditedEntity().getJobState())
                 || JobSource.PREDEFINED.equals(getEditedEntity().getJobSource());
         setReadOnly(readOnly);
         jobNameField.setEditable(!readOnly);

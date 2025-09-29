@@ -16,7 +16,6 @@
 
 package io.jmix.search.searching;
 
-import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
@@ -29,6 +28,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements SearchQueryConfigurator<SRB, QB, OB> {
 
+    protected static final String THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY = "ThereAreNoIndexesForSearchingMessage";
     protected final SearchUtils searchUtils;
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final Messages messages;
@@ -68,6 +68,6 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
     }
 
     private void throwException() {
-        throw new DevelopmentException(messages.getMessage(this.getClass(), "ThereAreNoIndexesForSearchingMessage"));
+        throw new EmptyAllowedEntitiesListForSearching(messages.getMessage(this.getClass(), THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY));
     }
 }

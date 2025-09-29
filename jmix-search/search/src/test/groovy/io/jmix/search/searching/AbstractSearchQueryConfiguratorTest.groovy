@@ -16,7 +16,6 @@
 
 package io.jmix.search.searching
 
-import io.jmix.core.DevelopmentException
 import io.jmix.core.Messages
 import io.jmix.search.index.IndexConfiguration
 import io.jmix.search.index.mapping.IndexConfigurationManager
@@ -24,7 +23,12 @@ import spock.lang.Specification
 
 import java.util.function.Function
 
+import static io.jmix.search.searching.AbstractSearchQueryConfigurator.THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY
+
 class AbstractSearchQueryConfiguratorTest extends Specification {
+
+
+    public static final String SAMPLE_MESSAGE_TEXT = "Sample text"
 
     def "getIndexNamesWithFields. Normal flow"() {
         given:
@@ -74,7 +78,11 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of()
 
         and:
-        def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager), Mock(Messages))
+        def messages = Mock(Messages)
+        messages.getMessage(TestSearchQueryConfigurator.class, THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY) >> SAMPLE_MESSAGE_TEXT
+
+        and:
+        def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager), messages)
 
         when:
         configurator.getIndexNamesWithFields(
@@ -83,7 +91,8 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         )
 
         then:
-        thrown(DevelopmentException)
+        def exception = thrown(EmptyAllowedEntitiesListForSearching)
+        exception.getMessage() == SAMPLE_MESSAGE_TEXT
     }
 
     def "getIndexNamesWithFields. Empty list of allowed entities"() {
@@ -92,7 +101,11 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of()
 
         and:
-        def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager), Mock(Messages))
+        def messages = Mock(Messages)
+        messages.getMessage(TestSearchQueryConfigurator.class, THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY) >> SAMPLE_MESSAGE_TEXT
+
+        and:
+        def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager), messages)
 
         when:
         configurator.getIndexNamesWithFields(
@@ -101,7 +114,8 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         )
 
         then:
-        thrown(DevelopmentException)
+        def exception = thrown(EmptyAllowedEntitiesListForSearching)
+        exception.getMessage() == SAMPLE_MESSAGE_TEXT
     }
 
     def "getIndexNamesWithFields. Some entities haven't allowed fields"() {
@@ -171,7 +185,11 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of("entity1", "entity2", "entity3")
 
         and:
-        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager, Mock(Messages))
+        def messages = Mock(Messages)
+        messages.getMessage(TestSearchQueryConfigurator.class, THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY) >> SAMPLE_MESSAGE_TEXT
+
+        and:
+        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager, messages)
 
         when:
         configurator.getIndexNamesWithFields(
@@ -180,7 +198,8 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         )
 
         then:
-        thrown(DevelopmentException)
+        def exception = thrown(EmptyAllowedEntitiesListForSearching)
+        exception.getMessage() == SAMPLE_MESSAGE_TEXT
     }
 
     private class TestSearchQueryConfigurator extends AbstractSearchQueryConfigurator {

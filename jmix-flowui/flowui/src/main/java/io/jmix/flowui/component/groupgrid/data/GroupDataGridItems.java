@@ -54,7 +54,7 @@ public interface GroupDataGridItems<T> extends DataGridItems<T> {
     List<GroupInfo> getRootGroups();
 
     /**
-     * @return the list of nested groups
+     * @return the list of own nested groups
      */
     List<GroupInfo> getChildren(GroupInfo group);
 

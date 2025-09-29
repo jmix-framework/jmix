@@ -161,13 +161,13 @@ public interface GroupListDataComponent<E> extends ListDataComponent<E> {
     class CollapseEvent<E> extends EventObject {
 
         protected final boolean isFromClient;
-        protected final Collection<E> collapsedItems;
+        protected final Collection<GroupInfo> collapsedGroups;
 
-        public CollapseEvent(GroupListDataComponent<E> source, boolean isFromClient, Collection<E> collapsedItems) {
+        public CollapseEvent(GroupListDataComponent<E> source, boolean isFromClient, Collection<GroupInfo> collapsedGroups) {
             super(source);
 
             this.isFromClient = isFromClient;
-            this.collapsedItems = collapsedItems;
+            this.collapsedGroups = collapsedGroups;
         }
 
         @Override
@@ -188,8 +188,8 @@ public interface GroupListDataComponent<E> extends ListDataComponent<E> {
         /**
          * @return a collection of collapsed group items
          */
-        public Collection<E> getCollapsedItems() {
-            return collapsedItems;
+        public Collection<GroupInfo> getCollapsedGroups() {
+            return collapsedGroups;
         }
     }
 
@@ -201,13 +201,13 @@ public interface GroupListDataComponent<E> extends ListDataComponent<E> {
     class ExpandEvent<E> extends EventObject {
 
         protected final boolean isFromClient;
-        protected final Collection<E> expandedItems;
+        protected final Collection<GroupInfo> expandedGroups;
 
-        public ExpandEvent(GroupListDataComponent<E> source, boolean isFromClient, Collection<E> expandedItems) {
+        public ExpandEvent(GroupListDataComponent<E> source, boolean isFromClient, Collection<GroupInfo> expandedGroups) {
             super(source);
 
             this.isFromClient = isFromClient;
-            this.expandedItems = expandedItems;
+            this.expandedGroups = expandedGroups;
         }
 
         @Override
@@ -226,10 +226,10 @@ public interface GroupListDataComponent<E> extends ListDataComponent<E> {
         }
 
         /**
-         * @return a collection of expanded group items
+         * @return a collection of expanded groups
          */
-        public Collection<E> getExpandedItems() {
-            return expandedItems;
+        public Collection<GroupInfo> getExpandedGroups() {
+            return expandedGroups;
         }
     }
 }

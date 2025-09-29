@@ -104,6 +104,47 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         thrown(DevelopmentException)
     }
 
+    def "getIndexNamesWithFields. Some entities haven't allowed fields"() {
+        given:
+        IndexConfiguration configuration1 = Mock()
+        configuration1.getIndexName() >> "index1"
+        IndexConfiguration configuration2 = Mock()
+        configuration2.getIndexName() >> "index2"
+        IndexConfiguration configuration3 = Mock()
+        configuration3.getIndexName() >> "index3"
+
+        Map<IndexConfiguration, Set<String>> fieldsMap = Map.of(
+                configuration1, Set.of("field1_1", "field1_2", "field1_3"),
+                configuration2, Set.of(),
+                configuration3, Set.of("field3_1", "field3_2", "field3_3")
+        )
+
+        and:
+        IndexConfigurationManager indexConfigurationManager = Mock()
+        indexConfigurationManager.getIndexConfigurationByEntityName("entity1") >> configuration1
+        indexConfigurationManager.getIndexConfigurationByEntityName("entity2") >> configuration2
+        indexConfigurationManager.getIndexConfigurationByEntityName("entity3") >> configuration3
+
+        and:
+        SearchUtils searchUtils = Mock()
+        searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of("entity1", "entity2", "entity3")
+
+        and:
+        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager, Mock(Messages))
+
+        when:
+        def fields = configurator.getIndexNamesWithFields(
+                List.of("entity1", "entity2", "entity3", "entity4"),
+                configuration -> fieldsMap.get(configuration)
+        )
+
+        then:
+        fields == Map.of(
+                "index1", Set.of("field1_1", "field1_2", "field1_3"),
+                "index3", Set.of("field3_1", "field3_2", "field3_3")
+        )
+    }
+
     private class TestSearchQueryConfigurator extends AbstractSearchQueryConfigurator {
         TestSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager, Messages messages) {
             super(searchUtils, indexConfigurationManager, messages)

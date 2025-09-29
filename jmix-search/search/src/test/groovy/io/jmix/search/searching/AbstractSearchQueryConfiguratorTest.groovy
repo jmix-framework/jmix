@@ -26,7 +26,7 @@ import java.util.function.Function
 
 class AbstractSearchQueryConfiguratorTest extends Specification {
 
-    def "getIndexNamesWithFields"() {
+    def "getIndexNamesWithFields. Normal flow"() {
         given:
         IndexConfiguration configuration1 = Mock()
         configuration1.getIndexName() >> "index1"
@@ -52,7 +52,7 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of("entity1", "entity2", "entity3")
 
         and:
-        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager, Mock())
+        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager, Mock(Messages))
 
         when:
         def fields = configurator.getIndexNamesWithFields(
@@ -143,6 +143,44 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
                 "index1", Set.of("field1_1", "field1_2", "field1_3"),
                 "index3", Set.of("field3_1", "field3_2", "field3_3")
         )
+    }
+
+    def "getIndexNamesWithFields. All entities haven't allowed fields"() {
+        given:
+        IndexConfiguration configuration1 = Mock()
+        configuration1.getIndexName() >> "index1"
+        IndexConfiguration configuration2 = Mock()
+        configuration2.getIndexName() >> "index2"
+        IndexConfiguration configuration3 = Mock()
+        configuration3.getIndexName() >> "index3"
+
+        Map<IndexConfiguration, Set<String>> fieldsMap = Map.of(
+                configuration1, Set.of(),
+                configuration2, Set.of(),
+                configuration3, Set.of()
+        )
+
+        and:
+        IndexConfigurationManager indexConfigurationManager = Mock()
+        indexConfigurationManager.getIndexConfigurationByEntityName("entity1") >> configuration1
+        indexConfigurationManager.getIndexConfigurationByEntityName("entity2") >> configuration2
+        indexConfigurationManager.getIndexConfigurationByEntityName("entity3") >> configuration3
+
+        and:
+        SearchUtils searchUtils = Mock()
+        searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of("entity1", "entity2", "entity3")
+
+        and:
+        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager, Mock(Messages))
+
+        when:
+        configurator.getIndexNamesWithFields(
+                List.of("entity1", "entity2", "entity3", "entity4"),
+                configuration -> fieldsMap.get(configuration)
+        )
+
+        then:
+        thrown(DevelopmentException)
     }
 
     private class TestSearchQueryConfigurator extends AbstractSearchQueryConfigurator {

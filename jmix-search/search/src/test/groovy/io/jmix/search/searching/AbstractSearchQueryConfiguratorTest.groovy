@@ -78,6 +78,24 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
 
         when:
         configurator.getIndexNamesWithFields(
+                List.of(),
+                configuration -> null
+        )
+
+        then:
+        thrown(DevelopmentException)
+    }
+
+    def "getIndexNamesWithFields. Empty list of allowed entities"() {
+        given:
+        SearchUtils searchUtils = Mock()
+        searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of()
+
+        and:
+        def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager), Mock(Messages))
+
+        when:
+        configurator.getIndexNamesWithFields(
                 List.of("entity1", "entity2", "entity3", "entity4"),
                 configuration -> null
         )

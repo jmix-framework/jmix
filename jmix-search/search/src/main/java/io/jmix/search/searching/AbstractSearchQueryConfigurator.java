@@ -40,6 +40,10 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
     }
 
     protected Map<String, Set<String>> getIndexNamesWithFields(List<String> entities, Function<IndexConfiguration, Set<String>> fieldResolving) {
+        if(entities.isEmpty()){
+            throwException();
+        }
+
         List<String> allowedEntityNames = searchUtils.resolveEntitiesAllowedToSearch(entities);
 
         if (allowedEntityNames.isEmpty()) {

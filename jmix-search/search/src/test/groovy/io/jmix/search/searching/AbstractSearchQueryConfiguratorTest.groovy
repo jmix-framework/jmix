@@ -16,6 +16,8 @@
 
 package io.jmix.search.searching
 
+import io.jmix.core.DevelopmentException
+import io.jmix.core.Messages
 import io.jmix.search.index.IndexConfiguration
 import io.jmix.search.index.mapping.IndexConfigurationManager
 import spock.lang.Specification
@@ -47,10 +49,10 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
 
         and:
         SearchUtils searchUtils = Mock()
-        searchUtils.resolveEntitiesAllowedToSearch(_)>>List.of("entity1", "entity2", "entity3")
+        searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of("entity1", "entity2", "entity3")
 
         and:
-        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager)
+        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager, Mock())
 
         when:
         def fields = configurator.getIndexNamesWithFields(
@@ -66,9 +68,27 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         )
     }
 
+    def "getIndexNamesWithFields. Empty list of required entities"() {
+        given:
+        SearchUtils searchUtils = Mock()
+        searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of()
+
+        and:
+        def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager), Mock(Messages))
+
+        when:
+        configurator.getIndexNamesWithFields(
+                List.of("entity1", "entity2", "entity3", "entity4"),
+                configuration -> null
+        )
+
+        then:
+        thrown(DevelopmentException)
+    }
+
     private class TestSearchQueryConfigurator extends AbstractSearchQueryConfigurator {
-        TestSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager) {
-            super(searchUtils, indexConfigurationManager)
+        TestSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager, Messages messages) {
+            super(searchUtils, indexConfigurationManager, messages)
         }
 
         @Override

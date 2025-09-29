@@ -19,7 +19,7 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.util.ObjectBuilder;
-import io.jmix.core.DevelopmentException;
+import io.jmix.core.Messages;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.AbstractSearchQueryConfigurator;
@@ -35,8 +35,8 @@ import java.util.function.Function;
 @Component
 public class ElasticSearchQueryConfigurator extends AbstractSearchQueryConfigurator<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
 
-    public ElasticSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager) {
-        super(searchUtils, indexConfigurationManager);
+    public ElasticSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager, Messages messages) {
+        super(searchUtils, indexConfigurationManager, messages);
     }
 
     public void configureRequest(
@@ -48,22 +48,26 @@ public class ElasticSearchQueryConfigurator extends AbstractSearchQueryConfigura
     }
 
     protected Query createQuery(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
-        if (indexesWithFields.size() > 1){
-            return Query.of(rootBoolBuilder ->
-                    rootBoolBuilder.bool(rootShouldBuilder ->
-                            rootShouldBuilder.should(createSubqueriesForIndexes(indexesWithFields, targetQueryBuilder)))
-            );
-        }else if (indexesWithFields.size() ==1){
-            Query.Builder builder = new Query.Builder();
-            return targetQueryBuilder
-                    .apply(
-                            builder,
-                            new ArrayList<>(indexesWithFields.entrySet().iterator().next().getValue()))
-                    .build();
+        if (indexesWithFields.size() > 1) {
+            return createQueryForMultipleIndexes(targetQueryBuilder, indexesWithFields);
         }
+        return createQueryForSingleIndex(targetQueryBuilder, indexesWithFields);
+    }
 
-        //TODO messages
-        throw new DevelopmentException("There are not indexes for searching.");
+    private static Query createQueryForSingleIndex(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
+        Query.Builder builder = new Query.Builder();
+        return targetQueryBuilder
+                .apply(
+                        builder,
+                        new ArrayList<>(indexesWithFields.entrySet().iterator().next().getValue()))
+                .build();
+    }
+
+    private Query createQueryForMultipleIndexes(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
+        return Query.of(rootBoolBuilder ->
+                rootBoolBuilder.bool(rootShouldBuilder ->
+                        rootShouldBuilder.should(createSubqueriesForIndexes(indexesWithFields, targetQueryBuilder)))
+        );
     }
 
     private List<Query> createSubqueriesForIndexes(Map<String, Set<String>> indexesWithFields, TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) {

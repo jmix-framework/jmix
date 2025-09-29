@@ -16,6 +16,7 @@
 
 package io.jmix.searchopensearch.searching.strategy.impl;
 
+import io.jmix.core.Messages;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.AbstractSearchQueryConfigurator;
@@ -32,8 +33,8 @@ import java.util.function.Function;
 
 public class OpenSearchQueryConfigurator extends AbstractSearchQueryConfigurator<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
 
-    public OpenSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager) {
-        super(searchUtils, indexConfigurationManager);
+    public OpenSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager, Messages messages) {
+        super(searchUtils, indexConfigurationManager, messages);
     }
 
     @Override

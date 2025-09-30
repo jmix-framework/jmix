@@ -102,9 +102,14 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
 
         boolean moreDataAvailable;
         do {
-            SearchRequest searchRequest = createRequest(
-                    searchContext, targetIndexes, searchStrategy, searchResult.getEffectiveOffset()
-            );
+            SearchRequest searchRequest;
+            try {
+                searchRequest = createRequest(
+                        searchContext, targetIndexes, searchStrategy, searchResult.getEffectiveOffset()
+                );
+            } catch (EmptyAllowedEntitiesListForSearching exception) {
+                return searchResult;
+            }
             SearchResponse<ObjectNode> searchResponse;
             try {
                 log.debug("Search Request: {}", searchRequest);

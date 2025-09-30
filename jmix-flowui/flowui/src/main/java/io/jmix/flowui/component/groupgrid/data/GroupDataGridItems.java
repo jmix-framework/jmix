@@ -16,8 +16,10 @@
 
 package io.jmix.flowui.component.groupgrid.data;
 
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.groupgrid.GroupInfo;
+import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import io.jmix.flowui.component.groupgrid.GroupProperty;
 import io.jmix.flowui.data.grid.DataGridItems;
 import org.springframework.lang.Nullable;
@@ -33,7 +35,7 @@ import java.util.function.Consumer;
  *
  * @param <T> the type of items contained within the group data grid
  */
-public interface GroupDataGridItems<T> extends DataGridItems<T> {
+public interface GroupDataGridItems<T> extends DataGridItems<T>, HierarchicalDataProvider<T, Void> {
 
     /**
      * Perform grouping by the list of properties. The available values for properties are:
@@ -111,6 +113,30 @@ public interface GroupDataGridItems<T> extends DataGridItems<T> {
      * Indicates that a group is contained in the group tree
      */
     boolean containsGroup(GroupInfo group);
+
+    /**
+     * Returns {@link GroupInfo} by a <strong>group item</strong>.
+     * <p>
+     * Group item is an empty entity object that represents a grouping row in a {@link GroupListDataComponent}.
+     * It does not exist in the data container.
+     *
+     * @param groupItem a group item
+     * @return group info or {@code null} if there is no group info for the given item
+     */
+    @Nullable
+    GroupInfo getGroupByItem(T groupItem);
+
+    /**
+     * Returns a <strong>group item</strong> that corresponds to the provided {@link GroupInfo}.
+     * <p>
+     * Group item is an empty entity object that represents a grouping row in a {@link GroupListDataComponent}.
+     * It does not exist in the data container.
+     *
+     * @param group group info
+     * @return group item or {@code null} if there is no item for the given group info
+     */
+    @Nullable
+    T getItemByGroup(GroupInfo group);
 
     /**
      * Adds a group property descriptor for a custom grouping property. This method enables defining

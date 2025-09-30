@@ -118,6 +118,9 @@ public interface GroupListDataComponent<E> extends ListDataComponent<E> {
      */
     boolean isExpanded(GroupInfo group);
 
+    /**
+     * @return the list of root groups
+     */
     List<GroupInfo> getRootGroups();
 
     /**

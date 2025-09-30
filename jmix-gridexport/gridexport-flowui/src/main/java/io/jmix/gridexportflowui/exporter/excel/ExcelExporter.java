@@ -306,12 +306,11 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     protected String getColumnHeaderText(Grid<Object> dataGrid, DataGrid.Column<?> column) {
         if (dataGrid instanceof AbstractGroupDataGridAdapter<Object> gridAdapter) {
             // Grouping column is not attached to the Grid,
             // so we should retrieve the last specified header.
-            if (gridAdapter.isGroupingColumn((DataGrid.Column) column)
+            if (gridAdapter.getGroupingColumns().contains(column)
                     && column instanceof AbstractGroupDataGridColumnAdapter<?> columnAdapter) {
                 String headerText = columnAdapter.getStoredHeaderText();
                 if (!Strings.isNullOrEmpty(headerText)) {

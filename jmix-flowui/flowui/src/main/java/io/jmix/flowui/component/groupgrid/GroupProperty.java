@@ -26,7 +26,7 @@ import java.util.Objects;
 public interface GroupProperty {
 
     /**
-     * Returns the property. In most cases, it contains one of the following types:
+     * Returns the property. It contains one of the following types:
      * <ul>
      *    <li>
      *        {@link MetaPropertyPath} if the grouping column is based on an entity property.
@@ -50,29 +50,22 @@ public interface GroupProperty {
      *       If the provided {@code property} is a {@link String} and group property is a {@link MetaPropertyPath}.
      *       It will compare the provided value with the string representation of the property path.
      *   </li>
-     *   <li>If the provided {@code property} is a {@link MetaPropertyPath} and group property is a {@link String}.
-     *       It will compare the string representation of the property path and string value of the group property.
+     *   <li>
+     *       For any other cases, the equality will be determined using {@link Objects#equals(Object, Object)}.
      *   </li>
-     *   <li>For any other cases, the equality will be determined using {@link Objects#equals(Object, Object)}.</li>
      * </ul>
      *
      * @param property the property to check
      * @return {@code true} if the property matches the current property value
      */
     default boolean is(Object property) {
-        Object value = get();
+        Object currentProperty = get();
 
-        if (property instanceof String) {
-            if (value instanceof MetaPropertyPath mpp) {
-                return Objects.equals(mpp.toPathString(), property);
-            }
-        }
-        if (property instanceof MetaPropertyPath mpp) {
-            if (value instanceof String) {
-                return Objects.equals(value, mpp.toPathString());
-            }
+        if (property instanceof String
+                && currentProperty instanceof MetaPropertyPath mpp) {
+            return Objects.equals(mpp.toPathString(), property);
         }
 
-        return Objects.equals(value, property);
+        return Objects.equals(currentProperty, property);
     }
 }

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * Describes a property of an entity that can be used to group items.
+ * Describes a property that can be used to group items.
  * <p>
  * For instance, the group data grid contains a column not bound with a property of the entity. To enable grouping
  * by this column, a custom {@link GroupPropertyDescriptor} must be provided. If the column defines the "fullName" key,
@@ -51,6 +51,9 @@ public interface GroupPropertyDescriptor<E> {
      */
     Function<GroupValueContext<E>, Object> getValueProvider();
 
+    /**
+     * @return a list of properties that should be used for sorting the group property
+     */
     default List<String> getSortProperties() {
         return Collections.emptyList();
     }

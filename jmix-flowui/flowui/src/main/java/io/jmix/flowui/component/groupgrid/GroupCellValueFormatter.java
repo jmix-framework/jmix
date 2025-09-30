@@ -28,9 +28,9 @@ import java.util.Collection;
  * If a group data grid column has a custom group component renderer, the formatter is not used.
  * The formatter will only be applied during export to Excel using export actions.
  * <p>
- * For instance setting formatter for group column cell value:
+ * For instance, setting formatter for group column cell value:
  * <pre>
- * &#064;Install(to  = "customersDataGrid.group", subject = "groupCellValueFormatter")
+ * &#064;Install(to = "customersDataGrid.group", subject = "groupCellValueFormatter")
  * public String groupColumnCellFormatter(GroupCellValueFormatter.GroupCellContext&lt;Customer&gt; context) {
  *     GroupInfo groupInfo = context.getGroupInfo();
  *     GroupProperty property = groupInfo.getProperty();

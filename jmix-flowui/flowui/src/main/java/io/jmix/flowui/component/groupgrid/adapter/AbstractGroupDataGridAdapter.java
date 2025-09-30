@@ -33,7 +33,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 /**
- * A base abstract class that adapts an implementation of {@link GroupListDataComponent} to use it as a
+ * A base class that adapts an implementation of {@link GroupListDataComponent} to use it as a
  * {@link DataGrid} in other components and modules (e.g., in export actions).
  *
  * @param <E> the type of items
@@ -69,14 +69,6 @@ public abstract class AbstractGroupDataGridAdapter<E> extends DataGrid<E> implem
      * @return {@code true} if the column is a group column
      */
     public abstract boolean isGroupColumn(Column<E> column);
-
-    /**
-     * Checks whether the given column participates in grouping data in the grid.
-     *
-     * @param column the column to check
-     * @return {@code true} if the column is a grouping column
-     */
-    public abstract boolean isGroupingColumn(Column<E> column);
 
     @Nullable
     @Override

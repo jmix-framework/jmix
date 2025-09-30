@@ -20,7 +20,8 @@ import com.vaadin.flow.component.icon.Icon;
 import org.springframework.lang.Nullable;
 
 /**
- * Interface to be implemented by group columns.
+ * Interface to be implemented by group columns. The group column is a special column used to display a hierarchy of
+ * grouped items, manage the grouping and expand/collapse group rows.
  *
  * @param <E> item type
  */

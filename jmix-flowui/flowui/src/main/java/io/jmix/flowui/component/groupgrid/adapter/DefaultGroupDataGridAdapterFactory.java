@@ -23,7 +23,7 @@ import org.springframework.lang.Nullable;
 import java.util.List;
 
 /**
- * Default implementation of {@link GroupDataGridAdapterFactory}. Collects all {@link GroupDataGridAdapterProvider}}
+ * Default implementation of {@link GroupDataGridAdapterFactory}. Collects all {@link GroupDataGridAdapterProvider}s
  * and iterates over them to find the first suitable adapter.
  */
 public class DefaultGroupDataGridAdapterFactory implements GroupDataGridAdapterFactory {

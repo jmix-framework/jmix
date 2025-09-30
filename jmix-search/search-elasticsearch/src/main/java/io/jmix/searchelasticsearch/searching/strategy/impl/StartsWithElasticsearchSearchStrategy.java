@@ -19,7 +19,7 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
@@ -51,40 +51,38 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearch
     }
 
     @Override
-    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
         int maxPrefixSize = searchProperties.getMaxPrefixLength();
-        if (isSearchTermExceedMaxPrefixSize(searchContext.getSearchText(), maxPrefixSize)
+        if (isSearchTermExceedMaxPrefixSize(requestContext.getSearchContext().getSearchText(), maxPrefixSize)
                 && searchProperties.isWildcardPrefixQueryEnabled()) {
-            configureWildcardQuery(requestBuilder, searchContext);
+            configureWildcardQuery(requestContext);
         } else {
-            configureTermsQuery(requestBuilder, searchContext);
+            configureTermsQuery(requestContext);
         }
     }
 
-    protected void configureTermsQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+    protected void configureTermsQuery(RequestContext<SearchRequest.Builder> requestContext) {
        queryConfigurator.configureRequest(
-                requestBuilder,
-                searchContext.getEntities(),
+                requestContext,
                 searchFieldsResolver::resolveFieldsWithPrefixes,
                 (queryBuilder, fields) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
                                 multiMatchQueryBuilder.fields(new ArrayList<>(fields))
-                                        .query(searchContext.getEscapedSearchText())
+                                        .query(requestContext.getSearchContext().getEscapedSearchText())
                                         .type(TextQueryType.BestFields)
                         )
         );
     }
 
-    protected void configureWildcardQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
-        String searchText = searchContext.getEscapedSearchText();
+    protected void configureWildcardQuery(RequestContext<SearchRequest.Builder> requestContext) {
+        String searchText = requestContext.getSearchContext().getEscapedSearchText();
         String[] searchTerms = searchText.split("\\s+");
         String queryText = Arrays.stream(searchTerms)
                 .filter(StringUtils::isNotBlank)
                 .map(term -> term + "*")
                 .collect(Collectors.joining(" "));
         queryConfigurator.configureRequest(
-                requestBuilder,
-                searchContext.getEntities(),
+                requestContext,
                 searchFieldsResolver::resolveFields,
                 (queryBuilder, fields) ->
                         queryBuilder.queryString(queryStringQueryBuilder ->

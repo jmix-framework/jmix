@@ -16,11 +16,9 @@
 
 package io.jmix.searchopensearch.searching.strategy.impl;
 
-import io.jmix.core.Messages;
-import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.AbstractSearchQueryConfigurator;
-import io.jmix.search.searching.NoAllowedEntitiesForSearching;
+import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchUtils;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchRequest;
@@ -30,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 public class OpenSearchQueryConfigurator extends AbstractSearchQueryConfigurator<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
 
@@ -39,12 +36,10 @@ public class OpenSearchQueryConfigurator extends AbstractSearchQueryConfigurator
     }
 
     @Override
-    public void configureRequest(
-            SearchRequest.Builder requestBuilder,
-            List<String> entities,
-            Function<IndexConfiguration, Set<String>> fieldResolving,
-            TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) throws NoAllowedEntitiesForSearching {
-        requestBuilder.query(createQuery(targetQueryBuilder, getIndexNamesWithFields(entities, fieldResolving)));
+    protected void processEntitiesWithFields(RequestContext<SearchRequest.Builder> requestContext,
+                                             TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder,
+                                             Map<String, Set<String>> indexNamesWithFields) {
+        requestContext.getRequestBuilder().query(createQuery(targetQueryBuilder, indexNamesWithFields));
     }
 
     protected Query createQuery(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {

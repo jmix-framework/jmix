@@ -102,14 +102,14 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
 
         boolean moreDataAvailable;
         do {
-            SearchRequest searchRequest;
-            try {
-                searchRequest = createRequest(
-                        searchContext, targetIndexes, searchStrategy, searchResult.getEffectiveOffset()
-                );
-            } catch (NoAllowedEntitiesForSearching exception) {
+            RequestContext<SearchRequest.Builder> requestContext = createRequest(
+                    searchContext, targetIndexes, searchStrategy, searchResult.getEffectiveOffset()
+            );
+
+            if(!requestContext.isRequestPossible()){
                 return searchResult;
             }
+            SearchRequest searchRequest = requestContext.getRequestBuilder().build();
             SearchResponse<ObjectNode> searchResponse;
             try {
                 log.debug("Search Request: {}", searchRequest);
@@ -159,15 +159,16 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
         return searchStrategyManager.getSearchStrategyByName(searchStrategyName);
     }
 
-    protected SearchRequest createRequest(SearchContext searchContext,
-                                          List<String> targetIndexes,
-                                          ElasticsearchSearchStrategy searchStrategy,
-                                          int offset) throws NoAllowedEntitiesForSearching {
+    protected RequestContext<SearchRequest.Builder> createRequest(SearchContext searchContext,
+                                                                  List<String> targetIndexes,
+                                                                  ElasticsearchSearchStrategy searchStrategy,
+                                                                  int offset) {
         SearchRequest.Builder builder = new SearchRequest.Builder();
+        RequestContext<SearchRequest.Builder> requestContext = new RequestContext<>(builder, searchContext);
         initRequest(builder, targetIndexes);
-        searchStrategy.configureRequest(builder, searchContext);
+        searchStrategy.configureRequest(requestContext);
         applyPostStrategyRequestSettings(builder, searchContext, offset);
-        return builder.build();
+        return requestContext;
     }
 
     protected void initRequest(SearchRequest.Builder builder, List<String> targetIndexes) {

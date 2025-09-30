@@ -23,7 +23,7 @@ import io.jmix.search.utils.Constants;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
-
+//TODO
 @Component
 public class SearchFieldsAdapter {
 

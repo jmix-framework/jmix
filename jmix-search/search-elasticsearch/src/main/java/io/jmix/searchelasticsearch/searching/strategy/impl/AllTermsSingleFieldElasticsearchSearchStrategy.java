@@ -18,9 +18,8 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
@@ -47,15 +46,14 @@ public class AllTermsSingleFieldElasticsearchSearchStrategy extends AbstractElas
     }
 
     @Override
-    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
-                requestBuilder,
-                searchContext.getEntities(),
+                requestContext,
                 searchFieldsResolver::resolveFields,
                 (queryBuilder, fields) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
                                 multiMatchQueryBuilder.fields(fields)
-                                        .query(searchContext.getEscapedSearchText())
+                                        .query(requestContext.getSearchContext().getEscapedSearchText())
                                         .operator(Operator.And)
                         )
         );

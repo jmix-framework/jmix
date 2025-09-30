@@ -25,6 +25,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static io.jmix.search.searching.SearchContextProcessingResult.NO_AVAILABLE_ENTITIES_FOR_SEARCHING;
+import static java.util.Collections.emptyMap;
+
 /**
  * //TODO
  * @param <SRB>
@@ -33,7 +36,6 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements SearchQueryConfigurator<SRB, QB, OB> {
 
-    protected static final String THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY = "ThereAreNoIndexesForSearchingMessage";
     protected final SearchUtils searchUtils;
     protected final IndexConfigurationManager indexConfigurationManager;
 
@@ -42,16 +44,35 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
         this.indexConfigurationManager = indexConfigurationManager;
     }
 
-    protected Map<String, Set<String>> getIndexNamesWithFields(List<String> entities, Function<IndexConfiguration, Set<String>> fieldResolving) throws NoAllowedEntitiesForSearching {
+    @Override
+    public void configureRequest(
+            RequestContext<SRB> requestContext,
+            Function<IndexConfiguration, Set<String>> fieldResolving,
+            TargetQueryBuilder<QB, OB> targetQueryBuilder)  {
+        List<String> requestedEntities = requestContext.getSearchContext().getEntities();
+        Map<String, Set<String>> indexNamesWithFields = getIndexNamesWithFields(requestedEntities, fieldResolving);
+        if (indexNamesWithFields.isEmpty()){
+            requestContext.setProcessingResult(NO_AVAILABLE_ENTITIES_FOR_SEARCHING);
+            return;
+        }
+        processEntitiesWithFields(requestContext, targetQueryBuilder, indexNamesWithFields);
+    }
+
+    protected abstract void processEntitiesWithFields(
+            RequestContext<SRB> requestContext,
+            TargetQueryBuilder<QB, OB> targetQueryBuilder,
+            Map<String, Set<String>> indexNamesWithFields);
+
+    protected Map<String, Set<String>> getIndexNamesWithFields(List<String> entities, Function<IndexConfiguration, Set<String>> fieldResolving){
         if(entities.isEmpty()){
-            throw new NoAllowedEntitiesForSearching();
+            return emptyMap();
         }
 
         //TODO
         List<String> allowedEntityNames = searchUtils.resolveEntitiesAllowedToSearch(entities);
 
         if (allowedEntityNames.isEmpty()) {
-            throw new NoAllowedEntitiesForSearching();
+            return emptyMap();
         }
 
         Map<String, Set<String>> notFilteredIndexesWithFields = allowedEntityNames
@@ -66,7 +87,7 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         if (result.isEmpty()) {
-            throw new NoAllowedEntitiesForSearching();
+            return emptyMap();
         }
         return result;
     }

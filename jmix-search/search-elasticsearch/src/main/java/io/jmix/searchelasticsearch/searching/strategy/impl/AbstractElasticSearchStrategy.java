@@ -16,11 +16,21 @@
 
 package io.jmix.searchelasticsearch.searching.strategy.impl;
 
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.search.searching.impl.SearchFieldsResolver;
+import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 
-public abstract class AbstractElasticSearchStrategy extends AbstractSearchStrategy<ElasticSearchQueryConfigurator> {
+public abstract class AbstractElasticSearchStrategy
+        extends AbstractSearchStrategy<SearchRequest.Builder, ElasticSearchQueryConfigurator>
+        implements ElasticsearchSearchStrategy {
     protected AbstractElasticSearchStrategy(SearchFieldsResolver searchFieldsResolver, ElasticSearchQueryConfigurator queryConfigurator) {
         super(searchFieldsResolver, queryConfigurator);
+    }
+
+    @Override
+    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+        throw new UnsupportedOperationException();
     }
 }

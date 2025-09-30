@@ -19,11 +19,9 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.util.ObjectBuilder;
-import io.jmix.core.Messages;
-import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.AbstractSearchQueryConfigurator;
-import io.jmix.search.searching.NoAllowedEntitiesForSearching;
+import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchUtils;
 import org.springframework.stereotype.Component;
 
@@ -31,22 +29,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 @Component
 public class ElasticSearchQueryConfigurator extends AbstractSearchQueryConfigurator<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
 
-    public ElasticSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager, Messages messages) {
-        super(searchUtils, indexConfigurationManager, messages);
+    public ElasticSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager) {
+        super(searchUtils, indexConfigurationManager);
     }
 
-    public void configureRequest(
-            SearchRequest.Builder requestBuilder,
-            List<String> entities,
-            Function<IndexConfiguration, Set<String>> fieldResolving,
-            TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) throws NoAllowedEntitiesForSearching {
-        requestBuilder.query(createQuery(targetQueryBuilder, getIndexNamesWithFields(entities, fieldResolving)));
+    @Override
+    protected void processEntitiesWithFields(RequestContext<SearchRequest.Builder> requestContext, TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexNamesWithFields) {
+        requestContext.getRequestBuilder().query(createQuery(targetQueryBuilder, indexNamesWithFields));
     }
+
 
     protected Query createQuery(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
         if (indexesWithFields.size() > 1) {
@@ -86,5 +81,4 @@ public class ElasticSearchQueryConfigurator extends AbstractSearchQueryConfigura
                         .must(m2 -> targetQueryBuilder.apply(m2, new ArrayList<>(fields)))
                 ));
     }
-
 }

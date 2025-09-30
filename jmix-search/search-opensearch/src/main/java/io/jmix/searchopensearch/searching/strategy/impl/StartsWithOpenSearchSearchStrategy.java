@@ -17,8 +17,7 @@
 package io.jmix.searchopensearch.searching.strategy.impl;
 
 import io.jmix.search.SearchProperties;
-import io.jmix.search.searching.NoAllowedEntitiesForSearching;
-import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
@@ -49,33 +48,31 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
     }
 
     @Override
-    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) throws NoAllowedEntitiesForSearching {
+    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
         int maxPrefixSize = searchProperties.getMaxPrefixLength();
-        if (isSearchTermExceedMaxPrefixSize(searchContext.getSearchText(), maxPrefixSize)
+        if (isSearchTermExceedMaxPrefixSize(requestContext.getSearchContext().getSearchText(), maxPrefixSize)
                 && searchProperties.isWildcardPrefixQueryEnabled()) {
-            configureWildcardQuery(requestBuilder, searchContext);
+            configureWildcardQuery(requestContext);
         } else {
-            configureTermsQuery(requestBuilder, searchContext);
+            configureTermsQuery(requestContext);
         }
     }
 
-    protected void configureTermsQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) throws NoAllowedEntitiesForSearching {
-
+    protected void configureTermsQuery(RequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
-                requestBuilder,
-                searchContext.getEntities(),
+                requestContext,
                 searchFieldsResolver::resolveFieldsWithPrefixes,
                 (queryBuilder, fields) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
                                 multiMatchQueryBuilder.fields(fields)
-                                        .query(searchContext.getEscapedSearchText())
+                                        .query(requestContext.getSearchContext().getEscapedSearchText())
                                         .type(TextQueryType.BestFields)
                         )
         );
     }
 
-    protected void configureWildcardQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) throws NoAllowedEntitiesForSearching {
-        String searchText = searchContext.getEscapedSearchText();
+    protected void configureWildcardQuery(RequestContext<SearchRequest.Builder> requestContext) {
+        String searchText = requestContext.getSearchContext().getEscapedSearchText();
         String[] searchTerms = searchText.split("\\s+");
         String queryText = Arrays.stream(searchTerms)
                 .filter(StringUtils::isNotBlank)
@@ -83,8 +80,7 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
                 .collect(Collectors.joining(" "));
 
         queryConfigurator.configureRequest(
-                requestBuilder,
-                searchContext.getEntities(),
+                requestContext,
                 searchFieldsResolver::resolveFields,
                 (queryBuilder, fields) ->
                         queryBuilder.queryString(queryStringQueryBuilder ->

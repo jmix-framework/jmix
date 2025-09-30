@@ -18,8 +18,7 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import io.jmix.search.searching.NoAllowedEntitiesForSearching;
-import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
@@ -44,16 +43,14 @@ public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractElastic
     }
 
     @Override
-    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) throws NoAllowedEntitiesForSearching {
-
+    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
-                requestBuilder,
-                searchContext.getEntities(),
+                requestContext,
                 searchFieldsResolver::resolveFields,
                 (queryBuilder, fields) ->
                         queryBuilder.simpleQueryString(simpleQueryStringQueryBuilder ->
                                 simpleQueryStringQueryBuilder.fields(fields)
-                                        .query(searchContext.getEscapedSearchText())
+                                        .query(requestContext.getSearchContext().getEscapedSearchText())
                                         .defaultOperator(Operator.And)
                         )
         );

@@ -24,10 +24,9 @@ import java.util.function.Function;
 
 public interface SearchQueryConfigurator<SRB, QB, OB> {
 
-    void configureRequest(SRB requestBuilder,
-                          List<String> entities,
+    void configureRequest(RequestContext<SRB> requestContext,
                           Function<IndexConfiguration, Set<String>> fieldResolving,
-                          TargetQueryBuilder<QB, OB> targetQueryBuilder) throws NoAllowedEntitiesForSearching;
+                          TargetQueryBuilder<QB, OB> targetQueryBuilder);
 
     interface TargetQueryBuilder<QB, OB> {
         OB apply(QB queryBuilder, List<String> fields);

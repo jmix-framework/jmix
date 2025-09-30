@@ -20,13 +20,7 @@ import io.jmix.search.index.IndexConfiguration
 import io.jmix.search.index.mapping.IndexConfigurationManager
 import spock.lang.Specification
 
-import java.util.function.Function
-
-
 class AbstractSearchQueryConfiguratorTest extends Specification {
-
-
-    public static final String SAMPLE_MESSAGE_TEXT = "Sample text"
 
     def "getIndexNamesWithFields. Normal flow"() {
         given:
@@ -79,14 +73,13 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager))
 
         when:
-        configurator.getIndexNamesWithFields(
+        def fields = configurator.getIndexNamesWithFields(
                 List.of(),
                 configuration -> null
         )
 
         then:
-        def exception = thrown(NoAllowedEntitiesForSearching)
-        exception.getMessage() == SAMPLE_MESSAGE_TEXT
+        fields.isEmpty()
     }
 
     def "getIndexNamesWithFields. Empty list of allowed entities"() {
@@ -98,14 +91,13 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager))
 
         when:
-        configurator.getIndexNamesWithFields(
+        def fields = configurator.getIndexNamesWithFields(
                 List.of("entity1", "entity2", "entity3", "entity4"),
                 configuration -> null
         )
 
         then:
-        def exception = thrown(NoAllowedEntitiesForSearching)
-        exception.getMessage() == SAMPLE_MESSAGE_TEXT
+        fields.isEmpty()
     }
 
     def "getIndexNamesWithFields. Some entities haven't allowed fields"() {
@@ -178,13 +170,13 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager)
 
         when:
-        configurator.getIndexNamesWithFields(
+        def fields = configurator.getIndexNamesWithFields(
                 List.of("entity1", "entity2", "entity3", "entity4"),
                 configuration -> fieldsMap.get(configuration)
         )
 
         then:
-        def exception = thrown(NoAllowedEntitiesForSearching)
+        fields.isEmpty()
     }
 
     private class TestSearchQueryConfigurator extends AbstractSearchQueryConfigurator {
@@ -193,7 +185,7 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         }
 
         @Override
-        void configureRequest(Object requestBuilder, List entities, Function fieldResolving, TargetQueryBuilder targetQueryBuilder) {
+        protected void processEntitiesWithFields(RequestContext requestContext, TargetQueryBuilder targetQueryBuilder, Map indexNamesWithFields) {
 
         }
     }

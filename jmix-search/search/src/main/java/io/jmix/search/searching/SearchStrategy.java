@@ -28,4 +28,7 @@ public interface SearchStrategy {
      * @return name
      */
     String getName();
+    //TODO
+    //void configureRequest(T requestBuilder, SearchContext searchContext);
+
 }

@@ -26,6 +26,12 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * //TODO
+ * @param <SRB>
+ * @param <QB>
+ * @param <OB>
+ */
 public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements SearchQueryConfigurator<SRB, QB, OB> {
 
     protected static final String THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY = "ThereAreNoIndexesForSearchingMessage";
@@ -44,6 +50,7 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
             throwException();
         }
 
+        //TODO
         List<String> allowedEntityNames = searchUtils.resolveEntitiesAllowedToSearch(entities);
 
         if (allowedEntityNames.isEmpty()) {

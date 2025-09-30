@@ -76,14 +76,6 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
         jobModelsDc.setItems(sortedJobs);
     }
 
-    @Install(to = "jobModelsTable.jobState", subject = "partNameGenerator")
-    protected String jobStatePartNameGenerator(final JobModel entity) {
-        if (entity != null && JobState.INVALID.equals(entity.getJobState())) {
-            return "quartz-job-invalid";
-        }
-        return null;
-    }
-
     @Install(to = "jobModelsTable.executeNow", subject = "enabledRule")
     private boolean jobModelsTableExecuteNowEnabledRule() {
         JobModel selectedJobModel = jobModelsTable.getSingleSelected();
@@ -94,7 +86,7 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
 
     @Install(to = "jobModelsTable.activate", subject = "enabledRule")
     private boolean jobModelsTableActivateEnabledRule() {
-        JobModel selectedJobModel = jobModelsTable.getSelected().iterator().next();
+        JobModel selectedJobModel = jobModelsTable.getSingleSelected();
         return selectedJobModel != null
                 && !isJobActive(selectedJobModel)
                 && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers())

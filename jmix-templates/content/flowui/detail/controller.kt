@@ -10,9 +10,11 @@ import com.vaadin.flow.router.Route
 import io.jmix.flowui.view.*
 <%if (useDataRepositories){%>import io.jmix.core.LoadContext
 import io.jmix.core.SaveContext
+import io.jmix.core.FetchPlan
 import io.jmix.flowui.view.Target
 import ${repository.getQualifiedName()}
-import io.jmix.core.repository.JmixDataRepositoryUtils.*
+import java.util.Optional
+import java.util.UUID
 <%}%>
 <%if (classComment) {%>
 ${classComment}
@@ -21,6 +23,11 @@ ${classComment}
 @ViewDescriptor(path = "${detailDescriptorName}.xml")
 @EditedEntityContainer("${dcId}")
 class ${detailControllerName}<%if (useDataRepositories){%>(private val repository: ${repository.getName()})<%}%> : StandardDetailView<${entity.className}>() {<%if (useDataRepositories){%>
+
+    @Install(to = "${dlId}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
+    private fun loadDelegate(id: UUID, fetchPlan: FetchPlan): Optional<${entity.className}> {
+        return repository.findById(id, fetchPlan)
+    }
 
     @Install(target = Target.DATA_CONTEXT)
     private fun saveDelegate(saveContext: SaveContext): Set<Any> {
@@ -34,12 +41,7 @@ class ${detailControllerName}<%if (useDataRepositories){%>(private val repositor
           if (compositeAttrs.length() > 0){
               compositeAttrs = compositeAttrs.substring(0, compositeAttrs.length() - 2);
               println """// ${entity.className} has the following @Composition attributes: $compositeAttrs.
-               // To save them, either add cascade in JPA annotation or pass to appropriate repository manually."""}
+               // Make sure they have CascadeType.ALL in @OneToMany annotation."""}
         %>return mutableSetOf(repository.save(editedEntity))
-    }
-
-    @Install(to = "${dlId}", target = Target.DATA_LOADER)
-    private fun loadDelegate(context: LoadContext<${entity.className}>): ${entity.className} {
-        return repository.getById(extractEntityId(context), context.fetchPlan)
     }<%}%>
 }

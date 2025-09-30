@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -70,6 +71,7 @@ public class FilterUrlQueryParametersSupport {
         return switch (operationType) {
             case UNARY -> urlParamSerializer.deserialize(Boolean.class, valueString);
             case VALUE -> parseSingleValue(property, valueString, mpp);
+            case DATE -> urlParamSerializer.deserialize(Date.class, valueString);
             case LIST -> parseCollectionValue(property, valueString, mpp);
             case INTERVAL -> urlParamSerializer.deserialize(BaseDateInterval.class, valueString);
         };

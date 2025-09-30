@@ -36,7 +36,7 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
     @Install(to = "${dlId}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
     private Optional<${entity.className}> loadDelegate(java.util.UUID id, FetchPlan fetchPlan){
         return repository.findById(id, fetchPlan);
-    }<%}%>
+    }
 
     @Install(target = Target.DATA_CONTEXT)
     private Set<Object> saveDelegate(SaveContext saveContext) {
@@ -52,5 +52,5 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
               println """// ${entity.className} has the following @Composition attributes: $compositeAttrs.
                        // Make sure they have CascadeType.ALL in @OneToMany annotation."""}
         %>return Set.of(repository.save(getEditedEntity()));
-    }
+    }<%}%>
 }

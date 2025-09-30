@@ -4,6 +4,7 @@ import ${project_rootPackage}.entity.User;
 import ${project_rootPackage}.view.main.MainView;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.EntityStates;
@@ -41,6 +42,8 @@ public class UserDetailView extends StandardDetailView<User> {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    private boolean newEntity;
+
     @Subscribe
     public void onInit(final InitEvent event) {
         timeZoneField.setItems(List.of(TimeZone.getAvailableIDs()));
@@ -73,10 +76,19 @@ public class UserDetailView extends StandardDetailView<User> {
         if (entityStates.isNew(getEditedEntity())) {
             getEditedEntity().setPassword(passwordEncoder.encode(passwordField.getValue()));
 
+            newEntity = true;
+        }
+    }
+
+    @Subscribe
+    public void onAfterSave(final AfterSaveEvent event) {
+        if (newEntity) {
             notifications.create(messageBundle.getMessage("noAssignedRolesNotification"))
-                    .withType(Notifications.Type.WARNING)
+                    .withThemeVariant(NotificationVariant.LUMO_WARNING)
                     .withPosition(Notification.Position.TOP_END)
                     .show();
+
+            newEntity = false;
         }
     }
 }

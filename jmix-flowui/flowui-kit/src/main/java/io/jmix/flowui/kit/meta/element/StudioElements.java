@@ -590,7 +590,16 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING, required = true),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ICON)
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ICON),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "checkable", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "checked", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
+                            options = {"non-checkable"})
             }
     )
     UserMenuItem textUserItemUserMenuItem();
@@ -603,7 +612,16 @@ public interface StudioElements {
             isInjectable = false,
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.ACTION_REF)
+                    @StudioProperty(xmlAttribute = "ref", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ACTION_REF),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "checkable", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "checked", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
+                            options = {"non-checkable"})
             }
     )
     UserMenuItem actionUserMenuItem();
@@ -643,7 +661,16 @@ public interface StudioElements {
                     )
             ),
             properties = {
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true)
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "checkable", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "checked", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
+                            options = {"non-checkable"})
             }
     )
     UserMenuItem componentUserMenuItem();
@@ -663,6 +690,15 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "openMode", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setOpenMode", classFqn = "io.jmix.flowui.view.OpenMode",
                             defaultValue = "NAVIGATION", options = {"NAVIGATION", "DIALOG"}),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "checkable", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "checked", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
+                            options = {"non-checkable"})
             }
     )
     UserMenuItem viewUserItemUserMenuItem();

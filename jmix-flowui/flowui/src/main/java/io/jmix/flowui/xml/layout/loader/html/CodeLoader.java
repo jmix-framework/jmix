@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-@Internal
-@NonNullApi
-package io.jmix.flowuidata.dateinterval.converter;
+package io.jmix.flowui.xml.layout.loader.html;
 
-import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import com.vaadin.flow.component.html.Code;
+
+public class CodeLoader extends AbstractHtmlContainerLoader<Code> {
+
+    @Override
+    protected Code createComponent() {
+        return factory.create(Code.class);
+    }
+}

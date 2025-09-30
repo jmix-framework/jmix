@@ -48,6 +48,7 @@ import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
+import io.jmix.dynattr.model.ReferenceToEntity;
 import io.jmix.dynattr.utils.DynAttrStringUtils;
 import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
@@ -428,6 +429,9 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             objectDefaultEntityId = referenceToEntitySupport.getReferenceId(entity);
         }
 
+        if (getEditedEntity().getDefaultEntity() == null) {
+            getEditedEntity().setDefaultEntity(metadata.create(ReferenceToEntity.class));
+        }
         getEditedEntity().setObjectDefaultEntityId(objectDefaultEntityId);
     }
 

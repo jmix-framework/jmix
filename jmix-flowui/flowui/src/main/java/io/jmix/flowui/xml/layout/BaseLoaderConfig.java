@@ -150,6 +150,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("article", ArticleLoader.class);
         loaders.put("header", HeaderLoader.class);
         loaders.put("pre", PreLoader.class);
+        loaders.put("code", CodeLoader.class);
         loaders.put("p", ParagraphLoader.class);
         loaders.put("htmlObject", HtmlObjectLoader.class);
         loaders.put("anchor", AnchorLoader.class);

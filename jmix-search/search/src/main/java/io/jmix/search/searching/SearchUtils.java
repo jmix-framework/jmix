@@ -25,6 +25,7 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import io.jmix.search.utils.Constants;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.springframework.stereotype.Component;
@@ -92,11 +93,17 @@ public class SearchUtils {
                     // Add nested fields created by FileFieldMapper
                     effectiveFieldsToSearch.add(fieldName + "._file_name");
                     effectiveFieldsToSearch.add(fieldName + "._content");
+                } else if (isReferenceProperty(metaPropertyPath)) {
+                    // Add nested instanceName field for pure reference property
+                    effectiveFieldsToSearch.add(fieldName + "." + Constants.INSTANCE_NAME_FIELD);
                 } else {
                     effectiveFieldsToSearch.add(fieldName);
                 }
             }
         }
+
+        // Add root instanceName field
+        effectiveFieldsToSearch.add(Constants.INSTANCE_NAME_FIELD);
 
         return effectiveFieldsToSearch;
     }
@@ -108,5 +115,9 @@ public class SearchUtils {
         } else {
             return false;
         }
+    }
+
+    protected boolean isReferenceProperty(MetaPropertyPath propertyPath) {
+        return propertyPath.getRange().isClass();
     }
 }

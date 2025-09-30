@@ -60,7 +60,7 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinFlowVersion = '24.8.5'
+def vaadinFlowVersion = '24.9.0'
 
 javaPlatform {
     allowDependencies()
@@ -385,6 +385,8 @@ dependencies {
         api "com.openhtmltopdf:openhtmltopdf-core:$openhtmltopdfVersion"
         api "com.openhtmltopdf:openhtmltopdf-rtl-support:$openhtmltopdfVersion"
         api "com.openhtmltopdf:openhtmltopdf-pdfbox:$openhtmltopdfVersion"
+
+        api 'org.apache.pdfbox:pdfbox:3.0.5'
 
         api 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.5.3'
         api 'org.docx4j:docx4j-ImportXHTML:11.4.8'

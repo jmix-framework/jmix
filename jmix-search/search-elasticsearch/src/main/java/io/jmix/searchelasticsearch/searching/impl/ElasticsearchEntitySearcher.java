@@ -107,7 +107,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
                 searchRequest = createRequest(
                         searchContext, targetIndexes, searchStrategy, searchResult.getEffectiveOffset()
                 );
-            } catch (EmptyAllowedEntitiesListForSearching exception) {
+            } catch (NoAllowedEntitiesForSearching exception) {
                 return searchResult;
             }
             SearchResponse<ObjectNode> searchResponse;
@@ -162,7 +162,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
     protected SearchRequest createRequest(SearchContext searchContext,
                                           List<String> targetIndexes,
                                           ElasticsearchSearchStrategy searchStrategy,
-                                          int offset) {
+                                          int offset) throws NoAllowedEntitiesForSearching {
         SearchRequest.Builder builder = new SearchRequest.Builder();
         initRequest(builder, targetIndexes);
         searchStrategy.configureRequest(builder, searchContext);

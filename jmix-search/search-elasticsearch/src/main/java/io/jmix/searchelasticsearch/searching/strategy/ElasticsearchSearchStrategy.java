@@ -1,6 +1,7 @@
 package io.jmix.searchelasticsearch.searching.strategy;
 
 import co.elastic.clients.elasticsearch.core.SearchRequest;
+import io.jmix.search.searching.NoAllowedEntitiesForSearching;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 
@@ -15,5 +16,5 @@ public interface ElasticsearchSearchStrategy extends SearchStrategy {
      * @param requestBuilder allows to configure search request
      * @param searchContext  contains details about search being performed
      */
-    void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext);
+    void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) throws NoAllowedEntitiesForSearching;
 }

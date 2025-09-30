@@ -16,7 +16,6 @@
 
 package io.jmix.search.searching;
 
-import io.jmix.core.Messages;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 
@@ -37,24 +36,22 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
     protected static final String THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY = "ThereAreNoIndexesForSearchingMessage";
     protected final SearchUtils searchUtils;
     protected final IndexConfigurationManager indexConfigurationManager;
-    protected final Messages messages;
 
-    public AbstractSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager, Messages messages) {
+    public AbstractSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager) {
         this.searchUtils = searchUtils;
         this.indexConfigurationManager = indexConfigurationManager;
-        this.messages = messages;
     }
 
-    protected Map<String, Set<String>> getIndexNamesWithFields(List<String> entities, Function<IndexConfiguration, Set<String>> fieldResolving) {
+    protected Map<String, Set<String>> getIndexNamesWithFields(List<String> entities, Function<IndexConfiguration, Set<String>> fieldResolving) throws NoAllowedEntitiesForSearching {
         if(entities.isEmpty()){
-            throwException();
+            throw new NoAllowedEntitiesForSearching();
         }
 
         //TODO
         List<String> allowedEntityNames = searchUtils.resolveEntitiesAllowedToSearch(entities);
 
         if (allowedEntityNames.isEmpty()) {
-            throwException();
+            throw new NoAllowedEntitiesForSearching();
         }
 
         Map<String, Set<String>> notFilteredIndexesWithFields = allowedEntityNames
@@ -69,12 +66,9 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         if (result.isEmpty()) {
-            throwException();
+            throw new NoAllowedEntitiesForSearching();
         }
         return result;
     }
 
-    private void throwException() {
-        throw new EmptyAllowedEntitiesListForSearching(messages.getMessage(this.getClass(), THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY));
-    }
 }

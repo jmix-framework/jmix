@@ -1,5 +1,6 @@
 package io.jmix.searchopensearch.searching.strategy.impl;
 
+import io.jmix.search.searching.NoAllowedEntitiesForSearching;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.impl.SearchFieldsResolver;
@@ -25,7 +26,7 @@ public class PhraseOpenSearchSearchStrategy extends AbstractOpenSearchStrategy i
     }
 
     @Override
-    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) throws NoAllowedEntitiesForSearching {
         queryConfigurator.configureRequest(
                 requestBuilder,
                 searchContext.getEntities(),

@@ -23,6 +23,7 @@ import io.jmix.core.Messages;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.AbstractSearchQueryConfigurator;
+import io.jmix.search.searching.NoAllowedEntitiesForSearching;
 import io.jmix.search.searching.SearchUtils;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +44,7 @@ public class ElasticSearchQueryConfigurator extends AbstractSearchQueryConfigura
             SearchRequest.Builder requestBuilder,
             List<String> entities,
             Function<IndexConfiguration, Set<String>> fieldResolving,
-            TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) {
+            TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) throws NoAllowedEntitiesForSearching {
         requestBuilder.query(createQuery(targetQueryBuilder, getIndexNamesWithFields(entities, fieldResolving)));
     }
 

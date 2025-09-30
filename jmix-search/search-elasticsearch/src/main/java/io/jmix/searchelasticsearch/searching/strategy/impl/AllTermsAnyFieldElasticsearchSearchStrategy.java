@@ -18,16 +18,12 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
+import io.jmix.search.searching.NoAllowedEntitiesForSearching;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.SearchUtils;
-import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * Describes {@link SearchStrategy} that searches documents with fields match all input terms in any order.
@@ -48,7 +44,7 @@ public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractElastic
     }
 
     @Override
-    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) throws NoAllowedEntitiesForSearching {
 
         queryConfigurator.configureRequest(
                 requestBuilder,

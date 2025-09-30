@@ -16,9 +16,5 @@
 
 package io.jmix.search.searching;
 
-public class EmptyAllowedEntitiesListForSearching extends RuntimeException {
-
-    public EmptyAllowedEntitiesListForSearching(String message) {
-        super(message);
-    }
+public class NoAllowedEntitiesForSearching extends Exception {
 }

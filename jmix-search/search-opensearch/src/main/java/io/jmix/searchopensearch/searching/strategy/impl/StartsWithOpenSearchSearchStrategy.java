@@ -17,6 +17,7 @@
 package io.jmix.searchopensearch.searching.strategy.impl;
 
 import io.jmix.search.SearchProperties;
+import io.jmix.search.searching.NoAllowedEntitiesForSearching;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.impl.SearchFieldsResolver;
@@ -48,7 +49,7 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
     }
 
     @Override
-    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) throws NoAllowedEntitiesForSearching {
         int maxPrefixSize = searchProperties.getMaxPrefixLength();
         if (isSearchTermExceedMaxPrefixSize(searchContext.getSearchText(), maxPrefixSize)
                 && searchProperties.isWildcardPrefixQueryEnabled()) {
@@ -58,7 +59,7 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
         }
     }
 
-    protected void configureTermsQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+    protected void configureTermsQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) throws NoAllowedEntitiesForSearching {
 
         queryConfigurator.configureRequest(
                 requestBuilder,
@@ -73,7 +74,7 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
         );
     }
 
-    protected void configureWildcardQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+    protected void configureWildcardQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) throws NoAllowedEntitiesForSearching {
         String searchText = searchContext.getEscapedSearchText();
         String[] searchTerms = searchText.split("\\s+");
         String queryText = Arrays.stream(searchTerms)

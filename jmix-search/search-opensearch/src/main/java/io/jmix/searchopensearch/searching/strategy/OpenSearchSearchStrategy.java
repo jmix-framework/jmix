@@ -1,5 +1,6 @@
 package io.jmix.searchopensearch.searching.strategy;
 
+import io.jmix.search.searching.NoAllowedEntitiesForSearching;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 import org.opensearch.client.opensearch.core.SearchRequest;
@@ -15,5 +16,5 @@ public interface OpenSearchSearchStrategy extends SearchStrategy {
      * @param requestBuilder allows to configure search request
      * @param searchContext  contains details about search being performed
      */
-    void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext);
+    void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) throws NoAllowedEntitiesForSearching;
 }

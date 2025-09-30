@@ -16,14 +16,12 @@
 
 package io.jmix.search.searching
 
-import io.jmix.core.Messages
 import io.jmix.search.index.IndexConfiguration
 import io.jmix.search.index.mapping.IndexConfigurationManager
 import spock.lang.Specification
 
 import java.util.function.Function
 
-import static io.jmix.search.searching.AbstractSearchQueryConfigurator.THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY
 
 class AbstractSearchQueryConfiguratorTest extends Specification {
 
@@ -56,7 +54,7 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of("entity1", "entity2", "entity3")
 
         and:
-        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager, Mock(Messages))
+        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager)
 
         when:
         def fields = configurator.getIndexNamesWithFields(
@@ -78,11 +76,7 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of()
 
         and:
-        def messages = Mock(Messages)
-        messages.getMessage(TestSearchQueryConfigurator.class, THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY) >> SAMPLE_MESSAGE_TEXT
-
-        and:
-        def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager), messages)
+        def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager))
 
         when:
         configurator.getIndexNamesWithFields(
@@ -91,7 +85,7 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         )
 
         then:
-        def exception = thrown(EmptyAllowedEntitiesListForSearching)
+        def exception = thrown(NoAllowedEntitiesForSearching)
         exception.getMessage() == SAMPLE_MESSAGE_TEXT
     }
 
@@ -101,11 +95,7 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of()
 
         and:
-        def messages = Mock(Messages)
-        messages.getMessage(TestSearchQueryConfigurator.class, THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY) >> SAMPLE_MESSAGE_TEXT
-
-        and:
-        def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager), messages)
+        def configurator = new TestSearchQueryConfigurator(searchUtils, Mock(IndexConfigurationManager))
 
         when:
         configurator.getIndexNamesWithFields(
@@ -114,7 +104,7 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         )
 
         then:
-        def exception = thrown(EmptyAllowedEntitiesListForSearching)
+        def exception = thrown(NoAllowedEntitiesForSearching)
         exception.getMessage() == SAMPLE_MESSAGE_TEXT
     }
 
@@ -144,7 +134,7 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of("entity1", "entity2", "entity3")
 
         and:
-        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager, Mock(Messages))
+        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager)
 
         when:
         def fields = configurator.getIndexNamesWithFields(
@@ -185,11 +175,7 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         searchUtils.resolveEntitiesAllowedToSearch(_) >> List.of("entity1", "entity2", "entity3")
 
         and:
-        def messages = Mock(Messages)
-        messages.getMessage(TestSearchQueryConfigurator.class, THERE_ARE_NO_INDEXES_FOR_SEARCHING_MESSAGE_KEY) >> SAMPLE_MESSAGE_TEXT
-
-        and:
-        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager, messages)
+        def configurator = new TestSearchQueryConfigurator(searchUtils, indexConfigurationManager)
 
         when:
         configurator.getIndexNamesWithFields(
@@ -198,13 +184,12 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
         )
 
         then:
-        def exception = thrown(EmptyAllowedEntitiesListForSearching)
-        exception.getMessage() == SAMPLE_MESSAGE_TEXT
+        def exception = thrown(NoAllowedEntitiesForSearching)
     }
 
     private class TestSearchQueryConfigurator extends AbstractSearchQueryConfigurator {
-        TestSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager, Messages messages) {
-            super(searchUtils, indexConfigurationManager, messages)
+        TestSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager) {
+            super(searchUtils, indexConfigurationManager)
         }
 
         @Override

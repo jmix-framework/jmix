@@ -18,6 +18,7 @@ package io.jmix.reports.impl.repository;
 
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.security.AccessDeniedException;
@@ -35,7 +36,6 @@ import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
@@ -293,9 +293,7 @@ public class ReportRepositoryImpl implements ReportRepository {
             throw new AccessDeniedException("entity", metadata.getClass(Report.class).getName(), EntityOp.READ.getId());
         }
 
-        if (StringUtils.isEmpty(reportCode)) {
-            throw new IllegalStateException("Report code should not be empty");
-        }
+        Preconditions.checkNotEmptyString(reportCode,"Report code should not be empty");
 
         for (Report report : annotatedReportHolder.getAllReports()) {
             if (report.getCode().equals(reportCode)) {
@@ -315,9 +313,7 @@ public class ReportRepositoryImpl implements ReportRepository {
             throw new AccessDeniedException("entity", metadata.getClass(Report.class).getName(), EntityOp.READ.getId());
         }
 
-        if (StringUtils.isEmpty(reportCode)) {
-            throw new IllegalStateException("Report code should not be empty");
-        }
+        Preconditions.checkNotEmptyString(reportCode,"Report code should not be empty");
 
         for (Report report : annotatedReportHolder.getAllReports()) {
             if (report.getCode().equals(reportCode)) {

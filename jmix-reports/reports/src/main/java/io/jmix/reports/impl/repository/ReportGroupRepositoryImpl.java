@@ -18,6 +18,7 @@ package io.jmix.reports.impl.repository;
 
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
 import io.jmix.reports.ReportGroupFilter;
@@ -26,9 +27,6 @@ import io.jmix.reports.ReportGroupRepository;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.impl.AnnotatedReportGroupHolder;
 import io.jmix.reports.util.MsgBundleTools;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -126,9 +124,7 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
             throw new AccessDeniedException("entity", metadata.getClass(ReportGroup.class).getName(), EntityOp.READ.getId());
         }
 
-        if (StringUtils.isEmpty(reportGroupCode)) {
-            throw new IllegalStateException("Report group code should not be empty");
-        }
+        Preconditions.checkNotEmptyString(reportGroupCode, "Report group code should not be empty");
 
         for (ReportGroup group : annotatedReportGroupHolder.getAllGroups()) {
             if (group.getCode().equals(reportGroupCode)) {
@@ -148,9 +144,7 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
             throw new AccessDeniedException("entity", metadata.getClass(ReportGroup.class).getName(), EntityOp.READ.getId());
         }
 
-        if (StringUtils.isEmpty(reportGroupCode)) {
-            throw new IllegalStateException("Report group code should not be empty");
-        }
+        Preconditions.checkNotEmptyString(reportGroupCode,"Report group code should not be empty");
 
         for (ReportGroup group : annotatedReportGroupHolder.getAllGroups()) {
             if (group.getCode().equals(reportGroupCode)) {

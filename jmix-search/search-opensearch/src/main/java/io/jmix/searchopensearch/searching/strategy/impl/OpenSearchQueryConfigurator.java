@@ -39,14 +39,23 @@ public class OpenSearchQueryConfigurator extends AbstractSearchQueryConfigurator
     protected void processEntitiesWithFields(RequestContext<SearchRequest.Builder> requestContext,
                                              TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder,
                                              Map<String, Set<String>> indexNamesWithFields) {
-        requestContext.getRequestBuilder().query(createQuery(targetQueryBuilder, indexNamesWithFields));
+        requestContext.getRequestBuilder().query(createQuery(targetQueryBuilder, indexNamesWithFields).build());
     }
 
-    protected Query createQuery(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
-        return Query.of(rootBoolBuilder ->
-                rootBoolBuilder.bool(rootShouldBuilder ->
-                        rootShouldBuilder.should(createSubqueriesForIndexes(indexesWithFields, targetQueryBuilder)))
-        );
+    @Override
+    protected ObjectBuilder<Query> createQueryForSingleIndex(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
+        Query.Builder builder = new Query.Builder();
+        return targetQueryBuilder
+                .apply(
+                        builder,
+                        new ArrayList<>(indexesWithFields.entrySet().iterator().next().getValue()));
+    }
+
+    @Override
+    protected ObjectBuilder<Query> createQueryForMultipleIndexes(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
+        return new Query.Builder()
+                .bool(boolBuilder ->
+                        boolBuilder.should(createSubqueriesForIndexes(indexesWithFields, targetQueryBuilder)));
     }
 
     private List<Query> createSubqueriesForIndexes(Map<String, Set<String>> indexesWithFields, TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) {
@@ -60,7 +69,7 @@ public class OpenSearchQueryConfigurator extends AbstractSearchQueryConfigurator
     private Query createQueryForSingleIndex(String indexName, Set<String> fields, TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) {
         return Query.of(root ->
                 root.bool(b -> b
-                        .must(m -> m.term(t -> t.field("_index").value(v->v.stringValue(indexName))))
+                        .must(m -> m.term(t -> t.field("_index").value(v -> v.stringValue(indexName))))
                         .must(m2 -> targetQueryBuilder.apply(m2, new ArrayList<>(fields)))
                 ));
     }

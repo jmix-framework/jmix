@@ -92,4 +92,15 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
         return result;
     }
 
+    protected OB createQuery(TargetQueryBuilder<QB, OB> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
+        if (indexesWithFields.size() > 1) {
+            return createQueryForMultipleIndexes(targetQueryBuilder, indexesWithFields);
+        }
+        return createQueryForSingleIndex(targetQueryBuilder, indexesWithFields);
+    }
+
+    protected abstract OB createQueryForSingleIndex(TargetQueryBuilder<QB, OB> targetQueryBuilder, Map<String, Set<String>> indexesWithFields);
+
+    protected abstract OB createQueryForMultipleIndexes(TargetQueryBuilder<QB, OB> targetQueryBuilder, Map<String, Set<String>> indexesWithFields);
+
 }

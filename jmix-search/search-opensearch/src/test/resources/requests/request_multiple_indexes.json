@@ -1,0 +1,52 @@
+{
+  "bool": {
+    "should": [
+      {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "_index": {
+                  "value": "index1"
+                }
+              }
+            },
+            {
+              "multi_match": {
+                "fields": [
+                  "field1_1"
+                ],
+                "operator": "or",
+                "query": "search text"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "_index": {
+                  "value": "index2"
+                }
+              }
+            },
+            {
+              "multi_match": {
+                "fields": [
+                  "field2_1",
+                  "field2_2",
+                  "field2_3"
+                ],
+                "operator": "or",
+                "query": "search text"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

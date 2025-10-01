@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.searchelasticsearch.searching.strategy.impl
+package io.jmix.searchopensearch.searching.strategy.impl
 
-import co.elastic.clients.elasticsearch._types.query_dsl.Operator
-import co.elastic.clients.json.JsonpMapper
-import co.elastic.clients.json.JsonpSerializable
-import co.elastic.clients.json.jackson.JacksonJsonpMapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.json.spi.JsonProvider
+import org.opensearch.client.json.JsonpMapper
+import org.opensearch.client.json.JsonpSerializable
+import org.opensearch.client.json.jackson.JacksonJsonpMapper
+import org.opensearch.client.opensearch._types.query_dsl.Operator
 import spock.lang.Specification
 
-import static java.nio.charset.StandardCharsets.*
+import static java.nio.charset.StandardCharsets.UTF_8
 
-class ElasticSearchQueryConfiguratorTest extends Specification {
+class OpenSearchQueryConfiguratorTest extends Specification {
+
     def "configureRequest. multiple indexes"() {
         given:
         Map<String, Set<String>> indexesWithFields = new LinkedHashMap<>()
@@ -35,7 +36,7 @@ class ElasticSearchQueryConfiguratorTest extends Specification {
         indexesWithFields.put("index2", createLinkedSet("field2_1", "field2_2", "field2_3"))
 
         and:
-        def configurator = new ElasticSearchQueryConfigurator(null, null)
+        def configurator = new OpenSearchQueryConfigurator(null, null)
 
         when:
         def query = configurator.createQuery(
@@ -43,7 +44,8 @@ class ElasticSearchQueryConfiguratorTest extends Specification {
                         b.multiMatch(m ->
                                 m.fields(fields).query("search text").operator(Operator.Or)
                         )
-                , indexesWithFields).build()
+                , indexesWithFields)
+        .build()
 
         then:
         jsonEquals(toJson(query), readResourceAsString("request_multiple_indexes"))
@@ -55,7 +57,7 @@ class ElasticSearchQueryConfiguratorTest extends Specification {
         indexesWithFields.put("index1", createLinkedSet("field1_1", "field1_2", "field1_3"))
 
         and:
-        def configurator = new ElasticSearchQueryConfigurator(null, null)
+        def configurator = new OpenSearchQueryConfigurator(null, null)
 
         when:
         def query = configurator.createQuery(
@@ -88,7 +90,7 @@ class ElasticSearchQueryConfiguratorTest extends Specification {
     }
 
     private static String readResourceAsString(String resourcePath) {
-        InputStream is = ElasticSearchQueryConfiguratorTest.class.classLoader.getResourceAsStream("requests/" + resourcePath + ".json")
+        InputStream is = OpenSearchQueryConfigurator.class.classLoader.getResourceAsStream("requests/" + resourcePath + ".json")
         assert is != null: "Resource not found: $resourcePath"
         try {
             return new String(is.readAllBytes(), UTF_8)

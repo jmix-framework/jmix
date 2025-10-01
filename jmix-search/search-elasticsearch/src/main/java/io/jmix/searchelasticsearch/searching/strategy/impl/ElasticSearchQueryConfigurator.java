@@ -39,31 +39,23 @@ public class ElasticSearchQueryConfigurator extends AbstractSearchQueryConfigura
 
     @Override
     protected void processEntitiesWithFields(RequestContext<SearchRequest.Builder> requestContext, TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexNamesWithFields) {
-        requestContext.getRequestBuilder().query(createQuery(targetQueryBuilder, indexNamesWithFields));
+        requestContext.getRequestBuilder().query(createQuery(targetQueryBuilder, indexNamesWithFields).build());
     }
 
-
-    protected Query createQuery(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
-        if (indexesWithFields.size() > 1) {
-            return createQueryForMultipleIndexes(targetQueryBuilder, indexesWithFields);
-        }
-        return createQueryForSingleIndex(targetQueryBuilder, indexesWithFields);
-    }
-
-    private static Query createQueryForSingleIndex(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
+    @Override
+    protected ObjectBuilder<Query> createQueryForSingleIndex(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
         Query.Builder builder = new Query.Builder();
         return targetQueryBuilder
                 .apply(
                         builder,
-                        new ArrayList<>(indexesWithFields.entrySet().iterator().next().getValue()))
-                .build();
+                        new ArrayList<>(indexesWithFields.entrySet().iterator().next().getValue()));
     }
 
-    private Query createQueryForMultipleIndexes(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
-        return Query.of(rootBoolBuilder ->
-                rootBoolBuilder.bool(rootShouldBuilder ->
-                        rootShouldBuilder.should(createSubqueriesForIndexes(indexesWithFields, targetQueryBuilder)))
-        );
+    @Override
+    protected ObjectBuilder<Query> createQueryForMultipleIndexes(TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder, Map<String, Set<String>> indexesWithFields) {
+        return new Query.Builder()
+                .bool(boolBuilder ->
+                        boolBuilder.should(createSubqueriesForIndexes(indexesWithFields, targetQueryBuilder)));
     }
 
     private List<Query> createSubqueriesForIndexes(Map<String, Set<String>> indexesWithFields, TargetQueryBuilder<Query.Builder, ObjectBuilder<Query>> targetQueryBuilder) {

@@ -186,7 +186,17 @@ class AbstractSearchQueryConfiguratorTest extends Specification {
 
         @Override
         protected void processEntitiesWithFields(RequestContext requestContext, TargetQueryBuilder targetQueryBuilder, Map indexNamesWithFields) {
+            throw new UnsupportedOperationException()
+        }
 
+        @Override
+        protected Object createQueryForSingleIndex(TargetQueryBuilder targetQueryBuilder, Map indexesWithFields) {
+            throw new UnsupportedOperationException()
+        }
+
+        @Override
+        protected Object createQueryForMultipleIndexes(TargetQueryBuilder targetQueryBuilder, Map indexesWithFields) {
+            throw new UnsupportedOperationException()
         }
     }
 }

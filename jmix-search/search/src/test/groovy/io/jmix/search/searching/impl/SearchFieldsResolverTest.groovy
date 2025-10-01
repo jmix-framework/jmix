@@ -26,6 +26,8 @@ import io.jmix.security.constraint.PolicyStore
 import io.jmix.security.constraint.SecureOperations
 import spock.lang.Specification
 
+import static io.jmix.search.searching.impl.SearchFieldsResolver.GETTING_FIELD_WITH_SUBFIELD_WITH_PREFIXES
+
 class SearchFieldsResolverTest extends Specification {
     public static final String FIELD_NAME_1 = "field1"
     public static final String FIELD_NAME_2 = "field2"
@@ -135,7 +137,7 @@ class SearchFieldsResolverTest extends Specification {
                 searchFieldsAdapter)
 
         when:
-        def fieldsForIndex = resolver.resolveFieldsWithPrefixes(indexConfiguration)
+        def fieldsForIndex = resolver.resolveFieldsWithSubfields(indexConfiguration, GETTING_FIELD_WITH_SUBFIELD_WITH_PREFIXES)
 
         then:
         fieldsForIndex == Set.of(

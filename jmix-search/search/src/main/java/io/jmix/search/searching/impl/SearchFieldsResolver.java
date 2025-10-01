@@ -29,10 +29,14 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class SearchFieldsResolver {
 
+    public static final Function<String, Set<String>> GETTING_FIELD_WITH_SUBFIELD_WITH_PREFIXES =
+            fieldName -> Set.of(fieldName, fieldName + "." + ExtendedSearchConstants.PREFIX_SUBFIELD_NAME);
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
@@ -46,7 +50,6 @@ public class SearchFieldsResolver {
     }
 
     /**
-     *
      * @param targetEntity
      * @return
      */
@@ -55,17 +58,6 @@ public class SearchFieldsResolver {
     }
 
     /**
-     *
-     * @param targetEntity
-     * @return
-     */
-    public Set<String> resolveFieldsWithPrefixes(String targetEntity) {
-        return resolveFieldsWithPrefixes(indexConfigurationManager.getIndexConfigurationByEntityName(targetEntity));
-    }
-
-
-    /**
-     *
      * @param indexConfiguration
      * @return
      */
@@ -75,7 +67,7 @@ public class SearchFieldsResolver {
 
         for (Map.Entry<String, MappingFieldDescriptor> entry : fields.entrySet()) {
             MetaPropertyPath metaPropertyPath = entry.getValue().getMetaPropertyPath();
-            if(secureOperations.isEntityAttrReadPermitted(metaPropertyPath, policyStore)){
+            if (secureOperations.isEntityAttrReadPermitted(metaPropertyPath, policyStore)) {
                 effectiveFieldsToSearch.addAll(searchFieldsAdapter.getFieldsForIndexByPath(metaPropertyPath, entry.getKey()));
             }
         }
@@ -83,14 +75,12 @@ public class SearchFieldsResolver {
         return effectiveFieldsToSearch;
     }
 
-    public Set<String> resolveFieldsWithPrefixes(IndexConfiguration indexConfiguration) {
-        Set<String> result = new HashSet<>();
-        Set<String> fields = resolveFields(indexConfiguration);
-        for(String fieldName: fields){
-            result.add(fieldName);
-            result.add(fieldName+"."+ ExtendedSearchConstants.PREFIX_SUBFIELD_NAME);
-        }
-        return result;
+    public Set<String> resolveFieldsWithSubfields(IndexConfiguration indexConfiguration, Function<String, Set<String>> fieldByFieldNameResolver) {
+        return resolveFields(indexConfiguration)
+                .stream()
+                .map(fieldByFieldNameResolver)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
     }
 
     protected static void addRootInstanceField(Set<String> effectiveFieldsToSearch) {

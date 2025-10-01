@@ -29,6 +29,8 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static io.jmix.search.searching.impl.SearchFieldsResolver.GETTING_FIELD_WITH_SUBFIELD_WITH_PREFIXES;
+
 /**
  * Class that encapsulates logic of {@link SearchStrategy} that searches documents by prefix.
  */
@@ -61,7 +63,7 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
     protected void configureTermsQuery(RequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                searchFieldsResolver::resolveFieldsWithPrefixes,
+                conf -> searchFieldsResolver.resolveFieldsWithSubfields(conf, GETTING_FIELD_WITH_SUBFIELD_WITH_PREFIXES),
                 (queryBuilder, fields) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
                                 multiMatchQueryBuilder.fields(fields)

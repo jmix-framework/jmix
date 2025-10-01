@@ -65,16 +65,19 @@ public class JmixTableData implements Serializable {
 
         protected String caption;
 
+        protected String captionMessageKey;
+
         protected Integer position;
 
-        public ColumnInfo(String key, Class columnClass, String caption) {
-            this(key, columnClass, caption, null);
+        public ColumnInfo(String key, Class columnClass, String caption, String captionMessageKey) {
+            this(key, columnClass, caption, captionMessageKey, null);
         }
 
-        public ColumnInfo(String key, Class columnClass, String caption, Integer position) {
+        public ColumnInfo(String key, Class columnClass, String caption, String captionMessageKey, Integer position) {
             this.key = key;
             this.columnClass = columnClass;
             this.caption = caption;
+            this.captionMessageKey = captionMessageKey;
             this.position = position;
         }
 
@@ -98,6 +101,10 @@ public class JmixTableData implements Serializable {
             return caption;
         }
 
+        public String getCaptionMessageKey() {
+            return captionMessageKey;
+        }
+
         public void setCaption(String caption) {
             this.caption = caption;
         }
@@ -118,12 +125,13 @@ public class JmixTableData implements Serializable {
             return Objects.equals(getPosition(), that.getPosition()) &&
                     Objects.equals(getKey(), that.getKey()) &&
                     Objects.equals(getColumnClass(), that.getColumnClass()) &&
-                    Objects.equals(getCaption(), that.getCaption());
+                    Objects.equals(getCaption(), that.getCaption()) &&
+                    Objects.equals(getCaptionMessageKey(), that.getCaptionMessageKey());
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(getKey(), getColumnClass(), getCaption(), getPosition());
+            return Objects.hash(getKey(), getColumnClass(), getCaption(), getCaptionMessageKey(), getPosition());
         }
     }
 }

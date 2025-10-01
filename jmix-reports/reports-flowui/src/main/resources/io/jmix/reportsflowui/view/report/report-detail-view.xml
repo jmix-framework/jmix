@@ -35,11 +35,7 @@
 
         <collection id="availableParentBandsDc" class="io.jmix.reports.entity.BandDefinition"/>
         <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup">
-            <loader id="groupsDl">
-                <query>
-                    <![CDATA[select rg from report_ReportGroup rg order by rg.createTs asc]]>
-                </query>
-            </loader>
+            <loader id="groupsDl"/>
         </collection>
     </data>
     <facets>
@@ -62,11 +58,12 @@
                             <responsiveStep minWidth="50em" columns="2"/>
                         </responsiveSteps>
                         <textField id="nameField" property="name"
-                                   requiredMessage="msg://detailsTab.nameField.requiredMessage"/>
+                                   requiredMessage="msg://detailsTab.nameField.requiredMessage" required="true"/>
                         <entityComboBox id="groupField"
                                         property="group"
                                         itemsContainer="groupsDc"/>
-                        <textField id="codeField" property="code"/>
+                        <textField id="codeField" property="code"
+                                   requiredMessage="msg://detailsTab.codeField.isEmpty.text" required="true"/>
                         <hbox padding="false" alignItems="BASELINE">
                             <checkbox id="systemField" label="msg://io.jmix.reports.entity/Report.system"
                                       property="system"/>
@@ -253,6 +250,10 @@
                                             <action id="remove" type="list_remove"
                                                     description="msg://bandsTab.dataSetsDataGrid.action.remove.description"/>
                                         </actions>
+                                        <columns>
+                                            <column property="name"/>
+                                            <column property="type"/>
+                                        </columns>
                                     </dataGrid>
                                 </vbox>
                                 <div id="dataSetDetailsLayout" classNames="report-data-set-details-layout">

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+<head>
+    <title>User Profile</title>
+</head>
+<body>
+
+<h1>Registration data</h1>
+<#assign UserData = Root.bands.UserData>
+<table border="1" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Registration date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <#if UserData?has_content>
+    <#list UserData as row>
+    <tr>
+        <td>${(row.fields('username'))!?string!}</td>
+        <td>${(row.fields('firstName'))!?string!}</td>
+        <td>${(row.fields('lastName'))!?string!}</td>
+        <td>${row.fields('registrationDate')?string}</td>
+    </tr>
+    </#list>
+</#if>
+</tbody>
+</table>
+
+<h1>Games</h1>
+<#assign GameData = Root.bands.UserData[0].bands.GameData>
+<table border="1" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Game</th>
+        <th>Purchase date</th>
+        <th>User rating</th>
+    </tr>
+    </thead>
+    <tbody>
+    <#if GameData?has_content>
+    <#list GameData as row>
+    <tr>
+        <td>${(row.fields('game').name)!?string!}</td>
+        <td>${(row.fields('purchaseDate'))?string}</td>
+        <td>
+            <#if row.fields('userRating')?has_content>
+              ${(row.fields('userRating'))!?string!}
+            </#if>
+        </td>
+    </tr>
+    </#list>
+</#if>
+</tbody>
+</table>
+</body>
+</html>

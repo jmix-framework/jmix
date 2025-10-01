@@ -17,9 +17,7 @@
 package io.jmix.reports.runner;
 
 import com.google.common.base.Strings;
-import io.jmix.core.DataManager;
-import io.jmix.core.EntityStates;
-import io.jmix.core.Id;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
@@ -36,7 +34,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Class is used to run a report using various additional criteria:
@@ -54,8 +51,6 @@ import java.util.Optional;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FluentReportRunner {
 
-    private static final String REPORT_RUN_FETCH_PLAN = "report.edit";
-
     private static final Logger log = LoggerFactory.getLogger(FluentReportRunner.class);
 
     private Report report;
@@ -66,11 +61,7 @@ public class FluentReportRunner {
     private ReportOutputType outputType;
     private String outputNamePattern;
 
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private EntityStates entityStates;
-
+    private ReportRepository reportRepository;
     private ReportRunner reportRunner;
 
     public FluentReportRunner(Report report) {
@@ -84,6 +75,11 @@ public class FluentReportRunner {
     @Autowired
     public void setReportRunner(ReportRunner reportRunner) {
         this.reportRunner = reportRunner;
+    }
+
+    @Autowired
+    public void setReportRepository(ReportRepository reportRepository) {
+        this.reportRepository = reportRepository;
     }
 
     /**
@@ -177,31 +173,14 @@ public class FluentReportRunner {
         return reportRunner.run(buildContext());
     }
 
-    private Optional<Report> loadReportByCode(String reportCode) {
-        return dataManager.load(Report.class)
-                .query("e.code = :code")
-                .parameter("code", reportCode)
-                .fetchPlan(REPORT_RUN_FETCH_PLAN)
-                .optional();
-    }
-
     private Report getReportToUse() {
         if (this.report != null) {
-            if (report.getIsTmp()) {
-                return this.report;
-            }
-            if (!entityStates.isLoadedWithFetchPlan(this.report, REPORT_RUN_FETCH_PLAN)) {
-                return dataManager.load(Id.of(report))
-                        .fetchPlan(REPORT_RUN_FETCH_PLAN)
-                        .one();
-            } else {
-                return this.report;
-            }
+            return reportRepository.reloadForRunning(report);
         }
         if (!Strings.isNullOrEmpty(reportCode)) {
-            Optional<Report> reportOpt = loadReportByCode(this.reportCode);
-            if (reportOpt.isPresent()) {
-                return reportOpt.get();
+            Report entity = reportRepository.loadForRunningByCode(this.reportCode);
+            if (entity != null) {
+                return entity;
             }
             throw new ReportingException(String.format("Cannot find report with code %s", reportCode));
         }
@@ -211,12 +190,7 @@ public class FluentReportRunner {
 
     private ReportTemplate getReportTemplateToUse(Report report) {
         if (this.template != null) {
-            if (!entityStates.isLoadedWithFetchPlan(this.template, "template.edit")) {
-                return dataManager.load(Id.of(template))
-                        .fetchPlan("template.edit")
-                        .one();
-            }
-            return this.template;
+            return reportRepository.reloadTemplateForRunning(template);
         }
         if (!Strings.isNullOrEmpty(templateCode)) {
             ReportTemplate templateByCode = report.getTemplateByCode(templateCode);

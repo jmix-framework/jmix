@@ -33,6 +33,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -42,6 +43,7 @@ import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.*;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -51,6 +53,7 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
@@ -62,9 +65,7 @@ import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
-import io.jmix.reports.ReportPrintHelper;
-import io.jmix.reports.ReportsPersistence;
-import io.jmix.reports.ReportsSerialization;
+import io.jmix.reports.*;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.wizard.ReportData;
@@ -120,6 +121,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected TreeDataGrid<BandDefinition> bandsTreeDataGrid;
     @ViewComponent
     protected TypedTextField<String> bandNameField;
+    @ViewComponent
+    private TypedTextField<String> codeField;
     @ViewComponent
     protected JmixSelect<Orientation> orientationField;
     @ViewComponent
@@ -190,11 +193,15 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected CollectionPropertyContainer<ReportRole> reportRolesDc;
     @ViewComponent
     protected DataGrid<ReportInputParameter> inputParametersDataGrid;
+    @ViewComponent
+    protected JmixTabSheet mainTabSheet;
+    @ViewComponent("mainTabSheet.detailsTab")
+    protected Tab mainTabSheetDetailsTab;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected ReportsPersistence reportsPersistence;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -245,6 +252,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected DataManager dataManager;
     @Autowired
     private EntityUuidGenerator entityUuidGenerator;
+    @Autowired
+    protected ReportGroupRepository reportGroupRepository;
+    @Autowired
+    protected ReportRepository reportRepository;
 
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
@@ -271,6 +282,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
         initLocaleDetailReportTextField();
         initRoleField();
         initScreenIdField();
+        initSingleDataSetTypeField();
+        initJsonSourceTypeField();
     }
 
     @Supply(to = "templatesDataGrid.alterable", subject = "renderer")
@@ -292,6 +305,14 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Supply(to = "inputParametersDataGrid.validationOn", subject = "renderer")
     protected Renderer<ReportInputParameter> inputParametersDataGridValidationOnRenderer() {
         return new ComponentRenderer<>(parameter -> createCheckbox(parameter.getValidationOn()));
+    }
+
+    @Install(to = "groupsDl", target = Target.DATA_LOADER)
+    private List<ReportGroup> groupsDlLoadDelegate(final LoadContext<ReportGroup> ignored) {
+        return reportGroupRepository.loadAll().stream()
+                // for now, we support only db-based groups in this view
+                .filter(group -> group.getSource() == ReportSource.DATABASE)
+                .toList();
     }
 
     protected Checkbox createCheckbox(Boolean value) {
@@ -617,8 +638,62 @@ public class ReportDetailView extends StandardDetailView<Report> {
         validateTemplate(event.getErrors());
     }
 
+    protected void markFieldAndPreventSave(TypedTextField<?> field, String messageBundleKey, BeforeSaveEvent event) {
+        event.preventSave();
+        field.setErrorMessage(messageBundle.getMessage(messageBundleKey));
+        field.setInvalid(true);
+    }
+
+    protected void showNotificationIfAnotherTab(Tab tab, ValidationErrors errors, Component component, String messageBundleKey) {
+        if (!tab.isSelected()) {
+            errors.add(component, messageBundle.getMessage(messageBundleKey));
+        }
+    }
+
+    protected void checkReportCode(BeforeSaveEvent event) {
+        ValidationErrors errors = new ValidationErrors();
+        String reportCode = codeField.getTypedValue();
+        Report editedReport = getEditedEntity();
+        Optional<UUID> reportId;
+
+        if (reportCode == null) {
+            markFieldAndPreventSave(codeField, "detailsTab.codeField.isEmpty.text", event);
+            showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.isEmpty.text");
+            return;
+        }
+
+        try {
+            if (entityStates.isNew(editedReport)) {
+                if (reportRepository.existsReportByCode(reportCode)) {
+                    markFieldAndPreventSave(codeField, "detailsTab.codeField.alreadyExists.text", event);
+                    showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.alreadyExists.text");
+                    return;
+                }
+            }
+
+            reportId = reportRepository.loadReportIdByCode(reportCode);
+
+            if (reportId.isPresent()) {
+                if (!editedReport.getId().equals(reportId.get())) {
+                    if (reportRepository.existsReportByCode(reportCode)) {
+                        markFieldAndPreventSave(codeField, "detailsTab.codeField.alreadyExists.text", event);
+                        showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.alreadyExists.text");
+                    }
+                }
+            }
+        } catch (AccessDeniedException ade) {
+            event.preventSave();
+            showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.notification.notReadAccessRights.text");
+        } finally {
+            if (!errors.isEmpty()) {
+                viewValidation.showValidationErrors(errors);
+            }
+        }
+    }
+
     @Subscribe
     protected void onBeforeSave(BeforeSaveEvent event) {
+        checkReportCode(event);
         setupReportXml();
     }
 
@@ -1125,7 +1200,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @SuppressWarnings("unchecked")
     protected Component dataSetTypeColumnValueProvider(DataSet item) {
         JmixComboBox<DataSetType> field = uiComponents.create(JmixComboBox.class);
-        field.setItems(DataSetType.class);
+        field.setItems(getDataSetTypeOptions());
         field.setValue(item.getType());
         field.setRequired(true);
         field.setStatusChangeHandler(typedTextFieldStatusContext -> {/*do nothing*/});
@@ -1137,6 +1212,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
             dataSetsDataGrid.select(item);
         });
         return field;
+    }
+
+    protected List<DataSetType> getDataSetTypeOptions() {
+        ArrayList<DataSetType> options = new ArrayList<>(Arrays.asList(DataSetType.values()));
+        options.remove(DataSetType.DELEGATE); // can't set it up in runtime editor
+        return options;
     }
 
     protected void updateDataSetsLayout(boolean isMultiDataSet) {
@@ -1570,6 +1651,17 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
 
         ComponentUtils.setItemsMap(rolesField, roles);
+    }
+
+    protected void initSingleDataSetTypeField() {
+        singleDataSetTypeField.setItems(getDataSetTypeOptions());
+    }
+
+    protected void initJsonSourceTypeField() {
+        ArrayList<JsonSourceType> options = new ArrayList<>(Arrays.asList(JsonSourceType.values()));
+        options.remove(JsonSourceType.DELEGATE); // can't set it up in runtime editor
+
+        jsonSourceTypeField.setItems(options);
     }
 
     @Install(to = "rolesDataGrid.exclude", subject = "enabledRule")

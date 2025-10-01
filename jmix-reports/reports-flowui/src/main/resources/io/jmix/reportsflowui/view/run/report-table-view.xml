@@ -21,12 +21,7 @@
     <data>
         <collection id="reportsDc"
                     class="io.jmix.reports.entity.Report">
-            <loader id="reportsDl">
-                <query>
-                    <![CDATA[select r from report_Report r where exists
-                        (select t from report_ReportTemplate t where t.report.id = r.id and t.reportOutputType = 90)]]>
-                </query>
-            </loader>
+            <loader id="reportsDl"/>
         </collection>
     </data>
 

@@ -18,10 +18,29 @@ package io.jmix.reports.entity;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
+/**
+ * Determines source where JSON for a {@link DataSetType#JSON} data set is obtained.
+ */
 public enum JsonSourceType implements EnumClass<Integer> {
+    /**
+     * Groovy script, supposed to return JSON data as a string.
+     */
     GROOVY_SCRIPT(10),
+
+    /**
+     * The reporting engine will perform an HTTP GET query against the URL.
+     */
     URL(20),
-    PARAMETER(30);
+
+    /**
+     * An input parameter of {@link ParameterType#TEXT} type provides the JSON data.
+     */
+    PARAMETER(30),
+
+    /**
+     * Obtain JSON data by calling associated {@link io.jmix.reports.delegate.JsonInputProvider}.
+     */
+    DELEGATE(40);
 
     private Integer id;
 

@@ -18,20 +18,15 @@
       title="msg://reportRunView.title"
       focusComponent="reportDataGrid">
 
-    <data>
+    <data readOnly="true">
         <collection id="reportsDc"
-                    class="io.jmix.reports.entity.Report"
-                    fetchPlan="report.view">
+                    class="io.jmix.reports.entity.Report">
             <loader id="reportsDl"/>
         </collection>
+
         <collection id="reportGroupsDc"
-                    class="io.jmix.reports.entity.ReportGroup"
-                    fetchPlan="_local">
-            <loader id="reportGroupDl">
-                <query>
-                    <![CDATA[select e from report_ReportGroup e]]>
-                </query>
-            </loader>
+                    class="io.jmix.reports.entity.ReportGroup">
+            <loader id="reportGroupsDl"/>
         </collection>
     </data>
 
@@ -46,27 +41,23 @@
     </facets>
 
     <layout>
-        <formLayout id="filterPanel">
-            <responsiveSteps>
-                <responsiveStep minWidth="0" columns="1"/>
-                <responsiveStep minWidth="40em" columns="3"/>
-                <responsiveStep minWidth="80em" columns="5"/>
-            </responsiveSteps>
-            <textField id="nameFilter" datatype="string" label="msg://report.reportRunFilterName"/>
-            <entityComboBox id="groupFilter" itemsContainer="reportGroupsDc" metaClass="report_ReportGroup"
-                            label="msg://report.reportRunFilterGroup"/>
-            <textField id="codeFilter" label="msg://report.reportRunFilterCode"/>
-            <datePicker id="updatedDateFilter" datatype="date" label="msg://report.reportRunFilterUpdatedDate"/>
-            <hbox>
-                <button id="searchBtn"
-                        text="msg://report.reportFilterButton"
-                        icon="SEARCH"/>
-                <button id="clearBtn"
-                        text="msg://report.reportClearButton"
-                        themeNames="error"
-                        icon="TRASH"/>
-            </hbox>
-        </formLayout>
+        <details id="filterDetails"
+                 summaryText="msg://io.jmix.reportsflowui.view/filter"
+                 opened="true"
+                 width="100%">
+            <formLayout id="filterPanel">
+                <responsiveSteps>
+                    <responsiveStep minWidth="0" columns="1"/>
+                    <responsiveStep minWidth="40em" columns="3"/>
+                    <responsiveStep minWidth="80em" columns="5"/>
+                </responsiveSteps>
+                <textField id="nameFilter" datatype="string" label="msg://report.reportRunFilterName"/>
+                <entityComboBox id="groupFilter" itemsContainer="reportGroupsDc" metaClass="report_ReportGroup"
+                                label="msg://report.reportRunFilterGroup"/>
+                <textField id="codeFilter" label="msg://report.reportRunFilterCode"/>
+                <datePicker id="updatedDateFilter" datatype="date" label="msg://report.reportRunFilterUpdatedDate"/>
+            </formLayout>
+        </details>
 
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="runReport" action="reportDataGrid.runReport"/>

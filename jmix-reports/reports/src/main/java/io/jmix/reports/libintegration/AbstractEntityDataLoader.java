@@ -79,6 +79,8 @@ public abstract class AbstractEntityDataLoader implements ReportDataLoader {
         FetchPlan fetchPlan;
         if (Boolean.TRUE.equals(dataSet.getUseExistingFetchPLan())) {
             fetchPlan = fetchPlanRepository.getFetchPlan(entity.getClass(), dataSet.getFetchPlanName());
+        } else if (dataSet.getFetchPlanProvider() != null) {
+            fetchPlan = dataSet.getFetchPlanProvider().getFetchPlan();
         } else {
             fetchPlan = dataSet.getFetchPlan();
         }

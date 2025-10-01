@@ -29,6 +29,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
@@ -57,7 +58,7 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
     public static final String DEFAULT_SINGLE_ENTITY_ALIAS = "entity";
     public static final String DEFAULT_LIST_OF_ENTITIES_ALIAS = "entities";
 
-    protected DataManager dataManager;
+    protected ReportRepository reportRepository;
     protected DialogWindows dialogWindows;
     protected UiReportRunner uiReportRunner;
     protected ReportsClientProperties reportsClientProperties;
@@ -81,8 +82,8 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
     }
 
     @Autowired
-    public void setDataManager(DataManager dataManager) {
-        this.dataManager = dataManager;
+    public void setReportRepository(ReportRepository reportRepository) {
+        this.reportRepository = reportRepository;
     }
 
     @Autowired
@@ -122,9 +123,7 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
         if (CollectionUtils.isNotEmpty(reports)) {
             Report report = reports.iterator().next();
 
-            report = dataManager.load(Id.of(report))
-                    .fetchPlan("report.edit")
-                    .one();
+            report = reportRepository.reloadForRunning(report);
 
             if (report.getInputParameters() != null
                     && report.getInputParameters().size() > 0

@@ -21,41 +21,39 @@ import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.action.list.CreateAction;
+import io.jmix.flowui.component.combobox.EntityComboBox;
+import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
-import io.jmix.reports.ReportImportExport;
-import io.jmix.reports.ReportsPersistence;
-import io.jmix.reports.entity.Report;
-import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reports.*;
+import io.jmix.reports.entity.*;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.download.ReportDownloader;
+import io.jmix.reportsflowui.helper.GridSortHelper;
+import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
+import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
-import io.jmix.reportsflowui.view.run.InputParametersDialog;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
-
-import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredByTemplates;
+import java.util.*;
 
 @Route(value = "reports", layout = DefaultMainViewParent.class)
 @ViewController("report_Report.list")
@@ -72,8 +70,17 @@ public class ReportListView extends StandardListView<Report> {
     @ViewComponent
     protected CollectionLoader<Report> reportsDl;
     @ViewComponent
+    protected TypedTextField<String> codeFilter;
+    @ViewComponent
+    protected TypedTextField<String> nameFilter;
+    @ViewComponent
+    protected EntityComboBox<ReportGroup> groupFilter;
+    @ViewComponent
+    protected TypedDatePicker<Date> updatedDateFilter;
+    @ViewComponent
+    protected JmixSelect<ReportOutputType> outputTypeFilter;
+    @ViewComponent
     protected CollectionContainer<Report> reportsDc;
-
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -85,10 +92,8 @@ public class ReportListView extends StandardListView<Report> {
     @Autowired
     protected ReportsUtils reportsUtils;
     @Autowired
-    protected ReportsPersistence reports;
-    @Autowired
     protected Notifications notifications;
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
     @Autowired
     protected ReportDownloader downloader;
@@ -98,8 +103,6 @@ public class ReportListView extends StandardListView<Report> {
     protected UiProperties uiProperties;
     @Autowired
     protected CoreProperties coreProperties;
-    @Autowired
-    protected FetchPlanRepository fetchPlanRepository;
     @Autowired
     protected DialogWindows dialogWindows;
     @Autowired
@@ -112,10 +115,30 @@ public class ReportListView extends StandardListView<Report> {
     private Messages messages;
     @Autowired
     private EntityUuidGenerator entityUuidGenerator;
+    @Autowired
+    protected ReportRepository reportRepository;
+    @Autowired
+    protected GridSortHelper gridSortHelper;
+    @Autowired
+    protected OutputTypeHelper outputTypeHelper;
+    @Autowired
+    protected ReportGroupRepository reportGroupRepository;
 
     @Subscribe
     protected void onInit(InitEvent event) {
         initReportsDataGridCreate();
+        initOutputTypeList();
+
+        codeFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
+        nameFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
+        groupFilter.addValueChangeListener(e -> onFilterFieldValueChange());
+        updatedDateFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
+        outputTypeFilter.addValueChangeListener(e -> onFilterFieldValueChange());
+    }
+
+    protected void initOutputTypeList() {
+        List<ReportOutputType> supportedOutputTypes = outputTypeHelper.getSupportedOutputTypes();
+        outputTypeFilter.setItems(supportedOutputTypes);
     }
 
     private void initReportsDataGridCreate() {
@@ -130,32 +153,23 @@ public class ReportListView extends StandardListView<Report> {
     @Subscribe("reportsDataGrid.runReport")
     public void onReportsDataGridRunReport(ActionPerformedEvent event) {
         Report report = reportsDataGrid.getSingleSelectedItem();
-        report = reloadReport(report, fetchPlanRepository.findFetchPlan(metadata.getClass(Report.class), "report.edit"));
-        if (CollectionUtils.isNotEmpty(report.getInputParameters()) || inputParametersRequiredByTemplates(report)) {
-            DialogWindow<InputParametersDialog> parametersDialogWindow = dialogWindows.view(this, InputParametersDialog.class)
-                    .withAfterCloseListener(e -> reportsDataGrid.focus())
-                    .build();
+        if (report == null) {
+            return;
+        }
 
-            InputParametersDialog inputParametersDialog = parametersDialogWindow.getView();
-            inputParametersDialog.setReport(report);
-            inputParametersDialog.setInBackground(reportsClientProperties.getUseBackgroundReportProcessing());
-            parametersDialogWindow.open();
-        } else {
-            FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
-                    .withParams(Collections.emptyMap());
+        FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
+                .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
+        try {
             if (reportsClientProperties.getUseBackgroundReportProcessing()) {
                 fluentRunner.inBackground(this);
             }
-
-            try {
-                fluentRunner.runAndShow();
-            } catch (MissingDefaultTemplateException e) {
-                notifications.create(
-                                messages.getMessage("runningReportError.title"),
-                                messages.getMessage("missingDefaultTemplateError.description"))
-                        .withType(Notifications.Type.ERROR)
-                        .show();
-            }
+            fluentRunner.runAndShow();
+        } catch (MissingDefaultTemplateException e) {
+            notifications.create(
+                            messages.getMessage("runningReportError.title"),
+                            messages.getMessage("missingDefaultTemplateError.description"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
         }
     }
 
@@ -229,8 +243,27 @@ public class ReportListView extends StandardListView<Report> {
 
     @Install(to = "reportsDataGrid.copy", subject = "enabledRule")
     protected boolean reportsDataGridCopyEnabledRule() {
+        return isPermissionsToCreateReports() && isDatabaseReportSelected();
+    }
+
+    @Install(to = "reportsDataGrid.edit", subject = "enabledRule")
+    protected boolean reportsDataGridEditEnabledRule() {
+        return isDatabaseReportSelected();
+    }
+
+    @Install(to = "reportsDataGrid.remove", subject = "enabledRule")
+    protected boolean reportsDataGridRemoveEnabledRule() {
+        return isDatabaseReportSelected();
+    }
+
+    @Install(to = "reportsDataGrid.export", subject = "enabledRule")
+    protected boolean reportsDataGridExportEnabledRule() {
+        return isDatabaseReportSelected();
+    }
+
+    protected boolean isDatabaseReportSelected() {
         Report report = reportsDataGrid.getSingleSelectedItem();
-        return report != null && isPermissionsToCreateReports();
+        return report != null && report.getSource() == ReportSource.DATABASE;
     }
 
     @Subscribe("reportsDataGrid.wizard")
@@ -267,7 +300,7 @@ public class ReportListView extends StandardListView<Report> {
             copiedTemplate.setId(entityUuidGenerator.generate());
         }
 
-        reports.save(copiedReport);
+        reportRepository.save(copiedReport);
         return copiedReport;
     }
 
@@ -278,11 +311,43 @@ public class ReportListView extends StandardListView<Report> {
         return showScreenContext.isCreatePermitted();
     }
 
-    private Report reloadReport(Report report, FetchPlan fetchPlan) {
-        MetaClass metaClass = metadata.getClass(Report.class);
-        LoadContext<Report> loadContext = new LoadContext<>(metaClass);
-        loadContext.setId(report.getId());
-        loadContext.setFetchPlan(fetchPlan);
-        return dataManager.load(loadContext);
+    @Install(to = "reportsDl", target = Target.DATA_LOADER)
+    private List<Report> reportsDlLoadDelegate(final LoadContext<Report> loadContext) {
+        ReportFilter filter = createFilter();
+
+        Sort sort = gridSortHelper.convertSortOrders(
+                reportsDataGrid.getSortOrder(),
+                Map.of("name", ReportLoadContext.LOCALIZED_NAME_SORT_KEY) // custom cell renderer
+        );
+        ReportLoadContext context = new ReportLoadContext(filter, sort, loadContext.getQuery().getFirstResult(),
+                loadContext.getQuery().getMaxResults());
+        List<Report> items = reportRepository.loadList(context);
+        return items;
+    }
+
+    @Install(to = "pagination", subject = "totalCountDelegate")
+    private Integer paginationTotalCountDelegate(final DataLoadContext ignored) {
+        ReportFilter filter = createFilter();
+        return reportRepository.getTotalCount(filter);
+    }
+
+    protected ReportFilter createFilter() {
+        ReportFilter filter = new ReportFilter();
+        // ui filters
+        filter.setNameContains(nameFilter.getTypedValue());
+        filter.setCodeContains(codeFilter.getTypedValue());
+        filter.setGroup(groupFilter.getValue());
+        filter.setUpdatedAfter(updatedDateFilter.getTypedValue());
+        filter.setOutputType(outputTypeFilter.getValue());
+        return filter;
+    }
+
+    protected void onFilterFieldValueChange() {
+        reportsDl.load();
+    }
+
+    @Install(to = "reportGroupsDl", target = Target.DATA_LOADER)
+    protected List<ReportGroup> reportGroupsDlLoadDelegate(final LoadContext<ReportGroup> ignored) {
+        return reportGroupRepository.loadAll();
     }
 }

@@ -144,7 +144,7 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
             throw new AccessDeniedException("entity", metadata.getClass(ReportGroup.class).getName(), EntityOp.READ.getId());
         }
 
-        Preconditions.checkNotEmptyString(reportGroupCode,"Report group code should not be empty");
+        Preconditions.checkNotEmptyString(reportGroupCode, "Report group code should not be empty");
 
         for (ReportGroup group : annotatedReportGroupHolder.getAllGroups()) {
             if (group.getCode().equals(reportGroupCode)) {

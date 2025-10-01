@@ -17,13 +17,14 @@
 package io.jmix.search.searching;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
-import io.jmix.search.searching.impl.SearchFieldsAdapter;
 import io.jmix.search.utils.Constants;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
@@ -39,17 +40,15 @@ public class SearchUtils {
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
     protected final Metadata metadata;
-    protected final SearchFieldsAdapter searchFieldsAdapter;
 
     public SearchUtils(IndexConfigurationManager indexConfigurationManager,
                        SecureOperations secureOperations,
                        PolicyStore policyStore,
-                       Metadata metadata, SearchFieldsAdapter searchFieldsAdapter) {
+                       Metadata metadata) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
         this.metadata = metadata;
-        this.searchFieldsAdapter = searchFieldsAdapter;
     }
 
     public List<String> resolveEntitiesAllowedToSearch(Collection<String> requestedEntities) {
@@ -82,6 +81,7 @@ public class SearchUtils {
      * @param requestedEntities
      * @return
      */
+    //TODO
     @Deprecated
     public Set<String> resolveEffectiveSearchFields(Collection<String> requestedEntities) {
         List<String> allowedEntities = resolveEntitiesAllowedToSearch(requestedEntities);
@@ -96,10 +96,32 @@ public class SearchUtils {
                 String fieldName = entry.getKey();
                 MappingFieldDescriptor mappingFieldDescriptor = entry.getValue();
                 MetaPropertyPath metaPropertyPath = mappingFieldDescriptor.getMetaPropertyPath();
-                effectiveFieldsToSearch.addAll(searchFieldsAdapter.getFieldsForIndexByPath(metaPropertyPath, fieldName));
+                effectiveFieldsToSearch.addAll(getFieldsForIndexByPath(metaPropertyPath, fieldName));
             }
         }
         effectiveFieldsToSearch.add(Constants.INSTANCE_NAME_FIELD);
         return effectiveFieldsToSearch;
+    }
+
+    public Set<String> getFieldsForIndexByPath(MetaPropertyPath metaPropertyPath, String fieldName) {
+        if (isFileRefProperty(metaPropertyPath)) {
+            return Set.of(fieldName + "._file_name", fieldName + "._content");
+        } else if (isReferenceProperty(metaPropertyPath)) {
+            return Set.of(fieldName + "." + Constants.INSTANCE_NAME_FIELD);
+        }
+        return Set.of(fieldName);
+    }
+
+    protected boolean isFileRefProperty(MetaPropertyPath propertyPath) {
+        if (propertyPath.getRange().isDatatype()) {
+            Datatype<?> datatype = propertyPath.getRange().asDatatype();
+            return datatype instanceof FileRefDatatype;
+        } else {
+            return false;
+        }
+    }
+
+    protected boolean isReferenceProperty(MetaPropertyPath propertyPath) {
+        return propertyPath.getRange().isClass();
     }
 }

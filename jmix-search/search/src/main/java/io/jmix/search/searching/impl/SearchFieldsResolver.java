@@ -21,6 +21,7 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.ExtendedSearchConstants;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import io.jmix.search.searching.SearchUtils;
 import io.jmix.search.utils.Constants;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
@@ -40,13 +41,13 @@ public class SearchFieldsResolver {
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
-    protected final SearchFieldsAdapter searchFieldsAdapter;
+    protected final SearchUtils searchUtils;
 
-    public SearchFieldsResolver(IndexConfigurationManager indexConfigurationManager, SecureOperations secureOperations, PolicyStore policyStore, SearchFieldsAdapter searchFieldsAdapter) {
+    public SearchFieldsResolver(IndexConfigurationManager indexConfigurationManager, SecureOperations secureOperations, PolicyStore policyStore, SearchUtils searchUtils) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
-        this.searchFieldsAdapter = searchFieldsAdapter;
+        this.searchUtils = searchUtils;
     }
 
     /**
@@ -68,7 +69,7 @@ public class SearchFieldsResolver {
         for (Map.Entry<String, MappingFieldDescriptor> entry : fields.entrySet()) {
             MetaPropertyPath metaPropertyPath = entry.getValue().getMetaPropertyPath();
             if (secureOperations.isEntityAttrReadPermitted(metaPropertyPath, policyStore)) {
-                effectiveFieldsToSearch.addAll(searchFieldsAdapter.getFieldsForIndexByPath(metaPropertyPath, entry.getKey()));
+                effectiveFieldsToSearch.addAll(searchUtils.getFieldsForIndexByPath(metaPropertyPath, entry.getKey()));
             }
         }
         addRootInstanceField(effectiveFieldsToSearch);

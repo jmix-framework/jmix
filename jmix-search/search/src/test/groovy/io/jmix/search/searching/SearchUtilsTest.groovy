@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching.impl
+package io.jmix.search.searching
 
+import io.jmix.core.Metadata
 import io.jmix.core.metamodel.datatype.Datatype
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype
 import io.jmix.core.metamodel.model.MetaPropertyPath
 import io.jmix.core.metamodel.model.Range
+import io.jmix.search.index.mapping.IndexConfigurationManager
+import io.jmix.security.constraint.PolicyStore
+import io.jmix.security.constraint.SecureOperations
 import spock.lang.Specification
 
-class SearchFieldsAdapterTest extends Specification {
-    def "resolve index fields by property path"() {
+class SearchUtilsTest extends Specification {
+
+    def "GetFieldsForIndexByPath. Resolve index fields by property path"() {
 
         given:
-        SearchFieldsAdapter adapter = new SearchFieldsAdapter()
+        SearchUtils adapter = new SearchUtils(Mock(IndexConfigurationManager), Mock(SecureOperations), Mock(PolicyStore), Mock(Metadata))
 
         when:
         def metaPropertyPath = createMetaPropertyPath(isDatatype, dataType, isClass)
@@ -37,10 +42,10 @@ class SearchFieldsAdapterTest extends Specification {
 
         where:
         isDatatype | dataType              | isClass || expectedResult
-        true       | Mock(FileRefDatatype) | false || Set.of("fieldName._content", "fieldName._file_name")
+        true       | Mock(FileRefDatatype) | false   || Set.of("fieldName._content", "fieldName._file_name")
         false      | null                  | true    || Set.of("fieldName._instance_name")
         false      | null                  | false   || Set.of("fieldName")
-        true       | Mock(Datatype)        | false || Set.of("fieldName")
+        true       | Mock(Datatype)        | false   || Set.of("fieldName")
     }
 
     MetaPropertyPath createMetaPropertyPath(boolean isDatatype, Datatype<?> dataType, boolean isClass) {

@@ -69,7 +69,7 @@ public class SearchFieldsResolver {
         for (Map.Entry<String, MappingFieldDescriptor> entry : fields.entrySet()) {
             MetaPropertyPath metaPropertyPath = entry.getValue().getMetaPropertyPath();
             if (secureOperations.isEntityAttrReadPermitted(metaPropertyPath, policyStore)) {
-                effectiveFieldsToSearch.addAll(searchUtils.getFieldsForIndexByPath(metaPropertyPath, entry.getKey()));
+                effectiveFieldsToSearch.addAll(searchUtils.resolveSpecificFieldsForSingleField(metaPropertyPath, entry.getKey()));
             }
         }
         addRootInstanceField(effectiveFieldsToSearch);

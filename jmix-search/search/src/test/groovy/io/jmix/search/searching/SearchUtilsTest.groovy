@@ -35,7 +35,7 @@ class SearchUtilsTest extends Specification {
 
         when:
         def metaPropertyPath = createMetaPropertyPath(isDatatype, dataType, isClass)
-        def actualResult = adapter.getFieldsForIndexByPath(metaPropertyPath, "fieldName")
+        def actualResult = adapter.resolveSpecificFieldsForSingleField(metaPropertyPath, "fieldName")
 
         then:
         actualResult == expectedResult

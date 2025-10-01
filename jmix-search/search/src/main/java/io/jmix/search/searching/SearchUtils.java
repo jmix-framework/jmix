@@ -96,14 +96,14 @@ public class SearchUtils {
                 String fieldName = entry.getKey();
                 MappingFieldDescriptor mappingFieldDescriptor = entry.getValue();
                 MetaPropertyPath metaPropertyPath = mappingFieldDescriptor.getMetaPropertyPath();
-                effectiveFieldsToSearch.addAll(getFieldsForIndexByPath(metaPropertyPath, fieldName));
+                effectiveFieldsToSearch.addAll(resolveSpecificFieldsForSingleField(metaPropertyPath, fieldName));
             }
         }
         effectiveFieldsToSearch.add(Constants.INSTANCE_NAME_FIELD);
         return effectiveFieldsToSearch;
     }
 
-    public Set<String> getFieldsForIndexByPath(MetaPropertyPath metaPropertyPath, String fieldName) {
+    public Set<String> resolveSpecificFieldsForSingleField(MetaPropertyPath metaPropertyPath, String fieldName) {
         if (isFileRefProperty(metaPropertyPath)) {
             return Set.of(fieldName + "._file_name", fieldName + "._content");
         } else if (isReferenceProperty(metaPropertyPath)) {

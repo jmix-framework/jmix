@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class SearchFieldsResolver {
 
     public static final Function<String, Set<String>> GETTING_FIELD_WITH_SUBFIELD_WITH_PREFIXES =
-            fieldName -> Set.of(fieldName, fieldName + "." + ExtendedSearchConstants.PREFIX_SUBFIELD_NAME);
+            fieldName -> Set.of(fieldName + "." + ExtendedSearchConstants.PREFIX_SUBFIELD_NAME);
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
@@ -76,10 +76,22 @@ public class SearchFieldsResolver {
         return effectiveFieldsToSearch;
     }
 
-    public Set<String> resolveFieldsWithSubfields(IndexConfiguration indexConfiguration, Function<String, Set<String>> fieldByFieldNameResolver) {
+    /**
+     * TODO
+     *
+     * @param indexConfiguration
+     * @param subfieldsResolver
+     * @return
+     */
+    public Set<String> resolveFieldsWithSubfields(IndexConfiguration indexConfiguration, Function<String, Set<String>> subfieldsResolver) {
         return resolveFields(indexConfiguration)
                 .stream()
-                .map(fieldByFieldNameResolver)
+                .map(fieldName -> {
+                    HashSet<String> fieldNames = new HashSet<>();
+                    fieldNames.add(fieldName);
+                    fieldNames.addAll(subfieldsResolver.apply(fieldName));
+                    return fieldNames;
+                })
                 .flatMap(Set::stream)
                 .collect(Collectors.toSet());
     }

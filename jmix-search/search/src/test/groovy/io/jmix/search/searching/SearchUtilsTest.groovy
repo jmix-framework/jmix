@@ -28,14 +28,14 @@ import spock.lang.Specification
 
 class SearchUtilsTest extends Specification {
 
-    def "GetFieldsForIndexByPath. Resolve index fields by property path"() {
+    def "GetTypeSpecificFieldsForSubstitution. Resolve index fields by property path"() {
 
         given:
         SearchUtils adapter = new SearchUtils(Mock(IndexConfigurationManager), Mock(SecureOperations), Mock(PolicyStore), Mock(Metadata))
 
         when:
         def metaPropertyPath = createMetaPropertyPath(isDatatype, dataType, isClass)
-        def actualResult = adapter.resolveSpecificFieldsForSingleField(metaPropertyPath, "fieldName")
+        def actualResult = adapter.getTypeSpecificFieldsForSubstitution(metaPropertyPath, "fieldName")
 
         then:
         actualResult == expectedResult

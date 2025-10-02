@@ -1,6 +1,22 @@
 <%
-        def dlId="${entity.uncapitalizedClassName}Dl"
-        %>
+def dlId="${entity.uncapitalizedClassName}Dl"
+
+private String getRepositoryIdFqn() {
+    try {
+        return repository.getIdFqn()
+    } catch(Exception e) {
+        return "java.util.UUID"
+    }
+}
+
+private String getRepositoryIdClassName() {
+    try {
+        return repository.getIdClassName()
+    } catch(Exception e) {
+        return "UUID"
+    }
+}
+%>
 package ${packageName};
 
 import ${entity.fqn};
@@ -17,8 +33,11 @@ import io.jmix.core.SaveContext;
 import io.jmix.core.FetchPlan;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ${repository.getQualifiedName()};
+
 import java.util.Optional;
 import java.util.Set;
+import ${getRepositoryIdFqn()};
 
 import static io.jmix.core.repository.JmixDataRepositoryUtils.*;
 <%}%>
@@ -34,7 +53,7 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
     private ${repository.getQualifiedName()} repository;
 
     @Install(to = "${dlId}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
-    private Optional<${entity.className}> loadDelegate(java.util.UUID id, FetchPlan fetchPlan){
+    private Optional<${entity.className}> loadDelegate(${getRepositoryIdClassName()} id, FetchPlan fetchPlan){
         return repository.findById(id, fetchPlan);
     }
 

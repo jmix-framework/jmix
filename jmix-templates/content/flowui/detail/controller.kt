@@ -1,6 +1,22 @@
 <%
-        def dlId="${entity.uncapitalizedClassName}Dl"
-        %>
+    def dlId="${entity.uncapitalizedClassName}Dl"
+
+    private String getRepositoryIdFqn() {
+        try {
+            return repository.getIdFqn()
+        } catch(Exception e) {
+            return "java.util.UUID"
+        }
+    }
+
+    private String getRepositoryIdClassName() {
+        try {
+            return repository.getIdClassName()
+        } catch(Exception e) {
+            return "UUID"
+        }
+    }
+%>
 package ${packageName}
 
 import ${entity.fqn}<%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%>
@@ -14,7 +30,7 @@ import io.jmix.core.FetchPlan
 import io.jmix.flowui.view.Target
 import ${repository.getQualifiedName()}
 import java.util.Optional
-import java.util.UUID
+import ${getRepositoryIdFqn()}
 <%}%>
 <%if (classComment) {%>
 ${classComment}
@@ -25,7 +41,7 @@ ${classComment}
 class ${detailControllerName}<%if (useDataRepositories){%>(private val repository: ${repository.getName()})<%}%> : StandardDetailView<${entity.className}>() {<%if (useDataRepositories){%>
 
     @Install(to = "${dlId}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
-    private fun loadDelegate(id: UUID, fetchPlan: FetchPlan): Optional<${entity.className}> {
+    private fun loadDelegate(id: ${getRepositoryIdClassName()}, fetchPlan: FetchPlan): Optional<${entity.className}> {
         return repository.findById(id, fetchPlan)
     }
 

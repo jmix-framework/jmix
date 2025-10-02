@@ -133,6 +133,23 @@
         <Method name="valueBindingChanged"/>
     </Match>
 
+    <!-- GroupGrid add-on -->
+
+    <Match>
+        <Bug pattern="SE_NO_SERIALVERSIONID">
+            <Class name="io.jmix.groupgridflowui.kit.vaadin.grid.CellFocusEvent"/>
+            <Class name="io.jmix.groupgridflowui.kit.vaadin.grid.contextmenu.GridContextMenu$GridContextMenuItemClickEvent"/>
+            <Class name="io.jmix.groupgridflowui.kit.vaadin.grid.contextmenu.GridContextMenu$GridContextMenuOpenedEvent"/>
+        </Bug>
+    </Match>
+
+    <Match>
+        <Bug pattern="DCN_NULLPOINTER_EXCEPTION">
+            <Class name="io.jmix.groupgridflowui.kit.vaadin.grid.Grid"/>
+            <Method name="applyValueProvider"/>
+        </Bug>
+    </Match>
+
     <!-- Ignored problems in classes -->
 
     <Match>

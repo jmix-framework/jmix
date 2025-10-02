@@ -113,6 +113,10 @@ dependencies {
         api "io.jmix.businesscalendar:jmix-businesscalendar-flowui:$premiumVersion"
         api "io.jmix.businesscalendar:jmix-businesscalendar-flowui-starter:$premiumVersion"
 
+        api "io.jmix.groupgrid:jmix-groupgrid-flowui:$premiumVersion"
+        api "io.jmix.groupgrid:jmix-groupgrid-flowui-kit:$premiumVersion"
+        api "io.jmix.groupgrid:jmix-groupgrid-flowui-starter:$premiumVersion"
+
         api "io.jmix.kanban:jmix-kanban-flowui:$premiumVersion"
         api "io.jmix.kanban:jmix-kanban-flowui-kit:$premiumVersion"
         api "io.jmix.kanban:jmix-kanban-flowui-starter:$premiumVersion"

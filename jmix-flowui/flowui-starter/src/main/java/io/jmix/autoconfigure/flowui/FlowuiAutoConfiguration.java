@@ -19,6 +19,9 @@ package io.jmix.autoconfigure.flowui;
 import io.jmix.core.*;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.*;
+import io.jmix.flowui.component.groupgrid.adapter.DefaultGroupDataGridAdapterFactory;
+import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
+import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterProvider;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
@@ -181,5 +184,12 @@ public class FlowuiAutoConfiguration {
     @ConditionalOnMissingBean
     public ViewAttributes viewAttributes(String viewId) {
         return new ViewAttributes(viewId);
+    }
+
+    @Bean("flowui_GroupDataGridAdapterFactory")
+    @ConditionalOnMissingBean
+    public GroupDataGridAdapterFactory groupDataGridAdapterFactory(@Autowired(required = false)
+                                                                   List<GroupDataGridAdapterProvider> providers) {
+        return new DefaultGroupDataGridAdapterFactory(providers);
     }
 }

@@ -37,6 +37,10 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
+import io.jmix.flowui.component.groupgrid.*;
+import io.jmix.flowui.component.groupgrid.adapter.AbstractGroupDataGridAdapter;
+import io.jmix.flowui.component.groupgrid.adapter.AbstractGroupDataGridColumnAdapter;
+import io.jmix.flowui.component.groupgrid.data.GroupDataGridItems;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
@@ -158,7 +162,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             createFonts();
             createFormats();
 
-            List<Grid.Column<Object>> columns = getColumns(dataGrid, columnFilter);
+            List<Grid.Column<Object>> columns = getColumns(dataGrid, columnFilter, exportMode);
 
             int r = 0;
 
@@ -170,7 +174,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             CellStyle headerCellStyle = wb.createCellStyle();
             headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
             for (DataGrid.Column<?> column : columns) {
-                String columnHeaderText = getColumnHeaderText(column);
+                String columnHeaderText = getColumnHeaderText(dataGrid, column);
 
                 int countOfReturnSymbols = StringUtils.countMatches(columnHeaderText, "\n");
                 if (countOfReturnSymbols > 0) {
@@ -182,7 +186,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
             for (int c = 0; c < columns.size(); c++) {
                 DataGrid.Column<?> column = columns.get(c);
-                String columnHeaderText = getColumnHeaderText(column);
+                String columnHeaderText = getColumnHeaderText(dataGrid, column);
 
                 Cell cell = row.createCell(c);
                 RichTextString richTextString = createStringCellValue(columnHeaderText);
@@ -231,6 +235,16 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
                         r = createDataGridHierarchicalRow(treeDataGrid, ((ContainerTreeDataGridItems) dataGridSource),
                                 columns, 0, r, item);
+                    }
+                } else if (dataGrid instanceof AbstractGroupDataGridAdapter<Object> groupDataGrid
+                        && groupDataGrid.hasGroups()) {
+
+                    for (GroupInfo item : groupDataGrid.getRootGroups()) {
+                        if (checkIsRowNumberExceed(r)) {
+                            break;
+                        }
+
+                        r = createDataGridGroupRow(groupDataGrid, columns, 0, ++r, item);
                     }
                 } else {
                     for (Object itemId : dataGridSource.getContainer().getItems().stream()
@@ -290,6 +304,31 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         } finally {
             disposeWorkBook();
         }
+    }
+
+    protected String getColumnHeaderText(Grid<Object> dataGrid, DataGrid.Column<?> column) {
+        if (dataGrid instanceof AbstractGroupDataGridAdapter<Object> gridAdapter) {
+            // Grouping column is not attached to the Grid,
+            // so we should retrieve the last specified header.
+            if (gridAdapter.getGroupingColumns().contains(column)
+                    && column instanceof AbstractGroupDataGridColumnAdapter<?> columnAdapter) {
+                String headerText = columnAdapter.getStoredHeaderText();
+                if (!Strings.isNullOrEmpty(headerText)) {
+                    return headerText;
+                }
+
+                com.vaadin.flow.component.Component headerComponent = columnAdapter.getStoredHeaderComponent();
+
+                if (headerComponent instanceof HasText hasText) {
+                    headerText = hasText.getText();
+                } else if (headerComponent instanceof DataGridHeaderFilter dataGridHeaderFilter
+                        && dataGridHeaderFilter.getHeader() instanceof HasText hasText) {
+                    headerText = hasText.getText();
+                }
+                return Strings.nullToEmpty(headerText);
+            }
+        }
+        return getColumnHeaderText(column);
     }
 
     protected String getColumnHeaderText(DataGrid.Column<?> column) {
@@ -356,6 +395,90 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             for (Object child : children) {
                 rowNumber = createDataGridHierarchicalRow(dataGrid, treeDataGridItems, columns, startColumn, rowNumber, child);
             }
+        }
+
+        return rowNumber;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected int createDataGridGroupRow(AbstractGroupDataGridAdapter<Object> groupDataGrid,
+                                         List<Grid.Column<Object>> columns,
+                                         int startColumn, int rowNumber, GroupInfo groupInfo) {
+        GroupDataGridItems<?> groupDataGridItems = groupDataGrid.getItems();
+        if (groupDataGridItems == null) {
+            return rowNumber;
+        }
+
+        Row row = sheet.createRow(rowNumber);
+
+        for (int col = 0; col < columns.size(); ++col) {
+            Grid.Column<Object> column = columns.get(col);
+            if (!groupDataGrid.isGroupColumn(column)) {
+                continue;
+            }
+
+            Cell cell = row.createCell(col);
+            Object val = groupInfo.getValue();
+
+            Collection<?> children = groupDataGridItems.getChildItems(groupInfo);
+            if (children.isEmpty()) {
+                return rowNumber;
+            }
+
+            Integer groupChildCount = null;
+            Object captionValue = val;
+            com.vaadin.flow.component.Component adapteeColumn =
+                    ((AbstractGroupDataGridColumnAdapter) column).getAdaptee();
+
+            if (adapteeColumn instanceof GroupColumn<?> groupColumn) {
+                if (groupColumn.isDisplayItemsCount()) {
+                    groupChildCount = children.size();
+                }
+                if (groupColumn.getGroupCellValueFormatter() != null) {
+                    // disable separate "(N)" printing
+                    groupChildCount = null;
+
+                    GroupCellValueFormatter<?> groupCellValueFormatter = groupColumn.getGroupCellValueFormatter();
+
+                    Collection<?> groupItems = groupDataGridItems.getGroupItems(groupInfo);
+
+                    GroupCellValueFormatter.GroupCellContext<?> cellContext =
+                            new GroupCellValueFormatter.GroupCellContext<>(groupInfo, groupItems);
+
+                    captionValue = groupCellValueFormatter.format((GroupCellValueFormatter.GroupCellContext) cellContext);
+                }
+            }
+
+            int level = 0;
+            GroupInfo groupParent = groupInfo.getParent();
+            while (groupParent != null) {
+                groupParent = groupParent.getParent();
+                level++;
+            }
+
+            Object property = groupInfo.getProperty().get();
+            MetaPropertyPath mpp = property instanceof MetaPropertyPath ? (MetaPropertyPath) property : null;
+
+            formatValueCell(cell, captionValue, mpp, col, rowNumber, level, groupChildCount);
+        }
+
+        int oldRowNumber = rowNumber;
+        List<GroupInfo> children = groupDataGrid.getChildren(groupInfo);
+        if (!children.isEmpty()) {
+            for (GroupInfo child : children) {
+                rowNumber = createDataGridGroupRow(groupDataGrid, columns, startColumn, ++rowNumber, child);
+            }
+        } else {
+            Collection<?> items = groupDataGridItems.getGroupItems(groupInfo);
+            for (Object item : items) {
+                createDataGridRow(groupDataGrid, columns, startColumn, ++rowNumber, Id.of(item).getValue());
+            }
+        }
+
+        if (checkIsRowNumberExceed(rowNumber)) {
+            sheet.groupRow(oldRowNumber + 1, MAX_ROW_COUNT);
+        } else {
+            sheet.groupRow(oldRowNumber + 1, rowNumber);
         }
 
         return rowNumber;
@@ -740,6 +863,20 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         }
     }
 
+    protected List<Grid.Column<Object>> getColumns(Grid<Object> grid,
+                                                   Predicate<Grid.Column<Object>> columnFilter,
+                                                   ExportMode exportMode) {
+        if (exportMode != ExportMode.CURRENT_PAGE
+                && grid instanceof AbstractGroupDataGridAdapter<Object> groupDataGrid) {
+            List<Grid.Column<Object>> columns = grid.getColumns().stream()
+                    .filter(columnFilter)
+                    .toList();
+
+            return getColumnsIncludingGrouping(groupDataGrid, getOrderedColumns(grid), columns);
+        }
+        return getColumns(grid, columnFilter);
+    }
+
     protected List<Grid.Column<Object>> getColumns(Grid<Object> grid, Predicate<Grid.Column<Object>> columnFilter) {
         List<Grid.Column<Object>> columns = grid.getColumns().stream()
                 .filter(columnFilter)
@@ -753,6 +890,30 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         return allColumns.stream()
                 .filter(columns::contains)
                 .toList();
+    }
+
+    protected List<Grid.Column<Object>> getColumnsIncludingGrouping(AbstractGroupDataGridAdapter<Object> groupDataGrid,
+                                                                    List<Grid.Column<Object>> allColumns,
+                                                                    List<Grid.Column<Object>> columns) {
+        List<Grid.Column<Object>> columnsToExport = allColumns.stream()
+                .filter(columns::contains)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // Include grouping columns instead of group column
+        int groupIndex = 0;
+        Grid.Column<?> groupColumn = null;
+        for (int i = 0; i < columnsToExport.size(); i++) {
+            Grid.Column<Object> column = columnsToExport.get(i);
+            if (groupDataGrid.isGroupColumn(column)) {
+                groupIndex = i;
+                groupColumn = column;
+                break;
+            }
+        }
+        Collection<Grid.Column<Object>> groupingColumns = groupDataGrid.getGroupingColumns();
+        columnsToExport.addAll(groupIndex, groupingColumns);
+        columnsToExport.remove(groupColumn);
+        return Collections.unmodifiableList(columnsToExport);
     }
 
     /**

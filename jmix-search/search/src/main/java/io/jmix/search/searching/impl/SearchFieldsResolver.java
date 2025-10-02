@@ -33,7 +33,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component
+@Component("search_SearchFieldsResolver")
 public class SearchFieldsResolver {
 
     public static final Function<String, Set<String>> GETTING_FIELD_WITH_SUBFIELD_WITH_PREFIXES =

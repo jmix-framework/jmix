@@ -95,15 +95,11 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
 
         ElasticsearchSearchStrategy searchStrategy = resolveSearchStrategy(searchStrategyName);
         SearchResultImpl searchResult = initSearchResult(searchContext, searchStrategy);
-        List<String> targetIndexes = searchUtils.resolveEffectiveTargetIndexes(searchContext.getEntities());
-        if (targetIndexes.isEmpty()) {
-            return searchResult;
-        }
 
         boolean moreDataAvailable;
         do {
             RequestContext<SearchRequest.Builder> requestContext = createRequest(
-                    searchContext, targetIndexes, searchStrategy, searchResult.getEffectiveOffset()
+                    searchContext, searchStrategy, searchResult.getEffectiveOffset()
             );
 
             if(!requestContext.isRequestPossible()){
@@ -139,6 +135,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
         return new SearchResultImpl(searchContext, searchStrategy.getName());
     }
 
+    //TODO @Deprecated???
     protected List<String> resolveTargetIndexes(SearchContext searchContext) {
         Collection<String> requestedEntities = searchContext.getEntities();
         if (requestedEntities.isEmpty()) {
@@ -160,14 +157,15 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
     }
 
     protected RequestContext<SearchRequest.Builder> createRequest(SearchContext searchContext,
-                                                                  List<String> targetIndexes,
                                                                   ElasticsearchSearchStrategy searchStrategy,
                                                                   int offset) {
         SearchRequest.Builder builder = new SearchRequest.Builder();
         RequestContext<SearchRequest.Builder> requestContext = new RequestContext<>(builder, searchContext);
-        initRequest(builder, targetIndexes);
         searchStrategy.configureRequest(requestContext);
-        applyPostStrategyRequestSettings(builder, searchContext, offset);
+        if(requestContext.isRequestPossible()){
+            initRequest(builder, new ArrayList<>(requestContext.getEffectiveIndexNames()));
+            applyPostStrategyRequestSettings(builder, searchContext, offset);
+        }
         return requestContext;
     }
 

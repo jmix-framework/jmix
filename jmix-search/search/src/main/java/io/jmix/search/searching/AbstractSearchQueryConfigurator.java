@@ -55,6 +55,7 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
             requestContext.setProcessingResult(NO_AVAILABLE_ENTITIES_FOR_SEARCHING);
             return;
         }
+        requestContext.setIndexesWithFields(indexNamesWithFields);
         processEntitiesWithFields(requestContext, targetQueryBuilder, indexNamesWithFields);
     }
 

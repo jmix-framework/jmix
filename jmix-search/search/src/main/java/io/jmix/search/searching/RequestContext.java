@@ -16,6 +16,9 @@
 
 package io.jmix.search.searching;
 
+import java.util.Map;
+import java.util.Set;
+
 import static io.jmix.search.searching.SearchContextProcessingResult.REQUEST_IS_POSSIBLE;
 
 /**
@@ -26,6 +29,7 @@ public class RequestContext<T> {
     protected final T requestBuilder;
     protected SearchContextProcessingResult searchContextProcessingResult = REQUEST_IS_POSSIBLE;
     protected SearchContext searchContext;
+    protected Map<String, Set<String>> effectiveIndexNamesWithFields;
 
     public RequestContext(T requestBuilder, SearchContext searchContext) {
         this.requestBuilder = requestBuilder;
@@ -50,5 +54,17 @@ public class RequestContext<T> {
 
     public boolean isRequestPossible(){
         return searchContextProcessingResult == REQUEST_IS_POSSIBLE;
+    }
+
+    public void setIndexesWithFields(Map<String, Set<String>> indexNamesWithFields) {
+        this.effectiveIndexNamesWithFields = indexNamesWithFields;
+    }
+
+    public Map<String, Set<String>> getEffectiveIndexNamesWithFields() {
+        return effectiveIndexNamesWithFields;
+    }
+
+    public Set<String> getEffectiveIndexNames() {
+        return effectiveIndexNamesWithFields.keySet();
     }
 }

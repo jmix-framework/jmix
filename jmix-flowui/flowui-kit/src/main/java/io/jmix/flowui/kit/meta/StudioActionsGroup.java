@@ -78,6 +78,11 @@ public @interface StudioActionsGroup {
     String[] unsupportedTarget() default {};
 
     /**
+     * Specifies the information about actions that are excluded from a given action group.
+     */
+    StudioExcludedElementsInfo excludedElementsInfo() default @StudioExcludedElementsInfo;
+
+    /**
      * @see StudioComponent#properties
      */
     StudioProperty[] properties() default {};

@@ -78,6 +78,11 @@ public @interface StudioElementsGroup {
     String[] unsupportedTarget() default {};
 
     /**
+     * Specifies the information about elements that are excluded from a given elements group.
+     */
+    StudioExcludedElementsInfo excludedElementsInfo() default @StudioExcludedElementsInfo;
+
+    /**
      * Specifies that group should be visible in Studio preview.
      */
     boolean visible() default false;

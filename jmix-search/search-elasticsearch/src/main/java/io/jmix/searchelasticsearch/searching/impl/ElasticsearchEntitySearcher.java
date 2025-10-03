@@ -163,7 +163,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
         RequestContext<SearchRequest.Builder> requestContext = new RequestContext<>(builder, searchContext);
         searchStrategy.configureRequest(requestContext);
         if(requestContext.isRequestPossible()){
-            initRequest(builder, new ArrayList<>(requestContext.getEffectiveIndexNames()));
+            initRequest(builder, new ArrayList<>(requestContext.getEffectiveIndexes()));
             applyPostStrategyRequestSettings(builder, searchContext, offset);
         }
         return requestContext;

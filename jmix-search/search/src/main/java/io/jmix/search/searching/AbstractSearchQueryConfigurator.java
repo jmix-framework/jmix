@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static io.jmix.search.searching.SearchContextProcessingResult.NO_AVAILABLE_ENTITIES_FOR_SEARCHING;
 import static java.util.Collections.emptyMap;
 
 /**
@@ -52,11 +51,11 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
         List<String> requestedEntities = requestContext.getSearchContext().getEntities();
         Map<String, Set<String>> indexNamesWithFields = getIndexNamesWithFields(requestedEntities, fieldResolving);
         if (indexNamesWithFields.isEmpty()){
-            requestContext.setProcessingResult(NO_AVAILABLE_ENTITIES_FOR_SEARCHING);
+            requestContext.setEmptyResult();
             return;
         }
-        requestContext.setIndexesWithFields(indexNamesWithFields);
         processEntitiesWithFields(requestContext, targetQueryBuilder, indexNamesWithFields);
+        requestContext.setPositiveResult(indexNamesWithFields);
     }
 
     protected abstract void processEntitiesWithFields(

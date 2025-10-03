@@ -19,15 +19,14 @@ package io.jmix.search.searching;
 import java.util.Map;
 import java.util.Set;
 
-import static io.jmix.search.searching.SearchContextProcessingResult.REQUEST_IS_POSSIBLE;
+import static io.jmix.search.searching.SearchContextProcessingResult.*;
 
 /**
- *
  * @param <T>
  */
 public class RequestContext<T> {
     protected final T requestBuilder;
-    protected SearchContextProcessingResult searchContextProcessingResult = REQUEST_IS_POSSIBLE;
+    protected SearchContextProcessingResult requestPreparingState = INITIAL_STATE;
     protected SearchContext searchContext;
     protected Map<String, Set<String>> effectiveIndexNamesWithFields;
 
@@ -37,34 +36,59 @@ public class RequestContext<T> {
     }
 
     public T getRequestBuilder() {
-        return requestBuilder;
+        if (requestPreparingState == REQUEST_IS_POSSIBLE || requestPreparingState == INITIAL_STATE) {
+            return requestBuilder;
+        }
+        throw noEntitiesForSearchingException();
     }
 
-    public void setProcessingResult(SearchContextProcessingResult searchContextProcessingResult) {
-        this.searchContextProcessingResult = searchContextProcessingResult;
+    public void setEmptyResult() {
+        this.requestPreparingState = NO_AVAILABLE_ENTITIES_FOR_SEARCHING;
     }
 
     public SearchContextProcessingResult getProcessingResult() {
-        return searchContextProcessingResult;
+        return requestPreparingState;
     }
 
     public SearchContext getSearchContext() {
         return searchContext;
     }
 
-    public boolean isRequestPossible(){
-        return searchContextProcessingResult == REQUEST_IS_POSSIBLE;
+    public boolean isRequestPossible() {
+        return requestPreparingState == REQUEST_IS_POSSIBLE;
     }
 
-    public void setIndexesWithFields(Map<String, Set<String>> indexNamesWithFields) {
+    public void setPositiveResult(Map<String, Set<String>> indexNamesWithFields) {
         this.effectiveIndexNamesWithFields = indexNamesWithFields;
+        requestPreparingState = REQUEST_IS_POSSIBLE;
     }
 
-    public Map<String, Set<String>> getEffectiveIndexNamesWithFields() {
+    public Map<String, Set<String>> getEffectiveIndexesWithFields() {
+        if (requestPreparingState == INITIAL_STATE) {
+            throw requestPreparingIsNotFinishedException();
+        }
+        if (requestPreparingState == NO_AVAILABLE_ENTITIES_FOR_SEARCHING) {
+            throw noEntitiesForSearchingException();
+        }
         return effectiveIndexNamesWithFields;
     }
 
-    public Set<String> getEffectiveIndexNames() {
+    public Set<String> getEffectiveIndexes() {
+        if (requestPreparingState == INITIAL_STATE) {
+            throw requestPreparingIsNotFinishedException();
+        }
+        if (requestPreparingState == NO_AVAILABLE_ENTITIES_FOR_SEARCHING) {
+            throw noEntitiesForSearchingException();
+        }
         return effectiveIndexNamesWithFields.keySet();
     }
+
+    private static IllegalStateException requestPreparingIsNotFinishedException() {
+        return new IllegalStateException("Request preparing is not finished.");
+    }
+
+    private static IllegalStateException noEntitiesForSearchingException() {
+        return new IllegalStateException("No entities for searching.");
+    }
+
 }

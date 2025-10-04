@@ -18,15 +18,15 @@ package io.jmix.searchopensearch.searching.strategy.impl;
 
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
-import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import org.opensearch.client.opensearch.core.SearchRequest;
 
 public abstract class AbstractOpenSearchStrategy
         extends AbstractSearchStrategy<SearchRequest.Builder, OpenSearchQueryConfigurator>
         implements OpenSearchSearchStrategy {
-    protected AbstractOpenSearchStrategy(SearchFieldsResolver searchFieldsResolver, OpenSearchQueryConfigurator queryConfigurator) {
-        super(searchFieldsResolver, queryConfigurator);
+
+    protected AbstractOpenSearchStrategy(OpenSearchQueryConfigurator queryConfigurator) {
+        super(queryConfigurator);
     }
 
     @Override

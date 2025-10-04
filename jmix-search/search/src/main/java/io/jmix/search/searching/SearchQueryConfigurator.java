@@ -16,8 +16,6 @@
 
 package io.jmix.search.searching;
 
-import io.jmix.search.index.IndexConfiguration;
-
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -25,7 +23,10 @@ import java.util.function.Function;
 public interface SearchQueryConfigurator<SRB, QB, OB> {
 
     void configureRequest(RequestContext<SRB> requestContext,
-                          Function<IndexConfiguration, Set<String>> fieldResolving,
+                          TargetQueryBuilder<QB, OB> targetQueryBuilder);
+
+    void configureRequest(RequestContext<SRB> requestContext,
+                          Function<String, Set<String>> subfieldsGenerator,
                           TargetQueryBuilder<QB, OB> targetQueryBuilder);
 
     interface TargetQueryBuilder<QB, OB> {

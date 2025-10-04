@@ -19,14 +19,14 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
-import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 
 public abstract class AbstractElasticSearchStrategy
         extends AbstractSearchStrategy<SearchRequest.Builder, ElasticSearchQueryConfigurator>
         implements ElasticsearchSearchStrategy {
-    protected AbstractElasticSearchStrategy(SearchFieldsResolver searchFieldsResolver, ElasticSearchQueryConfigurator queryConfigurator) {
-        super(searchFieldsResolver, queryConfigurator);
+
+    protected AbstractElasticSearchStrategy(ElasticSearchQueryConfigurator queryConfigurator) {
+        super(queryConfigurator);
     }
 
     @Override

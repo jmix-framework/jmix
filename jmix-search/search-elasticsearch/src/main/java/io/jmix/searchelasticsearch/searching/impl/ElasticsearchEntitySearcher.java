@@ -102,7 +102,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
                     searchContext, searchStrategy, searchResult.getEffectiveOffset()
             );
 
-            if(!requestContext.isRequestPossible()){
+            if (!requestContext.isRequestPossible()) {
                 return searchResult;
             }
             SearchRequest searchRequest = requestContext.getRequestBuilder().build();
@@ -135,7 +135,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
         return new SearchResultImpl(searchContext, searchStrategy.getName());
     }
 
-    //TODO @Deprecated???
+    @Deprecated(since = "2.7", forRemoval = true)
     protected List<String> resolveTargetIndexes(SearchContext searchContext) {
         Collection<String> requestedEntities = searchContext.getEntities();
         if (requestedEntities.isEmpty()) {
@@ -162,7 +162,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
         SearchRequest.Builder builder = new SearchRequest.Builder();
         RequestContext<SearchRequest.Builder> requestContext = new RequestContext<>(builder, searchContext);
         searchStrategy.configureRequest(requestContext);
-        if(requestContext.isRequestPossible()){
+        if (requestContext.isRequestPossible()) {
             initRequest(builder, new ArrayList<>(requestContext.getEffectiveIndexes()));
             applyPostStrategyRequestSettings(builder, searchContext, offset);
         }

@@ -2,7 +2,6 @@ package io.jmix.searchopensearch.searching.strategy.impl;
 
 import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import org.opensearch.client.opensearch._types.query_dsl.TextQueryType;
 import org.opensearch.client.opensearch.core.SearchRequest;
@@ -15,8 +14,8 @@ import org.springframework.stereotype.Component;
 @Component("search_PhraseOpenSearchSearchStrategy")
 public class PhraseOpenSearchSearchStrategy extends AbstractOpenSearchStrategy implements OpenSearchSearchStrategy {
 
-    protected PhraseOpenSearchSearchStrategy(SearchFieldsResolver searchFieldsResolver, OpenSearchQueryConfigurator queryConfigurator) {
-        super(searchFieldsResolver, queryConfigurator);
+    protected PhraseOpenSearchSearchStrategy(OpenSearchQueryConfigurator queryConfigurator) {
+        super(queryConfigurator);
     }
 
     @Override
@@ -25,10 +24,9 @@ public class PhraseOpenSearchSearchStrategy extends AbstractOpenSearchStrategy i
     }
 
     @Override
-    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext)  {
+    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                searchFieldsResolver::resolveFields,
                 (queryBuilder, fields) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
                                 multiMatchQueryBuilder.fields(fields)

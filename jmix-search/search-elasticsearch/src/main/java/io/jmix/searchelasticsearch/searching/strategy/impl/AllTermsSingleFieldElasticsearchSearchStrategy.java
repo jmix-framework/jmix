@@ -20,12 +20,8 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * Describes {@link SearchStrategy} that searches documents with at least one field matches all input terms in any order.
@@ -36,8 +32,8 @@ import java.util.Set;
 public class AllTermsSingleFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy
         implements ElasticsearchSearchStrategy {
 
-    protected AllTermsSingleFieldElasticsearchSearchStrategy(SearchFieldsResolver searchFieldsResolver, ElasticSearchQueryConfigurator queryConfigurator) {
-        super(searchFieldsResolver, queryConfigurator);
+    protected AllTermsSingleFieldElasticsearchSearchStrategy(ElasticSearchQueryConfigurator queryConfigurator) {
+        super(queryConfigurator);
     }
 
     @Override
@@ -49,7 +45,6 @@ public class AllTermsSingleFieldElasticsearchSearchStrategy extends AbstractElas
     public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                searchFieldsResolver::resolveFields,
                 (queryBuilder, fields) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
                                 multiMatchQueryBuilder.fields(fields)

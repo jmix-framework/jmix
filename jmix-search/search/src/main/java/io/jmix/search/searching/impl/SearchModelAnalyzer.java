@@ -1,0 +1,79 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.search.searching.impl;
+
+import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.searching.SearchUtils;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyMap;
+
+/**
+ * TODO
+ */
+@Component("search_SearchModelAnalyzer")
+public class SearchModelAnalyzer {
+
+    protected final SearchUtils searchUtils;
+    protected final IndexConfigurationManager indexConfigurationManager;
+    protected final SearchFieldsResolver searchFieldsResolver;
+
+    public SearchModelAnalyzer(SearchUtils searchUtils,
+                               IndexConfigurationManager indexConfigurationManager,
+                               SearchFieldsResolver searchFieldsResolver) {
+        this.searchUtils = searchUtils;
+        this.indexConfigurationManager = indexConfigurationManager;
+        this.searchFieldsResolver = searchFieldsResolver;
+    }
+
+    public Map<String, Set<String>> getIndexesWithFields(List<String> entities, Function<String, Set<String>> subfieldsGenerator) {
+        if (entities.isEmpty()) {
+            return emptyMap();
+        }
+
+        List<String> allowedEntityNames = searchUtils.resolveEntitiesAllowedToSearch(entities);
+
+        if (allowedEntityNames.isEmpty()) {
+            return emptyMap();
+        }
+
+        Map<String, Set<String>> notFilteredIndexesWithFields = allowedEntityNames
+                .stream()
+                .map(indexConfigurationManager::getIndexConfigurationByEntityName)
+                .collect(Collectors.toMap(
+                        IndexConfiguration::getIndexName,
+                        conf -> searchFieldsResolver.resolveFields(conf, subfieldsGenerator)));
+
+        Map<String, Set<String>> result = notFilteredIndexesWithFields
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() != null && !entry.getValue().isEmpty())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        if (result.isEmpty()) {
+            return emptyMap();
+        }
+        return result;
+    }
+}

@@ -22,11 +22,10 @@ import io.jmix.search.searching.SearchStrategy;
  * Base class for all search strategies.
  */
 public abstract class AbstractSearchStrategy<RB, QC> implements SearchStrategy<RB> {
-    protected final SearchFieldsResolver searchFieldsResolver;
+
     protected final QC queryConfigurator;
 
-    protected AbstractSearchStrategy(SearchFieldsResolver searchFieldsResolver, QC queryConfigurator) {
-        this.searchFieldsResolver = searchFieldsResolver;
+    protected AbstractSearchStrategy(QC queryConfigurator) {
         this.queryConfigurator = queryConfigurator;
     }
 

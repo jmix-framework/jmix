@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 public class AnyTermAnyFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy
         implements ElasticsearchSearchStrategy {
 
-    protected AnyTermAnyFieldElasticsearchSearchStrategy(SearchFieldsResolver searchFieldsResolver, ElasticSearchQueryConfigurator queryConfigurator) {
-        super(searchFieldsResolver, queryConfigurator);
+    protected AnyTermAnyFieldElasticsearchSearchStrategy(ElasticSearchQueryConfigurator queryConfigurator) {
+        super(queryConfigurator);
     }
 
     @Override
@@ -29,7 +29,6 @@ public class AnyTermAnyFieldElasticsearchSearchStrategy extends AbstractElasticS
     public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                searchFieldsResolver::resolveFields,
                 (queryBuilder, fields) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
                                 multiMatchQueryBuilder.fields(fields)

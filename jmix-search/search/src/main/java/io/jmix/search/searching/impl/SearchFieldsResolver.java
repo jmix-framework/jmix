@@ -33,11 +33,14 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static io.jmix.search.searching.AbstractSearchQueryConfigurator.NO_SUBFIELDS;
+
+/**
+ * TODO
+ */
 @Component("search_SearchFieldsResolver")
 public class SearchFieldsResolver {
 
-    public static final Function<String, Set<String>> GETTING_FIELD_WITH_SUBFIELD_WITH_PREFIXES =
-            fieldName -> Set.of(fieldName + "." + ExtendedSearchConstants.PREFIX_SUBFIELD_NAME);
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
@@ -51,18 +54,12 @@ public class SearchFieldsResolver {
     }
 
     /**
-     * @param targetEntity
-     * @return
-     */
-    public Set<String> resolveFields(String targetEntity) {
-        return resolveFields(indexConfigurationManager.getIndexConfigurationByEntityName(targetEntity));
-    }
-
-    /**
+     * TODO
+     *
      * @param indexConfiguration
      * @return
      */
-    public Set<String> resolveFields(IndexConfiguration indexConfiguration) {
+    public Set<String> resolveFields(IndexConfiguration indexConfiguration, Function<String, Set<String>> subfieldsGenerator) {
         Set<String> effectiveFieldsToSearch = new HashSet<>();
         Map<String, MappingFieldDescriptor> fields = indexConfiguration.getMapping().getFields();
 
@@ -73,18 +70,16 @@ public class SearchFieldsResolver {
             }
         }
         addRootInstanceField(effectiveFieldsToSearch);
-        return effectiveFieldsToSearch;
+
+        if (subfieldsGenerator == NO_SUBFIELDS) {
+            return effectiveFieldsToSearch;
+        }
+
+        return addSubfields(effectiveFieldsToSearch, subfieldsGenerator);
     }
 
-    /**
-     * TODO
-     *
-     * @param indexConfiguration
-     * @param subfieldsResolver
-     * @return
-     */
-    public Set<String> resolveFieldsWithSubfields(IndexConfiguration indexConfiguration, Function<String, Set<String>> subfieldsResolver) {
-        return resolveFields(indexConfiguration)
+    protected Set<String> addSubfields(Set<String> fields, Function<String, Set<String>> subfieldsResolver) {
+        return fields
                 .stream()
                 .map(fieldName -> {
                     HashSet<String> fieldNames = new HashSet<>();

@@ -21,7 +21,6 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -30,7 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static io.jmix.search.searching.impl.SearchFieldsResolver.GETTING_FIELD_WITH_SUBFIELD_WITH_PREFIXES;
+import static io.jmix.search.searching.AbstractSearchQueryConfigurator.NO_SUBFIELDS;
+import static io.jmix.search.searching.AbstractSearchQueryConfigurator.STANDARD_PREFIX_SUBFIELD;
 
 /**
  * Class that encapsulates logic of {@link SearchStrategy} that searches documents by prefix.
@@ -41,9 +41,8 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearch
     protected final SearchProperties searchProperties;
 
     public StartsWithElasticsearchSearchStrategy(SearchProperties searchProperties,
-                                                 ElasticSearchQueryConfigurator elasticSearchQueryConfigurator,
-                                                 SearchFieldsResolver searchFieldsResolver) {
-        super(searchFieldsResolver, elasticSearchQueryConfigurator);
+                                                 ElasticSearchQueryConfigurator elasticSearchQueryConfigurator) {
+        super(elasticSearchQueryConfigurator);
         this.searchProperties = searchProperties;
     }
 
@@ -64,9 +63,9 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearch
     }
 
     protected void configureTermsQuery(RequestContext<SearchRequest.Builder> requestContext) {
-       queryConfigurator.configureRequest(
+        queryConfigurator.configureRequest(
                 requestContext,
-               conf -> searchFieldsResolver.resolveFieldsWithSubfields(conf, GETTING_FIELD_WITH_SUBFIELD_WITH_PREFIXES),
+                STANDARD_PREFIX_SUBFIELD,
                 (queryBuilder, fields) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
                                 multiMatchQueryBuilder.fields(new ArrayList<>(fields))
@@ -85,7 +84,7 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearch
                 .collect(Collectors.joining(" "));
         queryConfigurator.configureRequest(
                 requestContext,
-                searchFieldsResolver::resolveFields,
+                NO_SUBFIELDS,
                 (queryBuilder, fields) ->
                         queryBuilder.queryString(queryStringQueryBuilder ->
                                 queryStringQueryBuilder

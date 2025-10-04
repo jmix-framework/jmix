@@ -4,7 +4,6 @@ import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +14,8 @@ import org.springframework.stereotype.Component;
 @Component("search_PhraseElasticsearchSearchStrategy")
 public class PhraseElasticsearchSearchStrategy extends AbstractElasticSearchStrategy implements ElasticsearchSearchStrategy {
 
-    protected PhraseElasticsearchSearchStrategy(SearchFieldsResolver searchFieldsResolver, ElasticSearchQueryConfigurator queryConfigurator) {
-        super(searchFieldsResolver, queryConfigurator);
+    protected PhraseElasticsearchSearchStrategy(ElasticSearchQueryConfigurator queryConfigurator) {
+        super(queryConfigurator);
     }
 
     @Override
@@ -28,7 +27,6 @@ public class PhraseElasticsearchSearchStrategy extends AbstractElasticSearchStra
     public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                searchFieldsResolver::resolveFields,
                 (queryBuilder, fields) -> queryBuilder
                         .multiMatch(multiMatchQueryBuilder ->
                                 multiMatchQueryBuilder.fields(fields)

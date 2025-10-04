@@ -20,7 +20,6 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
 
@@ -33,8 +32,8 @@ import org.springframework.stereotype.Component;
 public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy
         implements ElasticsearchSearchStrategy {
 
-    protected AllTermsAnyFieldElasticsearchSearchStrategy(SearchFieldsResolver searchFieldsResolver, ElasticSearchQueryConfigurator queryConfigurator) {
-        super(searchFieldsResolver, queryConfigurator);
+    protected AllTermsAnyFieldElasticsearchSearchStrategy(ElasticSearchQueryConfigurator queryConfigurator) {
+        super(queryConfigurator);
     }
 
     @Override
@@ -46,7 +45,6 @@ public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractElastic
     public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                searchFieldsResolver::resolveFields,
                 (queryBuilder, fields) ->
                         queryBuilder.simpleQueryString(simpleQueryStringQueryBuilder ->
                                 simpleQueryStringQueryBuilder.fields(fields)

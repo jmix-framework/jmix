@@ -19,10 +19,9 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.util.ObjectBuilder;
-import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.AbstractSearchQueryConfigurator;
 import io.jmix.search.searching.RequestContext;
-import io.jmix.search.searching.SearchUtils;
+import io.jmix.search.searching.impl.SearchModelAnalyzer;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -33,8 +32,8 @@ import java.util.Set;
 @Component("search_ElasticSearchQueryConfigurator")
 public class ElasticSearchQueryConfigurator extends AbstractSearchQueryConfigurator<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
 
-    public ElasticSearchQueryConfigurator(SearchUtils searchUtils, IndexConfigurationManager indexConfigurationManager) {
-        super(searchUtils, indexConfigurationManager);
+    protected ElasticSearchQueryConfigurator(SearchModelAnalyzer searchModelAnalyzer) {
+        super(searchModelAnalyzer);
     }
 
     @Override

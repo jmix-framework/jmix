@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 @Component("search_AnyTermAnyFieldOpenSearchSearchStrategy")
 public class AnyTermAnyFieldOpenSearchSearchStrategy extends AbstractOpenSearchStrategy implements OpenSearchSearchStrategy {
 
-    protected AnyTermAnyFieldOpenSearchSearchStrategy(SearchFieldsResolver searchFieldsResolver, OpenSearchQueryConfigurator queryConfigurator) {
-        super(searchFieldsResolver, queryConfigurator);
+    protected AnyTermAnyFieldOpenSearchSearchStrategy(OpenSearchQueryConfigurator queryConfigurator) {
+        super(queryConfigurator);
     }
 
     @Override
@@ -25,10 +25,9 @@ public class AnyTermAnyFieldOpenSearchSearchStrategy extends AbstractOpenSearchS
     }
 
     @Override
-    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext)  {
+    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                searchFieldsResolver::resolveFields,
                 (queryBuilder, fields) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
                                 multiMatchQueryBuilder.fields(fields)

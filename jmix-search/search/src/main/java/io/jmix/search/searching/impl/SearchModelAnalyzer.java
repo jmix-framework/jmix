@@ -18,7 +18,6 @@ package io.jmix.search.searching.impl;
 
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.searching.SearchUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,14 +34,14 @@ import static java.util.Collections.emptyMap;
 @Component("search_SearchModelAnalyzer")
 public class SearchModelAnalyzer {
 
-    protected final SearchUtils searchUtils;
+    protected final SearchSecurityDecorator securityDecorator;
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final SearchFieldsResolver searchFieldsResolver;
 
-    public SearchModelAnalyzer(SearchUtils searchUtils,
+    public SearchModelAnalyzer(SearchSecurityDecorator securityDecorator,
                                IndexConfigurationManager indexConfigurationManager,
                                SearchFieldsResolver searchFieldsResolver) {
-        this.searchUtils = searchUtils;
+        this.securityDecorator = securityDecorator;
         this.indexConfigurationManager = indexConfigurationManager;
         this.searchFieldsResolver = searchFieldsResolver;
     }
@@ -52,7 +51,7 @@ public class SearchModelAnalyzer {
             return emptyMap();
         }
 
-        List<String> allowedEntityNames = searchUtils.resolveEntitiesAllowedToSearch(entities);
+        List<String> allowedEntityNames = securityDecorator.resolveEntitiesAllowedToSearch(entities);
 
         if (allowedEntityNames.isEmpty()) {
             return emptyMap();

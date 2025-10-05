@@ -18,13 +18,9 @@ package io.jmix.search.searching.impl;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.impl.ExtendedSearchConstants;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
-import io.jmix.search.searching.SearchUtils;
 import io.jmix.search.utils.Constants;
-import io.jmix.security.constraint.PolicyStore;
-import io.jmix.security.constraint.SecureOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -42,15 +38,15 @@ import static io.jmix.search.searching.AbstractSearchQueryConfigurator.NO_SUBFIE
 public class SearchFieldsResolver {
 
     protected final IndexConfigurationManager indexConfigurationManager;
-    protected final SecureOperations secureOperations;
-    protected final PolicyStore policyStore;
-    protected final SearchUtils searchUtils;
+    protected final SearchFieldSubstitute searchFieldSubstitute;
+    protected final SearchSecurityDecorator securityDecorator;
 
-    public SearchFieldsResolver(IndexConfigurationManager indexConfigurationManager, SecureOperations secureOperations, PolicyStore policyStore, SearchUtils searchUtils) {
+    public SearchFieldsResolver(IndexConfigurationManager indexConfigurationManager,
+                                SearchFieldSubstitute searchFieldSubstitute,
+                                SearchSecurityDecorator securityDecorator) {
         this.indexConfigurationManager = indexConfigurationManager;
-        this.secureOperations = secureOperations;
-        this.policyStore = policyStore;
-        this.searchUtils = searchUtils;
+        this.searchFieldSubstitute = searchFieldSubstitute;
+        this.securityDecorator = securityDecorator;
     }
 
     /**
@@ -65,8 +61,8 @@ public class SearchFieldsResolver {
 
         for (Map.Entry<String, MappingFieldDescriptor> entry : fields.entrySet()) {
             MetaPropertyPath metaPropertyPath = entry.getValue().getMetaPropertyPath();
-            if (secureOperations.isEntityAttrReadPermitted(metaPropertyPath, policyStore)) {
-                effectiveFieldsToSearch.addAll(searchUtils.getTypeSpecificFieldsForSubstitution(metaPropertyPath, entry.getKey()));
+            if (securityDecorator.canAttributeBeRead(metaPropertyPath)) {
+                effectiveFieldsToSearch.addAll(searchFieldSubstitute.getFieldsForPath(metaPropertyPath, entry.getKey()));
             }
         }
         addRootInstanceField(effectiveFieldsToSearch);

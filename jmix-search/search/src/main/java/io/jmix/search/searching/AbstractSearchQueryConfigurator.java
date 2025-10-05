@@ -16,7 +16,6 @@
 
 package io.jmix.search.searching;
 
-import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.ExtendedSearchConstants;
 import io.jmix.search.searching.impl.SearchModelAnalyzer;
 

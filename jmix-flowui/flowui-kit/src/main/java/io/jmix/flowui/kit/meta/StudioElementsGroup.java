@@ -32,6 +32,22 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface StudioElementsGroup {
 
+    String TARGET_TAG_PREFIX = "tag:";
+    String TARGET_GROUP_IDENTIFIER_PREFIX = "groupIdentifier:";
+
+    /**
+     * Optional.
+     * <p></p>
+     *
+     * Unique elements group identifier.
+     * <p></p>
+     *
+     * Identifier is used to identify elements group in
+     * {@link StudioElementsGroup#target} and {@link StudioElementsGroup#unsupportedTarget}
+     * when need to define a nested elements group in {@link StudioElementsGroup} meta.
+     */
+    String identifier() default "";
+
     /**
      * @see StudioComponent#name
      */
@@ -68,12 +84,29 @@ public @interface StudioElementsGroup {
     String xmlnsAlias() default "";
 
     /**
-     * FQNs of target component class or component tag (e.g.: <code>tag:button</code>)
+     * Target that group should be added to.
+     * <p></p>
+     * Studio accepts the following formats:
+     * <p></p>
+     * <ul>
+     *     <li>FQN of component class
+     *     (e.g.: <code>io.jmix.flowui.component.combobox.EntityComboBox</code>)</li>
+     *
+     *     <li>Component tag.
+     *     Use {@link StudioElementsGroup#TARGET_TAG_PREFIX}
+     *     (e.g: <code>tag:button</code>)</li>
+     *
+     *     <li>Identifier of an elements group.
+     *     Use {@link StudioElementsGroup#TARGET_GROUP_IDENTIFIER_PREFIX}
+     *     (e.g.: <code>groupIdentifier:my_group_id</code>)</li>
+     * </ul>
      */
     String[] target() default {};
 
     /**
-     * FQNs of unsupported target component class or component tag (e.g.: <code>tag:button</code>)
+     * Target that group should <b>NOT</b> be added to.
+     * <p></p>
+     * See {@link #target()} for details and available formats.
      */
     String[] unsupportedTarget() default {};
 

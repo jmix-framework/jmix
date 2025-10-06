@@ -33,6 +33,11 @@ import java.lang.annotation.Target;
 public @interface StudioActionsGroup {
 
     /**
+     * @see StudioElementsGroup#identifier
+     */
+    String identifier() default "";
+
+    /**
      * @see StudioComponent#name
      */
     String name() default "";
@@ -43,7 +48,7 @@ public @interface StudioActionsGroup {
     String actionClassFqn() default "";
 
     /**
-     * Specifies that group actions should use the same xml namespace as the group.
+     * @see StudioElementsGroup#useGroupXmlns
      */
     boolean useGroupXmlns() default true;
 
@@ -68,17 +73,17 @@ public @interface StudioActionsGroup {
     String xmlnsAlias() default "";
 
     /**
-     * FQN of target component class or component tag (e.g.: <code>tag:button</code>)
+     * @see StudioElementsGroup#target
      */
     String[] target() default {};
 
     /**
-     * FQNs of unsupported target component class or component tag (e.g.: <code>tag:button</code>)
+     * @see StudioElementsGroup#unsupportedTarget
      */
     String[] unsupportedTarget() default {};
 
     /**
-     * Specifies the information about actions that are excluded from a given action group.
+     * @see StudioElementsGroup#excludedElementsInfo
      */
     StudioExcludedElementsInfo excludedElementsInfo() default @StudioExcludedElementsInfo;
 

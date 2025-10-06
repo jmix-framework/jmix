@@ -1283,6 +1283,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
                     initJsonDataSetOptions(dataSet);
                     jsonDataSetTypeVBox.setVisible(true);
                     break;
+                default:
+                    break;
             }
 
             CodeEditorMode codeEditorMode = getCodeEditorMode(dataSet);
@@ -1361,6 +1363,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 break;
             case PARAMETER:
                 jsonQueryParameterField.setVisible(true);
+                break;
+            default:
                 break;
         }
     }

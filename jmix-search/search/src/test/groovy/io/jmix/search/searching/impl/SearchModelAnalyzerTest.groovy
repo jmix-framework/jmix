@@ -22,9 +22,11 @@ import spock.lang.Specification
 
 import java.util.function.Function
 
+import static java.util.Collections.emptyList
+
 class SearchModelAnalyzerTest extends Specification {
 
-    def "getIndexesWithFields. Normal flow"() {
+    def "getIndexesWithFields. all entities have configuration. User hav full access to the entities"() {
         given:
         IndexConfiguration configuration1 = Mock()
         configuration1.getIndexName() >> "index1"
@@ -35,6 +37,7 @@ class SearchModelAnalyzerTest extends Specification {
 
         and:
         IndexConfigurationManager indexConfigurationManager = Mock()
+        indexConfigurationManager.getAllIndexedEntities() >> ["entity1", "entity2", "entity3"]
         indexConfigurationManager.getIndexConfigurationByEntityName("entity1") >> configuration1
         indexConfigurationManager.getIndexConfigurationByEntityName("entity2") >> configuration2
         indexConfigurationManager.getIndexConfigurationByEntityName("entity3") >> configuration3
@@ -51,12 +54,12 @@ class SearchModelAnalyzerTest extends Specification {
         fieldsResolver.resolveFields(configuration3, subfieldGenerator) >> Set.of("field3_1", "field3_2", "field3_3")
 
         and:
-        def configurator = new SearchModelAnalyzer(securityDecorator, indexConfigurationManager, fieldsResolver)
+        def analyzer = new SearchModelAnalyzer(securityDecorator, indexConfigurationManager, fieldsResolver)
 
 
         when:
-        def fields = configurator.getIndexesWithFields(
-                List.of("entity1", "entity2", "entity3", "entity4"),
+        def fields = analyzer.getIndexesWithFields(
+                ["entity1", "entity2", "entity3", "entity4"],
                 subfieldGenerator
         )
 
@@ -69,28 +72,74 @@ class SearchModelAnalyzerTest extends Specification {
     }
 
     def "getIndexNamesWithFields. Empty list of required entities"() {
-
         given:
-        def configurator = new SearchModelAnalyzer(Mock(SearchSecurityDecorator), Mock(IndexConfigurationManager), Mock(SearchFieldsResolver))
+        IndexConfiguration configuration1 = Mock()
+        configuration1.getIndexName() >> "index1"
+        IndexConfiguration configuration2 = Mock()
+        configuration2.getIndexName() >> "index2"
+        IndexConfiguration configuration3 = Mock()
+        configuration3.getIndexName() >> "index3"
+
+        and:
+        IndexConfigurationManager indexConfigurationManager = Mock()
+        indexConfigurationManager.getAllIndexedEntities() >> ["entity1", "entity2", "entity3"]
+        indexConfigurationManager.getIndexConfigurationByEntityName("entity1") >> configuration1
+        indexConfigurationManager.getIndexConfigurationByEntityName("entity2") >> configuration2
+        indexConfigurationManager.getIndexConfigurationByEntityName("entity3") >> configuration3
+
+        and:
+        SearchSecurityDecorator securityDecorator = Mock()
+        securityDecorator.resolveEntitiesAllowedToSearch(_) >> List.of("entity1", "entity2", "entity3")
+
+        and:
+        def fieldsResolver = Mock(SearchFieldsResolver)
+        def subfieldGenerator = Mock(Function)
+        fieldsResolver.resolveFields(configuration1, subfieldGenerator) >> Set.of("field1_1", "field1_2", "field1_3")
+        fieldsResolver.resolveFields(configuration2, subfieldGenerator) >> Set.of("field2_1", "field2_2", "field2_3")
+        fieldsResolver.resolveFields(configuration3, subfieldGenerator) >> Set.of("field3_1", "field3_2", "field3_3")
+
+        and:
+        def analyzer = new SearchModelAnalyzer(securityDecorator, indexConfigurationManager, fieldsResolver)
+
 
         when:
-        def fields = configurator.getIndexesWithFields(List.of(), Mock(Function))
+        def fields = analyzer.getIndexesWithFields(
+                emptyList(),
+                subfieldGenerator
+        )
 
         then:
-        fields.isEmpty()
+        fields == Map.of(
+                "index1", Set.of("field1_1", "field1_2", "field1_3"),
+                "index2", Set.of("field2_1", "field2_2", "field2_3"),
+                "index3", Set.of("field3_1", "field3_2", "field3_3")
+        )
     }
 
     def "getIndexNamesWithFields. Empty list of allowed entities"() {
         given:
-        SearchSecurityDecorator securityDecorator = Mock()
-        securityDecorator.resolveEntitiesAllowedToSearch(_) >> List.of()
+        IndexConfiguration configuration1 = Mock()
+        configuration1.getIndexName() >> "index1"
+        IndexConfiguration configuration2 = Mock()
+        configuration2.getIndexName() >> "index2"
+        IndexConfiguration configuration3 = Mock()
+        configuration3.getIndexName() >> "index3"
 
         and:
-        def configurator = new SearchModelAnalyzer(securityDecorator, Mock(IndexConfigurationManager), Mock(SearchFieldsResolver))
+        IndexConfigurationManager indexConfigurationManager = Mock()
+        indexConfigurationManager.getAllIndexedEntities() >> ["entity1", "entity2", "entity3"]
+
+        and:
+        SearchSecurityDecorator securityDecorator = Mock()
+        securityDecorator.resolveEntitiesAllowedToSearch(_) >> emptyList()
+
+        and:
+        def analyzer = new SearchModelAnalyzer(securityDecorator, indexConfigurationManager, Mock(SearchFieldsResolver))
+
 
         when:
-        def fields = configurator.getIndexesWithFields(
-                List.of("entity1", "entity2", "entity3", "entity4"),
+        def fields = analyzer.getIndexesWithFields(
+                ["entity1", "entity2", "entity3"],
                 Mock(Function)
         )
 
@@ -109,6 +158,7 @@ class SearchModelAnalyzerTest extends Specification {
 
         and:
         IndexConfigurationManager indexConfigurationManager = Mock()
+        indexConfigurationManager.getAllIndexedEntities() >> ["entity1", "entity2", "entity3"]
         indexConfigurationManager.getIndexConfigurationByEntityName("entity1") >> configuration1
         indexConfigurationManager.getIndexConfigurationByEntityName("entity2") >> configuration2
         indexConfigurationManager.getIndexConfigurationByEntityName("entity3") >> configuration3
@@ -125,10 +175,10 @@ class SearchModelAnalyzerTest extends Specification {
         fieldsResolver.resolveFields(configuration3, subfieldGenerator) >> Set.of("field3_1", "field3_2", "field3_3")
 
         and:
-        def configurator = new SearchModelAnalyzer(securityDecorator, indexConfigurationManager, fieldsResolver)
+        def analyzer = new SearchModelAnalyzer(securityDecorator, indexConfigurationManager, fieldsResolver)
 
         when:
-        def fields = configurator.getIndexesWithFields(
+        def fields = analyzer.getIndexesWithFields(
                 List.of("entity1", "entity2", "entity3", "entity4"),
                 subfieldGenerator
         )
@@ -151,6 +201,7 @@ class SearchModelAnalyzerTest extends Specification {
 
         and:
         IndexConfigurationManager indexConfigurationManager = Mock()
+        indexConfigurationManager.getAllIndexedEntities() >> ["entity1", "entity2", "entity3"]
         indexConfigurationManager.getIndexConfigurationByEntityName("entity1") >> configuration1
         indexConfigurationManager.getIndexConfigurationByEntityName("entity2") >> configuration2
         indexConfigurationManager.getIndexConfigurationByEntityName("entity3") >> configuration3
@@ -178,4 +229,30 @@ class SearchModelAnalyzerTest extends Specification {
         then:
         fields.isEmpty()
     }
+
+    def "GetEntitiesWithConfiguration"() {
+        given:
+        IndexConfigurationManager indexConfigurationManager = Mock()
+
+        and:
+        def analyzer = new SearchModelAnalyzer(Mock(SearchSecurityDecorator), indexConfigurationManager, Mock(SearchFieldsResolver))
+
+        when:
+        indexConfigurationManager.getAllIndexedEntities() >> allConfigurations
+
+        def entitiesWithConfiguration = analyzer.getEntitiesWithConfiguration(input)
+
+        then:
+        entitiesWithConfiguration == result
+
+        where:
+        input                             | allConfigurations                || result
+        []                                | ["entity1", "entity2", "entity3"] | ["entity1", "entity2", "entity3"]
+        []                                | []                                | []
+        ["entity1", "entity2", "entity3"] | []                                | []
+        ["entity1", "entity2", "entity3"] | ["entity1", "entity3"]            | ["entity1", "entity3"]
+        ["entity2", "entity3"]            | ["entity1", "entity2", "entity3"] | ["entity2", "entity3"]
+    }
+
+
 }

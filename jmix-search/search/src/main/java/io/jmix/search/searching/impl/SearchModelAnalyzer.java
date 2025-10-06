@@ -20,6 +20,7 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,11 +48,10 @@ public class SearchModelAnalyzer {
     }
 
     public Map<String, Set<String>> getIndexesWithFields(List<String> entities, Function<String, Set<String>> subfieldsGenerator) {
-        if (entities.isEmpty()) {
-            return emptyMap();
-        }
 
-        List<String> allowedEntityNames = securityDecorator.resolveEntitiesAllowedToSearch(entities);
+        Collection<String> entitiesWithSearchConfiguration = getEntitiesWithConfiguration(entities);
+
+        List<String> allowedEntityNames = securityDecorator.resolveEntitiesAllowedToSearch(entitiesWithSearchConfiguration);
 
         if (allowedEntityNames.isEmpty()) {
             return emptyMap();
@@ -74,5 +74,16 @@ public class SearchModelAnalyzer {
             return emptyMap();
         }
         return result;
+    }
+
+    protected Collection<String> getEntitiesWithConfiguration(List<String> entities) {
+        Collection<String> allIndexedEntities = indexConfigurationManager.getAllIndexedEntities();
+        if (entities.isEmpty()) {
+            return allIndexedEntities;
+        }
+        return entities
+                .stream()
+                .filter(allIndexedEntities::contains)
+                .toList();
     }
 }

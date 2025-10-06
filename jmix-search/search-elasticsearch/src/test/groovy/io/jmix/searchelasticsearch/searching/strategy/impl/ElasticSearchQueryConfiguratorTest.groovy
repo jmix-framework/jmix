@@ -21,6 +21,7 @@ import co.elastic.clients.json.JsonpMapper
 import co.elastic.clients.json.JsonpSerializable
 import co.elastic.clients.json.jackson.JacksonJsonpMapper
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.jmix.search.searching.impl.SearchModelAnalyzer
 import jakarta.json.spi.JsonProvider
 import spock.lang.Specification
 
@@ -35,7 +36,7 @@ class ElasticSearchQueryConfiguratorTest extends Specification {
         indexesWithFields.put("index2", createLinkedSet("field2_1", "field2_2", "field2_3"))
 
         and:
-        def configurator = new ElasticSearchQueryConfigurator(null, null)
+        def configurator = new ElasticSearchQueryConfigurator(Mock(SearchModelAnalyzer))
 
         when:
         def query = configurator.createQuery(
@@ -55,7 +56,7 @@ class ElasticSearchQueryConfiguratorTest extends Specification {
         indexesWithFields.put("index1", createLinkedSet("field1_1", "field1_2", "field1_3"))
 
         and:
-        def configurator = new ElasticSearchQueryConfigurator(null, null)
+        def configurator = new ElasticSearchQueryConfigurator(Mock(SearchModelAnalyzer))
 
         when:
         def query = configurator.createQuery(

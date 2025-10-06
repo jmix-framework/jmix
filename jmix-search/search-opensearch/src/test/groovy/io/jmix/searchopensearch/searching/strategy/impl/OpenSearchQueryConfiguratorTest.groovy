@@ -17,6 +17,7 @@
 package io.jmix.searchopensearch.searching.strategy.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.jmix.search.searching.impl.SearchModelAnalyzer
 import jakarta.json.spi.JsonProvider
 import org.opensearch.client.json.JsonpMapper
 import org.opensearch.client.json.JsonpSerializable
@@ -36,7 +37,7 @@ class OpenSearchQueryConfiguratorTest extends Specification {
         indexesWithFields.put("index2", createLinkedSet("field2_1", "field2_2", "field2_3"))
 
         and:
-        def configurator = new OpenSearchQueryConfigurator(null, null)
+        def configurator = new OpenSearchQueryConfigurator(Mock(SearchModelAnalyzer))
 
         when:
         def query = configurator.createQuery(
@@ -57,7 +58,7 @@ class OpenSearchQueryConfiguratorTest extends Specification {
         indexesWithFields.put("index1", createLinkedSet("field1_1", "field1_2", "field1_3"))
 
         and:
-        def configurator = new OpenSearchQueryConfigurator(null, null)
+        def configurator = new OpenSearchQueryConfigurator(Mock(SearchModelAnalyzer))
 
         when:
         def query = configurator.createQuery(
@@ -90,7 +91,7 @@ class OpenSearchQueryConfiguratorTest extends Specification {
     }
 
     private static String readResourceAsString(String resourcePath) {
-        InputStream is = OpenSearchQueryConfigurator.class.classLoader.getResourceAsStream("requests/" + resourcePath + ".json")
+        InputStream is = this.getClassLoader().getResourceAsStream("requests/" + resourcePath + ".json")
         assert is != null: "Resource not found: $resourcePath"
         try {
             return new String(is.readAllBytes(), UTF_8)

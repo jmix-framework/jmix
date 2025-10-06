@@ -17,5 +17,6 @@
 package io.jmix.search.searching;
 
 public enum SearchContextProcessingResult {
+
     INITIAL_STATE, REQUEST_IS_POSSIBLE, NO_AVAILABLE_ENTITIES_FOR_SEARCHING
 }

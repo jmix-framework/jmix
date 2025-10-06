@@ -25,6 +25,7 @@ import static io.jmix.search.searching.SearchContextProcessingResult.*;
  * @param <T>
  */
 public class RequestContext<T> {
+
     protected final T requestBuilder;
     protected SearchContextProcessingResult requestPreparingState = INITIAL_STATE;
     protected SearchContext searchContext;

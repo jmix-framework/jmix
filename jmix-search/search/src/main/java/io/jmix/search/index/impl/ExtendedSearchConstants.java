@@ -17,5 +17,6 @@
 package io.jmix.search.index.impl;
 
 public class ExtendedSearchConstants {
+
     public static final String PREFIX_SUBFIELD_NAME = "prefix";
 }

@@ -58,7 +58,8 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
             Function<String, Set<String>> subfieldsGenerator,
             TargetQueryBuilder<QB, OB> targetQueryBuilder) {
         List<String> requestedEntities = requestContext.getSearchContext().getEntities();
-        Map<String, Set<String>> indexNamesWithFields = searchModelAnalyzer.getIndexesWithFields(requestedEntities, subfieldsGenerator);
+        Map<String, Set<String>> indexNamesWithFields =
+                searchModelAnalyzer.getIndexesWithFields(requestedEntities, subfieldsGenerator);
         if (indexNamesWithFields.isEmpty()) {
             requestContext.setEmptyResult();
             return;
@@ -79,8 +80,12 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
         return createQueryForSingleIndex(targetQueryBuilder, indexesWithFields);
     }
 
-    protected abstract OB createQueryForSingleIndex(TargetQueryBuilder<QB, OB> targetQueryBuilder, Map<String, Set<String>> indexesWithFields);
+    protected abstract OB createQueryForSingleIndex(
+            TargetQueryBuilder<QB, OB> targetQueryBuilder,
+            Map<String, Set<String>> indexesWithFields);
 
-    protected abstract OB createQueryForMultipleIndexes(TargetQueryBuilder<QB, OB> targetQueryBuilder, Map<String, Set<String>> indexesWithFields);
+    protected abstract OB createQueryForMultipleIndexes(
+            TargetQueryBuilder<QB, OB> targetQueryBuilder,
+            Map<String, Set<String>> indexesWithFields);
 
 }

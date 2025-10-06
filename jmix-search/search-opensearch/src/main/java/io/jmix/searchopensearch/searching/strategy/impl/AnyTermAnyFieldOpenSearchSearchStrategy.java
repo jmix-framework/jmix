@@ -2,7 +2,6 @@ package io.jmix.searchopensearch.searching.strategy.impl;
 
 import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import org.opensearch.client.opensearch._types.query_dsl.Operator;
 import org.opensearch.client.opensearch.core.SearchRequest;

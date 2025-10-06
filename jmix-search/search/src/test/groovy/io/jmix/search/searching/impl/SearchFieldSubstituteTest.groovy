@@ -38,10 +38,10 @@ class SearchFieldSubstituteTest extends Specification {
 
         where:
         isDatatype | dataType              | isClass || expectedResult
-        true       | Mock(FileRefDatatype) | false || Set.of("fieldName._content", "fieldName._file_name")
+        true       | Mock(FileRefDatatype) | false   || Set.of("fieldName._content", "fieldName._file_name")
         false      | null                  | true    || Set.of("fieldName._instance_name")
         false      | null                  | false   || Set.of("fieldName")
-        true       | Mock(Datatype) | false || Set.of("fieldName")
+        true       | Mock(Datatype)        | false   || Set.of("fieldName")
     }
 
     MetaPropertyPath createMetaPropertyPath(boolean isDatatype, Datatype<?> dataType, boolean isClass) {

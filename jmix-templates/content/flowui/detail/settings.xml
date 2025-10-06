@@ -73,6 +73,11 @@
               propertyType="BOOLEAN"
               preferences="true"/>
 
+    <property caption="Fixed footer"
+              code="fixedFooter"
+              propertyType="BOOLEAN"
+              preferences="true"/>
+
     <property caption="Descriptor name"
               code="detailDescriptorName"
               propertyType="DESCRIPTOR_NAME"

@@ -52,12 +52,25 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
+    <%if (fixedFooter) {%>
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="contentBox">
+        <vbox id="contentBox" classNames="overflow-auto">
+    <%} else {%>
     <layout>
+    <%}%>
         ${formXml}
         <%collectionAttributesTable.each{table ->%>
             ${table}
         <%}%>
+        <%if (fixedFooter) {%>
+        </vbox>
+        <hbox id="detailActions"
+              classNames="px-m py-s bg-contrast-5">
+        <%} else {%>
         <hbox id="detailActions">
+        <%}%>
             <button id="saveAndCloseButton" action="saveAction"/>
             <button id="closeButton" action="closeAction"/>
         </hbox>

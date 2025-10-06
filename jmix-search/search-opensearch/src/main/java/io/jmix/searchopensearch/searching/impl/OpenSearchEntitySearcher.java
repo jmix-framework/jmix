@@ -47,7 +47,6 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
     protected final OpenSearchSearchStrategyProvider searchStrategyManager;
-    protected final SearchUtils searchUtils;
 
     protected final ObjectMapper objectMapper;
 
@@ -61,8 +60,7 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
                                     IdSerialization idSerialization,
                                     SecureOperations secureOperations,
                                     PolicyStore policyStore,
-                                    OpenSearchSearchStrategyProvider searchStrategyManager,
-                                    SearchUtils searchUtils) {
+                                    OpenSearchSearchStrategyProvider searchStrategyManager) {
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.metadata = metadata;
@@ -74,7 +72,6 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
         this.searchStrategyManager = searchStrategyManager;
-        this.searchUtils = searchUtils;
 
         this.objectMapper = new ObjectMapper();
     }

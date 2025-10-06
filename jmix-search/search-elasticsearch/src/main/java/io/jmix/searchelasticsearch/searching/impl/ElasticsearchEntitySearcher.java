@@ -51,7 +51,6 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
     protected final ElasticsearchSearchStrategyProvider searchStrategyManager;
-    protected final SearchUtils searchUtils;
 
     protected final ObjectMapper objectMapper;
 
@@ -65,8 +64,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
                                        IdSerialization idSerialization,
                                        SecureOperations secureOperations,
                                        PolicyStore policyStore,
-                                       ElasticsearchSearchStrategyProvider searchStrategyManager,
-                                       SearchUtils searchUtils) {
+                                       ElasticsearchSearchStrategyProvider searchStrategyManager) {
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.metadata = metadata;
@@ -78,7 +76,6 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
         this.searchStrategyManager = searchStrategyManager;
-        this.searchUtils = searchUtils;
 
         this.objectMapper = new ObjectMapper();
     }

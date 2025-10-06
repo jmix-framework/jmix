@@ -34,9 +34,11 @@ public enum Orientation implements EnumClass<Integer> {
     /**
      * Band entries are copied to the right and downwards as a matrix.
      * The band must contain three datasets:
-     * <li><code>${band_name}_dynamic_header</code> - the data from this dataset is copied to the right like a vertical band with table columns header</li>
-     * <li><code>${band_name}_master_data</code> - the data from this dataset is copied downwards like a horizontal band with table rows header</li>
-     * <li><code>${band_name}</code> - the dataset named the same as the band, it belongs to; it is the main content band that will fulfill the matrix cells.</li>
+     * <ul>
+     *  <li><code>${band_name}_dynamic_header</code> - the data from this dataset is copied to the right like a vertical band with table columns header</li>
+     *  <li><code>${band_name}_master_data</code> - the data from this dataset is copied downwards like a horizontal band with table rows header</li>
+     *  <li><code>${band_name}</code> - the dataset named the same as the band, it belongs to; it is the main content band that will fulfill the matrix cells.</li>
+     * </ul>
      */
     CROSS(2, BandOrientation.CROSS);
 

@@ -22,9 +22,11 @@ public @interface DataSetDef {
      * Data set name (optional).
      * <br/>
      * For Crosstab {@link Orientation#CROSS}) bands, its data sets must be named strictly according to convention:
+     * <ul>
      *  <li>Column headers - <code>${band_name}_dynamic_header</code></li>
      *  <li>Row headers - <code>${band_name}_master_data</code></li>
      *  <li>Main content - <code>${band_name}</code></li>
+     * </ul>
      */
     String name() default "";
 

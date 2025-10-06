@@ -25,9 +25,11 @@ public class AnnotatedBuilderUtils {
     /**
      * Extract message key from the message reference.
      * Reference can be in one of three formats, like in view descriptors:
-     * <li>with implicit group - starting with msg://, group must be taken from<code>defaultGroup</code></li>
-     * <li>with explicitly specified group: msg://group/key</li>
-     * <li>without a group, starting with msg:///</li>
+     * <ul>
+     *  <li>with implicit group - starting with msg://, group must be taken from<code>defaultGroup</code></li>
+     *  <li>with explicitly specified group: msg://group/key</li>
+     *  <li>without a group, starting with msg:///</li>
+     * </ul>
      * @param reference message reference in one of 3 formats
      * @param declarationOwner class defining default group for the message - which is its package name
      *

@@ -50,8 +50,10 @@ public enum DataSetType implements EnumClass<Integer> {
     /**
      * Data is produced using attributes of an entity list, which is taken from input parameters.
      * Two options are available:
-     * <li>input parameter of the {@link ParameterType#ENTITY_LIST} type is used as a source</li>
-     * <li>sub-collection attribute of the {@link ParameterType#ENTITY} parameter is used as a source</li>
+     * <ul>
+     *  <li>input parameter of the {@link ParameterType#ENTITY_LIST} type is used as a source</li>
+     *  <li>sub-collection attribute of the {@link ParameterType#ENTITY} parameter is used as a source</li>
+     * </ul>
      */
     MULTI(50, "multi"),
 

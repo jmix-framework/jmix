@@ -12,7 +12,9 @@ import java.lang.annotation.Target;
  *   defined by the current class.
  * Method must conform to convention: no parameters, the result is one of supported functional interfaces.
  * Currently supported interfaces:
- * <li>{@link ParametersCrossValidator} - for parameters cross-validation</li>
+ * <ul>
+ *  <li>{@link ParametersCrossValidator} - for parameters cross-validation</li>
+ * </ul>
  *
  * @see ReportDef
  */

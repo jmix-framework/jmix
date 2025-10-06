@@ -12,7 +12,9 @@ import java.lang.annotation.Target;
  *   defined in the report definition class.
  * Method must conform to convention: no parameters, the result is one of supported functional interfaces.
  * Currently supported interfaces:
- * <li>{@link CustomReport} - delegates custom generation of the report output document</li>
+ * <ul>
+ *  <li>{@link CustomReport} - delegates custom generation of the report output document</li>
+ * </ul>
  *
  * @see TemplateDef
  */

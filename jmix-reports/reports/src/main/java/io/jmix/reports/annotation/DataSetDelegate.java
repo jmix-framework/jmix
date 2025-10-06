@@ -14,9 +14,11 @@ import java.lang.annotation.Target;
  *   defined in the report definition class.
  * Method must conform to convention: no parameters, the result is one of supported functional interfaces.
  * Currently supported interfaces:
- * <li> {@link ReportDataLoader} - to fully delegate loading of the data</li>
- * <li> {@link FetchPlanProvider} - to build a fetch plan for entity data set</li>
- * <li> {@link JsonInputProvider} - to supply JSON input for JSON data set</li>
+ * <ul>
+ *  <li> {@link ReportDataLoader} - to fully delegate loading of the data</li>
+ *  <li> {@link FetchPlanProvider} - to build a fetch plan for entity data set</li>
+ *  <li> {@link JsonInputProvider} - to supply JSON input for JSON data set</li>
+ * </ul>
  *
  * @see DataSetDef
  */

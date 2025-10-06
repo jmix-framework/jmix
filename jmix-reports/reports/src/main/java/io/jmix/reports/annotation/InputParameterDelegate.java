@@ -14,9 +14,12 @@ import java.lang.annotation.Target;
  *   defined in the report definition class.
  * Method must conform to convention: no parameters, the result is one of supported functional interfaces.
  * Currently supported interfaces:
- * <li>{@link DefaultValueProvider} - provides default value for the parameter</li>
- * <li>{@link ParameterValidator} - validates parameter value</li>
- * <li>{@link ParameterTransformer} - transforms parameter value</li>
+ * <ul>
+ *  <li>{@link DefaultValueProvider} - provides default value for the parameter</li>
+ *  <li>{@link ParameterValidator} - validates parameter value</li>
+ *  <li>{@link ParameterTransformer} - transforms parameter value</li>
+ * </ul>
+ *
  * @see InputParameterDef
  */
 @Target({ElementType.METHOD})

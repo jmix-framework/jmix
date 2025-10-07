@@ -18,6 +18,7 @@ package io.jmix.search.searching.impl
 
 import io.jmix.core.metamodel.datatype.Datatype
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype
+import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.core.metamodel.model.MetaPropertyPath
 import io.jmix.core.metamodel.model.Range
 import spock.lang.Specification
@@ -27,24 +28,32 @@ class SearchFieldSubstituteTest extends Specification {
     def "Resolve fields for index by property path"() {
 
         given:
-        SearchFieldSubstitute fieldSubstitute = new SearchFieldSubstitute()
+        SearchSecurityDecorator securityDecorator = Mock()
+
+        and:
+        SearchFieldSubstitute fieldSubstitute = new SearchFieldSubstitute(securityDecorator)
 
         when:
-        def metaPropertyPath = createMetaPropertyPath(isDatatype, dataType, isClass)
+        def metaPropertyPath = createMetaPropertyPath(isDatatype, dataType, isClass, asClass)
+        if (isClass) {
+            securityDecorator.canEntityBeRead(asClass) >> canBeRead
+        }
+
         def actualResult = fieldSubstitute.getFieldsForPath(metaPropertyPath, "fieldName")
 
         then:
         actualResult == expectedResult
 
         where:
-        isDatatype | dataType              | isClass || expectedResult
-        true       | Mock(FileRefDatatype) | false   || Set.of("fieldName._content", "fieldName._file_name")
-        false      | null                  | true    || Set.of("fieldName._instance_name")
-        false      | null                  | false   || Set.of("fieldName")
-        true       | Mock(Datatype)        | false   || Set.of("fieldName")
+        isDatatype | dataType              | isClass | asClass         | canBeRead || expectedResult
+        true       | Mock(FileRefDatatype) | false   | null            | null      || Set.of("fieldName._content", "fieldName._file_name")
+        false      | null                  | true    | Mock(MetaClass) | false     || Set.of()
+        false      | null                  | true    | Mock(MetaClass) | true      || Set.of("fieldName._instance_name")
+        false      | null                  | false   | null            | null      || Set.of("fieldName")
+        true       | Mock(Datatype)        | false   | null            | null      || Set.of("fieldName")
     }
 
-    MetaPropertyPath createMetaPropertyPath(boolean isDatatype, Datatype<?> dataType, boolean isClass) {
+    MetaPropertyPath createMetaPropertyPath(boolean isDatatype, Datatype<?> dataType, boolean isClass, MetaClass metaClass) {
         def mock = Mock(MetaPropertyPath)
         def rangeMock = Mock(Range)
         mock.getRange() >> rangeMock
@@ -55,6 +64,7 @@ class SearchFieldSubstituteTest extends Specification {
         }
         rangeMock.isDatatype() >> isDatatype
         rangeMock.isClass() >> isClass
+        rangeMock.asClass() >> metaClass
         return mock
     }
 }

@@ -25,18 +25,30 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+import static java.util.Collections.emptySet;
+
 /**
  * TODO
  */
 @Component("search_SearchFieldSubstitute")
 public class SearchFieldSubstitute {
 
+    protected final SearchSecurityDecorator securityDecorator;
+
+    public SearchFieldSubstitute(SearchSecurityDecorator securityDecorator) {
+        this.securityDecorator = securityDecorator;
+    }
+
     public Set<String> getFieldsForPath(MetaPropertyPath path, String fieldName) {
         Range range = path.getRange();
         if (isFileRefProperty(range)) {
             return Set.of(fieldName + "._file_name", fieldName + "._content");
         } else if (isReferenceProperty(range)) {
-            return Set.of(fieldName + "." + Constants.INSTANCE_NAME_FIELD);
+            if (securityDecorator.canEntityBeRead(range.asClass())) {
+                return Set.of(fieldName + "." + Constants.INSTANCE_NAME_FIELD);
+            } else {
+                return emptySet();
+            }
         }
         return Set.of(fieldName);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.restds;
+package io.jmix.samples.restds.common;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.JmixModules;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.restds.impl.service.RemoteServiceBeanFactoryPostProcessor;
-import io.jmix.restds.util.RemoteServiceConfigurationCustomizer;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
+import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class})
-public class RestDsConfiguration {
-
-    @Bean
-    public static RemoteServiceBeanFactoryPostProcessor remoteServiceBeanFactoryPostProcessor(
-            JmixModules jmixModules, List<RemoteServiceConfigurationCustomizer> customizers) {
-        return new RemoteServiceBeanFactoryPostProcessor(jmixModules, customizers);
-    }
+@JmixModule(dependsOn = {EclipselinkConfiguration.class})
+@PropertySource(name = "io.jmix.samples.restds.common", value = "classpath:/io/jmix/samples/restds/common/module.properties")
+public class SampleRestDsCommonConfiguration {
 }

@@ -32,6 +32,7 @@ import io.jmix.restds.impl.RestAuthenticationManagerSupplier;
 import io.jmix.restds.filestorage.RestFileStorage;
 import io.jmix.restds.impl.RestPasswordAuthenticator;
 import io.jmix.restds.impl.RestTokenHolder;
+import io.jmix.samples.restds.common.SampleRestDsCommonConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
 import jakarta.persistence.EntityManagerFactory;
@@ -63,7 +64,8 @@ import javax.sql.DataSource;
 @Import({RestDsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class,
         CoreConfiguration.class})
 @PropertySource("classpath:/test_support/test-app.properties")
-@JmixModule(dependsOn = {RestDsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class})
+@JmixModule(dependsOn = {RestDsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class,
+        SampleRestDsCommonConfiguration.class})
 public class TestRestDsConfiguration {
 
     @Bean

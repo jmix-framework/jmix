@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2024 Haulmont.
+  ~ Copyright 2025 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -23,12 +23,10 @@
 
     <!-- DO NOT REMOVE. This is a master changelog that runs all other changelogs. -->
 
-    <include file="/io/jmix/authserver/liquibase/changelog.xml"/>
-    <include file="/io/jmix/data/liquibase/changelog.xml"/>
-    <include file="/io/jmix/securitydata/liquibase/changelog.xml"/>
+    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
+    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+    <include file="/io/jmix/data/liquibase/changelog.xml" contextFilter="@jmix-addon"/>
 
-    <include file="/io/jmix/samples/restds/common/liquibase/changelog.xml"/>
-
-    <includeAll path="/io/jmix/samples/restservice/liquibase/changelog"/>
+    <includeAll path="/changelog" relativeToChangelogFile="true" errorIfMissingOrEmpty="false"/>
 
 </databaseChangeLog>

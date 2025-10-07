@@ -48,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -610,8 +611,21 @@ public class InputDialog extends StandardView {
 
         /**
          * Checks that the dialog was closed with the given {@code outcome}.
+         *
+         * @deprecated use {@link #closedWith(DialogOutcome)} instead
          */
+        @Deprecated(since = "2.7.0", forRemoval = true)
         public boolean closedWith(StandardOutcome outcome) {
+            return outcome.getCloseAction().equals(closeAction);
+        }
+
+        /**
+         * Checks that the dialog was closed with the given {@code outcome}.
+         *
+         * @param outcome dialog outcome
+         * @return {@code true} if the dialog was closed with the given {@code outcome}
+         */
+        public boolean closedWith(DialogOutcome outcome) {
             return outcome.getCloseAction().equals(closeAction);
         }
     }

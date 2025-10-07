@@ -21,6 +21,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.lang.Nullable;
 
+/**
+ * @deprecated Use {@link FileTypesHelper} instead.
+ */
+@Deprecated(since = "2.7.0", forRemoval = true)
 public final class FileUploadTypesHelper {
 
     public static final String TYPES_SPLITTER = ",";

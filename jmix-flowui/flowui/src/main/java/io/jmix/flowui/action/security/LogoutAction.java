@@ -17,8 +17,8 @@
 package io.jmix.flowui.action.security;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
+import io.jmix.flowui.UiActionProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -49,12 +49,21 @@ public class LogoutAction extends BaseAction implements ExecutableAction, Applic
     }
 
     protected void initAction() {
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.SIGN_OUT);
+        // hook to be implemented, keep for backward compatibility
     }
 
     @Autowired
     public void setMessages(Messages messages) {
         this.description = messages.getMessage("actions.logout.description");
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getLogoutIcon());
+        }
     }
 
     @Override

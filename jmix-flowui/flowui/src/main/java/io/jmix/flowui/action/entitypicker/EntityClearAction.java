@@ -18,9 +18,9 @@ package io.jmix.flowui.action.entitypicker;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.flowui.UiActionProperties;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.valuepicker.PickerAction;
@@ -55,13 +55,6 @@ public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, Ent
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.CLOSE);
-    }
-
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.valuePicker.clear.description");
@@ -70,6 +63,15 @@ public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, Ent
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
         this.shortcutCombination = KeyCombination.create(uiComponentProperties.getPickerClearShortcut());
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getEntityClearIcon());
+        }
     }
 
     @Override

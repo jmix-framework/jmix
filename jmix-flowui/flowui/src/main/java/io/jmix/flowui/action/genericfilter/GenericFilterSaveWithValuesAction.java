@@ -18,13 +18,15 @@ package io.jmix.flowui.action.genericfilter;
 
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
+import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.accesscontext.UiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
-import io.jmix.flowui.accesscontext.UiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
-import org.springframework.lang.Nullable;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 /**
  * Action to save changes to current filter configuration using the values in filter components as default values.
@@ -49,6 +51,15 @@ public class GenericFilterSaveWithValuesAction
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.GenericFilter.SaveWithValues");
         this.messages = messages;
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getGenericFilterSaveWithValuesIcon());
+        }
     }
 
     @Autowired

@@ -18,11 +18,12 @@ package io.jmix.flowui.action.usermenu;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.page.WebStorage;
 import io.jmix.core.Messages;
+import io.jmix.flowui.UiActionProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.usermenu.UserMenu;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasSubMenu;
@@ -50,6 +51,7 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
     protected static final String MESSAGE_KEY = "actions.userMenu.ThemeSwitch";
 
     protected Messages messages;
+    protected UiActionProperties uiActionProperties;
 
     protected final Map<String, UserMenuItem> menuItems = new HashMap<>(3);
     protected HasSubMenu.SubMenu subMenu;
@@ -59,15 +61,14 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
     }
 
     public UserMenuThemeSwitchAction(String id) {
-        super(id);}
+        super(id);
+    }
 
     @Override
     protected void initAction() {
         checkJsImport();
 
         super.initAction();
-
-        icon = createIcon(SYSTEM_THEME);
     }
 
     protected void checkJsImport() {
@@ -85,6 +86,12 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
         this.messages = messages;
 
         this.text = messages.getMessage(MESSAGE_KEY);
+    }
+
+    @Autowired
+    public void setUiActionProperties(UiActionProperties uiActionProperties) {
+        this.uiActionProperties = uiActionProperties;
+        icon = createIcon(SYSTEM_THEME);
     }
 
     @Override
@@ -132,12 +139,12 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
     }
 
     protected Icon createIcon(String theme) {
-        return switch (theme) {
-            case SYSTEM_THEME -> VaadinIcon.ADJUST.create();
-            case LIGHT_THEME -> VaadinIcon.SUN_O.create();
-            case DARK_THEME -> VaadinIcon.MOON_O.create();
+        return ComponentUtils.parseIcon(switch (theme) {
+            case SYSTEM_THEME -> uiActionProperties.getUserMenuThemeSwitchSystemIcon();
+            case LIGHT_THEME -> uiActionProperties.getUserMenuThemeSwitchLightIcon();
+            case DARK_THEME -> uiActionProperties.getUserMenuThemeSwitchDarkIcon();
             default -> throw new IllegalStateException("Unknown theme: " + theme);
-        };
+        });
     }
 
     protected void selectSystemTheme(UserMenuItem.HasClickListener.ClickEvent<TextUserMenuItem> event) {

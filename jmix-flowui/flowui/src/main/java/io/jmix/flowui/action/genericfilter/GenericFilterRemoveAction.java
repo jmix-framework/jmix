@@ -17,10 +17,11 @@
 package io.jmix.flowui.action.genericfilter;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.accesscontext.UiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.genericfilter.Configuration;
@@ -28,7 +29,6 @@ import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
 import io.jmix.flowui.kit.component.ComponentUtils;
-import io.jmix.flowui.accesscontext.UiGenericFilterModifyGlobalConfigurationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -53,13 +53,6 @@ public class GenericFilterRemoveAction extends GenericFilterAction<GenericFilter
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.TRASH);
-    }
-
     @Autowired
     public void setGenericFilterSupport(GenericFilterSupport genericFilterSupport) {
         this.genericFilterSupport = genericFilterSupport;
@@ -69,6 +62,15 @@ public class GenericFilterRemoveAction extends GenericFilterAction<GenericFilter
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.GenericFilter.Remove");
         this.messages = messages;
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getGenericFilterRemoveIcon());
+        }
     }
 
     @Autowired

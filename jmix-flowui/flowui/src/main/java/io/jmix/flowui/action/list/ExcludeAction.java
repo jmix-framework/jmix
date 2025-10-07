@@ -16,10 +16,10 @@
 
 package io.jmix.flowui.action.list;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.flowui.UiActionProperties;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.action.ActionType;
@@ -34,8 +34,8 @@ import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.util.RemoveOperation.ActionCancelledEvent;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 @ActionType(ExcludeAction.ID)
@@ -65,7 +65,6 @@ public class ExcludeAction<E> extends SecuredListDataComponentAction<ExcludeActi
         super.initAction();
 
         variant = ActionVariant.DANGER;
-        icon = ComponentUtils.convertToIcon(VaadinIcon.CLOSE);
     }
 
     @Autowired
@@ -81,6 +80,15 @@ public class ExcludeAction<E> extends SecuredListDataComponentAction<ExcludeActi
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
         this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridRemoveShortcut());
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getListExcludeIcon());
+        }
     }
 
     /**

@@ -16,9 +16,9 @@
 
 package io.jmix.flowui.action.view;
 
-import io.jmix.flowui.action.ActionType;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
+import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,16 +36,18 @@ public class DetailDiscardAction<E> extends OperationResultViewAction<DetailDisc
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.BAN);
-    }
-
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.Cancel");
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getDetailDiscardIcon());
+        }
     }
 
     @Override

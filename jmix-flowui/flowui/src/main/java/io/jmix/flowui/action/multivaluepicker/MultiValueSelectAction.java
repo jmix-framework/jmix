@@ -20,11 +20,11 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.UiActionProperties;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
@@ -89,16 +89,18 @@ public class MultiValueSelectAction<E>
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
-    }
-
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
         this.uiComponentProperties = uiComponentProperties;
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getMultiValueSelectIcon());
+        }
     }
 
     @Autowired

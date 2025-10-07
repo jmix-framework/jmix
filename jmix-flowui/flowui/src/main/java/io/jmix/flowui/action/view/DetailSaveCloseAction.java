@@ -16,17 +16,17 @@
 
 package io.jmix.flowui.action.view;
 
+import io.jmix.core.Messages;
+import io.jmix.flowui.UiActionProperties;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.ActionType;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import io.jmix.core.Messages;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.LockStatus;
 import io.jmix.flowui.view.StandardDetailView;
-import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 @ActionType(DetailSaveCloseAction.ID)
 public class DetailSaveCloseAction<E>
@@ -46,7 +46,6 @@ public class DetailSaveCloseAction<E>
     protected void initAction() {
         super.initAction();
 
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.CHECK);
         this.variant = ActionVariant.PRIMARY;
     }
 
@@ -58,6 +57,15 @@ public class DetailSaveCloseAction<E>
     @Autowired
     protected void setUiViewProperties(UiViewProperties uiViewProperties) {
         this.shortcutCombination = KeyCombination.create(uiViewProperties.getSaveShortcut());
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getDetailSaveCloseIcon());
+        }
     }
 
     @Override

@@ -19,7 +19,6 @@ package io.jmix.flowui.action.valuepicker;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
@@ -27,6 +26,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.UiActionProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.app.propertyfilter.dateinterval.DateIntervalDialog;
 import io.jmix.flowui.app.propertyfilter.dateinterval.DateIntervalSupport;
@@ -62,16 +62,18 @@ public class DateIntervalAction
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
-    }
-
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.valuePicker.dateInterval.description");
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getValueDateIntervalIcon());
+        }
     }
 
     @Autowired

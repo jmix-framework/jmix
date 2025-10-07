@@ -16,8 +16,8 @@
 
 package io.jmix.flowui.action.view;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
+import io.jmix.flowui.UiActionProperties;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -25,8 +25,8 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.ViewControllerUtils;
-import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 @ActionType(DetailCloseAction.ID)
 public class DetailCloseAction<E> extends OperationResultViewAction<DetailCloseAction<E>, StandardDetailView<E>> {
@@ -41,13 +41,6 @@ public class DetailCloseAction<E> extends OperationResultViewAction<DetailCloseA
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.BAN);
-    }
-
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.Cancel");
@@ -56,6 +49,15 @@ public class DetailCloseAction<E> extends OperationResultViewAction<DetailCloseA
     @Autowired
     protected void setUiViewProperties(UiViewProperties viewProperties) {
         this.shortcutCombination = KeyCombination.create(viewProperties.getCloseShortcut());
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getDetailCloseIcon());
+        }
     }
 
     @Override

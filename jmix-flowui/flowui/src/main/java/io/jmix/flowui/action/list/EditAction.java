@@ -17,19 +17,19 @@
 package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.UiActionProperties;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.UiEntityContext;
-import io.jmix.flowui.action.impl.ActionHandlerValidator;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
+import io.jmix.flowui.action.impl.ActionHandlerValidator;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -76,7 +76,6 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
         super.initAction();
 
         setConstraintEntityOp(EntityOp.UPDATE);
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PENCIL);
     }
 
     @Nullable
@@ -224,6 +223,15 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
         this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridEditShortcut());
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getListEditIcon());
+        }
     }
 
     @Autowired

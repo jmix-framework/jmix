@@ -17,13 +17,13 @@
 package io.jmix.flowui.action.entitypicker;
 
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.UiActionProperties;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
@@ -75,13 +75,6 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.SEARCH);
-    }
-
     @Autowired
     public void setDialogWindows(DialogWindows dialogWindows) {
         this.dialogWindows = dialogWindows;
@@ -101,6 +94,15 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
         this.shortcutCombination = KeyCombination.create(uiComponentProperties.getPickerOpenShortcut());
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getEntityOpenIcon());
+        }
     }
 
     @Override

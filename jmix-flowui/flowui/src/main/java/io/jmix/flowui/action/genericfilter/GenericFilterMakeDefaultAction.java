@@ -16,9 +16,9 @@
 
 package io.jmix.flowui.action.genericfilter;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.UiActionProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
@@ -45,16 +45,18 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.STAR);
-    }
-
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.GenericFilter.MakeDefault");
+    }
+
+    @Autowired
+    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+        // For backward compatibility, set the default icon only if the icon is null,
+        // i.e., it was not set in the 'initAction' method, which is called first.
+        if (icon == null) {
+            this.icon = ComponentUtils.parseIcon(uiActionProperties.getGenericFilterMakeDefaultIcon());
+        }
     }
 
     @Override

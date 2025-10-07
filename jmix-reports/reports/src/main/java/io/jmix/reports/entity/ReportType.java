@@ -17,6 +17,10 @@ package io.jmix.reports.entity;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
+/**
+ * @deprecated the enum is not used. No direct replacement.
+ */
+@Deprecated(since = "2.7.0", forRemoval = true)
 public enum ReportType implements EnumClass<Integer> {
     SIMPLE(10),
     PRINT_FORM(20),

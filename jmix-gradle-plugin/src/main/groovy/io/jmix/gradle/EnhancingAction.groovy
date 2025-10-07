@@ -408,7 +408,10 @@ class EnhancingAction implements Action<Task> {
         List<String> nonJpaClasses = project.jmix.entitiesEnhancing.nonJpaClasses
 
         return classNames.findAll {className ->
-            !nonJpaClasses.contains(className) && !nonJpaPackages.find {className.startsWith(it + '.')}
+            boolean result = !nonJpaClasses.contains(className) && !nonJpaPackages.find {className.startsWith(it + '.')}
+            if (!result)
+                project.logger.info "Entity ${className} was fitered out by nonJpaPackages or nonJpaClasses"
+            return result
         }
     }
 

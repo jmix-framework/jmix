@@ -52,6 +52,7 @@ public abstract class BaseExecutionHistoryTest {
         fetchPlan = fetchPlans.builder(ReportExecution.class)
                 .addFetchPlan(FetchPlan.BASE)
                 .add("outputDocument", FetchPlan.LOCAL)
+                .add("report", FetchPlan.LOCAL)
                 .build();
     }
 

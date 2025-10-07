@@ -1469,4 +1469,11 @@ public interface StudioElements {
             )
     )
     void cardFooter();
+
+    @StudioElement(
+            name = "Markdown Content",
+            xmlElement = "content",
+            target = "com.vaadin.flow.component.markdown.Markdown"
+    )
+    void markdownContent();
 }

@@ -112,6 +112,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("horizontalMenu", HorizontalMenuLoader.class);
         loaders.put("richTextEditor", RichTextEditorLoader.class);
         loaders.put("twinColumn", TwinColumnLoader.class);
+        loaders.put("markdown", MarkdownLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

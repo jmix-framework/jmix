@@ -3415,6 +3415,24 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- Markdown -->
+    <xs:complexType name="markdownComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="content" minOccurs="0">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="content" type="resourceString"/>
+
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasSize"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- ActionItem-->
     <xs:complexType name="dropdownActionItemType">
         <xs:choice>
@@ -5220,6 +5238,7 @@
                 <xs:element name="twinColumn" type="twinColumnComponent"/>
                 <xs:element name="component" type="genericComponent"/>
                 <xs:element name="fragment" type="fragmentComponent"/>
+                <xs:element name="markdown" type="markdownComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

@@ -44,6 +44,26 @@ class SearchSecurityDecoratorTest extends Specification {
         expectedResult << [true, false]
     }
 
+    def "CanEntityBeRead: returns the result of the similar CurrentUserSecurityFacade method"() {
+        given:
+        def securityFacade = Mock(CurrentUserSecurityFacade)
+
+        and:
+        SearchSecurityDecorator decorator = new SearchSecurityDecorator(Mock(Metadata), securityFacade)
+
+        and:
+        def metaClass = Mock(MetaClass)
+
+        when:
+        1 * securityFacade.canEntityBeRead(metaClass) >> expectedResult
+        def actualResult = decorator.canEntityBeRead(metaClass)
+
+        then:
+        actualResult == expectedResult
+        where:
+        expectedResult << [true, false]
+    }
+
     def "ResolveEntitiesAllowedToSearch: a user has rights for all entities"() {
         given:
         def securityFacade = Mock(CurrentUserSecurityFacade)

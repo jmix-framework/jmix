@@ -26,6 +26,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * TODO
+ */
 @Component("search_SearchSecurityDecorator")
 public class SearchSecurityDecorator {
 
@@ -49,5 +52,9 @@ public class SearchSecurityDecorator {
 
     public boolean canAttributeBeRead(MetaPropertyPath metaPropertyPath) {
         return securityFacade.canAttributeBeRead(metaPropertyPath);
+    }
+
+    public boolean canEntityBeRead(MetaClass metaClass) {
+        return securityFacade.canEntityBeRead(metaClass);
     }
 }

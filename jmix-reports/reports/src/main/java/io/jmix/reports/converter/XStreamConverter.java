@@ -26,6 +26,10 @@ import io.jmix.reports.entity.*;
 
 import java.util.*;
 
+/**
+ * @deprecated XML serialization is the legacy way of storing reports. Use JSON serialization instead.
+ */
+@Deprecated(since = "2.7.0", forRemoval = true)
 public class XStreamConverter {
     protected XStream createXStream() {
         XStream xStream = new ReportsXStream(Collections.singletonList(SerializableConverter.class)) {

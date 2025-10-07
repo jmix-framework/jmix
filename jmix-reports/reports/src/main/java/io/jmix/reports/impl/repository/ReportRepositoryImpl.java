@@ -401,7 +401,7 @@ public class ReportRepositoryImpl implements ReportRepository {
     }
 
     // serves as cache for some calculations
-    public class FilteringContext {
+    public static class FilteringContext {
         Set<String> resourceRoleCodes;
         Set<String> inputValueMetaClassNames;
     }

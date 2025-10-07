@@ -18,7 +18,7 @@ package io.jmix.flowui.action.genericfilter;
 
 import com.vaadin.flow.component.HasValue;
 import io.jmix.core.Messages;
-import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.UiIconProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -45,11 +45,11 @@ public class GenericFilterClearValuesAction extends GenericFilterAction<GenericF
     }
 
     @Autowired
-    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+    protected void setUiIconProperties(UiIconProperties uiIconProperties) {
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiActionProperties.getGenericFilterClearValuesIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getGenericFilterClearValuesIcon());
         }
     }
 

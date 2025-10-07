@@ -18,7 +18,7 @@ package io.jmix.flowui.action.valuepicker;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.core.Messages;
-import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.UiIconProperties;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.PickerComponent;
@@ -53,11 +53,11 @@ public class ValueClearAction<V> extends PickerAction<ValueClearAction<V>, Picke
     }
 
     @Autowired
-    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+    protected void setUiIconProperties(UiIconProperties uiIconProperties) {
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiActionProperties.getValueClearIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getValueClearIcon());
         }
     }
 

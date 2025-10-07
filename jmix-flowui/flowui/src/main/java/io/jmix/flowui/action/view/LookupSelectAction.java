@@ -20,7 +20,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
-import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.UiIconProperties;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -68,11 +68,11 @@ public class LookupSelectAction<E> extends OperationResultViewAction<LookupSelec
     }
 
     @Autowired
-    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+    protected void setUiIconProperties(UiIconProperties uiIconProperties) {
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiActionProperties.getLookupSelectIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getLookupSelectIcon());
         }
     }
 

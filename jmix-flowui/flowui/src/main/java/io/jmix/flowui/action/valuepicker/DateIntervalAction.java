@@ -26,7 +26,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.UiIconProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.app.propertyfilter.dateinterval.DateIntervalDialog;
 import io.jmix.flowui.app.propertyfilter.dateinterval.DateIntervalSupport;
@@ -68,11 +68,11 @@ public class DateIntervalAction
     }
 
     @Autowired
-    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+    protected void setUiIconProperties(UiIconProperties uiIconProperties) {
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiActionProperties.getValueDateIntervalIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getValueDateIntervalIcon());
         }
     }
 

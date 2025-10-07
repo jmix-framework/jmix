@@ -22,7 +22,7 @@ import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.UiIconProperties;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.UiEntityContext;
@@ -226,11 +226,11 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     @Autowired
-    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+    protected void setUiIconProperties(UiIconProperties uiIconProperties) {
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiActionProperties.getListEditIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getListEditIcon());
         }
     }
 

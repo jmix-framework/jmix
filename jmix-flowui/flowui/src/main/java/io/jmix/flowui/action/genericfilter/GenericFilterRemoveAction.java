@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.UiIconProperties;
 import io.jmix.flowui.accesscontext.UiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
@@ -65,11 +65,11 @@ public class GenericFilterRemoveAction extends GenericFilterAction<GenericFilter
     }
 
     @Autowired
-    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+    protected void setUiIconProperties(UiIconProperties uiIconProperties) {
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiActionProperties.getGenericFilterRemoveIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getGenericFilterRemoveIcon());
         }
     }
 

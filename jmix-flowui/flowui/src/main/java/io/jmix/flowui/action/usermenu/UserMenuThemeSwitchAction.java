@@ -20,7 +20,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.page.WebStorage;
 import io.jmix.core.Messages;
-import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.UiIconProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -51,7 +51,7 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
     protected static final String MESSAGE_KEY = "actions.userMenu.ThemeSwitch";
 
     protected Messages messages;
-    protected UiActionProperties uiActionProperties;
+    protected UiIconProperties uiIconProperties;
 
     protected final Map<String, UserMenuItem> menuItems = new HashMap<>(3);
     protected HasSubMenu.SubMenu subMenu;
@@ -89,8 +89,8 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
     }
 
     @Autowired
-    public void setUiActionProperties(UiActionProperties uiActionProperties) {
-        this.uiActionProperties = uiActionProperties;
+    public void setUiIconProperties(UiIconProperties uiIconProperties) {
+        this.uiIconProperties = uiIconProperties;
         icon = createIcon(SYSTEM_THEME);
     }
 
@@ -140,9 +140,9 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
 
     protected Icon createIcon(String theme) {
         return ComponentUtils.parseIcon(switch (theme) {
-            case SYSTEM_THEME -> uiActionProperties.getUserMenuThemeSwitchSystemIcon();
-            case LIGHT_THEME -> uiActionProperties.getUserMenuThemeSwitchLightIcon();
-            case DARK_THEME -> uiActionProperties.getUserMenuThemeSwitchDarkIcon();
+            case SYSTEM_THEME -> uiIconProperties.getUserMenuThemeSwitchSystemIcon();
+            case LIGHT_THEME -> uiIconProperties.getUserMenuThemeSwitchLightIcon();
+            case DARK_THEME -> uiIconProperties.getUserMenuThemeSwitchDarkIcon();
             default -> throw new IllegalStateException("Unknown theme: " + theme);
         });
     }

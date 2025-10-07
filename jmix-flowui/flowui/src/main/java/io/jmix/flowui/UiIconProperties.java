@@ -22,8 +22,8 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 /**
  * Configuration properties for UI components in a Jmix application.
  */
-@ConfigurationProperties(prefix = "jmix.ui.action")
-public class UiActionProperties {
+@ConfigurationProperties(prefix = "jmix.ui.icon")
+public class UiIconProperties {
 
     String detailCloseIcon;
     String detailDiscardIcon;
@@ -67,7 +67,7 @@ public class UiActionProperties {
 
     String logoutIcon;
 
-    public UiActionProperties(
+    public UiIconProperties(
             @DefaultValue("vaadin:ban") String detailCloseIcon,
             @DefaultValue("vaadin:ban") String detailDiscardIcon,
             @DefaultValue("vaadin:pencil") String detailEnableEditingIcon,

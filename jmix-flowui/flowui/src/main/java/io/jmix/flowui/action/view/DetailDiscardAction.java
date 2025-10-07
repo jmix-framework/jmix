@@ -17,7 +17,7 @@
 package io.jmix.flowui.action.view;
 
 import io.jmix.core.Messages;
-import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.UiIconProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.StandardDetailView;
@@ -42,11 +42,11 @@ public class DetailDiscardAction<E> extends OperationResultViewAction<DetailDisc
     }
 
     @Autowired
-    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+    protected void setUiIconProperties(UiIconProperties uiIconProperties) {
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiActionProperties.getDetailDiscardIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getDetailDiscardIcon());
         }
     }
 

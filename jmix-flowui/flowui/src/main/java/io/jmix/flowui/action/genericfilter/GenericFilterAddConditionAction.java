@@ -20,7 +20,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.UiActionProperties;
+import io.jmix.flowui.UiIconProperties;
 import io.jmix.flowui.accesscontext.UiGenericFilterModifyConfigurationContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
@@ -114,11 +114,11 @@ public class GenericFilterAddConditionAction extends GenericFilterAction<Generic
     }
 
     @Autowired
-    protected void setUiActionProperties(UiActionProperties uiActionProperties) {
+    protected void setUiIconProperties(UiIconProperties uiIconProperties) {
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiActionProperties.getGenericFilterAddConditionIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getGenericFilterAddConditionIcon());
         }
     }
 

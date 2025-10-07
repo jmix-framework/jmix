@@ -410,7 +410,7 @@ class EnhancingAction implements Action<Task> {
         return classNames.findAll {className ->
             boolean result = !nonJpaClasses.contains(className) && !nonJpaPackages.find {className.startsWith(it + '.')}
             if (!result)
-                project.logger.info "Entity ${className} was fitered out by nonJpaPackages or nonJpaClasses"
+                project.logger.info "Entity ${className} was filtered out by nonJpaPackages or nonJpaClasses"
             return result
         }
     }

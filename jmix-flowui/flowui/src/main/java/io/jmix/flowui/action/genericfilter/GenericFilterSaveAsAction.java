@@ -50,7 +50,7 @@ public class GenericFilterSaveAsAction extends AbstractGenericFilterSaveAction<G
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiIconProperties.getGenericFilterSaveAsIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getGenericFilterSaveAsActionIcon());
         }
     }
 

@@ -93,7 +93,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiIconProperties.getEntityLookupIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getEntityLookupActionIcon());
         }
     }
 

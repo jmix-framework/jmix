@@ -57,7 +57,7 @@ public class ValueClearAction<V> extends PickerAction<ValueClearAction<V>, Picke
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiIconProperties.getValueClearIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getValueClearActionIcon());
         }
     }
 

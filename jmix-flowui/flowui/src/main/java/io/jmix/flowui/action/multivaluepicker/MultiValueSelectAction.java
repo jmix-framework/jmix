@@ -99,7 +99,7 @@ public class MultiValueSelectAction<E>
         // For backward compatibility, set the default icon only if the icon is null,
         // i.e., it was not set in the 'initAction' method, which is called first.
         if (icon == null) {
-            this.icon = ComponentUtils.parseIcon(uiIconProperties.getMultiValueSelectIcon());
+            this.icon = ComponentUtils.parseIcon(uiIconProperties.getMultiValueSelectActionIcon());
         }
     }
 

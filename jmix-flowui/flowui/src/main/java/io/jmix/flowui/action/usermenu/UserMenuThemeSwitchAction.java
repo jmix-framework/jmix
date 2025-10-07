@@ -140,9 +140,9 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
 
     protected Icon createIcon(String theme) {
         return ComponentUtils.parseIcon(switch (theme) {
-            case SYSTEM_THEME -> uiIconProperties.getUserMenuThemeSwitchSystemIcon();
-            case LIGHT_THEME -> uiIconProperties.getUserMenuThemeSwitchLightIcon();
-            case DARK_THEME -> uiIconProperties.getUserMenuThemeSwitchDarkIcon();
+            case SYSTEM_THEME -> uiIconProperties.getUserMenuThemeSwitchActionSystemIcon();
+            case LIGHT_THEME -> uiIconProperties.getUserMenuThemeSwitchActionLightIcon();
+            case DARK_THEME -> uiIconProperties.getUserMenuThemeSwitchActionDarkIcon();
             default -> throw new IllegalStateException("Unknown theme: " + theme);
         });
     }

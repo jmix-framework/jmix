@@ -25,261 +25,259 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConfigurationProperties(prefix = "jmix.ui.icon")
 public class UiIconProperties {
 
-    String detailCloseIcon;
-    String detailDiscardIcon;
-    String detailEnableEditingIcon;
-    String detailSaveIcon;
-    String detailSaveCloseIcon;
-    String lookupDiscardIcon;
-    String lookupSelectIcon;
-    String viewCloseIcon;
+    String detailCloseActionIcon;
+    String detailDiscardActionIcon;
+    String detailEnableEditingActionIcon;
+    String detailSaveActionIcon;
+    String detailSaveCloseActionIcon;
+    String lookupDiscardActionIcon;
+    String lookupSelectActionIcon;
+    String viewCloseActionIcon;
 
-    String listAddIcon;
-    String listCreateIcon;
-    String listEditIcon;
-    String listExcludeIcon;
-    String listReadIcon;
-    String listRefreshIcon;
-    String listRemoveIcon;
+    String listAddActionIcon;
+    String listCreateActionIcon;
+    String listEditActionIcon;
+    String listExcludeActionIcon;
+    String listReadActionIcon;
+    String listRefreshActionIcon;
+    String listRemoveActionIcon;
 
-    String entityClearIcon;
-    String entityLookupIcon;
-    String entityOpenIcon;
+    String entityClearActionIcon;
+    String entityLookupActionIcon;
+    String entityOpenActionIcon;
 
-    String valueDateIntervalIcon;
-    String valueClearIcon;
+    String valueDateIntervalActionIcon;
+    String valueClearActionIcon;
 
-    String multiValueSelectIcon;
+    String multiValueSelectActionIcon;
 
-    String genericFilterAddConditionIcon;
-    String genericFilterClearValuesIcon;
-    String genericFilterCopyIcon;
-    String genericFilterEditIcon;
-    String genericFilterMakeDefaultIcon;
-    String genericFilterRemoveIcon;
-    String genericFilterSaveIcon;
-    String genericFilterSaveAsIcon;
-    String genericFilterSaveWithValuesIcon;
+    String genericFilterAddConditionActionIcon;
+    String genericFilterClearValuesActionIcon;
+    String genericFilterCopyActionIcon;
+    String genericFilterEditActionIcon;
+    String genericFilterMakeDefaultActionIcon;
+    String genericFilterRemoveActionIcon;
+    String genericFilterSaveActionIcon;
+    String genericFilterSaveAsActionIcon;
+    String genericFilterSaveWithValuesActionIcon;
 
-    String userMenuThemeSwitchSystemIcon;
-    String userMenuThemeSwitchLightIcon;
-    String userMenuThemeSwitchDarkIcon;
+    String userMenuThemeSwitchActionSystemIcon;
+    String userMenuThemeSwitchActionLightIcon;
+    String userMenuThemeSwitchActionDarkIcon;
 
-    String logoutIcon;
+    String logoutActionIcon;
 
     public UiIconProperties(
-            @DefaultValue("vaadin:ban") String detailCloseIcon,
-            @DefaultValue("vaadin:ban") String detailDiscardIcon,
-            @DefaultValue("vaadin:pencil") String detailEnableEditingIcon,
-            @DefaultValue("vaadin:archive") String detailSaveIcon,
-            @DefaultValue("vaadin:check") String detailSaveCloseIcon,
-            @DefaultValue("vaadin:ban") String lookupDiscardIcon,
-            @DefaultValue("vaadin:check") String lookupSelectIcon,
-            @DefaultValue("vaadin:ban") String viewCloseIcon,
-            @DefaultValue("vaadin:plus") String listAddIcon,
-            @DefaultValue("vaadin:plus") String listCreateIcon,
-            @DefaultValue("vaadin:pencil") String listEditIcon,
-            @DefaultValue("vaadin:close") String listExcludeIcon,
-            @DefaultValue("vaadin:eye") String listReadIcon,
-            @DefaultValue("vaadin:refresh") String listRefreshIcon,
-            @DefaultValue("vaadin:trash") String listRemoveIcon,
-            @DefaultValue("vaadin:close") String entityClearIcon,
-            @DefaultValue("vaadin:ellipsis-dots-h") String entityLookupIcon,
-            @DefaultValue("vaadin:search") String entityOpenIcon,
-            @DefaultValue("vaadin:ellipsis-dots-h") String valueDateIntervalIcon,
-            @DefaultValue("vaadin:close") String valueClearIcon,
-            @DefaultValue("vaadin:ellipsis-dots-h") String multiValueSelectIcon,
+            @DefaultValue("vaadin:ban") String detailCloseActionIcon,
+            @DefaultValue("vaadin:ban") String detailDiscardActionIcon,
+            @DefaultValue("vaadin:pencil") String detailEnableEditingActionIcon,
+            @DefaultValue("vaadin:archive") String detailSaveActionIcon,
+            @DefaultValue("vaadin:check") String detailSaveCloseActionIcon,
+            @DefaultValue("vaadin:ban") String lookupDiscardActionIcon,
+            @DefaultValue("vaadin:check") String lookupSelectActionIcon,
+            @DefaultValue("vaadin:ban") String viewCloseActionIcon,
+            @DefaultValue("vaadin:plus") String listAddActionIcon,
+            @DefaultValue("vaadin:plus") String listCreateActionIcon,
+            @DefaultValue("vaadin:pencil") String listEditActionIcon,
+            @DefaultValue("vaadin:close") String listExcludeActionIcon,
+            @DefaultValue("vaadin:eye") String listReadActionIcon,
+            @DefaultValue("vaadin:refresh") String listRefreshActionIcon,
+            @DefaultValue("vaadin:trash") String listRemoveActionIcon,
+            @DefaultValue("vaadin:close") String entityClearActionIcon,
+            @DefaultValue("vaadin:ellipsis-dots-h") String entityLookupActionIcon,
+            @DefaultValue("vaadin:search") String entityOpenActionIcon,
+            @DefaultValue("vaadin:ellipsis-dots-h") String valueDateIntervalActionIcon,
+            @DefaultValue("vaadin:close") String valueClearActionIcon,
+            @DefaultValue("vaadin:ellipsis-dots-h") String multiValueSelectActionIcon,
+            @DefaultValue("vaadin:plus") String genericFilterAddConditionActionIcon,
+            @DefaultValue("vaadin:eraser") String genericFilterClearValuesActionIcon,
+            @DefaultValue("vaadin:copy") String genericFilterCopyActionIcon,
+            @DefaultValue("vaadin:pencil") String genericFilterEditActionIcon,
+            @DefaultValue("vaadin:star") String genericFilterMakeDefaultActionIcon,
+            @DefaultValue("vaadin:trash") String genericFilterRemoveActionIcon,
+            @DefaultValue("vaadin:archive") String genericFilterSaveActionIcon,
+            @DefaultValue("vaadin:archive") String genericFilterSaveAsActionIcon,
+            @DefaultValue("vaadin:archive") String genericFilterSaveWithValuesActionIcon,
+            @DefaultValue("vaadin:adjust") String userMenuThemeSwitchActionSystemIcon,
+            @DefaultValue("vaadin:sun-o") String userMenuThemeSwitchActionLightIcon,
+            @DefaultValue("vaadin:moon-o") String userMenuThemeSwitchActionDarkIcon,
+            @DefaultValue("vaadin:sign-out") String logoutActionIcon) {
+        this.detailCloseActionIcon = detailCloseActionIcon;
+        this.detailDiscardActionIcon = detailDiscardActionIcon;
+        this.detailEnableEditingActionIcon = detailEnableEditingActionIcon;
+        this.detailSaveActionIcon = detailSaveActionIcon;
+        this.detailSaveCloseActionIcon = detailSaveCloseActionIcon;
+        this.lookupDiscardActionIcon = lookupDiscardActionIcon;
+        this.lookupSelectActionIcon = lookupSelectActionIcon;
+        this.viewCloseActionIcon = viewCloseActionIcon;
 
-            @DefaultValue("vaadin:plus") String genericFilterAddConditionIcon,
-            @DefaultValue("vaadin:eraser") String genericFilterClearValuesIcon,
-            @DefaultValue("vaadin:copy") String genericFilterCopyIcon,
-            @DefaultValue("vaadin:pencil") String genericFilterEditIcon,
-            @DefaultValue("vaadin:star") String genericFilterMakeDefaultIcon,
-            @DefaultValue("vaadin:trash") String genericFilterRemoveIcon,
-            @DefaultValue("vaadin:archive") String genericFilterSaveIcon,
-            @DefaultValue("vaadin:archive") String genericFilterSaveAsIcon,
-            @DefaultValue("vaadin:archive") String genericFilterSaveWithValuesIcon,
+        this.listAddActionIcon = listAddActionIcon;
+        this.listCreateActionIcon = listCreateActionIcon;
+        this.listEditActionIcon = listEditActionIcon;
+        this.listExcludeActionIcon = listExcludeActionIcon;
+        this.listReadActionIcon = listReadActionIcon;
+        this.listRefreshActionIcon = listRefreshActionIcon;
+        this.listRemoveActionIcon = listRemoveActionIcon;
 
-            @DefaultValue("vaadin:adjust") String userMenuThemeSwitchSystemIcon,
-            @DefaultValue("vaadin:sun-o") String userMenuThemeSwitchLightIcon,
-            @DefaultValue("vaadin:moon-o") String userMenuThemeSwitchDarkIcon,
-            @DefaultValue("vaadin:sign-out") String logoutIcon) {
-        this.detailCloseIcon = detailCloseIcon;
-        this.detailDiscardIcon = detailDiscardIcon;
-        this.detailEnableEditingIcon = detailEnableEditingIcon;
-        this.detailSaveIcon = detailSaveIcon;
-        this.detailSaveCloseIcon = detailSaveCloseIcon;
-        this.lookupDiscardIcon = lookupDiscardIcon;
-        this.lookupSelectIcon = lookupSelectIcon;
-        this.viewCloseIcon = viewCloseIcon;
+        this.entityClearActionIcon = entityClearActionIcon;
+        this.entityLookupActionIcon = entityLookupActionIcon;
+        this.entityOpenActionIcon = entityOpenActionIcon;
 
-        this.listAddIcon = listAddIcon;
-        this.listCreateIcon = listCreateIcon;
-        this.listEditIcon = listEditIcon;
-        this.listExcludeIcon = listExcludeIcon;
-        this.listReadIcon = listReadIcon;
-        this.listRefreshIcon = listRefreshIcon;
-        this.listRemoveIcon = listRemoveIcon;
+        this.valueDateIntervalActionIcon = valueDateIntervalActionIcon;
+        this.valueClearActionIcon = valueClearActionIcon;
 
-        this.entityClearIcon = entityClearIcon;
-        this.entityLookupIcon = entityLookupIcon;
-        this.entityOpenIcon = entityOpenIcon;
+        this.multiValueSelectActionIcon = multiValueSelectActionIcon;
 
-        this.valueDateIntervalIcon = valueDateIntervalIcon;
-        this.valueClearIcon = valueClearIcon;
+        this.genericFilterAddConditionActionIcon = genericFilterAddConditionActionIcon;
+        this.genericFilterClearValuesActionIcon = genericFilterClearValuesActionIcon;
+        this.genericFilterCopyActionIcon = genericFilterCopyActionIcon;
+        this.genericFilterEditActionIcon = genericFilterEditActionIcon;
+        this.genericFilterMakeDefaultActionIcon = genericFilterMakeDefaultActionIcon;
+        this.genericFilterRemoveActionIcon = genericFilterRemoveActionIcon;
+        this.genericFilterSaveActionIcon = genericFilterSaveActionIcon;
+        this.genericFilterSaveAsActionIcon = genericFilterSaveAsActionIcon;
+        this.genericFilterSaveWithValuesActionIcon = genericFilterSaveWithValuesActionIcon;
 
-        this.multiValueSelectIcon = multiValueSelectIcon;
+        this.userMenuThemeSwitchActionSystemIcon = userMenuThemeSwitchActionSystemIcon;
+        this.userMenuThemeSwitchActionLightIcon = userMenuThemeSwitchActionLightIcon;
+        this.userMenuThemeSwitchActionDarkIcon = userMenuThemeSwitchActionDarkIcon;
 
-        this.genericFilterAddConditionIcon = genericFilterAddConditionIcon;
-        this.genericFilterClearValuesIcon = genericFilterClearValuesIcon;
-        this.genericFilterCopyIcon = genericFilterCopyIcon;
-        this.genericFilterEditIcon = genericFilterEditIcon;
-        this.genericFilterMakeDefaultIcon = genericFilterMakeDefaultIcon;
-        this.genericFilterRemoveIcon = genericFilterRemoveIcon;
-        this.genericFilterSaveIcon = genericFilterSaveIcon;
-        this.genericFilterSaveAsIcon = genericFilterSaveAsIcon;
-        this.genericFilterSaveWithValuesIcon = genericFilterSaveWithValuesIcon;
-
-        this.userMenuThemeSwitchSystemIcon = userMenuThemeSwitchSystemIcon;
-        this.userMenuThemeSwitchLightIcon = userMenuThemeSwitchLightIcon;
-        this.userMenuThemeSwitchDarkIcon = userMenuThemeSwitchDarkIcon;
-
-        this.logoutIcon = logoutIcon;
+        this.logoutActionIcon = logoutActionIcon;
     }
 
-    public String getDetailCloseIcon() {
-        return detailCloseIcon;
+    public String getDetailCloseActionIcon() {
+        return detailCloseActionIcon;
     }
 
-    public String getDetailDiscardIcon() {
-        return detailDiscardIcon;
+    public String getDetailDiscardActionIcon() {
+        return detailDiscardActionIcon;
     }
 
-    public String getDetailEnableEditingIcon() {
-        return detailEnableEditingIcon;
+    public String getDetailEnableEditingActionIcon() {
+        return detailEnableEditingActionIcon;
     }
 
-    public String getDetailSaveIcon() {
-        return detailSaveIcon;
+    public String getDetailSaveActionIcon() {
+        return detailSaveActionIcon;
     }
 
-    public String getDetailSaveCloseIcon() {
-        return detailSaveCloseIcon;
+    public String getDetailSaveCloseActionIcon() {
+        return detailSaveCloseActionIcon;
     }
 
-    public String getLookupDiscardIcon() {
-        return lookupDiscardIcon;
+    public String getLookupDiscardActionIcon() {
+        return lookupDiscardActionIcon;
     }
 
-    public String getLookupSelectIcon() {
-        return lookupSelectIcon;
+    public String getLookupSelectActionIcon() {
+        return lookupSelectActionIcon;
     }
 
-    public String getViewCloseIcon() {
-        return viewCloseIcon;
+    public String getViewCloseActionIcon() {
+        return viewCloseActionIcon;
     }
 
-    public String getListAddIcon() {
-        return listAddIcon;
+    public String getListAddActionIcon() {
+        return listAddActionIcon;
     }
 
-    public String getListCreateIcon() {
-        return listCreateIcon;
+    public String getListCreateActionIcon() {
+        return listCreateActionIcon;
     }
 
-    public String getListEditIcon() {
-        return listEditIcon;
+    public String getListEditActionIcon() {
+        return listEditActionIcon;
     }
 
-    public String getListExcludeIcon() {
-        return listExcludeIcon;
+    public String getListExcludeActionIcon() {
+        return listExcludeActionIcon;
     }
 
-    public String getListReadIcon() {
-        return listReadIcon;
+    public String getListReadActionIcon() {
+        return listReadActionIcon;
     }
 
-    public String getListRefreshIcon() {
-        return listRefreshIcon;
+    public String getListRefreshActionIcon() {
+        return listRefreshActionIcon;
     }
 
-    public String getListRemoveIcon() {
-        return listRemoveIcon;
+    public String getListRemoveActionIcon() {
+        return listRemoveActionIcon;
     }
 
-    public String getEntityClearIcon() {
-        return entityClearIcon;
+    public String getEntityClearActionIcon() {
+        return entityClearActionIcon;
     }
 
-    public String getEntityLookupIcon() {
-        return entityLookupIcon;
+    public String getEntityLookupActionIcon() {
+        return entityLookupActionIcon;
     }
 
-    public String getEntityOpenIcon() {
-        return entityOpenIcon;
+    public String getEntityOpenActionIcon() {
+        return entityOpenActionIcon;
     }
 
-    public String getValueDateIntervalIcon() {
-        return valueDateIntervalIcon;
+    public String getValueDateIntervalActionIcon() {
+        return valueDateIntervalActionIcon;
     }
 
-    public String getValueClearIcon() {
-        return valueClearIcon;
+    public String getValueClearActionIcon() {
+        return valueClearActionIcon;
     }
 
-    public String getMultiValueSelectIcon() {
-        return multiValueSelectIcon;
+    public String getMultiValueSelectActionIcon() {
+        return multiValueSelectActionIcon;
     }
 
-    public String getGenericFilterAddConditionIcon() {
-        return genericFilterAddConditionIcon;
+    public String getGenericFilterAddConditionActionIcon() {
+        return genericFilterAddConditionActionIcon;
     }
 
-    public String getGenericFilterClearValuesIcon() {
-        return genericFilterClearValuesIcon;
+    public String getGenericFilterClearValuesActionIcon() {
+        return genericFilterClearValuesActionIcon;
     }
 
-    public String getGenericFilterCopyIcon() {
-        return genericFilterCopyIcon;
+    public String getGenericFilterCopyActionIcon() {
+        return genericFilterCopyActionIcon;
     }
 
-    public String getGenericFilterEditIcon() {
-        return genericFilterEditIcon;
+    public String getGenericFilterEditActionIcon() {
+        return genericFilterEditActionIcon;
     }
 
-    public String getGenericFilterMakeDefaultIcon() {
-        return genericFilterMakeDefaultIcon;
+    public String getGenericFilterMakeDefaultActionIcon() {
+        return genericFilterMakeDefaultActionIcon;
     }
 
-    public String getGenericFilterRemoveIcon() {
-        return genericFilterRemoveIcon;
+    public String getGenericFilterRemoveActionIcon() {
+        return genericFilterRemoveActionIcon;
     }
 
-    public String getGenericFilterSaveIcon() {
-        return genericFilterSaveIcon;
+    public String getGenericFilterSaveActionIcon() {
+        return genericFilterSaveActionIcon;
     }
 
-    public String getGenericFilterSaveAsIcon() {
-        return genericFilterSaveAsIcon;
+    public String getGenericFilterSaveAsActionIcon() {
+        return genericFilterSaveAsActionIcon;
     }
 
-    public String getGenericFilterSaveWithValuesIcon() {
-        return genericFilterSaveWithValuesIcon;
+    public String getGenericFilterSaveWithValuesActionIcon() {
+        return genericFilterSaveWithValuesActionIcon;
     }
 
-    public String getUserMenuThemeSwitchSystemIcon() {
-        return userMenuThemeSwitchSystemIcon;
+    public String getUserMenuThemeSwitchActionSystemIcon() {
+        return userMenuThemeSwitchActionSystemIcon;
     }
 
-    public String getUserMenuThemeSwitchLightIcon() {
-        return userMenuThemeSwitchLightIcon;
+    public String getUserMenuThemeSwitchActionLightIcon() {
+        return userMenuThemeSwitchActionLightIcon;
     }
 
-    public String getUserMenuThemeSwitchDarkIcon() {
-        return userMenuThemeSwitchDarkIcon;
+    public String getUserMenuThemeSwitchActionDarkIcon() {
+        return userMenuThemeSwitchActionDarkIcon;
     }
 
-    public String getLogoutIcon() {
-        return logoutIcon;
+    public String getLogoutActionIcon() {
+        return logoutActionIcon;
     }
 }

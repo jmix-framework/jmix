@@ -23,7 +23,9 @@ import io.jmix.core.security.CurrentAuthentication
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
+import test_support.entity.dataaware.EnumType
 import test_support.entity.dataaware.TestDateTimeRangeEntity
+import test_support.entity.dataaware.TestEmptySelectionAllowedEntity
 import test_support.entity.dataaware.TestLengthEntity
 import test_support.entity.dataaware.TestTimeZoneIdEntity
 import test_support.spec.FlowuiTestSpecification
@@ -53,7 +55,11 @@ class DataAwareComponentsTest extends FlowuiTestSpecification {
         def lengthEntity = dataManager.create(TestLengthEntity)
         def timeZoneIdEntity = dataManager.create(TestTimeZoneIdEntity)
         def dateTimeRangeEntity = dataManager.create(TestDateTimeRangeEntity)
-        saveContext.saving(lengthEntity, timeZoneIdEntity, dateTimeRangeEntity)
+
+        def emptySelectionAllowedEntity = dataManager.create(TestEmptySelectionAllowedEntity)
+                .tap { requiredType = EnumType.ENUM_2 }
+
+        saveContext.saving(lengthEntity, timeZoneIdEntity, dateTimeRangeEntity, emptySelectionAllowedEntity)
 
         dataManager.save(saveContext)
     }
@@ -106,5 +112,14 @@ class DataAwareComponentsTest extends FlowuiTestSpecification {
 
         // end of the current day
         dataAwareView.rangeDateTimePicker.getMax().isAfter(LocalDateTime.now())     // @Past
+    }
+
+    def "Load empty selection allowed property from entity metadata"() {
+        when: "A DataAwareComponentsView will open with an entity that has enumeration attributee"
+        def dataAwareView = navigateToView DataAwareComponentsView
+
+        then: "Select component must have appropriate emptySelectionAllowed setting"
+        !dataAwareView.emptySelectionNotAllowedSelect.emptySelectionAllowed
+        dataAwareView.emptySelectionAllowedSelect.emptySelectionAllowed
     }
 }

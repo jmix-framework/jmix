@@ -174,8 +174,9 @@ public class DataAwareComponentsTools {
         MetaProperty metaProperty = valueSource.getMetaPropertyPath().getMetaProperty();
         Map<String, Object> annotations = metaProperty.getAnnotations();
 
-        Boolean required = (Boolean) annotations.get(NotNull.class.getName() + "_notnull_ui_component");
-        component.setEmptySelectionAllowed(required == null || !required);
+        Boolean notNullValue = (Boolean) annotations.get(NotNull.class.getName() + "_notnull_ui_component");
+        boolean mandatory = metaProperty.isMandatory() || Boolean.TRUE.equals(notNullValue);
+        component.setEmptySelectionAllowed(!mandatory);
     }
 
     @SuppressWarnings("unchecked")

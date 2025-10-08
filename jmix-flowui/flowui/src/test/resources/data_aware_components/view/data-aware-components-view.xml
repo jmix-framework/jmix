@@ -45,6 +45,16 @@
                 </query>
             </loader>
         </instance>
+
+        <instance id="emptySelectionAllowedDc"
+                  class="test_support.entity.dataaware.TestEmptySelectionAllowedEntity">
+            <fetchPlan extends="_local"/>
+            <loader id="emptySelectionAllowedDl">
+                <query>
+                    <![CDATA[select e from test_EmptySelectionAllowed e]]>
+                </query>
+            </loader>
+        </instance>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
@@ -64,5 +74,8 @@
         <datePicker id="rangeDatePicker" dataContainer="testDateTimeRangeDc" property="date"/>
         <timePicker id="rangeTimePicker" dataContainer="testDateTimeRangeDc" property="offsetTime"/>
         <dateTimePicker id="rangeDateTimePicker" dataContainer="testDateTimeRangeDc" property="dateTime"/>
+
+        <select id="emptySelectionNotAllowedSelect" dataContainer="emptySelectionAllowedDc" property="requiredType"/>
+        <select id="emptySelectionAllowedSelect" dataContainer="emptySelectionAllowedDc" property="notRequiredType"/>
     </layout>
 </view>

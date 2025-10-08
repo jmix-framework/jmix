@@ -18,6 +18,7 @@ package io.jmix.search.searching.impl;
 
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.searching.SubfieldsProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -30,24 +31,37 @@ import java.util.stream.Collectors;
 import static java.util.Collections.emptyMap;
 
 /**
- * TODO
+ * This class contains methods for getting information for the search request building.
+ * The analysis is based on the {@link IndexConfiguration} objects and entities metadata processing.
  */
 @Component("search_SearchModelAnalyzer")
 public class SearchModelAnalyzer {
 
     protected final SearchSecurityDecorator securityDecorator;
     protected final IndexConfigurationManager indexConfigurationManager;
-    protected final SearchFieldsResolver searchFieldsResolver;
+    protected final SearchFieldsProvider searchFieldsProvider;
 
     public SearchModelAnalyzer(SearchSecurityDecorator securityDecorator,
                                IndexConfigurationManager indexConfigurationManager,
-                               SearchFieldsResolver searchFieldsResolver) {
+                               SearchFieldsProvider searchFieldsProvider) {
         this.securityDecorator = securityDecorator;
         this.indexConfigurationManager = indexConfigurationManager;
-        this.searchFieldsResolver = searchFieldsResolver;
+        this.searchFieldsProvider = searchFieldsProvider;
     }
 
-    public Map<String, Set<String>> getIndexesWithFields(List<String> entities, Function<String, Set<String>> subfieldsGenerator) {
+    /**
+     * Calculates a map for the search request building.
+     * The method takes into account user rights to entities and their parameters.
+     * The method adds additional subfields name of which can be provided with the subfieldsProvider parameter.
+     *
+     * @param entities - a collection of the entity names for the search request building
+     * @param subfieldsProvider a {@link Function} for getting subfields of the index field.
+     *                           If the function returns an empty set,
+     *                           the only initial field name will be added to the result.
+     * @return a map that contains indexNames as keys and sets of correspondent fieldNames as values
+     * from the correspondent {@link io.jmix.search.index.mapping.IndexMappingConfiguration} for each index.
+     */
+    public Map<String, Set<String>> getIndexesWithFields(List<String> entities, SubfieldsProvider subfieldsProvider) {
 
         Collection<String> entitiesWithSearchConfiguration = getEntitiesWithConfiguration(entities);
 
@@ -62,7 +76,7 @@ public class SearchModelAnalyzer {
                 .map(indexConfigurationManager::getIndexConfigurationByEntityName)
                 .collect(Collectors.toMap(
                         IndexConfiguration::getIndexName,
-                        conf -> searchFieldsResolver.resolveFields(conf, subfieldsGenerator)));
+                        conf -> searchFieldsProvider.resolveFields(conf, subfieldsProvider)));
 
         Map<String, Set<String>> result = notFilteredIndexesWithFields
                 .entrySet()

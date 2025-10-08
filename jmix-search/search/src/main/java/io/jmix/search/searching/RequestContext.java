@@ -22,7 +22,8 @@ import java.util.Set;
 import static io.jmix.search.searching.SearchContextProcessingResult.*;
 
 /**
- * @param <T>
+ * A container of the request building information.
+ * @param <T> a platform specific request builder type
  */
 public class RequestContext<T> {
 

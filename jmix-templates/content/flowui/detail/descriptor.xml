@@ -49,7 +49,7 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
-        <action id="saveAction" type="detail_saveClose"/>
+        <action id="saveCloseAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout>
@@ -58,7 +58,7 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
             ${table}
         <%}%>
         <hbox id="detailActions">
-            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="saveAndCloseButton" action="saveCloseAction"/>
             <button id="closeButton" action="closeAction"/>
         </hbox>
     </layout>

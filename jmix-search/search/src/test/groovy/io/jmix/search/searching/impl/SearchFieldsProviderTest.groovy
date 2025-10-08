@@ -26,7 +26,7 @@ import spock.lang.Specification
 
 import static io.jmix.search.searching.AbstractSearchQueryConfigurator.*
 
-class SearchFieldsResolverTest extends Specification {
+class SearchFieldsProviderTest extends Specification {
 
     public static final String FIELD_NAME_1 = "field1"
     public static final String FIELD_NAME_2 = "field2"
@@ -73,13 +73,13 @@ class SearchFieldsResolverTest extends Specification {
         securityDecorator.canAttributeBeRead(metaPropertyPath3) >> true
 
         and:
-        SearchFieldsResolver resolver = new SearchFieldsResolver(
+        SearchFieldsProvider resolver = new SearchFieldsProvider(
                 Mock(IndexConfigurationManager),
                 fieldSubstitute,
                 securityDecorator)
 
         when:
-        def fieldsForIndex = resolver.resolveFields(indexConfiguration, fieldName -> Set.of(fieldName))
+        def fieldsForIndex = resolver.resolveFields(indexConfiguration, fieldInfo -> Set.of(fieldInfo.fieldName()))
 
         then:
         fieldsForIndex == Set.of("field1.subfield1", "field1.subfield2", "_instance_name", "field3")
@@ -126,7 +126,7 @@ class SearchFieldsResolverTest extends Specification {
         securityDecorator.canAttributeBeRead(metaPropertyPath3) >> true
 
         and:
-        SearchFieldsResolver resolver = new SearchFieldsResolver(
+        SearchFieldsProvider resolver = new SearchFieldsProvider(
                 Mock(IndexConfigurationManager),
                 fieldSubstitute,
                 securityDecorator)
@@ -179,7 +179,7 @@ class SearchFieldsResolverTest extends Specification {
         securityDecorator.canAttributeBeRead(metaPropertyPath3) >> true
 
         and:
-        SearchFieldsResolver resolver = new SearchFieldsResolver(
+        SearchFieldsProvider resolver = new SearchFieldsProvider(
                 Mock(IndexConfigurationManager),
                 fieldSubstitute,
                 securityDecorator

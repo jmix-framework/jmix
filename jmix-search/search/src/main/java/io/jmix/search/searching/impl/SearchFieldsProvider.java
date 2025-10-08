@@ -19,29 +19,30 @@ package io.jmix.search.searching.impl;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import io.jmix.search.searching.SubfieldsProvider;
 import io.jmix.search.utils.Constants;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static io.jmix.search.searching.AbstractSearchQueryConfigurator.NO_SUBFIELDS;
 
 /**
- * TODO
+ * Contains logic for getting fields of the given index for the request query building.
  */
 @Component("search_SearchFieldsResolver")
-public class SearchFieldsResolver {
+public class SearchFieldsProvider {
 
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final SearchFieldSubstitute searchFieldSubstitute;
     protected final SearchSecurityDecorator securityDecorator;
 
-    public SearchFieldsResolver(IndexConfigurationManager indexConfigurationManager,
+    public SearchFieldsProvider(IndexConfigurationManager indexConfigurationManager,
                                 SearchFieldSubstitute searchFieldSubstitute,
                                 SearchSecurityDecorator securityDecorator) {
         this.indexConfigurationManager = indexConfigurationManager;
@@ -50,12 +51,16 @@ public class SearchFieldsResolver {
     }
 
     /**
-     * TODO
+     * Returns fields with subfields of the given index for the request query building.
+     * The method taking into account if the current user has permission for the correspondent property reading or not.
+     * The method adds subfields to the result if they are provided with the subfieldsProvider.
      *
-     * @param indexConfiguration
-     * @return
+     * @param indexConfiguration - index configuration for getting fields.
+     *                           The field names are getting from the correspondent {@link IndexMappingConfiguration}
+     * @param subfieldsProvider - a {@link SubfieldsProvider} for getting subfields.
+     * @return set of the fields for searching
      */
-    public Set<String> resolveFields(IndexConfiguration indexConfiguration, Function<String, Set<String>> subfieldsGenerator) {
+    public Set<String> resolveFields(IndexConfiguration indexConfiguration, SubfieldsProvider subfieldsProvider) {
         Set<String> effectiveFieldsToSearch = new HashSet<>();
         Map<String, MappingFieldDescriptor> fields = indexConfiguration.getMapping().getFields();
 
@@ -67,20 +72,25 @@ public class SearchFieldsResolver {
         }
         addRootInstanceField(effectiveFieldsToSearch);
 
-        if (subfieldsGenerator == NO_SUBFIELDS) {
+        if (subfieldsProvider == NO_SUBFIELDS) {
             return effectiveFieldsToSearch;
         }
 
-        return addSubfields(effectiveFieldsToSearch, subfieldsGenerator);
+        return addSubfields(indexConfiguration, effectiveFieldsToSearch, subfieldsProvider);
     }
 
-    protected Set<String> addSubfields(Set<String> fields, Function<String, Set<String>> subfieldsResolver) {
+    protected Set<String> addSubfields(
+            IndexConfiguration indexConfiguration,
+            Set<String> fields,
+            SubfieldsProvider subfieldsProvider) {
         return fields
                 .stream()
                 .map(fieldName -> {
                     HashSet<String> fieldNames = new HashSet<>();
                     fieldNames.add(fieldName);
-                    fieldNames.addAll(subfieldsResolver.apply(fieldName));
+                    fieldNames.addAll(subfieldsProvider.getSubfields(
+                            new SubfieldsProvider.FieldInfo(indexConfiguration.getIndexName(), fieldName))
+                    );
                     return fieldNames;
                 })
                 .flatMap(Set::stream)

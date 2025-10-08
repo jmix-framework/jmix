@@ -4,7 +4,6 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.impl.SearchFieldsResolver;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
 

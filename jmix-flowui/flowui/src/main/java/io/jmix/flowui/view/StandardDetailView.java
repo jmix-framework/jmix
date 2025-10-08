@@ -41,7 +41,6 @@ import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
-import io.jmix.flowui.event.view.ViewSetupLockEvent;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
@@ -985,14 +984,26 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     /**
      * Event sent when the view requests an external lock, if one is defined.
-     *
-     * @deprecated use {@link ViewSetupLockEvent} instead.
      */
-    @Deprecated(since = "2.7", forRemoval = true)
-    public static class SetupLockEvent extends ViewSetupLockEvent<StandardDetailView<?>> {
+    public static class SetupLockEvent extends ApplicationEvent {
+
+        protected LockStatus lockStatus = LockStatus.NOT_SUPPORTED;
 
         public SetupLockEvent(StandardDetailView<?> view) {
             super(view);
+        }
+
+        @Override
+        public StandardDetailView<?> getSource() {
+            return ((StandardDetailView<?>) super.getSource());
+        }
+
+        public LockStatus getLockStatus() {
+            return lockStatus;
+        }
+
+        public void setLockStatus(LockStatus lockStatus) {
+            this.lockStatus = lockStatus;
         }
     }
 

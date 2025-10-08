@@ -21,11 +21,10 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.event.view.ViewClosedEvent;
-import io.jmix.flowui.event.view.ViewSetupLockEvent;
-import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.LockStatus;
+import io.jmix.flowui.view.StandardDetailView;
+import io.jmix.flowui.view.View;
 import io.jmix.pessimisticlockflowui.view.PessimisticLockSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -35,8 +34,6 @@ import static java.util.Objects.requireNonNull;
 @Component("pslock_ViewPessimisticLockListener")
 public class ViewPessimisticLockListener {
 
-    private static final Logger log = LoggerFactory.getLogger(ViewPessimisticLockListener.class);
-
     protected ApplicationContext applicationContext;
 
     public ViewPessimisticLockListener(ApplicationContext applicationContext) {
@@ -45,26 +42,9 @@ public class ViewPessimisticLockListener {
 
     @EventListener
     public void setupLockListener(StandardDetailView.SetupLockEvent event) {
-        viewSetupLock(event);
-    }
-
-    @EventListener
-    public void viewSetupLockListener(ViewSetupLockEvent<?> event) {
-        if (event instanceof StandardDetailView.SetupLockEvent) {
-            // It will be handled by the 'setupLockListener' method
-            return;
-        }
-
-        viewSetupLock(event);
-    }
-
-    protected <V extends View<?> & SupportEntityLock<?>> void viewSetupLock(ViewSetupLockEvent<V> event) {
-        V view = event.getSource();
-
+        StandardDetailView<?> view = event.getSource();
         Object entity = view.getEditedEntity();
         Object entityId = EntityValues.getId(entity);
-
-        log.debug("Locking entity: {}, view: {}", entity, view);
 
         LockStatus currentLockStatus = getLockSupport(view).lock(requireNonNull(entityId));
         event.setLockStatus(currentLockStatus);
@@ -74,9 +54,8 @@ public class ViewPessimisticLockListener {
             if (UiComponentUtils.isComponentAttachedToDialog(view)) {
                 view.addDetachListener(__ -> releaseLock(view));
             }
-        } else if (currentLockStatus == LockStatus.FAILED
-                && view instanceof ReadOnlyAwareView readOnlyAwareView) {
-            readOnlyAwareView.setReadOnly(true);
+        } else if (currentLockStatus == LockStatus.FAILED) {
+            view.setReadOnly(true);
         }
     }
 
@@ -86,16 +65,16 @@ public class ViewPessimisticLockListener {
     }
 
     protected void releaseLock(View<?> view) {
-        if (view instanceof SupportEntityLock<?> supportLock
-                && supportLock.getLockStatus() == LockStatus.LOCKED) {
-            Object entity = supportLock.getEditedEntity();
+        if (view instanceof StandardDetailView<?> detailView
+                && detailView.getLockStatus() == LockStatus.LOCKED) {
+            Object entity = detailView.getEditedEntity();
             Object entityId = requireNonNull(EntityValues.getId(entity));
 
-            getLockSupport(supportLock).unlock(entityId);
+            getLockSupport(detailView).unlock(entityId);
         }
     }
 
-    protected PessimisticLockSupport getLockSupport(SupportEntityLock<?> view) {
+    protected PessimisticLockSupport getLockSupport(StandardDetailView<?> view) {
         Metadata metadata = applicationContext.getBean(Metadata.class);
         MetaClass entityMetaClass = metadata.getClass(view.getEditedEntity());
 

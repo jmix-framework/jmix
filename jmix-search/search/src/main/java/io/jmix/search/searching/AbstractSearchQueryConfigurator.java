@@ -27,6 +27,7 @@ import static java.util.Collections.emptySet;
 
 /**
  * Implements common logic for all platform-specific implementations.
+ * Contains out-of the box SubfieldsProvider-s for the typical cases.
  *
  * @param <SRB> a platform-specific SearchRequestBuilder type
  * @param <QB>  a platform-specific QueryBuilder type

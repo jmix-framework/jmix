@@ -28,7 +28,8 @@ import java.util.Set;
 import static java.util.Collections.emptySet;
 
 /**
- * TODO
+ * Contains a logic that substitutes an initial field name with the specific subfields.
+ * Calculating such subfields depends on the field type and user permissions for the field.
  */
 @Component("search_SearchFieldSubstitute")
 public class SearchFieldSubstitute {
@@ -39,6 +40,16 @@ public class SearchFieldSubstitute {
         this.securityDecorator = securityDecorator;
     }
 
+    /**
+     * Determines the fields to be substituted for a given property path and field name. The substitution is based
+     * on the field's type and the user's permissions. If the property is a file reference, specific subfields are returned.
+     * If the property is a reference and the user has permission to read its entity, the instance name field is returned.
+     * Otherwise, the original field name or no fields are returned.
+     *
+     * @param path the {@link MetaPropertyPath} representing the relative path to the property
+     * @param fieldName the base name of the field to be evaluated
+     * @return a set of field names to be substituted based on the field type and user permissions
+     */
     public Set<String> getFieldsForPath(MetaPropertyPath path, String fieldName) {
         Range range = path.getRange();
         if (isFileRefProperty(range)) {

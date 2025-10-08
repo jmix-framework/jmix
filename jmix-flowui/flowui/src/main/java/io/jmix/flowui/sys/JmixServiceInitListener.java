@@ -18,6 +18,7 @@ package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.internal.LocaleUtil;
 import com.vaadin.flow.router.InternalServerError;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.internal.ErrorTargetEntry;
@@ -134,6 +135,11 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         // with `VaadinSessionScope` because there are cases when we should get instance for not
         // current user to publish events, which is not possible with bean.
         event.getSession().setAttribute(UiEventsManager.class, new UiEventsManager());
+
+        // default browser locale initialization
+        LocaleUtil.getLocaleMatchByLanguage(event.getRequest(), coreProperties.getAvailableLocales())
+                .or(() -> Optional.ofNullable(coreProperties.getAvailableLocales().get(0)))
+                .ifPresent(event.getSession()::setLocale);
 
         initCookieLocale(event.getSession());
     }

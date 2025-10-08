@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * TODO
+ * Decorates CurrentUserSecurityFacade and adds functionality that is necessary for the Search Engine.
  */
 @Component("search_SearchSecurityDecorator")
 public class SearchSecurityDecorator {
@@ -41,6 +41,12 @@ public class SearchSecurityDecorator {
         this.securityFacade = securityFacade;
     }
 
+    /**
+     * Gets a filtered list of the names of the entities that could be read with the current user.
+     *
+     * @param requestedEntities - a list of the entity names for the rights checking
+     * @return a filtered list of the names of the entities that could be read with the current user
+     */
     public List<String> resolveEntitiesAllowedToSearch(Collection<String> requestedEntities) {
         return requestedEntities.stream()
                 .filter(entity -> {
@@ -50,10 +56,22 @@ public class SearchSecurityDecorator {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Checks if the current user has permission to read the entity attribute specified by the given meta-property path.
+     *
+     * @param metaPropertyPath - the property path for the rights checking
+     * @return - true if the current user has the permission and false if not.
+     */
     public boolean canAttributeBeRead(MetaPropertyPath metaPropertyPath) {
         return securityFacade.canAttributeBeRead(metaPropertyPath);
     }
 
+    /**
+     * Checks if the current user has permission to read the entity that is represented with the MetaClass.
+     *
+     * @param metaClass - a MetaClass of the entity for the rights checking
+     * @return - true if the current user has the permission and false if not.
+     */
     public boolean canEntityBeRead(MetaClass metaClass) {
         return securityFacade.canEntityBeRead(metaClass);
     }

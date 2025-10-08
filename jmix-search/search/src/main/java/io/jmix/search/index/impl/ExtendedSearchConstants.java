@@ -16,6 +16,9 @@
 
 package io.jmix.search.index.impl;
 
+/**
+ * Constants of the search engine that can be used in different classes and cases.
+ */
 public class ExtendedSearchConstants {
 
     public static final String PREFIX_SUBFIELD_NAME = "prefix";

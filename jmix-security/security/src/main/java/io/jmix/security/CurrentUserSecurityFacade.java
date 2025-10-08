@@ -23,7 +23,7 @@ import io.jmix.security.constraint.SecureOperations;
 import org.springframework.stereotype.Component;
 
 /**
- * TODO
+ * A facade that helps to get rights of the current user.
  */
 @Component("sec_CurrentUserSecurityFacade")
 public class CurrentUserSecurityFacade {
@@ -37,20 +37,22 @@ public class CurrentUserSecurityFacade {
     }
 
     /**
-     * TODO
-     * @param metaPropertyPath
-     * @return
+     * Checks if the current user has permission to read the entity attribute specified by the given {@link MetaPropertyPath}.
+     *
+     * @param metaPropertyPath - the property path for the rights checking
+     * @return - true if the current user has the permission and false if not.
      */
-    public boolean canAttributeBeRead(MetaPropertyPath metaPropertyPath){
+    public boolean canAttributeBeRead(MetaPropertyPath metaPropertyPath) {
         return secureOperations.isEntityAttrReadPermitted(metaPropertyPath, policyStore);
     }
 
     /**
-     * TODO
-     * @param metaClass
-     * @return
+     * Checks if the current user has permission to read the entity that is represented with the {@link MetaClass}.
+     *
+     * @param metaClass - a MetaClass of the entity for the rights checking
+     * @return - true if the current user has the permission and false if not.
      */
-    public boolean canEntityBeRead(MetaClass metaClass){
+    public boolean canEntityBeRead(MetaClass metaClass) {
         return secureOperations.isEntityReadPermitted(metaClass, policyStore);
     }
 }

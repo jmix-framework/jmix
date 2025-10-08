@@ -16,7 +16,26 @@
 
 package io.jmix.search.searching;
 
+/**
+ * A result of the SearchContext processing that is set during the search request building.
+ */
 public enum SearchContextProcessingResult {
 
-    INITIAL_STATE, REQUEST_IS_POSSIBLE, NO_AVAILABLE_ENTITIES_FOR_SEARCHING
+    /**
+     * This state is set to {@link RequestContext} before its processing.
+     */
+    INITIAL_STATE,
+
+    /**
+     * This state is set to {@link RequestContext} when a {@link SearchContext} processing is finished
+     * and a request sending is possible.
+     */
+    REQUEST_IS_POSSIBLE,
+
+    /**
+     * This state is set to {@link RequestContext} when a {@link SearchContext} processing is finished
+     * and a request sending is possible due to there are no any entities and correspondent indexes for searching.
+     * Such result is possible because of the user doesn't have necessary permissions for the requested enteties.
+     */
+    NO_AVAILABLE_ENTITIES_FOR_SEARCHING
 }

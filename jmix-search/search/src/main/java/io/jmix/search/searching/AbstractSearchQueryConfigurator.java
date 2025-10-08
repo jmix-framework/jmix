@@ -22,22 +22,21 @@ import io.jmix.search.searching.impl.SearchModelAnalyzer;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 import static java.util.Collections.emptySet;
 
 /**
- * //TODO
+ * Implements common logic for all platform-specific implementations.
  *
- * @param <SRB>
- * @param <QB>
- * @param <OB>
+ * @param <SRB> a platform-specific SearchRequestBuilder type
+ * @param <QB>  a platform-specific QueryBuilder type
+ * @param <OB>  a platform-specific ObjectBuilder type
  */
 public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements SearchQueryConfigurator<SRB, QB, OB> {
 
-    public static final Function<String, Set<String>> NO_SUBFIELDS = fieldName -> emptySet();
-    public static final Function<String, Set<String>> STANDARD_PREFIX_SUBFIELD =
-            fieldName -> Set.of(fieldName + "." + ExtendedSearchConstants.PREFIX_SUBFIELD_NAME);
+    public static final SubfieldsProvider NO_SUBFIELDS = fieldInfo -> emptySet();
+    public static final SubfieldsProvider STANDARD_PREFIX_SUBFIELD =
+            fieldInfo -> Set.of(fieldInfo.fieldName() + "." + ExtendedSearchConstants.PREFIX_SUBFIELD_NAME);
 
     protected final SearchModelAnalyzer searchModelAnalyzer;
 
@@ -55,11 +54,11 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
     @Override
     public void configureRequest(
             RequestContext<SRB> requestContext,
-            Function<String, Set<String>> subfieldsGenerator,
+            SubfieldsProvider subfieldsProvider,
             TargetQueryBuilder<QB, OB> targetQueryBuilder) {
         List<String> requestedEntities = requestContext.getSearchContext().getEntities();
         Map<String, Set<String>> indexNamesWithFields =
-                searchModelAnalyzer.getIndexesWithFields(requestedEntities, subfieldsGenerator);
+                searchModelAnalyzer.getIndexesWithFields(requestedEntities, subfieldsProvider);
         if (indexNamesWithFields.isEmpty()) {
             requestContext.setEmptyResult();
             return;
@@ -87,5 +86,4 @@ public abstract class AbstractSearchQueryConfigurator<SRB, QB, OB> implements Se
     protected abstract OB createQueryForMultipleIndexes(
             TargetQueryBuilder<QB, OB> targetQueryBuilder,
             Map<String, Set<String>> indexesWithFields);
-
 }

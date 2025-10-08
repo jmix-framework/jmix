@@ -21,9 +21,9 @@ import java.util.List;
 /**
  * An interface for implementing common logic for the search request configuration.
  *
- * @param <SRB> a platform specific SearchRequestBuilder
- * @param <QB>  a platform specific QueryBuilder
- * @param <OB>  a platform specific ObjectBuilder
+ * @param <SRB> a platform-specific SearchRequestBuilder type
+ * @param <QB>  a platform-specific QueryBuilder type
+ * @param <OB>  a platform-specific ObjectBuilder type
  */
 public interface SearchQueryConfigurator<SRB, QB, OB> {
 

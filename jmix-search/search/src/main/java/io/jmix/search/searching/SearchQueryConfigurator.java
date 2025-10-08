@@ -17,18 +17,43 @@
 package io.jmix.search.searching;
 
 import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
 
+/**
+ * An interface for implementing common logic for the search request configuration.
+ *
+ * @param <SRB> a platform specific SearchRequestBuilder
+ * @param <QB>  a platform specific QueryBuilder
+ * @param <OB>  a platform specific ObjectBuilder
+ */
 public interface SearchQueryConfigurator<SRB, QB, OB> {
 
+    /**
+     * Configures request for the data querying from the search server.
+     *
+     * @param requestContext     a request context for the request building.
+     * @param targetQueryBuilder a builder that builds query for the single index.
+     */
     void configureRequest(RequestContext<SRB> requestContext,
                           TargetQueryBuilder<QB, OB> targetQueryBuilder);
 
+    /**
+     * Configures request for the data querying from the search server.
+     * Provides an ability to add subfields to the query.
+     *
+     * @param requestContext     a request context for the request building.
+     * @param subfieldsProvider - a provider that provides additional subfields by the {@link SubfieldsProvider.FieldInfo}
+     * @param targetQueryBuilder a builder that builds query for the single index.
+     */
     void configureRequest(RequestContext<SRB> requestContext,
-                          Function<String, Set<String>> subfieldsGenerator,
+                          SubfieldsProvider subfieldsProvider,
                           TargetQueryBuilder<QB, OB> targetQueryBuilder);
 
+    /**
+     * A common interface for query building for the single index.
+     *
+     * @param <QB> a platform specific QueryBuilder
+     * @param <OB> a platform specific ObjectBuilder
+     */
     interface TargetQueryBuilder<QB, OB> {
         OB apply(QB queryBuilder, List<String> fields);
     }

@@ -67,6 +67,9 @@ public class UiIconProperties {
 
     String logoutActionIcon;
 
+    String genericFilterSettingsButtonIcon;
+    String genericFilterConditionRemoveButtonIcon;
+
     public UiIconProperties(
             @DefaultValue("vaadin:ban") String detailCloseActionIcon,
             @DefaultValue("vaadin:ban") String detailDiscardActionIcon,
@@ -101,7 +104,10 @@ public class UiIconProperties {
             @DefaultValue("vaadin:adjust") String userMenuThemeSwitchActionSystemIcon,
             @DefaultValue("vaadin:sun-o") String userMenuThemeSwitchActionLightIcon,
             @DefaultValue("vaadin:moon-o") String userMenuThemeSwitchActionDarkIcon,
-            @DefaultValue("vaadin:sign-out") String logoutActionIcon) {
+            @DefaultValue("vaadin:sign-out") String logoutActionIcon,
+            @DefaultValue("vaadin:cog") String genericFilterSettingsButtonIcon,
+            @DefaultValue("vaadin:trash") String genericFilterConditionRemoveButtonIcon) {
+        /* Actions */
         this.detailCloseActionIcon = detailCloseActionIcon;
         this.detailDiscardActionIcon = detailDiscardActionIcon;
         this.detailEnableEditingActionIcon = detailEnableEditingActionIcon;
@@ -143,6 +149,14 @@ public class UiIconProperties {
         this.userMenuThemeSwitchActionDarkIcon = userMenuThemeSwitchActionDarkIcon;
 
         this.logoutActionIcon = logoutActionIcon;
+
+        /* Components */
+        this.genericFilterSettingsButtonIcon = genericFilterSettingsButtonIcon;
+        this.genericFilterConditionRemoveButtonIcon = genericFilterConditionRemoveButtonIcon;
+
+
+        /* Views */
+
     }
 
     public String getDetailCloseActionIcon() {
@@ -279,5 +293,13 @@ public class UiIconProperties {
 
     public String getLogoutActionIcon() {
         return logoutActionIcon;
+    }
+
+    public String getGenericFilterSettingsButtonIcon() {
+        return genericFilterSettingsButtonIcon;
+    }
+
+    public String getGenericFilterConditionRemoveButtonIcon() {
+        return genericFilterConditionRemoveButtonIcon;
     }
 }

@@ -29,11 +29,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementFactory;
+import io.jmix.core.AccessManager;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.UiProperties;
+import io.jmix.flowui.accesscontext.UiShowExceptionDetailsContext;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.ViewRegistry;
@@ -69,6 +71,7 @@ public class ExceptionDialog implements InitializingBean {
     protected ViewRegistry viewRegistry;
     protected UiComponents uiComponents;
     protected Notifications notifications;
+    protected AccessManager accessManager;
 
     protected Dialog dialog;
     protected Throwable throwable;
@@ -102,6 +105,11 @@ public class ExceptionDialog implements InitializingBean {
     @Autowired
     public void setNotifications(Notifications notifications) {
         this.notifications = notifications;
+    }
+
+    @Autowired
+    private void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
     }
 
     @Autowired
@@ -204,8 +212,10 @@ public class ExceptionDialog implements InitializingBean {
         layout.setWidthFull();
         layout.add(createCloseButton());
 
-        detailsButton = createDetailsButton();
-        layout.add(detailsButton);
+        if (isExceptionDetailsPermitted()) {
+            detailsButton = createDetailsButton();
+            layout.add(detailsButton);
+        }
 
         copyButton = createCopyButton();
         copyButton.getStyle().set("margin-inline-start", "auto");
@@ -286,6 +296,12 @@ public class ExceptionDialog implements InitializingBean {
                 .withType(Notifications.Type.SUCCESS)
                 .withPosition(Notification.Position.BOTTOM_END)
                 .show();
+    }
+
+    protected boolean isExceptionDetailsPermitted() {
+        UiShowExceptionDetailsContext uiShowExceptionDetailsContext = new UiShowExceptionDetailsContext();
+        accessManager.applyRegisteredConstraints(uiShowExceptionDetailsContext);
+        return uiShowExceptionDetailsContext.isPermitted();
     }
 
     protected Element createStackTraceTextArea(String stackTrace) {

@@ -32,9 +32,6 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface StudioElementsGroup {
 
-    String TARGET_TAG_PREFIX = "tag:";
-    String TARGET_GROUP_IDENTIFIER_PREFIX = "groupIdentifier:";
-
     /**
      * Optional.
      * <p></p>
@@ -45,6 +42,8 @@ public @interface StudioElementsGroup {
      * Identifier is used to identify elements group in
      * {@link StudioElementsGroup#target} and {@link StudioElementsGroup#unsupportedTarget}
      * when need to define a nested elements group in {@link StudioElementsGroup} meta.
+     *
+     * @see StudioMetaConstants#IDENTIFIER_PREFIX
      */
     String identifier() default "";
 
@@ -93,12 +92,12 @@ public @interface StudioElementsGroup {
      *     (e.g.: <code>io.jmix.flowui.component.combobox.EntityComboBox</code>)</li>
      *
      *     <li>Component tag.
-     *     Use {@link StudioElementsGroup#TARGET_TAG_PREFIX}
+     *     Use {@link StudioMetaConstants#TAG_PREFIX}
      *     (e.g: <code>tag:button</code>)</li>
      *
      *     <li>Identifier of an elements group.
-     *     Use {@link StudioElementsGroup#TARGET_GROUP_IDENTIFIER_PREFIX}
-     *     (e.g.: <code>groupIdentifier:my_group_id</code>)</li>
+     *     Use {@link StudioMetaConstants#IDENTIFIER_PREFIX}
+     *     (e.g.: <code>identifier:my_element_group_id</code>)</li>
      * </ul>
      */
     String[] target() default {};

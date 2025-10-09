@@ -17,9 +17,12 @@
 package io.jmix.flowui.kit.meta.elementsgroup;
 
 import io.jmix.flowui.kit.meta.StudioElementsGroup;
+import io.jmix.flowui.kit.meta.StudioMetaConstants;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+
+import static io.jmix.flowui.kit.meta.StudioMetaConstants.TAG_PREFIX;
 
 @StudioUiKit
 public interface StudioElementsGroups {
@@ -150,7 +153,10 @@ public interface StudioElementsGroups {
             elementClassFqn = "io.jmix.flowui.kit.stub.StudioGenericComponentPropertyElement",
             xmlElement = "properties",
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/properties.svg",
-            target = {"com.vaadin.flow.component.Component", "tag:component"}
+            target = {
+                    "com.vaadin.flow.component.Component",
+                    TAG_PREFIX + "component"
+            }
     )
     void genericComponentProperties();
 }

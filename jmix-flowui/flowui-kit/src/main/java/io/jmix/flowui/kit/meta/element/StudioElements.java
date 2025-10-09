@@ -31,6 +31,8 @@ import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy;
 import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy.ClassFqnStrategy;
 
+import static io.jmix.flowui.kit.meta.StudioMetaConstants.IDENTIFIER_PREFIX;
+
 @StudioUiKit
 public interface StudioElements {
 
@@ -70,6 +72,10 @@ public interface StudioElements {
             xmlElement = "shortcutCombination",
             icon = "io/jmix/flowui/kit/meta/icon/element/shortcutCombination.svg",
             target = {"io.jmix.flowui.kit.action.Action"},
+            unsupportedTarget = {
+                    IDENTIFIER_PREFIX + DROPDOWN_ACTION_ITEM_ACTION_IDENTIFIER,
+                    IDENTIFIER_PREFIX + USER_MENU_ACTION_ITEM_ACTION_IDENTIFIER,
+            },
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "keyCombination", type = StudioPropertyType.STRING, required = true),
@@ -96,7 +102,10 @@ public interface StudioElements {
     )
     DropdownButtonItem actionItem();
 
+    String DROPDOWN_ACTION_ITEM_ACTION_IDENTIFIER = "jmix_dropdown_action_item_action";
+
     @StudioElement(
+            identifier = DROPDOWN_ACTION_ITEM_ACTION_IDENTIFIER,
             name = "Action",
             xmlElement = "action",
             classFqn = "io.jmix.flowui.kit.action.BaseAction",
@@ -104,6 +113,7 @@ public interface StudioElements {
             target = {"io.jmix.flowui.kit.component.dropdownbutton.ActionItem"},
             unlimitedCount = false,
             properties = {
+                    @StudioProperty(xmlAttribute = "type", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
                             defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
@@ -626,7 +636,10 @@ public interface StudioElements {
     )
     UserMenuItem actionUserMenuItem();
 
+    String USER_MENU_ACTION_ITEM_ACTION_IDENTIFIER = "jmix_user_menu_action_item_action";
+
     @StudioElement(
+            identifier = USER_MENU_ACTION_ITEM_ACTION_IDENTIFIER,
             name = "Action",
             xmlElement = "action",
             classFqn = "io.jmix.flowui.kit.action.BaseAction",
@@ -636,6 +649,7 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "type", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),

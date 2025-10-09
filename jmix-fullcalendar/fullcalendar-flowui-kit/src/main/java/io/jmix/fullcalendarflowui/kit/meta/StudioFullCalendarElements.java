@@ -18,6 +18,8 @@ package io.jmix.fullcalendarflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.*;
 
+import static io.jmix.flowui.kit.meta.StudioMetaConstants.TAG_PREFIX;
+
 @StudioUiKit
 public interface StudioFullCalendarElements {
 
@@ -134,7 +136,7 @@ public interface StudioFullCalendarElements {
                             defaultValue = "DAY_GRID"),
                     @StudioProperty(xmlAttribute = "dayCount", type = StudioPropertyType.INTEGER)
             },
-            unsupportedTarget = "tag:displayModeProperties"
+            unsupportedTarget = TAG_PREFIX + "displayModeProperties"
     )
     void customDisplayMode();
 

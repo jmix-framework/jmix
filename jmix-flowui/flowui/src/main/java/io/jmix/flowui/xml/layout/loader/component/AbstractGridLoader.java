@@ -32,11 +32,13 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
@@ -81,6 +83,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected Subscription masterDataLoaderPostLoadListener; // used for CollectionPropertyContainer
     protected FetchPlanRepositoryImpl fetchPlanRepository;
     protected ClassManager classManager;
+    protected AccessManager accessManager;
 
     protected List<DataGridColumn<?>> pendingToFilterableColumns = new ArrayList<>();
 
@@ -186,7 +189,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         if (includeAll) {
             loadColumnsByInclude(resultComponent, columnsElement, metaClass, fetchPlan, sortable, resizable);
             // In case of includeAll, EditorActionsColumn will be place at the end
-            loadEditorActionsColumns(resultComponent, columnsElement);
+            loadEditorActionsColumns(resultComponent, columnsElement, metaClass);
         } else {
             List<Element> columnElements = columnsElement.elements();
             for (Element columnElement : columnElements) {
@@ -202,7 +205,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 loadColumn(resultComponent, columnElement, metaClass, sortableColumns, resizableColumns);
                 break;
             case EDITOR_ACTIONS_COLUMN_ELEMENT_NAME:
-                loadEditorActionsColumn(resultComponent, columnElement);
+                loadEditorActionsColumn(resultComponent, columnElement, metaClass);
                 break;
             default:
                 throw new GuiDevelopmentException("Unknown columns' child element: " + columnElement.getName(),
@@ -210,25 +213,25 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
     }
 
-    protected void loadEditorActionsColumns(T resultComponent, Element columnsElement) {
+    protected void loadEditorActionsColumns(T resultComponent, Element columnsElement, MetaClass metaClass) {
         List<Element> editorActionsColumns = columnsElement.elements(EDITOR_ACTIONS_COLUMN_ELEMENT_NAME);
         if (CollectionUtils.isEmpty(editorActionsColumns)) {
             return;
         }
 
         for (Element columnElement : editorActionsColumns) {
-            loadEditorActionsColumn(resultComponent, columnElement);
+            loadEditorActionsColumn(resultComponent, columnElement, metaClass);
         }
     }
 
-    protected void loadEditorActionsColumn(T resultComponent, Element columnElement) {
+    protected void loadEditorActionsColumn(T resultComponent, Element columnElement, MetaClass metaClass) {
         if (columnElement.elements().isEmpty()) {
             throw new GuiDevelopmentException("'editorActionsColumn' cannot be empty",
                     context, "Component ID", resultComponent.getId());
         }
 
         Editor<?> editor = resultComponent.getEditor();
-        Grid.Column<?> editColumn = createEditColumn(resultComponent, columnElement, editor);
+        Grid.Column<?> editColumn = createEditColumn(resultComponent, columnElement, editor, metaClass);
 
         HorizontalLayout actions = new HorizontalLayout();
         actions.setPadding(false);
@@ -267,21 +270,33 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Grid.Column<?> createEditColumn(T resultComponent, Element columnElement, Editor editor) {
+    protected Grid.Column<?> createEditColumn(T resultComponent, Element columnElement, Editor editor,
+                                              MetaClass metaClass) {
         return resultComponent.addComponentColumn(item -> {
-            Button editButton = loadEditorButton(columnElement, "editButton");
-            if (editButton != null) {
-                editButton.addClickListener(__ -> {
-                    if (editor.isOpen()) {
-                        editor.cancel();
-                    }
-                    editor.editItem(item);
-                });
-                return editButton;
-            } else {
-                // Vaadin throws NPE if null is returned
-                return new Span();
+            UiEntityContext entityContext = new UiEntityContext(metaClass);
+            getAccessManager().applyRegisteredConstraints(entityContext);
+
+            InMemoryCrudEntityContext inMemoryContext = new InMemoryCrudEntityContext(metaClass, applicationContext);
+            getAccessManager().applyRegisteredConstraints(inMemoryContext);
+
+            if (entityContext.isEditPermitted()
+                    && (inMemoryContext.updatePredicate() == null
+                    || item != null && inMemoryContext.isUpdatePermitted(item))) {
+                Button editButton = loadEditorButton(columnElement, "editButton");
+
+                if (editButton != null) {
+                    editButton.addClickListener(__ -> {
+                        if (editor.isOpen()) {
+                            editor.cancel();
+                        }
+                        editor.editItem(item);
+                    });
+                    return editButton;
+                }
             }
+
+            // Vaadin throws NPE if null is returned
+            return new Span();
         });
     }
 
@@ -690,6 +705,13 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             classManager = applicationContext.getBean(ClassManager.class);
         }
         return classManager;
+    }
+
+    protected AccessManager getAccessManager() {
+        if (accessManager == null) {
+            accessManager = applicationContext.getBean(AccessManager.class);
+        }
+        return accessManager;
     }
 
     @Nullable

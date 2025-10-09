@@ -858,6 +858,15 @@ public interface StudioElements {
     FormLayout.FormItem formItem();
 
     @StudioElement(
+            name = "FormRow",
+            classFqn = "com.vaadin.flow.component.formlayout.FormLayout.FormRow",
+            xmlElement = "formRow",
+            target = {"com.vaadin.flow.component.formlayout.FormLayout"},
+            visible = true
+    )
+    FormLayout.FormRow formRow();
+
+    @StudioElement(
             name = "ResponsiveStep",
             classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
             xmlElement = "responsiveStep",

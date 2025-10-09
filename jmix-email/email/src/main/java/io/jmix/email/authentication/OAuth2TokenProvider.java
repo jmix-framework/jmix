@@ -16,9 +16,22 @@
 
 package io.jmix.email.authentication;
 
+/**
+ * Interface defining methods for access/refresh token obtaining.
+ */
 public interface OAuth2TokenProvider {
 
+    /**
+     * Gets access token by using refresh token.
+     *
+     * @return access token value
+     */
     String getAccessToken();
 
+    /**
+     * Gets current refresh token.
+     *
+     * @return refresh token value
+     */
     String getRefreshToken();
 }

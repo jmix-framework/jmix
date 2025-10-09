@@ -3,6 +3,9 @@ package io.jmix.email.authentication;
 import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;
 
+/**
+ * {@link Authenticator} implementation that uses access token provided by {@link OAuth2TokenProvider}.
+ */
 public class OAuth2Authenticator extends Authenticator {
 
     private final String username;

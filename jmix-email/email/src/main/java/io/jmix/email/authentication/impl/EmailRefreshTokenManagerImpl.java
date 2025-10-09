@@ -27,13 +27,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Component //todo
+@Component("email_EmailRefreshTokenManager")
 public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
 
     private static final Logger log = LoggerFactory.getLogger(EmailRefreshTokenManagerImpl.class);
 
     protected static final UUID DEFAULT_REFRESH_TOKEN_ID = UUID.fromString("0198c7b9-4abc-77b6-9088-fb080c13200b");
-    protected static final String DEFAULT_REFRESH_TOKEN_REGISTRATION_ID = "default";
+    protected static final String DEFAULT_REFRESH_TOKEN_REGISTRATION_ID = "email_default";
 
     protected final DataManager dataManager;
     protected final EmailerProperties emailerProperties;

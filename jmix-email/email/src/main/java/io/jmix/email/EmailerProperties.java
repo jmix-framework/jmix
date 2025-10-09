@@ -118,14 +118,10 @@ public class EmailerProperties {
      */
     boolean cleanFileStorage;
 
+    /**
+     * Group of OAuth2 properties
+     */
     OAuth2 oauth2;
-
-    //TODO remove
-    String entraClientId;
-    String entraSecret;
-    String entraTenantId;
-    String provider;
-    String registrationId;
 
     public EmailerProperties(@DefaultValue("DoNotReply@localhost") String fromAddress,
                              @DefaultValue("2") int scheduledSendingDelayCallCount,
@@ -141,12 +137,7 @@ public class EmailerProperties {
                              @DefaultValue("0") int maxAgeOfNonImportantMessages,
                              @DefaultValue("0 0 0 * * ?") String emailCleaningCron,
                              @DefaultValue("false") boolean cleanFileStorage,
-                             @DefaultValue OAuth2 oauth2,
-                             String entraClientId,
-                             String entraSecret,
-                             String entraTenantId,
-                             String provider,
-                             String registrationId) {
+                             @DefaultValue OAuth2 oauth2) {
         this.fromAddress = fromAddress;
         this.scheduledSendingDelayCallCount = scheduledSendingDelayCallCount;
         this.messageQueueCapacity = messageQueueCapacity;
@@ -161,14 +152,7 @@ public class EmailerProperties {
         this.maxAgeOfNonImportantMessages = maxAgeOfNonImportantMessages;
         this.emailCleaningCron = emailCleaningCron;
         this.cleanFileStorage = cleanFileStorage;
-
         this.oauth2 = oauth2;
-
-        this.entraClientId = entraClientId;
-        this.entraSecret = entraSecret;
-        this.entraTenantId = entraTenantId;
-        this.provider = provider;
-        this.registrationId = registrationId;
     }
 
     /**
@@ -283,55 +267,101 @@ public class EmailerProperties {
         return cleanFileStorage;
     }
 
+    /**
+     * @see #oauth2
+     */
     public OAuth2 getOAuth2() {
         return oauth2;
     }
 
-    public String getEntraClientId() {
-        return entraClientId;
-    }
-
-    public String getEntraSecret() {
-        return entraSecret;
-    }
-
-    public String getEntraTenantId() {
-        return entraTenantId;
-    }
-
-    public String getProvider() {
-        return provider;
-    }
-
-    public String getRegistrationId() {
-        return registrationId;
-    }
-
     public static class OAuth2 {
 
-        protected final String clientId;
-        protected final String secret;
-        protected final String refreshToken;
-        //private String tenantId; todo
+        /**
+         * Whether the OAuth2 authentication is enabled
+         */
+        protected final boolean enabled;
 
-        public OAuth2(@DefaultValue("client") String clientId,
+        /**
+         * Name of SMTP server provider.
+         * <p>
+         * Available values: google, microsoft
+         */
+        protected final String provider;
+
+        /**
+         * Client id of application to connect via OAuth2
+         */
+        protected final String clientId;
+
+        /**
+         * Secret of application to connect via OAuth2
+         */
+        protected final String secret;
+
+        /**
+         * Refresh token value to get access token. This value will be used if no refresh token is stored in database.
+         */
+        protected final String refreshToken;
+
+        /**
+         * Tenant id used to connect to application provided by Microsoft
+         */
+        protected final String tenantId;
+
+        public OAuth2(@DefaultValue("false") boolean enabled,
+                      @DefaultValue("google") String provider,
+                      @DefaultValue("client") String clientId,
                       @DefaultValue("secret") String secret,
-                      @DefaultValue("") String refreshToken) {
+                      @DefaultValue("") String refreshToken,
+                      @DefaultValue("common") String tenantId) {
+            this.enabled = enabled;
+            this.provider = provider;
             this.clientId = clientId;
             this.secret = secret;
             this.refreshToken = refreshToken;
+            this.tenantId = tenantId;
         }
 
+        /**
+         * @see #enabled
+         */
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        /**
+         * @see #provider
+         */
+        public String getProvider() {
+            return provider;
+        }
+
+        /**
+         * @see #clientId
+         */
         public String getClientId() {
             return clientId;
         }
 
+        /**
+         * @see #secret
+         */
         public String getSecret() {
             return secret;
         }
 
+        /**
+         * @see #refreshToken
+         */
         public String getRefreshToken() {
             return refreshToken;
+        }
+
+        /**
+         * @see #tenantId
+         */
+        public String getTenantId() {
+            return tenantId;
         }
     }
 }

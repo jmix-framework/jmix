@@ -16,8 +16,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://administrativeView.title">
-
+      title="msg://emailTokenView.title">
     <data>
         <instance id="defaultRefreshTokenDc" class="io.jmix.email.entity.RefreshToken">
             <loader id="defaultRefreshTokenDl">
@@ -33,17 +32,18 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
-        <action id="updateDefaultRefreshTokenAction" text="Update default refresh token"/>
+        <action id="updateDefaultRefreshTokenAction" text="msg://updateDefaultRefreshTokenAction.text"/>
     </actions>
     <layout>
-        <details id="oauthDetailsGroup" summaryText="Refresh Token" opened="true">
-            <vbox><!-- TODO adjust size of fields-->
+        <details id="oauthDetailsGroup" summaryText="msg://oauthDetailsGroup.summaryText" opened="true" themeNames="filled">
+            <vbox width="60em">
                 <passwordField id="defaultRefreshTokenValueField" dataContainer="defaultRefreshTokenDc" property="tokenValue"
                                label="msg://defaultRefreshTokenValueField.label"
-                               clearButtonVisible="false" readOnly="true"/>
+                               clearButtonVisible="false" readOnly="true"
+                               width="100%"/>
                 <textField id="lastModifiedDateField" dataContainer="defaultRefreshTokenDc" property="lastModifiedDate"
-                           label="Last modified date" readOnly="true"/>
-                <button id="updateDefaultRefreshTokenButton" action="updateDefaultRefreshTokenAction" text="Update"/>
+                           readOnly="true" width="13em"/>
+                <button id="updateDefaultRefreshTokenButton" action="updateDefaultRefreshTokenAction"/>
             </vbox>
         </details>
     </layout>

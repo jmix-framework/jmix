@@ -19,12 +19,33 @@ package io.jmix.email.authentication;
 import io.jmix.email.entity.RefreshToken;
 import org.springframework.lang.Nullable;
 
+/**
+ * Interface defining methods for management of refresh token used for OAuth2 authentication with SMTP server.
+ */
 public interface EmailRefreshTokenManager {
 
+    /**
+     * Stores provided token value to database.
+     * It will override previous value of refresh token.
+     *
+     * @param refreshTokenValue token value
+     * @return stored {@link RefreshToken} instance
+     */
     RefreshToken storeDefaultRefreshTokenValue(String refreshTokenValue);
 
+    /**
+     * Gets current value of refresh token.
+     *
+     * @return token value stored in database.
+     * If no token value is stored - return token value from application property 'jmix.email.oauth2.refreshToken'
+     */
     String getDefaultRefreshTokenValue();
 
+    /**
+     * Loads refresh token instance from database.
+     *
+     * @return {@link RefreshToken} instance stored in database or null if no token is stored
+     */
     @Nullable
     RefreshToken loadDefaultRefreshToken();
 }

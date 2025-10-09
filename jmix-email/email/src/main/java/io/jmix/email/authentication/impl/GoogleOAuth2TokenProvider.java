@@ -27,46 +27,35 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-//TODO
-public class GoogleOAuth2TokenProvider implements OAuth2TokenProvider {
+public class GoogleOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
 
     private static final Logger log = LoggerFactory.getLogger(GoogleOAuth2TokenProvider.class);
 
-    protected final EmailerProperties emailerProperties;
-    protected final EmailRefreshTokenManager refreshTokenManager;
-
     public GoogleOAuth2TokenProvider(EmailerProperties emailerProperties,
                                      EmailRefreshTokenManager refreshTokenManager) {
-        this.emailerProperties = emailerProperties;
-        this.refreshTokenManager = refreshTokenManager;
+        super(emailerProperties, refreshTokenManager);
     }
 
     @Override
     public String getAccessToken() {
         GoogleCredentials credentials = createUserCredentials();
 
-        log.info("[IVGA] refreshIfExpired: start");
         try {
             credentials.refreshIfExpired();
         } catch (IOException e) {
             throw new RuntimeException("Unable to refresh access token", e);
         }
-        log.info("[IVGA] refreshIfExpired: end");
 
         AccessToken accessToken = credentials.getAccessToken();
-        log.info("[IVGA] Access token: scopes={}, expiration={}", accessToken.getScopes(), accessToken.getExpirationTime());
+        log.debug("Access token has been acquired with scopes: {} (expiration date = {})",
+                accessToken.getScopes(), accessToken.getExpirationTime());
         return accessToken.getTokenValue();
-    }
-
-    @Override
-    public String getRefreshToken() {
-        return refreshTokenManager.getDefaultRefreshTokenValue();
     }
 
     protected UserCredentials createUserCredentials() {
         return UserCredentials.newBuilder()
-                .setClientId(emailerProperties.getOAuth2().getClientId())
-                .setClientSecret(emailerProperties.getOAuth2().getSecret())
+                .setClientId(getClientId())
+                .setClientSecret(getSecret())
                 .setRefreshToken(getRefreshToken())
                 .build();
     }

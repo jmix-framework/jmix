@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-//todo move up by 1 level
-package io.jmix.emailflowui.view.sendingmessage.administrative;
+package io.jmix.emailflowui.view.emailtoken;
 
 
 import com.vaadin.flow.router.Route;
 import io.jmix.core.LoadContext;
+import io.jmix.core.Messages;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
 import io.jmix.email.entity.RefreshToken;
-import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.app.inputdialog.DialogActions;
@@ -32,61 +31,55 @@ import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.InstanceLoader;
 import io.jmix.flowui.view.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.UUID;
-
-@Route(value = "email-administrative-view", layout = DefaultMainViewParent.class)
-@ViewController(id = "AdministrativeView")
-@ViewDescriptor(path = "administrative-view.xml")
-public class AdministrativeView extends StandardView {
-
-    private static final Logger log = LoggerFactory.getLogger(AdministrativeView.class);
+@Route(value = "email/token", layout = DefaultMainViewParent.class)
+@ViewController(id = "email_tokenView")
+@ViewDescriptor(path = "email-token-view.xml")
+public class EmailTokenView extends StandardView {
 
     @Autowired
-    private DialogWindows dialogWindows;
+    protected Dialogs dialogs;
     @Autowired
-    private Dialogs dialogs;
-    @Autowired
-    private Notifications notifications;
+    protected Notifications notifications;
     @Autowired
     protected EmailRefreshTokenManager emailRefreshTokenManager;
-    @ViewComponent
-    private InstanceLoader<RefreshToken> defaultRefreshTokenDl;
-    @ViewComponent
-    private JmixPasswordField defaultRefreshTokenValueField;
+    @Autowired
+    protected Messages messages;
 
-    @Subscribe
-    public void onInit(final InitEvent event) {
-        //defaultRefreshTokenDl.setEntityId(UUID.fromString("0198c7b9-4abc-77b6-9088-fb080c13200b"));
-    }
+    @ViewComponent
+    protected InstanceLoader<RefreshToken> defaultRefreshTokenDl;
+    @ViewComponent
+    protected JmixPasswordField defaultRefreshTokenValueField;
 
     @Subscribe("updateDefaultRefreshTokenAction")
     public void onUpdateDefaultRefreshTokenAction(final ActionPerformedEvent event) {
         dialogs.createInputDialog(this)
-                .withParameters(
-                        InputParameter.stringParameter("tokenValue").withLabel("Token value")//todo localization, default value?
-                )
+                .withParameters(buildTokenValueInputParameter())
                 .withActions(DialogActions.OK_CANCEL)
                 .withCloseListener(closeEvent -> {
                             if (closeEvent.closedWith(DialogOutcome.OK)) {
-                                log.debug("[IVGA] Token save confirmed");
                                 String tokenValue = closeEvent.getValue("tokenValue");
-                                log.debug("[IVGA] Token value: {}", tokenValue);
-                                RefreshToken refreshToken = emailRefreshTokenManager.storeDefaultRefreshTokenValue(tokenValue);
-                                log.debug("[IVGA] Reload token");
+                                emailRefreshTokenManager.storeDefaultRefreshTokenValue(tokenValue);
 
                                 defaultRefreshTokenDl.load();
                                 notifications.create("Token value is updated").show();
-                            } else {
-                                log.debug("[IVGA] Token save outcome: {}", closeEvent.getCloseAction());
                             }
                         }
                 )
                 .withHeader("Update refresh token")
                 .open();
+    }
+
+    protected InputParameter buildTokenValueInputParameter() {
+        InputParameter parameter = InputParameter
+                .stringParameter("tokenValue")
+                .withLabel(messages.getMessage(getClass(), "onUpdateDefaultRefreshTokenAction.dialog.tokenValue.label"));
+        RefreshToken refreshToken = emailRefreshTokenManager.loadDefaultRefreshToken();
+        if (refreshToken != null) {
+            parameter.withDefaultValue(refreshToken.getTokenValue());
+        }
+        return parameter;
     }
 
     @Install(to = "defaultRefreshTokenDl", target = Target.DATA_LOADER)

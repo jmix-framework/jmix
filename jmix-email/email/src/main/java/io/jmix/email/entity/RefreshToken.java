@@ -22,7 +22,8 @@ public class RefreshToken {
     @Id
     private UUID id;
 
-    @Column(name = "TOKEN_VALUE", nullable = false, length = 1000)
+    @Lob
+    @Column(name = "TOKEN_VALUE", nullable = false)
     @NotNull
     private String tokenValue;
 

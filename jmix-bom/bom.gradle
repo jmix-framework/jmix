@@ -420,6 +420,9 @@ dependencies {
         api 'com.google.protobuf:protobuf-java:3.25.6'
         api 'com.fasterxml.woodstox:woodstox-core:6.4.0'
         api 'org.apache.lucene:lucene-queryparser:9.12.1'
+
+        api 'com.microsoft.azure:msal4j:1.23.1'
+        api 'com.google.auth:google-auth-library-oauth2-http:1.39.1'
     }
 }
 

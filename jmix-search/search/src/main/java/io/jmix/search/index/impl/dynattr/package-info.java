@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping;
+@Internal
+@NonNullApi
+package io.jmix.search.index.impl.dynattr;
 
-/**
- * TODO javadoc
- */
-public class DynamicAttributesParameterKeys {
-
-    public static final String REFERENCE_FIELD_INDEXING_MODE = "referenceFieldIndexingMode";
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

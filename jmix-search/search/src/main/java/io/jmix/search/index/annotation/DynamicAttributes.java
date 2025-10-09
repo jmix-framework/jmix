@@ -23,7 +23,19 @@ import java.lang.annotation.*;
 import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*;
 
 /**
- * TODO javadoc
+ * Annotation for marking methods in index definition interfaces that define dynamic attributes to be indexed.
+ * This annotation is used to configure various indexing behavior for dynamic attributes.
+ *
+ * <h3>Container Annotation:</h3>
+ * `DynamicAttributes.Container` is a repeatable container that allows multiple `DynamicAttributes` annotations
+ * to be used on a single method.
+ *
+ * <h3>Usage:</h3>
+ * This annotation, along with its attributes, provides flexibility for indexing dynamic attributes while ensuring
+ * exclusion and indexing modes can be explicitly defined when needed.
+ *
+ * @see ReferenceAttributesIndexingMode
+ * @see FieldMappingAnnotation
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -31,17 +43,37 @@ import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*;
 @FieldMappingAnnotation
 public @interface DynamicAttributes {
 
+    /**
+     * Specifies dynamic attribute categories to be excluded from indexing for the annotated method.
+     */
     @Nullable
     String[] excludeCategories() default {};
 
+    /**
+     * Specifies dynamic attributes to be excluded from indexing for the annotated method.
+     */
     @Nullable
     String[] excludeAttributes() default {};
 
+    /**
+     * Determines the indexing mode for reference attributes associated with the annotated method.
+     * Allows configuration of how reference attributes are handled during indexing, such as whether
+     * reference values are indexed based on instance names or excluded completely.
+     * Defaults to {@code INSTANCE_NAME_ONLY}.
+     */
     @Nullable
     ReferenceAttributesIndexingMode referenceAttributesIndexingMode() default INSTANCE_NAME_ONLY;
 
+    /**
+     * Specifies the name of the analyzer to be used for processing textual content associated
+     * with the annotated method. An analyzer is responsible for breaking down text into tokens
+     * and applying text normalization rules to make the text searchable in a specific manner.
+     */
     String analyzer() default "";
 
+    /**
+     * Indicates whether the content of a file, in addition to its name, should be indexed.
+     */
     boolean indexFileContent() default true;
 
     @Target(ElementType.METHOD)

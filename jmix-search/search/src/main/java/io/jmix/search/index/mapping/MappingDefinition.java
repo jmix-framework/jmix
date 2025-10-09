@@ -20,7 +20,9 @@ import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.annotation.ManualMappingDefinition;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * TODO update java doc
@@ -90,37 +92,27 @@ import java.util.List;
  */
 public class MappingDefinition {
 
-    protected List<StaticAttributesConfigurationGroup> staticGroups;
-    protected List<DynamicAttributesConfigurationGroup> dynamicGroups;
+    protected Map<Class<? extends AttributesGroupConfiguration>, List<? extends AttributesGroupConfiguration>> attributesGroupConfigurationMap =
+            new HashMap<>();
 
     protected MappingDefinition(MappingDefinitionBuilder builder) {
-        this.staticGroups = builder.elements;
-        this.dynamicGroups = builder.dynamicGroups;
+        attributesGroupConfigurationMap.put(StaticAttributesGroupConfiguration.class, builder.staticGroups);
+        attributesGroupConfigurationMap.put(DynamicAttributesGroupConfiguration.class, builder.dynamicGroups);
     }
 
     /**
-     * Gets all {@link StaticAttributesConfigurationGroup}
-     * use the {@link MappingDefinition#getStaticGroups()}
+     * Gets all {@link StaticAttributesGroupConfiguration}
+     * @deprecated use the {@link MappingDefinition#getMappingConfigurations(Class)}}
      *
      * @return List of {@link MappingDefinitionElement}
      */
     @Deprecated
-    public List<StaticAttributesConfigurationGroup> getElements() {
-        return staticGroups;
+    public List<StaticAttributesGroupConfiguration> getElements() {
+        return (List<StaticAttributesGroupConfiguration>) attributesGroupConfigurationMap.get(StaticAttributesGroupConfiguration.class);
     }
 
-    /**
-     * Gets all {@link StaticAttributesConfigurationGroup}
-     *
-     * @return List of {@link StaticAttributesConfigurationGroup}
-     */
-    public List<StaticAttributesConfigurationGroup> getStaticGroups() {
-        return staticGroups;
-    }
-
-
-    public List<DynamicAttributesConfigurationGroup> getDynamicGroups() {
-        return dynamicGroups;
+    public <T extends AttributesGroupConfiguration> List<T> getMappingConfigurations(Class<T> configurationType) {
+        return (List<T>) attributesGroupConfigurationMap.get(configurationType);
     }
 
     public static MappingDefinitionBuilder builder() {
@@ -129,21 +121,21 @@ public class MappingDefinition {
 
     public static class MappingDefinitionBuilder {
 
-        private final List<StaticAttributesConfigurationGroup> elements = new ArrayList<>();
-        private final List<DynamicAttributesConfigurationGroup> dynamicGroups = new ArrayList<>();
+        private final List<StaticAttributesGroupConfiguration> staticGroups = new ArrayList<>();
+        private final List<DynamicAttributesGroupConfiguration> dynamicGroups = new ArrayList<>();
 
         @Deprecated
-        public MappingDefinitionBuilder addElement(StaticAttributesConfigurationGroup element) {
-            elements.add(element);
+        public MappingDefinitionBuilder addElement(StaticAttributesGroupConfiguration element) {
+            staticGroups.add(element);
             return this;
         }
 
-        public MappingDefinitionBuilder addStaticAttributesGroup(StaticAttributesConfigurationGroup group) {
-            elements.add(group);
+        public MappingDefinitionBuilder addStaticAttributesGroup(StaticAttributesGroupConfiguration group) {
+            staticGroups.add(group);
             return this;
         }
 
-        public MappingDefinitionBuilder addDynamicAttributesGroup(DynamicAttributesConfigurationGroup group) {
+        public MappingDefinitionBuilder addDynamicAttributesGroup(DynamicAttributesGroupConfiguration group) {
             dynamicGroups.add(group);
             return this;
         }

@@ -23,7 +23,18 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.ResolvableTypeProvider;
 
+/**
+ * Event representing a change in the dynamic attributes of an entity.
+ * <p>
+ * This event contains contextual information about the change, including
+ * the {@link MetaClass} of the entity and the updated dynamic attributes. It extends
+ * the {@link ApplicationEvent} class and is designed to handle dynamic
+ * attribute-related events in the application.
+ *
+ * @param <E> the type of the entity associated with the event
+ */
 public class DynamicAttributeChangeEvent<E> extends ApplicationEvent implements ResolvableTypeProvider {
+
     private final MetaClass metaClass;
     private final DynamicAttributes dynamicAttributes;
 

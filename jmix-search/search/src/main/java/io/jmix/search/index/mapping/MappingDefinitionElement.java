@@ -16,22 +16,12 @@
 
 package io.jmix.search.index.mapping;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
-import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Describes details of mapping for entity property or group of properties.
- * Equivalent of single field-mapping annotation.
+ * Equivalent of a single field-mapping annotation {@link io.jmix.search.index.annotation.AutoMappedField}.
  */
 @Deprecated
-public class MappingDefinitionElement extends StaticAttributesConfigurationGroup {
+public class MappingDefinitionElement extends StaticAttributesGroupConfiguration {
 
     protected MappingDefinitionElement(StaticAttributeGroupBuilder builder) {
         super(builder);

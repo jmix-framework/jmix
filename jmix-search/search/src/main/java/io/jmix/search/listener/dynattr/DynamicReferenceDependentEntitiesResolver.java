@@ -28,8 +28,11 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Set;
 
-@Component("search_DynamicReferenceDependentEntitiesResolver")
-@Lazy
+/**
+ * Resolver for determining entities that are dependent on a dynamically updated reference entity.
+ * This class is responsible for managing the resolution of dependent entity IDs based on updates
+ * to a specified entity and its associated dynamic attributes.
+ */
 public class DynamicReferenceDependentEntitiesResolver {
 
     protected final IndexConfigurationManager indexConfigurationManager;
@@ -41,18 +44,21 @@ public class DynamicReferenceDependentEntitiesResolver {
         this.dependentEntitiesLoader = dependentEntitiesLoader;
     }
 
-
-    public Set<Id<?>> getEntityIdsDependentOnUpdatedEntity(Id<Object> updatedEntityId, MetaClass metaClass, DynamicAttributes dynamicAttributes) {
-        return getEntityIdsDependentOnUpdatedEntityInternal(
-                updatedEntityId,
-                metaClass,
-                updatedEntityId.getEntityClass(),
-                dynamicAttributes.getKeys());
-    }
-
-    protected Set<Id<?>> getEntityIdsDependentOnUpdatedEntityInternal(Id<?> updatedEntityId, MetaClass metaClass, Class<?> entityClass, Set<String> attributes) {
-        Map<MetaClass, Set<MetaPropertyPath>> dependenciesMetaData;
-        dependenciesMetaData = indexConfigurationManager.getDependenciesMetaDataForUpdate(entityClass, attributes);
+    /**
+     * Retrieves a set of entity IDs that are dependent on the specified updated entity.
+     *
+     * @param updatedEntityId  the ID of the updated entity whose dependencies are being resolved
+     * @param metaClass        the metadata class of the updated entity
+     * @param dynamicAttributes dynamic attributes associated with the updated entity
+     * @return a set of IDs representing entities that are dependent on the updated entity
+     */
+    public Set<Id<?>> getEntityIdsDependentOnUpdatedEntity(Id<Object> updatedEntityId,
+                                                           MetaClass metaClass,
+                                                           DynamicAttributes dynamicAttributes) {
+        Map<MetaClass, Set<MetaPropertyPath>> dependenciesMetaData =
+                indexConfigurationManager.getDependenciesMetaDataForUpdate(
+                        updatedEntityId.getEntityClass(),
+                        dynamicAttributes.getKeys());
         return dependentEntitiesLoader.loadDependentEntityIds(updatedEntityId, metaClass, dependenciesMetaData);
     }
 }

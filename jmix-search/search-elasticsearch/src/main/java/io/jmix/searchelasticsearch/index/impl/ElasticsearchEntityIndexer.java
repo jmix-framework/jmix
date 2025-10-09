@@ -28,7 +28,7 @@ import io.jmix.search.index.IndexResult;
 import io.jmix.search.index.RefreshPolicy;
 import io.jmix.search.index.impl.BaseEntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
-import io.jmix.search.index.impl.dynattr.DynamicAttributesModuleChecker;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -55,9 +55,16 @@ public class ElasticsearchEntityIndexer extends BaseEntityIndexer {
                                       MetadataTools metadataTools,
                                       SearchProperties searchProperties,
                                       ElasticsearchClient client,
-                                      DynamicAttributesModuleChecker dynamicAttributesModuleChecker) {
-        super(dataManager, fetchPlans, indexConfigurationManager, metadata,
-                idSerialization, indexStateRegistry, metadataTools, searchProperties, dynamicAttributesModuleChecker);
+                                      DynamicAttributesSupport dynamicAttributesSupport) {
+        super(dataManager,
+                fetchPlans,
+                indexConfigurationManager,
+                metadata,
+                idSerialization,
+                indexStateRegistry,
+                metadataTools,
+                searchProperties,
+                dynamicAttributesSupport);
         this.client = client;
     }
 

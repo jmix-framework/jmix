@@ -31,31 +31,40 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * TODO javadoc
- */
+ * Processes attributes groups defined as static attributes configurations.
+ **/
 @Component("search_StaticAttributesGroupProcessor")
-public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProcessor<StaticAttributesConfigurationGroup> {
+public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProcessor<StaticAttributesGroupConfiguration> {
 
     private static final Logger log = LoggerFactory.getLogger(StaticAttributesGroupProcessor.class);
 
     protected final MetadataTools metadataTools;
     protected final FieldMappingCreator fieldMappingCreator;
 
-    StaticAttributesGroupProcessor(PropertyTools propertyTools, MetadataTools metadataTools, FieldMappingCreator fieldMappingCreator) {
+    StaticAttributesGroupProcessor(PropertyTools propertyTools,
+                                   MetadataTools metadataTools,
+                                   FieldMappingCreator fieldMappingCreator) {
         super(propertyTools);
         this.metadataTools = metadataTools;
         this.fieldMappingCreator = fieldMappingCreator;
     }
 
+    @Override
+    public Class<StaticAttributesGroupConfiguration> getConfigurationClass() {
+        return StaticAttributesGroupConfiguration.class;
+    }
 
     @Override
-    public List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass, StaticAttributesConfigurationGroup group, ExtendedSearchSettings extendedSearchSettings) {
+    public List<MappingFieldDescriptor> processAttributesGroupInternal(MetaClass metaClass,
+                                                                       StaticAttributesGroupConfiguration group,
+                                                                       ExtendedSearchSettings extendedSearchSettings) {
         Map<String, MetaPropertyPath> effectiveProperties = resolveEffectiveProperties(
                 metaClass, group.getIncludedProperties(), group.getExcludedProperties()
         );
 
         return effectiveProperties.values().stream()
-                .map(propertyPath -> fieldMappingCreator.createMappingFieldDescriptor(propertyPath, group, extendedSearchSettings))
+                .map(propertyPath ->
+                        fieldMappingCreator.createMappingFieldDescriptor(propertyPath, group, extendedSearchSettings))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
@@ -85,14 +94,16 @@ public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProce
         return effectiveProperties;
     }
 
-    protected Map<String, MetaPropertyPath> expandEmbeddedProperties(MetaClass rootEntityMetaClass, Map<String, MetaPropertyPath> propertyPaths) {
+    protected Map<String, MetaPropertyPath> expandEmbeddedProperties(MetaClass rootEntityMetaClass,
+                                                                     Map<String, MetaPropertyPath> propertyPaths) {
         return propertyPaths.entrySet().stream()
                 .flatMap(entry -> {
                     String propertyFullName = entry.getKey();
                     MetaPropertyPath propertyPath = entry.getValue();
                     if (metadataTools.isEmbedded(propertyPath.getMetaProperty())) {
                         log.trace("Property '{}' is embedded. Expand", propertyFullName);
-                        Map<String, MetaPropertyPath> expandedEmbeddedProperties = propertyTools.findPropertiesByPath(rootEntityMetaClass, propertyFullName + ".*");
+                        Map<String, MetaPropertyPath> expandedEmbeddedProperties =
+                                propertyTools.findPropertiesByPath(rootEntityMetaClass, propertyFullName + ".*");
                         log.trace("Property '{}' was expanded to {}", propertyFullName, expandedEmbeddedProperties.values());
                         Map<String, MetaPropertyPath> result = expandEmbeddedProperties(rootEntityMetaClass, expandedEmbeddedProperties);
                         return result.entrySet().stream();

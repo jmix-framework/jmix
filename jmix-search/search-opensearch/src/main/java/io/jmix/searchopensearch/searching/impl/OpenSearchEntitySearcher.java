@@ -53,8 +53,6 @@ public class OpenSearchEntitySearcher extends AbstractEntitySearcher implements 
                                     SecureOperations secureOperations,
                                     PolicyStore policyStore,
                                     OpenSearchSearchStrategyProvider searchStrategyManager) {
-                                    OpenSearchSearchStrategyProvider searchStrategyManager,
-                                    SearchUtils searchUtils) {
         super(metadataTools, searchProperties, secureDataManager, idSerialization);
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
@@ -63,10 +61,7 @@ public class OpenSearchEntitySearcher extends AbstractEntitySearcher implements 
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
         this.searchStrategyManager = searchStrategyManager;
-
-        this.objectMapper = new ObjectMapper();
     }
-
 
     @Override
     public SearchResult search(SearchContext searchContext) {

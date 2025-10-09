@@ -16,17 +16,18 @@
 
 package io.jmix.search.index.mapping.processor.impl.dynattr
 
+import io.jmix.search.exception.IndexConfigurationException
 import spock.lang.Specification
 
-class DynamicAttributesConfigurationGroupCheckerTest extends Specification {
+class DynamicAttributesGroupConfigurationValidatorTest extends Specification {
 
     def "Check. Not supported symbols in categories"() {
         when:
-        def checker = new DynamicAttributesConfigurationGroupChecker()
+        def checker = new DynamicAttributesGroupConfigurationValidator()
         checker.checkCategory(categoryName)
 
         then:
-        def throwable = thrown(IllegalStateException)
+        def throwable = thrown(IndexConfigurationException)
         throwable.getMessage() == message
 
         where:
@@ -46,11 +47,11 @@ class DynamicAttributesConfigurationGroupCheckerTest extends Specification {
     def "Check. Not supported symbols in attributes"() {
 
         when:
-        def checker = new DynamicAttributesConfigurationGroupChecker()
+        def checker = new DynamicAttributesGroupConfigurationValidator()
         checker.checkAttribute(categoryName)
 
         then:
-        def throwable = thrown(IllegalStateException)
+        def throwable = thrown(IndexConfigurationException)
         throwable.getMessage() == message
 
         where:
@@ -69,11 +70,11 @@ class DynamicAttributesConfigurationGroupCheckerTest extends Specification {
 
     def "Check. Supported symbols in categories"() {
         when:
-        def checker = new DynamicAttributesConfigurationGroupChecker()
+        def checker = new DynamicAttributesGroupConfigurationValidator()
         checker.checkCategory(categoryName)
 
         then:
-        notThrown(IllegalStateException)
+        notThrown(IndexConfigurationException)
 
         where:
         categoryName<< ["*suffix", "prefix*", "in*fix", "tw*is*e"]
@@ -81,11 +82,11 @@ class DynamicAttributesConfigurationGroupCheckerTest extends Specification {
 
     def "Check. Supported symbols in attributes"() {
         when:
-        def checker = new DynamicAttributesConfigurationGroupChecker()
+        def checker = new DynamicAttributesGroupConfigurationValidator()
         checker.checkAttribute(categoryName)
 
         then:
-        notThrown(IllegalStateException)
+        notThrown(IndexConfigurationException)
 
         where:
         categoryName<< ["*suffix", "prefix*", "in*fix", "tw*is*e"]

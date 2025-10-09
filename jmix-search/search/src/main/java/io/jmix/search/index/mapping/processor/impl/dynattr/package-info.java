@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.impl.dynattr;
+@Internal
+@NonNullApi
+package io.jmix.search.index.mapping.processor.impl.dynattr;
 
-public interface DynAttrConstants {
-    /**
-     * The duplicate of the io.jmix.dynattr.DynAttrQueryHints#LOAD_DYN_ATTR
-     * This duplication is need because of independence of the Dynamic Attributes Add-on
-     */
-    String LOAD_DYN_ATTR = "jmix.dynattr";
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

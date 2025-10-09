@@ -14,20 +14,29 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.processor.impl;
+package io.jmix.search.index.mapping.processor;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.search.index.mapping.AttributesConfigurationGroup;
+import io.jmix.search.index.mapping.AttributesGroupConfiguration;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 
 import java.util.List;
 
 /**
- * TODO javadoc
+ * Defines the contract for processing groups of attributes specified by {@link AttributesGroupConfiguration}.
+ * <p>
+ * Implementations of this interface are responsible for generating a list of {@link MappingFieldDescriptor}
+ * objects that describe the mapping of entity attributes to index fields, based on the provided configuration
+ * and settings.
+ *
+ * @param <G> the type of {@link AttributesGroupConfiguration} processed by this processor
  */
-public interface AttributesGroupProcessor<Group extends AttributesConfigurationGroup> {
+public interface AttributesGroupProcessor<G extends AttributesGroupConfiguration> {
+
+    Class<G> getConfigurationClass();
+
     List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass,
-                                                        Group group,
+                                                        AttributesGroupConfiguration group,
                                                         ExtendedSearchSettings extendedSearchSettings);
 }

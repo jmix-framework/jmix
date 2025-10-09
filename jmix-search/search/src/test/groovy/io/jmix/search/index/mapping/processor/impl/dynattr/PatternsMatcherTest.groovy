@@ -18,7 +18,7 @@ package io.jmix.search.index.mapping.processor.impl.dynattr
 
 import spock.lang.Specification
 
-class WildcardResolverTest extends Specification {
+class PatternsMatcherTest extends Specification {
     def "GetMatchingElements"() {
         given:
         Map<String, String> sourceElements = Map.of(
@@ -27,7 +27,7 @@ class WildcardResolverTest extends Specification {
                 "name3", "name3Element")
 
         when:
-        def resolver = new WildcardResolver()
+        def resolver = new PatternsMatcher()
         def resultElements = new ArrayList<>(resolver.getMatchingElements(sourceElements, excludedNames))
 
         then:

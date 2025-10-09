@@ -25,27 +25,35 @@ import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO javadoc
+ * A listener that listens for changes in dynamic attributes of entities and processes
+ * them for indexing into a search system.
+ * <p>
+ * This class is responsible for tracking updates to entities with dynamic attributes and
+ * ensuring they are appropriately handled in terms of updating search indexes. It listens
+ * for {@link DynamicAttributeChangeEvent} events and performs necessary actions such as
+ * enqueuing the entity for indexing or resolving and processing dependent entities that
+ * may be affected by the change.
+ * <p>
+ * It considers specific configurations, such as whether an entity is indexed directly
+ * and checks if updates are required depending on the affected attributes. Additionally,
+ * it resolves entities dependent on the updated entity and enqueues them for reindexing
+ * if necessary.
  */
-@Component("search_DynamicAttributesTrackingListener")
-@Lazy
 public class DynamicAttributesTrackingListener {
 
     private static final Logger log = LoggerFactory.getLogger(DynamicAttributesTrackingListener.class);
 
-    private final IndexConfigurationManager indexConfigurationManager;
-    private final IndexingQueueManager indexingQueueManager;
-    private final DynamicReferenceDependentEntitiesResolver dependentEntitiesResolver;
-    private final EntityStates entityStates;
-    private final MetadataTools metadataTools;
+    protected final IndexConfigurationManager indexConfigurationManager;
+    protected final IndexingQueueManager indexingQueueManager;
+    protected final DynamicReferenceDependentEntitiesResolver dependentEntitiesResolver;
+    protected final EntityStates entityStates;
+    protected final MetadataTools metadataTools;
 
     public DynamicAttributesTrackingListener(IndexConfigurationManager indexConfigurationManager,
                                              IndexingQueueManager indexingQueueManager,
@@ -60,7 +68,7 @@ public class DynamicAttributesTrackingListener {
     }
 
     @EventListener
-    public void onDynamicAttributesChanging(DynamicAttributeChangeEvent<?> event) {
+    public void onDynamicAttributesChange(DynamicAttributeChangeEvent<?> event) {
         DynamicAttributes dynamicAttributes = event.getDynamicAttributes();
         Object rawObject = event.getSource();
         Object rawId = EntityValues.getId(rawObject);
@@ -68,12 +76,17 @@ public class DynamicAttributesTrackingListener {
         MetaClass metaClass = event.getMetaClass();
         String entityMetaName = metaClass.getName();
         boolean isNew = entityStates.isNew(rawObject);
-        //TODO null check
+
+        if (rawId == null) {
+            throw new IllegalArgumentException(
+                    String.format("Entity id is null. Entity type is: %s. Consider of using different entity id generating type.",
+                            rawObject.getClass().getName()));
+        }
+
         Id<Object> entityId = Id.of(rawId, metaClass.getJavaClass());
         if (indexConfigurationManager.isDirectlyIndexed(entityMetaName)) {
             log.debug("{} is directly indexed", rawId);
             if (isNew) {
-
                 indexingQueueManager.enqueueIndexByEntityId(entityId);
             } else {
                 if (isUpdateRequired(metaClass.getJavaClass(), dynamicAttributes.getKeys())) {
@@ -90,12 +103,8 @@ public class DynamicAttributesTrackingListener {
         }
     }
 
-    //TODO copy past
     protected boolean isUpdateRequired(Class<?> entityClass, Set<String> attributeList) {
         Set<String> affectedLocalPropertyNames = new HashSet<>(indexConfigurationManager.getLocalPropertyNamesAffectedByUpdate(entityClass));
-        if (metadataTools.isSoftDeletable(entityClass)) {
-            affectedLocalPropertyNames.add(metadataTools.findDeletedDateProperty(entityClass));
-        }
         return attributeList
                 .stream()
                 .map(s -> "+" + s)

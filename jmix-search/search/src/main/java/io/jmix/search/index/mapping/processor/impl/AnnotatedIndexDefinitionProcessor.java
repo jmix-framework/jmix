@@ -28,9 +28,9 @@ import io.jmix.search.index.annotation.*;
 import io.jmix.search.index.mapping.*;
 import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.fieldmapper.impl.TextFieldMapper;
+import io.jmix.search.index.mapping.processor.AttributesGroupProcessor;
 import io.jmix.search.index.mapping.processor.FieldAnnotationProcessor;
 import io.jmix.search.index.mapping.processor.MappingFieldAnnotationProcessorsRegistry;
-import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesGroupProcessor;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractorProvider;
 import io.jmix.search.index.mapping.propertyvalue.impl.DisplayedNameValueExtractor;
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +54,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Provides functionality to process index definition interfaces marked with {@link JmixEntitySearchIndex}
@@ -69,8 +68,7 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
     protected final SearchProperties searchProperties;
     protected final MethodArgumentsProvider methodArgumentsProvider;
-    protected final StaticAttributesGroupProcessor staticAttributesGroupProcessor;
-    protected final DynamicAttributesGroupProcessor dynamicAttributesGroupProcessor;
+    protected final List<AttributesGroupProcessor<? extends AttributesGroupConfiguration>> attributesGroupProcessors;
     protected final InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver;
 
 
@@ -80,16 +78,14 @@ public class AnnotatedIndexDefinitionProcessor {
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
                                              ContextArgumentResolverComposite resolvers,
-                                             StaticAttributesGroupProcessor staticAttributesGroupProcessor,
-                                             DynamicAttributesGroupProcessor dynamicAttributesGroupProcessor,
+                                             List<AttributesGroupProcessor<?>> attributesGroupProcessors,
                                              InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver) {
         this.metadata = metadata;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
         this.searchProperties = searchProperties;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
-        this.staticAttributesGroupProcessor = staticAttributesGroupProcessor;
-        this.dynamicAttributesGroupProcessor = dynamicAttributesGroupProcessor;
+        this.attributesGroupProcessors = attributesGroupProcessors;
         this.instanceNameRelatedPropertiesResolver = instanceNameRelatedPropertiesResolver;
     }
 
@@ -352,19 +348,18 @@ public class AnnotatedIndexDefinitionProcessor {
     protected Map<String, MappingFieldDescriptor> processMappingDefinition(MetaClass metaClass,
                                                                            MappingDefinition mappingDefinition,
                                                                            ExtendedSearchSettings extendedSearchSettings) {
+        List<MappingFieldDescriptor> allMappings = new ArrayList<>();
 
-        List<MappingFieldDescriptor> staticMappings = mappingDefinition.getStaticGroups().stream()
-                .map(item -> staticAttributesGroupProcessor.processAttributesGroup(metaClass, item, extendedSearchSettings))
-                .flatMap(Collection::stream)
-                .toList();
+        attributesGroupProcessors.forEach(processor -> {
+            List<? extends AttributesGroupConfiguration> mappingConfigurations = mappingDefinition.getMappingConfigurations(processor.getConfigurationClass());
 
-        List<MappingFieldDescriptor> dynamicMappings = mappingDefinition.getDynamicGroups().stream()
-                .map(item -> dynamicAttributesGroupProcessor.processAttributesGroup(metaClass, item, extendedSearchSettings))
-                .flatMap(Collection::stream)
-                .toList();
-
-        return Stream.of(staticMappings, dynamicMappings)
-                .flatMap(Collection::stream)
+            List<MappingFieldDescriptor> mappings = mappingConfigurations.stream()
+                    .map(item -> processor.processAttributesGroup(metaClass, item, extendedSearchSettings))
+                    .flatMap(Collection::stream)
+                    .toList();
+            allMappings.addAll(mappings);
+        });
+        return allMappings.stream()
                 .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
                     int order1 = v1.getOrder();
                     int order2 = v2.getOrder();

@@ -16,39 +16,46 @@
 
 package io.jmix.search.index.mapping.processor.impl.dynattr;
 
-import io.jmix.search.index.mapping.DynamicAttributesConfigurationGroup;
+import io.jmix.search.exception.IndexConfigurationException;
+import io.jmix.search.index.mapping.DynamicAttributesGroupConfiguration;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-import static io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesConfigurationGroupChecker.ArgumentType.*;
+import static io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesGroupConfigurationValidator.ArgumentType.*;
 
-@Component("search_DynamicAttributesConfigurationGroupChecker")
-public class DynamicAttributesConfigurationGroupChecker {
-    protected static List<String> deniedSymbols = List.of("+", ".");
+/**
+ * A component responsible for validating the configuration of dynamic attribute groups.
+ * This class performs checks on category names and attribute names to ensure they comply
+ * with the required rules and constraints.
+ */
+@Component("search_DynamicAttributesGroupConfigurationChecker")
+public class DynamicAttributesGroupConfigurationValidator {
 
-    public void check(DynamicAttributesConfigurationGroup group) {
+    protected static List<String> forbiddenSymbols = List.of("+", ".");
+
+    public void check(DynamicAttributesGroupConfiguration group) {
         Stream.of(group.getExcludedCategories()).forEach(this::checkCategory);
         Stream.of(group.getExcludedProperties()).forEach(this::checkAttribute);
     }
 
     protected void checkCategory(String categoryName) {
         checkIsNotEmpty(categoryName, CATEGORY);
-        checkDeniedSymbols(categoryName, CATEGORY);
-        checkThatNotIsTheWildcard(categoryName, CATEGORY);
+        checkForbiddenSymbols(categoryName, CATEGORY);
+        checkNotWildcardOnly(categoryName, CATEGORY);
     }
 
     protected void checkAttribute(String attributeName) {
         checkIsNotEmpty(attributeName, ATTRIBUTE);
-        checkDeniedSymbols(attributeName, ATTRIBUTE);
-        checkThatNotIsTheWildcard(attributeName, ATTRIBUTE);
+        checkForbiddenSymbols(attributeName, ATTRIBUTE);
+        checkNotWildcardOnly(attributeName, ATTRIBUTE);
     }
 
-    protected void checkDeniedSymbols(String name, ArgumentType argumentType) {
-        deniedSymbols.forEach(symbol -> {
+    protected void checkForbiddenSymbols(String name, ArgumentType argumentType) {
+        forbiddenSymbols.forEach(symbol -> {
             if (name.contains(symbol)) {
-                throw new IllegalStateException(String.format("The '%s' symbol is denied in the %s name. %s name value is '%s'",
+                throw new IndexConfigurationException(String.format("The '%s' symbol is denied in the %s name. %s name value is '%s'",
                         symbol,
                         argumentType.name,
                         argumentType.nameWithCapitalLetter,
@@ -57,15 +64,16 @@ public class DynamicAttributesConfigurationGroupChecker {
         });
     }
 
-    private void checkIsNotEmpty(String name, ArgumentType argumentType) {
+    protected void checkIsNotEmpty(String name, ArgumentType argumentType) {
         if("".equals(name)){
-            throw new IllegalStateException(String.format("%s name can't be empty", argumentType.nameWithCapitalLetter));
+            throw new IndexConfigurationException(String.format("%s name can't be empty", argumentType.nameWithCapitalLetter));
         }
     }
 
-    protected void checkThatNotIsTheWildcard(String name, ArgumentType argumentType) {
+    protected void checkNotWildcardOnly(String name, ArgumentType argumentType) {
         if ("*".equals(name)){
-            throw new IllegalStateException(String.format("%s name can't be a wildcard without any text. But wildcards like '*abc', 'abc*', 'a*b*c' are supported.", argumentType.nameWithCapitalLetter));
+            throw new IndexConfigurationException(String.format("%s name can't be a wildcard without any text. " +
+                    "But wildcards like '*abc', 'abc*', 'a*b*c' are supported.", argumentType.nameWithCapitalLetter));
         }
     }
 

@@ -27,14 +27,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Describes details of mapping for entity property or group of properties.
- * Equivalent of single field-mapping annotation.
+ * The {@code DynamicAttributesGroupConfiguration} class represents a search configuration
+ * for a group of the dynamic attributes.
+ * <p>
+ * It allows specifying which properties should be included or excluded for indexing
+ * and provides functionality to define additional configurations like field mapping
+ * strategies and parameterization.
+ * <p>
+ * Equivalent of a single field-mapping annotation {@link io.jmix.search.index.annotation.DynamicAttributes}.
+ * <p>
+ * Instances of this class should be built using the {@link DynamicAttributesGroupConfiguration.DynamicAttributeGroupDefinitionBuilder}.
  */
-public class DynamicAttributesConfigurationGroup extends AbstractAttributesConfigurationGroup {
+public class DynamicAttributesGroupConfiguration extends AbstractAttributesGroupConfiguration {
+
     protected final String[] excludedCategories;
     protected final String[] excludedProperties;
 
-    protected DynamicAttributesConfigurationGroup(DynamicAttributeGroupDefinitionBuilder builder) {
+    protected DynamicAttributesGroupConfiguration(DynamicAttributeGroupDefinitionBuilder builder) {
         super(builder.fieldMappingStrategyClass,
                 builder.fieldMappingStrategy,
                 builder.fieldConfiguration,
@@ -59,8 +68,9 @@ public class DynamicAttributesConfigurationGroup extends AbstractAttributesConfi
     }
 
     /**
-     * TODO javadoc
-     * @return
+     * Retrieves the categories that are excluded from processing or indexing.
+     *
+     * @return an array of the excluded category names.
      */
     public String[] getExcludedCategories() {
         return excludedCategories;
@@ -125,7 +135,8 @@ public class DynamicAttributesConfigurationGroup extends AbstractAttributesConfi
          * @see #withFieldConfiguration(String)
          * @see #withFieldConfiguration(ObjectNode)
          */
-        public DynamicAttributeGroupDefinitionBuilder withFieldMappingStrategyClass(Class<? extends FieldMappingStrategy> fieldMappingStrategyClass) {
+        public DynamicAttributeGroupDefinitionBuilder withFieldMappingStrategyClass(
+                Class<? extends FieldMappingStrategy> fieldMappingStrategyClass) {
             this.fieldMappingStrategyClass = fieldMappingStrategyClass;
             return this;
         }
@@ -160,7 +171,7 @@ public class DynamicAttributesConfigurationGroup extends AbstractAttributesConfi
         /**
          * Defines parameters map.
          * <p>
-         * See {@link DynamicAttributesConfigurationGroup#getParameters()}.
+         * See {@link DynamicAttributesGroupConfiguration#getParameters()}.
          *
          * @param parameters parameters
          * @return builder
@@ -294,8 +305,8 @@ public class DynamicAttributesConfigurationGroup extends AbstractAttributesConfi
             return this;
         }
 
-        public DynamicAttributesConfigurationGroup build() {
-            return new DynamicAttributesConfigurationGroup(this);
+        public DynamicAttributesGroupConfiguration build() {
+            return new DynamicAttributesGroupConfiguration(this);
         }
     }
 }

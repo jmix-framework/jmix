@@ -19,9 +19,18 @@ package io.jmix.search.listener;
 import java.util.Map;
 
 /**
- * TODO javadoc
+ * Represents a query with its associated parameters for determining dependent entities.
+ * <p>
+ * This record encapsulates:
+ * <ul>
+ *   <li>A {@code query} string which specifies the query used for resolving dependencies.
+ *   <li>A {@code parameters} map containing the key-value pairs of parameters used in the query.
+ * </ul>
+ * This class is primarily used for constructing and storing information necessary to resolve entities
+ * dependent on the provided criteria.
+ * </p>
  */
-record DependentEntitiesQuery(String query, Map<String, Object> parameters) {
+public record DependentEntitiesQuery(String query, Map<String, Object> parameters) {
 
     @Override
     public String toString() {

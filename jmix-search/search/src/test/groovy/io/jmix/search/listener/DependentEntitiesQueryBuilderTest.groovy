@@ -18,14 +18,14 @@ package io.jmix.search.listener
 
 import io.jmix.core.Id
 import io.jmix.core.MetadataTools
-import io.jmix.core.metamodel.annotation.JmixEntity
 import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.core.metamodel.model.MetaProperty
 import io.jmix.core.metamodel.model.MetaPropertyPath
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport
 import io.jmix.search.listener.dynattr.DynamicAttributeReferenceFieldResolver
-import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
 import spock.lang.Specification
+import test_support.entity.ReferenceEntity
 
 import java.lang.reflect.AnnotatedElement
 
@@ -59,9 +59,12 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         def metadataTools = Mock(MetadataTools)
         metadataTools.getPrimaryKeyName(targetMetaClass) >> "pk_name"
 
+        and:
+        DynamicAttributesSupport dynamicAttributesSupport = Mock()
+        dynamicAttributesSupport.isDynamicAttribute(_) >> false
 
         when:
-        def query = new DependentEntitiesQueryBuilder(metadataTools, Mock(DynamicAttributeReferenceFieldResolver))
+        def query = new DependentEntitiesQueryBuilder(metadataTools, Mock(DynamicAttributeReferenceFieldResolver), dynamicAttributesSupport)
                 .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
@@ -112,8 +115,12 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         def referencedMetaClass = Mock(MetaClass)
         referencedMetaClass.getName() >> "some_entityName"
 
+        and:
+        DynamicAttributesSupport dynamicAttributesSupport = Mock()
+        dynamicAttributesSupport.isDynamicAttribute(_) >> false
+
         when:
-        def query = new DependentEntitiesQueryBuilder(metadataTools, Mock(DynamicAttributeReferenceFieldResolver))
+        def query = new DependentEntitiesQueryBuilder(metadataTools, Mock(DynamicAttributeReferenceFieldResolver), dynamicAttributesSupport)
                 .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
@@ -160,8 +167,13 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         def resolver = Mock(DynamicAttributeReferenceFieldResolver)
         resolver.getFieldName(_) >> "entityId"
 
+        and:
+        DynamicAttributesSupport dynamicAttributesSupport = Mock()
+        dynamicAttributesSupport.isDynamicAttribute(_) >> true
+
+
         when:
-        def query = new DependentEntitiesQueryBuilder(metadataTools, resolver)
+        def query = new DependentEntitiesQueryBuilder(metadataTools, resolver, dynamicAttributesSupport)
                 .loadEntity(referencedMetaClass)
                 .byProperty(metaPropertyPath)
                 .dependedOn(targetMetaClass, Id.of(targetEntityId, ReferenceEntity))
@@ -172,15 +184,9 @@ class DependentEntitiesQueryBuilderTest extends Specification {
         then:
         query.query() == "select e1 from some_entityName e1 where exists " +
                 "(select r from dynat_CategoryAttributeValue r " +
-                    "where r.entityValue.entityId =:ref and r.entity.entityId = e1.pk_name)"
+                "where r.entityValue.entityId =:ref and r.entity.entityId = e1.pk_name)"
         query.parameters().size() == 1
         firstParameter.getKey() == "ref"
         firstParameter.getValue() == targetEntityId
-    }
-
-    @Entity
-    @JmixEntity
-    private static class ReferenceEntity {
-
     }
 }

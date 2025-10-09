@@ -18,14 +18,109 @@ package io.jmix.search.index.mapping.processor.impl.dynattr;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.dynattr.AttributeDefinition;
+import io.jmix.dynattr.AttributeType;
+import io.jmix.dynattr.CategoryDefinition;
+import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.search.index.annotation.ReferenceAttributesIndexingMode;
+import io.jmix.search.utils.PropertyTools;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public interface DynamicAttributesResolver {
-    Map<String, MetaPropertyPath> resolveEffectivePropertyPaths(
+import static io.jmix.dynattr.AttributeType.*;
+import static io.jmix.dynattr.AttributeType.ENTITY;
+import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.INSTANCE_NAME_ONLY;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+
+public class DynamicAttributesResolver {
+
+    private final DynAttrMetadata dynAttrMetadata;
+    private final PropertyTools propertyTools;
+    private static final List<AttributeType> SUPPORTED_DATA_TYPES = List.of(STRING, ENTITY, ENUMERATION);
+    private final PatternsMatcher patternsMatcher;
+
+    public DynamicAttributesResolver(DynAttrMetadata dynAttrMetadata,
+                                     PropertyTools propertyTools,
+                                     PatternsMatcher patternsMatcher) {
+        this.dynAttrMetadata = dynAttrMetadata;
+        this.propertyTools = propertyTools;
+        this.patternsMatcher = patternsMatcher;
+    }
+
+    public Map<String, MetaPropertyPath> resolveEffectivePropertyPaths(
             MetaClass metaClass,
             String[] excludedCategories,
             String[] excludedProperties,
-            ReferenceAttributesIndexingMode mode);
+            ReferenceAttributesIndexingMode mode) {
+        Map<String, MetaPropertyPath> effectiveProperties = new HashMap<>();
+        Collection<AttributeDefinition> attributes = getAttributes(metaClass, excludedCategories, excludedProperties, mode);
+
+        attributes.forEach(attributeDefinition ->
+                effectiveProperties.putAll(propertyTools.findPropertiesByPath(
+                        metaClass,
+                        "+" + attributeDefinition.getCode(),
+                        true))
+        );
+        return effectiveProperties;
+    }
+
+    protected Collection<AttributeDefinition> getAttributes(
+            MetaClass metaClass,
+            String[] excludedCategories,
+            String[] excludedProperties,
+            ReferenceAttributesIndexingMode mode) {
+        Map<String, AttributeDefinition> attributeDefinitionMap = dynAttrMetadata.getAttributes(metaClass).stream()
+                .filter(
+                        attributeDefinition -> {
+                            AttributeType dataType = attributeDefinition.getDataType();
+                            if (!SUPPORTED_DATA_TYPES.contains(dataType)) {
+                                return false;
+                            }
+                            return dataType != ENTITY || mode == INSTANCE_NAME_ONLY;
+                        })
+                .collect(toMap(AttributeDefinition::getCode, identity()));
+        if (excludedCategories.length > 0) {
+            removeAttributesForExcludedCategories(metaClass, excludedCategories, attributeDefinitionMap);
+        }
+        if (excludedProperties.length > 0) {
+            removeExcludedAttributes(excludedProperties, attributeDefinitionMap);
+        }
+
+        return attributeDefinitionMap.values();
+    }
+
+    protected void removeAttributesForExcludedCategories(MetaClass metaClass,
+                                                         String[] excludedCategories,
+                                                         Map<String, AttributeDefinition> attributeDefinitionMap) {
+        Map<String, CategoryDefinition> categories = dynAttrMetadata
+                .getCategories(metaClass)
+                .stream()
+                .collect(toMap(CategoryDefinition::getName, identity()));
+
+        Collection<CategoryDefinition> categoriesToRemove =
+                patternsMatcher.getMatchingElements(categories, List.of(excludedCategories));
+
+        List<String> excludedAttributeCodes = categoriesToRemove
+                .stream()
+                .map(CategoryDefinition::getAttributeDefinitions)
+                .flatMap(Collection::stream)
+                .map(AttributeDefinition::getCode)
+                .toList();
+
+        excludedAttributeCodes.forEach(attributeDefinitionMap::remove);
+    }
+
+    protected void removeExcludedAttributes(String[] excludedAttributes,
+                                            Map<String, AttributeDefinition> attributeDefinitionMap) {
+        Collection<AttributeDefinition> attributesToRemove =
+                patternsMatcher.getMatchingElements(attributeDefinitionMap, List.of(excludedAttributes));
+
+        attributesToRemove.forEach(
+                attributeDefinition -> attributeDefinitionMap.remove(attributeDefinition.getCode())
+        );
+    }
 }

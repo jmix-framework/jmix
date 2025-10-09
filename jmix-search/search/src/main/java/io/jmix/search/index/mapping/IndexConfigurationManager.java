@@ -38,14 +38,31 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * The {@code IndexConfigurationManager} class provides functionality for managing
+ * index configurations within an application. It allows for retrieving, creating,
+ * and refreshing index definitions, as well as for determining the involvement of
+ * entities in the indexing process.
+ *
+ * <p>This class is responsible for ensuring index configuration consistency and
+ * providing metadata about entities and their relationships in the indexing context.
+ *
+ * <h2>Main Responsibilities</h2>
+ * <ul>
+ *   <li>Managing index definitions and their lifecycle</li>
+ *   <li>Retrieving index configurations by entity or index name</li>
+ *   <li>Determining the extent to which entities are indexed</li>
+ *   <li>Providing metadata on dependencies between entities in the indexing process</li>
+ * </ul>
+ */
 @Component("search_IndexConfigurationManager")
 public class IndexConfigurationManager {
 
     private static final Logger log = LoggerFactory.getLogger(IndexConfigurationManager.class);
 
     protected final Registry registry;
-    private final AnnotatedIndexDefinitionProcessor indexDefinitionProcessor;
-    private final Set<String> classNames;
+    protected final AnnotatedIndexDefinitionProcessor indexDefinitionProcessor;
+    protected final Set<String> classNames;
 
     @Autowired
     public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
@@ -57,26 +74,18 @@ public class IndexConfigurationManager {
         Class<? extends IndexDefinitionDetector> detectorClass = indexDefinitionDetector.getClass();
         classNames = Collections.unmodifiableSet(classpathScanner.getClassNames(detectorClass));
         log.debug("Create Index Configurations");
-
         this.registry = new Registry(instanceNameProvider, metadataTools);
-
-        createIndexDefinitions(false);
+        initializeIndexDefinitions();
     }
 
     /**
-     * TODO javadoc
+     * Refreshes the index definitions by re-creating and registering them.
+     *
+     * <p>This method triggers the recreation of all index configurations, ensuring that
+     * the latest configurations are applied.
      */
     public void refreshIndexDefinitions() {
-        createIndexDefinitions(true);
-    }
-
-    protected synchronized void createIndexDefinitions(boolean withClean) {
-        if (withClean) {
-            registry.clean();
-        }
-        classNames.stream()
-                .map(indexDefinitionProcessor::createIndexConfiguration)
-                .forEach(registry::registerIndexConfiguration);
+        initializeIndexDefinitions();
     }
 
     /**
@@ -227,6 +236,30 @@ public class IndexConfigurationManager {
         return result;
     }
 
+    /**
+     * Initializes the index definitions by creating and registering them.
+     * <p>
+     * The method ensures that the current index configurations are updated to match
+     * the definitions specified by the provided class names.
+     */
+    protected void initializeIndexDefinitions() {
+        ArrayList<IndexConfiguration> configurations = new ArrayList<>();
+        classNames.forEach(className ->
+                configurations.add(indexDefinitionProcessor.createIndexConfiguration(className)));
+
+        replaceConfigurations(configurations);
+    }
+
+    /**
+     * Replaces the current index configurations with the provided list of new configurations.
+     *
+     * @param configurations the list of {@link IndexConfiguration} objects to be set in the registry
+     */
+    protected synchronized void replaceConfigurations(ArrayList<IndexConfiguration> configurations) {
+        registry.clean();
+        configurations.forEach(registry::registerIndexConfiguration);
+    }
+
     protected static class PropertyTrackingInfo {
 
         protected final Class<?> trackedClassUpdate; //todo change both tracked class to their entity names?
@@ -283,6 +316,7 @@ public class IndexConfigurationManager {
     }
 
     protected static class Registry {
+
         private final InstanceNameProvider instanceNameProvider;
         private final MetadataTools metadataTools;
 

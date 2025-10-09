@@ -164,7 +164,13 @@ public class BaseSearchTestConfiguration {
 
     @Bean
     @Primary
-    public DynAttrManager dynAttrManager(){
+    public DynAttrManager dynAttrManager() {
         return new NoopDynAttrManagerImpl();
+    }
+
+    @Bean
+    @Primary
+    public TestNoopDynAttrMetadata dynAttrMetadata() {
+        return new TestNoopDynAttrMetadata();
     }
 }

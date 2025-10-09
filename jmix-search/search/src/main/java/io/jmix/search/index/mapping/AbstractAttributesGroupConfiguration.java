@@ -24,9 +24,19 @@ import org.springframework.lang.Nullable;
 import java.util.Map;
 
 /**
- * TODO javadoc
+ * Abstract base class for defining a configuration group of attributes.
+ * <p>
+ * Provides common functionality and properties for configuring attribute mappings
+ * and value extraction. Enables specifying the field mapping strategy and
+ * related configurations used to index properties.
+ * <p>
+ * Subclasses should provide specific implementations or extensions
+ * as required for dynamic or static attribute configurations.
+ * <p>
+ * Implements {@link AttributesGroupConfiguration}.
  */
-public abstract class AbstractAttributesConfigurationGroup implements AttributesConfigurationGroup {
+public abstract class AbstractAttributesGroupConfiguration implements AttributesGroupConfiguration {
+
     protected final Class<? extends FieldMappingStrategy> fieldMappingStrategyClass;
     protected final FieldMappingStrategy fieldMappingStrategy;
     protected final FieldConfiguration fieldConfiguration;
@@ -34,8 +44,7 @@ public abstract class AbstractAttributesConfigurationGroup implements Attributes
     protected final Map<String, Object> parameters;
     protected final Integer order;
 
-
-    protected AbstractAttributesConfigurationGroup(
+    protected AbstractAttributesGroupConfiguration(
             Class<? extends FieldMappingStrategy> fieldMappingStrategyClass,
             FieldMappingStrategy fieldMappingStrategy,
             FieldConfiguration fieldConfiguration,
@@ -69,7 +78,7 @@ public abstract class AbstractAttributesConfigurationGroup implements Attributes
      * Can be null if strategy is defined as class (see {@link #getFieldMappingStrategyClass()})
      * or configuration is specified explicitly (see {@link #getFieldConfiguration()})
      * <p>
-     * {@link DynamicAttributesConfigurationGroup#getFieldMappingStrategyClass()} is ignored if this instance is set.
+     * {@link DynamicAttributesGroupConfiguration#getFieldMappingStrategyClass()} is ignored if this instance is set.
      *
      * @return {@link FieldMappingStrategy} instance
      */

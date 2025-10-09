@@ -20,8 +20,7 @@ import io.jmix.search.index.annotation.AutoMappedField;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.annotation.ManualMappingDefinition;
 import io.jmix.search.index.mapping.MappingDefinition;
-import io.jmix.search.index.mapping.MappingDefinitionElement;
-import io.jmix.search.index.mapping.StaticAttributesConfigurationGroup;
+import io.jmix.search.index.mapping.StaticAttributesGroupConfiguration;
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
 import test_support.entity.TestSimpleRootEntity;
 
@@ -33,7 +32,7 @@ public interface TestProgrammaticMappingWithAnnotationsIndexDefinitionNewApi {
     default MappingDefinition programmaticMapping() {
         return MappingDefinition.builder()
                 .addStaticAttributesGroup(
-                        StaticAttributesConfigurationGroup.builder()
+                        StaticAttributesGroupConfiguration.builder()
                                 .includeProperties("name")
                                 .withFieldMappingStrategyClass(AutoMappingStrategy.class)
                                 .build()

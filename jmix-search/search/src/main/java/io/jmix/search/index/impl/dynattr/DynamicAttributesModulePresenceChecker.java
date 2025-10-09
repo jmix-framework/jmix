@@ -19,16 +19,24 @@ package io.jmix.search.index.impl.dynattr;
 import io.jmix.core.JmixModules;
 import org.springframework.stereotype.Component;
 
+/**
+ * This class is responsible for checking the availability of the Dynamic Attributes module in the Jmix application.
+ */
 @Component("search_DynamicAttributesModuleChecker")
-public class DynamicAttributesModuleChecker {
+public class DynamicAttributesModulePresenceChecker {
 
     private final JmixModules modules;
 
-    public DynamicAttributesModuleChecker(JmixModules modules) {
+    public DynamicAttributesModulePresenceChecker(JmixModules modules) {
         this.modules = modules;
     }
 
-    public boolean isDynamicAttributesUsing() {
+    /**
+     * Checks if the Dynamic Attributes module is available in the application.
+     *
+     * @return true if the Dynamic Attributes module is present, false otherwise
+     */
+    public boolean isModulePresent() {
         return modules.get("io.jmix.dynattr") != null;
     }
 }

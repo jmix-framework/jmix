@@ -58,8 +58,6 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
     @Autowired
     protected IndexingQueueManager indexingQueueManager;
     @Autowired
-    protected StoreAwareLocator storeAwareLocator;
-    @Autowired
     protected SearchProperties searchProperties;
     @Autowired
     protected MetadataTools metadataTools;

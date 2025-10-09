@@ -31,7 +31,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * TODO javadoc
+ * The {@code InstanceNameRelatedPropertiesResolver} class is responsible for resolving a list of
+ * {@link MetaPropertyPath} objects related to the instance name of a given {@link MetaClass}.
+ * <p>
+ * This resolver utilizes an {@link InstanceNameProvider} to determine which properties are associated
+ * with the instance name pattern of the provided entity metadata. The resolution may include properties
+ * in the base class or extended properties dependent on the given root property path.
  */
 @Component("search_InstanceNameRelatedPropertiesResolver")
 public class InstanceNameRelatedPropertiesResolver {

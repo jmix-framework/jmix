@@ -27,7 +27,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
-import io.jmix.search.index.impl.dynattr.DynamicAttributesModuleChecker;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.utils.SslConfigurer;
@@ -45,8 +45,6 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -57,15 +55,14 @@ import org.springframework.lang.Nullable;
 
 import javax.net.ssl.SSLContext;
 import java.util.Collection;
+import java.util.List;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class,
         DataConfiguration.class,
         SearchConfiguration.class,
         SearchElasticsearchConfiguration.class})
-    public class SearchElasticsearchAutoConfiguration {
-
-    private static final Logger log = LoggerFactory.getLogger(SearchElasticsearchAutoConfiguration.class);
+public class SearchElasticsearchAutoConfiguration {
 
     @Autowired
     protected SearchProperties searchProperties;
@@ -129,7 +126,7 @@ import java.util.Collection;
                                                        MetadataTools metadataTools,
                                                        SearchProperties searchProperties,
                                                        ElasticsearchClient client,
-                                                       DynamicAttributesModuleChecker dynamicAttributesModuleChecker) {
+                                                       DynamicAttributesSupport dynamicAttributesSupport) {
         return new ElasticsearchEntityIndexer(dataManager,
                 fetchPlans,
                 indexConfigurationManager,
@@ -139,7 +136,7 @@ import java.util.Collection;
                 metadataTools,
                 searchProperties,
                 client,
-                dynamicAttributesModuleChecker);
+                dynamicAttributesSupport);
     }
 
     @Bean("search_ElasticsearchEntitySearcher")

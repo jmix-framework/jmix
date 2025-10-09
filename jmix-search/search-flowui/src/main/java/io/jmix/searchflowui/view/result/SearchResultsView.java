@@ -32,6 +32,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
@@ -88,6 +89,8 @@ public class SearchResultsView extends StandardView {
     protected Notifications notifications;
     @Autowired
     protected SearchProperties searchProperties;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     protected SearchResult searchResult;
     protected String searchStrategy;
@@ -97,8 +100,6 @@ public class SearchResultsView extends StandardView {
     protected SearchFieldContext searchFieldContext;
     protected boolean searchButtonVisible;
     protected boolean settingsButtonVisible;
-    @Autowired
-    private MetadataTools metadataTools;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -307,11 +308,11 @@ public class SearchResultsView extends StandardView {
         MetaClass currentMetaClass = metadata.getClass(entityName);
         for (int i = 0; i < parts.length; i++) {
             String part = parts[i];
-            MetaProperty currentMetaProperty = metadataTools.resolveMetaPropertyOrNull(currentMetaClass, part);
-            if (currentMetaProperty == null) {
+            MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(currentMetaClass, part);
+            if (metaPropertyPath == null) {
                 break;
             }
-
+            MetaProperty currentMetaProperty = metaPropertyPath.getMetaProperty();
             if (currentMetaProperty.getRange().isDatatype()
                     && (Datatype<?>) currentMetaProperty.getRange().asDatatype() instanceof FileRefDatatype
                     && i + 1 < parts.length) {

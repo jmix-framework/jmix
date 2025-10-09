@@ -22,6 +22,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.PersistenceHints;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.listener.dynattr.DynamicAttributeReferenceFieldResolver;
 import org.eclipse.persistence.exceptions.JPQLException;
 import org.slf4j.Logger;
@@ -34,6 +35,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * This class is responsible for loading dependent entity IDs for a given target entity.
+ * It facilitates the process of identifying entities that have a dependency relationship
+ * with a specified entity based on the provided metadata.
+ */
 @Component("search_DependentEntitiesLoader")
 public class DependentEntitiesLoader {
 
@@ -42,18 +48,21 @@ public class DependentEntitiesLoader {
     protected final DataManager dataManager;
     protected final MetadataTools metadataTools;
     protected final DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver;
+    protected final DynamicAttributesSupport dynamicAttributesSupport;
 
     public DependentEntitiesLoader(DataManager dataManager,
                                    MetadataTools metadataTools,
-                                   DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver) {
+                                   DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver,
+                                   DynamicAttributesSupport dynamicAttributesSupport) {
         this.dataManager = dataManager;
         this.metadataTools = metadataTools;
         this.dynamicAttributeReferenceFieldResolver = dynamicAttributeReferenceFieldResolver;
+        this.dynamicAttributesSupport = dynamicAttributesSupport;
     }
 
     public Set<Id<?>> loadDependentEntityIds(Id<?> targetEntityId,
-                                                MetaClass targetMetaClass,
-                                                Map<MetaClass, Set<MetaPropertyPath>> dependencyMetaData) {
+                                             MetaClass targetMetaClass,
+                                             Map<MetaClass, Set<MetaPropertyPath>> dependencyMetaData) {
         log.debug("Load dependent entity pks for entity {}: {}", targetEntityId, dependencyMetaData);
 
         Set<Id<?>> result = new HashSet<>();
@@ -69,7 +78,7 @@ public class DependentEntitiesLoader {
                 log.debug("Load entities '{}' dependent via property '{}'", entityName, propertyPath);
 
                 //TODO think about performance
-                DependentEntitiesQuery dependentEntitiesQuery = new DependentEntitiesQueryBuilder(metadataTools, dynamicAttributeReferenceFieldResolver)
+                DependentEntitiesQuery dependentEntitiesQuery = new DependentEntitiesQueryBuilder(metadataTools, dynamicAttributeReferenceFieldResolver, dynamicAttributesSupport)
                         .loadEntity(metaClass)
                         .byProperty(propertyPath)
                         .dependedOn(targetMetaClass, targetEntityId)
@@ -80,8 +89,7 @@ public class DependentEntitiesLoader {
                     List<Id<?>> refObjectIds = performLoadingDependentEntityIds(metaClass, dependentEntitiesQuery);
                     log.debug("Loaded primary keys of dependent references ({}): {}", refObjectIds.size(), refObjectIds);
                     result.addAll(refObjectIds);
-                }
-                catch (JPQLException e){
+                } catch (JPQLException e) {
                     log.error("Can't execute query", e);
                     throw e;
                 }

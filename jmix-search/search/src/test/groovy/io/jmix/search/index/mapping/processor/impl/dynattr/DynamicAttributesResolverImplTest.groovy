@@ -31,7 +31,7 @@ import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*
 import static java.util.Arrays.asList
 import static java.util.Collections.singletonMap
 
-class DynamicAttributesResolverImplTest extends Specification {
+class DynamicAttributesResolverTest extends Specification {
 
     def "all attributes without references"() {
         given:
@@ -58,7 +58,7 @@ class DynamicAttributesResolverImplTest extends Specification {
         propertyTools.findPropertiesByPath(metaClass, "+attr2", true) >> singletonMap("key2", Mock(MetaPropertyPath))
 
         and:
-        def resolver = new DynamicAttributesResolverImpl(metadata, propertyTools, new WildcardResolver())
+        def resolver = new DynamicAttributesResolver(metadata, propertyTools, new PatternsMatcher())
 
         when:
         def properties = resolver.resolveEffectivePropertyPaths(metaClass, new String[]{}, new String[]{}, NONE)
@@ -93,7 +93,7 @@ class DynamicAttributesResolverImplTest extends Specification {
         propertyTools.findPropertiesByPath(metaClass, "+attr2", true) >> singletonMap("key2", Mock(MetaPropertyPath))
 
         and:
-        def resolver = new DynamicAttributesResolverImpl(metadata, propertyTools, new WildcardResolver())
+        def resolver = new DynamicAttributesResolver(metadata, propertyTools, new PatternsMatcher())
 
         when:
         def properties = resolver.resolveEffectivePropertyPaths(metaClass, new String[]{}, new String[]{}, INSTANCE_NAME_ONLY)
@@ -116,7 +116,7 @@ class DynamicAttributesResolverImplTest extends Specification {
         PropertyTools propertyTools = Mock()
 
         and:
-        def resolver = new DynamicAttributesResolverImpl(metadata, propertyTools, new WildcardResolver())
+        def resolver = new DynamicAttributesResolver(metadata, propertyTools, new PatternsMatcher())
 
         when:
         def properties = resolver.resolveEffectivePropertyPaths(metaClass, new String[]{}, new String[]{}, INSTANCE_NAME_ONLY)
@@ -169,7 +169,7 @@ class DynamicAttributesResolverImplTest extends Specification {
         metadata.getCategories(metaClass) >> asList(category1, category2)
 
         and:
-        def resolver = new DynamicAttributesResolverImpl(metadata, Mock(PropertyTools), new WildcardResolver())
+        def resolver = new DynamicAttributesResolver(metadata, Mock(PropertyTools), new PatternsMatcher())
 
         when:
         def attributes = resolver.getAttributes(metaClass, excludeCategories.toArray() as String[], excludeParameters.toArray() as String[], referenceMode)
@@ -240,7 +240,7 @@ class DynamicAttributesResolverImplTest extends Specification {
         metadata.getCategories(metaClass) >> asList(category1, category2)
 
         and:
-        def resolver = new DynamicAttributesResolverImpl(metadata, Mock(PropertyTools), new WildcardResolver())
+        def resolver = new DynamicAttributesResolver(metadata, Mock(PropertyTools), new PatternsMatcher())
 
         when:
         def attributes = resolver.getAttributes(metaClass, excludeCategories.toArray() as String[], excludeParameters.toArray() as String[], referenceMode)

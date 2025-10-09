@@ -23,10 +23,16 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * A component responsible for resolving the field name of a reference to a dynamic attribute
+ * based on the entity's primary key type. This resolver is specifically designed to support
+ * entities with simple primary keys and does not support composite primary keys.
+ */
 @Component("search_DynamicAttributeReferenceFieldResolver")
 public class DynamicAttributeReferenceFieldResolver {
 
-    public static final String COMPOSITE_KEYS_ARE_NOT_SUPPORTED_MESSAGE = "Composite keys are not supported in the dynamic attributes. The entity type is %s.";
+    public static final String COMPOSITE_KEYS_ARE_NOT_SUPPORTED_MESSAGE =
+            "Composite keys are not supported in the dynamic attributes. The entity type is %s.";
 
     private static final Map<Class<?>, String> typesMap = Map.of(
             UUID.class, "entityId",
@@ -34,7 +40,7 @@ public class DynamicAttributeReferenceFieldResolver {
             Integer.class, "intEntityId",
             Long.class, "longEntityId");
 
-    private final MetadataTools metadataTools;
+    protected final MetadataTools metadataTools;
 
     public DynamicAttributeReferenceFieldResolver(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;

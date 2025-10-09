@@ -31,7 +31,13 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * TODO javadoc
+ * The {@code FieldMappingCreator} class is responsible for creating field mapping descriptors
+ * to establish the mapping between entity properties and corresponding index fields.
+ * It resolves field mapping strategies, field configurations, and value extractors for the specified
+ * property paths and attribute group configurations.
+ * <p>
+ * This component relies on {@link FieldMappingStrategyProvider} to provide field mapping strategies
+ * and {@link InstanceNameRelatedPropertiesResolver} to identify properties related to instance names.
  */
 @Component("search_FieldMappingCreator")
 public class FieldMappingCreator {
@@ -48,13 +54,16 @@ public class FieldMappingCreator {
         this.instanceNameRelatedPropertiesResolver = instanceNameRelatedPropertiesResolver;
     }
 
-    public Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, AttributesConfigurationGroup group, ExtendedSearchSettings extendedSearchSettings) {
+    public Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath,
+                                                                         AttributesGroupConfiguration group,
+                                                                         ExtendedSearchSettings extendedSearchSettings) {
         Optional<FieldMappingStrategy> fieldMappingStrategyOpt = resolveFieldMappingStrategy(group);
         FieldConfiguration explicitFieldConfiguration = group.getFieldConfiguration();
         PropertyValueExtractor explicitPropertyValueExtractor = group.getPropertyValueExtractor();
 
-        if (!fieldMappingStrategyOpt.isPresent() && explicitFieldConfiguration == null) {
-            log.error("Unable to create mapping field descriptor for property '{}': neither field mapping strategy nor explicit field configuration is specified", propertyPath);
+        if (fieldMappingStrategyOpt.isEmpty() && explicitFieldConfiguration == null) {
+            log.error("Unable to create mapping field descriptor for property '{}': " +
+                    "neither field mapping strategy nor explicit field configuration is specified", propertyPath);
             return Optional.empty();
         }
 
@@ -63,10 +72,15 @@ public class FieldMappingCreator {
         if (fieldMappingStrategyOpt.isPresent()) {
             FieldMappingStrategy fieldMappingStrategy = fieldMappingStrategyOpt.get();
             if (fieldMappingStrategy.isSupported(propertyPath)) {
-                strategyFieldConfiguration = fieldMappingStrategy.createFieldConfiguration(propertyPath, group.getParameters(), extendedSearchSettings);
+                strategyFieldConfiguration = fieldMappingStrategy.createFieldConfiguration(
+                        propertyPath,
+                        group.getParameters(),
+                        extendedSearchSettings);
                 strategyPropertyValueExtractor = fieldMappingStrategy.getPropertyValueExtractor(propertyPath);
             } else {
-                log.debug("Property '{}' ('{}') is not supported by field mapping strategy '{}'", propertyPath, propertyPath.getMetaClass(), fieldMappingStrategy);
+                log.debug("Property '{}' ('{}') is not supported by field mapping strategy '{}'",
+                        propertyPath, propertyPath.getMetaClass(),
+                        fieldMappingStrategy);
             }
         }
 
@@ -88,7 +102,8 @@ public class FieldMappingCreator {
                 ? strategyPropertyValueExtractor
                 : explicitPropertyValueExtractor;
 
-        List<MetaPropertyPath> instanceNameRelatedProperties = instanceNameRelatedPropertiesResolver.resolveInstanceNameRelatedProperties(propertyPath);
+        List<MetaPropertyPath> instanceNameRelatedProperties =
+                instanceNameRelatedPropertiesResolver.resolveInstanceNameRelatedProperties(propertyPath);
 
         int effectiveOrder = group.getOrder() == null
                 ? fieldMappingStrategyOpt.map(FieldMappingStrategy::getOrder).orElse(Integer.MIN_VALUE)
@@ -108,7 +123,7 @@ public class FieldMappingCreator {
         return Optional.of(fieldDescriptor);
     }
 
-    protected Optional<FieldMappingStrategy> resolveFieldMappingStrategy(AttributesConfigurationGroup element) {
+    protected Optional<FieldMappingStrategy> resolveFieldMappingStrategy(AttributesGroupConfiguration element) {
         FieldMappingStrategy fieldMappingStrategy = element.getFieldMappingStrategy();
         if (fieldMappingStrategy != null) {
             return Optional.of(fieldMappingStrategy);

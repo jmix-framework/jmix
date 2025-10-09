@@ -21,6 +21,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.listener.dynattr.DynamicAttributeReferenceFieldResolver;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
@@ -29,8 +30,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static io.jmix.search.index.impl.dynattr.DynAttrUtils.isDynamicAttributeName;
-
+/**
+ * A builder class for constructing queries to retrieve dependent entities based on various criteria.
+ * The {@code DependentEntitiesQueryBuilder} is primarily designed to handle both static and dynamic
+ * attribute references with optional multi-level properties.
+ */
 public class DependentEntitiesQueryBuilder {
 
     public static final String REFERENCES_WITH_TWO_OR_MORE_LEVELS_ARE_NOT_SUPPORTED_MESSAGE =
@@ -53,13 +57,16 @@ public class DependentEntitiesQueryBuilder {
     private String targetPrimaryKeyName;
 
     private Map<String, Object> parameters;
-    private final MetadataTools metadataTools;
-    private final DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver;
+    protected final MetadataTools metadataTools;
+    protected final DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver;
+    private final DynamicAttributesSupport dynamicAttributesSupport;
 
     DependentEntitiesQueryBuilder(MetadataTools metadataTools,
-                                  DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver) {
+                                  DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver,
+                                  DynamicAttributesSupport dynamicAttributesSupport) {
         this.metadataTools = metadataTools;
         this.dynamicAttributeReferenceFieldResolver = dynamicAttributeReferenceFieldResolver;
+        this.dynamicAttributesSupport = dynamicAttributesSupport;
     }
 
     protected DependentEntitiesQueryBuilder loadEntity(MetaClass metaClass) {
@@ -80,21 +87,21 @@ public class DependentEntitiesQueryBuilder {
     }
 
     protected DependentEntitiesQuery buildQuery() {
-        if (!isDynamic(propertyPath)) {
+        if (!dynamicAttributesSupport.isDynamicAttribute(propertyPath)) {
             initQuery();
             processProperties();
         } else {
-            if (!hasLevels(propertyPath)) {
+            if (!hasExtraLevels(propertyPath)) {
                 initDynamicQuery();
                 processDynamicProperty();
-            }else {
+            } else {
                 throw new IllegalStateException(String.format(REFERENCES_WITH_TWO_OR_MORE_LEVELS_ARE_NOT_SUPPORTED_MESSAGE, referencedMetaClass.getName(), propertyPath.toString()));
             }
         }
         return new DependentEntitiesQuery(querySb.toString(), parameters);
     }
 
-    private boolean hasLevels(MetaPropertyPath propertyPath) {
+    private boolean hasExtraLevels(MetaPropertyPath propertyPath) {
         return propertyPath.getMetaProperties().length > 1;
     }
 
@@ -120,10 +127,6 @@ public class DependentEntitiesQueryBuilder {
                 .append(".")
                 .append(targetPrimaryKeyName)
                 .append(")");
-    }
-
-    private boolean isDynamic(MetaPropertyPath propertyPath) {
-        return isDynamicAttributeName(propertyPath.getFirstPropertyName());
     }
 
     private void initQuery() {

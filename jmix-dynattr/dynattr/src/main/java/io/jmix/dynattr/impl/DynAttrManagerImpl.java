@@ -165,7 +165,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                                 }
                             });
                 }
-                eventPublisher.publishEvent(new DynamicAttributeChangeEvent(metaClass, entity, dynamicModel));
+                eventPublisher.publishEvent(new DynamicAttributeChangeEvent<>(metaClass, entity, dynamicModel));
             }
             //todo: refresh state
             //state.setValues(mergedValues);

@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.impl.dynattr;
+package io.jmix.search.exception;
 
-public class DynAttrUtils {
+/**
+ * Represents an exception thrown when there is an issue with the configuration
+ * of an index within the search module.
+ */
+public class IndexConfigurationException extends RuntimeException{
 
-    public static boolean isDynamicAttributeName(String entityPropertyFullName) {
-        return entityPropertyFullName.contains("+");
+    public IndexConfigurationException(String message) {
+        super(message);
     }
-
 }

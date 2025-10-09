@@ -53,6 +53,17 @@ public class PropertyTools {
         return findPropertiesByPath(metaClass, pathString, false);
     }
 
+    /**
+     * Finds properties of an entity by the provided path string.
+     * The path string can include wildcard '*' for pattern matching.
+     *
+     * @param metaClass the entity's {@link MetaClass} to search within
+     * @param pathString the path to the property to find, supports dot-separated notation and wildcards.
+     *                   The path string can also contain the '+' sign that determines a dynamic attribute.
+     * @param useDynamicAttributes whether to include dynamic attributes in the search
+     * @return a map where the key is the effective property path as a string, and the value
+     * is the corresponding {@code MetaPropertyPath} object
+     */
     public Map<String, MetaPropertyPath> findPropertiesByPath(MetaClass metaClass, String pathString, boolean useDynamicAttributes) {
         log.debug("Find properties by path: MetaClass={}, PathString={}", metaClass, pathString);
         if (hasWildcard(pathString)) {

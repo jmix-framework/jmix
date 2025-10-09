@@ -19,35 +19,33 @@ package io.jmix.search.index.mapping.processor.impl.dynattr;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.annotation.ReferenceAttributesIndexingMode;
-import io.jmix.search.index.mapping.DynamicAttributesConfigurationGroup;
+import io.jmix.search.index.mapping.DynamicAttributesGroupConfiguration;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.mapping.processor.impl.AbstractAttributesGroupProcessor;
 import io.jmix.search.index.mapping.processor.impl.FieldMappingCreator;
 import io.jmix.search.utils.PropertyTools;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*;
-import static io.jmix.search.index.mapping.DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE;
+import static io.jmix.search.index.mapping.ParameterKeys.REFERENCE_FIELD_INDEXING_MODE;
 
 /**
- * TODO javadoc
+ * This processor is responsible for resolving dynamic attributes, validating the configuration,
+ * and creating field mappings based on the provided {@link DynamicAttributesGroupConfiguration}.
  */
-@Component("search_DynamicAttributesGroupProcessor")
-public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProcessor<DynamicAttributesConfigurationGroup> {
+public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProcessor<DynamicAttributesGroupConfiguration> {
 
     protected final DynamicAttributesResolver dynamicAttributesResolver;
     protected final FieldMappingCreator fieldMappingCreator;
-    protected final DynamicAttributesConfigurationGroupChecker groupChecker;
+    protected final DynamicAttributesGroupConfigurationValidator groupChecker;
 
-    protected DynamicAttributesGroupProcessor(PropertyTools propertyTools,
-                                              @Lazy DynamicAttributesResolver dynamicAttributesResolver,
-                                              FieldMappingCreator fieldMappingCreator,
-                                              DynamicAttributesConfigurationGroupChecker groupChecker) {
+    public DynamicAttributesGroupProcessor(PropertyTools propertyTools,
+                                           DynamicAttributesResolver dynamicAttributesResolver,
+                                           FieldMappingCreator fieldMappingCreator,
+                                           DynamicAttributesGroupConfigurationValidator groupChecker) {
         super(propertyTools);
         this.dynamicAttributesResolver = dynamicAttributesResolver;
         this.fieldMappingCreator = fieldMappingCreator;
@@ -55,9 +53,14 @@ public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProc
     }
 
     @Override
-    public List<MappingFieldDescriptor> processAttributesGroup(MetaClass metaClass,
-                                                               DynamicAttributesConfigurationGroup group,
-                                                               ExtendedSearchSettings extendedSearchSettings) {
+    public Class<DynamicAttributesGroupConfiguration> getConfigurationClass() {
+        return DynamicAttributesGroupConfiguration.class;
+    }
+
+    @Override
+    public List<MappingFieldDescriptor> processAttributesGroupInternal(MetaClass metaClass,
+                                                                       DynamicAttributesGroupConfiguration group,
+                                                                       ExtendedSearchSettings extendedSearchSettings) {
 
         groupChecker.check(group);
 
@@ -75,10 +78,10 @@ public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProc
                 .collect(Collectors.toList());
     }
 
-    protected ReferenceAttributesIndexingMode extractReferenceFieldsIndexingMode(DynamicAttributesConfigurationGroup group) {
-        if (group.getParameters() != null){
+    protected ReferenceAttributesIndexingMode extractReferenceFieldsIndexingMode(DynamicAttributesGroupConfiguration group) {
+        if (group.getParameters() != null) {
             Object mode = group.getParameters().get(REFERENCE_FIELD_INDEXING_MODE);
-            if(mode != null){
+            if (mode != null) {
                 return (ReferenceAttributesIndexingMode) mode;
             }
         }

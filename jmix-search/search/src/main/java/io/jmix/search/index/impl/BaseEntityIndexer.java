@@ -22,12 +22,12 @@ import com.fasterxml.jackson.databind.node.*;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexResult;
-import io.jmix.search.index.impl.dynattr.DynAttrConstants;
-import io.jmix.search.index.impl.dynattr.DynamicAttributesModuleChecker;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
@@ -35,13 +35,9 @@ import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static io.jmix.search.index.impl.dynattr.DynAttrUtils.isDynamicAttributeName;
-import static java.util.Collections.emptyMap;
 
 /**
  * Provides non-platform-specific functionality.
@@ -59,8 +55,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
     protected final IndexStateRegistry indexStateRegistry;
     protected final MetadataTools metadataTools;
     protected final SearchProperties searchProperties;
-    protected final DynamicAttributesModuleChecker dynamicAttributesModuleChecker;
-
+    protected final DynamicAttributesSupport dynamicAttributesSupport;
     protected final ObjectMapper objectMapper;
 
     public BaseEntityIndexer(UnconstrainedDataManager dataManager,
@@ -71,7 +66,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                              IndexStateRegistry indexStateRegistry,
                              MetadataTools metadataTools,
                              SearchProperties searchProperties,
-                             DynamicAttributesModuleChecker dynamicAttributesModuleChecker) {
+                             DynamicAttributesSupport dynamicAttributesSupport) {
         this.dataManager = dataManager;
         this.fetchPlans = fetchPlans;
         this.indexConfigurationManager = indexConfigurationManager;
@@ -80,7 +75,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
         this.indexStateRegistry = indexStateRegistry;
         this.metadataTools = metadataTools;
         this.searchProperties = searchProperties;
-        this.dynamicAttributesModuleChecker = dynamicAttributesModuleChecker;
+        this.dynamicAttributesSupport = dynamicAttributesSupport;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -235,7 +230,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                                     .load(metaClass.getJavaClass())
                                     .id(id)
                                     .fetchPlan(fetchPlan)
-                                    .hints(getHints())
+                                    .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                                     .optional())
                             .filter(Optional::isPresent)
                             .map(Optional::get)
@@ -248,7 +243,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                             .load(metaClass.getJavaClass())
                             .query(queryString)
                             .parameter("ids", entityIds)
-                            .hints(getHints())
+                            .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                             .fetchPlan(fetchPlan)
                             .list();
                 }
@@ -258,18 +253,11 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
         return result;
     }
 
-    private Map<String, Serializable> getHints() {
-        if (!dynamicAttributesModuleChecker.isDynamicAttributesUsing()){
-            return emptyMap();
-        }
-        return Map.of(DynAttrConstants.LOAD_DYN_ATTR, true);
-    }
-
     protected FetchPlan createFetchPlan(IndexConfiguration indexConfiguration) {
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexConfiguration.getEntityClass());
         indexConfiguration.getMapping().getFields().values().forEach(field -> {
             String entityPropertyFullName = field.getEntityPropertyFullName();
-            if (!isDynamicAttributeName(entityPropertyFullName)){
+            if (!dynamicAttributesSupport.isDynamicAttributeName(entityPropertyFullName)) {
                 log.trace("Add property to fetch plan: {}", entityPropertyFullName);
                 fetchPlanBuilder.add(entityPropertyFullName);
                 field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {

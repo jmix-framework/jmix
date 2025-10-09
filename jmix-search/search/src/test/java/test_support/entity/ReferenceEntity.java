@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package io.jmix.core;
+package test_support.entity;
 
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
-import org.springframework.lang.Nullable;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
-public interface MetaPropertyResolver {
-    @Nullable
-    MetaProperty resolveMetaPropertyOrNull(MetaClass metaClass, String propertyName);
+import java.util.UUID;
+
+@Entity
+@JmixEntity
+public class ReferenceEntity {
+
+    @Id
+    private UUID id;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 }

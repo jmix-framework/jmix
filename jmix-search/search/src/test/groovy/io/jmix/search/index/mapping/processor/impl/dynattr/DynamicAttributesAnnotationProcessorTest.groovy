@@ -18,8 +18,7 @@ package io.jmix.search.index.mapping.processor.impl.dynattr
 
 import io.jmix.search.index.annotation.DynamicAttributes
 import io.jmix.search.index.annotation.ReferenceAttributesIndexingMode
-import io.jmix.search.index.mapping.DynamicAttributesConfigurationGroup
-import io.jmix.search.index.mapping.DynamicAttributesParameterKeys
+import io.jmix.search.index.mapping.DynamicAttributesGroupConfiguration
 import io.jmix.search.index.mapping.ParameterKeys
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy
 import org.springframework.core.annotation.MergedAnnotation
@@ -30,7 +29,7 @@ import java.util.stream.Collectors
 
 import static java.util.Arrays.stream
 
-class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
+class DynamicAttributesAnnotationProcessorTest extends Specification {
 
     public static final String SOME_ANALYZER = "ANotStandardAnalyzer"
 
@@ -46,7 +45,7 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
 
     def "CreateDefinition. null check"() {
         given:
-        def processor = new AutoMappedDynamicFieldAnnotationProcessor()
+        def processor = new DynamicAttributesAnnotationProcessor()
 
         when:
         processor.createDefinition(null)
@@ -58,11 +57,11 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
 
     def "CreateDefinition. Annotation without parameters"() {
         given:
-        def parser = new AutoMappedDynamicFieldAnnotationProcessor()
+        def parser = new DynamicAttributesAnnotationProcessor()
 
         when:
         def annotations = extractAnnotations(IndexDefinitionSimple);
-        DynamicAttributesConfigurationGroup definition = parser.createDefinition(annotations.iterator().next())
+        DynamicAttributesGroupConfiguration definition = parser.createDefinition(annotations.iterator().next())
 
         then:
         definition.getFieldMappingStrategyClass() == AutoMappingStrategy
@@ -72,7 +71,7 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
         definition.getFieldConfiguration() == null
         definition.getPropertyValueExtractor() == null
         definition.getParameters() == Map.of(
-                DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE,
+                ParameterKeys.REFERENCE_FIELD_INDEXING_MODE,
                 ReferenceAttributesIndexingMode.INSTANCE_NAME_ONLY,
 
                 ParameterKeys.INDEX_FILE_CONTENT, true
@@ -81,11 +80,11 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
 
     def "CreateDefinition. Excludes"() {
         given:
-        def parser = new AutoMappedDynamicFieldAnnotationProcessor()
+        def parser = new DynamicAttributesAnnotationProcessor()
 
         when:
         def annotations = extractAnnotations(IndexDefinitionWithExcludes);
-        DynamicAttributesConfigurationGroup definition = parser.createDefinition(annotations.iterator().next())
+        DynamicAttributesGroupConfiguration definition = parser.createDefinition(annotations.iterator().next())
 
         then:
         definition.getExcludedCategories() == new String[]{"cat1", "cat2", "cat3"}
@@ -94,7 +93,7 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
 
     def "CreateDefinition. parameters"() {
         given:
-        def parser = new AutoMappedDynamicFieldAnnotationProcessor()
+        def parser = new DynamicAttributesAnnotationProcessor()
 
         when:
         def annotations = extractAnnotations(IndexDefinitionWithParameters);
@@ -104,13 +103,13 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
         then:
         parameters.get(ParameterKeys.ANALYZER) == SOME_ANALYZER
         parameters.get(ParameterKeys.INDEX_FILE_CONTENT) == false
-        parameters.get(DynamicAttributesParameterKeys.REFERENCE_FIELD_INDEXING_MODE)
+        parameters.get(ParameterKeys.REFERENCE_FIELD_INDEXING_MODE)
                 == ReferenceAttributesIndexingMode.NONE
     }
 
     def "extract from class. simple"() {
         given:
-        def parser = new AutoMappedDynamicFieldAnnotationProcessor()
+        def parser = new DynamicAttributesAnnotationProcessor()
 
         when:
         def annotations = extractAnnotations(aClass)
@@ -130,7 +129,7 @@ class AutoMappedDynamicFieldAnnotationProcessorTest extends Specification {
 
     def "extract from class. content check"() {
         given:
-        def parser = new AutoMappedDynamicFieldAnnotationProcessor()
+        def parser = new DynamicAttributesAnnotationProcessor()
 
         when:
         def annotations = extractAnnotations(IndexDefinitionSomeInSomeMethods)

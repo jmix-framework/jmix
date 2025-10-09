@@ -24,27 +24,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-@Component("search_WildcardResolver")
-public class WildcardResolver {
-    public <T> Collection<T> getMatchingElements(Map<String, T> elementsWithNames, List<String> excludedNames) {
+/**
+ * The {@code PatternsMatcher} class provides functionality for resolving patterns and identifying
+ * matching elements within a collection based on wildcard patterns. It supports processing of string
+ * patterns that may include wildcards (e.g., "*") for flexible and dynamic matching.
+ */
+@Component("search_PatternsMatcher")
+public class PatternsMatcher {
+
+    public <T> Collection<T> getMatchingElements(Map<String, T> namedElements, List<String> patternsForCheck) {
         ArrayList<T> result = new ArrayList<>();
-        elementsWithNames.forEach((key, value) -> {
-            if (checkHit(excludedNames, key)) {
+        namedElements.forEach((key, value) -> {
+            if (getMatchingElementsForSinglePattern(patternsForCheck, key)) {
                 result.add(value);
             }
         });
         return result;
     }
 
-    protected boolean checkHit(List<String> excludedNames, String nameToCheck) {
+    protected boolean getMatchingElementsForSinglePattern(List<String> excludedNames, String patternForCheck) {
         for (String excludingName : excludedNames) {
-            if (!isWithWildCard(excludingName)) {
-                if (nameToCheck.equals(excludingName)) {
+            if (!hasWildCard(excludingName)) {
+                if (patternForCheck.equals(excludingName)) {
                     return true;
                 }
             } else {
                 Pattern pattern = Pattern.compile(excludingName.replace("*", ".*"));
-                if (pattern.matcher(nameToCheck).matches()) {
+                if (pattern.matcher(patternForCheck).matches()) {
                     return true;
                 }
             }
@@ -52,7 +58,7 @@ public class WildcardResolver {
         return false;
     }
 
-    private static boolean isWithWildCard(String excludingName) {
-        return excludingName.contains("*");
+    protected static boolean hasWildCard(String patternForCheck) {
+        return patternForCheck.contains("*");
     }
 }

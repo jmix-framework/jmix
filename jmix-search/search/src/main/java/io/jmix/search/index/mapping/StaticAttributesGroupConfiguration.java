@@ -27,14 +27,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO javadoc
+ * The {@code StaticAttributesGroupConfiguration} class represents a search configuration
+ * for a group of the regular static attributes.
+ * <p>
+ * It allows specifying which properties should be included or excluded for indexing
+ * and provides functionality to define additional configurations like field mapping
+ * strategies and parameterization.
+ * <p>
+ * Equivalent of a single field-mapping annotation {@link io.jmix.search.index.annotation.AutoMappedField}.
+ * <p>
+ * Instances of this class should be built using the {@link StaticAttributeGroupBuilder}.
  */
-public class StaticAttributesConfigurationGroup extends AbstractAttributesConfigurationGroup {
+public class StaticAttributesGroupConfiguration extends AbstractAttributesGroupConfiguration {
 
     protected final String[] includedProperties;
     protected final String[] excludedProperties;
 
-    protected StaticAttributesConfigurationGroup(StaticAttributeGroupBuilder builder) {
+    protected StaticAttributesGroupConfiguration(StaticAttributeGroupBuilder builder) {
         super(builder.fieldMappingStrategyClass,
                 builder.fieldMappingStrategy,
                 builder.fieldConfiguration,
@@ -171,7 +180,7 @@ public class StaticAttributesConfigurationGroup extends AbstractAttributesConfig
         /**
          * Defines parameters map.
          * <p>
-         * See {@link StaticAttributesConfigurationGroup#getParameters()}.
+         * See {@link StaticAttributesGroupConfiguration#getParameters()}.
          *
          * @param parameters parameters
          * @return builder
@@ -305,10 +314,8 @@ public class StaticAttributesConfigurationGroup extends AbstractAttributesConfig
             return this;
         }
 
-        public StaticAttributesConfigurationGroup build() {
-            return new StaticAttributesConfigurationGroup(this);
+        public StaticAttributesGroupConfiguration build() {
+            return new StaticAttributesGroupConfiguration(this);
         }
     }
-
-
 }

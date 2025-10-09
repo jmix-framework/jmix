@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.search'
-archivesBaseName = 'jmix-search-starter'
+package io.jmix.search.index.impl.dynattr;
 
-dependencies {
-    api project(':search')
-    compileOnly project(':dynattr')
+import io.jmix.dynattr.DynAttrUtils;
 
-    api 'org.springframework.boot:spring-boot-autoconfigure'
+/**
+ * Proxy class for determining if a given property name or property path
+ * represents a dynamic attribute.
+ */
+public class DynamicAttributesSupportDelegate {
 
-    compileOnly 'org.springframework.boot:spring-boot-starter-quartz'
+    public boolean isDynamicAttributeName(String entityPropertyFullName) {
+        return DynAttrUtils.isDynamicAttributeProperty(entityPropertyFullName);
+    }
 }

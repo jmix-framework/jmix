@@ -24,9 +24,13 @@ import org.springframework.lang.Nullable;
 import java.util.Map;
 
 /**
- * TODO javadoc
+ * Defines the configuration for an attributes group, enabling mapping of properties into search index fields.
+ * <p>
+ * This interface allows specifying either a {@link FieldMappingStrategy} implementation (as a class or instance)
+ * or an explicit field configuration to control the mapping process. Additional customization can be achieved
+ * through property value extractors and parameters.
  */
-public interface AttributesConfigurationGroup {
+public interface AttributesGroupConfiguration {
 
     /**
      * Provides {@link FieldMappingStrategy} implementation class that should be used to map properties.
@@ -45,12 +49,12 @@ public interface AttributesConfigurationGroup {
      * Can be null if strategy is defined as class (see {@link #getFieldMappingStrategyClass()})
      * or configuration is specified explicitly (see {@link #getFieldConfiguration()})
      * <p>
-     * {@link DynamicAttributesConfigurationGroup#getFieldMappingStrategyClass()} is ignored if this instance is set.
+     * {@link DynamicAttributesGroupConfiguration#getFieldMappingStrategyClass()} is ignored if this instance is set.
      *
      * @return {@link FieldMappingStrategy} instance
      */
     @Nullable
-     FieldMappingStrategy getFieldMappingStrategy();
+    FieldMappingStrategy getFieldMappingStrategy();
 
     /**
      * Provides explicit configuration for indexed fields.
@@ -98,5 +102,4 @@ public interface AttributesConfigurationGroup {
      */
     @Nullable
     Integer getOrder();
-
 }

@@ -5,10 +5,7 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Iterables;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchProperties;
@@ -25,7 +22,6 @@ import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.util.*;
@@ -56,8 +52,8 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
                                        IdSerialization idSerialization,
                                        SecureOperations secureOperations,
                                        PolicyStore policyStore,
-                                       ElasticsearchSearchStrategyProvider searchStrategyManager,
-                                       SearchUtils searchUtils) {
+                                       ElasticsearchSearchStrategyProvider searchStrategyManager) {
+        super(metadataTools, searchProperties, secureDataManager, idSerialization);
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.metadata = metadata;
@@ -65,7 +61,6 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
         this.searchStrategyManager = searchStrategyManager;
-        this.searchUtils = searchUtils;
     }
 
 

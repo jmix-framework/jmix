@@ -26,7 +26,6 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.StandardDetailView.InitEntityEvent;
-import io.jmix.flowui.view.StandardDetailView.ReadOnlyChangeEvent;
 import io.jmix.flowui.view.StandardDetailView.ValidationEvent;
 import io.jmix.flowui.view.View.QueryParametersChangeEvent;
 import io.jmix.flowui.view.View.RestoreComponentsStateEvent;
@@ -310,18 +309,6 @@ public final class ViewControllerUtils {
     public static Registration addValidationEventListener(StandardDetailView<?> view,
                                                           ComponentEventListener<ValidationEvent> listener) {
         return view.addValidationEventListener(listener);
-    }
-
-    /**
-     * Adds a {@link ReadOnlyChangeEvent} listener to the specified view.
-     *
-     * @param view     the view to which the listener is added
-     * @param listener the listener to add
-     * @return a {@link Registration} object for removing the listener
-     */
-    public static Registration addReadOnlyChangeListener(StandardDetailView<?> view,
-                                                         ComponentEventListener<ReadOnlyChangeEvent> listener) {
-        return view.addReadOnlyStateChangeListener(listener);
     }
 
     /**

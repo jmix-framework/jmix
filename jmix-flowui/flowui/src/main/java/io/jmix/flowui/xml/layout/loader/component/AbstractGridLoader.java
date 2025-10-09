@@ -54,9 +54,10 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
+import io.jmix.flowui.view.ReadOnlyTracker;
+import io.jmix.flowui.view.ReadOnlyTracker.ReadOnlyChangeEvent;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -283,16 +284,16 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         if (view == null) {
 
             log.warn("Unable to find view for Grid '{}' after attaching", resultComponent.getId().orElse(null));
-        } else if (!(view instanceof StandardDetailView<?> standardDetailView)) {
+        } else if (!(view instanceof ReadOnlyTracker readOnlyTracker)) {
 
             log.info("Adding the {} listener will be skipped for Grid {} because the view {} is not an instance of {}",
-                    StandardDetailView.ReadOnlyChangeEvent.class.getSimpleName(), resultComponent.getId().orElse(null),
+                    ReadOnlyChangeEvent.class.getSimpleName(), resultComponent.getId().orElse(null),
                     view.getId(), StandardDetailView.class.getSimpleName());
         } else {
             // read-only state can be configured before this moment e.g., via URL query parameters
-            editButton.setEnabled(!standardDetailView.isReadOnly());
+            editButton.setEnabled(!readOnlyTracker.isReadOnly());
 
-            Registration registration = ViewControllerUtils.addReadOnlyChangeListener(standardDetailView,
+            Registration registration = readOnlyTracker.addReadOnlyStateChangeListener(
                     readOnlyChangeEvent -> editButton.setEnabled(!readOnlyChangeEvent.isReadOnly()));
             editButton.addDetachListener(__ -> registration.remove());
         }

@@ -49,7 +49,6 @@ import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -64,7 +63,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <T> entity class
  */
-public class StandardDetailView<T> extends StandardView implements DetailView<T>, ReadOnlyAwareView {
+public class StandardDetailView<T> extends StandardView implements DetailView<T>, ReadOnlyTracker {
 
     public static final String NEW_ENTITY_ID = "new";
     public static final String DEFAULT_ROUTE_PARAM = "id";
@@ -957,13 +956,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return getEventBus().addListener(ValidationEvent.class, listener);
     }
 
-    /**
-     * Add a listener to {@link ReadOnlyChangeEvent}.
-     *
-     * @param listener listener
-     * @return registration object for removing the listener
-     */
-    protected Registration addReadOnlyStateChangeListener(ComponentEventListener<ReadOnlyChangeEvent> listener) {
+    @Override
+    public Registration addReadOnlyStateChangeListener(ComponentEventListener<ReadOnlyChangeEvent> listener) {
         return getEventBus().addListener(ReadOnlyChangeEvent.class, listener);
     }
 
@@ -1228,35 +1222,6 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
         public ValidationErrors getErrors() {
             return errors;
-        }
-    }
-
-    /**
-     * The event is dispatched when a view changes its read-only state.
-     * Use this event listener to perform additional actions on view components to change their read-only state.
-     * <p>
-     * For example:
-     * <pre>{@code
-     *     @Subscribe
-     *     public void onReadOnlyChangeEvent(ReadOnlyChangeEvent event) {
-     *          myComponent.setReadOnly(event.isReadOnly());
-     *     }
-     * }</pre>
-     */
-    public static class ReadOnlyChangeEvent extends ComponentEvent<View<?>> {
-
-        protected boolean readOnly;
-
-        public ReadOnlyChangeEvent(View<?> source, boolean readOnly) {
-            super(source, false);
-            this.readOnly = readOnly;
-        }
-
-        /**
-         * @return {@code true} if the view is read-only, {@code false} otherwise
-         */
-        public boolean isReadOnly() {
-            return readOnly;
         }
     }
 }

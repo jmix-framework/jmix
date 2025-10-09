@@ -19,20 +19,18 @@ package io.jmix.dynattr.impl;
 import io.jmix.core.MetaPropertyResolver;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.metamodel.model.Range;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.dynattr.DynAttrUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 import static io.jmix.dynattr.DynAttrUtils.getAttributeCodeFromProperty;
 import static io.jmix.dynattr.DynAttrUtils.isDynamicAttributeProperty;
 
-@Component
+/**
+ * An implementation of the {@link MetaPropertyResolver} for the Dynamic attributes.
+ */
+@Component("dynat_DynAttrMetaPropertyResolver")
 public class DynAttrMetaPropertyResolver implements MetaPropertyResolver {
 
     protected final DynAttrMetadata dynAttrMetadata;

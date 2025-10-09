@@ -979,11 +979,27 @@ public class MetadataTools {
     }
 
     /**
-     * TODO
-     * @param metaClass
-     * @param propertyName
-     * @return
+     * Resolves a {@link MetaProperty} by its name for the given {@link MetaClass}.
+     * <p>
+     * The method first looks up the property among those declared in the provided
+     * {@link MetaClass}. If it is not found, the method iterates over the registered
+     * {@link MetaPropertyResolver} implementations and returns the first successfully
+     * provided {@link MetaProperty}. If nothing is found,
+     * {@code null} is returned.
+     * <p>
+     * Note: this method does not handle composite property paths such as
+     * {@code "order.customer.name"}. Use
+     * {@link #resolveMetaPropertyPathOrNull(MetaClass, String)} to resolve property paths.
+     *
+     * @param metaClass    the{@link MetaClass} within which the property should be resolved
+     * @param propertyName the property name (not a path); may refer to either an entity-declared
+     *                     property or a property provided by extensions
+     * @return the {@link MetaProperty} if the property is found; otherwise {@code null}
+     * @see MetaClass#getProperty(String)
+     * @see MetaPropertyResolver
+     * @see #resolveMetaPropertyPathOrNull(MetaClass, String)
      */
+
     @Nullable
     public MetaProperty resolveMetaPropertyOrNull(MetaClass metaClass, String propertyName) {
 

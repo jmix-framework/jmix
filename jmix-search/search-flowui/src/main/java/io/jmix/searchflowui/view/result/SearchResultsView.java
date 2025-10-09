@@ -85,6 +85,8 @@ public class SearchResultsView extends StandardView {
     protected DialogWindows dialogWindows;
     @Autowired
     protected Notifications notifications;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     protected SearchResult searchResult;
     protected String searchStrategy;
@@ -94,8 +96,6 @@ public class SearchResultsView extends StandardView {
     protected SearchFieldContext searchFieldContext;
     protected boolean searchButtonVisible;
     protected boolean settingsButtonVisible;
-    @Autowired
-    private MetadataTools metadataTools;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {

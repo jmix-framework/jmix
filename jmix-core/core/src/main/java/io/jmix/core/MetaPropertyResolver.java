@@ -20,7 +20,11 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.lang.Nullable;
 
+/**
+ * An interface for providing {@link @MetaProperty} by the {@link MetaClass} and the property name.
+ */
 public interface MetaPropertyResolver {
+
     @Nullable
     MetaProperty resolveMetaPropertyOrNull(MetaClass metaClass, String propertyName);
 }

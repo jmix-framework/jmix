@@ -16,6 +16,7 @@
 
 package io.jmix.messagetemplatesflowui.kit.meta.stub;
 
+import io.jmix.flowui.kit.meta.StudioAPI;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 
 /**
@@ -23,5 +24,6 @@ import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
  * Marker interface for collecting <code>block</code> elements into <code>blocks</code> elements group
  * in {@link GrapesJs} component.
  */
+@StudioAPI
 final class StudioGrapesJsBlockElement {
 }

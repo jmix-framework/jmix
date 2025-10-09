@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.stub;
+@StudioAPI
+package io.jmix.vaadincommercialcomponents.devserverkit;
 
 import io.jmix.flowui.kit.meta.StudioAPI;
-
-/**
- * Used in Studio.
- * Marker interface for <code>FragmentRenderer</code> elements.
- */
-@StudioAPI
-final class StudioFragmentRenderer {
-}

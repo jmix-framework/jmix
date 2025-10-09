@@ -21,6 +21,9 @@ import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 
+/**
+ * An abstract implementation of the {@link AbstractSearchStrategy} that contains specific of the ElasticSearch.
+ */
 public abstract class AbstractElasticSearchStrategy
         extends AbstractSearchStrategy<SearchRequest.Builder, ElasticSearchQueryConfigurator>
         implements ElasticsearchSearchStrategy {

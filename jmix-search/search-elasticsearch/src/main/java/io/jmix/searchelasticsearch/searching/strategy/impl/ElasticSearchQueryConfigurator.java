@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A platform-specific implementation of the {@link AbstractSearchQueryConfigurator}
+ */
 @Component("search_ElasticSearchQueryConfigurator")
 public class ElasticSearchQueryConfigurator extends AbstractSearchQueryConfigurator<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
 

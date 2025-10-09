@@ -5,8 +5,14 @@ import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 import org.opensearch.client.opensearch.core.SearchRequest;
 
+/**
+ * A platform-specific extension of the common {link @SearchStrategy} interface
+ */
 public interface OpenSearchSearchStrategy extends SearchStrategy<SearchRequest.Builder> {
 
+    /**
+     * Use {@link OpenSearchSearchStrategy#configureRequest(RequestContext)}
+     */
     @Deprecated(since = "2.7", forRemoval = true)
     void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext);
 

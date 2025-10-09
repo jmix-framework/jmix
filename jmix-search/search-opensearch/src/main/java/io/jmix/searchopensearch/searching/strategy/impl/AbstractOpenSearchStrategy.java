@@ -21,6 +21,9 @@ import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import org.opensearch.client.opensearch.core.SearchRequest;
 
+/**
+ * An abstract implementation of the {@link AbstractSearchStrategy} that contains specific of the OpenSearch.
+ */
 public abstract class AbstractOpenSearchStrategy
         extends AbstractSearchStrategy<SearchRequest.Builder, OpenSearchQueryConfigurator>
         implements OpenSearchSearchStrategy {

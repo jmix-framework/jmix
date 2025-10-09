@@ -5,8 +5,14 @@ import io.jmix.search.searching.RequestContext;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 
+/**
+ * A platform-specific extension of the common {link @SearchStrategy} interface
+ */
 public interface ElasticsearchSearchStrategy extends SearchStrategy<SearchRequest.Builder> {
 
+    /**
+     * Use {@link ElasticsearchSearchStrategy#configureRequest(RequestContext)}
+     */
     @Deprecated(since = "2.7", forRemoval = true)
     void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.grid;
+@NonNullApi
+package io.jmix.flowui.component.groupgrid;
 
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.data.renderer.Renderer;
-import io.jmix.flowui.kit.meta.StudioAPI;
-
-@StudioAPI
-final class EditorActionsColumn<T> extends Grid.Column<T> {
-    private EditorActionsColumn(Grid<T> grid, String columnId, Renderer<T> renderer) {
-        super(grid, columnId, renderer);
-    }
-}
+import org.springframework.lang.NonNullApi;

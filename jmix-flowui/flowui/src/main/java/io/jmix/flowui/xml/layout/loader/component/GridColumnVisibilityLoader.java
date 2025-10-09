@@ -56,7 +56,7 @@ public class GridColumnVisibilityLoader extends AbstractComponentLoader<JmixGrid
     protected void loadGridSpecificProperties(Element element) {
         String gridId = loadDataGridId(element);
 
-        DeferredLoadContext loadContext = new DeferredLoadContext(resultComponent, gridId);
+        DeferredLoadContext loadContext = new DeferredLoadContext(resultComponent, gridId, applicationContext);
 
         getLoaderSupport().loadString(element, "include", loadContext::setIncludeColumns);
         getLoaderSupport().loadString(element, "exclude", loadContext::setExcludeColumns);

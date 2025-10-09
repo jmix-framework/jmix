@@ -49,7 +49,6 @@ import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -64,7 +63,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <T> entity class
  */
-public class StandardDetailView<T> extends StandardView implements DetailView<T>, ReadOnlyAwareView {
+public class StandardDetailView<T> extends StandardView implements DetailView<T>, ReadOnlyTracker {
 
     public static final String NEW_ENTITY_ID = "new";
     public static final String DEFAULT_ROUTE_PARAM = "id";
@@ -424,6 +423,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             this.readOnly = readOnly;
 
             getReadOnlyViewSupport().setViewReadOnly(this, readOnly);
+            fireEvent(new ReadOnlyChangeEvent(this, readOnly));
         }
     }
 
@@ -954,6 +954,11 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      */
     protected Registration addValidationEventListener(ComponentEventListener<ValidationEvent> listener) {
         return getEventBus().addListener(ValidationEvent.class, listener);
+    }
+
+    @Override
+    public Registration addReadOnlyStateChangeListener(ComponentEventListener<ReadOnlyChangeEvent> listener) {
+        return getEventBus().addListener(ReadOnlyChangeEvent.class, listener);
     }
 
     /**

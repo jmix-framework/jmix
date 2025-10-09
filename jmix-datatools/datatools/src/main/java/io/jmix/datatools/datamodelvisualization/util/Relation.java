@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.datatools.datamodelvisualization.util;
 
-group = 'io.jmix.datatools'
-archivesBaseName = 'jmix-datatools'
-
-dependencies {
-    api project(':data')
-
-    api 'net.sourceforge.plantuml:plantuml-mit'
-}
+public record Relation (
+    String referencedClass,
+    RelationType relationType
+){}

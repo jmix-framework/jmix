@@ -14,6 +14,14 @@
     <property name="byte_array.type" dbms="oracle" value="BLOB"/>
     <property name="byte_array.type" dbms="hsqldb" value="BLOB"/>
 
+    <property name="offsetDateTime.type" dbms="postgresql" value="timestamp with time zone"/>
+    <property name="offsetDateTime.type" dbms="oracle" value="timestamp with time zone"/>
+    <property name="offsetDateTime.type" dbms="mysql" value="DATETIME"/>
+    <property name="offsetDateTime.type" dbms="mssql" value="datetimeoffset"/>
+    <property name="offsetDateTime.type" dbms="mariadb" value="DATETIME"/>
+    <property name="offsetDateTime.type" dbms="hsqldb" value="timestamp with time zone"/>
+
     <include file="io/jmix/email/liquibase/changelog/001-email.xml"/>
+    <include file="io/jmix/email/liquibase/changelog/002-email.xml"/>
 
 </databaseChangeLog>

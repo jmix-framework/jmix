@@ -424,6 +424,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             this.readOnly = readOnly;
 
             getReadOnlyViewSupport().setViewReadOnly(this, readOnly);
+            fireEvent(new ReadOnlyChangeEvent(this, readOnly));
         }
     }
 
@@ -957,6 +958,16 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     /**
+     * Add a listener to {@link ReadOnlyChangeEvent}.
+     *
+     * @param listener listener
+     * @return registration object for removing the listener
+     */
+    protected Registration addReadOnlyStateChangeListener(ComponentEventListener<ReadOnlyChangeEvent> listener) {
+        return getEventBus().addListener(ReadOnlyChangeEvent.class, listener);
+    }
+
+    /**
      * @return true if the edited entity should be reloaded before setting to the data container.
      */
     protected boolean isReloadEdited() {
@@ -1217,6 +1228,35 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
         public ValidationErrors getErrors() {
             return errors;
+        }
+    }
+
+    /**
+     * The event is dispatched when a view changes its read-only state.
+     * Use this event listener to perform additional actions on view components to change their read-only state.
+     * <p>
+     * For example:
+     * <pre>{@code
+     *     @Subscribe
+     *     public void onReadOnlyChangeEvent(ReadOnlyChangeEvent event) {
+     *          myComponent.setReadOnly(event.isReadOnly());
+     *     }
+     * }</pre>
+     */
+    public static class ReadOnlyChangeEvent extends ComponentEvent<View<?>> {
+
+        protected boolean readOnly;
+
+        public ReadOnlyChangeEvent(View<?> source, boolean readOnly) {
+            super(source, false);
+            this.readOnly = readOnly;
+        }
+
+        /**
+         * @return {@code true} if the view is read-only, {@code false} otherwise
+         */
+        public boolean isReadOnly() {
+            return readOnly;
         }
     }
 }

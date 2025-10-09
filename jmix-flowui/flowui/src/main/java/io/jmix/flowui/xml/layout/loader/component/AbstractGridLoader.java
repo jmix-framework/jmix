@@ -31,6 +31,7 @@ import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.common.event.Subscription;
@@ -40,6 +41,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.AggregationInfo;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.GridContextMenuItemComponent;
@@ -52,6 +54,9 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
+import io.jmix.flowui.view.StandardDetailView;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -62,6 +67,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.datatype.DatatypeElementFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -73,6 +80,8 @@ import java.util.stream.Stream;
 
 public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & HasActions>
         extends AbstractComponentLoader<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractGridLoader.class);
 
     public static final String COLUMN_ELEMENT_NAME = "column";
     public static final String EDITOR_ACTIONS_COLUMN_ELEMENT_NAME = "editorActionsColumn";
@@ -269,6 +278,26 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadBoolean(columnElement, "visible", editColumn::setVisible);
     }
 
+    protected void configureParentViewReadOnlyChangeListener(Button editButton) {
+        View<?> view = UiComponentUtils.findView(resultComponent);
+        if (view == null) {
+
+            log.warn("Unable to find view for Grid '{}' after attaching", resultComponent.getId().orElse(null));
+        } else if (!(view instanceof StandardDetailView<?> standardDetailView)) {
+
+            log.info("Adding the {} listener will be skipped for Grid {} because the view {} is not an instance of {}",
+                    StandardDetailView.ReadOnlyChangeEvent.class.getSimpleName(), resultComponent.getId().orElse(null),
+                    view.getId(), StandardDetailView.class.getSimpleName());
+        } else {
+            // read-only state can be configured before this moment e.g., via URL query parameters
+            editButton.setEnabled(!standardDetailView.isReadOnly());
+
+            Registration registration = ViewControllerUtils.addReadOnlyChangeListener(standardDetailView,
+                    readOnlyChangeEvent -> editButton.setEnabled(!readOnlyChangeEvent.isReadOnly()));
+            editButton.addDetachListener(__ -> registration.remove());
+        }
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected Grid.Column<?> createEditColumn(T resultComponent, Element columnElement, Editor editor,
                                               MetaClass metaClass) {
@@ -285,6 +314,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 Button editButton = loadEditorButton(columnElement, "editButton");
 
                 if (editButton != null) {
+                    configureParentViewReadOnlyChangeListener(editButton);
+
                     editButton.addClickListener(__ -> {
                         if (editor.isOpen()) {
                             editor.cancel();

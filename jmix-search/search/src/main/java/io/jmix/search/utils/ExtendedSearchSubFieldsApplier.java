@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 
-import static io.jmix.search.index.impl.ExtendedSearchConstants.PREFIX_SUBFIELD_NAME;
+import static io.jmix.search.utils.Constants.PREFIX_SUBFIELD_NAME;
 
 public class ExtendedSearchSubFieldsApplier {
 

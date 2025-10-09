@@ -22,19 +22,24 @@ import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import org.opensearch.client.opensearch.core.SearchRequest;
 
 /**
- * An abstract implementation of the {@link AbstractSearchStrategy} that contains specific of the OpenSearch.
+ * An abstract implementation of the {@link AbstractSearchStrategy} that contains specifics of the OpenSearch.
  */
 public abstract class AbstractOpenSearchStrategy
-        extends AbstractSearchStrategy<SearchRequest.Builder, OpenSearchQueryConfigurator>
+        extends AbstractSearchStrategy<SearchRequest.Builder, OpenSearchQueryConfigurer>
         implements OpenSearchSearchStrategy {
 
-    protected AbstractOpenSearchStrategy(OpenSearchQueryConfigurator queryConfigurator) {
+    protected AbstractOpenSearchStrategy(OpenSearchQueryConfigurer queryConfigurator) {
         super(queryConfigurator);
     }
 
+    /**
+     * TODO Pavel Aleksandrov
+     * @param requestBuilder allows to configure search request
+     * @param searchContext  contains details about search being performed
+     */
     @Override
+    @Deprecated(since = "2.7", forRemoval = true)
     public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
         throw new UnsupportedOperationException();
     }
-
 }

@@ -14,61 +14,72 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching.impl
+package io.jmix.search.searching
 
 import io.jmix.core.metamodel.model.MetaPropertyPath
 import io.jmix.core.Metadata
 import io.jmix.core.metamodel.model.MetaClass
-import io.jmix.security.CurrentUserSecurityFacade
+import io.jmix.security.constraint.PolicyStore
+import io.jmix.security.constraint.SecureOperations
 import spock.lang.Specification
 
 class SearchSecurityDecoratorTest extends Specification {
 
-    def "CanAttributeBeRead: returns the result of the similar CurrentUserSecurityFacade method"() {
+    def isEntityAttrReadPermitted() {
         given:
-        def securityFacade = Mock(CurrentUserSecurityFacade)
+        def secureOperations = Mock(SecureOperations)
 
         and:
-        SearchSecurityDecorator decorator = new SearchSecurityDecorator(Mock(Metadata), securityFacade)
+        def policyStore = Stub(PolicyStore)
 
         and:
-        def propertyPath = Mock(MetaPropertyPath)
+        def metaPropertyPath = Mock(MetaPropertyPath)
+
+        and:
+        def decorator = new SearchSecurityDecorator(Mock(Metadata), secureOperations, policyStore);
 
         when:
-        1 * securityFacade.canAttributeBeRead(propertyPath) >> expectedResult
-        def actualResult = decorator.canAttributeBeRead(propertyPath)
+        secureOperations.isEntityAttrReadPermitted(metaPropertyPath, policyStore) >> operationsResult
+        def actualResult = decorator.isEntityAttrReadPermitted(metaPropertyPath)
 
         then:
         actualResult == expectedResult
+
         where:
-        expectedResult << [true, false]
+        operationsResult | expectedResult
+        true             | true
+        false            | false
     }
 
-    def "CanEntityBeRead: returns the result of the similar CurrentUserSecurityFacade method"() {
+    def isEntityReadPermitted() {
         given:
-        def securityFacade = Mock(CurrentUserSecurityFacade)
+        def secureOperations = Mock(SecureOperations)
 
         and:
-        SearchSecurityDecorator decorator = new SearchSecurityDecorator(Mock(Metadata), securityFacade)
+        def policyStore = Stub(PolicyStore)
 
         and:
         def metaClass = Mock(MetaClass)
 
+        and:
+        def decorator = new SearchSecurityDecorator(Mock(Metadata), secureOperations, policyStore);
+
         when:
-        1 * securityFacade.canEntityBeRead(metaClass) >> expectedResult
-        def actualResult = decorator.canEntityBeRead(metaClass)
+        secureOperations.isEntityReadPermitted(metaClass, policyStore) >> operationsResult
+        def actualResult = decorator.isEntityReadPermitted(metaClass)
 
         then:
         actualResult == expectedResult
+
         where:
-        expectedResult << [true, false]
+        operationsResult | expectedResult
+        true             | true
+        false            | false
+
     }
 
     def "ResolveEntitiesAllowedToSearch: a user has rights for all entities"() {
         given:
-        def securityFacade = Mock(CurrentUserSecurityFacade)
-
-        and:
         def metadata = Mock(Metadata)
         def metaClass1 = Mock(MetaClass)
         def metaClass2 = Mock(MetaClass)
@@ -78,14 +89,14 @@ class SearchSecurityDecoratorTest extends Specification {
         metadata.getClass("entity3") >> metaClass3
 
         and:
-        securityFacade.canEntityBeRead(metaClass1) >> true
-        securityFacade.canEntityBeRead(metaClass2) >> true
-        securityFacade.canEntityBeRead(metaClass3) >> true
+        def secureOperations = Mock(SecureOperations)
+        def policyStore = Stub(PolicyStore)
+        secureOperations.isEntityReadPermitted(metaClass1, policyStore) >> true
+        secureOperations.isEntityReadPermitted(metaClass2, policyStore) >> true
+        secureOperations.isEntityReadPermitted(metaClass3, policyStore) >> true
 
         and:
-        SearchSecurityDecorator decorator = new SearchSecurityDecorator(
-                metadata,
-                securityFacade)
+        SearchSecurityDecorator decorator = new SearchSecurityDecorator(metadata, secureOperations, policyStore)
 
         when:
         def actualResult = decorator.resolveEntitiesAllowedToSearch(["entity1", "entity2", "entity3"])
@@ -96,9 +107,6 @@ class SearchSecurityDecoratorTest extends Specification {
 
     def "ResolveEntitiesAllowedToSearch: a user has rights not for all entities"() {
         given:
-        def securityFacade = Mock(CurrentUserSecurityFacade)
-
-        and:
         def metadata = Mock(Metadata)
         def metaClass1 = Mock(MetaClass)
         def metaClass2 = Mock(MetaClass)
@@ -108,12 +116,14 @@ class SearchSecurityDecoratorTest extends Specification {
         metadata.getClass("entity3") >> metaClass3
 
         and:
-        securityFacade.canEntityBeRead(metaClass1) >> false
-        securityFacade.canEntityBeRead(metaClass2) >> true
-        securityFacade.canEntityBeRead(metaClass3) >> false
+        def secureOperations = Mock(SecureOperations)
+        def policyStore = Stub(PolicyStore)
+        secureOperations.isEntityReadPermitted(metaClass1, policyStore) >> false
+        secureOperations.isEntityReadPermitted(metaClass2, policyStore) >> true
+        secureOperations.isEntityReadPermitted(metaClass3, policyStore) >> false
 
         and:
-        SearchSecurityDecorator decorator = new SearchSecurityDecorator(metadata, securityFacade)
+        SearchSecurityDecorator decorator = new SearchSecurityDecorator(metadata, secureOperations, policyStore)
 
         when:
         def actualResult = decorator.resolveEntitiesAllowedToSearch(["entity1", "entity2", "entity3"])
@@ -124,9 +134,6 @@ class SearchSecurityDecoratorTest extends Specification {
 
     def "ResolveEntitiesAllowedToSearch: a user has not rights for all entities"() {
         given:
-        def securityFacade = Mock(CurrentUserSecurityFacade)
-
-        and:
         def metadata = Mock(Metadata)
         def metaClass1 = Mock(MetaClass)
         def metaClass2 = Mock(MetaClass)
@@ -136,12 +143,14 @@ class SearchSecurityDecoratorTest extends Specification {
         metadata.getClass("entity3") >> metaClass3
 
         and:
-        securityFacade.canEntityBeRead(metaClass1) >> false
-        securityFacade.canEntityBeRead(metaClass2) >> false
-        securityFacade.canEntityBeRead(metaClass3) >> false
+        def secureOperations = Mock(SecureOperations)
+        def policyStore = Stub(PolicyStore)
+        secureOperations.isEntityReadPermitted(metaClass1, policyStore) >> false
+        secureOperations.isEntityReadPermitted(metaClass2, policyStore) >> false
+        secureOperations.isEntityReadPermitted(metaClass3, policyStore) >> false
 
         and:
-        SearchSecurityDecorator decorator = new SearchSecurityDecorator(metadata, securityFacade)
+        SearchSecurityDecorator decorator = new SearchSecurityDecorator(metadata, secureOperations, policyStore)
 
         when:
         def actualResult = decorator.resolveEntitiesAllowedToSearch(["entity1", "entity2", "entity3"])

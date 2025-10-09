@@ -21,9 +21,10 @@ import io.jmix.core.metamodel.datatype.impl.FileRefDatatype
 import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.core.metamodel.model.MetaPropertyPath
 import io.jmix.core.metamodel.model.Range
+import io.jmix.search.searching.SearchSecurityDecorator
 import spock.lang.Specification
 
-class SearchFieldSubstituteTest extends Specification {
+class FullFieldNamesProviderTest extends Specification {
 
     def "Resolve fields for index by property path"() {
 
@@ -31,15 +32,15 @@ class SearchFieldSubstituteTest extends Specification {
         SearchSecurityDecorator securityDecorator = Mock()
 
         and:
-        SearchFieldSubstitute fieldSubstitute = new SearchFieldSubstitute(securityDecorator)
+        FullFieldNamesProvider provider = new FullFieldNamesProvider(securityDecorator)
 
         when:
         def metaPropertyPath = createMetaPropertyPath(isDatatype, dataType, isClass, asClass)
         if (isClass) {
-            securityDecorator.canEntityBeRead(asClass) >> canBeRead
+            securityDecorator.isEntityReadPermitted(asClass) >> canBeRead
         }
 
-        def actualResult = fieldSubstitute.getFieldsForPath(metaPropertyPath, "fieldName")
+        def actualResult = provider.getFieldNamesForBaseField(metaPropertyPath, "fieldName")
 
         then:
         actualResult == expectedResult

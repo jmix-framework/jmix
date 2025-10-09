@@ -16,18 +16,20 @@
 
 package io.jmix.search.searching
 
+import io.jmix.search.index.IndexConfiguration
 import spock.lang.Specification
 
-import static io.jmix.search.searching.SearchContextProcessingResult.*
+import static io.jmix.search.searching.SearchRequestContext.ProcessingState.*
 
-class RequestContextTest extends Specification {
+
+class SearchRequestContextTest extends Specification {
 
     def "RequestContext.getting initial parameters"() {
         given:
         def initialBuilder = new TestBuilder()
         def initialSearchContext = Mock(SearchContext)
         and:
-        def requestContext = new RequestContext<>(initialBuilder, initialSearchContext)
+        def requestContext = new SearchRequestContext<>(initialBuilder, initialSearchContext)
 
         when:
         def builder = requestContext.getRequestBuilder()
@@ -36,20 +38,20 @@ class RequestContextTest extends Specification {
         then:
         builder == initialBuilder
         context == initialSearchContext
-        requestContext.getProcessingResult() == INITIAL_STATE
+        requestContext.getProcessingResult() == UNPROCESSED
         !requestContext.isRequestPossible()
         notThrown(Exception)
     }
 
-    def "RequestContext.getEffectiveIndexesWithFields. INITIAL_STATE"() {
+    def 'RequestContext.getIndexesSearchData. INITIAL_STATE'() {
         given:
         def initialBuilder = new TestBuilder()
         def initialSearchContext = Mock(SearchContext)
         and:
-        def requestContext = new RequestContext<>(initialBuilder, initialSearchContext)
+        def requestContext = new SearchRequestContext<>(initialBuilder, initialSearchContext)
 
         when:
-        def builder = requestContext.getEffectiveIndexesWithFields()
+        def builder = requestContext.getIndexSearchRequestScopes()
 
         then:
         def exception = thrown(IllegalStateException)
@@ -61,7 +63,7 @@ class RequestContextTest extends Specification {
         def initialBuilder = new TestBuilder()
         def initialSearchContext = Mock(SearchContext)
         and:
-        def requestContext = new RequestContext<>(initialBuilder, initialSearchContext)
+        def requestContext = new SearchRequestContext<>(initialBuilder, initialSearchContext)
 
         when:
         def builder = requestContext.getEffectiveIndexes()
@@ -71,16 +73,16 @@ class RequestContextTest extends Specification {
         exception.getMessage() == "Request preparing is not finished."
     }
 
-    def "RequestContext.getEffectiveIndexesWithFields. NO_AVAILABLE_ENTITIES_FOR_SEARCHING"() {
+    def 'RequestContext.getIndexesSearchData. NO_AVAILABLE_ENTITIES_FOR_SEARCHING'() {
         given:
         def initialBuilder = new TestBuilder()
         def initialSearchContext = Mock(SearchContext)
         and:
-        def requestContext = new RequestContext<>(initialBuilder, initialSearchContext)
+        def requestContext = new SearchRequestContext<>(initialBuilder, initialSearchContext)
 
         when:
         requestContext.setEmptyResult()
-        def builder = requestContext.getEffectiveIndexesWithFields()
+        def builder = requestContext.getIndexSearchRequestScopes()
 
         then:
         def exception = thrown(IllegalStateException)
@@ -92,7 +94,7 @@ class RequestContextTest extends Specification {
         def initialBuilder = new TestBuilder()
         def initialSearchContext = Mock(SearchContext)
         and:
-        def requestContext = new RequestContext<>(initialBuilder, initialSearchContext)
+        def requestContext = new SearchRequestContext<>(initialBuilder, initialSearchContext)
 
         when:
         requestContext.setEmptyResult()
@@ -108,26 +110,31 @@ class RequestContextTest extends Specification {
         def initialBuilder = new TestBuilder()
         def initialSearchContext = Mock(SearchContext)
         and:
-        def requestContext = new RequestContext<>(initialBuilder, initialSearchContext)
+        def requestContext = new SearchRequestContext<>(initialBuilder, initialSearchContext)
         and:
-        Map<String, Set<String>> resultMap = Map.of(
-                "firstIndex", Set.of("field1_1", "field1_2", "field1_3"),
-                "secondIndex", Set.of("field2_1")
+        IndexConfiguration configuration1 = Mock(IndexConfiguration)
+        configuration1.getIndexName() >> "firstIndex"
+        IndexConfiguration configuration2 = Mock(IndexConfiguration)
+        configuration2.getIndexName() >> "secondIndex"
+        and:
+        List<IndexSearchRequestScope> scopes = List.of(
+                new IndexSearchRequestScope(configuration1, Set.of("field1_1", "field1_2", "field1_3")),
+                new IndexSearchRequestScope(configuration2, Set.of("field2_1"))
         )
 
         when:
-        requestContext.setPositiveResult(resultMap)
-        def indexesWithFields = requestContext.getEffectiveIndexesWithFields()
+        requestContext.setPositiveResult(scopes)
+        def indexesWithFields = requestContext.getIndexSearchRequestScopes()
         def indexes = requestContext.getEffectiveIndexes()
         def builder = requestContext.getRequestBuilder()
         def context = requestContext.getSearchContext()
 
         then:
         indexes == Set.of("firstIndex", "secondIndex")
-        indexesWithFields == resultMap
+        indexesWithFields == scopes
         builder == initialBuilder
         context == initialSearchContext
-        requestContext.getProcessingResult() == REQUEST_IS_POSSIBLE
+        requestContext.getProcessingResult() == READY
         requestContext.isRequestPossible()
     }
 
@@ -136,14 +143,14 @@ class RequestContextTest extends Specification {
         def initialBuilder = new TestBuilder()
         def initialSearchContext = Mock(SearchContext)
         and:
-        def requestContext = new RequestContext<>(initialBuilder, initialSearchContext)
+        def requestContext = new SearchRequestContext<>(initialBuilder, initialSearchContext)
 
         when:
         requestContext.setEmptyResult()
         requestContext.getRequestBuilder()
 
         then:
-        requestContext.getProcessingResult() == NO_AVAILABLE_ENTITIES_FOR_SEARCHING
+        requestContext.getProcessingResult() == NO_AVAILABLE_ENTITIES
         !requestContext.isRequestPossible()
         def exception = thrown(IllegalStateException)
         exception.getMessage() == "No entities for searching."
@@ -154,7 +161,7 @@ class RequestContextTest extends Specification {
         def initialBuilder = new TestBuilder()
         def initialSearchContext = Mock(SearchContext)
         and:
-        def requestContext = new RequestContext<>(initialBuilder, initialSearchContext)
+        def requestContext = new SearchRequestContext<>(initialBuilder, initialSearchContext)
 
         when:
         requestContext.setEmptyResult()
@@ -162,7 +169,7 @@ class RequestContextTest extends Specification {
 
         then:
         context == initialSearchContext
-        requestContext.getProcessingResult() == NO_AVAILABLE_ENTITIES_FOR_SEARCHING
+        requestContext.getProcessingResult() == NO_AVAILABLE_ENTITIES
         !requestContext.isRequestPossible()
         notThrown(Exception)
     }

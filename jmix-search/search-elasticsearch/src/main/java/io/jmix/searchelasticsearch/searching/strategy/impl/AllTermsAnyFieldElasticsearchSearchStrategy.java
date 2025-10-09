@@ -18,9 +18,8 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import io.jmix.search.searching.RequestContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -29,10 +28,9 @@ import org.springframework.stereotype.Component;
  */
 @Deprecated(since = "2.4", forRemoval = true)
 @Component("search_AllTermsAnyFieldElasticsearchSearchStrategy")
-public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy
-        implements ElasticsearchSearchStrategy {
+public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy{
 
-    protected AllTermsAnyFieldElasticsearchSearchStrategy(ElasticSearchQueryConfigurator queryConfigurator) {
+    public AllTermsAnyFieldElasticsearchSearchStrategy(ElasticSearchQueryConfigurer queryConfigurator) {
         super(queryConfigurator);
     }
 
@@ -42,12 +40,12 @@ public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractElastic
     }
 
     @Override
-    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
+    public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                (queryBuilder, fields) ->
+                (queryBuilder, scope) ->
                         queryBuilder.simpleQueryString(simpleQueryStringQueryBuilder ->
-                                simpleQueryStringQueryBuilder.fields(fields)
+                                simpleQueryStringQueryBuilder.fields(scope.getFieldList())
                                         .query(requestContext.getSearchContext().getEscapedSearchText())
                                         .defaultOperator(Operator.And)
                         )

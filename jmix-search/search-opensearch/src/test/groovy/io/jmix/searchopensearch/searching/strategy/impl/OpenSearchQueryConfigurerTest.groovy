@@ -17,7 +17,9 @@
 package io.jmix.searchopensearch.searching.strategy.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.jmix.search.searching.impl.SearchModelAnalyzer
+import io.jmix.search.index.IndexConfiguration
+import io.jmix.search.searching.IndexSearchRequestScope
+import io.jmix.search.searching.SearchRequestScopeProvider
 import jakarta.json.spi.JsonProvider
 import org.opensearch.client.json.JsonpMapper
 import org.opensearch.client.json.JsonpSerializable
@@ -27,26 +29,25 @@ import spock.lang.Specification
 
 import static java.nio.charset.StandardCharsets.UTF_8
 
-class OpenSearchQueryConfiguratorTest extends Specification {
+class OpenSearchQueryConfigurerTest extends Specification {
 
     def "configureRequest. multiple indexes"() {
         given:
-        Map<String, Set<String>> indexesWithFields = new LinkedHashMap<>()
-
-        indexesWithFields.put("index1", createLinkedSet("field1_1"))
-        indexesWithFields.put("index2", createLinkedSet("field2_1", "field2_2", "field2_3"))
-
+        List<IndexSearchRequestScope> scopes = List.of(
+                createScope("index1", "field1_1"),
+                createScope("index2", "field2_1", "field2_2", "field2_3")
+        )
         and:
-        def configurator = new OpenSearchQueryConfigurator(Mock(SearchModelAnalyzer))
+        def configurator = new OpenSearchQueryConfigurer(Mock(SearchRequestScopeProvider))
 
         when:
         def query = configurator.createQuery(
-                (b, fields) ->
+                (b, scope) ->
                         b.multiMatch(m ->
-                                m.fields(fields).query("search text").operator(Operator.Or)
+                                m.fields(scope.getFieldList()).query("search text").operator(Operator.Or)
                         )
-                , indexesWithFields)
-        .build()
+                , scopes)
+                .build()
 
         then:
         jsonEquals(toJson(query), readResourceAsString("request_multiple_indexes"))
@@ -54,26 +55,23 @@ class OpenSearchQueryConfiguratorTest extends Specification {
 
     def "configureRequest. single index"() {
         given:
-        Map<String, Set<String>> indexesWithFields = new LinkedHashMap<>()
-        indexesWithFields.put("index1", createLinkedSet("field1_1", "field1_2", "field1_3"))
+        List<IndexSearchRequestScope> scopes = List.of(
+                createScope("index1", "field1_1", "field1_2", "field1_3"),
+        )
 
         and:
-        def configurator = new OpenSearchQueryConfigurator(Mock(SearchModelAnalyzer))
+        def configurator = new OpenSearchQueryConfigurer(Mock(SearchRequestScopeProvider))
 
         when:
         def query = configurator.createQuery(
-                (b, fields) ->
+                (b, scope) ->
                         b.multiMatch(m ->
-                                m.fields(fields).query("search text").operator(Operator.Or)
+                                m.fields(scope.getFieldList()).query("search text").operator(Operator.Or)
                         )
-                , indexesWithFields).build()
+                , scopes).build()
 
         then:
         jsonEquals(toJson(query), readResourceAsString("request_single_index"))
-    }
-
-    private static LinkedHashSet<String> createLinkedSet(String... fields) {
-        new LinkedHashSet<>(List.of(fields))
     }
 
     private static String toJson(JsonpSerializable obj) {
@@ -98,5 +96,11 @@ class OpenSearchQueryConfiguratorTest extends Specification {
         } finally {
             is.close()
         }
+    }
+
+    private IndexSearchRequestScope createScope(String indexName, String... fields) {
+        IndexConfiguration indexConfiguration = Mock()
+        indexConfiguration.getIndexName() >> indexName
+        return new IndexSearchRequestScope(indexConfiguration, new LinkedHashSet<>(List.of(fields)))
     }
 }

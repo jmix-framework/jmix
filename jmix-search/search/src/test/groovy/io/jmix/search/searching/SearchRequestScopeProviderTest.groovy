@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching.impl
+package io.jmix.search.searching
 
 import io.jmix.search.index.IndexConfiguration
 import io.jmix.search.index.mapping.IndexConfigurationManager
-import io.jmix.search.searching.SubfieldsProvider
 import spock.lang.Specification
 
 import static java.util.Collections.emptyList
 
-class SearchModelAnalyzerTest extends Specification {
+class SearchRequestScopeProviderTest extends Specification {
 
     def "getIndexesWithFields. all entities have configuration. User hav full access to the entities"() {
         given:
@@ -47,26 +46,26 @@ class SearchModelAnalyzerTest extends Specification {
 
         and:
         def fieldsResolver = Mock(SearchFieldsProvider)
-        def subfieldsProvider = Mock(SubfieldsProvider)
+        def subfieldsProvider = Mock(VirtualSubfieldsProvider)
         fieldsResolver.resolveFields(configuration1, subfieldsProvider) >> Set.of("field1_1", "field1_2", "field1_3")
         fieldsResolver.resolveFields(configuration2, subfieldsProvider) >> Set.of("field2_1", "field2_2", "field2_3")
         fieldsResolver.resolveFields(configuration3, subfieldsProvider) >> Set.of("field3_1", "field3_2", "field3_3")
 
         and:
-        def analyzer = new SearchModelAnalyzer(securityDecorator, indexConfigurationManager, fieldsResolver)
+        def analyzer = new SearchRequestScopeProvider(securityDecorator, indexConfigurationManager, fieldsResolver)
 
 
         when:
-        def fields = analyzer.getIndexesWithFields(
+        def fields = analyzer.getSearchRequestScope(
                 ["entity1", "entity2", "entity3", "entity4"],
                 subfieldsProvider
         )
 
         then:
-        fields == Map.of(
-                "index1", Set.of("field1_1", "field1_2", "field1_3"),
-                "index2", Set.of("field2_1", "field2_2", "field2_3"),
-                "index3", Set.of("field3_1", "field3_2", "field3_3")
+        fields == List.of(
+                new IndexSearchRequestScope(configuration1, Set.of("field1_1", "field1_2", "field1_3")),
+                new IndexSearchRequestScope(configuration2, Set.of("field2_1", "field2_2", "field2_3")),
+                new IndexSearchRequestScope(configuration3, Set.of("field3_1", "field3_2", "field3_3"))
         )
     }
 
@@ -92,26 +91,26 @@ class SearchModelAnalyzerTest extends Specification {
 
         and:
         def fieldsResolver = Mock(SearchFieldsProvider)
-        def subfieldsProvider = Mock(SubfieldsProvider)
+        def subfieldsProvider = Mock(VirtualSubfieldsProvider)
         fieldsResolver.resolveFields(configuration1, subfieldsProvider) >> Set.of("field1_1", "field1_2", "field1_3")
         fieldsResolver.resolveFields(configuration2, subfieldsProvider) >> Set.of("field2_1", "field2_2", "field2_3")
         fieldsResolver.resolveFields(configuration3, subfieldsProvider) >> Set.of("field3_1", "field3_2", "field3_3")
 
         and:
-        def analyzer = new SearchModelAnalyzer(securityDecorator, indexConfigurationManager, fieldsResolver)
+        def analyzer = new SearchRequestScopeProvider(securityDecorator, indexConfigurationManager, fieldsResolver)
 
 
         when:
-        def fields = analyzer.getIndexesWithFields(
+        def fields = analyzer.getSearchRequestScope(
                 emptyList(),
                 subfieldsProvider
         )
 
         then:
-        fields == Map.of(
-                "index1", Set.of("field1_1", "field1_2", "field1_3"),
-                "index2", Set.of("field2_1", "field2_2", "field2_3"),
-                "index3", Set.of("field3_1", "field3_2", "field3_3")
+        fields == List.of(
+                new IndexSearchRequestScope(configuration1, Set.of("field1_1", "field1_2", "field1_3")),
+                new IndexSearchRequestScope(configuration2, Set.of("field2_1", "field2_2", "field2_3")),
+                new IndexSearchRequestScope(configuration3, Set.of("field3_1", "field3_2", "field3_3"))
         )
     }
 
@@ -133,13 +132,13 @@ class SearchModelAnalyzerTest extends Specification {
         securityDecorator.resolveEntitiesAllowedToSearch(_) >> emptyList()
 
         and:
-        def analyzer = new SearchModelAnalyzer(securityDecorator, indexConfigurationManager, Mock(SearchFieldsProvider))
+        def analyzer = new SearchRequestScopeProvider(securityDecorator, indexConfigurationManager, Mock(SearchFieldsProvider))
 
 
         when:
-        def fields = analyzer.getIndexesWithFields(
+        def fields = analyzer.getSearchRequestScope(
                 ["entity1", "entity2", "entity3"],
-                Mock(SubfieldsProvider)
+                Mock(VirtualSubfieldsProvider)
         )
 
         then:
@@ -168,24 +167,24 @@ class SearchModelAnalyzerTest extends Specification {
 
         and:
         def fieldsResolver = Mock(SearchFieldsProvider)
-        def subfieldsProvider = Mock(SubfieldsProvider)
+        def subfieldsProvider = Mock(VirtualSubfieldsProvider)
         fieldsResolver.resolveFields(configuration1, subfieldsProvider) >> Set.of("field1_1", "field1_2", "field1_3")
         fieldsResolver.resolveFields(configuration2, subfieldsProvider) >> Set.of()
         fieldsResolver.resolveFields(configuration3, subfieldsProvider) >> Set.of("field3_1", "field3_2", "field3_3")
 
         and:
-        def analyzer = new SearchModelAnalyzer(securityDecorator, indexConfigurationManager, fieldsResolver)
+        def analyzer = new SearchRequestScopeProvider(securityDecorator, indexConfigurationManager, fieldsResolver)
 
         when:
-        def fields = analyzer.getIndexesWithFields(
+        def fields = analyzer.getSearchRequestScope(
                 List.of("entity1", "entity2", "entity3", "entity4"),
                 subfieldsProvider
         )
 
         then:
-        fields == Map.of(
-                "index1", Set.of("field1_1", "field1_2", "field1_3"),
-                "index3", Set.of("field3_1", "field3_2", "field3_3")
+        fields == List.of(
+                new IndexSearchRequestScope(configuration1, Set.of("field1_1", "field1_2", "field1_3")),
+                new IndexSearchRequestScope(configuration3, Set.of("field3_1", "field3_2", "field3_3"))
         )
     }
 
@@ -211,16 +210,16 @@ class SearchModelAnalyzerTest extends Specification {
 
         and:
         def fieldsResolver = Mock(SearchFieldsProvider)
-        def subfieldsProvider = Mock(SubfieldsProvider)
+        def subfieldsProvider = Mock(VirtualSubfieldsProvider)
         fieldsResolver.resolveFields(configuration1, subfieldsProvider) >> Set.of()
         fieldsResolver.resolveFields(configuration2, subfieldsProvider) >> Set.of()
         fieldsResolver.resolveFields(configuration3, subfieldsProvider) >> Set.of()
 
         and:
-        def configurator = new SearchModelAnalyzer(securityDecorator, indexConfigurationManager, fieldsResolver)
+        def configurator = new SearchRequestScopeProvider(securityDecorator, indexConfigurationManager, fieldsResolver)
 
         when:
-        def fields = configurator.getIndexesWithFields(
+        def fields = configurator.getSearchRequestScope(
                 List.of("entity1", "entity2", "entity3", "entity4"),
                 subfieldsProvider
         )
@@ -234,7 +233,7 @@ class SearchModelAnalyzerTest extends Specification {
         IndexConfigurationManager indexConfigurationManager = Mock()
 
         and:
-        def analyzer = new SearchModelAnalyzer(Mock(SearchSecurityDecorator), indexConfigurationManager, Mock(SearchFieldsProvider))
+        def analyzer = new SearchRequestScopeProvider(Mock(SearchSecurityDecorator), indexConfigurationManager, Mock(SearchFieldsProvider))
 
         when:
         indexConfigurationManager.getAllIndexedEntities() >> allConfigurations

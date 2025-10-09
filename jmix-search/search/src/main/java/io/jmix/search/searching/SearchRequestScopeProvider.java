@@ -14,78 +14,77 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching.impl;
+package io.jmix.search.searching;
 
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.searching.SubfieldsProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptyList;
 
 /**
  * This class contains methods for getting information for the search request building.
  * The analysis is based on the {@link IndexConfiguration} objects and entities metadata processing.
  */
-@Component("search_SearchModelAnalyzer")
-public class SearchModelAnalyzer {
+@Component("search_SearchRequestScopeProvider")
+public class SearchRequestScopeProvider {
 
     protected final SearchSecurityDecorator securityDecorator;
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final SearchFieldsProvider searchFieldsProvider;
 
-    public SearchModelAnalyzer(SearchSecurityDecorator securityDecorator,
-                               IndexConfigurationManager indexConfigurationManager,
-                               SearchFieldsProvider searchFieldsProvider) {
+    public SearchRequestScopeProvider(SearchSecurityDecorator securityDecorator,
+                                      IndexConfigurationManager indexConfigurationManager,
+                                      SearchFieldsProvider searchFieldsProvider) {
         this.securityDecorator = securityDecorator;
         this.indexConfigurationManager = indexConfigurationManager;
         this.searchFieldsProvider = searchFieldsProvider;
     }
 
     /**
+     * TODO Pavel Aleksandrov rewrite
      * Calculates a map for the search request building.
      * The method takes into account user rights to entities and their parameters.
      * The method adds additional subfields name of which can be provided with the subfieldsProvider parameter.
      *
      * @param entities - a collection of the entity names for the search request building
-     * @param subfieldsProvider a {@link Function} for getting subfields of the index field.
+     * @param virtualSubfieldsProvider a {@link Function} for getting subfields of the index field.
      *                           If the function returns an empty set,
      *                           the only initial field name will be added to the result.
-     * @return a map that contains indexNames as keys and sets of correspondent fieldNames as values
+     * @return a map that contains indexNames as keys and sets of corresponding fieldNames as values
      * from the correspondent {@link io.jmix.search.index.mapping.IndexMappingConfiguration} for each index.
      */
-    public Map<String, Set<String>> getIndexesWithFields(List<String> entities, SubfieldsProvider subfieldsProvider) {
+    public List<IndexSearchRequestScope> getSearchRequestScope(List<String> entities, VirtualSubfieldsProvider virtualSubfieldsProvider) {
 
         Collection<String> entitiesWithSearchConfiguration = getEntitiesWithConfiguration(entities);
 
         List<String> allowedEntityNames = securityDecorator.resolveEntitiesAllowedToSearch(entitiesWithSearchConfiguration);
 
         if (allowedEntityNames.isEmpty()) {
-            return emptyMap();
+            return emptyList();
         }
 
-        Map<String, Set<String>> notFilteredIndexesWithFields = allowedEntityNames
+        List<IndexSearchRequestScope> notFilteredScopes = allowedEntityNames
                 .stream()
-                .map(indexConfigurationManager::getIndexConfigurationByEntityName)
-                .collect(Collectors.toMap(
-                        IndexConfiguration::getIndexName,
-                        conf -> searchFieldsProvider.resolveFields(conf, subfieldsProvider)));
+                .map(entityName->{
+                    IndexConfiguration configuration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
+                    return new IndexSearchRequestScope(
+                            configuration,
+                            searchFieldsProvider.resolveFields(configuration, virtualSubfieldsProvider));
+                })
+                .toList();
 
-        Map<String, Set<String>> result = notFilteredIndexesWithFields
-                .entrySet()
+        List<IndexSearchRequestScope> result = notFilteredScopes
                 .stream()
-                .filter(entry -> entry.getValue() != null && !entry.getValue().isEmpty())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .filter(info -> !info.fields().isEmpty())
+                .toList();
 
         if (result.isEmpty()) {
-            return emptyMap();
+            return emptyList();
         }
         return result;
     }

@@ -2,9 +2,8 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import io.jmix.search.searching.RequestContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,10 +11,9 @@ import org.springframework.stereotype.Component;
  * with at least one field matches at least one input word.
  */
 @Component("search_AnyTermAnyFieldElasticsearchSearchStrategy")
-public class AnyTermAnyFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy
-        implements ElasticsearchSearchStrategy {
+public class AnyTermAnyFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy{
 
-    protected AnyTermAnyFieldElasticsearchSearchStrategy(ElasticSearchQueryConfigurator queryConfigurator) {
+    public AnyTermAnyFieldElasticsearchSearchStrategy(ElasticSearchQueryConfigurer queryConfigurator) {
         super(queryConfigurator);
     }
 
@@ -25,12 +23,12 @@ public class AnyTermAnyFieldElasticsearchSearchStrategy extends AbstractElasticS
     }
 
     @Override
-    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
+    public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                (queryBuilder, fields) ->
+                (queryBuilder, scope) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
-                                multiMatchQueryBuilder.fields(fields)
+                                multiMatchQueryBuilder.fields(scope.getFieldList())
                                         .query(requestContext.getSearchContext().getEscapedSearchText())
                                         .operator(Operator.Or)
                         ));

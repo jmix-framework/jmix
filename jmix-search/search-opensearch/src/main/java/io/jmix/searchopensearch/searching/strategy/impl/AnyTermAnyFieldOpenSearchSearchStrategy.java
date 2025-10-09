@@ -1,8 +1,7 @@
 package io.jmix.searchopensearch.searching.strategy.impl;
 
-import io.jmix.search.searching.RequestContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import org.opensearch.client.opensearch._types.query_dsl.Operator;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.springframework.stereotype.Component;
@@ -12,9 +11,9 @@ import org.springframework.stereotype.Component;
  * with at least one field matches at least one input word.
  */
 @Component("search_AnyTermAnyFieldOpenSearchSearchStrategy")
-public class AnyTermAnyFieldOpenSearchSearchStrategy extends AbstractOpenSearchStrategy implements OpenSearchSearchStrategy {
+public class AnyTermAnyFieldOpenSearchSearchStrategy extends AbstractOpenSearchStrategy{
 
-    protected AnyTermAnyFieldOpenSearchSearchStrategy(OpenSearchQueryConfigurator queryConfigurator) {
+    public AnyTermAnyFieldOpenSearchSearchStrategy(OpenSearchQueryConfigurer queryConfigurator) {
         super(queryConfigurator);
     }
 
@@ -24,12 +23,12 @@ public class AnyTermAnyFieldOpenSearchSearchStrategy extends AbstractOpenSearchS
     }
 
     @Override
-    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
+    public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                (queryBuilder, fields) ->
+                (queryBuilder, scope) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
-                                multiMatchQueryBuilder.fields(fields)
+                                multiMatchQueryBuilder.fields(scope.getFieldList())
                                         .query(requestContext.getSearchContext().getEscapedSearchText())
                                         .operator(Operator.Or)
                         )

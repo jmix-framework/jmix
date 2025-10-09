@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching.impl
+package io.jmix.search.searching
 
 
 import io.jmix.core.metamodel.model.MetaPropertyPath
@@ -22,9 +22,10 @@ import io.jmix.search.index.IndexConfiguration
 import io.jmix.search.index.mapping.IndexConfigurationManager
 import io.jmix.search.index.mapping.IndexMappingConfiguration
 import io.jmix.search.index.mapping.MappingFieldDescriptor
+import io.jmix.search.searching.impl.FullFieldNamesProvider
 import spock.lang.Specification
 
-import static io.jmix.search.searching.AbstractSearchQueryConfigurator.*
+import static io.jmix.search.searching.AbstractSearchQueryConfigurer.*
 
 class SearchFieldsProviderTest extends Specification {
 
@@ -32,7 +33,7 @@ class SearchFieldsProviderTest extends Specification {
     public static final String FIELD_NAME_2 = "field2"
     public static final String FIELD_NAME_3 = "field3"
 
-    def "ResolveFields. Without generated subfields"() {
+    def "ResolveFields. Without virtual fields"() {
         given:
         def metaPropertyPath1 = Mock(MetaPropertyPath)
         def mappingFieldDescriptor1 = Mock(MappingFieldDescriptor)
@@ -61,31 +62,31 @@ class SearchFieldsProviderTest extends Specification {
         indexConfiguration.getMapping() >> mapping
 
         and:
-        def fieldSubstitute = Mock(SearchFieldSubstitute)
-        fieldSubstitute.getFieldsForPath(metaPropertyPath1, FIELD_NAME_1) >> Set.of(FIELD_NAME_1 + ".subfield1", FIELD_NAME_1 + ".subfield2")
-        fieldSubstitute.getFieldsForPath(metaPropertyPath3, FIELD_NAME_3) >> Set.of(FIELD_NAME_3)
+        def fullFieldNamesProvider = Mock(FullFieldNamesProvider)
+        fullFieldNamesProvider.getFieldNamesForBaseField(metaPropertyPath1, FIELD_NAME_1) >> Set.of(FIELD_NAME_1 + ".subfield1", FIELD_NAME_1 + ".subfield2")
+        fullFieldNamesProvider.getFieldNamesForBaseField(metaPropertyPath3, FIELD_NAME_3) >> Set.of(FIELD_NAME_3)
 
 
         and:
         def securityDecorator = Mock(SearchSecurityDecorator)
-        securityDecorator.canAttributeBeRead(metaPropertyPath1) >> true
-        securityDecorator.canAttributeBeRead(metaPropertyPath2) >> false
-        securityDecorator.canAttributeBeRead(metaPropertyPath3) >> true
+        securityDecorator.isEntityAttrReadPermitted(metaPropertyPath1) >> true
+        securityDecorator.isEntityAttrReadPermitted(metaPropertyPath2) >> false
+        securityDecorator.isEntityAttrReadPermitted(metaPropertyPath3) >> true
 
         and:
         SearchFieldsProvider resolver = new SearchFieldsProvider(
                 Mock(IndexConfigurationManager),
-                fieldSubstitute,
+                fullFieldNamesProvider,
                 securityDecorator)
 
         when:
-        def fieldsForIndex = resolver.resolveFields(indexConfiguration, fieldInfo -> Set.of(fieldInfo.fieldName()))
+        def fieldsForIndex = resolver.resolveFields(indexConfiguration, fieldInfo -> Set.of())
 
         then:
         fieldsForIndex == Set.of("field1.subfield1", "field1.subfield2", "_instance_name", "field3")
     }
 
-    def "ResolveFields. Without generated subfields. Using a lambda as constants"() {
+    def "ResolveFields. Without virtual fields. Using a standard lambda constant"() {
         given:
         def metaPropertyPath1 = Mock(MetaPropertyPath)
         def mappingFieldDescriptor1 = Mock(MappingFieldDescriptor)
@@ -114,31 +115,31 @@ class SearchFieldsProviderTest extends Specification {
         indexConfiguration.getMapping() >> mapping
 
         and:
-        def fieldSubstitute = Mock(SearchFieldSubstitute)
-        fieldSubstitute.getFieldsForPath(metaPropertyPath1, FIELD_NAME_1) >> Set.of(FIELD_NAME_1 + ".subfield1", FIELD_NAME_1 + ".subfield2")
-        fieldSubstitute.getFieldsForPath(metaPropertyPath3, FIELD_NAME_3) >> Set.of(FIELD_NAME_3)
+        def fullFieldNamesProvider = Mock(FullFieldNamesProvider)
+        fullFieldNamesProvider.getFieldNamesForBaseField(metaPropertyPath1, FIELD_NAME_1) >> Set.of(FIELD_NAME_1 + ".subfield1", FIELD_NAME_1 + ".subfield2")
+        fullFieldNamesProvider.getFieldNamesForBaseField(metaPropertyPath3, FIELD_NAME_3) >> Set.of(FIELD_NAME_3)
 
 
         and:
         def securityDecorator = Mock(SearchSecurityDecorator)
-        securityDecorator.canAttributeBeRead(metaPropertyPath1) >> true
-        securityDecorator.canAttributeBeRead(metaPropertyPath2) >> false
-        securityDecorator.canAttributeBeRead(metaPropertyPath3) >> true
+        securityDecorator.isEntityAttrReadPermitted(metaPropertyPath1) >> true
+        securityDecorator.isEntityAttrReadPermitted(metaPropertyPath2) >> false
+        securityDecorator.isEntityAttrReadPermitted(metaPropertyPath3) >> true
 
         and:
         SearchFieldsProvider resolver = new SearchFieldsProvider(
                 Mock(IndexConfigurationManager),
-                fieldSubstitute,
+                fullFieldNamesProvider,
                 securityDecorator)
 
         when:
-        def fieldsForIndex = resolver.resolveFields(indexConfiguration, NO_SUBFIELDS)
+        def fieldsForIndex = resolver.resolveFields(indexConfiguration, NO_VIRTUAL_SUBFIELDS)
 
         then:
         fieldsForIndex == Set.of("field1.subfield1", "field1.subfield2", "_instance_name", "field3")
     }
 
-    def "resolveFields. With generated subfield"() {
+    def "resolveFields. With virtual fields"() {
         given:
         def metaPropertyPath1 = Mock(MetaPropertyPath)
         def mappingFieldDescriptor1 = Mock(MappingFieldDescriptor)
@@ -167,26 +168,26 @@ class SearchFieldsProviderTest extends Specification {
         indexConfiguration.getMapping() >> mapping
 
         and:
-        def fieldSubstitute = Mock(SearchFieldSubstitute)
-        fieldSubstitute.getFieldsForPath(metaPropertyPath1, FIELD_NAME_1) >> Set.of(FIELD_NAME_1 + ".subfield1", FIELD_NAME_1 + ".subfield2")
-        fieldSubstitute.getFieldsForPath(metaPropertyPath3, FIELD_NAME_3) >> Set.of(FIELD_NAME_3)
+        def fullFieldNamesProvider = Mock(FullFieldNamesProvider)
+        fullFieldNamesProvider.getFieldNamesForBaseField(metaPropertyPath1, FIELD_NAME_1) >> Set.of(FIELD_NAME_1 + ".subfield1", FIELD_NAME_1 + ".subfield2")
+        fullFieldNamesProvider.getFieldNamesForBaseField(metaPropertyPath3, FIELD_NAME_3) >> Set.of(FIELD_NAME_3)
 
 
         and:
         def securityDecorator = Mock(SearchSecurityDecorator)
-        securityDecorator.canAttributeBeRead(metaPropertyPath1) >> true
-        securityDecorator.canAttributeBeRead(metaPropertyPath2) >> false
-        securityDecorator.canAttributeBeRead(metaPropertyPath3) >> true
+        securityDecorator.isEntityAttrReadPermitted(metaPropertyPath1) >> true
+        securityDecorator.isEntityAttrReadPermitted(metaPropertyPath2) >> false
+        securityDecorator.isEntityAttrReadPermitted(metaPropertyPath3) >> true
 
         and:
         SearchFieldsProvider resolver = new SearchFieldsProvider(
                 Mock(IndexConfigurationManager),
-                fieldSubstitute,
+                fullFieldNamesProvider,
                 securityDecorator
         )
 
         when:
-        def fieldsForIndex = resolver.resolveFields(indexConfiguration, STANDARD_PREFIX_SUBFIELD)
+        def fieldsForIndex = resolver.resolveFields(indexConfiguration, WITH_PREFIX_VIRTUAL_SUBFIELDS)
 
         then:
         fieldsForIndex == Set.of(

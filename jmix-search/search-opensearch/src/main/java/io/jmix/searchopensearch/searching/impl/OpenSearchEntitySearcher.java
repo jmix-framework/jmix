@@ -91,7 +91,7 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
 
         boolean moreDataAvailable;
         do {
-            RequestContext<SearchRequest.Builder> requestContext = createRequest(
+            SearchRequestContext<SearchRequest.Builder> requestContext = createRequest(
                     searchContext, searchStrategy, searchResult.getEffectiveOffset()
             );
             if (!requestContext.isRequestPossible()) {
@@ -133,11 +133,11 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
         return searchStrategyManager.getSearchStrategyByName(searchStrategyName);
     }
 
-    protected RequestContext<SearchRequest.Builder> createRequest(SearchContext searchContext,
-                                                                  OpenSearchSearchStrategy searchStrategy,
-                                                                  int offset) {
+    protected SearchRequestContext<SearchRequest.Builder> createRequest(SearchContext searchContext,
+                                                                        OpenSearchSearchStrategy searchStrategy,
+                                                                        int offset) {
         SearchRequest.Builder builder = new SearchRequest.Builder();
-        RequestContext<SearchRequest.Builder> requestContext = new RequestContext<>(builder, searchContext);
+        SearchRequestContext<SearchRequest.Builder> requestContext = new SearchRequestContext<>(builder, searchContext);
         searchStrategy.configureRequest(requestContext);
         if (requestContext.isRequestPossible()) {
             initRequest(builder, new ArrayList<>(requestContext.getEffectiveIndexes()));

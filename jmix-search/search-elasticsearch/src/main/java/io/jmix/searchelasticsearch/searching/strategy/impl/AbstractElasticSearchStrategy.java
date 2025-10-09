@@ -22,17 +22,23 @@ import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 
 /**
- * An abstract implementation of the {@link AbstractSearchStrategy} that contains specific of the ElasticSearch.
+ * An abstract implementation of the {@link AbstractSearchStrategy} that contains specifics of the ElasticSearch.
  */
 public abstract class AbstractElasticSearchStrategy
-        extends AbstractSearchStrategy<SearchRequest.Builder, ElasticSearchQueryConfigurator>
+        extends AbstractSearchStrategy<SearchRequest.Builder, ElasticSearchQueryConfigurer>
         implements ElasticsearchSearchStrategy {
 
-    protected AbstractElasticSearchStrategy(ElasticSearchQueryConfigurator queryConfigurator) {
+    protected AbstractElasticSearchStrategy(ElasticSearchQueryConfigurer queryConfigurator) {
         super(queryConfigurator);
     }
 
+    /**
+     * TODO Pavel Aleksandrov
+     * @param requestBuilder allows to configure search request
+     * @param searchContext  contains details about search being performed
+     */
     @Override
+    @Deprecated(since = "2.7", forRemoval = true)
     public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
         throw new UnsupportedOperationException();
     }

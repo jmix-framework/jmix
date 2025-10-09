@@ -20,6 +20,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.search.searching.SearchSecurityDecorator;
 import io.jmix.search.utils.Constants;
 import org.springframework.stereotype.Component;
 
@@ -31,12 +32,12 @@ import static java.util.Collections.emptySet;
  * Contains a logic that substitutes an initial field name with the specific subfields.
  * Calculating such subfields depends on the field type and user permissions for the field.
  */
-@Component("search_SearchFieldSubstitute")
-public class SearchFieldSubstitute {
+@Component("search_FullFieldNamesProvider")
+public class FullFieldNamesProvider {
 
     protected final SearchSecurityDecorator securityDecorator;
 
-    public SearchFieldSubstitute(SearchSecurityDecorator securityDecorator) {
+    public FullFieldNamesProvider(SearchSecurityDecorator securityDecorator) {
         this.securityDecorator = securityDecorator;
     }
 
@@ -50,12 +51,12 @@ public class SearchFieldSubstitute {
      * @param fieldName the base name of the field to be evaluated
      * @return a set of field names to be substituted based on the field type and user permissions
      */
-    public Set<String> getFieldsForPath(MetaPropertyPath path, String fieldName) {
+    public Set<String> getFieldNamesForBaseField(MetaPropertyPath path, String fieldName) {
         Range range = path.getRange();
         if (isFileRefProperty(range)) {
             return Set.of(fieldName + "._file_name", fieldName + "._content");
         } else if (isReferenceProperty(range)) {
-            if (securityDecorator.canEntityBeRead(range.asClass())) {
+            if (securityDecorator.isEntityReadPermitted(range.asClass())) {
                 return Set.of(fieldName + "." + Constants.INSTANCE_NAME_FIELD);
             } else {
                 return emptySet();

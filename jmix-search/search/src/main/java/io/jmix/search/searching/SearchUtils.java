@@ -22,13 +22,11 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
-import io.jmix.search.searching.impl.SearchFieldSubstitute;
-import io.jmix.search.searching.impl.SearchSecurityDecorator;
+import io.jmix.search.searching.impl.FullFieldNamesProvider;
 import io.jmix.search.utils.Constants;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component("search_SearchUtils")
@@ -37,20 +35,21 @@ public class SearchUtils {
 
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final Metadata metadata;
-    protected final SearchFieldSubstitute fieldSubstitute;
+    protected final FullFieldNamesProvider fullFieldNamesProvider;
     protected final SearchSecurityDecorator securityDecorator;
 
     public SearchUtils(IndexConfigurationManager indexConfigurationManager,
-                       Metadata metadata, SearchFieldSubstitute fieldSubstitute,
+                       Metadata metadata,
+                       FullFieldNamesProvider fullFieldNamesProvider,
                        SearchSecurityDecorator securityDecorator) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.metadata = metadata;
-        this.fieldSubstitute = fieldSubstitute;
+        this.fullFieldNamesProvider = fullFieldNamesProvider;
         this.securityDecorator = securityDecorator;
     }
 
     /**
-     * Use {@link io.jmix.search.searching.impl.SearchModelAnalyzer#getIndexesWithFields(List, Function)}
+     * Use {@link SearchRequestScopeProvider#getSearchRequestScope(List, VirtualSubfieldsProvider)}
      */
     @Deprecated(since = "2.7",forRemoval = true)
     public List<String> resolveEntitiesAllowedToSearch(Collection<String> entityNames) {
@@ -84,9 +83,9 @@ public class SearchUtils {
     }
 
     /**
-     * The method doesn't take into account security constraints of entity fields.
+     * Use {@link SearchRequestScopeProvider#getSearchRequestScope(List, VirtualSubfieldsProvider)}
+     * @deprecated The method doesn't take into account security constraints of entity fields.
      * The method doesn't separate result fields by the entities.
-     * Use {@link io.jmix.search.searching.impl.SearchModelAnalyzer#getIndexesWithFields(List, Function)}
      */
     @Deprecated(since = "2.7",forRemoval = true)
     public Set<String> resolveEffectiveSearchFields(Collection<String> requestedEntities) {
@@ -102,7 +101,7 @@ public class SearchUtils {
                 String fieldName = entry.getKey();
                 MappingFieldDescriptor mappingFieldDescriptor = entry.getValue();
                 MetaPropertyPath metaPropertyPath = mappingFieldDescriptor.getMetaPropertyPath();
-                effectiveFieldsToSearch.addAll(fieldSubstitute.getFieldsForPath(metaPropertyPath, fieldName));
+                effectiveFieldsToSearch.addAll(fullFieldNamesProvider.getFieldNamesForBaseField(metaPropertyPath, fieldName));
             }
         }
         effectiveFieldsToSearch.add(Constants.INSTANCE_NAME_FIELD);

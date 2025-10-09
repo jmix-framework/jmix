@@ -16,37 +16,35 @@
 
 package io.jmix.search.searching;
 
-import java.util.List;
-
 /**
  * An interface for implementing common logic for the search request configuration.
  *
- * @param <SRB> a platform-specific SearchRequestBuilder type
+ * @param <RB> a platform-specific SearchRequestBuilder type
  * @param <QB>  a platform-specific QueryBuilder type
  * @param <OB>  a platform-specific ObjectBuilder type
  */
-public interface SearchQueryConfigurator<SRB, QB, OB> {
+public interface SearchQueryConfigurer<RB, QB, OB> {
 
     /**
      * Configures request for the data querying from the search server.
      *
      * @param requestContext     a request context for the request building.
-     * @param targetQueryBuilder a builder that builds query for the single index.
+     * @param businessQueryConfigurer a builder that builds query for the single index.
      */
-    void configureRequest(RequestContext<SRB> requestContext,
-                          TargetQueryBuilder<QB, OB> targetQueryBuilder);
+    void configureRequest(SearchRequestContext<RB> requestContext,
+                          BusinessQueryConfigurer<QB, OB> businessQueryConfigurer);
 
     /**
      * Configures request for the data querying from the search server.
      * Provides an ability to add subfields to the query.
      *
      * @param requestContext     a request context for the request building.
-     * @param subfieldsProvider - a provider that provides additional subfields by the {@link SubfieldsProvider.FieldInfo}
-     * @param targetQueryBuilder a builder that builds query for the single index.
+     * @param virtualSubfieldsProvider - a provider that provides additional subfields by the {@link VirtualSubfieldsProvider.FieldInfo}
+     * @param businessQueryConfigurer a builder that builds query for the single index.
      */
-    void configureRequest(RequestContext<SRB> requestContext,
-                          SubfieldsProvider subfieldsProvider,
-                          TargetQueryBuilder<QB, OB> targetQueryBuilder);
+    void configureRequest(SearchRequestContext<RB> requestContext,
+                          VirtualSubfieldsProvider virtualSubfieldsProvider,
+                          BusinessQueryConfigurer<QB, OB> businessQueryConfigurer);
 
     /**
      * A common interface for query building for the single index.
@@ -54,7 +52,7 @@ public interface SearchQueryConfigurator<SRB, QB, OB> {
      * @param <QB> a platform specific QueryBuilder
      * @param <OB> a platform specific ObjectBuilder
      */
-    interface TargetQueryBuilder<QB, OB> {
-        OB apply(QB queryBuilder, List<String> fields);
+    interface BusinessQueryConfigurer<QB, OB> {
+        OB apply(QB queryBuilder, IndexSearchRequestScope indexSearchRequestScope);
     }
 }

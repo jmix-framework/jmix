@@ -2,9 +2,8 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import io.jmix.search.searching.RequestContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,9 +11,9 @@ import org.springframework.stereotype.Component;
  * matches the entire phrase - all input words in provided order.
  */
 @Component("search_PhraseElasticsearchSearchStrategy")
-public class PhraseElasticsearchSearchStrategy extends AbstractElasticSearchStrategy implements ElasticsearchSearchStrategy {
+public class PhraseElasticsearchSearchStrategy extends AbstractElasticSearchStrategy{
 
-    protected PhraseElasticsearchSearchStrategy(ElasticSearchQueryConfigurator queryConfigurator) {
+    public PhraseElasticsearchSearchStrategy(ElasticSearchQueryConfigurer queryConfigurator) {
         super(queryConfigurator);
     }
 
@@ -24,12 +23,12 @@ public class PhraseElasticsearchSearchStrategy extends AbstractElasticSearchStra
     }
 
     @Override
-    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
+    public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                (queryBuilder, fields) -> queryBuilder
+                (queryBuilder, scope) -> queryBuilder
                         .multiMatch(multiMatchQueryBuilder ->
-                                multiMatchQueryBuilder.fields(fields)
+                                multiMatchQueryBuilder.fields(scope.getFieldList())
                                         .query(requestContext.getSearchContext().getEscapedSearchText())
                                         .type(TextQueryType.Phrase)));
     }

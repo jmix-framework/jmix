@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching.impl;
+package io.jmix.search.searching;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.security.CurrentUserSecurityFacade;
+import io.jmix.security.constraint.PolicyStore;
+import io.jmix.security.constraint.SecureOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -33,12 +34,13 @@ import java.util.stream.Collectors;
 public class SearchSecurityDecorator {
 
     protected final Metadata metadata;
-    protected final CurrentUserSecurityFacade securityFacade;
+    protected final SecureOperations secureOperations;
+    protected final PolicyStore policyStore;
 
-    public SearchSecurityDecorator(Metadata metadata,
-                                   CurrentUserSecurityFacade securityFacade) {
+    public SearchSecurityDecorator(Metadata metadata, SecureOperations secureOperations, PolicyStore policyStore) {
         this.metadata = metadata;
-        this.securityFacade = securityFacade;
+        this.secureOperations = secureOperations;
+        this.policyStore = policyStore;
     }
 
     /**
@@ -51,7 +53,7 @@ public class SearchSecurityDecorator {
         return requestedEntities.stream()
                 .filter(entity -> {
                     MetaClass metaClass = metadata.getClass(entity);
-                    return securityFacade.canEntityBeRead(metaClass);
+                    return secureOperations.isEntityReadPermitted(metaClass, policyStore);
                 })
                 .collect(Collectors.toList());
     }
@@ -62,8 +64,8 @@ public class SearchSecurityDecorator {
      * @param metaPropertyPath - the property path for the rights checking
      * @return - true if the current user has the permission and false if not.
      */
-    public boolean canAttributeBeRead(MetaPropertyPath metaPropertyPath) {
-        return securityFacade.canAttributeBeRead(metaPropertyPath);
+    public boolean isEntityAttrReadPermitted(MetaPropertyPath metaPropertyPath) {
+        return secureOperations.isEntityAttrReadPermitted(metaPropertyPath, policyStore);
     }
 
     /**
@@ -72,7 +74,7 @@ public class SearchSecurityDecorator {
      * @param metaClass - a MetaClass of the entity for the rights checking
      * @return - true if the current user has the permission and false if not.
      */
-    public boolean canEntityBeRead(MetaClass metaClass) {
-        return securityFacade.canEntityBeRead(metaClass);
+    public boolean isEntityReadPermitted(MetaClass metaClass) {
+        return secureOperations.isEntityReadPermitted(metaClass, policyStore);
     }
 }

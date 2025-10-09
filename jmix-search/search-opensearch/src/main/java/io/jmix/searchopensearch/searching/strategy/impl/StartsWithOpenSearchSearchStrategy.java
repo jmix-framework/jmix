@@ -17,9 +17,8 @@
 package io.jmix.searchopensearch.searching.strategy.impl;
 
 import io.jmix.search.SearchProperties;
-import io.jmix.search.searching.RequestContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.opensearch.client.opensearch._types.query_dsl.TextQueryType;
 import org.opensearch.client.opensearch.core.SearchRequest;
@@ -28,18 +27,18 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static io.jmix.search.searching.AbstractSearchQueryConfigurator.NO_SUBFIELDS;
-import static io.jmix.search.searching.AbstractSearchQueryConfigurator.STANDARD_PREFIX_SUBFIELD;
+import static io.jmix.search.searching.AbstractSearchQueryConfigurer.NO_VIRTUAL_SUBFIELDS;
+import static io.jmix.search.searching.AbstractSearchQueryConfigurer.WITH_PREFIX_VIRTUAL_SUBFIELDS;
 
 /**
  * Class that encapsulates logic of {@link SearchStrategy} that searches documents by prefix.
  */
 @Component("search_StartsWithOpenSearchSearchStrategy")
-public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrategy implements OpenSearchSearchStrategy {
+public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrategy{
 
     protected final SearchProperties searchProperties;
 
-    protected StartsWithOpenSearchSearchStrategy(OpenSearchQueryConfigurator queryConfigurator,
+    public StartsWithOpenSearchSearchStrategy(OpenSearchQueryConfigurer queryConfigurator,
                                                  SearchProperties searchProperties) {
         super(queryConfigurator);
         this.searchProperties = searchProperties;
@@ -51,7 +50,7 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
     }
 
     @Override
-    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
+    public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
         int maxPrefixSize = searchProperties.getMaxPrefixLength();
         if (isSearchTermExceedMaxPrefixSize(requestContext.getSearchContext().getSearchText(), maxPrefixSize)
                 && searchProperties.isWildcardPrefixQueryEnabled()) {
@@ -61,20 +60,20 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
         }
     }
 
-    protected void configureTermsQuery(RequestContext<SearchRequest.Builder> requestContext) {
+    protected void configureTermsQuery(SearchRequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                STANDARD_PREFIX_SUBFIELD,
-                (queryBuilder, fields) ->
+                WITH_PREFIX_VIRTUAL_SUBFIELDS,
+                (queryBuilder, data) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
-                                multiMatchQueryBuilder.fields(fields)
+                                multiMatchQueryBuilder.fields(data.getFieldList())
                                         .query(requestContext.getSearchContext().getEscapedSearchText())
                                         .type(TextQueryType.BestFields)
                         )
         );
     }
 
-    protected void configureWildcardQuery(RequestContext<SearchRequest.Builder> requestContext) {
+    protected void configureWildcardQuery(SearchRequestContext<SearchRequest.Builder> requestContext) {
         String searchText = requestContext.getSearchContext().getEscapedSearchText();
         String[] searchTerms = searchText.split("\\s+");
         String queryText = Arrays.stream(searchTerms)
@@ -84,11 +83,11 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
 
         queryConfigurator.configureRequest(
                 requestContext,
-                NO_SUBFIELDS,
-                (queryBuilder, fields) ->
+                NO_VIRTUAL_SUBFIELDS,
+                (queryBuilder, scope) ->
                         queryBuilder.queryString(queryStringQueryBuilder ->
                                 queryStringQueryBuilder
-                                        .fields(fields)
+                                        .fields(scope.getFieldList())
                                         .analyzeWildcard(true)
                                         .query(queryText)
                         )

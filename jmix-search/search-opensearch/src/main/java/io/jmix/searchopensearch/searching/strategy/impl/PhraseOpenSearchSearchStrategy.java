@@ -1,8 +1,7 @@
 package io.jmix.searchopensearch.searching.strategy.impl;
 
-import io.jmix.search.searching.RequestContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import org.opensearch.client.opensearch._types.query_dsl.TextQueryType;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.springframework.stereotype.Component;
@@ -12,9 +11,9 @@ import org.springframework.stereotype.Component;
  * matches the entire phrase - all input words in provided order.
  */
 @Component("search_PhraseOpenSearchSearchStrategy")
-public class PhraseOpenSearchSearchStrategy extends AbstractOpenSearchStrategy implements OpenSearchSearchStrategy {
+public class PhraseOpenSearchSearchStrategy extends AbstractOpenSearchStrategy{
 
-    protected PhraseOpenSearchSearchStrategy(OpenSearchQueryConfigurator queryConfigurator) {
+    public PhraseOpenSearchSearchStrategy(OpenSearchQueryConfigurer queryConfigurator) {
         super(queryConfigurator);
     }
 
@@ -24,12 +23,12 @@ public class PhraseOpenSearchSearchStrategy extends AbstractOpenSearchStrategy i
     }
 
     @Override
-    public void configureRequest(RequestContext<SearchRequest.Builder> requestContext) {
+    public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
         queryConfigurator.configureRequest(
                 requestContext,
-                (queryBuilder, fields) ->
+                (queryBuilder, scope) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->
-                                multiMatchQueryBuilder.fields(fields)
+                                multiMatchQueryBuilder.fields(scope.getFieldList())
                                         .query(requestContext.getSearchContext().getEscapedSearchText())
                                         .type(TextQueryType.Phrase)
                         )

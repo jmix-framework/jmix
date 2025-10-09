@@ -16,22 +16,24 @@
 
 package io.jmix.search.searching;
 
+import io.jmix.search.index.IndexConfiguration;
+
 import java.util.Set;
 
 /**
  * A functional interface for resolving subfields by the field information
  */
 @FunctionalInterface
-public interface SubfieldsProvider {
+public interface VirtualSubfieldsProvider {
 
     Set<String> getSubfields(FieldInfo fieldInfo);
 
     /**
      * Describes search field information for subfields generating.
      *
-     * @param indexName
+     * @param indexConfiguration TODO Pavel Aleksandrov
      * @param fieldName
      */
-    record FieldInfo(String indexName, String fieldName) {
+    record FieldInfo(IndexConfiguration indexConfiguration, String fieldName) {
     }
 }

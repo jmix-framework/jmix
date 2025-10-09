@@ -31,7 +31,7 @@ public interface EmailRefreshTokenManager {
      * @param refreshTokenValue token value
      * @return stored {@link RefreshToken} instance
      */
-    RefreshToken storeDefaultRefreshTokenValue(String refreshTokenValue);
+    RefreshToken storeRefreshTokenValue(String refreshTokenValue);
 
     /**
      * Gets current value of refresh token.
@@ -39,7 +39,7 @@ public interface EmailRefreshTokenManager {
      * @return token value stored in database.
      * If no token value is stored - return token value from application property 'jmix.email.oauth2.refreshToken'
      */
-    String getDefaultRefreshTokenValue();
+    String getRefreshTokenValue();
 
     /**
      * Loads refresh token instance from database.
@@ -47,5 +47,5 @@ public interface EmailRefreshTokenManager {
      * @return {@link RefreshToken} instance stored in database or null if no token is stored
      */
     @Nullable
-    RefreshToken loadDefaultRefreshToken();
+    RefreshToken loadRefreshToken();
 }

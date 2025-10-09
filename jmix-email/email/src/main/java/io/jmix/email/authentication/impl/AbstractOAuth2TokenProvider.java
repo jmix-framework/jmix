@@ -32,7 +32,7 @@ public abstract class AbstractOAuth2TokenProvider implements OAuth2TokenProvider
 
     @Override
     public String getRefreshToken() {
-        return refreshTokenManager.getDefaultRefreshTokenValue();
+        return refreshTokenManager.getRefreshTokenValue();
     }
 
     protected String getClientId() {

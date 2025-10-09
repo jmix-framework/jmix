@@ -18,8 +18,8 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://emailTokenView.title">
     <data>
-        <instance id="defaultRefreshTokenDc" class="io.jmix.email.entity.RefreshToken">
-            <loader id="defaultRefreshTokenDl">
+        <instance id="refreshTokenDc" class="io.jmix.email.entity.RefreshToken">
+            <loader id="refreshTokenDl">
                 <query>
                     <![CDATA[select e from email_RefreshToken e  ]]>
                 </query>
@@ -32,19 +32,18 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
-        <action id="updateDefaultRefreshTokenAction" text="msg://updateDefaultRefreshTokenAction.text"/>
+        <action id="updateRefreshTokenAction" text="msg://updateRefreshTokenAction.text"/>
     </actions>
     <layout>
-        <details id="oauthDetailsGroup" summaryText="msg://oauthDetailsGroup.summaryText" opened="true" themeNames="filled">
-            <vbox width="60em">
-                <passwordField id="defaultRefreshTokenValueField" dataContainer="defaultRefreshTokenDc" property="tokenValue"
-                               label="msg://defaultRefreshTokenValueField.label"
-                               clearButtonVisible="false" readOnly="true"
-                               width="100%"/>
-                <textField id="lastModifiedDateField" dataContainer="defaultRefreshTokenDc" property="lastModifiedDate"
-                           readOnly="true" width="13em"/>
-                <button id="updateDefaultRefreshTokenButton" action="updateDefaultRefreshTokenAction"/>
-            </vbox>
-        </details>
+        <vbox width="60em">
+            <passwordField id="refreshTokenValueField" dataContainer="refreshTokenDc" property="tokenValue"
+                           label="msg://refreshTokenValueField.label"
+                           clearButtonVisible="false" readOnly="true"
+                           width="100%"/>
+            <textField id="lastModifiedDateField" dataContainer="refreshTokenDc" property="lastModifiedDate"
+                       label="msg://io.jmix.email.entity/RefreshToken.lastModifiedDate"
+                       readOnly="true" width="13em"/>
+            <button id="updateRefreshTokenButton" action="updateRefreshTokenAction"/>
+        </vbox>
     </layout>
 </view>

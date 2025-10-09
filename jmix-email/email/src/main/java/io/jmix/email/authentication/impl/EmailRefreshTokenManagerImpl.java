@@ -45,26 +45,26 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
     }
 
     @Override
-    public RefreshToken storeDefaultRefreshTokenValue(String refreshToken) {
-        log.debug("Storing default refresh token in database...");
+    public RefreshToken storeRefreshTokenValue(String refreshTokenValue) {
+        log.debug("Storing refresh token to database...");
 
-        RefreshToken defaultRefreshToken = loadDefaultRefreshToken();
-        if (defaultRefreshToken == null) {
+        RefreshToken refreshToken = loadRefreshToken();
+        if (refreshToken == null) {
             log.debug("Refresh token was not found in database. Create new one");
-            defaultRefreshToken = dataManager.create(RefreshToken.class);
-            defaultRefreshToken.setId(DEFAULT_REFRESH_TOKEN_ID);
-            defaultRefreshToken.setRegistrationId(DEFAULT_REFRESH_TOKEN_REGISTRATION_ID);
+            refreshToken = dataManager.create(RefreshToken.class);
+            refreshToken.setId(DEFAULT_REFRESH_TOKEN_ID);
+            refreshToken.setRegistrationId(DEFAULT_REFRESH_TOKEN_REGISTRATION_ID);
         }
-        defaultRefreshToken.setTokenValue(refreshToken);
-        return dataManager.save(defaultRefreshToken);
+        refreshToken.setTokenValue(refreshTokenValue);
+        return dataManager.save(refreshToken);
     }
 
     @Override
-    public String getDefaultRefreshTokenValue() {
-        RefreshToken defaultRefreshToken = loadDefaultRefreshToken();
-        if (defaultRefreshToken != null) {
+    public String getRefreshTokenValue() {
+        RefreshToken refreshToken = loadRefreshToken();
+        if (refreshToken != null) {
             log.debug("Refresh token was found in database");
-            return defaultRefreshToken.getTokenValue();
+            return refreshToken.getTokenValue();
         }
 
         log.debug("Refresh token was not found in database. Using value from properties");
@@ -72,8 +72,8 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
     }
 
     @Nullable
-    public RefreshToken loadDefaultRefreshToken() {
-        log.debug("Loading default refresh token from database...");
+    public RefreshToken loadRefreshToken() {
+        log.debug("Loading refresh token from database...");
         return dataManager.load(RefreshToken.class)
                 .id(DEFAULT_REFRESH_TOKEN_ID)
                 .optional()

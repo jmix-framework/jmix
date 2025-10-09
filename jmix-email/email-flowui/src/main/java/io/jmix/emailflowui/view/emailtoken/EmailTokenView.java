@@ -48,21 +48,21 @@ public class EmailTokenView extends StandardView {
     protected Messages messages;
 
     @ViewComponent
-    protected InstanceLoader<RefreshToken> defaultRefreshTokenDl;
+    protected InstanceLoader<RefreshToken> refreshTokenDl;
     @ViewComponent
-    protected JmixPasswordField defaultRefreshTokenValueField;
+    protected JmixPasswordField refreshTokenValueField;
 
-    @Subscribe("updateDefaultRefreshTokenAction")
-    public void onUpdateDefaultRefreshTokenAction(final ActionPerformedEvent event) {
+    @Subscribe("updateRefreshTokenAction")
+    public void onUpdateRefreshTokenAction(final ActionPerformedEvent event) {
         dialogs.createInputDialog(this)
                 .withParameters(buildTokenValueInputParameter())
                 .withActions(DialogActions.OK_CANCEL)
                 .withCloseListener(closeEvent -> {
                             if (closeEvent.closedWith(DialogOutcome.OK)) {
                                 String tokenValue = closeEvent.getValue("tokenValue");
-                                emailRefreshTokenManager.storeDefaultRefreshTokenValue(tokenValue);
+                                emailRefreshTokenManager.storeRefreshTokenValue(tokenValue);
 
-                                defaultRefreshTokenDl.load();
+                                refreshTokenDl.load();
                                 notifications.create("Token value is updated").show();
                             }
                         }
@@ -74,16 +74,16 @@ public class EmailTokenView extends StandardView {
     protected InputParameter buildTokenValueInputParameter() {
         InputParameter parameter = InputParameter
                 .stringParameter("tokenValue")
-                .withLabel(messages.getMessage(getClass(), "onUpdateDefaultRefreshTokenAction.dialog.tokenValue.label"));
-        RefreshToken refreshToken = emailRefreshTokenManager.loadDefaultRefreshToken();
+                .withLabel(messages.getMessage(getClass(), "onUpdateRefreshTokenAction.dialog.tokenValue.label"));
+        RefreshToken refreshToken = emailRefreshTokenManager.loadRefreshToken();
         if (refreshToken != null) {
             parameter.withDefaultValue(refreshToken.getTokenValue());
         }
         return parameter;
     }
 
-    @Install(to = "defaultRefreshTokenDl", target = Target.DATA_LOADER)
-    private RefreshToken defaultRefreshTokenDlLoadDelegate(final LoadContext<RefreshToken> loadContext) {
-        return emailRefreshTokenManager.loadDefaultRefreshToken();
+    @Install(to = "refreshTokenDl", target = Target.DATA_LOADER)
+    private RefreshToken refreshTokenDlLoadDelegate(final LoadContext<RefreshToken> loadContext) {
+        return emailRefreshTokenManager.loadRefreshToken();
     }
 }

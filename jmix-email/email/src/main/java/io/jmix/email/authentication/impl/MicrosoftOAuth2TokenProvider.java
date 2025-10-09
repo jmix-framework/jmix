@@ -57,11 +57,6 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
         }
     }
 
-    /*@Override
-    public String getRefreshToken() {
-        return refreshTokenManager.getDefaultRefreshTokenValue();
-    }*/
-
     protected IClientCredential createCredential() {
         return ClientCredentialFactory.createFromSecret(getSecret());
     }

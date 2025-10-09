@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.groupgrid.data;
 
+import io.jmix.core.annotation.Experimental;
 import io.jmix.flowui.component.groupgrid.GroupProperty;
 
 import java.util.Collections;
@@ -39,6 +40,7 @@ import java.util.function.Function;
  *
  * @param <E> item type
  */
+@Experimental
 public interface GroupPropertyDescriptor<E> {
 
     /**

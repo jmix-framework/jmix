@@ -18,6 +18,7 @@ package io.jmix.flowui.component.groupgrid.data;
 
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.annotation.Experimental;
 import io.jmix.flowui.component.groupgrid.GroupInfo;
 import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import io.jmix.flowui.component.groupgrid.GroupProperty;
@@ -153,6 +154,7 @@ public interface GroupDataGridItems<T> extends DataGridItems<T>, HierarchicalDat
      *
      * @param groupPropertyDescriptor implementation of {@link GroupPropertyDescriptor}
      */
+    @Experimental
     void addGroupPropertyDescriptor(GroupPropertyDescriptor<T> groupPropertyDescriptor);
 
     /**
@@ -160,18 +162,21 @@ public interface GroupDataGridItems<T> extends DataGridItems<T>, HierarchicalDat
      *
      * @param property the custom property
      */
+    @Experimental
     void removeGroupPropertyDescriptor(GroupProperty property);
 
     /**
      * @param property the custom property
      * @return a group property descriptor for a custom property
      */
+    @Experimental
     @Nullable
     GroupPropertyDescriptor<T> getGroupPropertyDescriptor(GroupProperty property);
 
     /**
      * Removes all group property descriptors previously added for grouping.
      */
+    @Experimental
     void removeAllGroupPropertyProviders();
 
     /**
@@ -180,6 +185,7 @@ public interface GroupDataGridItems<T> extends DataGridItems<T>, HierarchicalDat
      * @param listener the listener to add
      * @return a registration object for removing the listener
      */
+    @Experimental
     Registration addGroupPropertyDescriptorsChangedListener(Consumer<GroupPropertyDescriptorsChangedEvent<T>> listener);
 
     /**
@@ -187,6 +193,7 @@ public interface GroupDataGridItems<T> extends DataGridItems<T>, HierarchicalDat
      *
      * @param <T> item type
      */
+    @Experimental
     class GroupPropertyDescriptorsChangedEvent<T> extends EventObject {
 
         protected final Collection<GroupPropertyDescriptor<T>> groupPropertyDescriptors;

@@ -17,6 +17,7 @@
 package io.jmix.flowui.component.groupgrid;
 
 import com.vaadin.flow.component.icon.Icon;
+import io.jmix.core.annotation.Experimental;
 import org.springframework.lang.Nullable;
 
 /**
@@ -25,6 +26,7 @@ import org.springframework.lang.Nullable;
  *
  * @param <E> item type
  */
+@Experimental
 public interface GroupColumn<E> {
 
     /**

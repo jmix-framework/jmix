@@ -23,8 +23,10 @@ import io.jmix.core.querycondition.Condition;
 import org.springframework.lang.Nullable;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TemporalType;
+
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class that defines parameters for loading values from the database via {@link DataManager#loadValues(ValueLoadContext)}.
@@ -219,6 +221,33 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
         return String.format("ValuesContext{query=%s, softDeletion=%s, keys=%s}", query, softDeletion, properties);
     }
 
+
+    /**
+     * Creates a copy of this ValueLoadContext instance.
+     */
+    public ValueLoadContext copy() {
+        ValueLoadContext ctx;
+        try {
+            ctx = getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("Error copying LoadContext", e);
+        }
+
+        ctx.query = query != null ? query.copy() : null;
+        if (hints != null) {
+            ctx.setHints(new HashMap<>(hints));
+        }
+        ctx.accessConstraints = this.accessConstraints != null ? new ArrayList<>(this.accessConstraints) : null;
+        ctx.joinTransaction = this.joinTransaction;
+        ctx.lockMode = lockMode;
+        ctx.storeName = this.storeName;
+        ctx.softDeletion = this.softDeletion;
+        ctx.idName = this.idName;
+        ctx.properties = new ArrayList<>(this.properties);
+
+        return ctx;
+    }
+
     /**
      * Class that defines a query to be executed for loading values.
      */
@@ -398,6 +427,28 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
         @Nullable
         public String[] getNoConversionParams() {
             return noConversionParams;
+        }
+
+        /**
+         * Creates a copy of this Query instance.
+         */
+        public Query copy() {
+            Query newQuery = new Query(this.queryString);
+            copyStateTo(newQuery);
+            return newQuery;
+        }
+
+        public void copyStateTo(Query query) {
+            query.parameters.putAll(this.parameters);
+            query.firstResult = this.firstResult;
+            query.maxResults = this.maxResults;
+            query.condition = this.condition == null ? null : this.condition.copy();
+            query.sort = this.sort;
+            query.noConversionParams = this.noConversionParams != null
+                    ? Arrays.copyOf(this.noConversionParams, this.noConversionParams.length)
+                    : null;
+            query.condition = this.condition != null ? this.condition.copy() : null;
+            query.distinct = this.distinct;
         }
 
         @Override

@@ -17,18 +17,15 @@
 package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.*;
-import io.jmix.core.Sort;
-import io.jmix.core.impl.repository.query.utils.LoaderHelper;
+import io.jmix.core.impl.repository.query.utils.QueryParameterUtils;
 import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.core.repository.Query;
-import org.springframework.data.domain.*;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.RepositoryQuery;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -37,11 +34,7 @@ import java.util.regex.Pattern;
 /**
  * {@link RepositoryQuery} for query methods annotated with {@link Query @Query}.
  */
-public class JmixCustomLoadQuery extends JmixAbstractQuery {
-
-    protected static final String PARAMETER_TEMPLATE = "([:?][a-zA-Z0-9_$]+)";
-    protected static final String PARAMETER_PREFIX = "p_";
-
+public class JmixCustomLoadQuery extends JmixAbstractEntityQuery {
     protected String query;
 
     public JmixCustomLoadQuery(DataManager dataManager,
@@ -53,40 +46,7 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
                                ProjectionFactory factory,
                                String query) {
         super(dataManager, jmixMetadata, fetchPlanRepository, queryStringProcessors, method, metadata, factory);
-        this.query = query;
-        Matcher m = Pattern.compile(PARAMETER_TEMPLATE).matcher(query);
-        Set<String> parameterNames = new HashSet<>();
-        Boolean positionParametersFound = null;
-        while (m.find()) {
-            String occurrence = m.group();
-            String paramName;
-            if (occurrence.startsWith("?")) {
-                if (!Boolean.FALSE.equals(positionParametersFound)) {
-                    positionParametersFound = true;
-                    paramName = occurrence.replace("?", PARAMETER_PREFIX);
-                    this.query = this.query.replace(occurrence, ":" + paramName);
-                } else {
-                    throw new DevelopmentException(String.format("There are mixed parameter types in query '%s' for %s",
-                            query,
-                            formatMethod(method)));
-                }
-            } else if (occurrence.startsWith(":")) {
-                if (!Boolean.TRUE.equals(positionParametersFound)) {
-                    positionParametersFound = false;
-                    paramName = occurrence.replace(":", "");
-                } else {
-                    throw new DevelopmentException(String.format("There are mixed parameter types in query '%s' for %s",
-                            query,
-                            formatMethod(method)));
-                }
-            } else {
-                throw new RuntimeException("Cannot happen");
-            }
-            parameterNames.add(paramName);
-        }
-
-        if (!parameterNames.isEmpty())
-            matchQueryParameters(parameterNames, queryMethod.getParameters().getBindableParameters(), positionParametersFound);
+        this.query = QueryParameterUtils.replaceQueryParameters(queryMethod, method, query, namedParametersBindings);
     }
 
     /**
@@ -120,32 +80,6 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
         return new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
                 .setQuery(lcQuery)
                 .setHints(collectHints(parameters));
-    }
-
-    protected void matchQueryParameters(Set<String> parameterNames,
-                                        Parameters<? extends Parameters, ? extends Parameter> bindableParameters,
-                                        boolean fromPositionParameters) {
-
-        if (fromPositionParameters) {
-            for (String parameterName : parameterNames) {
-                int position = Integer.parseInt(parameterName.substring(PARAMETER_PREFIX.length())) - 1;
-                namedParametersBindings.put(parameterName, bindableParameters.getParameter(position).getIndex());
-            }
-        } else {
-            for (Parameter bindableParameter : bindableParameters.toList()) {
-                //noinspection OptionalGetWithoutIsPresent
-                String name = bindableParameter.getName().get();//existence checked by spring
-                if (parameterNames.contains(name)) {
-                    namedParametersBindings.put(name, bindableParameter.getIndex());
-                } else {
-                    throw new DevelopmentException(String.format("Parameter %s of method %s does not included to query \"%s\"",
-                            name,
-                            formatMethod(method),
-                            query
-                    ));
-                }
-            }
-        }
     }
 
     @Override

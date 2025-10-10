@@ -18,7 +18,6 @@ package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.ConditionTransformer;
-import io.jmix.core.impl.repository.query.utils.LoaderHelper;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.repository.JmixDataRepositoryContext;
@@ -29,17 +28,14 @@ import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.data.repository.query.parser.PartTree;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Base {@link RepositoryQuery} class for repository queries constructed by method name.
  */
-public abstract class JmixStructuredQuery extends JmixAbstractQuery {
+public abstract class JmixStructuredEntityQuery extends JmixAbstractEntityQuery {
     protected final Condition conditions;
     protected final boolean distinct;
 
@@ -48,14 +44,14 @@ public abstract class JmixStructuredQuery extends JmixAbstractQuery {
      */
     protected final Integer maxResults;
 
-    public JmixStructuredQuery(DataManager dataManager,
-                               Metadata jmixMetadata,
-                               FetchPlanRepository fetchPlanRepository,
-                               List<QueryStringProcessor> queryStringProcessors,
-                               Method method,
-                               RepositoryMetadata metadata,
-                               ProjectionFactory factory,
-                               PartTree qryTree) {
+    public JmixStructuredEntityQuery(DataManager dataManager,
+                                     Metadata jmixMetadata,
+                                     FetchPlanRepository fetchPlanRepository,
+                                     List<QueryStringProcessor> queryStringProcessors,
+                                     Method method,
+                                     RepositoryMetadata metadata,
+                                     ProjectionFactory factory,
+                                     PartTree qryTree) {
         super(dataManager, jmixMetadata, fetchPlanRepository, queryStringProcessors, method, metadata, factory);
         List<String> parameterNames = new ArrayList<>();
         conditions = ConditionTransformer.fromPartTree(qryTree, parameterNames);

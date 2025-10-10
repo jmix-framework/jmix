@@ -101,6 +101,6 @@ public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
     Optional<KeyValueEntity> queryEmployeeValuesOptional(@Param("name") String name);
 
     @Query(value = "select e.age, e.name, e.secondName from repository$Employee e where e.name = :name",
-            properties = {"age", "name","secondName"})
+            properties = {"age", "name", "secondName"})
     Optional<KeyValueEntity> queryEmployeeValuesOptionalNamed(@Param("name") String name);
 }

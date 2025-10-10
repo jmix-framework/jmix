@@ -74,7 +74,7 @@ public interface CustomerRepository extends JmixDataRepository<Customer, UUID> {
     List<Long> countAllByScalarQueryAndReturnLongList();
 
     @Query(value = "select count(c) from repository$Customer c")
-    Long countAllByScalarQueryAndReturnLong();
+    long countAllByScalarQueryAndReturnLong();
 
     @Query(value = "select count(c) from repository$Customer c")
     Set<Long> countAllByScalarQueryAndReturnLongSet();

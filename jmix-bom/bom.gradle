@@ -68,6 +68,10 @@ javaPlatform {
 
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:2.7.18")
+    api platform("org.springframework:spring-framework-bom:5.3.39")
+    api platform("org.springframework.security:spring-security-bom:5.7.14")
+    api platform("io.netty:netty-bom:4.1.127.Final")
+    api platform("org.eclipse.jetty:jetty-bom:9.4.58.v20250814")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def freeVersion = version
@@ -270,7 +274,7 @@ dependencies {
         api 'org.antlr:antlr-runtime:3.5.2'
         api 'org.apache.commons:commons-collections4:4.4'
         api 'org.apache.commons:commons-text:1.10.0'
-        api 'org.apache.commons:commons-compress:1.26.0'
+        api 'org.apache.commons:commons-compress:1.28.0'
         api 'org.dom4j:dom4j:2.1.4'
         api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
         api 'org.eclipse.persistence:org.eclipse.persistence.core:2.7.15-1-jmix'
@@ -323,8 +327,6 @@ dependencies {
 
         api 'org.springframework.cloud:spring-cloud-aws-messaging:2.2.6.RELEASE'
 
-        api 'org.springframework.security:spring-security-core:5.7.12'
-
         api 'org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE'
 
         api 'org.springframework.security:spring-security-oauth2-authorization-server:0.3.1'
@@ -332,6 +334,8 @@ dependencies {
         api 'org.springframework:spring-web:5.3.39'
         api 'org.springframework:spring-webmvc:5.3.39'
         api 'org.springframework:spring-webflux:5.3.39'
+
+        api 'org.springframework.ldap:spring-ldap-core:2.4.4'
 
         api 'javax.cache:cache-api:1.1.1'
 
@@ -348,7 +352,7 @@ dependencies {
 
         api 'org.liquibase:liquibase-core:4.11.0'
 
-        api 'com.thoughtworks.xstream:xstream:1.4.20'
+        api 'com.thoughtworks.xstream:xstream:1.4.21'
 
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
@@ -445,18 +449,27 @@ dependencies {
         api 'com.fasterxml.jackson.core:jackson-core:2.16.1'
         api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1'
         api 'com.google.gwt:gwt-dev:2.10.0'
-        api 'com.google.protobuf:protobuf-java:3.21.12'
+        api 'com.google.protobuf:protobuf-java:3.25.8'
         api 'org.yaml:snakeyaml:2.2'
         api 'com.fasterxml.woodstox:woodstox-core:6.5.1'
         api 'ch.qos.logback:logback-core:1.2.13'
         api 'ch.qos.logback:logback-classic:1.2.13'
-        api 'com.nimbusds:nimbus-jose-jwt:9.37.3'
+        api 'com.nimbusds:nimbus-jose-jwt:9.37.4'
         api 'com.jayway.jsonpath:json-path:2.9.0'
         api 'org.apache.james:apache-mime4j-core:0.8.10'
+        api 'net.minidev:json-smart:2.5.2'
+        api 'io.github.classgraph:classgraph:4.8.181'
+        api 'org.xmlunit:xmlunit-core:2.10.4'
 
-        api 'org.apache.tomcat.embed:tomcat-embed-core:9.0.102'
-        api 'org.apache.tomcat.embed:tomcat-embed-el:9.0.102'
-        api 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.102'
+        api 'org.apache.tomcat.embed:tomcat-embed-core:9.0.110'
+        api 'org.apache.tomcat.embed:tomcat-embed-el:9.0.110'
+        api 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.110'
+
+        api('org.slf4j:slf4j-api') {
+            version {
+                strictly '1.7.36'
+            }
+        }
 
         runtime 'org.postgresql:postgresql:42.7.3'
         runtime 'org.hsqldb:hsqldb:2.7.2'

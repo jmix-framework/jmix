@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 
+import static io.jmix.search.utils.Constants.PREFIX_SUBFIELD_NAME;
+
 public class ExtendedSearchSubFieldsApplier {
 
     public static final String FIELDS_FIELD_NAME = "fields";
@@ -36,7 +38,7 @@ public class ExtendedSearchSubFieldsApplier {
             fieldsNode = mainFieldConfig.putObject("fields");
         }
 
-        ObjectNode prefixSubFieldNode = fieldsNode.putObject("prefix");
+        ObjectNode prefixSubFieldNode = fieldsNode.putObject(PREFIX_SUBFIELD_NAME);
         prefixSubFieldNode.put(TYPE_FIELD_NAME, "text");
         prefixSubFieldNode.put(ANALYZER_FIELD_NAME, extendedSearchSettings.getPrefixAnalyzer());
         prefixSubFieldNode.put(SEARCH_ANALYZER_FIELD_NAME, extendedSearchSettings.getPrefixSearchAnalyzer());

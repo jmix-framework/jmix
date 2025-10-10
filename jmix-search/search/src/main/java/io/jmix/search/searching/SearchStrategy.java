@@ -18,8 +18,9 @@ package io.jmix.search.searching;
 
 /**
  * Describes the way search context should be processed.
+ * @param <T> platform-specific request builder type
  */
-public interface SearchStrategy {
+public interface SearchStrategy<T> {
 
     /**
      * Provides the name of this search strategy.
@@ -28,4 +29,9 @@ public interface SearchStrategy {
      * @return name
      */
     String getName();
+
+    default void configureRequest(SearchRequestContext<T> requestContext) {
+        throw new UnsupportedOperationException();
+    }
+
 }

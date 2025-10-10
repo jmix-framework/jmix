@@ -19,4 +19,5 @@ package io.jmix.search.utils;
 public class Constants {
 
     public static final String INSTANCE_NAME_FIELD = "_instance_name";
+    public static final String PREFIX_SUBFIELD_NAME = "prefix";
 }

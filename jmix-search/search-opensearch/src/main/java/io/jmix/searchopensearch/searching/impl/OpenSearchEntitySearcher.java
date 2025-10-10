@@ -47,7 +47,6 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
     protected final OpenSearchSearchStrategyProvider searchStrategyManager;
-    protected final SearchUtils searchUtils;
 
     protected final ObjectMapper objectMapper;
 
@@ -61,8 +60,7 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
                                     IdSerialization idSerialization,
                                     SecureOperations secureOperations,
                                     PolicyStore policyStore,
-                                    OpenSearchSearchStrategyProvider searchStrategyManager,
-                                    SearchUtils searchUtils) {
+                                    OpenSearchSearchStrategyProvider searchStrategyManager) {
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.metadata = metadata;
@@ -74,7 +72,6 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
         this.searchStrategyManager = searchStrategyManager;
-        this.searchUtils = searchUtils;
 
         this.objectMapper = new ObjectMapper();
     }
@@ -91,16 +88,16 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
 
         OpenSearchSearchStrategy searchStrategy = resolveSearchStrategy(searchStrategyName);
         SearchResultImpl searchResult = initSearchResult(searchContext, searchStrategy);
-        List<String> targetIndexes = searchUtils.resolveEffectiveTargetIndexes(searchContext.getEntities());
-        if (targetIndexes.isEmpty()) {
-            return searchResult;
-        }
 
         boolean moreDataAvailable;
         do {
-            SearchRequest searchRequest = createRequest(
-                    searchContext, targetIndexes, searchStrategy, searchResult.getEffectiveOffset()
+            SearchRequestContext<SearchRequest.Builder> requestContext = createRequest(
+                    searchContext, searchStrategy, searchResult.getEffectiveOffset()
             );
+            if (!requestContext.isRequestPossible()) {
+                return searchResult;
+            }
+            SearchRequest searchRequest = requestContext.getRequestBuilder().build();
             SearchResponse<ObjectNode> searchResponse;
             try {
                 if (log.isDebugEnabled()) {
@@ -136,16 +133,17 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
         return searchStrategyManager.getSearchStrategyByName(searchStrategyName);
     }
 
-    protected SearchRequest createRequest(SearchContext searchContext,
-                                          List<String> targetIndexes,
-                                          OpenSearchSearchStrategy searchStrategy,
-                                          int offset) {
-
+    protected SearchRequestContext<SearchRequest.Builder> createRequest(SearchContext searchContext,
+                                                                        OpenSearchSearchStrategy searchStrategy,
+                                                                        int offset) {
         SearchRequest.Builder builder = new SearchRequest.Builder();
-        initRequest(builder, targetIndexes);
-        searchStrategy.configureRequest(builder, searchContext);
-        applyPostStrategyRequestSettings(builder, searchContext, offset);
-        return builder.build();
+        SearchRequestContext<SearchRequest.Builder> requestContext = new SearchRequestContext<>(builder, searchContext);
+        searchStrategy.configureRequest(requestContext);
+        if (requestContext.isRequestPossible()) {
+            initRequest(builder, new ArrayList<>(requestContext.getEffectiveIndexes()));
+            applyPostStrategyRequestSettings(builder, searchContext, offset);
+        }
+        return requestContext;
     }
 
     protected void initRequest(SearchRequest.Builder builder, List<String> targetIndexes) {

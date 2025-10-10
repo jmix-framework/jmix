@@ -1,10 +1,14 @@
 package io.jmix.searchopensearch.searching.strategy;
 
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 import org.opensearch.client.opensearch.core.SearchRequest;
 
-public interface OpenSearchSearchStrategy extends SearchStrategy {
+/**
+ * A OpenSearch-specific extension of the common {link @SearchStrategy} interface
+ */
+public interface OpenSearchSearchStrategy extends SearchStrategy<SearchRequest.Builder> {
 
     /**
      * Configures OpenSearch {@link SearchRequest}.
@@ -14,6 +18,14 @@ public interface OpenSearchSearchStrategy extends SearchStrategy {
      *
      * @param requestBuilder allows to configure search request
      * @param searchContext  contains details about search being performed
+     * @deprecated TODO Pavel Aleksandrov
+     * Use {@link OpenSearchSearchStrategy#configureRequest(SearchRequestContext)}
      */
+    @Deprecated(since = "2.7", forRemoval = true)
     void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext);
+
+    @Override
+    default void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
+        configureRequest(requestContext.getRequestBuilder(), requestContext.getSearchContext());
+    }
 }

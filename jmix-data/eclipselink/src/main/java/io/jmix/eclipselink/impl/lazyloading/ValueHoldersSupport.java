@@ -16,6 +16,8 @@
 
 package io.jmix.eclipselink.impl.lazyloading;
 
+import io.jmix.core.entity.NoValueCollection;
+import jakarta.annotation.Nullable;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.indirection.IndirectCollection;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
@@ -24,6 +26,7 @@ import org.eclipse.persistence.internal.expressions.ParameterExpression;
 import org.eclipse.persistence.internal.indirection.QueryBasedValueHolder;
 import org.eclipse.persistence.internal.indirection.UnitOfWorkQueryValueHolder;
 import io.jmix.core.common.util.ReflectionHelper;
+import org.eclipse.persistence.internal.indirection.WrappingValueHolder;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -61,6 +64,21 @@ public class ValueHoldersSupport {
             valueHolderField.set(entity, valueHolder);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(String.format("Unable to access value holder for property: %s on entity %s",
+                    propertyName, entity.getClass().getName()), e);
+        }
+    }
+
+        public static void setSingleValue(Object entity, String propertyName, Object valueHolder) {
+        try {
+            Field field = ReflectionHelper.findField(entity.getClass(), propertyName);
+            if (field == null) {
+                throw new RuntimeException(String.format("Unable to access property: %s on entity %s",
+                        propertyName, entity.getClass().getName()));
+            }
+            ReflectionUtils.makeAccessible(field);
+            field.set(entity, valueHolder);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(String.format("Unable to access property: %s on entity %s",
                     propertyName, entity.getClass().getName()), e);
         }
     }
@@ -122,6 +140,17 @@ public class ValueHoldersSupport {
             if (unitOfWorkQueryValueHolder.getWrappedValueHolder() instanceof QueryBasedValueHolder) {
                 QueryBasedValueHolder queryBasedValueHolder = (QueryBasedValueHolder) unitOfWorkQueryValueHolder.getWrappedValueHolder();
                 return queryBasedValueHolder.isInstantiated() ? null : queryBasedValueHolder;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static Object unwrapToValueIfInstantiated(Object valueHolder) {
+        if (valueHolder instanceof WrappingValueHolder<?> wrappingValueHolder && wrappingValueHolder.getWrappedValueHolder() != null) {
+            ValueHolderInterface<?> wrappedHolder = wrappingValueHolder.getWrappedValueHolder();
+            if (wrappedHolder.isInstantiated() && !(wrappedHolder instanceof NoValueCollection)) {
+                return wrappingValueHolder.getWrappedValueHolder().getValue();
             }
         }
         return null;

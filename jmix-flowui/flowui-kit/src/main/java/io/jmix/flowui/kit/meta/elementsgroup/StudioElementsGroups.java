@@ -153,10 +153,7 @@ public interface StudioElementsGroups {
             elementClassFqn = "io.jmix.flowui.kit.stub.StudioGenericComponentPropertyElement",
             xmlElement = "properties",
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/properties.svg",
-            target = {
-                    "com.vaadin.flow.component.Component",
-                    TAG_PREFIX + "component"
-            }
+            target = TAG_PREFIX + "component"
     )
     void genericComponentProperties();
 }

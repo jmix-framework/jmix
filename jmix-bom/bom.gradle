@@ -461,9 +461,9 @@ dependencies {
         api 'io.github.classgraph:classgraph:4.8.181'
         api 'org.xmlunit:xmlunit-core:2.10.4'
 
-        api 'org.apache.tomcat.embed:tomcat-embed-core:9.0.109'
-        api 'org.apache.tomcat.embed:tomcat-embed-el:9.0.109'
-        api 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.109'
+        api 'org.apache.tomcat.embed:tomcat-embed-core:9.0.110'
+        api 'org.apache.tomcat.embed:tomcat-embed-el:9.0.110'
+        api 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.110'
 
         api('org.slf4j:slf4j-api') {
             version {

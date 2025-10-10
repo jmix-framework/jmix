@@ -44,7 +44,7 @@ import static io.jmix.core.Sort.*;
  * @see JmixQueryLookupStrategy is responsible for generating Query implementations based on interface method names that will be executed by the Jmix.
  * @see RepositoryQuery
  */
-public abstract class JmixAbstractQuery implements RepositoryQuery {
+public abstract class JmixAbstractQuery<T extends DataLoadContext> implements RepositoryQuery {
 
     protected final Method method;
     protected final RepositoryMetadata metadata;
@@ -55,8 +55,6 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
      * {@link UnconstrainedDataManager} or {@link DataManager} will be chosen depending on {@link ApplyConstraints} annotation on method/repository or ancestor method/repository
      */
     protected UnconstrainedDataManager dataManager;
-    protected List<QueryStringProcessor> queryStringProcessors;
-    protected FetchPlanRepository fetchPlanRepository;
 
     protected Metadata jmixMetadata;
 
@@ -65,21 +63,15 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
 
     protected int sortIndex;
     protected int pageableIndex;
-    protected int fetchPlanIndex;
     protected int jmixContextIndex;
 
     protected final Map<String, Serializable> queryHints;
-    protected final String fetchPlanByAnnotation;
 
-    public JmixAbstractQuery(DataManager dataManager,
+    protected JmixAbstractQuery(DataManager dataManager,
                              Metadata jmixMetadata,
-                             FetchPlanRepository fetchPlanRepository,
-                             List<QueryStringProcessor> queryStringProcessors,
                              Method method, RepositoryMetadata metadata, ProjectionFactory factory) {
         this.method = method;
         this.metadata = metadata;
-        this.fetchPlanRepository = fetchPlanRepository;
-        this.queryStringProcessors = queryStringProcessors;
         this.factory = factory;
         this.queryMethod = getQueryMethod();
         this.jmixMetadata = jmixMetadata;
@@ -89,9 +81,6 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
         this.queryHints = Collections.unmodifiableMap(MethodMetadataHelper.determineQueryHints(method));
 
         processSpecialParameters();
-
-        FetchPlan fetchPlanAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, FetchPlan.class);
-        fetchPlanByAnnotation = fetchPlanAnnotation != null ? fetchPlanAnnotation.value() : io.jmix.core.FetchPlan.BASE;
     }
 
     @Override
@@ -116,19 +105,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
 
         pageableIndex = parameters.getPageableIndex();
         sortIndex = parameters.getSortIndex();
-        fetchPlanIndex = parameters.getFetchPlanIndex();
         jmixContextIndex = parameters.getJmixContextIndex();
-    }
-
-    protected void setupFetchPlan(LoadContext<?> loadContext, Object[] parameters) {
-        JmixDataRepositoryContext jmixDataRepositoryContext = jmixContextIndex != -1 ? (JmixDataRepositoryContext) parameters[jmixContextIndex] : null;
-        if (fetchPlanIndex != -1 && parameters[fetchPlanIndex] != null) {
-            loadContext.setFetchPlan((io.jmix.core.FetchPlan) parameters[fetchPlanIndex]);
-        } else if (jmixDataRepositoryContext != null && jmixDataRepositoryContext.fetchPlan() != null) {
-            loadContext.setFetchPlan(jmixDataRepositoryContext.fetchPlan());
-        } else {
-            loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(metadata.getDomainType(), fetchPlanByAnnotation));
-        }
     }
 
     protected List<Order> getSortFromParams(Object[] parameters) {
@@ -156,15 +133,10 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     }
 
     @Override
-    public Object execute(Object[] parameters) {
-        LoadContext<?> loadContext = prepareQueryContext(parameters);
-        setupFetchPlan(loadContext, parameters);
-        loadContext.getQuery().setSort(by(getSortFromParams(parameters)));
+    @Nullable
+    public abstract Object execute(Object[] parameters);
 
-        return processAccordingToReturnType(loadContext, parameters);
-    }
-
-    protected abstract LoadContext<?> prepareQueryContext(Object[] parameters);
+    protected abstract T prepareQueryContext(Object[] parameters);
 
     @Nullable
     protected Object processAccordingToReturnType(LoadContext<?> loadContext, Object[] parameters) {
@@ -212,7 +184,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
         return result;
     }
 
-    protected static String formatMethod(Method method) {
+    public static String formatMethod(Method method) {
         return method.getDeclaringClass().getName() + '#' + method.getName();
     }
 
@@ -222,6 +194,6 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     }
 
     protected String getQueryDescription() {
-        return String.format("fetchPlan:'%s'; fetchPlanIndex:'%s'; jmixArgsIndex:'%s'; sortIndex:'%s'; pageableIndex:'%s'", fetchPlanByAnnotation, fetchPlanIndex, jmixContextIndex, sortIndex, pageableIndex);
+        return String.format("jmixArgsIndex:'%s'; sortIndex:'%s'; pageableIndex:'%s'", jmixContextIndex, sortIndex, pageableIndex);
     }
 }

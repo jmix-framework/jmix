@@ -268,7 +268,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
 
         StringBuilder builder = new StringBuilder().append(originalValueHolder.getClass().getSimpleName());
         Object currentValueHolder = originalValueHolder;
-        int iteration = 0;
+        int iteration = 0; //Just in case. Prevents potential cyclic reference chains (e.g., VH1->VH2, VH2->VH3, VH3->VH1)
         while (currentValueHolder instanceof WrappingValueHolder<?> wrappingValueHolder
                 && wrappingValueHolder.getWrappedValueHolder() != null
                 && wrappingValueHolder.getWrappedValueHolder() != currentValueHolder

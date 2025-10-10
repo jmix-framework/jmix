@@ -149,7 +149,7 @@ public class ValueHoldersSupport {
     public static Object unwrapToValueIfInstantiated(Object valueHolder) {
         if (valueHolder instanceof WrappingValueHolder<?> wrappingValueHolder && wrappingValueHolder.getWrappedValueHolder() != null) {
             ValueHolderInterface<?> wrappedHolder = wrappingValueHolder.getWrappedValueHolder();
-            if (wrappedHolder != null && wrappedHolder.isInstantiated() && !(wrappedHolder instanceof NoValueCollection)) {
+            if (wrappedHolder.isInstantiated() && !(wrappedHolder instanceof NoValueCollection)) {
                 return wrappingValueHolder.getWrappedValueHolder().getValue();
             }
         }

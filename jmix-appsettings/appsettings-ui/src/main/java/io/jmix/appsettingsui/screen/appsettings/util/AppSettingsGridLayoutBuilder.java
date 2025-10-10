@@ -140,8 +140,8 @@ public class AppSettingsGridLayoutBuilder {
                         continue;
                     }
                     if (metaProperty.getType() != MetaProperty.Type.ENUM
-                            && (EntityUtils.isByteArray(metaProperty) || EntityUtils.isUuid(metaProperty))
-                            && !appSettingsUiProperties.isShowUuidFields()) {
+                            && (EntityUtils.isByteArray(metaProperty) || EntityUtils.isUuid(metaProperty)
+                            && !appSettingsUiProperties.isShowUuidFields())) {
                         continue;
                     }
                     if (metadataTools.isAnnotationPresent(item, metaProperty.getName(), Convert.class)) {

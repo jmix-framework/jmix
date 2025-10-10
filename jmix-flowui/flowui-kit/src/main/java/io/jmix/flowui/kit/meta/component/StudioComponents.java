@@ -3543,7 +3543,7 @@ public interface StudioComponents {
             classFqn = "com.vaadin.flow.component.markdown.Markdown",
             category = "Components",
             xmlElement = "markdown",
-            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/component/markdown.svg",
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = "content",

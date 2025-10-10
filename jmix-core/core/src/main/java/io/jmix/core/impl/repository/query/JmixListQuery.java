@@ -28,7 +28,6 @@ import java.util.*;
 
 public class JmixListQuery extends JmixStructuredEntityQuery {
 
-
     protected final Sort staticSort;
 
     public JmixListQuery(DataManager dataManager,

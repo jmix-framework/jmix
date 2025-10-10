@@ -35,8 +35,8 @@ import java.util.stream.Stream;
 
 import static io.jmix.core.Sort.by;
 
-
 public class JmixScalarQuery extends JmixAbstractQuery<ValueLoadContext> {
+
     protected List<String> resultPropertyNames;
     protected String query;
 
@@ -78,7 +78,6 @@ public class JmixScalarQuery extends JmixAbstractQuery<ValueLoadContext> {
 
         lcQuery.setParameters(buildNamedParametersMap(parameters));
 
-
         return new ValueLoadContext()
                 .setQuery(lcQuery)
                 .setHints(collectHints(parameters))
@@ -93,7 +92,6 @@ public class JmixScalarQuery extends JmixAbstractQuery<ValueLoadContext> {
 
         return processAccordingToReturnType(loadContext, parameters);
     }
-
 
     @Nullable
     protected Object processAccordingToReturnType(ValueLoadContext loadContext, Object[] parameters) {

@@ -90,7 +90,7 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(String.format("Query for %s resolved: %s", method, resolvedQuery));
+            log.debug("Query for {} resolved: {}", method, resolvedQuery);
         }
 
         return resolvedQuery;

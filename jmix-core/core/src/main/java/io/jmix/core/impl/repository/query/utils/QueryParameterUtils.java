@@ -29,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class QueryParameterUtils {
+
     protected static final String PARAMETER_TEMPLATE = "([:?][a-zA-Z0-9_$]+)";
     protected static final String PARAMETER_PREFIX = "p_";
 

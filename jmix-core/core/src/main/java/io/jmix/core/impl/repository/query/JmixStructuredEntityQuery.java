@@ -36,6 +36,7 @@ import java.util.List;
  * Base {@link RepositoryQuery} class for repository queries constructed by method name.
  */
 public abstract class JmixStructuredEntityQuery extends JmixAbstractEntityQuery {
+
     protected final Condition conditions;
     protected final boolean distinct;
 

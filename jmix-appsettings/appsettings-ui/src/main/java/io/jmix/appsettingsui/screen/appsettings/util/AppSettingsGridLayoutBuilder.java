@@ -2,6 +2,7 @@ package io.jmix.appsettingsui.screen.appsettings.util;
 
 import io.jmix.appsettings.AppSettings;
 import io.jmix.appsettings.AppSettingsTools;
+import io.jmix.appsettingsui.AppSettingsUiProperties;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
@@ -51,6 +52,9 @@ public class AppSettingsGridLayoutBuilder {
 
     @Autowired
     protected AppSettings appSettings;
+
+    @Autowired
+    protected AppSettingsUiProperties appSettingsUiProperties;
 
     @Autowired
     protected AppSettingsTools appSettingsTools;
@@ -136,7 +140,8 @@ public class AppSettingsGridLayoutBuilder {
                         continue;
                     }
                     if (metaProperty.getType() != MetaProperty.Type.ENUM
-                            && (EntityUtils.isByteArray(metaProperty) || EntityUtils.isUuid(metaProperty))) {
+                            && (EntityUtils.isByteArray(metaProperty) || EntityUtils.isUuid(metaProperty)
+                            && !appSettingsUiProperties.isShowUuidFields())) {
                         continue;
                     }
                     if (metadataTools.isAnnotationPresent(item, metaProperty.getName(), Convert.class)) {

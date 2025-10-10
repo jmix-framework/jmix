@@ -91,6 +91,10 @@ public class InvalidJobDetail implements JobDetail {
 
     @Override
     public Object clone() {
-        return null;
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Job clone failed", e);
+        }
     }
 }

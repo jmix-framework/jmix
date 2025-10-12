@@ -55,13 +55,27 @@ def tableXml = api.processSnippet('table.xml',
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>
     </actions>
-    <layout><%if (createGenericFilter) {%>
+    <%if (fixedFooter) {%>
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="contentBox">
+        <vbox id="contentBox" classNames="overflow-auto">
+    <%} else {%>
+    <layout>
+    <%}%>
+        <%if (createGenericFilter) {%>
         <genericFilter id="genericFilter"
                        dataLoader="${tableDl}">
             <properties include=".*"/>
         </genericFilter><%}%>
         ${tableXml}
+        <%if (fixedFooter) {%>
+        </vbox>
+        <hbox id="lookupActions" visible="false"
+              classNames="px-m py-s bg-contrast-5">
+        <%} else {%>
         <hbox id="lookupActions" visible="false">
+        <%}%>
             <button id="selectButton" action="selectAction"/>
             <button id="discardButton" action="discardAction"/>
         </hbox>

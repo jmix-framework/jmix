@@ -1,4 +1,4 @@
-package ${project_rootPackage}.view.main;
+package ${packageName};
 
 import ${project_rootPackage}.entity.User;
 import com.google.common.base.Strings;
@@ -18,10 +18,15 @@ import io.jmix.flowui.view.ViewDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
+<%if (!updateLayoutProperty) {%>/*
+ * To use the view as a main view don't forget to set
+ * new value (see @ViewController) to 'jmix.ui.main-view-id' property.
+ * Also, the route of this view (see @Route) must differ from the route of default MainView.
+ */<%}%>
 @Route("")
-@ViewController(id = "${normalizedPrefix_underscore}MainView")
-@ViewDescriptor(path = "main-view.xml")
-public class MainView extends StandardMainView {
+@ViewController(id = "${id}")
+@ViewDescriptor(path = "${descriptorName}.xml")
+public class ${controllerName} extends StandardMainView {
 
     @Autowired
     private Messages messages;

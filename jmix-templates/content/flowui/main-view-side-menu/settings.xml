@@ -31,6 +31,18 @@
         <message lang="default"><![CDATA[${project.getName()} application]]></message>
     </locMessages>
 
+    <locMessages key="drawerToggleAriaLabel" expressionKey="${'drawerToggle.ariaLabel'">
+        <message lang="default"><![CDATA[Menu toggle]]></message>
+    </locMessages>
+
+    <locMessages key="applicationTitleText" expressionKey="${'applicationTitle.text'">
+        <message lang="default"><![CDATA[${project.getName()} application]]></message>
+    </locMessages>
+
+    <locMessages key="navigationAriaLabel" expressionKey="${'navigation.ariaLabel'">
+        <message lang="default"><![CDATA[Views]]></message>
+    </locMessages>
+
     <property caption="Descriptor name"
               code="descriptorName"
               defaultValue="main-view-side-menu"

@@ -52,7 +52,7 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <%if (fixedFooter) {%>
+    <%if (detailFixedFooter) {%>
     <layout alignItems="STRETCH"
             padding="false" spacing="false"
             expand="contentBox">
@@ -64,7 +64,7 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
         <%collectionAttributesTable.each{table ->%>
             ${table}
         <%}%>
-        <%if (fixedFooter) {%>
+        <%if (detailFixedFooter) {%>
         </vbox>
         <hbox id="detailActions"
               classNames="px-m py-s bg-contrast-5">

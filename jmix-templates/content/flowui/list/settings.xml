@@ -103,7 +103,7 @@
               preferences="true"
               defaultValue="true"/>
     <property caption="Fixed footer"
-              code="fixedFooter"
+              code="listFixedFooter"
               propertyType="BOOLEAN"
               preferences="true"/>
 

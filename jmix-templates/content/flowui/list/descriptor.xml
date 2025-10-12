@@ -55,7 +55,7 @@ def tableXml = api.processSnippet('table.xml',
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>
     </actions>
-    <%if (fixedFooter) {%>
+    <%if (listFixedFooter) {%>
     <layout alignItems="STRETCH"
             padding="false" spacing="false"
             expand="contentBox">
@@ -69,7 +69,7 @@ def tableXml = api.processSnippet('table.xml',
             <properties include=".*"/>
         </genericFilter><%}%>
         ${tableXml}
-        <%if (fixedFooter) {%>
+        <%if (listFixedFooter) {%>
         </vbox>
         <hbox id="lookupActions" visible="false"
               classNames="px-m py-s bg-contrast-5">

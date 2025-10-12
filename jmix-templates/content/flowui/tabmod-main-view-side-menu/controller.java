@@ -1,6 +1,6 @@
 package ${packageName};
 
-import ${project_rootPackage}.entity.User;
+import ${module_basePackage}.entity.User;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.avatar.Avatar;

@@ -18,7 +18,7 @@
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_main_window.svg"
           name="Main view with top menu"
-          order="80"
+          order="85"
           enabled="true">
     <exclude>
         <tag>TABBED_MODE</tag>

@@ -1,6 +1,6 @@
 package ${packageName}
 
-import ${project_rootPackage}.entity.User
+import ${module_basePackage}.entity.User
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.avatar.Avatar
 import com.vaadin.flow.component.avatar.AvatarVariant

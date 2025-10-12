@@ -10,7 +10,7 @@
                 <drawerToggle id="drawerToggle"
                               classNames="jmix-main-view-drawer-toggle"
                               themeNames="contrast"
-                              ariaLabel="msg://drawerToggle.ariaLabel"/>
+                              ariaLabel="${messageKeys['drawerToggleAriaLabel']}"/>
                 <h1 id="viewTitle" classNames="jmix-main-view-title"/>
 
                 <userMenu id="userMenu"
@@ -34,12 +34,12 @@
                     classNames="jmix-main-view-application-title">
                     <anchor id="baseLink"
                             href="."
-                            text="msg://applicationTitle.text"
+                            text="${messageKeys['applicationTitleText']}"
                             classNames="jmix-main-view-application-title-base-link"/>
                 </h2>
                 <nav id="navigation"
                      classNames="jmix-main-view-navigation"
-                     ariaLabel="msg://navigation.ariaLabel">
+                     ariaLabel="${messageKeys['navigationAriaLabel']}">
                     <listMenu id="menu"/>
                 </nav>
             </section>

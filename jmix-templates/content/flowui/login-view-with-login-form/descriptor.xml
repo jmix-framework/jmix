@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      focusComponent="login"
+      title="${messageKeys['loginViewTitle']}">
+    <layout justifyContent="CENTER" alignItems="CENTER" classNames="jmix-login-main-layout">
+        <loginForm id="login"
+                   forgotPasswordButtonVisible="false">
+            <form title="${messageKeys['loginFormHeaderTitle']}"
+                  username="${messageKeys['loginFormUsername']}"
+                  password="${messageKeys['loginFormPassword']}"
+                  rememberMe="${messageKeys['loginFormRememberMe']}"
+                  submit="${messageKeys['loginFormSubmit']}"
+                  forgotPassword="${messageKeys['loginFormForgotPassword']}"/>
+            <errorMessage title="${messageKeys['loginFormErrorTitle']}"
+                          message="${messageKeys['loginFormBadCredentials']}"
+                          username="${messageKeys['loginFormErrorUsername']}"
+                          password="${messageKeys['loginFormErrorPassword']}"/>
+        </loginForm>
+    </layout>
+</view>

@@ -24,7 +24,7 @@ import java.util.Locale
 @Route(value = "login")
 @ViewController(id = "${id}")
 @ViewDescriptor(path = "${descriptorName}.xml")
-open class LoginView : StandardView(), LocaleChangeObserver {
+open class ${controllerName} : StandardView(), LocaleChangeObserver {
 
     @Autowired
     private lateinit var coreProperties: CoreProperties
@@ -47,7 +47,7 @@ open class LoginView : StandardView(), LocaleChangeObserver {
     @Value("\\\${ui.login.defaultPassword:}")
     private lateinit var defaultPassword: String
 
-    private val log = LoggerFactory.getLogger(LoginView::class.java)
+    private val log = LoggerFactory.getLogger(${controllerName}::class.java)
 
     @Subscribe
     fun onInit(event: InitEvent) {
@@ -90,7 +90,7 @@ open class LoginView : StandardView(), LocaleChangeObserver {
     }
 
     override fun localeChange(event: LocaleChangeEvent) {
-        UI.getCurrent().page.setTitle(messageBundle.getMessage("LoginView.title"))
+        UI.getCurrent().page.setTitle(messageBundle.getMessage("${studioUtils.decapitalize(controllerName)}.title"))
 
         val loginI18n: JmixLoginI18n = JmixLoginI18n.createDefault()
 

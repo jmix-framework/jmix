@@ -41,9 +41,7 @@ import java.util.stream.Collectors
 @Route(value = "login")
 @ViewController(id = "${id}")
 @ViewDescriptor(path = "${descriptorName}.xml")
-open class LoginView : StandardView(), LocaleChangeObserver {
-
-    private val log = LoggerFactory.getLogger(LoginView::class.java)
+open class ${controllerName} : StandardView(), LocaleChangeObserver {
 
     @ViewComponent
     private lateinit var header: Div
@@ -92,6 +90,8 @@ open class LoginView : StandardView(), LocaleChangeObserver {
 
     @Value("\\\${ui.login.defaultPassword:}")
     private lateinit var defaultPassword: String
+
+    private val log = LoggerFactory.getLogger(${controllerName}::class.java)
 
     @Subscribe
     fun onInit(event: InitEvent) {
@@ -155,7 +155,7 @@ open class LoginView : StandardView(), LocaleChangeObserver {
     }
 
     override fun localeChange(event: LocaleChangeEvent) {
-        UI.getCurrent().page.setTitle(messageBundle.getMessage("LoginView.title"))
+        UI.getCurrent().page.setTitle(messageBundle.getMessage("${studioUtils.decapitalize(controllerName)}.title"))
 
         header.text = messageBundle.getMessage("loginForm.headerTitle")
         usernameField.label = messageBundle.getMessage("loginForm.username")

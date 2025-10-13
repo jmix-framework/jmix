@@ -16,7 +16,7 @@
   -->
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
-          icon="resource://template/template_main_window.svg"
+          icon="resource://template/template_login_window.svg"
           name="Login view with LoginForm"
           order="70"
           enabled="true">
@@ -28,43 +28,43 @@
         <message lang="default"><![CDATA[Login - ${project.getName()}]]></message>
     </locMessages>
 
-    <locMessages key="loginFormHeaderTitle" expressionKey="${'loginForm.headerTitle'">
+    <locMessages key="loginFormHeaderTitle" expressionKey="${'loginForm.headerTitle'}">
         <message lang="default"><![CDATA[]]></message>
     </locMessages>
 
-    <locMessages key="loginFormUsername" expressionKey="${'loginForm.username'">
+    <locMessages key="loginFormUsername" expressionKey="${'loginForm.username'}">
         <message lang="default"><![CDATA[Username]]></message>
     </locMessages>
 
-    <locMessages key="loginFormPassword" expressionKey="${'loginForm.password'">
+    <locMessages key="loginFormPassword" expressionKey="${'loginForm.password'}">
         <message lang="default"><![CDATA[Password]]></message>
     </locMessages>
 
-    <locMessages key="loginFormRememberMe" expressionKey="${'loginForm.rememberMe'">
+    <locMessages key="loginFormRememberMe" expressionKey="${'loginForm.rememberMe'}">
         <message lang="default"><![CDATA[Remember me]]></message>
     </locMessages>
 
-    <locMessages key="loginFormSubmit" expressionKey="${'loginForm.submit'">
+    <locMessages key="loginFormSubmit" expressionKey="${'loginForm.submit'}">
         <message lang="default"><![CDATA[Log in]]></message>
     </locMessages>
 
-    <locMessages key="loginFormForgotPassword" expressionKey="${'loginForm.forgotPassword'">
+    <locMessages key="loginFormForgotPassword" expressionKey="${'loginForm.forgotPassword'}">
         <message lang="default"><![CDATA[Forgot password]]></message>
     </locMessages>
 
-    <locMessages key="loginFormErrorTitle" expressionKey="${'loginForm.errorTitle'">
+    <locMessages key="loginFormErrorTitle" expressionKey="${'loginForm.errorTitle'}">
         <message lang="default"><![CDATA[Login failed]]></message>
     </locMessages>
 
-    <locMessages key="loginFormBadCredentials" expressionKey="${'loginForm.badCredentials'">
+    <locMessages key="loginFormBadCredentials" expressionKey="${'loginForm.badCredentials'}">
         <message lang="default"><![CDATA[Check that you have entered the correct username and password and try again]]></message>
     </locMessages>
 
-    <locMessages key="loginFormErrorUsername" expressionKey="${'loginForm.errorUsername'">
+    <locMessages key="loginFormErrorUsername" expressionKey="${'loginForm.errorUsername'}">
         <message lang="default"><![CDATA[Username is required]]></message>
     </locMessages>
 
-    <locMessages key="loginFormErrorPassword" expressionKey="${'loginForm.errorPassword'">
+    <locMessages key="loginFormErrorPassword" expressionKey="${'loginForm.errorPassword'}">
         <message lang="default"><![CDATA[Password is required]]></message>
     </locMessages>
 

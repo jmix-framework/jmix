@@ -42,9 +42,9 @@ import java.util.stream.Collectors;
 @Route(value = "login")
 @ViewController(id = "${id}")
 @ViewDescriptor(path = "${descriptorName}.xml")
-public class LoginView extends StandardView implements LocaleChangeObserver {
+public class ${controllerName} extends StandardView implements LocaleChangeObserver {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginView.class);
+    private static final Logger log = LoggerFactory.getLogger(${controllerName}.class);
 
     @ViewComponent
     private Div header;
@@ -76,10 +76,10 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     @Autowired
     private ViewValidation viewValidation;
 
-    @Value("${ui.login.defaultUsername:}")
+    @Value("\${ui.login.defaultUsername:}")
     private String defaultUsername;
 
-    @Value("${ui.login.defaultPassword:}")
+    @Value("\${ui.login.defaultPassword:}")
     private String defaultPassword;
 
     @Subscribe
@@ -147,7 +147,7 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
 
     @Override
     public void localeChange(final LocaleChangeEvent event) {
-        UI.getCurrent().getPage().setTitle(messageBundle.getMessage("LoginView.title"));
+        UI.getCurrent().getPage().setTitle(messageBundle.getMessage("${studioUtils.decapitalize(controllerName)}.title"));
 
         header.setText(messageBundle.getMessage("loginForm.headerTitle"));
         usernameField.setLabel(messageBundle.getMessage("loginForm.username"));

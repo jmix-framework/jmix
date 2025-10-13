@@ -65,6 +65,10 @@
               propertyType="BOOLEAN"
               preferences="true"
               defaultValue="true"/>
+    <property caption="Fixed footer"
+              code="listFixedFooter"
+              propertyType="BOOLEAN"
+              preferences="true"/>
 
     <property caption="Descriptor name"
               code="viewDescriptorName"

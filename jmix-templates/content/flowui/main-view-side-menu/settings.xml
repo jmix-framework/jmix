@@ -76,6 +76,12 @@
               defaultValue="false"
               preferences="true"/>
 
+    <property caption="Create user menu"
+              code="createUserMenu"
+              propertyType="BOOLEAN"
+              defaultValue="true"
+              preferences="true"/>
+
     <source fileExt="xml"
             name="descriptor"/>
     <source fileExt="java"

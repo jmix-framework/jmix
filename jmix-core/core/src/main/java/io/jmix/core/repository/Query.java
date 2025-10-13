@@ -35,7 +35,7 @@ public @interface Query {
 
     /**
      * Allows specifying custom property names to store values in {@link io.jmix.core.entity.KeyValueEntity} by.
-     *"property_&ltn&gt" property names will be generated in case of absence.
+     *"property_&lt;n&gt;" property names will be generated in case of absence.
      * @see io.jmix.core.entity.KeyValueEntity#getValue(String)
      */
     String[] properties() default {};

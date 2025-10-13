@@ -16,17 +16,12 @@
 
 package io.jmix.searchopensearch.searching.strategy.impl;
 
-import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.SearchUtils;
-import io.jmix.search.searching.impl.AbstractSearchStrategy;
-import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
+import io.jmix.searchopensearch.searching.strategy.OpenSearchQueryConfigurer;
 import org.opensearch.client.opensearch._types.query_dsl.Operator;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * Describes {@link SearchStrategy} that searches documents with fields match all input terms in any order.
@@ -34,13 +29,10 @@ import java.util.Set;
  */
 @Deprecated(since = "2.4", forRemoval = true)
 @Component("search_AllTermsAnyFieldOpenSearchSearchStrategy")
-public class AllTermsAnyFieldOpenSearchSearchStrategy extends AbstractSearchStrategy
-        implements OpenSearchSearchStrategy {
+public class AllTermsAnyFieldOpenSearchSearchStrategy extends AbstractOpenSearchStrategy{
 
-    protected final SearchUtils searchUtils;
-
-    public AllTermsAnyFieldOpenSearchSearchStrategy(SearchUtils searchUtils) {
-        this.searchUtils = searchUtils;
+    public AllTermsAnyFieldOpenSearchSearchStrategy(OpenSearchQueryConfigurer queryConfigurator) {
+        super(queryConfigurator);
     }
 
     @Override
@@ -49,14 +41,15 @@ public class AllTermsAnyFieldOpenSearchSearchStrategy extends AbstractSearchStra
     }
 
     @Override
-    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
-        Set<String> effectiveFieldsToSearch = searchUtils.resolveEffectiveSearchFields(searchContext.getEntities());
-        requestBuilder.query(queryBuilder ->
-                queryBuilder.simpleQueryString(simpleQueryStringQueryBuilder ->
-                        simpleQueryStringQueryBuilder.fields(new ArrayList<>(effectiveFieldsToSearch))
-                                .query(searchContext.getEscapedSearchText())
-                                .defaultOperator(Operator.And)
-                )
+    public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
+        queryConfigurator.configureRequest(
+                requestContext,
+                (queryBuilder, scope) ->
+                        queryBuilder.simpleQueryString(simpleQueryStringQueryBuilder ->
+                                simpleQueryStringQueryBuilder.fields(scope.getFieldList())
+                                        .query(requestContext.getSearchContext().getEscapedSearchText())
+                                        .defaultOperator(Operator.And)
+                        )
         );
     }
 }

@@ -1,10 +1,14 @@
 package io.jmix.searchelasticsearch.searching.strategy;
 
 import co.elastic.clients.elasticsearch.core.SearchRequest;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 
-public interface ElasticsearchSearchStrategy extends SearchStrategy {
+/**
+ * A Elasticsearch-specific extension of the common {link @SearchStrategy} interface
+ */
+public interface ElasticsearchSearchStrategy extends SearchStrategy<SearchRequest.Builder> {
 
     /**
      * Configures Elasticsearch {@link SearchRequest}.
@@ -14,6 +18,14 @@ public interface ElasticsearchSearchStrategy extends SearchStrategy {
      *
      * @param requestBuilder allows to configure search request
      * @param searchContext  contains details about search being performed
+     * @deprecated TODO Pavel Aleksandrov
+     * Use {@link ElasticsearchSearchStrategy#configureRequest(SearchRequestContext)}
      */
+    @Deprecated(since = "2.7", forRemoval = true)
     void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext);
+
+    @Override
+    default void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
+        configureRequest(requestContext.getRequestBuilder(), requestContext.getSearchContext());
+    }
 }

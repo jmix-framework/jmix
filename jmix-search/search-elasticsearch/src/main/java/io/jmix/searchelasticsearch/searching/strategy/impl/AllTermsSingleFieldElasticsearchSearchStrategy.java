@@ -18,15 +18,10 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.SearchUtils;
-import io.jmix.search.searching.impl.AbstractSearchStrategy;
-import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
+import io.jmix.searchelasticsearch.searching.strategy.ElasticSearchQueryConfigurer;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * Describes {@link SearchStrategy} that searches documents with at least one field matches all input terms in any order.
@@ -34,13 +29,10 @@ import java.util.Set;
  */
 @Deprecated(since = "2.4", forRemoval = true)
 @Component("search_AllTermsSingleFieldElasticsearchSearchStrategy")
-public class AllTermsSingleFieldElasticsearchSearchStrategy extends AbstractSearchStrategy
-        implements ElasticsearchSearchStrategy {
+public class AllTermsSingleFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy{
 
-    protected final SearchUtils searchUtils;
-
-    public AllTermsSingleFieldElasticsearchSearchStrategy(SearchUtils searchUtils) {
-        this.searchUtils = searchUtils;
+    public AllTermsSingleFieldElasticsearchSearchStrategy(ElasticSearchQueryConfigurer queryConfigurator) {
+        super(queryConfigurator);
     }
 
     @Override
@@ -49,14 +41,15 @@ public class AllTermsSingleFieldElasticsearchSearchStrategy extends AbstractSear
     }
 
     @Override
-    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
-        Set<String> effectiveFieldsToSearch = searchUtils.resolveEffectiveSearchFields(searchContext.getEntities());
-        requestBuilder.query(queryBuilder ->
-                queryBuilder.multiMatch(multiMatchQueryBuilder ->
-                        multiMatchQueryBuilder.fields(new ArrayList<>(effectiveFieldsToSearch))
-                                .query(searchContext.getEscapedSearchText())
-                                .operator(Operator.And)
-                )
+    public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
+        queryConfigurator.configureRequest(
+                requestContext,
+                (queryBuilder, scope) ->
+                        queryBuilder.multiMatch(multiMatchQueryBuilder ->
+                                multiMatchQueryBuilder.fields(scope.getFieldList())
+                                        .query(requestContext.getSearchContext().getEscapedSearchText())
+                                        .operator(Operator.And)
+                        )
         );
     }
 }

@@ -19,6 +19,7 @@ package io.jmix.searchopensearch.searching.strategy.impl;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
+import io.jmix.searchopensearch.searching.strategy.OpenSearchQueryConfigurer;
 import org.apache.commons.lang3.StringUtils;
 import org.opensearch.client.opensearch._types.query_dsl.TextQueryType;
 import org.opensearch.client.opensearch.core.SearchRequest;
@@ -39,7 +40,7 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
     protected final SearchProperties searchProperties;
 
     public StartsWithOpenSearchSearchStrategy(OpenSearchQueryConfigurer queryConfigurator,
-                                                 SearchProperties searchProperties) {
+                                              SearchProperties searchProperties) {
         super(queryConfigurator);
         this.searchProperties = searchProperties;
     }

@@ -14,34 +14,33 @@
  * limitations under the License.
  */
 
-package io.jmix.searchelasticsearch.searching.strategy.impl;
+package io.jmix.searchopensearch.searching.strategy;
 
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch.core.SearchRequest;
-import co.elastic.clients.util.ObjectBuilder;
 import io.jmix.search.searching.AbstractSearchQueryConfigurer;
 import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.IndexSearchRequestScope;
 import io.jmix.search.searching.SearchRequestScopeProvider;
+import org.opensearch.client.opensearch._types.query_dsl.Query;
+import org.opensearch.client.opensearch.core.SearchRequest;
+import org.opensearch.client.util.ObjectBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
- * A  Elasticsearch-specific implementation of the {@link AbstractSearchQueryConfigurer}
+ * A  OpenSearch-specific implementation of the {@link AbstractSearchQueryConfigurer}
  */
-@Component("search_ElasticSearchQueryConfigurer")
-public class ElasticSearchQueryConfigurer extends AbstractSearchQueryConfigurer<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
+@Component("search_OpenSearchQueryConfigurer")
+public class OpenSearchQueryConfigurer extends AbstractSearchQueryConfigurer<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
 
-    protected ElasticSearchQueryConfigurer(SearchRequestScopeProvider searchRequestScopeProvider) {
+    protected OpenSearchQueryConfigurer(SearchRequestScopeProvider searchRequestScopeProvider) {
         super(searchRequestScopeProvider);
     }
 
     @Override
-    protected void querySettingToRequestBuilder(
-            SearchRequestContext<SearchRequest.Builder> requestContext,
-            BusinessQueryConfigurer<Query.Builder, ObjectBuilder<Query>> businessQueryConfigurer,
-            List<IndexSearchRequestScope> indexSearchRequestScopes) {
+    protected void querySettingToRequestBuilder(SearchRequestContext<SearchRequest.Builder> requestContext,
+                                                BusinessQueryConfigurer<Query.Builder, ObjectBuilder<Query>> businessQueryConfigurer,
+                                                List<IndexSearchRequestScope> indexSearchRequestScopes) {
         requestContext.getRequestBuilder().query(createQuery(businessQueryConfigurer, indexSearchRequestScopes).build());
     }
 
@@ -78,7 +77,7 @@ public class ElasticSearchQueryConfigurer extends AbstractSearchQueryConfigurer<
         return Query.of(root ->
                 root.bool(b -> b
                         .must(m -> m.term(t -> t.field("_index")
-                                .value(indexSearchRequestScope.indexConfiguration().getIndexName())))
+                                .value(v -> v.stringValue(indexSearchRequestScope.indexConfiguration().getIndexName()))))
                         .must(m2 -> businessQueryConfigurer.apply(m2, indexSearchRequestScope))
                 ));
     }

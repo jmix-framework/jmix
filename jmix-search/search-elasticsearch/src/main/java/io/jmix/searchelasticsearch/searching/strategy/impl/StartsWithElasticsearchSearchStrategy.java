@@ -21,6 +21,7 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
+import io.jmix.searchelasticsearch.searching.strategy.ElasticSearchQueryConfigurer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 

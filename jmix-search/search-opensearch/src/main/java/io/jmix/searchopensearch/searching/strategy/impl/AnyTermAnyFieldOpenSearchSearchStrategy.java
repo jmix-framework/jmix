@@ -2,6 +2,7 @@ package io.jmix.searchopensearch.searching.strategy.impl;
 
 import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
+import io.jmix.searchopensearch.searching.strategy.OpenSearchQueryConfigurer;
 import org.opensearch.client.opensearch._types.query_dsl.Operator;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.springframework.stereotype.Component;

@@ -18,6 +18,7 @@ package io.jmix.searchopensearch.searching.strategy.impl;
 
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
+import io.jmix.searchopensearch.searching.strategy.OpenSearchQueryConfigurer;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import org.opensearch.client.opensearch.core.SearchRequest;
 

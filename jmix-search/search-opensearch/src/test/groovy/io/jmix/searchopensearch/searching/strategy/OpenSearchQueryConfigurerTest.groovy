@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package io.jmix.searchelasticsearch.searching.strategy.impl
+package io.jmix.searchopensearch.searching.strategy
 
-import co.elastic.clients.elasticsearch._types.query_dsl.Operator
-import co.elastic.clients.json.JsonpMapper
-import co.elastic.clients.json.JsonpSerializable
-import co.elastic.clients.json.jackson.JacksonJsonpMapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jmix.search.index.IndexConfiguration
 import io.jmix.search.searching.IndexSearchRequestScope
 import io.jmix.search.searching.SearchRequestScopeProvider
 import jakarta.json.spi.JsonProvider
+import org.opensearch.client.json.JsonpMapper
+import org.opensearch.client.json.JsonpSerializable
+import org.opensearch.client.json.jackson.JacksonJsonpMapper
+import org.opensearch.client.opensearch._types.query_dsl.Operator
 import spock.lang.Specification
 
-import static java.nio.charset.StandardCharsets.*
+import static java.nio.charset.StandardCharsets.UTF_8
 
-class ElasticSearchQueryConfigurerTest extends Specification {
+class OpenSearchQueryConfigurerTest extends Specification {
+
     def "configureRequest. multiple indexes"() {
         given:
         List<IndexSearchRequestScope> scopes = List.of(
                 createScope("index1", "field1_1"),
                 createScope("index2", "field2_1", "field2_2", "field2_3")
         )
-
         and:
-        def configurator = new ElasticSearchQueryConfigurer(Mock(SearchRequestScopeProvider))
+        def configurator = new OpenSearchQueryConfigurer(Mock(SearchRequestScopeProvider))
 
         when:
         def query = configurator.createQuery(
@@ -46,7 +46,8 @@ class ElasticSearchQueryConfigurerTest extends Specification {
                         b.multiMatch(m ->
                                 m.fields(scope.getFieldList()).query("search text").operator(Operator.Or)
                         )
-                , scopes).build()
+                , scopes)
+                .build()
 
         then:
         jsonEquals(toJson(query), readResourceAsString("request_multiple_indexes"))
@@ -58,9 +59,8 @@ class ElasticSearchQueryConfigurerTest extends Specification {
                 createScope("index1", "field1_1", "field1_2", "field1_3"),
         )
 
-
         and:
-        def configurator = new ElasticSearchQueryConfigurer(Mock(SearchRequestScopeProvider))
+        def configurator = new OpenSearchQueryConfigurer(Mock(SearchRequestScopeProvider))
 
         when:
         def query = configurator.createQuery(
@@ -89,7 +89,7 @@ class ElasticSearchQueryConfigurerTest extends Specification {
     }
 
     private static String readResourceAsString(String resourcePath) {
-        InputStream is = ElasticSearchQueryConfigurerTest.class.classLoader.getResourceAsStream("requests/" + resourcePath + ".json")
+        InputStream is = this.getClassLoader().getResourceAsStream("requests/" + resourcePath + ".json")
         assert is != null: "Resource not found: $resourcePath"
         try {
             return new String(is.readAllBytes(), UTF_8)

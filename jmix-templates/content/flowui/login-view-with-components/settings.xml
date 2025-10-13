@@ -103,4 +103,9 @@
             name="controller"/>
     <source fileExt="kt"
             name="controller"/>
+
+    <resource>
+        <directory>styles</directory>
+        <copyTo>META-INF/frontend/styles/login-view/</copyTo>
+    </resource>
 </template>

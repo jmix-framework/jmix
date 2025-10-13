@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Paragraph;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
 @Route(value = "login")
 @ViewController(id = "${id}")
 @ViewDescriptor(path = "${descriptorName}.xml")
+@CssImport("./styles/login-view/login-view.css")
 public class ${controllerName} extends StandardView implements LocaleChangeObserver {
 
     private static final Logger log = LoggerFactory.getLogger(${controllerName}.class);

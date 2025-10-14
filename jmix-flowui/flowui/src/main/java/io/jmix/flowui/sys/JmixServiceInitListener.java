@@ -136,12 +136,16 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         // current user to publish events, which is not possible with bean.
         event.getSession().setAttribute(UiEventsManager.class, new UiEventsManager());
 
-        // default browser locale initialization
-        LocaleUtil.getLocaleMatchByLanguage(event.getRequest(), coreProperties.getAvailableLocales())
-                .or(() -> Optional.ofNullable(coreProperties.getAvailableLocales().get(0)))
-                .ifPresent(event.getSession()::setLocale);
+        initDefaultBrowserLocale(event.getRequest(), event.getSession());
 
         initCookieLocale(event.getSession());
+    }
+
+    protected void initDefaultBrowserLocale(VaadinRequest request, VaadinSession session) {
+        // default browser locale initialization
+        LocaleUtil.getLocaleMatchByLanguage(request, coreProperties.getAvailableLocales())
+                .or(() -> Optional.ofNullable(coreProperties.getAvailableLocales().get(0)))
+                .ifPresent(session::setLocale);
     }
 
     protected void initCookieLocale(VaadinSession session) {

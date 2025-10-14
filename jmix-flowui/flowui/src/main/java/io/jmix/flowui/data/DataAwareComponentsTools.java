@@ -28,7 +28,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.component.HasLengthLimited;
 import io.jmix.flowui.component.HasZoneId;
-import io.jmix.flowui.component.select.JmixSelect;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
@@ -162,21 +161,6 @@ public class DataAwareComponentsTools {
                 .ifPresent(component::setMax);
         getMinRange(component.getMin(), valueSource, LocalTime.class)
                 .ifPresent(component::setMin);
-    }
-
-    /**
-     * Sets whether empty selection is allowed for the given {@link JmixSelect} component based on entity metadata.
-     *
-     * @param component   the {@link JmixSelect} component to configure
-     * @param valueSource the entity value source
-     */
-    public void setupEmptySelectionAllowed(JmixSelect<?> component, EntityValueSource<?, ?> valueSource) {
-        MetaProperty metaProperty = valueSource.getMetaPropertyPath().getMetaProperty();
-        Map<String, Object> annotations = metaProperty.getAnnotations();
-
-        Boolean notNullValue = (Boolean) annotations.get(NotNull.class.getName() + "_notnull_ui_component");
-        boolean mandatory = metaProperty.isMandatory() || Boolean.TRUE.equals(notNullValue);
-        component.setEmptySelectionAllowed(!mandatory);
     }
 
     @SuppressWarnings("unchecked")

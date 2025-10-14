@@ -29,7 +29,7 @@ import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
-import io.jmix.flowui.component.delegate.SelectDelegate;
+import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
@@ -49,7 +49,7 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
 
     protected ApplicationContext applicationContext;
 
-    protected SelectDelegate<JmixSelect<V>, V, V> fieldDelegate;
+    protected FieldDelegate<JmixSelect<V>, V, V> fieldDelegate;
     protected DataViewDelegate<JmixSelect<V>, V> dataViewDelegate;
 
     @Override
@@ -202,8 +202,8 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
     }
 
     @SuppressWarnings("unchecked")
-    protected SelectDelegate<JmixSelect<V>, V, V> createFieldDelegate() {
-        return applicationContext.getBean(SelectDelegate.class, this);
+    protected FieldDelegate<JmixSelect<V>, V, V> createFieldDelegate() {
+        return applicationContext.getBean(FieldDelegate.class, this);
     }
 
     @SuppressWarnings("unchecked")

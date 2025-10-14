@@ -19,7 +19,6 @@ package data_aware_components.view;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
-import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.JmixEmailField;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -28,7 +27,6 @@ import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
-import test_support.entity.dataaware.TestEmptySelectionAllowedEntity;
 
 import java.time.OffsetTime;
 import java.util.Date;
@@ -63,9 +61,4 @@ public class DataAwareComponentsView extends StandardView {
     public TypedTimePicker<OffsetTime> rangeTimePicker;
     @ViewComponent
     public TypedDateTimePicker<Date> rangeDateTimePicker;
-
-    @ViewComponent
-    public JmixSelect<TestEmptySelectionAllowedEntity> emptySelectionNotAllowedSelect;
-    @ViewComponent
-    public JmixSelect<TestEmptySelectionAllowedEntity> emptySelectionAllowedSelect;
 }

@@ -34,6 +34,7 @@ import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.SupportsDatatype;
+import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import io.jmix.flowui.component.select.JmixSelect;
@@ -88,7 +89,7 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
 
         PropertyFilterComponentGenerationContext pfContext = (PropertyFilterComponentGenerationContext) context;
         if (pfContext.getOperation().getType() == Operation.Type.DATE) {
-          return createDatePicker(context);
+            return createDateField(context);
         } else if (pfContext.getOperation().getType() == Operation.Type.UNARY) {
             return createUnaryField(context);
         } else if (pfContext.getOperation().getType() == Operation.Type.LIST) {
@@ -96,7 +97,7 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
         } else if (pfContext.getOperation().getType() == Operation.Type.INTERVAL) {
             return createIntervalField(context, mpp);
         } else if (mpp.getRange().getCardinality().isMany()
-                && pfContext.getOperation().getType() == PropertyFilter.Operation.Type.VALUE) {
+                && pfContext.getOperation().getType() == Operation.Type.VALUE) {
             //for 'member of' conditions of x-to-many property
             return createEntityField(context);
         }
@@ -129,6 +130,19 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
         }
 
         return field;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected Component createDateField(ComponentGenerationContext context) {
+        TypedDatePicker datePicker = ((TypedDatePicker) createDatePicker(context));
+
+        MetaClass metaClass = context.getMetaClass();
+        MetaPropertyPath mpp = resolveMetaPropertyPath(metaClass, context.getProperty());
+        if (mpp != null) {
+            datePicker.setDatatype(mpp.getRange().asDatatype());
+        }
+
+        return datePicker;
     }
 
     @Override

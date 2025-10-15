@@ -20,6 +20,8 @@ import io.jmix.core.*;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
 import io.jmix.core.impl.repository.query.utils.QueryParameterUtils;
+import io.jmix.core.metamodel.datatype.EnumClass;
+import io.jmix.core.metamodel.datatype.impl.EnumUtils;
 import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.core.repository.Query;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
@@ -145,19 +147,20 @@ public class JmixScalarQuery extends JmixAbstractQuery<ValueLoadContext> {
                 if (genericReturnType instanceof ParameterizedType prt
                         && prt.getActualTypeArguments().length == 1
                         && prt.getActualTypeArguments()[0] instanceof Class<?> clazz) {
-                    result = processSingleValueAccordingToReturnType(keyValueEntities, clazz);
-                } else {//return KeyValueEntity in case of the raw type
-                    result = processSingleValueAccordingToReturnType(keyValueEntities, KeyValueEntity.class);
+                    result = processAsSingleValue(keyValueEntities, clazz);
+                } else {//return KeyValueEntity in case of the raw type or type parametrized with not a Class
+                    result = processAsSingleValue(keyValueEntities, KeyValueEntity.class);
                 }
             }
         } else {
-            result = processSingleValueAccordingToReturnType(keyValueEntities, returnClass);
+            result = processAsSingleValue(keyValueEntities, returnClass);
         }
 
         return result;
     }
 
-    protected Object processSingleValueAccordingToReturnType(List<KeyValueEntity> keyValueEntities, Class<?> returnClass) {
+    @Nullable
+    protected Object processAsSingleValue(List<KeyValueEntity> keyValueEntities, Class<?> returnClass) {
         if (keyValueEntities.isEmpty())
             throw new NoResultException("No results");
 
@@ -165,10 +168,25 @@ public class JmixScalarQuery extends JmixAbstractQuery<ValueLoadContext> {
             throw new IncorrectResultSizeDataAccessException(1, keyValueEntities.size());
         }
 
+        return processSingleValueAccordingToReturnType(keyValueEntities.get(0), returnClass);
+    }
+
+    @Nullable
+    protected Object processSingleValueAccordingToReturnType(KeyValueEntity keyValueEntity, Class<?> returnClass) {
         if (KeyValueEntity.class.isAssignableFrom(returnClass)) {
-            return keyValueEntities.get(0);
+            return keyValueEntity;
+        } else if (EnumClass.class.isAssignableFrom(returnClass)) {
+            Object value = keyValueEntity.getValue(resultPropertyNames.get(0));
+            if (value == null) return null;
+            for (Object o : returnClass.getEnumConstants()) {
+                EnumClass<?> enumValue = (EnumClass<?>) o;
+                if (value.equals(enumValue.getId())) {
+                    return enumValue;
+                }
+            }
+            throw new DevelopmentException("Unable to find EnumClass value for id '" + value + "'");
         } else {
-            return keyValueEntities.get(0).getValue(resultPropertyNames.get(0));
+            return keyValueEntity.getValue(resultPropertyNames.get(0));
         }
     }
 
@@ -189,7 +207,6 @@ public class JmixScalarQuery extends JmixAbstractQuery<ValueLoadContext> {
                 throw new DevelopmentException("Complex collections is unsupported");
             }
 
-
             Type rawType = pt.getRawType();
 
             if (collectionClass == null) {
@@ -200,12 +217,6 @@ public class JmixScalarQuery extends JmixAbstractQuery<ValueLoadContext> {
                 }
             }
 
-            if (resultPropertyNames.size() != 1) {
-                throw new RuntimeException("Conversion to Collection of complex types is unsupported");
-            }
-
-            String propertyName = resultPropertyNames.get(0);
-
             boolean isKeyValueTypeArgument = actualTypeArguments.length == 1
                     && actualTypeArguments[0] instanceof Class<?> clazz
                     && KeyValueEntity.class.isAssignableFrom(clazz);
@@ -214,15 +225,24 @@ public class JmixScalarQuery extends JmixAbstractQuery<ValueLoadContext> {
                 return keyValueEntities;
             }
 
+            if (resultPropertyNames.size() != 1 && !isKeyValueTypeArgument) {
+                throw new DevelopmentException("Conversion to Collection of complex types is unsupported");
+            }
+
+            Class<?> argumentClass;
+            if (actualTypeArguments.length == 0) {
+                argumentClass = KeyValueEntity.class;
+            } else if (actualTypeArguments[0] instanceof Class<?>) {
+                argumentClass = (Class<?>) actualTypeArguments[0];
+            } else {
+                throw new DevelopmentException("Unsupported generic type:" + actualTypeArguments[0]);
+            }
+
             //noinspection rawtypes
             Collection result = createCollectionOfClass(collectionClass, keyValueEntities.size());
 
-            if (isKeyValueTypeArgument) {
-                result.addAll(keyValueEntities);
-            } else {
-                for (KeyValueEntity keyValueEntity : keyValueEntities) {
-                    result.add(keyValueEntity.getValue(propertyName));
-                }
+            for (KeyValueEntity keyValueEntity : keyValueEntities) {
+                result.add(processSingleValueAccordingToReturnType(keyValueEntity, argumentClass));
             }
 
             if (rawType instanceof Class<?> returnClass && Stream.class.isAssignableFrom(returnClass)) {

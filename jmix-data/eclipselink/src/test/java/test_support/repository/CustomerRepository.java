@@ -23,6 +23,7 @@ import io.jmix.core.repository.JmixDataRepository;
 import io.jmix.core.repository.Query;
 import org.springframework.data.repository.query.Param;
 import test_support.entity.repository.Customer;
+import test_support.entity.repository.CustomerGrade;
 
 import java.util.*;
 
@@ -90,4 +91,7 @@ public interface CustomerRepository extends JmixDataRepository<Customer, UUID> {
 
     @Query(value = "select count(c) from repository$Customer c where c.name like ?1")
     Integer countAllByScalarQueryWithParams(String name);
+
+    @Query(value = "select distinct c.grade from repository$Customer c order by c.name")
+    List<CustomerGrade> getAllGrades();
 }

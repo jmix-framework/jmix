@@ -85,8 +85,8 @@ public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
     @Query("select e.age from repository$Employee e where(e.name is not null) order by e.name desc")
     LinkedHashSet queryEmployeeAgesRawLHSByNameNotNullOrderByNameDesc();
 
-    @Query("select e.age from repository$Employee e")
-    Slice<Integer> queryEmployee(Pageable pageable);
+    @Query(value = "select e.age, e.secondName from repository$Employee e", properties = {"age", "secondNameForSort"})
+    Slice<KeyValueEntity> queryEmployeeAges(Pageable pageable);
 
     @Query("select e.secondName from repository$Employee e")
     Optional<String> queryEmployeeSecondNameByContext(JmixDataRepositoryContext context);
@@ -103,4 +103,11 @@ public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
     @Query(value = "select e.age, e.name, e.secondName from repository$Employee e where e.name = :name",
             properties = {"age", "name", "secondName"})
     Optional<KeyValueEntity> queryEmployeeValuesOptionalNamed(@Param("name") String name);
+
+    @Query("select e.age, e.name, e.secondName from repository$Employee e order by e.name")
+    List<KeyValueEntity> queryEmployeeValuesList();
+
+    @Query(value = "select e.age, e.name, e.secondName from repository$Employee e order by e.name",
+            properties = {"firstColumn", "secondColumn", "thirdColumn"})
+    LinkedHashSet<KeyValueEntity> queryEmployeeValuesSet();
 }

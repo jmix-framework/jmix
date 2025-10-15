@@ -79,6 +79,7 @@ public class TriggerModel {
 
     public void setTimeZoneId(String timeZone) { this.timeZoneId = timeZone; }
 
+    @Nullable
     public String getTimeZoneId() { return timeZoneId; }
 
     @Nullable

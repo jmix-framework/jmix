@@ -34,6 +34,9 @@
                     <button id="repeatModeSelectorHelpButton" classNames="self-center"/>
                 </hbox>
             </formItem>
+            <formItem id="timezoneFormItem">
+                <comboBox id="timeZoneField" property="timeZoneId" clearButtonVisible="true"/>
+            </formItem>
             <formItem id="repeatCountFormItem" visible="false"
                       label="msg://io.jmix.quartz.model/TriggerModel.repeatCount">
                 <hbox id="repeatCountBox">

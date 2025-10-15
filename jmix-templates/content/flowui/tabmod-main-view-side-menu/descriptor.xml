@@ -67,7 +67,16 @@
             </mainTabSheet>
             <initialLayout id="initialLayout"
                            classNames="jmix-initial-layout"
+                           alignItems="CENTER" justifyContent="CENTER"
                            width="100%" height="100%">
+                <vbox alignItems="CENTER" maxWidth="40em" >
+                    <image resource="icons/icon.png" height="5rem"/>
+                    <h1 text="${messageKeys['applicationTitleText']}"/>
+                </vbox>
+                <!--
+                    This is the work area - central part of the view.
+                    Put your components here.
+                -->
             </initialLayout>
         </workArea>
     </appLayout>

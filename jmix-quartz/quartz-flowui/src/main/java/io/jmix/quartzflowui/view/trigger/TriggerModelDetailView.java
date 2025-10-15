@@ -88,6 +88,8 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     private JmixButton repeatModeSelectorHelpButton;
     @ViewComponent
     private FormLayout.FormItem repeatModeFormItem;
+    @ViewComponent
+    private ComboBox<String> timeZoneField;
 
     @Autowired
     private QuartzService quartzService;
@@ -107,6 +109,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         initRepeatCountHelperButton();
         initMisfireInstructionHelperButton();
         initDateFields();
+        initTimeZoneField();
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -187,6 +190,10 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
         endDateTimePicker.setMin(now);
         setupDateTimePickerDefaultTimeListener(startDateTimePicker);
         setupDateTimePickerDefaultTimeListener(endDateTimePicker);
+    }
+
+    private void initTimeZoneField() {
+        timeZoneField.setItems(List.of(TimeZone.getAvailableIDs()));
     }
 
     private void initMisfireInstructionHelperButton() {
@@ -363,6 +370,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     private void initFieldVisibility() {
         boolean isSimpleTrigger = getEditedEntity().getScheduleType() == ScheduleType.SIMPLE;
         cronExpressionFormItem.setVisible(!isSimpleTrigger);
+        timeZoneField.setVisible(!isSimpleTrigger);
         initRepeatFieldsVisibility(isSimpleTrigger, repeatModeSelector.getValue());
     }
 

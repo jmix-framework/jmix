@@ -62,9 +62,7 @@ public class MainView extends StandardTabbedModeMainView {
 
     @Install(to = "userMenu", subject = "headerRenderer")
     private Component userMenuHeaderRenderer(final UserDetails userDetails) {
-        User user = (User) userDetails;
-
-        if (user == null) {
+        if (!(userDetails instanceof User user)) {
             return null;
         }
 

@@ -22,7 +22,7 @@
     <layout>
         <formLayout id="groupProps" dataContainer="groupDc">
             <textField id="titleField" property="title" required="true"/>
-            <textField id="codeField" property="code" required="true"/>
+            <textField id="codeField" property="code" required="false"/>
             <textArea id="localeTextField"
                       label="msg://io.jmix.reportsflowui.view.group/reportGroupDetailView.locale.title"
                       dataContainer="groupDc" property="localeNames"

@@ -48,6 +48,7 @@ public interface GroupDataGridItems<T> extends DataGridItems<T>, HierarchicalDat
      *         Column key (String) of a generated value.
      *     </li>
      * </ul>
+     * @throws MissingPropertyDescriptorException if the grouping fails due to a missing property descriptor
      */
     void groupBy(List<GroupProperty> properties);
 

@@ -51,5 +51,6 @@ public interface GroupInfo {
      * @param <T> property value type
      * @return group property value
      */
+    @Nullable
     <T> T getValue();
 }

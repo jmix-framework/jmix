@@ -28,6 +28,11 @@ import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import io.jmix.flowui.kit.component.gridlayout.JmixGridLayout;
 import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.ClassInfo;
+import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.TagInfo;
+
+import static io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.ANY_TAG;
+import static io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN;
 
 @StudioUiKit
 public interface StudioLayouts {
@@ -282,6 +287,9 @@ public interface StudioLayouts {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "flexLayout"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
             }),
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @ClassInfo(qualifiedName = FLOW_COMPONENT_FQN, maxCount = 1)
+            ),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -512,14 +520,14 @@ public interface StudioLayouts {
             },
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = {
-                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "title", maxCount = 1),
-                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "subtitle", maxCount = 1),
-                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "media", maxCount = 1),
-                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "content", maxCount = 1),
-                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "headerPrefix", maxCount = 1),
-                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "header", maxCount = 1),
-                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "headerSuffix", maxCount = 1),
-                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "footer", maxCount = 1),
+                            @TagInfo(qualifiedName = "title", maxCount = 1),
+                            @TagInfo(qualifiedName = "subtitle", maxCount = 1),
+                            @TagInfo(qualifiedName = "media", maxCount = 1),
+                            @TagInfo(qualifiedName = "content", maxCount = 1),
+                            @TagInfo(qualifiedName = "headerPrefix", maxCount = 1),
+                            @TagInfo(qualifiedName = "header", maxCount = 1),
+                            @TagInfo(qualifiedName = "headerSuffix", maxCount = 1),
+                            @TagInfo(qualifiedName = "footer", maxCount = 1),
                     }
             )
     )

@@ -344,6 +344,10 @@ public class QuartzService {
                 throw new IllegalStateException("Cron trigger has null cron expression");
             }
             CronScheduleBuilder cronScheduleBuilder = cronSchedule(cronExpression);
+            if (triggerModel.getTimeZoneId() != null) {
+                cronScheduleBuilder.inTimeZone(TimeZone.getTimeZone(triggerModel.getTimeZoneId()));
+            }
+
             String misfireInstructionId = triggerModel.getMisfireInstructionId();
             if (misfireInstructionId != null) {
                 CronTriggerMisfireInstruction misfireInstruction = CronTriggerMisfireInstruction.fromId(misfireInstructionId);

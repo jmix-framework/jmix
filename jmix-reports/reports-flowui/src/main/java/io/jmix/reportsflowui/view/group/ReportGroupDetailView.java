@@ -10,6 +10,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportGroupRepository;
 import io.jmix.reports.entity.ReportGroup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -46,8 +47,7 @@ public class ReportGroupDetailView extends StandardDetailView<ReportGroup> {
         ReportGroup editedGroup = getEditedEntity();
         Optional<UUID> groupId;
 
-        if (groupCode == null) {
-            markFieldAndPreventSave(codeField, "reportGroupDetailView.codeField.isEmpty.text", event);
+        if (StringUtils.isEmpty(groupCode)) {
             return;
         }
 

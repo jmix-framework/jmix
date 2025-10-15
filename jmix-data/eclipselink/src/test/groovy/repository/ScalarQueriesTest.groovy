@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort
 import test_support.DataSpec
 import test_support.entity.repository.Address
 import test_support.entity.repository.Customer
+import test_support.entity.repository.CustomerGrade
 import test_support.entity.repository.Employee
 import test_support.repository.CustomerRepository
 import test_support.repository.EmployeeRepository
@@ -45,6 +46,7 @@ class ScalarQueriesTest extends DataSpec {
         customer.address = new Address()
         customer.address.street = "Shadows"
         customer.address.city = "Ant-Meerin"
+        customer.grade = CustomerGrade.BRONZE
         customerRepository.save(customer)
 
         customer = new Customer();
@@ -52,6 +54,7 @@ class ScalarQueriesTest extends DataSpec {
         customer.address = new Address()
         customer.address.street = "undefined"
         customer.address.city = "Ubarweld"
+        customer.grade = CustomerGrade.GOLD
         customerRepository.save(customer)
 
         Employee e1 = employeeRepository.create();
@@ -101,7 +104,8 @@ class ScalarQueriesTest extends DataSpec {
         def rawPage1 = employeeRepository.queryEmployeeAgesRawPageByNameNotNullOrderByNameDesc(PageRequest.of(1, 1))
         def rawPage2 = employeeRepository.queryEmployeeAgesRawPageByNameNotNullOrderByNameDesc(PageRequest.of(2, 1))
 
-        def sliceBySecondNameAsc = employeeRepository.queryEmployee(PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "secondName")))
+        def sliceBySecondNameAsc = employeeRepository.queryEmployeeAges(PageRequest.of(0, 2,
+                Sort.by(Sort.Direction.ASC, "secondNameForSort")))
 
         def listRes = employeeRepository.queryEmployeeAgesListByNameNotNullOrderByNameDesc()
         def rawListRes = employeeRepository.queryEmployeeAgesRawListByNameNotNullOrderByNameDesc()
@@ -113,6 +117,7 @@ class ScalarQueriesTest extends DataSpec {
 
         def streamResult = employeeRepository.queryEmployeeAgesStreamByNameNotNullOrderByNameDesc()
 
+        def allGrades = customerRepository.getAllGrades()
 
         then:
         page0.size == 2
@@ -126,7 +131,10 @@ class ScalarQueriesTest extends DataSpec {
 
         sliceBySecondNameAsc.hasNext()
         sliceBySecondNameAsc.numberOfElements == 2
-        //sliceBySecondNameAsc.getContent().get(0) == null//todo taimanov fix Sort in ValueLoadQuery processing of DM
+        sliceBySecondNameAsc.getContent().get(0).getValue("age") == null
+        sliceBySecondNameAsc.getContent().get(0).getValue("secondNameForSort") == "SN1"
+        sliceBySecondNameAsc.getContent().get(1).getValue("age") == 20
+        sliceBySecondNameAsc.getContent().get(1).getValue("secondNameForSort") == "SN2"
 
         listRes == [40, null, 20]
 
@@ -153,6 +161,40 @@ class ScalarQueriesTest extends DataSpec {
         iterableResult == [40, null, 20]
 
         streamResult.collect(Collectors.toList()) == [40, null, 20]
+
+        allGrades == [CustomerGrade.BRONZE, CustomerGrade.GOLD]
+    }
+
+    void "check KeyValueEntity collections"() {
+        when:
+        def kveList = employeeRepository.queryEmployeeValuesList()
+        def kveSet = employeeRepository.queryEmployeeValuesSet()
+
+        then:
+        kveList[0].getValue(PROPERTY_PREFIX + 0) == 20
+        kveList[0].getValue(PROPERTY_PREFIX + 1) == "First"
+        kveList[0].getValue(PROPERTY_PREFIX + 2) == "SN2"
+
+        kveList[1].getValue(PROPERTY_PREFIX + 0) == null
+        kveList[1].getValue(PROPERTY_PREFIX + 1) == "Second"
+        kveList[1].getValue(PROPERTY_PREFIX + 2) == "SN1"
+
+        kveList[2].getValue(PROPERTY_PREFIX + 0) == 40
+        kveList[2].getValue(PROPERTY_PREFIX + 1) == "Third"
+        kveList[2].getValue(PROPERTY_PREFIX + 2) == "SN3"
+
+
+        kveSet[0].getValue("firstColumn") == 20
+        kveSet[0].getValue("secondColumn") == "First"
+        kveSet[0].getValue("thirdColumn") == "SN2"
+
+        kveSet[1].getValue("firstColumn") == null
+        kveSet[1].getValue("secondColumn") == "Second"
+        kveSet[1].getValue("thirdColumn") == "SN1"
+
+        kveSet[2].getValue("firstColumn") == 40
+        kveSet[2].getValue("secondColumn") == "Third"
+        kveSet[2].getValue("thirdColumn") == "SN3"
     }
 
 

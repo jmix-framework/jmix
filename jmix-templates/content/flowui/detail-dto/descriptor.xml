@@ -25,9 +25,22 @@ def formXml = api.processSnippet('dto_form.xml',
         <action id="saveCloseAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
+    <%if (detailFixedFooter) {%>
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="contentBox">
+        <vbox id="contentBox" classNames="overflow-auto">
+    <%} else {%>
     <layout>
+    <%}%>
         ${formXml}
+        <%if (detailFixedFooter) {%>
+        </vbox>
+        <hbox id="detailActions"
+              classNames="px-m py-s bg-contrast-5">
+        <%} else {%>
         <hbox id="detailActions">
+        <%}%>
             <button id="saveAndCloseButton" action="saveCloseAction"/>
             <button id="closeButton" action="closeAction"/>
         </hbox>

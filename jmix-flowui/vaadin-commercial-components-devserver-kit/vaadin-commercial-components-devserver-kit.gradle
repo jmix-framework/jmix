@@ -25,7 +25,9 @@ group = 'io.jmix.flowui'
 archivesBaseName = 'vaadin-commercial-components-devserver-kit'
 
 dependencies {
-    api project(':vaadin-commercial-components-kit')
+    api(project(':vaadin-commercial-components-kit')) {
+        exclude group: 'com.vaadin', module: 'copilot'
+    }
 }
 
 shadowJar {

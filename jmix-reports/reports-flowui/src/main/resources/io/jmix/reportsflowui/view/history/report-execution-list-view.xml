@@ -26,9 +26,16 @@
                 <query>
                     <![CDATA[select e from report_ReportExecution e order by e.startTime desc]]>
                     <condition>
-                        <c:jpql>
-                            <c:where>{E}.report.id in :reportIds</c:where>
-                        </c:jpql>
+                        <and>
+                            <or>
+                                <c:jpql>
+                                    <c:where>{E}.report.id in :reportIds</c:where>
+                                </c:jpql>
+                                <c:jpql>
+                                    <c:where>{E}.reportCode in :reportCodes</c:where>
+                                </c:jpql>
+                            </or>
+                        </and>
                     </condition>
                 </query>
             </loader>

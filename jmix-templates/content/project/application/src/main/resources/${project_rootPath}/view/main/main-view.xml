@@ -44,7 +44,17 @@
                 </nav>
             </section>
         </drawerLayout>
-        <initialLayout>
+        <initialLayout id="initialLayout" classNames="jmix-initial-layout">
+            <div classNames="jmix-initial-layout-content">
+                <h1 text="msg://applicationTitle.text"
+                    classNames="jmix-initial-layout-title"/>
+                <image resource="public/images/logo.png"
+                       classNames="jmix-initial-layout-logo"/>
+            </div>
+            <!--
+                This is the work area - central part of the view.
+                Put your components here.
+            -->
         </initialLayout>
     </appLayout>
 </mainView>

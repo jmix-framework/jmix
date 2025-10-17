@@ -44,9 +44,22 @@ def tableXml = api.processSnippet('dto_table.xml',
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>
     </actions>
+    <%if (listFixedFooter) {%>
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="contentBox">
+        <vbox id="contentBox" classNames="overflow-auto">
+    <%} else {%>
     <layout>
+    <%}%>
         ${tableXml}
+        <%if (listFixedFooter) {%>
+        </vbox>
+        <hbox id="lookupActions" visible="false"
+              classNames="px-m py-s bg-contrast-5">
+        <%} else {%>
         <hbox id="lookupActions" visible="false">
+        <%}%>
             <button id="selectButton" action="selectAction"/>
             <button id="discardButton" action="discardAction"/>
         </hbox>

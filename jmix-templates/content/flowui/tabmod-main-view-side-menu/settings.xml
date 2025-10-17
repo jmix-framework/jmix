@@ -17,7 +17,7 @@
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_main_window.svg"
-          name="Main view with side menu"
+          name="Tabbed Mode: Main view with side menu"
           order="80"
           enabled="true">
     <tags>

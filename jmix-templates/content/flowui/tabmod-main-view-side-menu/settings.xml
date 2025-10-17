@@ -17,27 +17,35 @@
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_main_window.svg"
-          name="Main view with top menu"
-          order="85"
+          name="Tabbed Mode: Main view with side menu"
+          order="80"
           enabled="true">
-    <exclude>
+    <tags>
         <tag>TABBED_MODE</tag>
-    </exclude>
+    </tags>
     <description>
-        <![CDATA[<html>Main view with top menu.</html>]]>
+        <![CDATA[<html>Main view with side menu.</html>]]>
     </description>
 
-    <locMessages key="mainViewTopMenuTitle" expressionKey="${studioUtils.decapitalize(controllerName)}.title">
+    <locMessages key="mainViewSideMenuTitle" expressionKey="${studioUtils.decapitalize(controllerName)}.title">
         <message lang="default"><![CDATA[${project.getName()} application]]></message>
     </locMessages>
 
-    <locMessages key="applicationTitleText" expressionKey="${'applicationTitle.text'}">
+    <locMessages key="drawerToggleAriaLabel" expressionKey="${'drawerToggle.ariaLabel}'">
+        <message lang="default"><![CDATA[Menu toggle]]></message>
+    </locMessages>
+
+    <locMessages key="applicationTitleText" expressionKey="${'applicationTitle.text}'">
         <message lang="default"><![CDATA[${project.getName()} application]]></message>
+    </locMessages>
+
+    <locMessages key="navigationAriaLabel" expressionKey="${'navigation.ariaLabel}'">
+        <message lang="default"><![CDATA[Views]]></message>
     </locMessages>
 
     <property caption="Descriptor name"
               code="descriptorName"
-              defaultValue="main-view-top-menu"
+              defaultValue="main-view-side-menu"
               propertyType="DESCRIPTOR_NAME"
               required="true"
               focused="true"

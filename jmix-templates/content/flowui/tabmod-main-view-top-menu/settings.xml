@@ -31,6 +31,10 @@
         <message lang="default"><![CDATA[${project.getName()} application]]></message>
     </locMessages>
 
+    <locMessages key="applicationTitleText" expressionKey="${'applicationTitle.text}'">
+        <message lang="default"><![CDATA[${project.getName()} application]]></message>
+    </locMessages>
+
     <property caption="Descriptor name"
               code="descriptorName"
               defaultValue="main-view-top-menu"
@@ -62,6 +66,12 @@
               code="updateLayoutProperty"
               propertyType="BOOLEAN"
               defaultValue="false"
+              preferences="true"/>
+
+    <property caption="Create user menu"
+              code="createUserMenu"
+              propertyType="BOOLEAN"
+              defaultValue="true"
               preferences="true"/>
 
     <source fileExt="xml"

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      focusComponent="usernameField"
+      title="${messageKeys['loginViewTitle']}">
+    <layout justifyContent="CENTER" alignItems="CENTER" classNames="login-form-main-layout">
+        <vbox id="loginFormWrapper" classNames="login-form-wrapper">
+            <div id="header" text="${messageKeys['loginFormHeaderTitle']}"
+                 classNames="login-form-header"/>
+
+            <div id="errorMessage" classNames="login-form-error-message" visible="false">
+                <h5 id="errorMessageTitle"
+                    classNames="login-form-error-message-title"/>
+                <p id="errorMessageDescription"
+                   classNames="login-form-error-message-description"/>
+            </div>
+
+            <textField id="usernameField"
+                       label="${messageKeys['loginFormUsername']}"
+                       classNames="login-form-username">
+                <validators>
+                    <notEmpty message="${messageKeys['loginFormErrorUsername']}"/>
+                </validators>
+            </textField>
+
+            <passwordField id="passwordField"
+                           label="${messageKeys['loginFormPassword']}"
+                           classNames="login-form-password">
+                <validators>
+                    <notEmpty message="${messageKeys['loginFormErrorPassword']}"/>
+                </validators>
+            </passwordField>
+
+            <hbox id="loginFormSettingsWrapper"
+                  classNames="login-form-settings-wrapper">
+                <checkbox id="rememberMe"
+                          label="${messageKeys['loginFormRememberMe']}"
+                          classNames="login-form-remember-me"/>
+                <select id="localeSelect"
+                        classNames="login-form-locale-select"/>
+            </hbox>
+            <button id="submitBtn"
+                    classNames="login-form-submit"
+                    text="${messageKeys['loginFormSubmit']}" themeNames="primary"
+                    shortcutCombination="ENTER"/>
+        </vbox>
+    </layout>
+</view>

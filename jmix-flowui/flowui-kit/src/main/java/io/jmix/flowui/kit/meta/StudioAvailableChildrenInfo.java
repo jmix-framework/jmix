@@ -70,6 +70,11 @@ public @interface StudioAvailableChildrenInfo {
         String qualifiedName();
 
         long maxCount();
+
+        /**
+         * Enables or disables inspection by Studio plugin for this info.
+         */
+        boolean enableInspection() default true;
     }
 
     /**
@@ -79,6 +84,11 @@ public @interface StudioAvailableChildrenInfo {
         String qualifiedName();
 
         long maxCount();
+
+        /**
+         * Enables or disables inspection by Studio plugin for this info.
+         */
+        boolean enableInspection() default true;
     }
 
     /**

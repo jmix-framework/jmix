@@ -415,7 +415,8 @@ public interface StudioHTMLComponents {
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                            maxCount = 0
+                            maxCount = 0,
+                            enableInspection = false
                     )
             ),
             propertiesBindings = {
@@ -477,7 +478,8 @@ public interface StudioHTMLComponents {
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                            maxCount = 0
+                            maxCount = 0,
+                            enableInspection = false
                     )
             ),
             propertiesBindings = {
@@ -539,7 +541,8 @@ public interface StudioHTMLComponents {
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                            maxCount = 0
+                            maxCount = 0,
+                            enableInspection = false
                     )
             ),
             propertiesBindings = {
@@ -601,7 +604,8 @@ public interface StudioHTMLComponents {
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                            maxCount = 0
+                            maxCount = 0,
+                            enableInspection = false
                     )
             ),
             propertiesBindings = {
@@ -663,7 +667,8 @@ public interface StudioHTMLComponents {
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                            maxCount = 0
+                            maxCount = 0,
+                            enableInspection = false
                     )
             ),
             propertiesBindings = {
@@ -725,7 +730,8 @@ public interface StudioHTMLComponents {
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                            maxCount = 0
+                            maxCount = 0,
+                            enableInspection = false
                     )
             ),
             propertiesBindings = {
@@ -1512,7 +1518,8 @@ public interface StudioHTMLComponents {
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                            maxCount = 0
+                            maxCount = 0,
+                            enableInspection = false
                     )
             ),
             propertiesBindings = {
@@ -1620,7 +1627,8 @@ public interface StudioHTMLComponents {
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                            maxCount = 0
+                            maxCount = 0,
+                            enableInspection = false
                     )
             ),
             propertiesBindings = {

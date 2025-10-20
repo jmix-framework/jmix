@@ -23,6 +23,7 @@ import io.jmix.core.InstanceNameProvider
 import io.jmix.core.security.SystemAuthenticator
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
+import test_support.entity.instance_name.ExtendedMappedSuperclass
 import test_support.entity.instance_name.GrandChildOne
 import test_support.entity.instance_name.GrandChildTwo
 
@@ -131,6 +132,26 @@ class InstanceNameFallbackTest extends DataSpec {
         def exception = thrown(RuntimeException)
         exception.getMessage().startsWith("Error getting instance name for test_support.entity.instance_name.GrandChildTwo-")
         exception.getCause().getMessage().startsWith("Cannot get unfetched attribute [code]")
+    }
+
+    void "check mapped superclass fallback works correctly"() {
+        setup:
+        def entity = dataManager.create(ExtendedMappedSuperclass)
+        entity.code = "1"
+        entity.details = "One"
+        entity = dataManager.save(entity)
+
+        when: "instance name property is member of MappedSuperclass and have undefined store"
+
+        def reloaded = dataManager.load(Id.of(entity)).fetchPlan(FetchPlan.INSTANCE_NAME).one()
+
+
+        then: "descendant class properties used to define instance name and _instance_name fetch plan built correctly because they have Jpa datastore"
+        instanceNameProvider.getInstanceName(reloaded) == "1_"
+
+        cleanup:
+        jdbc.update("delete from TEST_EXTENDED_MAPPED_SUPERCLASS")
+
     }
 
     void cleanup() {

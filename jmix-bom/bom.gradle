@@ -162,10 +162,6 @@ dependencies {
         api "io.jmix.flowui:jmix-flowui-restds-starter:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-devserver:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-test-assist:$freeVersion"
-        api "io.jmix.flowui:vaadin-commercial-components:$freeVersion"
-        api "io.jmix.flowui:vaadin-commercial-components-starter:$freeVersion"
-        api "io.jmix.flowui:vaadin-commercial-components-kit:$freeVersion"
-        api "io.jmix.flowui:vaadin-commercial-components-devserver-kit:$freeVersion"
 
         api "io.jmix.fullcalendar:jmix-fullcalendar-flowui-kit:$freeVersion"
         api "io.jmix.fullcalendar:jmix-fullcalendar-flowui:$freeVersion"
@@ -286,6 +282,11 @@ dependencies {
 
         api "io.jmix.uiconstraints:jmix-uiconstraints:$premiumVersion"
         api "io.jmix.uiconstraints:jmix-uiconstraints-starter:$premiumVersion"
+
+        api "io.jmix.vcc:vaadin-commercial-components:$premiumVersion"
+        api "io.jmix.vcc:vaadin-commercial-components-starter:$premiumVersion"
+        api "io.jmix.vcc:vaadin-commercial-components-kit:$premiumVersion"
+        api "io.jmix.vcc:vaadin-commercial-components-devserver-kit:$premiumVersion"
 
         api "io.jmix.webdav:jmix-webdav:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"

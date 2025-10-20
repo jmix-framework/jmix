@@ -297,7 +297,17 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
             }
         } else {
             if (metaClass.getAncestor() != null) {
-                return parseNamePattern(metaClass.getAncestor());
+                InstanceNameRec ancestorRec = parseNamePattern(metaClass.getAncestor());
+                if (ancestorRec != null) {
+                    //find descendant class corresponding MetaProperties
+                    MetaProperty[] actualProperties = new MetaProperty[ancestorRec.nameProperties.length];
+                    for (int i = 0; i < ancestorRec.nameProperties.length; i++) {
+                        actualProperties[i] = metaClass.getProperty(ancestorRec.nameProperties[i].getName());
+                        if (actualProperties[i] == null)
+                            throw new RuntimeException("Ancestor property is not registered in descendant. Should not happen.");
+                    }
+                    return new InstanceNameRec(ancestorRec.format, ancestorRec.method, actualProperties);
+                }
             }
             return null;
         }

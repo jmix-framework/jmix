@@ -1998,10 +1998,20 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
             },
             availableChildren = @StudioAvailableChildrenInfo(
-                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
-                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                            maxCount = 0
-                    )
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(
+                                    qualifiedName = "prefix",
+                                    maxCount = 1
+                            ),
+                            @StudioAvailableChildrenInfo.TagInfo(
+                                    qualifiedName = "tooltip",
+                                    maxCount = 1
+                            ),
+                            @StudioAvailableChildrenInfo.TagInfo(
+                                    qualifiedName = "fragmentRenderer",
+                                    maxCount = 1
+                            )
+                    }
             ),
             propertiesBindings = {
                     @StudioPropertiesBinding(
@@ -2064,10 +2074,16 @@ public interface StudioComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "multiSelectListBox")
             }),
             availableChildren = @StudioAvailableChildrenInfo(
-                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
-                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                            maxCount = 0
-                    )
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(
+                                    qualifiedName = "tooltip",
+                                    maxCount = 1
+                            ),
+                            @StudioAvailableChildrenInfo.TagInfo(
+                                    qualifiedName = "fragmentRenderer",
+                                    maxCount = 1
+                            )
+                    }
             ),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -2117,10 +2133,16 @@ public interface StudioComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "listBox")
             }),
             availableChildren = @StudioAvailableChildrenInfo(
-                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
-                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                            maxCount = 0
-                    )
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(
+                                    qualifiedName = "tooltip",
+                                    maxCount = 1
+                            ),
+                            @StudioAvailableChildrenInfo.TagInfo(
+                                    qualifiedName = "fragmentRenderer",
+                                    maxCount = 1
+                            )
+                    }
             ),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,

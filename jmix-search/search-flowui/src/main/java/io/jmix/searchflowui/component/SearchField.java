@@ -240,6 +240,7 @@ public class SearchField extends CustomField<String>
             View<?> originView = UiComponentUtils.getView(this);
             if (UiComponentUtils.isComponentAttachedToDialog(this)
                     && originView instanceof SearchResultsView targetView) {
+                // null, as there is no need to open a dialog window
                 initViewIfSearchEnabled(targetView, null);
             } else {
                 DialogWindow<SearchResultsView> searchResultsDialog = dialogWindows.view(

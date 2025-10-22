@@ -136,6 +136,9 @@ public abstract class JmixAbstractQuery<T extends DataLoadContext> implements Re
     @Nullable
     public abstract Object execute(Object[] parameters);
 
+    /**
+     * @return query context that has a non-null query
+     */
     protected abstract T prepareQueryContext(Object[] parameters);
 
     @Nullable

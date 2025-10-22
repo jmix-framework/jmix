@@ -18,9 +18,9 @@ package test_support.repository;
 
 
 import io.jmix.core.entity.KeyValueEntity;
-import io.jmix.core.repository.FetchPlan;
-import io.jmix.core.repository.JmixDataRepository;
-import io.jmix.core.repository.Query;
+import io.jmix.core.repository.*;
+import io.jmix.data.PersistenceHints;
+import jakarta.persistence.QueryHint;
 import org.springframework.data.repository.query.Param;
 import test_support.entity.repository.Customer;
 import test_support.entity.repository.CustomerGrade;
@@ -94,4 +94,11 @@ public interface CustomerRepository extends JmixDataRepository<Customer, UUID> {
 
     @Query(value = "select distinct c.grade from repository$Customer c order by c.name")
     List<CustomerGrade> getAllGrades();
+
+    @Query("select e.grade from repository$Customer e order by e.name desc")
+    @QueryHints(@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false"))
+    List<CustomerGrade> queryGradesByContext();
+
+    @Query("select e.grade from repository$Customer e order by e.name desc")
+    List<CustomerGrade> queryGradesByContext(JmixDataRepositoryContext context);
 }

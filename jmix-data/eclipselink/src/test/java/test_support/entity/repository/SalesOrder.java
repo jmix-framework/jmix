@@ -35,7 +35,7 @@ public class SalesOrder extends BaseEntity {
     @Column(name = "NUMBER_")
     protected String number;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DATE_")
     protected Date date;
 

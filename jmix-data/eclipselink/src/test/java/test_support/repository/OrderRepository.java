@@ -17,6 +17,7 @@
 package test_support.repository;
 
 
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.repository.FetchPlan;
 import io.jmix.core.repository.JmixDataRepository;
@@ -79,6 +80,10 @@ public interface OrderRepository extends JmixDataRepository<SalesOrder, UUID> {
                                                                        Pageable pageable,
                                                                        Date date);
 
+    @Query(value = "select o.customer, count(o), min(o.date) from repository$SalesOrder o group by o.customer order by min(o.date)",
+            properties = {"customer","count", "earliestOrderDate"})
+    List<KeyValueEntity> findOrderCountsByCustomer();
+
 
     long countByNumberInOrDateIsNull(List<String> numbers);
 
@@ -91,10 +96,10 @@ public interface OrderRepository extends JmixDataRepository<SalesOrder, UUID> {
     List<SalesOrder> findAllByNumberLikeAndCount(String number, Integer count, Pageable pageable, io.jmix.core.FetchPlan fetchPlan);
 
 
-    default SalesOrder getByExtractedNumber(String searchSource){
-        String conditionString  = searchSource.replaceAll("[A-Za-z ]","");
+    default SalesOrder getByExtractedNumber(String searchSource) {
+        String conditionString = searchSource.replaceAll("[A-Za-z ]", "");
         return getDataManager().load(SalesOrder.class)
-                .condition(PropertyCondition.equal("number",conditionString))
+                .condition(PropertyCondition.equal("number", conditionString))
                 .one();
     }
 

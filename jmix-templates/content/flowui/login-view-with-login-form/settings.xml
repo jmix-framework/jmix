@@ -29,7 +29,7 @@
     </locMessages>
 
     <locMessages key="loginFormHeaderTitle" expressionKey="${'loginForm.headerTitle'}">
-        <message lang="default"><![CDATA[]]></message>
+        <message lang="default"><![CDATA[${project.getName()}]]></message>
     </locMessages>
 
     <locMessages key="loginFormUsername" expressionKey="${'loginForm.username'}">

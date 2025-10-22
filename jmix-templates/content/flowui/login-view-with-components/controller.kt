@@ -142,7 +142,7 @@ open class ${controllerName} : StandardView(), LocaleChangeObserver {
         val username = usernameField.value
         val password = passwordField.value
 
-        if (validationErrors.isNotEmpty() || username.isNullOrEmpty() || password.isNullOrEmpty()) {
+        if (!validationErrors.isEmpty || username.isNullOrEmpty() || password.isNullOrEmpty()) {
             return
         }
 
@@ -153,7 +153,7 @@ open class ${controllerName} : StandardView(), LocaleChangeObserver {
                     .withRememberMe(rememberMe.value)
             )
         } catch (e: Exception) {
-            log.warn("Login failed for user '{}': {}", event.username, e.toString())
+            log.warn("Login failed for user '{}': {}", username, e.toString())
 
             errorMessageTitle.text = messageBundle.getMessage("loginForm.errorTitle")
             errorMessageDescription.text = messageBundle.getMessage("loginForm.badCredentials")

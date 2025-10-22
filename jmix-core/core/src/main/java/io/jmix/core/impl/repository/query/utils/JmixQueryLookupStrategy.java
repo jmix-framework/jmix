@@ -78,7 +78,8 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
                 String scalarQueryString = query.value();
                 List<String> propertyNames;
                 if (query.properties().length == 0) {
-                    propertyNames = checkReturnTypeAndGeneratePropertyNames(method);
+                    checkPropertyNamesGenerationPossible(method);
+                    propertyNames = List.of(PROPERTY_NAME);
                 } else {
                     propertyNames = Arrays.asList(query.properties());
                 }
@@ -138,14 +139,12 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
     }
 
     /**
-     * Checks the return type of the {@code method} and generates return property names if possible.
-     * Generates only a single property.
+     * Checks whether the return type of the {@code method} allows omitting the definition of return properties.
      *
      * @throws DevelopmentException in case of {@link KeyValueEntity} being returned because it may contain any
      *                              number of return properties
      */
-    protected List<String> checkReturnTypeAndGeneratePropertyNames(Method method) {
-
+    protected void checkPropertyNamesGenerationPossible(Method method) {
         if (KeyValueEntity.class.isAssignableFrom(method.getReturnType()) ||
                 (method.getGenericReturnType() instanceof ParameterizedType parameterizedType
                         && parameterizedType.getActualTypeArguments().length == 1
@@ -153,7 +152,5 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
                         && KeyValueEntity.class.isAssignableFrom(clazz))) {
             throw new DevelopmentException("@Query#properties must be specified for KeyValueEntity return type");
         }
-
-        return List.of(PROPERTY_NAME);
     }
 }

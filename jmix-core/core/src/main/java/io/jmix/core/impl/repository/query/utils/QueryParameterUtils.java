@@ -39,13 +39,13 @@ public class QueryParameterUtils {
     protected static final String PARAMETER_PREFIX = "p_";
 
     /**
-     * Matches parameter names in the query with positions of method arguments.
-     * Replaces positional parameters with named ones.
+     * Binds parameter names in the query with positions of method arguments.
+     * Replaces positional parameters with named ones if needed.
      *
      * @param queryMethod Spring query method metadata
      * @param method java method definition
      * @param query to process
-     * @param namedParametersBindings map to store matching
+     * @param namedParametersBindings map to store binding
      * @return modified query
      */
     public static String replaceQueryParameters(QueryMethod queryMethod,

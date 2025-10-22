@@ -16,7 +16,7 @@
 
 package repository
 
-import io.jmix.core.entity.KeyValueEntity
+import io.jmix.core.DevelopmentException
 import io.jmix.core.querycondition.JpqlCondition
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
@@ -35,7 +35,6 @@ import test_support.repository.EmployeeRepository
 import java.text.SimpleDateFormat
 import java.util.stream.Collectors
 
-import static io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy.PROPERTY_NAME
 import static io.jmix.core.repository.JmixDataRepositoryContext.of
 
 class ScalarQueriesTest extends DataSpec {
@@ -168,10 +167,6 @@ class ScalarQueriesTest extends DataSpec {
         def page0 = employeeRepository.queryEmployeeAgesPageOrderByNameDesc(PageRequest.of(0, 2))
         def page1 = employeeRepository.queryEmployeeAgesPageOrderByNameDesc(PageRequest.of(1, 2))
 
-        def rawPage0 = employeeRepository.queryEmployeeAgesRawPageOrderByNameDesc(PageRequest.of(0, 1))
-        def rawPage1 = employeeRepository.queryEmployeeAgesRawPageOrderByNameDesc(PageRequest.of(1, 1))
-        def rawPage2 = employeeRepository.queryEmployeeAgesRawPageOrderByNameDesc(PageRequest.of(2, 1))
-
         def sliceBySecondNameAsc = employeeRepository.queryEmployeeAges(PageRequest.of(0, 2,
                 Sort.by(Sort.Direction.ASC, "secondNameForSort")))
 
@@ -179,11 +174,8 @@ class ScalarQueriesTest extends DataSpec {
                 Sort.by(Sort.Direction.ASC, "secondNameForSort"))
 
         def listRes = employeeRepository.queryEmployeeAgesListOrderByNameDesc()
-        def rawListRes = employeeRepository.queryEmployeeAgesRawListOrderByNameDesc()
-        def incompleteRawListRes = employeeRepository.queryEmployeeAgesRawListWithMultipleReturnProperties()
 
         def linkedHashSetRes = employeeRepository.queryEmployeeAgesLHSOrderByNameDesc()
-        def rawLinkedHashSetRes = employeeRepository.queryEmployeeAgesRawLHSOrderByNameDesc()
 
         def iterableResult = employeeRepository.queryEmployeeAgesIterableOrderByNameDesc()
 
@@ -219,29 +211,8 @@ class ScalarQueriesTest extends DataSpec {
 
         listRes == [40, null, 20]
 
-        rawListRes.size() == 3
-        rawListRes[0] instanceof KeyValueEntity
-        ((KeyValueEntity) rawListRes[0]).getValue(PROPERTY_NAME) == 40
-
-        incompleteRawListRes.size() == 3
-        incompleteRawListRes[0] instanceof KeyValueEntity
-        ((KeyValueEntity) incompleteRawListRes[0]).getValue(PROPERTY_NAME) == 40
-
         linkedHashSetRes.size() == 3
         linkedHashSetRes =~ [40, null, 20]
-
-        rawLinkedHashSetRes.size() == 3
-        rawLinkedHashSetRes[0] instanceof KeyValueEntity
-        [40, null, 20].contains(((KeyValueEntity) rawLinkedHashSetRes[0]).getValue(PROPERTY_NAME))
-
-
-        rawPage0.size == 1
-        rawPage0.numberOfElements == 1
-        rawPage0.totalPages == 3
-        rawPage0.totalElements == 3
-        ((KeyValueEntity) rawPage0[0]).getValue(PROPERTY_NAME) == 40
-        ((KeyValueEntity) rawPage1[0]).getValue(PROPERTY_NAME) == null
-        ((KeyValueEntity) rawPage2[0]).getValue(PROPERTY_NAME) == 20
 
         iterableResult == [40, null, 20]
 
@@ -352,6 +323,14 @@ class ScalarQueriesTest extends DataSpec {
         kVENamedValuesForFirstEmployee.get().getValue("secondName") == "SN2"
 
         kVEAgeForNotExisted.isEmpty()
+    }
+
+    void 'raw return type considered as entity query'() {
+        when:
+        def res = employeeRepository.incorrectReturnTypeQuery()
+
+        then:
+        thrown(DevelopmentException)
     }
 
     void cleanup() {

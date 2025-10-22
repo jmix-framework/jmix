@@ -76,18 +76,10 @@ public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
     @Query("select e.birthDate from repository$Employee e where(e.age is not null)  order by e.age")
     Stream<Date> queryEmployeeAgesStreamSortByAgeNotNull();
 
-    @Query("select e.age from repository$Employee e order by e.name desc")
-    Page queryEmployeeAgesRawPageOrderByNameDesc(Pageable pageable);
-
-    @Query("select e.age from repository$Employee e order by e.name desc")
-    List queryEmployeeAgesRawListOrderByNameDesc();
 
     @Query("select e.age, e.name from repository$Employee e order by e.name desc")
-    List queryEmployeeAgesRawListWithMultipleReturnProperties();
+    List incorrectReturnTypeQuery();
 
-
-    @Query("select e.age from repository$Employee e order by e.name desc")
-    LinkedHashSet queryEmployeeAgesRawLHSOrderByNameDesc();
 
     @Query(value = "select e.age, e.secondName from repository$Employee e", properties = {"age", "secondNameForSort"})
     Slice<KeyValueEntity> queryEmployeeAges(Pageable pageable);

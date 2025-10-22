@@ -22,6 +22,7 @@ import io.jmix.core.impl.repository.query.*;
 import io.jmix.core.repository.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -32,6 +33,7 @@ import org.springframework.data.repository.query.parser.PartTree;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Determines query type and creates {@link RepositoryQuery RepositoryQueries} for Jmix data repositories
@@ -118,6 +120,18 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
                 && Entity.class.isAssignableFrom(clazz)
                 && !KeyValueEntity.class.isAssignableFrom(clazz)) {
             return true;
+        }
+
+        if ((Collection.class.isAssignableFrom(methodReturnType)
+                || Iterable.class.isAssignableFrom(methodReturnType)
+                || Stream.class.isAssignableFrom(methodReturnType)
+                || Slice.class.isAssignableFrom(methodReturnType)
+                || Optional.class.isAssignableFrom(methodReturnType)
+        ) && !(method.getGenericReturnType() instanceof ParameterizedType)) {
+            log.warn("Cannot determine if Query method is scalar. Method {} is considered as an entity method. " +
+                            "Please avoid using raw return types in Data Repository methods.",
+                    JmixAbstractQuery.formatMethod(method));
+            return true;//preserve old behavior for raw type
         }
 
         return false;

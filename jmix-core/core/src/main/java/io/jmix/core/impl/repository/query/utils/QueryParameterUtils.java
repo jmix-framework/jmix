@@ -17,6 +17,7 @@
 package io.jmix.core.impl.repository.query.utils;
 
 import io.jmix.core.DevelopmentException;
+import io.jmix.core.impl.repository.query.JmixAbstractQuery;
 import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.QueryMethod;
@@ -28,11 +29,25 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Internal helper with query processing logic common for both {@link io.jmix.core.impl.repository.query.JmixCustomLoadQuery}
+ * and {@link io.jmix.core.impl.repository.query.JmixScalarQuery}.
+ */
 public class QueryParameterUtils {
 
     protected static final String PARAMETER_TEMPLATE = "([:?][a-zA-Z0-9_$]+)";
     protected static final String PARAMETER_PREFIX = "p_";
 
+    /**
+     * Binds parameter names in the query with positions of method arguments.
+     * Replaces positional parameters with named ones if needed.
+     *
+     * @param queryMethod Spring query method metadata
+     * @param method java method definition
+     * @param query to process
+     * @param namedParametersBindings map to store binding
+     * @return modified query
+     */
     public static String replaceQueryParameters(QueryMethod queryMethod,
                                                 Method method,
                                                 String query,
@@ -52,7 +67,7 @@ public class QueryParameterUtils {
                 } else {
                     throw new DevelopmentException(String.format("There are mixed parameter types in query '%s' for %s",
                             query,
-                            formatMethod(method)));
+                            JmixAbstractQuery.formatMethod(method)));
                 }
             } else if (occurrence.startsWith(":")) {
                 if (!Boolean.TRUE.equals(positionParametersFound)) {
@@ -61,7 +76,7 @@ public class QueryParameterUtils {
                 } else {
                     throw new DevelopmentException(String.format("There are mixed parameter types in query '%s' for %s",
                             query,
-                            formatMethod(method)));
+                            JmixAbstractQuery.formatMethod(method)));
                 }
             } else {
                 throw new RuntimeException("Cannot happen");
@@ -95,15 +110,11 @@ public class QueryParameterUtils {
                 } else {
                     throw new DevelopmentException(String.format("Parameter %s of method %s does not included to query \"%s\"",
                             name,
-                            formatMethod(method),
+                            JmixAbstractQuery.formatMethod(method),
                             query
                     ));
                 }
             }
         }
-    }
-
-    protected static String formatMethod(Method method) {
-        return method.getDeclaringClass().getName() + '#' + method.getName();
     }
 }

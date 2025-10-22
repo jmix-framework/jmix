@@ -22,6 +22,7 @@ import io.jmix.core.impl.repository.query.*;
 import io.jmix.core.repository.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -41,7 +42,10 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(QueryLookupStrategy.class);
 
-    public static final String PROPERTY_PREFIX = "property_";
+    /**
+     * Property name for {@link KeyValueEntity}
+     */
+    public static final String PROPERTY_NAME = "property";
 
     private DataManager dataManager;
     private Metadata jmixMetadata;
@@ -64,13 +68,18 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
         JmixAbstractQuery<?> resolvedQuery;
         if (query != null) {
             if (isEntityReturnType(method)) {
+                if (query.properties().length > 0) {
+                    log.warn("Wrong usage of 'properties' attribute for entity query - it can only be used with scalar queries. Method: {}",
+                            JmixAbstractQuery.formatMethod(method));
+                }
                 String qryString = query.value();
                 resolvedQuery = new JmixCustomLoadQuery(dataManager, jmixMetadata, fetchPlanRepository, processors, method, repositoryMetadata, factory, qryString);
             } else {
                 String scalarQueryString = query.value();
                 List<String> propertyNames;
                 if (query.properties().length == 0) {
-                    propertyNames = generatePropertyNames(method, scalarQueryString);
+                    checkPropertyNamesGenerationPossible(method);
+                    propertyNames = List.of(PROPERTY_NAME);
                 } else {
                     propertyNames = Arrays.asList(query.properties());
                 }
@@ -114,36 +123,34 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
             return true;
         }
 
+        if ((Collection.class.isAssignableFrom(methodReturnType)
+                || Iterable.class.isAssignableFrom(methodReturnType)
+                || Stream.class.isAssignableFrom(methodReturnType)
+                || Slice.class.isAssignableFrom(methodReturnType)
+                || Optional.class.isAssignableFrom(methodReturnType)
+        ) && !(method.getGenericReturnType() instanceof ParameterizedType)) {
+            log.warn("Cannot determine if Query method is scalar. Method {} is considered as an entity method. " +
+                            "Please avoid using raw return types in Data Repository methods.",
+                    JmixAbstractQuery.formatMethod(method));
+            return true;//preserve old behavior for raw type
+        }
+
         return false;
     }
 
-    protected List<String> generatePropertyNames(Method method, String query) {
-        query = query.toLowerCase().trim();
-
-        int fromClausePosition = query.indexOf(" from ");
-        if (!query.startsWith("select ") || fromClausePosition < 0)
-            throw new DevelopmentException("Malformed scalar value query: '" + query + "' for method "
-                    + JmixAbstractQuery.formatMethod(method));
-
-        String selectExpressions = query.substring(0, fromClausePosition);
-        String[] expressoins = selectExpressions.split(",");
-
-        if ((Collection.class.isAssignableFrom(method.getReturnType())
-                || Stream.class.isAssignableFrom(method.getReturnType())
-                || Iterable.class.isAssignableFrom(method.getReturnType())
-                || Optional.class.isAssignableFrom(method.getReturnType()))
-                && method.getGenericReturnType() instanceof ParameterizedType parameterizedType
-                && parameterizedType.getActualTypeArguments()[0] instanceof Class<?> clazz
-                && !KeyValueEntity.class.isAssignableFrom(clazz)
-                && expressoins.length > 1) {
-            throw new DevelopmentException("Multiple values per row is supported for KeyValueEntity generic types only. Query: '"
-                    + query + "' for method " + JmixAbstractQuery.formatMethod(method));
+    /**
+     * Checks whether the return type of the {@code method} allows omitting the definition of return properties.
+     *
+     * @throws DevelopmentException in case of {@link KeyValueEntity} being returned because it may contain any
+     *                              number of return properties
+     */
+    protected void checkPropertyNamesGenerationPossible(Method method) {
+        if (KeyValueEntity.class.isAssignableFrom(method.getReturnType()) ||
+                (method.getGenericReturnType() instanceof ParameterizedType parameterizedType
+                        && parameterizedType.getActualTypeArguments().length == 1
+                        && parameterizedType.getActualTypeArguments()[0] instanceof Class<?> clazz
+                        && KeyValueEntity.class.isAssignableFrom(clazz))) {
+            throw new DevelopmentException("@Query#properties must be specified for KeyValueEntity return type");
         }
-
-        List<String> propertyNames = new ArrayList<>(expressoins.length);
-        for (int i = 0; i < expressoins.length; i++) {
-            propertyNames.add(PROPERTY_PREFIX + i);
-        }
-        return propertyNames;
     }
 }

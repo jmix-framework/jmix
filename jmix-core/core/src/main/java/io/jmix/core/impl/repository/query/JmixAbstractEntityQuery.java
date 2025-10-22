@@ -72,6 +72,7 @@ public abstract class JmixAbstractEntityQuery extends JmixAbstractQuery<LoadCont
     public Object execute(Object[] parameters) {
         LoadContext<?> loadContext = prepareQueryContext(parameters);
         setupFetchPlan(loadContext, parameters);
+        //noinspection DataFlowIssue
         loadContext.getQuery().setSort(by(getSortFromParams(parameters)));
 
         return processAccordingToReturnType(loadContext, parameters);

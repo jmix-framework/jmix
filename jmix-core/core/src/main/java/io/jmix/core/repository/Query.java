@@ -34,8 +34,10 @@ public @interface Query {
     String value();
 
     /**
-     * Allows specifying custom property names to store values in {@link io.jmix.core.entity.KeyValueEntity} by.
-     *"property_&lt;n&gt;" property names will be generated in case of absence.
+     * For scalar queries only.
+     * <p>
+     * Specifies property names (keys) to store values in {@link io.jmix.core.entity.KeyValueEntity}.
+     * Must be specified if {@link io.jmix.core.entity.KeyValueEntity} is used in return type.
      * @see io.jmix.core.entity.KeyValueEntity#getValue(String)
      */
     String[] properties() default {};

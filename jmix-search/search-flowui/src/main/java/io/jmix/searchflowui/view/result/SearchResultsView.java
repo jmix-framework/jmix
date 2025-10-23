@@ -196,25 +196,11 @@ public class SearchResultsView extends StandardView {
         getContent().add(span);
     }
 
-    public void createNotificationWithMessage(String messageBundleKey) {
-        notifications.create(messageBundle.getMessage(messageBundleKey)).show();
-    }
-
     protected void renderResult(SearchResult searchResult) {
         getContent().removeAll();
         getContent().add(createSearchField(searchResult));
         if (searchResult.isEmpty()) {
-            if (searchProperties.isEnabled()) {
-                if (searchFieldContext.getOpenMode().equals(OpenMode.DIALOG)) {
-                    if (dialogWindows.getOpenedDialogWindows().getCurrentDialog().isPresent()) {
-                        createNotificationWithMessage("noResults");
-                    }
-                } else {
-                    createNotificationWithMessage("noResults");
-                }
-            } else {
-                createNotificationWithMessage("searchDisabled");
-            }
+            notifications.create(messageBundle.getMessage("noResults")).show();
         } else {
             VirtualList<SearchResultEntry> virtualList = uiComponents.create(VirtualList.class);
             virtualList.setRenderer(searchResultRenderer);

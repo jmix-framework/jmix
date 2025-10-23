@@ -222,26 +222,16 @@ public class SearchField extends CustomField<String>
         return settingsButton;
     }
 
-    protected void initViewIfSearchEnabled(SearchResultsView targetView,
-                                           @Nullable DialogWindow<SearchResultsView> searchResultsDialog) {
-        if (searchProperties.isEnabled()) {
-            if (searchResultsDialog != null) {
-                // opens a new dialog window
-                searchResultsDialog.open();
-            }
-            targetView.initView(new SearchFieldContext(this));
-        } else {
-            targetView.createNotificationWithMessage("searchDisabled");
-        }
-    }
-
     protected void openSearchResultsWindow(String searchText) {
+        if (!searchProperties.isEnabled()) {
+            notifications.create(messages.getMessage(getClass(),"searchDisabled")).show();
+            return;
+        }
         if (openMode == OpenMode.DIALOG) {
             View<?> originView = UiComponentUtils.getView(this);
             if (UiComponentUtils.isComponentAttachedToDialog(this)
                     && originView instanceof SearchResultsView targetView) {
-                // null, as there is no need to open a dialog window
-                initViewIfSearchEnabled(targetView, null);
+                targetView.initView(new SearchFieldContext(this));
             } else {
                 DialogWindow<SearchResultsView> searchResultsDialog = dialogWindows.view(
                                 originView,
@@ -249,7 +239,8 @@ public class SearchField extends CustomField<String>
                         .build();
 
                 SearchResultsView targetView = searchResultsDialog.getView();
-                initViewIfSearchEnabled(targetView, searchResultsDialog);
+                searchResultsDialog.open();
+                targetView.initView(new SearchFieldContext(this));
             }
         } else {
             viewNavigators.view(UiComponentUtils.getView(this), SearchResultsView.class)

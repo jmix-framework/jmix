@@ -25,7 +25,7 @@ public class PhraseOpenSearchSearchStrategy extends AbstractOpenSearchStrategy{
 
     @Override
     public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
-        queryConfigurator.configureRequest(
+        queryConfigurer.configureRequest(
                 requestContext,
                 (queryBuilder, scope) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->

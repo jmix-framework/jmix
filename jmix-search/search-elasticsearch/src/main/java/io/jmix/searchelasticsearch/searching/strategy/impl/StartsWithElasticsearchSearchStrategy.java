@@ -62,7 +62,7 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearch
     }
 
     protected void configureTermsQuery(SearchRequestContext<SearchRequest.Builder> requestContext) {
-        queryConfigurator.configureRequest(
+        queryConfigurer.configureRequest(
                 requestContext,
                 WITH_PREFIX_VIRTUAL_SUBFIELDS,
                 (queryBuilder, scope) ->
@@ -81,7 +81,7 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearch
                 .filter(StringUtils::isNotBlank)
                 .map(term -> term + "*")
                 .collect(Collectors.joining(" "));
-        queryConfigurator.configureRequest(
+        queryConfigurer.configureRequest(
                 requestContext,
                 NO_VIRTUAL_SUBFIELDS,
                 (queryBuilder, scope) ->

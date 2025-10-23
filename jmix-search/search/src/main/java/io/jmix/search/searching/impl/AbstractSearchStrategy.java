@@ -25,10 +25,10 @@ import io.jmix.search.searching.SearchStrategy;
 public abstract class AbstractSearchStrategy<RB, QC extends SearchQueryConfigurer<RB, ?, ?>>
         implements SearchStrategy<RB> {
 
-    protected final QC queryConfigurator;
+    protected final QC queryConfigurer;
 
-    protected AbstractSearchStrategy(QC queryConfigurator) {
-        this.queryConfigurator = queryConfigurator;
+    protected AbstractSearchStrategy(QC queryConfigurer) {
+        this.queryConfigurer = queryConfigurer;
     }
 
     @Override

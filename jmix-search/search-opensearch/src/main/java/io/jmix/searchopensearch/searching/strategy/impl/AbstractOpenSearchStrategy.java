@@ -23,7 +23,9 @@ import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import org.opensearch.client.opensearch.core.SearchRequest;
 
 /**
- * An abstract implementation of the {@link AbstractSearchStrategy} that contains specifics of the OpenSearch.
+ * Abstract base class for OpenSearch-specific search strategy implementations.
+ * It provides a foundational structure for search strategies that configure OpenSearch search requests.
+ * Subclasses should implement specific search logic and provide concrete configurations for search requests.
  */
 public abstract class AbstractOpenSearchStrategy
         extends AbstractSearchStrategy<SearchRequest.Builder, OpenSearchQueryConfigurer>

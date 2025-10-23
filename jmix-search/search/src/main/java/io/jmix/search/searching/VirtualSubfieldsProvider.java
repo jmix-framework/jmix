@@ -21,7 +21,7 @@ import io.jmix.search.index.IndexConfiguration;
 import java.util.Set;
 
 /**
- * A functional interface for resolving subfields by the field information
+ * A functional interface for providing logic of virtual subfields resolving by the field information.
  */
 @FunctionalInterface
 public interface VirtualSubfieldsProvider {
@@ -29,10 +29,12 @@ public interface VirtualSubfieldsProvider {
     Set<String> getSubfields(FieldInfo fieldInfo);
 
     /**
-     * Describes search field information for subfields generating.
+     * Represents information about a specific index field.
+     * This record holds details about a field that is part of a particular index configuration.
+     * It is used in the context of index searching and virtual subfield resolution.
      *
-     * @param indexConfiguration TODO Pavel Aleksandrov
-     * @param fieldName
+     * @param indexConfiguration configuration of the index to which the field belongs
+     * @param fieldName name of the field within the index
      */
     record FieldInfo(IndexConfiguration indexConfiguration, String fieldName) {
     }

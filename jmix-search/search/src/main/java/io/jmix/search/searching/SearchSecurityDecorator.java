@@ -44,10 +44,10 @@ public class SearchSecurityDecorator {
     }
 
     /**
-     * Gets a filtered list of the names of the entities that could be read with the current user.
+     * Resolves a list of entities that the current user is allowed to search based on security policies.
      *
-     * @param requestedEntities - a list of the entity names for the rights checking
-     * @return a filtered list of the names of the entities that could be read with the current user
+     * @param requestedEntities a collection of entity names to be filtered for search permission
+     * @return a list of entity names that the user is permitted to search
      */
     public List<String> resolveEntitiesAllowedToSearch(Collection<String> requestedEntities) {
         return requestedEntities.stream()
@@ -61,7 +61,7 @@ public class SearchSecurityDecorator {
     /**
      * Checks if the current user has permission to read the entity attribute specified by the given meta-property path.
      *
-     * @param metaPropertyPath - the property path for the rights checking
+     * @param metaPropertyPath - the property path for the right checking
      * @return - true if the current user has the permission and false if not.
      */
     public boolean isEntityAttrReadPermitted(MetaPropertyPath metaPropertyPath) {
@@ -71,7 +71,7 @@ public class SearchSecurityDecorator {
     /**
      * Checks if the current user has permission to read the entity that is represented with the MetaClass.
      *
-     * @param metaClass - a MetaClass of the entity for the rights checking
+     * @param metaClass - a MetaClass of the entity for the right checking
      * @return - true if the current user has the permission and false if not.
      */
     public boolean isEntityReadPermitted(MetaClass metaClass) {

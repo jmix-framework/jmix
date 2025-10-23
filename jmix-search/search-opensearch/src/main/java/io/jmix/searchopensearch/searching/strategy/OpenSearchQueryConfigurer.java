@@ -28,7 +28,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * A  OpenSearch-specific implementation of the {@link AbstractSearchQueryConfigurer}
+ * A specific implementation of {@link AbstractSearchQueryConfigurer} for OpenSearch.
+ * This class provides methods for configuring search queries and request builders tailored
+ * to OpenSearch's API and query structure.
+ * The class uses an instance of {@link SearchRequestScopeProvider} to manage the relevant
+ * search scopes for the requested entities and subfield settings.
  */
 @Component("search_OpenSearchQueryConfigurer")
 public class OpenSearchQueryConfigurer extends AbstractSearchQueryConfigurer<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {

@@ -27,9 +27,9 @@ import static java.util.Collections.emptySet;
  * Implements common logic for all platform-specific implementations.
  * Contains "out of the box" SubfieldsProvider-s for the typical cases.
  *
- * @param <RB> a platform-specific SearchRequestBuilder type
- * @param <QB> a platform-specific QueryBuilder type
- * @param <OB> a platform-specific ObjectBuilder type
+ * @param <RB> platform-specific SearchRequestBuilder type
+ * @param <QB> platform-specific QueryBuilder type
+ * @param <OB> platform-specific ObjectBuilder type
  */
 public abstract class AbstractSearchQueryConfigurer<RB, QB, OB> implements SearchQueryConfigurer<RB, QB, OB> {
 
@@ -68,9 +68,9 @@ public abstract class AbstractSearchQueryConfigurer<RB, QB, OB> implements Searc
      * Configures the search request by applying query settings using the provided request context,
      * business query configurer, and index search request scopes.
      *
-     * @param requestContext the container holding the request building information and platform-specific request builder
-     * @param businessQueryConfigurer the configurer used for building queries for given index search scopes
-     * @param indexSearchRequestScopes a list of search request scopes representing the targeted indexes and their configurations
+     * @param requestContext container holding the request building information and platform-specific request builder
+     * @param businessQueryConfigurer configurer used for building queries for given index search scopes
+     * @param indexSearchRequestScopes list of search request scopes representing the targeted indexes and their configurations
      */
     protected abstract void querySettingToRequestBuilder(SearchRequestContext<RB> requestContext,
                                                          BusinessQueryConfigurer<QB, OB> businessQueryConfigurer,

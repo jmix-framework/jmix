@@ -29,7 +29,7 @@ import java.util.Set;
 import static java.util.Collections.emptySet;
 
 /**
- * Contains a logic that substitutes an initial field name with the specific subfields.
+ * Class that encapsulates logic that substitutes an initial field name with the specific subfields.
  * Calculating such subfields depends on the field type and user permissions for the field.
  */
 @Component("search_FullFieldNamesProvider")
@@ -42,14 +42,12 @@ public class FullFieldNamesProvider {
     }
 
     /**
-     * Determines the fields to be substituted for a given property path and field name. The substitution is based
-     * on the field's type and the user's permissions. If the property is a file reference, specific subfields are returned.
-     * If the property is a reference and the user has permission to read its entity, the instance name field is returned.
-     * Otherwise, the original field name or no fields are returned.
+     * Returns the fields to be substituted for a given property path and field name. The substitution is based
+     * on the field's type and the user's permissions.
      *
-     * @param path the {@link MetaPropertyPath} representing the relative path to the property
-     * @param fieldName the base name of the field to be evaluated
-     * @return a set of field names to be substituted based on the field type and user permissions
+     * @param path {@link MetaPropertyPath} representing the relative path to the property
+     * @param fieldName base name of the field to be evaluated
+     * @return set of field names to be substituted based on the field type and user permissions
      */
     public Set<String> getFieldNamesForBaseField(MetaPropertyPath path, String fieldName) {
         Range range = path.getRange();

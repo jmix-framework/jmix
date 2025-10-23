@@ -20,7 +20,7 @@ public interface ElasticsearchSearchStrategy extends SearchStrategy<SearchReques
      *
      * @param requestBuilder allows search request configuring
      * @param searchContext  contains details about search being performed
-     * @deprecated TODO Pavel Aleksandrov
+     * @deprecated Because the new method with a more flexible signature is created.
      * Use {@link ElasticsearchSearchStrategy#configureRequest(SearchRequestContext)}
      */
     @Deprecated(since = "2.7", forRemoval = true)

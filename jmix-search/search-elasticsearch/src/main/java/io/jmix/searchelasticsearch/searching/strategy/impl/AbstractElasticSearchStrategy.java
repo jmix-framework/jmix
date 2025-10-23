@@ -18,6 +18,7 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticSearchQueryConfigurer;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
@@ -36,11 +37,7 @@ public abstract class AbstractElasticSearchStrategy
     }
 
     /**
-     * Configures the search request using the provided request builder and search context.
-     *
-     * @param requestBuilder the builder used to configure the search request
-     * @param searchContext the context containing search parameters such as search text, size, offset, and entities
-     * @throws UnsupportedOperationException as this method is not intended for usage
+     * @deprecated Use {@link ElasticsearchSearchStrategy#configureRequest(SearchRequestContext)}
      */
     @Override
     @Deprecated(since = "2.7", forRemoval = true)

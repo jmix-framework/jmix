@@ -18,7 +18,7 @@ public interface OpenSearchSearchStrategy extends SearchStrategy<SearchRequest.B
      *
      * @param requestBuilder allows to configure search request
      * @param searchContext  contains details about search being performed
-     * @deprecated TODO Pavel Aleksandrov
+     * @deprecated Because the new method with a more flexible signature is created.
      * Use {@link OpenSearchSearchStrategy#configureRequest(SearchRequestContext)}
      */
     @Deprecated(since = "2.7", forRemoval = true)

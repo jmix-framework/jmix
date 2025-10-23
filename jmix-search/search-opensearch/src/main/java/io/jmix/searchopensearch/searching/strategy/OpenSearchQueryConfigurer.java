@@ -42,9 +42,9 @@ public class OpenSearchQueryConfigurer extends AbstractSearchQueryConfigurer<Sea
     }
 
     @Override
-    protected void querySettingToRequestBuilder(SearchRequestContext<SearchRequest.Builder> requestContext,
-                                                BusinessQueryConfigurer<Query.Builder, ObjectBuilder<Query>> businessQueryConfigurer,
-                                                List<IndexSearchRequestScope> indexSearchRequestScopes) {
+    protected void setQueryToRequestBuilder(SearchRequestContext<SearchRequest.Builder> requestContext,
+                                            BusinessQueryConfigurer<Query.Builder, ObjectBuilder<Query>> businessQueryConfigurer,
+                                            List<IndexSearchRequestScope> indexSearchRequestScopes) {
         requestContext.getRequestBuilder().query(createQuery(businessQueryConfigurer, indexSearchRequestScopes).build());
     }
 

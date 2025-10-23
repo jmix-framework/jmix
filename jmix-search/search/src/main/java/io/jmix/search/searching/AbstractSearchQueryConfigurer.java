@@ -60,22 +60,29 @@ public abstract class AbstractSearchQueryConfigurer<RB, QB, OB> implements Searc
             requestContext.setEmptyResult();
             return;
         }
-        querySettingToRequestBuilder(requestContext, businessQueryConfigurer, indexSearchRequestScopes);
+        setQueryToRequestBuilder(requestContext, businessQueryConfigurer, indexSearchRequestScopes);
         requestContext.setPositiveResult(indexSearchRequestScopes);
     }
 
     /**
-     * Configures the search request by applying query settings using the provided request context,
-     * business query configurer, and index search request scopes.
+     * Configures the search query in the provided request builder by applying business-specific configurations and
+     * setting up the query parameters within the specified search request scopes.
      *
-     * @param requestContext container holding the request building information and platform-specific request builder
-     * @param businessQueryConfigurer configurer used for building queries for given index search scopes
-     * @param indexSearchRequestScopes list of search request scopes representing the targeted indexes and their configurations
+     * @param requestContext context of the search request, providing the request builder and related information
+     * @param businessQueryConfigurer business-specific query configuration logic to apply to the query builder
+     * @param indexSearchRequestScopes list of search request scopes that define the boundaries of the search query
      */
-    protected abstract void querySettingToRequestBuilder(SearchRequestContext<RB> requestContext,
-                                                         BusinessQueryConfigurer<QB, OB> businessQueryConfigurer,
-                                                         List<IndexSearchRequestScope> indexSearchRequestScopes);
+    protected abstract void setQueryToRequestBuilder(SearchRequestContext<RB> requestContext,
+                                                     BusinessQueryConfigurer<QB, OB> businessQueryConfigurer,
+                                                     List<IndexSearchRequestScope> indexSearchRequestScopes);
 
+    /**
+     * Creates a query object based on the provided query configuration and the given index search request scopes.
+     *
+     * @param businessQueryConfigurer business-specific query configuration logic to apply to the query builder
+     * @param indexSearchRequestScopes list of index search request scopes defining the boundaries of the query
+     * @return configured query object for single or multiple index search request scopes
+     */
     protected OB createQuery(BusinessQueryConfigurer<QB, OB> businessQueryConfigurer,
                              List<IndexSearchRequestScope> indexSearchRequestScopes) {
         if (indexSearchRequestScopes.size() > 1) {
@@ -84,9 +91,25 @@ public abstract class AbstractSearchQueryConfigurer<RB, QB, OB> implements Searc
         return createQueryForSingleIndex(businessQueryConfigurer, indexSearchRequestScopes.iterator().next());
     }
 
+    /**
+     * Creates a query object for a single index based on the provided query configuration
+     * and the given index search request scope.
+     *
+     * @param businessQueryConfigurer the business-specific query configuration logic to apply to the query builder
+     * @param indexSearchRequestScope the index search request scope defining the boundaries of the query
+     * @return configured query object for the specified single index search request scope
+     */
     protected abstract OB createQueryForSingleIndex(BusinessQueryConfigurer<QB, OB> businessQueryConfigurer,
                                                     IndexSearchRequestScope indexSearchRequestScope);
 
+    /**
+     * Creates a query object for multiple indexes based on the provided query configuration
+     * and the list of index search request scopes.
+     *
+     * @param businessQueryConfigurer the business-specific query configuration logic to apply to the query builder
+     * @param indexSearchRequestScopes the list of index search request scopes defining the boundaries of the query
+     * @return configured query object for the specified multiple index search request scopes
+     */
     protected abstract OB createQueryForMultipleIndexes(BusinessQueryConfigurer<QB, OB> businessQueryConfigurer,
                                                         List<IndexSearchRequestScope> indexSearchRequestScopes);
 }

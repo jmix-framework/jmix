@@ -42,7 +42,7 @@ public class ElasticSearchQueryConfigurer extends AbstractSearchQueryConfigurer<
     }
 
     @Override
-    protected void querySettingToRequestBuilder(
+    protected void setQueryToRequestBuilder(
             SearchRequestContext<SearchRequest.Builder> requestContext,
             BusinessQueryConfigurer<Query.Builder, ObjectBuilder<Query>> businessQueryConfigurer,
             List<IndexSearchRequestScope> indexSearchRequestScopes) {

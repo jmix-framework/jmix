@@ -33,7 +33,9 @@ import java.util.stream.Collectors;
 import static io.jmix.search.searching.AbstractSearchQueryConfigurer.NO_VIRTUAL_SUBFIELDS;
 
 /**
- * Contains logic for getting fields of the given index for the request query building.
+ * A class for getting fields of the given index for the request query building. The class changes field names
+ * that are contained in the index field mapping with the full paths. Also, the class checks security rights
+ * for getting access to each field.
  */
 @Component("search_SearchFieldsProvider")
 public class SearchFieldsProvider {
@@ -52,8 +54,8 @@ public class SearchFieldsProvider {
 
     /**
      * Returns fields with subfields of the given index for the request query building.
-     * The method taking into account if the current user has permission for the correspondent property reading or not.
-     * The method adds subfields to the result if they are provided with the subfieldsProvider.
+     * The method takes into account if the current user has permission for the correspondent property reading or not.
+     * The method adds virtual subfields to the result if they are provided with the virtualSubfieldsProvider.
      *
      * @param indexConfiguration - index configuration for getting fields.
      *                           The field names are getting from the correspondent {@link IndexMappingConfiguration}
@@ -100,5 +102,4 @@ public class SearchFieldsProvider {
     protected static void addRootInstanceField(Set<String> effectiveFieldsToSearch) {
         effectiveFieldsToSearch.add(Constants.INSTANCE_NAME_FIELD);
     }
-
 }

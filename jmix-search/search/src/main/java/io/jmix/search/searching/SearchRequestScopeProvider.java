@@ -22,13 +22,16 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 import static java.util.Collections.emptyList;
 
 /**
- * This class contains methods for getting information for the search request building.
- * The analysis is based on the {@link IndexConfiguration} objects and entities metadata processing.
+ * The class is responsible for calculating scopes used for building
+ * search requests in the search engine. It considers permissions for the current user and attaches
+ * additional subfields to indexed fields as needed.
+ * This component utilizes {@link SearchSecurityDecorator} to enforce security constraints,
+ * {@link IndexConfigurationManager} for managing index configurations, and
+ * {@link SearchFieldsProvider} to resolve fields of the index.
  */
 @Component("search_SearchRequestScopeProvider")
 public class SearchRequestScopeProvider {
@@ -46,17 +49,15 @@ public class SearchRequestScopeProvider {
     }
 
     /**
-     * TODO Pavel Aleksandrov rewrite
-     * Calculates a map for the search request building.
-     * The method takes into account user rights to entities and their parameters.
-     * The method adds additional subfields name of which can be provided with the subfieldsProvider parameter.
+     * Generates a list of {@link IndexSearchRequestScope} objects that define the scope of
+     * search requests for the specified entities. The method evaluates the entities allowed
+     * for the current user based on security constraints and resolves the fields required
+     * for search using the provided {@link VirtualSubfieldsProvider}.
      *
-     * @param entities - a collection of the entity names for the search request building
-     * @param virtualSubfieldsProvider a {@link Function} for getting subfields of the index field.
-     *                           If the function returns an empty set,
-     *                           the only initial field name will be added to the result.
-     * @return a map that contains indexNames as keys and sets of corresponding fieldNames as values
-     * from the correspondent {@link io.jmix.search.index.mapping.IndexMappingConfiguration} for each index.
+     * @param entities list of entity names to evaluate for search scope. If empty, all indexed entities are considered.
+     * @param virtualSubfieldsProvider provider used to resolve additional subfields for indexed fields.
+     * @return list of {@link IndexSearchRequestScope} objects representing the search scope for the specified entities,
+     * or an empty list if no valid scopes are resolved.
      */
     public List<IndexSearchRequestScope> getSearchRequestScope(List<String> entities, VirtualSubfieldsProvider virtualSubfieldsProvider) {
 

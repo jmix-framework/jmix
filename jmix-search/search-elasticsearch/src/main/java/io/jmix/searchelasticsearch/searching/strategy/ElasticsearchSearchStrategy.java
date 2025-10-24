@@ -6,7 +6,9 @@ import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 
 /**
- * A Elasticsearch-specific extension of the common {link @SearchStrategy} interface
+ * Represents a search strategy specifically designed for Elasticsearch integration.
+ * An implementation of this interface configures an Elasticsearch {@link SearchRequest}
+ * based on the provided search context.
  */
 public interface ElasticsearchSearchStrategy extends SearchStrategy<SearchRequest.Builder> {
 
@@ -16,9 +18,9 @@ public interface ElasticsearchSearchStrategy extends SearchStrategy<SearchReques
      * <p>Configuration of another request parameters is optional.
      * <p>Highlighting, size and offset shouldn't be configured here - these parameters will be overwritten.
      *
-     * @param requestBuilder allows to configure search request
+     * @param requestBuilder allows search request configuring
      * @param searchContext  contains details about search being performed
-     * @deprecated TODO Pavel Aleksandrov
+     * @deprecated Because the new method with a more flexible signature is created.
      * Use {@link ElasticsearchSearchStrategy#configureRequest(SearchRequestContext)}
      */
     @Deprecated(since = "2.7", forRemoval = true)

@@ -17,13 +17,16 @@
 package io.jmix.searchopensearch.searching.strategy.impl;
 
 import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchQueryConfigurer;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import org.opensearch.client.opensearch.core.SearchRequest;
 
 /**
- * An abstract implementation of the {@link AbstractSearchStrategy} that contains specifics of the OpenSearch.
+ * Abstract base class for OpenSearch-specific search strategy implementations.
+ * It provides a foundational structure for search strategies that configure OpenSearch search requests.
+ * Subclasses should implement specific search logic and provide concrete configurations for search requests.
  */
 public abstract class AbstractOpenSearchStrategy
         extends AbstractSearchStrategy<SearchRequest.Builder, OpenSearchQueryConfigurer>
@@ -34,9 +37,7 @@ public abstract class AbstractOpenSearchStrategy
     }
 
     /**
-     * TODO Pavel Aleksandrov
-     * @param requestBuilder allows to configure search request
-     * @param searchContext  contains details about search being performed
+     * @deprecated Use {@link OpenSearchSearchStrategy#configureRequest(SearchRequestContext)}
      */
     @Override
     @Deprecated(since = "2.7", forRemoval = true)

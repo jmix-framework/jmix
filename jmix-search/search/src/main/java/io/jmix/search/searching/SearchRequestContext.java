@@ -23,8 +23,10 @@ import java.util.stream.Collectors;
 import static io.jmix.search.searching.SearchRequestContext.ProcessingState.*;
 
 /**
- * A container of the search request building information.
- * @param <T> a platform-specific request builder type
+ * Represents the context of a search request, managing the state of the search preparation process
+ * and the related information such as request scope and effective indexes.
+ *
+ * @param <T> type of the platform-specific request builder associated with the search request context
  */
 public class SearchRequestContext<T> {
 

@@ -223,6 +223,10 @@ public class SearchField extends CustomField<String>
     }
 
     protected void openSearchResultsWindow(String searchText) {
+        if (!searchProperties.isEnabled()) {
+            notifications.create(messages.getMessage(getClass(),"searchDisabled")).show();
+            return;
+        }
         if (openMode == OpenMode.DIALOG) {
             View<?> originView = UiComponentUtils.getView(this);
             if (UiComponentUtils.isComponentAttachedToDialog(this)
@@ -235,8 +239,8 @@ public class SearchField extends CustomField<String>
                         .build();
 
                 SearchResultsView targetView = searchResultsDialog.getView();
-                targetView.initView(new SearchFieldContext(this));
                 searchResultsDialog.open();
+                targetView.initView(new SearchFieldContext(this));
             }
         } else {
             viewNavigators.view(UiComponentUtils.getView(this), SearchResultsView.class)

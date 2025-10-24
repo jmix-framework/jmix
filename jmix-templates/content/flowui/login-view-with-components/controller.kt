@@ -42,9 +42,8 @@ import java.util.stream.Collectors
 <%if (!defaultLoginView) {%>/*
  * To use the view as a login view don't forget to set
  * new value (see @ViewController) to 'jmix.ui.login-view-id' property.
- * Also, the route of this view (see @Route) must differ from the route of default LoginView.
- */<%}%>
-@Route(value = "login")
+ */
+@Route(value = "${route}")<%} else {%>@Route(value = "login")<%}%>
 @ViewController(id = "${id}")
 @ViewDescriptor(path = "${descriptorName}.xml")
 @CssImport("./styles/login-view/login-view.css")

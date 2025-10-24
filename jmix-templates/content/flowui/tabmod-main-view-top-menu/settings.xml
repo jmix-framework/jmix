@@ -68,6 +68,25 @@
               defaultValue="false"
               preferences="true"/>
 
+    <property caption="View route"
+              code="route"
+              defaultValue="main-view"
+              propertyType="FLOW_VIEW_ROUTE"
+              dynamic="true"
+              valueTemplate="${descriptorName}"
+              preferences="true">
+        <dependency code="descriptorName"/>
+        <dynamicAttribute name="enabled" source="${!updateLayoutProperty}">
+            <dependency code = "updateLayoutProperty"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="visible" source="${!updateLayoutProperty}">
+            <dependency code = "updateLayoutProperty"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="required" source="${!updateLayoutProperty}">
+            <dependency code = "updateLayoutProperty"/>
+        </dynamicAttribute>
+    </property>
+
     <property caption="Create user menu"
               code="createUserMenu"
               propertyType="BOOLEAN"

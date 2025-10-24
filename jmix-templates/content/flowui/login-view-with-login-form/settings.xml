@@ -101,6 +101,25 @@
               defaultValue="false"
               preferences="true"/>
 
+    <property caption="View route"
+              code="route"
+              defaultValue="login-view"
+              propertyType="FLOW_VIEW_ROUTE"
+              dynamic="true"
+              valueTemplate="${descriptorName}"
+              preferences="true">
+        <dependency code="descriptorName"/>
+        <dynamicAttribute name="enabled" source="${!defaultLoginView}">
+            <dependency code = "defaultLoginView"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="visible" source="${!defaultLoginView}">
+            <dependency code = "defaultLoginView"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="required" source="${!defaultLoginView}">
+            <dependency code = "defaultLoginView"/>
+        </dynamicAttribute>
+    </property>
+
     <source fileExt="xml"
             name="descriptor"/>
     <source fileExt="java"

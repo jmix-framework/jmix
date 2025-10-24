@@ -200,8 +200,7 @@ public class SearchResultsView extends StandardView {
         getContent().removeAll();
         getContent().add(createSearchField(searchResult));
         if (searchResult.isEmpty()) {
-            notifications.create(messageBundle.getMessage(searchProperties.isEnabled() ? "noResults" : "searchDisabled"))
-                    .show();
+            notifications.create(messageBundle.getMessage("noResults")).show();
         } else {
             VirtualList<SearchResultEntry> virtualList = uiComponents.create(VirtualList.class);
             virtualList.setRenderer(searchResultRenderer);

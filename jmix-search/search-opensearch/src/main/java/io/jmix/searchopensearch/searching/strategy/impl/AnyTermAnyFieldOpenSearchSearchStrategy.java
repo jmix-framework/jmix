@@ -25,7 +25,7 @@ public class AnyTermAnyFieldOpenSearchSearchStrategy extends AbstractOpenSearchS
 
     @Override
     public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
-        queryConfigurator.configureRequest(
+        queryConfigurer.configureRequest(
                 requestContext,
                 (queryBuilder, scope) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->

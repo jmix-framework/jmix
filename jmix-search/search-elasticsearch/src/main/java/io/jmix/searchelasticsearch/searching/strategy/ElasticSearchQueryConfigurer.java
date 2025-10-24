@@ -28,7 +28,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * A  Elasticsearch-specific implementation of the {@link AbstractSearchQueryConfigurer}
+ * A specific implementation of {@link AbstractSearchQueryConfigurer} for ElasticSearch.
+ * This class provides methods for configuring search queries and request builders tailored
+ * to ElasticSearch's API and query structure.
+ * The class uses an instance of {@link SearchRequestScopeProvider} to manage the relevant
+ * search scopes for the requested entities and subfield settings.
  */
 @Component("search_ElasticSearchQueryConfigurer")
 public class ElasticSearchQueryConfigurer extends AbstractSearchQueryConfigurer<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
@@ -38,7 +42,7 @@ public class ElasticSearchQueryConfigurer extends AbstractSearchQueryConfigurer<
     }
 
     @Override
-    protected void querySettingToRequestBuilder(
+    protected void setQueryToRequestBuilder(
             SearchRequestContext<SearchRequest.Builder> requestContext,
             BusinessQueryConfigurer<Query.Builder, ObjectBuilder<Query>> businessQueryConfigurer,
             List<IndexSearchRequestScope> indexSearchRequestScopes) {

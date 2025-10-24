@@ -32,6 +32,11 @@ import java.util.Set;
  */
 public record IndexSearchRequestScope(IndexConfiguration indexConfiguration, Set<String> fields) {
 
+    /**
+     * Returns the list of fields that are included in the scope of the search request.
+     *
+     * @return a list of field names available for searching within the current scope
+     */
     public List<String> getFieldList(){
         return new ArrayList<>(fields);
     }

@@ -62,7 +62,7 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
     }
 
     protected void configureTermsQuery(SearchRequestContext<SearchRequest.Builder> requestContext) {
-        queryConfigurator.configureRequest(
+        queryConfigurer.configureRequest(
                 requestContext,
                 WITH_PREFIX_VIRTUAL_SUBFIELDS,
                 (queryBuilder, data) ->
@@ -82,7 +82,7 @@ public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrate
                 .map(term -> term + "*")
                 .collect(Collectors.joining(" "));
 
-        queryConfigurator.configureRequest(
+        queryConfigurer.configureRequest(
                 requestContext,
                 NO_VIRTUAL_SUBFIELDS,
                 (queryBuilder, scope) ->

@@ -42,7 +42,7 @@ public class AllTermsSingleFieldElasticsearchSearchStrategy extends AbstractElas
 
     @Override
     public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
-        queryConfigurator.configureRequest(
+        queryConfigurer.configureRequest(
                 requestContext,
                 (queryBuilder, scope) ->
                         queryBuilder.multiMatch(multiMatchQueryBuilder ->

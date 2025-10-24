@@ -29,8 +29,11 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated Use {@link SearchRequestScopeProvider}
+ */
 @Component("search_SearchUtils")
-@Deprecated(since = "2.7",forRemoval = true)
+@Deprecated(since = "2.7", forRemoval = true)
 public class SearchUtils {
 
     protected final IndexConfigurationManager indexConfigurationManager;
@@ -49,16 +52,16 @@ public class SearchUtils {
     }
 
     /**
+     * @deprecated The method doesn't take into account security rights of the user
      * Use {@link SearchRequestScopeProvider#getSearchRequestScope(List, VirtualSubfieldsProvider)}
      */
-    @Deprecated(since = "2.7",forRemoval = true)
+    @Deprecated(since = "2.7", forRemoval = true)
     public List<String> resolveEntitiesAllowedToSearch(Collection<String> entityNames) {
         Collection<String> allIndexedEntities = indexConfigurationManager.getAllIndexedEntities();
         Collection<String> entityNamesWithConfigurations;
         if (entityNames.isEmpty()) {
-            entityNamesWithConfigurations= allIndexedEntities;
-        }
-        else{
+            entityNamesWithConfigurations = allIndexedEntities;
+        } else {
             entityNamesWithConfigurations = entityNames
                     .stream()
                     .filter(allIndexedEntities::contains)
@@ -68,8 +71,11 @@ public class SearchUtils {
         return securityDecorator.resolveEntitiesAllowedToSearch(entityNamesWithConfigurations);
     }
 
-
-    @Deprecated(since = "2.7",forRemoval = true)
+    /**
+     * @deprecated The method doesn't take into account that some entity can be accessible by a user but the fields of the entity are not.
+     * Use {@link SearchRequestScopeProvider#getSearchRequestScope(List, VirtualSubfieldsProvider)}.
+     */
+    @Deprecated(since = "2.7", forRemoval = true)
     public List<String> resolveEffectiveTargetIndexes(Collection<String> requestedEntities) {
         List<String> allowedEntities = resolveEntitiesAllowedToSearch(requestedEntities);
 
@@ -83,11 +89,11 @@ public class SearchUtils {
     }
 
     /**
-     * Use {@link SearchRequestScopeProvider#getSearchRequestScope(List, VirtualSubfieldsProvider)}
      * @deprecated The method doesn't take into account security constraints of entity fields.
      * The method doesn't separate result fields by the entities.
+     * Use {@link SearchRequestScopeProvider#getSearchRequestScope(List, VirtualSubfieldsProvider)}
      */
-    @Deprecated(since = "2.7",forRemoval = true)
+    @Deprecated(since = "2.7", forRemoval = true)
     public Set<String> resolveEffectiveSearchFields(Collection<String> requestedEntities) {
         List<String> allowedEntities = resolveEntitiesAllowedToSearch(requestedEntities);
 

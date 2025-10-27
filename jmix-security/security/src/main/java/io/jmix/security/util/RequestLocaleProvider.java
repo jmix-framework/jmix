@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.authserver.authentication;
+package io.jmix.security.util;
 
 import com.google.common.base.Strings;
 import io.jmix.core.CoreProperties;
@@ -26,7 +26,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-
 import java.util.List;
 import java.util.Locale;
 

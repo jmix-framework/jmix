@@ -15,6 +15,16 @@
       "name": "jmix.resource-server.anonymous-url-patterns",
       "type": "java.lang.String",
       "description": "Comma-separated list of URL patterns that should be accessed without token"
+    },
+    {
+      "name": "jmix.resource-server.force-api-security-scope.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether API security scope is forced during access via REST API"
+    },
+    {
+      "name": "jmix.resource-server.force-api-security-scope.security-filter-chain-names",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of SecurityFilterChain bean-names to force API security scope during access via REST API"
     }
   ]
 }

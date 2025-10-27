@@ -21,6 +21,9 @@ archivesBaseName = 'jmix-security-resource-server'
 
 dependencies {
     api project(':core')
+    api project(':security')
+
+    api 'org.springframework.security:spring-security-oauth2-resource-server'
 }
 
 tasks.named('compileJava') {

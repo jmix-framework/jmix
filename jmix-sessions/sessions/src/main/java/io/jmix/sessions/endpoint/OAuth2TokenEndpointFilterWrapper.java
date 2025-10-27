@@ -16,11 +16,11 @@
 
 package io.jmix.sessions.endpoint;
 
-import io.jmix.authserver.authentication.RequestLocaleProvider;
 import io.jmix.authserver.service.cleanup.impl.UserInvalidationListener;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.core.session.SessionData;
 import io.jmix.security.model.SecurityScope;
+import io.jmix.security.util.RequestLocaleProvider;
 import io.jmix.sessions.resolver.OAuth2AndCookieSessionIdResolver;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -37,12 +37,9 @@ import org.springframework.security.oauth2.server.authorization.authentication.O
 import org.springframework.security.oauth2.server.authorization.web.OAuth2TokenEndpointFilter;
 import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2AccessTokenResponseAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Locale;
 
 public class OAuth2TokenEndpointFilterWrapper extends OncePerRequestFilter {
     protected OAuth2TokenEndpointFilter delegate;

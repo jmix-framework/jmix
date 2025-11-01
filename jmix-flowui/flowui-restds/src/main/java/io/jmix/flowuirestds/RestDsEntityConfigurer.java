@@ -18,7 +18,6 @@ package io.jmix.flowuirestds;
 
 import com.google.common.base.Strings;
 import io.jmix.core.JmixOrder;
-import io.jmix.core.Metadata;
 import io.jmix.core.MetadataMutationTools;
 import io.jmix.core.MetadataPostProcessor;
 import io.jmix.core.annotation.Internal;
@@ -39,9 +38,6 @@ public class RestDsEntityConfigurer implements MetadataPostProcessor {
     private String uiConfigStore;
 
     @Autowired
-    private Metadata metadata;
-
-    @Autowired
     private MetadataMutationTools metadataMutationTools;
 
     @Override
@@ -49,7 +45,7 @@ public class RestDsEntityConfigurer implements MetadataPostProcessor {
         if (Strings.isNullOrEmpty(uiConfigStore))
             return;
 
-        metadataMutationTools.setStore(metadata.getClass(UserSettingsItem.class), uiConfigStore);
-        metadataMutationTools.setStore(metadata.getClass(FilterConfiguration.class), uiConfigStore);
+        metadataMutationTools.setStore(session.getClass(UserSettingsItem.class), uiConfigStore);
+        metadataMutationTools.setStore(session.getClass(FilterConfiguration.class), uiConfigStore);
     }
 }

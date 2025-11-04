@@ -52,7 +52,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     protected List<HasMenuItem> items = new ArrayList<>();
 
     protected JmixMenuItem dropdownItem;
-    protected Icon iconComponent;
+    protected Component iconComponent;
 
     protected abstract JmixMenuItem getDropdownItem();
 
@@ -260,6 +260,17 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     @Nullable
     @Override
     public Icon getIcon() {
+        return iconComponent instanceof Icon icon ? icon : null;
+    }
+
+    @Override
+    public void setIcon(@Nullable Icon icon) {
+        setIconComponent(icon);
+    }
+
+    @Nullable
+    @Override
+    public Component getIconComponent() {
         return iconComponent;
     }
 

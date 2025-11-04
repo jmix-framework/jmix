@@ -136,6 +136,12 @@ public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends J
 
     @SuppressWarnings("unchecked")
     @Override
+    public A withIcon(@Nullable Component icon) {
+        return (A) super.withIcon(icon);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     public A withIcon(@Nullable Icon icon) {
         return ((A) super.withIcon(icon));
     }

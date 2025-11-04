@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.component.dropdownbutton;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
@@ -85,7 +86,7 @@ public class DropdownButton extends AbstractDropdownButton implements HasThemeVa
     }
 
     @Override
-    public void setIcon(@Nullable Icon icon) {
+    public void setIconComponent(@Nullable Component icon) {
         if (icon != null && icon.getElement().isTextNode()) {
             throw new IllegalArgumentException(
                     "Text node can't be used as an icon.");

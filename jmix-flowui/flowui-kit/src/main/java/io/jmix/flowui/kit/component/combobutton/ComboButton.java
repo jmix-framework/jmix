@@ -94,7 +94,7 @@ public class ComboButton extends AbstractDropdownButton
     }
 
     @Override
-    public void setIcon(@Nullable Icon icon) {
+    public void setIconComponent(@Nullable Component icon) {
         if (icon != null && icon.getElement().isTextNode()) {
             throw new IllegalArgumentException(
                     "Text node can't be used as an icon.");

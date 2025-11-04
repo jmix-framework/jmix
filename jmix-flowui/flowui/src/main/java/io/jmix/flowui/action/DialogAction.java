@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.action;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -86,6 +87,11 @@ public class DialogAction extends SecuredBaseAction {
     public DialogAction withVisible(boolean visible) {
         setVisible(visible);
         return this;
+    }
+
+    @Override
+    public DialogAction withIcon(@Nullable Component icon) {
+        return (DialogAction) super.withIcon(icon);
     }
 
     @Override

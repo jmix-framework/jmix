@@ -155,7 +155,9 @@ public class ActionLoaderSupport implements ApplicationContextAware {
 
         loaderSupport.loadString(element, "icon")
                 .ifPresent(iconString ->
-                        targetAction.setIcon(parseIcon(iconString)));
+                        targetAction.setIconComponent(parseIcon(iconString)));
+
+        // TODO: gg, load icon component
 
         Element shortcutCombinationElement = element.element("shortcutCombination");
         // shortcutCombination element takes precedence over the attribute

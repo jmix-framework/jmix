@@ -125,6 +125,19 @@ public class BaseAction extends AbstractAction {
      * @param icon icon to set or {@code null} to remove
      * @return this object
      */
+    public BaseAction withIcon(@Nullable Component icon) {
+        setIconComponent(icon);
+        return this;
+    }
+
+    /**
+     * Sets the icon property value of an action. May be used by components
+     * to initialize their appearance.
+     *
+     * @param icon icon to set or {@code null} to remove
+     * @return this object
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     public BaseAction withIcon(@Nullable Icon icon) {
         setIcon(icon);
         return this;
@@ -136,7 +149,7 @@ public class BaseAction extends AbstractAction {
      *
      * @param icon icon to set or {@code null} to remove
      * @return this object
-     * @deprecated use {@link #withIcon(Icon)} or {@link #setIcon(Icon)} instead
+     * @deprecated use {@link #withIcon(Component)} or {@link #setIconComponent(Component)} instead
      */
     @Deprecated(since = "2.4", forRemoval = true)
     public BaseAction withIcon(@Nullable VaadinIcon icon) {

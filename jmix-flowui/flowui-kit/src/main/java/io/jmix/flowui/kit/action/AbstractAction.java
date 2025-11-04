@@ -16,12 +16,14 @@
 
 package io.jmix.flowui.kit.action;
 
+import com.google.common.base.Preconditions;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.icon.AbstractIcon;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.event.EventBus;
-
 import jakarta.annotation.Nullable;
 
 import java.beans.PropertyChangeEvent;
@@ -39,7 +41,7 @@ public abstract class AbstractAction implements Action {
     protected String text;
     protected boolean enabled = true;
     protected boolean visible = true;
-    protected Icon icon;
+    protected Component icon;
     protected String description;
     protected ActionVariant variant = ActionVariant.DEFAULT;
     protected KeyCombination shortcutCombination;
@@ -102,12 +104,34 @@ public abstract class AbstractAction implements Action {
     @Nullable
     @Override
     public Icon getIcon() {
-        return icon != null ? ComponentUtils.copyIconComponent(icon) : null;
+        return icon instanceof Icon iconComponent
+                ? ComponentUtils.copyIconComponent(iconComponent)
+                : null;
     }
 
     @Override
     public void setIcon(@Nullable Icon icon) {
-        Icon oldValue = this.icon;
+        setIconComponent(icon);
+    }
+
+    @Nullable
+    @Override
+    public Component getIconComponent() {
+        return icon != null
+                ? ComponentUtils.copyIcon(icon)
+                : null;
+    }
+
+    @Override
+    public void setIconComponent(@Nullable Component icon) {
+        // Action returns a copy of an icon, because the icon is actually
+        // used by the components linked to this action and an icon cannot
+        // have several parents. To provide a correct copy of an icon, we
+        // limit the component type to icons related classes.
+        Preconditions.checkArgument(icon instanceof AbstractIcon<?>,
+                "Icon component must be an com.vaadin.flow.component.icon.AbstractIcon");
+
+        Component oldValue = this.icon;
         if (!Objects.equals(oldValue, icon)) {
             this.icon = icon;
             firePropertyChange(Action.PROP_ICON, oldValue, icon);

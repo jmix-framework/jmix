@@ -65,19 +65,19 @@ public final class ComponentUtils {
      * otherwise the passed string is considered as {@link VaadinIcon} constant
      * name.
      *
-     * @param iconString a string representing an icon
+     * @param iconName a string representing an icon name
      * @return a new instance of {@link Icon} component
      */
-    public static Icon parseIcon(String iconString) {
-        if (iconString.contains(":")) {
-            String[] parts = iconString.split(":");
+    public static Icon parseIcon(String iconName) {
+        if (iconName.contains(":")) {
+            String[] parts = iconName.split(":");
             if (parts.length != 2) {
                 throw new IllegalStateException("Unexpected number of icon parts, must be two");
             }
 
             return new Icon(parts[0], parts[1]);
         } else {
-            VaadinIcon vaadinIcon = VaadinIcon.valueOf(iconString);
+            VaadinIcon vaadinIcon = VaadinIcon.valueOf(iconName);
             return convertToIcon(vaadinIcon);
         }
     }

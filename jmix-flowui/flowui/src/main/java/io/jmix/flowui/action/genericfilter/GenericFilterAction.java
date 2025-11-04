@@ -169,6 +169,12 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
 
     @SuppressWarnings("unchecked")
     @Override
+    public A withIcon(@Nullable Component icon) {
+        return (A) super.withIcon(icon);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     public A withIcon(@Nullable Icon icon) {
         return ((A) super.withIcon(icon));
     }

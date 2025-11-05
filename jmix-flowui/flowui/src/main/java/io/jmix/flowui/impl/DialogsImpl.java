@@ -123,8 +123,8 @@ public class DialogsImpl implements Dialogs {
             button.setText(action.getText());
         }
 
-        if (action.getIcon() != null) {
-            button.setIcon(action.getIcon());
+        if (action.getIconComponent() != null) {
+            button.setIcon(action.getIconComponent());
         }
 
         button.addClickListener(event -> {

@@ -18,8 +18,8 @@ package io.jmix.flowui.kit.component.combobutton;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.contextmenu.MenuItem;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -158,7 +158,7 @@ public class ComboButtonActionSupport {
 
     protected void updateIcon(boolean overrideComponentProperties) {
         if (comboButton.getIcon() == null || overrideComponentProperties) {
-            comboButton.setIcon(action.getIcon());
+            comboButton.setIconComponent(action.getIconComponent());
         }
     }
 
@@ -184,7 +184,7 @@ public class ComboButtonActionSupport {
                 comboButton.setVisible((Boolean) event.getNewValue());
                 break;
             case Action.PROP_ICON:
-                comboButton.setIcon((Icon) event.getNewValue());
+                comboButton.setIconComponent((Component) event.getNewValue());
                 break;
             case Action.PROP_DESCRIPTION:
                 comboButton.setTitle((String) event.getNewValue());

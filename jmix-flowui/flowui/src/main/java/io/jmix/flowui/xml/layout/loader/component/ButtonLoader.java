@@ -20,12 +20,14 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 import org.dom4j.Element;
 
 public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
 
     protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
+    protected IconLoaderSupport iconLoaderSupport;
 
     @Override
     protected JmixButton createComponent() {
@@ -50,7 +52,6 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
         componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadText(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
-        componentLoader().loadIcon(element, resultComponent::setIcon);
         componentLoader().loadWhiteSpace(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
@@ -59,6 +60,8 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadShortcutCombination(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
+
+        iconLoaderSupport().loadIcon(element, resultComponent::setIcon);
 
         loadAction(resultComponent, element);
     }
@@ -76,8 +79,8 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
     protected void afterActionSet(Action action) {
         loadVisible(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadIcon(element, resultComponent::setIcon);
         componentLoader().loadThemeNames(resultComponent, element);
+        iconLoaderSupport().loadIcon(element, resultComponent::setIcon);
 
         // set event if an 'empty' value to clear a value from the action
         loadResourceString(element, "title", context.getMessageGroup(), false)
@@ -91,5 +94,13 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
             prefixSuffixLoaderSupport = applicationContext.getBean(PrefixSuffixLoaderSupport.class, context);
         }
         return prefixSuffixLoaderSupport;
+    }
+
+    protected IconLoaderSupport iconLoaderSupport() {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, context);
+        }
+
+        return iconLoaderSupport;
     }
 }

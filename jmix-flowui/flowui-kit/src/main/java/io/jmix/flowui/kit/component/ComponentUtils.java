@@ -22,6 +22,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.*;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
@@ -101,17 +102,17 @@ public final class ComponentUtils {
      * @return icon component copy
      */
     public static Component copyIcon(Component icon) {
-        Component copy;
         if (icon instanceof Icon iconComponent) {
-            copy = copyIconComponent(iconComponent);
+            return copyIconComponent(iconComponent);
         } else if (icon instanceof SvgIcon svgIcon) {
-            copy = copySvgIcon(svgIcon);
+            return copySvgIcon(svgIcon);
         } else if (icon instanceof FontIcon fontIcon) {
-            copy = copyFontIcon(fontIcon);
+            return copyFontIcon(fontIcon);
+        } else if (icon instanceof Image image) {
+            return copyImage(image);
         } else {
             throw new IllegalArgumentException(icon.getClass().getSimpleName() + " is not supported");
         }
-        return copy;
     }
 
     /**
@@ -162,8 +163,38 @@ public final class ComponentUtils {
         copy.setFontFamily(fontIcon.getFontFamily());
         copy.setCharCode(fontIcon.getCharCode());
         copy.setLigature(fontIcon.getLigature());
+        copy.setIconClassNames(fontIcon.getIconClassNames());
 
         copyAbstractIconAttributes(fontIcon, copy);
+        return copy;
+    }
+
+    /**
+     * Creates a copy of an image component.
+     *
+     * @param image am image component to copy
+     * @return an image component copy
+     */
+    public static Image copyImage(Image image) {
+        Image copy = new Image(image.getSrc(), image.getAlt().orElse(null));
+
+        copy.setText(image.getText());
+        copy.setWhiteSpace(image.getWhiteSpace());
+        copy.setVisible(image.isVisible());
+        copy.setEnabled(image.isEnabled());
+        copy.addClassNames(image.getClassNames().toArray(new String[0]));
+
+        copy.setWidth(image.getWidth());
+        copy.setMinWidth(image.getMinWidth());
+        copy.setMaxWidth(image.getMaxWidth());
+        copy.setHeight(image.getHeight());
+        copy.setMinHeight(image.getMinHeight());
+        copy.setMaxHeight(image.getMaxHeight());
+
+        image.getAriaLabel().ifPresent(copy::setAriaLabel);
+        image.getAriaLabelledBy().ifPresent(copy::setAriaLabelledBy);
+        image.getTitle().ifPresent(copy::setTitle);
+
         return copy;
     }
 

@@ -18,6 +18,7 @@ package io.jmix.flowui.kit.action;
 
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.AbstractIcon;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
@@ -128,8 +129,11 @@ public abstract class AbstractAction implements Action {
         // used by the components linked to this action and an icon cannot
         // have several parents. To provide a correct copy of an icon, we
         // limit the component type to icons related classes.
-        Preconditions.checkArgument(icon instanceof AbstractIcon<?>,
-                "Icon component must be an com.vaadin.flow.component.icon.AbstractIcon");
+        Preconditions.checkArgument(icon == null
+                        || icon instanceof AbstractIcon<?>
+                        || icon instanceof Image,
+                "Icon component must be either '%s' or '%s'"
+                        .formatted(AbstractIcon.class.getName(), Image.class.getName()));
 
         Component oldValue = this.icon;
         if (!Objects.equals(oldValue, icon)) {

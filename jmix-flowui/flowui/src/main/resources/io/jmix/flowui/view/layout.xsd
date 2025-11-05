@@ -2405,10 +2405,26 @@
         <xs:group ref="singleLayoutOrComponent" minOccurs="0"/>
     </xs:complexType>
 
+    <xs:group name="iconComponentGroup">
+        <xs:sequence>
+            <xs:choice minOccurs="0">
+                <xs:element name="icon" type="iconComponent"/>
+                <xs:element name="svgIcon" type="svgIconComponent"/>
+                <xs:element name="fontIcon" type="fontIconComponent"/>
+                <xs:element name="image" type="imageComponent"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:complexType name="iconComponentElement">
+        <xs:group ref="iconComponentGroup" minOccurs="0"/>
+    </xs:complexType>
+
     <xs:complexType name="baseAction">
         <xs:sequence minOccurs="0">
             <xs:element name="properties" type="actionProperties"/>
             <xs:element name="shortcutCombination" type="actionShortcutCombination"/>
+            <xs:element name="icon" type="iconComponentElement"/>
         </xs:sequence>
 
         <xs:attribute name="type" type="actionTypeEnum"/>
@@ -2426,6 +2442,7 @@
     <xs:complexType name="noShortcutBaseAction">
         <xs:sequence>
             <xs:element name="properties" type="actionProperties" minOccurs="0"/>
+            <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
         </xs:sequence>
 
         <xs:attribute name="type" type="actionTypeEnum"/>
@@ -2620,14 +2637,15 @@
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
                 </xs:sequence>
 
                 <xs:attribute name="openOnHover" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="dropdownButtonThemeNames"/>
-                <xs:attribute name="icon" type="vaadinIconEnum"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasIcon"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasClassNames"/>
@@ -2937,8 +2955,10 @@
                 <xs:choice minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
 
-                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
-                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="prefix" type="prefixOrSuffixComponent" minOccurs="0"/>
+                    <xs:element name="suffix" type="prefixOrSuffixComponent" minOccurs="0"/>
+
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
                 </xs:choice>
 
                 <xs:attribute name="action" type="xs:string"/>
@@ -3471,6 +3491,10 @@
     <xs:complexType name="comboButtonComponent">
         <xs:complexContent>
             <xs:extension base="baseDropdownButtonComponent">
+                <xs:sequence>
+                    <xs:element name="dropdownIcon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
                 <xs:attribute name="action" type="xs:string"/>
                 <xs:attribute name="dropdownIcon" type="vaadinIconEnum"/>
 
@@ -4464,7 +4488,8 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
-                    <xs:element name="menuItem" minOccurs="0" type="gridColumnVisibilityMenuItemType"/>
+                    <xs:element name="menuItem" type="gridColumnVisibilityMenuItemType" minOccurs="0"/>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasSize"/>

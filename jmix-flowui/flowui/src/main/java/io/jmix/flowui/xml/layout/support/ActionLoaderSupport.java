@@ -37,8 +37,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static io.jmix.flowui.kit.component.ComponentUtils.parseIcon;
-
 @Component("flowui_ActionLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ActionLoaderSupport implements ApplicationContextAware {
@@ -49,6 +47,7 @@ public class ActionLoaderSupport implements ApplicationContextAware {
     protected ActionCustomPropertyLoader propertyLoader;
     protected Actions actions;
     protected ComponentLoaderSupport componentLoaderSupport;
+    protected IconLoaderSupport iconLoaderSupport;
 
     public ActionLoaderSupport(Context context) {
         this.context = context;
@@ -153,11 +152,7 @@ public class ActionLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadEnum(element, ActionVariant.class, "actionVariant",
                 ((Action) targetAction)::setVariant);
 
-        loaderSupport.loadString(element, "icon")
-                .ifPresent(iconString ->
-                        targetAction.setIconComponent(parseIcon(iconString)));
-
-        // TODO: gg, load icon component
+        iconLoaderSupport().loadIcon(element, targetAction::setIconComponent);
 
         Element shortcutCombinationElement = element.element("shortcutCombination");
         // shortcutCombination element takes precedence over the attribute
@@ -201,6 +196,15 @@ public class ActionLoaderSupport implements ApplicationContextAware {
         if (componentLoaderSupport == null) {
             componentLoaderSupport = applicationContext.getBean(ComponentLoaderSupport.class, context);
         }
+
         return componentLoaderSupport;
+    }
+
+    protected IconLoaderSupport iconLoaderSupport() {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, context);
+        }
+
+        return iconLoaderSupport;
     }
 }

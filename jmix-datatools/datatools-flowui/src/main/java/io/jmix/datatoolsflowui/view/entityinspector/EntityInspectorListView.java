@@ -31,10 +31,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.selection.SelectionEvent;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.*;
@@ -101,7 +98,8 @@ import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Route(value = "datatl/entityinspector", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "datatl/entityinspector", layout = DefaultMainViewParent.class)
+@Route(value = "datatl/entity-inspector", layout = DefaultMainViewParent.class)
 @ViewController("datatl_entityInspectorListView")
 @ViewDescriptor("entity-inspector-list-view.xml")
 @LookupComponent("entitiesDataGrid")

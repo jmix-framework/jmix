@@ -38,6 +38,7 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
@@ -94,7 +95,8 @@ import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Route(value = "reports/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/reports/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_Report.detail")
 @ViewDescriptor("report-detail-view.xml")
 @EditedEntityContainer("reportDc")

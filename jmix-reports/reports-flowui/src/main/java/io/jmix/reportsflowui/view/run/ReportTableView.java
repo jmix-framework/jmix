@@ -22,6 +22,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.StandardSerialization;
@@ -62,7 +63,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Route(value = "reports/tables", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/tables", layout = DefaultMainViewParent.class)
+@Route(value = "report/tables", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportTableView")
 @ViewDescriptor("report-table-view.xml")
 @DialogMode(width = "50em", resizable = true)

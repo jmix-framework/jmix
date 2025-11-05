@@ -25,6 +25,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
@@ -65,7 +66,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-@Route(value = "reports/templates/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/templates/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/templates/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportTemplate.detail")
 @ViewDescriptor("report-template-detail-view.xml")
 @EditedEntityContainer("reportTemplateDc")

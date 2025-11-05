@@ -19,6 +19,7 @@ package io.jmix.searchflowui.view.settings;
 
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.Messages;
 import io.jmix.flowui.component.formlayout.JmixFormLayout;
 import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
@@ -37,7 +38,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Route(value = "search-field-settings-view", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "search-field-settings-view", layout = DefaultMainViewParent.class)
+@Route(value = "search/search-field-settings", layout = DefaultMainViewParent.class)
 @ViewController("SearchFieldSettingsView")
 @ViewDescriptor("search-field-settings-view.xml")
 @DialogMode(width = "30em")

@@ -17,10 +17,12 @@
 package io.jmix.messagetemplatesflowui.view.messagetemplateblock;
 
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.flowui.view.*;
 import io.jmix.messagetemplates.entity.MessageTemplateBlock;
 
-@Route(value = "msgtmp/messagetemplateblock", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "msgtmp/messagetemplateblock", layout = DefaultMainViewParent.class)
+@Route(value = "msgtmp/message-template-block", layout = DefaultMainViewParent.class)
 @ViewController("msgtmp_MessageTemplateBlock.list")
 @ViewDescriptor("message-template-block-list-view.xml")
 @LookupComponent("messageTemplateBlocksDataGrid")

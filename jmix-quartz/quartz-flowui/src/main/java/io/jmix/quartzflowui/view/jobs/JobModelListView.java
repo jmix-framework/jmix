@@ -28,6 +28,7 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.AccessManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MessageTools;
@@ -69,7 +70,8 @@ import java.util.stream.Collectors;
 import static java.util.Comparator.*;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
-@Route(value = "quartz/jobmodels", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "quartz/jobmodels", layout = DefaultMainViewParent.class)
+@Route(value = "quartz/job-models", layout = DefaultMainViewParent.class)
 @ViewController("quartz_JobModel.list")
 @ViewDescriptor("job-model-list-view.xml")
 @LookupComponent("jobModelsTable")

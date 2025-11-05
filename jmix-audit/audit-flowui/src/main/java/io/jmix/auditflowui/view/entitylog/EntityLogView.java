@@ -36,6 +36,7 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.audit.EntityLog;
 import io.jmix.audit.entity.EntityLogAttr;
 import io.jmix.audit.entity.EntityLogItem;
@@ -94,7 +95,8 @@ import java.util.stream.Stream;
 import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
-@Route(value = "audit/entitylog", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "audit/entitylog", layout = DefaultMainViewParent.class)
+@Route(value = "audit/entity-log", layout = DefaultMainViewParent.class)
 @ViewController("entityLog.view")
 @ViewDescriptor("entity-log-view.xml")
 @LookupComponent("entityLogTable")

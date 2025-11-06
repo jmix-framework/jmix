@@ -95,6 +95,9 @@ public class AuthServerProperties {
      */
     String logoutAccessTokenBodyFormParameterName;
 
+    //TODO Javadoc
+    FilterChain filterChain;
+
     public AuthServerProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
             @DefaultValue("false") boolean useInMemoryAuthorizationService,
@@ -108,7 +111,8 @@ public class AuthServerProperties {
             @DefaultValue("Authorization") String logoutAccessTokenHeaderName,
             @DefaultValue("token") String logoutAccessTokenUrlParameterName,
             @DefaultValue("token") String logoutAccessTokenBodyFormParameterName,
-            String postLogoutUrlRedirectParameterName
+            String postLogoutUrlRedirectParameterName,
+            @DefaultValue FilterChain filterChain
     ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.useInMemoryAuthorizationService = useInMemoryAuthorizationService;
@@ -123,6 +127,7 @@ public class AuthServerProperties {
         this.logoutAccessTokenHeaderName = logoutAccessTokenHeaderName;
         this.logoutAccessTokenUrlParameterName = logoutAccessTokenUrlParameterName;
         this.logoutAccessTokenBodyFormParameterName = logoutAccessTokenBodyFormParameterName;
+        this.filterChain = filterChain;
     }
 
     public boolean isUseDefaultConfiguration() {
@@ -177,6 +182,10 @@ public class AuthServerProperties {
         return logoutAccessTokenBodyFormParameterName;
     }
 
+    public FilterChain getFilterChain() {
+        return filterChain;
+    }
+
     /**
      * Class stores Jmix-specific settings of Authorization Server client.
      */
@@ -206,4 +215,24 @@ public class AuthServerProperties {
         }
     }
 
+    public static class FilterChain {
+
+        boolean forceApiScopeEnabled;
+
+        List<String> apiScopeSecurityFilterChainNames;
+
+        public FilterChain(@DefaultValue("true") boolean forceApiScopeEnabled,
+                           @DefaultValue("authsr_OpaqueTokenIntrospector") List<String> apiScopeSecurityFilterChainNames) {
+            this.forceApiScopeEnabled = forceApiScopeEnabled;
+            this.apiScopeSecurityFilterChainNames = apiScopeSecurityFilterChainNames;
+        }
+
+        public boolean isForceApiScopeEnabled() {
+            return forceApiScopeEnabled;
+        }
+
+        public List<String> getApiScopeSecurityFilterChainNames() {
+            return apiScopeSecurityFilterChainNames;
+        }
+    }
 }

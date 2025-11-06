@@ -54,24 +54,36 @@ public class IconLoaderSupport implements ApplicationContextAware {
 
     public void loadIcon(Element element,
                          Consumer<Component> setter) {
-        loadIcon(element, DEFAULT_ICON_ELEMENT_NAME, setter);
+        loadIcon(element, DEFAULT_ICON_ELEMENT_NAME, DEFAULT_ICON_ELEMENT_NAME, setter);
     }
 
     public void loadIcon(Element element, String iconElementName, Consumer<Component> setter) {
-        loadIcon(element, iconElementName)
+        loadIcon(element, iconElementName, iconElementName)
+                .ifPresent(setter);
+    }
+
+    public void loadIcon(Element element,
+                         String iconElementName, String iconAttributeName,
+                         Consumer<Component> setter) {
+        loadIcon(element, iconElementName, iconAttributeName)
                 .ifPresent(setter);
     }
 
     public Optional<Component> loadIcon(Element element) {
-        return loadIcon(element, DEFAULT_ICON_ELEMENT_NAME);
+        return loadIcon(element, DEFAULT_ICON_ELEMENT_NAME, DEFAULT_ICON_ELEMENT_NAME);
     }
 
     public Optional<Component> loadIcon(Element element, String iconElementName) {
+        return loadIcon(element, iconElementName, iconElementName);
+    }
+
+    public Optional<Component> loadIcon(Element element,
+                                        String iconElementName, String iconAttributeName) {
         Element iconElement = element.element(iconElementName);
         if (iconElement != null) {
             return loadIconComponent(iconElement);
         } else {
-            return loaderSupport().loadString(element, iconElementName)
+            return loaderSupport().loadString(element, iconAttributeName)
                     .map(ComponentUtils::parseIcon);
         }
     }

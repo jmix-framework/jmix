@@ -19,11 +19,11 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.google.common.base.Splitter;
 import com.vaadin.flow.component.upload.UploadI18N;
 import io.jmix.flowui.data.SupportsValueSource;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.upload.AbstractSingleUploadField;
 import io.jmix.flowui.kit.component.upload.JmixUploadI18N;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import org.dom4j.Element;
 
 import java.util.List;
@@ -34,6 +34,7 @@ public abstract class AbstractUploadFieldLoader<C extends AbstractSingleUploadFi
         extends AbstractComponentLoader<C> {
 
     protected DataLoaderSupport dataLoaderSupport;
+    protected IconLoaderSupport iconLoaderSupport;
 
     @Override
     public void loadComponent() {
@@ -53,13 +54,11 @@ public abstract class AbstractUploadFieldLoader<C extends AbstractSingleUploadFi
 
         getLoaderSupport().loadInteger(element, "maxFileSize", resultComponent::setMaxFileSize);
         loadAcceptedFileTypes(element)
-                .ifPresent(types-> resultComponent.setAcceptedFileTypes(types.toArray(new String[0])));
+                .ifPresent(types -> resultComponent.setAcceptedFileTypes(types.toArray(new String[0])));
 
         getLoaderSupport().loadBoolean(element, "dropAllowed", resultComponent::setDropAllowed);
 
-        getLoaderSupport().loadString(element, "uploadIcon")
-                .map(ComponentUtils::parseIcon)
-                .ifPresent(resultComponent::setUploadIcon);
+        getIconLoaderSupport().loadIcon(element, "uploadIcon", resultComponent::setUploadIcon);
 
         getLoaderSupport().loadResourceString(element, "uploadText", context.getMessageGroup(),
                 resultComponent::setUploadText);
@@ -161,5 +160,13 @@ public abstract class AbstractUploadFieldLoader<C extends AbstractSingleUploadFi
             dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
         }
         return dataLoaderSupport;
+    }
+
+    protected IconLoaderSupport getIconLoaderSupport() {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, context);
+        }
+
+        return iconLoaderSupport;
     }
 }

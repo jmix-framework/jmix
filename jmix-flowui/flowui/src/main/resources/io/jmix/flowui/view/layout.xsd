@@ -4347,6 +4347,11 @@
     <xs:complexType name="uploadComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="dropLabelIcon" type="iconComponentElement" minOccurs="0"/>
+                    <xs:element name="uploadIcon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
                 <!-- DropLabel attributes-->
                 <xs:attribute name="dropLabel" type="resourceString"/>
                 <xs:attribute name="dropLabelIcon" type="vaadinIconEnum"/>
@@ -4395,9 +4400,10 @@
     <xs:complexType name="baseUploadFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                <xs:sequence>
+                    <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
+                    <xs:element name="uploadIcon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
 
                 <xs:attribute name="uploadText" type="resourceString"/>
                 <xs:attribute name="fileNotSelectedText" type="resourceString"/>

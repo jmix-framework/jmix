@@ -63,6 +63,7 @@ import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.component.datagrid.RendererProvider;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
+import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentFactory;
@@ -94,6 +95,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected FetchPlanRepositoryImpl fetchPlanRepository;
     protected ClassManager classManager;
     protected AccessManager accessManager;
+    protected IconLoaderSupport iconLoaderSupport;
 
     protected List<DataGridColumn<?>> pendingToFilterableColumns = new ArrayList<>();
 
@@ -339,7 +341,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             JmixButton button = factory.create(JmixButton.class);
 
             loadResourceString(buttonElement, "text", context.getMessageGroup(), button::setText);
-            componentLoader().loadIcon(buttonElement, button::setIcon);
+            iconLoaderSupport().loadIcon(buttonElement, button::setIcon);
             componentLoader().loadTitle(button, buttonElement, context);
             componentLoader().loadClassNames(button, buttonElement);
             componentLoader().loadThemeNames(button, buttonElement);
@@ -746,6 +748,14 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         return accessManager;
     }
 
+    protected IconLoaderSupport iconLoaderSupport() {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, context);
+        }
+
+        return iconLoaderSupport;
+    }
+
     @Nullable
     protected String loadMessage(@Nullable String message) {
         if (Strings.isNullOrEmpty(message)) {
@@ -814,6 +824,9 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             case "separator":
                 separatorConsumer.accept(new Hr());
                 break;
+            case "icon":
+                // A valid icon element. Loaded along with other attributes.
+                break;
             default:
                 throw new GuiDevelopmentException("Unknown context menu child element: " + childElement.getName(),
                         context, "Component ID", resultComponent.getId());
@@ -832,7 +845,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         componentLoader().loadText(component, itemElement);
         componentLoader().loadWhiteSpace(component, itemElement);
-        componentLoader().loadIcon(itemElement, component::setPrefixComponent);
+        iconLoaderSupport().loadIcon(itemElement, component::setPrefixComponent);
 
         loadContextMenuItemAction(component, itemElement);
 

@@ -2885,10 +2885,10 @@
     </xs:complexType>
 
     <xs:complexType name="contextMenuType">
-        <xs:choice minOccurs="0">
-            <xs:element name="item" minOccurs="0" type="contextMenuItemType"/>
+        <xs:sequence>
+            <xs:element name="item" type="contextMenuItemType" minOccurs="0"/>
             <xs:element name="separator" minOccurs="0"/>
-        </xs:choice>
+        </xs:sequence>
 
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="css" type="xs:string"/>
@@ -2899,10 +2899,12 @@
     </xs:complexType>
 
     <xs:complexType name="contextMenuItemType">
-        <xs:choice minOccurs="0">
-            <xs:element name="item" minOccurs="0" type="contextMenuItemType"/>
+        <xs:sequence>
+            <xs:element name="item" type="contextMenuItemType" minOccurs="0"/>
             <xs:element name="separator" minOccurs="0"/>
-        </xs:choice>
+
+            <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+        </xs:sequence>
 
         <xs:attribute name="action" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
@@ -2952,14 +2954,14 @@
     <xs:complexType name="buttonComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
+                <xs:sequence>
+                    <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
 
                     <xs:element name="prefix" type="prefixOrSuffixComponent" minOccurs="0"/>
                     <xs:element name="suffix" type="prefixOrSuffixComponent" minOccurs="0"/>
 
                     <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
-                </xs:choice>
+                </xs:sequence>
 
                 <xs:attribute name="action" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
@@ -2984,6 +2986,10 @@
     <xs:complexType name="drawerToggleComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="buttonThemeNames"/>
 
@@ -3073,6 +3079,10 @@
     <xs:complexType name="userMenuTextItemType">
         <xs:complexContent>
             <xs:extension base="userMenuWithSubMenuBaseItemType">
+                <xs:sequence>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
                 <xs:attribute name="text" type="resourceString" use="required"/>
                 <xs:attributeGroup ref="hasIcon"/>
             </xs:extension>
@@ -3107,6 +3117,10 @@
     <xs:complexType name="userMenuViewItemType">
         <xs:complexContent>
             <xs:extension base="userMenuBaseItemType">
+                <xs:sequence>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
                 <xs:attribute name="text" type="resourceString" use="required"/>
                 <xs:attributeGroup ref="hasIcon"/>
 
@@ -3123,6 +3137,10 @@
     <!--endregion-->
 
     <xs:complexType name="gridEditorButtonType">
+        <xs:sequence>
+            <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+        </xs:sequence>
+
         <xs:attributeGroup ref="hasText"/>
         <xs:attributeGroup ref="hasIcon"/>
         <xs:attributeGroup ref="hasTitle"/>

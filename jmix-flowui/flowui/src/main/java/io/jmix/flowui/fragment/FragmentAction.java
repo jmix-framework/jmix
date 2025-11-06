@@ -97,6 +97,7 @@ public abstract class FragmentAction<A extends FragmentAction<A, C>, C extends F
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated(since = "3.0", forRemoval = true)
     @Override
     public A withIcon(@Nullable Icon icon) {
         return ((A) super.withIcon(icon));

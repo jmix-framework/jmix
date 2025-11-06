@@ -159,6 +159,7 @@ public class SecuredBaseAction extends BaseAction implements SecuredAction {
         return (SecuredBaseAction) super.withIcon(icon);
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Override
     public SecuredBaseAction withIcon(@Nullable Icon icon) {
         setIcon(icon);

@@ -94,6 +94,7 @@ public class DialogAction extends SecuredBaseAction {
         return (DialogAction) super.withIcon(icon);
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Override
     public DialogAction withIcon(@Nullable Icon icon) {
         setIcon(icon);

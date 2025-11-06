@@ -26,19 +26,18 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.data.ContainerDataUnit;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.Nested;
+import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.builder.EditedEntityTransformer;
 import io.jmix.flowui.view.builder.WindowBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -51,9 +50,11 @@ import static io.jmix.flowui.view.ViewControllerUtils.getViewData;
 public class BulkEditors {
 
     protected final DialogWindows dialogWindows;
+    protected List<EditedEntityTransformer> editedEntityTransformers;
 
-    public BulkEditors(DialogWindows dialogWindows) {
+    public BulkEditors(DialogWindows dialogWindows, List<EditedEntityTransformer> editedEntityTransformers) {
         this.dialogWindows = dialogWindows;
+        this.editedEntityTransformers = editedEntityTransformers;
     }
 
     public <E> BulkEditorBuilder<E> builder(MetaClass metaClass, Collection<E> entities, View<?> origin) {
@@ -93,7 +94,7 @@ public class BulkEditors {
             if (afterCloseEvent.closedWith(StandardOutcome.SAVE)
                     && listDataComponent != null
                     && listDataComponent.getItems() instanceof ContainerDataUnit<?> containerDataUnit) {
-                replaceItems(containerDataUnit.getContainer(), afterCloseEvent.getView());
+                replaceItems(containerDataUnit.getContainer(), afterCloseEvent.getView(), builder);
             }
 
             if (builder.getListDataComponent() instanceof Focusable<?> focusable) {
@@ -102,14 +103,54 @@ public class BulkEditors {
         };
     }
 
-    protected <E> void replaceItems(CollectionContainer<E> collectionContainer, BulkEditView<?> view) {
+    protected <E> void replaceItems(CollectionContainer<E> collectionContainer, BulkEditView<?> view,
+                                    BulkEditorBuilder<?> builder) {
         EntitySet savedItems = view.getSavedItems();
         if (savedItems == null) {
             return;
         }
 
         Collection<E> saved = savedItems.getAll(collectionContainer.getEntityMetaClass().getJavaClass());
-        saved.forEach(collectionContainer::replaceItem);
+        saved.stream()
+                .map(item -> transformForCollectionContainer(item, collectionContainer))
+                .map(item -> merge(item, builder.getOrigin(), view, collectionContainer))
+                .forEach(collectionContainer::replaceItem);
+    }
+
+    protected <E> E transformForCollectionContainer(E entity, CollectionContainer<E> container) {
+        E result = entity;
+        if (CollectionUtils.isNotEmpty(editedEntityTransformers)) {
+            for (EditedEntityTransformer transformer : editedEntityTransformers) {
+                result = transformer.transformForCollectionContainer(result, container);
+            }
+        }
+
+        return result;
+    }
+
+    protected <E> E merge(E entity, View<?> origin, View<?> target,
+                          @Nullable CollectionContainer<E> container) {
+        DataContext parentDataContext = getViewData(target).getDataContext().getParent();
+        if (parentDataContext == null && isContainerLinkedWithDataContext(container)) {
+            DataContext thisDataContext = getViewData(origin).getDataContextOrNull();
+            if (thisDataContext != null) {
+                return thisDataContext.merge(entity);
+            }
+        }
+
+        return entity;
+    }
+
+    protected <E> boolean isContainerLinkedWithDataContext(@Nullable InstanceContainer<E> container) {
+        if (container instanceof HasLoader standaloneContainer) {
+            DataLoader loader = standaloneContainer.getLoader();
+            return loader != null && loader.getDataContext() != null;
+        }
+        if (container instanceof Nested nestedContainer) {
+            InstanceContainer<?> masterContainer = nestedContainer.getMaster();
+            return isContainerLinkedWithDataContext(masterContainer);
+        }
+        return false;
     }
 
     protected <E> BulkEditViewContext<E> createBulkEditorContext(BulkEditorBuilder<E> builder) {

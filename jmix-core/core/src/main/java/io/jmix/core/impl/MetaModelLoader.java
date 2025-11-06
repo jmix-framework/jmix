@@ -120,8 +120,8 @@ public class MetaModelLoader {
         for (String className : classNames) {
             try {
                 classes.add(ReflectionHelper.loadClass(className));
-            } catch (ClassNotFoundException e) {
-                log.warn("Class {} not found", className);
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
+                log.warn("Cannot load class {}: {}", className, e.toString());
             }
         }
 

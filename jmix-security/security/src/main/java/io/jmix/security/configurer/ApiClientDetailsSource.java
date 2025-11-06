@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.securityresourceserver.authentication;
+package io.jmix.security.configurer;
 
 import io.jmix.core.security.ClientDetails;
 import io.jmix.security.model.SecurityScope;
-import io.jmix.security.util.RequestLocaleProvider;
+import io.jmix.security.util.ClientDetailsSourceSupport;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 
-import java.util.Locale;
-import java.util.TimeZone;
-
 /**
- * Implementation of {@link ApiClientDetailsSource} that provides {@link ClientDetails} with API security scope.
+ * Implementation of {@link AuthenticationDetailsSource} that provides {@link ClientDetails} with API security scope.
  */
-public class ApiClientDetailsSource implements AuthenticationDetailsSource<HttpServletRequest, ClientDetails> {
+public class ApiClientDetailsSource extends BaseClientDetailsSource {
 
-    protected final RequestLocaleProvider requestLocaleProvider;
-
-    public ApiClientDetailsSource(RequestLocaleProvider requestLocaleProvider) {
-        this.requestLocaleProvider = requestLocaleProvider;
+    public ApiClientDetailsSource(ClientDetailsSourceSupport clientDetailsSourceSupport) {
+        super(clientDetailsSourceSupport);
     }
 
     @Override
@@ -45,13 +40,5 @@ public class ApiClientDetailsSource implements AuthenticationDetailsSource<HttpS
                 .sessionId(request.getSession().getId())
                 .timeZone(getTimeZone())
                 .build();
-    }
-
-    protected Locale getLocale(HttpServletRequest request) {
-        return requestLocaleProvider.getLocale(request);
-    }
-
-    protected TimeZone getTimeZone() {
-        return TimeZone.getDefault();
     }
 }

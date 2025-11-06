@@ -3,6 +3,8 @@ package io.jmix.oidc;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.util.List;
+
 @ConfigurationProperties(prefix = "jmix.oidc")
 public class OidcProperties {
 
@@ -26,16 +28,21 @@ public class OidcProperties {
      */
     JwtAuthenticationConverterConfig jwtAuthenticationConverter;
 
+    //todo javadoc
+    FilterChain filterChain;
+
     public OidcProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
             @DefaultValue("{baseUrl}") String postLogoutRedirectUri,
             @DefaultValue DefaultClaimsRolesMapperConfig defaultClaimsRolesMapper,
-            @DefaultValue JwtAuthenticationConverterConfig jwtAuthenticationConverter
+            @DefaultValue JwtAuthenticationConverterConfig jwtAuthenticationConverter,
+            @DefaultValue FilterChain filterChain
     ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.postLogoutRedirectUri = postLogoutRedirectUri;
         this.defaultClaimsRolesMapper = defaultClaimsRolesMapper;
         this.jwtAuthenticationConverter = jwtAuthenticationConverter;
+        this.filterChain = filterChain;
     }
 
     public boolean isUseDefaultConfiguration() {
@@ -52,6 +59,10 @@ public class OidcProperties {
 
     public JwtAuthenticationConverterConfig getJwtAuthenticationConverter() {
         return jwtAuthenticationConverter;
+    }
+
+    public FilterChain getFilterChain() {
+        return filterChain;
     }
 
     public static class DefaultClaimsRolesMapperConfig {
@@ -107,6 +118,44 @@ public class OidcProperties {
 
         public String getUsernameClaim() {
             return usernameClaim;
+        }
+    }
+
+    //todo javadoc
+    public static class FilterChain {
+
+        boolean forceApiScopeEnabled;
+
+        boolean forceUiScopeEnabled;
+
+        List<String> apiScopeSecurityFilterChainNames;
+
+        List<String> uiScopeSecurityFilterChainNames;
+
+        public FilterChain(@DefaultValue("true") boolean forceApiScopeEnabled,
+                           @DefaultValue("true") boolean forceUiScopeEnabled,
+                           @DefaultValue("oidc_JwtSecurityFilterChain") List<String> apiScopeSecurityFilterChainNames,
+                           @DefaultValue("VaadinSecurityFilterChainBean") List<String> uiScopeSecurityFilterChainNames) {
+            this.forceApiScopeEnabled = forceApiScopeEnabled;
+            this.apiScopeSecurityFilterChainNames = apiScopeSecurityFilterChainNames;
+            this.forceUiScopeEnabled = forceUiScopeEnabled;
+            this.uiScopeSecurityFilterChainNames = uiScopeSecurityFilterChainNames;
+        }
+
+        public boolean isForceApiScopeEnabled() {
+            return forceApiScopeEnabled;
+        }
+
+        public boolean isForceUiScopeEnabled() {
+            return forceUiScopeEnabled;
+        }
+
+        public List<String> getApiScopeSecurityFilterChainNames() {
+            return apiScopeSecurityFilterChainNames;
+        }
+
+        public List<String> getUiScopeSecurityFilterChainNames() {
+            return uiScopeSecurityFilterChainNames;
         }
     }
 }

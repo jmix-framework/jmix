@@ -22,6 +22,7 @@ import io.jmix.authserver.AuthServerProperties;
 import io.jmix.authserver.authentication.OAuth2ResourceOwnerPasswordTokenEndpointConfigurer;
 import io.jmix.authserver.authentication.TokenRevocationLogoutHandler;
 import io.jmix.authserver.filter.AsResourceServerEventSecurityFilter;
+import io.jmix.authserver.filter.AuthServerResourceServerSecurityFilterChainCustomizer;
 import io.jmix.authserver.introspection.AuthorizationServiceOpaqueTokenIntrospector;
 import io.jmix.authserver.introspection.TokenIntrospectorRolesHelper;
 import io.jmix.authserver.principal.AuthServerAuthenticationPrincipalResolver;
@@ -37,6 +38,8 @@ import io.jmix.authserver.service.mapper.JdbcOAuth2AuthorizationServiceObjectMap
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.data.persistence.DbmsType;
 import io.jmix.security.SecurityConfigurers;
+import io.jmix.security.configurer.SecurityFilterChainCustomizer;
+import io.jmix.security.util.ClientDetailsSourceSupport;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
 import org.apache.commons.lang3.StringUtils;
@@ -343,6 +346,12 @@ public class AuthServerAutoConfiguration {
         public OpaqueTokenIntrospector opaqueTokenIntrospector(OAuth2AuthorizationService authorizationService,
                                                                TokenIntrospectorRolesHelper tokenIntrospectorRolesHelper) {
             return new AuthorizationServiceOpaqueTokenIntrospector(authorizationService, tokenIntrospectorRolesHelper);
+        }
+
+        @Bean("authsr_AuthServerResourceServerSecurityFilterChainCustomizer")
+        public SecurityFilterChainCustomizer authServerResourceServerSecurityFilterChainCustomizer(ClientDetailsSourceSupport clientDetailsSourceSupport,
+                                                                                                   AuthServerProperties authServerProperties) {
+            return new AuthServerResourceServerSecurityFilterChainCustomizer(clientDetailsSourceSupport, authServerProperties);
         }
     }
 }

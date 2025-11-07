@@ -178,7 +178,6 @@ public class IconLoaderSupport implements ApplicationContextAware {
 
         Element componentElement = iconElement.elements().get(0);
         ComponentLoader<?> componentLoader = getLayoutLoader().createComponentLoader(componentElement);
-        // TODO: gg, check allowed list or correct component loading?
         componentLoader.initComponent();
         componentLoader.loadComponent();
 

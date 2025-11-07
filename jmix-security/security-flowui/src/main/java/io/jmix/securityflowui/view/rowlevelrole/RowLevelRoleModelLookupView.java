@@ -17,6 +17,7 @@
 package io.jmix.securityflowui.view.rowlevelrole;
 
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
@@ -33,7 +34,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Route(value = "sec/rowlevelrolemodelslookup", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "sec/rowlevelrolemodelslookup", layout = DefaultMainViewParent.class)
+@Route(value = "sec/row-level-role-models-lookup", layout = DefaultMainViewParent.class)
 @ViewController("sec_RowLevelRoleModel.lookup")
 @ViewDescriptor("row-level-role-model-lookup-view.xml")
 @LookupComponent("roleModelsTable")

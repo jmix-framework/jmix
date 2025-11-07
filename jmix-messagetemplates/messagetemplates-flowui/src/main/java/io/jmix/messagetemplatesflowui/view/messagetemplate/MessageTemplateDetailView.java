@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
@@ -49,7 +50,8 @@ import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-@Route(value = "msgtmp/messagetemplate/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "msgtmp/messagetemplate/:id", layout = DefaultMainViewParent.class)
+@Route(value = "msgtmp/message-template/:id", layout = DefaultMainViewParent.class)
 @ViewController("msgtmp_MessageTemplate.detail")
 @ViewDescriptor("message-template-detail-view.xml")
 @EditedEntityContainer("messageTemplateDc")

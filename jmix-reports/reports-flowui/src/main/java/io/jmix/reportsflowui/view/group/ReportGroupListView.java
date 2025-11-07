@@ -4,6 +4,7 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.list.EditAction;
@@ -22,7 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 
-@Route(value = "reports/groups", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/groups", layout = DefaultMainViewParent.class)
+@Route(value = "report/groups", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportGroup.list")
 @ViewDescriptor("report-group-list-view.xml")
 @LookupComponent("reportGroupsDataGrid")

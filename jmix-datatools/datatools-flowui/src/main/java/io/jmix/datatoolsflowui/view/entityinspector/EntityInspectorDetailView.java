@@ -25,6 +25,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -58,7 +59,8 @@ import java.util.HashMap;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 
-@Route(value = "datatl/entityinspector/:entityName/:entityId", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "datatl/entityinspector/:entityName/:entityId", layout = DefaultMainViewParent.class)
+@Route(value = "datatl/entity-inspector/:entityName/:entityId", layout = DefaultMainViewParent.class)
 @ViewController("datatl_entityInspectorDetailView")
 @ViewDescriptor("entity-inspector-detail-view.xml")
 @DialogMode(width = "50em", resizable = true)

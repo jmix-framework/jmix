@@ -22,6 +22,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.audit.UserSessions;
 import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.UserSession;
@@ -48,7 +49,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Route(value = "audit/usersessions", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "audit/usersessions", layout = DefaultMainViewParent.class)
+@Route(value = "audit/user-sessions", layout = DefaultMainViewParent.class)
 @ViewController("userSession.view")
 @ViewDescriptor("user-sessions-view.xml")
 @LookupComponent("sessionsTable")

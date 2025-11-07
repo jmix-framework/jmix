@@ -17,6 +17,7 @@
 package io.jmix.securityflowui.view.resourcerole;
 
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
@@ -33,7 +34,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Route(value = "sec/resourcerolemodelslookup", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "sec/resourcerolemodelslookup", layout = DefaultMainViewParent.class)
+@Route(value = "sec/resource-role-models-lookup", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.lookup")
 @ViewDescriptor("resource-role-model-lookup-view.xml")
 @LookupComponent("roleModelsTable")

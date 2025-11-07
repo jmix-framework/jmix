@@ -18,6 +18,7 @@ package io.jmix.messagetemplatesflowui.view.messagetemplate;
 
 import com.google.common.io.Files;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
@@ -53,7 +54,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
-@Route(value = "msgtmp/messagetemplate", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "msgtmp/messagetemplate", layout = DefaultMainViewParent.class)
+@Route(value = "msgtmp/message-template", layout = DefaultMainViewParent.class)
 @ViewController("msgtmp_MessageTemplate.list")
 @ViewDescriptor("message-template-list-view.xml")
 @LookupComponent("messageTemplatesDataGrid")

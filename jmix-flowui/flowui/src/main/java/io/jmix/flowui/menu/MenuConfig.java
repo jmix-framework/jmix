@@ -16,6 +16,7 @@
 package io.jmix.flowui.menu;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.Text;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
@@ -25,10 +26,13 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.menu.MenuItem.MenuItemParameter;
 import io.jmix.flowui.menu.MenuItem.MenuItemProperty;
+import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.lang.Nullable;
@@ -52,6 +56,7 @@ public class MenuConfig {
 
     protected List<MenuItem> rootItems = new ArrayList<>();
 
+    protected ApplicationContext applicationContext;
     protected Resources resources;
     protected Messages messages;
     protected MessageTools messageTools;
@@ -62,13 +67,17 @@ public class MenuConfig {
     protected Metadata metadata;
     protected MetadataTools metadataTools;
 
+    protected IconLoaderSupport iconLoaderSupport;
+
     protected volatile boolean initialized;
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public MenuConfig(Resources resources, Messages messages, MessageTools messageTools, Dom4jTools dom4JTools,
+    public MenuConfig(ApplicationContext applicationContext,
+                      Resources resources, Messages messages, MessageTools messageTools, Dom4jTools dom4JTools,
                       Environment environment, UiProperties uiProperties, JmixModules modules,
                       Metadata metadata, MetadataTools metadataTools) {
+        this.applicationContext = applicationContext;
         this.resources = resources;
         this.messages = messages;
         this.messageTools = messageTools;
@@ -230,6 +239,8 @@ public class MenuConfig {
                 if (StringUtils.isNotBlank(id)) {
                     menuItem.setDescriptor(element);
                 }
+            } else if ("icon".equals(element.getName())) {
+                addItem = false;
             } else {
                 log.warn(String.format("Unknown tag '%s' in menu-config", element.getName()));
             }
@@ -370,11 +381,7 @@ public class MenuConfig {
     }
 
     protected void loadIcon(Element element, MenuItem menuItem) {
-        String icon = element.attributeValue("icon");
-
-        if (StringUtils.isNotEmpty(icon)) {
-            menuItem.setIcon(icon);
-        }
+        getIconLoaderSupport().loadIcon(element, menuItem::setIconComponent);
     }
 
     protected String loadResourceString(@Nullable String ref) {
@@ -590,5 +597,23 @@ public class MenuConfig {
             }
         }
         return null;
+    }
+
+    protected IconLoaderSupport getIconLoaderSupport() {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, createLoaderContext());
+        }
+
+        return iconLoaderSupport;
+    }
+
+    protected ComponentLoader.Context createLoaderContext() {
+        // Using some non 'HasComponents' origin as a placeholder since
+        // MenuConfig doesn't represent a component itself.
+        MenuLoaderContext context = new MenuLoaderContext(new Text(getClass().getSimpleName()));
+        context.setFullOriginId(MENU_CONFIG_XML_PROP);
+        context.setMessageGroup("");
+
+        return context;
     }
 }

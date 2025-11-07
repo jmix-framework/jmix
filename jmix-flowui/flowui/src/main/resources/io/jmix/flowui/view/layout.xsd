@@ -2411,7 +2411,7 @@
                 <xs:element name="icon" type="iconComponent"/>
                 <xs:element name="svgIcon" type="svgIconComponent"/>
                 <xs:element name="fontIcon" type="fontIconComponent"/>
-                <xs:element name="image" type="imageComponent"/>
+                <xs:element name="image" type="imageIconComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>
@@ -4444,6 +4444,29 @@
             <xs:extension base="imageHtmlComponent">
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attribute name="themeNames" type="imageThemeNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Image as Icon -->
+    <xs:complexType name="imageIconComponent">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlComponent">
+                <!-- imageComponent -->
+                <xs:attribute name="themeNames" type="imageThemeNames"/>
+
+                <!-- imageHtmlComponent -->
+                <xs:attribute name="resource" type="xs:string"/>
+                <xs:attribute name="alternateText" type="resourceString"/>
+
+                <xs:attributeGroup ref="hasAriaLabel"/>
+
+                <!-- baseClickableHtmlContainer -->
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
+
+                <!-- baseHtmlContainer -->
+                <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasEnabled"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

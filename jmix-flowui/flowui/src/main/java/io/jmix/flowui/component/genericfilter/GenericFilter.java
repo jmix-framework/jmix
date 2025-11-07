@@ -261,7 +261,7 @@ public class GenericFilter extends Composite<JmixDetails>
         GenericFilterAddConditionAction addConditionAction = actions.create(GenericFilterAddConditionAction.ID);
         addConditionAction.setTarget(this);
         addConditionAction.setText(messages.getMessage("genericFilter.addConditionButton.text"));
-        addConditionAction.setIcon(null);
+        addConditionAction.setIconComponent(null);
         addConditionButton.setAction(addConditionAction, false);
     }
 
@@ -308,7 +308,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected void initSettingsButton(DropdownButton settingsButton) {
         settingsButton.addThemeVariants(DropdownButtonVariant.LUMO_ICON);
         settingsButton.setDropdownIndicatorVisible(false);
-        settingsButton.setIcon(VaadinIcon.COG.create());
+        settingsButton.setIconComponent(VaadinIcon.COG.create());
 
         List<GenericFilterAction<?>> defaultFilterActions = genericFilterSupport.getDefaultFilterActions(this);
         for (GenericFilterAction<?> filterAction : defaultFilterActions) {

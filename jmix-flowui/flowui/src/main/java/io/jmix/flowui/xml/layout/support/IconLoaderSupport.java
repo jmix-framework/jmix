@@ -31,6 +31,9 @@ import org.springframework.context.annotation.Scope;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Utility class for loading component icons.
+ */
 @org.springframework.stereotype.Component("flowui_IconLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class IconLoaderSupport implements ApplicationContextAware {
@@ -52,16 +55,53 @@ public class IconLoaderSupport implements ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Loads an icon component from the given XML {@code element} and applies it
+     * using the provided {@code setter}. The method first attempts to find the nested icon
+     * element with the default name within the given element. If the icon element
+     * is found, an icon component is loaded and passed to the {@code setter}.
+     * Otherwise, it attempts to load an icon from the fallback attribute with the
+     * default name.
+     *
+     * @param element the XML element to load the icon from
+     * @param setter  the setter used to process the loaded icon
+     */
     public void loadIcon(Element element,
                          Consumer<Component> setter) {
         loadIcon(element, DEFAULT_ICON_ELEMENT_NAME, DEFAULT_ICON_ELEMENT_NAME, setter);
     }
 
+    /**
+     * Loads an icon component from the given XML {@code element} and applies it
+     * using the provided {@code setter}. The method first attempts to find the nested icon
+     * element with the given name within the given element. If the icon element
+     * is found, an icon component is loaded and passed to the {@code setter}.
+     * Otherwise, it attempts to load an icon from the fallback attribute the same
+     * name as the given icon element name.
+     *
+     * @param element         the XML element to load the icon from
+     * @param iconElementName the name of the child element that stores the icon
+     * @param setter          the setter used to process the loaded icon
+     */
     public void loadIcon(Element element, String iconElementName, Consumer<Component> setter) {
         loadIcon(element, iconElementName, iconElementName)
                 .ifPresent(setter);
     }
 
+    /**
+     * Loads an icon component from the given XML {@code element} and applies it
+     * using the provided {@code setter}. The method first attempts to find the nested icon
+     * element with the given name within the given element. If the icon element
+     * is found, an icon component is loaded and passed to the {@code setter}.
+     * Otherwise, it attempts to load an icon from the specified fallback attribute of
+     * the given element.
+     *
+     * @param element           the XML element to load the icon from
+     * @param iconElementName   the name of the child element that stores the icon
+     * @param iconAttributeName the name of the fallback attribute that represents
+     *                          the icon if no icon element is found
+     * @param setter            the setter used to process the loaded icon
+     */
     public void loadIcon(Element element,
                          String iconElementName, String iconAttributeName,
                          Consumer<Component> setter) {
@@ -69,14 +109,53 @@ public class IconLoaderSupport implements ApplicationContextAware {
                 .ifPresent(setter);
     }
 
+    /**
+     * Loads an icon component from the given XML {@code element}. The method first
+     * attempts to find the nested icon element with the default name within the given
+     * element. If the icon element is found, the icon component is loaded from it.
+     * Otherwise, it attempts to load an icon from the fallback attribute with the
+     * default name.
+     *
+     * @param element the XML element to load the icon from
+     * @return an {@link Optional} containing the loaded icon {@link Component},
+     * or an empty {@link Optional}
+     * if no icon could be loaded
+     */
     public Optional<Component> loadIcon(Element element) {
         return loadIcon(element, DEFAULT_ICON_ELEMENT_NAME, DEFAULT_ICON_ELEMENT_NAME);
     }
 
+    /**
+     * Loads an icon component from the given XML {@code element}. The method first
+     * attempts to find the nested icon element with the given name within the given
+     * element. If the icon element is found, the icon component is loaded from it.
+     * Otherwise, it attempts to load an icon from the fallback attribute with the same
+     * name as the given icon element name. If no icon is found, an empty {@link Optional}
+     * is returned.
+     *
+     * @param element         the XML element to load the icon from
+     * @param iconElementName the name of the child element that stores the icon
+     * @return an {@link Optional} containing the loaded icon {@link Component},
+     * or an empty {@link Optional} if no icon could be loaded
+     */
     public Optional<Component> loadIcon(Element element, String iconElementName) {
         return loadIcon(element, iconElementName, iconElementName);
     }
 
+    /**
+     * Loads an icon component from the given XML {@code element}. The method first
+     * attempts to find the nested icon element with the given name within the given
+     * element. If the icon element is found, the icon component is loaded from it.
+     * Otherwise, it attempts to load an icon from the given fallback attribute.
+     * If no icon is found, an empty {@link Optional} is returned.
+     *
+     * @param element           the XML element to load the icon from
+     * @param iconElementName   the name of the child element that stores the icon
+     * @param iconAttributeName the name of the fallback attribute that represents
+     *                          the icon if no icon element is found
+     * @return an {@link Optional} containing the loaded icon {@link Component}, or
+     * an empty {@link Optional} if no icon could be loaded
+     */
     public Optional<Component> loadIcon(Element element,
                                         String iconElementName, String iconAttributeName) {
         Element iconElement = element.element(iconElementName);

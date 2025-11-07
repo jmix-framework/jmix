@@ -25,7 +25,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -36,6 +35,7 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.shared.Registration;
+import com.vaadin.flow.theme.lumo.LumoIcon;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
@@ -534,13 +534,13 @@ public class EntityInspectorListView extends StandardListView<Object> {
         DropdownButton exportDropdownButton = uiComponents.create(DropdownButton.class);
         exportDropdownButton.setEnabled(importExportAvailableBySpecificUiPermission);
         exportDropdownButton.setText(messages.getMessage(EntityInspectorListView.class, "export"));
-        exportDropdownButton.setIcon(VaadinIcon.DOWNLOAD.create());
+        exportDropdownButton.setIconComponent(VaadinIcon.DOWNLOAD.create());
 
         ExportAction exportJsonAction = new ExportAction("exportJSON");
         exportJsonAction.setFormat(JSON);
         exportJsonAction.setDataGrid(dataGrid);
         exportJsonAction.setMetaClass(selectedMeta);
-        exportJsonAction.setIcon(VaadinIcon.FILE_CODE.create());
+        exportJsonAction.setIconComponent(VaadinIcon.FILE_CODE.create());
         exportJsonAction.setMetadata(metadata);
         exportDropdownButton.addItem("exportJson", exportJsonAction);
 
@@ -548,7 +548,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         exportZipAction.setFormat(ZIP);
         exportZipAction.setDataGrid(dataGrid);
         exportZipAction.setMetaClass(selectedMeta);
-        exportZipAction.setIcon(VaadinIcon.FILE_ZIP.create());
+        exportZipAction.setIconComponent(VaadinIcon.FILE_ZIP.create());
         exportZipAction.setMetadata(metadata);
         exportDropdownButton.addItem("exportZip", exportZipAction);
 
@@ -727,7 +727,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         restoreAction.setText(messages.getMessage(EntityInspectorListView.class, "restore"));
         restoreAction.addActionPerformedListener(event -> showRestoreDialog());
         restoreAction.setTarget(dataGrid);
-        restoreAction.setIcon(new Icon("lumo", "undo"));
+        restoreAction.setIconComponent(LumoIcon.UNDO.create());
 
         restoreButton.setAction(restoreAction);
         dataGrid.addAction(restoreAction);
@@ -742,7 +742,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         wipeOutAction.addActionPerformedListener(event -> showWipeOutDialog());
         wipeOutAction.setTarget(dataGrid);
         wipeOutAction.setVariant(ActionVariant.DANGER);
-        wipeOutAction.setIcon(VaadinIcon.ERASER.create());
+        wipeOutAction.setIconComponent(VaadinIcon.ERASER.create());
 
         wipeOutButton.setAction(wipeOutAction);
         dataGrid.addAction(wipeOutAction);

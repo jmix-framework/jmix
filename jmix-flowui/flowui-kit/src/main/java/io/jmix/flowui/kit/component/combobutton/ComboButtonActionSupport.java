@@ -157,7 +157,7 @@ public class ComboButtonActionSupport {
     }
 
     protected void updateIcon(boolean overrideComponentProperties) {
-        if (comboButton.getIcon() == null || overrideComponentProperties) {
+        if (comboButton.getIconComponent() == null || overrideComponentProperties) {
             comboButton.setIconComponent(action.getIconComponent());
         }
     }

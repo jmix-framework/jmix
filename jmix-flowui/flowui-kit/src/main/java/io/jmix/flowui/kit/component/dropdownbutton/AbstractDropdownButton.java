@@ -257,12 +257,14 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         return getContent().addDetachListener(listener);
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     @Override
     public Icon getIcon() {
         return iconComponent instanceof Icon icon ? icon : null;
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Override
     public void setIcon(@Nullable Icon icon) {
         setIconComponent(icon);

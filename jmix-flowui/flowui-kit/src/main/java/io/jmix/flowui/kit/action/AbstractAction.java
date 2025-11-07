@@ -102,14 +102,19 @@ public abstract class AbstractAction implements Action {
         }
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     @Override
     public Icon getIcon() {
+        // Action returns a copy of an icon, because the icon is actually
+        // used by the components linked to this action and an icon cannot
+        // have several parents.
         return icon instanceof Icon iconComponent
                 ? ComponentUtils.copyIconComponent(iconComponent)
                 : null;
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Override
     public void setIcon(@Nullable Icon icon) {
         setIconComponent(icon);
@@ -118,6 +123,9 @@ public abstract class AbstractAction implements Action {
     @Nullable
     @Override
     public Component getIconComponent() {
+        // Action returns a copy of an icon, because the icon is actually
+        // used by the components linked to this action and an icon cannot
+        // have several parents.
         return icon != null
                 ? ComponentUtils.copyIcon(icon)
                 : null;

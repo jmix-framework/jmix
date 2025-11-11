@@ -12,13 +12,28 @@
               shortcutCombination="Control-Enter"/>
         <menu id="nestedMenu"
               title="Nested menu">
+            <icon>
+                <icon icon="CHECK"/>
+            </icon>
+
             <item view="Nested.view"
-                  title="Nested view"/>
+                  title="Nested view">
+                <icon>
+                    <svgIcon resource="/icons/check-solid-full.svg"/>
+                </icon>
+            </item>
         </menu>
     </menu>
     <menu id="administration"
           title="Administration">
+        <icon>
+            <fontIcon fontFamily="lumo-icons" charCode=""/>
+        </icon>
         <item view="Administration.view"
-              title="Administration view"/>
+              title="Administration view">
+            <icon>
+                <image resource="/icons/icon.png"/>
+            </icon>
+        </item>
     </menu>
 </menu-config>

@@ -32,7 +32,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.lang.Nullable;
@@ -48,7 +50,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Holds information about the main menu structure.
  */
 @Component("flowui_MenuConfig")
-public class MenuConfig {
+public class MenuConfig implements ApplicationContextAware {
 
     private final Logger log = LoggerFactory.getLogger(MenuConfig.class);
 
@@ -73,11 +75,9 @@ public class MenuConfig {
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public MenuConfig(ApplicationContext applicationContext,
-                      Resources resources, Messages messages, MessageTools messageTools, Dom4jTools dom4JTools,
+    public MenuConfig(Resources resources, Messages messages, MessageTools messageTools, Dom4jTools dom4JTools,
                       Environment environment, UiProperties uiProperties, JmixModules modules,
                       Metadata metadata, MetadataTools metadataTools) {
-        this.applicationContext = applicationContext;
         this.resources = resources;
         this.messages = messages;
         this.messageTools = messageTools;
@@ -87,6 +87,11 @@ public class MenuConfig {
         this.modules = modules;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
     /**

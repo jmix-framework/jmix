@@ -42,6 +42,7 @@ class CustomIconXmlLoad extends FlowuiTestSpecification {
         then: "Action has Icon as icon"
         view.iconAttributeAction.iconComponent instanceof Icon
         ComponentTestUtils.isSameIcon(view.iconAttributeAction.iconComponent, VaadinIcon.CHECK)
+        ComponentTestUtils.isSameIcon(view.iconAttributeAction.icon, VaadinIcon.CHECK)
 
         and: "Button has Icon as icon"
         view.iconAttributeButton.icon instanceof Icon
@@ -55,6 +56,7 @@ class CustomIconXmlLoad extends FlowuiTestSpecification {
         then: "Action has Icon as icon"
         view.iconAction.iconComponent instanceof Icon
         ComponentTestUtils.isSameIcon(view.iconAction.iconComponent, VaadinIcon.CHECK)
+        ComponentTestUtils.isSameIcon(view.iconAction.icon, VaadinIcon.CHECK)
 
         and: "Button has Icon as icon"
         view.iconButton.icon instanceof Icon

@@ -17,6 +17,7 @@ package io.jmix.flowui.menu;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.icon.Icon;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
@@ -226,7 +227,9 @@ public class MenuItem {
     @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     public String getIcon() {
-        return iconName;
+        return !Strings.isNullOrEmpty(iconName)
+                ? iconName
+                : icon instanceof Icon iconComponent ? iconComponent.getIcon() : null;
     }
 
     /**

@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping;
+package test_support.index_definition.dynamic;
 
-public class ParameterKeys {
+import io.jmix.search.index.annotation.AutoMappedField;
+import io.jmix.search.index.annotation.DynamicAttributes;
+import io.jmix.search.index.annotation.JmixEntitySearchIndex;
+import test_support.entity.TestSimpleRootEntity;
 
-    public static final String INDEX_FILE_CONTENT = "_indexFileContent";
-    public static final String ANALYZER = "analyzer";
+@JmixEntitySearchIndex(entity = TestSimpleRootEntity.class)
+public interface TestDynamicAttributesIndexDefinition {
+
+    @AutoMappedField(includeProperties = {"name", "embedded"})
+    @DynamicAttributes
+    void mapping();
 }

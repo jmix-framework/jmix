@@ -435,9 +435,12 @@ public class EntityIndexingManagementFacade {
     }
 
     @Authenticated
-    @ManagedOperation(description = "Recalculate all index configurations, including the dynamic attributes analysis")
-    public void refreshLocalIndexConfigurations(){
+    @ManagedOperation(description = "Recalculates all index configurations, including the dynamic attributes analysis, and synchronizes index schemas." +
+            "Synchronizes schemas of all search indexes defined in application. " +
+            "This may cause deletion of indexes with all their data - depends on schema management strategy")
+    public String synchronizeIndexSchemasWithIndexesRecreating() {
         indexConfigurationManager.refreshIndexDefinitions();
+        return synchronizeIndexSchemas();
     }
 
     protected String formatSingleStatusString(String entityName, String indexName, String status) {

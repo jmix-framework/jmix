@@ -38,9 +38,7 @@ import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesReso
 import io.jmix.search.index.mapping.processor.impl.dynattr.PatternsMatcher;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.search.index.queue.impl.JpaIndexingQueueManager;
-import io.jmix.search.listener.DependentEntitiesLoader;
 import io.jmix.search.listener.dynattr.DynamicAttributesTrackingListener;
-import io.jmix.search.listener.dynattr.DynamicReferenceDependentEntitiesResolver;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.utils.PropertyTools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,21 +94,12 @@ public class SearchAutoConfiguration {
         public DynamicAttributesTrackingListener dynamicAttributesTrackingListener(
                 IndexConfigurationManager indexConfigurationManager,
                 IndexingQueueManager indexingQueueManager,
-                DynamicReferenceDependentEntitiesResolver dependentEntitiesResolver,
                 EntityStates entityStates,
                 MetadataTools metadataTools) {
             return new DynamicAttributesTrackingListener(indexConfigurationManager,
                     indexingQueueManager,
-                    dependentEntitiesResolver,
                     entityStates,
                     metadataTools);
-        }
-
-        @Bean(name = "search_DynamicReferenceDependentEntitiesResolver")
-        public DynamicReferenceDependentEntitiesResolver dynamicReferenceDependentEntitiesResolver(
-                IndexConfigurationManager indexConfigurationManager,
-                DependentEntitiesLoader dependentEntitiesLoader) {
-            return new DynamicReferenceDependentEntitiesResolver(indexConfigurationManager, dependentEntitiesLoader);
         }
 
         @Bean(name = "search_DynamicAttributesResolver")

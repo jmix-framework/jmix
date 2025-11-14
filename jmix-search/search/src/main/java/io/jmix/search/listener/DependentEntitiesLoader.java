@@ -77,7 +77,6 @@ public class DependentEntitiesLoader {
             for (MetaPropertyPath propertyPath : properties) {
                 log.debug("Load entities '{}' dependent via property '{}'", entityName, propertyPath);
 
-                //TODO think about performance
                 DependentEntitiesQuery dependentEntitiesQuery = new DependentEntitiesQueryBuilder(metadataTools, dynamicAttributeReferenceFieldResolver, dynamicAttributesSupport)
                         .loadEntity(metaClass)
                         .byProperty(propertyPath)

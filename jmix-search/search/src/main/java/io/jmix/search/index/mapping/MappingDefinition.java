@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO update java doc
  * Contains information about indexed properties defined within index definition interface
  * marked with {@link JmixEntitySearchIndex}
  * <p>
@@ -50,15 +49,15 @@ import java.util.Map;
  *     default MappingDefinition mapping(AutoMappingStrategy autoMappingStrategy,
  *                                       SimplePropertyValueExtractor simplePropertyValueExtractor) {
  *         return MappingDefinition.builder()
- *                 .addElement(
- *                         MappingDefinitionElement.builder()
+ *                 .addStaticAttributesGroup(
+ *                         StaticAttributesGroupConfiguration.builder()
  *                                 .includeProperties("*")
  *                                 .excludeProperties("name", "description")
  *                                 .withFieldMappingStrategyClass(AutoMappingStrategy.class)
  *                                 .build()
  *                 )
- *                 .addElement(
- *                         MappingDefinitionElement.builder()
+ *                 .addStaticAttributesGroup(
+ *                         StaticAttributesGroupConfiguration.builder()
  *                                 .includeProperties("name")
  *                                 .withFieldMappingStrategy(autoMappingStrategy)
  *                                 .withFieldConfiguration(
@@ -70,8 +69,8 @@ import java.util.Map;
  *                                 )
  *                                 .build()
  *                 )
- *                 .addElement(
- *                         MappingDefinitionElement.builder()
+ *                 .addStaticAttributesGroup(
+ *                         StaticAttributesGroupConfiguration.builder()
  *                                 .includeProperties("description")
  *                                 .withFieldConfiguration(
  *                                         "{\n" +
@@ -81,6 +80,27 @@ import java.util.Map;
  *                                 )
  *                                 .withPropertyValueExtractor(simplePropertyValueExtractor)
  *                                 .withOrder(1)
+ *                                 .build()
+ *                 )
+ *                 .addDynamicAttributesGroup(
+ *                         DynamicAttributesGroupConfiguration.builder()
+ *                                 .excludeProperties("prefix1*")
+ *                                 .excludeCategories("categoryPrefix1*")
+ *                                 .withFieldMappingStrategyClass(AutoMappingStrategy.class)
+ *                                 .build()
+ *                 )
+ *                 .addDynamicAttributesGroup(
+ *                         DynamicAttributesGroupConfiguration.builder()
+ *                                 .excludeProperties("prefix2*", "*infix*")
+ *                                 .withReferenceAttributesIndexingMode(ReferenceAttributesIndexingMode.NONE)
+ *                                 .addParameter("analyzer", "english")
+ *                                 .withPropertyValueExtractor(simplePropertyValueExtractor)
+ *                                 .withFieldConfiguration(
+ *                                         "{\n" +
+ *                                         "    \"type\": \"text\",\n" +
+ *                                         "    \"analyzer\": \"english\"\n" +
+ *                                         "}"
+ *                                 ) *
  *                                 .build()
  *                 )
  *                 .build();

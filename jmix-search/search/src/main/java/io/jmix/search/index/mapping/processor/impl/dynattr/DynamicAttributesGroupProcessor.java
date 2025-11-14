@@ -18,7 +18,6 @@ package io.jmix.search.index.mapping.processor.impl.dynattr;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.search.index.annotation.ReferenceAttributesIndexingMode;
 import io.jmix.search.index.mapping.DynamicAttributesGroupConfiguration;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
@@ -28,9 +27,6 @@ import io.jmix.search.utils.PropertyTools;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*;
-import static io.jmix.search.index.mapping.ParameterKeys.REFERENCE_FIELD_INDEXING_MODE;
 
 /**
  * This processor is responsible for resolving dynamic attributes, validating the configuration,
@@ -68,7 +64,7 @@ public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProc
                 metaClass,
                 group.getExcludedCategories(),
                 group.getExcludedProperties(),
-                extractReferenceFieldsIndexingMode(group)
+                group.getReferenceAttributesIndexingMode()
         );
 
         return effectiveProperties.values().stream()
@@ -76,15 +72,5 @@ public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProc
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
-    }
-
-    protected ReferenceAttributesIndexingMode extractReferenceFieldsIndexingMode(DynamicAttributesGroupConfiguration group) {
-        if (group.getParameters() != null) {
-            Object mode = group.getParameters().get(REFERENCE_FIELD_INDEXING_MODE);
-            if (mode != null) {
-                return (ReferenceAttributesIndexingMode) mode;
-            }
-        }
-        return NONE;
     }
 }

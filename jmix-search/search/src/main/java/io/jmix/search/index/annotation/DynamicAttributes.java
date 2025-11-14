@@ -71,11 +71,6 @@ public @interface DynamicAttributes {
      */
     String analyzer() default "";
 
-    /**
-     * Indicates whether the content of a file, in addition to its name, should be indexed.
-     */
-    boolean indexFileContent() default true;
-
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
     @interface Container {

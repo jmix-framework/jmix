@@ -46,11 +46,11 @@ public class DependentEntitiesResolver {
     public Set<Id<?>> getEntityIdsDependentOnUpdatedEntity(Id<?> updatedEntityId,
                                                            MetaClass metaClass,
                                                            AttributeChanges changes) {
-        return getEntityIdsDependentOnUpdatedEntityInternal(
-                updatedEntityId,
-                metaClass,
-                updatedEntityId.getEntityClass(),
-                changes.getAttributes());
+
+        Map<MetaClass, Set<MetaPropertyPath>> dependenciesMetaData;
+        dependenciesMetaData =
+                indexConfigurationManager.getDependenciesMetaDataForUpdate(updatedEntityId.getEntityClass(), changes.getAttributes());
+        return dependentEntitiesLoader.loadDependentEntityIds(updatedEntityId, metaClass, dependenciesMetaData);
     }
 
     public Set<Id<?>> getEntityIdsDependentOnRemovedEntity(Id<?> removedEntityId, MetaClass metaClass) {
@@ -58,14 +58,5 @@ public class DependentEntitiesResolver {
         Map<MetaClass, Set<MetaPropertyPath>> dependenciesMetaData;
         dependenciesMetaData = indexConfigurationManager.getDependenciesMetaDataForDelete(entityClass);
         return dependentEntitiesLoader.loadDependentEntityIds(removedEntityId, metaClass, dependenciesMetaData);
-    }
-
-    protected Set<Id<?>> getEntityIdsDependentOnUpdatedEntityInternal(Id<?> updatedEntityId,
-                                                                      MetaClass metaClass,
-                                                                      Class<?> entityClass,
-                                                                      Set<String> attributes) {
-        Map<MetaClass, Set<MetaPropertyPath>> dependenciesMetaData;
-        dependenciesMetaData = indexConfigurationManager.getDependenciesMetaDataForUpdate(entityClass, attributes);
-        return dependentEntitiesLoader.loadDependentEntityIds(updatedEntityId, metaClass, dependenciesMetaData);
     }
 }

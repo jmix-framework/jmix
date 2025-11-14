@@ -79,13 +79,15 @@ public class IndexConfigurationManager {
     }
 
     /**
-     * Refreshes the index definitions by re-creating and registering them.
+     * Refreshes and recreates the index definitions by creating and registering them.
+     * <p>
+     * This method ensures that the current index configurations are updated to reflect
+     * any changes in the index definitions within the application.
      *
-     * <p>This method triggers the recreation of all index configurations, ensuring that
-     * the latest configurations are applied.
+     * @return a list of {@link IndexConfiguration} objects representing the refreshed index definitions.
      */
-    public void refreshIndexDefinitions() {
-        initializeIndexDefinitions();
+    public ArrayList<IndexConfiguration> refreshIndexDefinitions() {
+        return initializeIndexDefinitions();
     }
 
     /**
@@ -241,13 +243,17 @@ public class IndexConfigurationManager {
      * <p>
      * The method ensures that the current index configurations are updated to match
      * the definitions specified by the provided class names.
+     *
+     * @return
      */
-    protected void initializeIndexDefinitions() {
+    protected ArrayList<IndexConfiguration> initializeIndexDefinitions() {
         ArrayList<IndexConfiguration> configurations = new ArrayList<>();
         classNames.forEach(className ->
                 configurations.add(indexDefinitionProcessor.createIndexConfiguration(className)));
 
         replaceConfigurations(configurations);
+
+        return configurations;
     }
 
     /**

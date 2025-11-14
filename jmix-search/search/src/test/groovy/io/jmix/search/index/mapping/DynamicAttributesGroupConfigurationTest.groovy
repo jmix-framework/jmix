@@ -24,9 +24,7 @@ import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy
 import spock.lang.Specification
 
 import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*
-import static io.jmix.search.index.mapping.ParameterKeys.REFERENCE_FIELD_INDEXING_MODE
 import static io.jmix.search.index.mapping.ParameterKeys.ANALYZER
-import static io.jmix.search.index.mapping.ParameterKeys.INDEX_FILE_CONTENT
 
 class DynamicAttributesGroupConfigurationTest extends Specification {
     private static final String[] EXCLUDED_CATEGORIES = ["category1", "category2", "category3"]
@@ -43,8 +41,7 @@ class DynamicAttributesGroupConfigurationTest extends Specification {
         def dynamicAttributesGroup = DynamicAttributesGroupConfiguration.builder()
                 .excludeCategories(EXCLUDED_CATEGORIES)
                 .excludeProperties(EXCLUDED_PROPERTIES)
-                .withParameters(Map.of(REFERENCE_FIELD_INDEXING_MODE, NONE))
-                .addParameter(INDEX_FILE_CONTENT, true)
+                .withReferenceAttributesIndexingMode(NONE)
                 .addParameter(ANALYZER, SOME_ANALYZER)
                 .withFieldMappingStrategyClass(AutoMappingStrategy)
                 .withPropertyValueExtractor(propertyValueExtractorMock)
@@ -53,10 +50,8 @@ class DynamicAttributesGroupConfigurationTest extends Specification {
         then:
         dynamicAttributesGroup.getExcludedProperties() == EXCLUDED_PROPERTIES
         dynamicAttributesGroup.getExcludedCategories() == EXCLUDED_CATEGORIES
-        dynamicAttributesGroup.getParameters() == Map.of(
-                REFERENCE_FIELD_INDEXING_MODE, NONE,
-                INDEX_FILE_CONTENT, true,
-                ANALYZER, SOME_ANALYZER)
+        dynamicAttributesGroup.getReferenceAttributesIndexingMode() == NONE
+        dynamicAttributesGroup.getParameters() == Map.of(ANALYZER, SOME_ANALYZER)
         dynamicAttributesGroup.getPropertyValueExtractor() == propertyValueExtractorMock
         dynamicAttributesGroup.getFieldMappingStrategyClass() == AutoMappingStrategy
 
@@ -72,8 +67,7 @@ class DynamicAttributesGroupConfigurationTest extends Specification {
         def dynamicAttributesGroup = DynamicAttributesGroupConfiguration.builder()
                 .excludeCategories(EXCLUDED_CATEGORIES)
                 .excludeProperties(EXCLUDED_PROPERTIES)
-                .withParameters(Map.of(REFERENCE_FIELD_INDEXING_MODE, NONE))
-                .addParameter(INDEX_FILE_CONTENT, true)
+                .withReferenceAttributesIndexingMode(NONE)
                 .addParameter(ANALYZER, SOME_ANALYZER)
                 .withFieldMappingStrategy(fieldMappingStrategyMock)
                 .withFieldMappingStrategyClass(AutoMappingStrategy)
@@ -97,8 +91,7 @@ class DynamicAttributesGroupConfigurationTest extends Specification {
         def dynamicAttributesGroup = DynamicAttributesGroupConfiguration.builder()
                 .excludeCategories(EXCLUDED_CATEGORIES)
                 .excludeProperties(EXCLUDED_PROPERTIES)
-                .withParameters(Map.of(REFERENCE_FIELD_INDEXING_MODE, NONE))
-                .addParameter(INDEX_FILE_CONTENT, true)
+                .withReferenceAttributesIndexingMode(NONE)
                 .addParameter(ANALYZER, SOME_ANALYZER)
                 .withFieldMappingStrategy(fieldMappingStrategyMock)
                 .withFieldMappingStrategyClass(AutoMappingStrategy)
@@ -122,8 +115,7 @@ class DynamicAttributesGroupConfigurationTest extends Specification {
         def dynamicAttributesGroup = DynamicAttributesGroupConfiguration.builder()
                 .excludeCategories(EXCLUDED_CATEGORIES)
                 .excludeProperties(EXCLUDED_PROPERTIES)
-                .withParameters(Map.of(REFERENCE_FIELD_INDEXING_MODE, NONE))
-                .addParameter(INDEX_FILE_CONTENT, true)
+                .withReferenceAttributesIndexingMode(NONE)
                 .addParameter(ANALYZER, SOME_ANALYZER)
                 .withFieldMappingStrategy(fieldMappingStrategyMock)
                 .withFieldMappingStrategyClass(AutoMappingStrategy)
@@ -147,8 +139,7 @@ class DynamicAttributesGroupConfigurationTest extends Specification {
         def dynamicAttributesGroup = DynamicAttributesGroupConfiguration.builder()
                 .excludeCategories(EXCLUDED_CATEGORIES)
                 .excludeProperties(EXCLUDED_PROPERTIES)
-                .withParameters(Map.of(REFERENCE_FIELD_INDEXING_MODE, NONE))
-                .addParameter(INDEX_FILE_CONTENT, true)
+                .withReferenceAttributesIndexingMode(NONE)
                 .addParameter(ANALYZER, SOME_ANALYZER)
                 .withFieldMappingStrategy(fieldMappingStrategyMock)
                 .withFieldMappingStrategyClass(AutoMappingStrategy)

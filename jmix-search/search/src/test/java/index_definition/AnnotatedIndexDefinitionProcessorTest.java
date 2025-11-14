@@ -17,6 +17,8 @@
 package index_definition;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.jmix.core.Metadata;
+import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.processor.impl.AnnotatedIndexDefinitionProcessor;
 import org.hamcrest.Matcher;
@@ -48,10 +50,15 @@ public class AnnotatedIndexDefinitionProcessorTest {
 
     @Autowired
     AnnotatedIndexDefinitionProcessor indexDefinitionProcessor;
+    @Autowired
+    DynAttrMetadata dynAttrMetadata;
+    @Autowired
+    private Metadata metadata;
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("provideTestCases")
     public void indexDefinitionProcessing(AnnotatedIndexDefinitionProcessorTestCase testCase) {
+        testCase.getDynAttrMetadataConsumer().addMocks(dynAttrMetadata, metadata);
         log.info("Start Test Case '{}'", testCase);
         IndexConfiguration indexConfiguration = indexDefinitionProcessor.createIndexConfiguration(testCase.getIndexDefinitionClass().getName());
         Matcher<IndexConfiguration> matcher = createIndexConfigurationMatcher(testCase);
@@ -63,7 +70,8 @@ public class AnnotatedIndexDefinitionProcessorTest {
                 provideCommonTestCases(),
                 provideReferenceTestCases(),
                 provideFileTestCases(),
-                provideEmbeddedTestCases()
+                provideEmbeddedTestCases(),
+                provideDynamicAttributesTestCases()
         ).flatMap(a -> a);
     }
 
@@ -76,4 +84,5 @@ public class AnnotatedIndexDefinitionProcessorTest {
                 expectedMapping
         );
     }
+
 }

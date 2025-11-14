@@ -19,12 +19,15 @@ package io.jmix.search.index.mapping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.search.index.annotation.ReferenceAttributesIndexingMode;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.INSTANCE_NAME_ONLY;
 
 /**
  * The {@code DynamicAttributesGroupConfiguration} class represents a search configuration
@@ -42,6 +45,7 @@ public class DynamicAttributesGroupConfiguration extends AbstractAttributesGroup
 
     protected final String[] excludedCategories;
     protected final String[] excludedProperties;
+    protected final ReferenceAttributesIndexingMode referenceAttributesIndexingMode;
 
     protected DynamicAttributesGroupConfiguration(DynamicAttributeGroupDefinitionBuilder builder) {
         super(builder.fieldMappingStrategyClass,
@@ -52,6 +56,7 @@ public class DynamicAttributesGroupConfiguration extends AbstractAttributesGroup
                 builder.order);
         this.excludedCategories = builder.excludedCategories;
         this.excludedProperties = builder.excludedProperties;
+        this.referenceAttributesIndexingMode = builder.referenceAttributesIndexingMode;
     }
 
     /**
@@ -76,6 +81,15 @@ public class DynamicAttributesGroupConfiguration extends AbstractAttributesGroup
         return excludedCategories;
     }
 
+    /**
+     * Gets the reference attributes indexing mode.
+     *
+     * @return the reference attributes indexing mode
+     */
+    public ReferenceAttributesIndexingMode getReferenceAttributesIndexingMode() {
+        return referenceAttributesIndexingMode;
+    }
+
     public static class DynamicAttributeGroupDefinitionBuilder {
 
         protected static final ObjectMapper mapper = new ObjectMapper();
@@ -85,6 +99,7 @@ public class DynamicAttributesGroupConfiguration extends AbstractAttributesGroup
         protected FieldConfiguration fieldConfiguration;
         protected PropertyValueExtractor propertyValueExtractor;
         protected Map<String, Object> parameters = null;
+        protected ReferenceAttributesIndexingMode referenceAttributesIndexingMode = INSTANCE_NAME_ONLY;
         protected Integer order = null;
 
         private String[] excludedCategories = new String[0];
@@ -290,6 +305,16 @@ public class DynamicAttributesGroupConfiguration extends AbstractAttributesGroup
          */
         public DynamicAttributeGroupDefinitionBuilder withPropertyValueExtractor(PropertyValueExtractor propertyValueExtractor) {
             this.propertyValueExtractor = propertyValueExtractor;
+            return this;
+        }
+
+        /**
+         * Defines indexing mode for the reference dynamic attributes of the indexing entity
+         * @param mode reference attributes indexing mode
+         * @return builder
+         */
+        public DynamicAttributeGroupDefinitionBuilder withReferenceAttributesIndexingMode(ReferenceAttributesIndexingMode mode) {
+            this.referenceAttributesIndexingMode = mode;
             return this;
         }
 

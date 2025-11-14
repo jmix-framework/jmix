@@ -51,18 +51,15 @@ public class DynamicAttributesTrackingListener {
 
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final IndexingQueueManager indexingQueueManager;
-    protected final DynamicReferenceDependentEntitiesResolver dependentEntitiesResolver;
     protected final EntityStates entityStates;
     protected final MetadataTools metadataTools;
 
     public DynamicAttributesTrackingListener(IndexConfigurationManager indexConfigurationManager,
                                              IndexingQueueManager indexingQueueManager,
-                                             DynamicReferenceDependentEntitiesResolver dependentEntitiesResolver,
                                              EntityStates entityStates,
                                              MetadataTools metadataTools) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.indexingQueueManager = indexingQueueManager;
-        this.dependentEntitiesResolver = dependentEntitiesResolver;
         this.entityStates = entityStates;
         this.metadataTools = metadataTools;
     }
@@ -92,13 +89,6 @@ public class DynamicAttributesTrackingListener {
                 if (isUpdateRequired(metaClass.getJavaClass(), dynamicAttributes.getKeys())) {
                     indexingQueueManager.enqueueIndexByEntityId(entityId);
                 }
-            }
-        }
-
-        if (!isNew) {
-            Set<Id<?>> dependentEntityIds = dependentEntitiesResolver.getEntityIdsDependentOnUpdatedEntity(entityId, metaClass, dynamicAttributes);
-            if (!dependentEntityIds.isEmpty()) {
-                indexingQueueManager.enqueueIndexCollectionByEntityIds(dependentEntityIds);
             }
         }
     }

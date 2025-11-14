@@ -39,9 +39,9 @@ class DynamicAttributesAnnotationProcessorTest extends Specification {
                 .flatMap(MergedAnnotations::stream)
                 .map(MergedAnnotation::synthesize)
                 .filter(annotation -> annotation instanceof DynamicAttributes)
-                .map(annotation -> (DynamicAttributes)annotation)
+                .map(annotation -> (DynamicAttributes) annotation)
                 .collect(Collectors.toSet());
-    }    
+    }
 
     def "CreateDefinition. null check"() {
         given:
@@ -70,12 +70,25 @@ class DynamicAttributesAnnotationProcessorTest extends Specification {
         definition.getExcludedProperties() == new String[0]
         definition.getFieldConfiguration() == null
         definition.getPropertyValueExtractor() == null
-        definition.getParameters() == Map.of(
-                ParameterKeys.REFERENCE_FIELD_INDEXING_MODE,
-                ReferenceAttributesIndexingMode.INSTANCE_NAME_ONLY,
+        definition.getReferenceAttributesIndexingMode() == ReferenceAttributesIndexingMode.INSTANCE_NAME_ONLY
+    }
 
-                ParameterKeys.INDEX_FILE_CONTENT, true
-        )
+    def "CreateDefinition. Annotation with reference indexing mode"() {
+        given:
+        def parser = new DynamicAttributesAnnotationProcessor()
+
+        when:
+        def annotations = extractAnnotations(IndexDefinitionWithReferenceIndexingMode);
+        DynamicAttributesGroupConfiguration definition = parser.createDefinition(annotations.iterator().next())
+
+        then:
+        definition.getFieldMappingStrategyClass() == AutoMappingStrategy
+        definition.getFieldMappingStrategy() == null
+        definition.getExcludedCategories() == new String[0]
+        definition.getExcludedProperties() == new String[0]
+        definition.getFieldConfiguration() == null
+        definition.getPropertyValueExtractor() == null
+        definition.getReferenceAttributesIndexingMode() == ReferenceAttributesIndexingMode.NONE
     }
 
     def "CreateDefinition. Excludes"() {
@@ -102,9 +115,6 @@ class DynamicAttributesAnnotationProcessorTest extends Specification {
 
         then:
         parameters.get(ParameterKeys.ANALYZER) == SOME_ANALYZER
-        parameters.get(ParameterKeys.INDEX_FILE_CONTENT) == false
-        parameters.get(ParameterKeys.REFERENCE_FIELD_INDEXING_MODE)
-                == ReferenceAttributesIndexingMode.NONE
     }
 
     def "extract from class. simple"() {
@@ -157,11 +167,7 @@ class DynamicAttributesAnnotationProcessorTest extends Specification {
     }
 
     private interface IndexDefinitionWithParameters {
-        @DynamicAttributes(
-                referenceAttributesIndexingMode = ReferenceAttributesIndexingMode.NONE,
-                analyzer = SOME_ANALYZER,
-                indexFileContent = false
-        )
+        @DynamicAttributes(analyzer = SOME_ANALYZER)
         void method();
 
     }
@@ -206,4 +212,9 @@ class DynamicAttributesAnnotationProcessorTest extends Specification {
         void method2();
     }
 
+    private interface IndexDefinitionWithReferenceIndexingMode {
+
+        @DynamicAttributes(referenceAttributesIndexingMode = ReferenceAttributesIndexingMode.NONE)
+        void method();
+    }
 }

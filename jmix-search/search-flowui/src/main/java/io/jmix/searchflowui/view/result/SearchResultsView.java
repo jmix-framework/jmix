@@ -32,6 +32,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
@@ -60,7 +61,7 @@ public class SearchResultsView extends StandardView {
     public static final String QUERY_PARAM_SEARCH_BUTTON_VISIBLE = "searchButtonVisible";
     public static final String QUERY_PARAM_SETTINGS_BUTTON_VISIBLE = "settingsButtonVisible";
 
-    protected static final Map<String, String> systemFieldLabels = ImmutableMap.<String, String>builder()
+    protected static final Map<String, String> SYSTEM_FIELD_LABELS = ImmutableMap.<String, String>builder()
             .put("_file_name", "fileName")
             .put("_content", "content")
             .build();
@@ -88,6 +89,8 @@ public class SearchResultsView extends StandardView {
     protected Notifications notifications;
     @Autowired
     protected SearchProperties searchProperties;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     protected SearchResult searchResult;
     protected String searchStrategy;
@@ -305,17 +308,17 @@ public class SearchResultsView extends StandardView {
         MetaClass currentMetaClass = metadata.getClass(entityName);
         for (int i = 0; i < parts.length; i++) {
             String part = parts[i];
-            MetaProperty currentMetaProperty = currentMetaClass.findProperty(part);
-            if (currentMetaProperty == null) {
+            MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(currentMetaClass, part);
+            if (metaPropertyPath == null) {
                 break;
             }
-
+            MetaProperty currentMetaProperty = metaPropertyPath.getMetaProperty();
             if (currentMetaProperty.getRange().isDatatype()
                     && (Datatype<?>) currentMetaProperty.getRange().asDatatype() instanceof FileRefDatatype
                     && i + 1 < parts.length) {
                 String propertyCaption = messageTools.getPropertyCaption(currentMetaProperty);
                 String nextPart = parts[i + 1];
-                String labelKey = systemFieldLabels.get(nextPart);
+                String labelKey = SYSTEM_FIELD_LABELS.get(nextPart);
                 if (labelKey != null) {
                     String labelValue = messageBundle.getMessage(labelKey);
                     propertyCaption = propertyCaption + "[" + labelValue + "]";

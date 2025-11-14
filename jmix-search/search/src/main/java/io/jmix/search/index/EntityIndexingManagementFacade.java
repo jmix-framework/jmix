@@ -434,6 +434,22 @@ public class EntityIndexingManagementFacade {
         return String.format("%d items for entity '%s' have been removed from Indexing Queue", deleted, entityName);
     }
 
+    @Authenticated
+    @ManagedOperation(description = "Recalculate all index configurations, including the dynamic attributes analysis")
+    public String refreshLocalIndexConfigurations() {
+        List<IndexConfiguration> indexConfigurations = indexConfigurationManager.refreshIndexDefinitions();
+        StringBuilder sb = new StringBuilder("Previous configurations have been deleted.");
+        if (!indexConfigurations.isEmpty()) {
+            sb.append(String.format(" Following %s configurations have been created:", indexConfigurations.size()));
+            indexConfigurations.forEach(configuration ->
+                    sb.append(System.lineSeparator()).append("\t")
+                            .append(String.format("Entity=%s, Index=%s", configuration.getEntityName(), configuration.getIndexName())));
+        } else {
+            sb.append(" No configurations have been created.");
+        }
+        return sb.toString();
+    }
+
     protected String formatSingleStatusString(String entityName, String indexName, String status) {
         return String.format("Entity=%s, Index=%s, Status=%s", entityName, indexName, status);
     }

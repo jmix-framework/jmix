@@ -20,4 +20,5 @@ public class ParameterKeys {
 
     public static final String INDEX_FILE_CONTENT = "_indexFileContent";
     public static final String ANALYZER = "analyzer";
+    public static final String REFERENCE_FIELD_INDEXING_MODE = "referenceFieldIndexingMode";
 }

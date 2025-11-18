@@ -18,7 +18,7 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import org.dom4j.Element;
@@ -43,6 +43,7 @@ public class IconLoaderSupport implements ApplicationContextAware {
     protected ComponentLoader.Context context;
     protected LayoutLoader layoutLoader;
     protected LoaderSupport loaderSupport;
+    protected Icons icons;
 
     protected ApplicationContext applicationContext;
 
@@ -163,7 +164,7 @@ public class IconLoaderSupport implements ApplicationContextAware {
             return loadIconComponent(iconElement);
         } else {
             return loaderSupport().loadString(element, iconAttributeName)
-                    .map(ComponentUtils::parseIcon);
+                    .map(getIcons()::get);
         }
     }
 
@@ -198,5 +199,13 @@ public class IconLoaderSupport implements ApplicationContextAware {
         }
 
         return layoutLoader;
+    }
+
+    protected Icons getIcons() {
+        if (icons == null) {
+            icons = applicationContext.getBean(Icons.class);
+        }
+
+        return icons;
     }
 }

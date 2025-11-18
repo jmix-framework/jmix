@@ -114,7 +114,7 @@ public class DialogsImpl implements Dialogs {
             button.setId(type.getId());
             button.addClassName(type.getId() + BUTTON_CLASS_NAMES_POSTFIX);
             button.setText(messages.getMessage(type.getMsgKey()));
-            button.setIcon(type.getVaadinIcon().create());
+            button.setIcon(type.getIcon());
         }
 
         button.setEnabled(action.isEnabled());

@@ -21,7 +21,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
@@ -44,7 +43,8 @@ import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -99,11 +99,19 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
         this.uiComponentProperties = uiComponentProperties;
     }
 
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.GENERIC_FILTER_SAVE_ACTION);
+        }
+    }
+
     @Override
     protected void initAction() {
         super.initAction();
 
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ARCHIVE);
         this.inputDialogCloseListener = inputDialogCloseEvent -> {
             if (inputDialogCloseEvent.closedWith(DialogOutcome.OK)) {
                 applyDefaultInputDialogOkAction(inputDialogCloseEvent);

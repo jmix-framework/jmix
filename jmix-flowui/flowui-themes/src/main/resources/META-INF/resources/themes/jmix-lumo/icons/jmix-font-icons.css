@@ -1,0 +1,3357 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+html {
+    --jmix-font-icon-font-family: "Vaadin-Icons";
+
+    /* Vaadin icons */
+    --jmix-font-icon-abacus: "abacus";
+    --jmix-font-icon-absolute-position: "absolute-position";
+    --jmix-font-icon-academy-cap: "academy-cap";
+    --jmix-font-icon-accessibility: "accessibility";
+    --jmix-font-icon-accordion-menu: "accordion-menu";
+    --jmix-font-icon-add-dock: "add-dock";
+    --jmix-font-icon-adjust: "adjust";
+    --jmix-font-icon-adobe-flash: "adobe-flash";
+    --jmix-font-icon-airplane: "airplane";
+    --jmix-font-icon-alarm: "alarm";
+    --jmix-font-icon-align-center: "align-center";
+    --jmix-font-icon-align-justify: "align-justify";
+    --jmix-font-icon-align-left: "align-left";
+    --jmix-font-icon-align-right: "align-right";
+    --jmix-font-icon-alt-a: "alt-a";
+    --jmix-font-icon-alt: "alt";
+    --jmix-font-icon-ambulance: "ambulance";
+    --jmix-font-icon-anchor: "anchor";
+    --jmix-font-icon-angle-double-down: "angle-double-down";
+    --jmix-font-icon-angle-double-left: "angle-double-left";
+    --jmix-font-icon-angle-double-right: "angle-double-right";
+    --jmix-font-icon-angle-double-up: "angle-double-up";
+    --jmix-font-icon-angle-down: "angle-down";
+    --jmix-font-icon-angle-left: "angle-left";
+    --jmix-font-icon-angle-right: "angle-right";
+    --jmix-font-icon-angle-up: "angle-up";
+    --jmix-font-icon-archive: "archive";
+    --jmix-font-icon-archives: "archives";
+    --jmix-font-icon-area-select: "area-select";
+    --jmix-font-icon-arrow-backward: "arrow-backward";
+    --jmix-font-icon-arrow-circle-down-o: "arrow-circle-down-o";
+    --jmix-font-icon-arrow-circle-down: "arrow-circle-down";
+    --jmix-font-icon-arrow-circle-left-o: "arrow-circle-left-o";
+    --jmix-font-icon-arrow-circle-left: "arrow-circle-left";
+    --jmix-font-icon-arrow-circle-right-o: "arrow-circle-right-o";
+    --jmix-font-icon-arrow-circle-right: "arrow-circle-right";
+    --jmix-font-icon-arrow-circle-up-o: "arrow-circle-up-o";
+    --jmix-font-icon-arrow-circle-up: "arrow-circle-up";
+    --jmix-font-icon-arrow-down: "arrow-down";
+    --jmix-font-icon-arrow-forward: "arrow-forward";
+    --jmix-font-icon-arrow-left: "arrow-left";
+    --jmix-font-icon-arrow-long-down: "arrow-long-down";
+    --jmix-font-icon-arrow-long-left: "arrow-long-left";
+    --jmix-font-icon-arrow-right: "arrow-right";
+    --jmix-font-icon-arrow-up: "arrow-up";
+    --jmix-font-icon-arrows-cross: "arrows-cross";
+    --jmix-font-icon-arrows-long-h: "arrows-long-h";
+    --jmix-font-icon-arrows-long-right: "arrows-long-right";
+    --jmix-font-icon-arrows-long-up: "arrows-long-up";
+    --jmix-font-icon-arrows-long-v: "arrows-long-v";
+    --jmix-font-icon-arrows: "arrows";
+    --jmix-font-icon-asterisk: "asterisk";
+    --jmix-font-icon-at: "at";
+    --jmix-font-icon-automation: "automation";
+    --jmix-font-icon-backspace-a: "backspace-a";
+    --jmix-font-icon-backspace: "backspace";
+    --jmix-font-icon-backwards: "backwards";
+    --jmix-font-icon-ban: "ban";
+    --jmix-font-icon-bar-chart-h: "bar-chart-h";
+    --jmix-font-icon-bar-chart-v: "bar-chart-v";
+    --jmix-font-icon-bar-chart: "bar-chart";
+    --jmix-font-icon-barcode: "barcode";
+    --jmix-font-icon-bed: "bed";
+    --jmix-font-icon-bell-o: "bell-o";
+    --jmix-font-icon-bell-slash-o: "bell-slash-o";
+    --jmix-font-icon-bell-slash: "bell-slash";
+    --jmix-font-icon-bell: "bell";
+    --jmix-font-icon-boat: "boat";
+    --jmix-font-icon-bold: "bold";
+    --jmix-font-icon-bolt: "bolt";
+    --jmix-font-icon-bomb: "bomb";
+    --jmix-font-icon-book-dollar: "book-dollar";
+    --jmix-font-icon-book-percent: "book-percent";
+    --jmix-font-icon-book: "book";
+    --jmix-font-icon-bookmark-o: "bookmark-o";
+    --jmix-font-icon-bookmark: "bookmark";
+    --jmix-font-icon-briefcase: "briefcase";
+    --jmix-font-icon-browser: "browser";
+    --jmix-font-icon-bug-o: "bug-o";
+    --jmix-font-icon-bug: "bug";
+    --jmix-font-icon-building-o: "building-o";
+    --jmix-font-icon-building: "building";
+    --jmix-font-icon-bullets: "bullets";
+    --jmix-font-icon-bullseye: "bullseye";
+    --jmix-font-icon-bus: "bus";
+    --jmix-font-icon-button: "button";
+    --jmix-font-icon-calc-book: "calc-book";
+    --jmix-font-icon-calc: "calc";
+    --jmix-font-icon-calendar-briefcase: "calendar-briefcase";
+    --jmix-font-icon-calendar-clock: "calendar-clock";
+    --jmix-font-icon-calendar-envelope: "calendar-envelope";
+    --jmix-font-icon-calendar-o: "calendar-o";
+    --jmix-font-icon-calendar-user: "calendar-user";
+    --jmix-font-icon-calendar: "calendar";
+    --jmix-font-icon-camera: "camera";
+    --jmix-font-icon-car: "car";
+    --jmix-font-icon-caret-down: "caret-down";
+    --jmix-font-icon-caret-left: "caret-left";
+    --jmix-font-icon-caret-right: "caret-right";
+    --jmix-font-icon-caret-square-down-o: "caret-square-down-o";
+    --jmix-font-icon-caret-square-left-o: "caret-square-left-o";
+    --jmix-font-icon-caret-square-right-o: "caret-square-right-o";
+    --jmix-font-icon-caret-square-up-o: "caret-square-up-o";
+    --jmix-font-icon-caret-up: "caret-up";
+    --jmix-font-icon-cart-o: "cart-o";
+    --jmix-font-icon-cart: "cart";
+    --jmix-font-icon-cash: "cash";
+    --jmix-font-icon-chart-3d: "chart-3d";
+    --jmix-font-icon-chart-grid: "chart-grid";
+    --jmix-font-icon-chart-line: "chart-line";
+    --jmix-font-icon-chart-timeline: "chart-timeline";
+    --jmix-font-icon-chart: "chart";
+    --jmix-font-icon-chat: "chat";
+    --jmix-font-icon-check-circle-o: "check-circle-o";
+    --jmix-font-icon-check-circle: "check-circle";
+    --jmix-font-icon-check-square-o: "check-square-o";
+    --jmix-font-icon-check-square: "check-square";
+    --jmix-font-icon-check: "check";
+    --jmix-font-icon-chevron-circle-down-o: "chevron-circle-down-o";
+    --jmix-font-icon-chevron-circle-down: "chevron-circle-down";
+    --jmix-font-icon-chevron-circle-left-o: "chevron-circle-left-o";
+    --jmix-font-icon-chevron-circle-left: "chevron-circle-left";
+    --jmix-font-icon-chevron-circle-right-o: "chevron-circle-right-o";
+    --jmix-font-icon-chevron-circle-right: "chevron-circle-right";
+    --jmix-font-icon-chevron-circle-up-o: "chevron-circle-up-o";
+    --jmix-font-icon-chevron-circle-up: "chevron-circle-up";
+    --jmix-font-icon-chevron-down-small: "chevron-down-small";
+    --jmix-font-icon-chevron-down: "chevron-down";
+    --jmix-font-icon-chevron-left-small: "chevron-left-small";
+    --jmix-font-icon-chevron-left: "chevron-left";
+    --jmix-font-icon-chevron-right-small: "chevron-right-small";
+    --jmix-font-icon-chevron-right: "chevron-right";
+    --jmix-font-icon-chevron-up-small: "chevron-up-small";
+    --jmix-font-icon-chevron-up: "chevron-up";
+    --jmix-font-icon-child: "child";
+    --jmix-font-icon-circle-thin: "circle-thin";
+    --jmix-font-icon-circle: "circle";
+    --jmix-font-icon-clipboard-check: "clipboard-check";
+    --jmix-font-icon-clipboard-cross: "clipboard-cross";
+    --jmix-font-icon-clipboard-heart: "clipboard-heart";
+    --jmix-font-icon-clipboard-pulse: "clipboard-pulse";
+    --jmix-font-icon-clipboard-text: "clipboard-text";
+    --jmix-font-icon-clipboard-user: "clipboard-user";
+    --jmix-font-icon-clipboard: "clipboard";
+    --jmix-font-icon-clock: "clock";
+    --jmix-font-icon-close-big: "close-big";
+    --jmix-font-icon-close-circle-o: "close-circle-o";
+    --jmix-font-icon-close-circle: "close-circle";
+    --jmix-font-icon-close-small: "close-small";
+    --jmix-font-icon-close: "close";
+    --jmix-font-icon-cloud-download-o: "cloud-download-o";
+    --jmix-font-icon-cloud-download: "cloud-download";
+    --jmix-font-icon-cloud-o: "cloud-o";
+    --jmix-font-icon-cloud-upload-o: "cloud-upload-o";
+    --jmix-font-icon-cloud-upload: "cloud-upload";
+    --jmix-font-icon-cloud: "cloud";
+    --jmix-font-icon-cluster: "cluster";
+    --jmix-font-icon-code: "code";
+    --jmix-font-icon-coffee: "coffee";
+    --jmix-font-icon-cog-o: "cog-o";
+    --jmix-font-icon-cog: "cog";
+    --jmix-font-icon-cogs: "cogs";
+    --jmix-font-icon-coin-piles: "coin-piles";
+    --jmix-font-icon-coins: "coins";
+    --jmix-font-icon-combobox: "combobox";
+    --jmix-font-icon-comment-ellipsis-o: "comment-ellipsis-o";
+    --jmix-font-icon-comment-ellipsis: "comment-ellipsis";
+    --jmix-font-icon-comment-o: "comment-o";
+    --jmix-font-icon-comment: "comment";
+    --jmix-font-icon-comments-o: "comments-o";
+    --jmix-font-icon-comments: "comments";
+    --jmix-font-icon-compile: "compile";
+    --jmix-font-icon-compress-square: "compress-square";
+    --jmix-font-icon-compress: "compress";
+    --jmix-font-icon-connect-o: "connect-o";
+    --jmix-font-icon-connect: "connect";
+    --jmix-font-icon-controller: "controller";
+    --jmix-font-icon-copy-o: "copy-o";
+    --jmix-font-icon-copy: "copy";
+    --jmix-font-icon-copyright: "copyright";
+    --jmix-font-icon-corner-lower-left: "corner-lower-left";
+    --jmix-font-icon-corner-lower-right: "corner-lower-right";
+    --jmix-font-icon-corner-upper-left: "corner-upper-left";
+    --jmix-font-icon-corner-upper-right: "corner-upper-right";
+    --jmix-font-icon-credit-card: "credit-card";
+    --jmix-font-icon-crop: "crop";
+    --jmix-font-icon-cross-cutlery: "cross-cutlery";
+    --jmix-font-icon-crosshairs: "crosshairs";
+    --jmix-font-icon-css: "css";
+    --jmix-font-icon-ctrl-a: "ctrl-a";
+    --jmix-font-icon-ctrl: "ctrl";
+    --jmix-font-icon-cube: "cube";
+    --jmix-font-icon-cubes: "cubes";
+    --jmix-font-icon-curly-brackets: "curly-brackets";
+    --jmix-font-icon-cursor-o: "cursor-o";
+    --jmix-font-icon-cursor: "cursor";
+    --jmix-font-icon-cutlery: "cutlery";
+    --jmix-font-icon-dashboard: "dashboard";
+    --jmix-font-icon-database: "database";
+    --jmix-font-icon-date-input: "date-input";
+    --jmix-font-icon-deindent: "deindent";
+    --jmix-font-icon-del-a: "del-a";
+    --jmix-font-icon-del: "del";
+    --jmix-font-icon-dental-chair: "dental-chair";
+    --jmix-font-icon-desktop: "desktop";
+    --jmix-font-icon-diamond-o: "diamond-o";
+    --jmix-font-icon-diamond: "diamond";
+    --jmix-font-icon-diploma-scroll: "diploma-scroll";
+    --jmix-font-icon-diploma: "diploma";
+    --jmix-font-icon-disc: "disc";
+    --jmix-font-icon-doctor-briefcase: "doctor-briefcase";
+    --jmix-font-icon-doctor: "doctor";
+    --jmix-font-icon-dollar: "dollar";
+    --jmix-font-icon-dot-circle: "dot-circle";
+    --jmix-font-icon-download-alt: "download-alt";
+    --jmix-font-icon-download: "download";
+    --jmix-font-icon-drop: "drop";
+    --jmix-font-icon-edit: "edit";
+    --jmix-font-icon-eject: "eject";
+    --jmix-font-icon-elastic: "elastic";
+    --jmix-font-icon-ellipsis-circle-o: "ellipsis-circle-o";
+    --jmix-font-icon-ellipsis-circle: "ellipsis-circle";
+    --jmix-font-icon-ellipsis-dots-h: "ellipsis-dots-h";
+    --jmix-font-icon-ellipsis-dots-v: "ellipsis-dots-v";
+    --jmix-font-icon-ellipsis-h: "ellipsis-h";
+    --jmix-font-icon-ellipsis-v: "ellipsis-v";
+    --jmix-font-icon-enter-arrow: "enter-arrow";
+    --jmix-font-icon-enter: "enter";
+    --jmix-font-icon-envelope-o: "envelope-o";
+    --jmix-font-icon-envelope-open-o: "envelope-open-o";
+    --jmix-font-icon-envelope-open: "envelope-open";
+    --jmix-font-icon-envelope: "envelope";
+    --jmix-font-icon-envelopes-o: "envelopes-o";
+    --jmix-font-icon-envelopes: "envelopes";
+    --jmix-font-icon-eraser: "eraser";
+    --jmix-font-icon-esc-a: "esc-a";
+    --jmix-font-icon-esc: "esc";
+    --jmix-font-icon-euro: "euro";
+    --jmix-font-icon-exchange: "exchange";
+    --jmix-font-icon-exclamation-circle-o: "exclamation-circle-o";
+    --jmix-font-icon-exclamation-circle: "exclamation-circle";
+    --jmix-font-icon-exclamation: "exclamation";
+    --jmix-font-icon-exit-o: "exit-o";
+    --jmix-font-icon-exit: "exit";
+    --jmix-font-icon-expand-full: "expand-full";
+    --jmix-font-icon-expand-square: "expand-square";
+    --jmix-font-icon-expand: "expand";
+    --jmix-font-icon-external-browser: "external-browser";
+    --jmix-font-icon-external-link: "external-link";
+    --jmix-font-icon-eye-slash: "eye-slash";
+    --jmix-font-icon-eye: "eye";
+    --jmix-font-icon-eyedropper: "eyedropper";
+    --jmix-font-icon-facebook-square: "facebook-square";
+    --jmix-font-icon-facebook: "facebook";
+    --jmix-font-icon-factory: "factory";
+    --jmix-font-icon-family: "family";
+    --jmix-font-icon-fast-backward: "fast-backward";
+    --jmix-font-icon-fast-forward: "fast-forward";
+    --jmix-font-icon-female: "female";
+    --jmix-font-icon-file-add: "file-add";
+    --jmix-font-icon-file-code: "file-code";
+    --jmix-font-icon-file-font: "file-font";
+    --jmix-font-icon-file-movie: "file-movie";
+    --jmix-font-icon-file-o: "file-o";
+    --jmix-font-icon-file-picture: "file-picture";
+    --jmix-font-icon-file-presentation: "file-presentation";
+    --jmix-font-icon-file-process: "file-process";
+    --jmix-font-icon-file-refresh: "file-refresh";
+    --jmix-font-icon-file-remove: "file-remove";
+    --jmix-font-icon-file-search: "file-search";
+    --jmix-font-icon-file-sound: "file-sound";
+    --jmix-font-icon-file-start: "file-start";
+    --jmix-font-icon-file-table: "file-table";
+    --jmix-font-icon-file-text-o: "file-text-o";
+    --jmix-font-icon-file-text: "file-text";
+    --jmix-font-icon-file-tree-small: "file-tree-small";
+    --jmix-font-icon-file-tree-sub: "file-tree-sub";
+    --jmix-font-icon-file-tree: "file-tree";
+    --jmix-font-icon-file-zip: "file-zip";
+    --jmix-font-icon-file: "file";
+    --jmix-font-icon-fill: "fill";
+    --jmix-font-icon-film: "film";
+    --jmix-font-icon-filter: "filter";
+    --jmix-font-icon-fire: "fire";
+    --jmix-font-icon-flag-checkered: "flag-checkered";
+    --jmix-font-icon-flag-o: "flag-o";
+    --jmix-font-icon-flag: "flag";
+    --jmix-font-icon-flash: "flash";
+    --jmix-font-icon-flask: "flask";
+    --jmix-font-icon-flight-landing: "flight-landing";
+    --jmix-font-icon-flight-takeoff: "flight-takeoff";
+    --jmix-font-icon-flip-h: "flip-h";
+    --jmix-font-icon-flip-v: "flip-v";
+    --jmix-font-icon-folder-add: "folder-add";
+    --jmix-font-icon-folder-o: "folder-o";
+    --jmix-font-icon-folder-open-o: "folder-open-o";
+    --jmix-font-icon-folder-open: "folder-open";
+    --jmix-font-icon-folder-remove: "folder-remove";
+    --jmix-font-icon-folder-search: "folder-search";
+    --jmix-font-icon-folder: "folder";
+    --jmix-font-icon-font: "font";
+    --jmix-font-icon-form: "form";
+    --jmix-font-icon-forward: "forward";
+    --jmix-font-icon-frown-o: "frown-o";
+    --jmix-font-icon-function: "function";
+    --jmix-font-icon-funnel: "funnel";
+    --jmix-font-icon-gamepad: "gamepad";
+    --jmix-font-icon-gavel: "gavel";
+    --jmix-font-icon-gift: "gift";
+    --jmix-font-icon-glass: "glass";
+    --jmix-font-icon-glasses: "glasses";
+    --jmix-font-icon-globe-wire: "globe-wire";
+    --jmix-font-icon-globe: "globe";
+    --jmix-font-icon-golf: "golf";
+    --jmix-font-icon-google-plus-square: "google-plus-square";
+    --jmix-font-icon-google-plus: "google-plus";
+    --jmix-font-icon-grab: "grab";
+    --jmix-font-icon-grid-bevel: "grid-bevel";
+    --jmix-font-icon-grid-big-o: "grid-big-o";
+    --jmix-font-icon-grid-big: "grid-big";
+    --jmix-font-icon-grid-h: "grid-h";
+    --jmix-font-icon-grid-small-o: "grid-small-o";
+    --jmix-font-icon-grid-small: "grid-small";
+    --jmix-font-icon-grid-v: "grid-v";
+    --jmix-font-icon-grid: "grid";
+    --jmix-font-icon-group: "group";
+    --jmix-font-icon-hammer: "hammer";
+    --jmix-font-icon-hand: "hand";
+    --jmix-font-icon-handle-corner: "handle-corner";
+    --jmix-font-icon-hands-up: "hands-up";
+    --jmix-font-icon-handshake: "handshake";
+    --jmix-font-icon-harddrive-o: "harddrive-o";
+    --jmix-font-icon-harddrive: "harddrive";
+    --jmix-font-icon-hash: "hash";
+    --jmix-font-icon-header: "header";
+    --jmix-font-icon-headphones: "headphones";
+    --jmix-font-icon-headset: "headset";
+    --jmix-font-icon-health-card: "health-card";
+    --jmix-font-icon-heart-o: "heart-o";
+    --jmix-font-icon-heart: "heart";
+    --jmix-font-icon-home-o: "home-o";
+    --jmix-font-icon-home: "home";
+    --jmix-font-icon-hospital: "hospital";
+    --jmix-font-icon-hourglass-empty: "hourglass-empty";
+    --jmix-font-icon-hourglass-end: "hourglass-end";
+    --jmix-font-icon-hourglass-start: "hourglass-start";
+    --jmix-font-icon-hourglass: "hourglass";
+    --jmix-font-icon-inbox: "inbox";
+    --jmix-font-icon-indent: "indent";
+    --jmix-font-icon-info-circle-o: "info-circle-o";
+    --jmix-font-icon-info-circle: "info-circle";
+    --jmix-font-icon-info: "info";
+    --jmix-font-icon-input: "input";
+    --jmix-font-icon-insert: "insert";
+    --jmix-font-icon-institution: "institution";
+    --jmix-font-icon-invoice: "invoice";
+    --jmix-font-icon-italic: "italic";
+    --jmix-font-icon-key-o: "key-o";
+    --jmix-font-icon-key: "key";
+    --jmix-font-icon-keyboard-o: "keyboard-o";
+    --jmix-font-icon-keyboard: "keyboard";
+    --jmix-font-icon-laptop: "laptop";
+    --jmix-font-icon-layout: "layout";
+    --jmix-font-icon-level-down-bold: "level-down-bold";
+    --jmix-font-icon-level-down: "level-down";
+    --jmix-font-icon-level-left-bold: "level-left-bold";
+    --jmix-font-icon-level-left: "level-left";
+    --jmix-font-icon-level-right-bold: "level-right-bold";
+    --jmix-font-icon-level-right: "level-right";
+    --jmix-font-icon-level-up-bold: "level-up-bold";
+    --jmix-font-icon-level-up: "level-up";
+    --jmix-font-icon-lifebuoy: "lifebuoy";
+    --jmix-font-icon-lightbulb: "lightbulb";
+    --jmix-font-icon-line-bar-chart: "line-bar-chart";
+    --jmix-font-icon-line-chart: "line-chart";
+    --jmix-font-icon-line-h: "line-h";
+    --jmix-font-icon-line-v: "line-v";
+    --jmix-font-icon-lines-list: "lines-list";
+    --jmix-font-icon-lines: "lines";
+    --jmix-font-icon-link: "link";
+    --jmix-font-icon-list-ol: "list-ol";
+    --jmix-font-icon-list-select: "list-select";
+    --jmix-font-icon-list-ul: "list-ul";
+    --jmix-font-icon-list: "list";
+    --jmix-font-icon-location-arrow-circle-o: "location-arrow-circle-o";
+    --jmix-font-icon-location-arrow-circle: "location-arrow-circle";
+    --jmix-font-icon-location-arrow: "location-arrow";
+    --jmix-font-icon-lock: "lock";
+    --jmix-font-icon-magic: "magic";
+    --jmix-font-icon-magnet: "magnet";
+    --jmix-font-icon-mailbox: "mailbox";
+    --jmix-font-icon-male: "male";
+    --jmix-font-icon-map-marker: "map-marker";
+    --jmix-font-icon-margin-bottom: "margin-bottom";
+    --jmix-font-icon-margin-left: "margin-left";
+    --jmix-font-icon-margin-right: "margin-right";
+    --jmix-font-icon-margin-top: "margin-top";
+    --jmix-font-icon-margin: "margin";
+    --jmix-font-icon-medal: "medal";
+    --jmix-font-icon-megaphone: "megaphone";
+    --jmix-font-icon-meh-o: "meh-o";
+    --jmix-font-icon-menu: "menu";
+    --jmix-font-icon-microphone: "microphone";
+    --jmix-font-icon-minus-circle-o: "minus-circle-o";
+    --jmix-font-icon-minus-circle: "minus-circle";
+    --jmix-font-icon-minus-square-o: "minus-square-o";
+    --jmix-font-icon-minus: "minus";
+    --jmix-font-icon-mobile-browser: "mobile-browser";
+    --jmix-font-icon-mobile-retro: "mobile-retro";
+    --jmix-font-icon-mobile: "mobile";
+    --jmix-font-icon-modal-list: "modal-list";
+    --jmix-font-icon-modal: "modal";
+    --jmix-font-icon-money-deposit: "money-deposit";
+    --jmix-font-icon-money-exchange: "money-exchange";
+    --jmix-font-icon-money-withdraw: "money-withdraw";
+    --jmix-font-icon-money: "money";
+    --jmix-font-icon-moon-o: "moon-o";
+    --jmix-font-icon-moon: "moon";
+    --jmix-font-icon-morning: "morning";
+    --jmix-font-icon-movie: "movie";
+    --jmix-font-icon-music: "music";
+    --jmix-font-icon-mute: "mute";
+    --jmix-font-icon-native-button: "native-button";
+    --jmix-font-icon-newspaper: "newspaper";
+    --jmix-font-icon-notebook: "notebook";
+    --jmix-font-icon-nurse: "nurse";
+    --jmix-font-icon-office: "office";
+    --jmix-font-icon-open-book: "open-book";
+    --jmix-font-icon-option-a: "option-a";
+    --jmix-font-icon-option: "option";
+    --jmix-font-icon-options: "options";
+    --jmix-font-icon-orientation: "orientation";
+    --jmix-font-icon-out: "out";
+    --jmix-font-icon-outbox: "outbox";
+    --jmix-font-icon-package: "package";
+    --jmix-font-icon-padding-bottom: "padding-bottom";
+    --jmix-font-icon-padding-left: "padding-left";
+    --jmix-font-icon-padding-right: "padding-right";
+    --jmix-font-icon-padding-top: "padding-top";
+    --jmix-font-icon-padding: "padding";
+    --jmix-font-icon-paint-roll: "paint-roll";
+    --jmix-font-icon-paintbrush: "paintbrush";
+    --jmix-font-icon-palette: "palette";
+    --jmix-font-icon-panel: "panel";
+    --jmix-font-icon-paperclip: "paperclip";
+    --jmix-font-icon-paperplane-o: "paperplane-o";
+    --jmix-font-icon-paperplane: "paperplane";
+    --jmix-font-icon-paragraph: "paragraph";
+    --jmix-font-icon-password: "password";
+    --jmix-font-icon-paste: "paste";
+    --jmix-font-icon-pause: "pause";
+    --jmix-font-icon-pencil: "pencil";
+    --jmix-font-icon-phone-landline: "phone-landline";
+    --jmix-font-icon-phone: "phone";
+    --jmix-font-icon-picture: "picture";
+    --jmix-font-icon-pie-bar-chart: "pie-bar-chart";
+    --jmix-font-icon-pie-chart: "pie-chart";
+    --jmix-font-icon-piggy-bank-coin: "piggy-bank-coin";
+    --jmix-font-icon-piggy-bank: "piggy-bank";
+    --jmix-font-icon-pill: "pill";
+    --jmix-font-icon-pills: "pills";
+    --jmix-font-icon-pin-post: "pin-post";
+    --jmix-font-icon-pin: "pin";
+    --jmix-font-icon-play-circle-o: "play-circle-o";
+    --jmix-font-icon-play-circle: "play-circle";
+    --jmix-font-icon-play: "play";
+    --jmix-font-icon-plug: "plug";
+    --jmix-font-icon-plus-circle-o: "plus-circle-o";
+    --jmix-font-icon-plus-circle: "plus-circle";
+    --jmix-font-icon-plus-minus: "plus-minus";
+    --jmix-font-icon-plus-square-o: "plus-square-o";
+    --jmix-font-icon-plus: "plus";
+    --jmix-font-icon-pointer: "pointer";
+    --jmix-font-icon-power-off: "power-off";
+    --jmix-font-icon-presentation: "presentation";
+    --jmix-font-icon-print: "print";
+    --jmix-font-icon-progressbar: "progressbar";
+    --jmix-font-icon-puzzle-piece: "puzzle-piece";
+    --jmix-font-icon-pyramid-chart: "pyramid-chart";
+    --jmix-font-icon-qrcode: "qrcode";
+    --jmix-font-icon-question-circle-o: "question-circle-o";
+    --jmix-font-icon-question-circle: "question-circle";
+    --jmix-font-icon-question: "question";
+    --jmix-font-icon-quote-left: "quote-left";
+    --jmix-font-icon-quote-right: "quote-right";
+    --jmix-font-icon-random: "random";
+    --jmix-font-icon-raster-lower-left: "raster-lower-left";
+    --jmix-font-icon-raster: "raster";
+    --jmix-font-icon-records: "records";
+    --jmix-font-icon-recycle: "recycle";
+    --jmix-font-icon-refresh: "refresh";
+    --jmix-font-icon-reply-all: "reply-all";
+    --jmix-font-icon-reply: "reply";
+    --jmix-font-icon-resize-h: "resize-h";
+    --jmix-font-icon-resize-v: "resize-v";
+    --jmix-font-icon-retweet: "retweet";
+    --jmix-font-icon-rhombus: "rhombus";
+    --jmix-font-icon-road-branch: "road-branch";
+    --jmix-font-icon-road-branches: "road-branches";
+    --jmix-font-icon-road-split: "road-split";
+    --jmix-font-icon-road: "road";
+    --jmix-font-icon-rocket: "rocket";
+    --jmix-font-icon-rotate-left: "rotate-left";
+    --jmix-font-icon-rotate-right: "rotate-right";
+    --jmix-font-icon-rss-square: "rss-square";
+    --jmix-font-icon-rss: "rss";
+    --jmix-font-icon-safe-lock: "safe-lock";
+    --jmix-font-icon-safe: "safe";
+    --jmix-font-icon-scale-unbalance: "scale-unbalance";
+    --jmix-font-icon-scale: "scale";
+    --jmix-font-icon-scatter-chart: "scatter-chart";
+    --jmix-font-icon-scissors: "scissors";
+    --jmix-font-icon-screwdriver: "screwdriver";
+    --jmix-font-icon-search-minus: "search-minus";
+    --jmix-font-icon-search-plus: "search-plus";
+    --jmix-font-icon-search: "search";
+    --jmix-font-icon-select: "select";
+    --jmix-font-icon-server: "server";
+    --jmix-font-icon-share-square: "share-square";
+    --jmix-font-icon-share: "share";
+    --jmix-font-icon-shield: "shield";
+    --jmix-font-icon-shift-arrow: "shift-arrow";
+    --jmix-font-icon-shift: "shift";
+    --jmix-font-icon-shop: "shop";
+    --jmix-font-icon-sign-in-alt: "sign-in-alt";
+    --jmix-font-icon-sign-in: "sign-in";
+    --jmix-font-icon-sign-out-alt: "sign-out-alt";
+    --jmix-font-icon-sign-out: "sign-out";
+    --jmix-font-icon-signal: "signal";
+    --jmix-font-icon-sitemap: "sitemap";
+    --jmix-font-icon-slider: "slider";
+    --jmix-font-icon-sliders: "sliders";
+    --jmix-font-icon-smiley-o: "smiley-o";
+    --jmix-font-icon-sort: "sort";
+    --jmix-font-icon-sound-disable: "sound-disable";
+    --jmix-font-icon-spark-line: "spark-line";
+    --jmix-font-icon-specialist: "specialist";
+    --jmix-font-icon-spinner-arc: "spinner-arc";
+    --jmix-font-icon-spinner-third: "spinner-third";
+    --jmix-font-icon-spinner: "spinner";
+    --jmix-font-icon-spline-area-chart: "spline-area-chart";
+    --jmix-font-icon-spline-chart: "spline-chart";
+    --jmix-font-icon-split-h: "split-h";
+    --jmix-font-icon-split-v: "split-v";
+    --jmix-font-icon-split: "split";
+    --jmix-font-icon-spoon: "spoon";
+    --jmix-font-icon-square-shadow: "square-shadow";
+    --jmix-font-icon-star-half-left-o: "star-half-left-o";
+    --jmix-font-icon-star-half-left: "star-half-left";
+    --jmix-font-icon-star-half-right-o: "star-half-right-o";
+    --jmix-font-icon-star-half-right: "star-half-right";
+    --jmix-font-icon-star-o: "star-o";
+    --jmix-font-icon-star: "star";
+    --jmix-font-icon-start-cog: "start-cog";
+    --jmix-font-icon-step-backward: "step-backward";
+    --jmix-font-icon-step-forward: "step-forward";
+    --jmix-font-icon-stethoscope: "stethoscope";
+    --jmix-font-icon-stock: "stock";
+    --jmix-font-icon-stop-cog: "stop-cog";
+    --jmix-font-icon-stop: "stop";
+    --jmix-font-icon-stopwatch: "stopwatch";
+    --jmix-font-icon-storage: "storage";
+    --jmix-font-icon-strikethrough: "strikethrough";
+    --jmix-font-icon-subscript: "subscript";
+    --jmix-font-icon-suitcase: "suitcase";
+    --jmix-font-icon-sun-down: "sun-down";
+    --jmix-font-icon-sun-o: "sun-o";
+    --jmix-font-icon-sun-rise: "sun-rise";
+    --jmix-font-icon-superscript: "superscript";
+    --jmix-font-icon-sword: "sword";
+    --jmix-font-icon-tab-a: "tab-a";
+    --jmix-font-icon-tab: "tab";
+    --jmix-font-icon-table: "table";
+    --jmix-font-icon-tablet: "tablet";
+    --jmix-font-icon-tabs: "tabs";
+    --jmix-font-icon-tag: "tag";
+    --jmix-font-icon-tags: "tags";
+    --jmix-font-icon-tasks: "tasks";
+    --jmix-font-icon-taxi: "taxi";
+    --jmix-font-icon-teeth: "teeth";
+    --jmix-font-icon-terminal: "terminal";
+    --jmix-font-icon-text-height: "text-height";
+    --jmix-font-icon-text-input: "text-input";
+    --jmix-font-icon-text-label: "text-label";
+    --jmix-font-icon-text-width: "text-width";
+    --jmix-font-icon-thin-square: "thin-square";
+    --jmix-font-icon-thumbs-down-o: "thumbs-down-o";
+    --jmix-font-icon-thumbs-down: "thumbs-down";
+    --jmix-font-icon-thumbs-up-o: "thumbs-up-o";
+    --jmix-font-icon-thumbs-up: "thumbs-up";
+    --jmix-font-icon-ticket: "ticket";
+    --jmix-font-icon-time-backward: "time-backward";
+    --jmix-font-icon-time-forward: "time-forward";
+    --jmix-font-icon-timer: "timer";
+    --jmix-font-icon-toolbox: "toolbox";
+    --jmix-font-icon-tools: "tools";
+    --jmix-font-icon-tooth: "tooth";
+    --jmix-font-icon-touch: "touch";
+    --jmix-font-icon-train: "train";
+    --jmix-font-icon-trash: "trash";
+    --jmix-font-icon-tree-table: "tree-table";
+    --jmix-font-icon-trending-down: "trending-down";
+    --jmix-font-icon-trending-up: "trending-up";
+    --jmix-font-icon-trophy: "trophy";
+    --jmix-font-icon-truck: "truck";
+    --jmix-font-icon-twin-col-select: "twin-col-select";
+    --jmix-font-icon-twitter-square: "twitter-square";
+    --jmix-font-icon-twitter: "twitter";
+    --jmix-font-icon-umbrella: "umbrella";
+    --jmix-font-icon-underline: "underline";
+    --jmix-font-icon-unlink: "unlink";
+    --jmix-font-icon-unlock: "unlock";
+    --jmix-font-icon-upload-alt: "upload-alt";
+    --jmix-font-icon-upload: "upload";
+    --jmix-font-icon-user-card: "user-card";
+    --jmix-font-icon-user-check: "user-check";
+    --jmix-font-icon-user-clock: "user-clock";
+    --jmix-font-icon-user-heart: "user-heart";
+    --jmix-font-icon-user-star: "user-star";
+    --jmix-font-icon-user: "user";
+    --jmix-font-icon-users: "users";
+    --jmix-font-icon-vaadin-h: "vaadin-h";
+    --jmix-font-icon-vaadin-v: "vaadin-v";
+    --jmix-font-icon-viewport: "viewport";
+    --jmix-font-icon-vimeo-square: "vimeo-square";
+    --jmix-font-icon-vimeo: "vimeo";
+    --jmix-font-icon-volume-down: "volume-down";
+    --jmix-font-icon-volume-off: "volume-off";
+    --jmix-font-icon-volume-up: "volume-up";
+    --jmix-font-icon-volume: "volume";
+    --jmix-font-icon-wallet: "wallet";
+    --jmix-font-icon-warning: "warning";
+    --jmix-font-icon-workplace: "workplace";
+    --jmix-font-icon-wrench: "wrench";
+    --jmix-font-icon-youtube-square: "youtube-square";
+    --jmix-font-icon-youtube: "youtube";
+
+    /* Jmix specific icons */
+    --jmix-font-icon-create-action: var(--jmix-font-icon-plus);
+    --jmix-font-icon-edit-action: var(--jmix-font-icon-pencil);
+    --jmix-font-icon-remove-action: var(--jmix-font-icon-trash);
+    --jmix-font-icon-add-action: var(--jmix-font-icon-plus);
+    --jmix-font-icon-exclude-action: var(--jmix-font-icon-close);
+    --jmix-font-icon-read-action: var(--jmix-font-icon-eye);
+    --jmix-font-icon-refresh-action: var(--jmix-font-icon-refresh);
+
+    --jmix-font-icon-view-close-action: var(--jmix-font-icon-ban);
+    --jmix-font-icon-detail-save-close-action: var(--jmix-font-icon-check);
+    --jmix-font-icon-detail-save-action: var(--jmix-font-icon-archive);
+    --jmix-font-icon-detail-close-action: var(--jmix-font-icon-ban);
+    --jmix-font-icon-detail-discard-action: var(--jmix-font-icon-ban);
+    --jmix-font-icon-detail-enable-editing-action: var(--jmix-font-icon-pencil);
+    --jmix-font-icon-lookup-select-action: var(--jmix-font-icon-check);
+    --jmix-font-icon-lookup-discard-action: var(--jmix-font-icon-ban);
+
+    --jmix-font-icon-entity-lookup-action: var(--jmix-font-icon-ellipsis-dots-h);
+    --jmix-font-icon-entity-clear-action: var(--jmix-font-icon-close);
+    --jmix-font-icon-entity-open-action: var(--jmix-font-icon-search-plus);
+
+    --jmix-font-icon-value-clear-action: var(--jmix-font-icon-close);
+
+    --jmix-font-icon-multi-value-select-action: var(--jmix-font-icon-ellipsis-dots-h);
+
+    --jmix-font-icon-date-interval-action: var(--jmix-font-icon-ellipsis-dots-h);
+
+    --jmix-font-icon-logout-action: var(--jmix-font-icon-sign-out);
+
+    --jmix-font-icon-user-menu-theme-switch-action-system-theme: var(--jmix-font-icon-adjust);
+    --jmix-font-icon-user-menu-theme-switch-action-light-theme: var(--jmix-font-icon-sun-o);
+    --jmix-font-icon-user-menu-theme-switch-action-dark-theme: var(--jmix-font-icon-moon-o);
+
+    --jmix-font-icon-generic-filter-save-action: var(--jmix-font-icon-archive);
+    --jmix-font-icon-generic-filter-edit-action: var(--jmix-font-icon-pencil);
+    --jmix-font-icon-generic-filter-copy-action: var(--jmix-font-icon-copy);
+    --jmix-font-icon-generic-filter-remove-action: var(--jmix-font-icon-trash);
+    --jmix-font-icon-generic-filter-clear-values-action: var(--jmix-font-icon-eraser);
+    --jmix-font-icon-generic-filter-make-default-action: var(--jmix-font-icon-star);
+    --jmix-font-icon-generic-filter-add-condition-action: var(--jmix-font-icon-plus);
+
+    --jmix-font-icon-dialog-ok: var(--jmix-font-icon-check);
+    --jmix-font-icon-dialog-cancel: var(--jmix-font-icon-ban);
+    --jmix-font-icon-dialog-yes: var(--jmix-font-icon-check);
+    --jmix-font-icon-dialog-no: var(--jmix-font-icon-ban);
+    --jmix-font-icon-dialog-close: var(--jmix-font-icon-close);
+
+    --jmix-font-icon-combo-button-dropdown: var(--jmix-font-icon-chevron-down);
+
+    --jmix-font-icon-pagination-first-page: var(--jmix-font-icon-angle-double-left);
+    --jmix-font-icon-pagination-previous-page: var(--jmix-font-icon-angle-left);
+    --jmix-font-icon-pagination-next-page: var(--jmix-font-icon-angle-right);
+    --jmix-font-icon-pagination-last-page: var(--jmix-font-icon-angle-double-right);
+
+    --jmix-font-icon-twin-column-select-all: var(--jmix-font-icon-angle-double-right);
+    --jmix-font-icon-twin-column-deselect-all: var(--jmix-font-icon-angle-double-left);
+    --jmix-font-icon-twin-column-select: var(--jmix-font-icon-angle-right);
+    --jmix-font-icon-twin-column-deselect: var(--jmix-font-icon-angle-left);
+
+    --jmix-font-icon-generic-filter-settings: var(--jmix-font-icon-cog);
+    --jmix-font-icon-generic-filter-condition-remove: var(--jmix-font-icon-trash);
+
+    --jmix-font-icon-data-gird-header-filter: var(--jmix-font-icon-filter);
+    --jmix-font-icon-data-gird-header-filter-apply: var(--jmix-font-icon-check);
+    --jmix-font-icon-data-gird-header-filter-cancel: var(--jmix-font-icon-ban);
+    --jmix-font-icon-data-gird-header-filter-clear: var(--jmix-font-icon-eraser);
+}
+
+.jmix-font-icon {
+    font-family: var(--jmix-font-icon-font-family);
+}
+
+/* Jmix specific icons */
+
+.jmix-font-icon-create-action:before {
+    content: var(--jmix-font-icon-create-action);
+}
+
+.jmix-font-icon-dialog-ok:before {
+    content: var(--jmix-font-icon-dialog-ok);
+}
+.jmix-font-icon-dialog-cancel:before {
+    content: var(--jmix-font-icon-dialog-cancel);
+}
+.jmix-font-icon-dialog-yes:before {
+    content: var(--jmix-font-icon-dialog-yes);
+}
+.jmix-font-icon-dialog-no:before {
+    content: var(--jmix-font-icon-dialog-no);
+}
+.jmix-font-icon-dialog-close:before {
+    content: var(--jmix-font-icon-dialog-close);
+}
+
+.jmix-font-icon-combo-button-dropdown:before {
+    content: var(--jmix-font-icon-combo-button-dropdown);
+}
+
+.jmix-font-icon-pagination-first-page:before {
+    content: var(--jmix-font-icon-pagination-first-page);
+}
+
+.jmix-font-icon-pagination-previous-page:before {
+    content: var(--jmix-font-icon-pagination-previous-page);
+}
+
+.jmix-font-icon-pagination-next-page:before {
+    content: var(--jmix-font-icon-pagination-next-page);
+}
+
+.jmix-font-icon-pagination-last-page:before {
+    content: var(--jmix-font-icon-pagination-last-page);
+}
+
+.jmix-font-icon-twin-column-select-all:before {
+    content: var(--jmix-font-icon-twin-column-select-all);
+}
+
+.jmix-font-icon-twin-column-deselect-all:before {
+    content: var(--jmix-font-icon-twin-column-deselect-all);
+}
+
+.jmix-font-icon-twin-column-select:before {
+    content: var(--jmix-font-icon-twin-column-select);
+}
+
+.jmix-font-icon-twin-column-deselect:before {
+    content: var(--jmix-font-icon-twin-column-deselect);
+}
+
+.jmix-font-icon-generic-filter-settings:before {
+    content: var(--jmix-font-icon-generic-filter-settings);
+}
+
+.jmix-font-icon-generic-filter-condition-remove:before {
+    content: var(--jmix-font-icon-generic-filter-condition-remove);
+}
+
+.jmix-font-icon-data-gird-header-filter:before {
+    content: var(--jmix-font-icon-data-gird-header-filter);
+}
+
+.jmix-font-icon-data-gird-header-filter-apply:before {
+    content: var(--jmix-font-icon-data-gird-header-filter-apply);
+}
+
+.jmix-font-icon-data-gird-header-filter-cancel:before {
+    content: var(--jmix-font-icon-data-gird-header-filter-cancel);
+}
+
+.jmix-font-icon-data-gird-header-filter-clear:before {
+    content: var(--jmix-font-icon-data-gird-header-filter-clear);
+}
+
+/* Vaadin icons */
+
+.jmix-font-icon-abacus:before {
+    content: var(--jmix-font-icon-abacus);
+}
+
+.jmix-font-icon-absolute-position:before {
+    content: var(--jmix-font-icon-absolute-position);
+}
+
+.jmix-font-icon-academy-cap:before {
+    content: var(--jmix-font-icon-academy-cap);
+}
+
+.jmix-font-icon-accessibility:before {
+    content: var(--jmix-font-icon-accessibility);
+}
+
+.jmix-font-icon-accordion-menu:before {
+    content: var(--jmix-font-icon-accordion-menu);
+}
+
+.jmix-font-icon-add-dock:before {
+    content: var(--jmix-font-icon-add-dock);
+}
+
+.jmix-font-icon-adjust:before {
+    content: var(--jmix-font-icon-adjust);
+}
+
+.jmix-font-icon-adobe-flash:before {
+    content: var(--jmix-font-icon-adobe-flash);
+}
+
+.jmix-font-icon-airplane:before {
+    content: var(--jmix-font-icon-airplane);
+}
+
+.jmix-font-icon-alarm:before {
+    content: var(--jmix-font-icon-alarm);
+}
+
+.jmix-font-icon-align-center:before {
+    content: var(--jmix-font-icon-align-center);
+}
+
+.jmix-font-icon-align-justify:before {
+    content: var(--jmix-font-icon-align-justify);
+}
+
+.jmix-font-icon-align-left:before {
+    content: var(--jmix-font-icon-align-left);
+}
+
+.jmix-font-icon-align-right:before {
+    content: var(--jmix-font-icon-align-right);
+}
+
+.jmix-font-icon-alt-a:before {
+    content: var(--jmix-font-icon-alt-a);
+}
+
+.jmix-font-icon-alt:before {
+    content: var(--jmix-font-icon-alt);
+}
+
+.jmix-font-icon-ambulance:before {
+    content: var(--jmix-font-icon-ambulance);
+}
+
+.jmix-font-icon-anchor:before {
+    content: var(--jmix-font-icon-anchor);
+}
+
+.jmix-font-icon-angle-double-down:before {
+    content: var(--jmix-font-icon-angle-double-down);
+}
+
+.jmix-font-icon-angle-double-left:before {
+    content: var(--jmix-font-icon-angle-double-left);
+}
+
+.jmix-font-icon-angle-double-right:before {
+    content: var(--jmix-font-icon-angle-double-right);
+}
+
+.jmix-font-icon-angle-double-up:before {
+    content: var(--jmix-font-icon-angle-double-up);
+}
+
+.jmix-font-icon-angle-down:before {
+    content: var(--jmix-font-icon-angle-down);
+}
+
+.jmix-font-icon-angle-left:before {
+    content: var(--jmix-font-icon-angle-left);
+}
+
+.jmix-font-icon-angle-right:before {
+    content: var(--jmix-font-icon-angle-right);
+}
+
+.jmix-font-icon-angle-up:before {
+    content: var(--jmix-font-icon-angle-up);
+}
+
+.jmix-font-icon-archive:before {
+    content: var(--jmix-font-icon-archive);
+}
+
+.jmix-font-icon-archives:before {
+    content: var(--jmix-font-icon-archives);
+}
+
+.jmix-font-icon-area-select:before {
+    content: var(--jmix-font-icon-area-select);
+}
+
+.jmix-font-icon-arrow-backward:before {
+    content: var(--jmix-font-icon-arrow-backward);
+}
+
+.jmix-font-icon-arrow-circle-down-o:before {
+    content: var(--jmix-font-icon-arrow-circle-down-o);
+}
+
+.jmix-font-icon-arrow-circle-down:before {
+    content: var(--jmix-font-icon-arrow-circle-down);
+}
+
+.jmix-font-icon-arrow-circle-left-o:before {
+    content: var(--jmix-font-icon-arrow-circle-left-o);
+}
+
+.jmix-font-icon-arrow-circle-left:before {
+    content: var(--jmix-font-icon-arrow-circle-left);
+}
+
+.jmix-font-icon-arrow-circle-right-o:before {
+    content: var(--jmix-font-icon-arrow-circle-right-o);
+}
+
+.jmix-font-icon-arrow-circle-right:before {
+    content: var(--jmix-font-icon-arrow-circle-right);
+}
+
+.jmix-font-icon-arrow-circle-up-o:before {
+    content: var(--jmix-font-icon-arrow-circle-up-o);
+}
+
+.jmix-font-icon-arrow-circle-up:before {
+    content: var(--jmix-font-icon-arrow-circle-up);
+}
+
+.jmix-font-icon-arrow-down:before {
+    content: var(--jmix-font-icon-arrow-down);
+}
+
+.jmix-font-icon-arrow-forward:before {
+    content: var(--jmix-font-icon-arrow-forward);
+}
+
+.jmix-font-icon-arrow-left:before {
+    content: var(--jmix-font-icon-arrow-left);
+}
+
+.jmix-font-icon-arrow-long-down:before {
+    content: var(--jmix-font-icon-arrow-long-down);
+}
+
+.jmix-font-icon-arrow-long-left:before {
+    content: var(--jmix-font-icon-arrow-long-left);
+}
+
+.jmix-font-icon-arrow-right:before {
+    content: var(--jmix-font-icon-arrow-right);
+}
+
+.jmix-font-icon-arrow-up:before {
+    content: var(--jmix-font-icon-arrow-up);
+}
+
+.jmix-font-icon-arrows-cross:before {
+    content: var(--jmix-font-icon-arrows-cross);
+}
+
+.jmix-font-icon-arrows-long-h:before {
+    content: var(--jmix-font-icon-arrows-long-h);
+}
+
+.jmix-font-icon-arrows-long-right:before {
+    content: var(--jmix-font-icon-arrows-long-right);
+}
+
+.jmix-font-icon-arrows-long-up:before {
+    content: var(--jmix-font-icon-arrows-long-up);
+}
+
+.jmix-font-icon-arrows-long-v:before {
+    content: var(--jmix-font-icon-arrows-long-v);
+}
+
+.jmix-font-icon-arrows:before {
+    content: var(--jmix-font-icon-arrows);
+}
+
+.jmix-font-icon-asterisk:before {
+    content: var(--jmix-font-icon-asterisk);
+}
+
+.jmix-font-icon-at:before {
+    content: var(--jmix-font-icon-at);
+}
+
+.jmix-font-icon-automation:before {
+    content: var(--jmix-font-icon-automation);
+}
+
+.jmix-font-icon-backspace-a:before {
+    content: var(--jmix-font-icon-backspace-a);
+}
+
+.jmix-font-icon-backspace:before {
+    content: var(--jmix-font-icon-backspace);
+}
+
+.jmix-font-icon-backwards:before {
+    content: var(--jmix-font-icon-backwards);
+}
+
+.jmix-font-icon-ban:before {
+    content: var(--jmix-font-icon-ban);
+}
+
+.jmix-font-icon-bar-chart-h:before {
+    content: var(--jmix-font-icon-bar-chart-h);
+}
+
+.jmix-font-icon-bar-chart-v:before {
+    content: var(--jmix-font-icon-bar-chart-v);
+}
+
+.jmix-font-icon-bar-chart:before {
+    content: var(--jmix-font-icon-bar-chart);
+}
+
+.jmix-font-icon-barcode:before {
+    content: var(--jmix-font-icon-barcode);
+}
+
+.jmix-font-icon-bed:before {
+    content: var(--jmix-font-icon-bed);
+}
+
+.jmix-font-icon-bell-o:before {
+    content: var(--jmix-font-icon-bell-o);
+}
+
+.jmix-font-icon-bell-slash-o:before {
+    content: var(--jmix-font-icon-bell-slash-o);
+}
+
+.jmix-font-icon-bell-slash:before {
+    content: var(--jmix-font-icon-bell-slash);
+}
+
+.jmix-font-icon-bell:before {
+    content: var(--jmix-font-icon-bell);
+}
+
+.jmix-font-icon-boat:before {
+    content: var(--jmix-font-icon-boat);
+}
+
+.jmix-font-icon-bold:before {
+    content: var(--jmix-font-icon-bold);
+}
+
+.jmix-font-icon-bolt:before {
+    content: var(--jmix-font-icon-bolt);
+}
+
+.jmix-font-icon-bomb:before {
+    content: var(--jmix-font-icon-bomb);
+}
+
+.jmix-font-icon-book-dollar:before {
+    content: var(--jmix-font-icon-book-dollar);
+}
+
+.jmix-font-icon-book-percent:before {
+    content: var(--jmix-font-icon-book-percent);
+}
+
+.jmix-font-icon-book:before {
+    content: var(--jmix-font-icon-book);
+}
+
+.jmix-font-icon-bookmark-o:before {
+    content: var(--jmix-font-icon-bookmark-o);
+}
+
+.jmix-font-icon-bookmark:before {
+    content: var(--jmix-font-icon-bookmark);
+}
+
+.jmix-font-icon-briefcase:before {
+    content: var(--jmix-font-icon-briefcase);
+}
+
+.jmix-font-icon-browser:before {
+    content: var(--jmix-font-icon-browser);
+}
+
+.jmix-font-icon-bug-o:before {
+    content: var(--jmix-font-icon-bug-o);
+}
+
+.jmix-font-icon-bug:before {
+    content: var(--jmix-font-icon-bug);
+}
+
+.jmix-font-icon-building-o:before {
+    content: var(--jmix-font-icon-building-o);
+}
+
+.jmix-font-icon-building:before {
+    content: var(--jmix-font-icon-building);
+}
+
+.jmix-font-icon-bullets:before {
+    content: var(--jmix-font-icon-bullets);
+}
+
+.jmix-font-icon-bullseye:before {
+    content: var(--jmix-font-icon-bullseye);
+}
+
+.jmix-font-icon-bus:before {
+    content: var(--jmix-font-icon-bus);
+}
+
+.jmix-font-icon-button:before {
+    content: var(--jmix-font-icon-button);
+}
+
+.jmix-font-icon-calc-book:before {
+    content: var(--jmix-font-icon-calc-book);
+}
+
+.jmix-font-icon-calc:before {
+    content: var(--jmix-font-icon-calc);
+}
+
+.jmix-font-icon-calendar-briefcase:before {
+    content: var(--jmix-font-icon-calendar-briefcase);
+}
+
+.jmix-font-icon-calendar-clock:before {
+    content: var(--jmix-font-icon-calendar-clock);
+}
+
+.jmix-font-icon-calendar-envelope:before {
+    content: var(--jmix-font-icon-calendar-envelope);
+}
+
+.jmix-font-icon-calendar-o:before {
+    content: var(--jmix-font-icon-calendar-o);
+}
+
+.jmix-font-icon-calendar-user:before {
+    content: var(--jmix-font-icon-calendar-user);
+}
+
+.jmix-font-icon-calendar:before {
+    content: var(--jmix-font-icon-calendar);
+}
+
+.jmix-font-icon-camera:before {
+    content: var(--jmix-font-icon-camera);
+}
+
+.jmix-font-icon-car:before {
+    content: var(--jmix-font-icon-car);
+}
+
+.jmix-font-icon-caret-down:before {
+    content: var(--jmix-font-icon-caret-down);
+}
+
+.jmix-font-icon-caret-left:before {
+    content: var(--jmix-font-icon-caret-left);
+}
+
+.jmix-font-icon-caret-right:before {
+    content: var(--jmix-font-icon-caret-right);
+}
+
+.jmix-font-icon-caret-square-down-o:before {
+    content: var(--jmix-font-icon-caret-square-down-o);
+}
+
+.jmix-font-icon-caret-square-left-o:before {
+    content: var(--jmix-font-icon-caret-square-left-o);
+}
+
+.jmix-font-icon-caret-square-right-o:before {
+    content: var(--jmix-font-icon-caret-square-right-o);
+}
+
+.jmix-font-icon-caret-square-up-o:before {
+    content: var(--jmix-font-icon-caret-square-up-o);
+}
+
+.jmix-font-icon-caret-up:before {
+    content: var(--jmix-font-icon-caret-up);
+}
+
+.jmix-font-icon-cart-o:before {
+    content: var(--jmix-font-icon-cart-o);
+}
+
+.jmix-font-icon-cart:before {
+    content: var(--jmix-font-icon-cart);
+}
+
+.jmix-font-icon-cash:before {
+    content: var(--jmix-font-icon-cash);
+}
+
+.jmix-font-icon-chart-3d:before {
+    content: var(--jmix-font-icon-chart-3d);
+}
+
+.jmix-font-icon-chart-grid:before {
+    content: var(--jmix-font-icon-chart-grid);
+}
+
+.jmix-font-icon-chart-line:before {
+    content: var(--jmix-font-icon-chart-line);
+}
+
+.jmix-font-icon-chart-timeline:before {
+    content: var(--jmix-font-icon-chart-timeline);
+}
+
+.jmix-font-icon-chart:before {
+    content: var(--jmix-font-icon-chart);
+}
+
+.jmix-font-icon-chat:before {
+    content: var(--jmix-font-icon-chat);
+}
+
+.jmix-font-icon-check-circle-o:before {
+    content: var(--jmix-font-icon-check-circle-o);
+}
+
+.jmix-font-icon-check-circle:before {
+    content: var(--jmix-font-icon-check-circle);
+}
+
+.jmix-font-icon-check-square-o:before {
+    content: var(--jmix-font-icon-check-square-o);
+}
+
+.jmix-font-icon-check-square:before {
+    content: var(--jmix-font-icon-check-square);
+}
+
+.jmix-font-icon-check:before {
+    content: var(--jmix-font-icon-check);
+}
+
+.jmix-font-icon-chevron-circle-down-o:before {
+    content: var(--jmix-font-icon-chevron-circle-down-o);
+}
+
+.jmix-font-icon-chevron-circle-down:before {
+    content: var(--jmix-font-icon-chevron-circle-down);
+}
+
+.jmix-font-icon-chevron-circle-left-o:before {
+    content: var(--jmix-font-icon-chevron-circle-left-o);
+}
+
+.jmix-font-icon-chevron-circle-left:before {
+    content: var(--jmix-font-icon-chevron-circle-left);
+}
+
+.jmix-font-icon-chevron-circle-right-o:before {
+    content: var(--jmix-font-icon-chevron-circle-right-o);
+}
+
+.jmix-font-icon-chevron-circle-right:before {
+    content: var(--jmix-font-icon-chevron-circle-right);
+}
+
+.jmix-font-icon-chevron-circle-up-o:before {
+    content: var(--jmix-font-icon-chevron-circle-up-o);
+}
+
+.jmix-font-icon-chevron-circle-up:before {
+    content: var(--jmix-font-icon-chevron-circle-up);
+}
+
+.jmix-font-icon-chevron-down-small:before {
+    content: var(--jmix-font-icon-chevron-down-small);
+}
+
+.jmix-font-icon-chevron-down:before {
+    content: var(--jmix-font-icon-chevron-down);
+}
+
+.jmix-font-icon-chevron-left-small:before {
+    content: var(--jmix-font-icon-chevron-left-small);
+}
+
+.jmix-font-icon-chevron-left:before {
+    content: var(--jmix-font-icon-chevron-left);
+}
+
+.jmix-font-icon-chevron-right-small:before {
+    content: var(--jmix-font-icon-chevron-right-small);
+}
+
+.jmix-font-icon-chevron-right:before {
+    content: var(--jmix-font-icon-chevron-right);
+}
+
+.jmix-font-icon-chevron-up-small:before {
+    content: var(--jmix-font-icon-chevron-up-small);
+}
+
+.jmix-font-icon-chevron-up:before {
+    content: var(--jmix-font-icon-chevron-up);
+}
+
+.jmix-font-icon-child:before {
+    content: var(--jmix-font-icon-child);
+}
+
+.jmix-font-icon-circle-thin:before {
+    content: var(--jmix-font-icon-circle-thin);
+}
+
+.jmix-font-icon-circle:before {
+    content: var(--jmix-font-icon-circle);
+}
+
+.jmix-font-icon-clipboard-check:before {
+    content: var(--jmix-font-icon-clipboard-check);
+}
+
+.jmix-font-icon-clipboard-cross:before {
+    content: var(--jmix-font-icon-clipboard-cross);
+}
+
+.jmix-font-icon-clipboard-heart:before {
+    content: var(--jmix-font-icon-clipboard-heart);
+}
+
+.jmix-font-icon-clipboard-pulse:before {
+    content: var(--jmix-font-icon-clipboard-pulse);
+}
+
+.jmix-font-icon-clipboard-text:before {
+    content: var(--jmix-font-icon-clipboard-text);
+}
+
+.jmix-font-icon-clipboard-user:before {
+    content: var(--jmix-font-icon-clipboard-user);
+}
+
+.jmix-font-icon-clipboard:before {
+    content: var(--jmix-font-icon-clipboard);
+}
+
+.jmix-font-icon-clock:before {
+    content: var(--jmix-font-icon-clock);
+}
+
+.jmix-font-icon-close-big:before {
+    content: var(--jmix-font-icon-close-big);
+}
+
+.jmix-font-icon-close-circle-o:before {
+    content: var(--jmix-font-icon-close-circle-o);
+}
+
+.jmix-font-icon-close-circle:before {
+    content: var(--jmix-font-icon-close-circle);
+}
+
+.jmix-font-icon-close-small:before {
+    content: var(--jmix-font-icon-close-small);
+}
+
+.jmix-font-icon-close:before {
+    content: var(--jmix-font-icon-close);
+}
+
+.jmix-font-icon-cloud-download-o:before {
+    content: var(--jmix-font-icon-cloud-download-o);
+}
+
+.jmix-font-icon-cloud-download:before {
+    content: var(--jmix-font-icon-cloud-download);
+}
+
+.jmix-font-icon-cloud-o:before {
+    content: var(--jmix-font-icon-cloud-o);
+}
+
+.jmix-font-icon-cloud-upload-o:before {
+    content: var(--jmix-font-icon-cloud-upload-o);
+}
+
+.jmix-font-icon-cloud-upload:before {
+    content: var(--jmix-font-icon-cloud-upload);
+}
+
+.jmix-font-icon-cloud:before {
+    content: var(--jmix-font-icon-cloud);
+}
+
+.jmix-font-icon-cluster:before {
+    content: var(--jmix-font-icon-cluster);
+}
+
+.jmix-font-icon-code:before {
+    content: var(--jmix-font-icon-code);
+}
+
+.jmix-font-icon-coffee:before {
+    content: var(--jmix-font-icon-coffee);
+}
+
+.jmix-font-icon-cog-o:before {
+    content: var(--jmix-font-icon-cog-o);
+}
+
+.jmix-font-icon-cog:before {
+    content: var(--jmix-font-icon-cog);
+}
+
+.jmix-font-icon-cogs:before {
+    content: var(--jmix-font-icon-cogs);
+}
+
+.jmix-font-icon-coin-piles:before {
+    content: var(--jmix-font-icon-coin-piles);
+}
+
+.jmix-font-icon-coins:before {
+    content: var(--jmix-font-icon-coins);
+}
+
+.jmix-font-icon-combobox:before {
+    content: var(--jmix-font-icon-combobox);
+}
+
+.jmix-font-icon-comment-ellipsis-o:before {
+    content: var(--jmix-font-icon-comment-ellipsis-o);
+}
+
+.jmix-font-icon-comment-ellipsis:before {
+    content: var(--jmix-font-icon-comment-ellipsis);
+}
+
+.jmix-font-icon-comment-o:before {
+    content: var(--jmix-font-icon-comment-o);
+}
+
+.jmix-font-icon-comment:before {
+    content: var(--jmix-font-icon-comment);
+}
+
+.jmix-font-icon-comments-o:before {
+    content: var(--jmix-font-icon-comments-o);
+}
+
+.jmix-font-icon-comments:before {
+    content: var(--jmix-font-icon-comments);
+}
+
+.jmix-font-icon-compile:before {
+    content: var(--jmix-font-icon-compile);
+}
+
+.jmix-font-icon-compress-square:before {
+    content: var(--jmix-font-icon-compress-square);
+}
+
+.jmix-font-icon-compress:before {
+    content: var(--jmix-font-icon-compress);
+}
+
+.jmix-font-icon-connect-o:before {
+    content: var(--jmix-font-icon-connect-o);
+}
+
+.jmix-font-icon-connect:before {
+    content: var(--jmix-font-icon-connect);
+}
+
+.jmix-font-icon-controller:before {
+    content: var(--jmix-font-icon-controller);
+}
+
+.jmix-font-icon-copy-o:before {
+    content: var(--jmix-font-icon-copy-o);
+}
+
+.jmix-font-icon-copy:before {
+    content: var(--jmix-font-icon-copy);
+}
+
+.jmix-font-icon-copyright:before {
+    content: var(--jmix-font-icon-copyright);
+}
+
+.jmix-font-icon-corner-lower-left:before {
+    content: var(--jmix-font-icon-corner-lower-left);
+}
+
+.jmix-font-icon-corner-lower-right:before {
+    content: var(--jmix-font-icon-corner-lower-right);
+}
+
+.jmix-font-icon-corner-upper-left:before {
+    content: var(--jmix-font-icon-corner-upper-left);
+}
+
+.jmix-font-icon-corner-upper-right:before {
+    content: var(--jmix-font-icon-corner-upper-right);
+}
+
+.jmix-font-icon-credit-card:before {
+    content: var(--jmix-font-icon-credit-card);
+}
+
+.jmix-font-icon-crop:before {
+    content: var(--jmix-font-icon-crop);
+}
+
+.jmix-font-icon-cross-cutlery:before {
+    content: var(--jmix-font-icon-cross-cutlery);
+}
+
+.jmix-font-icon-crosshairs:before {
+    content: var(--jmix-font-icon-crosshairs);
+}
+
+.jmix-font-icon-css:before {
+    content: var(--jmix-font-icon-css);
+}
+
+.jmix-font-icon-ctrl-a:before {
+    content: var(--jmix-font-icon-ctrl-a);
+}
+
+.jmix-font-icon-ctrl:before {
+    content: var(--jmix-font-icon-ctrl);
+}
+
+.jmix-font-icon-cube:before {
+    content: var(--jmix-font-icon-cube);
+}
+
+.jmix-font-icon-cubes:before {
+    content: var(--jmix-font-icon-cubes);
+}
+
+.jmix-font-icon-curly-brackets:before {
+    content: var(--jmix-font-icon-curly-brackets);
+}
+
+.jmix-font-icon-cursor-o:before {
+    content: var(--jmix-font-icon-cursor-o);
+}
+
+.jmix-font-icon-cursor:before {
+    content: var(--jmix-font-icon-cursor);
+}
+
+.jmix-font-icon-cutlery:before {
+    content: var(--jmix-font-icon-cutlery);
+}
+
+.jmix-font-icon-dashboard:before {
+    content: var(--jmix-font-icon-dashboard);
+}
+
+.jmix-font-icon-database:before {
+    content: var(--jmix-font-icon-database);
+}
+
+.jmix-font-icon-date-input:before {
+    content: var(--jmix-font-icon-date-input);
+}
+
+.jmix-font-icon-deindent:before {
+    content: var(--jmix-font-icon-deindent);
+}
+
+.jmix-font-icon-del-a:before {
+    content: var(--jmix-font-icon-del-a);
+}
+
+.jmix-font-icon-del:before {
+    content: var(--jmix-font-icon-del);
+}
+
+.jmix-font-icon-dental-chair:before {
+    content: var(--jmix-font-icon-dental-chair);
+}
+
+.jmix-font-icon-desktop:before {
+    content: var(--jmix-font-icon-desktop);
+}
+
+.jmix-font-icon-diamond-o:before {
+    content: var(--jmix-font-icon-diamond-o);
+}
+
+.jmix-font-icon-diamond:before {
+    content: var(--jmix-font-icon-diamond);
+}
+
+.jmix-font-icon-diploma-scroll:before {
+    content: var(--jmix-font-icon-diploma-scroll);
+}
+
+.jmix-font-icon-diploma:before {
+    content: var(--jmix-font-icon-diploma);
+}
+
+.jmix-font-icon-disc:before {
+    content: var(--jmix-font-icon-disc);
+}
+
+.jmix-font-icon-doctor-briefcase:before {
+    content: var(--jmix-font-icon-doctor-briefcase);
+}
+
+.jmix-font-icon-doctor:before {
+    content: var(--jmix-font-icon-doctor);
+}
+
+.jmix-font-icon-dollar:before {
+    content: var(--jmix-font-icon-dollar);
+}
+
+.jmix-font-icon-dot-circle:before {
+    content: var(--jmix-font-icon-dot-circle);
+}
+
+.jmix-font-icon-download-alt:before {
+    content: var(--jmix-font-icon-download-alt);
+}
+
+.jmix-font-icon-download:before {
+    content: var(--jmix-font-icon-download);
+}
+
+.jmix-font-icon-drop:before {
+    content: var(--jmix-font-icon-drop);
+}
+
+.jmix-font-icon-edit:before {
+    content: var(--jmix-font-icon-edit);
+}
+
+.jmix-font-icon-eject:before {
+    content: var(--jmix-font-icon-eject);
+}
+
+.jmix-font-icon-elastic:before {
+    content: var(--jmix-font-icon-elastic);
+}
+
+.jmix-font-icon-ellipsis-circle-o:before {
+    content: var(--jmix-font-icon-ellipsis-circle-o);
+}
+
+.jmix-font-icon-ellipsis-circle:before {
+    content: var(--jmix-font-icon-ellipsis-circle);
+}
+
+.jmix-font-icon-ellipsis-dots-h:before {
+    content: var(--jmix-font-icon-ellipsis-dots-h);
+}
+
+.jmix-font-icon-ellipsis-dots-v:before {
+    content: var(--jmix-font-icon-ellipsis-dots-v);
+}
+
+.jmix-font-icon-ellipsis-h:before {
+    content: var(--jmix-font-icon-ellipsis-h);
+}
+
+.jmix-font-icon-ellipsis-v:before {
+    content: var(--jmix-font-icon-ellipsis-v);
+}
+
+.jmix-font-icon-enter-arrow:before {
+    content: var(--jmix-font-icon-enter-arrow);
+}
+
+.jmix-font-icon-enter:before {
+    content: var(--jmix-font-icon-enter);
+}
+
+.jmix-font-icon-envelope-o:before {
+    content: var(--jmix-font-icon-envelope-o);
+}
+
+.jmix-font-icon-envelope-open-o:before {
+    content: var(--jmix-font-icon-envelope-open-o);
+}
+
+.jmix-font-icon-envelope-open:before {
+    content: var(--jmix-font-icon-envelope-open);
+}
+
+.jmix-font-icon-envelope:before {
+    content: var(--jmix-font-icon-envelope);
+}
+
+.jmix-font-icon-envelopes-o:before {
+    content: var(--jmix-font-icon-envelopes-o);
+}
+
+.jmix-font-icon-envelopes:before {
+    content: var(--jmix-font-icon-envelopes);
+}
+
+.jmix-font-icon-eraser:before {
+    content: var(--jmix-font-icon-eraser);
+}
+
+.jmix-font-icon-esc-a:before {
+    content: var(--jmix-font-icon-esc-a);
+}
+
+.jmix-font-icon-esc:before {
+    content: var(--jmix-font-icon-esc);
+}
+
+.jmix-font-icon-euro:before {
+    content: var(--jmix-font-icon-euro);
+}
+
+.jmix-font-icon-exchange:before {
+    content: var(--jmix-font-icon-exchange);
+}
+
+.jmix-font-icon-exclamation-circle-o:before {
+    content: var(--jmix-font-icon-exclamation-circle-o);
+}
+
+.jmix-font-icon-exclamation-circle:before {
+    content: var(--jmix-font-icon-exclamation-circle);
+}
+
+.jmix-font-icon-exclamation:before {
+    content: var(--jmix-font-icon-exclamation);
+}
+
+.jmix-font-icon-exit-o:before {
+    content: var(--jmix-font-icon-exit-o);
+}
+
+.jmix-font-icon-exit:before {
+    content: var(--jmix-font-icon-exit);
+}
+
+.jmix-font-icon-expand-full:before {
+    content: var(--jmix-font-icon-expand-full);
+}
+
+.jmix-font-icon-expand-square:before {
+    content: var(--jmix-font-icon-expand-square);
+}
+
+.jmix-font-icon-expand:before {
+    content: var(--jmix-font-icon-expand);
+}
+
+.jmix-font-icon-external-browser:before {
+    content: var(--jmix-font-icon-external-browser);
+}
+
+.jmix-font-icon-external-link:before {
+    content: var(--jmix-font-icon-external-link);
+}
+
+.jmix-font-icon-eye-slash:before {
+    content: var(--jmix-font-icon-eye-slash);
+}
+
+.jmix-font-icon-eye:before {
+    content: var(--jmix-font-icon-eye);
+}
+
+.jmix-font-icon-eyedropper:before {
+    content: var(--jmix-font-icon-eyedropper);
+}
+
+.jmix-font-icon-facebook-square:before {
+    content: var(--jmix-font-icon-facebook-square);
+}
+
+.jmix-font-icon-facebook:before {
+    content: var(--jmix-font-icon-facebook);
+}
+
+.jmix-font-icon-factory:before {
+    content: var(--jmix-font-icon-factory);
+}
+
+.jmix-font-icon-family:before {
+    content: var(--jmix-font-icon-family);
+}
+
+.jmix-font-icon-fast-backward:before {
+    content: var(--jmix-font-icon-fast-backward);
+}
+
+.jmix-font-icon-fast-forward:before {
+    content: var(--jmix-font-icon-fast-forward);
+}
+
+.jmix-font-icon-female:before {
+    content: var(--jmix-font-icon-female);
+}
+
+.jmix-font-icon-file-add:before {
+    content: var(--jmix-font-icon-file-add);
+}
+
+.jmix-font-icon-file-code:before {
+    content: var(--jmix-font-icon-file-code);
+}
+
+.jmix-font-icon-file-font:before {
+    content: var(--jmix-font-icon-file-font);
+}
+
+.jmix-font-icon-file-movie:before {
+    content: var(--jmix-font-icon-file-movie);
+}
+
+.jmix-font-icon-file-o:before {
+    content: var(--jmix-font-icon-file-o);
+}
+
+.jmix-font-icon-file-picture:before {
+    content: var(--jmix-font-icon-file-picture);
+}
+
+.jmix-font-icon-file-presentation:before {
+    content: var(--jmix-font-icon-file-presentation);
+}
+
+.jmix-font-icon-file-process:before {
+    content: var(--jmix-font-icon-file-process);
+}
+
+.jmix-font-icon-file-refresh:before {
+    content: var(--jmix-font-icon-file-refresh);
+}
+
+.jmix-font-icon-file-remove:before {
+    content: var(--jmix-font-icon-file-remove);
+}
+
+.jmix-font-icon-file-search:before {
+    content: var(--jmix-font-icon-file-search);
+}
+
+.jmix-font-icon-file-sound:before {
+    content: var(--jmix-font-icon-file-sound);
+}
+
+.jmix-font-icon-file-start:before {
+    content: var(--jmix-font-icon-file-start);
+}
+
+.jmix-font-icon-file-table:before {
+    content: var(--jmix-font-icon-file-table);
+}
+
+.jmix-font-icon-file-text-o:before {
+    content: var(--jmix-font-icon-file-text-o);
+}
+
+.jmix-font-icon-file-text:before {
+    content: var(--jmix-font-icon-file-text);
+}
+
+.jmix-font-icon-file-tree-small:before {
+    content: var(--jmix-font-icon-file-tree-small);
+}
+
+.jmix-font-icon-file-tree-sub:before {
+    content: var(--jmix-font-icon-file-tree-sub);
+}
+
+.jmix-font-icon-file-tree:before {
+    content: var(--jmix-font-icon-file-tree);
+}
+
+.jmix-font-icon-file-zip:before {
+    content: var(--jmix-font-icon-file-zip);
+}
+
+.jmix-font-icon-file:before {
+    content: var(--jmix-font-icon-file);
+}
+
+.jmix-font-icon-fill:before {
+    content: var(--jmix-font-icon-fill);
+}
+
+.jmix-font-icon-film:before {
+    content: var(--jmix-font-icon-film);
+}
+
+.jmix-font-icon-filter:before {
+    content: var(--jmix-font-icon-filter);
+}
+
+.jmix-font-icon-fire:before {
+    content: var(--jmix-font-icon-fire);
+}
+
+.jmix-font-icon-flag-checkered:before {
+    content: var(--jmix-font-icon-flag-checkered);
+}
+
+.jmix-font-icon-flag-o:before {
+    content: var(--jmix-font-icon-flag-o);
+}
+
+.jmix-font-icon-flag:before {
+    content: var(--jmix-font-icon-flag);
+}
+
+.jmix-font-icon-flash:before {
+    content: var(--jmix-font-icon-flash);
+}
+
+.jmix-font-icon-flask:before {
+    content: var(--jmix-font-icon-flask);
+}
+
+.jmix-font-icon-flight-landing:before {
+    content: var(--jmix-font-icon-flight-landing);
+}
+
+.jmix-font-icon-flight-takeoff:before {
+    content: var(--jmix-font-icon-flight-takeoff);
+}
+
+.jmix-font-icon-flip-h:before {
+    content: var(--jmix-font-icon-flip-h);
+}
+
+.jmix-font-icon-flip-v:before {
+    content: var(--jmix-font-icon-flip-v);
+}
+
+.jmix-font-icon-folder-add:before {
+    content: var(--jmix-font-icon-folder-add);
+}
+
+.jmix-font-icon-folder-o:before {
+    content: var(--jmix-font-icon-folder-o);
+}
+
+.jmix-font-icon-folder-open-o:before {
+    content: var(--jmix-font-icon-folder-open-o);
+}
+
+.jmix-font-icon-folder-open:before {
+    content: var(--jmix-font-icon-folder-open);
+}
+
+.jmix-font-icon-folder-remove:before {
+    content: var(--jmix-font-icon-folder-remove);
+}
+
+.jmix-font-icon-folder-search:before {
+    content: var(--jmix-font-icon-folder-search);
+}
+
+.jmix-font-icon-folder:before {
+    content: var(--jmix-font-icon-folder);
+}
+
+.jmix-font-icon-font:before {
+    content: var(--jmix-font-icon-font);
+}
+
+.jmix-font-icon-form:before {
+    content: var(--jmix-font-icon-form);
+}
+
+.jmix-font-icon-forward:before {
+    content: var(--jmix-font-icon-forward);
+}
+
+.jmix-font-icon-frown-o:before {
+    content: var(--jmix-font-icon-frown-o);
+}
+
+.jmix-font-icon-function:before {
+    content: var(--jmix-font-icon-function);
+}
+
+.jmix-font-icon-funnel:before {
+    content: var(--jmix-font-icon-funnel);
+}
+
+.jmix-font-icon-gamepad:before {
+    content: var(--jmix-font-icon-gamepad);
+}
+
+.jmix-font-icon-gavel:before {
+    content: var(--jmix-font-icon-gavel);
+}
+
+.jmix-font-icon-gift:before {
+    content: var(--jmix-font-icon-gift);
+}
+
+.jmix-font-icon-glass:before {
+    content: var(--jmix-font-icon-glass);
+}
+
+.jmix-font-icon-glasses:before {
+    content: var(--jmix-font-icon-glasses);
+}
+
+.jmix-font-icon-globe-wire:before {
+    content: var(--jmix-font-icon-globe-wire);
+}
+
+.jmix-font-icon-globe:before {
+    content: var(--jmix-font-icon-globe);
+}
+
+.jmix-font-icon-golf:before {
+    content: var(--jmix-font-icon-golf);
+}
+
+.jmix-font-icon-google-plus-square:before {
+    content: var(--jmix-font-icon-google-plus-square);
+}
+
+.jmix-font-icon-google-plus:before {
+    content: var(--jmix-font-icon-google-plus);
+}
+
+.jmix-font-icon-grab:before {
+    content: var(--jmix-font-icon-grab);
+}
+
+.jmix-font-icon-grid-bevel:before {
+    content: var(--jmix-font-icon-grid-bevel);
+}
+
+.jmix-font-icon-grid-big-o:before {
+    content: var(--jmix-font-icon-grid-big-o);
+}
+
+.jmix-font-icon-grid-big:before {
+    content: var(--jmix-font-icon-grid-big);
+}
+
+.jmix-font-icon-grid-h:before {
+    content: var(--jmix-font-icon-grid-h);
+}
+
+.jmix-font-icon-grid-small-o:before {
+    content: var(--jmix-font-icon-grid-small-o);
+}
+
+.jmix-font-icon-grid-small:before {
+    content: var(--jmix-font-icon-grid-small);
+}
+
+.jmix-font-icon-grid-v:before {
+    content: var(--jmix-font-icon-grid-v);
+}
+
+.jmix-font-icon-grid:before {
+    content: var(--jmix-font-icon-grid);
+}
+
+.jmix-font-icon-group:before {
+    content: var(--jmix-font-icon-group);
+}
+
+.jmix-font-icon-hammer:before {
+    content: var(--jmix-font-icon-hammer);
+}
+
+.jmix-font-icon-hand:before {
+    content: var(--jmix-font-icon-hand);
+}
+
+.jmix-font-icon-handle-corner:before {
+    content: var(--jmix-font-icon-handle-corner);
+}
+
+.jmix-font-icon-hands-up:before {
+    content: var(--jmix-font-icon-hands-up);
+}
+
+.jmix-font-icon-handshake:before {
+    content: var(--jmix-font-icon-handshake);
+}
+
+.jmix-font-icon-harddrive-o:before {
+    content: var(--jmix-font-icon-harddrive-o);
+}
+
+.jmix-font-icon-harddrive:before {
+    content: var(--jmix-font-icon-harddrive);
+}
+
+.jmix-font-icon-hash:before {
+    content: var(--jmix-font-icon-hash);
+}
+
+.jmix-font-icon-header:before {
+    content: var(--jmix-font-icon-header);
+}
+
+.jmix-font-icon-headphones:before {
+    content: var(--jmix-font-icon-headphones);
+}
+
+.jmix-font-icon-headset:before {
+    content: var(--jmix-font-icon-headset);
+}
+
+.jmix-font-icon-health-card:before {
+    content: var(--jmix-font-icon-health-card);
+}
+
+.jmix-font-icon-heart-o:before {
+    content: var(--jmix-font-icon-heart-o);
+}
+
+.jmix-font-icon-heart:before {
+    content: var(--jmix-font-icon-heart);
+}
+
+.jmix-font-icon-home-o:before {
+    content: var(--jmix-font-icon-home-o);
+}
+
+.jmix-font-icon-home:before {
+    content: var(--jmix-font-icon-home);
+}
+
+.jmix-font-icon-hospital:before {
+    content: var(--jmix-font-icon-hospital);
+}
+
+.jmix-font-icon-hourglass-empty:before {
+    content: var(--jmix-font-icon-hourglass-empty);
+}
+
+.jmix-font-icon-hourglass-end:before {
+    content: var(--jmix-font-icon-hourglass-end);
+}
+
+.jmix-font-icon-hourglass-start:before {
+    content: var(--jmix-font-icon-hourglass-start);
+}
+
+.jmix-font-icon-hourglass:before {
+    content: var(--jmix-font-icon-hourglass);
+}
+
+.jmix-font-icon-inbox:before {
+    content: var(--jmix-font-icon-inbox);
+}
+
+.jmix-font-icon-indent:before {
+    content: var(--jmix-font-icon-indent);
+}
+
+.jmix-font-icon-info-circle-o:before {
+    content: var(--jmix-font-icon-info-circle-o);
+}
+
+.jmix-font-icon-info-circle:before {
+    content: var(--jmix-font-icon-info-circle);
+}
+
+.jmix-font-icon-info:before {
+    content: var(--jmix-font-icon-info);
+}
+
+.jmix-font-icon-input:before {
+    content: var(--jmix-font-icon-input);
+}
+
+.jmix-font-icon-insert:before {
+    content: var(--jmix-font-icon-insert);
+}
+
+.jmix-font-icon-institution:before {
+    content: var(--jmix-font-icon-institution);
+}
+
+.jmix-font-icon-invoice:before {
+    content: var(--jmix-font-icon-invoice);
+}
+
+.jmix-font-icon-italic:before {
+    content: var(--jmix-font-icon-italic);
+}
+
+.jmix-font-icon-key-o:before {
+    content: var(--jmix-font-icon-key-o);
+}
+
+.jmix-font-icon-key:before {
+    content: var(--jmix-font-icon-key);
+}
+
+.jmix-font-icon-keyboard-o:before {
+    content: var(--jmix-font-icon-keyboard-o);
+}
+
+.jmix-font-icon-keyboard:before {
+    content: var(--jmix-font-icon-keyboard);
+}
+
+.jmix-font-icon-laptop:before {
+    content: var(--jmix-font-icon-laptop);
+}
+
+.jmix-font-icon-layout:before {
+    content: var(--jmix-font-icon-layout);
+}
+
+.jmix-font-icon-level-down-bold:before {
+    content: var(--jmix-font-icon-level-down-bold);
+}
+
+.jmix-font-icon-level-down:before {
+    content: var(--jmix-font-icon-level-down);
+}
+
+.jmix-font-icon-level-left-bold:before {
+    content: var(--jmix-font-icon-level-left-bold);
+}
+
+.jmix-font-icon-level-left:before {
+    content: var(--jmix-font-icon-level-left);
+}
+
+.jmix-font-icon-level-right-bold:before {
+    content: var(--jmix-font-icon-level-right-bold);
+}
+
+.jmix-font-icon-level-right:before {
+    content: var(--jmix-font-icon-level-right);
+}
+
+.jmix-font-icon-level-up-bold:before {
+    content: var(--jmix-font-icon-level-up-bold);
+}
+
+.jmix-font-icon-level-up:before {
+    content: var(--jmix-font-icon-level-up);
+}
+
+.jmix-font-icon-lifebuoy:before {
+    content: var(--jmix-font-icon-lifebuoy);
+}
+
+.jmix-font-icon-lightbulb:before {
+    content: var(--jmix-font-icon-lightbulb);
+}
+
+.jmix-font-icon-line-bar-chart:before {
+    content: var(--jmix-font-icon-line-bar-chart);
+}
+
+.jmix-font-icon-line-chart:before {
+    content: var(--jmix-font-icon-line-chart);
+}
+
+.jmix-font-icon-line-h:before {
+    content: var(--jmix-font-icon-line-h);
+}
+
+.jmix-font-icon-line-v:before {
+    content: var(--jmix-font-icon-line-v);
+}
+
+.jmix-font-icon-lines-list:before {
+    content: var(--jmix-font-icon-lines-list);
+}
+
+.jmix-font-icon-lines:before {
+    content: var(--jmix-font-icon-lines);
+}
+
+.jmix-font-icon-link:before {
+    content: var(--jmix-font-icon-link);
+}
+
+.jmix-font-icon-list-ol:before {
+    content: var(--jmix-font-icon-list-ol);
+}
+
+.jmix-font-icon-list-select:before {
+    content: var(--jmix-font-icon-list-select);
+}
+
+.jmix-font-icon-list-ul:before {
+    content: var(--jmix-font-icon-list-ul);
+}
+
+.jmix-font-icon-list:before {
+    content: var(--jmix-font-icon-list);
+}
+
+.jmix-font-icon-location-arrow-circle-o:before {
+    content: var(--jmix-font-icon-location-arrow-circle-o);
+}
+
+.jmix-font-icon-location-arrow-circle:before {
+    content: var(--jmix-font-icon-location-arrow-circle);
+}
+
+.jmix-font-icon-location-arrow:before {
+    content: var(--jmix-font-icon-location-arrow);
+}
+
+.jmix-font-icon-lock:before {
+    content: var(--jmix-font-icon-lock);
+}
+
+.jmix-font-icon-magic:before {
+    content: var(--jmix-font-icon-magic);
+}
+
+.jmix-font-icon-magnet:before {
+    content: var(--jmix-font-icon-magnet);
+}
+
+.jmix-font-icon-mailbox:before {
+    content: var(--jmix-font-icon-mailbox);
+}
+
+.jmix-font-icon-male:before {
+    content: var(--jmix-font-icon-male);
+}
+
+.jmix-font-icon-map-marker:before {
+    content: var(--jmix-font-icon-map-marker);
+}
+
+.jmix-font-icon-margin-bottom:before {
+    content: var(--jmix-font-icon-margin-bottom);
+}
+
+.jmix-font-icon-margin-left:before {
+    content: var(--jmix-font-icon-margin-left);
+}
+
+.jmix-font-icon-margin-right:before {
+    content: var(--jmix-font-icon-margin-right);
+}
+
+.jmix-font-icon-margin-top:before {
+    content: var(--jmix-font-icon-margin-top);
+}
+
+.jmix-font-icon-margin:before {
+    content: var(--jmix-font-icon-margin);
+}
+
+.jmix-font-icon-medal:before {
+    content: var(--jmix-font-icon-medal);
+}
+
+.jmix-font-icon-megaphone:before {
+    content: var(--jmix-font-icon-megaphone);
+}
+
+.jmix-font-icon-meh-o:before {
+    content: var(--jmix-font-icon-meh-o);
+}
+
+.jmix-font-icon-menu:before {
+    content: var(--jmix-font-icon-menu);
+}
+
+.jmix-font-icon-microphone:before {
+    content: var(--jmix-font-icon-microphone);
+}
+
+.jmix-font-icon-minus-circle-o:before {
+    content: var(--jmix-font-icon-minus-circle-o);
+}
+
+.jmix-font-icon-minus-circle:before {
+    content: var(--jmix-font-icon-minus-circle);
+}
+
+.jmix-font-icon-minus-square-o:before {
+    content: var(--jmix-font-icon-minus-square-o);
+}
+
+.jmix-font-icon-minus:before {
+    content: var(--jmix-font-icon-minus);
+}
+
+.jmix-font-icon-mobile-browser:before {
+    content: var(--jmix-font-icon-mobile-browser);
+}
+
+.jmix-font-icon-mobile-retro:before {
+    content: var(--jmix-font-icon-mobile-retro);
+}
+
+.jmix-font-icon-mobile:before {
+    content: var(--jmix-font-icon-mobile);
+}
+
+.jmix-font-icon-modal-list:before {
+    content: var(--jmix-font-icon-modal-list);
+}
+
+.jmix-font-icon-modal:before {
+    content: var(--jmix-font-icon-modal);
+}
+
+.jmix-font-icon-money-deposit:before {
+    content: var(--jmix-font-icon-money-deposit);
+}
+
+.jmix-font-icon-money-exchange:before {
+    content: var(--jmix-font-icon-money-exchange);
+}
+
+.jmix-font-icon-money-withdraw:before {
+    content: var(--jmix-font-icon-money-withdraw);
+}
+
+.jmix-font-icon-money:before {
+    content: var(--jmix-font-icon-money);
+}
+
+.jmix-font-icon-moon-o:before {
+    content: var(--jmix-font-icon-moon-o);
+}
+
+.jmix-font-icon-moon:before {
+    content: var(--jmix-font-icon-moon);
+}
+
+.jmix-font-icon-morning:before {
+    content: var(--jmix-font-icon-morning);
+}
+
+.jmix-font-icon-movie:before {
+    content: var(--jmix-font-icon-movie);
+}
+
+.jmix-font-icon-music:before {
+    content: var(--jmix-font-icon-music);
+}
+
+.jmix-font-icon-mute:before {
+    content: var(--jmix-font-icon-mute);
+}
+
+.jmix-font-icon-native-button:before {
+    content: var(--jmix-font-icon-native-button);
+}
+
+.jmix-font-icon-newspaper:before {
+    content: var(--jmix-font-icon-newspaper);
+}
+
+.jmix-font-icon-notebook:before {
+    content: var(--jmix-font-icon-notebook);
+}
+
+.jmix-font-icon-nurse:before {
+    content: var(--jmix-font-icon-nurse);
+}
+
+.jmix-font-icon-office:before {
+    content: var(--jmix-font-icon-office);
+}
+
+.jmix-font-icon-open-book:before {
+    content: var(--jmix-font-icon-open-book);
+}
+
+.jmix-font-icon-option-a:before {
+    content: var(--jmix-font-icon-option-a);
+}
+
+.jmix-font-icon-option:before {
+    content: var(--jmix-font-icon-option);
+}
+
+.jmix-font-icon-options:before {
+    content: var(--jmix-font-icon-options);
+}
+
+.jmix-font-icon-orientation:before {
+    content: var(--jmix-font-icon-orientation);
+}
+
+.jmix-font-icon-out:before {
+    content: var(--jmix-font-icon-out);
+}
+
+.jmix-font-icon-outbox:before {
+    content: var(--jmix-font-icon-outbox);
+}
+
+.jmix-font-icon-package:before {
+    content: var(--jmix-font-icon-package);
+}
+
+.jmix-font-icon-padding-bottom:before {
+    content: var(--jmix-font-icon-padding-bottom);
+}
+
+.jmix-font-icon-padding-left:before {
+    content: var(--jmix-font-icon-padding-left);
+}
+
+.jmix-font-icon-padding-right:before {
+    content: var(--jmix-font-icon-padding-right);
+}
+
+.jmix-font-icon-padding-top:before {
+    content: var(--jmix-font-icon-padding-top);
+}
+
+.jmix-font-icon-padding:before {
+    content: var(--jmix-font-icon-padding);
+}
+
+.jmix-font-icon-paint-roll:before {
+    content: var(--jmix-font-icon-paint-roll);
+}
+
+.jmix-font-icon-paintbrush:before {
+    content: var(--jmix-font-icon-paintbrush);
+}
+
+.jmix-font-icon-palette:before {
+    content: var(--jmix-font-icon-palette);
+}
+
+.jmix-font-icon-panel:before {
+    content: var(--jmix-font-icon-panel);
+}
+
+.jmix-font-icon-paperclip:before {
+    content: var(--jmix-font-icon-paperclip);
+}
+
+.jmix-font-icon-paperplane-o:before {
+    content: var(--jmix-font-icon-paperplane-o);
+}
+
+.jmix-font-icon-paperplane:before {
+    content: var(--jmix-font-icon-paperplane);
+}
+
+.jmix-font-icon-paragraph:before {
+    content: var(--jmix-font-icon-paragraph);
+}
+
+.jmix-font-icon-password:before {
+    content: var(--jmix-font-icon-password);
+}
+
+.jmix-font-icon-paste:before {
+    content: var(--jmix-font-icon-paste);
+}
+
+.jmix-font-icon-pause:before {
+    content: var(--jmix-font-icon-pause);
+}
+
+.jmix-font-icon-pencil:before {
+    content: var(--jmix-font-icon-pencil);
+}
+
+.jmix-font-icon-phone-landline:before {
+    content: var(--jmix-font-icon-phone-landline);
+}
+
+.jmix-font-icon-phone:before {
+    content: var(--jmix-font-icon-phone);
+}
+
+.jmix-font-icon-picture:before {
+    content: var(--jmix-font-icon-picture);
+}
+
+.jmix-font-icon-pie-bar-chart:before {
+    content: var(--jmix-font-icon-pie-bar-chart);
+}
+
+.jmix-font-icon-pie-chart:before {
+    content: var(--jmix-font-icon-pie-chart);
+}
+
+.jmix-font-icon-piggy-bank-coin:before {
+    content: var(--jmix-font-icon-piggy-bank-coin);
+}
+
+.jmix-font-icon-piggy-bank:before {
+    content: var(--jmix-font-icon-piggy-bank);
+}
+
+.jmix-font-icon-pill:before {
+    content: var(--jmix-font-icon-pill);
+}
+
+.jmix-font-icon-pills:before {
+    content: var(--jmix-font-icon-pills);
+}
+
+.jmix-font-icon-pin-post:before {
+    content: var(--jmix-font-icon-pin-post);
+}
+
+.jmix-font-icon-pin:before {
+    content: var(--jmix-font-icon-pin);
+}
+
+.jmix-font-icon-play-circle-o:before {
+    content: var(--jmix-font-icon-play-circle-o);
+}
+
+.jmix-font-icon-play-circle:before {
+    content: var(--jmix-font-icon-play-circle);
+}
+
+.jmix-font-icon-play:before {
+    content: var(--jmix-font-icon-play);
+}
+
+.jmix-font-icon-plug:before {
+    content: var(--jmix-font-icon-plug);
+}
+
+.jmix-font-icon-plus-circle-o:before {
+    content: var(--jmix-font-icon-plus-circle-o);
+}
+
+.jmix-font-icon-plus-circle:before {
+    content: var(--jmix-font-icon-plus-circle);
+}
+
+.jmix-font-icon-plus-minus:before {
+    content: var(--jmix-font-icon-plus-minus);
+}
+
+.jmix-font-icon-plus-square-o:before {
+    content: var(--jmix-font-icon-plus-square-o);
+}
+
+.jmix-font-icon-plus:before {
+    content: var(--jmix-font-icon-plus);
+}
+
+.jmix-font-icon-pointer:before {
+    content: var(--jmix-font-icon-pointer);
+}
+
+.jmix-font-icon-power-off:before {
+    content: var(--jmix-font-icon-power-off);
+}
+
+.jmix-font-icon-presentation:before {
+    content: var(--jmix-font-icon-presentation);
+}
+
+.jmix-font-icon-print:before {
+    content: var(--jmix-font-icon-print);
+}
+
+.jmix-font-icon-progressbar:before {
+    content: var(--jmix-font-icon-progressbar);
+}
+
+.jmix-font-icon-puzzle-piece:before {
+    content: var(--jmix-font-icon-puzzle-piece);
+}
+
+.jmix-font-icon-pyramid-chart:before {
+    content: var(--jmix-font-icon-pyramid-chart);
+}
+
+.jmix-font-icon-qrcode:before {
+    content: var(--jmix-font-icon-qrcode);
+}
+
+.jmix-font-icon-question-circle-o:before {
+    content: var(--jmix-font-icon-question-circle-o);
+}
+
+.jmix-font-icon-question-circle:before {
+    content: var(--jmix-font-icon-question-circle);
+}
+
+.jmix-font-icon-question:before {
+    content: var(--jmix-font-icon-question);
+}
+
+.jmix-font-icon-quote-left:before {
+    content: var(--jmix-font-icon-quote-left);
+}
+
+.jmix-font-icon-quote-right:before {
+    content: var(--jmix-font-icon-quote-right);
+}
+
+.jmix-font-icon-random:before {
+    content: var(--jmix-font-icon-random);
+}
+
+.jmix-font-icon-raster-lower-left:before {
+    content: var(--jmix-font-icon-raster-lower-left);
+}
+
+.jmix-font-icon-raster:before {
+    content: var(--jmix-font-icon-raster);
+}
+
+.jmix-font-icon-records:before {
+    content: var(--jmix-font-icon-records);
+}
+
+.jmix-font-icon-recycle:before {
+    content: var(--jmix-font-icon-recycle);
+}
+
+.jmix-font-icon-refresh:before {
+    content: var(--jmix-font-icon-refresh);
+}
+
+.jmix-font-icon-reply-all:before {
+    content: var(--jmix-font-icon-reply-all);
+}
+
+.jmix-font-icon-reply:before {
+    content: var(--jmix-font-icon-reply);
+}
+
+.jmix-font-icon-resize-h:before {
+    content: var(--jmix-font-icon-resize-h);
+}
+
+.jmix-font-icon-resize-v:before {
+    content: var(--jmix-font-icon-resize-v);
+}
+
+.jmix-font-icon-retweet:before {
+    content: var(--jmix-font-icon-retweet);
+}
+
+.jmix-font-icon-rhombus:before {
+    content: var(--jmix-font-icon-rhombus);
+}
+
+.jmix-font-icon-road-branch:before {
+    content: var(--jmix-font-icon-road-branch);
+}
+
+.jmix-font-icon-road-branches:before {
+    content: var(--jmix-font-icon-road-branches);
+}
+
+.jmix-font-icon-road-split:before {
+    content: var(--jmix-font-icon-road-split);
+}
+
+.jmix-font-icon-road:before {
+    content: var(--jmix-font-icon-road);
+}
+
+.jmix-font-icon-rocket:before {
+    content: var(--jmix-font-icon-rocket);
+}
+
+.jmix-font-icon-rotate-left:before {
+    content: var(--jmix-font-icon-rotate-left);
+}
+
+.jmix-font-icon-rotate-right:before {
+    content: var(--jmix-font-icon-rotate-right);
+}
+
+.jmix-font-icon-rss-square:before {
+    content: var(--jmix-font-icon-rss-square);
+}
+
+.jmix-font-icon-rss:before {
+    content: var(--jmix-font-icon-rss);
+}
+
+.jmix-font-icon-safe-lock:before {
+    content: var(--jmix-font-icon-safe-lock);
+}
+
+.jmix-font-icon-safe:before {
+    content: var(--jmix-font-icon-safe);
+}
+
+.jmix-font-icon-scale-unbalance:before {
+    content: var(--jmix-font-icon-scale-unbalance);
+}
+
+.jmix-font-icon-scale:before {
+    content: var(--jmix-font-icon-scale);
+}
+
+.jmix-font-icon-scatter-chart:before {
+    content: var(--jmix-font-icon-scatter-chart);
+}
+
+.jmix-font-icon-scissors:before {
+    content: var(--jmix-font-icon-scissors);
+}
+
+.jmix-font-icon-screwdriver:before {
+    content: var(--jmix-font-icon-screwdriver);
+}
+
+.jmix-font-icon-search-minus:before {
+    content: var(--jmix-font-icon-search-minus);
+}
+
+.jmix-font-icon-search-plus:before {
+    content: var(--jmix-font-icon-search-plus);
+}
+
+.jmix-font-icon-search:before {
+    content: var(--jmix-font-icon-search);
+}
+
+.jmix-font-icon-select:before {
+    content: var(--jmix-font-icon-select);
+}
+
+.jmix-font-icon-server:before {
+    content: var(--jmix-font-icon-server);
+}
+
+.jmix-font-icon-share-square:before {
+    content: var(--jmix-font-icon-share-square);
+}
+
+.jmix-font-icon-share:before {
+    content: var(--jmix-font-icon-share);
+}
+
+.jmix-font-icon-shield:before {
+    content: var(--jmix-font-icon-shield);
+}
+
+.jmix-font-icon-shift-arrow:before {
+    content: var(--jmix-font-icon-shift-arrow);
+}
+
+.jmix-font-icon-shift:before {
+    content: var(--jmix-font-icon-shift);
+}
+
+.jmix-font-icon-shop:before {
+    content: var(--jmix-font-icon-shop);
+}
+
+.jmix-font-icon-sign-in-alt:before {
+    content: var(--jmix-font-icon-sign-in-alt);
+}
+
+.jmix-font-icon-sign-in:before {
+    content: var(--jmix-font-icon-sign-in);
+}
+
+.jmix-font-icon-sign-out-alt:before {
+    content: var(--jmix-font-icon-sign-out-alt);
+}
+
+.jmix-font-icon-sign-out:before {
+    content: var(--jmix-font-icon-sign-out);
+}
+
+.jmix-font-icon-signal:before {
+    content: var(--jmix-font-icon-signal);
+}
+
+.jmix-font-icon-sitemap:before {
+    content: var(--jmix-font-icon-sitemap);
+}
+
+.jmix-font-icon-slider:before {
+    content: var(--jmix-font-icon-slider);
+}
+
+.jmix-font-icon-sliders:before {
+    content: var(--jmix-font-icon-sliders);
+}
+
+.jmix-font-icon-smiley-o:before {
+    content: var(--jmix-font-icon-smiley-o);
+}
+
+.jmix-font-icon-sort:before {
+    content: var(--jmix-font-icon-sort);
+}
+
+.jmix-font-icon-sound-disable:before {
+    content: var(--jmix-font-icon-sound-disable);
+}
+
+.jmix-font-icon-spark-line:before {
+    content: var(--jmix-font-icon-spark-line);
+}
+
+.jmix-font-icon-specialist:before {
+    content: var(--jmix-font-icon-specialist);
+}
+
+.jmix-font-icon-spinner-arc:before {
+    content: var(--jmix-font-icon-spinner-arc);
+}
+
+.jmix-font-icon-spinner-third:before {
+    content: var(--jmix-font-icon-spinner-third);
+}
+
+.jmix-font-icon-spinner:before {
+    content: var(--jmix-font-icon-spinner);
+}
+
+.jmix-font-icon-spline-area-chart:before {
+    content: var(--jmix-font-icon-spline-area-chart);
+}
+
+.jmix-font-icon-spline-chart:before {
+    content: var(--jmix-font-icon-spline-chart);
+}
+
+.jmix-font-icon-split-h:before {
+    content: var(--jmix-font-icon-split-h);
+}
+
+.jmix-font-icon-split-v:before {
+    content: var(--jmix-font-icon-split-v);
+}
+
+.jmix-font-icon-split:before {
+    content: var(--jmix-font-icon-split);
+}
+
+.jmix-font-icon-spoon:before {
+    content: var(--jmix-font-icon-spoon);
+}
+
+.jmix-font-icon-square-shadow:before {
+    content: var(--jmix-font-icon-square-shadow);
+}
+
+.jmix-font-icon-star-half-left-o:before {
+    content: var(--jmix-font-icon-star-half-left-o);
+}
+
+.jmix-font-icon-star-half-left:before {
+    content: var(--jmix-font-icon-star-half-left);
+}
+
+.jmix-font-icon-star-half-right-o:before {
+    content: var(--jmix-font-icon-star-half-right-o);
+}
+
+.jmix-font-icon-star-half-right:before {
+    content: var(--jmix-font-icon-star-half-right);
+}
+
+.jmix-font-icon-star-o:before {
+    content: var(--jmix-font-icon-star-o);
+}
+
+.jmix-font-icon-star:before {
+    content: var(--jmix-font-icon-star);
+}
+
+.jmix-font-icon-start-cog:before {
+    content: var(--jmix-font-icon-start-cog);
+}
+
+.jmix-font-icon-step-backward:before {
+    content: var(--jmix-font-icon-step-backward);
+}
+
+.jmix-font-icon-step-forward:before {
+    content: var(--jmix-font-icon-step-forward);
+}
+
+.jmix-font-icon-stethoscope:before {
+    content: var(--jmix-font-icon-stethoscope);
+}
+
+.jmix-font-icon-stock:before {
+    content: var(--jmix-font-icon-stock);
+}
+
+.jmix-font-icon-stop-cog:before {
+    content: var(--jmix-font-icon-stop-cog);
+}
+
+.jmix-font-icon-stop:before {
+    content: var(--jmix-font-icon-stop);
+}
+
+.jmix-font-icon-stopwatch:before {
+    content: var(--jmix-font-icon-stopwatch);
+}
+
+.jmix-font-icon-storage:before {
+    content: var(--jmix-font-icon-storage);
+}
+
+.jmix-font-icon-strikethrough:before {
+    content: var(--jmix-font-icon-strikethrough);
+}
+
+.jmix-font-icon-subscript:before {
+    content: var(--jmix-font-icon-subscript);
+}
+
+.jmix-font-icon-suitcase:before {
+    content: var(--jmix-font-icon-suitcase);
+}
+
+.jmix-font-icon-sun-down:before {
+    content: var(--jmix-font-icon-sun-down);
+}
+
+.jmix-font-icon-sun-o:before {
+    content: var(--jmix-font-icon-sun-o);
+}
+
+.jmix-font-icon-sun-rise:before {
+    content: var(--jmix-font-icon-sun-rise);
+}
+
+.jmix-font-icon-superscript:before {
+    content: var(--jmix-font-icon-superscript);
+}
+
+.jmix-font-icon-sword:before {
+    content: var(--jmix-font-icon-sword);
+}
+
+.jmix-font-icon-tab-a:before {
+    content: var(--jmix-font-icon-tab-a);
+}
+
+.jmix-font-icon-tab:before {
+    content: var(--jmix-font-icon-tab);
+}
+
+.jmix-font-icon-table:before {
+    content: var(--jmix-font-icon-table);
+}
+
+.jmix-font-icon-tablet:before {
+    content: var(--jmix-font-icon-tablet);
+}
+
+.jmix-font-icon-tabs:before {
+    content: var(--jmix-font-icon-tabs);
+}
+
+.jmix-font-icon-tag:before {
+    content: var(--jmix-font-icon-tag);
+}
+
+.jmix-font-icon-tags:before {
+    content: var(--jmix-font-icon-tags);
+}
+
+.jmix-font-icon-tasks:before {
+    content: var(--jmix-font-icon-tasks);
+}
+
+.jmix-font-icon-taxi:before {
+    content: var(--jmix-font-icon-taxi);
+}
+
+.jmix-font-icon-teeth:before {
+    content: var(--jmix-font-icon-teeth);
+}
+
+.jmix-font-icon-terminal:before {
+    content: var(--jmix-font-icon-terminal);
+}
+
+.jmix-font-icon-text-height:before {
+    content: var(--jmix-font-icon-text-height);
+}
+
+.jmix-font-icon-text-input:before {
+    content: var(--jmix-font-icon-text-input);
+}
+
+.jmix-font-icon-text-label:before {
+    content: var(--jmix-font-icon-text-label);
+}
+
+.jmix-font-icon-text-width:before {
+    content: var(--jmix-font-icon-text-width);
+}
+
+.jmix-font-icon-thin-square:before {
+    content: var(--jmix-font-icon-thin-square);
+}
+
+.jmix-font-icon-thumbs-down-o:before {
+    content: var(--jmix-font-icon-thumbs-down-o);
+}
+
+.jmix-font-icon-thumbs-down:before {
+    content: var(--jmix-font-icon-thumbs-down);
+}
+
+.jmix-font-icon-thumbs-up-o:before {
+    content: var(--jmix-font-icon-thumbs-up-o);
+}
+
+.jmix-font-icon-thumbs-up:before {
+    content: var(--jmix-font-icon-thumbs-up);
+}
+
+.jmix-font-icon-ticket:before {
+    content: var(--jmix-font-icon-ticket);
+}
+
+.jmix-font-icon-time-backward:before {
+    content: var(--jmix-font-icon-time-backward);
+}
+
+.jmix-font-icon-time-forward:before {
+    content: var(--jmix-font-icon-time-forward);
+}
+
+.jmix-font-icon-timer:before {
+    content: var(--jmix-font-icon-timer);
+}
+
+.jmix-font-icon-toolbox:before {
+    content: var(--jmix-font-icon-toolbox);
+}
+
+.jmix-font-icon-tools:before {
+    content: var(--jmix-font-icon-tools);
+}
+
+.jmix-font-icon-tooth:before {
+    content: var(--jmix-font-icon-tooth);
+}
+
+.jmix-font-icon-touch:before {
+    content: var(--jmix-font-icon-touch);
+}
+
+.jmix-font-icon-train:before {
+    content: var(--jmix-font-icon-train);
+}
+
+.jmix-font-icon-trash:before {
+    content: var(--jmix-font-icon-trash);
+}
+
+.jmix-font-icon-tree-table:before {
+    content: var(--jmix-font-icon-tree-table);
+}
+
+.jmix-font-icon-trending-down:before {
+    content: var(--jmix-font-icon-trending-down);
+}
+
+.jmix-font-icon-trending-up:before {
+    content: var(--jmix-font-icon-trending-up);
+}
+
+.jmix-font-icon-trophy:before {
+    content: var(--jmix-font-icon-trophy);
+}
+
+.jmix-font-icon-truck:before {
+    content: var(--jmix-font-icon-truck);
+}
+
+.jmix-font-icon-twin-col-select:before {
+    content: var(--jmix-font-icon-twin-col-select);
+}
+
+.jmix-font-icon-twitter-square:before {
+    content: var(--jmix-font-icon-twitter-square);
+}
+
+.jmix-font-icon-twitter:before {
+    content: var(--jmix-font-icon-twitter);
+}
+
+.jmix-font-icon-umbrella:before {
+    content: var(--jmix-font-icon-umbrella);
+}
+
+.jmix-font-icon-underline:before {
+    content: var(--jmix-font-icon-underline);
+}
+
+.jmix-font-icon-unlink:before {
+    content: var(--jmix-font-icon-unlink);
+}
+
+.jmix-font-icon-unlock:before {
+    content: var(--jmix-font-icon-unlock);
+}
+
+.jmix-font-icon-upload-alt:before {
+    content: var(--jmix-font-icon-upload-alt);
+}
+
+.jmix-font-icon-upload:before {
+    content: var(--jmix-font-icon-upload);
+}
+
+.jmix-font-icon-user-card:before {
+    content: var(--jmix-font-icon-user-card);
+}
+
+.jmix-font-icon-user-check:before {
+    content: var(--jmix-font-icon-user-check);
+}
+
+.jmix-font-icon-user-clock:before {
+    content: var(--jmix-font-icon-user-clock);
+}
+
+.jmix-font-icon-user-heart:before {
+    content: var(--jmix-font-icon-user-heart);
+}
+
+.jmix-font-icon-user-star:before {
+    content: var(--jmix-font-icon-user-star);
+}
+
+.jmix-font-icon-user:before {
+    content: var(--jmix-font-icon-user);
+}
+
+.jmix-font-icon-users:before {
+    content: var(--jmix-font-icon-users);
+}
+
+.jmix-font-icon-vaadin-h:before {
+    content: var(--jmix-font-icon-vaadin-h);
+}
+
+.jmix-font-icon-vaadin-v:before {
+    content: var(--jmix-font-icon-vaadin-v);
+}
+
+.jmix-font-icon-viewport:before {
+    content: var(--jmix-font-icon-viewport);
+}
+
+.jmix-font-icon-vimeo-square:before {
+    content: var(--jmix-font-icon-vimeo-square);
+}
+
+.jmix-font-icon-vimeo:before {
+    content: var(--jmix-font-icon-vimeo);
+}
+
+.jmix-font-icon-volume-down:before {
+    content: var(--jmix-font-icon-volume-down);
+}
+
+.jmix-font-icon-volume-off:before {
+    content: var(--jmix-font-icon-volume-off);
+}
+
+.jmix-font-icon-volume-up:before {
+    content: var(--jmix-font-icon-volume-up);
+}
+
+.jmix-font-icon-volume:before {
+    content: var(--jmix-font-icon-volume);
+}
+
+.jmix-font-icon-wallet:before {
+    content: var(--jmix-font-icon-wallet);
+}
+
+.jmix-font-icon-warning:before {
+    content: var(--jmix-font-icon-warning);
+}
+
+.jmix-font-icon-workplace:before {
+    content: var(--jmix-font-icon-workplace);
+}
+
+.jmix-font-icon-wrench:before {
+    content: var(--jmix-font-icon-wrench);
+}
+
+.jmix-font-icon-youtube-square:before {
+    content: var(--jmix-font-icon-youtube-square);
+}
+
+.jmix-font-icon-youtube:before {
+    content: var(--jmix-font-icon-youtube);
+}

@@ -19,7 +19,6 @@ package io.jmix.flowui.kit.component.combobutton;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
@@ -30,6 +29,7 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import jakarta.annotation.Nullable;
 
 import java.util.Objects;
@@ -44,7 +44,7 @@ public class ComboButton extends AbstractDropdownButton
     protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-combo-button-icon";
 
     protected JmixMenuItem buttonItem;
-    protected Component dropdownIcon = VaadinIcon.CHEVRON_DOWN.create();
+    protected Component dropdownIcon = JmixFontIcon.COMBO_BUTTON_DROPDOWN.create();
 
     protected ComboButtonActionSupport actionSupport;
     protected ShortcutRegistration shortcutRegistration;

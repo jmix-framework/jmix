@@ -16,17 +16,17 @@
 
 package io.jmix.flowui.action.view;
 
+import io.jmix.core.Messages;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.ActionType;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import io.jmix.core.Messages;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.LockStatus;
 import io.jmix.flowui.view.StandardDetailView;
-import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 @ActionType(DetailSaveCloseAction.ID)
 public class DetailSaveCloseAction<E>
@@ -46,13 +46,21 @@ public class DetailSaveCloseAction<E>
     protected void initAction() {
         super.initAction();
 
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.CHECK);
         this.variant = ActionVariant.PRIMARY;
     }
 
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.Ok");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.DETAIL_SAVE_CLOSE_ACTION);
+        }
     }
 
     @Autowired

@@ -655,6 +655,11 @@ html {
     --jmix-font-icon-youtube-square: "youtube-square";
     --jmix-font-icon-youtube: "youtube";
 
+    /* Lumo icons (missing in Vaadin icons) */
+    --jmix-font-icon-photo: var(--lumo-icons-photo);
+    --jmix-font-icon-redo: var(--lumo-icons-redo);
+    --jmix-font-icon-undo: var(--lumo-icons-undo);
+
     /* Jmix specific icons */
     --jmix-font-icon-ok: var(--jmix-font-icon-check);
     --jmix-font-icon-cancel: var(--jmix-font-icon-ban);
@@ -696,6 +701,8 @@ html {
 
     --jmix-font-icon-logout-action: var(--jmix-font-icon-sign-out);
 
+    --jmix-font-icon-bulk-edit-action: var(--jmix-font-icon-table);
+
     --jmix-font-icon-user-menu-theme-switch-action-system-theme: var(--jmix-font-icon-adjust);
     --jmix-font-icon-user-menu-theme-switch-action-light-theme: var(--jmix-font-icon-sun-o);
     --jmix-font-icon-user-menu-theme-switch-action-dark-theme: var(--jmix-font-icon-moon-o);
@@ -729,6 +736,9 @@ html {
     --jmix-font-icon-data-gird-header-filter-apply: var(--jmix-font-icon-check);
     --jmix-font-icon-data-gird-header-filter-cancel: var(--jmix-font-icon-ban);
     --jmix-font-icon-data-gird-header-filter-clear: var(--jmix-font-icon-eraser);
+
+    --jmix-font-icon-search-field-search: var(--jmix-font-icon-search);
+    --jmix-font-icon-search-field-settings: var(--jmix-font-icon-ellipsis-dots-v);
 }
 
 .jmix-font-icon {
@@ -743,12 +753,15 @@ html {
 .jmix-font-icon-ok:before {
     content: var(--jmix-font-icon-ok);
 }
+
 .jmix-font-icon-cancel:before {
     content: var(--jmix-font-icon-cancel);
 }
+
 .jmix-font-icon-yes:before {
     content: var(--jmix-font-icon-yes);
 }
+
 .jmix-font-icon-no:before {
     content: var(--jmix-font-icon-no);
 }
@@ -756,15 +769,19 @@ html {
 .jmix-font-icon-dialog-ok:before {
     content: var(--jmix-font-icon-dialog-ok);
 }
+
 .jmix-font-icon-dialog-cancel:before {
     content: var(--jmix-font-icon-dialog-cancel);
 }
+
 .jmix-font-icon-dialog-yes:before {
     content: var(--jmix-font-icon-dialog-yes);
 }
+
 .jmix-font-icon-dialog-no:before {
     content: var(--jmix-font-icon-dialog-no);
 }
+
 .jmix-font-icon-dialog-close:before {
     content: var(--jmix-font-icon-dialog-close);
 }
@@ -772,21 +789,27 @@ html {
 .jmix-font-icon-create-action:before {
     content: var(--jmix-font-icon-create-action);
 }
+
 .jmix-font-icon-edit-action:before {
     content: var(--jmix-font-icon-edit-action);
 }
+
 .jmix-font-icon-remove-action:before {
     content: var(--jmix-font-icon-remove-action);
 }
+
 .jmix-font-icon-add-action:before {
     content: var(--jmix-font-icon-add-action);
 }
+
 .jmix-font-icon-exclude-action:before {
     content: var(--jmix-font-icon-exclude-action);
 }
+
 .jmix-font-icon-read-action:before {
     content: var(--jmix-font-icon-read-action);
 }
+
 .jmix-font-icon-refresh-action:before {
     content: var(--jmix-font-icon-refresh-action);
 }
@@ -794,18 +817,23 @@ html {
 .jmix-font-icon-view-close-action:before {
     content: var(--jmix-font-icon-view-close-action);
 }
+
 .jmix-font-icon-detail-save-close-action:before {
     content: var(--jmix-font-icon-detail-save-close-action);
 }
+
 .jmix-font-icon-detail-save-action:before {
     content: var(--jmix-font-icon-detail-save-action);
 }
+
 .jmix-font-icon-detail-close-action:before {
     content: var(--jmix-font-icon-detail-close-action);
 }
+
 .jmix-font-icon-detail-discard-action:before {
     content: var(--jmix-font-icon-detail-discard-action);
 }
+
 .jmix-font-icon-detail-enable-editing-action:before {
     content: var(--jmix-font-icon-detail-enable-editing-action);
 }
@@ -813,9 +841,11 @@ html {
 .jmix-font-icon-lookup-select-action:before {
     content: var(--jmix-font-icon-lookup-select-action);
 }
+
 .jmix-font-icon-lookup-discard-action:before {
     content: var(--jmix-font-icon-lookup-discard-action);
 }
+
 .jmix-font-icon-entity-lookup-action:before {
     content: var(--jmix-font-icon-entity-lookup-action);
 }
@@ -823,6 +853,7 @@ html {
 .jmix-font-icon-entity-clear-action:before {
     content: var(--jmix-font-icon-entity-clear-action);
 }
+
 .jmix-font-icon-entity-open-action:before {
     content: var(--jmix-font-icon-entity-open-action);
 }
@@ -843,12 +874,18 @@ html {
     content: var(--jmix-font-icon-logout-action);
 }
 
+.jmix-font-icon-bulk-edit-action:before {
+    content: var(--jmix-font-icon-bulk-edit-action);
+}
+
 .jmix-font-icon-user-menu-theme-switch-action-system-theme:before {
     content: var(--jmix-font-icon-user-menu-theme-switch-action-system-theme);
 }
+
 .jmix-font-icon-user-menu-theme-switch-action-light-theme:before {
     content: var(--jmix-font-icon-user-menu-theme-switch-action-light-theme);
 }
+
 .jmix-font-icon-user-menu-theme-switch-action-dark-theme:before {
     content: var(--jmix-font-icon-user-menu-theme-switch-action-dark-theme);
 }
@@ -856,21 +893,27 @@ html {
 .jmix-font-icon-generic-filter-save-action:before {
     content: var(--jmix-font-icon-generic-filter-save-action);
 }
+
 .jmix-font-icon-generic-filter-edit-action:before {
     content: var(--jmix-font-icon-generic-filter-edit-action);
 }
+
 .jmix-font-icon-generic-filter-copy-action:before {
     content: var(--jmix-font-icon-generic-filter-copy-action);
 }
+
 .jmix-font-icon-generic-filter-remove-action:before {
     content: var(--jmix-font-icon-generic-filter-remove-action);
 }
+
 .jmix-font-icon-generic-filter-clear-values-action:before {
     content: var(--jmix-font-icon-generic-filter-clear-values-action);
 }
+
 .jmix-font-icon-generic-filter-make-default-action:before {
     content: var(--jmix-font-icon-generic-filter-make-default-action);
 }
+
 .jmix-font-icon-generic-filter-add-condition-action:before {
     content: var(--jmix-font-icon-generic-filter-add-condition-action);
 }
@@ -937,6 +980,14 @@ html {
 
 .jmix-font-icon-data-gird-header-filter-clear:before {
     content: var(--jmix-font-icon-data-gird-header-filter-clear);
+}
+
+.jmix-font-icon-search-field-search:before {
+    content: var(--jmix-font-icon-search-field-search);
+}
+
+.jmix-font-icon-search-field-search:before {
+    content: var(--jmix-font-icon-search-field-settings);
 }
 
 /* Vaadin icons */
@@ -3483,4 +3534,19 @@ html {
 
 .jmix-font-icon-youtube:before {
     content: var(--jmix-font-icon-youtube);
+}
+
+.jmix-font-icon-photo:before {
+    font-family: lumo-icons;
+    content: var(--jmix-font-icon-photo);
+}
+
+.jmix-font-icon-redo:before {
+    font-family: lumo-icons;
+    content: var(--jmix-font-icon-redo);
+}
+
+.jmix-font-icon-undo:before {
+    font-family: lumo-icons;
+    content: var(--jmix-font-icon-undo);
 }

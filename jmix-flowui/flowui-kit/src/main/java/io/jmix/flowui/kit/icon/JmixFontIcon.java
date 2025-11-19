@@ -4,7 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.FontIcon;
 import jakarta.annotation.Nullable;
 
-public enum JmixFontIcon implements IconFactory {
+public enum JmixFontIcon implements IconFactory<FontIcon> {
 
     /* Jmix specific icons */
     OK,
@@ -47,6 +47,8 @@ public enum JmixFontIcon implements IconFactory {
 
     LOGOUT_ACTION,
 
+    BULK_EDIT_ACTION,
+
     USER_MENU_THEME_SWITCH_ACTION_SYSTEM_THEME,
     USER_MENU_THEME_SWITCH_ACTION_LIGHT_THEME,
     USER_MENU_THEME_SWITCH_ACTION_DARK_THEME,
@@ -80,6 +82,18 @@ public enum JmixFontIcon implements IconFactory {
     DATA_GIRD_HEADER_FILTER_APPLY,
     DATA_GIRD_HEADER_FILTER_CANCEL,
     DATA_GIRD_HEADER_FILTER_CLEAR,
+
+    SEARCH_FIELD_SEARCH,
+    SEARCH_FIELD_SETTINGS, /*ELLIPSIS_DOTS_V*/
+
+    /*
+    * Lumo icons (missing in Vaadin icons)
+    * CAUTION: copied from com.vaadin.flow.theme.lumo.LumoIcon [last update Vaadin 24.9.0]
+    */
+
+    PHOTO,
+    REDO,
+    UNDO,
 
     /*
      * Vaadin icons
@@ -723,7 +737,7 @@ public enum JmixFontIcon implements IconFactory {
     YOUTUBE;
 
     @Override
-    public Component create() {
+    public FontIcon create() {
         return new FontIcon(
                 "jmix-font-icon",
                 "jmix-font-icon-" + name().replace('_', '-').toLowerCase()

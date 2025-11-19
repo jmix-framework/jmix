@@ -20,7 +20,6 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -46,10 +45,12 @@ import io.jmix.flowui.component.UiComponentsGenerator;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
@@ -110,6 +111,8 @@ public class BulkEditView<E> extends StandardView {
     protected UiComponents uiComponents;
     @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
+    @Autowired
+    protected Icons icons;
     @Autowired
     protected jakarta.validation.Validator validator;
     @Autowired
@@ -327,7 +330,7 @@ public class BulkEditView<E> extends StandardView {
 
     protected JmixButton createClearButton(AbstractField<?, ?> field, boolean isFieldRequired) {
         JmixButton button = uiComponents.create(JmixButton.class);
-        button.setIcon(VaadinIcon.ERASER.create());
+        button.setIcon(icons.get(JmixFontIcon.ERASER));
 
         if (isFieldRequired) {
             //set visibility to hidden to add a spacer instead of button
@@ -344,7 +347,7 @@ public class BulkEditView<E> extends StandardView {
             editField.setEnabled(!editField.isEnabled());
             Button button = e.getSource();
 
-            button.setIcon(editField.isEnabled() ? VaadinIcon.ERASER.create() : VaadinIcon.EDIT.create());
+            button.setIcon(editField.isEnabled() ? icons.get(JmixFontIcon.ERASER) : icons.get(JmixFontIcon.EDIT));
             Tooltip.forComponent(button).setText(messageBundle.getMessage(editField.isEnabled()
                     ? "bulk.clearAttribute"
                     : "bulk.editAttribute"

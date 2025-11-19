@@ -30,8 +30,10 @@ import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,13 +75,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
 
     public BulkEditAction(String id) {
         super(id);
-    }
-
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.TABLE);
     }
 
     /**
@@ -141,6 +136,15 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.BulkEdit");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.BULK_EDIT_ACTION);
+        }
     }
 
     @Autowired

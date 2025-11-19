@@ -26,7 +26,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.ComboBoxBase;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.select.Select;
 import io.jmix.core.Messages;
 import io.jmix.core.SaveContext;
@@ -35,8 +34,10 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.service.QuartzService;
@@ -99,6 +100,9 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     private Dialogs dialogs;
     @Autowired
     private Messages messages;
+    @Autowired
+    private Icons icons;
+
     private List<String> triggerGroupNames;
 
     @Subscribe
@@ -140,7 +144,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     }
 
     private void initCronExpressionHelperButton() {
-        cronExpressionHelpButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        cronExpressionHelpButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
         cronExpressionHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
         cronExpressionHelpButton.addClickListener(this::onCronHelperButtonClick);
     }
@@ -155,7 +159,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     }
 
     private void initRepeatModeHelperButton() {
-        repeatModeSelectorHelpButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        repeatModeSelectorHelpButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
         repeatModeSelectorHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
         repeatModeSelectorHelpButton.addClickListener(this::onRepeatModeHelperButtonClick);
     }
@@ -170,7 +174,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     }
 
     private void initRepeatCountHelperButton() {
-        repeatCountHelpButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        repeatCountHelpButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
         repeatCountHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
         repeatCountHelpButton.addClickListener(this::onRepeatCountHelperButtonClick);
     }
@@ -197,7 +201,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     }
 
     private void initMisfireInstructionHelperButton() {
-        misfireInstructionHelpButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        misfireInstructionHelpButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
         misfireInstructionHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
         misfireInstructionHelpButton.addClickListener(this::onMisfireInstructionHelperButtonClick);
     }

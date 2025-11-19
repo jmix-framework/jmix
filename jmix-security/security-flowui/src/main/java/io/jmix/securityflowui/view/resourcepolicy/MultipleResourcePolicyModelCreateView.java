@@ -16,15 +16,15 @@
 
 package io.jmix.securityflowui.view.resourcepolicy;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
@@ -39,6 +39,8 @@ public abstract class MultipleResourcePolicyModelCreateView extends StandardView
 
     @Autowired
     private ViewValidation viewValidation;
+    @Autowired
+    private Icons icons;
 
     @Subscribe
     public void onMultipleResourcePolicyModelCreateViewInit(InitEvent event) {
@@ -57,7 +59,7 @@ public abstract class MultipleResourcePolicyModelCreateView extends StandardView
 
         return new SecuredBaseAction(SAVE_ACTION_ID)
                 .withText(messages.getMessage("actions.Ok"))
-                .withIcon(ComponentUtils.convertToIcon(VaadinIcon.CHECK))
+                .withIcon(icons.get(JmixFontIcon.OK))
                 .withVariant(ActionVariant.PRIMARY)
                 .withShortcutCombination(KeyCombination.create(flowUiViewProperties.getSaveShortcut()))
                 .withHandler(this::validateAndClose);

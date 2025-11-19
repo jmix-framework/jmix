@@ -18,9 +18,9 @@ package io.jmix.flowui.kit.icon;
 
 import com.vaadin.flow.component.Component;
 
-public interface IconFactory {
+public interface IconFactory<T extends Component> {
 
     String name();
 
-    Component create();
+    T create();
 }

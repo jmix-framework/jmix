@@ -733,6 +733,108 @@ html {
 .jmix-font-icon-create-action:before {
     content: var(--jmix-font-icon-create-action);
 }
+.jmix-font-icon-edit-action:before {
+    content: var(--jmix-font-icon-edit-action);
+}
+.jmix-font-icon-remove-action:before {
+    content: var(--jmix-font-icon-remove-action);
+}
+.jmix-font-icon-add-action:before {
+    content: var(--jmix-font-icon-add-action);
+}
+.jmix-font-icon-exclude-action:before {
+    content: var(--jmix-font-icon-exclude-action);
+}
+.jmix-font-icon-read-action:before {
+    content: var(--jmix-font-icon-read-action);
+}
+.jmix-font-icon-refresh-action:before {
+    content: var(--jmix-font-icon-refresh-action);
+}
+
+.jmix-font-icon-view-close-action:before {
+    content: var(--jmix-font-icon-view-close-action);
+}
+.jmix-font-icon-detail-save-close-action:before {
+    content: var(--jmix-font-icon-detail-save-close-action);
+}
+.jmix-font-icon-detail-save-action:before {
+    content: var(--jmix-font-icon-detail-save-action);
+}
+.jmix-font-icon-detail-close-action:before {
+    content: var(--jmix-font-icon-detail-close-action);
+}
+.jmix-font-icon-detail-discard-action:before {
+    content: var(--jmix-font-icon-detail-discard-action);
+}
+.jmix-font-icon-detail-enable-editing-action:before {
+    content: var(--jmix-font-icon-detail-enable-editing-action);
+}
+
+.jmix-font-icon-lookup-select-action:before {
+    content: var(--jmix-font-icon-lookup-select-action);
+}
+.jmix-font-icon-lookup-discard-action:before {
+    content: var(--jmix-font-icon-lookup-discard-action);
+}
+.jmix-font-icon-entity-lookup-action:before {
+    content: var(--jmix-font-icon-entity-lookup-action);
+}
+
+.jmix-font-icon-entity-clear-action:before {
+    content: var(--jmix-font-icon-entity-clear-action);
+}
+.jmix-font-icon-entity-open-action:before {
+    content: var(--jmix-font-icon-entity-open-action);
+}
+
+.jmix-font-icon-value-clear-action:before {
+    content: var(--jmix-font-icon-value-clear-action);
+}
+
+.jmix-font-icon-multi-value-select-action:before {
+    content: var(--jmix-font-icon-multi-value-select-action);
+}
+
+.jmix-font-icon-date-interval-action:before {
+    content: var(--jmix-font-icon-date-interval-action);
+}
+
+.jmix-font-icon-logout-action:before {
+    content: var(--jmix-font-icon-logout-action);
+}
+
+.jmix-font-icon-user-menu-theme-switch-action-system-theme:before {
+    content: var(--jmix-font-icon-user-menu-theme-switch-action-system-theme);
+}
+.jmix-font-icon-user-menu-theme-switch-action-light-theme:before {
+    content: var(--jmix-font-icon-user-menu-theme-switch-action-light-theme);
+}
+.jmix-font-icon-user-menu-theme-switch-action-dark-theme:before {
+    content: var(--jmix-font-icon-user-menu-theme-switch-action-dark-theme);
+}
+
+.jmix-font-icon-generic-filter-save-action:before {
+    content: var(--jmix-font-icon-generic-filter-save-action);
+}
+.jmix-font-icon-generic-filter-edit-action:before {
+    content: var(--jmix-font-icon-generic-filter-edit-action);
+}
+.jmix-font-icon-generic-filter-copy-action:before {
+    content: var(--jmix-font-icon-generic-filter-copy-action);
+}
+.jmix-font-icon-generic-filter-remove-action:before {
+    content: var(--jmix-font-icon-generic-filter-remove-action);
+}
+.jmix-font-icon-generic-filter-clear-values-action:before {
+    content: var(--jmix-font-icon-generic-filter-clear-values-action);
+}
+.jmix-font-icon-generic-filter-make-default-action:before {
+    content: var(--jmix-font-icon-generic-filter-make-default-action);
+}
+.jmix-font-icon-generic-filter-add-condition-action:before {
+    content: var(--jmix-font-icon-generic-filter-add-condition-action);
+}
 
 .jmix-font-icon-dialog-ok:before {
     content: var(--jmix-font-icon-dialog-ok);

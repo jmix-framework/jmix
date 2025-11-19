@@ -7,6 +7,17 @@ import jakarta.annotation.Nullable;
 public enum JmixFontIcon implements IconFactory {
 
     /* Jmix specific icons */
+    OK,
+    CANCEL,
+    YES,
+    NO,
+
+    DIALOG_OK,
+    DIALOG_CANCEL,
+    DIALOG_YES,
+    DIALOG_NO,
+    DIALOG_CLOSE,
+
     CREATE_ACTION,
     EDIT_ACTION,
     REMOVE_ACTION,
@@ -48,30 +59,23 @@ public enum JmixFontIcon implements IconFactory {
     GENERIC_FILTER_MAKE_DEFAULT_ACTION,
     GENERIC_FILTER_ADD_CONDITION_ACTION,
 
-    /*OK,
-    CANCEL,
-    YES,
-    NO,
-    CLOSE,*/
-    // todo: all buttons
-
-    DIALOG_OK,
-    DIALOG_CANCEL,
-    DIALOG_YES,
-    DIALOG_NO,
-    DIALOG_CLOSE,
+    INTERVAL_FIELD_HELP,
 
     COMBO_BUTTON_DROPDOWN,
+
     PAGINATION_FIRST_PAGE,
     PAGINATION_PREVIOUS_PAGE,
     PAGINATION_NEXT_PAGE,
     PAGINATION_LAST_PAGE,
+
     TWIN_COLUMN_SELECT_ALL,
     TWIN_COLUMN_DESELECT_ALL,
     TWIN_COLUMN_SELECT,
     TWIN_COLUMN_DESELECT,
+
     GENERIC_FILTER_SETTINGS,
     GENERIC_FILTER_CONDITION_REMOVE,
+
     DATA_GIRD_HEADER_FILTER,
     DATA_GIRD_HEADER_FILTER_APPLY,
     DATA_GIRD_HEADER_FILTER_CANCEL,

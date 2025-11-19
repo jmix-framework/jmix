@@ -656,6 +656,17 @@ html {
     --jmix-font-icon-youtube: "youtube";
 
     /* Jmix specific icons */
+    --jmix-font-icon-ok: var(--jmix-font-icon-check);
+    --jmix-font-icon-cancel: var(--jmix-font-icon-ban);
+    --jmix-font-icon-yes: var(--jmix-font-icon-check);
+    --jmix-font-icon-no: var(--jmix-font-icon-ban);
+
+    --jmix-font-icon-dialog-ok: var(--jmix-font-icon-check);
+    --jmix-font-icon-dialog-cancel: var(--jmix-font-icon-ban);
+    --jmix-font-icon-dialog-yes: var(--jmix-font-icon-check);
+    --jmix-font-icon-dialog-no: var(--jmix-font-icon-ban);
+    --jmix-font-icon-dialog-close: var(--jmix-font-icon-close);
+
     --jmix-font-icon-create-action: var(--jmix-font-icon-plus);
     --jmix-font-icon-edit-action: var(--jmix-font-icon-pencil);
     --jmix-font-icon-remove-action: var(--jmix-font-icon-trash);
@@ -697,11 +708,7 @@ html {
     --jmix-font-icon-generic-filter-make-default-action: var(--jmix-font-icon-star);
     --jmix-font-icon-generic-filter-add-condition-action: var(--jmix-font-icon-plus);
 
-    --jmix-font-icon-dialog-ok: var(--jmix-font-icon-check);
-    --jmix-font-icon-dialog-cancel: var(--jmix-font-icon-ban);
-    --jmix-font-icon-dialog-yes: var(--jmix-font-icon-check);
-    --jmix-font-icon-dialog-no: var(--jmix-font-icon-ban);
-    --jmix-font-icon-dialog-close: var(--jmix-font-icon-close);
+    --jmix-font-icon-interval-field-help: var(--jmix-font-icon-question-circle);
 
     --jmix-font-icon-combo-button-dropdown: var(--jmix-font-icon-chevron-down);
 
@@ -726,9 +733,41 @@ html {
 
 .jmix-font-icon {
     font-family: var(--jmix-font-icon-font-family);
+
+    /* Same as for ::slotted(vaadin-icon[icon^='vaadin:']) */
+    padding: var(--lumo-space-xs);
+    box-sizing: border-box !important;
 }
 
 /* Jmix specific icons */
+.jmix-font-icon-ok:before {
+    content: var(--jmix-font-icon-ok);
+}
+.jmix-font-icon-cancel:before {
+    content: var(--jmix-font-icon-cancel);
+}
+.jmix-font-icon-yes:before {
+    content: var(--jmix-font-icon-yes);
+}
+.jmix-font-icon-no:before {
+    content: var(--jmix-font-icon-no);
+}
+
+.jmix-font-icon-dialog-ok:before {
+    content: var(--jmix-font-icon-dialog-ok);
+}
+.jmix-font-icon-dialog-cancel:before {
+    content: var(--jmix-font-icon-dialog-cancel);
+}
+.jmix-font-icon-dialog-yes:before {
+    content: var(--jmix-font-icon-dialog-yes);
+}
+.jmix-font-icon-dialog-no:before {
+    content: var(--jmix-font-icon-dialog-no);
+}
+.jmix-font-icon-dialog-close:before {
+    content: var(--jmix-font-icon-dialog-close);
+}
 
 .jmix-font-icon-create-action:before {
     content: var(--jmix-font-icon-create-action);
@@ -836,20 +875,8 @@ html {
     content: var(--jmix-font-icon-generic-filter-add-condition-action);
 }
 
-.jmix-font-icon-dialog-ok:before {
-    content: var(--jmix-font-icon-dialog-ok);
-}
-.jmix-font-icon-dialog-cancel:before {
-    content: var(--jmix-font-icon-dialog-cancel);
-}
-.jmix-font-icon-dialog-yes:before {
-    content: var(--jmix-font-icon-dialog-yes);
-}
-.jmix-font-icon-dialog-no:before {
-    content: var(--jmix-font-icon-dialog-no);
-}
-.jmix-font-icon-dialog-close:before {
-    content: var(--jmix-font-icon-dialog-close);
+.jmix-font-icon-interval-field-help:before {
+    content: var(--jmix-font-icon-interval-field-help);
 }
 
 .jmix-font-icon-combo-button-dropdown:before {

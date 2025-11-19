@@ -61,6 +61,7 @@ public class DialogAction extends SecuredBaseAction {
          */
         @Deprecated(since = "3.0", forRemoval = true)
         public VaadinIcon getVaadinIcon() {
+            // For backward compatibility
             return switch (this) {
                 case OK -> VaadinIcon.CHECK;
                 case CANCEL -> VaadinIcon.BAN;

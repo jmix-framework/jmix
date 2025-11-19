@@ -323,7 +323,7 @@ dependencies {
 //        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
 
         def eclipselinkOriginalVersion = '4.0.6'
-        def eclipselinkVersion = '4.0.6-2-jmix'
+        def eclipselinkVersion = '4.0.6-3-jmix'
         api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkOriginalVersion"

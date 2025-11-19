@@ -29,6 +29,19 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "6.3.1.5724"
+    id "org.cyclonedx.bom" version "3.0.2"
+}
+
+sonarqube {
+    properties {
+        property "sonar.exclusions", """
+        **/io/jmix/data/impl/jpql/antlr2/**
+        """
+    }
+}
+
 configure(subprojects.findAll { it.name != 'bom' }) {
     apply(plugin: 'io.jmix.build')
 }

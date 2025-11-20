@@ -4075,7 +4075,7 @@
     <xs:complexType name="iconComponent">
         <xs:complexContent>
             <xs:extension base="baseIconComponent">
-                <xs:attribute name="icon" type="jmixFontIconEnum" use="required"/>
+                <xs:attribute name="icon" type="vaadinIconEnum" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

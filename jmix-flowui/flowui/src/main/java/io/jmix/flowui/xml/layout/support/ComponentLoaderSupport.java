@@ -459,7 +459,34 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
      * @param element the XML element from which to load the icon
      * @return an {@link Optional} containing the parsed {@link Icon} if the "icon" attribute
      * is present and valid, or an empty {@link Optional} otherwise
-     * @deprecated use {@link IconLoaderSupport#loadIcon(Element)} instead
+     */
+    public Optional<Icon> loadIconSetIcon(Element element) {
+        return loadIconSetIcon(element, "icon");
+    }
+
+    /**
+     * Loads an {@link Icon} from the given {@link Element} for the attribute
+     * with the given name and, if present, parses it into an {@link Icon}.
+     *
+     * @param element       the XML element from which to load the icon
+     * @param attributeName the name of the attribute value to be returned
+     * @return an {@link Optional} containing the parsed {@link Icon} if the
+     * attribute value is present and valid, or an empty {@link Optional} otherwise
+     */
+    public Optional<Icon> loadIconSetIcon(Element element, String attributeName) {
+        return loaderSupport.loadString(element, attributeName)
+                .map(ComponentUtils::parseIcon);
+    }
+
+    /**
+     * Loads an {@link Icon} from the given {@link Element}.
+     * The method tries to retrieve the "icon" attribute value from the element and,
+     * if present, parses it into an {@link Icon}.
+     *
+     * @param element the XML element from which to load the icon
+     * @return an {@link Optional} containing the parsed {@link Icon} if the "icon" attribute
+     * is present and valid, or an empty {@link Optional} otherwise
+     * @deprecated use {@link ComponentLoaderSupport#loadIconSetIcon(Element)} instead
      */
     @Deprecated(since = "3.0", forRemoval = true)
     public Optional<Icon> loadIcon(Element element) {

@@ -19,11 +19,16 @@ package io.jmix.flowui.xml.facet;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.Timer;
 import io.jmix.flowui.facet.impl.TimerImpl;
+import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
+/**
+ * @deprecated use {@link FacetRegistrationBuilder} instead
+ */
+@Deprecated(forRemoval = true, since = "3.0")
 @Component("flowui_TimerFacetProvider")
 public class TimerFacetProvider implements FacetProvider<Timer> {
 

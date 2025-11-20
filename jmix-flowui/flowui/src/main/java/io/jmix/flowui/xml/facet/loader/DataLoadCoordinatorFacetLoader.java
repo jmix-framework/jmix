@@ -1,0 +1,252 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.flowui.xml.facet.loader;
+
+import com.vaadin.flow.component.Component;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.facet.DataLoadCoordinator;
+import io.jmix.flowui.model.DataLoader;
+import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
+import io.jmix.flowui.xml.layout.ComponentLoader;
+import org.dom4j.Element;
+import org.springframework.lang.Nullable;
+
+
+public class DataLoadCoordinatorFacetLoader extends AbstractFacetLoader<DataLoadCoordinator> {
+
+    @Override
+    protected DataLoadCoordinator createFacet() {
+        DataLoadCoordinator facet = facets.create(DataLoadCoordinator.class);
+        facet.setOwner(context.getView());
+        return facet;
+    }
+
+    @Override
+    public void loadFacet() {
+        loaderSupport.loadString(element, "id", resultFacet::setId);
+        loaderSupport.loadString(element, "containerPrefix", resultFacet::setContainerPrefix);
+        loaderSupport.loadString(element, "componentPrefix", resultFacet::setComponentPrefix);
+
+        loadRefreshElements(element);
+        loadAuto(element);
+    }
+
+    protected void loadAuto(Element element) {
+        loaderSupport.loadBoolean(element, "auto")
+                .ifPresent(auto -> {
+                    if (auto) {
+                        context.addPreInitTask(new AutoConfigurationInitTask(resultFacet));
+                    }
+                });
+    }
+
+    protected void loadRefreshElements(Element element) {
+        for (Element loaderEl : element.elements("refresh")) {
+            loadRefresh(resultFacet, loaderEl);
+        }
+    }
+
+    protected void loadRefresh(DataLoadCoordinator facet, Element element) {
+        String loaderId = loaderSupport.loadString(element, "loader")
+                .orElseThrow(() ->
+                        new GuiDevelopmentException("'dataLoadCoordinator/refresh' element has no 'loader' attribute",
+                                context));
+
+        for (Element eventElement : element.elements()) {
+            switch (eventElement.getName()) {
+                case "onViewEvent" -> loadOnViewEvent(facet, loaderId, eventElement);
+                case "onContainerItemChanged" -> loadOnContainerItemChanged(facet, loaderId, eventElement);
+                case "onComponentValueChanged" -> loadOnComponentValueChanged(facet, loaderId, eventElement);
+                default -> throw new GuiDevelopmentException(
+                        "Unsupported nested element in 'dataLoadCoordinator/refresh': %s"
+                                .formatted(eventElement.getName()),
+                        context);
+            }
+        }
+    }
+
+    protected void loadOnViewEvent(DataLoadCoordinator facet, String loaderId, Element element) {
+        String type = loadEventRequiredAttribute(element, "type");
+
+        Class<?> eventClass = switch (type) {
+            case "Init" -> View.InitEvent.class;
+            case "BeforeShow" -> View.BeforeShowEvent.class;
+            case "Ready" -> View.ReadyEvent.class;
+            default -> throw new GuiDevelopmentException("Unsupported 'dataLoadCoordinator/refresh/onViewEvent.event'" +
+                    " value: " + type, context);
+        };
+
+        context.addPreInitTask(new OnViewEventLoadTriggerInitTask(facet, loaderId, eventClass));
+    }
+
+    protected void loadOnContainerItemChanged(DataLoadCoordinator facet, String loaderId, Element element) {
+        String container = loadEventRequiredAttribute(element, "container");
+        String param = loadParam(element);
+
+        context.addPreInitTask(new OnContainerItemChangedLoadTriggerInitTask(facet, loaderId, container, param));
+    }
+
+    protected void loadOnComponentValueChanged(DataLoadCoordinator facet, String loaderId, Element element) {
+        String component = loadEventRequiredAttribute(element, "component");
+
+        String param = loadParam(element);
+        DataLoadCoordinator.LikeClause likeClause = loadLikeClause(element);
+
+        context.addPreInitTask(new OnComponentValueChangedLoadTriggerInitTask(
+                facet, loaderId, component, param, likeClause));
+    }
+
+    protected String loadEventRequiredAttribute(Element element, String attributeName) {
+        return loaderSupport.loadString(element, attributeName)
+                .orElseThrow(() -> new GuiDevelopmentException(
+                        "'dataLoadCoordinator/refresh/%s' has no '%s' attribute"
+                                .formatted(element.getName(), attributeName),
+                        context));
+    }
+
+    @Nullable
+    protected String loadParam(Element element) {
+        return loaderSupport.loadString(element, "param").orElse(null);
+    }
+
+    protected DataLoadCoordinator.LikeClause loadLikeClause(Element element) {
+        return loaderSupport.loadEnum(element, DataLoadCoordinator.LikeClause.class, "likeClause")
+                .orElse(DataLoadCoordinator.LikeClause.NONE);
+    }
+
+    @SuppressWarnings("ClassCanBeRecord")
+    public static class OnViewEventLoadTriggerInitTask implements ComponentLoader.InitTask {
+
+        protected final DataLoadCoordinator facet;
+        protected final String loaderId;
+        protected final Class<?> eventClass;
+
+        public OnViewEventLoadTriggerInitTask(DataLoadCoordinator facet, String loaderId, Class<?> eventClass) {
+            this.facet = facet;
+            this.loaderId = loaderId;
+            this.eventClass = eventClass;
+        }
+
+        @Override
+        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
+            // Is not invoked, do nothing, will be removed
+        }
+
+        @Override
+        public void execute(ComponentLoader.Context context) {
+            Preconditions.checkNotNullArgument(facet.getOwner());
+
+            ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
+            DataLoader loader = viewData.getLoader(loaderId);
+            facet.addOnViewEventLoadTrigger(loader, eventClass);
+        }
+    }
+
+    @SuppressWarnings("ClassCanBeRecord")
+    public static class OnContainerItemChangedLoadTriggerInitTask implements ComponentLoader.InitTask {
+
+        private final DataLoadCoordinator facet;
+        private final String loaderId;
+        private final String containerId;
+        private final String param;
+
+        public OnContainerItemChangedLoadTriggerInitTask(
+                DataLoadCoordinator facet, String loaderId, String containerId, @Nullable String param) {
+            this.facet = facet;
+            this.loaderId = loaderId;
+            this.containerId = containerId;
+            this.param = param;
+        }
+
+        @Override
+        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
+            // Is not invoked, do nothing, will be removed
+        }
+
+        @Override
+        public void execute(ComponentLoader.Context context) {
+            Preconditions.checkNotNullArgument(facet.getOwner());
+
+            ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
+            DataLoader loader = viewData.getLoader(loaderId);
+            InstanceContainer<?> container = viewData.getContainer(containerId);
+
+            facet.addOnContainerItemChangedLoadTrigger(loader, container, param);
+        }
+    }
+
+    @SuppressWarnings("ClassCanBeRecord")
+    public static class OnComponentValueChangedLoadTriggerInitTask implements ComponentLoader.InitTask {
+
+        protected final DataLoadCoordinator facet;
+        protected final String loaderId;
+        protected final String componentId;
+        protected final String param;
+        protected final DataLoadCoordinator.LikeClause likeClause;
+
+        public OnComponentValueChangedLoadTriggerInitTask(
+                DataLoadCoordinator facet, String loaderId, String componentId,
+                @Nullable String param, DataLoadCoordinator.LikeClause likeClause) {
+            this.facet = facet;
+            this.loaderId = loaderId;
+            this.componentId = componentId;
+            this.param = param;
+            this.likeClause = likeClause;
+        }
+
+        @Override
+        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
+            // Is not invoked, do nothing, will be removed
+        }
+
+        @Override
+        public void execute(ComponentLoader.Context context) {
+            Preconditions.checkNotNullArgument(facet.getOwner());
+
+            ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
+            DataLoader loader = viewData.getLoader(loaderId);
+            Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
+
+            facet.addOnComponentValueChangedLoadTrigger(loader, component, param, likeClause);
+        }
+    }
+
+    @SuppressWarnings("ClassCanBeRecord")
+    public static class AutoConfigurationInitTask implements ComponentLoader.InitTask {
+
+        protected final DataLoadCoordinator facet;
+
+        public AutoConfigurationInitTask(DataLoadCoordinator facet) {
+            this.facet = facet;
+        }
+
+        @Override
+        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
+            // Is not invoked, do nothing, will be removed
+        }
+
+        @Override
+        public void execute(ComponentLoader.Context context) {
+            facet.configureAutomatically();
+        }
+    }
+}

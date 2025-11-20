@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.facet;
 
 import io.jmix.flowui.facet.Facet;
+import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import org.dom4j.Element;
 
@@ -25,8 +26,11 @@ import org.dom4j.Element;
  *
  * @param <T> type of facet
  * @see Facet
+ * @deprecated use {@link FacetRegistrationBuilder} instead
  */
+@Deprecated(forRemoval = true, since = "3.0")
 public interface FacetProvider<T extends Facet> {
+
     /**
      * @return facet interface
      */

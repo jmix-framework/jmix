@@ -25,6 +25,7 @@ import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
 import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
+import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.apache.commons.collections4.CollectionUtils;
@@ -37,6 +38,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated use {@link FacetRegistrationBuilder} instead
+ */
+@Deprecated(forRemoval = true, since = "3.0")
 @org.springframework.stereotype.Component("flowui_SettingsFacetProvider")
 public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
 

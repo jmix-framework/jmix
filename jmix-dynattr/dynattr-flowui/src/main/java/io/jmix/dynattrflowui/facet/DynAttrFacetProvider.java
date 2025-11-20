@@ -20,11 +20,16 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.dynattrflowui.DynAttrEmbeddingStrategies;
 import io.jmix.dynattrflowui.impl.AttributeDefaultValues;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
 import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
+/**
+ * @deprecated use {@link FacetRegistrationBuilder} instead
+ */
 @Internal
+@Deprecated(forRemoval = true, since = "3.0")
 @org.springframework.stereotype.Component("dynat_DynamicAttributeFacetProvider")
 public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
 

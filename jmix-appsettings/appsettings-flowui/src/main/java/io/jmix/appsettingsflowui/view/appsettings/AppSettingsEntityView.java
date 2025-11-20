@@ -62,7 +62,8 @@ import jakarta.persistence.Convert;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Route(value = "app-settings", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "app-settings", layout = DefaultMainViewParent.class)
+@Route(value = "appset/app-settings", layout = DefaultMainViewParent.class)
 @ViewController("appSettings.view")
 @ViewDescriptor("app-settings-entity-view.xml")
 @DialogMode(width = "50em", height = "37.5em")

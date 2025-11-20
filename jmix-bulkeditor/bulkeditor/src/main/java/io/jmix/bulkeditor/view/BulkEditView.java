@@ -27,6 +27,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.bulkeditor.view.BulkEditViewDataLoadSupport.LoadDescriptor;
 import io.jmix.core.*;
 import io.jmix.core.annotation.TenantId;
@@ -67,9 +68,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@RouteAlias(value = "bulk-edit", layout = DefaultMainViewParent.class)
+@Route(value = "bulked/bulk-edit", layout = DefaultMainViewParent.class)
 @ViewController("bulkEditorWindow")
 @ViewDescriptor("bulk-edit-view.xml")
-@Route("bulk-edit")
 @DialogMode(resizable = true, width = "64em", height = "48em", minWidth = "18em")
 public class BulkEditView<E> extends StandardView {
 

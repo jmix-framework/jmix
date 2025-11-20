@@ -18,6 +18,7 @@ package io.jmix.pivottableflowui.view;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.Messages;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -33,7 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-@Route(value = "pivot-table-view")
+@RouteAlias(value = "pivot-table-view", layout = DefaultMainViewParent.class)
+@Route(value = "pvttbl/pivot-table", layout = DefaultMainViewParent.class)
 @ViewController("pvttbl_PivotTableView")
 @ViewDescriptor("pivot-table-view.xml")
 public class PivotTableView extends StandardView {

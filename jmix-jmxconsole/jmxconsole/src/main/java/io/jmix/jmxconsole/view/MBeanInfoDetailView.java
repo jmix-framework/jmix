@@ -23,6 +23,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.details.JmixDetails;
@@ -40,7 +41,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "jmxconsole/mbeaninfo/:mbean", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "jmxconsole/mbeaninfo/:mbean", layout = DefaultMainViewParent.class)
+@Route(value = "jmxcon/mbean-info/:mbean", layout = DefaultMainViewParent.class)
 @ViewController("jmxcon_ManagedBeanInfo.detail")
 @ViewDescriptor("mbean-detail-view.xml")
 @EditedEntityContainer("mbeanDc")

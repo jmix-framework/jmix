@@ -19,6 +19,7 @@ package io.jmix.reportsflowui.view.run;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
@@ -52,7 +53,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@Route(value = "reports/run", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/run", layout = DefaultMainViewParent.class)
+@Route(value = "report/run", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportRunView")
 @ViewDescriptor("report-run-view.xml")
 @LookupComponent("reportDataGrid")

@@ -722,8 +722,6 @@ html {
 
     --jmix-font-icon-user-menu-substitute-user-action: var(--jmix-font-icon-exchange);
 
-    /*--jmix-font-icon-: var(--jmix-font-icon-);*/
-
     --jmix-font-icon-generic-filter-save-action: var(--jmix-font-icon-archive);
     --jmix-font-icon-generic-filter-edit-action: var(--jmix-font-icon-pencil);
     --jmix-font-icon-generic-filter-copy-action: var(--jmix-font-icon-copy);
@@ -731,6 +729,8 @@ html {
     --jmix-font-icon-generic-filter-clear-values-action: var(--jmix-font-icon-eraser);
     --jmix-font-icon-generic-filter-make-default-action: var(--jmix-font-icon-star);
     --jmix-font-icon-generic-filter-add-condition-action: var(--jmix-font-icon-plus);
+
+    --jmix-font-icon-create-notification-action: var(--jmix-font-icon-plus);
 
     --jmix-font-icon-interval-field-help: var(--jmix-font-icon-question-circle);
 
@@ -756,6 +756,12 @@ html {
 
     --jmix-font-icon-search-field-search: var(--jmix-font-icon-search);
     --jmix-font-icon-search-field-settings: var(--jmix-font-icon-ellipsis-dots-v);
+
+    --jmix-font-icon-notifications-indicator: var(--jmix-font-icon-bell);
+    --jmix-font-icon-notifications-indicator-refresh: var(--jmix-font-icon-refresh);
+
+    --jmix-font-icon-columns-grouper-item-add: var(--lumo-icons-plus);
+    --jmix-font-icon-columns-grouper-item-remove: var(--lumo-icons-cross);
 }
 
 .jmix-font-icon {
@@ -979,6 +985,10 @@ html {
     content: var(--jmix-font-icon-generic-filter-add-condition-action);
 }
 
+.jmix-font-icon-create-notification-action:before {
+    content: var(--jmix-font-icon-create-notification-action);
+}
+
 .jmix-font-icon-interval-field-help:before {
     content: var(--jmix-font-icon-interval-field-help);
 }
@@ -1049,6 +1059,22 @@ html {
 
 .jmix-font-icon-search-field-search:before {
     content: var(--jmix-font-icon-search-field-settings);
+}
+
+.jmix-font-icon-notifications-indicator:before {
+    content: var(--jmix-font-icon-notifications-indicator);
+}
+
+.jmix-font-icon-notifications-indicator-refresh:before {
+    content: var(--jmix-font-icon-notifications-indicator-refresh);
+}
+
+.jmix-font-icon-columns-grouper-item-add:before {
+    content: var(--jmix-font-icon-columns-grouper-item-add);
+}
+
+.jmix-font-icon-columns-grouper-item-remove:before {
+    content: var(--jmix-font-icon-columns-grouper-item-remove);
 }
 
 /* Vaadin icons */

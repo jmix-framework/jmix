@@ -79,6 +79,8 @@ public enum JmixFontIcon implements IconFactory<FontIcon> {
     GENERIC_FILTER_MAKE_DEFAULT_ACTION,
     GENERIC_FILTER_ADD_CONDITION_ACTION,
 
+    CREATE_NOTIFICATION_ACTION,
+
     INTERVAL_FIELD_HELP,
 
     COMBO_BUTTON_DROPDOWN,
@@ -103,6 +105,12 @@ public enum JmixFontIcon implements IconFactory<FontIcon> {
 
     SEARCH_FIELD_SEARCH,
     SEARCH_FIELD_SETTINGS,
+
+    NOTIFICATIONS_INDICATOR,
+    NOTIFICATIONS_INDICATOR_REFRESH,
+
+    COLUMNS_GROUPER_ITEM_ADD("jmix-font-icon-lumo"),
+    COLUMNS_GROUPER_ITEM_REMOVE("jmix-font-icon-lumo"),
 
     /*
      * Lumo icons (missing in Vaadin icons)

@@ -38,9 +38,9 @@ public abstract class MultipleResourcePolicyModelCreateView extends StandardView
     public static final String SAVE_ACTION_ID = "saveAction";
 
     @Autowired
-    private ViewValidation viewValidation;
+    protected ViewValidation viewValidation;
     @Autowired
-    private Icons icons;
+    protected Icons icons;
 
     @Subscribe
     public void onMultipleResourcePolicyModelCreateViewInit(InitEvent event) {

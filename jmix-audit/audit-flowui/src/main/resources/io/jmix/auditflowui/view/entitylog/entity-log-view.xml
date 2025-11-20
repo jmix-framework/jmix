@@ -224,8 +224,8 @@
 
                         </vbox>
                         <hbox id="actionsPaneLayout" visible="false" alignItems="END">
-                            <button id="saveBtn" themeNames="primary" text="msg://save" icon="CHECK"/>
-                            <button id="cancelBtn" text="msg://cancel" icon="BAN"/>
+                            <button id="saveBtn" themeNames="primary" text="msg://save" icon="OK"/>
+                            <button id="cancelBtn" text="msg://cancel" icon="CANCEL"/>
                         </hbox>
                     </vbox>
                 </hbox>

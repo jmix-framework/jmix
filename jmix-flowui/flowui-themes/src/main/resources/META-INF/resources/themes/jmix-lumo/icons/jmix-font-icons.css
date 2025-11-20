@@ -766,6 +766,10 @@ html {
     box-sizing: border-box !important;
 }
 
+.jmix-font-icon.jmix-font-icon-lumo {
+    padding: 0;
+}
+
 /* Jmix specific icons */
 .jmix-font-icon-ok:before {
     content: var(--jmix-font-icon-ok);

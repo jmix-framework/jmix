@@ -3,6 +3,10 @@ package io.jmix.flowui.kit.icon;
 import com.vaadin.flow.component.icon.FontIcon;
 import jakarta.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public enum JmixFontIcon implements IconFactory<FontIcon> {
 
     /* Jmix specific icons */
@@ -98,16 +102,16 @@ public enum JmixFontIcon implements IconFactory<FontIcon> {
     DATA_GIRD_HEADER_FILTER_CLEAR,
 
     SEARCH_FIELD_SEARCH,
-    SEARCH_FIELD_SETTINGS, /*ELLIPSIS_DOTS_V*/
+    SEARCH_FIELD_SETTINGS,
 
     /*
      * Lumo icons (missing in Vaadin icons)
      * CAUTION: copied from com.vaadin.flow.theme.lumo.LumoIcon [last update Vaadin 24.9.0]
      */
 
-    PHOTO,
-    REDO,
-    UNDO,
+    PHOTO("jmix-font-icon-lumo"),
+    REDO("jmix-font-icon-lumo"),
+    UNDO("jmix-font-icon-lumo"),
 
     /*
      * Vaadin icons
@@ -750,12 +754,25 @@ public enum JmixFontIcon implements IconFactory<FontIcon> {
     YOUTUBE_SQUARE,
     YOUTUBE;
 
+    private static final String BASE_CLASS_NAME = "jmix-font-icon";
+
+    private final String[] iconClassNames;
+
+    JmixFontIcon(String... iconClassNames) {
+        this.iconClassNames = iconClassNames;
+    }
+
     @Override
     public FontIcon create() {
-        return new FontIcon(
-                "jmix-font-icon",
-                "jmix-font-icon-" + name().replace('_', '-').toLowerCase()
-        );
+        List<String> resultIconClassNames = new ArrayList<>();
+        resultIconClassNames.add(BASE_CLASS_NAME);
+        resultIconClassNames.add(BASE_CLASS_NAME + "-" + name().replace('_', '-').toLowerCase());
+
+        if (this.iconClassNames != null) {
+            resultIconClassNames.addAll(Arrays.asList(this.iconClassNames));
+        }
+
+        return new FontIcon(resultIconClassNames.toArray(new String[0]));
     }
 
     @Nullable

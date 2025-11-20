@@ -18,8 +18,8 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://searchFieldSettingsView.title">
     <actions>
-        <action id="saveAction" type="view_close" icon="CHECK" text="OK"/>
-        <action id="closeAction" type="view_close" icon="BAN"/>
+        <action id="saveAction" type="view_close" icon="OK" text="msg:///actions.Ok"/>
+        <action id="closeAction" type="view_close"/>
     </actions>
     <layout>
         <formLayout id="mainForm">

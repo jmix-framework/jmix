@@ -17,7 +17,6 @@
 package io.jmix.securityflowui.action;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.action.ActionType;
@@ -25,7 +24,8 @@ import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.securityflowui.view.roleassignment.RoleAssignmentView;
@@ -50,13 +50,6 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.SHIELD);
-    }
-
     @Autowired
     public void setViewNavigators(ViewNavigators viewNavigators) {
         this.viewNavigators = viewNavigators;
@@ -70,6 +63,15 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.ShowRoleAssignments");
+    }
+
+    @Autowired
+    public void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.SHOW_ROLE_ASSIGNMENTS_ACTION);
+        }
     }
 
     @Override

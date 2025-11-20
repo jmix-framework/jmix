@@ -1,6 +1,5 @@
 package io.jmix.flowui.kit.icon;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.FontIcon;
 import jakarta.annotation.Nullable;
 
@@ -49,9 +48,24 @@ public enum JmixFontIcon implements IconFactory<FontIcon> {
 
     BULK_EDIT_ACTION,
 
+    JSON_EXPORT_ACTION,
+    EXCEL_EXPORT_ACTION,
+
+    SHOW_ROLE_ASSIGNMENTS_ACTION,
+    ASSIGN_TO_USERS_ACTION,
+
+    RUN_REPORT_ACTION,
+    RUN_SINGLE_ENTITY_REPORT_ACTION,
+    RUN_LIST_ENTITY_REPORT_ACTION,
+    SHOW_EXECUTION_REPORT_HISTORY_ACTION,
+
+    DAYS_OF_WEEK_EDIT_ACTION,
+
     USER_MENU_THEME_SWITCH_ACTION_SYSTEM_THEME,
     USER_MENU_THEME_SWITCH_ACTION_LIGHT_THEME,
     USER_MENU_THEME_SWITCH_ACTION_DARK_THEME,
+
+    USER_MENU_SUBSTITUTE_USER_ACTION,
 
     GENERIC_FILTER_SAVE_ACTION,
     GENERIC_FILTER_EDIT_ACTION,
@@ -87,9 +101,9 @@ public enum JmixFontIcon implements IconFactory<FontIcon> {
     SEARCH_FIELD_SETTINGS, /*ELLIPSIS_DOTS_V*/
 
     /*
-    * Lumo icons (missing in Vaadin icons)
-    * CAUTION: copied from com.vaadin.flow.theme.lumo.LumoIcon [last update Vaadin 24.9.0]
-    */
+     * Lumo icons (missing in Vaadin icons)
+     * CAUTION: copied from com.vaadin.flow.theme.lumo.LumoIcon [last update Vaadin 24.9.0]
+     */
 
     PHOTO,
     REDO,

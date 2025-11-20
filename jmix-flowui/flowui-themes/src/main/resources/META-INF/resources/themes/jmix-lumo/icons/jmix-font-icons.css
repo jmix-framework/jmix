@@ -703,9 +703,26 @@ html {
 
     --jmix-font-icon-bulk-edit-action: var(--jmix-font-icon-table);
 
+    --jmix-font-icon-json-export-action: var(--jmix-font-icon-file-code);
+    --jmix-font-icon-excel-export-action: var(--jmix-font-icon-file-table);
+
+    --jmix-font-icon-show-role-assignments-action: var(--jmix-font-icon-shield);
+    --jmix-font-icon-assign-to-users-action: var(--jmix-font-icon-users);
+
+    --jmix-font-icon-run-report-action: var(--jmix-font-icon-print);
+    --jmix-font-icon-run-single-entity-report-action: var(--jmix-font-icon-print);
+    --jmix-font-icon-run-list-entity-report-action: var(--jmix-font-icon-print);
+    --jmix-font-icon-show-execution-report-history-action: var(--jmix-font-icon-clock);
+
+    --jmix-font-icon-days-of-week-edit-action: var(--jmix-font-icon-ellipsis-dots-h);
+
     --jmix-font-icon-user-menu-theme-switch-action-system-theme: var(--jmix-font-icon-adjust);
     --jmix-font-icon-user-menu-theme-switch-action-light-theme: var(--jmix-font-icon-sun-o);
     --jmix-font-icon-user-menu-theme-switch-action-dark-theme: var(--jmix-font-icon-moon-o);
+
+    --jmix-font-icon-user-menu-substitute-user-action: var(--jmix-font-icon-exchange);
+
+    /*--jmix-font-icon-: var(--jmix-font-icon-);*/
 
     --jmix-font-icon-generic-filter-save-action: var(--jmix-font-icon-archive);
     --jmix-font-icon-generic-filter-edit-action: var(--jmix-font-icon-pencil);
@@ -878,6 +895,42 @@ html {
     content: var(--jmix-font-icon-bulk-edit-action);
 }
 
+.jmix-font-icon-json-export-action:before {
+    content: var(--jmix-font-icon-json-export-action);
+}
+
+.jmix-font-icon-excel-export-action:before {
+    content: var(--jmix-font-icon-excel-export-action);
+}
+
+.jmix-font-icon-show-role-assignments-action:before {
+    content: var(--jmix-font-icon-show-role-assignments-action);
+}
+
+.jmix-font-icon-assign-to-users-action:before {
+    content: var(--jmix-font-icon-assign-to-users-action);
+}
+
+.jmix-font-icon-run-report-action:before {
+    content: var(--jmix-font-icon-run-report-action);
+}
+
+.jmix-font-icon-run-single-entity-report-action:before {
+    content: var(--jmix-font-icon-run-single-entity-report-action);
+}
+
+.jmix-font-icon-run-list-entity-report-action:before {
+    content: var(--jmix-font-icon-run-list-entity-report-action);
+}
+
+.jmix-font-icon-show-execution-report-history-action:before {
+    content: var(--jmix-font-icon-show-execution-report-history-action);
+}
+
+.jmix-font-icon-days-of-week-edit-action:before {
+    content: var(--jmix-font-icon-days-of-week-edit-action);
+}
+
 .jmix-font-icon-user-menu-theme-switch-action-system-theme:before {
     content: var(--jmix-font-icon-user-menu-theme-switch-action-system-theme);
 }
@@ -888,6 +941,10 @@ html {
 
 .jmix-font-icon-user-menu-theme-switch-action-dark-theme:before {
     content: var(--jmix-font-icon-user-menu-theme-switch-action-dark-theme);
+}
+
+.jmix-font-icon-user-menu-substitute-user-action:before {
+    content: var(--jmix-font-icon-user-menu-substitute-user-action);
 }
 
 .jmix-font-icon-generic-filter-save-action:before {

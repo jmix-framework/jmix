@@ -434,6 +434,15 @@ public class EntityIndexingManagementFacade {
         return String.format("%d items for entity '%s' have been removed from Indexing Queue", deleted, entityName);
     }
 
+    @Authenticated
+    @ManagedOperation(description = "Recalculates all index configurations, including the dynamic attributes analysis, and synchronizes index schemas." +
+            "Synchronizes schemas of all search indexes defined in application. " +
+            "This may cause deletion of indexes with all their data - depends on schema management strategy")
+    public String synchronizeIndexSchemasWithIndexesRecreating() {
+        indexConfigurationManager.refreshIndexDefinitions();
+        return synchronizeIndexSchemas();
+    }
+
     protected String formatSingleStatusString(String entityName, String indexName, String status) {
         return String.format("Entity=%s, Index=%s, Status=%s", entityName, indexName, status);
     }

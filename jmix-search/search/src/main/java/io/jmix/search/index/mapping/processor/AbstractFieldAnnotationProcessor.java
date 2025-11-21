@@ -26,7 +26,7 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 
 /**
- * Class with basic functionality for processor of some field-mapping annotation.
+ * Class with basic functionality for the processor of some field-mapping annotation.
  *
  * @param <T> specific annotation class
  */
@@ -42,7 +42,7 @@ public abstract class AbstractFieldAnnotationProcessor<T extends Annotation> imp
     }
 
     /**
-     * Extracts parameters from annotation.
+     * Extracts parameters from the annotation.
      *
      * @param specificAnnotation processed annotation
      * @return map with parameters
@@ -50,7 +50,7 @@ public abstract class AbstractFieldAnnotationProcessor<T extends Annotation> imp
     protected abstract Map<String, Object> createParameters(T specificAnnotation);
 
     /**
-     * Processes specific field-mapping annotation and adds new Mapping definition element to builder.
+     * Processes specific field-mapping annotation and adds a new Mapping definition element to the builder.
      *
      * @param builder             Mapping Definition builder
      * @param rootEntityMetaClass entity holds indexed properties

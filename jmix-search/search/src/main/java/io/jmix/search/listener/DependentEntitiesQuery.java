@@ -1,0 +1,42 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.search.listener;
+
+import java.util.Map;
+
+/**
+ * Represents a query with its associated parameters for determining dependent entities.
+ * <p>
+ * This record encapsulates:
+ * <ul>
+ *   <li>A {@code query} string which specifies the query used for resolving dependencies.
+ *   <li>A {@code parameters} map containing the key-value pairs of parameters used in the query.
+ * </ul>
+ * This class is primarily used for constructing and storing information necessary to resolve entities
+ * dependent on the provided criteria.
+ * </p>
+ */
+public record DependentEntitiesQuery(String query, Map<String, Object> parameters) {
+
+    @Override
+    public String toString() {
+        return "DependentEntitiesQuery{" +
+                "query='" + query + '\'' +
+                ", parameters=" + parameters +
+                '}';
+    }
+}

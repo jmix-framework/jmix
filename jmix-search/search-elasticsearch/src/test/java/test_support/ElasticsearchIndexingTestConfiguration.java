@@ -29,7 +29,6 @@ import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.http.HttpHost;
-import org.apache.http.client.CredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,6 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import javax.net.ssl.SSLContext;
 import javax.sql.DataSource;
 
 import static org.mockito.Mockito.anyString;
@@ -104,6 +102,12 @@ public class ElasticsearchIndexingTestConfiguration {
     @Primary
     public TestFileStorage testFileStorage() {
         return new TestFileStorage();
+    }
+
+    @Bean
+    @Primary
+    public TestNoopDynAttrMetadata dynAttrMetadata() {
+        return new TestNoopDynAttrMetadata();
     }
 }
 

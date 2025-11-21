@@ -1,0 +1,20 @@
+{
+  "properties" : {
+    "+dynamicReferenceAttributeCode" : {
+      "properties" : {
+        "_instance_name" : {
+          "type" : "text"
+        }
+      }
+    },
+    "name" : {
+      "type" : "text"
+    },
+    "+dynamicStringAttributeCode" : {
+      "type" : "text"
+    },
+    "_instance_name" : {
+      "type" : "text"
+    }
+  }
+}

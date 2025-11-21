@@ -16,6 +16,11 @@
 
 package index_definition;
 
+import io.jmix.core.Metadata;
+import io.jmix.dynattr.DynAttrMetadata;
+
+import java.util.List;
+
 public class AnnotatedIndexDefinitionProcessorTestCase {
 
     private final String name;
@@ -24,6 +29,7 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
     private final String expectedIndexName;
     private final Class<?> expectedEntityClass;
     private final String pathToFileWithExpectedMapping;
+    private final AttributeMocker dynamicAttributesMocker;
 
     AnnotatedIndexDefinitionProcessorTestCase(Builder builder) {
         this(
@@ -32,7 +38,8 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
                 builder.expectedEntityName,
                 builder.expectedIndexName,
                 builder.expectedEntityClass,
-                builder.pathToFileWithExpectedMapping
+                builder.pathToFileWithExpectedMapping,
+                builder.dynamicAttributesMocker
         );
     }
 
@@ -41,13 +48,15 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
                                                       String expectedEntityName,
                                                       String expectedIndexName,
                                                       Class<?> expectedEntityClass,
-                                                      String pathToFileWithExpectedMapping) {
+                                                      String pathToFileWithExpectedMapping,
+                                                      AttributeMocker dynamicAttributesMocker) {
         this.name = name;
         this.indexDefinitionClass = indexDefinitionClass;
         this.expectedEntityName = expectedEntityName;
         this.expectedIndexName = expectedIndexName;
         this.expectedEntityClass = expectedEntityClass;
         this.pathToFileWithExpectedMapping = pathToFileWithExpectedMapping;
+        this.dynamicAttributesMocker = dynamicAttributesMocker;
     }
 
     @Override
@@ -79,6 +88,10 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
         return pathToFileWithExpectedMapping;
     }
 
+    public AttributeMocker getDynAttrMetadataConsumer() {
+        return dynamicAttributesMocker;
+    }
+
     static class Builder {
         private final String name;
         private Class<?> indexDefinitionClass;
@@ -86,6 +99,7 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
         private String expectedIndexName;
         private Class<?> expectedEntityClass;
         private String pathToFileWithExpectedMapping;
+        private AttributeMocker dynamicAttributesMocker = (dynAttrMetadata, metadata) -> {};
 
         private Builder(String name) {
             this.name = name;
@@ -116,8 +130,18 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
             return this;
         }
 
+        Builder dynamicAttributes(AttributeMocker dynamicAttributesMocker) {
+            this.dynamicAttributesMocker = dynamicAttributesMocker;
+            return this;
+        }
+
         AnnotatedIndexDefinitionProcessorTestCase build() {
             return new AnnotatedIndexDefinitionProcessorTestCase(this);
         }
+    }
+
+    @FunctionalInterface
+    public interface AttributeMocker {
+        void addMocks(DynAttrMetadata dynAttrMetadata, Metadata metadata);
     }
 }

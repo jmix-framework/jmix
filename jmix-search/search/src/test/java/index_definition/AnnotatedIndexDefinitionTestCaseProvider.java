@@ -16,12 +16,13 @@
 
 package index_definition;
 
+import io.jmix.core.metamodel.datatype.impl.StringDatatype;
+import io.jmix.dynattr.AttributeDefinition;
+import io.jmix.dynattr.AttributeType;
 import org.junit.jupiter.params.provider.Arguments;
-import test_support.entity.TestRootEntity;
-import test_support.entity.TestSimpleEmbeddedRootEntity;
-import test_support.entity.TestSimpleFileRootEntity;
-import test_support.entity.TestSimpleRootEntity;
+import test_support.entity.*;
 import test_support.index_definition.common.*;
+import test_support.index_definition.dynamic.*;
 import test_support.index_definition.embedded.TestIncludeAllEmbeddablePropertiesIndexDefinition;
 import test_support.index_definition.embedded.TestIncludeEmbeddedPropertyIndexDefinition;
 import test_support.index_definition.embedded.TestIncludeSpecificEmbeddablePropertyIndexDefinition;
@@ -30,6 +31,8 @@ import test_support.index_definition.file.TestIncludeLocalFilePropertyWithoutCon
 import test_support.index_definition.reference.*;
 
 import java.util.stream.Stream;
+
+import static index_definition.DynamicAttributesMockHelper.*;
 
 public class AnnotatedIndexDefinitionTestCaseProvider {
 
@@ -83,8 +86,24 @@ public class AnnotatedIndexDefinitionTestCaseProvider {
                         .pathToFileWithExpectedMapping("index_definition/common/test_mapping_programmatic")
                         .build()
                 ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Programmatic mapping is correct")
+                        .indexDefinitionClass(TestProgrammaticMappingIndexDefinitionNewApi.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/common/test_mapping_programmatic")
+                        .build()
+                ),
                 Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Programmatic mapping ignores annotations")
                         .indexDefinitionClass(TestProgrammaticMappingWithAnnotationsIndexDefinition.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/common/test_mapping_programmatic_with_annotations")
+                        .build()
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Programmatic mapping ignores annotations")
+                        .indexDefinitionClass(TestProgrammaticMappingWithAnnotationsIndexDefinitionNewApi.class)
                         .expectedEntityName("test_SimpleRootEntity")
                         .expectedIndexName("search_index_test_simplerootentity")
                         .expectedEntityClass(TestSimpleRootEntity.class)
@@ -115,8 +134,24 @@ public class AnnotatedIndexDefinitionTestCaseProvider {
                         .pathToFileWithExpectedMapping("index_definition/common/test_mapping_programmatic_with_argument")
                         .build()
                 ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Provide bean-arguments to programmatic mapping method")
+                        .indexDefinitionClass(TestProgrammaticMappingWithArgumentsIndexDefinitionNewApi.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/common/test_mapping_programmatic_with_argument")
+                        .build()
+                ),
                 Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Programmatic mapping method doesn't work without marker annotation")
                         .indexDefinitionClass(TestProgrammaticMappingWithoutMarkerAnnotationIndexDefinition.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/common/test_mapping_programmatic_without_marker_annotation")
+                        .build()
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Programmatic mapping method doesn't work without marker annotation")
+                        .indexDefinitionClass(TestProgrammaticMappingWithoutMarkerAnnotationIndexDefinitionNewApi.class)
                         .expectedEntityName("test_SimpleRootEntity")
                         .expectedIndexName("search_index_test_simplerootentity")
                         .expectedEntityClass(TestSimpleRootEntity.class)
@@ -216,6 +251,110 @@ public class AnnotatedIndexDefinitionTestCaseProvider {
                         .expectedIndexName("search_index_test_simpleembrootentity")
                         .expectedEntityClass(TestSimpleEmbeddedRootEntity.class)
                         .pathToFileWithExpectedMapping("index_definition/embedded/test_mapping_include_specific_embeddable_property")
+                        .build()
+                )
+        );
+    }
+
+    public static Stream<Arguments> provideDynamicAttributesTestCases() {
+        return Stream.of(
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Dynamic attributes support. Simple test")
+                        .indexDefinitionClass(TestDynamicAttributesIndexDefinition.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/dynamic/simple_test")
+                        .dynamicAttributes((dynAttrMetadata, metadata) -> {
+                            AttributeDefinition attr1 = createDynamicAttributeMockForDataType("dynamicAttributeCode", AttributeType.STRING, new StringDatatype());
+                            addMocksToDynAttrMetadata(dynAttrMetadata, TestSimpleRootEntity.class, attr1);
+                        })
+                        .build()
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Dynamic attributes support. Test with enumeration")
+                        .indexDefinitionClass(TestDynamicAttributesIndexDefinition.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/dynamic/enum_test")
+                        .dynamicAttributes((dynAttrMetadata, metadata) -> {
+                            AttributeDefinition attr1 = createDynamicAttributeMockForDataType("dynamicStringAttributeCode", AttributeType.STRING, new StringDatatype());
+                            AttributeDefinition attr2 = createDynamicAttributeMockForDataType("dynamicEnumAttributeCode", AttributeType.ENUMERATION, new StringDatatype());
+                            addMocksToDynAttrMetadata(dynAttrMetadata, TestSimpleRootEntity.class, attr1, attr2);
+                        })
+                        .build()
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Dynamic attributes support. Test with reference")
+                        .indexDefinitionClass(TestDynamicAttributesIndexDefinition.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/dynamic/reference_test")
+                        .dynamicAttributes((dynAttrMetadata, metadata) -> {
+                            AttributeDefinition attr1 = createDynamicAttributeMockForDataType("dynamicStringAttributeCode", AttributeType.STRING, new StringDatatype());
+                            AttributeDefinition attr2 = createDynamicAttributeMockForReference("dynamicReferenceAttributeCode", metadata.getClass(TestSubReferenceEntity.class));
+                            addMocksToDynAttrMetadata(dynAttrMetadata, TestSimpleRootEntity.class, attr1, attr2);
+                        })
+                        .build()
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Dynamic attributes support. Test without references")
+                        .indexDefinitionClass(TestDynamicAttributesIndexDefinitionWithoutReferences.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/dynamic/reference_none_test")
+                        .dynamicAttributes((dynAttrMetadata, metadata) -> {
+                            AttributeDefinition attr1 = createDynamicAttributeMockForDataType("dynamicStringAttributeCode", AttributeType.STRING, new StringDatatype());
+                            AttributeDefinition attr2 = createDynamicAttributeMockForDataType("dynamicEnumAttributeCode", AttributeType.ENUMERATION, new StringDatatype());
+                            AttributeDefinition attr3 = createDynamicAttributeMockForReference("dynamicReferenceAttributeCode", metadata.getClass(TestSubReferenceEntity.class));
+                            addMocksToDynAttrMetadata(dynAttrMetadata, TestSimpleRootEntity.class, attr1, attr2, attr3);
+                        })
+                        .build()
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Dynamic attributes support. Test with properties excluding")
+                        .indexDefinitionClass(TestDynamicAttributesIndexDefinitionWithExclusions.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/dynamic/with_exclusions_test")
+                        .dynamicAttributes((dynAttrMetadata, metadata) -> {
+                            AttributeDefinition attr1 = createDynamicAttributeMockForDataType("dynamicStringAttributeCode", AttributeType.STRING, new StringDatatype());
+                            AttributeDefinition attr2 = createDynamicAttributeMockForDataType("dynamicEnumAttributeCode", AttributeType.ENUMERATION, new StringDatatype());
+                            AttributeDefinition attr3 = createDynamicAttributeMockForReference("dynamicReferenceAttributeCode", metadata.getClass(TestSubReferenceEntity.class));
+                            AttributeDefinition attr4 = createDynamicAttributeMockForDataType("dynamicAttribute4", AttributeType.STRING, new StringDatatype());
+                            addMocksToDynAttrMetadata(dynAttrMetadata, TestSimpleRootEntity.class, attr1, attr2, attr3, attr4);
+                        })
+                        .build()
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Dynamic attributes support. Simple programmatic configuring")
+                        .indexDefinitionClass(TestDynamicAttributesProgrammaticMappingIndexDefinitionMinimal.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/dynamic/programmatic_simple")
+                        .dynamicAttributes((dynAttrMetadata, metadata) -> {
+                            AttributeDefinition attr1 = createDynamicAttributeMockForDataType("dynamicStringAttributeCode", AttributeType.STRING, new StringDatatype());
+                            AttributeDefinition attr2 = createDynamicAttributeMockForDataType("dynamicEnumAttributeCode", AttributeType.ENUMERATION, new StringDatatype());
+                            AttributeDefinition attr3 = createDynamicAttributeMockForReference("dynamicReferenceAttributeCode", metadata.getClass(TestSubReferenceEntity.class));
+                            AttributeDefinition attr4 = createDynamicAttributeMockForDataType("dynamicAttribute4", AttributeType.STRING, new StringDatatype());
+                            addMocksToDynAttrMetadata(dynAttrMetadata, TestSimpleRootEntity.class, attr1, attr2, attr3, attr4);
+                        })
+                        .build()
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Dynamic attributes support. Programmatic configuring")
+                        .indexDefinitionClass(TestDynamicAttributesProgrammaticMappingIndexDefinition.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/dynamic/programmatic_configuration")
+                        .dynamicAttributes((dynAttrMetadata, metadata) -> {
+                            AttributeDefinition attr1 = createDynamicAttributeMockForDataType("dynamicStringAttributeCode", AttributeType.STRING, new StringDatatype());
+                            AttributeDefinition attr2 = createDynamicAttributeMockForDataType("dynamicEnumAttributeCode", AttributeType.ENUMERATION, new StringDatatype());
+                            AttributeDefinition attr3 = createDynamicAttributeMockForReference("dynamicReferenceAttributeCode", metadata.getClass(TestSubReferenceEntity.class));
+                            AttributeDefinition attr4 = createDynamicAttributeMockForReference("secondReference", metadata.getClass(TestSubReferenceEntity.class));
+                            AttributeDefinition attr5 = createDynamicAttributeMockForDataType("secondString", AttributeType.STRING, new StringDatatype());
+                            AttributeDefinition attr6 = createDynamicAttributeMockForDataType("dynamicAttribute4", AttributeType.STRING, new StringDatatype());
+                            addMocksToDynAttrMetadata(dynAttrMetadata, TestSimpleRootEntity.class, attr1, attr2, attr3, attr4, attr5, attr6);
+                        })
                         .build()
                 )
         );

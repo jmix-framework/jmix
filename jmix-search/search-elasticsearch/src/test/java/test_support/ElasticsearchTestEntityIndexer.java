@@ -22,6 +22,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexResult;
 import io.jmix.search.index.impl.IndexStateRegistry;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.searchelasticsearch.index.impl.ElasticsearchEntityIndexer;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
@@ -50,8 +51,17 @@ public class ElasticsearchTestEntityIndexer extends ElasticsearchEntityIndexer {
                                           IndexStateRegistry indexStateRegistry,
                                           MetadataTools metadataTools,
                                           SearchProperties searchProperties,
-                                          ElasticsearchTestBulkRequestsTracker bulkRequestsTracker) {
-        super(dataManager, fetchPlans, indexConfigurationManager, metadata, idSerialization, indexStateRegistry, metadataTools, searchProperties, null);
+                                          ElasticsearchTestBulkRequestsTracker bulkRequestsTracker,
+                                          DynamicAttributesSupport dynamicAttributesSupport) {
+        super(dataManager,
+                fetchPlans,
+                indexConfigurationManager,
+                metadata,
+                idSerialization,
+                indexStateRegistry,
+                metadataTools, searchProperties,
+                null,
+                dynamicAttributesSupport);
         this.bulkRequestsTracker = bulkRequestsTracker;
     }
 

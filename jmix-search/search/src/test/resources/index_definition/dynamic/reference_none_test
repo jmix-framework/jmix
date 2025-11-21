@@ -1,0 +1,16 @@
+{
+  "properties" : {
+    "name" : {
+      "type" : "text"
+    },
+    "+dynamicStringAttributeCode" : {
+      "type" : "text"
+    },
+    "+dynamicEnumAttributeCode" : {
+      "type" : "text"
+    },
+    "_instance_name" : {
+      "type" : "text"
+    }
+  }
+}

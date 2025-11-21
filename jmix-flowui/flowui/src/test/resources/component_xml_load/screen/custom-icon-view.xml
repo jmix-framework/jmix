@@ -18,6 +18,7 @@
 <view xmlns="http://jmix.io/schema/flowui/view">
     <actions>
         <action id="iconAttributeAction" text="Action (icon attribute)" icon="CHECK"/>
+        <action id="vaadinIconAttributeAction" text="Action (Vaadin icon attribute)" icon="vaadin:check"/>
 
         <action id="iconAction" text="Action (icon)">
             <icon>
@@ -44,6 +45,7 @@
         <details summaryText="Button">
             <vbox>
                 <button id="iconAttributeButton" text="Button (icon attribute)" icon="CHECK"/>
+                <button id="vaadinIconAttributeButton" text="Button (icon attribute)" icon="vaadin:check"/>
 
                 <button id="iconButton" text="Button (icon)">
                     <icon>
@@ -71,6 +73,7 @@
         <details summaryText="Button - Action ref">
             <vbox>
                 <button id="iconAttributeActionButton" action="iconAttributeAction"/>
+                <button id="vaadinIconAttributeActionButton" action="vaadinIconAttributeAction"/>
                 <button id="iconActionButton" action="iconAction"/>
                 <button id="svgIconActionButton" action="svgIconAction"/>
                 <button id="fontIconActionButton" action="fontIconAction"/>
@@ -81,6 +84,7 @@
         <details summaryText="Button - Override action props">
             <vbox>
                 <button id="overrideIconAttributeActionButton" action="iconAttributeAction" icon="CLOSE"/>
+                <button id="overrideVaadinIconAttributeActionButton" action="iconAttributeAction" icon="vaadin:close"/>
 
                 <button id="overrideIconActionButton" action="iconAction">
                     <icon>

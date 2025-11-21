@@ -32,6 +32,8 @@ public class CustomIconView extends StandardView {
     @ViewComponent
     public BaseAction iconAttributeAction;
     @ViewComponent
+    public BaseAction vaadinIconAttributeAction;
+    @ViewComponent
     public BaseAction iconAction;
     @ViewComponent
     public BaseAction svgIconAction;
@@ -42,6 +44,8 @@ public class CustomIconView extends StandardView {
 
     @ViewComponent
     public JmixButton iconAttributeButton;
+    @ViewComponent
+    public JmixButton vaadinIconAttributeButton;
     @ViewComponent
     public JmixButton iconButton;
     @ViewComponent
@@ -54,6 +58,8 @@ public class CustomIconView extends StandardView {
     @ViewComponent
     public JmixButton iconAttributeActionButton;
     @ViewComponent
+    public JmixButton vaadinIconAttributeActionButton;
+    @ViewComponent
     public JmixButton iconActionButton;
     @ViewComponent
     public JmixButton svgIconActionButton;
@@ -64,6 +70,8 @@ public class CustomIconView extends StandardView {
 
     @ViewComponent
     public JmixButton overrideIconAttributeActionButton;
+    @ViewComponent
+    public JmixButton overrideVaadinIconAttributeActionButton;
     @ViewComponent
     public JmixButton overrideIconActionButton;
     @ViewComponent

@@ -88,7 +88,7 @@ public class GridColumnVisibilityLoader extends AbstractComponentLoader<JmixGrid
                 getLoaderSupport().loadResourceString(element, "text", context.getMessageGroup(),
                         menuItem::setText);
                 menuItems.put(refColumn, menuItem);
-            } if (!element.getName().equals(ICON_ELEMENT_NAME)) {
+            } else if (!element.getName().equals(ICON_ELEMENT_NAME)) {
                 throw new GuiDevelopmentException("Found invalid child element '%s' in gridColumnVisibility element"
                         .formatted(element.getName()), context);
             }

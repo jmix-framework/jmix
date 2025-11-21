@@ -23,6 +23,7 @@ import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.SvgIcon
 import com.vaadin.flow.component.icon.VaadinIcon
 import component_xml_load.screen.CustomIconView
+import io.jmix.flowui.kit.icon.JmixFontIcon
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.ComponentTestUtils
 import test_support.spec.FlowuiTestSpecification
@@ -40,13 +41,26 @@ class CustomIconXmlLoad extends FlowuiTestSpecification {
         def view = navigateToView(CustomIconView)
 
         then: "Action has Icon as icon"
-        view.iconAttributeAction.iconComponent instanceof Icon
-        ComponentTestUtils.isSameIcon(view.iconAttributeAction.iconComponent, VaadinIcon.CHECK)
-        ComponentTestUtils.isSameIcon(view.iconAttributeAction.icon, VaadinIcon.CHECK)
+        view.iconAttributeAction.iconComponent instanceof FontIcon
+        ComponentTestUtils.isSameIcon(view.iconAttributeAction.iconComponent, JmixFontIcon.CHECK)
 
         and: "Button has Icon as icon"
-        view.iconAttributeButton.icon instanceof Icon
-        ComponentTestUtils.isSameIcon(view.iconAttributeButton.icon, VaadinIcon.CHECK)
+        view.iconAttributeButton.icon instanceof FontIcon
+        ComponentTestUtils.isSameIcon(view.iconAttributeButton.icon, JmixFontIcon.CHECK)
+    }
+
+    def "Load Icon as Vaadin icon (attribute)"() {
+        when: "Open the CustomIconView"
+        def view = navigateToView(CustomIconView)
+
+        then: "Action has Icon as icon"
+        view.vaadinIconAttributeAction.iconComponent instanceof Icon
+        ComponentTestUtils.isSameIcon(view.vaadinIconAttributeAction.iconComponent, VaadinIcon.CHECK)
+        ComponentTestUtils.isSameIcon(view.vaadinIconAttributeAction.icon, VaadinIcon.CHECK)
+
+        and: "Button has Icon as icon"
+        view.vaadinIconAttributeButton.icon instanceof Icon
+        ComponentTestUtils.isSameIcon(view.vaadinIconAttributeButton.icon, VaadinIcon.CHECK)
     }
 
     def "Load Icon as icon"() {
@@ -109,8 +123,12 @@ class CustomIconXmlLoad extends FlowuiTestSpecification {
         def view = navigateToView(CustomIconView)
 
         then: "Button get icon (attribute) from Action"
-        view.iconAttributeActionButton.icon instanceof Icon
-        ComponentTestUtils.isSameIcon(view.iconAttributeActionButton.icon, VaadinIcon.CHECK)
+        view.iconAttributeActionButton.icon instanceof FontIcon
+        ComponentTestUtils.isSameIcon(view.iconAttributeActionButton.icon, JmixFontIcon.CHECK)
+
+        then: "Button get Vaadin icon (attribute) from Action"
+        view.vaadinIconAttributeActionButton.icon instanceof Icon
+        ComponentTestUtils.isSameIcon(view.vaadinIconAttributeActionButton.icon, VaadinIcon.CHECK)
 
         and: "Button get Icon as icon from Action"
         view.iconActionButton.icon instanceof Icon
@@ -135,8 +153,12 @@ class CustomIconXmlLoad extends FlowuiTestSpecification {
         def view = navigateToView(CustomIconView)
 
         then: "Button overrides icon (attribute) from Action"
-        view.overrideIconAttributeActionButton.icon instanceof Icon
-        ComponentTestUtils.isSameIcon(view.overrideIconAttributeActionButton.icon, VaadinIcon.CLOSE)
+        view.overrideIconAttributeActionButton.icon instanceof FontIcon
+        ComponentTestUtils.isSameIcon(view.overrideIconAttributeActionButton.icon, JmixFontIcon.CLOSE)
+
+        then: "Button overrides vaadin icon (attribute) from Action"
+        view.overrideVaadinIconAttributeActionButton.icon instanceof Icon
+        ComponentTestUtils.isSameIcon(view.overrideVaadinIconAttributeActionButton.icon, VaadinIcon.CLOSE)
 
         and: "Button overrides Icon as icon from Action"
         view.overrideIconActionButton.icon instanceof Icon

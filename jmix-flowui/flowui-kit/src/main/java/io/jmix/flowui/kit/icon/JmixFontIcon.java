@@ -7,6 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Represents a collection of font icons used within the application.
+ * <p>
+ * This class provides predefined constants for various icons used throughout the
+ * user interface.
+ */
 public enum JmixFontIcon implements IconFactory<FontIcon> {
 
     /* Jmix specific icons */
@@ -783,8 +789,19 @@ public enum JmixFontIcon implements IconFactory<FontIcon> {
         return new FontIcon(resultIconClassNames.toArray(new String[0]));
     }
 
+    /**
+     * Returns a {@link JmixFontIcon} enumeration value that matches the provided icon name.
+     *
+     * @param iconName the name of the icon to look up
+     * @return the {@link JmixFontIcon} corresponding to the specified {@code iconName},
+     * or {@code null} if no matching icon is found.
+     */
     @Nullable
-    public static JmixFontIcon fromName(String iconName) {
+    public static JmixFontIcon fromName(@Nullable String iconName) {
+        if (iconName == null) {
+            return null;
+        }
+
         for (JmixFontIcon icon : JmixFontIcon.values()) {
             if (icon.name().equals(iconName)) {
                 return icon;

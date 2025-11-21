@@ -18,9 +18,24 @@ package io.jmix.flowui.kit.icon;
 
 import com.vaadin.flow.component.Component;
 
+/**
+ * Interface for enumerations representing a factory for creating icons.
+ *
+ * @param <T> the type of {@link Component} that the factory creates
+ */
 public interface IconFactory<T extends Component> {
 
+    /**
+     * Returns an icon name.
+     *
+     * @return an icon name, e.g. "OK", "CREATE_ACTION", "CHECK".
+     */
     String name();
 
+    /**
+     * Creates a new instance of a component representing an icon.
+     *
+     * @return a new instance of a component representing an icon
+     */
     T create();
 }

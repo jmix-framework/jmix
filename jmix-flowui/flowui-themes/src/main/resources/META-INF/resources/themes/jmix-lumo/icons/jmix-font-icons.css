@@ -766,14 +766,18 @@ html {
 
 .jmix-font-icon {
     font-family: var(--jmix-font-icon-font-family);
-
-    /* Same as for ::slotted(vaadin-icon[icon^='vaadin:']) */
-    padding: var(--lumo-space-xs);
-    box-sizing: border-box !important;
 }
 
 .jmix-font-icon.jmix-font-icon-lumo {
-    padding: 0;
+    font-family: lumo-icons;
+}
+
+/* Same as for ::slotted(vaadin-icon[icon^='vaadin:']) */
+/* Vaadin icons are based on a 16x16 grid (unlike Lumo icons with 24x24), so they look too big by default */
+vaadin-menu-bar-item > vaadin-icon[icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon-lumo"]),
+vaadin-icon[slot][icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon-lumo"]) {
+    padding: var(--lumo-space-xs);
+    box-sizing: border-box !important;
 }
 
 /* Jmix specific icons */
@@ -3624,16 +3628,13 @@ html {
 }
 
 .jmix-font-icon-photo:before {
-    font-family: lumo-icons;
     content: var(--jmix-font-icon-photo);
 }
 
 .jmix-font-icon-redo:before {
-    font-family: lumo-icons;
     content: var(--jmix-font-icon-redo);
 }
 
 .jmix-font-icon-undo:before {
-    font-family: lumo-icons;
     content: var(--jmix-font-icon-undo);
 }

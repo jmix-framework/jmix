@@ -54,7 +54,7 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
 
     @Override
     protected Map<String, Object> createParameters(AutoMappedField specificAnnotation) {
-        HashMap<String, Object> parameters = new HashMap<>();
+        Map<String, Object> parameters = new HashMap<>();
         if (StringUtils.isNotBlank(specificAnnotation.analyzer())) {
             parameters.put(ParameterKeys.ANALYZER, specificAnnotation.analyzer());
         }

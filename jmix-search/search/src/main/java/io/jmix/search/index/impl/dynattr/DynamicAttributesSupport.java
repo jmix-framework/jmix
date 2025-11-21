@@ -16,6 +16,7 @@
 
 package io.jmix.search.index.impl.dynattr;
 
+import io.jmix.core.JmixModules;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +30,18 @@ import org.springframework.stereotype.Component;
 public class DynamicAttributesSupport {
 
     private static final Logger log = LoggerFactory.getLogger(DynamicAttributesSupport.class);
-    protected final DynamicAttributesSupportDelegate proxy;
+    protected static final String DYNAMIC_ATTRIBUTES_MODULE_ID = "io.jmix.dynattr";
 
-    public DynamicAttributesSupport(ObjectProvider<DynamicAttributesSupportDelegate> proxy) {
-        this.proxy = proxy.getIfAvailable();
-        if (this.proxy == null) {
-            log.warn("Dynamic attributes support proxy is not available.");
+    protected final JmixModules modules;
+    protected final DynamicAttributesSupportDelegate delegate;
+
+    public DynamicAttributesSupport(JmixModules modules, ObjectProvider<DynamicAttributesSupportDelegate> delegate) {
+        this.modules = modules;
+        this.delegate = delegate.getIfAvailable();
+        if (this.delegate == null) {
+            log.warn("Dynamic attributes support delegate is not available.");
         } else {
-            log.debug("Dynamic attributes support proxy is available");
+            log.debug("Dynamic attributes support delegate is available");
         }
     }
 
@@ -47,7 +52,7 @@ public class DynamicAttributesSupport {
      * @return true if the property name contains a plus sign ("+"), indicating it is a dynamic attribute; false otherwise
      */
     public boolean isDynamicAttributeName(String entityPropertyFullName) {
-        return proxy != null && proxy.isDynamicAttributeName(entityPropertyFullName);
+        return delegate != null && delegate.isDynamicAttributeName(entityPropertyFullName);
     }
 
     /**
@@ -57,6 +62,15 @@ public class DynamicAttributesSupport {
      * @return {@code true} if the {@link MetaPropertyPath} corresponds to a dynamic attribute; {@code false} otherwise
      */
     public boolean isDynamicAttribute(MetaPropertyPath propertyPath) {
-        return proxy != null && proxy.isDynamicAttributeName(propertyPath.getFirstPropertyName());
+        return delegate != null && delegate.isDynamicAttributeName(propertyPath.getFirstPropertyName());
+    }
+
+    /**
+     * Checks if the Dynamic Attributes module is available in the application.
+     *
+     * @return true if the Dynamic Attributes module is present, false otherwise
+     */
+    public boolean isModulePresent() {
+        return modules.get(DYNAMIC_ATTRIBUTES_MODULE_ID) != null;
     }
 }

@@ -16,9 +16,13 @@
 
 package io.jmix.search.index.impl.dynattr
 
+import io.jmix.core.JmixModuleDescriptor
+import io.jmix.core.JmixModules
 import io.jmix.core.metamodel.model.MetaPropertyPath
 import org.springframework.beans.factory.ObjectProvider
 import spock.lang.Specification
+
+import static io.jmix.search.index.impl.dynattr.DynamicAttributesSupport.DYNAMIC_ATTRIBUTES_MODULE_ID
 
 class DynamicAttributesSupportTest extends Specification {
 
@@ -28,7 +32,7 @@ class DynamicAttributesSupportTest extends Specification {
         proxyProvider.getIfAvailable() >> null
 
         and:
-        DynamicAttributesSupport support = new DynamicAttributesSupport(proxyProvider)
+        DynamicAttributesSupport support = new DynamicAttributesSupport(Mock(JmixModules), proxyProvider)
 
         when:
         def isDynamic = support.isDynamicAttributeName("anyName")
@@ -43,7 +47,7 @@ class DynamicAttributesSupportTest extends Specification {
         proxyProvider.getIfAvailable() >> null
 
         and:
-        DynamicAttributesSupport support = new DynamicAttributesSupport(proxyProvider)
+        DynamicAttributesSupport support = new DynamicAttributesSupport(Mock(JmixModules), proxyProvider)
 
         and:
         MetaPropertyPath path = Mock()
@@ -63,7 +67,7 @@ class DynamicAttributesSupportTest extends Specification {
         ObjectProvider proxyProvider = Mock()
         proxyProvider.getIfAvailable() >> proxy
 
-        DynamicAttributesSupport support = new DynamicAttributesSupport(proxyProvider)
+        DynamicAttributesSupport support = new DynamicAttributesSupport(Mock(JmixModules), proxyProvider)
 
         def result = support.isDynamicAttributeName(attributeName)
 
@@ -87,7 +91,7 @@ class DynamicAttributesSupportTest extends Specification {
         MetaPropertyPath path = Mock()
         path.getFirstPropertyName() >> attributeName
 
-        DynamicAttributesSupport support = new DynamicAttributesSupport(proxyProvider)
+        DynamicAttributesSupport support = new DynamicAttributesSupport(Mock(JmixModules), proxyProvider)
 
         def result = support.isDynamicAttribute(path)
 
@@ -98,5 +102,25 @@ class DynamicAttributesSupportTest extends Specification {
         attributeName          || isDynamic
         "dynamicAttributeName" || true
         "staticAttributeName"  || false
+    }
+
+    def "isModulePresent"() {
+        given:
+        def jmixModules = Mock(JmixModules)
+
+        and:
+        DynamicAttributesSupport support = new DynamicAttributesSupport(jmixModules, Mock(ObjectProvider))
+
+        when:
+        jmixModules.get(DYNAMIC_ATTRIBUTES_MODULE_ID) >> dyanttrModule
+        def result = support.isModulePresent()
+
+        then:
+        result == expectedResult
+
+        where:
+        dyanttrModule              || expectedResult
+        Mock(JmixModuleDescriptor) || true
+        null                       || false
     }
 }

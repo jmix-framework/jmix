@@ -32,5 +32,4 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableScheduling
 public class SearchConfiguration {
-
 }

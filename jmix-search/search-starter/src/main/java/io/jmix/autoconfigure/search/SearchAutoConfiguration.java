@@ -35,7 +35,7 @@ import io.jmix.search.index.mapping.processor.impl.FieldMappingCreator;
 import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesGroupConfigurationValidator;
 import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesGroupProcessor;
 import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesResolver;
-import io.jmix.search.index.mapping.processor.impl.dynattr.PatternsMatcher;
+import io.jmix.search.index.mapping.processor.impl.dynattr.WildcardPatternsMatcher;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.search.index.queue.impl.JpaIndexingQueueManager;
 import io.jmix.search.listener.dynattr.DynamicAttributesTrackingListener;
@@ -105,11 +105,11 @@ public class SearchAutoConfiguration {
         @Bean(name = "search_DynamicAttributesResolver")
         public DynamicAttributesResolver dynamicAttributesResolver(DynAttrMetadata dynAttrMetadata,
                                                                    PropertyTools propertyTools,
-                                                                   PatternsMatcher patternsMatcher){
-            return new DynamicAttributesResolver(dynAttrMetadata, propertyTools, patternsMatcher);
+                                                                   WildcardPatternsMatcher wildcardPatternsMatcher){
+            return new DynamicAttributesResolver(dynAttrMetadata, propertyTools, wildcardPatternsMatcher);
         }
 
-        @Bean(name = "search_DynamicAttributesSupportProxy")
+        @Bean(name = "DynamicAttributesSupportDelegate")
         public DynamicAttributesSupportDelegate dynamicAttributesSupport(){
             return new DynamicAttributesSupportDelegate();
         }

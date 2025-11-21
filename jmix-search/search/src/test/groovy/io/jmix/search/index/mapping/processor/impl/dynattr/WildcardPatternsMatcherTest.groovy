@@ -18,7 +18,7 @@ package io.jmix.search.index.mapping.processor.impl.dynattr
 
 import spock.lang.Specification
 
-class PatternsMatcherTest extends Specification {
+class WildcardPatternsMatcherTest extends Specification {
     def "GetMatchingElements"() {
         given:
         Map<String, String> sourceElements = Map.of(
@@ -27,7 +27,7 @@ class PatternsMatcherTest extends Specification {
                 "name3", "name3Element")
 
         when:
-        def resolver = new PatternsMatcher()
+        def resolver = new WildcardPatternsMatcher()
         def resultElements = new ArrayList<>(resolver.getMatchingElements(sourceElements, excludedNames))
 
         then:

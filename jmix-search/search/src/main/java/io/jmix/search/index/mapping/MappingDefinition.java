@@ -39,7 +39,8 @@ import java.util.Map;
  *     <li>With Spring beans as parameters</li>
  * </ul>
  * <p>
- * {@link MappingDefinition#builder()} and {@link MappingDefinitionElement#builder()} should be used to create content.
+ * {@link MappingDefinition#builder()}, {@link StaticAttributesGroupConfiguration#builder()}
+ * and {@link DynamicAttributesGroupConfiguration#builder()} should be used to create content.
  * <p>
  * Example:<pre>
  * &#64;JmixEntitySearchIndex(entity = Customer.class)

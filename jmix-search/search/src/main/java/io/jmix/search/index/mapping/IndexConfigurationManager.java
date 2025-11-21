@@ -35,6 +35,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
+import java.util.concurrent.locks.StampedLock;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,6 +65,7 @@ public class IndexConfigurationManager {
     protected final Registry registry;
     protected final AnnotatedIndexDefinitionProcessor indexDefinitionProcessor;
     protected final Set<String> classNames;
+    protected final StampedLock lock = new StampedLock();
 
     @Autowired
     public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
@@ -83,11 +86,12 @@ public class IndexConfigurationManager {
      * <p>
      * This method ensures that the current index configurations are updated to reflect
      * any changes in the index definitions within the application.
-     *
-     * @return a list of {@link IndexConfiguration} objects representing the refreshed index definitions.
+     * <p>
+     * This refreshing also takes into account any changes in the dynamic attributes metadata
+     * if the Dynamic attributes add-on is used in the project.
      */
-    public ArrayList<IndexConfiguration> refreshIndexDefinitions() {
-        return initializeIndexDefinitions();
+    public void refreshIndexDefinitions() {
+        initializeIndexDefinitions();
     }
 
     /**
@@ -95,8 +99,9 @@ public class IndexConfigurationManager {
      *
      * @return all {@link IndexConfiguration}
      */
+    @SuppressWarnings("ConstantConditions")
     public Collection<IndexConfiguration> getAllIndexConfigurations() {
-        return registry.getIndexConfigurations();
+        return optimisticRead(registry::getIndexConfigurations);
     }
 
     /**
@@ -107,7 +112,7 @@ public class IndexConfigurationManager {
      * @return {@link IndexConfiguration}
      */
     public IndexConfiguration getIndexConfigurationByEntityName(String entityName) {
-        IndexConfiguration indexConfiguration = registry.getIndexConfigurationByEntityName(entityName);
+        IndexConfiguration indexConfiguration = optimisticRead(() -> registry.getIndexConfigurationByEntityName(entityName));
         if (indexConfiguration == null) {
             throw new IllegalArgumentException("Entity '" + entityName + "' is not configured for indexing");
         }
@@ -121,7 +126,7 @@ public class IndexConfigurationManager {
      * @return optional {@link IndexConfiguration}
      */
     public Optional<IndexConfiguration> getIndexConfigurationByEntityNameOpt(String entityName) {
-        return Optional.ofNullable(registry.getIndexConfigurationByEntityName(entityName));
+        return optimisticReadOpt(() -> registry.getIndexConfigurationByEntityName(entityName));
     }
 
     /**
@@ -132,7 +137,7 @@ public class IndexConfigurationManager {
      * @return {@link IndexConfiguration}
      */
     public IndexConfiguration getIndexConfigurationByIndexName(String indexName) {
-        IndexConfiguration indexConfiguration = registry.getIndexConfigurationByIndexName(indexName);
+        IndexConfiguration indexConfiguration = optimisticRead(() -> registry.getIndexConfigurationByIndexName(indexName));
         if (indexConfiguration == null) {
             throw new IllegalArgumentException("There is no configuration for index name '" + indexName + "'");
         }
@@ -146,54 +151,58 @@ public class IndexConfigurationManager {
      * @return optional {@link IndexConfiguration}
      */
     public Optional<IndexConfiguration> getIndexConfigurationByIndexNameOpt(String indexName) {
-        return Optional.ofNullable(registry.getIndexConfigurationByIndexName(indexName));
+        return optimisticReadOpt(() -> registry.getIndexConfigurationByIndexName(indexName));
     }
 
+    @SuppressWarnings("ConstantConditions")
     public Collection<String> getAllIndexedEntities() {
-        return registry.getAllIndexedEntities();
+        return optimisticRead(registry::getAllIndexedEntities);
     }
 
     /**
-     * Checks if provided entity is declared to be indexed directly (not as a part of another entity).
+     * Checks if the provided entity is declared to be indexed directly (not as a part of another entity).
      *
      * @param entityName entity name
-     * @return true if entity is indexed, false otherwise
+     * @return true if the entity is indexed, false otherwise
      */
+    @SuppressWarnings("ConstantConditions")
     public boolean isDirectlyIndexed(String entityName) {
-        return registry.hasDefinitionForEntity(entityName);
+        return optimisticRead(() -> registry.hasDefinitionForEntity(entityName));
     }
 
     /**
-     * Checks if provided entity is involved in index process directly or as a part of another entity.
+     * Checks if the provided entity is involved in the index process directly or as a part of another entity.
      *
      * @param entityClass entity java class
-     * @return true if entity is involved in index process, false otherwise
+     * @return true if the entity is involved in the index process, false otherwise
      */
+    @SuppressWarnings("ConstantConditions")
     public boolean isAffectedEntityClass(Class<?> entityClass) {
-        return registry.isEntityClassRegistered(entityClass);
+        return optimisticRead(() -> registry.isEntityClassRegistered(entityClass));
     }
 
     /**
-     * Gets local property names of provided entity involved into index update process
+     * Gets local property names of the provided entity involved into the index update process
      *
      * @param entityClass entity class
      * @return set of property names
      */
+    @SuppressWarnings("ConstantConditions")
     public Set<String> getLocalPropertyNamesAffectedByUpdate(Class<?> entityClass) {
-        return registry.getLocalPropertyNamesAffectedByUpdate(entityClass);
+        return optimisticRead(() -> registry.getLocalPropertyNamesAffectedByUpdate(entityClass));
     }
 
     /**
-     * Gets metadata of entities dependent on updated main entity and its changed properties.
+     * Gets metadata of entities dependent on the updated main entity and its changed properties.
      *
-     * @param entityClass       java class of main entity
-     * @param changedProperties changed property of main entity
+     * @param entityClass       java class of the main entity
+     * @param changedProperties changed property of the main entity
      * @return dependent entities grouped by their {@link MetaClass}.
      * For every meta class group there are set of properties representing dependency-to-main references
      */
     public Map<MetaClass, Set<MetaPropertyPath>> getDependenciesMetaDataForUpdate(Class<?> entityClass, Set<String> changedProperties) {
         log.debug("Get dependencies metadata for class {} with changed properties: {}", entityClass, changedProperties);
-        Map<String, Set<MetaPropertyPath>> backRefProperties = registry.getBackRefPropertiesForUpdate(entityClass);
+        Map<String, Set<MetaPropertyPath>> backRefProperties = optimisticRead(() -> registry.getBackRefPropertiesForUpdate(entityClass));
         if (MapUtils.isEmpty(backRefProperties)) {
             return Collections.emptyMap();
         }
@@ -214,9 +223,9 @@ public class IndexConfigurationManager {
     }
 
     /**
-     * Gets metadata of entities dependent on deleted main entity.
+     * Gets metadata of entities dependent on the deleted main entity.
      *
-     * @param deletedEntityClass java class of main entity
+     * @param deletedEntityClass java class of the main entity
      * @return dependent entities grouped by their {@link MetaClass}.
      * For every meta class group there are set of properties representing dependency-to-main references
      */
@@ -243,17 +252,13 @@ public class IndexConfigurationManager {
      * <p>
      * The method ensures that the current index configurations are updated to match
      * the definitions specified by the provided class names.
-     *
-     * @return
      */
-    protected ArrayList<IndexConfiguration> initializeIndexDefinitions() {
-        ArrayList<IndexConfiguration> configurations = new ArrayList<>();
+    protected void initializeIndexDefinitions() {
+        List<IndexConfiguration> configurations = new ArrayList<>();
         classNames.forEach(className ->
                 configurations.add(indexDefinitionProcessor.createIndexConfiguration(className)));
 
         replaceConfigurations(configurations);
-
-        return configurations;
     }
 
     /**
@@ -261,9 +266,61 @@ public class IndexConfigurationManager {
      *
      * @param configurations the list of {@link IndexConfiguration} objects to be set in the registry
      */
-    protected synchronized void replaceConfigurations(ArrayList<IndexConfiguration> configurations) {
-        registry.clean();
-        configurations.forEach(registry::registerIndexConfiguration);
+    protected void replaceConfigurations(List<IndexConfiguration> configurations) {
+        long stamp = lock.readLock();
+        try {
+            registry.clean();
+            configurations.forEach(registry::registerIndexConfiguration);
+        } finally {
+            lock.unlockRead(stamp);
+        }
+    }
+
+    /**
+     * Executes the given supplier function using an optimistic read lock and wraps the result in an {@link Optional}.
+     *
+     * @param <T>      the type of the result provided by the supplier
+     * @param supplier the supplier function to execute within the optimistic read lock
+     * @return an {@link Optional} containing the result of the supplier's execution, or an empty {@link Optional} if the result is {@code null}
+     */
+    protected <T> Optional<T> optimisticReadOpt(Supplier<T> supplier) {
+        return Optional.ofNullable(optimisticRead(supplier));
+    }
+
+    /**
+     * Executes the given supplier function in a read-safe manner using an optimistic read lock,
+     * ensuring the consistency of the read operation. If the optimistic lock fails validation,
+     * a fallback using a read lock is performed.
+     *
+     * @param <T>      the type of the result provided by the supplier
+     * @param supplier the supplier function to execute within the optimistic read lock
+     * @return the result of the supplier's execution
+     */
+    @Nullable
+    protected <T> T optimisticRead(Supplier<T> supplier) {
+        T result;
+        // Attempt to acquire an optimistic read lock. Returns 0 if another thread holds a write lock,
+        // otherwise returns a non-zero stamp that can be used to validate the read later.
+        long stamp = lock.tryOptimisticRead();
+        if (stamp == 0L) {
+            stamp = lock.readLock();
+            try {
+                result = supplier.get();
+            } finally {
+                lock.unlockRead(stamp);
+            }
+        } else {
+            result = supplier.get();
+            if (!lock.validate(stamp)) {
+                stamp = lock.readLock();
+                try {
+                    result = supplier.get();
+                } finally {
+                    lock.unlockRead(stamp);
+                }
+            }
+        }
+        return result;
     }
 
     protected static class PropertyTrackingInfo {

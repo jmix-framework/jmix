@@ -25,32 +25,40 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * The {@code PatternsMatcher} class provides functionality for resolving patterns and identifying
+ * Provides functionality for resolving patterns and identifying
  * matching elements within a collection based on wildcard patterns. It supports processing of string
- * patterns that may include wildcards (e.g., "*") for flexible and dynamic matching.
+ * patterns that may include wildcards "*" for flexible and dynamic matching.
  */
-@Component("search_PatternsMatcher")
-public class PatternsMatcher {
+@Component("search_WildcardPatternsMatcher")
+public class WildcardPatternsMatcher {
 
-    public <T> Collection<T> getMatchingElements(Map<String, T> namedElements, List<String> patternsForCheck) {
-        ArrayList<T> result = new ArrayList<>();
+    /**
+     * Returns a collection of elements which names match any pattern of the given patterns list.
+     * Each pattern can contain one or more wildcard symbols "*".
+     * @param namedElements the map with the elements and its names
+     * @param patterns the list of patterns.
+     * @return the list of filtered elements
+     * @param <T> the type of named elements.
+     */
+    public <T> Collection<T> getMatchingElements(Map<String, T> namedElements, List<String> patterns) {
+        List<T> result = new ArrayList<>();
         namedElements.forEach((key, value) -> {
-            if (getMatchingElementsForSinglePattern(patternsForCheck, key)) {
+            if (getMatchingElementsForSingleNamedElement(key, patterns)) {
                 result.add(value);
             }
         });
         return result;
     }
 
-    protected boolean getMatchingElementsForSinglePattern(List<String> excludedNames, String patternForCheck) {
-        for (String excludingName : excludedNames) {
-            if (!hasWildCard(excludingName)) {
-                if (patternForCheck.equals(excludingName)) {
+    protected boolean getMatchingElementsForSingleNamedElement(String elementName, List<String> patterns) {
+        for (String pattern : patterns) {
+            if (!hasWildCard(pattern)) {
+                if (elementName.equals(pattern)) {
                     return true;
                 }
             } else {
-                Pattern pattern = Pattern.compile(excludingName.replace("*", ".*"));
-                if (pattern.matcher(patternForCheck).matches()) {
+                Pattern compiledPattern = Pattern.compile(pattern.replace("*", ".*"));
+                if (compiledPattern.matcher(elementName).matches()) {
                     return true;
                 }
             }

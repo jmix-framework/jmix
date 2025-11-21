@@ -23,11 +23,9 @@ import io.jmix.search.index.mapping.processor.impl.FieldMappingCreator;
 import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesGroupConfigurationValidator;
 import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesGroupProcessor;
 import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesResolver;
-import io.jmix.search.index.mapping.processor.impl.dynattr.PatternsMatcher;
+import io.jmix.search.index.mapping.processor.impl.dynattr.WildcardPatternsMatcher;
 import io.jmix.search.utils.PropertyTools;
 import org.springframework.context.annotation.*;
-
-import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -53,8 +51,8 @@ public class IndexDefinitionProcessingTestConfiguration {
     @Bean(name = "search_DynamicAttributesResolver")
     public DynamicAttributesResolver dynamicAttributesResolver(DynAttrMetadata dynAttrMetadata,
                                                                PropertyTools propertyTools,
-                                                               PatternsMatcher patternsMatcher){
-        return new DynamicAttributesResolver(dynAttrMetadata, propertyTools, patternsMatcher);
+                                                               WildcardPatternsMatcher wildcardPatternsMatcher){
+        return new DynamicAttributesResolver(dynAttrMetadata, propertyTools, wildcardPatternsMatcher);
     }
 
     @Bean(name = "search_DynamicAttributesSupportProxy")

@@ -41,25 +41,25 @@ public class DependentEntitiesQueryBuilder {
             "References with two or more levels are not supported for dynamic attributes. " +
                     "The entity type: %s. The property path: %s";
 
-    private String entityName;
-    private MetaClass referencedMetaClass;
-    private MetaPropertyPath propertyPath;
-    private MetaClass targetMetaClass;
-    private Id<?> targetEntityId;
+    protected String entityName;
+    protected MetaClass referencedMetaClass;
+    protected MetaPropertyPath propertyPath;
+    protected MetaClass targetMetaClass;
+    protected Id<?> targetEntityId;
 
-    private int currentEntityIndex;
-    private String currentEntityAlias;
-    private StringBuilder currentPropertyPathSb;
-    private StringBuilder querySb;
-    private int propertiesLevels;
-    private MetaProperty currentLevelProperty;
-    private int currentLevelPropertyIndex;
-    private String targetPrimaryKeyName;
+    protected int currentEntityIndex;
+    protected String currentEntityAlias;
+    protected StringBuilder currentPropertyPathSb;
+    protected StringBuilder querySb;
+    protected int propertiesLevels;
+    protected MetaProperty currentLevelProperty;
+    protected int currentLevelPropertyIndex;
+    protected String targetPrimaryKeyName;
 
-    private Map<String, Object> parameters;
+    protected Map<String, Object> parameters;
     protected final MetadataTools metadataTools;
     protected final DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver;
-    private final DynamicAttributesSupport dynamicAttributesSupport;
+    protected final DynamicAttributesSupport dynamicAttributesSupport;
 
     DependentEntitiesQueryBuilder(MetadataTools metadataTools,
                                   DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver,
@@ -101,11 +101,11 @@ public class DependentEntitiesQueryBuilder {
         return new DependentEntitiesQuery(querySb.toString(), parameters);
     }
 
-    private boolean hasExtraLevels(MetaPropertyPath propertyPath) {
+    protected boolean hasExtraLevels(MetaPropertyPath propertyPath) {
         return propertyPath.getMetaProperties().length > 1;
     }
 
-    private void initDynamicQuery() {
+    protected void initDynamicQuery() {
         parameters = new HashMap<>();
         currentEntityIndex = 1;
         currentEntityAlias = "e1";
@@ -129,7 +129,7 @@ public class DependentEntitiesQueryBuilder {
                 .append(")");
     }
 
-    private void initQuery() {
+    protected void initQuery() {
         parameters = new HashMap<>();
         currentEntityIndex = 1;
         currentEntityAlias = "e1";
@@ -142,7 +142,7 @@ public class DependentEntitiesQueryBuilder {
                 .append(currentEntityAlias);
     }
 
-    private void processProperties() {
+    protected void processProperties() {
         targetPrimaryKeyName = metadataTools.getPrimaryKeyName(targetMetaClass);
         MetaProperty[] metaProperties = propertyPath.getMetaProperties();
         propertiesLevels = metaProperties.length;
@@ -150,11 +150,11 @@ public class DependentEntitiesQueryBuilder {
         Stream.of(metaProperties).forEach(this::processPropertyLevel);
     }
 
-    private void processDynamicProperty() {
+    protected void processDynamicProperty() {
         parameters.put("ref", targetEntityId.getValue());
     }
 
-    private void processPropertyLevel(MetaProperty property) {
+    protected void processPropertyLevel(MetaProperty property) {
         currentLevelProperty = property;
 
         appendCurrentLevelProperty();
@@ -169,31 +169,31 @@ public class DependentEntitiesQueryBuilder {
         currentLevelPropertyIndex++;
     }
 
-    private boolean isLastLevelProperty() {
+    protected boolean isLastLevelProperty() {
         return currentLevelPropertyIndex == propertiesLevels - 1;
     }
 
-    private boolean isJoinRequired(MetaProperty property) {
+    protected boolean isJoinRequired(MetaProperty property) {
         boolean oneToMany = property.getAnnotatedElement().isAnnotationPresent(OneToMany.class);
         boolean manyToMany = property.getAnnotatedElement().isAnnotationPresent(ManyToMany.class);
         return oneToMany || manyToMany;
     }
 
-    private void appendCurrentLevelProperty() {
+    protected void appendCurrentLevelProperty() {
         currentPropertyPathSb.append('.').append(currentLevelProperty.getName());
     }
 
-    private void joinWithNextEntity() {
+    protected void joinWithNextEntity() {
         currentEntityIndex++;
         currentEntityAlias = "e" + currentEntityIndex;
         querySb.append(" join ").append(currentPropertyPathSb).append(' ').append(currentEntityAlias);
     }
 
-    private void initPropertyPathStringBuilderForCurrentEntity() {
+    protected void initPropertyPathStringBuilderForCurrentEntity() {
         currentPropertyPathSb = new StringBuilder(currentEntityAlias);
     }
 
-    private void appendWhereBlock() {
+    protected void appendWhereBlock() {
         querySb.append(" where ").append(currentPropertyPathSb).append('.').append(targetPrimaryKeyName).append(" = :ref");
         parameters.put("ref", targetEntityId.getValue());
     }

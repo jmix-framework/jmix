@@ -43,6 +43,13 @@ public class DependentEntitiesResolver {
         this.dependentEntitiesLoader = dependentEntitiesLoader;
     }
 
+    /**
+     * Returns the ids of the entities that should be re-indexed as a result of the performed entity changes.
+     * @param updatedEntityId the id of the entity that was updated
+     * @param metaClass the {@link MetaClass} of the entity that was updated
+     * @param changes the performed changes of the entity
+     * @return the ids of the entities that should be re-indexed
+     */
     public Set<Id<?>> getEntityIdsDependentOnUpdatedEntity(Id<?> updatedEntityId,
                                                            MetaClass metaClass,
                                                            AttributeChanges changes) {
@@ -53,6 +60,12 @@ public class DependentEntitiesResolver {
         return dependentEntitiesLoader.loadDependentEntityIds(updatedEntityId, metaClass, dependenciesMetaData);
     }
 
+    /**
+     * Returns the ids of the entities that should be re-indexed as a result of the deletion of the entity with the given id.
+     * @param removedEntityId  the id of the entity that was deleted
+     * @param metaClass the {@link MetaClass} of the entity that was deleted
+     * @return the ids of the entities that should be re-indexed
+     */
     public Set<Id<?>> getEntityIdsDependentOnRemovedEntity(Id<?> removedEntityId, MetaClass metaClass) {
         Class<?> entityClass = removedEntityId.getEntityClass();
         Map<MetaClass, Set<MetaPropertyPath>> dependenciesMetaData;

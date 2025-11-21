@@ -65,7 +65,7 @@ public class DynamicAttributesGroupConfigurationValidator {
     }
 
     protected void checkIsNotEmpty(String name, ArgumentType argumentType) {
-        if("".equals(name)){
+        if(name.isEmpty()){
             throw new IndexConfigurationException(String.format("%s name can't be empty", argumentType.nameWithCapitalLetter));
         }
     }

@@ -19,7 +19,7 @@ package io.jmix.search.index.mapping.processor.impl.dynattr;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.exception.IndexConfigurationException;
 import io.jmix.search.index.annotation.DynamicAttributes;
-import io.jmix.search.index.impl.dynattr.DynamicAttributesModulePresenceChecker;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.DynamicAttributesGroupConfiguration;
 import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.ParameterKeys;
@@ -42,10 +42,10 @@ import java.util.Map;
 @Component("search_DynamicAttributesAnnotationProcessor")
 public class DynamicAttributesAnnotationProcessor extends AbstractFieldAnnotationProcessor<DynamicAttributes> {
 
-    protected final DynamicAttributesModulePresenceChecker modulePresenceChecker;
+    protected final DynamicAttributesSupport dynamicAttributesSupport;
 
-    public DynamicAttributesAnnotationProcessor(DynamicAttributesModulePresenceChecker modulePresenceChecker) {
-        this.modulePresenceChecker = modulePresenceChecker;
+    public DynamicAttributesAnnotationProcessor(DynamicAttributesSupport dynamicAttributesSupport) {
+        this.dynamicAttributesSupport = dynamicAttributesSupport;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DynamicAttributesAnnotationProcessor extends AbstractFieldAnnotatio
     protected void processSpecificAnnotation(MappingDefinitionBuilder builder,
                                              MetaClass rootEntityMetaClass,
                                              DynamicAttributes annotation) {
-        if (!modulePresenceChecker.isModulePresent()) {
+        if (!dynamicAttributesSupport.isModulePresent()) {
             throw new IndexConfigurationException("Dynamic attributes module is not present in the application. " +
                     "Make sure the module is properly included in your dependencies.");
         }
@@ -90,7 +90,7 @@ public class DynamicAttributesAnnotationProcessor extends AbstractFieldAnnotatio
 
     @Override
     protected Map<String, Object> createParameters(DynamicAttributes specificAnnotation) {
-        HashMap<String, Object> parameters = new HashMap<>();
+        Map<String, Object> parameters = new HashMap<>();
         if (StringUtils.isNotBlank(specificAnnotation.analyzer())) {
             parameters.put(ParameterKeys.ANALYZER, specificAnnotation.analyzer());
         }

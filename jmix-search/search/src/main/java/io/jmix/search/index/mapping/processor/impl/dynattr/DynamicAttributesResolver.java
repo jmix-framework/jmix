@@ -41,14 +41,14 @@ public class DynamicAttributesResolver {
     private final DynAttrMetadata dynAttrMetadata;
     private final PropertyTools propertyTools;
     private static final List<AttributeType> SUPPORTED_DATA_TYPES = List.of(STRING, ENTITY, ENUMERATION);
-    private final PatternsMatcher patternsMatcher;
+    private final WildcardPatternsMatcher wildcardPatternsMatcher;
 
     public DynamicAttributesResolver(DynAttrMetadata dynAttrMetadata,
                                      PropertyTools propertyTools,
-                                     PatternsMatcher patternsMatcher) {
+                                     WildcardPatternsMatcher wildcardPatternsMatcher) {
         this.dynAttrMetadata = dynAttrMetadata;
         this.propertyTools = propertyTools;
-        this.patternsMatcher = patternsMatcher;
+        this.wildcardPatternsMatcher = wildcardPatternsMatcher;
     }
 
     public Map<String, MetaPropertyPath> resolveEffectivePropertyPaths(
@@ -102,7 +102,7 @@ public class DynamicAttributesResolver {
                 .collect(toMap(CategoryDefinition::getName, identity()));
 
         Collection<CategoryDefinition> categoriesToRemove =
-                patternsMatcher.getMatchingElements(categories, List.of(excludedCategories));
+                wildcardPatternsMatcher.getMatchingElements(categories, List.of(excludedCategories));
 
         List<String> excludedAttributeCodes = categoriesToRemove
                 .stream()
@@ -117,7 +117,7 @@ public class DynamicAttributesResolver {
     protected void removeExcludedAttributes(String[] excludedAttributes,
                                             Map<String, AttributeDefinition> attributeDefinitionMap) {
         Collection<AttributeDefinition> attributesToRemove =
-                patternsMatcher.getMatchingElements(attributeDefinitionMap, List.of(excludedAttributes));
+                wildcardPatternsMatcher.getMatchingElements(attributeDefinitionMap, List.of(excludedAttributes));
 
         attributesToRemove.forEach(
                 attributeDefinition -> attributeDefinitionMap.remove(attributeDefinition.getCode())

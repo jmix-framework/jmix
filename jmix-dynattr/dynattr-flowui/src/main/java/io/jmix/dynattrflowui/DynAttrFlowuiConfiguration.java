@@ -25,15 +25,20 @@ import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattrflowui.facet.DynAttrFacet;
+import io.jmix.dynattrflowui.facet.DynAttrFacetImpl;
 import io.jmix.dynattrflowui.panel.DynamicAttributesPanel;
 import io.jmix.dynattrflowui.panel.DynamicAttributesPanelLoader;
 import io.jmix.dynattrflowui.propertyfilter.DynAttrPropertyFilterSupport;
+import io.jmix.dynattrflowui.xml.facet.loader.DynAttrFacetLoader;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.app.propertyfilter.dateinterval.DateIntervalSupport;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.flowui.sys.registration.ComponentRegistration;
 import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
+import io.jmix.flowui.sys.registration.FacetRegistration;
+import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
@@ -73,6 +78,14 @@ public class DynAttrFlowuiConfiguration {
     public ComponentRegistration dynamicAttributesPanel() {
         return ComponentRegistrationBuilder.create(DynamicAttributesPanel.class)
                 .withComponentLoader(DynamicAttributesPanel.NAME, DynamicAttributesPanelLoader.class)
+                .build();
+    }
+
+    @Bean
+    public FacetRegistration dynAttrFacet() {
+        return FacetRegistrationBuilder.create(DynAttrFacetImpl.class)
+                .replaceFacet(DynAttrFacet.class)
+                .withFacetLoader(DynAttrFacet.FACET_NAME, DynAttrFacetLoader.class)
                 .build();
     }
 }

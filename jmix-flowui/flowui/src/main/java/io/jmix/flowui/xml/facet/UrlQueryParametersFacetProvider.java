@@ -20,6 +20,7 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.impl.UrlQueryParametersFacetImpl;
 import io.jmix.flowui.facet.urlqueryparameters.UrlQueryParametersBinderProvider;
+import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
@@ -30,6 +31,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @deprecated use {@link FacetRegistrationBuilder} instead
+ */
+@Deprecated(forRemoval = true, since = "3.0")
 @org.springframework.stereotype.Component("flowui_UrlQueryParametersFacetProvider")
 public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryParametersFacet> {
 

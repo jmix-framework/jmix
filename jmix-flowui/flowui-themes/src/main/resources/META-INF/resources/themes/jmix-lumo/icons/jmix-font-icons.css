@@ -780,6 +780,10 @@ vaadin-icon[slot][icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon
     box-sizing: border-box !important;
 }
 
+jmix-notifications-indicator > vaadin-icon[icon-class~="jmix-font-icon"][slot="icon"]:not([icon-class~="jmix-font-icon-lumo"]) {
+    padding: 0;
+}
+
 /* Jmix specific icons */
 .jmix-font-icon-ok:before {
     content: var(--jmix-font-icon-ok);

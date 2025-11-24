@@ -178,7 +178,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
     protected void initFunnelButton() {
         filterButton = uiComponents.create(JmixButton.class);
         filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE, ButtonVariant.LUMO_ICON);
-        filterButton.setIcon(icons.get(JmixFontIcon.DATA_GIRD_HEADER_FILTER));
+        filterButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER));
         filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
         filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_ROLE);
         filterButton.addClickListener(this::onFilterButtonClick);
@@ -241,7 +241,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     protected JmixButton createApplyButton() {
         JmixButton applyButton = uiComponents.create(JmixButton.class);
-        applyButton.setIcon(icons.get(JmixFontIcon.DATA_GIRD_HEADER_FILTER_APPLY));
+        applyButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER_APPLY));
         applyButton.setText(messages.getMessage("columnFilter.apply.text"));
 
         applyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -260,7 +260,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     protected JmixButton createCancelButton() {
         JmixButton cancelButton = uiComponents.create(JmixButton.class);
-        cancelButton.setIcon(icons.get(JmixFontIcon.DATA_GIRD_HEADER_FILTER_CANCEL));
+        cancelButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER_CANCEL));
         cancelButton.setText(messages.getMessage("columnFilter.cancel.text"));
 
         cancelButton.addClickListener(this::onCancelButtonClick);
@@ -303,7 +303,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         JmixButton clearButton = uiComponents.create(JmixButton.class);
 
         clearButton.addThemeVariants(ButtonVariant.LUMO_ICON);
-        clearButton.setIcon(icons.get(JmixFontIcon.DATA_GIRD_HEADER_FILTER_CLEAR));
+        clearButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER_CLEAR));
         clearButton.addClickListener(this::onClearButtonClick);
 
         return clearButton;

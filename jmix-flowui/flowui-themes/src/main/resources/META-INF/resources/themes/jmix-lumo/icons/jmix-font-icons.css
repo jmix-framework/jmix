@@ -102,7 +102,7 @@ html {
     --jmix-font-icon-building: "building";
     --jmix-font-icon-bullets: "bullets";
     --jmix-font-icon-bullseye: "bullseye";
-    --jmix-font-icon-bus: "bus";
+    --jmix-font-icon-bus: '\e90c';
     --jmix-font-icon-button: "button";
     --jmix-font-icon-calc-book: "calc-book";
     --jmix-font-icon-calc: "calc";
@@ -322,7 +322,7 @@ html {
     --jmix-font-icon-form: "form";
     --jmix-font-icon-forward: "forward";
     --jmix-font-icon-frown-o: "frown-o";
-    --jmix-font-icon-function: "function";
+    --jmix-font-icon-function: '\e64c';
     --jmix-font-icon-funnel: "funnel";
     --jmix-font-icon-gamepad: "gamepad";
     --jmix-font-icon-gavel: "gavel";
@@ -460,7 +460,7 @@ html {
     --jmix-font-icon-padding: "padding";
     --jmix-font-icon-paint-roll: "paint-roll";
     --jmix-font-icon-paintbrush: "paintbrush";
-    --jmix-font-icon-palette: "palette";
+    --jmix-font-icon-palette: '\e667';
     --jmix-font-icon-panel: "panel";
     --jmix-font-icon-paperclip: "paperclip";
     --jmix-font-icon-paperplane-o: "paperplane-o";
@@ -619,7 +619,7 @@ html {
     --jmix-font-icon-train: "train";
     --jmix-font-icon-trash: "trash";
     --jmix-font-icon-tree-table: "tree-table";
-    --jmix-font-icon-trending-down: "trending-down";
+    --jmix-font-icon-trending-down: '\e960';
     --jmix-font-icon-trending-up: "trending-up";
     --jmix-font-icon-trophy: "trophy";
     --jmix-font-icon-truck: "truck";
@@ -749,10 +749,10 @@ html {
     --jmix-font-icon-generic-filter-settings: var(--jmix-font-icon-cog);
     --jmix-font-icon-generic-filter-condition-remove: var(--jmix-font-icon-trash);
 
-    --jmix-font-icon-data-gird-header-filter: var(--jmix-font-icon-filter);
-    --jmix-font-icon-data-gird-header-filter-apply: var(--jmix-font-icon-check);
-    --jmix-font-icon-data-gird-header-filter-cancel: var(--jmix-font-icon-ban);
-    --jmix-font-icon-data-gird-header-filter-clear: var(--jmix-font-icon-eraser);
+    --jmix-font-icon-data-grid-header-filter: var(--jmix-font-icon-filter);
+    --jmix-font-icon-data-grid-header-filter-apply: var(--jmix-font-icon-check);
+    --jmix-font-icon-data-grid-header-filter-cancel: var(--jmix-font-icon-ban);
+    --jmix-font-icon-data-grid-header-filter-clear: var(--jmix-font-icon-eraser);
 
     --jmix-font-icon-search-field-search: var(--jmix-font-icon-search);
     --jmix-font-icon-search-field-settings: var(--jmix-font-icon-ellipsis-dots-v);
@@ -1045,27 +1045,27 @@ jmix-notifications-indicator > vaadin-icon[icon-class~="jmix-font-icon"][slot="i
     content: var(--jmix-font-icon-generic-filter-condition-remove);
 }
 
-.jmix-font-icon-data-gird-header-filter:before {
-    content: var(--jmix-font-icon-data-gird-header-filter);
+.jmix-font-icon-data-grid-header-filter:before {
+    content: var(--jmix-font-icon-data-grid-header-filter);
 }
 
-.jmix-font-icon-data-gird-header-filter-apply:before {
-    content: var(--jmix-font-icon-data-gird-header-filter-apply);
+.jmix-font-icon-data-grid-header-filter-apply:before {
+    content: var(--jmix-font-icon-data-grid-header-filter-apply);
 }
 
-.jmix-font-icon-data-gird-header-filter-cancel:before {
-    content: var(--jmix-font-icon-data-gird-header-filter-cancel);
+.jmix-font-icon-data-grid-header-filter-cancel:before {
+    content: var(--jmix-font-icon-data-grid-header-filter-cancel);
 }
 
-.jmix-font-icon-data-gird-header-filter-clear:before {
-    content: var(--jmix-font-icon-data-gird-header-filter-clear);
+.jmix-font-icon-data-grid-header-filter-clear:before {
+    content: var(--jmix-font-icon-data-grid-header-filter-clear);
 }
 
 .jmix-font-icon-search-field-search:before {
     content: var(--jmix-font-icon-search-field-search);
 }
 
-.jmix-font-icon-search-field-search:before {
+.jmix-font-icon-search-field-settings:before {
     content: var(--jmix-font-icon-search-field-settings);
 }
 

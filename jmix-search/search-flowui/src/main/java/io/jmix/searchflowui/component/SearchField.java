@@ -195,7 +195,7 @@ public class SearchField extends CustomField<String>
                 ButtonVariant.LUMO_ICON,
                 ButtonVariant.LUMO_SMALL
         );
-        settingsButton.setIcon(icons.get(JmixFontIcon.SEARCH_FIELD_SEARCH));
+        settingsButton.setIcon(icons.get(JmixFontIcon.SEARCH_FIELD_SETTINGS));
 
         settingsButton.addClickListener(clickEvent -> {
             View<?> origin = UiComponentUtils.getView(this);

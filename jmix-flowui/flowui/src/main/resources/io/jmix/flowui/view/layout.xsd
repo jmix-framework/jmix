@@ -181,10 +181,10 @@
                     <xs:enumeration value="GENERIC_FILTER_SETTINGS"/>
                     <xs:enumeration value="GENERIC_FILTER_CONDITION_REMOVE"/>
 
-                    <xs:enumeration value="DATA_GIRD_HEADER_FILTER"/>
-                    <xs:enumeration value="DATA_GIRD_HEADER_FILTER_APPLY"/>
-                    <xs:enumeration value="DATA_GIRD_HEADER_FILTER_CANCEL"/>
-                    <xs:enumeration value="DATA_GIRD_HEADER_FILTER_CLEAR"/>
+                    <xs:enumeration value="DATA_GRID_HEADER_FILTER"/>
+                    <xs:enumeration value="DATA_GRID_HEADER_FILTER_APPLY"/>
+                    <xs:enumeration value="DATA_GRID_HEADER_FILTER_CANCEL"/>
+                    <xs:enumeration value="DATA_GRID_HEADER_FILTER_CLEAR"/>
 
                     <xs:enumeration value="SEARCH_FIELD_SEARCH"/>
                     <xs:enumeration value="SEARCH_FIELD_SETTINGS"/>

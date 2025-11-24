@@ -318,6 +318,9 @@ public class RestDataStoreTest extends BaseRestDsIntegrationTest {
 
         assertThat(updatedRegion).isEqualTo(region);
 
+        long count = dataManager.getCount(new LoadContext(metadata.getClass(CustomerRegionDto.class)));
+        assertThat(count).isGreaterThan(0);
+
         // delete
 
         dataManager.remove(region);

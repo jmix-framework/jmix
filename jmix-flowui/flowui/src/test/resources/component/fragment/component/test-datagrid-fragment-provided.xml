@@ -20,7 +20,7 @@
                     class="test_support.entity.sales.Product"/>
     </data>
     <actions>
-        <action id="testAction" text="msg://testAction.text" icon="PLUS"/>
+        <action id="testAction" text="msg://testAction.text" icon="vaadin:plus"/>
     </actions>
     <content>
         <vbox id="contentBox" classNames="overflow-auto">

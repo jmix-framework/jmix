@@ -16,10 +16,11 @@
 
 package io.jmix.gridexportflowui.action;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.action.ActionType;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.gridexportflowui.exporter.json.JsonExporter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -40,9 +41,13 @@ public class JsonExportAction extends ExportAction {
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        icon = ComponentUtils.convertToIcon(VaadinIcon.FILE_CODE);
+    @Autowired
+    public void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.JSON_EXPORT_ACTION);
+        }
     }
 
     @Override

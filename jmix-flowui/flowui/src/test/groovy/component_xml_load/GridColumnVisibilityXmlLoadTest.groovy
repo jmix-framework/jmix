@@ -26,6 +26,7 @@ import io.jmix.flowui.UiComponents
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
+import test_support.ComponentTestUtils
 import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
 
@@ -83,8 +84,7 @@ class GridColumnVisibilityXmlLoadTest extends FlowuiTestSpecification {
             grid == columnVisibilityView.dataGrid
             themeNames.containsAll(["tertiary", "primary"])
             text == "Show/hide columns"
-            icon.element.getAttribute("icon") ==
-                    VaadinIcon.COG.create().element.getAttribute("icon")
+            ComponentTestUtils.isSameIcon(iconComponent, VaadinIcon.COG)
             !hideAllEnabled
             showAllEnabled
             whiteSpace == HasText.WhiteSpace.NOWRAP

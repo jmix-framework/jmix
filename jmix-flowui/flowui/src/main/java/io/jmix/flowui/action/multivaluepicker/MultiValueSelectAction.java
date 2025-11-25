@@ -20,7 +20,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.Range;
@@ -36,8 +35,9 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.data.EntityValueSource;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
@@ -89,13 +89,6 @@ public class MultiValueSelectAction<E>
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
-    }
-
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
         this.uiComponentProperties = uiComponentProperties;
@@ -104,6 +97,15 @@ public class MultiValueSelectAction<E>
     @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.MULTI_VALUE_SELECT_ACTION);
+        }
     }
 
     @Autowired

@@ -18,15 +18,13 @@ package io.jmix.reportsflowui.action;
 
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import io.jmix.core.DataManager;
-import io.jmix.core.Id;
 import io.jmix.core.Messages;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.ReportRepository;
@@ -77,6 +75,15 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
     }
 
     @Autowired
+    public void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.RUN_REPORT_ACTION);
+        }
+    }
+
+    @Autowired
     public void setDialogWindows(DialogWindows dialogWindows) {
         this.dialogWindows = dialogWindows;
     }
@@ -94,11 +101,6 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
     @Autowired
     public void setReportsClientProperties(ReportsClientProperties reportsClientProperties) {
         this.reportsClientProperties = reportsClientProperties;
-    }
-
-    @Override
-    protected void initAction() {
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PRINT);
     }
 
     @Override

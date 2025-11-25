@@ -33,7 +33,7 @@
                               visible="false"
                               themeNames="tertiary, primary"
                               text="Show/hide columns"
-                              icon="COG"
+                              icon="vaadin:cog"
                               exclude="date, time"
                               minHeight="1em"
                               minWidth="2em"

@@ -16,17 +16,17 @@
 
 package io.jmix.flowui.action.view;
 
-import io.jmix.flowui.UiViewProperties;
-import io.jmix.flowui.action.ActionType;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.UiViewProperties;
+import io.jmix.flowui.action.ActionType;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.jmix.flowui.view.View;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.StandardOutcome;
-import org.springframework.lang.Nullable;
+import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 @ActionType(ViewCloseAction.ID)
 public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, View> {
@@ -43,16 +43,18 @@ public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, 
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.BAN);
-    }
-
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.Cancel");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.VIEW_CLOSE_ACTION);
+        }
     }
 
     @Autowired

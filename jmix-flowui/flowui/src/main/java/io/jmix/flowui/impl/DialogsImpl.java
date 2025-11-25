@@ -26,8 +26,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.shared.Registration;
@@ -45,8 +43,10 @@ import io.jmix.flowui.backgroundtask.LocalizedTaskWrapper;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.event.dialog.DialogClosedEvent;
 import io.jmix.flowui.event.dialog.DialogOpenedEvent;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
@@ -73,9 +73,12 @@ public class DialogsImpl implements Dialogs {
     protected BackgroundWorker backgroundWorker;
     protected ApplicationContext applicationContext;
 
-    public DialogsImpl(ApplicationContext applicationContext, Messages messages,
+    public DialogsImpl(ApplicationContext applicationContext,
+                       Messages messages,
                        UiViewProperties flowUiViewProperties,
-                       DialogWindows dialogWindows, UiComponents uiComponents, BackgroundWorker backgroundWorker) {
+                       DialogWindows dialogWindows,
+                       UiComponents uiComponents,
+                       BackgroundWorker backgroundWorker) {
         this.messages = messages;
         this.flowUiViewProperties = flowUiViewProperties;
         this.dialogWindows = dialogWindows;
@@ -114,7 +117,7 @@ public class DialogsImpl implements Dialogs {
             button.setId(type.getId());
             button.addClassName(type.getId() + BUTTON_CLASS_NAMES_POSTFIX);
             button.setText(messages.getMessage(type.getMsgKey()));
-            button.setIcon(type.getVaadinIcon().create());
+            button.setIcon(type.getIcon());
         }
 
         button.setEnabled(action.isEnabled());
@@ -1034,8 +1037,9 @@ public class DialogsImpl implements Dialogs {
 
             cancelButton = uiComponents.create(Button.class);
             cancelButton.setText(messages.getMessage("actions.Cancel"));
-            cancelButton.setIcon(new Icon(VaadinIcon.BAN));
             cancelButton.addClickListener(this::onCancelButtonClick);
+            Icons icons = applicationContext.getBean(Icons.class);
+            cancelButton.setIcon(icons.get(JmixFontIcon.DIALOG_CANCEL));
         }
 
         @Override

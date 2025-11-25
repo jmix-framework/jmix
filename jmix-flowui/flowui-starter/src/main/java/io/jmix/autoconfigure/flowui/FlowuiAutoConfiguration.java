@@ -22,6 +22,8 @@ import io.jmix.flowui.*;
 import io.jmix.flowui.component.groupgrid.adapter.DefaultGroupDataGridAdapterFactory;
 import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
 import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterProvider;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.icon.impl.IconsImpl;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
@@ -191,5 +193,11 @@ public class FlowuiAutoConfiguration {
     public GroupDataGridAdapterFactory groupDataGridAdapterFactory(@Autowired(required = false)
                                                                    List<GroupDataGridAdapterProvider> providers) {
         return new DefaultGroupDataGridAdapterFactory(providers);
+    }
+
+    @Bean("flowui_Icons")
+    @ConditionalOnMissingBean
+    public Icons icons() {
+        return new IconsImpl();
     }
 }

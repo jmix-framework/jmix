@@ -160,10 +160,18 @@ public final class ComponentUtils {
      */
     public static FontIcon copyFontIcon(FontIcon fontIcon) {
         FontIcon copy = new FontIcon(fontIcon.getIconClassNames());
-        copy.setFontFamily(fontIcon.getFontFamily());
-        copy.setCharCode(fontIcon.getCharCode());
-        copy.setLigature(fontIcon.getLigature());
-        copy.setIconClassNames(fontIcon.getIconClassNames());
+
+        if (!Strings.isNullOrEmpty(fontIcon.getFontFamily())) {
+            copy.setFontFamily(fontIcon.getFontFamily());
+        }
+
+        if (!Strings.isNullOrEmpty(fontIcon.getCharCode())) {
+            copy.setCharCode(fontIcon.getCharCode());
+        }
+
+        if (!Strings.isNullOrEmpty(fontIcon.getLigature())) {
+            copy.setLigature(fontIcon.getLigature());
+        }
 
         copyAbstractIconAttributes(fontIcon, copy);
         return copy;

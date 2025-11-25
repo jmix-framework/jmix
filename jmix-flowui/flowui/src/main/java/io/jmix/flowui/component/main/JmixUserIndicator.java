@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.Messages;
@@ -37,8 +36,10 @@ import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.security.SubstituteUserAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.main.UserIndicator;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +68,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
     protected Messages messages;
     protected Actions actions;
     protected UserRepository userRepository;
+    protected Icons icons;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -172,7 +174,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
                                 .withUsers(prevUser, newUser)
                                 .withCancelHandler(this::updateUserIndicatorLabel)
                                 .withText(messages.getMessage("actions.Ok"))
-                                .withIcon(VaadinIcon.CHECK)
+                                .withIcon(icons.get(JmixFontIcon.DIALOG_OK))
                                 .withVariant(ActionVariant.PRIMARY),
                         new DialogAction(DialogAction.Type.CANCEL)
                                 .withHandler(cancelEvent -> updateUserIndicatorLabel(prevUser))

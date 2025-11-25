@@ -266,7 +266,7 @@ public interface Dialogs {
          *         .withActions(
          *                 action("okAction")
          *                         .withText("OK")
-         *                         .withIcon(VaadinIcon.CHECK.create())
+         *                         .withIcon(JmixFontIcon.OK.create())
          *                         .withHandler(event -> {
          *                             InputDialogAction inputDialogAction = ((InputDialogAction) event.getSource());
          *                             InputDialog inputDialog = inputDialogAction.getInputDialog();
@@ -276,7 +276,7 @@ public interface Dialogs {
          *                         }),
          *                 action("cancelAction")
          *                         .withText("Cancel")
-         *                         .withIcon(VaadinIcon.BAN.create())
+         *                         .withIcon(JmixFontIcon.CANCEL.create())
          *                         .withValidationRequired(false)
          *                         .withHandler(event -> {
          *                             // do logic

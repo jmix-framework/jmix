@@ -17,7 +17,6 @@
 package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -26,14 +25,15 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.UiEntityContext;
-import io.jmix.flowui.action.impl.ActionHandlerValidator;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
+import io.jmix.flowui.action.impl.ActionHandlerValidator;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
@@ -76,7 +76,6 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
         super.initAction();
 
         setConstraintEntityOp(EntityOp.UPDATE);
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PENCIL);
     }
 
     @Nullable
@@ -219,6 +218,15 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     protected void setMessages(Messages messages) {
         this.messages = messages;
         this.text = messages.getMessage("actions.Edit");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.EDIT_ACTION);
+        }
     }
 
     @Autowired

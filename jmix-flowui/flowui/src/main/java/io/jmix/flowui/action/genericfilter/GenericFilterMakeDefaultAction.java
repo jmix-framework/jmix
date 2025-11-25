@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.action.genericfilter;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.action.ActionType;
@@ -25,7 +24,8 @@ import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.settings.ViewSettings;
 import io.jmix.flowui.facet.settings.component.GenericFilterSettings;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,16 +45,18 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.STAR);
-    }
-
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.GenericFilter.MakeDefault");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.GENERIC_FILTER_MAKE_DEFAULT_ACTION);
+        }
     }
 
     @Override

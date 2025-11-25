@@ -22,8 +22,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -37,7 +35,9 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.accesscontext.UiShowExceptionDetailsContext;
 import io.jmix.flowui.fragment.FragmentDescriptor;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.FragmentContext;
@@ -60,6 +60,7 @@ public class ExceptionDialog implements InitializingBean {
     protected static final String BASE_CLASS_NAME = "jmix-exception-dialog-window";
     protected static final String DIALOG_CONTENT_CLASS_NAME = BASE_CLASS_NAME + "-content";
     protected static final String HEADER_CLOSE_BUTTON_CLASS_NAME = BASE_CLASS_NAME + "-close-button";
+    protected static final String COPY_BUTTON_CLASS_NAME = BASE_CLASS_NAME + "-copy-button";
     protected static final String STACKTRACE_TEXTAREA_CLASS_NAME = BASE_CLASS_NAME + "-stacktrace-textarea";
     protected static final String MESSAGE_TEXTAREA_CLASS_NAME = BASE_CLASS_NAME + "-message-textarea";
 
@@ -72,6 +73,7 @@ public class ExceptionDialog implements InitializingBean {
     protected UiComponents uiComponents;
     protected Notifications notifications;
     protected AccessManager accessManager;
+    protected Icons icons;
 
     protected Dialog dialog;
     protected Throwable throwable;
@@ -115,6 +117,11 @@ public class ExceptionDialog implements InitializingBean {
     @Autowired
     public void setUiProperties(UiProperties uiProperties) {
         exceptionDialogModal = uiProperties.isExceptionDialogModal();
+    }
+
+    @Autowired
+    public void setIcons(Icons icons) {
+        this.icons = icons;
     }
 
     @Override
@@ -165,7 +172,7 @@ public class ExceptionDialog implements InitializingBean {
 
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents.create(JmixButton.class);
-        closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
+        closeButton.setIcon(icons.get(JmixFontIcon.CLOSE_SMALL));
         closeButton.addThemeVariants(
                 ButtonVariant.LUMO_TERTIARY_INLINE,
                 ButtonVariant.LUMO_ICON,
@@ -281,7 +288,8 @@ public class ExceptionDialog implements InitializingBean {
     protected JmixButton createCopyButton() {
         JmixButton copyBtn = uiComponents.create(JmixButton.class);
 
-        copyBtn.setIcon(new Icon(VaadinIcon.COPY_O));
+        copyBtn.setIcon(icons.get(JmixFontIcon.COPY_O));
+        copyBtn.setClassName(COPY_BUTTON_CLASS_NAME);
         copyBtn.setVisible(false);
         copyBtn.setTitle(messages.getMessage("exceptionDialog.copyButton.description"));
         copyBtn.addClickListener(this::onCopyButtonClick);

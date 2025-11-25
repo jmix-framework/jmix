@@ -69,9 +69,9 @@
                           columnReorderingAllowed="true">
                     <actions>
                         <action id="downloadAttachment" text="msg://sendingMessageView.downloadAttachments.text"
-                                type="list_itemTracking" icon="lumo:download"/>
+                                type="list_itemTracking" icon="DOWNLOAD"/>
                         <action id="resendEmail" text="msg://sendingMessageView.resendEmail.text"
-                                type="list_itemTracking" icon="lumo:reload"/>
+                                type="list_itemTracking" icon="REFRESH"/>
                     </actions>
                     <columns resizable="true">
                         <column property="address" autoWidth="true"/>

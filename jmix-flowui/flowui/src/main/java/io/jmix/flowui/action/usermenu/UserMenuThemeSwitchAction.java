@@ -16,16 +16,17 @@
 
 package io.jmix.flowui.action.usermenu;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.page.WebStorage;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.usermenu.UserMenu;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasSubMenu;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.kit.theme.ThemeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -50,6 +51,7 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
     protected static final String MESSAGE_KEY = "actions.userMenu.ThemeSwitch";
 
     protected Messages messages;
+    protected Icons icons;
 
     protected final Map<String, UserMenuItem> menuItems = new HashMap<>(3);
     protected HasSubMenu.SubMenu subMenu;
@@ -59,15 +61,14 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
     }
 
     public UserMenuThemeSwitchAction(String id) {
-        super(id);}
+        super(id);
+    }
 
     @Override
     protected void initAction() {
         checkJsImport();
 
         super.initAction();
-
-        icon = createIcon(SYSTEM_THEME);
     }
 
     protected void checkJsImport() {
@@ -85,6 +86,16 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
         this.messages = messages;
 
         this.text = messages.getMessage(MESSAGE_KEY);
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        this.icons = icons;
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = createIcon(SYSTEM_THEME);
+        }
     }
 
     @Override
@@ -131,11 +142,11 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
         return menuItem;
     }
 
-    protected Icon createIcon(String theme) {
+    protected Component createIcon(String theme) {
         return switch (theme) {
-            case SYSTEM_THEME -> VaadinIcon.ADJUST.create();
-            case LIGHT_THEME -> VaadinIcon.SUN_O.create();
-            case DARK_THEME -> VaadinIcon.MOON_O.create();
+            case SYSTEM_THEME -> icons.get(JmixFontIcon.USER_MENU_THEME_SWITCH_ACTION_SYSTEM_THEME);
+            case LIGHT_THEME -> icons.get(JmixFontIcon.USER_MENU_THEME_SWITCH_ACTION_LIGHT_THEME);
+            case DARK_THEME -> icons.get(JmixFontIcon.USER_MENU_THEME_SWITCH_ACTION_DARK_THEME);
             default -> throw new IllegalStateException("Unknown theme: " + theme);
         };
     }
@@ -160,7 +171,7 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
         menuItems.forEach((key, menuItem) ->
                 menuItem.setChecked(key.equals(value)));
 
-        setIcon(createIcon(value));
+        setIconComponent(createIcon(value));
     }
 
     @Override

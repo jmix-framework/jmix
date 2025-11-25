@@ -23,27 +23,28 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
-
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 public class DialogAction extends SecuredBaseAction {
 
     public enum Type {
-        OK("ok", "actions.Ok", VaadinIcon.CHECK),
-        CANCEL("cancel", "actions.Cancel", VaadinIcon.BAN),
-        YES("yes", "actions.Yes", VaadinIcon.CHECK),
-        NO("no", "actions.No", VaadinIcon.BAN),
-        CLOSE("close", "actions.Close", VaadinIcon.CLOSE);
+        OK("ok", "actions.Ok", JmixFontIcon.DIALOG_OK.create()),
+        CANCEL("cancel", "actions.Cancel", JmixFontIcon.DIALOG_CANCEL.create()),
+        YES("yes", "actions.Yes", JmixFontIcon.DIALOG_YES.create()),
+        NO("no", "actions.No", JmixFontIcon.DIALOG_NO.create()),
+        CLOSE("close", "actions.Close", JmixFontIcon.DIALOG_CLOSE.create());
 
         private final String id;
         private final String msgKey;
-        private final VaadinIcon vaadinIcon;
+        private final Component icon;
 
-        Type(String id, String msgKey, VaadinIcon vaadinIcon) {
+        Type(String id, String msgKey, Component icon) {
             this.id = id;
             this.msgKey = msgKey;
-            this.vaadinIcon = vaadinIcon;
+            this.icon = icon;
         }
 
         public String getId() {
@@ -54,8 +55,24 @@ public class DialogAction extends SecuredBaseAction {
             return msgKey;
         }
 
+        /**
+         * @return an icon
+         * @deprecated use {@link #getIcon()} instead
+         */
+        @Deprecated(since = "3.0", forRemoval = true)
         public VaadinIcon getVaadinIcon() {
-            return vaadinIcon;
+            // For backward compatibility
+            return switch (this) {
+                case OK -> VaadinIcon.CHECK;
+                case CANCEL -> VaadinIcon.BAN;
+                case YES -> VaadinIcon.CHECK;
+                case NO -> VaadinIcon.BAN;
+                case CLOSE -> VaadinIcon.CLOSE;
+            };
+        }
+
+        public Component getIcon() {
+            return icon;
         }
     }
 

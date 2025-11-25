@@ -24,7 +24,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </bigDecimalField>
 
@@ -33,7 +33,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </button>
 
@@ -42,7 +42,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </emailField>
 
@@ -52,7 +52,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </entityPicker>
 
@@ -61,7 +61,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </integerField>
 
@@ -70,7 +70,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </multiValuePicker>
 
@@ -79,7 +79,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </numberField>
 
@@ -88,7 +88,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </passwordField>
 
@@ -97,7 +97,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </textArea>
 
@@ -106,7 +106,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </textField>
 
@@ -115,7 +115,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </valuePicker>
 
@@ -124,7 +124,7 @@
                 <icon id="prefixIcon" icon="QUESTION_CIRCLE"/>
             </prefix>
             <suffix>
-                <button id="suffixButton" icon="PENCIL" text="Suffix Button"/>
+                <button id="suffixButton" icon="vaadin:pencil" text="Suffix Button"/>
             </suffix>
         </tabSheet>
 

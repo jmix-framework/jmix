@@ -21,6 +21,7 @@ import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 
 public final class ComponentTestUtils {
 
@@ -37,6 +38,14 @@ public final class ComponentTestUtils {
 
         return componentIcon.getElement().getAttribute("icon")
                 .equals(targetIcon.getIcon());
+    }
+
+    public static boolean isSameIcon(Component componentIcon, JmixFontIcon targetIcon) {
+        Preconditions.checkNotNullArgument(componentIcon);
+        Preconditions.checkNotNullArgument(targetIcon);
+
+        return componentIcon.getElement().getProperty("iconClass")
+                .equals(targetIcon.create().getElement().getProperty("iconClass"));
     }
 
     public static boolean isSameFontIcon(FontIcon fontIcon, String fontFamily, String charCode) {

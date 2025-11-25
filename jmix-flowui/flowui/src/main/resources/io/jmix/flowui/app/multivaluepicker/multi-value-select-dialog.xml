@@ -8,7 +8,7 @@
                 actionVariant="PRIMARY"/>
         <action id="cancel"
                 text="msg:///actions.Cancel"
-                icon="BAN"/>
+                icon="CANCEL"/>
     </actions>
     <layout expand="scroller">
         <hbox id="addItemLayout" width="100%"/>

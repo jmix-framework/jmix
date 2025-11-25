@@ -17,12 +17,11 @@
 package io.jmix.dynattrflowui.view.category;
 
 import com.google.common.io.Files;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
@@ -48,9 +47,11 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataContext;
@@ -126,7 +127,8 @@ public class CategoryListView extends StandardListView<Category> {
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
-
+    @Autowired
+    protected Icons icons;
 
     @ViewComponent
     protected DataGrid<Category> categoriesGrid;
@@ -247,16 +249,10 @@ public class CategoryListView extends StandardListView<Category> {
         );
     }
 
-    protected Icon createCheckboxIconByAttributeValue(Boolean attributeValue) {
-        Icon icon = uiComponents.create(Icon.class);
-
-        if (Boolean.TRUE.equals(attributeValue)) {
-            icon.setIcon(VaadinIcon.CHECK_SQUARE_O);
-        } else {
-            icon.setIcon(VaadinIcon.THIN_SQUARE);
-        }
-
-        return icon;
+    protected Component createCheckboxIconByAttributeValue(Boolean attributeValue) {
+        return Boolean.TRUE.equals(attributeValue)
+                ? icons.get(JmixFontIcon.CHECK_SQUARE_O)
+                : icons.get(JmixFontIcon.THIN_SQUARE);
     }
 
     @Supply(to = "attributesTable.dataType", subject = "renderer")

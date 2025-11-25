@@ -531,8 +531,8 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
 
         protected void initItem(Action action) {
-            if (action.getIcon() != null) {
-                item.addComponentAsFirst(action.getIcon());
+            if (action.getIconComponent() != null) {
+                item.addComponentAsFirst(action.getIconComponent());
             }
 
             item.setEnabled(action.isEnabled());
@@ -550,7 +550,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
             switch (event.getPropertyName()) {
                 case Action.PROP_TEXT:
                 case Action.PROP_ICON:
-                    updateContent(action.getText(), action.getIcon());
+                    updateContent(action.getText(), action.getIconComponent());
                     break;
                 case Action.PROP_ENABLED:
                     setEnabled((Boolean) event.getNewValue());

@@ -19,12 +19,10 @@ package io.jmix.flowui.component.horizontalmenu;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.router.RouterLink;
 import io.jmix.core.MessageTools;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem;
 import io.jmix.flowui.menu.MenuItemCommand;
@@ -143,10 +141,8 @@ public class HorizontalMenuItemConverter {
     }
 
     @Nullable
-    protected Icon getIcon(MenuItem menuItemDescriptor) {
-        return !Strings.isNullOrEmpty(menuItemDescriptor.getIcon())
-                ? ComponentUtils.parseIcon(menuItemDescriptor.getIcon())
-                : null;
+    protected com.vaadin.flow.component.Component getIcon(MenuItem menuItemDescriptor) {
+        return menuItemDescriptor.getIconComponent();
     }
 
     @Nullable

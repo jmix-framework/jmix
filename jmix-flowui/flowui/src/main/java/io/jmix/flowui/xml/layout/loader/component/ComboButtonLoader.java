@@ -17,7 +17,6 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import org.dom4j.Element;
@@ -52,8 +51,8 @@ public class ComboButtonLoader extends AbstractDropdownButtonLoader<ComboButton>
     protected void afterActionSet(Action action) {
         loadVisible(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadIcon(element, resultComponent::setIcon);
         componentLoader().loadThemeNames(resultComponent, element);
+        iconLoaderSupport().loadIcon(element, resultComponent::setIconComponent);
 
         // set event if an 'empty' value to clear a value from the action
         loadResourceString(element, "title", context.getMessageGroup(), false)
@@ -63,8 +62,7 @@ public class ComboButtonLoader extends AbstractDropdownButtonLoader<ComboButton>
     }
 
     protected void loadDropdownIcon(ComboButton component, Element element) {
-        loaderSupport.loadString(element, "dropdownIcon")
-                .map(ComponentUtils::parseIcon)
-                .ifPresent(component::setDropdownIcon);
+        iconLoaderSupport().loadIcon(element, "dropdownIcon",
+                component::setDropdownIconComponent);
     }
 }

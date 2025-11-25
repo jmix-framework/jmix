@@ -267,12 +267,12 @@ public class IndexConfigurationManager {
      * @param configurations the list of {@link IndexConfiguration} objects to be set in the registry
      */
     protected void replaceConfigurations(List<IndexConfiguration> configurations) {
-        long stamp = lock.readLock();
+        long stamp = lock.writeLock();
         try {
             registry.clean();
             configurations.forEach(registry::registerIndexConfiguration);
         } finally {
-            lock.unlockRead(stamp);
+            lock.unlockWrite(stamp);
         }
     }
 
@@ -299,25 +299,14 @@ public class IndexConfigurationManager {
     @Nullable
     protected <T> T optimisticRead(Supplier<T> supplier) {
         T result;
-        // Attempt to acquire an optimistic read lock. Returns 0 if another thread holds a write lock,
-        // otherwise returns a non-zero stamp that can be used to validate the read later.
         long stamp = lock.tryOptimisticRead();
-        if (stamp == 0L) {
+        result = supplier.get();
+        if (!lock.validate(stamp)) {
             stamp = lock.readLock();
             try {
                 result = supplier.get();
             } finally {
                 lock.unlockRead(stamp);
-            }
-        } else {
-            result = supplier.get();
-            if (!lock.validate(stamp)) {
-                stamp = lock.readLock();
-                try {
-                    result = supplier.get();
-                } finally {
-                    lock.unlockRead(stamp);
-                }
             }
         }
         return result;

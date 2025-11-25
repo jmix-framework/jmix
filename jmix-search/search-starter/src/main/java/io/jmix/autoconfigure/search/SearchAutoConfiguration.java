@@ -109,7 +109,7 @@ public class SearchAutoConfiguration {
             return new DynamicAttributesResolver(dynAttrMetadata, propertyTools, wildcardPatternsMatcher);
         }
 
-        @Bean(name = "DynamicAttributesSupportDelegate")
+        @Bean(name = "search_DynamicAttributesSupportDelegate")
         public DynamicAttributesSupportDelegate dynamicAttributesSupport(){
             return new DynamicAttributesSupportDelegate();
         }

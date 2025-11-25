@@ -33,6 +33,7 @@ class DynamicAttributesGroupConfigurationValidatorTest extends Specification {
         where:
         categoryName || message
         ""           || "Category name can't be empty"
+        " "          || "Category name can't be empty"
         "*"          || "Category name can't be a wildcard without any text. But wildcards like '*abc', 'abc*', 'a*b*c' are supported."
         "+"          || "The '+' symbol is denied in the category name. Category name value is '+'"
         "+suffix"    || "The '+' symbol is denied in the category name. Category name value is '+suffix'"
@@ -57,6 +58,7 @@ class DynamicAttributesGroupConfigurationValidatorTest extends Specification {
         where:
         categoryName || message
         ""           || "Attribute name can't be empty"
+        " "          || "Attribute name can't be empty"
         "*"          || "Attribute name can't be a wildcard without any text. But wildcards like '*abc', 'abc*', 'a*b*c' are supported."
         "+"          || "The '+' symbol is denied in the attribute name. Attribute name value is '+'"
         "+suffix"    || "The '+' symbol is denied in the attribute name. Attribute name value is '+suffix'"
@@ -77,7 +79,7 @@ class DynamicAttributesGroupConfigurationValidatorTest extends Specification {
         notThrown(IndexConfigurationException)
 
         where:
-        categoryName<< ["*suffix", "prefix*", "in*fix", "tw*is*e"]
+        categoryName << ["*suffix", "prefix*", "in*fix", "tw*is*e"]
     }
 
     def "Check. Supported symbols in attributes"() {
@@ -89,7 +91,7 @@ class DynamicAttributesGroupConfigurationValidatorTest extends Specification {
         notThrown(IndexConfigurationException)
 
         where:
-        categoryName<< ["*suffix", "prefix*", "in*fix", "tw*is*e"]
+        categoryName << ["*suffix", "prefix*", "in*fix", "tw*is*e"]
     }
 
 }

@@ -41,13 +41,13 @@ public class DynamicAttributesGroupConfigurationValidator {
     }
 
     protected void checkCategory(String categoryName) {
-        checkIsNotEmpty(categoryName, CATEGORY);
+        checkIsNotBlank(categoryName, CATEGORY);
         checkForbiddenSymbols(categoryName, CATEGORY);
         checkNotWildcardOnly(categoryName, CATEGORY);
     }
 
     protected void checkAttribute(String attributeName) {
-        checkIsNotEmpty(attributeName, ATTRIBUTE);
+        checkIsNotBlank(attributeName, ATTRIBUTE);
         checkForbiddenSymbols(attributeName, ATTRIBUTE);
         checkNotWildcardOnly(attributeName, ATTRIBUTE);
     }
@@ -64,20 +64,20 @@ public class DynamicAttributesGroupConfigurationValidator {
         });
     }
 
-    protected void checkIsNotEmpty(String name, ArgumentType argumentType) {
-        if(name.isEmpty()){
+    protected void checkIsNotBlank(String name, ArgumentType argumentType) {
+        if (name.isBlank()) {
             throw new IndexConfigurationException(String.format("%s name can't be empty", argumentType.nameWithCapitalLetter));
         }
     }
 
     protected void checkNotWildcardOnly(String name, ArgumentType argumentType) {
-        if ("*".equals(name)){
+        if ("*".equals(name)) {
             throw new IndexConfigurationException(String.format("%s name can't be a wildcard without any text. " +
                     "But wildcards like '*abc', 'abc*', 'a*b*c' are supported.", argumentType.nameWithCapitalLetter));
         }
     }
 
-    protected enum ArgumentType{
+    protected enum ArgumentType {
         CATEGORY("category", "Category"),
         ATTRIBUTE("attribute", "Attribute");
 

@@ -8,11 +8,10 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.icon.IconFactory;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 
-@org.springframework.stereotype.Component("flowui_Icons")
 public class IconsImpl implements Icons {
 
     @Override
-    public Component get(IconFactory icon) {
+    public Component get(IconFactory<?> icon) {
         Preconditions.checkNotNullArgument(icon);
         return get(icon.name());
     }

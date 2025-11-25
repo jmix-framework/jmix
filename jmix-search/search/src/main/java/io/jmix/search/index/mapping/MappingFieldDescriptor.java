@@ -50,7 +50,7 @@ public class MappingFieldDescriptor {
     protected Map<String, Object> parameters = Collections.emptyMap();
 
     /**
-     * Gets full property name in metamodel.
+     * Gets a full property name in metamodel.
      *
      * @return property name
      */
@@ -59,7 +59,7 @@ public class MappingFieldDescriptor {
     }
 
     /**
-     * Gets full name of field in index.
+     * Gets a full name of field in index.
      *
      * @return index field name
      */
@@ -77,7 +77,7 @@ public class MappingFieldDescriptor {
     }
 
     /**
-     * Gets meta class of metamodel property.
+     * Gets a meta class of metamodel property.
      *
      * @return {@link MetaClass}
      */
@@ -123,8 +123,8 @@ public class MappingFieldDescriptor {
     }
 
     /**
-     * Gets descriptor order based on mapping strategy it created by.
-     * If several descriptors are related to the same field the one with the latest order will be used.
+     * Gets descriptor order based on a mapping strategy it created by.
+     * If several descriptors are related to the same field, the one with the latest order will be used.
      *
      * @return order
      */
@@ -178,6 +178,12 @@ public class MappingFieldDescriptor {
                 "entityPropertyFullName='" + entityPropertyFullName + '\'' +
                 ", indexPropertyFullName='" + indexPropertyFullName + '\'' +
                 ", metaPropertyPath=" + metaPropertyPath +
+                ", standalone=" + standalone +
+                ", fieldConfiguration=" + fieldConfiguration +
+                ", propertyValueExtractor=" + propertyValueExtractor +
+                ", order=" + order +
+                ", instanceNameRelatedProperties=" + instanceNameRelatedProperties +
+                ", parameters=" + parameters +
                 '}';
     }
 }

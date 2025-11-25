@@ -200,6 +200,11 @@ dependencies {
         api "io.jmix.notifications:jmix-notifications-flowui-kit:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-flowui-starter:$premiumVersion"
 
+        api "io.jmix.stormbpmn:jmix-stormbpmn:$premiumVersion"
+        api "io.jmix.stormbpmn:jmix-stormbpmn-starter:$premiumVersion"
+        api "io.jmix.stormbpmn:jmix-stormbpmn-flowui:$premiumVersion"
+        api "io.jmix.stormbpmn:jmix-stormbpmn-flowui-starter:$premiumVersion"
+
         api "io.jmix.oidc:jmix-oidc:$freeVersion"
         api "io.jmix.oidc:jmix-oidc-starter:$freeVersion"
 

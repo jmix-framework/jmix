@@ -114,7 +114,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
         LoadContext<E> loadContext = createLoadContext();
 
-        if (!sendPreLoadEvent(loadContext)) {
+        if (sendPreLoadEvent(loadContext)) {
             return false;
         }
 
@@ -192,8 +192,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
      * @return true if duplicate results are possible, false otherwise
      */
     protected boolean canLeadToDuplicateResultsRecursive(Condition condition) {
-        if (condition instanceof LogicalCondition) {
-            LogicalCondition logicalCondition = (LogicalCondition) condition;
+        if (condition instanceof LogicalCondition logicalCondition) {
             for (Condition childCondition : logicalCondition.getConditions()) {
                 boolean duplicatesPossible = canLeadToDuplicateResultsRecursive(childCondition);
                 if (duplicatesPossible) {
@@ -201,8 +200,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
                 }
             }
             return false;
-        } else if (condition instanceof PropertyCondition) {
-            PropertyCondition propertyCondition = (PropertyCondition) condition;
+        } else if (condition instanceof PropertyCondition propertyCondition) {
             MetaPropertyPath mpp = container.getEntityMetaClass().getPropertyPath(propertyCondition.getProperty());
             if (mpp == null) {
                 return false;
@@ -220,15 +218,13 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
         }
     }
 
+    @Nullable
     protected FetchPlan resolveFetchPlan() {
-        FetchPlan fp = this.fetchPlan;
-        if (fp == null && fetchPlanName != null) {
-            fp = fetchPlanRepository.getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
-        }
-        if (fp == null) {
-            fp = container.getFetchPlan();
-        }
-        return fp;
+        if (this.fetchPlan != null) return this.fetchPlan;
+
+        return fetchPlanName != null
+                ? fetchPlanRepository.getFetchPlan(container.getEntityMetaClass(), fetchPlanName)
+                : container.getFetchPlan();
     }
 
     protected boolean sendPreLoadEvent(LoadContext<E> loadContext) {
@@ -241,7 +237,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
         DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
         stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.PRE_LOAD, info);
 
-        return !preLoadEvent.isLoadPrevented();
+        return preLoadEvent.isLoadPrevented();
     }
 
     protected void sendPostLoadEvent(List<E> entities) {

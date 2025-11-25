@@ -38,10 +38,11 @@ import static java.util.stream.Collectors.toMap;
 
 public class DynamicAttributesResolver {
 
-    private final DynAttrMetadata dynAttrMetadata;
-    private final PropertyTools propertyTools;
-    private static final List<AttributeType> SUPPORTED_DATA_TYPES = List.of(STRING, ENTITY, ENUMERATION);
-    private final WildcardPatternsMatcher wildcardPatternsMatcher;
+    protected static final List<AttributeType> SUPPORTED_DATA_TYPES = List.of(STRING, ENTITY, ENUMERATION);
+
+    protected final DynAttrMetadata dynAttrMetadata;
+    protected final PropertyTools propertyTools;
+    protected final WildcardPatternsMatcher wildcardPatternsMatcher;
 
     public DynamicAttributesResolver(DynAttrMetadata dynAttrMetadata,
                                      PropertyTools propertyTools,

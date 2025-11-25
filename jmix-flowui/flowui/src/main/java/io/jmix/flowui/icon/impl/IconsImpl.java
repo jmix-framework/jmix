@@ -21,17 +21,25 @@ public class IconsImpl implements Icons {
         Preconditions.checkNotNullArgument(iconName);
 
         if (iconName.contains(":")) {
-            String[] parts = iconName.split(":");
-            if (parts.length != 2) {
-                throw new IllegalStateException("Unexpected number of icon parts, must be two");
-            }
-
-            return new Icon(parts[0], parts[1]);
+            return createIconFromCollection(iconName);
         } else {
-            JmixFontIcon jmixFontIcon = JmixFontIcon.fromName(iconName);
-            return jmixFontIcon != null
-                    ? jmixFontIcon.create()
-                    : VaadinIcon.valueOf(iconName).create();
+            return createIconByName(iconName);
         }
+    }
+
+    protected Icon createIconFromCollection(String iconName) {
+        String[] parts = iconName.split(":");
+        if (parts.length != 2) {
+            throw new IllegalStateException("Unexpected number of icon parts, must be two");
+        }
+
+        return new Icon(parts[0], parts[1]);
+    }
+
+    protected Component createIconByName(String iconName) {
+        JmixFontIcon jmixFontIcon = JmixFontIcon.fromName(iconName);
+        return jmixFontIcon != null
+                ? jmixFontIcon.create()
+                : VaadinIcon.valueOf(iconName).create();
     }
 }

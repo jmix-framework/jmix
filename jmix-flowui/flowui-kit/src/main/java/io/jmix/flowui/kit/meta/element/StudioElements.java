@@ -1328,6 +1328,7 @@ public interface StudioElements {
                     "io.jmix.flowui.component.gridlayout.GridLayout"
             },
             unlimitedCount = false,
+            isInjectable = false,
             properties = {
                     @StudioProperty(xmlAttribute = "class", category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.FRAGMENT_CLASS, required = true)

@@ -28,7 +28,6 @@ import java.util.Map;
  * </ul>
  * This class is primarily used for constructing and storing information necessary to resolve entities
  * dependent on the provided criteria.
- * </p>
  */
 public record DependentEntitiesQuery(String query, Map<String, Object> parameters) {
 

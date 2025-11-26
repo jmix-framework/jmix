@@ -21,11 +21,11 @@ package io.jmix.search.index.annotation;
  *
  * <p>This enum is used to configure how reference attributes are handled during the indexing process.</p>
  * <p>It provides two modes:</p>
- * <ol>
+ * <ul>
  * <li>{@code NONE}: Disables indexing of reference attributes. No reference attribute values will be indexed.</li>
  * <li>{@code INSTANCE_NAME_ONLY}: Indexes only the instance name of reference attributes. Useful for indexing
  *    a textual representative of a reference without considering the full details of the reference.</li>
- * <ol/>
+ * </ul>
  * <p>This enum is typically used in annotations or configurations related to indexing.</p>
  */
 public enum ReferenceAttributesIndexingMode {

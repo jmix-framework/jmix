@@ -21,7 +21,6 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.HasTooltip;
@@ -54,6 +53,7 @@ import io.jmix.flowui.component.logicalfilter.GroupFilter;
 import io.jmix.flowui.component.logicalfilter.GroupFilterSupport;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.HasActions;
@@ -63,6 +63,7 @@ import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.kit.component.combobutton.ComboButtonVariant;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.BaseCollectionLoader;
 import io.jmix.flowui.model.DataLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -102,6 +103,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected DialogWindows dialogWindows;
     protected GenericFilterSupport genericFilterSupport;
     protected GroupFilterSupport groupFilterSupport;
+    protected Icons icons;
 
     protected boolean autoApply;
     protected String applyShortcut;
@@ -149,6 +151,7 @@ public class GenericFilter extends Composite<JmixDetails>
         dialogWindows = applicationContext.getBean(DialogWindows.class);
         genericFilterSupport = applicationContext.getBean(GenericFilterSupport.class);
         groupFilterSupport = applicationContext.getBean(GroupFilterSupport.class);
+        icons = applicationContext.getBean(Icons.class);
     }
 
     protected void initComponent() {
@@ -261,7 +264,7 @@ public class GenericFilter extends Composite<JmixDetails>
         GenericFilterAddConditionAction addConditionAction = actions.create(GenericFilterAddConditionAction.ID);
         addConditionAction.setTarget(this);
         addConditionAction.setText(messages.getMessage("genericFilter.addConditionButton.text"));
-        addConditionAction.setIcon(null);
+        addConditionAction.setIconComponent(null);
         addConditionButton.setAction(addConditionAction, false);
     }
 
@@ -308,7 +311,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected void initSettingsButton(DropdownButton settingsButton) {
         settingsButton.addThemeVariants(DropdownButtonVariant.LUMO_ICON);
         settingsButton.setDropdownIndicatorVisible(false);
-        settingsButton.setIcon(VaadinIcon.COG.create());
+        settingsButton.setIconComponent(icons.get(JmixFontIcon.GENERIC_FILTER_SETTINGS));
 
         List<GenericFilterAction<?>> defaultFilterActions = genericFilterSupport.getDefaultFilterActions(this);
         for (GenericFilterAction<?> filterAction : defaultFilterActions) {
@@ -702,7 +705,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected Component createConditionRemoveButton(FilterComponent filterComponent, String removeButtonId) {
         JmixButton conditionRemoveButton = uiComponents.create(JmixButton.class);
         conditionRemoveButton.setId(removeButtonId);
-        conditionRemoveButton.setIcon(VaadinIcon.TRASH.create());
+        conditionRemoveButton.setIcon(icons.get(JmixFontIcon.GENERIC_FILTER_CONDITION_REMOVE));
         conditionRemoveButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
 
         conditionRemoveButton.addClickListener(clickEvent -> {

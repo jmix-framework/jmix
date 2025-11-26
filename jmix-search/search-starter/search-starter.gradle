@@ -19,6 +19,7 @@ archivesBaseName = 'jmix-search-starter'
 
 dependencies {
     api project(':search')
+    compileOnly project(':dynattr')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 

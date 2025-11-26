@@ -25,12 +25,14 @@ import io.jmix.flowui.xml.layout.inittask.AssignDropdownButtonActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
+import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import org.dom4j.Element;
 
 public abstract class AbstractDropdownButtonLoader<T extends AbstractDropdownButton>
         extends AbstractComponentLoader<T> {
 
     protected ActionLoaderSupport actionLoaderSupport;
+    protected IconLoaderSupport iconLoaderSupport;
 
     @Override
     public void loadComponent() {
@@ -45,7 +47,7 @@ public abstract class AbstractDropdownButtonLoader<T extends AbstractDropdownBut
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadText(resultComponent, element);
         componentLoader().loadWhiteSpace(resultComponent, element);
-        componentLoader().loadIcon(element, resultComponent::setIcon);
+        iconLoaderSupport().loadIcon(element, resultComponent::setIconComponent);
 
         loadContent();
     }
@@ -149,5 +151,13 @@ public abstract class AbstractDropdownButtonLoader<T extends AbstractDropdownBut
             actionLoaderSupport = applicationContext.getBean(ActionLoaderSupport.class, context);
         }
         return actionLoaderSupport;
+    }
+
+    protected IconLoaderSupport iconLoaderSupport() {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, context);
+        }
+
+        return iconLoaderSupport;
     }
 }

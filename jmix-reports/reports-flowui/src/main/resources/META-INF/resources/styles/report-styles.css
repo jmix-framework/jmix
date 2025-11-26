@@ -61,7 +61,7 @@
 }
 
 .report-field-icon {
-    cursor: pointer;
+    cursor: var(--lumo-clickable-cursor);
 }
 
 .report-field-icon-size {

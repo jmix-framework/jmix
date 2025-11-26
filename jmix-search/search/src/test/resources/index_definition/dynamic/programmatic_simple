@@ -1,0 +1,34 @@
+{
+  "properties" : {
+    "+dynamicReferenceAttributeCode" : {
+      "properties" : {
+        "_instance_name" : {
+          "type" : "text"
+        }
+      }
+    },
+    "name" : {
+      "type" : "text"
+    },
+    "+dynamicStringAttributeCode" : {
+      "type" : "text"
+    },
+    "+dynamicAttribute4" : {
+      "type" : "text"
+    },
+    "firstTextValue" : {
+      "analyzer" : "english",
+      "type" : "text"
+    },
+    "+dynamicEnumAttributeCode" : {
+      "type" : "text"
+    },
+    "secondTextValue" : {
+      "analyzer" : "english",
+      "type" : "text"
+    },
+    "_instance_name" : {
+      "type" : "text"
+    }
+  }
+}

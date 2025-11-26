@@ -16,6 +16,7 @@
 
 package menu
 
+import com.vaadin.flow.component.icon.VaadinIcon
 import io.jmix.flowui.kit.component.KeyCombination
 import io.jmix.flowui.menu.MenuConfig
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,7 +42,7 @@ class MenuConfigMergeTest extends FlowuiTestSpecification {
         applicationMenu.getBeanMethod() == null
         applicationMenu.getClassNames() == null
         applicationMenu.getDescription() == "Application"
-        applicationMenu.getIcon() == "TABLE"
+        applicationMenu.getIcon() == VaadinIcon.TABLE.create().getIcon()
         applicationMenu.getParent() == null
         applicationMenu.getProperties() == []
         applicationMenu.getRouteParameters() == []
@@ -61,7 +62,7 @@ class MenuConfigMergeTest extends FlowuiTestSpecification {
         applicationView.getBeanMethod() == null
         applicationView.getClassNames() == null
         applicationView.getDescription() == "app view"
-        applicationView.getIcon() == "ABACUS"
+        applicationView.getIcon() == VaadinIcon.ABACUS.create().getIcon()
         applicationView.getParent() == applicationMenu
         applicationView.getProperties() == []
         applicationView.getRouteParameters() == []

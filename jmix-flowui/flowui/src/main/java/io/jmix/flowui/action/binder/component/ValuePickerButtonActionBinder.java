@@ -62,8 +62,8 @@ public class ValuePickerButtonActionBinder implements ComponentActionsHolderBind
         component.setEnabled(action.isEnabled());
         component.setVisible(action.isVisible());
 
-        if (action.getIcon() != null) {
-            component.setIcon(action.getIcon());
+        if (action.getIconComponent() != null) {
+            component.setIcon(action.getIconComponent());
         }
 
         KeyCombination shortcutCombination = action.getShortcutCombination();
@@ -91,7 +91,7 @@ public class ValuePickerButtonActionBinder implements ComponentActionsHolderBind
                     component.setVisible(action.isVisible());
                     break;
                 case Action.PROP_ICON:
-                    component.setIcon(action.getIcon());
+                    component.setIcon(action.getIconComponent());
                     break;
                 case Action.PROP_SHORTCUT_COMBINATION:
                     ActionBinderUtils.refreshShortcutCombinationProperty(component, (KeyCombination) event.getNewValue(), (KeyCombination) event.getOldValue(), registrations);

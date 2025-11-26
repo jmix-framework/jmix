@@ -29,7 +29,7 @@
             </hbox>
         </hbox>
         <hbox id="detailActions">
-            <button id="saveAndCloseBtn" text="msg:///actions.Ok" icon="CHECK" themeNames="primary"/>
+            <button id="saveAndCloseBtn" text="msg:///actions.Ok" icon="OK" themeNames="primary"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>
     </layout>

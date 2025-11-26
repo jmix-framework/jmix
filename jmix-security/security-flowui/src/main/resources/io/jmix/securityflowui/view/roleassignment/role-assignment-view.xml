@@ -36,12 +36,12 @@
     <actions>
         <action id="saveAction"
                 text="msg:///actions.Ok"
-                icon="CHECK"
+                icon="OK"
                 shortcutCombination="${SAVE_SHORTCUT}"
                 actionVariant="PRIMARY"/>
         <action id="closeAction"
                 text="msg:///actions.Cancel"
-                icon="BAN"
+                icon="CANCEL"
                 shortcutCombination="${CLOSE_SHORTCUT}"/>
     </actions>
     <layout alignItems="STRETCH"

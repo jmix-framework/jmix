@@ -16,7 +16,7 @@
 
 package component.fragment
 
-import com.vaadin.flow.component.Component
+
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.data.provider.Query
 import component.fragment.component.*
@@ -37,7 +37,7 @@ import io.jmix.flowui.testassist.UiTestUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.lang.Nullable
+import test_support.ComponentTestUtils
 import test_support.entity.petclinic.Address
 import test_support.entity.petclinic.Country
 import test_support.entity.sales.Product
@@ -93,7 +93,7 @@ class FragmentTest extends FlowuiTestSpecification {
         then:
         dataGridFragment.clicks == 0
         dataGridFragment.testBtn.text == "Test"
-        getIconAttribute(dataGridFragment.testBtn.icon) == getIconAttribute(VaadinIcon.PLUS.create())
+        ComponentTestUtils.isSameIcon(dataGridFragment.testBtn.icon, VaadinIcon.PLUS)
         dataGridFragment.items instanceof EmptyDataGridItems
 
         when:
@@ -128,7 +128,7 @@ class FragmentTest extends FlowuiTestSpecification {
         then:
         dataGridFragmentProvided.clicks == 0
         dataGridFragmentProvided.testBtn.text == "Test"
-        getIconAttribute(dataGridFragmentProvided.testBtn.icon) == getIconAttribute(VaadinIcon.PLUS.create())
+        ComponentTestUtils.isSameIcon(dataGridFragmentProvided.testBtn.icon, VaadinIcon.PLUS)
 
         and:
         dataGridFragmentProvided.items instanceof ContainerDataGridItems
@@ -146,7 +146,7 @@ class FragmentTest extends FlowuiTestSpecification {
         then:
         dataGridFragment.clicks == 0
         dataGridFragment.testBtn.text == "Test"
-        getIconAttribute(dataGridFragment.testBtn.icon) == getIconAttribute(VaadinIcon.PLUS.create())
+        ComponentTestUtils.isSameIcon(dataGridFragment.testBtn.icon, VaadinIcon.PLUS)
 
         and:
         dataGridFragment.items instanceof ContainerDataGridItems
@@ -397,10 +397,5 @@ class FragmentTest extends FlowuiTestSpecification {
 
         then:
         noExceptionThrown()
-    }
-
-    @Nullable
-    private static String getIconAttribute(Component icon) {
-        return icon != null ? icon.element.getAttribute("icon") : null
     }
 }

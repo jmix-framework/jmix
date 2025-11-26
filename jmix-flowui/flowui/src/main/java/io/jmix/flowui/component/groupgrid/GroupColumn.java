@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.groupgrid;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import io.jmix.core.annotation.Experimental;
 import org.springframework.lang.Nullable;
@@ -73,7 +74,9 @@ public interface GroupColumn<E> {
 
     /**
      * @return the icon for the Columns Grouper button or {@code null} if the default icon is used
+     * @deprecated use {@link #getGroupIconComponent()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     Icon getGroupIcon();
 
@@ -81,8 +84,23 @@ public interface GroupColumn<E> {
      * Sets the icon for the Columns Grouper button.
      *
      * @param icon the icon to set, or {@code null} to set the default icon
+     * @deprecated use {@link #setGroupIconComponent(Component)} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     void setGroupIcon(@Nullable Icon icon);
+
+    /**
+     * @return the icon for the Columns Grouper button or {@code null} if the default icon is used
+     */
+    @Nullable
+    Component getGroupIconComponent();
+
+    /**
+     * Sets the icon for the Columns Grouper button.
+     *
+     * @param icon the icon to set, or {@code null} to set the default icon
+     */
+    void setGroupIconComponent(@Nullable Component icon);
 
     /**
      * @return {@code true} if the icon for the Columns Grouper button is visible

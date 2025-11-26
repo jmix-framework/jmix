@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.action;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -153,6 +154,12 @@ public class SecuredBaseAction extends BaseAction implements SecuredAction {
         return this;
     }
 
+    @Override
+    public SecuredBaseAction withIcon(@Nullable Component icon) {
+        return (SecuredBaseAction) super.withIcon(icon);
+    }
+
+    @Deprecated(since = "3.0", forRemoval = true)
     @Override
     public SecuredBaseAction withIcon(@Nullable Icon icon) {
         setIcon(icon);

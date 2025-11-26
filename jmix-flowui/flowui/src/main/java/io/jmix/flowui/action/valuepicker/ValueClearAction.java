@@ -17,13 +17,13 @@
 package io.jmix.flowui.action.valuepicker;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.PickerComponent;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static io.jmix.flowui.component.UiComponentUtils.getEmptyValue;
@@ -42,16 +42,18 @@ public class ValueClearAction<V> extends PickerAction<ValueClearAction<V>, Picke
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.CLOSE);
-    }
-
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.valuePicker.clear.description");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.VALUE_CLEAR_ACTION);
+        }
     }
 
     @Autowired

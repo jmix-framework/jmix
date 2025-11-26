@@ -72,4 +72,12 @@ public class FieldConfiguration {
         }
         return new FieldConfiguration(config, virtualFieldsNames);
     }
+
+    @Override
+    public String toString() {
+        return "FieldConfiguration{" +
+                "config=" + config +
+                ", virtualFields=" + virtualFields +
+                '}';
+    }
 }

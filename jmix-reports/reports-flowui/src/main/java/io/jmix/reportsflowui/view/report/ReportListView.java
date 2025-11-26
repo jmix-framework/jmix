@@ -142,7 +142,7 @@ public class ReportListView extends StandardListView<Report> {
     }
 
     private void initReportsDataGridCreate() {
-        reportsDataGridCreate.setIcon(null);
+        reportsDataGridCreate.setIconComponent(null);
     }
 
     @Supply(to = "reportsDataGrid.name", subject = "renderer")

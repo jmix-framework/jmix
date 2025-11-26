@@ -20,13 +20,12 @@ import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -62,11 +61,13 @@ import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataContext;
@@ -187,6 +188,8 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     protected Notifications notifications;
     @Autowired
     protected PolicyStore policyStore;
+    @Autowired
+    protected Icons icons;
 
     protected Object selectedEntity;
 
@@ -660,16 +663,10 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         );
     }
 
-    protected Icon createCheckboxIconByAttributeValue(Boolean attributeValue) {
-        Icon icon = uiComponents.create(Icon.class);
-
-        if (Boolean.TRUE.equals(attributeValue)) {
-            icon.setIcon(VaadinIcon.CHECK_SQUARE_O);
-        } else {
-            icon.setIcon(VaadinIcon.THIN_SQUARE);
-        }
-
-        return icon;
+    protected Component createCheckboxIconByAttributeValue(Boolean attributeValue) {
+        return Boolean.TRUE.equals(attributeValue)
+                ? icons.get(JmixFontIcon.CHECK_SQUARE_O)
+                : icons.get(JmixFontIcon.THIN_SQUARE);
     }
 
     @Subscribe("searchBtn")

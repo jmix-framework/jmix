@@ -24,6 +24,7 @@ import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
@@ -33,6 +34,8 @@ import org.springframework.stereotype.Component;
 public class ViewUserMenuItemLoader extends AbstractUserMenuItemLoader {
 
     public static final String NAME = "viewItem";
+
+    protected IconLoaderSupport iconLoaderSupport;
 
     public ViewUserMenuItemLoader(ApplicationContext applicationContext,
                                   LoaderSupport loaderSupport) {
@@ -76,8 +79,16 @@ public class ViewUserMenuItemLoader extends AbstractUserMenuItemLoader {
             item = hasViewMenuItems.addViewItem(id, (Class) viewClass, text);
         }
 
-        componentLoader(context).loadIcon(element, item::setIcon);
+        iconLoaderSupport(context).loadIcon(element, item::setIcon);
         loaderSupport.loadEnum(element, OpenMode.class, "openMode", item::setOpenMode);
         loadItem(element, item, context);
+    }
+
+    protected IconLoaderSupport iconLoaderSupport(ComponentLoader.Context context) {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, context);
+        }
+
+        return iconLoaderSupport;
     }
 }

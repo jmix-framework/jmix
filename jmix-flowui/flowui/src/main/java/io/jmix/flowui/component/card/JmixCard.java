@@ -38,27 +38,37 @@ public class JmixCard extends Card implements HasSubParts {
             if (component.isPresent()) {
                 return component.get();
             }
-        } else if (getSubtitle() != null) {
+        }
+
+        if (getSubtitle() != null) {
             Optional<Component> component = findComponent(getSubtitle(), name);
             if (component.isPresent()) {
                 return component.get();
             }
-        } else if (getMedia() != null) {
+        }
+
+        if (getMedia() != null) {
             Optional<Component> component = findComponent(getMedia(), name);
             if (component.isPresent()) {
                 return component.get();
             }
-        } else if (getHeaderPrefix() != null) {
+        }
+
+        if (getHeaderPrefix() != null) {
             Optional<Component> component = findComponent(getHeaderPrefix(), name);
             if (component.isPresent()) {
                 return component.get();
             }
-        } else if (getHeader() != null) {
+        }
+
+        if (getHeader() != null) {
             Optional<Component> component = findComponent(getHeader(), name);
             if (component.isPresent()) {
                 return component.get();
             }
-        } else if (getHeaderSuffix() != null) {
+        }
+
+        if (getHeaderSuffix() != null) {
             Optional<Component> component = findComponent(getHeaderSuffix(), name);
             if (component.isPresent()) {
                 return component.get();

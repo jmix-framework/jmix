@@ -26,6 +26,8 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.dynattr.DynAttrConfiguration;
+import io.jmix.dynattr.DynAttrManager;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
@@ -63,7 +65,8 @@ import javax.sql.DataSource;
         DataConfiguration.class,
         EclipselinkConfiguration.class,
         SecurityConfiguration.class,
-        SearchConfiguration.class})
+        SearchConfiguration.class,
+        DynAttrConfiguration.class})
 public class BaseSearchTestConfiguration {
 
     @Autowired
@@ -157,5 +160,11 @@ public class BaseSearchTestConfiguration {
     @Bean
     public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
         return new LocalApplicationEventChannelSupplier();
+    }
+
+    @Bean
+    @Primary
+    public DynAttrManager dynAttrManager() {
+        return new NoopDynAttrManagerImpl();
     }
 }

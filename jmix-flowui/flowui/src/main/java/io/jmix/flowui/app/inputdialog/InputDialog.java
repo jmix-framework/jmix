@@ -421,7 +421,7 @@ public class InputDialog extends StandardView {
             if (action instanceof DialogAction) {
                 DialogAction.Type type = ((DialogAction) action).getType();
                 button.setText(messages.getMessage(type.getMsgKey()));
-                button.setIcon(type.getVaadinIcon().create());
+                button.setIcon(type.getIcon());
             }
 
             actionBox.add(button);

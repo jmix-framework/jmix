@@ -69,6 +69,7 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.valuepicker.JmixValuePicker;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -204,6 +205,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected DynAttrUiHelper dynAttrUiHelper;
     @Autowired
     protected EntityStates entityStates;
+    @Autowired
+    protected Icons icons;
 
     @ViewComponent
     protected JmixCheckbox lookupField;
@@ -692,6 +695,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                     messageTools,
                     uiComponents,
                     dataComponents,
+                    icons,
                     getViewData().getDataContext());
             localizationFragment.setNameMsgBundle(getEditedEntity().getNameMsgBundle());
             localizationFragment.setDescriptionMsgBundle(getEditedEntity().getDescriptionsMsgBundle());

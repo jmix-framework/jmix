@@ -18,7 +18,6 @@ package io.jmix.securityflowui.action;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
@@ -35,11 +34,12 @@ import io.jmix.flowui.action.security.SubstituteUserAction;
 import io.jmix.flowui.action.usermenu.UserMenuAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.usermenu.UserMenu;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasSubMenu;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.View;
 import io.jmix.securityflowui.SecurityUiProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +62,7 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
     public static final String ID = "sec_userMenuSubstituteUser";
     public static final String DEFAULT_VIEW = "sec_SubstituteUserView";
 
+    protected Icons icons;
     protected Actions actions;
     protected Dialogs dialogs;
     protected Messages messages;
@@ -88,13 +89,6 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.EXCHANGE);
-    }
-
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -105,6 +99,16 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
         this.messages = messages;
 
         this.text = messages.getMessage("actions.userMenu.SubstituteUser");
+    }
+
+    @Autowired
+    public void setIcons(Icons icons) {
+        this.icons = icons;
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.USER_MENU_SUBSTITUTE_USER_ACTION);
+        }
     }
 
     @Autowired
@@ -281,7 +285,7 @@ public class UserMenuSubstituteUserAction extends UserMenuAction<UserMenuSubstit
                                 .withUsers(prevUser, newUser)
                                 .withCancelHandler(userDetails -> updateState(userDetails.getUsername()))
                                 .withText(messages.getMessage("actions.Ok"))
-                                .withIcon(VaadinIcon.CHECK.create())
+                                .withIcon(icons.get(JmixFontIcon.DIALOG_OK))
                                 .withVariant(ActionVariant.PRIMARY),
                         new DialogAction(DialogAction.Type.CANCEL)
                                 .withHandler(__ -> updateState(prevUser.getUsername()))

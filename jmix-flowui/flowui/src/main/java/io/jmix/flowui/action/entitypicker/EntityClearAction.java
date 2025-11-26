@@ -18,7 +18,6 @@ package io.jmix.flowui.action.entitypicker;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.UiComponentProperties;
@@ -28,8 +27,9 @@ import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
@@ -55,16 +55,18 @@ public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, Ent
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.CLOSE);
-    }
-
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.valuePicker.clear.description");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.ENTITY_CLEAR_ACTION);
+        }
     }
 
     @Autowired

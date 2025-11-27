@@ -19,12 +19,12 @@ package io.jmix.reportsflowui.view.template;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
@@ -42,6 +42,7 @@ import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
 import io.jmix.flowui.kit.component.upload.event.FileUploadFailedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadStartedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportPrintHelper;
@@ -65,7 +66,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-@Route(value = "reports/templates/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/templates/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/templates/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportTemplate.detail")
 @ViewDescriptor("report-template-detail-view.xml")
 @EditedEntityContainer("reportTemplateDc")
@@ -124,7 +126,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     @Autowired
     protected OutputTypeHelper outputTypeHelper;
 
-    protected Icon customDefinitionHelpIcon;
+    protected FontIcon customDefinitionHelpIcon;
     protected TableEditFragment tableEditComposite;
     @ViewComponent
     private VerticalLayout customDefinitionBox;
@@ -249,7 +251,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     }
 
     protected void initCustomDefinitionHelpIcon() {
-        customDefinitionHelpIcon = VaadinIcon.QUESTION_CIRCLE.create();
+        customDefinitionHelpIcon = JmixFontIcon.QUESTION_CIRCLE.create();
         customDefinitionHelpIcon.addClassNames(
                 ReportStyleConstants.FIELD_ICON_SIZE_CLASS_NAME,
                 ReportStyleConstants.FIELD_ICON_CLASS_NAME
@@ -265,7 +267,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         descriptionEditBox.add(tableEditComposite);
     }
 
-    protected void onCustomDefinitionHelpIconClick(ClickEvent<Icon> event) {
+    protected void onCustomDefinitionHelpIconClick(ClickEvent<?> event) {
         openCustomDefinitionHelpDialog();
     }
 
@@ -282,13 +284,13 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     }
 
     protected void initOutputNamePatternField() {
-        Icon icon = VaadinIcon.QUESTION_CIRCLE.create();
+        FontIcon icon = JmixFontIcon.QUESTION_CIRCLE.create();
         icon.addClickListener(this::onOutputNamePatternHelpIconClick);
         icon.addClassName(ReportStyleConstants.FIELD_ICON_CLASS_NAME);
         outputNamePatternField.setSuffixComponent(icon);
     }
 
-    protected void onOutputNamePatternHelpIconClick(ClickEvent<Icon> event) {
+    protected void onOutputNamePatternHelpIconClick(ClickEvent<?> event) {
         dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage("outputNamePatternField.helpIcon.dialog.header"))
                 .withContent(new Html(messageBundle.getMessage("outputNamePatternField.helpIcon.dialog.content")))

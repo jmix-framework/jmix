@@ -84,6 +84,119 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="jmixFontIconEnum">
+        <xs:union memberTypes="jmixSpecificIconEnum vaadinIconEnum"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="jmixSpecificIconEnum">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="OK"/>
+                    <xs:enumeration value="CANCEL"/>
+                    <xs:enumeration value="YES"/>
+                    <xs:enumeration value="NO"/>
+
+                    <xs:enumeration value="DIALOG_OK"/>
+                    <xs:enumeration value="DIALOG_CANCEL"/>
+                    <xs:enumeration value="DIALOG_YES"/>
+                    <xs:enumeration value="DIALOG_NO"/>
+                    <xs:enumeration value="DIALOG_CLOSE"/>
+
+                    <xs:enumeration value="CREATE_ACTION"/>
+                    <xs:enumeration value="EDIT_ACTION"/>
+                    <xs:enumeration value="REMOVE_ACTION"/>
+                    <xs:enumeration value="ADD_ACTION"/>
+                    <xs:enumeration value="EXCLUDE_ACTION"/>
+                    <xs:enumeration value="READ_ACTION"/>
+                    <xs:enumeration value="REFRESH_ACTION"/>
+
+                    <xs:enumeration value="VIEW_CLOSE_ACTION"/>
+                    <xs:enumeration value="DETAIL_SAVE_CLOSE_ACTION"/>
+                    <xs:enumeration value="DETAIL_SAVE_ACTION"/>
+                    <xs:enumeration value="DETAIL_CLOSE_ACTION"/>
+                    <xs:enumeration value="DETAIL_DISCARD_ACTION"/>
+                    <xs:enumeration value="DETAIL_ENABLE_EDITING_ACTION"/>
+                    <xs:enumeration value="LOOKUP_SELECT_ACTION"/>
+                    <xs:enumeration value="LOOKUP_DISCARD_ACTION"/>
+
+                    <xs:enumeration value="ENTITY_LOOKUP_ACTION"/>
+                    <xs:enumeration value="ENTITY_CLEAR_ACTION"/>
+                    <xs:enumeration value="ENTITY_OPEN_ACTION"/>
+
+                    <xs:enumeration value="VALUE_CLEAR_ACTION"/>
+
+                    <xs:enumeration value="MULTI_VALUE_SELECT_ACTION"/>
+
+                    <xs:enumeration value="DATE_INTERVAL_ACTION"/>
+
+                    <xs:enumeration value="LOGOUT_ACTION"/>
+
+                    <xs:enumeration value="BULK_EDIT_ACTION"/>
+
+                    <xs:enumeration value="JSON_EXPORT_ACTION"/>
+                    <xs:enumeration value="EXCEL_EXPORT_ACTION"/>
+
+                    <xs:enumeration value="SHOW_ROLE_ASSIGNMENTS_ACTION"/>
+                    <xs:enumeration value="ASSIGN_TO_USERS_ACTION"/>
+
+                    <xs:enumeration value="RUN_REPORT_ACTION"/>
+                    <xs:enumeration value="RUN_SINGLE_ENTITY_REPORT_ACTION"/>
+                    <xs:enumeration value="RUN_LIST_ENTITY_REPORT_ACTION"/>
+                    <xs:enumeration value="SHOW_EXECUTION_REPORT_HISTORY_ACTION"/>
+
+                    <xs:enumeration value="DAYS_OF_WEEK_EDIT_ACTION"/>
+
+                    <xs:enumeration value="USER_MENU_THEME_SWITCH_ACTION_SYSTEM_THEME"/>
+                    <xs:enumeration value="USER_MENU_THEME_SWITCH_ACTION_LIGHT_THEME"/>
+                    <xs:enumeration value="USER_MENU_THEME_SWITCH_ACTION_DARK_THEME"/>
+
+                    <xs:enumeration value="USER_MENU_SUBSTITUTE_USER_ACTION"/>
+
+                    <xs:enumeration value="GENERIC_FILTER_SAVE_ACTION"/>
+                    <xs:enumeration value="GENERIC_FILTER_EDIT_ACTION"/>
+                    <xs:enumeration value="GENERIC_FILTER_COPY_ACTION"/>
+                    <xs:enumeration value="GENERIC_FILTER_REMOVE_ACTION"/>
+                    <xs:enumeration value="GENERIC_FILTER_CLEAR_VALUES_ACTION"/>
+                    <xs:enumeration value="GENERIC_FILTER_MAKE_DEFAULT_ACTION"/>
+                    <xs:enumeration value="GENERIC_FILTER_ADD_CONDITION_ACTION"/>
+
+                    <xs:enumeration value="INTERVAL_FIELD_HELP"/>
+
+                    <xs:enumeration value="COMBO_BUTTON_DROPDOWN"/>
+
+                    <xs:enumeration value="PAGINATION_FIRST_PAGE"/>
+                    <xs:enumeration value="PAGINATION_PREVIOUS_PAGE"/>
+                    <xs:enumeration value="PAGINATION_NEXT_PAGE"/>
+                    <xs:enumeration value="PAGINATION_LAST_PAGE"/>
+
+                    <xs:enumeration value="TWIN_COLUMN_SELECT_ALL"/>
+                    <xs:enumeration value="TWIN_COLUMN_DESELECT_ALL"/>
+                    <xs:enumeration value="TWIN_COLUMN_SELECT"/>
+                    <xs:enumeration value="TWIN_COLUMN_DESELECT"/>
+
+                    <xs:enumeration value="GENERIC_FILTER_SETTINGS"/>
+                    <xs:enumeration value="GENERIC_FILTER_CONDITION_REMOVE"/>
+
+                    <xs:enumeration value="DATA_GRID_HEADER_FILTER"/>
+                    <xs:enumeration value="DATA_GRID_HEADER_FILTER_APPLY"/>
+                    <xs:enumeration value="DATA_GRID_HEADER_FILTER_CANCEL"/>
+                    <xs:enumeration value="DATA_GRID_HEADER_FILTER_CLEAR"/>
+
+                    <xs:enumeration value="SEARCH_FIELD_SEARCH"/>
+                    <xs:enumeration value="SEARCH_FIELD_SETTINGS"/>
+
+                    <xs:enumeration value="PHOTO"/>
+                    <xs:enumeration value="REDO"/>
+                    <xs:enumeration value="UNDO"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="vaadinIconEnum">
         <xs:union>
             <xs:simpleType>
@@ -2305,7 +2418,7 @@
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasIcon">
-        <xs:attribute name="icon" type="vaadinIconEnum"/>
+        <xs:attribute name="icon" type="jmixFontIconEnum"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasShortcutCombination">
@@ -2405,10 +2518,26 @@
         <xs:group ref="singleLayoutOrComponent" minOccurs="0"/>
     </xs:complexType>
 
+    <xs:group name="iconComponentGroup">
+        <xs:sequence>
+            <xs:choice minOccurs="0">
+                <xs:element name="icon" type="iconComponent"/>
+                <xs:element name="svgIcon" type="svgIconComponent"/>
+                <xs:element name="fontIcon" type="fontIconComponent"/>
+                <xs:element name="image" type="imageIconComponent"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:complexType name="iconComponentElement">
+        <xs:group ref="iconComponentGroup" minOccurs="0"/>
+    </xs:complexType>
+
     <xs:complexType name="baseAction">
         <xs:sequence minOccurs="0">
             <xs:element name="properties" type="actionProperties"/>
             <xs:element name="shortcutCombination" type="actionShortcutCombination"/>
+            <xs:element name="icon" type="iconComponentElement"/>
         </xs:sequence>
 
         <xs:attribute name="type" type="actionTypeEnum"/>
@@ -2426,6 +2555,7 @@
     <xs:complexType name="noShortcutBaseAction">
         <xs:sequence>
             <xs:element name="properties" type="actionProperties" minOccurs="0"/>
+            <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
         </xs:sequence>
 
         <xs:attribute name="type" type="actionTypeEnum"/>
@@ -2620,14 +2750,15 @@
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
                 </xs:sequence>
 
                 <xs:attribute name="openOnHover" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="dropdownButtonThemeNames"/>
-                <xs:attribute name="icon" type="vaadinIconEnum"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasIcon"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasClassNames"/>
@@ -2867,10 +2998,10 @@
     </xs:complexType>
 
     <xs:complexType name="contextMenuType">
-        <xs:choice minOccurs="0">
-            <xs:element name="item" minOccurs="0" type="contextMenuItemType"/>
+        <xs:sequence>
+            <xs:element name="item" type="contextMenuItemType" minOccurs="0"/>
             <xs:element name="separator" minOccurs="0"/>
-        </xs:choice>
+        </xs:sequence>
 
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="css" type="xs:string"/>
@@ -2881,10 +3012,12 @@
     </xs:complexType>
 
     <xs:complexType name="contextMenuItemType">
-        <xs:choice minOccurs="0">
-            <xs:element name="item" minOccurs="0" type="contextMenuItemType"/>
+        <xs:sequence>
+            <xs:element name="item" type="contextMenuItemType" minOccurs="0"/>
             <xs:element name="separator" minOccurs="0"/>
-        </xs:choice>
+
+            <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+        </xs:sequence>
 
         <xs:attribute name="action" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
@@ -2934,12 +3067,14 @@
     <xs:complexType name="buttonComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
+                <xs:sequence>
+                    <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
 
-                    <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
-                    <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
-                </xs:choice>
+                    <xs:element name="prefix" type="prefixOrSuffixComponent" minOccurs="0"/>
+                    <xs:element name="suffix" type="prefixOrSuffixComponent" minOccurs="0"/>
+
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
 
                 <xs:attribute name="action" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
@@ -2964,6 +3099,10 @@
     <xs:complexType name="drawerToggleComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="buttonThemeNames"/>
 
@@ -3053,6 +3192,10 @@
     <xs:complexType name="userMenuTextItemType">
         <xs:complexContent>
             <xs:extension base="userMenuWithSubMenuBaseItemType">
+                <xs:sequence>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
                 <xs:attribute name="text" type="resourceString" use="required"/>
                 <xs:attributeGroup ref="hasIcon"/>
             </xs:extension>
@@ -3087,6 +3230,10 @@
     <xs:complexType name="userMenuViewItemType">
         <xs:complexContent>
             <xs:extension base="userMenuBaseItemType">
+                <xs:sequence>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
                 <xs:attribute name="text" type="resourceString" use="required"/>
                 <xs:attributeGroup ref="hasIcon"/>
 
@@ -3103,6 +3250,10 @@
     <!--endregion-->
 
     <xs:complexType name="gridEditorButtonType">
+        <xs:sequence>
+            <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+        </xs:sequence>
+
         <xs:attributeGroup ref="hasText"/>
         <xs:attributeGroup ref="hasIcon"/>
         <xs:attributeGroup ref="hasTitle"/>
@@ -3471,8 +3622,12 @@
     <xs:complexType name="comboButtonComponent">
         <xs:complexContent>
             <xs:extension base="baseDropdownButtonComponent">
+                <xs:sequence>
+                    <xs:element name="dropdownIcon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
                 <xs:attribute name="action" type="xs:string"/>
-                <xs:attribute name="dropdownIcon" type="vaadinIconEnum"/>
+                <xs:attribute name="dropdownIcon" type="jmixFontIconEnum"/>
 
                 <xs:attributeGroup ref="hasShortcutCombination"/>
             </xs:extension>
@@ -4305,13 +4460,18 @@
     <xs:complexType name="uploadComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="dropLabelIcon" type="iconComponentElement" minOccurs="0"/>
+                    <xs:element name="uploadIcon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
                 <!-- DropLabel attributes-->
                 <xs:attribute name="dropLabel" type="resourceString"/>
-                <xs:attribute name="dropLabelIcon" type="vaadinIconEnum"/>
+                <xs:attribute name="dropLabelIcon" type="jmixFontIconEnum"/>
 
                 <!-- UploadButton attributes-->
                 <xs:attribute name="uploadText" type="resourceString"/>
-                <xs:attribute name="uploadIcon" type="vaadinIconEnum"/>
+                <xs:attribute name="uploadIcon" type="jmixFontIconEnum"/>
 
                 <xs:attribute name="acceptedFileTypes" type="xs:string"/>
                 <xs:attribute name="autoUpload" type="xs:boolean"/>
@@ -4353,9 +4513,10 @@
     <xs:complexType name="baseUploadFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                <xs:sequence>
+                    <xs:element name="tooltip" type="tooltipElement" minOccurs="0"/>
+                    <xs:element name="uploadIcon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
 
                 <xs:attribute name="uploadText" type="resourceString"/>
                 <xs:attribute name="fileNotSelectedText" type="resourceString"/>
@@ -4374,7 +4535,7 @@
 
                 <xs:attribute name="maxFileSize" type="xs:int"/>
                 <xs:attribute name="acceptedFileTypes" type="xs:string"/>
-                <xs:attribute name="uploadIcon" type="vaadinIconEnum"/>
+                <xs:attribute name="uploadIcon" type="jmixFontIconEnum"/>
                 <xs:attribute name="dropAllowed" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
@@ -4396,6 +4557,29 @@
             <xs:extension base="imageHtmlComponent">
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attribute name="themeNames" type="imageThemeNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Image as Icon -->
+    <xs:complexType name="imageIconComponent">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlComponent">
+                <!-- imageComponent -->
+                <xs:attribute name="themeNames" type="imageThemeNames"/>
+
+                <!-- imageHtmlComponent -->
+                <xs:attribute name="resource" type="xs:string"/>
+                <xs:attribute name="alternateText" type="resourceString"/>
+
+                <xs:attributeGroup ref="hasAriaLabel"/>
+
+                <!-- baseClickableHtmlContainer -->
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
+
+                <!-- baseHtmlContainer -->
+                <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasEnabled"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4464,7 +4648,8 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
-                    <xs:element name="menuItem" minOccurs="0" type="gridColumnVisibilityMenuItemType"/>
+                    <xs:element name="menuItem" type="gridColumnVisibilityMenuItemType" minOccurs="0"/>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasSize"/>

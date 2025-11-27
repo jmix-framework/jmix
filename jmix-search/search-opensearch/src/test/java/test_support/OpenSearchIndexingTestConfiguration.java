@@ -106,5 +106,11 @@ public class OpenSearchIndexingTestConfiguration {
     public TestFileStorage testFileStorage() {
         return new TestFileStorage();
     }
+
+    @Bean
+    @Primary
+    public TestNoopDynAttrMetadata dynAttrMetadata() {
+        return new TestNoopDynAttrMetadata();
+    }
 }
 

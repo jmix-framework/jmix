@@ -20,13 +20,13 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.bulkeditor.view.BulkEditViewDataLoadSupport.LoadDescriptor;
 import io.jmix.core.*;
 import io.jmix.core.annotation.TenantId;
@@ -46,10 +46,12 @@ import io.jmix.flowui.component.UiComponentsGenerator;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
@@ -67,9 +69,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@RouteAlias(value = "bulk-edit", layout = DefaultMainViewParent.class)
+@Route(value = "bulked/bulk-edit", layout = DefaultMainViewParent.class)
 @ViewController("bulkEditorWindow")
 @ViewDescriptor("bulk-edit-view.xml")
-@Route("bulk-edit")
 @DialogMode(resizable = true, width = "64em", height = "48em", minWidth = "18em")
 public class BulkEditView<E> extends StandardView {
 
@@ -110,6 +113,8 @@ public class BulkEditView<E> extends StandardView {
     protected UiComponents uiComponents;
     @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
+    @Autowired
+    protected Icons icons;
     @Autowired
     protected jakarta.validation.Validator validator;
     @Autowired
@@ -327,7 +332,7 @@ public class BulkEditView<E> extends StandardView {
 
     protected JmixButton createClearButton(AbstractField<?, ?> field, boolean isFieldRequired) {
         JmixButton button = uiComponents.create(JmixButton.class);
-        button.setIcon(VaadinIcon.ERASER.create());
+        button.setIcon(icons.get(JmixFontIcon.ERASER));
 
         if (isFieldRequired) {
             //set visibility to hidden to add a spacer instead of button
@@ -344,7 +349,7 @@ public class BulkEditView<E> extends StandardView {
             editField.setEnabled(!editField.isEnabled());
             Button button = e.getSource();
 
-            button.setIcon(editField.isEnabled() ? VaadinIcon.ERASER.create() : VaadinIcon.EDIT.create());
+            button.setIcon(editField.isEnabled() ? icons.get(JmixFontIcon.ERASER) : icons.get(JmixFontIcon.EDIT));
             Tooltip.forComponent(button).setText(messageBundle.getMessage(editField.isEnabled()
                     ? "bulk.clearAttribute"
                     : "bulk.editAttribute"

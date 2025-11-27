@@ -25,13 +25,13 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.event.notification.NotificationClosedEvent;
 import io.jmix.flowui.event.notification.NotificationOpenedEvent;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -461,7 +461,7 @@ public class Notifications {
             Button button = new Button();
             button.setClassName(CLOSE_BUTTON_CLASS_NAME);
             button.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
-            button.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
+            button.setIcon(icons().get(JmixFontIcon.CLOSE_SMALL));
             button.addClickListener(this::onCloseButtonClick);
             return button;
         }
@@ -510,6 +510,10 @@ public class Notifications {
             } else {
                 applicationContext.publishEvent(new NotificationClosedEvent(notification));
             }
+        }
+
+        protected Icons icons() {
+            return applicationContext.getBean(Icons.class);
         }
     }
 }

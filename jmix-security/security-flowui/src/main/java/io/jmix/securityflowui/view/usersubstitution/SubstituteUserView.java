@@ -20,7 +20,6 @@ package io.jmix.securityflowui.view.usersubstitution;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.listbox.dataview.ListBoxListDataView;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -37,9 +36,11 @@ import io.jmix.flowui.action.security.SubstituteUserAction;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
 import io.jmix.flowui.component.listbox.JmixListBox;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,8 @@ public class SubstituteUserView extends StandardView {
     protected CurrentUserSubstitution currentUserSubstitution;
     @Autowired
     protected UserSubstitutionManager userSubstitutionManager;
+    @Autowired
+    protected Icons icons;
 
     protected ListBoxListDataView<UserDetails> usersDataView;
 
@@ -141,7 +144,7 @@ public class SubstituteUserView extends StandardView {
                         ((SubstituteUserAction) actions.create(SubstituteUserAction.ID))
                                 .withUsers(currentUserSubstitution.getEffectiveUser(), newUser)
                                 .withText(messages.getMessage("actions.Ok"))
-                                .withIcon(VaadinIcon.CHECK.create())
+                                .withIcon(icons.get(JmixFontIcon.DIALOG_OK))
                                 .withVariant(ActionVariant.PRIMARY),
                         new DialogAction(DialogAction.Type.CANCEL)
                 )

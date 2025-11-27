@@ -50,12 +50,12 @@ class JmixButtonTest extends FlowuiTestSpecification {
         editButton.getIcon() != null
         removeButton.getIcon() != null
 
-        addButton.getIcon().getElement().getAttribute("icon") ==
-                addAction.getIcon().getElement().getAttribute("icon")
-        editButton.getIcon().getElement().getAttribute("icon") ==
-                addAction.getIcon().getElement().getAttribute("icon")
-        removeButton.getIcon().getElement().getAttribute("icon") ==
-                addAction.getIcon().getElement().getAttribute("icon")
+        addButton.getIcon().getElement().getProperty("iconClass") ==
+                addAction.getIconComponent().getElement().getProperty("iconClass")
+        editButton.getIcon().getElement().getProperty("iconClass") ==
+                addAction.getIconComponent().getElement().getProperty("iconClass")
+        removeButton.getIcon().getElement().getProperty("iconClass") ==
+                addAction.getIconComponent().getElement().getProperty("iconClass")
 
         addButton.getIcon() != editButton.getIcon()
         addButton.getIcon() != removeButton.getIcon()

@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.action.genericfilter;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.action.ActionType;
@@ -30,7 +29,8 @@ import io.jmix.flowui.component.genericfilter.converter.FilterConverter;
 import io.jmix.flowui.component.genericfilter.registration.FilterComponents;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.View;
@@ -57,17 +57,19 @@ public class GenericFilterEditAction extends GenericFilterAction<GenericFilterEd
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PENCIL);
-    }
-
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.genericFilter.Edit");
         this.messages = messages;
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.GENERIC_FILTER_EDIT_ACTION);
+        }
     }
 
     @Autowired

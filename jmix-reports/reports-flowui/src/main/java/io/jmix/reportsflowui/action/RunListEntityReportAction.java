@@ -18,7 +18,6 @@ package io.jmix.reportsflowui.action;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -32,10 +31,11 @@ import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.ContainerDataUnit;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.*;
 import io.jmix.reports.app.ParameterPrototype;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +60,7 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
 
     public static final String ID = "report_runListEntityReport";
 
+    protected Icons icons;
     protected Dialogs dialogs;
     protected Messages messages;
     protected Metadata metadata;
@@ -84,6 +85,16 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
     }
 
     @Autowired
+    public void setIcons(Icons icons) {
+        this.icons = icons;
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.RUN_LIST_ENTITY_REPORT_ACTION);
+        }
+    }
+
+    @Autowired
     public void setDialogs(Dialogs dialogs) {
         this.dialogs = dialogs;
     }
@@ -105,11 +116,6 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
 
     public void setReportOutputName(@Nullable String reportOutputName) {
         this.reportOutputName = reportOutputName;
-    }
-
-    @Override
-    protected void initAction() {
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PRINT);
     }
 
     protected boolean isDataAvailable() {
@@ -168,12 +174,12 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
             Action printSelectedAction = new BaseAction("actions.printSelected")
                     .withVariant(ActionVariant.PRIMARY)
                     .withHandler(event -> printSelected(selected))
-                    .withIcon(ComponentUtils.convertToIcon(VaadinIcon.LINES))
+                    .withIcon(icons.get(JmixFontIcon.LINES))
                     .withText(messages.getMessage(getClass(), "actions.printSelected"));
 
             Action printAllAction = new BaseAction("actions.printAll")
                     .withText(messages.getMessage(getClass(), "actions.printAll"))
-                    .withIcon(ComponentUtils.convertToIcon(VaadinIcon.TABLE))
+                    .withIcon(icons.get(JmixFontIcon.TABLE))
                     .withHandler(event -> printAll());
 
             dialogs.createOptionDialog()

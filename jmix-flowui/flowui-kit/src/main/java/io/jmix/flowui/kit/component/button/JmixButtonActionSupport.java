@@ -18,9 +18,9 @@ package io.jmix.flowui.kit.component.button;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -162,7 +162,7 @@ public class JmixButtonActionSupport {
 
     protected void updateIcon(boolean overrideComponentProperties) {
         if (button.getIcon() == null || overrideComponentProperties) {
-            button.setIcon(action.getIcon());
+            button.setIcon(action.getIconComponent());
         }
     }
 
@@ -188,7 +188,7 @@ public class JmixButtonActionSupport {
                 button.setVisible((Boolean) event.getNewValue());
                 break;
             case Action.PROP_ICON:
-                button.setIcon((Icon) event.getNewValue());
+                button.setIcon((Component) event.getNewValue());
                 break;
             case Action.PROP_DESCRIPTION:
                 button.setTitle((String) event.getNewValue());

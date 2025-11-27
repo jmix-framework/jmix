@@ -20,12 +20,12 @@
           title="Application title"
           description="Application"
           classNames="className1, className2"
-          icon="TABLE">
+          icon="vaadin:table">
         <item id="Application.view"
               view="HorizontalMenuView"
               title="Application view"
               description="app view"
-              icon="ABACUS"
+              icon="vaadin:abacus"
               shortcutCombination="Control-Enter"/>
         <separator/>
         <menu id="nestedMenu"

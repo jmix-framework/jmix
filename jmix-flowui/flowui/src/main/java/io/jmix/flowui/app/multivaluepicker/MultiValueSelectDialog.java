@@ -21,7 +21,6 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.Messages;
@@ -36,9 +35,11 @@ import io.jmix.flowui.action.entitypicker.EntityLookupAction;
 import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.apache.commons.collections4.CollectionUtils;
@@ -78,6 +79,8 @@ public class MultiValueSelectDialog<E> extends StandardListView<E> implements Mu
     protected CurrentAuthentication currentAuthentication;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected Icons icons;
 
     protected MultiValueSelectContext<E> context;
     protected List<E> values = new ArrayList<>();
@@ -143,7 +146,7 @@ public class MultiValueSelectDialog<E> extends StandardListView<E> implements Mu
             JmixButton addButton = uiComponents.create(JmixButton.class);
             addButton.setId("add");
             addButton.setText(messages.getMessage("actions.Add"));
-            addButton.setIcon(VaadinIcon.PLUS.create());
+            addButton.setIcon(icons.get(JmixFontIcon.PLUS));
             addButton.addClickListener(e -> {
                 if (component instanceof HasValue) {
                     addValueInternal((HasValue<?, E>) component);
@@ -210,7 +213,7 @@ public class MultiValueSelectDialog<E> extends StandardListView<E> implements Mu
 
         if (!context.isReadOnly()) {
             JmixButton deleteItemButton = uiComponents.create(JmixButton.class);
-            deleteItemButton.setIcon(VaadinIcon.CLOSE_SMALL.create());
+            deleteItemButton.setIcon(icons.get(JmixFontIcon.CLOSE_SMALL));
 
             deleteItemButton.addThemeVariants(
                     ButtonVariant.LUMO_SMALL,

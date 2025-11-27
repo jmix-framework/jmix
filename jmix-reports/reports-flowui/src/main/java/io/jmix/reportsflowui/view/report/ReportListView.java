@@ -19,6 +19,7 @@ package io.jmix.reportsflowui.view.report;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.flowui.DialogWindows;
@@ -55,7 +56,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-@Route(value = "reports", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports", layout = DefaultMainViewParent.class)
+@Route(value = "report/reports", layout = DefaultMainViewParent.class)
 @ViewController("report_Report.list")
 @ViewDescriptor("report-list-view.xml")
 @LookupComponent("reportsDataGrid")
@@ -142,7 +144,7 @@ public class ReportListView extends StandardListView<Report> {
     }
 
     private void initReportsDataGridCreate() {
-        reportsDataGridCreate.setIcon(null);
+        reportsDataGridCreate.setIconComponent(null);
     }
 
     @Supply(to = "reportsDataGrid.name", subject = "renderer")

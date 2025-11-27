@@ -17,7 +17,6 @@
 package io.jmix.flowui.action.entitypicker;
 
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
@@ -29,8 +28,9 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.EntityPickerComponent;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
@@ -75,13 +75,6 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.SEARCH);
-    }
-
     @Autowired
     public void setDialogWindows(DialogWindows dialogWindows) {
         this.dialogWindows = dialogWindows;
@@ -96,6 +89,15 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     public void setMessages(Messages messages) {
         this.messages = messages;
         this.text = messages.getMessage("actions.entityPicker.open.description");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.ENTITY_OPEN_ACTION);
+        }
     }
 
     @Autowired

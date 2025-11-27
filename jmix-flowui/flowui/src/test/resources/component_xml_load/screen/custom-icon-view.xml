@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2025 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <actions>
+        <action id="iconAttributeAction" text="Action (icon attribute)" icon="CHECK"/>
+        <action id="vaadinIconAttributeAction" text="Action (Vaadin icon attribute)" icon="vaadin:check"/>
+
+        <action id="iconAction" text="Action (icon)">
+            <icon>
+                <icon icon="CHECK"/>
+            </icon>
+        </action>
+        <action id="svgIconAction" text="Action (svg)">
+            <icon>
+                <svgIcon resource="/icons/check-solid-full.svg"/>
+            </icon>
+        </action>
+        <action id="fontIconAction" text="Action (font)">
+            <icon>
+                <fontIcon fontFamily="lumo-icons" charCode=""/>
+            </icon>
+        </action>
+        <action id="imageAction" text="Action (image)">
+            <icon>
+                <image resource="/icons/icon.png" width="24px"/>
+            </icon>
+        </action>
+    </actions>
+    <layout>
+        <details summaryText="Button">
+            <vbox>
+                <button id="iconAttributeButton" text="Button (icon attribute)" icon="CHECK"/>
+                <button id="vaadinIconAttributeButton" text="Button (icon attribute)" icon="vaadin:check"/>
+
+                <button id="iconButton" text="Button (icon)">
+                    <icon>
+                        <icon icon="CHECK"/>
+                    </icon>
+                </button>
+                <button id="svgIconButton" text="Button (svg)">
+                    <icon>
+                        <svgIcon resource="/icons/check-solid-full.svg"/>
+                    </icon>
+                </button>
+                <button id="fontIconButton" text="Button (font)">
+                    <icon>
+                        <fontIcon fontFamily="lumo-icons" charCode=""/>
+                    </icon>
+                </button>
+                <button id="imageButton" text="Button (image)">
+                    <icon>
+                        <image resource="/icons/icon.png" width="24px"/>
+                    </icon>
+                </button>
+            </vbox>
+        </details>
+
+        <details summaryText="Button - Action ref">
+            <vbox>
+                <button id="iconAttributeActionButton" action="iconAttributeAction"/>
+                <button id="vaadinIconAttributeActionButton" action="vaadinIconAttributeAction"/>
+                <button id="iconActionButton" action="iconAction"/>
+                <button id="svgIconActionButton" action="svgIconAction"/>
+                <button id="fontIconActionButton" action="fontIconAction"/>
+                <button id="imageActionButton" action="imageAction"/>
+            </vbox>
+        </details>
+
+        <details summaryText="Button - Override action props">
+            <vbox>
+                <button id="overrideIconAttributeActionButton" action="iconAttributeAction" icon="CLOSE"/>
+                <button id="overrideVaadinIconAttributeActionButton" action="iconAttributeAction" icon="vaadin:close"/>
+
+                <button id="overrideIconActionButton" action="iconAction">
+                    <icon>
+                        <icon icon="CLOSE"/>
+                    </icon>
+                </button>
+
+                <button id="overrideSvgIconActionButton" action="svgIconAction">
+                    <icon>
+                        <svgIcon resource="/icons/xmark-solid-full.svg"/>
+                    </icon>
+                </button>
+
+                <button id="overrideFontIconActionButton" action="fontIconAction">
+                    <icon>
+                        <fontIcon fontFamily="lumo-icons" charCode=""/>
+                    </icon>
+                </button>
+
+                <button id="overrideImageActionButton" action="imageAction">
+                    <icon>
+                        <image resource="public/images/logo.png" width="24px"/>
+                    </icon>
+                </button>
+            </vbox>
+        </details>
+
+        <details summaryText="DropdownButton">
+            <vbox>
+                <dropdownButton text="DropdownButton (icon attribute)" icon="CHECK"/>
+
+                <dropdownButton text="DropdownButton (icon)">
+                    <icon>
+                        <icon icon="CHECK"/>
+                    </icon>
+                </dropdownButton>
+                <dropdownButton text="DropdownButton (svg)">
+                    <icon>
+                        <svgIcon resource="/icons/check-solid-full.svg"/>
+                    </icon>
+                </dropdownButton>
+                <dropdownButton text="DropdownButton (font)">
+                    <icon>
+                        <fontIcon fontFamily="lumo-icons" charCode=""/>
+                    </icon>
+                </dropdownButton>
+                <dropdownButton text="DropdownButton (image)">
+                    <icon>
+                        <image resource="/icons/icon.png" width="24px"/>
+                    </icon>
+                </dropdownButton>
+            </vbox>
+        </details>
+
+        <details summaryText="ComboButton">
+            <vbox>
+                <comboButton text="ComboButton (icon attribute)" icon="CHECK" dropdownIcon="ANGLE_DOUBLE_DOWN"/>
+
+                <comboButton text="ComboButton (icon)">
+                    <icon>
+                        <icon icon="CHECK"/>
+                    </icon>
+                    <dropdownIcon>
+                        <icon icon="ANGLE_DOUBLE_DOWN"/>
+                    </dropdownIcon>
+                </comboButton>
+                <comboButton text="ComboButton (svg)">
+                    <icon>
+                        <svgIcon resource="/icons/check-solid-full.svg"/>
+                    </icon>
+                    <dropdownIcon>
+                        <svgIcon resource="/icons/angle-down-solid-full.svg"/>
+                    </dropdownIcon>
+                </comboButton>
+                <comboButton text="ComboButton (font)">
+                    <icon>
+                        <fontIcon fontFamily="lumo-icons" charCode=""/>
+                    </icon>
+                    <dropdownIcon>
+                        <fontIcon fontFamily="lumo-icons" charCode=""/>
+                    </dropdownIcon>
+                </comboButton>
+                <comboButton text="ComboButton (image)">
+                    <icon>
+                        <image resource="/icons/icon.png" width="24px"/>
+                    </icon>
+                    <dropdownIcon>
+                        <image resource="/icons/icon.png" width="24px"/>
+                    </dropdownIcon>
+                </comboButton>
+            </vbox>
+        </details>
+
+        <details summaryText="ComboButton - Action ref">
+            <vbox>
+                <!-- Double to check if the icon has been copied correctly -->
+                <comboButton action="iconAttributeAction"/>
+                <comboButton action="iconAction"/>
+                <comboButton action="svgIconAction"/>
+                <comboButton action="fontIconAction"/>
+                <comboButton action="imageAction"/>
+            </vbox>
+        </details>
+
+        <details summaryText="ComboButton - Override action props">
+            <vbox>
+                <comboButton action="iconAttributeAction" icon="CLOSE"/>
+
+                <comboButton action="iconAction">
+                    <icon>
+                        <icon icon="CLOSE"/>
+                    </icon>
+                </comboButton>
+
+                <comboButton action="svgIconAction">
+                    <icon>
+                        <svgIcon resource="/icons/xmark-solid-full.svg"/>
+                    </icon>
+                </comboButton>
+
+                <comboButton action="fontIconAction">
+                    <icon>
+                        <fontIcon fontFamily="lumo-icons" charCode=""/>
+                    </icon>
+                </comboButton>
+
+                <comboButton action="imageAction">
+                    <icon>
+                        <image resource="public/images/logo.png" width="24px"/>
+                    </icon>
+                </comboButton>
+            </vbox>
+        </details>
+
+        <details summaryText="DrawerToggle">
+            <vbox>
+                <drawerToggle icon="CHECK"/>
+
+                <drawerToggle>
+                    <icon>
+                        <icon icon="CHECK"/>
+                    </icon>
+                </drawerToggle>
+                <drawerToggle>
+                    <icon>
+                        <svgIcon resource="/icons/check-solid-full.svg"/>
+                    </icon>
+                </drawerToggle>
+                <drawerToggle>
+                    <icon>
+                        <fontIcon fontFamily="lumo-icons" charCode=""/>
+                    </icon>
+                </drawerToggle>
+                <drawerToggle>
+                    <icon>
+                        <image resource="/icons/icon.png" width="24px"/>
+                    </icon>
+                </drawerToggle>
+            </vbox>
+        </details>
+
+        <details summaryText="FileUploadField">
+            <vbox>
+                <fileUploadField uploadIcon="CHECK"/>
+
+                <fileUploadField>
+                    <uploadIcon>
+                        <icon icon="CHECK"/>
+                    </uploadIcon>
+                </fileUploadField>
+                <fileUploadField>
+                    <uploadIcon>
+                        <svgIcon resource="/icons/check-solid-full.svg"/>
+                    </uploadIcon>
+                </fileUploadField>
+                <fileUploadField>
+                    <uploadIcon>
+                        <fontIcon fontFamily="lumo-icons" charCode=""/>
+                    </uploadIcon>
+                </fileUploadField>
+                <fileUploadField>
+                    <uploadIcon>
+                        <image resource="/icons/icon.png" width="24px"/>
+                    </uploadIcon>
+                </fileUploadField>
+            </vbox>
+        </details>
+
+        <details summaryText="FileStorageUploadField">
+            <vbox>
+                <fileStorageUploadField uploadIcon="CHECK"/>
+
+                <fileStorageUploadField>
+                    <uploadIcon>
+                        <icon icon="CHECK"/>
+                    </uploadIcon>
+                </fileStorageUploadField>
+                <fileStorageUploadField>
+                    <uploadIcon>
+                        <svgIcon resource="/icons/check-solid-full.svg"/>
+                    </uploadIcon>
+                </fileStorageUploadField>
+                <fileStorageUploadField>
+                    <uploadIcon>
+                        <fontIcon fontFamily="lumo-icons" charCode=""/>
+                    </uploadIcon>
+                </fileStorageUploadField>
+                <fileStorageUploadField>
+                    <uploadIcon>
+                        <image resource="/icons/icon.png" width="24px"/>
+                    </uploadIcon>
+                </fileStorageUploadField>
+            </vbox>
+        </details>
+
+        <details summaryText="Upload">
+            <vbox>
+                <upload uploadIcon="CHECK" dropLabelIcon="CLOSE"/>
+
+                <upload>
+                    <uploadIcon>
+                        <icon icon="CHECK"/>
+                    </uploadIcon>
+                    <dropLabelIcon>
+                        <icon icon="CLOSE"/>
+                    </dropLabelIcon>
+                </upload>
+                <upload>
+                    <uploadIcon>
+                        <svgIcon resource="/icons/check-solid-full.svg"/>
+                    </uploadIcon>
+                    <dropLabelIcon>
+                        <svgIcon resource="/icons/xmark-solid-full.svg"/>
+                    </dropLabelIcon>
+                </upload>
+                <upload>
+                    <uploadIcon>
+                        <fontIcon fontFamily="lumo-icons" charCode=""/>
+                    </uploadIcon>
+                    <dropLabelIcon>
+                        <fontIcon fontFamily="lumo-icons" charCode=""/>
+                    </dropLabelIcon>
+                </upload>
+                <upload>
+                    <uploadIcon>
+                        <image resource="/icons/icon.png" width="24px"/>
+                    </uploadIcon>
+                    <dropLabelIcon>
+                        <image resource="public/images/logo.png" width="24px"/>
+                    </dropLabelIcon>
+                </upload>
+            </vbox>
+        </details>
+    </layout>
+</view>

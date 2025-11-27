@@ -17,8 +17,8 @@
 package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.HasPlaceholder;
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.HasPlaceholder;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.BoxSizing;
@@ -451,11 +451,60 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                 });
     }
 
+    /**
+     * Loads an {@link Icon} from the given {@link Element}.
+     * The method tries to retrieve the "icon" attribute value from the element and,
+     * if present, parses it into an {@link Icon}.
+     *
+     * @param element the XML element from which to load the icon
+     * @return an {@link Optional} containing the parsed {@link Icon} if the "icon" attribute
+     * is present and valid, or an empty {@link Optional} otherwise
+     */
+    public Optional<Icon> loadIconSetIcon(Element element) {
+        return loadIconSetIcon(element, "icon");
+    }
+
+    /**
+     * Loads an {@link Icon} from the given {@link Element} for the attribute
+     * with the given name and, if present, parses it into an {@link Icon}.
+     *
+     * @param element       the XML element from which to load the icon
+     * @param attributeName the name of the attribute value to be returned
+     * @return an {@link Optional} containing the parsed {@link Icon} if the
+     * attribute value is present and valid, or an empty {@link Optional} otherwise
+     */
+    public Optional<Icon> loadIconSetIcon(Element element, String attributeName) {
+        return loaderSupport.loadString(element, attributeName)
+                .map(ComponentUtils::parseIcon);
+    }
+
+    /**
+     * Loads an {@link Icon} from the given {@link Element}.
+     * The method tries to retrieve the "icon" attribute value from the element and,
+     * if present, parses it into an {@link Icon}.
+     *
+     * @param element the XML element from which to load the icon
+     * @return an {@link Optional} containing the parsed {@link Icon} if the "icon" attribute
+     * is present and valid, or an empty {@link Optional} otherwise
+     * @deprecated use {@link ComponentLoaderSupport#loadIconSetIcon(Element)} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     public Optional<Icon> loadIcon(Element element) {
         return loaderSupport.loadString(element, "icon")
                 .map(ComponentUtils::parseIcon);
     }
 
+    /**
+     * Loads an {@link Icon} from the provided {@link Element} and applies
+     * the result using the specified {@link Consumer}. The method attempts
+     * to retrieve the "icon" attribute value from the given element, parse
+     * it into an {@link Icon}, and pass it to the setter if successfully parsed.
+     *
+     * @param element the XML element from which to load the icon
+     * @param setter  the {@link Consumer} used to apply the loaded {@link Icon}
+     * @deprecated use {@link IconLoaderSupport#loadIcon(Element, Consumer)} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     public void loadIcon(Element element, Consumer<Icon> setter) {
         loadIcon(element)
                 .ifPresent(setter);

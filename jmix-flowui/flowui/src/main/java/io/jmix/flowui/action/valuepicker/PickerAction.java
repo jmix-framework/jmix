@@ -25,6 +25,7 @@ import io.jmix.flowui.action.TargetAction;
 import io.jmix.flowui.component.PickerComponent;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
+import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.KeyCombination;
 
 import org.springframework.lang.Nullable;
@@ -103,6 +104,13 @@ public abstract class PickerAction<A extends PickerAction<A, C, V>, C extends Pi
     }
 
     @SuppressWarnings("unchecked")
+    @Override
+    public A withIcon(@Nullable Component icon) {
+        return (A) super.withIcon(icon);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Deprecated(since = "3.0", forRemoval = true)
     @Override
     public A withIcon(@Nullable Icon icon) {
         return ((A) super.withIcon(icon));

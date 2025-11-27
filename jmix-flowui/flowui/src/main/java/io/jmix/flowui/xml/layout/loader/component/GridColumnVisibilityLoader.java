@@ -22,12 +22,17 @@ import io.jmix.flowui.xml.layout.inittask.AssignGridColumnVisibilityPropertiesIn
 import io.jmix.flowui.xml.layout.inittask.AssignGridColumnVisibilityPropertiesInitTask.MenuItem;
 import io.jmix.flowui.xml.layout.inittask.AssignGridColumnVisibilityPropertiesInitTask.DeferredLoadContext;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import org.dom4j.Element;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class GridColumnVisibilityLoader extends AbstractComponentLoader<JmixGridColumnVisibility> {
+
+    protected static final String ICON_ELEMENT_NAME = "icon";
+
+    protected IconLoaderSupport iconLoaderSupport;
 
     @Override
     protected JmixGridColumnVisibility createComponent() {
@@ -45,7 +50,7 @@ public class GridColumnVisibilityLoader extends AbstractComponentLoader<JmixGrid
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadText(resultComponent, element);
         componentLoader().loadWhiteSpace(resultComponent, element);
-        componentLoader().loadIcon(element, resultComponent::setIcon);
+        iconLoaderSupport().loadIcon(element, ICON_ELEMENT_NAME, resultComponent::setIconComponent);
 
         getLoaderSupport().loadBoolean(element, "showAllEnabled", resultComponent::setShowAllEnabled);
         getLoaderSupport().loadBoolean(element, "hideAllEnabled", resultComponent::setHideAllEnabled);
@@ -83,11 +88,20 @@ public class GridColumnVisibilityLoader extends AbstractComponentLoader<JmixGrid
                 getLoaderSupport().loadResourceString(element, "text", context.getMessageGroup(),
                         menuItem::setText);
                 menuItems.put(refColumn, menuItem);
-            } else {
+            } else if (!element.getName().equals(ICON_ELEMENT_NAME)) {
                 throw new GuiDevelopmentException("Found invalid child element '%s' in gridColumnVisibility element"
                         .formatted(element.getName()), context);
             }
         }
+
         loadContext.setMenuItems(menuItems);
+    }
+
+    protected IconLoaderSupport iconLoaderSupport() {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, context);
+        }
+
+        return iconLoaderSupport;
     }
 }

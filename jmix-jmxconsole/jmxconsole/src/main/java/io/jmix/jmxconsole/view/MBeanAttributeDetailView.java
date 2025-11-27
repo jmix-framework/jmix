@@ -19,6 +19,7 @@ package io.jmix.jmxconsole.view;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.view.*;
 import io.jmix.jmxconsole.AttributeComponentProvider;
@@ -28,7 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
 
-@Route(value = "jmxconsole/mbeanattr/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "jmxconsole/mbeanattr/:id", layout = DefaultMainViewParent.class)
+@Route(value = "jmxcon/mbean-attr/:id", layout = DefaultMainViewParent.class)
 @ViewController("jmxcon_ManagedBeanAttribute.detail")
 @ViewDescriptor("mbean-attribute-detail-view.xml")
 @EditedEntityContainer("attrDc")

@@ -20,8 +20,6 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.customfield.CustomField;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.shared.HasThemeVariant;
@@ -32,8 +30,10 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.*;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.HasAutofocus;
 import io.jmix.flowui.kit.component.HasTitle;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.StandardOutcome;
@@ -45,8 +45,6 @@ import io.jmix.search.searching.SearchResult;
 import io.jmix.searchflowui.view.result.SearchResultsView;
 import io.jmix.searchflowui.view.settings.SearchFieldSettingsView;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -67,7 +65,6 @@ public class SearchField extends CustomField<String>
         InputNotifier, KeyNotifier, HasAriaLabel, HasAutofocus, HasPlaceholder {
 
     public static final String SEARCH_FIELD_STYLENAME = "jmix-search-field";
-    private static final Logger log = LoggerFactory.getLogger(SearchField.class);
 
     protected ApplicationContext applicationContext;
     protected UiComponents uiComponents;
@@ -77,6 +74,8 @@ public class SearchField extends CustomField<String>
     protected ViewNavigators viewNavigators;
     protected DialogWindows dialogWindows;
     protected Dialogs dialogs;
+    protected Icons icons;
+
     protected TypedTextField<String> root;
     protected String searchStrategy;
     protected List<String> entities;
@@ -115,6 +114,7 @@ public class SearchField extends CustomField<String>
         viewNavigators = applicationContext.getBean(ViewNavigators.class);
         dialogWindows = applicationContext.getBean(DialogWindows.class);
         dialogs = applicationContext.getBean(Dialogs.class);
+        icons = applicationContext.getBean(Icons.class);
         entitySearcher = applicationContext.getBean(EntitySearcher.class);
     }
 
@@ -181,7 +181,7 @@ public class SearchField extends CustomField<String>
                 ButtonVariant.LUMO_ICON,
                 ButtonVariant.LUMO_SMALL
         );
-        button.setIcon(new Icon(VaadinIcon.SEARCH));
+        button.setIcon(icons.get(JmixFontIcon.SEARCH_FIELD_SEARCH));
 
         button.addClickListener(clickEvent -> performSearch());
         return button;
@@ -195,7 +195,7 @@ public class SearchField extends CustomField<String>
                 ButtonVariant.LUMO_ICON,
                 ButtonVariant.LUMO_SMALL
         );
-        settingsButton.setIcon(new Icon(VaadinIcon.ELLIPSIS_DOTS_V));
+        settingsButton.setIcon(icons.get(JmixFontIcon.SEARCH_FIELD_SETTINGS));
 
         settingsButton.addClickListener(clickEvent -> {
             View<?> origin = UiComponentUtils.getView(this);
@@ -224,7 +224,7 @@ public class SearchField extends CustomField<String>
 
     protected void openSearchResultsWindow(String searchText) {
         if (!searchProperties.isEnabled()) {
-            notifications.create(messages.getMessage(getClass(),"searchDisabled")).show();
+            notifications.create(messages.getMessage(getClass(), "searchDisabled")).show();
             return;
         }
         if (openMode == OpenMode.DIALOG) {

@@ -17,7 +17,10 @@
 package io.jmix.autoconfigure.search;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.EntityStates;
+import io.jmix.core.MetadataTools;
 import io.jmix.data.DataConfiguration;
+import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
@@ -26,14 +29,25 @@ import io.jmix.search.index.impl.NoopEntityIndexer;
 import io.jmix.search.index.impl.NoopEntitySearcher;
 import io.jmix.search.index.impl.NoopIndexManager;
 import io.jmix.search.index.impl.NoopIndexingQueueManager;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupportDelegate;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.index.mapping.processor.impl.FieldMappingCreator;
+import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesGroupConfigurationValidator;
+import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesGroupProcessor;
+import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesResolver;
+import io.jmix.search.index.mapping.processor.impl.dynattr.WildcardPatternsMatcher;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.search.index.queue.impl.JpaIndexingQueueManager;
+import io.jmix.search.listener.dynattr.DynamicAttributesTrackingListener;
 import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.utils.PropertyTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
@@ -62,5 +76,42 @@ public class SearchAutoConfiguration {
         }
 
         return new NoopIndexingQueueManager();
+    }
+
+    @Configuration
+    @ConditionalOnClass(DynAttrMetadata.class)
+    public static class SearchConfigurationWithDynamicAttributes {
+
+        @Bean(name = "search_DynamicAttributesGroupProcessor")
+        public DynamicAttributesGroupProcessor dynamicAttributesGroupProcessor(PropertyTools propertyTools,
+                                                                               DynamicAttributesResolver dynamicAttributesResolver,
+                                                                               FieldMappingCreator fieldMappingCreator,
+                                                                               DynamicAttributesGroupConfigurationValidator groupChecker) {
+            return new DynamicAttributesGroupProcessor(propertyTools, dynamicAttributesResolver, fieldMappingCreator, groupChecker);
+        }
+
+        @Bean(name = "search_DynamicAttributesTrackingListener")
+        public DynamicAttributesTrackingListener dynamicAttributesTrackingListener(
+                IndexConfigurationManager indexConfigurationManager,
+                IndexingQueueManager indexingQueueManager,
+                EntityStates entityStates,
+                MetadataTools metadataTools) {
+            return new DynamicAttributesTrackingListener(indexConfigurationManager,
+                    indexingQueueManager,
+                    entityStates,
+                    metadataTools);
+        }
+
+        @Bean(name = "search_DynamicAttributesResolver")
+        public DynamicAttributesResolver dynamicAttributesResolver(DynAttrMetadata dynAttrMetadata,
+                                                                   PropertyTools propertyTools,
+                                                                   WildcardPatternsMatcher wildcardPatternsMatcher){
+            return new DynamicAttributesResolver(dynAttrMetadata, propertyTools, wildcardPatternsMatcher);
+        }
+
+        @Bean(name = "search_DynamicAttributesSupportDelegate")
+        public DynamicAttributesSupportDelegate dynamicAttributesSupport(){
+            return new DynamicAttributesSupportDelegate();
+        }
     }
 }

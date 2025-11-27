@@ -19,6 +19,7 @@ package component_xml_load
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import icon_xml_load.view.IconsView
+import io.jmix.flowui.kit.icon.JmixFontIcon
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
@@ -35,8 +36,8 @@ class IconXmlLoadTest extends FlowuiTestSpecification {
         def view = navigateToView(IconsView.class)
 
         then:
-        view.buttonEnumIcon.icon.element.getAttribute("icon")
-                == VaadinIcon.MENU.create().element.getAttribute("icon")
+        view.buttonEnumIcon.icon.element.getProperty("iconClass")
+                == JmixFontIcon.MENU.create().element.getProperty("iconClass")
     }
 
     def "Load button's icon as full vaadin-icon definition"() {
@@ -62,8 +63,8 @@ class IconXmlLoadTest extends FlowuiTestSpecification {
         def view = navigateToView(IconsView.class)
 
         then:
-        view.actionEnumIcon.icon.element.getAttribute("icon")
-                == VaadinIcon.MENU.create().element.getAttribute("icon")
+            view.actionEnumIcon.iconComponent.element.getProperty("iconClass")
+                == JmixFontIcon.MENU.create().element.getProperty("iconClass")
     }
 
     def "Load action's icon as full vaadin-icon definition"() {

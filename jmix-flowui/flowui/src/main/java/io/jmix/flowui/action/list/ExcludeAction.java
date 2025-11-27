@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.action.list;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -25,17 +24,18 @@ import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.data.ContainerDataUnit;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.util.RemoveOperation.ActionCancelledEvent;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 @ActionType(ExcludeAction.ID)
@@ -65,12 +65,20 @@ public class ExcludeAction<E> extends SecuredListDataComponentAction<ExcludeActi
         super.initAction();
 
         variant = ActionVariant.DANGER;
-        icon = ComponentUtils.convertToIcon(VaadinIcon.CLOSE);
     }
 
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.Exclude");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.EXCLUDE_ACTION);
+        }
     }
 
     @Autowired

@@ -7,6 +7,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -26,7 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Route(value = "reports/valueFormats/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/valueFormats/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/value-formats/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportValueFormat.detail")
 @ViewDescriptor("report-value-format-detail-view.xml")
 @EditedEntityContainer("valuesFormatsDc")

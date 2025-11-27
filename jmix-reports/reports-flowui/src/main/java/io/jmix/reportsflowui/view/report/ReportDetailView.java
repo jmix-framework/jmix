@@ -29,8 +29,7 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -38,6 +37,7 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
@@ -62,6 +62,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
@@ -94,7 +95,8 @@ import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Route(value = "reports/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/reports/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_Report.detail")
 @ViewDescriptor("report-detail-view.xml")
 @EditedEntityContainer("reportDc")
@@ -1445,14 +1447,14 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected void initJsonPathQueryTextAreaField() {
-        Icon icon = VaadinIcon.QUESTION_CIRCLE.create();
+        FontIcon icon = JmixFontIcon.QUESTION_CIRCLE.create();
         icon.addClickListener(this::onJsonPathQueryTextAreaFieldHelpIconClick);
         icon.addClassName(ReportStyleConstants.FIELD_ICON_CLASS_NAME);
 
         jsonPathQueryTextAreaField.setSuffixComponent(icon);
     }
 
-    protected void onJsonPathQueryTextAreaFieldHelpIconClick(ClickEvent<Icon> event) {
+    protected void onJsonPathQueryTextAreaFieldHelpIconClick(ClickEvent<?> event) {
         Html content = new Html(messageBundle.getMessage(
                 "bandsTab.dataSetTypeLayout.jsonPathQueryTextAreaField.helpIcon.dialog.content"));
         content.addClassName(ReportStyleConstants.TRANSPARENT_CODE_CLASS_NAME);
@@ -1593,13 +1595,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected void initLocaleDetailReportTextField() {
-        Icon icon = VaadinIcon.QUESTION_CIRCLE.create();
+        FontIcon icon = JmixFontIcon.QUESTION_CIRCLE.create();
         icon.addClickListener(this::onLocaleHelpIconClick);
         icon.addClassName(ReportStyleConstants.FIELD_ICON_CLASS_NAME);
         localeTextField.setSuffixComponent(icon);
     }
 
-    protected void onLocaleHelpIconClick(ClickEvent<Icon> event) {
+    protected void onLocaleHelpIconClick(ClickEvent<?> event) {
         dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage("detailsTab.localeFieldHelp.header"))
                 .withContent(new Html(messageBundle.getMessage("detailsTab.localeFieldHelp.text")))

@@ -2,8 +2,8 @@ package io.jmix.reportsflowui.view.region;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.Notifications;
@@ -12,9 +12,11 @@ import io.jmix.flowui.action.list.ItemTrackingAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionPropertyContainer;
 import io.jmix.flowui.model.DataContext;
@@ -29,7 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-@Route(value = "reports/region/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/region/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/region/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_WizardReportRegion.detail")
 @ViewDescriptor("report-region-wizard-detail-view.xml")
 @EditedEntityContainer("reportRegionDc")
@@ -62,6 +65,8 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     protected Actions actions;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected Icons icons;
 
     protected TreeDataGrid<EntityTreeNode> entityTree;
     protected EntityTreeNode rootEntity;
@@ -157,12 +162,12 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
             }
         });
 
-        ListDataComponentAction addPropertyAction = actions.create(ItemTrackingAction.ID, "addItemAction");
+        ListDataComponentAction<?, ?> addPropertyAction = actions.create(ItemTrackingAction.ID, "addItemAction");
         addPropertyAction.addActionPerformedListener(event -> addProperty());
         addPropertyAction.addEnabledRule(this::isUpdatePermitted);
         entityTree.addAction(addPropertyAction);
         addItem.setAction(addPropertyAction);
-        addItem.setIcon(VaadinIcon.ARROW_RIGHT.create());
+        addItem.setIcon(icons.get(JmixFontIcon.ARROW_RIGHT));
         treePanel.add(entityTreeComposite);
     }
 

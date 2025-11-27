@@ -22,8 +22,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.editor.Editor;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -38,6 +36,8 @@ import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedValue;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
@@ -60,6 +60,7 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
     protected final UiComponents uiComponents;
     protected final DataComponents dataComponents;
     protected final DataContext dataContext;
+    protected final Icons icons;
 
     protected CollectionLoader<AttributeLocalizedValue> localizedValuesDl;
     protected CollectionContainer<AttributeLocalizedValue> localizedValuesDc;
@@ -76,6 +77,7 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
                                           MessageTools messageTools,
                                           UiComponents uiComponents,
                                           DataComponents dataComponents,
+                                          Icons icons,
                                           DataContext dataContext) {
         this.coreProperties = coreProperties;
         this.msgBundleTools = msgBundleTools;
@@ -85,6 +87,7 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
         this.uiComponents = uiComponents;
         this.dataComponents = dataComponents;
         this.dataContext = dataContext;
+        this.icons = icons;
 
         initData();
         initComponentUi();
@@ -136,7 +139,7 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
         });
 
         Grid.Column<AttributeLocalizedValue> editColumn = localizedValuesDataGrid.addComponentColumn(attributeLocalizedValue -> {
-                    Button editButton = new Button(new Icon(VaadinIcon.PENCIL));
+                    Button editButton = new Button(icons.get(JmixFontIcon.PENCIL));
                     editButton.setEnabled(true);
                     editButton.addClickListener(e -> {
                         if (editor.isOpen()) {
@@ -167,8 +170,8 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
         descriptionCol.setEditorComponent(descriptionField);
 
 
-        Button saveButton = new Button(VaadinIcon.CHECK.create(), e -> editor.save());
-        Button cancelButton = new Button(VaadinIcon.CLOSE.create(), e -> editor.cancel());
+        Button saveButton = new Button(icons.get(JmixFontIcon.CHECK), e -> editor.save());
+        Button cancelButton = new Button(icons.get(JmixFontIcon.CLOSE), e -> editor.cancel());
         cancelButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
         saveButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SUCCESS);
         HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton);

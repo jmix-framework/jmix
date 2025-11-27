@@ -24,6 +24,7 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -56,7 +57,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-@Route(value = "reports/queryParameters/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/queryParameters/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/query-parameters/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_QueryParameter.detail")
 @ViewDescriptor("query-parameter-detail-view.xml")
 @EditedEntityContainer("queryParameterDc")

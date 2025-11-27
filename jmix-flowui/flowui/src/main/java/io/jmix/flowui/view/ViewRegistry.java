@@ -18,8 +18,12 @@ package io.jmix.flowui.view;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouterLayout;
+import com.vaadin.flow.router.internal.RouteUtil;
+import com.vaadin.flow.server.VaadinContext;
+import com.vaadin.flow.server.VaadinServletContext;
 import io.jmix.core.ClassManager;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
@@ -30,6 +34,7 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.exception.NoSuchViewException;
 import io.jmix.flowui.sys.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -74,6 +79,8 @@ public class ViewRegistry implements ApplicationContextAware {
     protected ExtendedEntities extendedEntities;
     protected ApplicationContext applicationContext;
     protected AnnotationScanMetadataReaderFactory metadataReaderFactory;
+
+    protected VaadinContext vaadinContext;
 
     protected Map<String, ViewInfo> views = new HashMap<>();
 
@@ -134,6 +141,7 @@ public class ViewRegistry implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+        vaadinContext = new VaadinServletContext(applicationContext.getBean(ServletContext.class));
     }
 
     @PostConstruct
@@ -602,19 +610,31 @@ public class ViewRegistry implements ApplicationContextAware {
         }
 
         RouteConfiguration routeConfiguration = getRouteConfiguration();
+        String routePath = RouteUtil.getRoutePath(vaadinContext, viewClass);
+        registerRoute(routePath, routeConfiguration, route.layout(), viewClass);
 
-        // The route can be already registered because of hot-deploy or different order of init listeners.
-        if (routeConfiguration.isPathAvailable(route.value())) {
-            routeConfiguration.removeRoute(route.value());
+        for (RouteAlias alias : viewClass
+                .getAnnotationsByType(RouteAlias.class)) {
+            String routeAliasPath = RouteUtil.getRouteAliasPath(viewClass, alias);
+            registerRoute(routeAliasPath, routeConfiguration, alias.layout(), viewClass);
         }
-
-        routeConfiguration.setRoute(route.value(), viewClass,
-                getParentChain(route, getDefaultParentChain()));
     }
 
-    protected List<Class<? extends RouterLayout>> getParentChain(Route route,
+    protected void registerRoute(String routePath, RouteConfiguration routeConfiguration,
+                                 Class<? extends RouterLayout> layout,
+                                 Class<? extends View<?>> viewClass) {
+
+        // The route can be already registered because of hot-deploy or different order of init listeners.
+        if (routeConfiguration.isPathAvailable(routePath)) {
+            routeConfiguration.removeRoute(routePath);
+        }
+
+        routeConfiguration.setRoute(routePath, viewClass,
+                getParentChain(layout, getDefaultParentChain()));
+    }
+
+    protected List<Class<? extends RouterLayout>> getParentChain(Class<? extends RouterLayout> layout,
                                                                  List<Class<? extends RouterLayout>> defaultChain) {
-        Class<? extends RouterLayout> layout = route.layout();
         if (DefaultMainViewParent.class.isAssignableFrom(layout)) {
             return defaultChain;
         }

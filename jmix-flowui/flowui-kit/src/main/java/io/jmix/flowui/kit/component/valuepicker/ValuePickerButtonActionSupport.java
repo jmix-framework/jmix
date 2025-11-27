@@ -63,7 +63,7 @@ public class ValuePickerButtonActionSupport {
             button.setTitle(generateTitle(action));
             button.setEnabled(action.isEnabled());
             button.setVisible(action.isVisible());
-            button.setIcon(action.getIcon());
+            button.setIcon(action.getIconComponent());
 
             registration = button.addClickListener(event -> action.actionPerform(event.getSource()));
             actionPropertyChangeRegistration = addPropertyChangeListener();
@@ -108,7 +108,7 @@ public class ValuePickerButtonActionSupport {
                     button.setVisible(action.isVisible());
                     break;
                 case Action.PROP_ICON:
-                    button.setIcon(action.getIcon());
+                    button.setIcon(action.getIconComponent());
                     break;
                 default:
             }

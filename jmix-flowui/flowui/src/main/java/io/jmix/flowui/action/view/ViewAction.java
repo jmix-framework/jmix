@@ -87,6 +87,13 @@ public abstract class ViewAction<A extends ViewAction<A, V>, V extends View> ext
 
     @SuppressWarnings("unchecked")
     @Override
+    public A withIcon(@Nullable Component icon) {
+        return (A) super.withIcon(icon);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Deprecated(since = "3.0", forRemoval = true)
+    @Override
     public A withIcon(@Nullable Icon icon) {
         return ((A) super.withIcon(icon));
     }

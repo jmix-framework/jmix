@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.action.list;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -28,8 +27,9 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.data.ContainerDataUnit;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
@@ -72,15 +72,18 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
         super(id);
     }
 
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PLUS);
-    }
-
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.Add");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.ADD_ACTION);
+        }
     }
 
     @Autowired

@@ -27,6 +27,7 @@ import component.listmenu.test_support.ListMenuTestConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import component.listmenu.test_support.TestMenuConfig
+import test_support.ComponentTestUtils
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest(classes = [ListMenuTestConfiguration])
@@ -53,7 +54,7 @@ class ListMenuTest extends FlowuiTestSpecification {
                 <menu id="application"
                       title="Application"
                       opened="true"
-                      icon="ABACUS"
+                      icon="vaadin:abacus"
                       description="Description">
                     <item view="ListMenuTestView"
                           title="List menu test view"
@@ -63,7 +64,7 @@ class ListMenuTest extends FlowuiTestSpecification {
                     <item bean="TestMenuItemBean" 
                           beanMethod="open"
                           title="Bean menu"
-                          icon="ABACUS"
+                          icon="vaadin:abacus"
                           description="Description"
                           shortcutCombination="Control-O"/>
                 </menu>
@@ -82,27 +83,21 @@ class ListMenuTest extends FlowuiTestSpecification {
         applicationMenuBar != null
         applicationMenuBar.title == "Application"
         applicationMenuBar.opened
-        applicationMenuBar.icon == VaadinIcon.ABACUS
         applicationMenuBar.description == "Description"
-        (applicationMenuBar.prefixComponent as Icon).element.getAttribute("icon") ==
-                VaadinIcon.ABACUS.create().element.getAttribute("icon")
+        ComponentTestUtils.isSameIcon(applicationMenuBar.prefixComponent, VaadinIcon.ABACUS)
         applicationMenuBar.getChildItems().size() == 2
 
         def menuItem = listMenu.getMenuItem("ListMenuTestView")
         menuItem != null
         menuItem.title == "List menu test view"
-        menuItem.icon == VaadinIcon.ACADEMY_CAP
-        (menuItem.prefixComponent as Icon).element.getAttribute("icon") ==
-                VaadinIcon.ACADEMY_CAP.create().element.getAttribute("icon")
+        ComponentTestUtils.isSameIcon(menuItem.prefixComponent, VaadinIcon.ACADEMY_CAP)
         menuItem.description == "Description"
         menuItem.shortcutCombination.key.keys.get(0) == "KeyO"
 
         def menuBeanItem = (JmixListMenu.BeanMenuItem) listMenu.getMenuItem("TestMenuItemBean#open")
         menuBeanItem != null
         menuBeanItem.title == "Bean menu"
-        menuBeanItem.icon == VaadinIcon.ABACUS
-        (menuBeanItem.prefixComponent as Icon).element.getAttribute("icon") ==
-                VaadinIcon.ABACUS.create().element.getAttribute("icon")
+        ComponentTestUtils.isSameIcon(menuBeanItem.prefixComponent, VaadinIcon.ABACUS)
         menuBeanItem.description == "Description"
         menuBeanItem.shortcutCombination.key.keys.get(0) == "KeyO"
         menuBeanItem.shortcutCombination.keyModifiers[0] == KeyModifier.CONTROL

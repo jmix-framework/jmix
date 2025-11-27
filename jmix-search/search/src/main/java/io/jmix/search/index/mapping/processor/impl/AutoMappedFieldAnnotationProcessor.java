@@ -19,8 +19,8 @@ package io.jmix.search.index.mapping.processor.impl;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.annotation.AutoMappedField;
 import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
-import io.jmix.search.index.mapping.MappingDefinitionElement;
 import io.jmix.search.index.mapping.ParameterKeys;
+import io.jmix.search.index.mapping.StaticAttributesGroupConfiguration;
 import io.jmix.search.index.mapping.processor.AbstractFieldAnnotationProcessor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
@@ -42,8 +42,8 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
     protected void processSpecificAnnotation(MappingDefinitionBuilder builder,
                                              MetaClass rootEntityMetaClass,
                                              AutoMappedField annotation) {
-        builder.addElement(
-                MappingDefinitionElement.builder()
+        builder.addStaticAttributesGroup(
+                StaticAttributesGroupConfiguration.builder()
                         .includeProperties(annotation.includeProperties())
                         .excludeProperties(annotation.excludeProperties())
                         .withFieldMappingStrategyClass(getFieldMappingStrategyClass())
@@ -54,7 +54,7 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
 
     @Override
     protected Map<String, Object> createParameters(AutoMappedField specificAnnotation) {
-        HashMap<String, Object> parameters = new HashMap<>();
+        Map<String, Object> parameters = new HashMap<>();
         if (StringUtils.isNotBlank(specificAnnotation.analyzer())) {
             parameters.put(ParameterKeys.ANALYZER, specificAnnotation.analyzer());
         }

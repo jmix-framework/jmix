@@ -21,7 +21,6 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import io.jmix.core.Messages;
@@ -34,7 +33,9 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
@@ -66,6 +67,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
     protected FormLayout formLayout;
     protected Messages messages;
     protected Metadata metadata;
+    protected Icons icons;
     protected CollectionContainer<EntityTreeNode> reportEntityTreeNodeDc;
 
     protected boolean scalarOnly = false;
@@ -107,7 +109,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
     protected FormLayout initContent() {
         reportPropertyName = uiComponents.create(TextField.class);
         JmixButton reportPropertyNameSearchButton = uiComponents.create(JmixButton.class);
-        reportPropertyNameSearchButton.setIcon(VaadinIcon.SEARCH.create());
+        reportPropertyNameSearchButton.setIcon(icons.get(JmixFontIcon.SEARCH));
         reportPropertyNameSearchButton.addClickListener(event -> {
             reportEntityTreeNodeDl.load();
             if (reportEntityTreeNodeDc.getItems().isEmpty()) {
@@ -158,6 +160,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
         this.messages = applicationContext.getBean(Messages.class);
         this.dataComponents = applicationContext.getBean(DataComponents.class);
         this.metadata = applicationContext.getBean(Metadata.class);
+        this.icons = applicationContext.getBean(Icons.class);
         this.metadataTools = applicationContext.getBean(MetadataTools.class);
 
 

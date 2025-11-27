@@ -17,10 +17,14 @@
 package events
 
 import io.jmix.core.DataManager
+import io.jmix.core.Id
 import io.jmix.core.event.EntityChangedEvent
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
+import test_support.entity.events.on_delete_stack_overflow.History
+import test_support.entity.events.on_delete_stack_overflow.Payment
+import test_support.entity.events.on_delete_stack_overflow.Product
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
 import test_support.listeners.TestOrdersListener
@@ -88,6 +92,10 @@ class EntityChangedEventOnDeleteTest extends DataSpec {
         jdbc.update("delete from SALES_ORDER_LINE")
         jdbc.update("delete from SALES_ORDER")
 
+        jdbc.update("delete from ODSO_HISTORY")
+        jdbc.update("delete from ODSO_PAYMENT")
+        jdbc.update("delete from ODSO_PRODUCT")
+
     }
 
     def "Event published for cascade deleted entity"() {
@@ -101,4 +109,45 @@ class EntityChangedEventOnDeleteTest extends DataSpec {
         hasOnDeleteAfterCommit
     }
 
+    def "no StackOverflowError thrown during deleting entity with ondelete policy"() {
+        setup: "see also 'test_support.listeners.OnDeleteStackOverflowListener'"
+        def product = dataManager.create(Product)
+        product.name = "P1"
+
+        def payment = dataManager.create(Payment)
+        payment.name = "payment_1"
+        payment.product = product
+
+        product = dataManager.save(product)
+        payment = dataManager.save(payment)
+
+        when: "'Payment' entity deleted by @OnDelete policy and 'History' entity created during EntityChangedEvent"
+        dataManager.remove(product)
+        Optional productAfterRemove = dataManager.load(Id.of(product)).optional()
+        Optional paymentAfterRemove = dataManager.load(Id.of(payment)).optional()
+
+        List<History> productEvents = dataManager.load(History)
+                .query("select e from odso_History e where e.objId=:id order by e.createdDate")
+                .parameter("id", product.id)
+                .list()
+
+        List<History> paymentEvents = dataManager.load(History)
+                .query("select e from odso_History e where e.objId=:id order by e.createdDate")
+                .parameter("id", payment.id)
+                .list()
+
+        then: "'Payment' entity deletion event doesn't thrown multiple times"
+        noExceptionThrown()
+
+        productAfterRemove.isEmpty()
+        paymentAfterRemove.isEmpty()
+
+        productEvents.size() == 2
+        productEvents[0].eventType == "CREATED"
+        productEvents[1].eventType == "DELETED"
+
+        paymentEvents.size() == 2
+        paymentEvents[0].eventType == "CREATED"
+        paymentEvents[1].eventType == "DELETED"
+    }
 }

@@ -16,20 +16,21 @@
 
 package io.jmix.pessimisticlockflowui.view.pessimisticlock;
 
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
+import io.jmix.pessimisticlock.entity.LockInfo;
+import io.jmix.pessimisticlock.LockManager;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
-import io.jmix.pessimisticlock.LockManager;
-import io.jmix.pessimisticlock.entity.LockInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;

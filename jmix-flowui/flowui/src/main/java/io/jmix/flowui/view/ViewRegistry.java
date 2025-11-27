@@ -34,6 +34,7 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.exception.NoSuchViewException;
 import io.jmix.flowui.sys.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -44,7 +45,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.util.*;
@@ -141,8 +141,7 @@ public class ViewRegistry implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        vaadinContext = new VaadinServletContext(
-                ((WebApplicationContext) applicationContext).getServletContext());
+        vaadinContext = new VaadinServletContext(applicationContext.getBean(ServletContext.class));
     }
 
     @PostConstruct

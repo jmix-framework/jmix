@@ -4,7 +4,6 @@ def containers = []
 def facetBlock = ''
 def nestedDatasourceProperties = []
 def optionsDatasourceXml = ''
-if (formTemplate.name() == 'VARIABLE') {
     StringBuilder facetsBuilder = new StringBuilder()
     facetsBuilder.append("<facets>")
     facetsBuilder.append("<dataLoadCoordinator auto=\"true\"/>")
@@ -54,7 +53,7 @@ if (formTemplate.name() == 'VARIABLE') {
             }
         }
     }
-} else if (formTemplate.name() == 'ENTITY') {
+if (formTemplate.name() == 'ENTITY') {
     nestedDatasourceProperties = api.evaluateScript('nestedDatasourceProperties.groovy',
         ['view': detailFetchPlan,
          'embeddable': false])
@@ -62,15 +61,12 @@ if (formTemplate.name() == 'VARIABLE') {
         ['view': detailFetchPlan,
          'api': api])
 }%>
-<%if (formTemplate.name() == 'VARIABLE' && !containers.isEmpty()) {%>
+<%if (!containers.isEmpty() || formTemplate.name() == 'ENTITY') { %>
     <data>
         <%containers.each {%>
             $it
         <%}%>
-    </data>
-<%if (hasComboBox) {%>$facetBlock<%}%>
-<%} else if (formTemplate.name() == 'ENTITY') {%>
-    <data>
+    <%if (formTemplate.name() == 'ENTITY') {%>
         <instance id="${dcId}"
                   class="${entity.fqn}"<%if (!is_inline_detailFetchPlan) {%>
                   fetchPlan="${detailFetchPlan.name}>"<%} else {%>>
@@ -88,8 +84,7 @@ if (formTemplate.name() == 'VARIABLE') {
         <%if (optionsDatasourceXml?.trim()) {%>
             ${optionsDatasourceXml}
         <%}%>
+    <%}%>
     </data>
-    <facets>
-        <dataLoadCoordinator auto="true"/>
-    </facets>
+    <%if (hasComboBox || formTemplate.name() == 'ENTITY') {%>$facetBlock<%}%>
 <%}%>

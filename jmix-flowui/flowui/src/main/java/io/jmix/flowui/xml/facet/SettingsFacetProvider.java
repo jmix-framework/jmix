@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 /**
  * @deprecated use {@link FacetRegistrationBuilder} instead
  */
-@Deprecated(forRemoval = true, since = "3.0")
+@Deprecated(since = "3.0", forRemoval = true)
 @org.springframework.stereotype.Component("flowui_SettingsFacetProvider")
 public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
 

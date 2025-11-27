@@ -21,11 +21,13 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.DataLoadCoordinator;
+import io.jmix.flowui.impl.FacetsImpl;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
+import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.lang.Nullable;
@@ -42,6 +44,16 @@ public class DataLoadCoordinatorFacetLoader extends AbstractFacetLoader<DataLoad
 
     @Override
     public void loadFacet() {
+        // for backward compatibility, should be removed in future releases
+        if (facets instanceof FacetsImpl facetsImpl) {
+            FacetProvider<DataLoadCoordinator> provider = facetsImpl.getProvider(DataLoadCoordinator.class);
+
+            if (provider != null) {
+                provider.loadFromXml(resultFacet, element, context);
+                return;
+            }
+        }
+
         loaderSupport.loadString(element, "id", resultFacet::setId);
         loaderSupport.loadString(element, "containerPrefix", resultFacet::setContainerPrefix);
         loaderSupport.loadString(element, "componentPrefix", resultFacet::setComponentPrefix);

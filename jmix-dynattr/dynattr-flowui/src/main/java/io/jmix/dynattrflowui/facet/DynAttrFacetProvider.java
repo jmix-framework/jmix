@@ -29,7 +29,7 @@ import org.dom4j.Element;
  * @deprecated use {@link FacetRegistrationBuilder} instead
  */
 @Internal
-@Deprecated(forRemoval = true, since = "3.0")
+@Deprecated(since = "3.0", forRemoval = true)
 @org.springframework.stereotype.Component("dynat_DynamicAttributeFacetProvider")
 public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
 
@@ -48,9 +48,7 @@ public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
 
     @Override
     public DynAttrFacet create() {
-        DynAttrFacetImpl dynAttrFacet = new DynAttrFacetImpl();
-        dynAttrFacet.setAttributeDefaultValues(attributeDefaultValues);
-        return dynAttrFacet;
+        return new DynAttrFacetImpl(attributeDefaultValues);
     }
 
     @Override

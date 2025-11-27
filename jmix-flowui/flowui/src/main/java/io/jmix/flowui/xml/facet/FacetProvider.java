@@ -28,7 +28,7 @@ import org.dom4j.Element;
  * @see Facet
  * @deprecated use {@link FacetRegistrationBuilder} instead
  */
-@Deprecated(forRemoval = true, since = "3.0")
+@Deprecated(since = "3.0", forRemoval = true)
 public interface FacetProvider<T extends Facet> {
 
     /**

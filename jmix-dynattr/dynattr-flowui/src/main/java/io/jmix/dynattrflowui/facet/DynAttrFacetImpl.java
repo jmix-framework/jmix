@@ -17,28 +17,26 @@
 package io.jmix.dynattrflowui.facet;
 
 import io.jmix.core.annotation.Internal;
-import io.jmix.core.common.event.EventHub;
 import io.jmix.dynattrflowui.impl.AttributeDefaultValues;
 import io.jmix.flowui.facet.impl.AbstractFacet;
 import io.jmix.flowui.view.StandardDetailView;
-import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.lang.Nullable;
 
-
 @Internal
 public class DynAttrFacetImpl extends AbstractFacet implements DynAttrFacet {
+
     protected AttributeDefaultValues attributeDefaultValues;
+
+    public DynAttrFacetImpl(AttributeDefaultValues attributeDefaultValues) {
+        this.attributeDefaultValues = attributeDefaultValues;
+    }
 
     @Override
     public void setOwner(@Nullable View<?> owner) {
         super.setOwner(owner);
         subscribe();
-    }
-
-    public void setAttributeDefaultValues(AttributeDefaultValues attributeDefaultValues) {
-        this.attributeDefaultValues = attributeDefaultValues;
     }
 
     private void subscribe() {

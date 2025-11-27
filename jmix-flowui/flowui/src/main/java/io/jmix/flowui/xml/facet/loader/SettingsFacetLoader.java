@@ -19,6 +19,8 @@ package io.jmix.flowui.xml.facet.loader;
 import com.google.common.base.Strings;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.SettingsFacet;
+import io.jmix.flowui.impl.FacetsImpl;
+import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dom4j.Element;
@@ -38,6 +40,16 @@ public class SettingsFacetLoader extends AbstractFacetLoader<SettingsFacet> {
 
     @Override
     public void loadFacet() {
+        // for backward compatibility, should be removed in future releases
+        if (facets instanceof FacetsImpl facetsImpl) {
+            FacetProvider<SettingsFacet> provider = facetsImpl.getProvider(SettingsFacet.class);
+
+            if (provider != null) {
+                provider.loadFromXml(resultFacet, element, context);
+                return;
+            }
+        }
+
         loaderSupport.loadString(element, "id", resultFacet::setId);
         loaderSupport.loadBoolean(element, "auto", resultFacet::setAuto);
 

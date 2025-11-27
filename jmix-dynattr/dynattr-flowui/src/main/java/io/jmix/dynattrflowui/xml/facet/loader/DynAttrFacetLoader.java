@@ -19,6 +19,8 @@ package io.jmix.dynattrflowui.xml.facet.loader;
 import io.jmix.dynattrflowui.DynAttrEmbeddingStrategies;
 import io.jmix.dynattrflowui.facet.DynAttrFacet;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.impl.FacetsImpl;
+import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.facet.loader.AbstractFacetLoader;
 
 public class DynAttrFacetLoader extends AbstractFacetLoader<DynAttrFacet> {
@@ -32,6 +34,16 @@ public class DynAttrFacetLoader extends AbstractFacetLoader<DynAttrFacet> {
 
     @Override
     public void loadFacet() {
+        // for backward compatibility, should be removed in future releases
+        if (facets instanceof FacetsImpl facetsImpl) {
+            FacetProvider<DynAttrFacet> provider = facetsImpl.getProvider(DynAttrFacet.class);
+
+            if (provider != null) {
+                provider.loadFromXml(resultFacet, element, context);
+                return;
+            }
+        }
+
         context.addInitTask((__, view) ->
                 UiComponentUtils.traverseComponents(view, component ->
                         getEmbeddingStrategies().embedAttributes(component, view))

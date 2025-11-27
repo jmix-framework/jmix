@@ -21,6 +21,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.FileRef;
 import io.jmix.flowui.Actions;
 import io.jmix.core.MetadataTools;
@@ -44,7 +45,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Route(value = "reports/executions", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/executions", layout = DefaultMainViewParent.class)
+@Route(value = "report/executions", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportExecution.list")
 @ViewDescriptor("report-execution-list-view.xml")
 @LookupComponent("executionsDataGrid")

@@ -8,6 +8,7 @@ import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -52,7 +53,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-@Route(value = "reports/parameters/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/parameters/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/parameters/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportInputParameter.detail")
 @ViewDescriptor("report-parameter-detail-view.xml")
 @EditedEntityContainer("parameterDc")

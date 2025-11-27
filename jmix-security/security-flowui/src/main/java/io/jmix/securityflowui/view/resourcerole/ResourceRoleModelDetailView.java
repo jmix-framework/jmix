@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.SaveContext;
@@ -49,7 +50,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Route(value = "sec/resourcerolemodels/:code", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "sec/resourcerolemodels/:code", layout = DefaultMainViewParent.class)
+@Route(value = "sec/resource-role-models/:code", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.detail")
 @ViewDescriptor("resource-role-model-detail-view.xml")
 @EditedEntityContainer("roleModelDc")

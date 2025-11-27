@@ -2,10 +2,7 @@ package io.jmix.securityflowui.view.roleassignment;
 
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeLeaveEvent;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.*;
 import io.jmix.core.*;
 import io.jmix.core.security.UserRepository;
 import io.jmix.flowui.Notifications;
@@ -37,7 +34,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Route(value = "sec/roleassignment/:username", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "sec/roleassignment/:username", layout = DefaultMainViewParent.class)
+@Route(value = "sec/role-assignment/:username", layout = DefaultMainViewParent.class)
 @ViewController("roleAssignmentView")
 @ViewDescriptor("role-assignment-view.xml")
 public class RoleAssignmentView extends StandardView {

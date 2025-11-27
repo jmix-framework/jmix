@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+@NonNullApi
+@Internal
+package io.jmix.datatools.datamodelvisualization.impl;
 
-group = 'io.jmix.datatools'
-archivesBaseName = 'jmix-datatools'
-
-dependencies {
-    api project(':data')
-
-    api 'net.sourceforge.plantuml:plantuml-mit'
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

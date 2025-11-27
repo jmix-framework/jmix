@@ -1,0 +1,60 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.dynattrflowui.xml.facet.loader;
+
+import io.jmix.dynattrflowui.DynAttrEmbeddingStrategies;
+import io.jmix.dynattrflowui.facet.DynAttrFacet;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.impl.FacetsImpl;
+import io.jmix.flowui.xml.facet.FacetProvider;
+import io.jmix.flowui.xml.facet.loader.AbstractFacetLoader;
+
+public class DynAttrFacetLoader extends AbstractFacetLoader<DynAttrFacet> {
+
+    protected DynAttrEmbeddingStrategies embeddingStrategies;
+
+    @Override
+    protected DynAttrFacet createFacet() {
+        return facets.create(DynAttrFacet.class);
+    }
+
+    @Override
+    public void loadFacet() {
+        // for backward compatibility, should be removed in future releases
+        if (facets instanceof FacetsImpl facetsImpl) {
+            FacetProvider<DynAttrFacet> provider = facetsImpl.getProvider(DynAttrFacet.class);
+
+            if (provider != null) {
+                provider.loadFromXml(resultFacet, element, context);
+                return;
+            }
+        }
+
+        context.addInitTask((__, view) ->
+                UiComponentUtils.traverseComponents(view, component ->
+                        getEmbeddingStrategies().embedAttributes(component, view))
+        );
+    }
+
+    protected DynAttrEmbeddingStrategies getEmbeddingStrategies() {
+        if (embeddingStrategies == null) {
+            embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
+        }
+
+        return embeddingStrategies;
+    }
+}

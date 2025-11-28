@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.h2.H2ConsoleProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -59,6 +60,7 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     protected ViewRegistry viewRegistry;
     protected ApplicationContext applicationContext;
     protected ServerProperties serverProperties;
+    protected H2ConsoleProperties h2ConsoleProperties;
     protected ServletContext servletContext;
     protected List<JmixRequestCacheRequestMatcher> requestCacheRequestMatchers;
 
@@ -80,6 +82,11 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     @Autowired
     public void setServerProperties(ServerProperties serverProperties) {
         this.serverProperties = serverProperties;
+    }
+
+    @Autowired(required = false)
+    public void setH2ConsoleProperties(H2ConsoleProperties h2ConsoleProperties) {
+        this.h2ConsoleProperties = h2ConsoleProperties;
     }
 
     @Autowired
@@ -186,6 +193,10 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     protected void configure(WebSecurity web) throws Exception {
         super.configure(web);
         web.ignoring().requestMatchers(new AntPathRequestMatcher("/VAADIN/push/**"));
+
+        if (h2ConsoleProperties != null && h2ConsoleProperties.isEnabled()) {
+            web.ignoring().requestMatchers(new AntPathRequestMatcher(h2ConsoleProperties.getPath() + "/**"));
+        }
     }
 
     protected RequestCache getDelegateRequestCache() {

@@ -39,6 +39,9 @@
     <property name="authserver.data.type"
               value="BLOB"
               dbms="hsqldb"/>
+    <property name="authserver.data.type"
+              value="BLOB"
+              dbms="h2"/>
     <include file="/io/jmix/authserver/liquibase/changelog/001-authserver.xml"/>
 
 </databaseChangeLog>

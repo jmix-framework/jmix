@@ -17,6 +17,7 @@
 package io.jmix.data.impl.dbms;
 
 import io.jmix.data.persistence.DbTypeConverter;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -26,6 +27,7 @@ import java.util.UUID;
 @Component("hsqlDbTypeConverter")
 public class HsqlDbTypeConverter implements DbTypeConverter {
 
+    @Nullable
     @Override
     public Object getJavaObject(ResultSet resultSet, int columnIndex) {
         Object value;

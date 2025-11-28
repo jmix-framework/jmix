@@ -30,6 +30,7 @@
     <property name="byte_array.type" dbms="mssql" value="varbinary(max)"/>
     <property name="byte_array.type" dbms="oracle" value="BLOB"/>
     <property name="byte_array.type" dbms="hsqldb" value="BLOB"/>
+    <property name="byte_array.type" dbms="h2" value="BLOB"/>
 
     <property name="table_prefix" value="QRTZ_"/>
 

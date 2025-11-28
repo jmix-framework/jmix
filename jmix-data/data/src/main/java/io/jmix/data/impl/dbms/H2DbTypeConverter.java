@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import java.sql.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Component("sqlServerDbTypeConverter")
-public class SqlServerDbTypeConverter implements DbTypeConverter {
+@Component("h2DbTypeConverter")
+public class H2DbTypeConverter implements DbTypeConverter {
 
     @Nullable
     @Override
@@ -44,11 +44,10 @@ public class SqlServerDbTypeConverter implements DbTypeConverter {
             String typeName = metaData.getColumnTypeName(columnIndex);
 
             switch (sqlType) {
-                case Types.CHAR:
-                case Types.VARCHAR:
-                case Types.LONGVARCHAR:
-                case Types.CLOB:
-                    if ("uniqueidentifier".equals(typeName)) {
+                case Types.OTHER:
+                    if (resultSet.getObject(columnIndex) instanceof UUID) {
+                        value = resultSet.getObject(columnIndex);
+                    } else if ("uuid".equals(typeName)) {
                         String stringValue = resultSet.getString(columnIndex);
                         value = stringValue != null ? UuidProvider.fromString(stringValue) : null;
                     } else {
@@ -71,10 +70,6 @@ public class SqlServerDbTypeConverter implements DbTypeConverter {
     public Object getSqlObject(Object value) {
         if (value instanceof Date)
             return new Timestamp(((Date) value).getTime());
-        if (value instanceof UUID)
-            return value.toString();
-        if (value instanceof Boolean)
-            return ((Boolean) value) ? 1 : 0;
         return value;
     }
 
@@ -82,21 +77,11 @@ public class SqlServerDbTypeConverter implements DbTypeConverter {
     public int getSqlType(Class<?> javaClass) {
         if (javaClass == Date.class)
             return Types.TIMESTAMP;
-        else if (javaClass == UUID.class)
-            return Types.VARCHAR;
-        else if (javaClass == Boolean.class)
-            return Types.BIT;
-        else if (javaClass == String.class)
-            return Types.VARCHAR;
-        else if (javaClass == Integer.class)
-            return Types.INTEGER;
-        else if (javaClass == Long.class)
-            return Types.BIGINT;
         return Types.OTHER;
     }
 
     @Override
     public String getTypeAndVersion() {
-        return "sqlServer";
+        return "h2";
     }
 }

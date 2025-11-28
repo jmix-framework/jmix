@@ -61,7 +61,6 @@ public class UserMenu extends JmixUserMenu<UserDetails> implements HasViewMenuIt
     private static final Logger log = LoggerFactory.getLogger(UserMenu.class);
 
     protected static final String SUBSTITUTED_THEME_NAME = "substituted";
-    protected static final String BUTTON_CONTENT_CLASS_NAME = BASE_CLASS_NAME + "-button-content";
 
     protected ApplicationContext applicationContext;
 

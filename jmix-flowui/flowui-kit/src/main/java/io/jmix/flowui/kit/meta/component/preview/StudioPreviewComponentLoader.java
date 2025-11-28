@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.meta.component.preview;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +41,22 @@ import org.dom4j.Element;
  */
 public interface StudioPreviewComponentLoader {
 
+    String MAIN_VIEW_SCHEMA = "http://jmix.io/schema/flowui/main-view";
+    String MAIN_VIEW_TAB_MODE_SCHEMA = "http://jmix.io/schema/tabmod/main-view";
+    List<String> MAIN_VIEW_SCHEMAS = List.of(MAIN_VIEW_SCHEMA, MAIN_VIEW_TAB_MODE_SCHEMA);
+
     String VIEW_SCHEMA = "http://jmix.io/schema/flowui/view";
+    String FRAGMENT_SCHEMA = "http://jmix.io/schema/flowui/fragment";
+
+    List<String> VIEW_OR_FRAGMENT_SCHEMAS = new ArrayList<>() {{
+        add(VIEW_SCHEMA);
+        add(FRAGMENT_SCHEMA);
+        addAll(MAIN_VIEW_SCHEMAS);
+    }};
+
+    default boolean hasViewOrFragmentSchema(Element element) {
+        return VIEW_OR_FRAGMENT_SCHEMAS.contains(element.getNamespaceURI());
+    }
 
     /**
      * Define the element that this loader can load.

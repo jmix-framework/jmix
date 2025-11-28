@@ -57,6 +57,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
     protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-user-menu";
     protected static final String BASE_CLASS_NAME = "jmix-user-menu";
     protected static final String OVERLAY_CLASS_NAME = BASE_CLASS_NAME + "-overlay";
+    public static final String BUTTON_CONTENT_CLASS_NAME = BASE_CLASS_NAME + "-button-content";
 
     protected JmixMenuItem userMenuItem;
 

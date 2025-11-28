@@ -95,13 +95,13 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     @Autowired
     private QuartzService quartzService;
     @Autowired
-    private MessageBundle messageBundle;
-    @Autowired
     private Dialogs dialogs;
     @Autowired
     private Messages messages;
     @Autowired
     private Icons icons;
+    @ViewComponent
+    private MessageBundle messageBundle;
 
     private List<String> triggerGroupNames;
 

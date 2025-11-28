@@ -76,12 +76,12 @@ public class ReportRunView extends StandardListView<Report> {
     @ViewComponent
     protected CollectionLoader<Report> reportsDl;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected ReportRepository reportRepository;
     @Autowired
     protected CurrentUserSubstitution currentUserSubstitution;
-    @ViewComponent
-    protected MessageBundle messageBundle;
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired

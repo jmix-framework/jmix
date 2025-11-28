@@ -27,7 +27,6 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
-import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.*;
 import io.jmix.security.usersubstitution.UserSubstitutionModel;
 import io.jmix.security.usersubstitution.UserSubstitutionPersistence;
@@ -50,7 +49,7 @@ public class UserSubstitutionView extends StandardView {
     @ViewComponent
     protected CollectionLoader<UserSubstitutionModel> userSubstitutionsDl;
 
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
     @Autowired
     protected MetadataTools metadataTools;

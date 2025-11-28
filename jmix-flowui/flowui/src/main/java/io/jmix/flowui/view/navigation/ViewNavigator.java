@@ -20,8 +20,8 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 /**
@@ -30,11 +30,6 @@ import java.util.function.Consumer;
  * An instance of this class should be obtained through {@link ViewNavigators#view(String)}.
  */
 public class ViewNavigator extends AbstractViewNavigator {
-
-    @Deprecated(since = "2.3", forRemoval = true)
-    public ViewNavigator(Consumer<? extends ViewNavigator> handler) {
-        super(handler);
-    }
 
     public ViewNavigator(View<?> origin,
                          Consumer<? extends ViewNavigator> handler) {

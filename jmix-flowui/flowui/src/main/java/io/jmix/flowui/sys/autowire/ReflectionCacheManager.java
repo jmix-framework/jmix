@@ -35,20 +35,17 @@ import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.Supply;
 import io.jmix.flowui.view.ViewComponent;
 import org.apache.commons.lang3.ClassUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
-import java.lang.annotation.Annotation;
 import java.lang.invoke.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
@@ -620,14 +617,6 @@ public class ReflectionCacheManager {
 
     @Nullable
     protected Class<?> getAutowiringAnnotationClass(AnnotatedElement element) {
-        // TODO: kd, remove after major release
-        //  deprecated function,
-        //  the @ViewComponent should be the only annotation for the fields that is processed by the framework.
-        //  currently, @Autowired is only needed for messageBundle bean. not removed for backward compatibility.
-        if (element.isAnnotationPresent(Autowired.class)) {
-            return Autowired.class;
-        }
-
         if (element.isAnnotationPresent(ViewComponent.class)) {
             return ViewComponent.class;
         }

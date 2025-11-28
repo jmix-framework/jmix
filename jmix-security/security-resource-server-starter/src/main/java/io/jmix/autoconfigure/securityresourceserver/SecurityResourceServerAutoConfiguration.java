@@ -18,9 +18,8 @@ package io.jmix.autoconfigure.securityresourceserver;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
-import io.jmix.core.security.AuthorizedUrlsProvider;
-import io.jmix.securityresourceserver.authentication.ForceApiSecurityScopePropertiesProvider;
 import io.jmix.security.util.RequestLocaleProvider;
+import io.jmix.securityresourceserver.authentication.ForceApiSecurityScopePropertiesProvider;
 import io.jmix.securityresourceserver.authentication.ResourceServerFilterChainCustomizer;
 import io.jmix.securityresourceserver.requestmatcher.AnonymousRequestMatcherProvider;
 import io.jmix.securityresourceserver.requestmatcher.AuthenticatedRequestMatcherProvider;
@@ -31,7 +30,6 @@ import io.jmix.securityresourceserver.requestmatcher.impl.CompositeResourceServe
 import io.jmix.securityresourceserver.requestmatcher.urlprovider.AnonymousUrlPatternsProvider;
 import io.jmix.securityresourceserver.requestmatcher.urlprovider.AuthenticatedUrlPatternsProvider;
 import io.jmix.securityresourceserver.requestmatcher.urlprovider.impl.AppPropertiesUrlPatternsProvider;
-import io.jmix.securityresourceserver.requestmatcher.urlprovider.impl.LegacyAuthorizedUrlsPatternsProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -71,12 +69,6 @@ public class SecurityResourceServerAutoConfiguration {
     AnonymousUrlPatternsRequestMatcherProvider anonymousUrlsRequestMatcherProvider(
             List<AnonymousUrlPatternsProvider> anonymousUrlPatternsProviders) {
         return new AnonymousUrlPatternsRequestMatcherProvider(anonymousUrlPatternsProviders);
-    }
-
-    @Bean("sec_LegacyAuthorizedUrlsPatternsProvider")
-    LegacyAuthorizedUrlsPatternsProvider legacyAuthorizedUrlsPatternsProvider(
-            List<AuthorizedUrlsProvider> authorizedUrlsProviders) {
-        return new LegacyAuthorizedUrlsPatternsProvider(authorizedUrlsProviders);
     }
 
     @Bean("sec_ForceApiSecurityScopePropertiesProvider")

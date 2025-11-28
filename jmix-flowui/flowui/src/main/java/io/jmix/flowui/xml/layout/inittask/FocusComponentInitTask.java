@@ -23,9 +23,6 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
-import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
@@ -34,7 +31,6 @@ import static io.jmix.flowui.component.UiComponentUtils.findFocusComponent;
 
 public class FocusComponentInitTask implements ComponentLoader.InitTask {
 
-    private static final Logger log = LoggerFactory.getLogger(FocusComponentInitTask.class);
     protected String focusComponentId;
     protected View<?> view;
 
@@ -44,7 +40,7 @@ public class FocusComponentInitTask implements ComponentLoader.InitTask {
     }
 
     @Override
-    public void execute(ComponentContext context, View<?> view) {
+    public void execute(ComponentLoader.Context context) {
         if (!(UiComponentUtils.isContainer(view.getContent())
                 || view.getContent() instanceof AppLayout)) {
             throw new GuiDevelopmentException(View.class.getSimpleName() + " cannot contain components", context);

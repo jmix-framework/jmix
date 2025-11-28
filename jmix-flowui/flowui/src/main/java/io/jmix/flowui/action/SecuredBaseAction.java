@@ -18,13 +18,10 @@ package io.jmix.flowui.action;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
-
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -33,10 +30,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class SecuredBaseAction extends BaseAction implements SecuredAction {
-
-    protected boolean enabledByUiPermissions = true;
-    protected boolean visibleByUiPermissions = true;
+public class SecuredBaseAction extends BaseAction {
 
     protected List<EnabledRule> enabledRules;
 
@@ -46,38 +40,10 @@ public class SecuredBaseAction extends BaseAction implements SecuredAction {
 
     @Override
     public void refreshState() {
-        setVisibleInternal(visibleExplicitly && isVisibleByUiPermissions());
+        setVisibleInternal(visibleExplicitly);
 
-        setEnabledInternal(enabledExplicitly && isEnabledByUiPermissions() && isVisibleByUiPermissions()
+        setEnabledInternal(enabledExplicitly
                 && isPermitted() && isApplicable() && isEnabledByRule());
-    }
-
-    @Override
-    public boolean isEnabledByUiPermissions() {
-        return enabledByUiPermissions;
-    }
-
-    @Override
-    public void setEnabledByUiPermissions(boolean enabledByUiPermissions) {
-        if (this.enabledByUiPermissions != enabledByUiPermissions) {
-            this.enabledByUiPermissions = enabledByUiPermissions;
-
-            refreshState();
-        }
-    }
-
-    @Override
-    public boolean isVisibleByUiPermissions() {
-        return visibleByUiPermissions;
-    }
-
-    @Override
-    public void setVisibleByUiPermissions(boolean visibleByUiPermissions) {
-        if (this.visibleByUiPermissions != visibleByUiPermissions) {
-            this.visibleByUiPermissions = visibleByUiPermissions;
-
-            refreshState();
-        }
     }
 
     protected boolean isPermitted() {
@@ -167,18 +133,6 @@ public class SecuredBaseAction extends BaseAction implements SecuredAction {
     }
 
     @Override
-    public SecuredBaseAction withIcon(@Nullable VaadinIcon icon) {
-        setIcon(ComponentUtils.convertToIcon(icon));
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withTitle(@Nullable String title) {
-        setDescription(title);
-        return this;
-    }
-
-    @Override
     public SecuredBaseAction withVariant(ActionVariant actionVariant) {
         setVariant(actionVariant);
         return this;
@@ -200,16 +154,6 @@ public class SecuredBaseAction extends BaseAction implements SecuredAction {
             addActionPerformedListener(handler);
         }
 
-        return this;
-    }
-
-    public SecuredBaseAction withEnabledByUiPermissions(boolean enabledByUiPermissions) {
-        setEnabledByUiPermissions(enabledByUiPermissions);
-        return this;
-    }
-
-    public SecuredBaseAction withVisibleByUiPermissions(boolean visibleByUiPermissions) {
-        setVisibleByUiPermissions(visibleByUiPermissions);
         return this;
     }
 }

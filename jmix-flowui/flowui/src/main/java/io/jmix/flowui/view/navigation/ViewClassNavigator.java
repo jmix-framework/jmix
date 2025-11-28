@@ -20,8 +20,8 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -36,14 +36,6 @@ public class ViewClassNavigator<V extends View<?>> extends ViewNavigator
     protected Class<V> viewClass;
 
     protected Consumer<SupportsAfterViewNavigationHandler.AfterViewNavigationEvent<V>> afterNavigationHandler;
-
-    @Deprecated(since = "2.3", forRemoval = true)
-    public ViewClassNavigator(Consumer<? extends ViewNavigator> handler,
-                              Class<V> viewClass) {
-        super(handler);
-
-        this.viewClass = viewClass;
-    }
 
     public ViewClassNavigator(View<?> origin,
                               Consumer<? extends ViewNavigator> handler,

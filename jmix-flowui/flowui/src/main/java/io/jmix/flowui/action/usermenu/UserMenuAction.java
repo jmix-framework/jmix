@@ -18,7 +18,6 @@ package io.jmix.flowui.action.usermenu;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
@@ -149,18 +148,6 @@ public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends J
 
     @SuppressWarnings("unchecked")
     @Override
-    public A withIcon(@Nullable VaadinIcon icon) {
-        return ((A) super.withIcon(icon));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withTitle(@Nullable String title) {
-        return ((A) super.withTitle(title));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
     public A withVariant(ActionVariant actionVariant) {
         return ((A) super.withVariant(actionVariant));
     }
@@ -175,18 +162,6 @@ public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends J
     @Override
     public A withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
         return ((A) super.withHandler(handler));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withEnabledByUiPermissions(boolean enabledByUiPermissions) {
-        return ((A) super.withEnabledByUiPermissions(enabledByUiPermissions));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withVisibleByUiPermissions(boolean visibleByUiPermissions) {
-        return ((A) super.withVisibleByUiPermissions(visibleByUiPermissions));
     }
 
     protected void checkTarget() {

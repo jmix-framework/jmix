@@ -41,9 +41,9 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
     @Autowired
     protected AttributeComponentProvider attributeComponentProvider;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected Notifications notifications;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     protected AbstractField<?, ?> attributeField;
 

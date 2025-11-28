@@ -21,8 +21,8 @@ import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.DetailViewMode;
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -42,14 +42,6 @@ public class DetailViewNavigator<E> extends AbstractViewNavigator {
     protected boolean readOnly;
 
     protected DetailViewMode mode = DetailViewMode.CREATE;
-
-    @Deprecated(since = "2.3", forRemoval = true)
-    public DetailViewNavigator(Class<E> entityClass, Consumer<? extends DetailViewNavigator<E>> handler) {
-        super(handler);
-        checkNotNullArgument(entityClass);
-
-        this.entityClass = entityClass;
-    }
 
     public DetailViewNavigator(View<?> origin,
                                Class<E> entityClass,

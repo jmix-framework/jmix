@@ -77,7 +77,7 @@ public class ViewLoaderSupport implements ApplicationContextAware {
         Element dataElement = element.element("data");
         if (dataElement != null) {
             ViewData viewData = ViewControllerUtils.getViewData(view);
-            dataComponentsLoaderSupport.load(viewData, element);
+            dataComponentsLoaderSupport.load(viewData, dataElement);
             ((ComponentLoaderContext) context).setDataHolder(viewData);
         }
     }

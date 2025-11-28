@@ -159,11 +159,6 @@ public class DataLoadCoordinatorFacetLoader extends AbstractFacetLoader<DataLoad
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
-        }
-
-        @Override
         public void execute(ComponentLoader.Context context) {
             Preconditions.checkNotNullArgument(facet.getOwner());
 
@@ -187,11 +182,6 @@ public class DataLoadCoordinatorFacetLoader extends AbstractFacetLoader<DataLoad
             this.loaderId = loaderId;
             this.containerId = containerId;
             this.param = param;
-        }
-
-        @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
         }
 
         @Override
@@ -226,11 +216,6 @@ public class DataLoadCoordinatorFacetLoader extends AbstractFacetLoader<DataLoad
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
-        }
-
-        @Override
         public void execute(ComponentLoader.Context context) {
             Preconditions.checkNotNullArgument(facet.getOwner());
 
@@ -249,11 +234,6 @@ public class DataLoadCoordinatorFacetLoader extends AbstractFacetLoader<DataLoad
 
         public AutoConfigurationInitTask(DataLoadCoordinator facet) {
             this.facet = facet;
-        }
-
-        @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
         }
 
         @Override

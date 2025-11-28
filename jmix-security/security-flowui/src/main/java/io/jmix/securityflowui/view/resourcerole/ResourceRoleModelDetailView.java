@@ -81,12 +81,12 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     @ViewComponent
     private CollectionPropertyContainer<ResourcePolicyModel> resourcePoliciesDc;
 
+    @ViewComponent
+    private MessageBundle messageBundle;
     @Autowired
     private Messages messages;
     @Autowired
     private MessageTools messageTools;
-    @Autowired
-    private MessageBundle messageBundle;
     @Autowired(required = false)
     private RolePersistence rolePersistence;
     @Autowired
@@ -383,8 +383,6 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 return EntityResourcePolicyModelDetailView.class;
             case ResourcePolicyType.ENTITY_ATTRIBUTE:
                 return EntityAttributeResourcePolicyModelDetailView.class;
-            case ResourcePolicyType.GRAPHQL:
-                return GraphQLResourcePolicyModelDetailView.class;
             case ResourcePolicyType.SPECIFIC:
                 return SpecificResourcePolicyModelDetailView.class;
         }

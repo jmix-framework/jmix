@@ -131,10 +131,10 @@ public class EntityInspectorListView extends StandardListView<Object> {
     @ViewComponent
     protected JmixButton selectButton;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -1067,10 +1067,14 @@ public class EntityInspectorListView extends StandardListView<Object> {
             this.metadata = metadata;
         }
 
+        protected boolean isVisibleBySpecificUiPermission() {
+            return importExportAvailableBySpecificUiPermission;
+        }
+
         @Override
-        public boolean isEnabledByUiPermissions() {
-            return importExportAvailableBySpecificUiPermission
-                    && super.isEnabledByUiPermissions();
+        protected void setVisibleInternal(boolean visible) {
+            super.setVisibleInternal(visible
+                    && isVisibleBySpecificUiPermission());
         }
 
         @Override

@@ -55,8 +55,6 @@ public class OpenSearchIndexSettingsProvider {
     protected final IndexSettings commonIndexSettings;
     protected final IndexSettingsAnalysis commonAnalysisSettings;
 
-    protected final IndexSettings legacyCommonSettings;
-
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
@@ -68,8 +66,6 @@ public class OpenSearchIndexSettingsProvider {
         prepareConfigurers(configurers);
 
         this.context = configureContext();
-
-        this.legacyCommonSettings = context.getCommonSettingsBuilder().build();
 
         this.commonIndexSettings = context.getCommonIndexSettingsBuilder().build();
         this.commonAnalysisSettings = context.getCommonAnalysisBuilder().build();
@@ -160,18 +156,6 @@ public class OpenSearchIndexSettingsProvider {
 
                 resultIndexSettings = deserializeIndexSettings(resultIndexSettingsNode.toString());
                 this.effectiveIndexSettings.put(entityClass, resultIndexSettings);
-            } else {
-                // Use legacy API
-                Map<Class<?>, IndexSettings.Builder> allLegacySpecificSettingsBuilders = context.getAllSpecificSettingsBuilders();
-                if (allLegacySpecificSettingsBuilders.containsKey(entityClass)) {
-                    // Legacy API entity-specific case
-                    IndexSettings.Builder legacyEntitySettingsBuilder = context.getEntitySettingsBuilder(entityClass);
-                    resultIndexSettings = legacyEntitySettingsBuilder.build();
-                } else {
-                    // Legacy API common-only case
-                    resultIndexSettings = copyIndexSettings(legacyCommonSettings);
-                }
-                effectiveIndexSettings.put(entityClass, resultIndexSettings);
             }
         }
         return resultIndexSettings;

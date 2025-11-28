@@ -18,20 +18,13 @@ package io.jmix.flowui.xml.layout.loader;
 
 
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.component.HasDataComponents;
-import io.jmix.flowui.kit.component.HasActions;
-import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class ComponentLoaderContext extends AbstractLoaderContext implements ComponentContext {
 
@@ -43,42 +36,6 @@ public class ComponentLoaderContext extends AbstractLoaderContext implements Com
     protected List<ComponentLoader.AutowireTask> autowireTasks;
 
     public ComponentLoaderContext() {
-    }
-
-    @Override
-    public ViewData getViewData() {
-        if (dataHolder instanceof ViewData viewData) {
-            return viewData;
-        }
-
-        throw new IllegalStateException("Data holder is not an instance of " +
-                ViewData.class.getSimpleName());
-    }
-
-    /**
-     * @deprecated Use {@link #setDataHolder(HasDataComponents)} instead
-     */
-    @Deprecated(since = "2.3", forRemoval = true)
-    public void setViewData(ViewData viewData) {
-        setDataHolder(viewData);
-    }
-
-    @Override
-    public ViewActions getViewActions() {
-        if (actionsHolder instanceof ViewActions viewActions) {
-            return viewActions;
-        }
-
-        throw new IllegalStateException("Actions holder is not an instance of " +
-                ViewActions.class.getSimpleName());
-    }
-
-    /**
-     * @deprecated Use {@link #setActionsHolder(HasActions)} instead
-     */
-    @Deprecated(since = "2.3", forRemoval = true)
-    public void setViewActions(ViewActions viewActions) {
-        setActionsHolder(viewActions);
     }
 
     @Override
@@ -95,18 +52,8 @@ public class ComponentLoaderContext extends AbstractLoaderContext implements Com
         this.view = view;
     }
 
-    @Override
-    public String getFullFrameId() {
-        return fullFrameId != null ? fullFrameId : getFullOriginId();
-    }
-
     public void setFullFrameId(String frameId) {
         this.fullFrameId = frameId;
-    }
-
-    @Override
-    public String getCurrentFrameId() {
-        return currentFrameId != null ? currentFrameId : getFullOriginId();
     }
 
     public void setCurrentFrameId(String currentFrameId) {
@@ -129,38 +76,6 @@ public class ComponentLoaderContext extends AbstractLoaderContext implements Com
         }
 
         autowireTasks.add(task);
-    }
-
-    @Override
-    public Optional<ComponentContext> getParent() {
-        if (parentContext == null) {
-            return Optional.empty();
-        }
-
-        if (parentContext instanceof ComponentLoaderContext componentLoaderContext) {
-            return Optional.of(componentLoaderContext);
-        }
-
-        throw new IllegalStateException("Parent context is not an instance of " +
-                ComponentLoaderContext.class.getSimpleName());
-    }
-
-    /**
-     * @deprecated Use {@link #setParentContext(ComponentLoader.Context)} instead
-     */
-    @Deprecated(since = "2.3", forRemoval = true)
-    public void setParent(@Nullable ComponentContext parent) {
-        setParentContext(parent);
-    }
-
-    @Deprecated(since = "2.3", forRemoval = true)
-    public List<ComponentLoader.InitTask> getPreInitTasks() {
-        return preInitTasks != null ? preInitTasks : Collections.emptyList();
-    }
-
-    @Deprecated(since = "2.3", forRemoval = true)
-    public List<ComponentLoader.InitTask> getInitTasks() {
-        return initTasks != null ? initTasks : Collections.emptyList();
     }
 
     @Override

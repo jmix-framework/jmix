@@ -20,7 +20,7 @@ package io.jmix.search.index.mapping;
  * Describes details of mapping for entity property or group of properties.
  * Equivalent of a single field-mapping annotation {@link io.jmix.search.index.annotation.AutoMappedField}.
  */
-@Deprecated
+@Deprecated(since = "3.0", forRemoval = true)
 public class MappingDefinitionElement extends StaticAttributesGroupConfiguration {
 
     protected MappingDefinitionElement(StaticAttributeGroupBuilder builder) {

@@ -9,9 +9,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.searching.*;
+import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchRequestContext;
+import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.impl.AbstractEntitySearcher;
 import io.jmix.search.searching.impl.SearchResultImpl;
 import io.jmix.search.utils.Constants;
@@ -113,23 +115,6 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
 
     protected SearchResultImpl initSearchResult(SearchContext searchContext, ElasticsearchSearchStrategy searchStrategy) {
         return new SearchResultImpl(searchContext, searchStrategy.getName());
-    }
-
-    @Deprecated(since = "2.7", forRemoval = true)
-    protected List<String> resolveTargetIndexes(SearchContext searchContext) {
-        Collection<String> requestedEntities = searchContext.getEntities();
-        if (requestedEntities.isEmpty()) {
-            requestedEntities = indexConfigurationManager.getAllIndexedEntities();
-        }
-
-        return requestedEntities.stream()
-                .map(metadata::getClass)
-                .filter(metaClass -> secureOperations.isEntityReadPermitted(metaClass, policyStore))
-                .map(metaClass -> indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(IndexConfiguration::getIndexName)
-                .collect(Collectors.toList());
     }
 
     protected ElasticsearchSearchStrategy resolveSearchStrategy(String searchStrategyName) {

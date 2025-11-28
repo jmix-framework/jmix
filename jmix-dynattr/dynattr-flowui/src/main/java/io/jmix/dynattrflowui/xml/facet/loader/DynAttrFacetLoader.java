@@ -20,6 +20,7 @@ import io.jmix.dynattrflowui.DynAttrEmbeddingStrategies;
 import io.jmix.dynattrflowui.facet.DynAttrFacet;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.impl.FacetsImpl;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.facet.loader.AbstractFacetLoader;
 
@@ -44,10 +45,11 @@ public class DynAttrFacetLoader extends AbstractFacetLoader<DynAttrFacet> {
             }
         }
 
-        context.addInitTask((__, view) ->
-                UiComponentUtils.traverseComponents(view, component ->
-                        getEmbeddingStrategies().embedAttributes(component, view))
-        );
+        View<?> view = context.getView();
+        context.addInitTask(__ -> {
+            UiComponentUtils.traverseComponents(view, component ->
+                    embeddingStrategies.embedAttributes(component, view));
+        });
     }
 
     protected DynAttrEmbeddingStrategies getEmbeddingStrategies() {

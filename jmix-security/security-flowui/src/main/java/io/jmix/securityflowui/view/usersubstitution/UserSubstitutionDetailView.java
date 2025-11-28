@@ -45,12 +45,12 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
     @ViewComponent
     private TypedTextField<String> usernameField;
 
+    @ViewComponent
+    protected MessageBundle messagesBundle;
     @Autowired
     protected EntityStates entityStates;
     @Autowired
     protected UserRepository userRepository;
-    @Autowired
-    protected MessageBundle messagesBundle;
     @Autowired(required = false)
     protected UserSubstitutionPersistence userSubstitutionPersistence;
     @Autowired(required = false)

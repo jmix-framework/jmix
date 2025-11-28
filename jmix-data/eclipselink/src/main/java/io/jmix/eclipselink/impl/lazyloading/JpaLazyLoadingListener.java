@@ -121,8 +121,9 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
         for (Map.Entry<Object, Set<FetchPlan>> entry : collectedFetchPlans.entrySet()) {
             MetaClass metaClass = metadata.getClass(entry.getKey());
             for (MetaProperty property : metaClass.getProperties()) {
-                if (property.getRange().isClass() && !metadataTools.isEmbedded(property) &&
-                        !isPropertyContainedInFetchPlans(property, entry.getValue()) &&
+                if (property.getRange().isClass()
+                        && property.getType() != MetaProperty.Type.EMBEDDED
+                        && !isPropertyContainedInFetchPlans(property, entry.getValue()) &&
                         metadataTools.getCrossDataStoreReferenceIdProperty(property.getStore().getName(), property) == null) {
                     if (!entityStates.isLoaded(entry.getKey(), property.getName())) {
                         if (property.getRange().getCardinality().isMany()) {
@@ -183,7 +184,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                         Object entityId;
 
                         MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(property.getRange().asClass());
-                        if (pkProperty != null && metadataTools.isEmbedded(pkProperty)) {
+                        if (pkProperty != null && pkProperty.getType() == MetaProperty.Type.EMBEDDED) {
                             entityId = buildEmbeddedIdByValueHolder(pkProperty, queryBasedValueHolder);
                         } else {
                             entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
@@ -233,7 +234,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                 } else {
                     Object entityId;
                     MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(property.getRange().asClass());
-                    if (pkProperty != null && metadataTools.isEmbedded(pkProperty)) {
+                    if (pkProperty != null && pkProperty.getType() == MetaProperty.Type.EMBEDDED) {
                         entityId = buildEmbeddedIdByValueHolder(pkProperty, queryBasedValueHolder);
                     } else {
                         entityId = getEntityIdFromValueHolder(queryBasedValueHolder);

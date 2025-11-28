@@ -20,13 +20,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinSession;
-import io.jmix.core.CoreProperties;
-import io.jmix.core.FileRef;
-import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageException;
-import io.jmix.core.FileStorageLocator;
-import io.jmix.core.FileTypesHelper;
-import io.jmix.core.Messages;
+import io.jmix.core.*;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.asynctask.UiAsyncTasks;
 import io.jmix.flowui.component.filedownloader.JmixFileDownloader;
@@ -38,9 +32,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -116,13 +109,6 @@ public class DownloaderImpl implements Downloader {
     @Autowired
     public void setUiAsyncTasks(UiAsyncTasks uiAsyncTasks) {
         this.uiAsyncTasks = uiAsyncTasks;
-    }
-
-    @Override
-    public void setFileStorage(FileStorage fileStorage) {
-        this.fileStorage = fileStorage;
-
-        log.warn("The passed value is ignored. Actual file storage is obtained from " + FileRef.class.getSimpleName());
     }
 
     protected boolean defaultViewFilePredicate(String fileExtension) {

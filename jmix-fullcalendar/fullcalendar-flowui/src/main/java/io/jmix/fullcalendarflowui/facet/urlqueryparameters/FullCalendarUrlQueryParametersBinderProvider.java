@@ -21,7 +21,6 @@ import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.urlqueryparameters.AbstractUrlQueryParametersBinderProvider;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
@@ -75,11 +74,6 @@ public class FullCalendarUrlQueryParametersBinderProvider extends AbstractUrlQue
             this.displayModeParam = displayModeParam;
             this.dateParam = dateParam;
             this.urlParamSerializer = urlParamSerializer;
-        }
-
-        @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing
         }
 
         @Override

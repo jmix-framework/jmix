@@ -18,6 +18,7 @@ package io.jmix.search.searching;
 
 /**
  * Describes the way search context should be processed.
+ *
  * @param <T> platform-specific request builder type
  */
 public interface SearchStrategy<T> {
@@ -34,9 +35,9 @@ public interface SearchStrategy<T> {
      * Configures the provided search request context based on the current search strategy.
      *
      * @param requestContext the {@link SearchRequestContext} to configure, which provides the necessary
-     *                        metadata and state of the search preparation process. The type parameter
-     *                        {@code T} represents the platform-specific request builder associated with
-     *                        the context.
+     *                       metadata and state of the search preparation process. The type parameter
+     *                       {@code T} represents the platform-specific request builder associated with
+     *                       the context.
      */
     default void configureRequest(SearchRequestContext<T> requestContext) {
         throw new UnsupportedOperationException();

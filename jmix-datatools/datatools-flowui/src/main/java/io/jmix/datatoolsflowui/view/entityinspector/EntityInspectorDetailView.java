@@ -93,9 +93,9 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     @Autowired
     protected DataManager dataManager;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected UrlParamSerializer urlParamSerializer;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     protected Tabs tabs;
     @Nullable

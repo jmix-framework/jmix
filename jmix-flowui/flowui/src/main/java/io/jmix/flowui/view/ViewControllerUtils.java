@@ -336,24 +336,6 @@ public final class ViewControllerUtils {
     }
 
     /**
-     * @deprecated use {@link ViewControllerUtils#addInitEntityEventListener(StandardDetailView, ComponentEventListener)} instead
-     */
-    @Deprecated(since = "2.2", forRemoval = true)
-    public static <T> Registration addInitEntityEvent(StandardDetailView<T> view,
-                                                      ComponentEventListener<InitEntityEvent<T>> listener) {
-        return view.addInitEntityListener(listener);
-    }
-
-    /**
-     * @deprecated use {@link ViewControllerUtils#addBeforeShowEventListener(View, ComponentEventListener)} instead
-     */
-    @Deprecated(since = "2.2", forRemoval = true)
-    public static Registration addBeforeShowEvent(View<?> view,
-                                                  ComponentEventListener<View.BeforeShowEvent> listener) {
-        return view.addBeforeShowListener(listener);
-    }
-
-    /**
      * Sets a handler to be executed after navigation to the given view.
      *
      * @param view      the view for which the after-navigation handler is to be set

@@ -30,9 +30,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.locks.StampedLock;
@@ -71,13 +70,12 @@ public class IndexConfigurationManager {
     public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
                                      AnnotatedIndexDefinitionProcessor indexDefinitionProcessor,
                                      InstanceNameProvider instanceNameProvider,
-                                     IndexDefinitionDetector indexDefinitionDetector,
-                                     MetadataTools metadataTools) {
+                                     IndexDefinitionDetector indexDefinitionDetector) {
         this.indexDefinitionProcessor = indexDefinitionProcessor;
         Class<? extends IndexDefinitionDetector> detectorClass = indexDefinitionDetector.getClass();
         classNames = Collections.unmodifiableSet(classpathScanner.getClassNames(detectorClass));
         log.debug("Create Index Configurations");
-        this.registry = new Registry(instanceNameProvider, metadataTools);
+        this.registry = new Registry(instanceNameProvider);
         initializeIndexDefinitions();
     }
 
@@ -370,7 +368,6 @@ public class IndexConfigurationManager {
     protected static class Registry {
 
         private final InstanceNameProvider instanceNameProvider;
-        private final MetadataTools metadataTools;
 
         private final Map<String, IndexConfiguration> indexConfigurationsByEntityName = new HashMap<>();
         private final Map<String, IndexConfiguration> indexConfigurationsByIndexName = new HashMap<>();
@@ -378,9 +375,16 @@ public class IndexConfigurationManager {
         private final Map<Class<?>, Set<MetaPropertyPath>> referentiallyAffectedPropertiesForDelete = new HashMap<>();
         private final Set<Class<?>> registeredEntityClasses = new HashSet<>();
 
-        public Registry(InstanceNameProvider instanceNameProvider, MetadataTools metadataTools) {
+        public Registry(InstanceNameProvider instanceNameProvider) {
             this.instanceNameProvider = instanceNameProvider;
-            this.metadataTools = metadataTools;
+        }
+
+        /**
+         * @deprecated Use {@link #Registry(InstanceNameProvider)} instead
+         */
+        @Deprecated(since = "3.0", forRemoval = true)
+        public Registry(InstanceNameProvider instanceNameProvider, MetadataTools metadataTools) {
+            this(instanceNameProvider);
         }
 
         void registerIndexConfiguration(IndexConfiguration indexConfiguration) {
@@ -567,7 +571,7 @@ public class IndexConfigurationManager {
             boolean result = false;
             if (metaProperties.length > 1) {
                 MetaProperty metaProperty = metaProperties[metaProperties.length - 2];
-                result = metadataTools.isEmbedded(metaProperty);
+                result = metaProperty.getType() == MetaProperty.Type.EMBEDDED;
             }
             return result;
         }

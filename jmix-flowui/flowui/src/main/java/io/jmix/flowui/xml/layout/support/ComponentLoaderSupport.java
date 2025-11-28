@@ -243,14 +243,6 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadInteger(element, "valueChangeTimeout", component::setValueChangeTimeout);
     }
 
-    /**
-     * Deprecated, use {@link ComponentLoaderSupport#loadFocusableAttributes(Focusable, Element)} instead
-     */
-    @Deprecated(since = "2.2", forRemoval = true)
-    public void loadTabIndex(Focusable<?> component, Element element) {
-        loaderSupport.loadInteger(element, "tabIndex", component::setTabIndex);
-    }
-
     public void loadClickNotifierAttributes(ClickNotifier<?> component, Element element) {
         loadShortcut(element, "clickShortcut")
                 .map(KeyCombination::create)
@@ -288,18 +280,6 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     public void loadThemeList(com.vaadin.flow.component.Component component, Element element) {
         loaderSupport.loadString(element, "themeNames")
                 .ifPresent(themeNamesString -> split(themeNamesString, component.getElement().getThemeList()::add));
-    }
-
-    /**
-     * @deprecated use {@link ComponentLoaderSupport#loadThemeList(com.vaadin.flow.component.Component, Element)} instead
-     */
-    @Deprecated(since = "2.0.3", forRemoval = true)
-    public void loadBadge(HasText component, Element element) {
-        loaderSupport.loadString(element, "themeNames")
-                .ifPresent(badgeString -> {
-                    component.getElement().getThemeList().add("badge");
-                    split(badgeString, component.getElement().getThemeList()::add);
-                });
     }
 
     public void loadValueAndElementAttributes(HasValueAndElement<?, ?> component, Element element) {
@@ -426,32 +406,6 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     /**
-     * @deprecated use {@link ComponentLoaderSupport#loadDateFormat(DatePicker.DatePickerI18n, Element)} instead.
-     */
-    @Deprecated(since = "2.1", forRemoval = true)
-    public void loadDateFormat(Element element, Consumer<DatePicker.DatePickerI18n> setter) {
-        loaderSupport.loadResourceString(element, "dateFormat", context.getMessageGroup())
-                .ifPresent(dateFormatString -> {
-                    List<String> dateFormatList = split(dateFormatString);
-
-                    DatePicker.DatePickerI18n datePickerI18n = new DatePicker.DatePickerI18n();
-
-                    if (dateFormatList.size() == 1) {
-                        datePickerI18n.setDateFormat(dateFormatList.get(0));
-                    } else {
-                        datePickerI18n.setDateFormats(
-                                dateFormatList.get(0),
-                                dateFormatList.stream()
-                                        .skip(1)
-                                        .toArray(String[]::new)
-                        );
-                    }
-
-                    setter.accept(datePickerI18n);
-                });
-    }
-
-    /**
      * Loads an {@link Icon} from the given {@link Element}.
      * The method tries to retrieve the "icon" attribute value from the element and,
      * if present, parses it into an {@link Icon}.
@@ -549,19 +503,6 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadString(element, "metaClass")
                 .ifPresent(metaClass ->
                         component.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
-    }
-
-    /**
-     * @deprecated {@link #loadDatePickerI18n(Element, Supplier<DatePicker.DatePickerI18n>)} instead
-     */
-    @Deprecated(since = "2.1.2", forRemoval = true)
-    public void loadDatePickerI18n(Element element, Consumer<DatePicker.DatePickerI18n> setter) {
-        DatePicker.DatePickerI18n datePickerI18n = new DatePicker.DatePickerI18n();
-
-        loadFirstDayOfWeek(datePickerI18n, element);
-        loadDateFormat(datePickerI18n, element);
-
-        setter.accept(datePickerI18n);
     }
 
     public void loadDatePickerI18n(Element element, Supplier<DatePicker.DatePickerI18n> getter) {

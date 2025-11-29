@@ -30,7 +30,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Provides a fluent interface to configure navigation parameters and navigate to a {@link View}.
  * <p>
- * An instance of this class should be obtained through {@link ViewNavigators#view(String)}.
+ * An instance of this class should be obtained through {@link ViewNavigators#view(View, String)}.
  */
 public abstract class AbstractViewNavigator {
 

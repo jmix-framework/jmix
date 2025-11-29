@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 /**
  * Provides a fluent interface to configure navigation parameters and navigate to a {@link View}.
  * <p>
- * An instance of this class should be obtained through {@link ViewNavigators#view(Class)}.
+ * An instance of this class should be obtained through {@link ViewNavigators#view(View, Class)}.
  */
 public class ViewClassNavigator<V extends View<?>> extends ViewNavigator
         implements SupportsAfterViewNavigationHandler<V> {

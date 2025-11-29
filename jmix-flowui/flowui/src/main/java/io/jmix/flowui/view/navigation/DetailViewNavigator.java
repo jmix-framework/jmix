@@ -31,8 +31,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Provides a fluent interface to configure navigation parameters and navigate to an entity detail {@link View}.
  * <p>
- * An instance of this class should be obtained through {@link ViewNavigators#detailView(Class)} and its overloaded
- * variants.
+ * An instance of this class should be obtained through {@link ViewNavigators#detailView(View, Class)}
+ * and its overloaded variants.
  */
 public class DetailViewNavigator<E> extends AbstractViewNavigator {
 

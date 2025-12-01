@@ -1067,14 +1067,14 @@ public class EntityInspectorListView extends StandardListView<Object> {
             this.metadata = metadata;
         }
 
-        protected boolean isVisibleBySpecificUiPermission() {
+        protected boolean isEnabledBySpecificUiPermission() {
             return importExportAvailableBySpecificUiPermission;
         }
 
         @Override
-        protected void setVisibleInternal(boolean visible) {
-            super.setVisibleInternal(visible
-                    && isVisibleBySpecificUiPermission());
+        protected void setEnabledInternal(boolean enabled) {
+            super.setEnabledInternal(enabled
+                    && isEnabledBySpecificUiPermission());
         }
 
         @Override

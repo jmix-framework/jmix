@@ -21,7 +21,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="reports" id="1-another-db" context="!cuba" dbms="postgresql, mysql, hsqldb, mssql, mariadb">
+    <changeSet author="reports" id="1-another-db" context="!cuba" dbms="postgresql, mysql, hsqldb, h2, mssql, mariadb">
         <modifyDataType tableName="REPORT_GROUP" columnName="LOCALE_NAMES" newDataType="varchar(4000)"/>
     </changeSet>
 

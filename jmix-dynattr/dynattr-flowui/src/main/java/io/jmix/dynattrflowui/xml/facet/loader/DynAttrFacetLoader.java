@@ -48,7 +48,7 @@ public class DynAttrFacetLoader extends AbstractFacetLoader<DynAttrFacet> {
         View<?> view = context.getView();
         context.addInitTask(__ -> {
             UiComponentUtils.traverseComponents(view, component ->
-                    embeddingStrategies.embedAttributes(component, view));
+                    getEmbeddingStrategies().embedAttributes(component, view));
         });
     }
 

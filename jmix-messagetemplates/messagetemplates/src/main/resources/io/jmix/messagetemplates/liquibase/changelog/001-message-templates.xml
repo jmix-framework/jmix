@@ -151,7 +151,7 @@
                                  referencedColumnNames="ID"/>
     </changeSet>
 
-    <changeSet id="2" author="message-templates" dbms="mssql, hsqldb, oracle">
+    <changeSet id="2" author="message-templates" dbms="mssql, hsqldb, h2, oracle">
         <createIndex indexName="IDX_MSGTMP_MESSAGE_TEMPLATE_GROUP_UNQ_NAME"
                      tableName="MSGTMP_MESSAGE_TEMPLATE_GROUP"
                      unique="true">

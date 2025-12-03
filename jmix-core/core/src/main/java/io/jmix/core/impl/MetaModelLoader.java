@@ -740,7 +740,8 @@ public class MetaModelLoader {
                 || annotatedElement.isAnnotationPresent(ManyToMany.class)
                 || annotatedElement.isAnnotationPresent(OneToOne.class)
                 || annotatedElement.isAnnotationPresent(Embedded.class)
-                || annotatedElement.isAnnotationPresent(EmbeddedId.class);
+                || annotatedElement.isAnnotationPresent(EmbeddedId.class)
+                || annotatedElement.isAnnotationPresent(ElementCollection.class);
     }
 
     protected boolean hasJpaAnnotation(Class<?> javaClass) {

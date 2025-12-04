@@ -73,7 +73,6 @@ public class ElementCollectionTest {
         changedEventListener.afterCommitEventConsumer = null;
         changedEventListener.beforeCommitEventConsumer = null;
 
-        jdbc.update("delete from TEST_EC_GAMMA");
         jdbc.update("delete from TEST_EC_ALPHA_TAGS");
         jdbc.update("delete from TEST_EC_ALPHA");
         jdbc.update("delete from TEST_EC_BETA");
@@ -132,7 +131,7 @@ public class ElementCollectionTest {
 
         dataManager.remove(loadedAlpha);
 
-        List<String> tags = jdbc.queryForList("select TAGS from TEST_EC_ALPHA_TAGS where ALPHA_ID = ?", String.class, alpha.getId());
+        List<String> tags = jdbc.queryForList("select TAG from TEST_EC_ALPHA_TAGS where ALPHA_ID = ?", String.class, alpha.getId());
         assertThat(tags).isEmpty();
     }
 

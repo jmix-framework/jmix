@@ -675,7 +675,10 @@ public class MetaModelLoader {
 
     protected Range.Cardinality getCardinality(Field field) {
         if (field.isAnnotationPresent(Column.class)) {
-            return Range.Cardinality.NONE;
+            if (field.isAnnotationPresent(ElementCollection.class))
+                return Range.Cardinality.ONE_TO_MANY;
+            else
+                return Range.Cardinality.NONE;
         } else if (field.isAnnotationPresent(OneToOne.class)) {
             return Range.Cardinality.ONE_TO_ONE;
         } else if (field.isAnnotationPresent(OneToMany.class)) {

@@ -21,12 +21,13 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
-@Table(name = "TEST_EC_GAMMA")
-@Entity(name = "test_EcGamma")
+@Table(name = "TEST_EC_ALPHA")
+@Entity(name = "test_EcAlpha")
 @JmixEntity
-public class EcGamma {
+public class EcAlpha {
 
     @Id
     @JmixGeneratedValue
@@ -37,9 +38,9 @@ public class EcGamma {
     @InstanceName
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ALPHA_ID")
-    private EcAlpha alpha;
+    @ElementCollection
+    @CollectionTable(name = "TEST_EC_ALPHA_TAGS", joinColumns = @JoinColumn(name = "ALPHA_ID"))
+    private List<String> tags;
 
     public UUID getId() {
         return id;
@@ -57,11 +58,11 @@ public class EcGamma {
         this.name = name;
     }
 
-    public EcAlpha getAlpha() {
-        return alpha;
+    public List<String> getTags() {
+        return tags;
     }
 
-    public void setAlpha(EcAlpha alpha) {
-        this.alpha = alpha;
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }

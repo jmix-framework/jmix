@@ -40,14 +40,12 @@ public class EcAlpha {
 
     @ElementCollection
     @CollectionTable(name = "TEST_EC_ALPHA_TAGS", joinColumns = @JoinColumn(name = "ALPHA_ID"))
+    @Column(name = "TAG")
     private List<String> tags;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BETA_ID")
     private EcBeta beta;
-
-    @OneToMany(mappedBy = "alpha")
-    private List<EcGamma> gammas;
 
     public UUID getId() {
         return id;
@@ -79,13 +77,5 @@ public class EcAlpha {
 
     public void setBeta(EcBeta bar) {
         this.beta = bar;
-    }
-
-    public List<EcGamma> getGammas() {
-        return gammas;
-    }
-
-    public void setGammas(List<EcGamma> gammas) {
-        this.gammas = gammas;
     }
 }

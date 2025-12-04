@@ -149,6 +149,19 @@ class LazyLoadingTest extends DataSpec {
 
         oneToManyEntity.getName() == "Name"
         oneToManyEntity.getManyToOneEntities().size() == 2
+
+        when: "add element to lazy loaded collection"
+
+        loadContext = new LoadContext<>(metadata.getClass(OneToManyEntity.class))
+        loadContext.setId(id)
+
+        loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(OneToManyEntity.class, "OneToManyEntity"))
+        oneToManyEntity = dataManager.load(loadContext)
+
+        oneToManyEntity.getManyToOneEntities().add(metadata.create(ManyToOneEntity.class))
+
+        then:
+        noExceptionThrown()
     }
 
     def "OneToMany traverse from ManyToOne"() {

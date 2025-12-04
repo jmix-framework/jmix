@@ -17,6 +17,7 @@
 package element_collection;
 
 import io.jmix.core.*;
+import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -36,8 +37,10 @@ import test_support.DataTestConfiguration;
 import test_support.TestContextInititalizer;
 import test_support.entity.element_collection.EcAlpha;
 import test_support.entity.element_collection.EcBeta;
+import test_support.listeners.TestEcAlphaChangedEventListener;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,9 +65,14 @@ public class ElementCollectionTest {
     TransactionTemplate transactionTemplate;
     @PersistenceContext
     EntityManager entityManager;
+    @Autowired
+    TestEcAlphaChangedEventListener changedEventListener;
 
     @AfterEach
     void tearDown() {
+        changedEventListener.afterCommitEventConsumer = null;
+        changedEventListener.beforeCommitEventConsumer = null;
+
         jdbc.update("delete from TEST_EC_GAMMA");
         jdbc.update("delete from TEST_EC_ALPHA_TAGS");
         jdbc.update("delete from TEST_EC_ALPHA");
@@ -163,6 +171,23 @@ public class ElementCollectionTest {
     }
 
     @Test
+    void testLazyLoadingCollectionAdd() {
+        EcAlpha alpha = dataManager.create(EcAlpha.class);
+        alpha.setName("foo 1");
+        alpha.setTags(List.of("tag1", "tag2"));
+        dataManager.saveWithoutReload(alpha);
+
+        EcAlpha loadedAlpha = dataManager.load(EcAlpha.class)
+                .id(alpha.getId())
+                .one();
+        assertThat(entityStates.isLoaded(loadedAlpha, "tags")).isFalse();
+
+        List<String> tags = loadedAlpha.getTags();
+        tags.add("tag3");
+        assertThat(entityStates.isLoaded(loadedAlpha, "tags")).isTrue();
+    }
+
+    @Test
     void testManagedEntity() {
         EcAlpha alpha = dataManager.create(EcAlpha.class);
         alpha.setName("foo 1");
@@ -182,4 +207,42 @@ public class ElementCollectionTest {
         assertThat(entityStates.isLoaded(alpha2, "tags")).isTrue();
     }
 
+    @Test
+    void testEntityChangedEvents() {
+        // create
+        setEventConsumer(event -> {
+            assertThat(event.getChanges().isChanged("tags")).isTrue();
+            assertThat((Object) event.getChanges().getOldValue("tags")).isNull();
+        });
+        EcAlpha alpha = dataManager.create(EcAlpha.class);
+        alpha.setName("foo 1");
+        alpha.setTags(List.of("tag1", "tag2"));
+        dataManager.saveWithoutReload(alpha);
+
+        // update
+        setEventConsumer(event -> {
+            assertThat(event.getChanges().isChanged("tags")).isTrue();
+            assertThat((Object) event.getChanges().getOldValue("tags")).isEqualTo(List.of("tag1", "tag2"));
+        });
+        EcAlpha loadedAlpha = dataManager.load(EcAlpha.class)
+                .id(alpha.getId())
+                .one();
+        loadedAlpha.getTags().add("tag3");
+        dataManager.saveWithoutReload(loadedAlpha);
+
+        // change another attribute
+        setEventConsumer(event -> {
+            assertThat(event.getChanges().isChanged("tags")).isFalse();
+        });
+        loadedAlpha = dataManager.load(EcAlpha.class)
+                .id(alpha.getId())
+                .one();
+        loadedAlpha.setName("foo changed");
+        dataManager.saveWithoutReload(loadedAlpha);
+    }
+
+    private void setEventConsumer(Consumer<EntityChangedEvent<EcAlpha>> eventConsumer) {
+        changedEventListener.beforeCommitEventConsumer = eventConsumer;
+        changedEventListener.afterCommitEventConsumer = eventConsumer;
+    }
 }

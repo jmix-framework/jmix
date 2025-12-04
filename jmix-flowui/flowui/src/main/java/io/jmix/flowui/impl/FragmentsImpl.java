@@ -107,6 +107,9 @@ public class FragmentsImpl implements Fragments {
         FragmentActions actions = applicationContext.getBean(FragmentActions.class, fragment);
         FragmentUtils.setFragmentActions(fragment, actions);
 
+        FragmentFacets facets = applicationContext.getBean(FragmentFacets.class, fragment);
+        FragmentUtils.setFragmentFacets(fragment, facets);
+
         FragmentLoaderContext context;
         String descriptorPath = FragmentUtils.resolveDescriptorPath(fragment.getClass());
         if (descriptorPath != null) {

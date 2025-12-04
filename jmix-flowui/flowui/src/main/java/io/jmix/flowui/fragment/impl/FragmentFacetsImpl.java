@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,39 +14,34 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.view.impl;
+package io.jmix.flowui.fragment.impl;
 
 import com.vaadin.flow.component.Composite;
-import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.impl.AbstractFacetComponentsHolder;
-import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewFacets;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentFacets;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
-
 /**
- * Implementation of the {@link ViewFacets} interface. This class manages a collection of facets
- * associated with a specific {@link View}.
+ * Implementation of {@link FragmentFacets} interface. This class manages a collection of facets associated with a
+ * specific {@link Fragment}.
  */
-@Component("flowui_ViewFacets")
+@Component("flowui_FragmentFacets")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ViewFacetsImpl extends AbstractFacetComponentsHolder implements ViewFacets {
+public class FragmentFacetsImpl extends AbstractFacetComponentsHolder implements FragmentFacets {
 
-    protected final View<?> view;
+    protected final Fragment<?> fragment;
 
-    protected Set<Facet> facets = null; // lazily initialized linked hash set
-
-    public ViewFacetsImpl(View<?> view) {
-        this.view = view;
+    public FragmentFacetsImpl(Fragment<?> fragment) {
+        this.fragment = fragment;
     }
 
     @Override
     protected <T extends Composite<?> & FacetOwner> T getOwner() {
         //noinspection unchecked
-        return (T) view;
+        return (T) fragment;
     }
 }

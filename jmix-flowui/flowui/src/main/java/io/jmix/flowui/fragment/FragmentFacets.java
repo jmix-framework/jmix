@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.view;
+package io.jmix.flowui.fragment;
 
 import io.jmix.flowui.component.HasFacetsComponents;
 
 /**
- * Interface for managing facets associated with a {@link View}.
+ * Interface for managing facets associated with a {@link Fragment}.
  */
-public interface ViewFacets extends HasFacetsComponents {
+public interface FragmentFacets extends HasFacetsComponents {
 }

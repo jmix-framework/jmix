@@ -118,6 +118,29 @@ public final class FragmentUtils {
     }
 
     /**
+     * Returns the {@link FragmentFacets} associated with the specified {@link Fragment}.
+     *
+     * @param fragment the {@link Fragment} which to retrieve the associated {@link FragmentFacets},
+     *                 must not be {@code null}
+     * @return the {@link FragmentFacets} associated with the given {@link Fragment}
+     */
+    public static FragmentFacets getFragmentFacets(Fragment<?> fragment) {
+        return fragment.getFragmentFacets();
+    }
+
+    /**
+     * Sets the {@link FragmentFacets} for the specified {@link Fragment}.
+     *
+     * @param fragment       the {@link Fragment} for which the {@link FragmentFacets} are to be set,
+     *                       must not be {@code null}
+     * @param fragmentFacets the {@link FragmentFacets} to associate with the specified {@link Fragment},
+     *                       must not be {@code null}
+     */
+    public static void setFragmentFacets(Fragment<?> fragment, FragmentFacets fragmentFacets) {
+        fragment.setFragmentFacets(fragmentFacets);
+    }
+
+    /**
      * Gets the owner of the passed {@link Fragment}.
      *
      * @param fragment fragment to get the owner

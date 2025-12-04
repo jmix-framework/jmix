@@ -29,6 +29,7 @@
             <xs:all>
                 <xs:element name="data" type="data:fragmentData" minOccurs="0"/>
                 <xs:element name="actions" type="layout:viewActions" minOccurs="0"/>
+                <xs:element name="facets" type="layout:facets" minOccurs="0"/>
                 <xs:element name="content" type="fragmentContent"/>
             </xs:all>
         </xs:complexType>

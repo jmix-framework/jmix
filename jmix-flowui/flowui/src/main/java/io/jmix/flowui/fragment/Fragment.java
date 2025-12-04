@@ -22,6 +22,7 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.Target;
@@ -53,12 +54,13 @@ import java.util.Optional;
  *
  * @param <T> the type of the content
  */
-public abstract class Fragment<T extends Component> extends Composite<T> implements FragmentOwner {
+public abstract class Fragment<T extends Component> extends Composite<T> implements FragmentOwner, FacetOwner {
 
     protected UiComponents uiComponents;
 
     protected FragmentData fragmentData;
     protected FragmentActions fragmentActions;
+    protected FragmentFacets fragmentFacets;
 
     protected FragmentOwner parentController;
 
@@ -84,6 +86,14 @@ public abstract class Fragment<T extends Component> extends Composite<T> impleme
 
     protected void setFragmentActions(FragmentActions fragmentActions) {
         this.fragmentActions = fragmentActions;
+    }
+
+    protected FragmentFacets getFragmentFacets() {
+        return fragmentFacets;
+    }
+
+    protected void setFragmentFacets(FragmentFacets fragmentFacets) {
+        this.fragmentFacets = fragmentFacets;
     }
 
     protected FragmentOwner getParentController() {

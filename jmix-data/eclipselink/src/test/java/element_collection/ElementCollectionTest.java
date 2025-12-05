@@ -17,6 +17,7 @@
 package element_collection;
 
 import io.jmix.core.*;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -238,6 +239,24 @@ public class ElementCollectionTest {
                 .one();
         loadedAlpha.setName("foo changed");
         dataManager.saveWithoutReload(loadedAlpha);
+    }
+
+    @Test
+    void testKeyValueEntity() {
+        EcAlpha alpha = dataManager.create(EcAlpha.class);
+        alpha.setName("foo 1");
+        alpha.setTags(List.of("tag1", "tag2"));
+        dataManager.saveWithoutReload(alpha);
+
+        List<KeyValueEntity> list = dataManager.loadValues("select e.name, t from test_EcAlpha e join e.tags t")
+                .properties("name", "tag")
+                .list();
+        KeyValueEntity entity = list.get(0);
+        assertThat((Object) entity.getValue("name")).isEqualTo("foo 1");
+        assertThat((Object) entity.getValue("tag")).isIn("tag1", "tag2");
+
+        List<String> tags = dataManager.loadValue("select t from test_EcAlpha e join e.tags t", String.class).list();
+        assertThat(tags).containsExactlyInAnyOrder("tag1", "tag2");
     }
 
     private void setEventConsumer(Consumer<EntityChangedEvent<EcAlpha>> eventConsumer) {

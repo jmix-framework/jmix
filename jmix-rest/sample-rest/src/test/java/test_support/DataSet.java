@@ -277,14 +277,18 @@ public class DataSet {
     }
 
     private void deleteDrivers(Connection conn) throws SQLException {
-        PreparedStatement stmt;
+        PreparedStatement phonesStmt, stmt;
+        phonesStmt = conn.prepareStatement("delete from ref_driver_phone where driver_id = ?");
         stmt = conn.prepareStatement("delete from ref_driver where id = ?");
         try {
-            for (UUID carId : driverIds) {
-                stmt.setObject(1, carId);
+            for (UUID driverId : driverIds) {
+                phonesStmt.setObject(1, driverId);
+                phonesStmt.executeUpdate();
+                stmt.setObject(1, driverId);
                 stmt.executeUpdate();
             }
         } finally {
+            phonesStmt.close();
             stmt.close();
         }
     }

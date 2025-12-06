@@ -76,87 +76,84 @@ public class ElasticsearchIndexSettingsProvider {
         Class<?> entityClass = indexConfiguration.getEntityClass();
         IndexSettings resultIndexSettings = this.effectiveIndexSettings.get(entityClass);
         if (resultIndexSettings == null) {
-            if (isNewApiUsed(entityClass)) {
-                // Use new API
-                Map<Class<?>, IndexSettings.Builder> indexSettingsBuilders = context.getAllSpecificIndexSettingsBuilders();
-                IndexSettings entityIndexSettings;
-                if (indexSettingsBuilders.containsKey(entityClass)) {
-                    // Merge common and entity-specific index settings
-                    IndexSettings.Builder entityIndexSettingsBuilder = indexSettingsBuilders.get(entityClass);
-                    entityIndexSettings = entityIndexSettingsBuilder.build();
+            Map<Class<?>, IndexSettings.Builder> indexSettingsBuilders = context.getAllSpecificIndexSettingsBuilders();
+            IndexSettings entityIndexSettings;
+            if (indexSettingsBuilders.containsKey(entityClass)) {
+                // Merge common and entity-specific index settings
+                IndexSettings.Builder entityIndexSettingsBuilder = indexSettingsBuilders.get(entityClass);
+                entityIndexSettings = entityIndexSettingsBuilder.build();
 
-                    ObjectNode commonIndexSettingsNode = toObjectNode(commonIndexSettings);
-                    ObjectNode entityIndexSettingsNode = toObjectNode(entityIndexSettings);
-                    ObjectNode mergedIndexSettingsNode = JsonNodeFactory.instance.objectNode();
-                    mergedIndexSettingsNode.setAll(commonIndexSettingsNode);
-                    entityIndexSettingsNode.fieldNames().forEachRemaining(childName -> {
-                        JsonNode specificChildNode = entityIndexSettingsNode.get(childName);
-                        mergedIndexSettingsNode.set(childName, specificChildNode);
-                    });
+                ObjectNode commonIndexSettingsNode = toObjectNode(commonIndexSettings);
+                ObjectNode entityIndexSettingsNode = toObjectNode(entityIndexSettings);
+                ObjectNode mergedIndexSettingsNode = JsonNodeFactory.instance.objectNode();
+                mergedIndexSettingsNode.setAll(commonIndexSettingsNode);
+                entityIndexSettingsNode.fieldNames().forEachRemaining(childName -> {
+                    JsonNode specificChildNode = entityIndexSettingsNode.get(childName);
+                    mergedIndexSettingsNode.set(childName, specificChildNode);
+                });
 
-                    entityIndexSettings = deserializeIndexSettings(mergedIndexSettingsNode.toString());
-                } else {
-                    entityIndexSettings = copyIndexSettings(commonIndexSettings);
-                }
-
-                Map<Class<?>, IndexSettingsAnalysis.Builder> analysisBuilders = context.getAllSpecificAnalysisBuilders();
-                IndexSettingsAnalysis entityAnalysisSettings;
-                if (analysisBuilders.containsKey(entityClass)) {
-                    // Merge common and entity-specific analysis settings
-                    ObjectNode commonAnalysisSettingsNode = toObjectNode(commonAnalysisSettings);
-                    IndexSettingsAnalysis.Builder entityAnalysisBuilder = analysisBuilders.get(entityClass);
-                    entityAnalysisSettings = entityAnalysisBuilder.build();
-
-                    ObjectNode entityAnalysisSettingsNode = toObjectNode(entityAnalysisSettings);
-                    ObjectNode mergedAnalysisSettingsNode = JsonNodeFactory.instance.objectNode();
-                    mergedAnalysisSettingsNode.setAll(commonAnalysisSettingsNode);
-                    entityAnalysisSettingsNode.fieldNames().forEachRemaining(childName -> {
-                        JsonNode specificChildNode = entityAnalysisSettingsNode.get(childName);
-                        JsonNode baseChildNode = mergedAnalysisSettingsNode.path(childName);
-                        if (specificChildNode.isObject()) {
-                            ObjectNode specificChildObjectNode = (ObjectNode) specificChildNode;
-                            if (baseChildNode.isObject()) {
-                                ((ObjectNode) baseChildNode).setAll(specificChildObjectNode);
-                            } else {
-                                mergedAnalysisSettingsNode.set(childName, specificChildObjectNode);
-                            }
-                        }
-                    });
-
-                    entityAnalysisSettings = deserializeAnalysisSettings(mergedAnalysisSettingsNode.toString());
-                } else {
-                    entityAnalysisSettings = copyAnalysisSettings(commonAnalysisSettings);
-                }
-
-                /*
-                Create result index settings as combination of merged index and analysis settings
-                */
-                IndexSettings.Builder resultBuilder = new IndexSettings.Builder().index(entityIndexSettings);
-
-                /*
-                Do not add analysis if they are empty.
-                */
-                if (!toObjectNode(entityAnalysisSettings).isEmpty()) {
-                    resultBuilder.analysis(entityAnalysisSettings);
-                }
-
-                resultIndexSettings = resultBuilder.build();
-
-                /*
-                Move content of the 'index' node (index settings) to the root level.
-                Both structures are valid during creation but response for index metadata request
-                contains settings on root level. So this 'movement' simplifies following settings comparison.
-                 */
-                ObjectNode resultIndexSettingsNode = toObjectNode(resultIndexSettings);
-                JsonNode indexNode = resultIndexSettingsNode.path("index");
-                if (indexNode.isObject()) {
-                    resultIndexSettingsNode.setAll((ObjectNode) indexNode);
-                    resultIndexSettingsNode.remove("index");
-                }
-
-                resultIndexSettings = deserializeIndexSettings(resultIndexSettingsNode.toString());
-                this.effectiveIndexSettings.put(entityClass, resultIndexSettings);
+                entityIndexSettings = deserializeIndexSettings(mergedIndexSettingsNode.toString());
+            } else {
+                entityIndexSettings = copyIndexSettings(commonIndexSettings);
             }
+
+            Map<Class<?>, IndexSettingsAnalysis.Builder> analysisBuilders = context.getAllSpecificAnalysisBuilders();
+            IndexSettingsAnalysis entityAnalysisSettings;
+            if (analysisBuilders.containsKey(entityClass)) {
+                // Merge common and entity-specific analysis settings
+                ObjectNode commonAnalysisSettingsNode = toObjectNode(commonAnalysisSettings);
+                IndexSettingsAnalysis.Builder entityAnalysisBuilder = analysisBuilders.get(entityClass);
+                entityAnalysisSettings = entityAnalysisBuilder.build();
+
+                ObjectNode entityAnalysisSettingsNode = toObjectNode(entityAnalysisSettings);
+                ObjectNode mergedAnalysisSettingsNode = JsonNodeFactory.instance.objectNode();
+                mergedAnalysisSettingsNode.setAll(commonAnalysisSettingsNode);
+                entityAnalysisSettingsNode.fieldNames().forEachRemaining(childName -> {
+                    JsonNode specificChildNode = entityAnalysisSettingsNode.get(childName);
+                    JsonNode baseChildNode = mergedAnalysisSettingsNode.path(childName);
+                    if (specificChildNode.isObject()) {
+                        ObjectNode specificChildObjectNode = (ObjectNode) specificChildNode;
+                        if (baseChildNode.isObject()) {
+                            ((ObjectNode) baseChildNode).setAll(specificChildObjectNode);
+                        } else {
+                            mergedAnalysisSettingsNode.set(childName, specificChildObjectNode);
+                        }
+                    }
+                });
+
+                entityAnalysisSettings = deserializeAnalysisSettings(mergedAnalysisSettingsNode.toString());
+            } else {
+                entityAnalysisSettings = copyAnalysisSettings(commonAnalysisSettings);
+            }
+
+            /*
+            Create result index settings as combination of merged index and analysis settings
+            */
+            IndexSettings.Builder resultBuilder = new IndexSettings.Builder().index(entityIndexSettings);
+
+            /*
+            Do not add analysis if they are empty.
+            */
+            if (!toObjectNode(entityAnalysisSettings).isEmpty()) {
+                resultBuilder.analysis(entityAnalysisSettings);
+            }
+
+            resultIndexSettings = resultBuilder.build();
+
+            /*
+            Move content of the 'index' node (index settings) to the root level.
+            Both structures are valid during creation but response for index metadata request
+            contains settings on root level. So this 'movement' simplifies following settings comparison.
+             */
+            ObjectNode resultIndexSettingsNode = toObjectNode(resultIndexSettings);
+            JsonNode indexNode = resultIndexSettingsNode.path("index");
+            if (indexNode.isObject()) {
+                resultIndexSettingsNode.setAll((ObjectNode) indexNode);
+                resultIndexSettingsNode.remove("index");
+            }
+
+            resultIndexSettings = deserializeIndexSettings(resultIndexSettingsNode.toString());
+            this.effectiveIndexSettings.put(entityClass, resultIndexSettings);
         }
         return resultIndexSettings;
     }
@@ -250,9 +247,9 @@ public class ElasticsearchIndexSettingsProvider {
         boolean hasCommonAnalysisSettings = !isEmptyAnalysisSettings(commonAnalysisSettings);
 
         return hasEntitySpecificAnalysisSettings
-                || hasCommonAnalysisSettings
-                || hasEntitySpecificIndexSettings
-                || hasCommonIndexSettings;
+               || hasCommonAnalysisSettings
+               || hasEntitySpecificIndexSettings
+               || hasCommonIndexSettings;
     }
 
     protected boolean isEmptySettings(IndexSettings settings) {

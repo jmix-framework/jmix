@@ -35,6 +35,18 @@ public class DynamicAttributesGroupConfigurationValidator {
 
     protected static List<String> forbiddenSymbols = List.of("+", ".");
 
+    private static boolean allCharsEqual(String str, char c) {
+        if (str == null || str.isEmpty()) {
+            return true; // Или false, в зависимости от требований
+        }
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) != c) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void check(DynamicAttributesGroupConfiguration group) {
         Stream.of(group.getExcludedCategories()).forEach(this::checkCategory);
         Stream.of(group.getExcludedProperties()).forEach(this::checkAttribute);
@@ -71,7 +83,7 @@ public class DynamicAttributesGroupConfigurationValidator {
     }
 
     protected void checkNotWildcardOnly(String name, ArgumentType argumentType) {
-        if ("*".equals(name)) {
+        if (allCharsEqual(name, '*')) {
             throw new IndexConfigurationException(String.format("%s name can't be a wildcard without any text. " +
                     "But wildcards like '*abc', 'abc*', 'a*b*c' are supported.", argumentType.nameWithCapitalLetter));
         }

@@ -17,8 +17,10 @@
 package io.jmix.search.index.mapping.strategy;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.index.mapping.AttributesGroupConfiguration;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.FieldConfiguration;
+import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 
 import java.util.Map;
@@ -31,7 +33,9 @@ public interface FieldMappingStrategy {
 
     /**
      * Defines the order of mapping strategy.
-     * If several strategies match the same property strategy with the latest order will be used
+     * If several strategies match the same property strategy with the highest order value will be used
+     * This order also is used for setting the {@link MappingFieldDescriptor#setOrder(int)}
+     * but can be overridden with the {@link AttributesGroupConfiguration#getOrder()}
      *
      * @return order
      */

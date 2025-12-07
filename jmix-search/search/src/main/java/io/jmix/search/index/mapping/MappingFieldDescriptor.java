@@ -124,7 +124,7 @@ public class MappingFieldDescriptor {
 
     /**
      * Gets descriptor order based on a mapping strategy it created by.
-     * If several descriptors are related to the same field, the one with the latest order will be used.
+     * If several descriptors are related to the same field, the one with the highest order value will be used.
      *
      * @return order
      */
@@ -132,6 +132,13 @@ public class MappingFieldDescriptor {
         return order;
     }
 
+    /**
+     * Sets the order for the descriptor. The order is used to determine the priority
+     * when multiple descriptors are associated with the same field. The descriptor
+     * with the highest order value is selected.
+     *
+     * @param order the order value to be set for this descriptor
+     */
     public void setOrder(int order) {
         this.order = order;
     }

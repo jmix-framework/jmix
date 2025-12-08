@@ -36,14 +36,6 @@ class DynamicAttributesGroupConfigurationValidatorTest extends Specification {
         " "          || "Category name can't be empty"
         "*"          || "Category name can't be a wildcard without any text. But wildcards like '*abc', 'abc*', 'a*b*c' are supported."
         "**"         || "Category name can't be a wildcard without any text. But wildcards like '*abc', 'abc*', 'a*b*c' are supported."
-        "+"          || "The '+' symbol is denied in the category name. Category name value is '+'"
-        "+suffix"    || "The '+' symbol is denied in the category name. Category name value is '+suffix'"
-        "prefix+"    || "The '+' symbol is denied in the category name. Category name value is 'prefix+'"
-        "in+fix"     || "The '+' symbol is denied in the category name. Category name value is 'in+fix'"
-        "."          || "The '.' symbol is denied in the category name. Category name value is '.'"
-        ".suffix"    || "The '.' symbol is denied in the category name. Category name value is '.suffix'"
-        "prefix."    || "The '.' symbol is denied in the category name. Category name value is 'prefix.'"
-        "in.fix"     || "The '.' symbol is denied in the category name. Category name value is 'in.fix'"
     }
 
     def "Check. Not supported symbols in attributes"() {
@@ -81,7 +73,18 @@ class DynamicAttributesGroupConfigurationValidatorTest extends Specification {
         notThrown(IndexConfigurationException)
 
         where:
-        categoryName << ["*suffix", "prefix*", "in*fix", "tw*is*e"]
+        categoryName << ["*suffix",
+                         "prefix*",
+                         "in*fix",
+                         "tw*is*e",
+                         "+",
+                         "+suffix",
+                         "prefix+",
+                         "in+fix",
+                         ".",
+                         ".suffix",
+                         "prefix.",
+                         "in.fix"]
     }
 
     def "Check. Supported symbols in attributes"() {

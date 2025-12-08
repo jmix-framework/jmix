@@ -54,7 +54,6 @@ public class DynamicAttributesGroupConfigurationValidator {
 
     protected void checkCategory(String categoryName) {
         checkIsNotBlank(categoryName, CATEGORY);
-        checkForbiddenSymbols(categoryName, CATEGORY);
         checkNotWildcardOnly(categoryName, CATEGORY);
     }
 

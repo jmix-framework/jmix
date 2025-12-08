@@ -55,7 +55,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     protected UiComponents uiComponents;
     protected ViewRegistry viewRegistry;
 
-    protected MenuItemProvider<ListMenu.MenuItem> itemProvider;
+    protected MenuItemProvider<MenuItem> itemProvider;
     protected Subscription itemCollectionChangedSubscription;
 
     @Override
@@ -136,7 +136,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     }
 
     @Override
-    public void setMenuItemProvider(@Nullable MenuItemProvider<ListMenu.MenuItem> itemProvider) {
+    public void setMenuItemProvider(@Nullable MenuItemProvider<MenuItem> itemProvider) {
         if (Objects.equals(this.itemProvider, itemProvider)) {
             return;
         }
@@ -151,14 +151,14 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
     }
 
-    protected void onMenuItemCollectionChanged(MenuItemProvider.CollectionChangeEvent<ListMenu.MenuItem> e) {
+    protected void onMenuItemCollectionChanged(MenuItemProvider.CollectionChangeEvent<MenuItem> e) {
         removeAllMenuItems();
         e.getItems().forEach(this::addMenuItem);
     }
 
     @Override
     @Nullable
-    public MenuItemProvider<ListMenu.MenuItem> getMenuItemProvider() {
+    public MenuItemProvider<MenuItem> getMenuItemProvider() {
         return this.itemProvider;
     }
 
@@ -194,6 +194,11 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         public ViewMenuItem withTitle(@Nullable String title) {
             super.withTitle(title);
             return this;
+        }
+
+        @Override
+        public ViewMenuItem withVisible(boolean visible) {
+            return (ViewMenuItem) super.withVisible(visible);
         }
 
         @Override
@@ -301,6 +306,11 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         public BeanMenuItem withTitle(@Nullable String title) {
             super.withTitle(title);
             return this;
+        }
+
+        @Override
+        public BeanMenuItem withVisible(boolean visible) {
+            return (BeanMenuItem) super.withVisible(visible);
         }
 
         @Override

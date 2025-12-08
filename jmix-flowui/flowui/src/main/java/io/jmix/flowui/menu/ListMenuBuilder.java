@@ -132,6 +132,13 @@ public class ListMenuBuilder {
                 return Optional.empty();
             }
 
+            if (menuBarItem.getChildItems().stream()
+                    .noneMatch(ListMenu.MenuItem::isVisible)) {
+                log.debug("Menu bar item '{}' is skipped as it does not have visible children", menuItem.getId());
+
+                return Optional.empty();
+            }
+
             return Optional.of(menuBarItem);
         } else if (menuItem.isSeparator()) {
             JmixListMenu.MenuItem listMenuSeparator = createMenuSeparator();
@@ -148,6 +155,7 @@ public class ListMenuBuilder {
         JmixListMenu.MenuBarItem menuBarItem = new JmixListMenu.MenuBarItem(menuItem.getId())
                 .withOpened(menuItem.isOpened())
                 .withTitle(menuConfig.getItemTitle(menuItem))
+                .withVisible(menuItem.isVisible())
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()));
 
@@ -218,6 +226,7 @@ public class ListMenuBuilder {
         JmixListMenu.ViewMenuItem listMenuItem = new JmixListMenu.ViewMenuItem(menuItem.getId())
                 .withControllerClass(getControllerClass(menuItem))
                 .withTitle(menuConfig.getItemTitle(menuItem))
+                .withVisible(menuItem.isVisible())
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()))
                 .withUrlQueryParameters(menuItem.getUrlQueryParameters())
@@ -232,6 +241,7 @@ public class ListMenuBuilder {
     protected JmixListMenu.MenuItem createBeanMenuItem(MenuItem menuItem) {
         JmixListMenu.BeanMenuItem beanMenuItem = new JmixListMenu.BeanMenuItem(menuItem.getId())
                 .withTitle(menuConfig.getItemTitle(menuItem))
+                .withVisible(menuItem.isVisible())
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()))
                 .withShortcutCombination(menuItem.getShortcutCombination());

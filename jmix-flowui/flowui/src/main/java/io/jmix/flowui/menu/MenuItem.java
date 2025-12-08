@@ -46,6 +46,7 @@ public class MenuItem {
     private Element descriptor;
     private boolean separator = false;
     private boolean opened = false;
+    protected boolean visible = true;
 
     private KeyCombination shortcutCombination;
     private boolean isMenu = false;
@@ -248,6 +249,24 @@ public class MenuItem {
      */
     public void setOpened(boolean expanded) {
         this.opened = expanded;
+    }
+
+    /**
+     * Returns whether this menu item is visible.
+     *
+     * @return {@code true} if the menu item is visible; {@code false} otherwise
+     */
+    public boolean isVisible() {
+        return visible;
+    }
+
+    /**
+     * Sets whether this menu item is visible.
+     *
+     * @param visible {@code true} if the menu item is to be visible; {@code false} otherwise
+     */
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     /**

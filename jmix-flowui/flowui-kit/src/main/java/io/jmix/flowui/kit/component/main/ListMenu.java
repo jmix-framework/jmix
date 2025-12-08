@@ -299,6 +299,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         routerLink.addClassNames(JMIX_MENU_ITEM_LINK_CLASS_NAME, FLEX_CLASS_NAME);
         routerLink.addClassNames(menuItem.getClassNames().toArray(new String[0]));
         routerLink.setHighlightCondition(HighlightConditions.never());
+        routerLink.setVisible(menuItem.isVisible());
 
         Component prefixComponent = menuItem.getPrefixComponent();
         if (prefixComponent != null) {
@@ -363,6 +364,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         menuItemComponent.addClassName(JMIX_MENUBAR_ITEM_CLASS_NAME);
         menuItemComponent.addClassNames(menuBarItem.getClassNames().toArray(new String[0]));
         menuItemComponent.setOpened(menuBarItem.isOpened());
+        menuItemComponent.setVisible(menuBarItem.isVisible());
 
         Div div = new Div();
         div.setWidthFull();
@@ -538,6 +540,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         protected KeyCombination shortcutCombination;
         protected Component prefixComponent;
         protected Component suffixComponent;
+        protected boolean visible = true;
 
         protected ListMenu menuComponent;
 
@@ -777,6 +780,33 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         /**
+         * @return {@code true} if menu item is visible, {@code false} otherwise
+         */
+        public boolean isVisible() {
+            return visible;
+        }
+
+        /**
+         * Sets whether a menu item should be visible.
+         *
+         * @param visible {@code true} if menu item should be visible, {@code false} otherwise
+         * @return current menu item instance
+         */
+        public MenuItem withVisible(boolean visible) {
+            this.visible = visible;
+            return this;
+        }
+
+        /**
+         * Sets whether a menu item should be visible.
+         *
+         * @param visible {@code true} if menu item should be visible, {@code false} otherwise
+         */
+        public void setVisible(boolean visible) {
+            this.visible = visible;
+        }
+
+        /**
          * @return {@code true} if menu item is {@link MenuBarItem} that contains other items,
          * {@code false} otherwise
          */
@@ -855,6 +885,11 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         @Override
         public MenuBarItem withTitle(@Nullable String title) {
             return (MenuBarItem) super.withTitle(title);
+        }
+
+        @Override
+        public MenuBarItem withVisible(boolean visible) {
+            return (MenuBarItem) super.withVisible(visible);
         }
 
         @Override

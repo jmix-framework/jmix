@@ -63,6 +63,7 @@
         <xs:attribute name="classNames" type="xs:string"/>
         <xs:attribute name="icon" type="xs:string"/>
         <xs:attribute name="opened" type="xs:boolean"/>
+        <xs:attribute name="visible" type="xs:boolean" default="true"/>
     </xs:complexType>
 
     <xs:complexType name="itemType">
@@ -87,6 +88,7 @@
         <xs:attribute name="description" type="resourceString"/>
         <xs:attribute name="classNames" type="xs:string"/>
         <xs:attribute name="icon" type="xs:string"/>
+        <xs:attribute name="visible" type="xs:boolean" default="true"/>
     </xs:complexType>
 
     <xs:complexType name="viewProperties">

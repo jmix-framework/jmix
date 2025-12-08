@@ -221,6 +221,7 @@ public class MenuConfig implements ApplicationContextAware {
                 loadShortcutCombination(menuItem, element);
                 loadClassNames(element, menuItem);
                 loadOpened(element, menuItem);
+                loadVisible(element, menuItem);
                 loadTitle(element, menuItem);
                 loadDescription(element, menuItem);
                 loadMenuItems(element, menuItem, menusByIdPaths);
@@ -320,6 +321,7 @@ public class MenuConfig implements ApplicationContextAware {
         loadIcon(element, menuItem);
         loadShortcutCombination(menuItem, element);
         loadClassNames(element, menuItem);
+        loadVisible(element, menuItem);
         loadTitle(element, menuItem);
         loadDescription(element, menuItem);
 
@@ -358,6 +360,14 @@ public class MenuConfig implements ApplicationContextAware {
 
         if (StringUtils.isNotEmpty(opened)) {
             menuItem.setOpened(Boolean.parseBoolean(opened));
+        }
+    }
+
+    protected void loadVisible(Element element, MenuItem menuItem) {
+        String visible = element.attributeValue("visible");
+
+        if (StringUtils.isNotEmpty(visible)) {
+            menuItem.setVisible(Boolean.parseBoolean(visible));
         }
     }
 

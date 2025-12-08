@@ -4800,6 +4800,8 @@
                 </xs:all>
 
                 <xs:attribute name="class" type="xs:string" use="required"/>
+
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

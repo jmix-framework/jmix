@@ -138,8 +138,8 @@ public class DateRangePicker extends CustomField<CustomDateInterval>
     @Override
     protected CustomDateInterval generateModelValue() {
         return new CustomDateInterval(
-                datatype.getId(),
                 metaPropertyPath.getFirstPropertyName(),
+                datatype.getId(),
                 convertValueToModel(startDatePicker.getTypedValue()),
                 convertValueToModel(endDatePicker.getTypedValue())
         );

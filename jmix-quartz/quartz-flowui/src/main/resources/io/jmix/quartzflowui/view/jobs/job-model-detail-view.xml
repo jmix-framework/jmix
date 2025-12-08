@@ -84,10 +84,10 @@
                             <column property="value" editable="true"/>
 
                             <editorActionsColumn width="12em" flexGrow="0">
-                                <editButton icon="PENCIL"/>
+                                <editButton icon="PENCIL" text="msg:///actions.Edit"/>
 
                                 <saveButton icon="CHECK" themeNames="success"/>
-                                <cancelButton icon="CLOSE" themeNames="error"/>
+                                <cancelButton icon="CLOSE" themeNames="error" text="msg:///actions.Cancel"/>
                             </editorActionsColumn>
                         </columns>
                     </dataGrid>

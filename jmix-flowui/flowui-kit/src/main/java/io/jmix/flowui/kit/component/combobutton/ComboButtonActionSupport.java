@@ -18,8 +18,8 @@ package io.jmix.flowui.kit.component.combobutton;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.contextmenu.MenuItem;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -28,6 +28,11 @@ import jakarta.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 
+/**
+ * Provides support for associating an {@link Action} with a {@link ComboButton}.
+ * Enables the synchronization of the button's state, appearance, and behavior based on the properties
+ * of the associated action and manages event handling for the action and button interaction.
+ */
 public class ComboButtonActionSupport {
 
     protected final ComboButton comboButton;
@@ -41,6 +46,18 @@ public class ComboButtonActionSupport {
         this.comboButton = comboButton;
     }
 
+    /**
+     * Sets the {@link Action} to be associated with the combo button and optionally overrides certain
+     * component properties based on the provided action.
+     * <p>
+     * If the action is already set to the same value, the method performs no operations.
+     * Otherwise, it updates the combo button's state (e.g., text, icon, visibility) and registers
+     * necessary listeners to synchronize the combo button with the action.
+     *
+     * @param action                      the action to associate with the combo button; can be null to remove the current association
+     * @param overrideComponentProperties if true, the combo button's properties (e.g., text, icon,
+     *                                    descriptive text) will be overridden by the action's corresponding properties
+     */
     public void setAction(@Nullable Action action, boolean overrideComponentProperties) {
         if (Objects.equals(this.action, action)) {
             return;
@@ -65,6 +82,11 @@ public class ComboButtonActionSupport {
         }
     }
 
+    /**
+     * Returns the current {@link Action} instance associated with this object.
+     *
+     * @return the currently associated {@code Action}, or {@code null} if no action is set
+     */
     @Nullable
     public Action getAction() {
         return action;
@@ -135,8 +157,8 @@ public class ComboButtonActionSupport {
     }
 
     protected void updateIcon(boolean overrideComponentProperties) {
-        if (comboButton.getIcon() == null || overrideComponentProperties) {
-            comboButton.setIcon(action.getIcon());
+        if (comboButton.getIconComponent() == null || overrideComponentProperties) {
+            comboButton.setIconComponent(action.getIconComponent());
         }
     }
 
@@ -162,7 +184,7 @@ public class ComboButtonActionSupport {
                 comboButton.setVisible((Boolean) event.getNewValue());
                 break;
             case Action.PROP_ICON:
-                comboButton.setIcon((Icon) event.getNewValue());
+                comboButton.setIconComponent((Component) event.getNewValue());
                 break;
             case Action.PROP_DESCRIPTION:
                 comboButton.setTitle((String) event.getNewValue());

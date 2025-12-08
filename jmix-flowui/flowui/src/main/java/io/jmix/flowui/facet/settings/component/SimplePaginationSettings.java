@@ -19,6 +19,10 @@ package io.jmix.flowui.facet.settings.component;
 import io.jmix.flowui.facet.settings.Settings;
 import org.springframework.lang.Nullable;
 
+/**
+ * Represents settings for a simple pagination component, allowing configuration of pagination properties
+ * such as identifying the settings and defining the number of items per page.
+ */
 public class SimplePaginationSettings implements Settings {
 
     protected String id;
@@ -35,11 +39,22 @@ public class SimplePaginationSettings implements Settings {
         this.id = id;
     }
 
+    /**
+     * Returns the value that specifies the number of items per page in the pagination settings.
+     *
+     * @return the number of items per page, or {@code null} if not specified
+     */
     @Nullable
     public Integer getItemsPerPageValue() {
         return itemsPerPageValue;
     }
 
+    /**
+     * Sets the value for the number of items displayed per page in the pagination settings.
+     *
+     * @param itemsPerPageValue the number of items to display per page; may be {@code null}
+     *                          if this setting is not specified
+     */
     public void setItemsPerPageValue(@Nullable Integer itemsPerPageValue) {
         this.itemsPerPageValue = itemsPerPageValue;
     }

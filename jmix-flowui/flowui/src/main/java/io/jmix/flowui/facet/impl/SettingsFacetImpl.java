@@ -38,7 +38,6 @@ import io.jmix.flowui.view.ViewFacets;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
 import java.lang.invoke.MethodHandle;
@@ -46,6 +45,10 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * An implementation of the {@link SettingsFacet} interface that provides functionality
+ * for managing and applying settings related to views and their components.
+ */
 public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
     private static final Logger log = LoggerFactory.getLogger(SettingsFacetImpl.class);

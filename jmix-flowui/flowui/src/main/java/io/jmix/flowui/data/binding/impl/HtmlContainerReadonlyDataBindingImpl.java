@@ -37,6 +37,12 @@ import org.springframework.stereotype.Component;
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * Implementation of {@link HtmlContainerReadonlyDataBinding}.
+ * This class provides functionality for binding an {@link HtmlContainer} with various data sources
+ * such as {@link ValueSource}, {@link InstanceContainer}, or {@link CollectionContainer}
+ * to display entity property values as text in the HTML container.
+ */
 @Component("flowui_HtmlContainerDataBinding")
 public class HtmlContainerReadonlyDataBindingImpl implements HtmlContainerReadonlyDataBinding {
 

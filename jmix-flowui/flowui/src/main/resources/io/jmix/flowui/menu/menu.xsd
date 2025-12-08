@@ -17,6 +17,7 @@
 
 <xs:schema targetNamespace="http://jmix.io/schema/flowui/menu"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:layout="http://jmix.io/schema/flowui/layout"
            xmlns="http://jmix.io/schema/flowui/menu"
            elementFormDefault="qualified">
 
@@ -53,6 +54,7 @@
                 <xs:element name="item" type="itemType"/>
                 <xs:element name="menu" type="menuType"/>
                 <xs:element name="separator"/>
+                <xs:element name="icon" type="layout:iconComponentElement" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string"/>
@@ -61,6 +63,7 @@
         <xs:attribute name="classNames" type="xs:string"/>
         <xs:attribute name="icon" type="xs:string"/>
         <xs:attribute name="opened" type="xs:boolean"/>
+        <xs:attribute name="visible" type="xs:boolean" default="true"/>
     </xs:complexType>
 
     <xs:complexType name="itemType">
@@ -69,6 +72,7 @@
                 <xs:element name="properties" type="viewProperties" minOccurs="0"/>
                 <xs:element name="urlQueryParameters" type="parameters" minOccurs="0"/>
                 <xs:element name="routeParameters" type="parameters" minOccurs="0"/>
+                <xs:element name="icon" type="layout:iconComponentElement" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>
 
@@ -84,6 +88,7 @@
         <xs:attribute name="description" type="resourceString"/>
         <xs:attribute name="classNames" type="xs:string"/>
         <xs:attribute name="icon" type="xs:string"/>
+        <xs:attribute name="visible" type="xs:boolean" default="true"/>
     </xs:complexType>
 
     <xs:complexType name="viewProperties">

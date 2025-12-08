@@ -24,7 +24,7 @@ import org.springframework.lang.Nullable;
  *
  * @param <E> type of entity
  */
-public interface DetailView<E> extends ChangeTracker {
+public interface DetailView<E> extends ChangeTracker, SupportEntityLock<E> {
 
     /**
      * Saves changes.
@@ -42,34 +42,11 @@ public interface DetailView<E> extends ChangeTracker {
     OperationResult closeWithDiscard();
 
     /**
-     * @return currently edited entity instance
-     * @throws IllegalStateException if the edited entity isn't initialized yet, for example in {@link View.InitEvent}
-     */
-    E getEditedEntity();
-
-    /**
-     * @return currently edited entity instance or {@code null} if not set
-     */
-    @Nullable
-    E getEditedEntityOrNull();
-
-    /**
      * Sets entity instance to the view.
      *
      * @param entity entity to edit
      */
     void setEntityToEdit(E entity);
-
-    /**
-     * @return lock status of the currently edited entity instance. Possible variants:
-     * <ul>
-     *     <li>{@link LockStatus#NOT_SUPPORTED} - if the entity does not support lock.</li>
-     *     <li>{@link LockStatus#LOCKED} - if the entity instance is successfully locked.</li>
-     *     <li>{@link LockStatus#FAILED} - if the entity instance has been locked when the view is
-     *         opened.</li>
-     * </ul>
-     */
-    LockStatus getLockStatus();
 
     /**
      * @return true if edited entity should be reloaded after closeWithSave action, false otherwise

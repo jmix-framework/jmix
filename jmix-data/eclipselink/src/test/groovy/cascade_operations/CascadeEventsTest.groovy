@@ -22,8 +22,11 @@ import io.jmix.core.FetchPlans
 import io.jmix.core.SaveContext
 import io.jmix.data.PersistenceHints
 import io.jmix.data.impl.EntityListenerManager
+import io.jmix.eclipselink.EclipselinkProperties
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.cascade_operations.JpaCascadeBar
@@ -35,6 +38,7 @@ import test_support.listeners.cascade_operations.TestCascadeFooEventListener
 import test_support.listeners.cascade_operations.TestCascadeItemEventListener
 
 class CascadeEventsTest extends DataSpec {
+    private static final Logger log = LoggerFactory.getLogger(CascadeEventsTest.class);
 
     @Autowired
     private EntityListenerManager entityListenerManager
@@ -46,19 +50,22 @@ class CascadeEventsTest extends DataSpec {
     private EntityManager entityManager
 
     @Autowired
-    private FetchPlans fetchPlans;
+    private FetchPlans fetchPlans
+
+    @Autowired
+    private EclipselinkProperties eclipselinkProperties
 
     def setup() {
         entityListenerManager.addListener(JpaCascadeBar, TestCascadeBarEventListener.class)
         entityListenerManager.addListener(JpaCascadeItem, TestCascadeItemEventListener.class)
         entityListenerManager.addListener(JpaCascadeFoo, TestCascadeFooEventListener.class)
+
+        TestCascadeItemEventListener.clear()
+        TestCascadeFooEventListener.clear()
+        TestCascadeBarEventListener.clear()
     }
 
     def "check OneToOne cascade operations events"() {
-        setup:
-        TestCascadeFooEventListener.clear()
-        TestCascadeBarEventListener.clear()
-
         when: "cascade persist occurs"
         def foo = dataManager.create(JpaCascadeFoo)
         foo.name = "testFoo"
@@ -144,7 +151,9 @@ class CascadeEventsTest extends DataSpec {
 
         then: "All events present for cascade-deleted entity"
 
-        barChangedEvents.size() == 6
+        log.info("Lazy loading disabled: ${eclipselinkProperties.disableLazyLoading}")
+
+        barChangedEvents.size() == (eclipselinkProperties.disableLazyLoading ? 7 : 6)
         //entity should be loaded to be deleted with all events, entity log records e.t.c.
         barChangedEvents.stream().anyMatch(info -> info.message == "EntityLoadingEvent")
 
@@ -157,9 +166,6 @@ class CascadeEventsTest extends DataSpec {
     }
 
     def "check OneToMany cascade operations events"() {
-        setup:
-        TestCascadeFooEventListener.clear()
-        TestCascadeBarEventListener.clear()
 
         when: "cascade persist occurs"
         def foo = dataManager.create(JpaCascadeFoo)
@@ -256,9 +262,6 @@ class CascadeEventsTest extends DataSpec {
     }
 
     def "check cascade events for embedded entities"() {
-        setup:
-        TestCascadeFooEventListener.clear()
-        TestCascadeBarEventListener.clear()
 
         when: "cascade persist occurs"
         def foo = dataManager.create(JpaCascadeFoo)
@@ -288,13 +291,16 @@ class CascadeEventsTest extends DataSpec {
         barChangedEvents.stream().anyMatch(info -> info.message == "EntityChangedEvent: afterCommit, CREATED")
 
         barChangedEvents.stream().anyMatch(info -> info.message == "EntityLoadingEvent")
-        cleanup:
-        dataManager.remove(bar, foo)
     }
 
 
     def cleanup() {
+        TestCascadeItemEventListener.clear()
         TestCascadeFooEventListener.clear()
         TestCascadeBarEventListener.clear()
+
+        jdbc.update("delete from TEST_JPA_CASCADE_ITEM")
+        jdbc.update("delete from TEST_JPA_CASCADE_FOO")
+        jdbc.update("delete from TEST_JPA_CASCADE_BAR")
     }
 }

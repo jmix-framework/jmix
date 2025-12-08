@@ -23,10 +23,15 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.SelectionChangeNotifier;
-
 import jakarta.annotation.Nullable;
+
 import java.util.Collection;
 
+/**
+ * A specialized TreeGrid component that introduces additional capabilities, including
+ * support for actions and sub-parts functionality. This class allows enhanced
+ * interaction with grid items, enabling action handling and sub-part retrieval.
+ */
 public class JmixTreeGrid<T> extends TreeGrid<T> implements SelectionChangeNotifier<Grid<T>, T>, HasActions, HasSubParts {
 
     protected GridActionsSupport<JmixTreeGrid<T>, T> actionsSupport;
@@ -68,6 +73,11 @@ public class JmixTreeGrid<T> extends TreeGrid<T> implements SelectionChangeNotif
         return super.getDefaultHeaderRow();
     }
 
+    /**
+     * Provides access to the {@link GridActionsSupport} instance associated with this component.
+     *
+     * @return the {@link GridActionsSupport} instance responsible for handling actions in the grid
+     */
     public GridActionsSupport<JmixTreeGrid<T>, T> getActionsSupport() {
         if (actionsSupport == null) {
             actionsSupport = createActionsSupport();

@@ -15,10 +15,7 @@
  */
 
 @import url('app/exception-dialog-window.css');
-@import url('app/main-view.css');
 @import url('app/misc.css');
-@import url('app/login-view.css');
-@import url('app/main-view-top-menu.css');
 @import url('app/role-assignment-view.css');
 
 @import url('component/jmix-list-menu.css');
@@ -41,6 +38,7 @@
 @import url('component/jmix-value-picker.css');
 @import url('component/jmix-multi-select-combo-box-picker.css');
 @import url('component/jmix-twin-column.css');
+@import url('component/jmix-user-menu.css');
 
 @import url('component/vaadin-text-field.css');
 @import url('component/vaadin-text-area.css');
@@ -55,6 +53,7 @@
 @import url('component/vaadin-date-picker.css');
 @import url('component/vaadin-time-picker.css');
 @import url('component/vaadin-date-time-picker.css');
+@import url('component/vaadin-dialog.css');
 @import url('component/vaadin-combo-box.css');
 @import url('component/vaadin-multi-select-combo-box.css');
 @import url('component/vaadin-form-layout.css');
@@ -63,6 +62,7 @@
 @import url('component/vaadin-split-layout.css');
 @import url('component/vaadin-checkbox.css');
 
+@import url('icons/jmix-font-icons.css');
 @import url('icons/vaadin-icons/vaadin-icons.css');
 
 html {

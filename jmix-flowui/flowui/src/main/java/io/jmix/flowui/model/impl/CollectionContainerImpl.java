@@ -30,13 +30,19 @@ import io.jmix.flowui.model.Sorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * Implementation of the {@link CollectionContainer} interface, which manages a collection of entities and provides
+ * functionality for modifying and interacting with the collection.
+ *
+ * @param <E> the type of entity held in the container
+ */
 public class CollectionContainerImpl<E>
         extends InstanceContainerImpl<E> implements CollectionContainer<E> {
 

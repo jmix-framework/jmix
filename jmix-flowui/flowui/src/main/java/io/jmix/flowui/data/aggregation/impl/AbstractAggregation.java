@@ -23,6 +23,12 @@ import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
 
+/**
+ * An abstract base implementation of the {@link Aggregation} interface.
+ * This class provides common functionality for aggregation operations.
+ *
+ * @param <T> the type of the items being aggregated
+ */
 public abstract class AbstractAggregation<T> implements Aggregation<T> {
 
     protected Class<T> clazz;

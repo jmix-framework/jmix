@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.EntityChangeTrackingTestConfiguration;
 import test_support.TestCommonEntityWrapperManager;
@@ -36,6 +37,7 @@ import test_support.entity.*;
 import java.util.Arrays;
 import java.util.Collections;
 
+@TestPropertySource(properties = {"jmix.eclipselink.disable-lazy-loading = false"})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
         classes = {EntityChangeTrackingTestConfiguration.class}

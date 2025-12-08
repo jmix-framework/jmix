@@ -18,6 +18,7 @@ package io.jmix.flowui.sys;
 
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Resources;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Dom4j;
 import io.jmix.core.common.util.ParamsMap;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +40,7 @@ import java.util.*;
 /**
  * Provides inheritance of screen XML descriptors.
  */
+@Internal
 @Component("flowui_XmlInheritanceProcessor")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class XmlInheritanceProcessor {

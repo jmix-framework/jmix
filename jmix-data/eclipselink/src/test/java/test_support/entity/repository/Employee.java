@@ -21,7 +21,10 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
+import io.jmix.core.metamodel.datatype.impl.LocalDateDatatype;
 import jakarta.persistence.*;
+
+import java.util.Date;
 import java.util.UUID;
 
 @JmixEntity
@@ -45,15 +48,6 @@ public class Employee {
     @Column(name = "NAME")
     private String name;
 
-    public Integer getAge() {
-        return age;
-    }
-
-    public Employee setAge(Integer age) {
-        this.age = age;
-        return this;
-    }
-
     @Column(name = "AGE")
     private Integer age;
 
@@ -62,6 +56,12 @@ public class Employee {
 
     @Column(name = "LAST_NAME")
     private String lastName;
+
+    @Column(name = "workingHours")
+    private Integer workingHours;
+
+    @Column(name = "BIRTH_DATE")
+    private Date birthDate;
 
     @Embedded
     @EmbeddedParameters(nullAllowed = false)
@@ -78,6 +78,16 @@ public class Employee {
             @AttributeOverride(name = "street", column = @Column(name = "WORK_ADDRESS_STREET"))
     })
     private Address workAddress;
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public Employee setAge(Integer age) {
+        this.age = age;
+        return this;
+    }
+
 
     public String getLastName() {
         return lastName;
@@ -133,5 +143,21 @@ public class Employee {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public Integer getWorkingHours() {
+        return workingHours;
+    }
+
+    public void setWorkingHours(Integer workingHours) {
+        this.workingHours = workingHours;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 }

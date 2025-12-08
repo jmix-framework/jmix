@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="data" id="1" context="!cuba" dbms="oracle">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM USER_OBJECTS
+                WHERE OBJECT_TYPE = 'PROCEDURE'
+                AND OBJECT_NAME = 'SET_SEQ_VAL'
+            </sqlCheck>
+        </preConditions>
+        <sql endDelimiter="/">
+            <![CDATA[
+            CREATE PROCEDURE SET_SEQ_VAL(seq_name VARCHAR2, new_value NUMBER)
+            AS
+                last_num NUMBER;
+                inc_by NUMBER;
+            BEGIN
+                SELECT LAST_NUMBER, INCREMENT_BY
+                INTO last_num, inc_by
+                FROM USER_SEQUENCES
+                WHERE SEQUENCE_NAME = upper(seq_name);
+
+                IF (new_value - last_num) = 0 THEN
+                    RETURN;
+                END IF;
+
+                EXECUTE IMMEDIATE 'ALTER SEQUENCE ' || seq_name || ' INCREMENT BY ' || (new_value - last_num);
+
+                EXECUTE IMMEDIATE 'SELECT ' || seq_name || '.nextval FROM DUAL' INTO last_num;
+
+                EXECUTE IMMEDIATE 'ALTER SEQUENCE ' || seq_name || ' INCREMENT BY ' || inc_by;
+            END;
+            /
+            ]]>
+        </sql>
+    </changeSet>
+
+    <changeSet author="data" id="2" context="!cuba" dbms="oracle">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM USER_OBJECTS
+                WHERE OBJECT_TYPE = 'FUNCTION'
+                AND OBJECT_NAME = 'GET_SEQ_VAL'
+            </sqlCheck>
+        </preConditions>
+        <sql endDelimiter="/">
+            <![CDATA[
+            CREATE FUNCTION GET_SEQ_VAL(seq_name VARCHAR2) RETURN NUMBER
+            AS
+                last_num NUMBER;
+                inc_by NUMBER;
+            BEGIN
+                SELECT LAST_NUMBER, INCREMENT_BY
+                INTO last_num, inc_by
+                FROM USER_SEQUENCES
+                WHERE SEQUENCE_NAME = upper(seq_name);
+
+                RETURN last_num - inc_by;
+            END;
+            /
+            ]]>
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

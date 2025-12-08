@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '2.5.0-RC1'
+    id 'io.jmix' version '2.7.0-RC2'
     id 'org.jetbrains.kotlin.jvm' version '2.1.10'
     id 'java'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.9'
@@ -35,9 +35,12 @@ dependencies {
     implementation 'io.jmix.datatools:jmix-datatools-starter'
     implementation 'io.jmix.datatools:jmix-datatools-flowui-starter'
 
+    // Provides Kotlin reflection API used by Spring Data/Jmix to inspect Kotlin method signatures
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    runtimeOnly 'org.hsqldb:hsqldb'
+    runtimeOnly 'com.h2database:h2'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

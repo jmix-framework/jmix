@@ -32,6 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * Extends {@link FilterMetadataTools} by providing additional utility functionality for working
+ * with data filtering metadata in the context of UI components. Specifically, it includes logic
+ * for detecting aggregate JPQL functions in queries.
+ * <p>
+ * Note: This class is annotated as {@link Internal}, meaning it is an internal implementation detail
+ * and should not be used in application code. It is subject to change without notice in future versions.
+ */
 @Internal
 public class UiDataFilterMetadataTools extends FilterMetadataTools {
 

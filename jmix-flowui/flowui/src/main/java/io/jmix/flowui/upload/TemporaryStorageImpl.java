@@ -31,6 +31,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * Implementation of the {@link TemporaryStorage} interface that provides mechanisms
+ * for temporarily storing files. This service allows for saving files using byte arrays
+ * or streams, retrieval and deletion of files, and moving files into permanent storage.
+ * The files are stored in a temporary directory defined via application properties.
+ */
 @Internal
 @Component("flowui_TemporaryStorage")
 public class TemporaryStorageImpl implements TemporaryStorage {
@@ -211,12 +217,14 @@ public class TemporaryStorageImpl implements TemporaryStorage {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public FileRef putFileIntoStorage(UUID fileId, String fileName) {
         FileStorage defaultFileStorage = fileStorageLocator.getDefault();
         return putFileIntoStorage(fileId, fileName, defaultFileStorage);
     }
 
+    /**
+     * Cleans up the temporary directory by deleting outdated files.
+     */
     public void clearTempDirectory() {
         try {
             File dir = new File(tempDir);
@@ -241,6 +249,11 @@ public class TemporaryStorageImpl implements TemporaryStorage {
         }
     }
 
+    /**
+     * Builds a string representation of temporarily stored files and their last modification timestamps.
+     *
+     * @return a string representation of the temporarily stored files and their metadata
+     */
     public String showTempFiles() {
         StringBuilder builder = new StringBuilder();
         Map<UUID, File> clonedFileMap = new HashMap<>(tempFiles);

@@ -31,7 +31,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {CoreConfiguration.class})
-@PropertySource("classpath:/io/jmix/rest/module.properties")
+@PropertySource(name = "io.jmix.rest", value = "classpath:/io/jmix/rest/module.properties")
 public class RestConfiguration implements WebMvcConfigurer {
 
     @Autowired

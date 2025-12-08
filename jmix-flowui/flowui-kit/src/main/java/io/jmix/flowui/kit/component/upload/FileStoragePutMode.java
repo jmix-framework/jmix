@@ -24,7 +24,7 @@ package io.jmix.flowui.kit.component.upload;
 public enum FileStoragePutMode {
 
     /**
-     * User have to put file into FileStorage manually.
+     * User has to put the file into FileStorage manually.
      */
     MANUAL,
     /**

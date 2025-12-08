@@ -47,5 +47,15 @@
                 <responsiveStep minWidth="60em" labelsPosition="TOP" columns="4"/>
             </responsiveSteps>
         </formLayout>
+
+        <formLayout id="formLayoutWithRows">
+            <formRow>
+                <textField id="textField"/>
+                <textArea id="textArea"/>
+            </formRow>
+            <formRow>
+                <comboBox id="comboBox"/>
+            </formRow>
+        </formLayout>
     </layout>
 </view>

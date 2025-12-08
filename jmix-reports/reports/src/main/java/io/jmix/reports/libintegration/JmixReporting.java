@@ -17,6 +17,7 @@
 package io.jmix.reports.libintegration;
 
 import com.google.common.base.Strings;
+import io.jmix.reports.delegate.ParameterTransformer;
 import io.jmix.reports.yarg.reporting.Reporting;
 import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.reporting.RunParams;
@@ -95,6 +96,10 @@ public class JmixReporting extends Reporting {
                     if (paramValue != null) {
                         handledParams.put(paramName, handlePredefinedTransformation(paramValue, reportInputParameter.getPredefinedTransformation()));
                     }
+                } else if (reportInputParameter.getTransformationDelegate() != null) {
+                    handledParams.put(paramName,
+                            handleTransformation(paramValue, reportInputParameter.getTransformationDelegate(), handledParams)
+                    );
                 } else if (!Strings.isNullOrEmpty(reportInputParameter.getTransformationScript())) {
                     handledParams.put(paramName, handleScriptTransformation(paramValue, reportInputParameter.getTransformationScript(), handledParams));
                 }
@@ -135,6 +140,11 @@ public class JmixReporting extends Reporting {
             script = resources.getResourceAsString(script);
         }
         return scripting.evaluateGroovy(script, scriptParams);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected Object handleTransformation(Object paramValue, ParameterTransformer transformer, Map<String, Object> params) {
+        return transformer.transform(paramValue, params);
     }
 
     protected String wrapValueForLike(Object value, boolean before, boolean after) {

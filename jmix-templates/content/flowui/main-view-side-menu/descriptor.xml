@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mainView xmlns="http://jmix.io/schema/flowui/main-view"
+          title="${messageKeys['mainViewSideMenuTitle']}">
+    <actions>
+        <%if (createUserMenu) {%>
+        <action id="logoutAction" text="msg:///actions.logout.text" type="logout"/>
+        <%} else {%>
+        <action id="logoutAction" type="logout"/>
+        <%}%>
+    </actions>
+    <appLayout>
+        <navigationBar>
+            <header id="header" classNames="jmix-main-view-header">
+                <drawerToggle id="drawerToggle"
+                              classNames="jmix-main-view-drawer-toggle"
+                              themeNames="contrast"
+                              ariaLabel="${messageKeys['drawerToggleAriaLabel']}"/>
+                <h1 id="viewTitle" classNames="jmix-main-view-title"/>
+                <%if (createUserMenu) {%>
+                <userMenu id="userMenu"
+                          themeNames="tertiary" classNames="ms-auto me-m">
+                    <items>
+                        <separator/>
+                        <actionItem id="substituteUserMenuItem"
+                                    themeNames="non-checkable">
+                            <action id="substituteUserAction" type="sec_userMenuSubstituteUser"/>
+                        </actionItem>
+                        <separator/>
+                        <actionItem id="logoutMenuItem" ref="logoutAction"
+                                    themeNames="non-checkable"/>
+                    </items>
+                </userMenu>
+                <%}%>
+            </header>
+        </navigationBar>
+        <drawerLayout>
+            <section id="section" classNames="jmix-main-view-section">
+                <h2 id="applicationTitle"
+                    classNames="jmix-main-view-application-title">
+                    <anchor id="baseLink"
+                            href="."
+                            text="${messageKeys['applicationTitleText']}"
+                            classNames="jmix-main-view-application-title-base-link"/>
+                </h2>
+                <nav id="navigation"
+                     classNames="jmix-main-view-navigation"
+                     ariaLabel="${messageKeys['navigationAriaLabel']}">
+                    <listMenu id="menu"/>
+                </nav>
+                <%if (!createUserMenu) {%>
+                <footer id="footer" classNames="jmix-main-view-footer">
+                    <userIndicator id="userIndicator"/>
+                    <button id="logoutButton"
+                            action="logoutAction"
+                            classNames="jmix-logout-button"/>
+                </footer>
+                <%}%>
+            </section>
+        </drawerLayout>
+        <initialLayout id="initialLayout"
+                       alignItems="CENTER" justifyContent="CENTER"
+                       width="100%" height="100%">
+            <vbox alignItems="CENTER" maxWidth="40em" >
+                <image resource="icons/icon.png" height="5rem"/>
+                <h1 text="${messageKeys['applicationTitleText']}"/>
+            </vbox>
+            <!--
+                This is the work area - central part of the view.
+                Put your components here.
+            -->
+        </initialLayout>
+    </appLayout>
+</mainView>

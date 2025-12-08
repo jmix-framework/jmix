@@ -29,17 +29,19 @@ import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.AggregationInfo;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.GridContextMenuItemComponent;
@@ -52,16 +54,23 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
+import io.jmix.flowui.view.ReadOnlyTracker;
+import io.jmix.flowui.view.ReadOnlyTracker.ReadOnlyChangeEvent;
+import io.jmix.flowui.view.StandardDetailView;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.component.datagrid.RendererProvider;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
+import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.datatype.DatatypeElementFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -74,6 +83,8 @@ import java.util.stream.Stream;
 public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & HasActions>
         extends AbstractComponentLoader<T> {
 
+    private static final Logger log = LoggerFactory.getLogger(AbstractGridLoader.class);
+
     public static final String COLUMN_ELEMENT_NAME = "column";
     public static final String EDITOR_ACTIONS_COLUMN_ELEMENT_NAME = "editorActionsColumn";
 
@@ -83,6 +94,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected Subscription masterDataLoaderPostLoadListener; // used for CollectionPropertyContainer
     protected FetchPlanRepositoryImpl fetchPlanRepository;
     protected ClassManager classManager;
+    protected AccessManager accessManager;
+    protected IconLoaderSupport iconLoaderSupport;
 
     protected List<DataGridColumn<?>> pendingToFilterableColumns = new ArrayList<>();
 
@@ -188,7 +201,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         if (includeAll) {
             loadColumnsByInclude(resultComponent, columnsElement, metaClass, fetchPlan, sortable, resizable);
             // In case of includeAll, EditorActionsColumn will be place at the end
-            loadEditorActionsColumns(resultComponent, columnsElement);
+            loadEditorActionsColumns(resultComponent, columnsElement, metaClass);
         } else {
             List<Element> columnElements = columnsElement.elements();
             for (Element columnElement : columnElements) {
@@ -204,7 +217,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 loadColumn(resultComponent, columnElement, metaClass, sortableColumns, resizableColumns);
                 break;
             case EDITOR_ACTIONS_COLUMN_ELEMENT_NAME:
-                loadEditorActionsColumn(resultComponent, columnElement);
+                loadEditorActionsColumn(resultComponent, columnElement, metaClass);
                 break;
             default:
                 throw new GuiDevelopmentException("Unknown columns' child element: " + columnElement.getName(),
@@ -212,45 +225,42 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
     }
 
-    protected void loadEditorActionsColumns(T resultComponent, Element columnsElement) {
+    protected void loadEditorActionsColumns(T resultComponent, Element columnsElement, MetaClass metaClass) {
         List<Element> editorActionsColumns = columnsElement.elements(EDITOR_ACTIONS_COLUMN_ELEMENT_NAME);
         if (CollectionUtils.isEmpty(editorActionsColumns)) {
             return;
         }
 
         for (Element columnElement : editorActionsColumns) {
-            loadEditorActionsColumn(resultComponent, columnElement);
+            loadEditorActionsColumn(resultComponent, columnElement, metaClass);
         }
     }
 
-    protected void loadEditorActionsColumn(T resultComponent, Element columnElement) {
+    protected void loadEditorActionsColumn(T resultComponent, Element columnElement, MetaClass metaClass) {
         if (columnElement.elements().isEmpty()) {
             throw new GuiDevelopmentException("'editorActionsColumn' cannot be empty",
                     context, "Component ID", resultComponent.getId());
         }
 
         Editor<?> editor = resultComponent.getEditor();
-        Grid.Column<?> editColumn = createEditColumn(resultComponent, columnElement, editor);
+        Grid.Column<?> editColumn = createEditColumn(resultComponent, columnElement, editor, metaClass);
 
         HorizontalLayout actions = new HorizontalLayout();
         actions.setPadding(false);
 
-        Button saveButton = loadEditorButton(columnElement, "saveButton",
-                null, VaadinIcon.CHECK.create());
+        Button saveButton = loadEditorButton(columnElement, "saveButton");
         if (saveButton != null) {
             saveButton.addClickListener(__ -> editor.save());
             actions.add(saveButton);
         }
 
-        Button cancelButton = loadEditorButton(columnElement, "cancelButton",
-                "actions.Cancel", VaadinIcon.BAN.create());
+        Button cancelButton = loadEditorButton(columnElement, "cancelButton");
         if (cancelButton != null) {
             cancelButton.addClickListener(__ -> editor.cancel());
             actions.add(cancelButton);
         }
 
-        Button closeButton = loadEditorButton(columnElement, "closeButton",
-                null, VaadinIcon.BAN.create());
+        Button closeButton = loadEditorButton(columnElement, "closeButton");
         if (closeButton != null) {
             closeButton.addClickListener(__ -> editor.closeEditor());
             actions.add(closeButton);
@@ -271,37 +281,67 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadBoolean(columnElement, "visible", editColumn::setVisible);
     }
 
+    protected void configureParentViewReadOnlyChangeListener(Button editButton) {
+        View<?> view = UiComponentUtils.findView(resultComponent);
+        if (view == null) {
+
+            log.warn("Unable to find view for Grid '{}' after attaching", resultComponent.getId().orElse(null));
+        } else if (!(view instanceof ReadOnlyTracker readOnlyTracker)) {
+
+            log.info("Adding the {} listener will be skipped for Grid {} because the view {} is not an instance of {}",
+                    ReadOnlyChangeEvent.class.getSimpleName(), resultComponent.getId().orElse(null),
+                    view.getId(), StandardDetailView.class.getSimpleName());
+        } else {
+            // read-only state can be configured before this moment e.g., via URL query parameters
+            editButton.setEnabled(!readOnlyTracker.isReadOnly());
+
+            Registration registration = readOnlyTracker.addReadOnlyStateChangeListener(
+                    readOnlyChangeEvent -> editButton.setEnabled(!readOnlyChangeEvent.isReadOnly()));
+            editButton.addDetachListener(__ -> registration.remove());
+        }
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Grid.Column<?> createEditColumn(T resultComponent, Element columnElement, Editor editor) {
+    protected Grid.Column<?> createEditColumn(T resultComponent, Element columnElement, Editor editor,
+                                              MetaClass metaClass) {
         return resultComponent.addComponentColumn(item -> {
-            Button editButton = loadEditorButton(columnElement, "editButton",
-                    "actions.Edit", VaadinIcon.PENCIL.create());
-            if (editButton != null) {
-                editButton.addClickListener(__ -> {
-                    if (editor.isOpen()) {
-                        editor.cancel();
-                    }
-                    editor.editItem(item);
-                });
-                return editButton;
-            } else {
-                // Vaadin throws NPE if null is returned
-                return new Span();
+            UiEntityContext entityContext = new UiEntityContext(metaClass);
+            getAccessManager().applyRegisteredConstraints(entityContext);
+
+            InMemoryCrudEntityContext inMemoryContext = new InMemoryCrudEntityContext(metaClass, applicationContext);
+            getAccessManager().applyRegisteredConstraints(inMemoryContext);
+
+            if (entityContext.isEditPermitted()
+                    && (inMemoryContext.updatePredicate() == null
+                    || item != null && inMemoryContext.isUpdatePermitted(item))) {
+                Button editButton = loadEditorButton(columnElement, "editButton");
+
+                if (editButton != null) {
+                    configureParentViewReadOnlyChangeListener(editButton);
+
+                    editButton.addClickListener(__ -> {
+                        if (editor.isOpen()) {
+                            editor.cancel();
+                        }
+                        editor.editItem(item);
+                    });
+                    return editButton;
+                }
             }
+
+            // Vaadin throws NPE if null is returned
+            return new Span();
         });
     }
 
     @Nullable
-    protected Button loadEditorButton(Element columnElement, String buttonElementName,
-                                      @Nullable String defaultMessage, Icon defaultIcon) {
+    protected Button loadEditorButton(Element columnElement, String buttonElementName) {
         Element buttonElement = columnElement.element(buttonElementName);
         if (buttonElement != null) {
             JmixButton button = factory.create(JmixButton.class);
 
-            loadResourceString(buttonElement, "text", context.getMessageGroup())
-                    .ifPresentOrElse(button::setText, () -> button.setText(loadMessage(defaultMessage)));
-            componentLoader().loadIcon(buttonElement)
-                    .ifPresentOrElse(button::setIcon, () -> button.setIcon(defaultIcon));
+            loadResourceString(buttonElement, "text", context.getMessageGroup(), button::setText);
+            iconLoaderSupport().loadIcon(buttonElement, button::setIcon);
             componentLoader().loadTitle(button, buttonElement, context);
             componentLoader().loadClassNames(button, buttonElement);
             componentLoader().loadThemeNames(button, buttonElement);
@@ -701,6 +741,21 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         return classManager;
     }
 
+    protected AccessManager getAccessManager() {
+        if (accessManager == null) {
+            accessManager = applicationContext.getBean(AccessManager.class);
+        }
+        return accessManager;
+    }
+
+    protected IconLoaderSupport iconLoaderSupport() {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, context);
+        }
+
+        return iconLoaderSupport;
+    }
+
     @Nullable
     protected String loadMessage(@Nullable String message) {
         if (Strings.isNullOrEmpty(message)) {
@@ -769,6 +824,9 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             case "separator":
                 separatorConsumer.accept(new Hr());
                 break;
+            case "icon":
+                // A valid icon element. Loaded along with other attributes.
+                break;
             default:
                 throw new GuiDevelopmentException("Unknown context menu child element: " + childElement.getName(),
                         context, "Component ID", resultComponent.getId());
@@ -787,7 +845,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         componentLoader().loadText(component, itemElement);
         componentLoader().loadWhiteSpace(component, itemElement);
-        componentLoader().loadIcon(itemElement, component::setPrefixComponent);
+        iconLoaderSupport().loadIcon(itemElement, component::setPrefixComponent);
 
         loadContextMenuItemAction(component, itemElement);
 

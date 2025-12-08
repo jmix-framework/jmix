@@ -28,6 +28,8 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
+import io.jmix.core.AccessManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
@@ -52,6 +54,7 @@ import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
+import io.jmix.quartzflowui.accesscontext.UiQuartzAdministrationAccessContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobKey;
@@ -67,7 +70,8 @@ import java.util.stream.Collectors;
 import static java.util.Comparator.*;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
-@Route(value = "quartz/jobmodels", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "quartz/jobmodels", layout = DefaultMainViewParent.class)
+@Route(value = "quartz/job-models", layout = DefaultMainViewParent.class)
 @ViewController("quartz_JobModel.list")
 @ViewDescriptor("job-model-list-view.xml")
 @LookupComponent("jobModelsTable")
@@ -89,11 +93,15 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected TypedTextField<String> groupFilter;
     @ViewComponent
     protected JmixSelect<JobState> jobStateFilter;
-
+    @ViewComponent
+    protected MessageBundle messageBundle;
+    @ViewComponent
+    protected UrlQueryParametersFacet urlQueryParameters;
     @ViewComponent
     protected CollectionContainer<JobModel> jobModelsDc;
     @ViewComponent
-    private CollectionLoader<JobModel> jobModelsDl;
+    protected CollectionLoader<JobModel> jobModelsDl;
+
     @Autowired
     protected RemoveOperation removeOperation;
     @Autowired
@@ -103,17 +111,24 @@ public class JobModelListView extends StandardListView<JobModel> {
     @Autowired
     protected Notifications notifications;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected MessageTools messageTools;
     @Autowired
-    private Metadata metadata;
-    @ViewComponent
-    private UrlQueryParametersFacet urlQueryParameters;
+    protected Metadata metadata;
+    @Autowired
+    protected AccessManager accessManager;
+
+    protected boolean administrationPermitted;
 
     @Subscribe
     protected void onInit(InitEvent event) {
         initUrlParameters();
+        applySecurityConstraints();
+    }
+
+    protected void applySecurityConstraints() {
+        UiQuartzAdministrationAccessContext accessContext = new UiQuartzAdministrationAccessContext();
+        accessManager.applyRegisteredConstraints(accessContext);
+        administrationPermitted = accessContext.isPermitted();
     }
 
     @Supply(to = "jobModelsTable.nextFireDate", subject = "renderer")
@@ -232,35 +247,51 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     @Install(to = "jobModelsTable.executeNow", subject = "enabledRule")
     protected boolean jobModelsTableExecuteNowEnabledRule() {
-        JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
-        return !CollectionUtils.isEmpty(jobModelsTable.getSelectedItems())
-                && !isJobActive(selectedJobModel)
-                && !isJobInvalid(selectedJobModel);
+        if (!administrationPermitted) {
+            return false;
+        } else {
+            JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
+            return !CollectionUtils.isEmpty(jobModelsTable.getSelectedItems())
+                    && !isJobActive(selectedJobModel)
+                    && !isJobInvalid(selectedJobModel);
+        }
     }
 
     @Install(to = "jobModelsTable.activate", subject = "enabledRule")
     protected boolean jobModelsTableActivateEnabledRule() {
-        JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
-        return selectedJobModel != null
-                && !isJobActive(selectedJobModel)
-                && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers())
-                && !isJobInvalid(selectedJobModel);
+        if (!administrationPermitted) {
+            return false;
+        } else {
+            JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
+            return selectedJobModel != null
+                    && !isJobActive(selectedJobModel)
+                    && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers())
+                    && !isJobInvalid(selectedJobModel);
+        }
     }
 
     @Install(to = "jobModelsTable.deactivate", subject = "enabledRule")
     protected boolean jobModelsTableDeactivateEnabledRule() {
-        JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
-        return selectedJobModel != null
-                && isJobActive(selectedJobModel)
-                && !isJobInvalid(selectedJobModel);
+        if (!administrationPermitted) {
+            return false;
+        } else {
+            JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
+            return selectedJobModel != null
+                    && isJobActive(selectedJobModel)
+                    && !isJobInvalid(selectedJobModel);
+        }
     }
 
     @Install(to = "jobModelsTable.remove", subject = "enabledRule")
     protected boolean jobModelsTableRemoveEnabledRule() {
-        JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
-        return selectedJobModel != null
-                && !isJobActive(selectedJobModel)
-                && JobSource.USER_DEFINED.equals(selectedJobModel.getJobSource());
+        if (!administrationPermitted) {
+            return false;
+        } else {
+            JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
+            return selectedJobModel != null
+                    && !isJobActive(selectedJobModel)
+                    && JobSource.USER_DEFINED.equals(selectedJobModel.getJobSource());
+        }
     }
 
     protected void updateDataWithSelection(JobModel selectedJobModel) {

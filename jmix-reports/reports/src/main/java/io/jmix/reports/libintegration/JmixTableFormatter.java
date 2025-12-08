@@ -150,7 +150,7 @@ public class JmixTableFormatter extends AbstractFormatter {
 
                             if (name != null && value != null) {
                                 Class valueClass = getColumnClass(bandData.getName(), name, value);
-                                headers.add(new JmixTableData.ColumnInfo(transformationKey(name), valueClass, name));
+                                headers.add(new JmixTableData.ColumnInfo(transformationKey(name), valueClass, name, null));
                             }
                             if (name != null && value == null) {
                                 emptyHeaders.add(transformationKey(name));
@@ -164,7 +164,7 @@ public class JmixTableFormatter extends AbstractFormatter {
 
             emptyHeaders.forEach(header -> {
                 if (!containsHeader(headers, header))
-                    headers.add(new JmixTableData.ColumnInfo(header, String.class, header));
+                    headers.add(new JmixTableData.ColumnInfo(header, String.class, header, null));
             });
 
             headers.removeIf(header -> containsLowerCaseDuplicate(header, headers));
@@ -246,9 +246,11 @@ public class JmixTableFormatter extends AbstractFormatter {
                             String transformationKey = transformationKey(key);
                             if (value != null) {
                                 Class valueClass = getColumnClass(bandName, key, value);
-                                headers.add(new JmixTableData.ColumnInfo(transformationKey, valueClass, column.getCaption(), column.getPosition()));
+                                headers.add(new JmixTableData.ColumnInfo(transformationKey, valueClass, column.getCaption(),
+                                        column.getCaptionMessageKey(), column.getPosition()));
                             } else {
-                                headers.add(new JmixTableData.ColumnInfo(transformationKey, String.class, column.getCaption(), column.getPosition()));
+                                headers.add(new JmixTableData.ColumnInfo(transformationKey, String.class, column.getCaption(),
+                                        column.getCaptionMessageKey(), column.getPosition()));
                             }
                         }
                     }

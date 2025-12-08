@@ -29,11 +29,11 @@ import java.util.UUID;
 public interface FirstRepository extends JmixDataRepository<TestOrder, UUID> {
 
     @Override
-    Iterable<TestOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
+    List<TestOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
 
     @Override
     @ApplyConstraints(false)
-    Iterable<TestOrder> findAll(FetchPlan fetchPlan);
+    List<TestOrder> findAll(FetchPlan fetchPlan);
 
     @ApplyConstraints(false)
     List<TestOrder> findByIdNotNull();

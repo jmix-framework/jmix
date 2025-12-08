@@ -62,6 +62,12 @@ public final class DownloadFormat implements Serializable {
         this.fileExt = fileExt;
     }
 
+    /**
+     * Returns a {@link DownloadFormat} object based on the given file extension.
+     *
+     * @param extension the file extension (case-insensitive) used to find a corresponding {@link DownloadFormat}
+     * @return the matching {@link DownloadFormat}, or the default {@code OCTET_STREAM} format if no match is found
+     */
     public static DownloadFormat getByExtension(String extension) {
         if (StringUtils.isEmpty(extension)) {
             return OCTET_STREAM;
@@ -76,10 +82,20 @@ public final class DownloadFormat implements Serializable {
         return OCTET_STREAM;
     }
 
+    /**
+     * Returns the content type associated with this instance.
+     *
+     * @return the content type
+     */
     public String getContentType() {
         return contentType;
     }
 
+    /**
+     * Returns the file extension associated with this instance.
+     *
+     * @return the file extension
+     */
     public String getFileExt() {
         return fileExt;
     }

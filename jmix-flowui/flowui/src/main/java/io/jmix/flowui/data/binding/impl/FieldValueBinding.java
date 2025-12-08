@@ -17,14 +17,20 @@
 package io.jmix.flowui.data.binding.impl;
 
 import com.vaadin.flow.component.HasValue;
-import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.component.SupportsTypedValue;
+import io.jmix.flowui.data.ValueSource;
+import io.jmix.flowui.data.binding.ValueBinding;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-
+/**
+ * Implementation of {@link ValueBinding} that binds a field component
+ * to its corresponding {@link ValueSource}.
+ *
+ * @param <V> the value type
+ */
 @Component("flowui_FieldValueBinding")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FieldValueBinding<V> extends AbstractValueBinding<V> {

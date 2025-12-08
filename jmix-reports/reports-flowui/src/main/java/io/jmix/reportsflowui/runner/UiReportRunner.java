@@ -119,7 +119,7 @@ public interface UiReportRunner {
      *                 .runMultipleReports("customer", customersList);
      * </pre>
      *
-     * @param report report entity
+     * @param report report entity (with any fetch plan)
      * @return instance of {@link FluentUiReportRunner}
      */
     FluentUiReportRunner byReportEntity(Report report);

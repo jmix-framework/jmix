@@ -29,6 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Default implementation of the {@link UserSettingsCache} interface, providing caching for user settings.
+ * Settings are cached per {@link VaadinSession} and synchronized with the underlying {@link UserSettingsService}.
+ */
 @Internal
 @Component("flowui_UserSettingsCacheImpl")
 public class UserSettingsCacheImpl implements UserSettingsCache {

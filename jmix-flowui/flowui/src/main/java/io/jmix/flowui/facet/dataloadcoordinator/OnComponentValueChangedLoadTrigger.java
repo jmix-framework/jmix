@@ -26,6 +26,15 @@ import io.jmix.flowui.model.DataLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of the {@link DataLoadCoordinator.Trigger} interface that triggers data loading
+ * in a {@link DataLoader} when the value of a specified UI component changes. The component must
+ * implement the {@code HasValue} interface.
+ * <p>
+ * This trigger listens for {@code ValueChangeEvent} on the specified component and updates the data
+ * loader's parameter with the new value before initiating a data load. It can also handle LIKE clause
+ * formatting for string parameters based on the {@link DataLoadCoordinator.LikeClause} configuration.
+ */
 public class OnComponentValueChangedLoadTrigger implements DataLoadCoordinator.Trigger {
 
     private static final Logger log = LoggerFactory.getLogger(OnComponentValueChangedLoadTrigger.class);

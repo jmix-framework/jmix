@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.action.list;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -28,8 +27,9 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.data.ContainerDataUnit;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
@@ -37,6 +37,8 @@ import io.jmix.flowui.view.LookupView;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
@@ -49,6 +51,8 @@ import java.util.function.Predicate;
 @ActionType(AddAction.ID)
 public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
         implements AdjustWhenViewReadOnly, ViewOpeningAction {
+
+    private static final Logger log = LoggerFactory.getLogger(AddAction.class);
 
     public static final String ID = "list_add";
 
@@ -68,15 +72,18 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
         super(id);
     }
 
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PLUS);
-    }
-
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.Add");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.ADD_ACTION);
+        }
     }
 
     @Autowired
@@ -102,7 +109,7 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
 
     @Override
     public void setOpenMode(@Nullable OpenMode openMode) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, OpenMode.class.getSimpleName());
     }
 
     /**
@@ -150,7 +157,7 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
 
     @Override
     public void setRouteParametersProvider(@Nullable RouteParametersProvider provider) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, RouteParametersProvider.class.getSimpleName());
     }
 
     @Nullable
@@ -162,7 +169,7 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
 
     @Override
     public void setQueryParametersProvider(@Nullable QueryParametersProvider provider) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, QueryParametersProvider.class.getSimpleName());
     }
 
     @Override

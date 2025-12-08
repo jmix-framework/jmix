@@ -19,6 +19,7 @@ import com.vaadin.flow.router.BeforeLeaveEvent
 import com.vaadin.flow.router.Route
 import io.jmix.core.AccessManager
 import io.jmix.core.EntityStates
+import io.jmix.core.entity.EntityValues
 import io.jmix.flowui.component.validation.ValidationErrors
 import io.jmix.core.validation.group.UiCrossFieldChecks
 import io.jmix.flowui.UiComponentProperties
@@ -123,7 +124,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
 
         dataContext.clear()
         val entity: ${entity.className} = dataContext.create(${entity.className}::class.java)
-        ${detailDc}.item = entity
+        ${detailDc}.setItem(entity)
         updateControls(true)
     }<%}%><%if (tableActions.contains("edit")) {%>
 
@@ -161,7 +162,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         val entity: ${entity.className}? = event.item
         dataContext.clear()
         if (entity != null) {
-            ${detailDl}.entityId = entity.id
+            ${detailDl}.entityId = EntityValues.getId(entity)
             ${detailDl}.load()
         } else {
             ${detailDl}.entityId = null

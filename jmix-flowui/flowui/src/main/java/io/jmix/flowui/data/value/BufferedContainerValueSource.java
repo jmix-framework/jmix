@@ -20,10 +20,20 @@ import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.BufferedDataUnit;
 import io.jmix.flowui.model.InstanceContainer;
 import org.springframework.context.ApplicationContext;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Objects;
 
+/**
+ * Represents a value source that provides buffering capabilities for reading and
+ * writing property values.
+ * <p>
+ * This class is useful in scenarios where the property value changes need to be decoupled from the
+ * underlying data source, allowing intermediate updates to be managed before committing the changes.
+ *
+ * @param <E> the type of the entity in the container
+ * @param <V> the type of the property value
+ */
 public class BufferedContainerValueSource<E, V> extends ContainerValueSource<E, V> implements BufferedDataUnit {
 
     protected boolean buffered;

@@ -22,6 +22,13 @@ import io.jmix.flowui.model.CollectionContainer;
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
+/**
+ * A weak wrapper for a {@link Consumer} that listens to {@link CollectionContainer.CollectionChangeEvent}s.
+ * This class ensures that the listener does not prevent garbage collection of the original
+ * {@link Consumer}, thus avoiding memory leaks.
+ *
+ * @param <E> the type of elements in the collection container
+ */
 public class WeakCollectionChangeListener<E>
         implements Consumer<CollectionContainer.CollectionChangeEvent<E>> {
 
@@ -45,6 +52,10 @@ public class WeakCollectionChangeListener<E>
         }
     }
 
+    /**
+     * Removes the associated listener from the event source, ensuring that this instance no longer
+     * listens to changes in the underlying collection or data source.
+     */
     public void removeItself() {
         subscription.remove();
     }

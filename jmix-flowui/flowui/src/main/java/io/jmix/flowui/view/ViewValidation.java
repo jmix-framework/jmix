@@ -24,8 +24,8 @@ import com.vaadin.flow.component.notification.Notification;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -33,16 +33,20 @@ import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.exception.CompositeValidationException;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.ActionVariant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ElementKind;
 import jakarta.validation.Path;
 import jakarta.validation.Validator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.*;
 
+/**
+ * Provides utility methods for validating UI components and JavaBean objects, displaying validation errors,
+ * and supporting dialog interactions in views with unsaved changes.
+ */
 @org.springframework.stereotype.Component("flowui_ViewValidation")
 public class ViewValidation {
 
@@ -118,7 +122,7 @@ public class ViewValidation {
      * Performs Java Bean Validation of the given object.
      *
      * @param groupClass the group or list of groups targeted for validation
-     * @param item object to validate
+     * @param item       object to validate
      * @return validation errors
      */
     public ValidationErrors validateBeanGroup(Class<?> groupClass, Object item) {
@@ -306,28 +310,47 @@ public class ViewValidation {
      * Callbacks holder for discarding unsaved changes dialog.
      */
     public static class UnsavedChangesDialogResult {
+
         protected Runnable discardHandler;
         protected Runnable cancelHandler;
 
         public UnsavedChangesDialogResult() {
         }
 
+        /**
+         * Sets the handler to be executed when the discard action is triggered.
+         *
+         * @param discardHandler the handler to execute for the discard action
+         * @return this for method chaining
+         */
         public UnsavedChangesDialogResult onDiscard(Runnable discardHandler) {
             this.discardHandler = discardHandler;
             return this;
         }
 
+        /**
+         * Sets the handler to be executed when the cancel action is triggered.
+         *
+         * @param cancelHandler the handler to execute for the cancel action
+         * @return this for method chaining
+         */
         public UnsavedChangesDialogResult onCancel(Runnable cancelHandler) {
             this.cancelHandler = cancelHandler;
             return this;
         }
 
+        /**
+         * Executes the discard operation.
+         */
         public void discard() {
             if (discardHandler != null) {
                 discardHandler.run();
             }
         }
 
+        /**
+         * Executes the cancel operation.
+         */
         public void cancel() {
             if (cancelHandler != null) {
                 cancelHandler.run();
@@ -339,6 +362,7 @@ public class ViewValidation {
      * Callbacks holder for saving or discarding unsaved changes dialog.
      */
     public static class SaveChangesDialogResult {
+
         protected Runnable saveHandler;
         protected Runnable discardHandler;
         protected Runnable cancelHandler;
@@ -346,33 +370,60 @@ public class ViewValidation {
         public SaveChangesDialogResult() {
         }
 
+        /**
+         * Sets the handler to be executed when the save action is triggered.
+         *
+         * @param saveHandler the handler to execute for the save action
+         * @return this for method chaining
+         */
         public SaveChangesDialogResult onSave(Runnable saveHandler) {
             this.saveHandler = saveHandler;
             return this;
         }
 
+        /**
+         * Sets the handler to be executed when the discard action is triggered.
+         *
+         * @param discardHandler the handler to execute for the discard action
+         * @return this for method chaining
+         */
         public SaveChangesDialogResult onDiscard(Runnable discardHandler) {
             this.discardHandler = discardHandler;
             return this;
         }
 
+        /**
+         * Sets the handler to be executed when the cancel action is triggered.
+         *
+         * @param cancelHandler the handler to execute for the cancel action
+         * @return this for method chaining
+         */
         public SaveChangesDialogResult onCancel(Runnable cancelHandler) {
             this.cancelHandler = cancelHandler;
             return this;
         }
 
+        /**
+         * Executes the save operation.
+         */
         public void save() {
             if (saveHandler != null) {
                 saveHandler.run();
             }
         }
 
+        /**
+         * Executes the discard operation.
+         */
         public void discard() {
             if (discardHandler != null) {
                 discardHandler.run();
             }
         }
 
+        /**
+         * Executes the cancel operation
+         */
         public void cancel() {
             if (cancelHandler != null) {
                 cancelHandler.run();

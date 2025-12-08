@@ -56,6 +56,12 @@ public enum StandardOutcome {
         this.closeAction = closeAction;
     }
 
+    /**
+     * Returns the {@link CloseAction} associated with this instance.
+     *
+     * @return the {@link CloseAction} representing how the view was closed,
+     * possibly with associated payload or behavior
+     */
     public CloseAction getCloseAction() {
         return closeAction;
     }

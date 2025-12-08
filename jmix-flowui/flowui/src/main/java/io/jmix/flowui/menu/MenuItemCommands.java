@@ -18,19 +18,24 @@ package io.jmix.flowui.menu;
 
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.UI;
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.LoadContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Provides functionality for creating and managing commands associated with menu items.
+ */
 @Component("flowui_MenuItemCommands")
 public class MenuItemCommands {
 

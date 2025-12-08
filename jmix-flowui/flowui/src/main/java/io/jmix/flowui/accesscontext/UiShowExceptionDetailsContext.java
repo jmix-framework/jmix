@@ -18,6 +18,10 @@ package io.jmix.flowui.accesscontext;
 
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
+/**
+ * Represents a specific access context for controlling the ability to view detailed exception information
+ * in the UI.
+ */
 public class UiShowExceptionDetailsContext extends SpecificOperationAccessContext {
 
     public static final String NAME = "ui.showExceptionDetails";

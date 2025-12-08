@@ -16,11 +16,13 @@
 
 package io.jmix.core.impl.scanning;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.Converter;
 
+@Internal
 @Component("core_JpaConverterDetector")
 public class JpaConverterDetector implements ClasspathScanCandidateDetector {
 

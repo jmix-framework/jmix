@@ -60,7 +60,7 @@
                   selectionMode="MULTI">
             <actions>
                 <action id="refresh" type="list_refresh"/>
-                <action id="expire" text="msg://expire" icon="BAN"/>
+                <action id="expire" text="msg://expire" icon="BAN" actionVariant="DANGER"/>
             </actions>
             <columns resizable="true">
                 <column property="sessionId"/>

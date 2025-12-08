@@ -18,16 +18,21 @@ package io.jmix.autoconfigure.restds;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.security.AddonAuthenticationManagerSupplier;
+import io.jmix.core.session.SessionData;
 import io.jmix.restds.RestDsConfiguration;
-import io.jmix.restds.impl.RestAuthenticationManagerSupplier;
-import io.jmix.restds.impl.RestPasswordAuthenticator;
+import io.jmix.restds.impl.*;
 import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -49,5 +54,18 @@ public class RestDsAutoConfiguration {
         restAuthenticator.setDataStoreName(storeName);
 
         return new RestAuthenticationManagerSupplier(providersProducer, publisher, restAuthenticator, userDetailsService);
+    }
+
+    @Bean("restds_SessionRestTokenHolder")
+    @ConditionalOnMissingBean(RestTokenHolder.class)
+    public RestTokenHolder restTokenHolder(ObjectProvider<SessionData> sessionDataProvider) {
+        return new SessionRestTokenHolder(sessionDataProvider);
+    }
+
+    @ConditionalOnClass(name = "org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager")
+    @Bean("restds_RestOAuth2ClientAuthenticator")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public RestOAuth2ClientAuthenticator restOAuth2ClientAuthenticator() {
+        return new RestOAuth2ClientAuthenticator();
     }
 }

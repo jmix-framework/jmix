@@ -32,7 +32,6 @@ import io.jmix.flowui.model.CollectionChangeType;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Comparator;
@@ -41,6 +40,14 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+/**
+ * A data provider implementation that connects to a {@link CollectionContainer}.
+ * This class allows interaction with the underlying data collection, enabling
+ * querying, filtering, and sorting operations, as well as propagating changes
+ * from the container to listeners.
+ *
+ * @param <E> the type of entities managed by this data provider
+ */
 public class ContainerDataProvider<E> extends AbstractDataProvider<E, SerializablePredicate<E>>
         implements InMemoryDataProvider<E>, ContainerDataUnit<E>, EntityItems<E> {
 

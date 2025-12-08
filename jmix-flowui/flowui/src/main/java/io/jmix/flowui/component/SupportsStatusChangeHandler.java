@@ -38,7 +38,16 @@ public interface SupportsStatusChangeHandler<C extends Component> {
      */
     void setStatusChangeHandler(@Nullable Consumer<StatusContext<C>> handler);
 
+    /**
+     * Represents the context of a status change for a specific component.
+     * <p>
+     * This class encapsulates information about the component and an optional
+     * description, typically related to validation or status handling processes.
+     *
+     * @param <C> the type of the component associated with the status context
+     */
     class StatusContext<C extends Component> {
+
         protected final C component;
         protected final String description;
 
@@ -47,10 +56,20 @@ public interface SupportsStatusChangeHandler<C extends Component> {
             this.description = description;
         }
 
+        /**
+         * Returns the component associated with this instance.
+         *
+         * @return the component
+         */
         public C getComponent() {
             return component;
         }
 
+        /**
+         * Returns the description associated with this object.
+         *
+         * @return the description, or {@code null} if no description is set
+         */
         @Nullable
         public String getDescription() {
             return description;

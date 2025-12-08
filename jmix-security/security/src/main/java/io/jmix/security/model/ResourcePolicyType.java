@@ -24,6 +24,5 @@ public class ResourcePolicyType {
     public static final String MENU = "menu";
     public static final String ENTITY = "entity";
     public static final String ENTITY_ATTRIBUTE = "entityAttribute";
-    public static final String GRAPHQL = "graphQL";
     public static final String SPECIFIC = "specific";
 }

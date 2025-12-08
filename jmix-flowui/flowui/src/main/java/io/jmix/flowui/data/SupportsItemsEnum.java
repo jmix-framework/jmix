@@ -19,6 +19,12 @@ package io.jmix.flowui.data;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.flowui.data.items.EnumDataProvider;
 
+/**
+ * An interface that provides support for setting item options from a specified {@link EnumClass}.
+ * This can be used to populate components with items derived from an enumeration.
+ *
+ * @param <T> the type that extends {@link EnumClass} and represents the enumeration of item options
+ */
 public interface SupportsItemsEnum<T> {
 
     /**

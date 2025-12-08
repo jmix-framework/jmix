@@ -19,14 +19,20 @@ package io.jmix.flowui.model.impl;
 import com.google.common.collect.ForwardingList;
 import io.jmix.core.Entity;
 import io.jmix.flowui.model.CollectionChangeType;
-
 import org.springframework.lang.Nullable;
+
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+/**
+ * A wrapper around a {@link List} that provides additional functionality for observing changes to the list.
+ * It notifies observers of specific collection change events such as additions, removals, and item replacements.
+ *
+ * @param <T> the type of elements in this list
+ */
 public class ObservableList<T> extends ForwardingList<T> implements Serializable {
 
     private static final long serialVersionUID = -1887633822578545041L;

@@ -19,11 +19,11 @@ package io.jmix.dynattrflowui.utils;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.shared.HasSuffix;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.stereotype.Component;
 
@@ -35,10 +35,14 @@ public class DynAttrUiHelper {
 
     private final Dialogs dialogs;
     private final UiComponents uiComponents;
+    private final Icons icons;
 
-    public DynAttrUiHelper(Dialogs dialogs, UiComponents uiComponents) {
+    public DynAttrUiHelper(Dialogs dialogs,
+                           UiComponents uiComponents,
+                           Icons icons) {
         this.dialogs = dialogs;
         this.uiComponents = uiComponents;
+        this.icons = icons;
     }
 
     public <T> void moveTableItemUp(CollectionContainer<T> collectionContainer, Grid<T> table, Runnable afterMoveCommand) {
@@ -79,7 +83,7 @@ public class DynAttrUiHelper {
 
     public JmixButton createHelperButton(String message) {
         JmixButton helperButton = uiComponents.create(JmixButton.class);
-        helperButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        helperButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
         helperButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
         helperButton.addClickListener(event ->
                 dialogs.createMessageDialog()

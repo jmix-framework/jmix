@@ -32,6 +32,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Configuration properties for UI components in a Jmix application.
+ */
 @ConfigurationProperties(prefix = "jmix.ui.component")
 public class UiComponentProperties {
 

@@ -30,6 +30,7 @@ import com.vaadin.flow.router.*;
 import io.jmix.appsettings.AppSettings;
 import io.jmix.appsettings.AppSettingsTools;
 import io.jmix.appsettings.entity.AppSettingsEntity;
+import io.jmix.appsettingsflowui.AppSettingsUiProperties;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -61,7 +62,8 @@ import jakarta.persistence.Convert;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Route(value = "app-settings", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "app-settings", layout = DefaultMainViewParent.class)
+@Route(value = "appset/app-settings", layout = DefaultMainViewParent.class)
 @ViewController("appSettings.view")
 @ViewDescriptor("app-settings-entity-view.xml")
 @DialogMode(width = "50em", height = "37.5em")
@@ -79,8 +81,12 @@ public class AppSettingsEntityView extends StandardView {
     @ViewComponent
     protected HorizontalLayout buttonsPanel;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected AppSettings appSettings;
+    @Autowired
+    protected AppSettingsUiProperties appSettingsUiProperties;
     @Autowired
     protected EntityStates entityStates;
     @Autowired
@@ -93,12 +99,6 @@ public class AppSettingsEntityView extends StandardView {
     protected DataComponents dataComponents;
     @Autowired
     protected ViewValidation viewValidation;
-    // Keep for compatibility, to prevent possible compilation errors,
-    // if someone has extended this view and is using Messages.
-    @Autowired
-    protected Messages messages;
-    @ViewComponent
-    protected MessageBundle messageBundle;
     @Autowired
     protected AppSettingsTools appSettingsTools;
     @Autowired
@@ -310,7 +310,8 @@ public class AppSettingsEntityView extends StandardView {
                     }
                     if (metaProperty.getType() != MetaProperty.Type.ENUM
                             && (metaProperty.getRange().asDatatype().getJavaClass().equals(byte[].class) ||
-                            metaProperty.getRange().asDatatype().getJavaClass().equals(UUID.class))) {
+                            metaProperty.getRange().asDatatype().getJavaClass().equals(UUID.class) &&
+                            !appSettingsUiProperties.isShowUuidFields())) {
                         continue;
                     }
                     if (metadataTools.isAnnotationPresent(item, metaProperty.getName(), Convert.class)) {

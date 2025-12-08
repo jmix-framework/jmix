@@ -19,10 +19,17 @@ package io.jmix.flowui.data.grid;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.component.grid.TreeDataGrid;
 
 import java.util.stream.Stream;
 
-public class EmptyTreeDataGridItems<T> extends EmptyDataGridItems<T> implements  TreeDataGridItems<T>,
+/**
+ * An implementation of {@link TreeDataGridItems} and {@link HierarchicalDataProvider} that represents
+ * an empty hierarchical data container for {@link TreeDataGrid}.
+ *
+ * @param <T> the type of items contained in the data grid
+ */
+public class EmptyTreeDataGridItems<T> extends EmptyDataGridItems<T> implements TreeDataGridItems<T>,
         HierarchicalDataProvider<T, Void> {
 
     public EmptyTreeDataGridItems(MetaClass metaClass) {

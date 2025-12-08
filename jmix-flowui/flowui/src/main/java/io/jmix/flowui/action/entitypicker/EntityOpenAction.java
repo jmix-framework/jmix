@@ -17,25 +17,26 @@
 package io.jmix.flowui.action.entitypicker;
 
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.EntityPickerComponent;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
 
 import java.util.function.Consumer;
@@ -43,9 +44,17 @@ import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkState;
 
+/**
+ * Represents an action that allows opening a {@link DetailView} for the entity associated with
+ * an {@link EntityPickerComponent}.
+ *
+ * @param <E> the type of entity being handled by this action
+ */
 @ActionType(EntityOpenAction.ID)
 public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, EntityPickerComponent<E>, E>
         implements ViewOpeningAction {
+
+    private static final Logger log = LoggerFactory.getLogger(EntityOpenAction.class);
 
     public static final String ID = "entity_open";
 
@@ -66,13 +75,6 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.SEARCH);
-    }
-
     @Autowired
     public void setDialogWindows(DialogWindows dialogWindows) {
         this.dialogWindows = dialogWindows;
@@ -90,6 +92,15 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     }
 
     @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.ENTITY_OPEN_ACTION);
+        }
+    }
+
+    @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
         this.shortcutCombination = KeyCombination.create(uiComponentProperties.getPickerOpenShortcut());
     }
@@ -102,10 +113,21 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         super.setTarget(target);
     }
 
+    /**
+     * Sets a handler that will be executed after the entity is saved.
+     *
+     * @param afterSaveHandler a {@link Consumer} that defines the action to be performed
+     *                         with the entity after it is saved
+     */
     public void setAfterSaveHandler(Consumer<E> afterSaveHandler) {
         this.afterSaveHandler = afterSaveHandler;
     }
 
+    /**
+     * Sets a transformation function to be applied to the entity.
+     *
+     * @param transformation a {@link Function} that takes an entity as input and returns the transformed entity.
+     */
     public void setTransformation(Function<E, E> transformation) {
         this.transformation = transformation;
     }
@@ -119,7 +141,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
 
     @Override
     public void setOpenMode(@Nullable OpenMode openMode) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, OpenMode.class.getSimpleName());
     }
 
     @Nullable
@@ -153,7 +175,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
 
     @Override
     public void setRouteParametersProvider(@Nullable RouteParametersProvider provider) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, RouteParametersProvider.class.getSimpleName());
     }
 
     @Nullable
@@ -165,7 +187,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
 
     @Override
     public void setQueryParametersProvider(@Nullable QueryParametersProvider provider) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, QueryParametersProvider.class.getSimpleName());
     }
 
     @Override
@@ -246,11 +268,17 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         return this;
     }
 
+    /**
+     * @see #setAfterSaveHandler(Consumer)
+     */
     public EntityOpenAction<E> withAfterSaveHandler(Consumer<E> afterSaveHandler) {
         setAfterSaveHandler(afterSaveHandler);
         return this;
     }
 
+    /**
+     * @see #setTransformation(Function)
+     */
     public EntityOpenAction<E> withTransformation(Function<E, E> transformation) {
         setTransformation(transformation);
         return this;

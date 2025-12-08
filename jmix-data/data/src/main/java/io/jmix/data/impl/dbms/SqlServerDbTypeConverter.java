@@ -19,6 +19,7 @@ package io.jmix.data.impl.dbms;
 
 import io.jmix.core.UuidProvider;
 import io.jmix.data.persistence.DbTypeConverter;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -28,6 +29,7 @@ import java.util.UUID;
 @Component("sqlServerDbTypeConverter")
 public class SqlServerDbTypeConverter implements DbTypeConverter {
 
+    @Nullable
     @Override
     public Object getJavaObject(ResultSet resultSet, int columnIndex) {
         Object value;

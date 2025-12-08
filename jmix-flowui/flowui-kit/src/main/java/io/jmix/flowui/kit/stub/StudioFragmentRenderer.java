@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.kit.stub;
 
+import io.jmix.flowui.kit.meta.StudioAPI;
+
 /**
  * Used in Studio.
  * Marker interface for <code>FragmentRenderer</code> elements.
  */
+@StudioAPI
 final class StudioFragmentRenderer {
 }

@@ -24,7 +24,10 @@ import org.quartz.listeners.JobListenerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 
 @Component("quartz_JobExecutionListener")
@@ -57,22 +60,58 @@ public class JobExecutionListener extends JobListenerSupport {
 
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
-        log.debug("Execute job: {}", context);
+        logStart(context);
+
         if (quartzProperties.isRunningJobsCacheUsageEnabled()) {
-            JobKey jobKey = context.getJobDetail().getKey();
-            TriggerKey triggerKey = context.getTrigger().getKey();
-            runningJobCache.put(jobKey, triggerKey);
+            runningJobCache.put(context.getJobDetail().getKey(), context.getTrigger().getKey());
         }
     }
 
     @Override
     public void jobWasExecuted(JobExecutionContext context,
                                JobExecutionException jobException) {
-        log.debug("Complete job: {}", context);
+        logFinish(context, jobException);
+
         if (quartzProperties.isRunningJobsCacheUsageEnabled()) {
-            JobKey jobKey = context.getJobDetail().getKey();
-            TriggerKey triggerKey = context.getTrigger().getKey();
-            runningJobCache.invalidate(jobKey, triggerKey);
+            runningJobCache.invalidate(context.getJobDetail().getKey(), context.getTrigger().getKey());
         }
     }
+
+    protected void logStart(JobExecutionContext context) {
+        logJobExecution(context, true, null);
+    }
+
+    protected void logFinish(JobExecutionContext context, JobExecutionException jobException) {
+        logJobExecution(context, false, jobException);
+    }
+
+    protected void logJobExecution(JobExecutionContext context, boolean start, @Nullable JobExecutionException jobException) {
+        JobKey jobKey = context.getJobDetail().getKey();
+        TriggerKey triggerKey = context.getTrigger().getKey();
+        Scheduler contextScheduler = context.getScheduler();
+        String fireInstanceId = context.getFireInstanceId();
+        Date fireTime = context.getFireTime();
+        Date scheduledFireTime = context.getScheduledFireTime();
+        Date previousFireTime = context.getPreviousFireTime();
+        Date nextFireTime = context.getNextFireTime();
+        boolean recovering = context.isRecovering();
+
+        String schedulerInstanceId;
+        String schedulerName;
+        try {
+            schedulerInstanceId = contextScheduler.getSchedulerInstanceId();
+            schedulerName = contextScheduler.getSchedulerName();
+        } catch (SchedulerException e) {
+            schedulerInstanceId = "Unable to resolve";
+            schedulerName = "Unable to resolve";
+        }
+
+        String label = start ? "Start job execution" : "Finish job execution";
+
+        log.debug("{}: Job={}, Trigger={}, Scheduler instance={}, Scheduler name={}, fireInstanceId={}, fireTime={}, " +
+                        "scheduledFireTime={}, previousFireTime={}, nextFireTime={}, recovering={}",
+                label, jobKey, triggerKey, schedulerInstanceId, schedulerName, fireInstanceId, fireTime,
+                scheduledFireTime, previousFireTime, nextFireTime, recovering, jobException);
+    }
+
 }

@@ -22,5 +22,6 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <include file="/io/jmix/data/liquibase/changelog/001-data.xml"/>
+    <include file="/io/jmix/data/liquibase/changelog/002-data.xml"/>
 
 </databaseChangeLog>

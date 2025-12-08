@@ -34,6 +34,7 @@ import io.jmix.core.validation.group.RestApiChecks;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.groups.Default;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
@@ -343,7 +344,8 @@ public class EntityImportExportImpl implements EntityImportExport {
                 //we need to exclude entities marked as @Valid starting checking the references of the root entity
                 if (metaProperty.getRange().isClass()
                         && !metadataTools.isMethodBased(metaProperty)
-                        && metadataTools.isAnnotationPresent(entity, metaProperty.getName(), Valid.class)) {
+                        && metadataTools.isAnnotationPresent(entity, metaProperty.getName(), Valid.class)
+                        && entityStates.isLoaded(entity, metaProperty.getName())) {
                     Object validated = EntityValues.getValue(entity, metaProperty.getName());
                     if (validated != null && !(validated instanceof Collection)) {
                         validated = Collections.singletonList(validated);
@@ -716,12 +718,15 @@ public class EntityImportExportImpl implements EntityImportExport {
         MetaClass metaClass = metadata.getClass(importPlan.getEntityClass());
         for (EntityImportPlanProperty importPlanProperty : importPlan.getProperties()) {
             EntityImportPlan importPlanPropertyPlan = importPlanProperty.getPlan();
+            MetaProperty metaProperty = metaClass.getProperty(importPlanProperty.getName());
             if (importPlanPropertyPlan == null) {
-                MetaProperty metaProperty = metaClass.getProperty(importPlanProperty.getName());
                 if (metaProperty.isReadOnly()) continue;
                 fetchPlanBuilder.add(importPlanProperty.getName());
             } else {
                 fetchPlanBuilder.add(importPlanProperty.getName(), constructFetchPlanFromImportPlan(importPlanPropertyPlan));
+            }
+            if (metaProperty.getInverse() != null) {
+                fetchPlanBuilder.add(importPlanProperty.getName() + "." + metaProperty.getInverse().getName());
             }
         }
         return fetchPlanBuilder;

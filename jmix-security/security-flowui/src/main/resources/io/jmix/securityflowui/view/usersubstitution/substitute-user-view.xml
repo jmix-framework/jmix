@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2025 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://substituteUserView.title">
+    <actions>
+        <action id="applyAction"
+                text="msg:///actions.Apply"
+                icon="CHECK"
+                actionVariant="PRIMARY"/>
+        <action id="cancelAction"
+                type="view_close"/>
+    </actions>
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="usersListWrapper">
+
+        <textField id="userFilter"
+                   datatype="string"
+                   placeholder="msg://userFilter.placeholder"
+                   width="100%" maxWidth="30em"
+                   classNames="pt-m px-m box-border"
+                   clearButtonVisible="true">
+            <prefix>
+                <icon icon="SEARCH"/>
+            </prefix>
+        </textField>
+
+        <vbox id="usersListWrapper"
+              classNames="overflow-auto">
+            <listBox id="usersList" width="100%"/>
+        </vbox>
+
+        <hbox id="actionsBox"
+              classNames="px-m py-s bg-contrast-5">
+            <button id="applyButton" action="applyAction"/>
+            <button id="cancelButton" action="cancelAction"/>
+        </hbox>
+    </layout>
+</view>

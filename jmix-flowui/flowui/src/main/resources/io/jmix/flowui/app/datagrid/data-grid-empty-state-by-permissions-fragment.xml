@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2025 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fragment xmlns="http://jmix.io/schema/flowui/fragment">
+    <content>
+        <hbox id="emptyStateByPermissionsLayout" height="100%" padding="false" spacing="false"
+              classNames="gap-x-s"
+              justifyContent="CENTER" alignItems="CENTER">
+            <icon id="emptyStateIcon" icon="WARNING"
+                  color="var(--lumo-error-contrast)" size="1em"/>
+            <h4 id="emptyStateHeader" text="msg://gridEmptyStateHeader"/>
+        </hbox>
+    </content>
+</fragment>

@@ -22,7 +22,6 @@ import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
-import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -31,17 +30,13 @@ import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.Views;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.kit.component.SupportsUserAction;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.Nested;
+import io.jmix.flowui.model.*;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -49,8 +44,9 @@ import java.util.function.Consumer;
 import static io.jmix.flowui.view.ViewControllerUtils.getViewData;
 
 
-@Internal
-@Component("flowui_DetailWindowBuilderProcessor")
+/**
+ * Processes and builds {@link DialogWindow} instances for views using a {@link DetailWindowBuilder}.
+ */
 public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor {
 
     protected Metadata metadata;
@@ -112,7 +108,7 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
                 E entityFromDetail = getSavedEntity(detailView, parentDataContext);
                 E reloadedEntity = transformForCollectionContainer(entityFromDetail, container);
                 E savedEntity = transform(reloadedEntity, builder);
-                E mergedEntity = merge(savedEntity, builder.getOrigin(), parentDataContext);
+                E mergedEntity = merge(savedEntity, builder.getOrigin(), parentDataContext, container);
 
                 if (builder.getMode() == DetailViewMode.CREATE) {
                     boolean addsFirst = false;
@@ -299,7 +295,7 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     protected <E> E initNewEntity(DetailWindowBuilder<E, ?> builder, @Nullable CollectionContainer<E> container,
                                   @Nullable EntityValueSource<?, ?> entityValueSource, boolean oneToOneComposition) {
         E entity = builder.getNewEntity()
-                .orElse(metadata.create(builder.getEntityClass()));
+                .orElseGet(() -> metadata.create(builder.getEntityClass()));
 
         if (container instanceof Nested) {
             initializeNestedEntity(entity, (Nested) container);
@@ -385,13 +381,26 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         return editedEntity;
     }
 
-    protected <E> E merge(E entity, View<?> origin, @Nullable DataContext parentDataContext) {
-        if (parentDataContext == null) {
+    protected <E> E merge(E entity, View<?> origin, @Nullable DataContext parentDataContext,
+                          @Nullable CollectionContainer<E> container) {
+        if (parentDataContext == null && isContainerLinkedWithDataContext(container)) {
             DataContext thisDataContext = getViewData(origin).getDataContextOrNull();
             if (thisDataContext != null) {
                 return thisDataContext.merge(entity);
             }
         }
         return entity;
+    }
+
+    protected <E> boolean isContainerLinkedWithDataContext(@Nullable InstanceContainer<E> container) {
+        if (container instanceof HasLoader standaloneContainer) {
+            DataLoader loader = standaloneContainer.getLoader();
+            return loader != null && loader.getDataContext() != null;
+        }
+        if (container instanceof Nested nestedContainer) {
+            InstanceContainer<?> masterContainer = nestedContainer.getMaster();
+            return isContainerLinkedWithDataContext(masterContainer);
+        }
+        return false;
     }
 }

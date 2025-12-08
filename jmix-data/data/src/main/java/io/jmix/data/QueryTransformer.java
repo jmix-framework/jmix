@@ -35,7 +35,7 @@ public interface QueryTransformer {
     /** Adds 'where' clause */
     void addWhereAsIs(String where);
 
-    /** Adds 'join' and 'where' clauses. Replaces alias in 'join' but doesn't replace it in 'where'*/
+    /** Adds 'join' and 'where' clauses. Replaces entity alias in both clauses. */
     void addJoinAndWhere(String join, String where);
 
     /** Adds or replaces 'order by' clause */

@@ -37,11 +37,26 @@ public class ValidationException extends RuntimeException {
         super(cause);
     }
 
+    /**
+     * Returns the detailed message associated with this exception instance.
+     *
+     * @return the localized message of the exception
+     */
     public String getDetailsMessage() {
         return getLocalizedMessage();
     }
 
+    /**
+     * Represents a contract for exceptions or objects that are associated
+     * with a specific UI {@link Component}.
+     */
     public interface HasRelatedComponent {
+
+        /**
+         * Returns associated component.
+         *
+         * @return the component associated with this instance
+         */
         Component getComponent();
     }
 }

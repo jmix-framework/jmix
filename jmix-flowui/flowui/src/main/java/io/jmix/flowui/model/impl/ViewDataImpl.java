@@ -17,11 +17,16 @@
 package io.jmix.flowui.model.impl;
 
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+/**
+ * Implementation of the {@link ViewData} interface.
+ * Provides functionality for managing the data API elements of a {@link View}.
+ */
 @Component("flowui_ViewData")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ViewDataImpl extends AbstractDataComponentsHolder implements ViewData {

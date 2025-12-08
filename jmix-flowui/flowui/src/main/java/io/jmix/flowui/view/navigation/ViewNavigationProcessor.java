@@ -19,9 +19,11 @@ package io.jmix.flowui.view.navigation;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
-import org.springframework.stereotype.Component;
 
-@Component("flowui_ViewNavigationProcessor")
+/**
+ * The navigation processor implementation that is responsible for processing navigation
+ * to specific views using a {@link ViewNavigator} instance.
+ */
 public class ViewNavigationProcessor extends AbstractNavigationProcessor<ViewNavigator> {
 
     public ViewNavigationProcessor(ViewSupport viewSupport,

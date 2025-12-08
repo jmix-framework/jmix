@@ -16,10 +16,13 @@
 
 package io.jmix.flowui.kit.stub;
 
+import io.jmix.flowui.kit.meta.StudioAPI;
+
 /**
  * Used in Studio.
  * Marker interface for collecting <code>property</code> elements
  * into <code>properties</code> elements group in Fragment component.
  */
+@StudioAPI
 final class StudioFragmentPropertyElement {
 }

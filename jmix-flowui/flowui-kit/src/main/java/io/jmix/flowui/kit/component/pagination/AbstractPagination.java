@@ -21,11 +21,14 @@ import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import jakarta.annotation.Nullable;
 
+/**
+ * Abstract base class for implementing pagination components.
+ * Provides a structure for creating navigational buttons and an inner component
+ * to manage pagination functionality, such as displaying data in pages or managing item counts.
+ */
 public abstract class AbstractPagination extends Composite<Div> implements HasStyle {
 
     public static final String BASE_BUTTON_CLASS_NAME = "-navigation-button";
@@ -81,15 +84,15 @@ public abstract class AbstractPagination extends Composite<Div> implements HasSt
     }
 
     protected void initNavigationButtons() {
-        firstButton = createNavigationButton(FIRST_BUTTON_CLASS_NAME, VaadinIcon.ANGLE_DOUBLE_LEFT);
-        previousButton = createNavigationButton(PREV_BUTTON_CLASS_NAME, VaadinIcon.ANGLE_LEFT);
-        nextButton = createNavigationButton(NEXT_BUTTON_CLASS_NAME, VaadinIcon.ANGLE_RIGHT);
-        lastButton = createNavigationButton(LAST_BUTTON_CLASS_NAME, VaadinIcon.ANGLE_DOUBLE_RIGHT);
+        firstButton = createNavigationButton(FIRST_BUTTON_CLASS_NAME, JmixFontIcon.ANGLE_DOUBLE_LEFT.create());
+        previousButton = createNavigationButton(PREV_BUTTON_CLASS_NAME, JmixFontIcon.ANGLE_LEFT.create());
+        nextButton = createNavigationButton(NEXT_BUTTON_CLASS_NAME, JmixFontIcon.ANGLE_RIGHT.create());
+        lastButton = createNavigationButton(LAST_BUTTON_CLASS_NAME, JmixFontIcon.ANGLE_DOUBLE_RIGHT.create());
     }
 
-    protected Button createNavigationButton(String additionalClassName, VaadinIcon icon) {
+    protected Button createNavigationButton(String additionalClassName, Component icon) {
         Button button = new Button();
-        button.setIcon(new Icon(icon));
+        button.setIcon(icon);
         button.addClassNames(componentBaseClassName + BASE_BUTTON_CLASS_NAME, additionalClassName);
         return button;
     }

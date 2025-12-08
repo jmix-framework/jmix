@@ -26,8 +26,7 @@ import org.springframework.data.repository.query.parser.PartTree;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class JmixListQuery extends JmixStructuredQuery {
-
+public class JmixListQuery extends JmixStructuredEntityQuery {
 
     protected final Sort staticSort;
 

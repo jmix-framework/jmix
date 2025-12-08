@@ -16,7 +16,16 @@
 
 package io.jmix.reports.yarg.structure;
 
+import org.springframework.lang.Nullable;
+
 public interface ReportParameterWithDefaultValue extends ReportParameter {
+
+    /**
+     * @return provider for the default value. If exists, takes precedence over {@link #getDefaultValue()}.
+     */
+    @Nullable
+    DefaultValueProvider<?> getDefaultValueProvider();
+
     /**
      * @return default value of the parameter, if exists
      */

@@ -21,7 +21,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.VaadinIcon;
 
 /**
  * SimplePagination is a component used to load data by pages. It is designed to be used together
@@ -102,7 +101,7 @@ public class JmixSimplePagination extends AbstractPagination {
     }
 
     @Override
-    protected Button createNavigationButton(String additionalClassName, VaadinIcon icon) {
+    protected Button createNavigationButton(String additionalClassName, Component icon) {
         Button button = super.createNavigationButton(additionalClassName, icon);
         button.addThemeVariants(ButtonVariant.LUMO_SMALL);
         return button;

@@ -22,15 +22,32 @@ import org.springframework.core.ResolvableType;
 import java.lang.reflect.Modifier;
 import java.util.Optional;
 
+/**
+ * The utility class designed to extract the entity class type associated with a {@link DetailView}.
+ */
 public final class DetailViewTypeExtractor {
 
     private DetailViewTypeExtractor() {
     }
 
+    /**
+     * Extracts the entity class type associated with the given {@link ViewInfo}.
+     *
+     * @param viewInfo the {@link ViewInfo} instance containing information about the view controller
+     * @return an {@link Optional} containing the entity class if it can be resolved,
+     * otherwise, an empty {@link Optional}
+     */
     public static Optional<Class<?>> extractEntityClass(ViewInfo viewInfo) {
         return extractEntityClass(viewInfo.getControllerClass());
     }
 
+    /**
+     * Extracts the entity class type associated with the given view class.
+     *
+     * @param viewClass the class of the view
+     * @return an {@link Optional} containing the entity class if it can be resolved,
+     * otherwise, an empty {@link Optional}
+     */
     public static Optional<Class<?>> extractEntityClass(Class<? extends View> viewClass) {
         return Optional.of(viewClass)
                 .map(ResolvableType::forClass)

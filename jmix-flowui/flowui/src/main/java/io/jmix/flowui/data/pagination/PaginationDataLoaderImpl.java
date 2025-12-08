@@ -37,6 +37,12 @@ import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Implementation of the {@link PaginationDataLoader} interface. Provides functionality
+ * for managing pagination when loading entity data, including setting and retrieving the
+ * starting position, maximum number of results, and total count of data items. Also handles
+ * refreshing the data and responding to collection change events.
+ */
 @Component("flowui_PaginationDataLoaderImpl")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PaginationDataLoaderImpl implements PaginationDataLoader {

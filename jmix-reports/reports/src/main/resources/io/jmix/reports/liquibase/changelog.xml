@@ -30,11 +30,14 @@
     <property name="byte_array.type" dbms="mssql" value="varbinary(max)"/>
     <property name="byte_array.type" dbms="oracle" value="BLOB"/>
     <property name="byte_array.type" dbms="hsqldb" value="BLOB"/>
+    <property name="byte_array.type" dbms="h2" value="BLOB"/>
 
     <include file="io/jmix/reports/liquibase/changelog/001-reports.xml"/>
     <include file="io/jmix/reports/liquibase/changelog/002-reports.xml"/>
     <include file="io/jmix/reports/liquibase/changelog/003-reports.xml"/>
     <include file="io/jmix/reports/liquibase/changelog/004-reports.xml"/>
+    <include file="io/jmix/reports/liquibase/changelog/005-reports.xml"/>
+    <include file="io/jmix/reports/liquibase/changelog/006-reports.xml"/>
 
 
 </databaseChangeLog>

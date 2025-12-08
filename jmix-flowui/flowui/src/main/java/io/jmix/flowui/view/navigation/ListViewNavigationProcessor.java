@@ -16,14 +16,14 @@
 
 package io.jmix.flowui.view.navigation;
 
-import io.jmix.core.annotation.Internal;
+import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.flowui.sys.ViewSupport;
-import org.springframework.stereotype.Component;
 
-@Internal
-@Component("flowui_ListViewNavigationProcessor")
+/**
+ * The navigation processor implementation that is responsible for processing navigation
+ * to specific views using a {@link ListViewNavigator} instance.
+ */
 public class ListViewNavigationProcessor extends AbstractNavigationProcessor<ListViewNavigator<?>> {
 
     public ListViewNavigationProcessor(ViewSupport viewSupport,

@@ -18,10 +18,9 @@ package io.jmix.flowui.kit.component.grid;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.renderer.Renderer;
+import io.jmix.flowui.kit.meta.StudioAPI;
 
-/**
- * For Studio use only.
- */
+@StudioAPI
 final class EditorActionsColumn<T> extends Grid.Column<T> {
     private EditorActionsColumn(Grid<T> grid, String columnId, Renderer<T> renderer) {
         super(grid, columnId, renderer);

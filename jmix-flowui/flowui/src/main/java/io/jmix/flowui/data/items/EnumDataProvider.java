@@ -20,6 +20,11 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 
 import java.util.Arrays;
 
+/**
+ * A data provider that uses an enumeration type as its data source.
+ *
+ * @param <T> the type of the enumeration items provided by this data provider
+ */
 public class EnumDataProvider<T> extends ListDataProvider<T> {
 
     protected final Class<T> enumClass;
@@ -29,6 +34,11 @@ public class EnumDataProvider<T> extends ListDataProvider<T> {
         this.enumClass = enumClass;
     }
 
+    /**
+     * Returns the enumeration class used as the data source.
+     *
+     * @return the class of the enumeration used by this data provider
+     */
     public Class<T> getEnumClass() {
         return enumClass;
     }

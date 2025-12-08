@@ -30,6 +30,7 @@ import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
+import io.jmix.messagetemplates.MessageTemplateProperties;
 import io.jmix.messagetemplates.MessageTemplatesConfiguration;
 import jakarta.persistence.EntityManagerFactory;
 import liquibase.integration.spring.SpringLiquibase;
@@ -49,6 +50,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
+import java.util.Locale;
 
 @Configuration
 @Import({CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class,
@@ -78,6 +80,15 @@ public class MessageTemplatesTestConfiguration {
                                                                 JmixModules jmixModules,
                                                                 Resources resources) {
         return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
+    }
+
+    @Bean
+    freemarker.template.Configuration configuration(MessageTemplateProperties messageTemplateProperties) {
+        freemarker.template.Configuration configuration =
+                new freemarker.template.Configuration(messageTemplateProperties.getFreemarkerVersion());
+        configuration.setDefaultEncoding("UTF-8");
+        configuration.setLocale(Locale.US);
+        return configuration;
     }
 
     @Bean

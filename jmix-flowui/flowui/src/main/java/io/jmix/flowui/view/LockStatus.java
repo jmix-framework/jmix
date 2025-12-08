@@ -16,6 +16,9 @@
 
 package io.jmix.flowui.view;
 
+/**
+ * Enum representing the status of a locking operation.
+ */
 public enum LockStatus {
 
     /**

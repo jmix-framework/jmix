@@ -23,6 +23,13 @@ import com.vaadin.flow.function.SerializablePredicate;
 
 import java.util.Optional;
 
+/**
+ * A wrapper for {@link InMemoryDataProvider} that integrates it into the
+ * {@link DataProviderWrapper} framework, enabling in-memory data filtering
+ * using a {@link SerializablePredicate}.
+ *
+ * @param <T> the type of items in the data provider
+ */
 public class InMemoryDataProviderWrapper<T> extends DataProviderWrapper<T, Void, SerializablePredicate<T>> {
 
     public InMemoryDataProviderWrapper(InMemoryDataProvider<T> dataProvider) {
@@ -37,6 +44,11 @@ public class InMemoryDataProviderWrapper<T> extends DataProviderWrapper<T, Void,
                 .orElse(item -> true);
     }
 
+    /**
+     * Returns the in-memory data provider associated with this wrapper.
+     *
+     * @return the underlying {@link InMemoryDataProvider} instance
+     */
     public InMemoryDataProvider<T> getDataProvider() {
         return ((InMemoryDataProvider<T>) dataProvider);
     }

@@ -266,7 +266,7 @@ public class RestDataStore extends AbstractDataStore {
 
     @Override
     protected long countAll(LoadContext<?> context) {
-        String entityName = context.getEntityMetaClass().getName();
+        String entityName = getEntityName(context.getEntityMetaClass());
         long count = restInvoker.count(entityName, createRestFilter(context));
         return count;
     }

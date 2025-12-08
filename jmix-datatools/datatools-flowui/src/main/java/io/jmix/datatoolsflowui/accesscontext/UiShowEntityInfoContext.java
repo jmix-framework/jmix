@@ -17,8 +17,13 @@
 package io.jmix.datatoolsflowui.accesscontext;
 
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
+import io.jmix.datatoolsflowui.view.entityinfo.model.InfoValue;
 
+/**
+ * An access context to check permissions for the {@link InfoValue} functionality.
+ */
 public class UiShowEntityInfoContext extends SpecificOperationAccessContext {
+
     public static final String NAME = "datatools.showEntityInfo";
 
     public UiShowEntityInfoContext() {

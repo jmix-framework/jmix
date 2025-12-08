@@ -20,6 +20,7 @@ package io.jmix.flowui.exception;
  * Exception that is thrown in case of incorrect access to a shared data from a thread that does not own necessary lock.
  */
 public class IllegalConcurrentAccessException extends RuntimeException {
+
     public IllegalConcurrentAccessException() {
         super("UI Shared state was accessed from a background thread");
     }

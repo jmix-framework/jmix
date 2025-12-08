@@ -16,18 +16,35 @@
 
 package io.jmix.eclipselink;
 
+import io.jmix.core.annotation.Experimental;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.eclipselink")
 public class EclipselinkProperties {
     boolean queryCacheEnabled;
+    /**
+     * EXPERIMENTAL:
+     * Disables lazy loading. Accessing an unfetched reference property will throw an {@link IllegalStateException}
+     * instead of performing a separate loading request.
+     */
+    @Experimental
+    boolean disableLazyLoading;
 
-    public EclipselinkProperties(@DefaultValue("true") boolean queryCacheEnabled) {
+    public EclipselinkProperties(@DefaultValue("true") boolean queryCacheEnabled,
+                                 @DefaultValue("false") boolean disableLazyLoading) {
         this.queryCacheEnabled = queryCacheEnabled;
+        this.disableLazyLoading = disableLazyLoading;
     }
 
     public boolean isQueryCacheEnabled() {
         return queryCacheEnabled;
+    }
+
+    /**
+     * @see #disableLazyLoading
+     */
+    public boolean isDisableLazyLoading() {
+        return disableLazyLoading;
     }
 }

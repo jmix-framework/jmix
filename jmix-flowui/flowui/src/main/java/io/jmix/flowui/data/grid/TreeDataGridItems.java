@@ -16,5 +16,10 @@
 
 package io.jmix.flowui.data.grid;
 
+/**
+ * Represents a specialized type of {@link DataGridItems} designed to handle hierarchical data structures.
+ *
+ * @param <T> the type of items contained in the data grid
+ */
 public interface TreeDataGridItems<T> extends DataGridItems<T> {
 }

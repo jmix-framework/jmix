@@ -35,6 +35,11 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * A delegate component responsible for performing data aggregation operations.
+ *
+ * @param <K> the type of the key used to identify items for aggregation
+ */
 @Component("flowui_AggregatableDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class AggregatableDelegate<K> {
@@ -61,14 +66,34 @@ public class AggregatableDelegate<K> {
         this.datatypeRegistry = datatypeRegistry;
     }
 
+    /**
+     * Sets the item provider function that determines how items are provided based on their identifier.
+     *
+     * @param itemProvider a function to set
+     */
     public void setItemProvider(Function<K, Object> itemProvider) {
         this.itemProvider = itemProvider;
     }
 
+    /**
+     * Sets the item value provider function that determines how values are resolved for items.
+     *
+     * @param itemValueProvider a function to set
+     */
     public void setItemValueProvider(BiFunction<K, MetaPropertyPath, Object> itemValueProvider) {
         this.itemValueProvider = itemValueProvider;
     }
 
+    /**
+     * Aggregates data based on an array of {@link AggregationInfo} objects and a collection of item identifiers.
+     *
+     * @param aggregationInfos an array of {@link AggregationInfo} objects that define the type
+     *                         and properties for aggregation
+     * @param itemsIds         a collection of item identifiers representing the items subjected to aggregation
+     * @return a map representing the formatted result of the aggregation for the given info
+     * @throws NullPointerException  if {@code aggregationInfos} or {@code itemsIds} is {@code null}.
+     * @throws IllegalStateException if the {@code aggregationInfos} array is empty.
+     */
     public Map<AggregationInfo, String> aggregate(AggregationInfo[] aggregationInfos,
                                                   Collection<K> itemsIds) {
         Preconditions.checkNotNull(aggregationInfos, "AggregationInfo can not be null");
@@ -81,6 +106,13 @@ public class AggregatableDelegate<K> {
         return doAggregation(aggregationInfos, itemsIds);
     }
 
+    /**
+     * Aggregates values based on the provided {@link AggregationInfo} array and collection of item identifiers.
+     *
+     * @param aggregationInfos an array of {@link AggregationInfo} objects
+     * @param itemIds          a collection of item identifiers representing the items to aggregate values from
+     * @return a map representing the result of the aggregation for the given info
+     */
     public Map<AggregationInfo, Object> aggregateValues(AggregationInfo[] aggregationInfos,
                                                         Collection<K> itemIds) {
         Preconditions.checkNotNull(aggregationInfos, "AggregationInfos can not be null");

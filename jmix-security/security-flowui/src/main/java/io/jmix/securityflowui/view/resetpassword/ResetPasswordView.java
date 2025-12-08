@@ -21,7 +21,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
@@ -43,8 +42,10 @@ import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.JmixPasswordField;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
@@ -82,11 +83,12 @@ public class ResetPasswordView extends StandardView {
     protected BackgroundWorker backgroundWorker;
     @Autowired
     protected Dialogs dialogs;
-
     @Autowired
-    protected MessageBundle messageBundle;
+    protected Icons icons;
     @Autowired
     protected UiComponents uiComponents;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     @Autowired(required = false)
     protected UiExportHelper uiExportHelper;
@@ -173,7 +175,7 @@ public class ResetPasswordView extends StandardView {
 
         exportActionButton = uiComponents.create(JmixButton.class);
         exportActionButton.setText(messageBundle.getMessage("resetPasswordView.exportActionButton.text"));
-        exportActionButton.setIcon(VaadinIcon.FILE_TABLE.create());
+        exportActionButton.setIcon(icons.get(JmixFontIcon.FILE_TABLE));
         exportActionButton.setVisible(false);
         exportActionButton.addClickListener(this::onExportBtnClick);
 
@@ -268,7 +270,7 @@ public class ResetPasswordView extends StandardView {
         button.setId(BUTTON_ID);
         button.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_CONTRAST);
         button.setTooltipText(messageBundle.getMessage("resetPasswordView.copyButton.tooltip"));
-        button.setIcon(VaadinIcon.COPY.create());
+        button.setIcon(icons.get(JmixFontIcon.COPY));
 
         layout.add(passwordField, button);
 
@@ -297,13 +299,13 @@ public class ResetPasswordView extends StandardView {
     protected void applyCopyButtonSuccessStyles(JmixButton button) {
         button.removeThemeVariants(ButtonVariant.LUMO_CONTRAST);
         button.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
-        button.setIcon(VaadinIcon.CHECK.create());
+        button.setIcon(icons.get(JmixFontIcon.CHECK));
     }
 
     protected void applyCopyButtonDefaultStyles(JmixButton button) {
         button.removeThemeVariants(ButtonVariant.LUMO_SUCCESS);
         button.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        button.setIcon(VaadinIcon.COPY.create());
+        button.setIcon(icons.get(JmixFontIcon.COPY));
     }
 
     protected void runAsync(Runnable runnable) {

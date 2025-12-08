@@ -18,11 +18,11 @@ package io.jmix.flowui.xml.layout.inittask;
 
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
-import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
@@ -40,14 +40,29 @@ public class FocusComponentInitTask implements ComponentLoader.InitTask {
     }
 
     @Override
-    public void execute(ComponentContext context, View<?> view) {
+    public void execute(ComponentLoader.Context context) {
         if (!(UiComponentUtils.isContainer(view.getContent())
                 || view.getContent() instanceof AppLayout)) {
             throw new GuiDevelopmentException(View.class.getSimpleName() + " cannot contain components", context);
         }
 
-        getFocusComponent().ifPresent(focusable ->
-                focusable.getElement().setProperty("autofocus", true));
+        getFocusComponent().ifPresent(this::doFocus);
+    }
+
+    protected void doFocus(Focusable<?> focusable) {
+        if (focusable instanceof Grid<?>) {
+            // Using a workaround to focus a Grid, see https://github.com/vaadin/flow-components/issues/2180
+            focusable.getElement().executeJs("""
+                        setTimeout(function() {
+                            $0.shadowRoot.querySelector("tr").focus();
+                        }, 100);
+                    """);
+        } else {
+            // Call `focus` explicitly because not all `com.vaadin.flow.component.Focusable`
+            // components support `autofocus`.
+            focusable.focus();
+            focusable.getElement().setProperty("autofocus", true);
+        }
     }
 
     protected Optional<Focusable<?>> getFocusComponent() {

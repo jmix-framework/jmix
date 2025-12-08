@@ -24,9 +24,9 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.download.DownloadFormat;
-import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
@@ -35,9 +35,9 @@ import io.jmix.reports.exception.ReportingException;
 import io.jmix.reports.runner.ReportRunContext;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.util.ReportZipUtils;
-import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.download.ReportDownloader;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunContext;
@@ -48,8 +48,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -62,24 +62,24 @@ public class UiReportRunnerImpl implements UiReportRunner {
 
     protected final ReportRunner reportRunner;
     protected final DialogWindows dialogWindows;
-    protected final Downloader downloader;
+    protected final ReportDownloader downloader;
     protected final MetadataTools metadataTools;
     protected final Messages messages;
     protected final Dialogs dialogs;
     protected final ReportZipUtils reportZipUtils;
-    protected final ReportsUtils reportsUtils;
+    protected final ReportRepository reportRepository;
     protected final ObjectProvider<FluentUiReportRunner> fluentUiReportRunners;
     protected final Notifications notifications;
     protected final ReportsClientProperties reportsClientProperties;
 
     public UiReportRunnerImpl(ReportRunner reportRunner,
                               DialogWindows dialogWindows,
-                              Downloader downloader,
+                              ReportDownloader downloader,
                               MetadataTools metadataTools,
                               Messages messages,
                               Dialogs dialogs,
                               ReportZipUtils reportZipUtils,
-                              ReportsUtils reportsUtils,
+                              ReportRepository reportRepository,
                               ObjectProvider<FluentUiReportRunner> fluentUiReportRunners,
                               Notifications notifications,
                               ReportsClientProperties reportsClientProperties) {
@@ -90,10 +90,12 @@ public class UiReportRunnerImpl implements UiReportRunner {
         this.messages = messages;
         this.dialogs = dialogs;
         this.reportZipUtils = reportZipUtils;
-        this.reportsUtils = reportsUtils;
+        this.reportRepository = reportRepository;
         this.fluentUiReportRunners = fluentUiReportRunners;
         this.notifications = notifications;
         this.reportsClientProperties = reportsClientProperties;
+
+
     }
 
     @Override
@@ -318,7 +320,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
 
     protected void prepareContext(UiReportRunContext context) {
         Report report = context.getReport();
-        context.setReport(reportsUtils.reloadReportIfNeeded(report, "report.edit"));
+        context.setReport(reportRepository.reloadForRunning(report));
 
         ReportTemplate template = context.getReportTemplate();
         if (template == null) {

@@ -25,6 +25,11 @@ import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
 import org.springframework.stereotype.Component;
 
+/**
+ * A class responsible for creating {@link View} instances based on view ids or view classes.
+ * <p>
+ * This implementation handles the instantiation of views registered in the {@link ViewRegistry}.
+ */
 @Component("flowui_Views")
 public class ViewsImpl implements Views {
 

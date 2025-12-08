@@ -23,6 +23,11 @@ import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Defines an authorization context specific to operations on a particular entity.
+ * Provides control over access permissions for create, view, edit, and delete operations
+ * on the associated entity.
+ */
 public class UiEntityContext implements AccessContext {
 
     protected final MetaClass entityClass;
@@ -36,38 +41,85 @@ public class UiEntityContext implements AccessContext {
         this.entityClass = entityClass;
     }
 
+    /**
+     * Returns the metadata object representing the entity associated with the current context.
+     *
+     * @return the {@link MetaClass} instance representing the entity
+     */
     public MetaClass getEntityClass() {
         return entityClass;
     }
 
+    /**
+     * Determines whether the "create" operation is permitted within the current context.
+     *
+     * @return {@code true} if the "create" operation is allowed, {@code false} otherwise
+     */
     public boolean isCreatePermitted() {
         return createPermitted;
     }
 
+    /**
+     * Denies the "create" operation within the current context.
+     * This method sets the permission state for the "create" operation to false,
+     * explicitly restricting the creation of the associated entity.
+     */
     public void setCreateDenied() {
         this.createPermitted = false;
     }
 
+    /**
+     * Determines whether the "view" operation is permitted for the associated entity
+     * within the current context.
+     *
+     * @return {@code true} if the "view" operation is allowed, {@code false} otherwise
+     */
     public boolean isViewPermitted() {
         return viewPermitted;
     }
 
+    /**
+     * Denies the "view" operation for the associated entity within the current context.
+     * This method sets the permission state for the "view" operation to false,
+     * explicitly restricting the ability to view the entity.
+     */
     public void setViewDenied() {
         this.viewPermitted = false;
     }
 
+    /**
+     * Determines whether the "edit" operation is permitted for the associated entity
+     * within the current context.
+     *
+     * @return {@code true} if the "edit" operation is allowed, {@code false} otherwise
+     */
     public boolean isEditPermitted() {
         return editPermitted;
     }
 
+    /**
+     * Denies the "edit" operation for the associated entity within the current context.
+     * This method sets the permission state for the "edit" operation to false,
+     * explicitly restricting the editing of the associated entity.
+     */
     public void setEditDenied() {
         this.editPermitted = false;
     }
 
+    /**
+     * Determines whether the "delete" operation is permitted within the current context.
+     *
+     * @return {@code true} if the "delete" operation is allowed, {@code false} otherwise
+     */
     public boolean isDeletePermitted() {
         return deletePermitted;
     }
 
+    /**
+     * Denies the "delete" operation for the associated entity within the current context.
+     * This method sets the permission state for the "delete" operation to false,
+     * explicitly restricting the deletion of the associated entity.
+     */
     public void setDeleteDenied() {
         this.deletePermitted = false;
     }

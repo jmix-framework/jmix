@@ -357,6 +357,12 @@ public abstract class BackgroundTask<T, V> {
         void onCancel();
     }
 
+    /**
+     * A default implementation of the {@link ProgressListener} interface with empty method bodies.
+     *
+     * @param <T> the type of the progress updates provided when the {@code onProgress} method is called
+     * @param <V> the type of the final result when the {@code onDone} method is called
+     */
     public static class ProgressListenerAdapter<T, V> implements ProgressListener<T, V> {
 
         @Override

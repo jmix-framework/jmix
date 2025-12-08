@@ -33,6 +33,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 public class JmixValuePicker<V> extends ValuePicker<V>
@@ -147,6 +148,6 @@ public class JmixValuePicker<V> extends ValuePicker<V>
 
     @Override
     protected ValuePickerActionSupport createActionsSupport() {
-        return new JmixValuePickerActionSupport(this);
+        return applicationContext.getBean(JmixValuePickerActionSupport.class, this);
     }
 }

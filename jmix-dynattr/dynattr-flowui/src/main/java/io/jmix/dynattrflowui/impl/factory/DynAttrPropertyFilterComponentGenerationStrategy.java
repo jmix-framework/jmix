@@ -114,7 +114,9 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
         PropertyFilter.Operation.Type type = pfContext.getOperation().getType();
 
         Component resultComponent;
-        if (type == PropertyFilter.Operation.Type.UNARY) {
+        if (type == PropertyFilter.Operation.Type.DATE) {
+            resultComponent = createDateField(context, attribute);
+        } else if (type == PropertyFilter.Operation.Type.UNARY) {
             resultComponent = createUnaryField(context);
         } else if (attribute.isCollection() || type == PropertyFilter.Operation.Type.LIST) {
             resultComponent = createCollectionField(context, attribute);

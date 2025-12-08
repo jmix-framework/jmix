@@ -16,11 +16,15 @@
 
 package io.jmix.flowui.data.aggregation.impl;
 
+import io.jmix.flowui.data.aggregation.Aggregation;
 import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+/**
+ * Implementation of {@link Aggregation} intended for aggregating {@link BigInteger} values.
+ */
 public class BigIntegerAggregation extends AbstractNumberAggregation<BigInteger> {
 
     public BigIntegerAggregation() {

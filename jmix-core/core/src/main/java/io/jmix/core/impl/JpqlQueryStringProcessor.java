@@ -19,6 +19,7 @@ package io.jmix.core.impl;
 import com.google.common.base.Strings;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryStringProcessor;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +42,15 @@ public class JpqlQueryStringProcessor implements QueryStringProcessor {
     @Autowired
     private Metadata metadata;
 
+    @Autowired
+    private MetadataTools metadataTools;
+
     @Nullable
     public String process(@Nullable String queryString, Class<?> entityClass) {
         if (Strings.isNullOrEmpty(queryString)) {
             return queryString;
         }
-        if (entityClass.getAnnotation(jakarta.persistence.Entity.class) != null) {
+        if (metadataTools.isJpaEntity(entityClass)) {
             return processJpaQuery(queryString, entityClass);
         } else {
             return queryString;

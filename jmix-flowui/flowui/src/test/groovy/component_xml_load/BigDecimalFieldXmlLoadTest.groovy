@@ -22,6 +22,7 @@ import com.vaadin.flow.component.textfield.Autocomplete
 import com.vaadin.flow.data.value.ValueChangeMode
 import component_xml_load.screen.ComponentView
 import io.jmix.core.DataManager
+import io.jmix.core.FetchPlan
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -101,7 +102,7 @@ class BigDecimalFieldXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load bigDecimalField component with datasource from XML"() {
         given: "An entity with some property"
-        def order = dataManager.load(Order).all().one()
+        def order = dataManager.load(Order).all().fetchPlan(FetchPlan.BASE).one()
 
         when: "Open the ComponentView and load data"
         def componentView = navigateToView(ComponentView.class)

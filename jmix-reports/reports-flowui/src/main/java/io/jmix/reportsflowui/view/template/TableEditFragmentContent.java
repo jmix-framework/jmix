@@ -17,7 +17,6 @@
 package io.jmix.reportsflowui.view.template;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -33,9 +32,11 @@ import io.jmix.flowui.action.list.RemoveAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionPropertyContainer;
 import io.jmix.reports.entity.table.TemplateTableBand;
 import io.jmix.reports.entity.table.TemplateTableColumn;
@@ -61,6 +62,7 @@ public class TableEditFragmentContent extends VerticalLayout {
     protected Metadata metadata;
     protected Actions actions;
     protected Messages messages;
+    protected Icons icons;
 
     protected FlexLayout dataGridsBox;
     protected VerticalLayout bandBox;
@@ -72,11 +74,16 @@ public class TableEditFragmentContent extends VerticalLayout {
     protected DataGrid<TemplateTableBand> bandsDataGrid;
     protected DataGrid<TemplateTableColumn> columnsDataGrid;
 
-    public TableEditFragmentContent(UiComponents uiComponents, Metadata metadata, Actions actions, Messages messages) {
+    public TableEditFragmentContent(UiComponents uiComponents,
+                                    Metadata metadata,
+                                    Actions actions,
+                                    Messages messages,
+                                    Icons icons) {
         this.uiComponents = uiComponents;
         this.metadata = metadata;
         this.actions = actions;
         this.messages = messages;
+        this.icons = icons;
 
         initComponent();
     }
@@ -168,13 +175,17 @@ public class TableEditFragmentContent extends VerticalLayout {
         bandsButtonsBox.setId("tableEditBandsButtonsBox");
 
         bandsButtonsBox.add(
-                createButtonWithAction(VaadinIcon.PLUS, CreateAction.ID, CREATE_BAND_ID, ActionVariant.PRIMARY));
+                createButtonWithAction(icons.get(JmixFontIcon.PLUS),
+                        CreateAction.ID, CREATE_BAND_ID, ActionVariant.PRIMARY));
         bandsButtonsBox.add(
-                createButtonWithAction(VaadinIcon.TRASH, RemoveAction.ID, REMOVE_BAND_ID, ActionVariant.DANGER));
+                createButtonWithAction(icons.get(JmixFontIcon.TRASH),
+                        RemoveAction.ID, REMOVE_BAND_ID, ActionVariant.DANGER));
         bandsButtonsBox.add(
-                createButtonWithAction(VaadinIcon.ARROW_UP, ItemTrackingAction.ID, UP_BAND_ID, null));
+                createButtonWithAction(icons.get(JmixFontIcon.ARROW_UP),
+                        ItemTrackingAction.ID, UP_BAND_ID, null));
         bandsButtonsBox.add(
-                createButtonWithAction(VaadinIcon.ARROW_DOWN, ItemTrackingAction.ID, DOWN_BAND_ID, null));
+                createButtonWithAction(icons.get(JmixFontIcon.ARROW_DOWN),
+                        ItemTrackingAction.ID, DOWN_BAND_ID, null));
 
         return bandsButtonsBox;
     }
@@ -261,18 +272,22 @@ public class TableEditFragmentContent extends VerticalLayout {
         columnsButtonsBox.setId("tableEditColumnsButtonsBox");
 
         columnsButtonsBox.add(
-                createButtonWithAction(VaadinIcon.PLUS, CreateAction.ID, CREATE_COLUMN_ID, ActionVariant.PRIMARY));
+                createButtonWithAction(icons.get(JmixFontIcon.PLUS),
+                        CreateAction.ID, CREATE_COLUMN_ID, ActionVariant.PRIMARY));
         columnsButtonsBox.add(
-                createButtonWithAction(VaadinIcon.TRASH, RemoveAction.ID, REMOVE_COLUMN_ID, ActionVariant.DANGER));
+                createButtonWithAction(icons.get(JmixFontIcon.TRASH),
+                        RemoveAction.ID, REMOVE_COLUMN_ID, ActionVariant.DANGER));
         columnsButtonsBox.add(
-                createButtonWithAction(VaadinIcon.ARROW_UP, ItemTrackingAction.ID, UP_COLUMN_ID, null));
+                createButtonWithAction(icons.get(JmixFontIcon.ARROW_UP),
+                        ItemTrackingAction.ID, UP_COLUMN_ID, null));
         columnsButtonsBox.add(
-                createButtonWithAction(VaadinIcon.ARROW_DOWN, ItemTrackingAction.ID, DOWN_COLUMN_ID, null));
+                createButtonWithAction(icons.get(JmixFontIcon.ARROW_DOWN),
+                        ItemTrackingAction.ID, DOWN_COLUMN_ID, null));
 
         return columnsButtonsBox;
     }
 
-    protected JmixButton createButtonWithAction(VaadinIcon icon, String actionType, String actionId,
+    protected JmixButton createButtonWithAction(Component icon, String actionType, String actionId,
                                                 @Nullable ActionVariant variant) {
         Action action = actions.create(actionType, actionId);
         action.setText("");
@@ -282,7 +297,7 @@ public class TableEditFragmentContent extends VerticalLayout {
 
         JmixButton button = uiComponents.create(JmixButton.class);
         button.setAction(action, true);
-        button.setIcon(icon.create());
+        button.setIcon(icon);
         return button;
     }
 }

@@ -20,6 +20,15 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * A specialized {@link ValidationException} used to represent a collection
+ * of individual validation violations. This exception encapsulates multiple
+ * causes of validation failure, enabling detailed reporting of all issues
+ * encountered during the validation process.
+ * <p>
+ * The {@code CompositeValidationException} holds a list of {@link ViolationCause},
+ * each of which provides information about a specific validation error.
+ */
 public class CompositeValidationException extends ValidationException {
 
     private final List<ViolationCause> causes;
@@ -33,7 +42,17 @@ public class CompositeValidationException extends ValidationException {
         return causes;
     }
 
+    /**
+     * Represents a cause of a validation violation, providing detailed
+     * information about a specific validation error.
+     */
     public interface ViolationCause extends Serializable {
+
+        /**
+         * Returns a message.
+         *
+         * @return the message
+         */
         String getMessage();
     }
 

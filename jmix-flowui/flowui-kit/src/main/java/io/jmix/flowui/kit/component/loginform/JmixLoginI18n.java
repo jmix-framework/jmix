@@ -67,14 +67,30 @@ public class JmixLoginI18n extends LoginI18n {
         return form;
     }
 
+    /**
+     * A subclass of {@link Form} that adds additional functionality specific
+     * to the customization of a login form used in the application.
+     * This class introduces a `rememberMe` property, allowing the
+     * configuration of a "Remember Me" option in the login form.
+     */
     public static class JmixForm extends Form {
 
         protected String rememberMe;
 
+        /**
+         * Retrieves the value of the "Remember Me" property.
+         *
+         * @return the current value of the "Remember Me" property
+         */
         public String getRememberMe() {
             return rememberMe;
         }
 
+        /**
+         * Sets the value of the "Remember Me" property.
+         *
+         * @param rememberMe the value to set for the "Remember Me" property
+         */
         public void setRememberMe(String rememberMe) {
             this.rememberMe = rememberMe;
         }

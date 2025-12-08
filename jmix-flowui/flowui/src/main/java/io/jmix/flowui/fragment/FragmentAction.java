@@ -18,7 +18,6 @@ package io.jmix.flowui.fragment;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
@@ -30,6 +29,12 @@ import org.springframework.lang.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * Represents an abstract action that operates on a specific {@link Fragment}.
+ *
+ * @param <A> the type of the concrete action implementation
+ * @param <C> the type of the target fragment
+ */
 public abstract class FragmentAction<A extends FragmentAction<A, C>, C extends Fragment<?>>
         extends SecuredBaseAction implements TargetAction<C>, ExecutableAction {
 
@@ -86,20 +91,15 @@ public abstract class FragmentAction<A extends FragmentAction<A, C>, C extends F
 
     @SuppressWarnings("unchecked")
     @Override
+    public A withIcon(@Nullable Component icon) {
+        return (A) super.withIcon(icon);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Deprecated(since = "3.0", forRemoval = true)
+    @Override
     public A withIcon(@Nullable Icon icon) {
         return ((A) super.withIcon(icon));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withIcon(@Nullable VaadinIcon icon) {
-        return ((A) super.withIcon(icon));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withTitle(@Nullable String title) {
-        return ((A) super.withTitle(title));
     }
 
     @SuppressWarnings("unchecked")
@@ -118,18 +118,6 @@ public abstract class FragmentAction<A extends FragmentAction<A, C>, C extends F
     @Override
     public A withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
         return ((A) super.withHandler(handler));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withEnabledByUiPermissions(boolean enabledByUiPermissions) {
-        return ((A) super.withEnabledByUiPermissions(enabledByUiPermissions));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withVisibleByUiPermissions(boolean visibleByUiPermissions) {
-        return ((A) super.withVisibleByUiPermissions(visibleByUiPermissions));
     }
 
     @Override

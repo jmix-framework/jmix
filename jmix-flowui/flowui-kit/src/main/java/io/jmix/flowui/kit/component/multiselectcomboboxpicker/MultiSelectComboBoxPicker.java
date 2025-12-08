@@ -24,11 +24,20 @@ import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
-
 import jakarta.annotation.Nullable;
+
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * A component that extends the {@link MultiSelectComboBox} to provide additional functionalities,
+ * such as supporting user actions, handling actions, and allowing tooltip titles.
+ * <p>
+ * This class is tailored for scenarios where there is a need to manage collections of selectable
+ * items, incorporate actions into the component, and enable custom behaviors triggered by user interactions.
+ *
+ * @param <V> the type of the items to be displayed and selected in the component
+ */
 @Tag("jmix-multi-select-combo-box-picker")
 @JsModule("./src/multi-select-combo-box-picker/jmix-multi-select-combo-box-picker.js")
 public class MultiSelectComboBoxPicker<V> extends MultiSelectComboBox<V>

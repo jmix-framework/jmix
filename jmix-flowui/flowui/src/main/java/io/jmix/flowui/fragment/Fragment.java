@@ -16,19 +16,22 @@
 
 package io.jmix.flowui.fragment;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.Target;
 import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.lang.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -58,6 +61,8 @@ public abstract class Fragment<T extends Component> extends Composite<T> impleme
     protected FragmentActions fragmentActions;
 
     protected FragmentOwner parentController;
+
+    private List<ApplicationListener<?>> applicationEventListeners;     // Global event listeners
 
     @Autowired
     public void setUiComponents(UiComponents uiComponents) {
@@ -143,6 +148,52 @@ public abstract class Fragment<T extends Component> extends Composite<T> impleme
      */
     protected Registration addReadyListener(ComponentEventListener<ReadyEvent> listener) {
         return getEventBus().addListener(ReadyEvent.class, listener);
+    }
+
+    List<ApplicationListener<?>> getApplicationEventListeners() {
+        return applicationEventListeners != null
+                ? Collections.unmodifiableList(applicationEventListeners)
+                : Collections.emptyList();
+    }
+
+    void setApplicationEventListeners(@Nullable List<ApplicationListener<?>> listeners) {
+        this.applicationEventListeners = listeners;
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+
+        addApplicationListeners();
+    }
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent) {
+        super.onDetach(detachEvent);
+
+        removeApplicationListeners();
+    }
+
+    private void addApplicationListeners() {
+        uiEventsManager().ifPresent(uiEventsManager -> {
+            uiEventsManager.removeApplicationListeners(this);
+            List<ApplicationListener<?>> listeners = getApplicationEventListeners();
+            for (ApplicationListener<?> listener : listeners) {
+                uiEventsManager.addApplicationListener(this, listener);
+            }
+        });
+    }
+
+    private void removeApplicationListeners() {
+        uiEventsManager().ifPresent(uiEventsManager ->
+                uiEventsManager.removeApplicationListeners(this));
+    }
+
+    private Optional<UiEventsManager> uiEventsManager() {
+        VaadinSession session = VaadinSession.getCurrent();
+        return session != null
+                ? Optional.ofNullable(session.getAttribute(UiEventsManager.class))
+                : Optional.empty();
     }
 
     /**

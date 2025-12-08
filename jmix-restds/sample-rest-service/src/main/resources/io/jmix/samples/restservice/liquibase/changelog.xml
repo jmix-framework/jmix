@@ -27,6 +27,8 @@
     <include file="/io/jmix/data/liquibase/changelog.xml"/>
     <include file="/io/jmix/securitydata/liquibase/changelog.xml"/>
 
+    <include file="/io/jmix/samples/restds/common/liquibase/changelog.xml"/>
+
     <includeAll path="/io/jmix/samples/restservice/liquibase/changelog"/>
 
 </databaseChangeLog>

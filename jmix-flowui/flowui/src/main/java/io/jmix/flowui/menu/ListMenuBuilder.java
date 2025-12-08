@@ -18,11 +18,9 @@ package io.jmix.flowui.menu;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.main.JmixListMenu;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.View;
@@ -46,7 +44,9 @@ import java.util.stream.Collectors;
 @Component("flowui_ListMenuBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ListMenuBuilder {
+
     private static final Logger log = LoggerFactory.getLogger(ListMenuBuilder.class);
+
     protected static final String GENERATED_SEPARATOR_ID_PREFIX = "separator-";
 
     protected MenuConfig menuConfig;
@@ -70,6 +70,12 @@ public class ListMenuBuilder {
         this.menuItemCommands = menuItemCommands;
     }
 
+    /**
+     * Builds and returns a new {@link JmixListMenu} instance by initializing it
+     * with the necessary configuration.
+     *
+     * @return a newly created {@link JmixListMenu} instance
+     */
     public JmixListMenu build() {
         JmixListMenu listMenu = uiComponents.create(JmixListMenu.class);
 
@@ -78,6 +84,12 @@ public class ListMenuBuilder {
         return listMenu;
     }
 
+    /**
+     * Builds the structure for the provided {@link JmixListMenu} by adding menu items
+     * based on the root items defined in the menu configuration.
+     *
+     * @param listMenu the {@link JmixListMenu} instance to build and populate with menu items
+     */
     public void build(JmixListMenu listMenu) {
         List<MenuItem> rootItems = menuConfig.getRootItems();
 
@@ -87,6 +99,16 @@ public class ListMenuBuilder {
         }
     }
 
+    /**
+     * Creates a {@link JmixListMenu.MenuItem} object from the given {@link MenuItem}, which can represent
+     * a menu hierarchy, separator, or an individual menu item. It recursively processes child menu items
+     * if the given {@link MenuItem} is a menu container.
+     *
+     * @param menuItem the {@link MenuItem} representing the menu structure to be converted
+     * @return an {@link Optional} containing the constructed {@link JmixListMenu.MenuItem},
+     * or {@code Optional.empty()} if the item has no children, is not permitted, or represents a
+     * n invalid structure
+     */
     public Optional<JmixListMenu.MenuItem> createListMenu(MenuItem menuItem) {
         if (menuItem.isMenu()) {
             if (menuItem.getChildren().isEmpty()) {
@@ -108,6 +130,13 @@ public class ListMenuBuilder {
                 return Optional.empty();
             }
 
+            if (menuBarItem.getChildItems().stream()
+                    .noneMatch(ListMenu.MenuItem::isVisible)) {
+                log.debug("Menu bar item '{}' is skipped as it does not have visible children", menuItem.getId());
+
+                return Optional.empty();
+            }
+
             return Optional.of(menuBarItem);
         } else if (menuItem.isSeparator()) {
             JmixListMenu.MenuItem listMenuSeparator = createMenuSeparator();
@@ -124,6 +153,7 @@ public class ListMenuBuilder {
         JmixListMenu.MenuBarItem menuBarItem = new JmixListMenu.MenuBarItem(menuItem.getId())
                 .withOpened(menuItem.isOpened())
                 .withTitle(menuConfig.getItemTitle(menuItem))
+                .withVisible(menuItem.isVisible())
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()));
 
@@ -133,26 +163,8 @@ public class ListMenuBuilder {
     }
 
     protected void setIcon(MenuItem menuItem, ListMenu.MenuItem listMenuItem) {
-        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            VaadinIcon vaadinIcon = getVaadinIcon(menuItem.getIcon());
-            listMenuItem.withIcon(vaadinIcon)
-                    .setPrefixComponent(ComponentUtils.parseIcon(menuItem.getIcon()));
-        }
-    }
-
-    @Nullable
-    protected VaadinIcon getVaadinIcon(String iconString) {
-        if (iconString.contains(":")) {
-            String[] parts = iconString.split(":");
-            if (parts.length != 2) {
-                throw new IllegalStateException("Unexpected number of icon parts, must be two");
-            }
-            if (!parts[0].equals("vaadin")) {
-                return null;
-            }
-            return VaadinIcon.valueOf(parts[1].toUpperCase().replace('-', '_'));
-        } else {
-            return VaadinIcon.valueOf(iconString);
+        if (menuItem.getIconComponent() != null) {
+            listMenuItem.setPrefixComponent(menuItem.getIconComponent());
         }
     }
 
@@ -194,6 +206,7 @@ public class ListMenuBuilder {
         JmixListMenu.ViewMenuItem listMenuItem = new JmixListMenu.ViewMenuItem(menuItem.getId())
                 .withControllerClass(getControllerClass(menuItem))
                 .withTitle(menuConfig.getItemTitle(menuItem))
+                .withVisible(menuItem.isVisible())
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()))
                 .withUrlQueryParameters(menuItem.getUrlQueryParameters())
@@ -208,6 +221,7 @@ public class ListMenuBuilder {
     protected JmixListMenu.MenuItem createBeanMenuItem(MenuItem menuItem) {
         JmixListMenu.BeanMenuItem beanMenuItem = new JmixListMenu.BeanMenuItem(menuItem.getId())
                 .withTitle(menuConfig.getItemTitle(menuItem))
+                .withVisible(menuItem.isVisible())
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()))
                 .withShortcutCombination(menuItem.getShortcutCombination());
@@ -257,7 +271,13 @@ public class ListMenuBuilder {
         return GENERATED_SEPARATOR_ID_PREFIX + RandomStringUtils.randomAlphanumeric(8);
     }
 
+    /**
+     * A command executor responsible for handling user interactions with {@link ListMenu.MenuItem}
+     * instances. It associates a specific {@link MenuItem} with the corresponding commands and
+     * manages the execution of these commands when an item is selected.
+     */
     public static class MenuCommandExecutor implements Consumer<ListMenu.MenuItem> {
+
         protected final MenuItem item;
         protected final MenuItemCommands menuItemCommands;
 

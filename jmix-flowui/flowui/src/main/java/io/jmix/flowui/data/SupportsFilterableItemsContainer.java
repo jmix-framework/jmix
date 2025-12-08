@@ -20,6 +20,12 @@ import com.vaadin.flow.function.SerializableBiPredicate;
 import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.model.CollectionContainer;
 
+/**
+ * Represents a component capable of handling a collection of items and providing
+ * filtering functionality based on user input.
+ *
+ * @param <E> the type of items contained in the component
+ */
 public interface SupportsFilterableItemsContainer<E> extends SupportsItemsContainer<E> {
 
     /**

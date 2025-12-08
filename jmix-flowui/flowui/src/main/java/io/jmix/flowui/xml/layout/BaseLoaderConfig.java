@@ -52,6 +52,9 @@ public abstract class BaseLoaderConfig {
         loaders.put("split", SplitLayoutLoader.class);
         loaders.put("formLayout", FormLayoutLoader.class);
         loaders.put("formItem", FormLayoutLoader.FormItemLoader.class);
+        loaders.put("formRow", FormLayoutLoader.FormRowLoader.class);
+        loaders.put("card", CardLoader.class);
+        loaders.put("gridLayout", GridLayoutLoader.class);
 
         /* Components */
         loaders.put("button", ButtonLoader.class);
@@ -90,6 +93,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("listMenu", ListMenuLoader.class);
         loaders.put("drawerToggle", DrawerToggleLoader.class);
         loaders.put("userIndicator", UserIndicatorLoader.class);
+        loaders.put("userMenu", UserMenuLoader.class);
         loaders.put("dataGrid", DataGridLoader.class);
         loaders.put("treeDataGrid", TreeDataGridLoader.class);
         loaders.put("loginForm", LoginFormLoader.class);
@@ -109,6 +113,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("horizontalMenu", HorizontalMenuLoader.class);
         loaders.put("richTextEditor", RichTextEditorLoader.class);
         loaders.put("twinColumn", TwinColumnLoader.class);
+        loaders.put("markdown", MarkdownLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);
@@ -147,6 +152,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("article", ArticleLoader.class);
         loaders.put("header", HeaderLoader.class);
         loaders.put("pre", PreLoader.class);
+        loaders.put("code", CodeLoader.class);
         loaders.put("p", ParagraphLoader.class);
         loaders.put("htmlObject", HtmlObjectLoader.class);
         loaders.put("anchor", AnchorLoader.class);

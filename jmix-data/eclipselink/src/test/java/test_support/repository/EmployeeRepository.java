@@ -16,13 +16,18 @@
 
 package test_support.repository;
 
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.repository.JmixDataRepository;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.core.repository.Query;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import test_support.entity.repository.Employee;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -53,4 +58,64 @@ public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
     Employee getByNameContains(String namePart);
 
     Optional<Employee> findByNameContains(String namePart);
+
+
+    // Scalar queries
+    @Query("select e.age from repository$Employee e order by e.name desc")
+    Page<Integer> queryEmployeeAgesPageOrderByNameDesc(Pageable pageable);
+
+    @Query("select e.age from repository$Employee e order by e.name desc")
+    List<Integer> queryEmployeeAgesListOrderByNameDesc();
+
+    @Query("select e.age from repository$Employee e order by e.name desc")
+    LinkedHashSet<Integer> queryEmployeeAgesLHSOrderByNameDesc();
+
+    @Query("select e.age from repository$Employee e order by e.name desc")
+    Iterable<Integer> queryEmployeeAgesIterableOrderByNameDesc();
+
+    @Query("select e.birthDate from repository$Employee e where(e.age is not null)  order by e.age")
+    Stream<Date> queryEmployeeAgesStreamSortByAgeNotNull();
+
+
+    @Query("select e.age, e.name from repository$Employee e order by e.name desc")
+    List incorrectReturnTypeQuery();
+
+
+    @Query(value = "select e.age, e.secondName from repository$Employee e", properties = {"age", "secondNameForSort"})
+    Slice<KeyValueEntity> queryEmployeeAges(Pageable pageable);
+
+    @Query(value = "select e.age, e.secondName from repository$Employee e", properties = {"age", "secondNameForSort"})
+    List<KeyValueEntity> queryEmployeeAgesWithSortParam(Sort sort);
+
+    @Query(value = "select e.secondName from repository$Employee e", properties = "secondNameReturnColumn")
+    List<String> queryEmployeeSecondNamesByContext(JmixDataRepositoryContext context);
+
+    @Query("select e.secondName from repository$Employee e where e.name = :name")
+    Optional<String> queryEmployeeSecondNameByFirstName(@Param("name") String name);
+
+    @Query("select e.age from repository$Employee e where e.name = :name")
+    Optional<BigDecimal> queryEmployeeAgeBigDecimalByName(@Param("name") String name);
+
+
+    @Query(value = "select e.age, e.name, e.secondName from repository$Employee e where e.name = :name",
+            properties = {"age", "name", "secondName"})
+    Optional<KeyValueEntity> queryEmployeeValuesOptionalNamed(@Param("name") String name);
+
+    @Query(value = "select e.age, e.name, e.secondName from repository$Employee e order by e.name",
+            properties = {"age", "name", "secondName"})
+    List<KeyValueEntity> queryEmployeeValuesList();
+
+    @Query(value = "select e.age, e.name, e.secondName from repository$Employee e order by e.name",
+            properties = {"firstColumn", "secondColumn", "thirdColumn"})
+    LinkedHashSet<KeyValueEntity> queryEmployeeValuesSet();
+
+
+    @Query(value = "select e.name, e.secondName from repository$Employee e order by e.secondName",
+            properties = {"name", "secondName"})
+    Stream<KeyValueEntity> queryKeyValueEntitiesStream();
+
+    @Query(value = "select e.workAddress.city, sum(e.workingHours) from repository$Employee e group by e.workAddress.city " +
+            "order by sum(e.workingHours) desc",
+            properties = {"city", "personHours"})
+    List<KeyValueEntity> personHoursByCitiesOrderByHoursDesc();
 }

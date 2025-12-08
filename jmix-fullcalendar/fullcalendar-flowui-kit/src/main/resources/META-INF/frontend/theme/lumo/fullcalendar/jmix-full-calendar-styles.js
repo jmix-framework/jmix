@@ -95,7 +95,6 @@ jmixFullCalendarStyle.textContent = `
     
     jmix-full-calendar .jmix-day-cell-bottom-text {
         padding: var(--lumo-space-xs);
-        cursor: var(--lumo-clickable-cursor);
     }
     
     jmix-full-calendar .fc-daygrid-day.jmix-has-bottom-text {

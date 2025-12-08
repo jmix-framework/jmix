@@ -16,8 +16,11 @@
 
 package io.jmix.flowui.data.grid;
 
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.EntityDataUnit;
-import io.jmix.flowui.data.grid.DataGridItems;
 
+/**
+ * Represents a set of data items for {@link DataGrid}.
+ */
 public interface EntityDataGridItems<E> extends DataGridItems<E>, EntityDataUnit {
 }

@@ -69,14 +69,25 @@ class FormLayoutXmlLoadTest extends FlowuiTestSpecification {
         def formLayout = containerView.formLayoutId
         verifyAll(formLayout) {
             id.get() == "formLayoutId"
+            element.getProperty("autoResponsive") == "true"
+            autoRows
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
+            columnSpacing == "1px"
+            columnWidth == "1px"
             enabled
+            expandColumns
+            !expandFields
             height == "50px"
+            labelsAside
+            labelSpacing == "1px"
+            maxColumns == 5
             maxHeight == "55px"
             maxWidth == "120px"
+            minColumns == 2
             minHeight == "40px"
             minWidth == "80px"
+            rowSpacing == "1px"
             visible
             width == "100px"
         }
@@ -98,6 +109,21 @@ class FormLayoutXmlLoadTest extends FlowuiTestSpecification {
             formLayout.getColspan(it) == 2
             (SlotUtils.getChildInSlot(it, "label") as NativeLabel).getText() == "amountLabel"
         }
+    }
+
+    def "Load formLayout with formRows"() {
+        given: "An view with multiple form layouts"
+        def formLayoutView = navigateToView(FormLayoutView)
+
+        when: "FormLayout with formRows"
+        def formRows = formLayoutView.formLayoutWithRows.children
+                .map {(FormLayout.FormRow) it}.toList()
+
+        then: "Only two rows should be loaded"
+
+        formRows.size() == 2
+        formRows.get(0).children.toList().size() == 2
+        formRows.get(1).children.toList().size() == 1
     }
 
     @Ignore("Until vaadin bugfix https://github.com/vaadin/flow-components/issues/1397")

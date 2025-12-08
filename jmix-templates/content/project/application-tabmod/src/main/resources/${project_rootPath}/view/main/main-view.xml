@@ -2,7 +2,7 @@
 <mainView xmlns="http://jmix.io/schema/tabmod/main-view"
           title="msg://MainView.title">
     <actions>
-        <action id="logoutAction" type="logout"/>
+        <action id="logoutAction" text="msg:///actions.logout.text" type="logout"/>
     </actions>
     <appLayout primarySection="NAVBAR">
         <navigationBar>
@@ -15,6 +15,20 @@
                     text="msg://applicationTitle.text"
                     classNames="jmix-main-view-application-title">
                 </h2>
+
+                <userMenu id="userMenu"
+                          themeNames="tertiary" classNames="ms-auto me-m">
+                    <items>
+                        <separator/>
+                        <actionItem id="substituteUserMenuItem"
+                                    themeNames="non-checkable">
+                            <action id="substituteUserAction" type="sec_userMenuSubstituteUser"/>
+                        </actionItem>
+                        <separator/>
+                        <actionItem id="logoutMenuItem" ref="logoutAction"
+                                    themeNames="non-checkable"/>
+                    </items>
+                </userMenu>
             </header>
         </navigationBar>
         <drawerLayout>
@@ -24,17 +38,31 @@
                      ariaLabel="msg://navigation.ariaLabel">
                     <listMenu id="menu"/>
                 </nav>
-                <footer id="footer" classNames="jmix-main-view-footer">
-                    <userIndicator id="userIndicator"/>
-                    <button id="logoutButton"
-                            action="logoutAction"
-                            classNames="jmix-logout-button"/>
-                </footer>
             </section>
         </drawerLayout>
         <workArea id="workArea"
                   classNames="jmix-work-area">
-            <initialLayout width="100%" height="100%">
+            <mainTabSheet id="mainTabSheet"
+                          classNames="jmix-main-tabsheet"
+                          tabsDraggable="true"
+                          width="100%" height="100%">
+                <actions>
+                    <action id="closeThisTabAction" type="tabmod_closeThisTab"/>
+                    <action id="closeOthersTabsAction" type="tabmod_closeOtherTabs"/>
+                    <action id="closeAllTabsAction" type="tabmod_closeAllTabs"/>
+                </actions>
+            </mainTabSheet>
+            <initialLayout id="initialLayout" classNames="jmix-initial-layout">
+                <div classNames="jmix-initial-layout-content">
+                    <h1 text="msg://applicationTitle.text"
+                        classNames="jmix-initial-layout-title"/>
+                    <image resource="public/images/logo.png"
+                           classNames="jmix-initial-layout-logo"/>
+                </div>
+                <!--
+                    This is the work area - central part of the view.
+                    Put your components here.
+                -->
             </initialLayout>
         </workArea>
     </appLayout>

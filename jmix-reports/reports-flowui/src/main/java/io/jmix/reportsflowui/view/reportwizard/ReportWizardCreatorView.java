@@ -13,9 +13,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
@@ -33,7 +35,6 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
-import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -41,6 +42,7 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.view.*;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
@@ -49,6 +51,7 @@ import io.jmix.reports.entity.wizard.*;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.download.ReportDownloader;
 import io.jmix.reportsflowui.helper.PackageHelper;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
@@ -69,7 +72,8 @@ import org.springframework.lang.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@Route(value = "reports/wizard", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/wizard", layout = DefaultMainViewParent.class)
+@Route(value = "report/wizard", layout = DefaultMainViewParent.class)
 @DialogMode(draggable = false, width = "45em")
 @ViewController("report_ReportWizardCreatorView")
 @ViewDescriptor("report-wizard-creator-view.xml")
@@ -132,11 +136,13 @@ public class ReportWizardCreatorView extends StandardView {
     protected JmixButton saveBtn;
     @ViewComponent
     protected JmixComboBox<MetaClass> entityField;
+    @ViewComponent
+    private TypedTextField<String> reportCodeField;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Dialogs dialogs;
     @Autowired
@@ -156,7 +162,7 @@ public class ReportWizardCreatorView extends StandardView {
     @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
     @Autowired
-    protected Downloader downloader;
+    protected ReportDownloader downloader;
     @Autowired
     protected OutputFormatTools outputFormatTools;
     @Autowired
@@ -179,6 +185,8 @@ public class ReportWizardCreatorView extends StandardView {
     protected ViewValidation viewValidation;
     @Autowired
     private PackageHelper packageHelper;
+    @Autowired
+    private ReportRepository reportRepository;
 
     protected int currentFragmentIdx = 0;
     protected boolean regenerateQuery = false;
@@ -305,6 +313,32 @@ public class ReportWizardCreatorView extends StandardView {
         }
     }
 
+    protected void markFieldAsInvalid(TypedTextField<?> field, String messageBundleKey) {
+        field.setErrorMessage(messageBundle.getMessage(messageBundleKey));
+        field.setInvalid(true);
+    }
+
+    protected boolean isReportCodeUnique() {
+        String newReportCode = reportCodeField.getTypedValue();
+
+        try {
+            if (newReportCode == null) {
+                markFieldAsInvalid(reportCodeField,"codeFieldIsEmptyMsg");
+                return false;
+            }
+            if (reportRepository.existsReportByCode(newReportCode)) {
+                markFieldAsInvalid(reportCodeField, "codeAlreadyExistsMsg");
+                return false;
+            }
+        } catch (AccessDeniedException ade) {
+            notifications.create(messageBundle.getMessage("notReadAccessRightsMsg"))
+                    .show();
+            return false;
+        }
+
+        return true;
+    }
+
     @Subscribe("nextBtn")
     public void onNextBtnClick(ClickEvent<Button> event) {
         if (!validateFragment()) {
@@ -347,6 +381,12 @@ public class ReportWizardCreatorView extends StandardView {
     }
 
     protected void nextFragment() {
+        if (currentFragmentIdx == 0) {
+            if (!isReportCodeUnique()) {
+                return;
+            }
+        }
+
         if (currentFragmentIdx < fragmentsList.size() - 1) {
             fragmentsList.get(currentFragmentIdx).setVisible(false);
             currentFragmentIdx++;
@@ -395,6 +435,8 @@ public class ReportWizardCreatorView extends StandardView {
         }
         return validationErrors.isEmpty();
     }
+
+
 
     @Subscribe("saveBtn")
     public void onSaveBtnClick(ClickEvent<Button> event) {

@@ -40,6 +40,10 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Implementation of the {@link KeyValueCollectionLoader} interface, responsible for loading and managing
+ * a collection of key-value pairs into a {@link KeyValueCollectionContainer} from a data source.
+ */
 public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
 
     @Autowired
@@ -207,7 +211,7 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
     }
 
     @Override
-    public void setCondition(Condition condition) {
+    public void setCondition(@Nullable Condition condition) {
         this.condition = condition;
     }
 

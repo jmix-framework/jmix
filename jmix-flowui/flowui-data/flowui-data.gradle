@@ -31,4 +31,5 @@ dependencies {
     testImplementation project(':eclipselink-starter')
     testImplementation 'org.apache.commons:commons-dbcp2'
     testRuntimeOnly 'org.hsqldb:hsqldb'
+    //testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

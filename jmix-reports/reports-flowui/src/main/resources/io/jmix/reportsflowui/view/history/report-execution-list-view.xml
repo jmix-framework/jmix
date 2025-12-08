@@ -18,7 +18,7 @@
 <view xmlns="http://jmix.io/schema/flowui/view" xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="msg://ReportExecutionListView.title"
       focusComponent="executionsDataGrid">
-    <data>
+    <data readOnly="true">
         <collection id="executionsDc"
                     class="io.jmix.reports.entity.ReportExecution"
                     fetchPlan="reportExecution.view">
@@ -26,9 +26,16 @@
                 <query>
                     <![CDATA[select e from report_ReportExecution e order by e.startTime desc]]>
                     <condition>
-                        <c:jpql>
-                            <c:where>{E}.report.id in :reportIds</c:where>
-                        </c:jpql>
+                        <and>
+                            <or>
+                                <c:jpql>
+                                    <c:where>{E}.report.id in :reportIds</c:where>
+                                </c:jpql>
+                                <c:jpql>
+                                    <c:where>{E}.reportCode in :reportCodes</c:where>
+                                </c:jpql>
+                            </or>
+                        </and>
                     </condition>
                 </query>
             </loader>
@@ -46,15 +53,13 @@
     <layout>
         <genericFilter id="genericFilter" dataLoader="executionsDl" opened="false"/>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="excelBtn" action="executionsDataGrid.excel"/>
             <button id="downloadBtn" action="executionsDataGrid.download"/>
             <simplePagination id="pagination" dataLoader="executionsDl"/>
         </hbox>
         <dataGrid id="executionsDataGrid" dataContainer="executionsDc" width="100%" selectionMode="MULTI"
                   columnReorderingAllowed="true">
             <actions>
-                <action id="excel" type="grdexp_excelExport"/>
-                <action id="download" text="msg://action.download.text" icon="DOWNLOAD"/>
+                <action id="download" text="msg://action.download.text" icon="DOWNLOAD" type="list_itemTracking"/>
             </actions>
             <columns resizable="true">
                 <column property="startTime"/>

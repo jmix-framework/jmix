@@ -27,6 +27,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
+/**
+ * Implementation of the {@link Timer} interface. Provides a client-side timer component
+ * that fires events at fixed intervals. This class manages the lifecycle and configuration
+ * of the timer and supports attaching and detaching it from a view.
+ */
 public class TimerImpl extends AbstractFacet implements Timer {
 
     protected JmixTimer timerImpl;

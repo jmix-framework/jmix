@@ -18,14 +18,35 @@ package io.jmix.flowui.kit.component.dropdownbutton;
 
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.ActionHolder;
 import io.jmix.flowui.kit.meta.StudioIgnore;
 
 import java.util.function.Consumer;
 
-public interface ActionItem extends DropdownButtonItem {
+/**
+ * Represents an item in a dropdown button that is associated with an {@link Action}.
+ * This interface provides functionalities for retrieving the related action
+ * and delegates click event handling to the encapsulated action logic.
+ */
+public interface ActionItem extends DropdownButtonItem, ActionHolder {
 
+    /**
+     * Returns the {@link Action} associated with this item.
+     *
+     * @return the associated action, or null if no action is set
+     */
+    @Override
     Action getAction();
 
+    /**
+     * Adds a listener to handle click events for the dropdown button item.
+     * This method is not supported for {@code ActionItem} and will throw
+     * an {@link UnsupportedOperationException}.
+     *
+     * @param listener the {@link Consumer} to process {@link ClickEvent} when the item is clicked
+     * @return a {@link Registration} object to remove the listener later
+     * @throws UnsupportedOperationException if invoked on an {@code ActionItem}
+     */
     @StudioIgnore
     @Override
     default Registration addClickListener(Consumer<ClickEvent> listener) {

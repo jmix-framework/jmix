@@ -23,6 +23,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+/**
+ * Implementation of the {@link FragmentData} interface providing methods
+ * to manage fragment-specific data API elements.
+ */
 @Component("flowui_FragmentData")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FragmentDataImpl extends AbstractDataComponentsHolder implements FragmentData {

@@ -32,6 +32,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * A default implementation of a user interface exception handler in the framework.
+ * This class handles exceptions thrown during the application's operation and provides a way
+ * to display an appropriate dialog for the user. It uses exception dialog providers to determine
+ * and display a dialog for a specific exception or its root cause. If no specific dialog is provided
+ * for an exception, a default exception dialog is used.
+ */
 @Internal
 @Component("flowui_DefaultExceptionHandler")
 public class DefaultUiExceptionHandler implements ApplicationContextAware {
@@ -50,6 +57,12 @@ public class DefaultUiExceptionHandler implements ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Handles the given exception and determines the appropriate action based on its type.
+     *
+     * @param exception the exception to handle
+     * @return {@code true} if the exception is handled; {@code false} if not handled
+     */
     public boolean handle(Throwable exception) {
         // Copied from com.vaadin.flow.server.DefaultErrorHandler#error(ErrorEvent)
         if (exception instanceof InvalidLocationException) {

@@ -16,12 +16,18 @@
 
 package io.jmix.flowui.monitoring;
 
+import io.jmix.flowui.model.DataLoader;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 
+/**
+ * Provides utility methods and constants to facilitate UI monitoring, including measuring and recording the
+ * durations of various UI-related operations and lifecycle events.
+ */
 public class UiMonitoring {
 
     private static final String NOT_AVAILABLE_TAG_VALUE = "N/A";
@@ -34,10 +40,27 @@ public class UiMonitoring {
     private UiMonitoring() {
     }
 
+    /**
+     * Starts a timer sample for measuring durations of specific operations or lifecycles.
+     * This method utilizes the provided {@link MeterRegistry} to create and return a {@link Timer.Sample}.
+     *
+     * @param meterRegistry the meter registry used to initialize the timer sample
+     * @return Returns the newly created timer sample
+     */
     public static Timer.Sample startTimerSample(MeterRegistry meterRegistry) {
         return Timer.start(meterRegistry);
     }
 
+    /**
+     * Stops the timer sample that measures the duration of a specific {@link DataLoaderLifeCycle} stage
+     * for a {@link DataLoader}. Utilizes the provided {@link Timer.Sample} and records the duration
+     * into a {@link MeterRegistry}.
+     *
+     * @param sample        the timer sample to stop
+     * @param meterRegistry the meter registry to record metrics into
+     * @param lifeCycle     the life cycle stage of the {@link DataLoader}
+     * @param info          monitoring information, including the view ID and loader ID.
+     */
     public static void stopDataLoaderTimerSample(Timer.Sample sample,
                                                  MeterRegistry meterRegistry,
                                                  DataLoaderLifeCycle lifeCycle,
@@ -51,6 +74,16 @@ public class UiMonitoring {
         );
     }
 
+    /**
+     * Stops the timer sample that measures the duration of a specific {@link ViewLifeCycle} phase
+     * for a {@link View}. Utilizes the provided {@link Timer.Sample} and records the duration
+     * into a {@link MeterRegistry}.
+     *
+     * @param sample        the timer sample to stop
+     * @param meterRegistry the meter registry to record metrics into
+     * @param lifeCycle     the life cycle phase of the {@link View}
+     * @param viewId        the unique identifier of the {@link View}, may be {@code null}
+     */
     public static void stopViewTimerSample(Timer.Sample sample,
                                            MeterRegistry meterRegistry,
                                            ViewLifeCycle lifeCycle,

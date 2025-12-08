@@ -19,25 +19,25 @@ package io.jmix.flowui.view.navigation;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Facilitates navigation to a detail view of a specific type with additional configuration options.
+ * This class extends {@link DetailViewNavigator} to provide the ability to specify a particular view class
+ * and handle additional navigation scenarios like executing a callback after successful navigation to a view.
+ *
+ * @param <E> the type of the entity managed by the detail view
+ * @param <V> the type of the view being navigated to, which extends {@link View}
+ */
 public class DetailViewClassNavigator<E, V extends View<?>> extends DetailViewNavigator<E>
         implements SupportsAfterViewNavigationHandler<V> {
 
     protected Class<V> viewClass;
 
     protected Consumer<AfterViewNavigationEvent<V>> afterNavigationHandler;
-
-    @Deprecated(since = "2.3", forRemoval = true)
-    public DetailViewClassNavigator(Class<E> entityClass, Consumer<? extends DetailViewNavigator<E>> handler,
-                                    Class<V> viewClass) {
-        super(entityClass, handler);
-
-        this.viewClass = viewClass;
-    }
 
     public DetailViewClassNavigator(View<?> origin,
                                     Class<E> entityClass,

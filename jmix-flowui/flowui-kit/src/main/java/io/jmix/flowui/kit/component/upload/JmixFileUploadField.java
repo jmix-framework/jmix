@@ -29,6 +29,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+/**
+ * A component for uploading files with support for displaying the uploaded file name and handling file upload events.
+ *
+ * @param <C> the type of the inheriting component that extends {@code AbstractSingleUploadField}
+ */
 public class JmixFileUploadField<C extends AbstractSingleUploadField<C, byte[]>>
         extends AbstractSingleUploadField<C, byte[]> {
 

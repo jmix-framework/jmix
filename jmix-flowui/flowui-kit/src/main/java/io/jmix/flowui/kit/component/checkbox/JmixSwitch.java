@@ -30,6 +30,9 @@ import com.vaadin.flow.data.binder.Validator;
 
 import java.util.Optional;
 
+/**
+ * JmixSwitch is an input field representing a binary choice.
+ */
 @Tag("jmix-switch")
 @JsModule("./src/checkbox/jmix-switch.js")
 public class JmixSwitch extends AbstractSinglePropertyField<JmixSwitch, Boolean>

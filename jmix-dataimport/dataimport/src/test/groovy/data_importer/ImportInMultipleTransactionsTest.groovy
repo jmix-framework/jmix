@@ -18,6 +18,7 @@ package data_importer
 
 
 import io.jmix.core.FetchPlan
+import io.jmix.core.FetchPlans
 import io.jmix.core.Resources
 import io.jmix.dataimport.DataImporter
 import io.jmix.dataimport.InputDataFormat
@@ -367,7 +368,8 @@ class ImportInMultipleTransactionsTest extends DataImportSpec {
 
         def importedOrderLine = dataManager.load(OrderLine)
                 .id(result.importedEntityIds[0])
-                .fetchPlan(FetchPlan.LOCAL)
+                .fetchPlan(b -> b
+                        .addAll("product.name", "quantity"))
                 .one() as OrderLine
         checkOrderLine(importedOrderLine, 'Outback Power Nano-Carbon Battery 12V', 4)
 
@@ -400,11 +402,11 @@ class ImportInMultipleTransactionsTest extends DataImportSpec {
         then:
         importResult.success
         importResult.importedEntityIds.size() == 2
-        def firstOrder = loadEntity(Order, importResult.importedEntityIds[0], FetchPlan.BASE) as Order
+        def firstOrder = loadEntity(Order, importResult.importedEntityIds[0], "order-with-customer") as Order
         checkOrder(firstOrder, '#0001', '12/12/2020 12:30', 150)
         checkCustomer(firstOrder.customer, 'Tom Smith', null, null)
 
-        def secondOrder = loadEntity(Order, importResult.importedEntityIds[1], FetchPlan.BASE) as Order
+        def secondOrder = loadEntity(Order, importResult.importedEntityIds[1], "order-with-customer") as Order
         checkOrder(secondOrder, '#0001', '12/12/2020 12:30', 100)
         checkCustomer(secondOrder.customer, 'John Dow', null, null)
     }
@@ -435,11 +437,11 @@ class ImportInMultipleTransactionsTest extends DataImportSpec {
         importResult.importedEntityIds.size() == 2
         importResult.failedEntities.size() == 1
 
-        def firstOrder = loadEntity(Order, importResult.importedEntityIds[0], FetchPlan.BASE) as Order
+        def firstOrder = loadEntity(Order, importResult.importedEntityIds[0], "order-with-customer") as Order
         checkOrder(firstOrder, '#0001', '12/12/2020 12:30', 100)
         checkCustomer(firstOrder.customer, 'Tom Smith', null, null)
 
-        def secondOrder = loadEntity(Order, importResult.importedEntityIds[1], FetchPlan.BASE) as Order
+        def secondOrder = loadEntity(Order, importResult.importedEntityIds[1], "order-with-customer") as Order
         checkOrder(secondOrder, '#0001', '12/12/2020 12:30', 100)
         checkCustomer(secondOrder.customer, 'John Dow', null, null)
 
@@ -475,11 +477,11 @@ class ImportInMultipleTransactionsTest extends DataImportSpec {
         importResult.importedEntityIds.size() == 2
         importResult.errorMessage != null
 
-        def firstOrder = loadEntity(Order, importResult.importedEntityIds[0], FetchPlan.BASE) as Order
+        def firstOrder = loadEntity(Order, importResult.importedEntityIds[0], "order-with-customer") as Order
         checkOrder(firstOrder, '#0001', '12/12/2020 12:30', 100)
         checkCustomer(firstOrder.customer, 'Tom Smith', null, null)
 
-        def secondOrder = loadEntity(Order, importResult.importedEntityIds[1], FetchPlan.BASE) as Order
+        def secondOrder = loadEntity(Order, importResult.importedEntityIds[1], "order-with-customer") as Order
         checkOrder(secondOrder, '#0001', '12/12/2020 12:30', 100)
         checkCustomer(secondOrder.customer, 'John Dow', null, null)
     }

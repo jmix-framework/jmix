@@ -84,6 +84,7 @@ public interface LookupView<E> {
      * @param <E> type of entity
      */
     class ValidationContext<E> {
+
         protected final View<?> view;
         protected final Collection<E> selectedItems;
 

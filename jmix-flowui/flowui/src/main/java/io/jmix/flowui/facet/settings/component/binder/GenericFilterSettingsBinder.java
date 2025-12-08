@@ -26,6 +26,10 @@ import org.springframework.core.annotation.Order;
 
 import java.util.Objects;
 
+/**
+ * A settings binder implementation for the {@link GenericFilter} component, handling
+ * the persistence and application of {@link GenericFilterSettings}.
+ */
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("flowui_GenericFilterSettingsBinder")
 public class GenericFilterSettingsBinder implements DataLoadingSettingsBinder<GenericFilter, GenericFilterSettings> {

@@ -26,6 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;
 
+/**
+ * Implementation of the {@link KeyValueContainer} interface.
+ * This class represents a container for a single {@link KeyValueEntity} instance
+ * and provides methods to manage its properties, entity metadata, and item state.
+ */
 public class KeyValueContainerImpl extends InstanceContainerImpl<KeyValueEntity> implements KeyValueContainer {
 
     private String idName;

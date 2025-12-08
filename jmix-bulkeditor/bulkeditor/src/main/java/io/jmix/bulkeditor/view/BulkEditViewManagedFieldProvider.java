@@ -81,7 +81,7 @@ public class BulkEditViewManagedFieldProvider {
             String fqn = generateFqn(metaProperty, fqnPrefix);
             String propertyCaption = generatePropertyCaption(metaClass, metaProperty, localePrefix);
 
-            if (!metadataTools.isEmbedded(metaProperty)) {
+            if (metaProperty.getType() != MetaProperty.Type.EMBEDDED) {
                 if (isManagedAttribute(metaClass, metaProperty, fqn)) {
                     managedFields.add(new BulkEditViewManagedField(fqn, metaProperty, propertyCaption, fqnPrefix));
                 }

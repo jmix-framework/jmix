@@ -32,6 +32,12 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Collection;
 
+/**
+ * A custom implementation of a context menu for a {@link Grid} component that extends
+ * the {@link GridContextMenu} functionality and implements the {@link HasSubParts} interface.
+ *
+ * @param <E> the grid item type
+ */
 public class JmixGridContextMenu<E> extends GridContextMenu<E> implements HasSubParts {
 
     public JmixGridContextMenu() {
@@ -41,12 +47,32 @@ public class JmixGridContextMenu<E> extends GridContextMenu<E> implements HasSub
         super(target);
     }
 
+    /**
+     * Adds a menu item at the specified index with the given text. If the index
+     * is equal to the current number of items, the menu item will be appended to
+     * the end of the menu. Otherwise, the item will be inserted at the specified index.
+     *
+     * @param index the position at which the menu item should be added
+     * @param text  the text for the menu item
+     * @return the newly created menu item
+     */
     public GridMenuItem<E> addItemAtIndex(int index, String text) {
         return getItems().size() == index
                 ? getMenuManager().addItem(text)
                 : getMenuManager().addItemAtIndex(index, text);
     }
 
+    /**
+     * Adds a menu item at the specified index with the given text and associates it with
+     * a click listener if provided. If the index is equal to the current number of items,
+     * the menu item will be appended to the end of the menu. Otherwise, the item will be
+     * inserted at the specified index.
+     *
+     * @param index         the position at which the menu item should be added
+     * @param text          the text for the menu item
+     * @param clickListener the click listener to associate with the menu item, may be null
+     * @return the newly created menu item
+     */
     public GridMenuItem<E> addItemAtIndex(int index, String text,
                                           @Nullable ComponentEventListener<GridContextMenuItemClickEvent<E>> clickListener) {
         GridMenuItem<E> menuItem = addItemAtIndex(index, text);
@@ -56,12 +82,32 @@ public class JmixGridContextMenu<E> extends GridContextMenu<E> implements HasSub
         return menuItem;
     }
 
+    /**
+     * Adds a menu item at the specified index with the provided component.
+     * If the index is equal to the current number of items, the menu item will be appended to the end.
+     * Otherwise, the item will be inserted at the specified index.
+     *
+     * @param index     the position at which the menu item should be added
+     * @param component the component to be associated with the menu item
+     * @return the newly created menu item
+     */
     public GridMenuItem<E> addItemAtIndex(int index, Component component) {
         return getItems().size() == index
                 ? getMenuManager().addItem(component)
                 : getMenuManager().addItemAtIndex(index, component);
     }
 
+    /**
+     * Adds a menu item at the specified index with the provided component and associates it
+     * with a click listener if provided. If the index is equal to the current number of items,
+     * the menu item will be appended to the end of the menu. Otherwise, the item will be
+     * inserted at the specified index.
+     *
+     * @param index         the position at which the menu item should be added
+     * @param component     the component to be associated with the menu item
+     * @param clickListener the click listener to associate with the menu item; may be null
+     * @return the newly created menu item
+     */
     public GridMenuItem<E> addItemAtIndex(int index, Component component,
                                           @Nullable ComponentEventListener<GridContextMenuItemClickEvent<E>> clickListener) {
         GridMenuItem<E> menuItem = addItemAtIndex(index, component);

@@ -16,11 +16,11 @@
 
 package io.jmix.flowui.kit.meta;
 
+import com.vaadin.flow.component.HasComponents;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
-
-import com.vaadin.flow.component.HasComponents;
 
 /**
  * Meta description that describes component.
@@ -120,6 +120,16 @@ public @interface StudioComponent {
     StudioSupplyHandler[] supplyHandlers() default {};
 
     /**
+     * Additional non-standard @Subscription handlers.
+     */
+    StudioCustomSubscription[] customSubscriptions() default {};
+
+    /**
+     * Additional non-standard @Install handlers.
+     */
+    StudioCustomInstall[] customInstalls() default {};
+
+    /**
      * Describes the available children information.
      *
      * @see StudioAvailableChildrenInfo
@@ -144,5 +154,13 @@ public @interface StudioComponent {
      */
     String documentationLink() default "";
 
+    /**
+     * A constant used to represent an empty or uninitialized injection identifier in the context of
+     * Studio component definitions.
+     * <p>
+     * This placeholder value is used when no custom identifier is explicitly specified for
+     * XML attributes or injection mechanisms. It signifies that the injection process should
+     * interpret the identifier as intentionally left unset or intentionally empty.
+     */
     String EMPTY_INJECTION_IDENTIFIER = "__empty__";
 }

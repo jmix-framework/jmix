@@ -25,5 +25,6 @@
     <property name="uuid.type" dbms="!oracle" value="uuid"/>
 
     <include file="/io/jmix/messagetemplates/liquibase/changelog/001-message-templates.xml"/>
+    <include file="/io/jmix/messagetemplates/liquibase/changelog/002-message-templates.xml"/>
 
 </databaseChangeLog>

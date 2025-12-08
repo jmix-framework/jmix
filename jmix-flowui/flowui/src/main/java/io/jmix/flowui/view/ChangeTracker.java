@@ -20,6 +20,7 @@ package io.jmix.flowui.view;
  * Interface of views that can contain unsaved changes.
  */
 public interface ChangeTracker {
+
     /**
      * @return {@code true} if the view has unsaved changes
      */

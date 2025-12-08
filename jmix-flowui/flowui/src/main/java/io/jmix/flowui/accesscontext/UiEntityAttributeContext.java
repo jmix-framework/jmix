@@ -20,6 +20,11 @@ import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
+/**
+ * Extends the {@link EntityAttributeContext} class and provides context information
+ * for UI-related operations on entity attributes. This class allows authorization
+ * and access control for viewing and modifying entity attributes in a user interface.
+ */
 public class UiEntityAttributeContext extends EntityAttributeContext {
 
     public UiEntityAttributeContext(MetaPropertyPath propertyPath) {

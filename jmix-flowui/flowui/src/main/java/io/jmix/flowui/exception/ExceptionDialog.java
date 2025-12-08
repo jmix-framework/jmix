@@ -22,19 +22,22 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementFactory;
+import io.jmix.core.AccessManager;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.UiProperties;
+import io.jmix.flowui.accesscontext.UiShowExceptionDetailsContext;
 import io.jmix.flowui.fragment.FragmentDescriptor;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.FragmentContext;
@@ -46,11 +49,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * A class provides a user interface component for displaying an exception dialog
+ * with detailed information about the error. The dialog supports features such as
+ * showing the exception message, viewing the stack trace, and copying the stack
+ * trace to clipboard.
+ */
 public class ExceptionDialog implements InitializingBean {
 
     protected static final String BASE_CLASS_NAME = "jmix-exception-dialog-window";
     protected static final String DIALOG_CONTENT_CLASS_NAME = BASE_CLASS_NAME + "-content";
     protected static final String HEADER_CLOSE_BUTTON_CLASS_NAME = BASE_CLASS_NAME + "-close-button";
+    protected static final String COPY_BUTTON_CLASS_NAME = BASE_CLASS_NAME + "-copy-button";
     protected static final String STACKTRACE_TEXTAREA_CLASS_NAME = BASE_CLASS_NAME + "-stacktrace-textarea";
     protected static final String MESSAGE_TEXTAREA_CLASS_NAME = BASE_CLASS_NAME + "-message-textarea";
 
@@ -62,6 +72,8 @@ public class ExceptionDialog implements InitializingBean {
     protected ViewRegistry viewRegistry;
     protected UiComponents uiComponents;
     protected Notifications notifications;
+    protected AccessManager accessManager;
+    protected Icons icons;
 
     protected Dialog dialog;
     protected Throwable throwable;
@@ -71,6 +83,7 @@ public class ExceptionDialog implements InitializingBean {
     protected Element stackTraceTextArea;
 
     protected boolean isStackTraceVisible = false;
+    protected boolean exceptionDialogModal = true;
 
     public ExceptionDialog(Throwable throwable) {
         this.throwable = throwable;
@@ -96,6 +109,21 @@ public class ExceptionDialog implements InitializingBean {
         this.notifications = notifications;
     }
 
+    @Autowired
+    private void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
+    }
+
+    @Autowired
+    public void setUiProperties(UiProperties uiProperties) {
+        exceptionDialogModal = uiProperties.isExceptionDialogModal();
+    }
+
+    @Autowired
+    public void setIcons(Icons icons) {
+        this.icons = icons;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         initDialog();
@@ -119,6 +147,7 @@ public class ExceptionDialog implements InitializingBean {
         dialog.setCloseOnOutsideClick(false);
         dialog.setDraggable(true);
 
+        dialog.setModal(exceptionDialogModal);
         dialog.setWidth(WIDTH);
 
         dialog.addThemeVariants(DialogVariant.LUMO_NO_PADDING);
@@ -143,7 +172,7 @@ public class ExceptionDialog implements InitializingBean {
 
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents.create(JmixButton.class);
-        closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
+        closeButton.setIcon(icons.get(JmixFontIcon.CLOSE_SMALL));
         closeButton.addThemeVariants(
                 ButtonVariant.LUMO_TERTIARY_INLINE,
                 ButtonVariant.LUMO_ICON,
@@ -190,8 +219,10 @@ public class ExceptionDialog implements InitializingBean {
         layout.setWidthFull();
         layout.add(createCloseButton());
 
-        detailsButton = createDetailsButton();
-        layout.add(detailsButton);
+        if (isExceptionDetailsPermitted()) {
+            detailsButton = createDetailsButton();
+            layout.add(detailsButton);
+        }
 
         copyButton = createCopyButton();
         copyButton.getStyle().set("margin-inline-start", "auto");
@@ -257,7 +288,8 @@ public class ExceptionDialog implements InitializingBean {
     protected JmixButton createCopyButton() {
         JmixButton copyBtn = uiComponents.create(JmixButton.class);
 
-        copyBtn.setIcon(new Icon(VaadinIcon.COPY_O));
+        copyBtn.setIcon(icons.get(JmixFontIcon.COPY_O));
+        copyBtn.setClassName(COPY_BUTTON_CLASS_NAME);
         copyBtn.setVisible(false);
         copyBtn.setTitle(messages.getMessage("exceptionDialog.copyButton.description"));
         copyBtn.addClickListener(this::onCopyButtonClick);
@@ -272,6 +304,12 @@ public class ExceptionDialog implements InitializingBean {
                 .withType(Notifications.Type.SUCCESS)
                 .withPosition(Notification.Position.BOTTOM_END)
                 .show();
+    }
+
+    protected boolean isExceptionDetailsPermitted() {
+        UiShowExceptionDetailsContext uiShowExceptionDetailsContext = new UiShowExceptionDetailsContext();
+        accessManager.applyRegisteredConstraints(uiShowExceptionDetailsContext);
+        return uiShowExceptionDetailsContext.isPermitted();
     }
 
     protected Element createStackTraceTextArea(String stackTrace) {
@@ -309,15 +347,15 @@ public class ExceptionDialog implements InitializingBean {
                     if (template != null) {
                         params.put("XML descriptor", template.value());
                     }
-                } else if (guiDevException.getFrameId() != null) {
-                    String frameId = guiDevException.getFrameId();
-                    params.put("Frame ID", frameId);
+                } else if (guiDevException.getOriginId() != null) {
+                    String originId = guiDevException.getOriginId();
+                    params.put("Origin ID", originId);
                     try {
                         params.put("XML descriptor",
-                                viewRegistry.getViewInfo(frameId).
+                                viewRegistry.getViewInfo(originId).
                                         getTemplatePath().orElse(null));
                     } catch (Exception e) {
-                        params.put("XML descriptor", "not found for " + frameId);
+                        params.put("XML descriptor", "not found for " + originId);
                     }
                 }
             }

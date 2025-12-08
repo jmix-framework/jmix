@@ -21,19 +21,24 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.kit.component.HasActions;
-import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 
-import java.util.Optional;
-
+/**
+ * Defines the contract for loading and initializing UI components from XML descriptors.
+ *
+ * @param <T> the type of component being loaded
+ */
 public interface ComponentLoader<T extends Component> {
 
+    /**
+     * Represents a context for loading and initializing UI components. The context
+     * provides access to the component being processed, its lifecycle tasks, and
+     * associated data or actions holders.
+     */
     interface Context {
 
         /**
@@ -81,40 +86,10 @@ public interface ComponentLoader<T extends Component> {
         HasDataComponents getDataHolder();
     }
 
+    /**
+     * Represents a context for loading and initializing UI components in {@link View}.
+     */
     interface ComponentContext extends Context {
-
-        /**
-         * @return an instance of {@link ViewData} object associated with the origin view
-         * @deprecated Use {@link #getDataHolder()} instead
-         */
-        @Deprecated(since = "2.3", forRemoval = true)
-        ViewData getViewData();
-
-        /**
-         * @return actions holder object
-         * @deprecated Use {@link #getActionsHolder()} instead
-         */
-        @Deprecated(since = "2.3", forRemoval = true)
-        ViewActions getViewActions();
-
-        /**
-         * @return parent loader context
-         * @deprecated Use {@link #getParentContext()} instead
-         */
-        @Deprecated(since = "2.3", forRemoval = true)
-        Optional<ComponentContext> getParent();
-
-        /**
-         * @deprecated Use {@link #getFullOriginId()}
-         */
-        @Deprecated(since = "2.3", forRemoval = true)
-        String getFullFrameId();
-
-        /**
-         * @deprecated Use {@link #getFullOriginId()}
-         */
-        @Deprecated(since = "2.3", forRemoval = true)
-        String getCurrentFrameId();
 
         /**
          * @return an origin view
@@ -150,6 +125,9 @@ public interface ComponentLoader<T extends Component> {
         void executeAutowireTasks();
     }
 
+    /**
+     * Represents a context for loading and initializing UI components in {@link Fragment}.
+     */
     interface FragmentContext extends Context {
 
         /**
@@ -162,28 +140,13 @@ public interface ComponentLoader<T extends Component> {
      * InitTasks are used to perform deferred initialization of visual components.
      */
     interface InitTask {
-        /**
-         * This method will be invoked after view initialization.
-         *
-         * @param context loader context
-         * @param view    view
-         * @deprecated Use {@link #execute(Context)} instead
-         */
-        @Deprecated(since = "2.3", forRemoval = true)
-        void execute(ComponentContext context, View<?> view);
 
         /**
          * This method will be invoked after component's content initialization.
          *
          * @param context loader context
          */
-        default void execute(Context context) {
-            if (context instanceof ComponentContext componentContext) {
-                execute(componentContext, componentContext.getView());
-            } else {
-                throw new IllegalArgumentException("'context' must implement " + ComponentContext.class.getName());
-            }
-        }
+        void execute(Context context);
     }
 
     /**
@@ -199,34 +162,85 @@ public interface ComponentLoader<T extends Component> {
         void execute(ComponentContext componentContext);
     }
 
+    /**
+     * Returns the context associated with the current component loading and initialization process.
+     *
+     * @return the {@link Context} instance
+     */
     Context getContext();
 
+    /**
+     * Sets the context for loading and initializing UI components.
+     *
+     * @param context the {@link Context} instance to set
+     */
     void setContext(Context context);
 
+    /**
+     * Returns the factory for creating UI components.
+     *
+     * @return the {@link UiComponents} instance
+     */
     UiComponents getFactory();
 
+    /**
+     * Sets the factory used for creating UI components.
+     *
+     * @param factory the {@link UiComponents} instance to set
+     */
     void setFactory(UiComponents factory);
 
+    /**
+     * Returns the {@link LoaderResolver} instance used to resolve component and view loaders
+     * during the XML-based component initialization process.
+     *
+     * @return the {@link LoaderResolver} instance
+     */
     LoaderResolver getLoaderResolver();
 
+    /**
+     * Sets the {@link LoaderResolver} instance used to resolve component and view loaders
+     * during the XML-based component initialization process.
+     *
+     * @param loaderResolver the {@link LoaderResolver} instance to set
+     */
     void setLoaderResolver(LoaderResolver loaderResolver);
 
+    /**
+     * Returns the {@link LoaderSupport} instance used to provide support functionalities
+     * for loading and initializing components.
+     *
+     * @return the {@link LoaderSupport} instance
+     */
     LoaderSupport getLoaderSupport();
 
+    /**
+     * Sets the {@link LoaderSupport} instance used to provide supporting functionalities
+     * for loading and initializing components.
+     *
+     * @param loaderSupport the {@link LoaderSupport} instance to set
+     */
     void setLoaderSupport(LoaderSupport loaderSupport);
 
-    Element getElement(Element element);
-
+    /**
+     * Sets the specified XML element to be associated with the component loader.
+     *
+     * @param element the {@link Element} instance representing the XML configuration
+     *                for a UI component
+     */
     void setElement(Element element);
 
-    void setApplicationContext(ApplicationContext applicationContext);
+    /**
+     * @return XML element associated with the component loader
+     */
+    Element getElement();
 
     /**
-     * @deprecated unused
+     * Sets the application context for the current component loader.
+     *
+     * @param applicationContext the {@link ApplicationContext} instance to set
      */
-    // don't forget to remove corresponding spotbugs exclusion
-    @Deprecated(since = "2.5", forRemoval = true)
-    void setEnvironment(Environment environment);
+    void setApplicationContext(ApplicationContext applicationContext);
 
     /**
      * Creates result component by XML-element
@@ -235,8 +249,6 @@ public interface ComponentLoader<T extends Component> {
 
     /**
      * Loads component properties by XML definition.
-     *
-     * @see #getElement(Element)
      */
     void loadComponent();
 

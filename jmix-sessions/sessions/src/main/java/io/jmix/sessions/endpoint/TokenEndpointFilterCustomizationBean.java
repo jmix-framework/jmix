@@ -16,8 +16,8 @@
 
 package io.jmix.sessions.endpoint;
 
-import io.jmix.authserver.authentication.RequestLocaleProvider;
 import io.jmix.core.session.SessionData;
+import io.jmix.security.util.RequestLocaleProvider;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.Filter;
 import org.springframework.beans.factory.ObjectProvider;

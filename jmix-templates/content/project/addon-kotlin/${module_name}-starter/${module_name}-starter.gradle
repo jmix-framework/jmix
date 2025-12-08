@@ -12,8 +12,5 @@ dependencies {
     implementation 'io.jmix.core:jmix-core'
     implementation 'io.jmix.data:jmix-data'
 
-    // Provides Kotlin reflection API used by Spring Data/Jmix to inspect Kotlin method signatures
-    implementation 'org.jetbrains.kotlin:kotlin-reflect'
-
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

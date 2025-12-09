@@ -685,9 +685,15 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Copies the value to the clipboard using an asynchronous JavaScript function call from the UI DOM element.
+     * Writes the value to the clipboard using an asynchronous JavaScript function call from the UI DOM element.
+     * <p>
+     * NOTE: It's not guaranteed that this method will write a value to the clipboard due to "user activation",
+     * which means that an error may occur when a code is not executed as a direct result of the end user clicking
+     * or tapping on an HTML element (e.g., {@code <button>}).
      *
      * @param valueToCopy the value to copy
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/User_activation">User activation</a>
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API">Clipboard API</a>
      */
     public static PendingJavaScriptResult copyToClipboard(String valueToCopy) {
         return UI.getCurrent().getElement().executeJs(getCopyToClipboardScript(), valueToCopy);
@@ -721,7 +727,7 @@ public final class UiComponentUtils {
             try {
                 return uri.toURL().toString();
             } catch (MalformedURLException e) {
-                throw new IllegalArgumentException("Cannot convert provided URI `" + uri + "' to URL", e);
+                throw new IllegalArgumentException("Cannot convert provided URI '" + uri + "' to URL", e);
             }
         }
 
@@ -729,23 +735,44 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Gets JavaScript function for copying a value to the clipboard. A temporary invisible
-     * {@code textarea} DOM element is used for copying.
+     * Generates a JavaScript script for copying text to the clipboard. The script first attempts to use
+     * the modern Clipboard API. If the Clipboard API is unavailable or fails, it falls back to using
+     * the {@code document.execCommand} method as a compatibility solution.
      *
-     * @return JavaScript copy function script
+     * @return a string containing the JavaScript code for clipboard manipulation
      */
     private static String getCopyToClipboardScript() {
         return """
-                   const textarea = document.createElement("textarea");
-                   textarea.value = $0;
+                const text = $0;
+                try {
+                    // Attempt to use the modern Clipboard API first
+                    // This might fail if the server round-trip takes too long (losing user activation)
+                    await navigator.clipboard.writeText(text);
+                } catch (error) {
+                    console.error('Copying of the text failed: ' + error);
                 
-                   textarea.style.position = "absolute";
-                   textarea.style.opacity = "0";
+                    // Fallback to document.execCommand if navigator.clipboard fails
+                    // (e.g. due to NotAllowedError or lack of Secure Context)
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
                 
-                   document.body.appendChild(textarea);
-                   textarea.select();
-                   document.execCommand("copy");
-                   document.body.removeChild(textarea);
+                    // Ensure the textarea is part of the DOM but hidden from view
+                    textArea.style.position = "absolute";
+                    textArea.style.opacity = "0";
+                
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                
+                    try {
+                        const successful = document.execCommand('copy');
+                        if (!successful) {
+                            throw new Error('Copying of the text failed.');
+                        }
+                    } finally {
+                        document.body.removeChild(textArea);
+                    }
+                }
                 """;
     }
 

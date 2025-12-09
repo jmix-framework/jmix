@@ -110,7 +110,7 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
 
     @Override
     public String getPageTitle() {
-        if (getEditedEntity().getName() != null) {
+        if (getEditedEntityOrNull() != null && getEditedEntity().getName() != null) {
             return getEditedEntity().getName();
         } else {
             return super.getPageTitle();

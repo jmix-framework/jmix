@@ -26,7 +26,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
 
     @Install(to = "${tableDl}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
     private fun loadDelegate(pageable: Pageable, context: JmixDataRepositoryContext): List<${entity.className}> {
-        return repository.findAll(pageable, context).content
+        return repository.findAllSlice(pageable, context).content
     }<%if (tableActions.contains("remove")) {%>
 
     @Install(to = "${tableId}.removeAction", subject = "delegate")

@@ -27,6 +27,8 @@ import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.kit.component.Alignment;
+import jakarta.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +46,9 @@ import java.util.stream.Collectors;
 @JsModule("./src/grid-layout/jmix-grid-layout.js")
 public class JmixGridLayout<T> extends Component implements HasSize, HasItemComponents<T>,
         HasListDataView<T, GridLayoutListDataView<T>>, HasDataView<T, Void, GridLayoutDataView<T>> {
+
+    protected static final String ALIGN_SELF_CSS_PROPERTY = "alignSelf";
+    protected static final String JUSTIFY_SELF_CSS_PROPERTY = "justifySelf";
 
     protected final AtomicReference<DataProvider<T, ?>> dataProvider = new AtomicReference<>(DataProvider.ofItems());
     protected List<T> items;
@@ -93,6 +98,76 @@ public class JmixGridLayout<T> extends Component implements HasSize, HasItemComp
      */
     public void setColumnMinWidth(String columnMinWidth) {
         getElement().setProperty("columnMinWidth", columnMinWidth);
+    }
+
+    /**
+     * Returns the individual alignment of a given component inside a cell along the block (column) axis.
+     * <p>
+     * The default alignment for individual components is {@link Alignment#AUTO}.
+     *
+     * @param component the component which individual layout should be read
+     * @return the alignment of the component
+     */
+    public Alignment getAlignSelf(HasElement component) {
+        return Alignment.toAlignment(component.getElement().getStyle()
+                .get(ALIGN_SELF_CSS_PROPERTY), Alignment.AUTO);
+    }
+
+    /**
+     * Sets an alignment for individual components inside their cells along the block (column) axis.
+     * <p>
+     * It effectively sets the {@code "alignSelf"} style value.
+     *
+     * @param alignment  the individual alignment for the children components. Setting
+     *                   {@code null} will reset the alignment to its default
+     * @param components the components to which the individual alignment should be set
+     */
+    public void setAlignSelf(@Nullable Alignment alignment, HasElement... components) {
+        if (alignment == null) {
+            for (HasElement component : components) {
+                component.getElement().getStyle()
+                        .remove(ALIGN_SELF_CSS_PROPERTY);
+            }
+        } else {
+            for (HasElement component : components) {
+                component.getElement().getStyle().set(ALIGN_SELF_CSS_PROPERTY, alignment.getFlexValue());
+            }
+        }
+    }
+
+    /**
+     * Returns the individual alignment of a given component inside a cell along the inline (row) axis.
+     * <p>
+     * The default alignment for individual components is {@link Alignment#AUTO}.
+     *
+     * @param component the component which individual layout should be read
+     * @return the alignment of the component
+     */
+    public Alignment getJustifySelf(HasElement component) {
+        return Alignment.toAlignment(component.getElement().getStyle()
+                .get(JUSTIFY_SELF_CSS_PROPERTY), Alignment.AUTO);
+    }
+
+    /**
+     * Sets an alignment for individual components inside their cells along the inline (row) axis.
+     * <p>
+     * It effectively sets the {@code "justifySelf"} style value.
+     *
+     * @param alignment  the individual alignment for the children components. Setting
+     *                   {@code null} will reset the alignment to its default
+     * @param components the components to which the individual alignment should be set
+     */
+    public void setJustifySelf(@Nullable Alignment alignment, HasElement... components) {
+        if (alignment == null) {
+            for (HasElement component : components) {
+                component.getElement().getStyle()
+                        .remove(JUSTIFY_SELF_CSS_PROPERTY);
+            }
+        } else {
+            for (HasElement component : components) {
+                component.getElement().getStyle().set(JUSTIFY_SELF_CSS_PROPERTY, alignment.getFlexValue());
+            }
+        }
     }
 
     /**

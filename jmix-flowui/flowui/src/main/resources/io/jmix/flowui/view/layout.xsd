@@ -2508,6 +2508,7 @@
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="colspan" type="xs:integer"/>
         <xs:attribute name="alignSelf" type="alignEnum"/>
+        <xs:attribute name="justifySelf" type="alignEnum"/>
         <xs:attribute name="css" type="xs:string"/>
 
         <!-- enable XSD extension here -->
@@ -5501,6 +5502,7 @@
                 <xs:attribute name="visible" type="xs:boolean"/>
                 <xs:attribute name="colspan" type="xs:integer"/>
                 <xs:attribute name="alignSelf" type="alignEnum"/>
+                <xs:attribute name="justifySelf" type="alignEnum"/>
                 <xs:attribute name="css" type="xs:string"/>
                 <xs:attribute name="themeNames" type="spacingThemeNames"/>
                 <xs:attribute name="wrap" type="xs:boolean"/>

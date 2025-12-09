@@ -65,6 +65,8 @@ public interface LockManager {
      * @param force force unlock even if the lock is not owned by the current owner
      */
     default void unlock(String name, String id, boolean force) {
+        // for backward compatibility since 2.7,
+        // the default implementation should be removed in future releases
         unlock(name, id);
     }
 

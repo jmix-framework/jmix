@@ -58,6 +58,17 @@ public interface LockManager {
     void unlock(String name, String id);
 
     /**
+     * Unlock an arbitrary object.
+     *
+     * @param name  locking object name
+     * @param id    locking object ID
+     * @param force force unlock even if the lock is not owned by the current owner
+     */
+    default void unlock(String name, String id, boolean force) {
+        unlock(name, id);
+    }
+
+    /**
      * Unlock an entity.
      *
      * @param entity entity instance

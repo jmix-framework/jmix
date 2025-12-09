@@ -38,8 +38,6 @@ import ${repository.getQualifiedName()};
 import java.util.Optional;
 import java.util.Set;
 import ${getRepositoryIdFqn()};
-
-import static io.jmix.core.repository.JmixDataRepositoryUtils.*;
 <%}%>
 <%if (classComment) {%>
 ${classComment}

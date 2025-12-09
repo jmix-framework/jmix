@@ -34,6 +34,6 @@ public class ThisMonthPredefinedDateInterval extends PredefinedDateInterval {
 
     @Override
     public String apply(String property) {
-        return String.format("@between({E}.%s, now, now+1, month)", property);
+        return "@between({E}.%s, now, now+1, month)";
     }
 }

@@ -319,8 +319,8 @@ public class DynamicAttributesGroupConfiguration extends AbstractAttributesGroup
         }
 
         /**
-         * Defines explicit priority of the {@link MappingDefinition} for the field.
-         * The higher the order number, the higher the priority.
+         * Defines explicit order of the {@link MappingDefinition} for the field.
+         * The {@link MappingDefinition} with the highest order number will be applied.
          * If the order is not specified {@link Integer#MIN_VALUE} will be used.
          * It overrides order on strategy - {@link FieldMappingStrategy#getOrder()}.
          * If two {@link MappingDefinition} objects have the same order

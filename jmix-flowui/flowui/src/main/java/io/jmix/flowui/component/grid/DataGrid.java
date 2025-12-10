@@ -96,6 +96,22 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         return super.setItems(dataProvider);
     }
 
+    @Override
+    public void scrollToItem(E item) {
+        if (getDataProvider() instanceof DataGridItems) {
+            Preconditions.checkNotNullArgument(item, "Item to scroll to cannot be null.");
+
+            Integer itemIndex = getGenericDataView().getItemIndex(item)
+                    .orElseThrow(() -> new NoSuchElementException(
+                            "Item to scroll to cannot be found: " + item));
+            scrollToIndex(itemIndex);
+
+            return;
+        }
+
+        super.scrollToItem(item);
+    }
+
     @Nullable
     @Override
     public E getSingleSelectedItem() {

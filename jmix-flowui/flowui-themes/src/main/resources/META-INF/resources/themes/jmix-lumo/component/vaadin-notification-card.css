@@ -18,7 +18,7 @@
 .jmix-text-layout-closeable .message,
 .jmix-text-layout .title,
 .jmix-text-layout .message {
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .jmix-text-layout-closeable .title,

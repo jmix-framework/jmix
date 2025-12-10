@@ -28,6 +28,8 @@ import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentModel;
 import io.jmix.security.role.assignment.RoleAssignmentPersistence;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import io.jmix.securityflowui.view.resourcerole.ResourceRoleModelLookupView;
+import io.jmix.securityflowui.view.rowlevelrole.RowLevelRoleModelLookupView;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -231,6 +233,16 @@ public class RoleAssignmentView extends StandardView {
                     return assignmentModel;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Install(to = "resourceRoleAssignmentsTable.addResourceRole", subject = "viewConfigurer")
+    private void resourceRoleAssignmentsTableAddResourceRoleViewConfigurer(final ResourceRoleModelLookupView resourceRoleModelLookupView) {
+        resourceRoleModelLookupView.setUser(user);
+    }
+
+    @Install(to = "rowLevelRoleAssignmentsTable.addRowLevelRole", subject = "viewConfigurer")
+    private void rowLevelRoleAssignmentsTableAddRowLevelRoleViewConfigurer(final RowLevelRoleModelLookupView rowLevelRoleModelLookupView) {
+        rowLevelRoleModelLookupView.setUser(user);
     }
 
     @Subscribe("resourceRoleAssignmentsTable.remove")

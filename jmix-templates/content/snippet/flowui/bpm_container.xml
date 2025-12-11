@@ -12,7 +12,7 @@ def optionsDatasourceXml = ''
     def createdCollections = []
 
     variables.each { v ->
-        if (v.type.id == 'entity') {
+        if (v.type.id.startsWith('entity')) {
             def entityName = ''
             def fqn = ''
             def query = ''

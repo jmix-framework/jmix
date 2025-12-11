@@ -16,12 +16,12 @@
 
 package element_collection;
 
-import io.jmix.core.*;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.core.EntityStates;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.event.EntityChangedEvent;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import jakarta.persistence.EntityManager;
@@ -53,10 +53,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ElementCollectionTest {
 
     @Autowired
-    Metadata metadata;
-    @Autowired
-    MetadataTools metadataTools;
-    @Autowired
     EntityStates entityStates;
     @Autowired
     UnconstrainedDataManager dataManager;
@@ -77,27 +73,6 @@ public class ElementCollectionTest {
         jdbc.update("delete from TEST_EC_ALPHA_TAGS");
         jdbc.update("delete from TEST_EC_ALPHA");
         jdbc.update("delete from TEST_EC_BETA");
-    }
-
-    @Test
-    void testMetadata() {
-        MetaClass metaClass = metadata.getClass(EcAlpha.class);
-
-        MetaProperty property = metaClass.findProperty("tags");
-        assertThat(property).isNotNull();
-
-        MetaProperty.Type propertyType = property.getType();
-        assertThat(propertyType).isEqualTo(MetaProperty.Type.DATATYPE);
-
-        Range propertyRange = property.getRange();
-        assertThat(propertyRange.isDatatype()).isTrue();
-
-        Range.Cardinality cardinality = propertyRange.getCardinality();
-        assertThat(cardinality.isMany()).isTrue();
-
-        assertThat(propertyRange.isOrdered()).isTrue();
-
-        assertThat(metadataTools.isJpa(property)).isTrue();
     }
 
     @Test

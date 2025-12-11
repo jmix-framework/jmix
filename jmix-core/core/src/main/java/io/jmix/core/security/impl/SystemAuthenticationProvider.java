@@ -41,9 +41,10 @@ public class SystemAuthenticationProvider implements AuthenticationProvider {
 
         UserDetails userDetails;
         String username = authentication.getName();
-        //todo MG check null or 'system'
-        if (Strings.isNullOrEmpty(username)) {
-            userDetails = userRepository.getSystemUser();
+        UserDetails systemUser = userRepository.getSystemUser();
+        if (Strings.isNullOrEmpty(username)
+                || username.equalsIgnoreCase(systemUser.getUsername())) {
+            userDetails = systemUser;
         } else {
             userDetails = userRepository.loadUserByUsername(username);
         }

@@ -487,6 +487,10 @@ public class MetadataTools {
         return Boolean.TRUE.equals(metaProperty.getAnnotatedElement().isAnnotationPresent(Secret.class));
     }
 
+    public boolean isElementCollection(MetaProperty metaProperty) {
+        return metaProperty.getRange().isDatatype() && metaProperty.getRange().getCardinality().isMany();
+    }
+
     public Map<String, Object> getMetaAnnotationAttributes(Map<String, Object> metaAnnotations, Class<?> metaAnnotationClass) {
         @SuppressWarnings("unchecked")
         Map<String, Object> map = (Map<String, Object>) metaAnnotations.get(metaAnnotationClass.getName());

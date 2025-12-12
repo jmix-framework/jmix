@@ -105,10 +105,8 @@ public abstract class AbstractValueHolder extends UnitOfWorkValueHolder implemen
 
     @Override
     public DatabaseMapping getMapping() {
-        if (LazyLoadingContext.isDisabled()) {
-            return originalValueHolder.getMapping();
-        }
-        throw new RuntimeException("Unsupported by lazy loading");
+        // Called e.g. by not-instantiated IndirectList.add()
+        return originalValueHolder.getMapping();
     }
 
     @Override

@@ -16,11 +16,11 @@
 
 package io.jmix.dynattrflowui.xml.facet.loader;
 
+import com.vaadin.flow.component.Component;
 import io.jmix.dynattrflowui.DynAttrEmbeddingStrategies;
 import io.jmix.dynattrflowui.facet.DynAttrFacet;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.impl.FacetsImpl;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.facet.loader.AbstractFacetLoader;
 
@@ -45,11 +45,11 @@ public class DynAttrFacetLoader extends AbstractFacetLoader<DynAttrFacet> {
             }
         }
 
-        View<?> view = context.getView();
-        context.addInitTask(__ -> {
-            UiComponentUtils.traverseComponents(view, component ->
-                    getEmbeddingStrategies().embedAttributes(component, view));
-        });
+        // TODO: kd, check to getting all components in case of fragment
+        Component owner = context.getOrigin();
+        context.addInitTask(__ ->
+                UiComponentUtils.traverseComponents(owner, component ->
+                        getEmbeddingStrategies().embedAttributes(component, owner)));
     }
 
     protected DynAttrEmbeddingStrategies getEmbeddingStrategies() {

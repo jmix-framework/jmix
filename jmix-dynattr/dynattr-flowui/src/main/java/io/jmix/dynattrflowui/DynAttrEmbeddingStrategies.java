@@ -35,7 +35,7 @@ public class DynAttrEmbeddingStrategies {
     }
 
 
-    public void embedAttributes(Component component, View<?> owner) {
+    public void embedAttributes(Component component, Component owner) {
         if (embeddingStrategies != null) {
             for (EmbeddingStrategy strategy : embeddingStrategies) {
                 if (strategy.supportComponent(component)) {

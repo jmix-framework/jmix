@@ -37,6 +37,8 @@ public class DateIntervalTestView extends StandardView {
     public CollectionContainer<Order> ordersDc;
     @ViewComponent
     public PropertyFilter<? super BaseDateInterval> dateFilter;
+    @ViewComponent
+    public PropertyFilter<? super BaseDateInterval> nestedOrderLineFilter;
 
     public Collection<Order> getItems() {
         return ordersDc.getItems();

@@ -16,20 +16,21 @@
 
 package io.jmix.securityflowui.util;
 
+import io.jmix.security.model.BaseRole;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.function.BiPredicate;
 
 /**
- * Interface to provide predicate to test the possibility to use some user as substitution based on target user.
- * Accepts the user to be substituted and another user as substitution candidate.
+ * Interface to provide predicate to test the possibility to assign some role to specific user.
+ * Accepts the role to be assigned and the target user.
  */
-public interface UserSubstitutionCandidatePredicate extends BiPredicate<UserDetails, UserDetails> {
+public interface RoleAssignmentCandidatePredicate extends BiPredicate<UserDetails, BaseRole> {
 
     /**
-     * Wraps the generic {@code BiPredicate<UserDetails, UserDetails>} in {@link UserSubstitutionCandidatePredicate} type.
+     * Wraps the generic {@code BiPredicate<UserDetails, BaseRole>} in {@link RoleAssignmentCandidatePredicate} type.
      */
-    static UserSubstitutionCandidatePredicate of(BiPredicate<UserDetails, UserDetails> p) {
+    static RoleAssignmentCandidatePredicate of(BiPredicate<UserDetails, BaseRole> p) {
         return p::test;
     }
 }

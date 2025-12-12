@@ -275,11 +275,20 @@ public class GenericFilter extends Composite<JmixDetails>
     protected void initApplyButton(ComboButton applyButton) {
         applyButton.addClickListener(this::onApplyButtonClick);
         applyButton.addThemeVariants(ComboButtonVariant.LUMO_SUCCESS, ComboButtonVariant.LUMO_PRIMARY);
-        applyButton.setShortcutCombination(KeyCombination.create(applyShortcut, this));
+        applyShortcutCombination(applyButton, applyShortcut);
 
         updateApplyButtonText(isAutoApply());
 
         initSelectConfigurationDropdown();
+    }
+
+    protected void applyShortcutCombination(ComboButton applyButton, @Nullable String applyShortcut) {
+        KeyCombination keyCombination = KeyCombination.create(applyShortcut, this);
+        if (keyCombination != null) {
+            keyCombination.setResetFocusOnActiveElement(true);
+        }
+
+        applyButton.setShortcutCombination(keyCombination);
     }
 
     protected void initSelectConfigurationDropdown() {
@@ -405,7 +414,7 @@ public class GenericFilter extends Composite<JmixDetails>
         if (!Objects.equals(this.applyShortcut, applyShortcut)) {
             this.applyShortcut = applyShortcut;
 
-            applyButton.setShortcutCombination(KeyCombination.create(applyShortcut, this));
+            applyShortcutCombination(applyButton, applyShortcut);
         }
     }
 

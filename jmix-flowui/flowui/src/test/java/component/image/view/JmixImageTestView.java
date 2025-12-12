@@ -41,7 +41,7 @@ public class JmixImageTestView extends StandardView {
     @Subscribe
     public void onReady(ReadyEvent event) {
         DocumentAttachment attachment = metadata.create(DocumentAttachment.class);
-        attachment.setPreview(RandomUtils.nextBytes(1));
+        attachment.setPreview(RandomUtils.secure().randomBytes(1));
         documentAttachmentDc.setItem(attachment);
     }
 }

@@ -176,28 +176,24 @@ public class AssignToUsersAction<E extends BaseRoleModel>
         }
 
         Class<? extends BaseRoleModel> roleClass = selectedItem.getClass();
-        BaseRole baseRole = null;
-        if (ResourceRoleModel.class.isAssignableFrom(roleClass)) {
-            baseRole = resourceRoleRepository.findRoleByCode(selectedItem.getCode());
-        } else if (RowLevelRoleModel.class.isAssignableFrom(roleClass)) {
-            baseRole = rowLevelRoleRepository.findRoleByCode(selectedItem.getCode());
-        }
 
-        final BaseRole finalBaseRole = baseRole;
+        BaseRole baseRole = ResourceRoleModel.class.isAssignableFrom(roleClass)
+                ? resourceRoleRepository.findRoleByCode(selectedItem.getCode())
+                : rowLevelRoleRepository.findRoleByCode(selectedItem.getCode());
 
         DialogWindow<View<?>> dialog = dialogWindows
                 .lookup(UiComponentUtils.getView(((Component) target)), userClass)
                 .withSelectHandler(this::selectHandler)
                 .withSelectValidator(validationContext -> {
-                    if (finalBaseRole == null) {
+                    if (baseRole == null) {
                         return true;
                     }
                     Collection<?> selectedItems = validationContext.getSelectedItems();
                     for (Object item : selectedItems) {
                         if (item instanceof UserDetails userDetails) {
-                            boolean applicable = compositeRoleAssignmentCandidatePredicate.test(userDetails, finalBaseRole);
+                            boolean applicable = compositeRoleAssignmentCandidatePredicate.test(userDetails, baseRole);
                             if (!applicable) {
-                                log.warn("Role '{}' can't be assigned to user '{}'", finalBaseRole.getName(), userDetails.getUsername());
+                                log.warn("Role '{}' can't be assigned to user '{}'", baseRole.getName(), userDetails.getUsername());
                                 showNotificationIncorrectUserSelected(userDetails);
                                 return false;
                             }

@@ -56,11 +56,12 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
 
     @Autowired(required = false)
     protected List<RoleAssignmentCandidatePredicate> roleAssignmentCandidatePredicates = Collections.emptyList();
+
     protected RoleAssignmentCandidatePredicate compositeRoleAssignmentCandidatePredicate;
 
-    private UserDetails user;
-
     private List<String> excludedRolesCodes = Collections.emptyList();
+
+    private UserDetails user;
 
     @Subscribe
     public void onInit(InitEvent event) {

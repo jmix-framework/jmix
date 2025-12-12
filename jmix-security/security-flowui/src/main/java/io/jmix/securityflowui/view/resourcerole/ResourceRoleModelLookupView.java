@@ -56,6 +56,7 @@ public class ResourceRoleModelLookupView extends StandardListView<ResourceRoleMo
 
     @Autowired(required = false)
     protected List<RoleAssignmentCandidatePredicate> roleAssignmentCandidatePredicates = Collections.emptyList();
+
     protected RoleAssignmentCandidatePredicate compositeRoleAssignmentCandidatePredicate;
 
     private List<String> excludedRolesCodes = Collections.emptyList();

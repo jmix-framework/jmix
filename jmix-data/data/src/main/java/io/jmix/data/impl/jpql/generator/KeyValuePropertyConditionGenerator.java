@@ -85,7 +85,7 @@ public class KeyValuePropertyConditionGenerator extends PropertyConditionGenerat
             String operation = PropertyConditionUtils.getJpqlOperation(propertyCondition);
             String lastSymbol = operation.contains("@between") ? "," : " ";
             return new StringBuilder(operation)
-                    .replace(operation.indexOf("{"), operation.indexOf(lastSymbol), entityAlias)
+                    .replace(operation.indexOf("%"), operation.indexOf(lastSymbol), entityAlias)
                     .toString();
         } else {
             return String.format("%s %s :%s",

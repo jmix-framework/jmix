@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.sales.Order
+import test_support.entity.sales.OrderLine
 import test_support.spec.FlowuiTestSpecification
 
 import java.time.LocalDate
@@ -56,17 +57,25 @@ class DateIntervalTest extends FlowuiTestSpecification {
         def item1 = dataManager.create Order
         item1.date = currentDate
 
+        def line1 = dataManager.create OrderLine
+        line1.order = item1
+        def line2 = dataManager.create OrderLine
+        line2.order = item1
+        def line3 = dataManager.create OrderLine
+        line3.order = item1
+
         def item2 = dataManager.create Order
         item2.date = lastDate
 
         def item3 = dataManager.create Order
         item3.date = nextDate
 
-        dataManager.save item1, item2, item3
+        dataManager.save item1, item2, item3, line1, line2, line3
     }
 
     @Override
     void cleanup() {
+        jdbcTemplate.update "delete from TEST_ORDER_LINE"
         jdbcTemplate.update "delete from TEST_ORDER"
     }
 
@@ -111,6 +120,29 @@ class DateIntervalTest extends FlowuiTestSpecification {
 
         then: "Should be loaded only one item"
         view.items.size() == 1
+    }
+
+    def "DateInterval applied to 'to-Many' association inner property"() {
+        when: "Open the DateIntervalTestView with a property filter"
+        def view = navigateToView DateIntervalTestView
+        PropertyFilter<? super DateInterval> propertyFilter = view.nestedOrderLineFilter
+
+        then: "All items will be loaded"
+        view.items.size() == 3
+
+        when: "Apply filter with 'LAST 1 HOUR INCLUDING CURRENT' interval"
+        propertyFilter.valueComponent.value = new DateInterval(BaseDateInterval.Type.LAST, 1, DateInterval.TimeUnit.HOUR, true)
+        propertyFilter.apply()
+
+        then: "Should be loaded only one item"
+        view.items.size() == 1
+
+        when: "Apply filter with 'NEXT 1 HOUR' interval"
+        propertyFilter.valueComponent.value = new DateInterval(BaseDateInterval.Type.NEXT, 1, DateInterval.TimeUnit.HOUR, false)
+        propertyFilter.apply()
+
+        then: "Zero items should be loaded"
+        view.items.size() == 0
     }
 
     def "DateInterval with LAST and NEXT type and KeyValueCollection"() {

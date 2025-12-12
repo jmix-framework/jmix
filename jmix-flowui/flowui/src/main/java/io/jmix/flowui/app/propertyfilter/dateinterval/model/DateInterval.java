@@ -73,6 +73,7 @@ public class DateInterval implements BaseDateInterval {
             moment1 = Boolean.TRUE.equals(includingCurrent) ? "now" : "now + 1";
             moment2 = "now + " + (number + 1);
         }
-        return String.format("@between({E}.%s, %s, %s, %s)", property, moment1, moment2, timeUnit.name());
+
+        return String.format("@between(%s.%s, %s, %s, %s)", "%s", "%s", moment1, moment2, timeUnit.name());
     }
 }

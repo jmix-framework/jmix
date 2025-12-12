@@ -21,14 +21,12 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
-@Table(name = "TEST_EC_BETA")
-@Entity(name = "test_EcBeta")
+@Table(name = "TEST_EC_GAMMA")
+@Entity(name = "test_EcGamma")
 @JmixEntity
-public class EcBeta {
+public class EcGamma {
 
     @Id
     @JmixGeneratedValue
@@ -39,8 +37,9 @@ public class EcBeta {
     @InstanceName
     private String name;
 
-    @OneToMany(mappedBy = "beta")
-    private Set<EcAlpha> alphas = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ALPHA_ID")
+    private EcAlpha alpha;
 
     public UUID getId() {
         return id;
@@ -58,11 +57,11 @@ public class EcBeta {
         this.name = name;
     }
 
-    public Set<EcAlpha> getAlphas() {
-        return alphas;
+    public EcAlpha getAlpha() {
+        return alpha;
     }
 
-    public void setAlphas(Set<EcAlpha> alphas) {
-        this.alphas = alphas;
+    public void setAlpha(EcAlpha alpha) {
+        this.alpha = alpha;
     }
 }

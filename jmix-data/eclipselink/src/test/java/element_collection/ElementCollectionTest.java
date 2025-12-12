@@ -22,6 +22,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.event.EntityChangedEvent;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import jakarta.persistence.EntityManager;
@@ -38,6 +39,7 @@ import test_support.DataTestConfiguration;
 import test_support.TestContextInititalizer;
 import test_support.entity.element_collection.EcAlpha;
 import test_support.entity.element_collection.EcBeta;
+import test_support.entity.element_collection.EcGamma;
 import test_support.listeners.TestEcAlphaChangedEventListener;
 
 import java.util.List;
@@ -70,6 +72,7 @@ public class ElementCollectionTest {
         changedEventListener.afterCommitEventConsumer = null;
         changedEventListener.beforeCommitEventConsumer = null;
 
+        jdbc.update("delete from TEST_EC_GAMMA");
         jdbc.update("delete from TEST_EC_ALPHA_TAGS");
         jdbc.update("delete from TEST_EC_ALPHA");
         jdbc.update("delete from TEST_EC_BETA");
@@ -234,8 +237,122 @@ public class ElementCollectionTest {
         assertThat(tags).containsExactlyInAnyOrder("tag1", "tag2");
     }
 
+    @Test
+    void testLoadWithQuery() {
+        Betas betas = createBetas();
+        Alphas alphas = createAlphas(betas);
+        Gammas gammas = createGammas(alphas);
+
+        List<EcAlpha> alphaList;
+
+        alphaList = dataManager.load(EcAlpha.class)
+                .query("select e from test_EcAlpha e where :tag member of e.tags")
+                .parameter("tag", "tag1")
+                .list();
+        assertThat(alphaList).containsExactly(alphas.alpha1());
+
+        alphaList = dataManager.load(EcAlpha.class)
+                .query("select e from test_EcAlpha e join e.tags t where t = :tag")
+                .parameter("tag", "tag1")
+                .list();
+        assertThat(alphaList).containsExactly(alphas.alpha1());
+
+        alphaList = dataManager.load(EcAlpha.class)
+                .query("select e from test_EcAlpha e join e.tags t where t like :tag")
+                .parameter("tag", "t%1")
+                .list();
+        assertThat(alphaList).containsExactly(alphas.alpha1());
+
+        List<EcGamma> gammaList = dataManager.load(EcGamma.class)
+                .query("select e from test_EcGamma e join e.alpha.tags t where t like :tag")
+                .parameter("tag", "t%1")
+                .list();
+        assertThat(gammaList).containsExactly(gammas.gamma1());
+    }
+
+    @Test
+    void testLoadWithConditions() {
+        Betas betas = createBetas();
+        Alphas alphas = createAlphas(betas);
+        Gammas gammas = createGammas(alphas);
+
+        List<EcAlpha> alphaList;
+
+        alphaList = dataManager.load(EcAlpha.class)
+                .condition(PropertyCondition.equal("tags", "tag1"))
+                .list();
+        assertThat(alphaList).containsExactly(alphas.alpha1);
+
+        alphaList = dataManager.load(EcAlpha.class)
+                .condition(PropertyCondition.contains("tags", "t%1"))
+                .list();
+        assertThat(alphaList).containsExactly(alphas.alpha1);
+
+        // intermediate many-to-one property
+        List<EcGamma> gammaList = dataManager.load(EcGamma.class)
+                .condition(PropertyCondition.equal("alpha.tags", "tag1"))
+                .list();
+        assertThat(gammaList).containsExactly(gammas.gamma1);
+
+        // intermediate one-to-many property
+        List<EcBeta> betaList = dataManager.load(EcBeta.class)
+                .condition(PropertyCondition.equal("alphas.tags", "tag1"))
+                .list();
+        assertThat(betaList).containsExactly(betas.beta1);
+    }
+
     private void setEventConsumer(Consumer<EntityChangedEvent<EcAlpha>> eventConsumer) {
         changedEventListener.beforeCommitEventConsumer = eventConsumer;
         changedEventListener.afterCommitEventConsumer = eventConsumer;
+    }
+
+    private Alphas createAlphas(Betas betas) {
+        EcAlpha alpha1 = dataManager.create(EcAlpha.class);
+        alpha1.setName("a1");
+        alpha1.setBeta(betas.beta1());
+        alpha1.setTags(List.of("tag1", "tag2"));
+
+        EcAlpha alpha2 = dataManager.create(EcAlpha.class);
+        alpha2.setName("a2");
+        alpha2.setBeta(betas.beta2());
+        alpha2.setTags(List.of("tag3", "tag4"));
+
+        dataManager.saveWithoutReload(alpha1, alpha2);
+
+        return new Alphas(alpha1, alpha2);
+    }
+
+    private Betas createBetas() {
+        EcBeta beta1 = dataManager.create(EcBeta.class);
+        beta1.setName("b1");
+        EcBeta beta2 = dataManager.create(EcBeta.class);
+        beta2.setName("b2");
+
+        dataManager.saveWithoutReload(beta1, beta2);
+
+        return new Betas(beta1, beta2);
+    }
+
+    private Gammas createGammas(Alphas alphas) {
+        EcGamma gamma1 = dataManager.create(EcGamma.class);
+        gamma1.setName("g1");
+        gamma1.setAlpha(alphas.alpha1());
+
+        EcGamma gamma2 = dataManager.create(EcGamma.class);
+        gamma2.setName("g2");
+        gamma2.setAlpha(alphas.alpha2());
+
+        dataManager.saveWithoutReload(gamma1, gamma2);
+
+        return new Gammas(gamma1, gamma2);
+    }
+
+    private record Alphas(EcAlpha alpha1, EcAlpha alpha2) {
+    }
+
+    private record Betas(EcBeta beta1, EcBeta beta2) {
+    }
+
+    private record Gammas(EcGamma gamma1, EcGamma gamma2) {
     }
 }

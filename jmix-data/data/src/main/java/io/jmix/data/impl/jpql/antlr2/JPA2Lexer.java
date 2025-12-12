@@ -1,4 +1,4 @@
-// $ANTLR 3.5.2 JPA2.g 2025-09-04 11:54:17
+// $ANTLR 3.5.2 JPA2.g 2025-12-11 17:57:00
 
 package io.jmix.data.impl.jpql.antlr2;
 

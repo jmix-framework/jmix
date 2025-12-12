@@ -101,7 +101,7 @@ public class ConditionGenerationContext {
         return joinMetaClass;
     }
 
-    public void setJoinMetaClass(MetaClass joinMetaClass) {
+    public void setJoinMetaClass(@Nullable MetaClass joinMetaClass) {
         this.joinMetaClass = joinMetaClass;
     }
 

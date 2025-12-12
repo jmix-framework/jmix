@@ -783,7 +783,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
 
         if (emptyStateComponentElement.elements().size() != 1) {
-            String message = "%s with '%s' ID should have a single 'emptyStateComponent' element"
+            String message = "%s with '%s' ID must contain a single nested element for the 'emptyStateComponent'"
                     .formatted(resultComponent.getClass().getSimpleName(), resultComponent.getId().orElse(null));
 
             throw new GuiDevelopmentException(message, context);

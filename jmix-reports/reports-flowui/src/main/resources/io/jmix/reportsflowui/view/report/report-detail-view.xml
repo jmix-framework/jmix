@@ -127,7 +127,8 @@
                                           spacing="false"
                                           height="100%">
                                         <div width="100%" classNames="flex, justify-between">
-                                            <nativeLabel text="msg://report.groovyScript.title"
+                                            <nativeLabel id="codeEditorLabel"
+                                                         text="msg://report.groovyScript.title"
                                                          setFor="jsonGroovyCodeEditor"/>
                                             <button id="dataSetScriptFullScreenBtn" text="msg:///fullScreenBtn.title"
                                                     themeNames="tertiary-inline"/>

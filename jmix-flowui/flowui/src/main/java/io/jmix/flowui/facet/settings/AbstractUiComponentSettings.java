@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,25 @@
 
 package io.jmix.flowui.facet.settings;
 
-import io.jmix.flowui.view.View;
+import com.vaadin.flow.component.Component;
 
 /**
- * Abstract base class that partially implements the {@link ViewSettings} interface
- * and provides common functionality related to managing settings for a specific {@link View}.
- *
- * @deprecated use {@link AbstractUiComponentSettings} instead
+ * Abstract base class that partially implements the {@link UiComponentSettings} interface
+ * and provides common functionality related to managing settings for a specific {@link Component}.
  */
-@Deprecated(since = "3.0", forRemoval = true)
-public abstract class AbstractViewSettings implements ViewSettings {
+public abstract class AbstractUiComponentSettings<S extends UiComponentSettings<S>>
+        implements UiComponentSettings<S> {
 
-    protected String viewId;
+    protected String ownerId;
     protected boolean modified = false;
 
-    public AbstractViewSettings(String viewId) {
-        this.viewId = viewId;
+    protected AbstractUiComponentSettings(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     @Override
-    public String getViewId() {
-        return viewId;
+    public String getOwnerId() {
+        return ownerId;
     }
 
     @Override

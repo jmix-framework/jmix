@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,29 +29,29 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 
 /**
- * Implementation of {@link ViewSettingsComponentManager} that applies, saves, and manages settings for components
- * using {@link ViewSettingsComponentRegistry} and {@link UserSettingsCache}.
+ * Implementation of {@link ComponentSettingsManager} that applies, saves, and manages settings for components
+ * using {@link ComponentSettingsRegistry} and {@link UserSettingsCache}.
  */
 @Internal
-@org.springframework.stereotype.Component("flowui_ViewSettingsComponentManagerImpl")
-public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentManager {
+@org.springframework.stereotype.Component("flowui_ComponentSettingsManagerImpl")
+public class ComponentSettingsManagerImpl implements ComponentSettingsManager {
 
-    private static final Logger log = LoggerFactory.getLogger(ViewSettingsComponentManagerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ComponentSettingsManagerImpl.class);
 
-    protected ViewSettingsComponentRegistry settingsRegistry;
+    protected ComponentSettingsRegistry settingsRegistry;
     protected UserSettingsCache userSettingsCache;
 
-    public ViewSettingsComponentManagerImpl(ViewSettingsComponentRegistry settingsRegistry,
-                                            UserSettingsCache userSettingsCache) {
+    public ComponentSettingsManagerImpl(ComponentSettingsRegistry settingsRegistry,
+                                        UserSettingsCache userSettingsCache) {
         this.settingsRegistry = settingsRegistry;
         this.userSettingsCache = userSettingsCache;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void applySettings(Collection<Component> components, ViewSettings viewSettings) {
+    public void applySettings(Collection<Component> components, UiComponentSettings<?> componentSettings) {
         Preconditions.checkNotNullArgument(components);
-        Preconditions.checkNotNullArgument(viewSettings);
+        Preconditions.checkNotNullArgument(componentSettings);
 
         for (Component component : components) {
             if (Strings.isNullOrEmpty(component.getId().orElse(null))
@@ -65,7 +65,7 @@ public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentMa
                     settingsRegistry.getSettingsBinder(component.getClass());
 
             Class<? extends Settings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
-            Settings settings = viewSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
+            Settings settings = componentSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
 
             binder.applySettings(component, settings.as());
         }
@@ -73,9 +73,9 @@ public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentMa
 
     @SuppressWarnings("unchecked")
     @Override
-    public void applyDataLoadingSettings(Collection<Component> components, ViewSettings viewSettings) {
+    public void applyDataLoadingSettings(Collection<Component> components, UiComponentSettings<?> componentSettings) {
         Preconditions.checkNotNullArgument(components);
-        Preconditions.checkNotNullArgument(viewSettings);
+        Preconditions.checkNotNullArgument(componentSettings);
 
         for (Component component : components) {
             if (!settingsRegistry.isSettingsRegisteredFor(component.getClass())
@@ -91,7 +91,7 @@ public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentMa
                     settingsRegistry.getSettingsBinder(component.getClass());
 
             if (binder instanceof DataLoadingSettingsBinder) {
-                Settings settings = viewSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
+                Settings settings = componentSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
                 ((DataLoadingSettingsBinder<Component, ?>) binder).applyDataLoadingSettings(component, settings.as());
             }
         }
@@ -99,9 +99,9 @@ public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentMa
 
     @SuppressWarnings("unchecked")
     @Override
-    public void saveSettings(Collection<Component> components, ViewSettings viewSettings) {
+    public void saveSettings(Collection<Component> components, UiComponentSettings<?> componentSettings) {
         Preconditions.checkNotNullArgument(components);
-        Preconditions.checkNotNullArgument(viewSettings);
+        Preconditions.checkNotNullArgument(componentSettings);
 
         boolean isModified = false;
 
@@ -115,7 +115,7 @@ public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentMa
 
             Class<? extends Settings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
 
-            Settings settings = viewSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
+            Settings settings = componentSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
 
             ComponentSettingsBinder<Component, ?> binder = (ComponentSettingsBinder<Component, ?>)
                     settingsRegistry.getSettingsBinder(component.getClass());
@@ -124,12 +124,12 @@ public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentMa
             if (settingsChanged) {
                 isModified = true;
 
-                viewSettings.put(settings);
+                componentSettings.put(settings);
             }
         }
 
-        if (isModified || viewSettings.isModified()) {
-            userSettingsCache.put(viewSettings.getViewId(), viewSettings.serialize());
+        if (isModified || componentSettings.isModified()) {
+            userSettingsCache.put(componentSettings.getOwnerId(), componentSettings.serialize());
         }
     }
 }

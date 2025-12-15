@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,15 @@
 
 package io.jmix.flowui.facet.settings;
 
-import io.jmix.core.annotation.Internal;
+import io.jmix.flowui.facet.SettingsFacet;
+import io.jmix.flowui.fragment.Fragment;
 
 /**
- * {@link ViewSettings}  that uses JSON structure.
+ * Base interface for classes that collect component settings from {@link Fragment}. It provides an API for
+ * putting, getting, and removing settings.ø
+ *
+ * @see SettingsFacet
+ * @see UiComponentSettings
  */
-@Internal
-public class ViewSettingsJson extends AbstractUiComponentSettingsJson<ViewSettings, ViewSettingsJson>
-        implements ViewSettings {
-
-    protected String viewId;
-
-    public ViewSettingsJson(String ownerId) {
-        super(ownerId);
-        this.viewId = ownerId;
-    }
-
-    @Override
-    public String getViewId() {
-        return viewId;
-    }
+public interface FragmentSettings extends UiComponentSettings<FragmentSettings> {
 }

@@ -25,10 +25,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
-import io.jmix.flowui.facet.settings.SettingsFacetUrlQueryParametersHelper;
-import io.jmix.flowui.facet.settings.ViewSettings;
-import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
-import io.jmix.flowui.facet.settings.ViewSettingsJson;
+import io.jmix.flowui.facet.settings.*;
 import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
@@ -55,7 +52,7 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
     protected SettingsFacetUrlQueryParametersHelper settingsHelper;
     protected ReflectionCacheManager reflectionCacheManager;
-    protected ViewSettingsComponentManager settingsManager;
+    protected ComponentSettingsManager settingsManager;
     protected UserSettingsCache userSettingsCache;
     @Nullable
     private final UserSettingsService userSettingsService;
@@ -80,7 +77,7 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     public SettingsFacetImpl(SettingsFacetUrlQueryParametersHelper settingsHelper,
                              ReflectionCacheManager reflectionCacheManager,
                              UserSettingsCache userSettingsCache,
-                             ViewSettingsComponentManager settingsManager,
+                             ComponentSettingsManager settingsManager,
                              @Nullable UserSettingsService userSettingsService) {
         this.settingsHelper = settingsHelper;
         this.reflectionCacheManager = reflectionCacheManager;

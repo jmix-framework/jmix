@@ -20,8 +20,8 @@ import com.google.common.base.Strings;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.impl.SettingsFacetImpl;
+import io.jmix.flowui.facet.settings.ComponentSettingsManager;
 import io.jmix.flowui.facet.settings.SettingsFacetUrlQueryParametersHelper;
-import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
 import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
@@ -48,7 +48,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
     protected LoaderSupport loaderSupport;
     protected SettingsFacetUrlQueryParametersHelper settingsHelper;
     protected ReflectionCacheManager reflectionCacheManager;
-    protected ViewSettingsComponentManager settingsManager;
+    protected ComponentSettingsManager settingsManager;
     protected UserSettingsCache userSettingsCache;
     @Nullable
     private final UserSettingsService userSettingsService;
@@ -57,7 +57,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
                                  SettingsFacetUrlQueryParametersHelper settingsHelper,
                                  ReflectionCacheManager reflectionCacheManager,
                                  UserSettingsCache userSettingsCache,
-                                 ViewSettingsComponentManager settingsManager,
+                                 ComponentSettingsManager settingsManager,
                                  @Nullable UserSettingsService userSettingsService) {
         this.loaderSupport = loaderSupport;
         this.settingsHelper = settingsHelper;
@@ -83,7 +83,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
     }
 
     @Override
-    public void loadFromXml(SettingsFacet facet, Element element, ComponentLoader.ComponentContext context) {
+    public void loadFromXml(SettingsFacet facet, Element element, ComponentLoader.Context context) {
         loaderSupport.loadString(element, "id", facet::setId);
         loaderSupport.loadBoolean(element, "auto", facet::setAuto);
 
@@ -112,7 +112,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
                 .collect(Collectors.toList());
     }
 
-    protected Map<String, Boolean> loadComponents(ComponentLoader.ComponentContext context, Element root) {
+    protected Map<String, Boolean> loadComponents(ComponentLoader.Context context, Element root) {
         List<Element> components = root.elements("component");
         if (CollectionUtils.isEmpty(components)) {
             return Collections.emptyMap();

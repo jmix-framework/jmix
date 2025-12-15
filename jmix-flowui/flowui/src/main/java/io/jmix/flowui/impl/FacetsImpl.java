@@ -21,10 +21,7 @@ import com.vaadin.flow.di.Instantiator;
 import io.jmix.flowui.Facets;
 import io.jmix.flowui.facet.*;
 import io.jmix.flowui.facet.Timer;
-import io.jmix.flowui.facet.impl.DataLoadCoordinatorImpl;
-import io.jmix.flowui.facet.impl.SettingsFacetImpl;
-import io.jmix.flowui.facet.impl.TimerImpl;
-import io.jmix.flowui.facet.impl.UrlQueryParametersFacetImpl;
+import io.jmix.flowui.facet.impl.*;
 import io.jmix.flowui.xml.facet.FacetProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +52,11 @@ public class FacetsImpl implements Facets, ApplicationContextAware {
         register(DataLoadCoordinatorImpl.class, DataLoadCoordinator.class);
         register(UrlQueryParametersFacetImpl.class, UrlQueryParametersFacet.class);
         register(TimerImpl.class, Timer.class);
-        register(SettingsFacetImpl.class, SettingsFacet.class);
+
+        // use view settings by default
+        register(ViewSettingsFacetImpl.class, SettingsFacet.class);
+        register(ViewSettingsFacetImpl.class, ViewSettingsFacet.class);
+        register(FragmentSettingsFacetImpl.class, FragmentSettingsFacet.class);
     }
 
     @Override
@@ -100,7 +101,7 @@ public class FacetsImpl implements Facets, ApplicationContextAware {
     }
 
     public void register(Class<? extends Facet> facetClass, Class<? extends Facet> replacedFacet) {
-        if(getFacetInfo(facetClass).isPresent()) {
+        if (getFacetInfo(facetClass).isPresent()) {
             log.trace("Facet with `{}` class has already registered", facetClass);
             return;
         }

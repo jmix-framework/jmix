@@ -19,7 +19,7 @@ package io.jmix.flowui.xml.facet;
 import com.google.common.base.Strings;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.SettingsFacet;
-import io.jmix.flowui.facet.impl.SettingsFacetImpl;
+import io.jmix.flowui.facet.impl.ViewSettingsFacetImpl;
 import io.jmix.flowui.facet.settings.ComponentSettingsManager;
 import io.jmix.flowui.facet.settings.SettingsFacetUrlQueryParametersHelper;
 import io.jmix.flowui.settings.UserSettingsCache;
@@ -74,7 +74,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
 
     @Override
     public SettingsFacet create() {
-        return new SettingsFacetImpl(settingsHelper, reflectionCacheManager, userSettingsCache, settingsManager, userSettingsService);
+        return new ViewSettingsFacetImpl(settingsHelper, reflectionCacheManager, userSettingsCache, settingsManager, userSettingsService);
     }
 
     @Override

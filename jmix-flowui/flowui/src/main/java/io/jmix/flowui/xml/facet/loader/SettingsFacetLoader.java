@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.facet.loader;
 
 import com.google.common.base.Strings;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.facet.FragmentSettingsFacet;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.impl.FacetsImpl;
 import io.jmix.flowui.xml.facet.FacetProvider;
@@ -31,10 +32,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class SettingsFacetLoader extends AbstractFacetLoader<SettingsFacet> {
+public class SettingsFacetLoader extends AbstractFacetLoader<SettingsFacet<?>> {
 
     @Override
-    protected SettingsFacet createFacet() {
+    protected SettingsFacet<?> createFacet() {
+        if (context instanceof ComponentLoader.FragmentContext) {
+            return facets.create(FragmentSettingsFacet.class);
+        }
+
         return facets.create(SettingsFacet.class);
     }
 

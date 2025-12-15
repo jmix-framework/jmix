@@ -16,17 +16,13 @@
 
 package io.jmix.flowui.facet;
 
-import java.util.Optional;
+import io.jmix.flowui.facet.settings.ViewSettings;
+import io.jmix.flowui.view.View;
 
 /**
- * Marker interface for components that can have facets.
+ * Marker interface representing a facet that manages {@link ViewSettings}.
+ * Provides functionality for retrieving and storing configuration settings
+ * associated with a {@link View}.
  */
-public interface FacetOwner {
-
-    /**
-     * Gets the id of the owner.
-     *
-     * @return the id, or and empty optional if no id has been set
-     */
-    Optional<String> getId();
+public interface ViewSettingsFacet extends SettingsFacet<ViewSettings> {
 }

@@ -22,6 +22,7 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
 import io.jmix.flowui.facet.SettingsFacet;
+import io.jmix.flowui.facet.ViewSettingsFacet;
 import io.jmix.flowui.facet.settings.ViewSettings;
 import io.jmix.flowui.facet.settings.component.GenericFilterSettings;
 import io.jmix.flowui.icon.Icons;
@@ -72,7 +73,7 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
     public void execute() {
         checkTarget();
 
-        SettingsFacet settingsFacet = ViewControllerUtils.getViewFacet(getParentView(), SettingsFacet.class);
+        ViewSettingsFacet settingsFacet = ViewControllerUtils.getViewFacet(getParentView(), ViewSettingsFacet.class);
         Preconditions.checkNotNullArgument(settingsFacet,
                 "The view doesn't contain %s", SettingsFacet.class.getSimpleName());
 

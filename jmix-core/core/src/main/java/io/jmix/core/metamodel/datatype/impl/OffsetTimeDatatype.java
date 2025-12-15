@@ -18,18 +18,37 @@ package io.jmix.core.metamodel.datatype.impl;
 
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.FormatStrings;
+import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
+import org.springframework.lang.Nullable;
 
+import java.time.LocalDate;
 import java.time.OffsetTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.TemporalQuery;
 import java.util.Locale;
+import java.util.TimeZone;
 
 @DatatypeDef(id = "offsetTime", javaClass = OffsetTime.class, defaultForClass = true, value = "core_OffsetTimeDatatype")
-public class OffsetTimeDatatype extends AbstractTemporalDatatype<OffsetTime> {
+public class OffsetTimeDatatype extends AbstractTemporalDatatype<OffsetTime>
+        implements TimeZoneAwareDatatype {
 
     public OffsetTimeDatatype() {
         super(DateTimeFormatter.ISO_OFFSET_TIME);
+    }
+
+    @Override
+    public String format(@Nullable Object value, Locale locale, @Nullable TimeZone timeZone) {
+        if (timeZone == null || value == null) {
+            return format(value, locale);
+        }
+
+        OffsetTime offsetTime = (OffsetTime) value;
+        ZonedDateTime zonedDateTime = offsetTime.atDate(LocalDate.now()).atZoneSameInstant(timeZone.toZoneId());
+        OffsetTime result = zonedDateTime.toOffsetDateTime().toOffsetTime();
+
+        return format(result, locale);
     }
 
     @Override

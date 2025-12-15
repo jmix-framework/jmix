@@ -17,9 +17,9 @@
 package io.jmix.core;
 
 import com.google.common.base.Preconditions;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.time.*;
 import java.util.Date;
 
@@ -46,6 +46,7 @@ public class DateTimeTransformations {
      * Obtains an instance of ZonedDateTime
      * from Date or LocalDate or LocalDateTime or OffsetDateTime
      * ZonedDateTime is created for LocalDate, LocalDateTime with default system timezone
+     *
      * @param date date object, not null
      * @return the ZonedDateTime, not null
      */
@@ -74,8 +75,9 @@ public class DateTimeTransformations {
      * Obtains an instance of specified by type date object from
      * from ZonedDateTime
      * LocalDate, LocalDateTime is created for default system timezone
+     *
      * @param zonedDateTime date object, not null
-     * @param javaType date type to transformation from ZonedDateTime
+     * @param javaType      date type to transformation from ZonedDateTime
      * @return the date object, not null
      */
     public Object transformFromZDT(ZonedDateTime zonedDateTime, Class<?> javaType) {
@@ -106,6 +108,7 @@ public class DateTimeTransformations {
     /**
      * Obtains an instance of LocalTime
      * from Time or Date or LocalTime or OffsetTime
+     *
      * @param date date object, not null
      * @return the LocalTime, not null
      */
@@ -128,8 +131,9 @@ public class DateTimeTransformations {
     /**
      * Obtains an instance of specified by type date object from
      * from LocalTime
+     *
      * @param localTime date object, not null
-     * @param javaType date type to transformation from LocalTime
+     * @param javaType  date type to transformation from LocalTime
      * @return the date object, not null
      */
     public Object transformFromLocalTime(LocalTime localTime, Class<?> javaType) {
@@ -150,12 +154,15 @@ public class DateTimeTransformations {
     }
 
     /**
-     * Check if date type supports time zone conversation
+     * Check if a date type supports time zone conversation
+     *
      * @param javaType - date type
      * @return true - if date type supports timezones
      */
     public boolean isDateTypeSupportsTimeZones(Class<?> javaType) {
-        return Date.class.equals(javaType) || OffsetDateTime.class.equals(javaType);
+        return Date.class.equals(javaType)
+                || OffsetDateTime.class.equals(javaType)
+                || OffsetTime.class.equals(javaType);
     }
 
     private static RuntimeException newUnsupportedTypeException(Class<?> javaType) {

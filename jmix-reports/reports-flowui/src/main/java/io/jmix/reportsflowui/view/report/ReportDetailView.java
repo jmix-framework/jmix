@@ -201,7 +201,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected MessageBundle messageBundle;
     @ViewComponent
-    private NativeLabel codeEditorLabel;
+    protected NativeLabel codeEditorLabel;
 
     @Autowired
     protected ReportsPersistence reportsPersistence;

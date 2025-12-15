@@ -23,6 +23,8 @@ import java.io.Serializable;
  */
 public class DomMouseEventDetails implements Serializable {
 
+    protected int clickCount;
+
     protected int button;
 
     protected int pageX;
@@ -36,6 +38,14 @@ public class DomMouseEventDetails implements Serializable {
     protected boolean metaKey;
 
     protected boolean shiftKey;
+
+    public int getClickCount() {
+        return clickCount;
+    }
+
+    public void setClickCount(int clickCount) {
+        this.clickCount = clickCount;
+    }
 
     public int getButton() {
         return button;

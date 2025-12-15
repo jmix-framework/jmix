@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,12 @@ import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 /**
  * INTERNAL.
  */
-@DomEvent("jmix-event-click")
-public class EventClickDomEvent extends AbstractEventClickDomEvent {
+@DomEvent("jmix-event-single-click")
+public class EventSingleClickDomEvent extends AbstractEventClickDomEvent {
 
-    public EventClickDomEvent(JmixFullCalendar source,
-                              boolean fromClient,
-                              @EventData("event.detail.context") JsonObject context) {
+    public EventSingleClickDomEvent(JmixFullCalendar source,
+                                    boolean fromClient,
+                                    @EventData("event.detail.context") JsonObject context) {
         super(source, fromClient, context);
     }
 }

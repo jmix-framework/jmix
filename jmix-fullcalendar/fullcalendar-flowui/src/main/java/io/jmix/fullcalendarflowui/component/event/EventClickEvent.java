@@ -45,7 +45,7 @@ public class EventClickEvent extends AbstractClickEvent {
     }
 
     /**
-     * @return information about current calendar's display mode
+     * @return information about the current calendar's display mode
      */
     public DisplayModeInfo getDisplayModeInfo() {
         return displayModeInfo;

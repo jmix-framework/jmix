@@ -509,6 +509,9 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
 
         this.eventSingleClickTimeoutId = setTimeout(() => {
             this.eventSingleClickTimeoutId = null;
+            if (e.jsEvent.detail !== 1) {
+                return;
+            }
             this.dispatchEvent(new CustomEvent("jmix-event-single-click", {
                 detail: {
                     context: {

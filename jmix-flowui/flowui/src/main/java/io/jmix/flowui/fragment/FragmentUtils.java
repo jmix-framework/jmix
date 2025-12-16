@@ -175,6 +175,22 @@ public final class FragmentUtils {
     }
 
     /**
+     * Returns the component with the given id.
+     *
+     * @param fragment fragment to find component from
+     * @param id       component id
+     * @return the component with the given id
+     * @throws IllegalStateException    if fragment content doesn't contain components
+     * @throws IllegalArgumentException if component with given id is not found
+     */
+    public static Component getComponent(Fragment<?> fragment, String id) {
+        return findComponent(fragment, id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Component with id '%s' not fount".formatted(id)
+                ));
+    }
+
+    /**
      * Returns an {@link Optional} describing the component with given fragment id,
      * or an empty {@link Optional}.
      *

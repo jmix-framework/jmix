@@ -49,12 +49,16 @@ public class FacetsImpl implements Facets, ApplicationContextAware {
     protected Set<FacetInfo> facets = ConcurrentHashMap.newKeySet();
 
     {
-        register(DataLoadCoordinatorImpl.class, DataLoadCoordinator.class);
+        // use view dataLoadCoordinator by default for backward compatibility
+        register(ViewDataLoadCoordinator.class, DataLoadCoordinator.class);
+        register(ViewDataLoadCoordinatorImpl.class, ViewDataLoadCoordinator.class);
+        register(FragmentDataLoadCoordinatorImpl.class, FragmentDataLoadCoordinator.class);
+
         register(UrlQueryParametersFacetImpl.class, UrlQueryParametersFacet.class);
         register(TimerImpl.class, Timer.class);
 
-        // use view settings by default
-        register(ViewSettingsFacetImpl.class, SettingsFacet.class);
+        // use view settings by default for backward compatibility
+        register(ViewSettingsFacet.class, SettingsFacet.class);
         register(ViewSettingsFacetImpl.class, ViewSettingsFacet.class);
         register(FragmentSettingsFacetImpl.class, FragmentSettingsFacet.class);
     }

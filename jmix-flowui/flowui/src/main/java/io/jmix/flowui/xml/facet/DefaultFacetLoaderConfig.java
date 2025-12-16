@@ -50,9 +50,15 @@ public class DefaultFacetLoaderConfig implements FacetLoaderConfig {
     }
 
     protected void initDefaultLoaders() {
-        loaders.put("dataLoadCoordinator", DataLoadCoordinatorFacetLoader.class);
-        loaders.put("urlQueryParameters", UrlQueryParametersFacetLoader.class);
+        loaders.put("dataLoadCoordinator", ViewDataLoadCoordinatorFacetLoader.class);
+        loaders.put("fragmentDataLoadCoordinator", FragmentDataLoadCoordinatorFacetLoader.class);
+
+        loaders.put("urlQueryParameters", ViewUrlQueryParametersFacetLoader.class);
+        loaders.put("fragmentUrlQueryParameters", FragmentUrlQueryParametersFacetLoader.class);
+
         loaders.put("timer", TimerFacetLoader.class);
-        loaders.put("settings", SettingsFacetLoader.class);
+
+        loaders.put("settings", ViewSettingsFacetLoader.class);
+        loaders.put("fragmentSettings", FragmentSettingsFacetLoader.class);
     }
 }

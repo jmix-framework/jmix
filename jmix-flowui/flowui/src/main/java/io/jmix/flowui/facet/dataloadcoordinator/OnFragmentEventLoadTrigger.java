@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,19 @@
 package io.jmix.flowui.facet.dataloadcoordinator;
 
 import io.jmix.flowui.facet.DataLoadCoordinator;
+import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
-import io.jmix.flowui.view.View;
 
 /**
- * Implementation of the {@link DataLoadCoordinator.Trigger} interface.
- * It registers an event listener on a specified {@link View View's} event and invokes the associated
- * {@link DataLoader} when the event occurs, triggering data loading operations.
+ * Implementation of the {@link DataLoadCoordinator.Trigger} interface. It registers an event listener on a
+ * specified {@link Fragment Fragment's} event and invokes the associated {@link DataLoader} when the event occurs,
+ * triggering data loading operations.
  */
-public class OnViewEventLoadTrigger extends AbstractOnEventLoadTrigger {
+public class OnFragmentEventLoadTrigger extends AbstractOnEventLoadTrigger {
 
-    public OnViewEventLoadTrigger(View<?> view, ReflectionCacheManager reflectionCacheManager,
-                                  DataLoader loader, Class<?> eventClass) {
-        super(view, reflectionCacheManager, loader, eventClass);
+    public OnFragmentEventLoadTrigger(Fragment<?> fragment, ReflectionCacheManager reflectionCacheManager,
+                                      DataLoader loader, Class<?> eventClass) {
+        super(fragment, reflectionCacheManager, loader, eventClass);
     }
 }

@@ -40,7 +40,8 @@ public class CodeEditorValidationSupport implements Serializable {
     }
 
     boolean isInvalid(String value) {
-        ValidationResult requiredValidation = ValidationUtil.checkRequired(required, value, field.getEmptyValue());
+        ValidationResult requiredValidation =
+                ValidationUtil.validateRequiredConstraint("", required, value, field.getEmptyValue());
         return requiredValidation.isError();
     }
 }

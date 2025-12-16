@@ -22,7 +22,8 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
-import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.streams.DownloadHandler;
+import com.vaadin.flow.server.streams.DownloadResponse;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.util.Preconditions;
@@ -699,29 +700,53 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Creates a resources from the passed object.
+     * Creates a resource based on the provided value and file storage locator. The resource can be of
+     * different types depending on the input value, such as a {@link DownloadHandler} or a string.
      *
-     * @param value              the object from which the resource will be created
-     * @param fileStorageLocator fileStorageLocator
-     * @param <V>                type of resource value
-     * @return created resource or {@code null} if the value is of an unsupported type
-     * @throws IllegalArgumentException if the URI resource can't be converted to URL
+     * <p>If the provided {@code value} is:
+     * <ul>
+     *   <li>{@code null}, a {@link DownloadHandler} with an empty {@link InputStream} is created.</li>
+     *   <li>An instance of {@code byte[]}, a {@link DownloadHandler} based on this byte array is created.</li>
+     *   <li>An instance of {@link FileRef}, a {@link DownloadHandler} based on the file reference is created,
+     *       which uses the provided {@link FileStorageLocator} to locate the file.</li>
+     *   <li>An instance of {@code String}, the string itself is returned as the resource.</li>
+     *   <li>An instance of {@code URI}, an attempt is made to convert it to a string representation of its URL.</li>
+     *   <li>Any other type, {@code null} is returned.</li>
+     * </ul>
+     *
+     * @param <V>                The type of the input value.
+     * @param value              The value based on which the resource is created
+     * @param fileStorageLocator The file storage locator used for resolving {@link FileRef} resources.
+     *                           Cannot be {@code null}.
+     * @return an object representing the created resource, which can be a {@link String}, {@link DownloadHandler}, or
+     * {@code null} if the input value does not match any of the expected types
+     * @throws IllegalArgumentException If the input {@code value} is of type {@code URI} and cannot
+     *                                  be converted to a {@code URL}
      */
     @Nullable
     public static <V> Object createResource(@Nullable V value, FileStorageLocator fileStorageLocator) {
         if (value == null) {
-            return new StreamResource(UUID.randomUUID().toString(), InputStream::nullInputStream);
+            return DownloadHandler.fromInputStream(downloadEvent ->
+                    new DownloadResponse(InputStream.nullInputStream(),
+                            UUID.randomUUID().toString(), null, 0));
         }
+
         if (value instanceof byte[] byteValue) {
-            return new StreamResource(UUID.randomUUID().toString(), () -> new ByteArrayInputStream(byteValue));
+            return DownloadHandler.fromInputStream(downloadEvent ->
+                    new DownloadResponse(new ByteArrayInputStream(byteValue),
+                            UUID.randomUUID().toString(), null, byteValue.length));
         }
+
         if (value instanceof FileRef fileRef) {
-            return new StreamResource(fileRef.getFileName(), () ->
-                    fileStorageLocator.getByName(fileRef.getStorageName()).openStream(fileRef));
+            return DownloadHandler.fromInputStream(downloadEvent ->
+                    new DownloadResponse(fileStorageLocator.getByName(fileRef.getStorageName()).openStream(fileRef),
+                            fileRef.getFileName(), fileRef.getContentType(), -1));
         }
+
         if (value instanceof String) {
             return value;
         }
+
         if (value instanceof URI uri) {
             try {
                 return uri.toURL().toString();

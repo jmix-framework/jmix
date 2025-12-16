@@ -217,7 +217,8 @@ public class GenericFilter extends Composite<JmixDetails>
     protected void initLayout() {
         contentWrapper = createContentWrapper();
         initContentWrapper(contentWrapper);
-        getContent().setContent(contentWrapper);
+        getContent().removeAll();
+        getContent().add(contentWrapper);
 
         controlsLayout = createControlsLayout();
         initControlsLayout(controlsLayout);

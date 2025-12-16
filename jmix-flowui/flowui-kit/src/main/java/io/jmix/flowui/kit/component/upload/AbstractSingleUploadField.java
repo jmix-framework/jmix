@@ -506,7 +506,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     @Nullable
     public String getClearButtonAriaLabel() {
         Element element = uploadButton.getUploadButton().getElement();
-        return element.getAttribute(ElementConstants.ARIA_LABEL_PROPERTY_NAME);
+        return element.getAttribute(ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME);
     }
 
     /**
@@ -624,9 +624,9 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     protected void setComponentAriaLabel(Component component, @Nullable String ariaLabel) {
         if (ariaLabel == null) {
-            component.getElement().removeAttribute(ElementConstants.ARIA_LABEL_PROPERTY_NAME);
+            component.getElement().removeAttribute(ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME);
         } else {
-            component.getElement().setAttribute(ElementConstants.ARIA_LABEL_PROPERTY_NAME, ariaLabel);
+            component.getElement().setAttribute(ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME, ariaLabel);
         }
     }
 

@@ -782,7 +782,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         componentLoader().loadEnabled(contextMenu, contextMenuElement);
 
         for (Element childItemElement : contextMenuElement.elements()) {
-            addContextMenuItem(contextMenu::addItem, contextMenu::add, childItemElement);
+            addContextMenuItem(contextMenu::addItem, contextMenu::addComponent, childItemElement);
         }
     }
 
@@ -851,7 +851,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         GridSubMenu<?> subMenu = menuItem.getSubMenu();
         for (Element contextMenuChildItemElement : itemElement.elements()) {
-            addContextMenuItem(subMenu::addItem, subMenu::add, contextMenuChildItemElement);
+            addContextMenuItem(subMenu::addItem, subMenu::addComponent, contextMenuChildItemElement);
         }
     }
 

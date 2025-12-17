@@ -53,7 +53,6 @@ import org.springframework.lang.Nullable;
 import java.lang.annotation.Annotation;
 import java.sql.Time;
 import java.time.*;
-import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
@@ -95,7 +94,8 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         Range mppRange = mpp.getRange();
         Component resultComponent = null;
 
-        if (Collection.class.isAssignableFrom(mpp.getMetaProperty().getJavaType())) {
+        if (mpp.getMetaProperty().getRange().getCardinality().isMany()
+                && !metadataTools.isElementCollection(mpp.getMetaProperty())) {
             resultComponent = createCollectionField(context, mpp);
         } else if (mppRange.isDatatype()) {
             resultComponent = createDatatypeField(context, mpp);

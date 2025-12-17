@@ -301,6 +301,46 @@ public class ElementCollectionTest {
         assertThat(betaList).containsExactly(betas.beta1);
     }
 
+    @Test
+    void testDuplication() {
+        Betas betas = createBetas();
+        Alphas alphas = createAlphas(betas);
+
+        List<EcAlpha> alphaList;
+
+        alphaList = dataManager.load(EcAlpha.class)
+                .condition(PropertyCondition.contains("tags", "%t%"))
+                .list();
+        assertThat(alphaList).size().isEqualTo(4); // duplicates rows without distinct
+        assertThat(alphaList).contains(alphas.alpha1, alphas.alpha2);
+    }
+
+    @Test
+    void testIsEmpty() {
+        EcAlpha alpha1 = dataManager.create(EcAlpha.class);
+        alpha1.setName("a1");
+        alpha1.setTags(List.of("tag1", "tag2"));
+
+        EcAlpha alpha2 = dataManager.create(EcAlpha.class);
+        alpha2.setName("a2");
+
+        dataManager.saveWithoutReload(alpha1, alpha2);
+
+        List<EcAlpha> alphaList;
+
+        // load by query
+        alphaList = dataManager.load(EcAlpha.class)
+                .query("select e from test_EcAlpha e where e.tags is empty")
+                .list();
+        assertThat(alphaList).containsExactly(alpha2);
+
+        // load by condition
+        alphaList = dataManager.load(EcAlpha.class)
+                .condition(PropertyCondition.isCollectionEmpty("tags", true))
+                .list();
+        assertThat(alphaList).containsExactly(alpha2);
+    }
+
     private void setEventConsumer(Consumer<EntityChangedEvent<EcAlpha>> eventConsumer) {
         changedEventListener.beforeCommitEventConsumer = eventConsumer;
         changedEventListener.afterCommitEventConsumer = eventConsumer;

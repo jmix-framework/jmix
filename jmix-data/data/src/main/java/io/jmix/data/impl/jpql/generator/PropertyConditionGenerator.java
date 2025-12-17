@@ -93,7 +93,8 @@ public class PropertyConditionGenerator implements ConditionGenerator {
         }
 
         MetaProperty metaProperty = metaClass.getProperty(propertyName);
-        if (metadataTools.isElementCollection(metaProperty)) {
+        if (metadataTools.isElementCollection(metaProperty)
+                && !propertyCondition.getOperation().equals(PropertyCondition.Operation.IS_COLLECTION_EMPTY)) {
             String joinAlias = propertyName.substring(0, 3) + RandomStringUtils.insecure().nextNumeric(3);
             context.setJoinAlias(joinAlias);
             context.setJoinProperty(propertyName);
@@ -182,11 +183,15 @@ public class PropertyConditionGenerator implements ConditionGenerator {
             }
         } else {
             // case of ElementCollection
-            if (PropertyConditionUtils.isUnaryOperation(propertyCondition)
-                    || PropertyConditionUtils.isInIntervalOperation(propertyCondition)
+            if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)
                     || PropertyConditionUtils.isDateEqualsOperation(propertyCondition)
                     || PropertyConditionUtils.isMemberOfCollectionOperation(propertyCondition)) {
                 throw new IllegalStateException("Unsupported property condition for ElementCollection: " + propertyCondition);
+            }
+            if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
+                return String.format("%s %s",
+                        entityAlias,
+                        PropertyConditionUtils.getJpqlOperation(propertyCondition));
             }
             return String.format("%s %s :%s",
                     entityAlias,

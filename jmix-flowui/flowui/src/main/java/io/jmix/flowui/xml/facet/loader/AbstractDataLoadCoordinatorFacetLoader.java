@@ -40,8 +40,8 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         if (facets instanceof FacetsImpl facetsImpl) {
             FacetProvider<DataLoadCoordinator> provider = facetsImpl.getProvider(DataLoadCoordinator.class);
 
-            if (provider != null) {
-                provider.loadFromXml(resultFacet, element, context);
+            if (provider != null && context instanceof ComponentLoader.ComponentContext componentContext) {
+                provider.loadFromXml(resultFacet, element, componentContext);
                 return;
             }
         }

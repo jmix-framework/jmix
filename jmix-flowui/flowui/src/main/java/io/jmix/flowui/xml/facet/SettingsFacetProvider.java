@@ -83,7 +83,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
     }
 
     @Override
-    public void loadFromXml(SettingsFacet facet, Element element, ComponentLoader.Context context) {
+    public void loadFromXml(SettingsFacet facet, Element element, ComponentLoader.ComponentContext context) {
         loaderSupport.loadString(element, "id", facet::setId);
         loaderSupport.loadBoolean(element, "auto", facet::setAuto);
 
@@ -112,7 +112,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
                 .collect(Collectors.toList());
     }
 
-    protected Map<String, Boolean> loadComponents(ComponentLoader.Context context, Element root) {
+    protected Map<String, Boolean> loadComponents(ComponentLoader.ComponentContext context, Element root) {
         List<Element> components = root.elements("component");
         if (CollectionUtils.isEmpty(components)) {
             return Collections.emptyMap();

@@ -75,9 +75,9 @@ public class FacetLoader {
      */
     public Facet load(Element element, ComponentLoader.Context context) {
         io.jmix.flowui.xml.facet.loader.FacetLoader<?> facetLoader = getLoader(element, context);
-        if (facetLoader == null) {
+        if (facetLoader == null && context instanceof ComponentLoader.ComponentContext componentContext) {
             // fallback
-            return _load(element, context);
+            return _load(element, componentContext);
         }
 
         facetLoader.initFacet();
@@ -128,7 +128,7 @@ public class FacetLoader {
     // for backward compatibility
     @Deprecated(since = "3.0", forRemoval = true)
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected Facet _load(Element element, ComponentLoader.Context context) {
+    protected Facet _load(Element element, ComponentLoader.ComponentContext context) {
         Collection<FacetProvider<?>> facetProviders = registrations.get(element.getName());
         FacetProvider facetProvider = beanSelector.selectFrom(facetProviders);
         if (facetProvider == null) {

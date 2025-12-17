@@ -18,7 +18,7 @@ package io.jmix.flowui.xml.facet;
 
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
-import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import org.dom4j.Element;
 
 /**
@@ -53,5 +53,5 @@ public interface FacetProvider<T extends Facet> {
      * @param element XML element
      * @param context loading context
      */
-    void loadFromXml(T facet, Element element, ComponentLoader.Context context);
+    void loadFromXml(T facet, Element element, ComponentContext context);
 }

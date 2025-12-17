@@ -16,20 +16,17 @@
 
 package io.jmix.flowui.xml.facet;
 
-import com.vaadin.flow.component.Composite;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.impl.UrlQueryParametersFacetImpl;
 import io.jmix.flowui.facet.urlqueryparameters.UrlQueryParametersBinderProvider;
 import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
 import io.jmix.flowui.view.navigation.RouteSupport;
-import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +35,7 @@ import java.util.List;
  * @deprecated use {@link FacetRegistrationBuilder} instead
  */
 @Deprecated(since = "3.0", forRemoval = true)
-@Component("flowui_UrlQueryParametersFacetProvider")
+@org.springframework.stereotype.Component("flowui_UrlQueryParametersFacetProvider")
 public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryParametersFacet> {
 
     protected LoaderSupport loaderSupport;
@@ -71,8 +68,8 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
     }
 
     @Override
-    public void loadFromXml(UrlQueryParametersFacet facet, Element element, ComponentLoader.Context context) {
-        facet.setOwner((Composite<?> & FacetOwner) context.getOrigin());
+    public void loadFromXml(UrlQueryParametersFacet facet, Element element, ComponentContext context) {
+        facet.setOwner(context.getView());
 
         loaderSupport.loadString(element, "id", facet::setId);
 
@@ -81,10 +78,10 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
         }
     }
 
-    protected void loadBinder(UrlQueryParametersFacet facet, Element element, ComponentLoader.Context context) {
+    protected void loadBinder(UrlQueryParametersFacet facet, Element element, ComponentContext context) {
         for (UrlQueryParametersBinderProvider binderProvider : binderProviders) {
             if (binderProvider.supports(element)) {
-                binderProvider.load(facet, element, findHostViewContext(context));
+                binderProvider.load(facet, element, context);
                 return;
             }
         }
@@ -92,19 +89,5 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
         throw new GuiDevelopmentException(
                 String.format("Unsupported nested element in '%s': %s",
                         getFacetTag(), element.getName()), context);
-    }
-
-    protected ComponentLoader.ComponentContext findHostViewContext(ComponentLoader.Context fragmentContext) {
-        ComponentLoader.Context currentContext = fragmentContext;
-        while (currentContext.getParentContext() != null) {
-            currentContext = currentContext.getParentContext();
-        }
-
-        if (currentContext instanceof ComponentLoader.ComponentContext viewContext) {
-            return viewContext;
-        }
-
-        throw new IllegalStateException("%s has no parent view context"
-                .formatted(fragmentContext.getClass().getSimpleName()));
     }
 }

@@ -26,7 +26,7 @@ public interface StudioFacets {
 
     @StudioFacet(
             name = "DataLoadCoordinator",
-            classFqn = "io.jmix.flowui.facet.DataLoadCoordinator",
+            classFqn = "io.jmix.flowui.facet.ViewDataLoadCoordinator",
             category = "Facets",
             xmlElement = "dataLoadCoordinator",
             icon = "io/jmix/flowui/kit/meta/icon/facet/dataLoadCoordinator.svg",
@@ -42,6 +42,25 @@ public interface StudioFacets {
             }
     )
     void dataLoadCoordinator();
+
+    @StudioFacet(
+            name = "DataLoadCoordinator",
+            classFqn = "io.jmix.flowui.facet.FragmentDataLoadCoordinator",
+            category = "Facets",
+            xmlElement = "fragmentDataLoadCoordinator",
+            icon = "io/jmix/flowui/kit/meta/icon/facet/dataLoadCoordinator.svg",
+            documentationLink = "%VERSION%/flow-ui/facets/dataLoadCoordinator.html",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false", initialValue = "true"),
+                    @StudioProperty(xmlAttribute = "componentPrefix", type = StudioPropertyType.STRING,
+                            defaultValue = "component_"),
+                    @StudioProperty(xmlAttribute = "containerPrefix", type = StudioPropertyType.STRING,
+                            defaultValue = "container_"),
+            }
+    )
+    void fragmentDataLoadCoordinator();
 
     @StudioFacet(
             name = "UrlQueryParameters",
@@ -74,7 +93,7 @@ public interface StudioFacets {
 
     @StudioFacet(
             name = "Settings",
-            classFqn = "io.jmix.flowui.facet.SettingsFacet",
+            classFqn = "io.jmix.flowui.facet.ViewSettingsFacet",
             category = "Facets",
             xmlElement = "settings",
             icon = "io/jmix/flowui/kit/meta/icon/facet/settings.svg",
@@ -85,4 +104,18 @@ public interface StudioFacets {
             }
     )
     void settings();
+
+    @StudioFacet(
+            name = "Settings",
+            classFqn = "io.jmix.flowui.facet.FragmentSettingsFacet",
+            category = "Facets",
+            xmlElement = "fragmentSettings",
+            icon = "io/jmix/flowui/kit/meta/icon/facet/settings.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false", initialValue = "true"),
+            }
+    )
+    void fragmentSettings();
 }

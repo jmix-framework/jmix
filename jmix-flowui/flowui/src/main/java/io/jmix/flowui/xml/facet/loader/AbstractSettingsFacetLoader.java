@@ -39,8 +39,8 @@ public abstract class AbstractSettingsFacetLoader extends AbstractFacetLoader<Se
         if (facets instanceof FacetsImpl facetsImpl) {
             FacetProvider<SettingsFacet> provider = facetsImpl.getProvider(SettingsFacet.class);
 
-            if (provider != null) {
-                provider.loadFromXml(resultFacet, element, context);
+            if (provider != null && context instanceof ComponentLoader.ComponentContext componentContext) {
+                provider.loadFromXml(resultFacet, element, componentContext);
                 return;
             }
         }

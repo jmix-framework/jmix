@@ -17,14 +17,12 @@
 package io.jmix.flowui.xml.facet;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Composite;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.facet.DataLoadCoordinator.LikeClause;
-import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.impl.ViewDataLoadCoordinatorImpl;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
@@ -74,18 +72,18 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
     }
 
     @Override
-    public void loadFromXml(DataLoadCoordinator facet, Element element, ComponentLoader.Context context) {
-        facet.setOwner((Composite<?> & FacetOwner) context.getOrigin());
+    public void loadFromXml(DataLoadCoordinator facet, Element element, ComponentContext context) {
+        facet.setOwner(context.getView());
 
         loaderSupport.loadString(element, "id", facet::setId);
         loaderSupport.loadString(element, "containerPrefix", facet::setContainerPrefix);
         loaderSupport.loadString(element, "componentPrefix", facet::setComponentPrefix);
 
         for (Element loaderEl : element.elements("refresh")) {
-            loadRefresh(facet, (ComponentContext) context, loaderEl);
+            loadRefresh(facet, context, loaderEl);
         }
 
-        loadAuto(facet, element, (ComponentContext) context);
+        loadAuto(facet, element, context);
     }
 
     protected void loadAuto(DataLoadCoordinator facet, Element element, ComponentContext context) {

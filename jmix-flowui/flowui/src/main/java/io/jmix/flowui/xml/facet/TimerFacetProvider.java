@@ -54,11 +54,11 @@ public class TimerFacetProvider implements FacetProvider<Timer> {
     }
 
     @Override
-    public void loadFromXml(Timer timer, Element element, ComponentLoader.Context context) {
+    public void loadFromXml(Timer timer, Element element, ComponentLoader.ComponentContext context) {
         loadTimer(timer, element, context);
     }
 
-    protected void loadTimer(Timer timer, Element element, ComponentLoader.Context context) {
+    protected void loadTimer(Timer timer, Element element, ComponentLoader.ComponentContext context) {
         String id = loaderSupport.loadString(element, "id")
                 .orElseThrow(() -> new IllegalStateException("Timer id must be defined"));
         timer.setId(id);

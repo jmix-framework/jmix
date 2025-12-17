@@ -29,7 +29,7 @@ import java.lang.invoke.MethodHandle;
  * specified {@link FacetOwner FacetOwner's} event and invokes the associated {@link DataLoader} when the event occurs,
  * triggering data loading operations.
  */
-public class AbstractOnEventLoadTrigger implements DataLoadCoordinator.Trigger {
+public abstract class AbstractOnEventLoadTrigger implements DataLoadCoordinator.Trigger {
 
     protected final DataLoader loader;
 

@@ -112,7 +112,7 @@ public class TimerImpl extends AbstractFacet implements Timer {
             registerInOwner(owner);
         } else {
             if (this.owner != null) {
-                unregisterInView(this.owner);
+                unregisterInOwner(this.owner);
             }
             super.setOwner(null);
         }
@@ -148,7 +148,7 @@ public class TimerImpl extends AbstractFacet implements Timer {
         timerImpl.getElement().removeFromTree();
     }
 
-    protected void unregisterInView(Composite<?> owner) {
+    protected void unregisterInOwner(Composite<?> owner) {
         detachTimer(owner);
     }
 

@@ -40,8 +40,8 @@
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="fragmentDataLoadCoordinator" type="fragmentDataLoadCoordinatorType" minOccurs="0"/>
-<!--                <xs:element name="urlQueryParameters" type="urlQueryParametersType" minOccurs="0"/>-->
-                <xs:element name="fragmentTimer" type="layout:timerType" minOccurs="0"/>
+                <xs:element name="urlQueryParameters" type="layout:urlQueryParametersType" minOccurs="0"/>
+                <xs:element name="timer" type="layout:timerType" minOccurs="0"/>
                 <xs:element name="fragmentSettings" type="layout:settingsFacetType" minOccurs="0"/>
 
                 <!-- allow custom facets from any namespace -->

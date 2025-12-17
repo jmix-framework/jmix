@@ -16,12 +16,12 @@
 
 package io.jmix.dynattrflowui.facet;
 
-import com.vaadin.flow.component.Component;
 import io.jmix.core.annotation.Internal;
 import io.jmix.dynattrflowui.DynAttrEmbeddingStrategies;
 import io.jmix.dynattrflowui.impl.AttributeDefaultValues;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
@@ -37,8 +37,7 @@ public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
     protected final DynAttrEmbeddingStrategies embeddingStrategies;
     protected final AttributeDefaultValues attributeDefaultValues;
 
-    public DynAttrFacetProvider(DynAttrEmbeddingStrategies embeddingStrategies,
-                                AttributeDefaultValues attributeDefaultValues) {
+    public DynAttrFacetProvider(DynAttrEmbeddingStrategies embeddingStrategies, AttributeDefaultValues attributeDefaultValues) {
         this.embeddingStrategies = embeddingStrategies;
         this.attributeDefaultValues = attributeDefaultValues;
     }
@@ -59,11 +58,11 @@ public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
     }
 
     @Override
-    public void loadFromXml(DynAttrFacet facet, Element element, ComponentLoader.Context context) {
-        Component owner = context.getOrigin();
-        // TODO: kd, check to getting all components in case of fragment
-        context.addInitTask(__ ->
-                UiComponentUtils.traverseComponents(owner, component ->
-                        embeddingStrategies.embedAttributes(component, owner)));
+    public void loadFromXml(DynAttrFacet facet, Element element, ComponentLoader.ComponentContext context) {
+        View<?> view = context.getView();
+        context.addInitTask(__ -> {
+            UiComponentUtils.traverseComponents(view, component ->
+                    embeddingStrategies.embedAttributes(component, view));
+        });
     }
 }

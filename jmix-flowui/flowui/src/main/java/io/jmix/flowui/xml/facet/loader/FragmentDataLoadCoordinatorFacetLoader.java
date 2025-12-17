@@ -40,7 +40,7 @@ public class FragmentDataLoadCoordinatorFacetLoader
 
     @Override
     protected ComponentLoader.ComponentContext getComponentContext() {
-        return findHostViewContext((ComponentLoader.FragmentContext) context);
+        return findHostViewContext(context);
     }
 
     protected void loadRefresh(FragmentDataLoadCoordinator facet, Element element) {
@@ -77,20 +77,6 @@ public class FragmentDataLoadCoordinatorFacetLoader
         }
 
         getComponentContext().addPreInitTask(new OnFragmentEventLoadTriggerInitTask(facet, loaderId, eventClass));
-    }
-
-    protected ComponentLoader.ComponentContext findHostViewContext(ComponentLoader.FragmentContext fragmentContext) {
-        ComponentLoader.Context currentContext = fragmentContext;
-        while (currentContext.getParentContext() != null) {
-            currentContext = currentContext.getParentContext();
-        }
-
-        if (currentContext instanceof ComponentLoader.ComponentContext viewContext) {
-            return viewContext;
-        }
-
-        throw new IllegalStateException("%s has no parent view context"
-                .formatted(fragmentContext.getClass().getSimpleName()));
     }
 
     public static class OnFragmentEventLoadTriggerInitTask implements ComponentLoader.InitTask {

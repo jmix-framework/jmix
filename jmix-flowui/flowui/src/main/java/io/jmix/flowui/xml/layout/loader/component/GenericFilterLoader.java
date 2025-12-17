@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.Composite;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponent;
@@ -25,15 +26,17 @@ import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.component.genericfilter.inspector.FilterPropertiesInspector;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.DataLoadCoordinator;
+import io.jmix.flowui.facet.FacetOwner;
+import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -45,6 +48,7 @@ import java.util.*;
 public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> {
 
     protected ActionLoaderSupport actionLoaderSupport;
+    protected GenericFilterSupport genericFilterSupport;
 
     @Override
     protected GenericFilter createComponent() {
@@ -262,14 +266,23 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
         return actionLoaderSupport;
     }
 
+    protected GenericFilterSupport getGenericFilterSupport() {
+        if (genericFilterSupport == null) {
+            genericFilterSupport = applicationContext.getBean(GenericFilterSupport.class, context);
+        }
+
+        return genericFilterSupport;
+    }
+
     protected void applyFilterIfNeeded() {
         getContext().addInitTask(new AbstractInitTask() {
             @Override
             public void execute(Context context) {
-                View<?> view = findParentView(context);
+                Composite<?> parent = getGenericFilterSupport().findCurrentOwner(resultComponent);
 
                 DataLoadCoordinator dataLoadCoordinator =
-                        ViewControllerUtils.getViewFacet(view, DataLoadCoordinator.class);
+                        getGenericFilterSupport().getFacet(parent, DataLoadCoordinator.class);
+
                 if (dataLoadCoordinator == null
                         || dataLoadCoordinator.getTriggers().isEmpty()) {
                     List<FilterComponent> filterComponents =
@@ -290,22 +303,5 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
                 }
             }
         });
-    }
-
-    protected View<?> findParentView(Context context) {
-
-        Component origin;
-        Context parentContext = context;
-
-        do {
-            origin = parentContext.getOrigin();
-            parentContext = parentContext.getParentContext();
-        } while (!(origin instanceof View) && parentContext != null);
-
-        if (origin instanceof View<?> view) {
-            return view;
-        } else {
-            throw new GuiDevelopmentException("Cannot find parent " + View.class.getSimpleName(), context);
-        }
     }
 }

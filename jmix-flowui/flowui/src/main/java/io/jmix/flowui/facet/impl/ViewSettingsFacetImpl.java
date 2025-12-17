@@ -31,7 +31,7 @@ import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
-import org.jspecify.annotations.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * An implementation of the {@link SettingsFacet} interfacet that provides functionality for managing

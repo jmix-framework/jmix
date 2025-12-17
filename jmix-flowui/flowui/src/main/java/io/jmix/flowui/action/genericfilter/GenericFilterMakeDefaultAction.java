@@ -20,14 +20,13 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
 import io.jmix.flowui.facet.SettingsFacet;
-import io.jmix.flowui.facet.ViewSettingsFacet;
-import io.jmix.flowui.facet.settings.ViewSettings;
+import io.jmix.flowui.facet.settings.UiComponentSettings;
 import io.jmix.flowui.facet.settings.component.GenericFilterSettings;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
-import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -37,6 +36,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericFilterMakeDefaultAction> {
 
     public static final String ID = "genericFilter_makeDefault";
+
+    protected GenericFilterSupport filterSupport;
 
     public GenericFilterMakeDefaultAction() {
         this(ID);
@@ -49,6 +50,11 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.GenericFilter.MakeDefault");
+    }
+
+    @Autowired
+    public void setGenericFilterSupport(GenericFilterSupport genericFilterSupport) {
+        this.filterSupport = genericFilterSupport;
     }
 
     @Autowired
@@ -65,7 +71,7 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
         return super.isApplicable()
                 && target.getId().isPresent()
                 && target.isAttached()
-                && ViewControllerUtils.getViewFacet(getParentView(), SettingsFacet.class) != null
+                && filterSupport.getFacet(filterSupport.findCurrentOwner(target), SettingsFacet.class) != null
                 && target.getCurrentConfiguration() != target.getEmptyConfiguration();
     }
 
@@ -73,11 +79,12 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
     public void execute() {
         checkTarget();
 
-        ViewSettingsFacet settingsFacet = ViewControllerUtils.getViewFacet(getParentView(), ViewSettingsFacet.class);
+        SettingsFacet<?> settingsFacet =
+                filterSupport.getFacet(filterSupport.findCurrentOwner(target), SettingsFacet.class);
         Preconditions.checkNotNullArgument(settingsFacet,
                 "The view doesn't contain %s", SettingsFacet.class.getSimpleName());
 
-        ViewSettings settings = settingsFacet.getSettings();
+        UiComponentSettings<?> settings = settingsFacet.getSettings();
         Preconditions.checkNotNullArgument(settings,
                 "%s isn't attached to the view", SettingsFacet.class.getSimpleName());
 

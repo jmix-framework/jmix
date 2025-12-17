@@ -107,7 +107,7 @@ public class PropertyFilterUrlQueryParametersBinderProvider extends AbstractUrlQ
             Preconditions.checkState(facet.getOwner() != null, "%s owner is not set",
                     UrlQueryParametersFacet.NAME);
 
-            com.vaadin.flow.component.Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
+            com.vaadin.flow.component.Component component = getComponent(facet.getOwner(), componentId);
             if (!(component instanceof PropertyFilter)) {
                 throw new IllegalStateException(String.format("'%s' is not a property filter component", componentId));
             }

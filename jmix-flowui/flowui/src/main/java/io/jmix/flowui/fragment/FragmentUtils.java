@@ -23,6 +23,7 @@ import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.server.Attributes;
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.facet.Facet;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.Nullable;
@@ -138,6 +139,24 @@ public final class FragmentUtils {
      */
     public static void setFragmentFacets(Fragment<?> fragment, FragmentFacets fragmentFacets) {
         fragment.setFragmentFacets(fragmentFacets);
+    }
+
+    /**
+     * Returns a specific type of {@link Facet} from the passed {@link Fragment}.
+     *
+     * @param fragment   the {@link Fragment} from which the facet is to be retrieved; must not be {@code null}
+     * @param facetClass the class type of the facet to retrieve; must not be {@code null}
+     * @param <T>        the type of the facet
+     * @return the facet of the specified type if found; otherwise, {@code null}
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <T extends Facet> T getFragmentFacet(Fragment<?> fragment, Class<T> facetClass) {
+        return (T) fragment.getFragmentFacets()
+                .getFacets()
+                .filter(facet -> facetClass.isAssignableFrom(facet.getClass()))
+                .findAny()
+                .orElse(null);
     }
 
     /**

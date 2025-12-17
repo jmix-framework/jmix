@@ -17,6 +17,7 @@
 package io.jmix.flowui.action.genericfilter;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.action.ExecutableAction;
@@ -25,6 +26,8 @@ import io.jmix.flowui.action.TargetAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;
@@ -209,5 +212,10 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
 
     protected View<?> getParentView() {
         return UiComponentUtils.getView(target);
+    }
+
+    protected Composite<?> getParent() {
+        Fragment<?> fragment = UiComponentUtils.findFragment(target);
+        return fragment != null ? fragment : UiComponentUtils.getView(target);
     }
 }

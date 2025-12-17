@@ -822,6 +822,10 @@ public final class AutowireUtils {
             return ViewControllerUtils.getViewFacets(view).getFacet(targetId);
         }
 
+        if (component instanceof Fragment<?> fragment) {
+            return FragmentUtils.getFragmentFacets(fragment).getFacet(targetId);
+        }
+
         return null;
     }
 

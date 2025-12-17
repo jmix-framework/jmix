@@ -17,7 +17,6 @@
 package io.jmix.flowui.view.impl;
 
 import com.vaadin.flow.component.Composite;
-import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.impl.AbstractFacetComponentsHolder;
 import io.jmix.flowui.view.View;
@@ -25,8 +24,6 @@ import io.jmix.flowui.view.ViewFacets;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 /**
  * Implementation of the {@link ViewFacets} interface. This class manages a collection of facets
@@ -37,8 +34,6 @@ import java.util.Set;
 public class ViewFacetsImpl extends AbstractFacetComponentsHolder implements ViewFacets {
 
     protected final View<?> view;
-
-    protected Set<Facet> facets = null; // lazily initialized linked hash set
 
     public ViewFacetsImpl(View<?> view) {
         this.view = view;

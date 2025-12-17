@@ -17,6 +17,7 @@
 package io.jmix.flowui.component.genericfilter;
 
 import com.google.common.collect.ImmutableSet;
+import com.vaadin.flow.component.Composite;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
@@ -35,9 +36,12 @@ import io.jmix.flowui.component.genericfilter.configuration.UiDataFilterConfigur
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
 import io.jmix.flowui.component.genericfilter.model.GenericFilterConfigurationConverter;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
+import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.facet.SettingsFacet;
-import io.jmix.flowui.facet.settings.ViewSettings;
+import io.jmix.flowui.facet.settings.UiComponentSettings;
 import io.jmix.flowui.facet.settings.component.GenericFilterSettings;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
@@ -242,6 +246,25 @@ public class GenericFilterSupport {
         }
     }
 
+    @Nullable
+    public Composite<?> findCurrentOwner(GenericFilter genericFilter) {
+        Composite<?> currentOwner = UiComponentUtils.findFragment(genericFilter);
+        if (currentOwner == null) {
+            currentOwner = UiComponentUtils.findView(genericFilter);
+        }
+
+        return currentOwner;
+    }
+
+    @Nullable
+    public <T extends Facet> T getFacet(@Nullable Composite<?> currentOwner, Class<T> facetClass) {
+        return currentOwner instanceof Fragment<?> fragment
+                ? FragmentUtils.getFragmentFacet(fragment, facetClass)
+                : currentOwner instanceof View<?> view
+                ? ViewControllerUtils.getViewFacet(view, facetClass)
+                : null;
+    }
+
     protected Configuration initFilterConfiguration(String id,
                                                     String name,
                                                     Configuration existedConfiguration,
@@ -372,18 +395,18 @@ public class GenericFilterSupport {
 
     protected boolean isDefaultForMeFieldVisible(Configuration currentConfiguration,
                                                  FilterConfigurationModel configurationModel) {
-        View<?> currentView = UiComponentUtils.findView(currentConfiguration.getOwner());
-
-        if (currentConfiguration.getOwner().getId().isEmpty() || currentView == null) {
+        Composite<?> currentOwner = findCurrentOwner(currentConfiguration.getOwner());
+        if (currentConfiguration.getOwner().getId().isEmpty() || currentOwner == null) {
             return false;
         }
 
-        SettingsFacet settingsFacet = ViewControllerUtils.getViewFacet(currentView, SettingsFacet.class);
+        SettingsFacet<?> settingsFacet = getFacet(currentOwner, SettingsFacet.class);
+
         if (settingsFacet == null) {
             return false;
         }
 
-        ViewSettings settings = settingsFacet.getSettings();
+        UiComponentSettings<?> settings = settingsFacet.getSettings();
 
         if (settings != null) {
             settings.getSettings(currentConfiguration.getOwner().getId().get(), GenericFilterSettings.class)
@@ -423,8 +446,8 @@ public class GenericFilterSupport {
 
             if (genericFilter.getId().isPresent()
                     && dataConfigurationDetail.isDefaultForMeFieldVisible()) {
-                SettingsFacet settingsFacet = ViewControllerUtils
-                        .getViewFacet(UiComponentUtils.getView(genericFilter), SettingsFacet.class);
+                Composite<?> currentOwner = findCurrentOwner(genericFilter);
+                SettingsFacet<?> settingsFacet = getFacet(currentOwner, SettingsFacet.class);
 
                 if (settingsFacet != null) {
                     saveFilterSettings(settingsFacet, genericFilter.getId().get(), configurationModel);
@@ -451,10 +474,10 @@ public class GenericFilterSupport {
         return configurationModel;
     }
 
-    protected void saveFilterSettings(SettingsFacet settingsFacet,
+    protected void saveFilterSettings(SettingsFacet<?> settingsFacet,
                                       String filterId,
                                       FilterConfigurationModel configurationModel) {
-        ViewSettings settings = settingsFacet.getSettings();
+        UiComponentSettings<?> settings = settingsFacet.getSettings();
         Preconditions.checkNotNullArgument(settings,
                 "%s is not attached to the view", SettingsFacet.class.getSimpleName());
 

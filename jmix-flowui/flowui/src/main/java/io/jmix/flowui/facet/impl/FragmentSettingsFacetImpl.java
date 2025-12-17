@@ -18,7 +18,6 @@ package io.jmix.flowui.facet.impl;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.router.QueryParameters;
 import io.jmix.flowui.component.HasFacetsComponents;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.FacetOwner;
@@ -33,7 +32,7 @@ import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.View;
-import org.jspecify.annotations.Nullable;
+import org.springframework.lang.Nullable;
 
 public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSettings>
         implements FragmentSettingsFacet {
@@ -41,8 +40,6 @@ public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSet
     protected OwnerEventListener readyListener;
     protected OwnerEventListener ownerViewDetachListener;
     protected OwnerEventListener ownerViewQueryParametersChangeListener;
-
-    protected QueryParameters viewQueryParameters;
 
     public FragmentSettingsFacetImpl(SettingsFacetUrlQueryParametersHelper settingsHelper,
                                      ReflectionCacheManager reflectionCacheManager,

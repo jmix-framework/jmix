@@ -104,7 +104,7 @@ public class GenericFilterUrlQueryParametersBinderProvider extends AbstractUrlQu
             Preconditions.checkState(facet.getOwner() != null, "%s owner is not set",
                     UrlQueryParametersFacet.NAME);
 
-            com.vaadin.flow.component.Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
+            com.vaadin.flow.component.Component component = getComponent(facet.getOwner(), componentId);
             if (!(component instanceof GenericFilter)) {
                 throw new IllegalStateException(String.format("'%s' is not a generic filter component", componentId));
             }

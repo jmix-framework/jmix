@@ -16,7 +16,9 @@
 
 package io.jmix.flowui.xml.facet.loader;
 
+import com.vaadin.flow.component.Composite;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.urlqueryparameters.UrlQueryParametersBinderProvider;
 import io.jmix.flowui.impl.FacetsImpl;
@@ -33,7 +35,7 @@ public class UrlQueryParametersFacetLoader extends AbstractFacetLoader<UrlQueryP
     @Override
     protected UrlQueryParametersFacet createFacet() {
         UrlQueryParametersFacet facet = facets.create(UrlQueryParametersFacet.class);
-        facet.setOwner(context.getView());
+        facet.setOwner((Composite<?> & FacetOwner) context.getOrigin());
         return facet;
     }
 
@@ -59,7 +61,7 @@ public class UrlQueryParametersFacetLoader extends AbstractFacetLoader<UrlQueryP
     protected void loadBinder(Element element) {
         for (UrlQueryParametersBinderProvider binderProvider : getBinderProviders()) {
             if (binderProvider.supports(element)) {
-                binderProvider.load(resultFacet, element, context);
+                binderProvider.load(resultFacet, element, findHostViewContext(context));
                 return;
             }
         }

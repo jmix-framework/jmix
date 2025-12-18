@@ -17,14 +17,21 @@
 package io.jmix.flowui.component.upload;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.UploadI18N;
+import com.vaadin.flow.component.upload.*;
+import com.vaadin.flow.server.streams.TransferContext;
+import com.vaadin.flow.server.streams.TransferProgressListener;
+import com.vaadin.flow.server.streams.UploadHandler;
+import com.vaadin.flow.server.streams.UploadMetadata;
+import io.jmix.core.FileTypesHelper;
 import io.jmix.core.Messages;
+import io.jmix.flowui.component.streams.TransferProgressNotifier;
+import io.jmix.flowui.component.upload.handler.SupportUploadSuccessCallback;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class JmixUpload extends Upload implements ApplicationContextAware, InitializingBean {
@@ -103,5 +110,57 @@ public class JmixUpload extends Upload implements ApplicationContextAware, Initi
         uploadI18N.setUnits(unitsList);
 
         setI18n(uploadI18N);
+    }
+
+    @Override
+    public void setUploadHandler(UploadHandler handler) {
+        if (handler instanceof TransferProgressNotifier transferProgressNotifier) {
+            transferProgressNotifier.addTransferProgressListener(new DefaultTransferProgressListener(this));
+        }
+
+        if (handler instanceof SupportUploadSuccessCallback supportUploadSuccessCallback) {
+            supportUploadSuccessCallback.setUploadSuccessCallback(this::onSuccess);
+        }
+
+        super.setUploadHandler(handler);
+    }
+
+    protected void onSuccess(SupportUploadSuccessCallback.UploadContext context) {
+        UploadMetadata uploadMetadata = context.getUploadMetadata();
+        fireEvent(new SucceededEvent(this,
+                uploadMetadata.fileName(), uploadMetadata.contentType(), uploadMetadata.contentLength()));
+    }
+
+    protected class DefaultTransferProgressListener implements TransferProgressListener {
+
+        protected final JmixUpload upload;
+
+        public DefaultTransferProgressListener(JmixUpload upload) {
+            this.upload = upload;
+        }
+
+        @Override
+        public void onStart(TransferContext context) {
+            upload.fireEvent(new StartedEvent(upload,
+                    context.fileName(), FileTypesHelper.getMIMEType(context.fileName()), context.contentLength()));
+        }
+
+        @Override
+        public void onProgress(TransferContext context, long transferredBytes, long totalBytes) {
+            upload.fireEvent(new ProgressUpdateEvent(upload,
+                    transferredBytes, totalBytes, context.fileName()));
+        }
+
+        @Override
+        public void onError(TransferContext context, IOException reason) {
+            upload.fireEvent(new FailedEvent(upload, context.fileName(),
+                    FileTypesHelper.getMIMEType(context.fileName()), context.contentLength(), reason));
+        }
+
+        @Override
+        public void onComplete(TransferContext context, long transferredBytes) {
+            upload.fireEvent(new FinishedEvent(upload,
+                    context.fileName(), FileTypesHelper.getMIMEType(context.fileName()), context.contentLength()));
+        }
     }
 }

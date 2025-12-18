@@ -18,6 +18,7 @@ package io.jmix.flowui.component.upload.receiver;
 
 import io.jmix.flowui.upload.TemporaryStorage;
 
+@Deprecated(since = "2.7", forRemoval = true)
 public class TemporaryStorageFileData {
 
     protected String fileName;

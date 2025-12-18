@@ -103,8 +103,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         Range mppRange = mpp.getRange();
         Component resultComponent = null;
 
-        if (mpp.getMetaProperty().getRange().getCardinality().isMany()
-                && !metadataTools.isElementCollection(mpp.getMetaProperty())) {
+        if (mpp.getMetaProperty().getRange().getCardinality().isMany()) {
             resultComponent = createCollectionField(context, mpp);
         } else if (mppRange.isDatatype()) {
             resultComponent = createDatatypeField(context, mpp);

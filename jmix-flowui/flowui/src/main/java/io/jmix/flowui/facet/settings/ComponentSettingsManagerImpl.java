@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.flowui.facet.settings.component.binder.DataLoadingSettingsBinder;
 import io.jmix.flowui.settings.UserSettingsCache;
@@ -54,18 +55,19 @@ public class ComponentSettingsManagerImpl implements ComponentSettingsManager {
         Preconditions.checkNotNullArgument(componentSettings);
 
         for (Component component : components) {
-            if (Strings.isNullOrEmpty(component.getId().orElse(null))
+            if (Strings.isNullOrEmpty(UiComponentUtils.getComponentId(component).orElse(null))
                     || !settingsRegistry.isSettingsRegisteredFor(component.getClass())) {
                 continue;
             }
 
-            log.trace("Applying settings for {} : {} ", component.getId().get(), component);
+            log.trace("Applying settings for {} : {} ", UiComponentUtils.getComponentId(component).get(), component);
 
             ComponentSettingsBinder<Component, ?> binder = (ComponentSettingsBinder<Component, ?>)
                     settingsRegistry.getSettingsBinder(component.getClass());
 
             Class<? extends Settings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
-            Settings settings = componentSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
+            Settings settings = componentSettings.getSettingsOrCreate(
+                    UiComponentUtils.getComponentId(component).get(), settingsClass);
 
             binder.applySettings(component, settings.as());
         }
@@ -79,11 +81,11 @@ public class ComponentSettingsManagerImpl implements ComponentSettingsManager {
 
         for (Component component : components) {
             if (!settingsRegistry.isSettingsRegisteredFor(component.getClass())
-                    || component.getId().orElse(null) == null) {
+                    || UiComponentUtils.getComponentId(component).isEmpty()) {
                 continue;
             }
 
-            log.trace("Applying settings for {} : {} ", component.getId().get(), component);
+            log.trace("Applying settings for {} : {} ", UiComponentUtils.getComponentId(component).get(), component);
 
             Class<? extends Settings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
 
@@ -91,7 +93,8 @@ public class ComponentSettingsManagerImpl implements ComponentSettingsManager {
                     settingsRegistry.getSettingsBinder(component.getClass());
 
             if (binder instanceof DataLoadingSettingsBinder) {
-                Settings settings = componentSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
+                Settings settings = componentSettings.getSettingsOrCreate(
+                        UiComponentUtils.getComponentId(component).get(), settingsClass);
                 ((DataLoadingSettingsBinder<Component, ?>) binder).applyDataLoadingSettings(component, settings.as());
             }
         }
@@ -107,15 +110,15 @@ public class ComponentSettingsManagerImpl implements ComponentSettingsManager {
 
         for (Component component : components) {
             if (!settingsRegistry.isSettingsRegisteredFor(component.getClass())
-                    || component.getId().orElse(null) == null) {
+                    || UiComponentUtils.getComponentId(component).isEmpty()) {
                 continue;
             }
 
-            log.trace("Saving settings for {} : {}", component.getId().get(), component);
+            log.trace("Saving settings for {} : {}", UiComponentUtils.getComponentId(component).get(), component);
 
             Class<? extends Settings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
 
-            Settings settings = componentSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
+            Settings settings = componentSettings.getSettingsOrCreate(UiComponentUtils.getComponentId(component).get(), settingsClass);
 
             ComponentSettingsBinder<Component, ?> binder = (ComponentSettingsBinder<Component, ?>)
                     settingsRegistry.getSettingsBinder(component.getClass());

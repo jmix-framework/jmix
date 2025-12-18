@@ -157,10 +157,10 @@ public abstract class AbstractSettingsFacet<S extends UiComponentSettings<S>> ex
     public Collection<Component> getManagedComponents() {
         checkAttachedToOwner();
 
-        Collection<Component> viewComponents = UiComponentUtils.getComponents(
+        Collection<Component> ownerComponents = UiComponentUtils.getComponents(
                 Objects.requireNonNull(getOwnerComponent()).getContent());
 
-        return getManagedComponentsFromCollection(viewComponents);
+        return getManagedComponentsFromCollection(ownerComponents);
     }
 
     @Nullable
@@ -215,20 +215,21 @@ public abstract class AbstractSettingsFacet<S extends UiComponentSettings<S>> ex
         }
     }
 
-    protected Collection<Component> getManagedComponentsFromCollection(Collection<Component> viewComponents) {
+    protected Collection<Component> getManagedComponentsFromCollection(Collection<Component> ownerComponents) {
         Collection<Component> components = Collections.emptyList();
         if (auto) {
-            components = viewComponents;
+            components = ownerComponents;
         } else if (CollectionUtils.isNotEmpty(componentIds)) {
-            components = viewComponents
+            components = ownerComponents
                     .stream()
-                    .filter(c -> componentIds.contains(c.getId().orElse(null)))
+                    .filter(c -> componentIds.contains(UiComponentUtils.getComponentId(c).orElse(null)))
                     .collect(Collectors.toList());
         }
 
         if (CollectionUtils.isNotEmpty(excludedComponentIds)) {
             components = components.stream()
-                    .filter(component -> !excludedComponentIds.contains(component.getId().orElse(null)))
+                    .filter(component ->
+                            !excludedComponentIds.contains(UiComponentUtils.getComponentId(component).orElse(null)))
                     .collect(Collectors.toList());
         }
         return components;
@@ -236,10 +237,10 @@ public abstract class AbstractSettingsFacet<S extends UiComponentSettings<S>> ex
 
     protected abstract S createSettings(FacetOwner owner);
 
-    protected void initSettings(S viewSettings) {
+    protected void initSettings(S settings) {
         if (isSettingsEnabled()) {
-            String rawSettings = userSettingsCache.get(viewSettings.getOwnerId());
-            viewSettings.initialize(rawSettings);
+            String rawSettings = userSettingsCache.get(settings.getOwnerId());
+            settings.initialize(rawSettings);
         }
     }
 

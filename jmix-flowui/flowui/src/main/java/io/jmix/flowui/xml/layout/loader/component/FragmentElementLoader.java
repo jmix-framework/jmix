@@ -42,6 +42,8 @@ public class FragmentElementLoader extends AbstractComponentLoader<Fragment<?>> 
 
     @Override
     public void loadComponent() {
+        componentLoader().loadClassNames(resultComponent, element);
+
         applicationContext.getBean(Fragments.class).init(context, resultComponent);
 
         if (element.element("properties") != null) {

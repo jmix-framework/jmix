@@ -219,6 +219,11 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
     }
 
     @Override
+    public Slice<T> findAllSlice(Pageable pageable) {
+        return findAllSlice(pageable, JmixDataRepositoryContext.builder().build());
+    }
+
+    @Override
     public Slice<T> findAllSlice(Pageable pageable, FetchPlan fetchPlan) {
         return findAllSlice(pageable, JmixDataRepositoryContext.plan(fetchPlan).build());
     }

@@ -35,6 +35,7 @@ package repository
 import com.google.common.collect.Lists
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
+import io.jmix.core.FetchPlan
 import io.jmix.core.FetchPlans
 import io.jmix.core.querycondition.PropertyCondition
 import io.jmix.core.repository.JmixDataRepositoryContext
@@ -353,9 +354,22 @@ class CustomerRepositoryTest extends DataSpec {
         Slice<Customer> slice
 
         when:
+        slice = customerRepository.findAllSlice(PageRequest.of(0, 10))
+        then:
+        !slice.hasNext()
+        slice.content.contains(customer1)
+
+        when:
+        def fetchPlan = fetchPlans.builder(Customer).addFetchPlan(FetchPlan.BASE).build()
+        slice = customerRepository.findAllSlice(PageRequest.of(0, 10), fetchPlan)
+        then:
+        !slice.hasNext()
+        slice.content.contains(customer1)
+
+        when:
         slice = customerRepository.findAllSlice(
                 PageRequest.of(0, 10),
-                JmixDataRepositoryContext.of(Map.of())
+                JmixDataRepositoryContext.builder().build()
         )
         then:
         !slice.hasNext()
@@ -364,7 +378,7 @@ class CustomerRepositoryTest extends DataSpec {
         when:
         slice = customerRepository.findAllSlice(
                 PageRequest.of(0, 2),
-                JmixDataRepositoryContext.of(Map.of())
+                JmixDataRepositoryContext.builder().build()
         )
         then:
         slice.hasNext()

@@ -43,7 +43,7 @@
                     visible="true"
                     width="100px">
             <nativeLabel id="gridLayoutChild1"/>
-            <textField id="gridLayoutChild2"/>
+            <textField id="gridLayoutChild2" alignSelf="START" justifySelf="END"/>
         </gridLayout>
         <gridLayout id="gridLayoutBindingId"
                     itemsContainer="ordersDc">

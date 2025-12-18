@@ -200,10 +200,11 @@ public class AwsFileStorage implements FileStorage {
         Map<String, String> fileRefParameters = Maps.toMap(parameters.keySet(), key -> parameters.get(key).toString());
         FileRef fileRef = new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
 
-        try (BufferedInputStream bos = new BufferedInputStream(inputStream, s3ChunkSizeBytes)) {
-            byte[] chunkBytes = new byte[s3ChunkSizeBytes];
-            int nBytes = bos.read(chunkBytes);
+        try (BufferedInputStream bis = new BufferedInputStream(inputStream, s3ChunkSizeBytes)) {
             S3Client s3Client = s3ClientReference.get();
+
+            byte[] chunkBytes = new byte[s3ChunkSizeBytes];
+            int nBytes = fillBuffer(bis, chunkBytes);
             if (nBytes < s3ChunkSizeBytes) {
                 s3Client.putObject(objectBuilder -> objectBuilder
                         .bucket(bucket)
@@ -230,7 +231,7 @@ public class AwsFileStorage implements FileStorage {
                         .eTag(partResponse.eTag())
                         .build();
                 completedParts.add(completedPart);
-                nBytes = bos.read(chunkBytes);
+                nBytes = fillBuffer(bis, chunkBytes);
             }
 
             s3Client.completeMultipartUpload(completeBuilder -> completeBuilder
@@ -244,6 +245,23 @@ public class AwsFileStorage implements FileStorage {
             String message = String.format("Could not save file %s.", fileName);
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, message);
         }
+    }
+
+    /**
+     * Reads bytes from the stream until the buffer is full or EOF is reached.
+     *
+     * @return number of bytes read (0 or more) or -1 if end of stream reached immediately.
+     */
+    protected int fillBuffer(InputStream in, byte[] buffer) throws IOException {
+        int bytesRead = 0;
+        while (bytesRead < buffer.length) {
+            int n = in.read(buffer, bytesRead, buffer.length - bytesRead);
+            if (n < 0) {
+                break; // EOF
+            }
+            bytesRead += n;
+        }
+        return bytesRead == 0 ? -1 : bytesRead;
     }
 
     protected RequestBody fromBytes(byte[] buffer, int length) {

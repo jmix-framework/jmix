@@ -62,6 +62,7 @@ public class DbmsType {
     protected static final Map<DatabaseDriver, Database> driverToDbMap = new EnumMap<>(DatabaseDriver.class);;
 
     static {
+        driverToDbMap.put(DatabaseDriver.H2, Database.H2);
         driverToDbMap.put(DatabaseDriver.HSQLDB, Database.HSQL);
         driverToDbMap.put(DatabaseDriver.MYSQL, Database.MYSQL);
         driverToDbMap.put(DatabaseDriver.MARIADB, Database.MYSQL);

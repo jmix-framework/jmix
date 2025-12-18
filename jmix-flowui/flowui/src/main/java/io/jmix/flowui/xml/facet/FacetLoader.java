@@ -75,9 +75,10 @@ public class FacetLoader {
      */
     public Facet load(Element element, ComponentLoader.Context context) {
         io.jmix.flowui.xml.facet.loader.FacetLoader<?> facetLoader = getLoader(element, context);
-        if (facetLoader == null && context instanceof ComponentLoader.ComponentContext componentContext) {
+        if (facetLoader == null) {
             // fallback
-            return _load(element, componentContext);
+            // we can cast safety because loaders exist for the fragment facets
+            return _load(element, (ComponentLoader.ComponentContext) context);
         }
 
         facetLoader.initFacet();

@@ -58,7 +58,7 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         loaderSupport.loadBoolean(element, "auto")
                 .ifPresent(auto -> {
                     if (auto) {
-                        getComponentContext().addPreInitTask(new AutoConfigurationInitTask(resultFacet));
+                        context.addPreInitTask(new AutoConfigurationInitTask(resultFacet));
                     }
                 });
     }
@@ -75,7 +75,7 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         String container = loadEventRequiredAttribute(element, "container");
         String param = loadParam(element);
 
-        getComponentContext().addPreInitTask(new OnContainerItemChangedLoadTriggerInitTask(facet, loaderId, container, param));
+        context.addPreInitTask(new OnContainerItemChangedLoadTriggerInitTask(facet, loaderId, container, param));
     }
 
     protected void loadOnComponentValueChanged(T facet, String loaderId, Element element) {
@@ -84,7 +84,7 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         String param = loadParam(element);
         DataLoadCoordinator.LikeClause likeClause = loadLikeClause(element);
 
-        getComponentContext().addPreInitTask(new OnComponentValueChangedLoadTriggerInitTask(
+        context.addPreInitTask(new OnComponentValueChangedLoadTriggerInitTask(
                 facet, loaderId, component, param, likeClause));
     }
 
@@ -105,8 +105,6 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         return loaderSupport.loadEnum(element, DataLoadCoordinator.LikeClause.class, "likeClause")
                 .orElse(DataLoadCoordinator.LikeClause.NONE);
     }
-
-    protected abstract ComponentLoader.ComponentContext getComponentContext();
 
     @SuppressWarnings("ClassCanBeRecord")
     public static class OnContainerItemChangedLoadTriggerInitTask implements ComponentLoader.InitTask {

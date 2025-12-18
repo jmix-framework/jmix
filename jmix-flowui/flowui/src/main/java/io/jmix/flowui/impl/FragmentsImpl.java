@@ -144,6 +144,12 @@ public class FragmentsImpl implements Fragments {
     }
 
     protected void postInit(Fragment<?> fragment, @Nullable FragmentLoaderContext context) {
+        if (context != null) {
+            // Pre InitTasks must be executed before DependencyManager
+            // invocation to have precedence over @Subscribe methods
+            context.executePreInitTasks();
+        }
+
         autowireFragment(fragment);
 
         // Init tasks should be executed after fragment is autowired,

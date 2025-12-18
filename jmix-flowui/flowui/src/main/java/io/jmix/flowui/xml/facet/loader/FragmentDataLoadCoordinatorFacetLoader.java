@@ -38,11 +38,6 @@ public class FragmentDataLoadCoordinatorFacetLoader
         return facet;
     }
 
-    @Override
-    protected ComponentLoader.ComponentContext getComponentContext() {
-        return findHostViewContext(context);
-    }
-
     protected void loadRefresh(FragmentDataLoadCoordinator facet, Element element) {
         String loaderId = loaderSupport.loadString(element, "loader")
                 .orElseThrow(() ->
@@ -76,7 +71,7 @@ public class FragmentDataLoadCoordinatorFacetLoader
                             " value: " + type, context);
         }
 
-        getComponentContext().addPreInitTask(new OnFragmentEventLoadTriggerInitTask(facet, loaderId, eventClass));
+        context.addPreInitTask(new OnFragmentEventLoadTriggerInitTask(facet, loaderId, eventClass));
     }
 
     public static class OnFragmentEventLoadTriggerInitTask implements ComponentLoader.InitTask {

@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.xml.layout.loader;
 
-import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.xml.layout.ComponentLoader;
@@ -36,6 +35,7 @@ public abstract class AbstractLoaderContext implements ComponentLoader.Context {
     protected HasActions actionsHolder;
 
     protected String messageGroup;
+    protected List<ComponentLoader.InitTask> preInitTasks;
     protected List<ComponentLoader.InitTask> initTasks;
 
     @Override
@@ -82,6 +82,25 @@ public abstract class AbstractLoaderContext implements ComponentLoader.Context {
 
     public void setDataHolder(HasDataComponents dataHolder) {
         this.dataHolder = dataHolder;
+    }
+
+    @Override
+    public void addPreInitTask(ComponentLoader.InitTask task) {
+        if (preInitTasks == null) {
+            preInitTasks = new ArrayList<>();
+        }
+
+        preInitTasks.add(task);
+    }
+
+    @Override
+    public void executePreInitTasks() {
+        if (CollectionUtils.isNotEmpty(preInitTasks)) {
+            for (ComponentLoader.InitTask initTask : preInitTasks) {
+                initTask.execute(this);
+            }
+            preInitTasks.clear();
+        }
     }
 
     @Override

@@ -68,13 +68,7 @@ public class ViewDataLoadCoordinatorFacetLoader
                     " value: " + type, context);
         };
 
-        getComponentContext().addPreInitTask(new OnViewEventLoadTriggerInitTask(facet, loaderId, eventClass));
-    }
-
-    @Override
-    protected ComponentLoader.ComponentContext getComponentContext() {
-        // should be component context in case on view loading
-        return (ComponentLoader.ComponentContext) context;
+        context.addPreInitTask(new OnViewEventLoadTriggerInitTask(facet, loaderId, eventClass));
     }
 
     @SuppressWarnings("ClassCanBeRecord")

@@ -176,11 +176,11 @@ public final class FragmentUtils {
      * @param fragmentOwner fragment owner to get the host view
      * @return the {@link View} owner of the passed fragment owner
      */
-    public static View<?> findHostView(FragmentOwner fragmentOwner) {
+    public static View<?> getHostView(FragmentOwner fragmentOwner) {
         if (fragmentOwner instanceof View<?> view) {
             return view;
         } else if (fragmentOwner instanceof Fragment<?> fragment) {
-            return findHostView(FragmentUtils.getParentController(fragment));
+            return getHostView(FragmentUtils.getParentController(fragment));
         }
 
         throw new IllegalStateException("Unknown parent type: " + fragmentOwner.getClass().getName());

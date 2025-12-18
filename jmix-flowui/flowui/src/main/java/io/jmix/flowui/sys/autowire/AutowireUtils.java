@@ -26,7 +26,6 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.fragment.Fragment;
-import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.ActionHolder;
@@ -255,7 +254,7 @@ public final class AutowireUtils {
                                                                           Target targetType) {
         return Strings.isNullOrEmpty(targetId) ? switch (targetType) {
             case COMPONENT, CONTROLLER -> fragment;
-            case HOST_CONTROLLER -> FragmentUtils.findHostView(fragment);
+            case HOST_CONTROLLER -> FragmentUtils.getHostView(fragment);
             case DATA_CONTEXT -> FragmentUtils.getFragmentData(fragment).getDataContext();
             default -> throw new UnsupportedOperationException(String.format("Unsupported @%s target '%s'",
                     annotation.getClass().getSimpleName(), targetType));

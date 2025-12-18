@@ -64,7 +64,7 @@ public class FragmentDataLoadCoordinatorImpl extends AbstractDataLoadCoordinator
 
     @Override
     public void addOnViewEventLoadTrigger(DataLoader loader, Class<?> eventClass) {
-        View<?> view = FragmentUtils.findHostView(getOwnerNN());
+        View<?> view = FragmentUtils.getHostView(getOwnerNN());
         triggers.add(new OnViewEventLoadTrigger(view, reflectionCacheManager, loader, eventClass));
 
     }

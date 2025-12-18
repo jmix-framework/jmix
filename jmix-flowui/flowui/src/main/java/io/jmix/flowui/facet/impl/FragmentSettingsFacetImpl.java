@@ -19,7 +19,6 @@ package io.jmix.flowui.facet.impl;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DetachEvent;
 import io.jmix.flowui.component.HasFacetsComponents;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.FragmentSettingsFacet;
 import io.jmix.flowui.facet.settings.ComponentSettingsManager;
@@ -79,7 +78,7 @@ public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSet
     @Override
     protected void subscribeOwnerLifecycle() {
         Fragment<?> fragment = ((Fragment<?>) getOwnerComponent());
-        View<?> ownerView = UiComponentUtils.getView(fragment);
+        View<?> ownerView = FragmentUtils.getHostView(fragment);
 
         readyListener = new OwnerEventListener(fragment, Fragment.ReadyEvent.class, this::onFragmentReady);
         ownerViewDetachListener = new OwnerEventListener(ownerView, DetachEvent.class, this::onOwnerViewDetach);

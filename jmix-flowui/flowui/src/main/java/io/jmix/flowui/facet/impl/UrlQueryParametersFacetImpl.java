@@ -88,7 +88,7 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
                 view = (View<?>) owner;
             } else if (owner instanceof Fragment<?> fragment) {
                 // in case of fragment
-                view = FragmentUtils.findHostView(fragment);
+                view = FragmentUtils.getHostView(fragment);
             } else {
                 throw new IllegalStateException("Unknown parent type for the %s: %s"
                         .formatted(UrlQueryParametersFacet.class.getSimpleName(), owner.getClass().getName()));

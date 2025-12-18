@@ -17,15 +17,10 @@
 package io.jmix.flowui.xml.facet.loader;
 
 import com.vaadin.flow.component.Composite;
-import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.ViewDataLoadCoordinator;
-import io.jmix.flowui.model.DataLoader;
-import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewControllerUtils;
-import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
 public class ViewDataLoadCoordinatorFacetLoader
@@ -69,28 +64,5 @@ public class ViewDataLoadCoordinatorFacetLoader
         };
 
         context.addPreInitTask(new OnViewEventLoadTriggerInitTask(facet, loaderId, eventClass));
-    }
-
-    @SuppressWarnings("ClassCanBeRecord")
-    public static class OnViewEventLoadTriggerInitTask implements ComponentLoader.InitTask {
-
-        protected final ViewDataLoadCoordinator facet;
-        protected final String loaderId;
-        protected final Class<?> eventClass;
-
-        public OnViewEventLoadTriggerInitTask(ViewDataLoadCoordinator facet, String loaderId, Class<?> eventClass) {
-            this.facet = facet;
-            this.loaderId = loaderId;
-            this.eventClass = eventClass;
-        }
-
-        @Override
-        public void execute(ComponentLoader.Context context) {
-            Preconditions.checkNotNullArgument(facet.getOwner());
-
-            ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
-            DataLoader loader = viewData.getLoader(loaderId);
-            facet.addOnViewEventLoadTrigger(loader, eventClass);
-        }
     }
 }

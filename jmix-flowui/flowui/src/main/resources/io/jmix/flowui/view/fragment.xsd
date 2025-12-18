@@ -81,6 +81,9 @@
     <xs:simpleType name="onFragmentEventEnum">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Ready"/>
+            <xs:enumeration value="Host.Init"/>
+            <xs:enumeration value="Host.BeforeShow"/>
+            <xs:enumeration value="Host.Ready"/>
         </xs:restriction>
     </xs:simpleType>
 

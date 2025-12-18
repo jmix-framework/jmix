@@ -21,8 +21,11 @@ import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.QueryParameters;
 import io.jmix.flowui.component.PaginationComponent;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
+import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
+import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.lang.Nullable;
 
@@ -91,8 +94,8 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
      */
     public ImmutableMap<String, String> serializeQueryParameters(PaginationDataLoader paginationLoader) {
         return ImmutableMap.of(
-                getFirstResultParam(), urlParamSerializer.serialize(paginationLoader.getFirstResult()),
-                getMaxResultsParam(), urlParamSerializer.serialize(paginationLoader.getMaxResults())
+                _getFirstResultParam(), urlParamSerializer.serialize(paginationLoader.getFirstResult()),
+                _getMaxResultsParam(), urlParamSerializer.serialize(paginationLoader.getMaxResults())
         );
     }
 
@@ -108,13 +111,23 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
     public void updateState(QueryParameters queryParameters) {
         getPaginationLoader().ifPresent(paginationLoader -> {
             Map<String, List<String>> parameters = queryParameters.getParameters();
-            if (parameters.containsKey(getFirstResultParam())) {
+            if (parameters.containsKey(_getFirstResultParam())) {
+                String serializedFirstResult = parameters.get(_getFirstResultParam()).get(0);
+                int firstResult = urlParamSerializer.deserialize(Integer.class, serializedFirstResult);
+                paginationLoader.setFirstResult(firstResult);
+            } else if (parameters.containsKey(getFirstResultParam())) {
+                // the fallback option should be removed in future versions
                 String serializedFirstResult = parameters.get(getFirstResultParam()).get(0);
                 int firstResult = urlParamSerializer.deserialize(Integer.class, serializedFirstResult);
                 paginationLoader.setFirstResult(firstResult);
             }
 
-            if (parameters.containsKey(getMaxResultsParam())) {
+            if (parameters.containsKey(_getMaxResultsParam())) {
+                String serializedMaxResults = parameters.get(_getMaxResultsParam()).get(0);
+                int maxResults = urlParamSerializer.deserialize(Integer.class, serializedMaxResults);
+                paginationLoader.setMaxResults(maxResults);
+            } else if (parameters.containsKey(getMaxResultsParam())) {
+                // the fallback option should be removed in future versions
                 String serializedMaxResults = parameters.get(getMaxResultsParam()).get(0);
                 int maxResults = urlParamSerializer.deserialize(Integer.class, serializedMaxResults);
                 paginationLoader.setMaxResults(maxResults);
@@ -127,9 +140,15 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
      * If the custom parameter name is not specified, a default parameter name is returned.
      *
      * @return the parameter name for the "first result" value, either a custom or default value
+     * @deprecated use {@link #_getFirstResultParam()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public String getFirstResultParam() {
         return Strings.isNullOrEmpty(firstResultParam) ? FIRST_RESULT_PARAM : firstResultParam;
+    }
+
+    protected String _getFirstResultParam() {
+        return getOwnerId() + "_" + getFirstResultParam();
     }
 
     /**
@@ -147,9 +166,32 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
      * If the custom parameter name is not specified, a default parameter name is returned.
      *
      * @return the parameter name for the "max results" value, either a custom or default value
+     * @deprecated use {@link #_getMaxResultsParam()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public String getMaxResultsParam() {
         return Strings.isNullOrEmpty(maxResultsParam) ? MAX_RESULTS_PARAM : maxResultsParam;
+    }
+
+    protected String _getMaxResultsParam() {
+        return getOwnerId() + "_" + getMaxResultsParam();
+    }
+
+    protected String getOwnerId() {
+        String ownerId = UiComponentUtils.getComponentId((Component) pagination)
+                // use default id instead
+                .orElse("pagination");
+
+        Fragment<?> fragment = UiComponentUtils.findFragment((Component) pagination);
+        if (fragment != null) {
+            // add fragment ID as a prefix in case of the fragment owner
+            ownerId = fragment.getId()
+                    .orElseThrow(() -> new IllegalStateException("A %s without an id can't use the %s"
+                            .formatted(Fragment.class.getSimpleName(), UrlQueryParametersFacet.class)))
+                    + "_" + ownerId;
+        }
+
+        return ownerId;
     }
 
     /**

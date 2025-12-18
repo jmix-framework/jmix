@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.facet;
 
-import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.view.View;
 
 /**
@@ -25,12 +24,4 @@ import io.jmix.flowui.view.View;
  * events, container item changes, or component value changes.
  */
 public interface ViewDataLoadCoordinator extends DataLoadCoordinator {
-
-    /**
-     * Adds trigger on view event.
-     *
-     * @param loader     loader
-     * @param eventClass event class
-     */
-    void addOnViewEventLoadTrigger(DataLoader loader, Class<?> eventClass);
 }

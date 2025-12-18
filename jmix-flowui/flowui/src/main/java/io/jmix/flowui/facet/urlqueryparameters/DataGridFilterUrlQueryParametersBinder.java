@@ -21,12 +21,14 @@ import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.router.QueryParameters;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
+import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.slf4j.Logger;
@@ -251,11 +253,21 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
      * @return the value of the parameter if set, or a generated default value based on the grid's ID
      */
     public String getParameter() {
-        return Strings.isNullOrEmpty(parameter)
-                ? grid.getId().orElseThrow(() ->
+        String parameterName = Strings.isNullOrEmpty(parameter)
+                ? UiComponentUtils.getComponentId(grid).orElseThrow(() ->
                 new IllegalStateException("Component has neither id nor explicit url query param"))
-                + "Filter"
                 : parameter;
+
+        Fragment<?> fragment = UiComponentUtils.findFragment(grid);
+        if (fragment != null) {
+            // add fragment ID as a prefix in case of the fragment owner
+            parameterName = fragment.getId()
+                    .orElseThrow(() -> new IllegalStateException("A %s without an id can't use the %s"
+                            .formatted(Fragment.class.getSimpleName(), UrlQueryParametersFacet.class)))
+                    + "_" + parameterName;
+        }
+
+        return parameterName;
     }
 
     /**

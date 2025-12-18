@@ -26,5 +26,11 @@ import io.jmix.flowui.model.DataLoader;
  */
 public interface FragmentDataLoadCoordinator extends DataLoadCoordinator {
 
+    /**
+     * Adds trigger on fragment event.
+     *
+     * @param loader     loader
+     * @param eventClass event class
+     */
     void addOnFragmentEventLoadTrigger(DataLoader loader, Class<?> eventClass);
 }

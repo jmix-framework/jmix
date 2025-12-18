@@ -17,14 +17,19 @@
 package io.jmix.flowui.xml.facet.loader;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Composite;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.DataLoadCoordinator;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.impl.FacetsImpl;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.layout.ComponentLoader;
@@ -177,6 +182,39 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         @Override
         public void execute(ComponentLoader.Context context) {
             facet.configureAutomatically();
+        }
+    }
+
+    @SuppressWarnings("ClassCanBeRecord")
+    public static class OnViewEventLoadTriggerInitTask implements ComponentLoader.InitTask {
+
+        protected final DataLoadCoordinator facet;
+        protected final String loaderId;
+        protected final Class<?> eventClass;
+
+        public OnViewEventLoadTriggerInitTask(DataLoadCoordinator facet, String loaderId, Class<?> eventClass) {
+            this.facet = facet;
+            this.loaderId = loaderId;
+            this.eventClass = eventClass;
+        }
+
+        @Override
+        public void execute(ComponentLoader.Context context) {
+            Composite<?> owner = facet.getOwner();
+            Preconditions.checkNotNullArgument(owner);
+
+            HasDataComponents data;
+            if (owner instanceof Fragment<?> fragment) {
+                data = FragmentUtils.getFragmentData(fragment);
+            } else if (owner instanceof View<?> view){
+                data = ViewControllerUtils.getViewData(view);
+            } else {
+                throw new IllegalStateException("Unsupported owner of the %s"
+                        .formatted(facet.getClass().getSimpleName()));
+            }
+
+            DataLoader loader = data.getLoader(loaderId);
+            facet.addOnViewEventLoadTrigger(loader, eventClass);
         }
     }
 }

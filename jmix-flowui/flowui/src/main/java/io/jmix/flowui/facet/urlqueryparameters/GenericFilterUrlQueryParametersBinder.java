@@ -43,7 +43,9 @@ import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent.FilterComponentsChangeEvent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.SingleFilterSupport;
+import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
+import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.KeyValueCollectionLoader;
@@ -180,8 +182,8 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         }
 
         return ImmutableMap.of(
-                getConfigurationParam(), configurationParam,
-                getConditionParam(), conditionParams
+                _getConfigurationParam(), configurationParam,
+                _getConditionParam(), conditionParams
         );
     }
 
@@ -216,23 +218,33 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     public void updateState(QueryParameters queryParameters) {
         Map<String, List<String>> parameters = queryParameters.getParameters();
 
-        if (parameters.containsKey(getConfigurationParam())) {
-            List<String> configurationParam = parameters.get(getConfigurationParam());
+        if (parameters.containsKey(getConfigurationParam()) || parameters.containsKey(_getConditionParam())) {
+            List<String> configurationParam = parameters.containsKey(_getConditionParam())
+                    ? parameters.get(_getConditionParam())
+                    // the fallback option should be removed in future versions
+                    : parameters.get(getConfigurationParam());
+
             String configurationId = deserializeConfigurationId(configurationParam.get(0));
             Optional<Configuration> currentConfiguration = filter.getConfigurations().stream()
                     .filter(configuration -> configurationId.equals(configuration.getId()))
                     .findAny();
 
             currentConfiguration.ifPresent(configuration -> {
-                if (parameters.containsKey(getConditionParam())) {
-                    List<String> conditionParams = parameters.get(getConditionParam());
+                if (parameters.containsKey(getConditionParam()) || parameters.containsKey(_getConditionParam())) {
+                    List<String> conditionParams = parameters.containsKey(_getConditionParam())
+                            ? parameters.get(_getConditionParam())
+                            // the fallback option should be removed in future versions
+                            : parameters.get(getConditionParam());
                     updateConfigurationConditions(configuration, conditionParams);
                 }
 
                 FilterUtils.setCurrentConfiguration(filter, configuration, true);
             });
-        } else if (parameters.containsKey(getConditionParam())) {
-            List<String> conditionParams = parameters.get(getConditionParam());
+        } else if (parameters.containsKey(getConditionParam()) || parameters.containsKey(_getConditionParam())) {
+            List<String> conditionParams = parameters.containsKey(_getConditionParam())
+                    ? parameters.get(_getConditionParam())
+                    // the fallback option should be removed in future versions
+                    : parameters.get(getConditionParam());
 
             // For cases where there is a default design-time configuration.
             // The design-time configuration can't be modified, so an empty configuration is entered
@@ -445,9 +457,15 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
      * is null or empty, a default name is returned.
      *
      * @return the configuration parameter name if set, otherwise the default configuration parameter name
+     * @deprecated use {@link #_getConfigurationParam()} ()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public String getConfigurationParam() {
         return Strings.isNullOrEmpty(configurationParam) ? DEFAULT_CONFIGURATION_PARAM : configurationParam;
+    }
+
+    protected String _getConfigurationParam() {
+        return getOwnerId() + "_" + getConfigurationParam();
     }
 
     /**
@@ -464,9 +482,15 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
      * is null or empty, a default name is returned.
      *
      * @return the condition parameter name if set, otherwise the default condition parameter name
+     * @deprecated use {@link #_getConditionParam()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public String getConditionParam() {
         return Strings.isNullOrEmpty(conditionParam) ? DEFAULT_CONDITION_PARAM : conditionParam;
+    }
+
+    public String _getConditionParam() {
+        return getOwnerId() + "_" + getConditionParam();
     }
 
     /**
@@ -476,6 +500,23 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
      */
     public void setConditionParam(@Nullable String conditionParam) {
         this.conditionParam = conditionParam;
+    }
+
+    protected String getOwnerId() {
+        String ownerId = UiComponentUtils.getComponentId(filter)
+                // use default id instead
+                .orElse("genericFilter");
+
+        Fragment<?> fragment = UiComponentUtils.findFragment(filter);
+        if (fragment != null) {
+            // add fragment ID as a prefix in case of the fragment owner
+            ownerId = fragment.getId()
+                    .orElseThrow(() -> new IllegalStateException("A %s without an id can't use the %s"
+                            .formatted(Fragment.class.getSimpleName(), UrlQueryParametersFacet.class)))
+                    + "_" + ownerId;
+        }
+
+        return ownerId;
     }
 
     protected boolean isPropertyMatched(PropertyFilter<?> propertyFilter, PropertyFilter<?> anotherPropertyFilter) {

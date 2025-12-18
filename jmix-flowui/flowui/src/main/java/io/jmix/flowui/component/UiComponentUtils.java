@@ -22,6 +22,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
+import com.vaadin.flow.server.Attributes;
 import com.vaadin.flow.server.StreamResource;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorageLocator;
@@ -537,6 +538,25 @@ public final class UiComponentUtils {
 
         Optional<Component> parent = component.getParent();
         return parent.map(UiComponentUtils::findFragment).orElse(null);
+    }
+
+    /**
+     * Gets the id of the root element of this component.
+     * <p>
+     * Gets the id of the root element of this component, depending on the attachment context:
+     * <ul>
+     *     <li>If the component is attached to a fragment, the value of {@code fragmentId}
+     *     {@link Attributes attribute} will be returned.</li>
+     *     <li>If the component is attached to a view, the component's original id will be returned.</li>
+     * </ol>
+     *
+     * @return the id, or and empty optional if no id has been set
+     * @see Component#setId(String)
+     * @see FragmentUtils#setComponentId(Component, String)
+     */
+    public static Optional<String> getComponentId(Component component) {
+        return FragmentUtils.getComponentId(component)
+                .or(component::getId);
     }
 
     /**

@@ -19,12 +19,15 @@ package io.jmix.flowui.facet.impl;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.flowui.component.HasDataComponents;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.FragmentDataLoadCoordinator;
 import io.jmix.flowui.facet.dataloadcoordinator.OnFragmentEventLoadTrigger;
+import io.jmix.flowui.facet.dataloadcoordinator.OnViewEventLoadTrigger;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
+import io.jmix.flowui.view.View;
 
 public class FragmentDataLoadCoordinatorImpl extends AbstractDataLoadCoordinator
         implements FragmentDataLoadCoordinator {
@@ -60,12 +63,10 @@ public class FragmentDataLoadCoordinatorImpl extends AbstractDataLoadCoordinator
         return (Fragment<?>) super.getOwnerNN();
     }
 
-    /**
-     * @deprecated use {@link #addOnFragmentEventLoadTrigger(DataLoader, Class)} instead
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
     @Override
     public void addOnViewEventLoadTrigger(DataLoader loader, Class<?> eventClass) {
-        throw new UnsupportedOperationException("FragmentDataLoadCoordinator does not support View events");
+        View<?> view = UiComponentUtils.getView(getOwnerNN());
+        triggers.add(new OnViewEventLoadTrigger(view, reflectionCacheManager, loader, eventClass));
+
     }
 }

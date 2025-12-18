@@ -165,6 +165,18 @@ public interface StudioDataElements {
     void onViewEventLoadTrigger();
 
     @StudioElement(
+            name = "OnFragmentEventLoadTrigger",
+            classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnFragmentEventLoadTrigger",
+            xmlElement = "onFragmentEvent",
+            icon = "io/jmix/flowui/kit/meta/icon/element/onFragmentEventLoadTrigger.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                            options = {"Ready", "Host.Init", "Host.BeforeShow", "Host.Ready"}, required = true)
+            }
+    )
+    void onFragmentEventLoadTrigger();
+
+    @StudioElement(
             name = "OnComponentValueChangedLoadTrigger",
             classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnComponentValueChangedLoadTrigger",
             xmlElement = "onComponentValueChanged",

@@ -18,9 +18,11 @@ package io.jmix.flowui.xml.facet.loader;
 
 import com.vaadin.flow.component.Composite;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.FragmentDataLoadCoordinator;
+import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentData;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.model.DataLoader;
@@ -61,17 +63,30 @@ public class FragmentDataLoadCoordinatorFacetLoader
     protected void loadOnFragmentEvent(FragmentDataLoadCoordinator facet, String loaderId, Element element) {
         String type = loadEventRequiredAttribute(element, "type");
 
-        Class<?> eventClass;
-
-        if ("Ready".equals(type)) {
-            eventClass = View.ReadyEvent.class;
-        } else {
-            throw new GuiDevelopmentException(
+        Class<?> eventClass = switch (type) {
+            case "Ready" -> Fragment.ReadyEvent.class;
+            case "Host.Init" -> View.InitEvent.class;
+            case "Host.BeforeShow" -> View.BeforeShowEvent.class;
+            case "Host.Ready" -> View.ReadyEvent.class;
+            default -> throw new GuiDevelopmentException(
                     "Unsupported 'fragmentDataLoadCoordinator/refresh/oFragmentEvent.event'" +
                             " value: " + type, context);
-        }
+        };
 
-        context.addPreInitTask(new OnFragmentEventLoadTriggerInitTask(facet, loaderId, eventClass));
+        if (eventClass.isAssignableFrom(Fragment.ReadyEvent.class)) {
+            context.addPreInitTask(new OnFragmentEventLoadTriggerInitTask(facet, loaderId, eventClass));
+        } else {
+            if (resultFacet.getOwner() != null && UiComponentUtils.findView(resultFacet.getOwner()) == null) {
+                // try to execute a trigger task after `Attach`, it can be cover the case of pragmatic creation of
+                // fragment on View.InitEevnt
+                resultFacet.getOwner().addAttachListener(event -> {
+                    event.unregisterListener();
+                    new OnViewEventLoadTriggerInitTask(facet, loaderId, eventClass).execute(context);
+                });
+            } else {
+                context.addPreInitTask(new OnViewEventLoadTriggerInitTask(facet, loaderId, eventClass));
+            }
+        }
     }
 
     public static class OnFragmentEventLoadTriggerInitTask implements ComponentLoader.InitTask {

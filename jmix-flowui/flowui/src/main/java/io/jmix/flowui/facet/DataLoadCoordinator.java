@@ -52,9 +52,7 @@ public interface DataLoadCoordinator extends Facet {
      *
      * @param loader     loader
      * @param eventClass event class
-     * @deprecated use {@link ViewDataLoadCoordinator#addOnViewEventLoadTrigger(DataLoader, Class)} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
     void addOnViewEventLoadTrigger(DataLoader loader, Class<?> eventClass);
 
     /**

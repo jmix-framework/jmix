@@ -6,14 +6,15 @@ import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
 import io.jmix.datatools.datamodel.DataModelManager;
 import io.jmix.flowui.component.image.JmixImage;
+import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;
 
-@Route(value = "data-diagram-view", layout = DefaultMainViewParent.class)
-@ViewController(id = "DataDiagramView")
+@Route(value = "datatl/data-diagram", layout = DefaultMainViewParent.class)
+@ViewController(id = "datatl_dataDiagramView")
 @ViewDescriptor(path = "data-diagram-view.xml")
 public class DataDiagramView extends StandardView {
     @Autowired
@@ -42,13 +43,4 @@ public class DataDiagramView extends StandardView {
 
         diagramImage.setSrc(downloadHandler);
     }
-
-    @Subscribe(id = "downloadButton", subject = "clickListener")
-    public void onDownloadButtonClick(final ClickEvent<JmixButton> event) {
-        // TODO
-        if (diagramImage.getValueSource().getValue() instanceof DownloadHandler handler) {
-            System.out.println();
-        }
-    }
-
 }

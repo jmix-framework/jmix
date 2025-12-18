@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-@Route(value = "data-models", layout = DefaultMainViewParent.class)
+@Route(value = "datatl/data-model", layout = DefaultMainViewParent.class)
 @ViewController(id = "datatl_dataModelListView")
 @ViewDescriptor(path = "data-model-list-view.xml")
 @LookupComponent("entityModelsDataGrid")
@@ -87,8 +87,8 @@ public class DataModelListView extends StandardListView<EntityModel> {
         return List.of();
     }
 
-    @Subscribe(id = "generateDiagramButton", subject = "clickListener")
-    public void onGenerateDiagramButtonClick(final ClickEvent<JmixButton> event) {
+    @Subscribe(id = "diagramButton", subject = "clickListener")
+    public void onDiagramButtonClick(final ClickEvent<JmixButton> event) {
         dataModelManager.setFilteredModels(entityModelsDl.getContainer().getItems());
         UI.getCurrent().getPage().open("/data-diagram-view");
     }

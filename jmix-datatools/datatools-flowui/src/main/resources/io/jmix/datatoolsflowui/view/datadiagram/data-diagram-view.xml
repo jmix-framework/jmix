@@ -2,10 +2,6 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://dataDiagramView.title">
     <layout>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="downloadButton" icon="vaadin:download" text="Download"/>
-        </hbox>
-        <h4 text="Data model diagram"/>
         <image id="diagramImage"/>
     </layout>
 </view>

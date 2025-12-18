@@ -29,6 +29,7 @@ import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -235,14 +236,17 @@ public class DataModelManagerImpl implements DataModelManager {
         return entityModel;
     }
 
+    @Override
     public void setFilteredModels(List<EntityModel> filteredModels) {
         this.filteredModels = filteredModels;
     }
 
+    @Override
     public int filteredModelsCount() {
         return filteredModels.size();
     }
 
+    @Override
     public DataModelHolder getDataModelHolder() {
         return dataModelHolder;
     }
@@ -406,6 +410,7 @@ public class DataModelManagerImpl implements DataModelManager {
         };
     }
 
+    @Override
     public byte[] generateFilteredDiagram() {
         StringBuilder tempEntitiesDescription = new StringBuilder();
         StringBuilder tempRelationsDescription = new StringBuilder();

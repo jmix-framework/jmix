@@ -18,6 +18,7 @@ package io.jmix.datatools.datamodel.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import java.util.UUID;
@@ -28,6 +29,7 @@ public class AttributeModel {
     @JmixId
     private UUID id;
 
+    @InstanceName
     private String attributeName;
 
     private String javaType;

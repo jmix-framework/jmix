@@ -46,7 +46,7 @@ public class DatatoolsConfiguration {
             case PLANTUML -> {
                 return new PlantUmlDiagramConstructor(datatoolsProperties);
             }
-            default -> throw new IllegalStateException("Couldn't create datatl_DiagramConstructor bean");
+            default -> throw new IllegalStateException("Failed to create datatl_DiagramConstructor bean");
         }
     }
 }

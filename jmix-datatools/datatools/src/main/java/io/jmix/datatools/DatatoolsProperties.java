@@ -23,6 +23,7 @@ public class DatatoolsProperties {
             return engineType;
         }
 
+        @Nullable
         public String getHost() {
             return host;
         }

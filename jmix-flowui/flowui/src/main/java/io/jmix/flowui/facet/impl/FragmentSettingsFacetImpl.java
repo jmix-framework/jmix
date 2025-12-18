@@ -80,13 +80,13 @@ public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSet
         Fragment<?> fragment = ((Fragment<?>) getOwnerComponent());
         View<?> ownerView = FragmentUtils.getHostView(fragment);
 
-        readyListener = new OwnerEventListener(fragment, Fragment.ReadyEvent.class, this::onFragmentReady);
+        readyListener = new OwnerEventListener(ownerView, View.ReadyEvent.class, this::onHostViewReady);
         ownerViewDetachListener = new OwnerEventListener(ownerView, DetachEvent.class, this::onOwnerViewDetach);
         ownerViewQueryParametersChangeListener = new OwnerEventListener(ownerView,
                 View.QueryParametersChangeEvent.class, this::onQueryParametersChange);
     }
 
-    protected void onFragmentReady(ComponentEvent<?> componentEvent) {
+    protected void onHostViewReady(ComponentEvent<?> componentEvent) {
         checkAttachedToOwner();
 
         if (applyDataLoadingSettingsDelegate != null) {

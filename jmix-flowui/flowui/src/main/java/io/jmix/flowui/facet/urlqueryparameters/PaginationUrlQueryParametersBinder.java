@@ -21,11 +21,8 @@ import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.QueryParameters;
 import io.jmix.flowui.component.PaginationComponent;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
-import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
-import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.lang.Nullable;
 
@@ -173,7 +170,7 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
         return Strings.isNullOrEmpty(maxResultsParam) ? MAX_RESULTS_PARAM : maxResultsParam;
     }
 
-    protected String _getMaxResultsParam() {
+    public String _getMaxResultsParam() {
         return getOwnerId("pagination") + "_" + getMaxResultsParam();
     }
 

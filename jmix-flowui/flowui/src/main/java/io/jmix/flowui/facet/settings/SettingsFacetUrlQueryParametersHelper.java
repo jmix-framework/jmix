@@ -70,6 +70,7 @@ public class SettingsFacetUrlQueryParametersHelper {
      */
     protected boolean containsParametersForPagination(Map<String, List<String>> parameters,
                                                       PaginationUrlQueryParametersBinder paginationBinder) {
-        return parameters.containsKey(paginationBinder.getMaxResultsParam());
+        return parameters.containsKey(paginationBinder.getMaxResultsParam()) ||
+                parameters.containsKey(paginationBinder._getMaxResultsParam());
     }
 }

@@ -27,8 +27,6 @@
 
     <logger name="io.jmix.core.datastore" level="DEBUG"/>
     <logger name="eclipselink.logging.sql" level="DEBUG"/>
-    <logger name="io.jmix.eclipselink.impl.FetchGroupManager" level="TRACE"/>
-    <logger name="io.jmix.data.impl.EntityFetcher" level="TRACE"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

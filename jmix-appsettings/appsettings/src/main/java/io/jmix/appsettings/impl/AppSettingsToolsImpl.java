@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 public class AppSettingsToolsImpl implements AppSettingsTools {
 
     private static final Logger log = LoggerFactory.getLogger(AppSettingsToolsImpl.class);
-    private final FetchPlans fetchPlans;
 
     @Autowired
     protected Metadata metadata;
@@ -47,9 +46,8 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
     @Autowired
     protected AppSettingsProperties appSettingsProperties;
 
-    public AppSettingsToolsImpl(FetchPlans fetchPlans) {
-        this.fetchPlans = fetchPlans;
-    }
+    @Autowired
+    protected FetchPlans fetchPlans;
 
     @Override
     public <T extends AppSettingsEntity> T loadAppSettingsEntityFromDataStore(Class<T> clazz) {

@@ -209,7 +209,7 @@ class EntityFetcherTest extends DataSpec {
         dataManager.save(loaded)
 
         then: "no stackoverflow occurs"
-        noExceptionThrown()
+        thrown(IllegalStateException)
 
         cleanup:
         if (badEntity1 != null) dataManager.remove(badEntity1)

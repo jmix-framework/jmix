@@ -72,6 +72,11 @@ public class FragmentsImpl implements Fragments {
 
     @Override
     public <F extends Fragment<?>> F create(FragmentOwner parent, Class<F> fragmentClass) {
+        return create(parent, fragmentClass, null);
+    }
+
+    @Override
+    public <F extends Fragment<?>> F create(FragmentOwner parent, Class<F> fragmentClass, @Nullable String fragmentId) {
         Preconditions.checkNotNullArgument(parent, "Parent must not be null");
         Preconditions.checkNotNullArgument(fragmentClass, Fragment.class.getSimpleName() + " class must not be null");
 
@@ -81,6 +86,10 @@ public class FragmentsImpl implements Fragments {
         ComponentLoader.Context hostContext = createHostLoaderContext(parent);
 
         F fragment = uiComponents.create(fragmentClass);
+        if (fragmentId != null) {
+            fragment.setId(fragmentId);
+        }
+
         init(hostContext, fragment);
 
         // perform automatic autowiring when the fragment is created programmatically

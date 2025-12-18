@@ -24,6 +24,7 @@ import com.vaadin.flow.server.Attributes;
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
+import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.Nullable;
@@ -167,6 +168,22 @@ public final class FragmentUtils {
      */
     public static FragmentOwner getParentController(Fragment<?> fragment) {
         return fragment.getParentController();
+    }
+
+    /**
+     * Gets the {@link View} owner of the passed {@link FragmentOwner}.
+     *
+     * @param fragmentOwner fragment owner to get the host view
+     * @return the {@link View} owner of the passed fragment owner
+     */
+    public static View<?> findHostView(FragmentOwner fragmentOwner) {
+        if (fragmentOwner instanceof View<?> view) {
+            return view;
+        } else if (fragmentOwner instanceof Fragment<?> fragment) {
+            return findHostView(FragmentUtils.getParentController(fragment));
+        }
+
+        throw new IllegalStateException("Unknown parent type: " + fragmentOwner.getClass().getName());
     }
 
     /**

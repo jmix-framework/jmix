@@ -47,7 +47,7 @@ public class PaginationUrlQueryParametersBinderProvider extends AbstractUrlQuery
     }
 
     @Override
-    public void load(UrlQueryParametersFacet facet, Element element, ComponentLoader.ComponentContext context) {
+    public void load(UrlQueryParametersFacet facet, Element element, ComponentLoader.Context context) {
         String componentId = loadRequiredAttribute(element, "component", context);
         String binderId = loadAttribute(element, "id");
         String firstResultParam = loadAttribute(element, "firstResultParam");

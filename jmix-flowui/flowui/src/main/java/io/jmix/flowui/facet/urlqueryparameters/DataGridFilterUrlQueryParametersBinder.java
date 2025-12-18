@@ -256,6 +256,7 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
         String parameterName = Strings.isNullOrEmpty(parameter)
                 ? UiComponentUtils.getComponentId(grid).orElseThrow(() ->
                 new IllegalStateException("Component has neither id nor explicit url query param"))
+                + "Filter"
                 : parameter;
 
         Fragment<?> fragment = UiComponentUtils.findFragment(grid);

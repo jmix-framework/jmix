@@ -48,20 +48,6 @@ public abstract class AbstractFacetLoader<F extends Facet> implements FacetLoade
         this.loaderSupport = applicationContext.getBean(LoaderSupport.class);
     }
 
-    protected ComponentLoader.ComponentContext findHostViewContext(ComponentLoader.Context fragmentContext) {
-        ComponentLoader.Context currentContext = fragmentContext;
-        while (currentContext.getParentContext() != null) {
-            currentContext = currentContext.getParentContext();
-        }
-
-        if (currentContext instanceof ComponentLoader.ComponentContext viewContext) {
-            return viewContext;
-        }
-
-        throw new IllegalStateException("%s has no parent view context"
-                .formatted(fragmentContext.getClass().getSimpleName()));
-    }
-
     @Override
     public Element getElement() {
         return element;

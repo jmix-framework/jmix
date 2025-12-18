@@ -25,6 +25,8 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.urlqueryparameters.HasInitialState;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
@@ -84,8 +86,12 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
             View<?> view;
             if (owner instanceof View) {
                 view = (View<?>) owner;
+            } else if (owner instanceof Fragment<?> fragment) {
+                // in case of fragment
+                view = FragmentUtils.findHostView(fragment);
             } else {
-                view = UiComponentUtils.getView(owner);
+                throw new IllegalStateException("Unknown parent type for the %s: %s"
+                        .formatted(UrlQueryParametersFacet.class.getSimpleName(), owner.getClass().getName()));
             }
 
             queryParametersChangeRegistration = ViewControllerUtils

@@ -19,7 +19,6 @@ package io.jmix.flowui.facet.impl;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.flowui.component.HasDataComponents;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.FragmentDataLoadCoordinator;
 import io.jmix.flowui.facet.dataloadcoordinator.OnFragmentEventLoadTrigger;
 import io.jmix.flowui.facet.dataloadcoordinator.OnViewEventLoadTrigger;
@@ -65,7 +64,7 @@ public class FragmentDataLoadCoordinatorImpl extends AbstractDataLoadCoordinator
 
     @Override
     public void addOnViewEventLoadTrigger(DataLoader loader, Class<?> eventClass) {
-        View<?> view = UiComponentUtils.getView(getOwnerNN());
+        View<?> view = FragmentUtils.findHostView(getOwnerNN());
         triggers.add(new OnViewEventLoadTrigger(view, reflectionCacheManager, loader, eventClass));
 
     }

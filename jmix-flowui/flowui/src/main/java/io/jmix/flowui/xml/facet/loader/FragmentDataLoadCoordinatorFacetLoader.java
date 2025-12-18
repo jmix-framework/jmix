@@ -76,16 +76,7 @@ public class FragmentDataLoadCoordinatorFacetLoader
         if (eventClass.isAssignableFrom(Fragment.ReadyEvent.class)) {
             context.addPreInitTask(new OnFragmentEventLoadTriggerInitTask(facet, loaderId, eventClass));
         } else {
-            if (resultFacet.getOwner() != null && UiComponentUtils.findView(resultFacet.getOwner()) == null) {
-                // try to execute a trigger task after `Attach`, it can be cover the case of pragmatic creation of
-                // fragment on View.InitEevnt
-                resultFacet.getOwner().addAttachListener(event -> {
-                    event.unregisterListener();
-                    new OnViewEventLoadTriggerInitTask(facet, loaderId, eventClass).execute(context);
-                });
-            } else {
-                context.addPreInitTask(new OnViewEventLoadTriggerInitTask(facet, loaderId, eventClass));
-            }
+            context.addPreInitTask(new OnViewEventLoadTriggerInitTask(facet, loaderId, eventClass));
         }
     }
 

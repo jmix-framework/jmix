@@ -148,7 +148,7 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
     }
 
     protected String _getFirstResultParam() {
-        return getOwnerId() + "_" + getFirstResultParam();
+        return getOwnerId("pagination") + "_" + getFirstResultParam();
     }
 
     /**
@@ -174,24 +174,7 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
     }
 
     protected String _getMaxResultsParam() {
-        return getOwnerId() + "_" + getMaxResultsParam();
-    }
-
-    protected String getOwnerId() {
-        String ownerId = UiComponentUtils.getComponentId((Component) pagination)
-                // use default id instead
-                .orElse("pagination");
-
-        Fragment<?> fragment = UiComponentUtils.findFragment((Component) pagination);
-        if (fragment != null) {
-            // add fragment ID as a prefix in case of the fragment owner
-            ownerId = fragment.getId()
-                    .orElseThrow(() -> new IllegalStateException("A %s without an id can't use the %s"
-                            .formatted(Fragment.class.getSimpleName(), UrlQueryParametersFacet.class)))
-                    + "_" + ownerId;
-        }
-
-        return ownerId;
+        return getOwnerId("pagination") + "_" + getMaxResultsParam();
     }
 
     /**

@@ -81,16 +81,16 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Returns the component with given id.
+     * Returns the component with the given id.
      *
-     * @param view view to find component from
-     * @param id   component id
+     * @param owner view or fragment to find component from
+     * @param id    component id
      * @return the component with given id
-     * @throws IllegalStateException    if view content is not a container
-     * @throws IllegalArgumentException if a component with given id is not found
+     * @throws IllegalStateException    if the owner content is not a container
+     * @throws IllegalArgumentException if a component with the given id is not found
      */
-    public static Component getComponent(View<?> view, String id) {
-        return findComponent(view, id)
+    public static Component getComponent(Composite<?> owner, String id) {
+        return findComponent(owner, id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         String.format("Component with id '%s' not found", id)));
     }

@@ -465,7 +465,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     }
 
     protected String _getConfigurationParam() {
-        return getOwnerId() + "_" + getConfigurationParam();
+        return getOwnerId("genericFilter") + "_" + getConfigurationParam();
     }
 
     /**
@@ -490,7 +490,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     }
 
     public String _getConditionParam() {
-        return getOwnerId() + "_" + getConditionParam();
+        return getOwnerId("genericFilter") + "_" + getConditionParam();
     }
 
     /**
@@ -500,23 +500,6 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
      */
     public void setConditionParam(@Nullable String conditionParam) {
         this.conditionParam = conditionParam;
-    }
-
-    protected String getOwnerId() {
-        String ownerId = UiComponentUtils.getComponentId(filter)
-                // use default id instead
-                .orElse("genericFilter");
-
-        Fragment<?> fragment = UiComponentUtils.findFragment(filter);
-        if (fragment != null) {
-            // add fragment ID as a prefix in case of the fragment owner
-            ownerId = fragment.getId()
-                    .orElseThrow(() -> new IllegalStateException("A %s without an id can't use the %s"
-                            .formatted(Fragment.class.getSimpleName(), UrlQueryParametersFacet.class)))
-                    + "_" + ownerId;
-        }
-
-        return ownerId;
     }
 
     protected boolean isPropertyMatched(PropertyFilter<?> propertyFilter, PropertyFilter<?> anotherPropertyFilter) {

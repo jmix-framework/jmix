@@ -62,7 +62,7 @@ public class UrlQueryParametersFacetLoader extends AbstractFacetLoader<UrlQueryP
     protected void loadBinder(Element element) {
         for (UrlQueryParametersBinderProvider binderProvider : getBinderProviders()) {
             if (binderProvider.supports(element)) {
-                binderProvider.load(resultFacet, element, findHostViewContext(context));
+                binderProvider.load(resultFacet, element, context);
                 return;
             }
         }

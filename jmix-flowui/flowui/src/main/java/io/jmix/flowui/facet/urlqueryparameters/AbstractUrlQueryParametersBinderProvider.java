@@ -44,7 +44,7 @@ public abstract class AbstractUrlQueryParametersBinderProvider implements UrlQue
         this.loaderSupport = loaderSupport;
     }
 
-    protected String loadRequiredAttribute(Element element, String name, ComponentLoader.ComponentContext context) {
+    protected String loadRequiredAttribute(Element element, String name, ComponentLoader.Context context) {
         return loaderSupport.loadString(element, name)
                 .orElseThrow(() -> new GuiDevelopmentException(
                         String.format("'%s/%s' has no '%s' attribute",

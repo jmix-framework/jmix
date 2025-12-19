@@ -218,9 +218,9 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     public void updateState(QueryParameters queryParameters) {
         Map<String, List<String>> parameters = queryParameters.getParameters();
 
-        if (parameters.containsKey(getConfigurationParam()) || parameters.containsKey(_getConditionParam())) {
-            List<String> configurationParam = parameters.containsKey(_getConditionParam())
-                    ? parameters.get(_getConditionParam())
+        if (parameters.containsKey(getConfigurationParam()) || parameters.containsKey(_getConfigurationParam())) {
+            List<String> configurationParam = parameters.containsKey(_getConfigurationParam())
+                    ? parameters.get(_getConfigurationParam())
                     // the fallback option should be removed in future versions
                     : parameters.get(getConfigurationParam());
 

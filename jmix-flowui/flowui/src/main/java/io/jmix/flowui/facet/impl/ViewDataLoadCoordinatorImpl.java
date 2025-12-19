@@ -27,6 +27,9 @@ import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 
+/**
+ * Implementation of the {@link ViewDataLoadCoordinator} interface.
+ */
 public class ViewDataLoadCoordinatorImpl extends AbstractDataLoadCoordinator
         implements ViewDataLoadCoordinator {
 

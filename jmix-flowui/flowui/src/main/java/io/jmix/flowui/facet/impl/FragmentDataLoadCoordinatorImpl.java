@@ -28,6 +28,9 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.View;
 
+/**
+ * Implementation of the {@link FragmentDataLoadCoordinator} interface.
+ */
 public class FragmentDataLoadCoordinatorImpl extends AbstractDataLoadCoordinator
         implements FragmentDataLoadCoordinator {
 
@@ -43,8 +46,8 @@ public class FragmentDataLoadCoordinatorImpl extends AbstractDataLoadCoordinator
 
     @Override
     protected void addOnDefaultEventLoadTrigger(DataLoader loader) {
-        // if the loader has no parameters in a query, add trigger on Fragment.ReadyEvent
-        addOnFragmentEventLoadTrigger(loader, Fragment.ReadyEvent.class);
+        // if the loader has no parameters in a query, add trigger on Host.BeforeShow
+        addOnViewEventLoadTrigger(loader, View.BeforeShowEvent.class);
     }
 
     @Override

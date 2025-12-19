@@ -44,7 +44,7 @@ public interface StudioFacets {
     void dataLoadCoordinator();
 
     @StudioFacet(
-            name = "DataLoadCoordinator",
+            name = "FragmentDataLoadCoordinator",
             classFqn = "io.jmix.flowui.facet.FragmentDataLoadCoordinator",
             category = "Facets",
             xmlElement = "fragmentDataLoadCoordinator",
@@ -106,7 +106,7 @@ public interface StudioFacets {
     void settings();
 
     @StudioFacet(
-            name = "Settings",
+            name = "FragmentSettings",
             classFqn = "io.jmix.flowui.facet.FragmentSettingsFacet",
             category = "Facets",
             xmlElement = "fragmentSettings",

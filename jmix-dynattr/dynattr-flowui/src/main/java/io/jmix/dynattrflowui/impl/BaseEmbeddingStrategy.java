@@ -24,6 +24,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.*;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.accesscontext.UiEntityContext;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.model.*;
 
 import java.util.Comparator;
@@ -62,7 +63,7 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
 
                 List<AttributeDefinition> attributes = findVisibleAttributes(
                         entityMetaClass,
-                        getOwnerId(owner), component.getId().orElse(""));
+                        getOwnerId(owner), UiComponentUtils.getComponentId(component).orElse(""));
 
                 if (!attributes.isEmpty()) {
                     setLoadDynamicAttributes(component);

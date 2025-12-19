@@ -228,7 +228,7 @@ public final class UiComponentUtils {
             return ((ComponentContainer) container).getOwnComponents();
         } else if (container instanceof HasComponents) {
             return container.getChildren().sequential().collect(Collectors.toList());
-        } else if (container instanceof View<?>) {
+        } else if (container instanceof View<?> || container instanceof Fragment<?>) {
             return container.getChildren().collect(Collectors.toList());
         } else {
             throw new IllegalArgumentException(container.getClass().getSimpleName() +

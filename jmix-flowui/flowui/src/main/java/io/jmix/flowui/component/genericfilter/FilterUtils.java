@@ -17,13 +17,17 @@
 package io.jmix.flowui.component.genericfilter;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.Composite;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.facet.Facet;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.WordUtils;
-
 import org.springframework.lang.Nullable;
 
 public class FilterUtils {
@@ -35,9 +39,9 @@ public class FilterUtils {
     }
 
     public static String generateFilterPath(GenericFilter filter) {
-        View<?> view = UiComponentUtils.findView(filter);
-        return (view != null ? "[" + view.getId().orElse("viewWithoutId") + "]" : "")
-                + filter.getId().orElse("filterWithoutId");
+        Composite<?> owner = findCurrentOwner(filter);
+        return (owner != null ? "[" + owner.getId().orElse("ownerWithoutId") + "]" : "")
+                + UiComponentUtils.getComponentId(filter).orElse("filterWithoutId");
     }
 
     public static void setCurrentConfiguration(GenericFilter filter, Configuration currentConfiguration, boolean fromClient) {
@@ -47,5 +51,33 @@ public class FilterUtils {
     @Internal
     public static void updateDataLoaderInitialCondition(GenericFilter genericFilter, @Nullable Condition condition) {
         genericFilter.updateDataLoaderInitialCondition(condition);
+    }
+
+    @Internal
+    @Nullable
+    public static Composite<?> findCurrentOwner(GenericFilter genericFilter) {
+        Composite<?> currentOwner = UiComponentUtils.findFragment(genericFilter);
+        if (currentOwner == null) {
+            currentOwner = UiComponentUtils.findView(genericFilter);
+        }
+
+        return currentOwner;
+    }
+
+    @Internal
+    @Nullable
+    public static <T extends Facet> T getFacet(GenericFilter genericFilter, Class<T> facetClass) {
+        Composite<?> currentOwner = findCurrentOwner(genericFilter);
+        return getFacet(currentOwner, facetClass);
+    }
+
+    @Internal
+    @Nullable
+    public static <T extends Facet> T getFacet(@Nullable Composite<?> currentOwner, Class<T> facetClass) {
+        return currentOwner instanceof Fragment<?> fragment
+                ? FragmentUtils.getFragmentFacet(fragment, facetClass)
+                : currentOwner instanceof View<?> view
+                ? ViewControllerUtils.getViewFacet(view, facetClass)
+                : null;
     }
 }

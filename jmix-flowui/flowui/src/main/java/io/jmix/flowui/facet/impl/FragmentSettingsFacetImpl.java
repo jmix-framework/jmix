@@ -36,7 +36,8 @@ import org.springframework.lang.Nullable;
 public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSettings>
         implements FragmentSettingsFacet {
 
-    protected OwnerEventListener readyListener;
+    protected OwnerEventListener ownerViewBeforeShowListener;
+    protected OwnerEventListener ownerViewReadyListener;
     protected OwnerEventListener ownerViewDetachListener;
     protected OwnerEventListener ownerViewQueryParametersChangeListener;
 
@@ -59,9 +60,14 @@ public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSet
 
     @Override
     protected void unsubscribeOwnerLifecycle() {
-        if (readyListener != null) {
-            readyListener.unsubscribe();
-            readyListener = null;
+        if (ownerViewBeforeShowListener != null) {
+            ownerViewBeforeShowListener.unsubscribe();
+            ownerViewBeforeShowListener = null;
+        }
+
+        if (ownerViewReadyListener != null) {
+            ownerViewReadyListener.unsubscribe();
+            ownerViewReadyListener = null;
         }
 
         if (ownerViewDetachListener != null) {
@@ -80,13 +86,16 @@ public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSet
         Fragment<?> fragment = ((Fragment<?>) getOwnerComponent());
         View<?> ownerView = FragmentUtils.getHostView(fragment);
 
-        readyListener = new OwnerEventListener(ownerView, View.ReadyEvent.class, this::onHostViewReady);
+
+        ownerViewBeforeShowListener =
+                new OwnerEventListener(ownerView, View.BeforeShowEvent.class, this::onOwnerViewBeforeShow);
+        ownerViewReadyListener = new OwnerEventListener(ownerView, View.ReadyEvent.class, this::onOwnerViewReady);
         ownerViewDetachListener = new OwnerEventListener(ownerView, DetachEvent.class, this::onOwnerViewDetach);
         ownerViewQueryParametersChangeListener = new OwnerEventListener(ownerView,
                 View.QueryParametersChangeEvent.class, this::onQueryParametersChange);
     }
 
-    protected void onHostViewReady(ComponentEvent<?> componentEvent) {
+    protected void onOwnerViewBeforeShow(ComponentEvent<?> event) {
         checkAttachedToOwner();
 
         if (applyDataLoadingSettingsDelegate != null) {
@@ -94,6 +103,10 @@ public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSet
         } else {
             applyDataLoadingSettings();
         }
+    }
+
+    protected void onOwnerViewReady(ComponentEvent<?> componentEvent) {
+        checkAttachedToOwner();
 
         if (applySettingsDelegate != null) {
             applySettingsDelegate.accept(createSettingsContext());

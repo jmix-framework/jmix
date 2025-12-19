@@ -246,25 +246,6 @@ public class GenericFilterSupport {
         }
     }
 
-    @Nullable
-    public Composite<?> findCurrentOwner(GenericFilter genericFilter) {
-        Composite<?> currentOwner = UiComponentUtils.findFragment(genericFilter);
-        if (currentOwner == null) {
-            currentOwner = UiComponentUtils.findView(genericFilter);
-        }
-
-        return currentOwner;
-    }
-
-    @Nullable
-    public <T extends Facet> T getFacet(@Nullable Composite<?> currentOwner, Class<T> facetClass) {
-        return currentOwner instanceof Fragment<?> fragment
-                ? FragmentUtils.getFragmentFacet(fragment, facetClass)
-                : currentOwner instanceof View<?> view
-                ? ViewControllerUtils.getViewFacet(view, facetClass)
-                : null;
-    }
-
     protected Configuration initFilterConfiguration(String id,
                                                     String name,
                                                     Configuration existedConfiguration,
@@ -395,12 +376,12 @@ public class GenericFilterSupport {
 
     protected boolean isDefaultForMeFieldVisible(Configuration currentConfiguration,
                                                  FilterConfigurationModel configurationModel) {
-        Composite<?> currentOwner = findCurrentOwner(currentConfiguration.getOwner());
-        if (currentConfiguration.getOwner().getId().isEmpty() || currentOwner == null) {
+        Composite<?> currentOwner = FilterUtils.findCurrentOwner(currentConfiguration.getOwner());
+        if (UiComponentUtils.getComponentId(currentConfiguration.getOwner()).isEmpty() || currentOwner == null) {
             return false;
         }
 
-        SettingsFacet<?> settingsFacet = getFacet(currentOwner, SettingsFacet.class);
+        SettingsFacet<?> settingsFacet = FilterUtils.getFacet(currentOwner, SettingsFacet.class);
 
         if (settingsFacet == null) {
             return false;
@@ -409,7 +390,8 @@ public class GenericFilterSupport {
         UiComponentSettings<?> settings = settingsFacet.getSettings();
 
         if (settings != null) {
-            settings.getSettings(currentConfiguration.getOwner().getId().get(), GenericFilterSettings.class)
+            settings.getSettings(UiComponentUtils.getComponentId(currentConfiguration.getOwner()).get(),
+                            GenericFilterSettings.class)
                     .ifPresent(genericFilterSettings -> {
                         String defaultConfigurationId = genericFilterSettings.getDefaultConfigurationId();
                         if (defaultConfigurationId != null) {
@@ -444,13 +426,12 @@ public class GenericFilterSupport {
 
             configurationModel = configurationDc.getItem();
 
-            if (genericFilter.getId().isPresent()
+            if (UiComponentUtils.getComponentId(genericFilter).isPresent()
                     && dataConfigurationDetail.isDefaultForMeFieldVisible()) {
-                Composite<?> currentOwner = findCurrentOwner(genericFilter);
-                SettingsFacet<?> settingsFacet = getFacet(currentOwner, SettingsFacet.class);
+                SettingsFacet<?> settingsFacet = FilterUtils.getFacet(genericFilter, SettingsFacet.class);
 
                 if (settingsFacet != null) {
-                    saveFilterSettings(settingsFacet, genericFilter.getId().get(), configurationModel);
+                    saveFilterSettings(settingsFacet, UiComponentUtils.getComponentId(genericFilter).get(), configurationModel);
                 }
             }
         } else {

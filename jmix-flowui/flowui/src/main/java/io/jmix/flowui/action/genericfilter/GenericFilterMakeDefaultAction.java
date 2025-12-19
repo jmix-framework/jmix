@@ -19,8 +19,9 @@ package io.jmix.flowui.action.genericfilter;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.action.ActionType;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.genericfilter.FilterUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
-import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.settings.UiComponentSettings;
@@ -37,8 +38,6 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
 
     public static final String ID = "genericFilter_makeDefault";
 
-    protected GenericFilterSupport filterSupport;
-
     public GenericFilterMakeDefaultAction() {
         this(ID);
     }
@@ -53,11 +52,6 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
     }
 
     @Autowired
-    public void setGenericFilterSupport(GenericFilterSupport genericFilterSupport) {
-        this.filterSupport = genericFilterSupport;
-    }
-
-    @Autowired
     protected void setIcons(Icons icons) {
         // Check for 'null' for backward compatibility because 'icon' can be set in
         // the 'initAction()' method which is called before injection.
@@ -69,9 +63,9 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
     @Override
     protected boolean isApplicable() {
         return super.isApplicable()
-                && target.getId().isPresent()
+                && UiComponentUtils.getComponentId(target).isPresent()
                 && target.isAttached()
-                && filterSupport.getFacet(filterSupport.findCurrentOwner(target), SettingsFacet.class) != null
+                && FilterUtils.getFacet(target, SettingsFacet.class) != null
                 && target.getCurrentConfiguration() != target.getEmptyConfiguration();
     }
 
@@ -79,8 +73,7 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
     public void execute() {
         checkTarget();
 
-        SettingsFacet<?> settingsFacet =
-                filterSupport.getFacet(filterSupport.findCurrentOwner(target), SettingsFacet.class);
+        SettingsFacet<?> settingsFacet = FilterUtils.getFacet(target, SettingsFacet.class);
         Preconditions.checkNotNullArgument(settingsFacet,
                 "The view doesn't contain %s", SettingsFacet.class.getSimpleName());
 
@@ -89,7 +82,7 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
                 "%s isn't attached to the view", SettingsFacet.class.getSimpleName());
 
         GenericFilterSettings genericFilterSettings = new GenericFilterSettings();
-        genericFilterSettings.setId(target.getId().orElse(null));
+        genericFilterSettings.setId(UiComponentUtils.getComponentId(target).orElse(null));
         genericFilterSettings.setDefaultConfigurationId(target.getCurrentConfiguration().getId());
         settings.put(genericFilterSettings);
     }

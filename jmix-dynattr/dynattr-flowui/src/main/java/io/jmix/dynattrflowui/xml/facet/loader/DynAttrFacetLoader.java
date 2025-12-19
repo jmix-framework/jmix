@@ -46,7 +46,6 @@ public class DynAttrFacetLoader extends AbstractFacetLoader<DynAttrFacet> {
             }
         }
 
-        // TODO: kd, check to getting all components in case of fragment
         Component owner = context.getOrigin();
         context.addInitTask(__ ->
                 UiComponentUtils.traverseComponents(owner, component ->

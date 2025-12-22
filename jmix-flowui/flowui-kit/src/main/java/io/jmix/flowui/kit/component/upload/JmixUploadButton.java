@@ -21,6 +21,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.UploadI18N;
 import com.vaadin.flow.internal.JsonSerializer;
+import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.flow.shared.Registration;
 
 /**
@@ -35,6 +36,7 @@ public class JmixUploadButton extends Upload {
     protected JmixUploadI18N i18n = new JmixUploadI18N();
 
     protected static final String JMIX_UPLOAD_BUTTON_CLASS_NAME = "jmix-upload-button";
+    protected UploadHandler uploadHandler;
 
     public JmixUploadButton() {
         addClassName(JMIX_UPLOAD_BUTTON_CLASS_NAME);
@@ -69,5 +71,20 @@ public class JmixUploadButton extends Upload {
         public String getFileName() {
             return fileName;
         }
+    }
+
+    /**
+     * Returns the upload handler to be used for this upload component.
+     *
+     * @return the upload handler to be used for this upload component
+     */
+    public UploadHandler getUploadHandler() {
+        return uploadHandler;
+    }
+
+    @Override
+    public void setUploadHandler(UploadHandler handler) {
+        this.uploadHandler = handler;
+        super.setUploadHandler(handler);
     }
 }

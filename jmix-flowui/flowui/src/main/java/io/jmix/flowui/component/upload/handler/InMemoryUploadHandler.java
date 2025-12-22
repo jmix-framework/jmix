@@ -33,9 +33,9 @@ import java.io.UncheckedIOException;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InMemoryUploadHandler
         extends TransferProgressAwareHandler<UploadEvent, InMemoryUploadHandler>
-        implements UploadHandler, TransferProgressNotifier, SupportUploadSuccessCallback {
+        implements UploadHandler, TransferProgressNotifier, SupportUploadSuccessCallback<byte[]> {
 
-    protected UploadSuccessCallback successCallback;
+    protected UploadSuccessCallback<byte[]> successCallback;
 
     public InMemoryUploadHandler() {
     }
@@ -58,8 +58,9 @@ public class InMemoryUploadHandler
         event.getUI().access(() -> {
             try {
                 if (successCallback != null) {
-                    successCallback.complete(new UploadContext(
-                            new UploadMetadata(event.getFileName(), event.getContentType(), event.getFileSize())));
+                    successCallback.complete(new UploadContext<>(
+                            new UploadMetadata(event.getFileName(), event.getContentType(), event.getFileSize()),
+                            data));
                 }
 
             } catch (IOException e) {
@@ -75,7 +76,7 @@ public class InMemoryUploadHandler
     }
 
     @Override
-    public void setUploadSuccessCallback(@Nullable UploadSuccessCallback successCallback) {
+    public void setUploadSuccessCallback(@Nullable UploadSuccessCallback<byte[]> successCallback) {
         this.successCallback = successCallback;
     }
 

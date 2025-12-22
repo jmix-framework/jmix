@@ -26,30 +26,20 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.util.function.Consumer;
 
 @Component("flowui_FileTemporaryStorageUploadHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FileTemporaryStorageUploadHandler
         extends TransferProgressAwareHandler<UploadEvent, FileTemporaryStorageUploadHandler>
-        implements UploadHandler, TransferProgressNotifier, SupportUploadSuccessCallback {
+        implements UploadHandler, TransferProgressNotifier, SupportUploadSuccessCallback<TemporaryStorage.FileInfo> {
 
     protected final TemporaryStorage temporaryStorage;
 
-    protected UploadSuccessCallback successCallback;
+    protected UploadSuccessCallback<TemporaryStorage.FileInfo> successCallback;
+    protected TemporaryStorage.FileInfo fileInfo;
 
     public FileTemporaryStorageUploadHandler(TemporaryStorage temporaryStorage) {
         this.temporaryStorage = temporaryStorage;
-    }
-
-    @Override
-    public Registration addTransferProgressListener(TransferProgressListener listener) {
-        return super.addTransferProgressListener(listener);
-    }
-
-    @Override
-    public void setUploadSuccessCallback(@Nullable UploadSuccessCallback successCallback) {
-        this.successCallback = successCallback;
     }
 
     @Override
@@ -73,7 +63,7 @@ public class FileTemporaryStorageUploadHandler
         event.getUI().access(() -> {
             try {
                 if (successCallback != null) {
-                    successCallback.complete(new UploadContext(metadata));
+                    successCallback.complete(new UploadContext<>(metadata, fileInfo));
                 }
             } catch (IOException e) {
                 throw new UncheckedIOException("Error in file upload callback", e);
@@ -81,8 +71,22 @@ public class FileTemporaryStorageUploadHandler
         });
     }
 
+    @Override
+    public Registration addTransferProgressListener(TransferProgressListener listener) {
+        return super.addTransferProgressListener(listener);
+    }
+
+    @Override
+    public void setUploadSuccessCallback(@Nullable UploadSuccessCallback<TemporaryStorage.FileInfo> successCallback) {
+        this.successCallback = successCallback;
+    }
+
+    public TemporaryStorage.FileInfo getFileInfo() {
+        return fileInfo;
+    }
+
     protected File createFile(UploadMetadata metadata) {
-        TemporaryStorage.FileInfo fileInfo = temporaryStorage.createFile();
+        fileInfo = temporaryStorage.createFile();
         return fileInfo.getFile();
     }
 

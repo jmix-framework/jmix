@@ -22,26 +22,33 @@ import org.springframework.lang.Nullable;
 import java.io.IOException;
 import java.io.Serializable;
 
-public interface SupportUploadSuccessCallback {
+// TODO: gg, move to the kit?
+public interface SupportUploadSuccessCallback<V> {
 
-    void setUploadSuccessCallback(@Nullable UploadSuccessCallback successCallback);
+    void setUploadSuccessCallback(@Nullable UploadSuccessCallback<V> successCallback);
 
     @FunctionalInterface
-    public interface UploadSuccessCallback extends Serializable {
+    public interface UploadSuccessCallback<V> extends Serializable {
 
-        void complete(UploadContext context) throws IOException;
+        void complete(UploadContext<V> context) throws IOException;
     }
 
-    class UploadContext {
+    class UploadContext<V> {
 
         protected final UploadMetadata uploadMetadata;
+        protected final V data;
 
-        public UploadContext(UploadMetadata uploadMetadata) {
+        public UploadContext(UploadMetadata uploadMetadata, V data) {
             this.uploadMetadata = uploadMetadata;
+            this.data = data;
         }
 
         public UploadMetadata getUploadMetadata() {
             return uploadMetadata;
+        }
+
+        public V getData() {
+            return data;
         }
     }
 }

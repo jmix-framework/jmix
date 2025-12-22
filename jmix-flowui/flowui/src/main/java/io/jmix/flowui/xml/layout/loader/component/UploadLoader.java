@@ -64,7 +64,7 @@ public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
         componentLoader().loadSizeAttributes(resultComponent, element);
     }
 
-    @Deprecated(since = "2.7", forRemoval = true)
+    @Deprecated(since = "3.0", forRemoval = true)
     protected void loadReceiver(JmixUpload component, Element element) {
         Optional<String> receiverFqn = loadString(element, "receiverFqn");
 
@@ -75,7 +75,7 @@ public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
         }
     }
 
-    @Deprecated(since = "2.7", forRemoval = true)
+    @Deprecated(since = "3.0", forRemoval = true)
     protected void loadReceiverFqn(JmixUpload component, String receiverFqn) {
         Class<?> clazz;
 

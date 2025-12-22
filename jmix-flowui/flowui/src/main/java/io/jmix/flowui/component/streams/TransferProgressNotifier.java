@@ -19,6 +19,7 @@ package io.jmix.flowui.component.streams;
 import com.vaadin.flow.server.streams.TransferProgressListener;
 import com.vaadin.flow.shared.Registration;
 
+// TODO: gg, move to the kit?
 public interface TransferProgressNotifier {
 
     Registration addTransferProgressListener(TransferProgressListener listener);

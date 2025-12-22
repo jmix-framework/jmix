@@ -30,7 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-@Deprecated(since = "2.7", forRemoval = true)
+@Deprecated(since = "3.0", forRemoval = true)
 @Component("flowui_FileTemporaryStorageBuffer")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FileTemporaryStorageBuffer implements Receiver {

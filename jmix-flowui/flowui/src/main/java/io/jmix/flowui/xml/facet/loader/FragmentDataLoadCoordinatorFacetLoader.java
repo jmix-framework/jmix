@@ -18,7 +18,6 @@ package io.jmix.flowui.xml.facet.loader;
 
 import com.vaadin.flow.component.Composite;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.FragmentDataLoadCoordinator;

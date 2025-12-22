@@ -129,11 +129,21 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
 
         @Override
         public void execute(ComponentLoader.Context context) {
-            Preconditions.checkNotNullArgument(facet.getOwner());
+            Composite<?> owner = facet.getOwner();
+            Preconditions.checkNotNullArgument(owner);
 
-            ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
-            DataLoader loader = viewData.getLoader(loaderId);
-            InstanceContainer<?> container = viewData.getContainer(containerId);
+            HasDataComponents data;
+            if (owner instanceof Fragment<?> fragment) {
+                data = FragmentUtils.getFragmentData(fragment);
+            } else if (owner instanceof View<?> view){
+                data = ViewControllerUtils.getViewData(view);
+            } else {
+                throw new IllegalStateException("Unsupported owner of the %s"
+                        .formatted(facet.getClass().getSimpleName()));
+            }
+
+            DataLoader loader = data.getLoader(loaderId);
+            InstanceContainer<?> container = data.getContainer(containerId);
 
             facet.addOnContainerItemChangedLoadTrigger(loader, container, param);
         }
@@ -160,10 +170,20 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
 
         @Override
         public void execute(ComponentLoader.Context context) {
-            Preconditions.checkNotNullArgument(facet.getOwner());
+            Composite<?> owner = facet.getOwner();
+            Preconditions.checkNotNullArgument(owner);
 
-            ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
-            DataLoader loader = viewData.getLoader(loaderId);
+            HasDataComponents data;
+            if (owner instanceof Fragment<?> fragment) {
+                data = FragmentUtils.getFragmentData(fragment);
+            } else if (owner instanceof View<?> view){
+                data = ViewControllerUtils.getViewData(view);
+            } else {
+                throw new IllegalStateException("Unsupported owner of the %s"
+                        .formatted(facet.getClass().getSimpleName()));
+            }
+
+            DataLoader loader = data.getLoader(loaderId);
             Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
 
             facet.addOnComponentValueChangedLoadTrigger(loader, component, param, likeClause);

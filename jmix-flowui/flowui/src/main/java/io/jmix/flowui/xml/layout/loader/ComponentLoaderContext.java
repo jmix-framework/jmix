@@ -29,8 +29,6 @@ import java.util.List;
 public class ComponentLoaderContext extends AbstractLoaderContext implements ComponentContext {
 
     protected View<?> view;
-    protected String fullFrameId;
-    protected String currentFrameId;
 
     protected List<ComponentLoader.InitTask> preInitTasks;
     protected List<ComponentLoader.AutowireTask> autowireTasks;
@@ -50,14 +48,6 @@ public class ComponentLoaderContext extends AbstractLoaderContext implements Com
 
     public void setView(View<?> view) {
         this.view = view;
-    }
-
-    public void setFullFrameId(String frameId) {
-        this.fullFrameId = frameId;
-    }
-
-    public void setCurrentFrameId(String currentFrameId) {
-        this.currentFrameId = currentFrameId;
     }
 
     @Override

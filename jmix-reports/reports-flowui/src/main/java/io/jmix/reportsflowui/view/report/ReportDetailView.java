@@ -1266,21 +1266,18 @@ public class ReportDetailView extends StandardDetailView<Report> {
             switch (dataSet.getType()) {
                 case SQL:
                     codeEditorLabel.setText(messageBundle.getMessage("report.sqlScript.title"));
-                    dataSet.setText("");
                     dataStoreField.setVisible(true);
                     isProcessTemplateField.setVisible(true);
                     dataSetScriptBox.setVisible(true);
                     break;
                 case JPQL:
                     codeEditorLabel.setText(messageBundle.getMessage("report.jpqlScript.title"));
-                    dataSet.setText("");
                     dataStoreField.setVisible(true);
                     isProcessTemplateField.setVisible(true);
                     dataSetScriptBox.setVisible(true);
                     break;
                 case GROOVY:
                     codeEditorLabel.setText(messageBundle.getMessage("report.groovyScript.title"));
-                    dataSet.setText("return [[:]]");
                     dataSetScriptBox.setVisible(true);
                     break;
                 case SINGLE:

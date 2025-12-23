@@ -153,7 +153,8 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             ReadContext ctx = parseResponse(response);
             assertEquals(carUuidString, ctx.read("$.id"));
-            assertNull(ctx.read("$._instanceName"));
+            assertEquals("io.jmix.samples.rest.entity.driver.Car-" + carUuidString + " [detached]",
+                    ctx.read("$._instanceName"));//fallback to base class string representation
         }
     }
 

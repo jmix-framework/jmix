@@ -15,6 +15,8 @@
  */
 package io.jmix.reports.entity;
 
+import io.jmix.core.CopyingSystemState;
+import io.jmix.reports.yarg.structure.CustomValueFormatter;
 import io.jmix.reports.yarg.structure.ReportFieldFormat;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -24,13 +26,14 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 import jakarta.persistence.Id;
 import java.util.UUID;
 
-@JmixEntity(name = "report_ReportValueFormat")
+@JmixEntity(name = "report_ReportValueFormat", annotatedPropertiesOnly = true)
 @SystemLevel
-public class ReportValueFormat implements ReportFieldFormat {
+public class ReportValueFormat implements ReportFieldFormat, CopyingSystemState<ReportValueFormat> {
 
     private static final long serialVersionUID = 680180375698449946L;
 
     @Id
+    @JmixProperty
     @JmixGeneratedValue
     protected UUID id;
 
@@ -45,6 +48,8 @@ public class ReportValueFormat implements ReportFieldFormat {
 
     @JmixProperty
     protected Boolean groovyScript = false;
+
+    protected CustomValueFormatter<?> customFormatter;
 
     public UUID getId() {
         return id;
@@ -99,5 +104,19 @@ public class ReportValueFormat implements ReportFieldFormat {
     @Override
     public Boolean isGroovyScript() {
         return groovyScript;
+    }
+
+    @Override
+    public CustomValueFormatter<?> getCustomFormatter() {
+        return customFormatter;
+    }
+
+    public void setCustomFormatter(CustomValueFormatter<?> customFormatter) {
+        this.customFormatter = customFormatter;
+    }
+
+    @Override
+    public void copyFrom(ReportValueFormat source) {
+        this.customFormatter = source.customFormatter;
     }
 }

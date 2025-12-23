@@ -1,3 +1,0 @@
-mutation Delete_scr_Car($id: String!) {
-    delete_scr_Car(id: $id)
-}

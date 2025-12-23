@@ -21,7 +21,6 @@ import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
-import io.jmix.restds.annotation.RemoteService;
 import io.jmix.restds.util.RestDataStoreUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
@@ -53,14 +52,7 @@ public class RemoteServiceInvoker {
     }
 
     @Nullable
-    public Object invokeServiceMethod(Class<?> serviceInterface, Method method, @Nullable Object[] args) {
-        RemoteService remoteServiceAnnotation = serviceInterface.getAnnotation(RemoteService.class);
-        if (remoteServiceAnnotation == null)
-            throw new IllegalStateException("RemoteService annotation is not found for interface " + serviceInterface);
-        String storeName = remoteServiceAnnotation.store();
-        String serviceName = remoteServiceAnnotation.remoteName().isEmpty() ?
-                serviceInterface.getSimpleName() : remoteServiceAnnotation.remoteName();
-
+    public Object invokeServiceMethod(String storeName, String serviceName, Method method, @Nullable Object[] args) {
         RestClient restClient = restDataStoreUtils.getRestClient(storeName);
 
         String resultJson = restClient.post()

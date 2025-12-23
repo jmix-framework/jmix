@@ -60,14 +60,14 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinFlowVersion = '24.7.3'
+def vaadinFlowVersion = '24.9.2'
 
 javaPlatform {
     allowDependencies()
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.5.0")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.5.6")
     api platform('software.amazon.awssdk:bom:2.25.60')
 
     def freeVersion = version
@@ -112,6 +112,10 @@ dependencies {
         api "io.jmix.businesscalendar:jmix-businesscalendar-starter:$premiumVersion"
         api "io.jmix.businesscalendar:jmix-businesscalendar-flowui:$premiumVersion"
         api "io.jmix.businesscalendar:jmix-businesscalendar-flowui-starter:$premiumVersion"
+
+        api "io.jmix.groupgrid:jmix-groupgrid-flowui:$premiumVersion"
+        api "io.jmix.groupgrid:jmix-groupgrid-flowui-kit:$premiumVersion"
+        api "io.jmix.groupgrid:jmix-groupgrid-flowui-starter:$premiumVersion"
 
         api "io.jmix.kanban:jmix-kanban-flowui:$premiumVersion"
         api "io.jmix.kanban:jmix-kanban-flowui-kit:$premiumVersion"
@@ -279,6 +283,11 @@ dependencies {
         api "io.jmix.uiconstraints:jmix-uiconstraints:$premiumVersion"
         api "io.jmix.uiconstraints:jmix-uiconstraints-starter:$premiumVersion"
 
+        api "io.jmix.vcc:vaadin-commercial-components:$premiumVersion"
+        api "io.jmix.vcc:vaadin-commercial-components-starter:$premiumVersion"
+        api "io.jmix.vcc:vaadin-commercial-components-kit:$premiumVersion"
+        api "io.jmix.vcc:vaadin-commercial-components-devserver-kit:$premiumVersion"
+
         api "io.jmix.webdav:jmix-webdav:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-starter:$premiumVersion"
@@ -300,7 +309,7 @@ dependencies {
 //        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
 
         def eclipselinkOriginalVersion = '4.0.6'
-        def eclipselinkVersion = '4.0.6-2-jmix'
+        def eclipselinkVersion = '4.0.6-3-jmix'
         api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkOriginalVersion"
@@ -316,6 +325,8 @@ dependencies {
         api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
         api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
+        api "com.vaadin:vaadin-board-flow:$vaadinFlowVersion"
+        api "com.vaadin:vaadin-spreadsheet-flow:$vaadinFlowVersion"
 
         api 'org.spockframework:spock-core:2.3-groovy-4.0'
         api 'org.spockframework:spock-spring:2.3-groovy-4.0'
@@ -376,6 +387,8 @@ dependencies {
         api "com.openhtmltopdf:openhtmltopdf-rtl-support:$openhtmltopdfVersion"
         api "com.openhtmltopdf:openhtmltopdf-pdfbox:$openhtmltopdfVersion"
 
+        api 'org.apache.pdfbox:pdfbox:3.0.5'
+
         api 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.5.3'
         api 'org.docx4j:docx4j-ImportXHTML:11.4.8'
         api 'org.docx4j:docx4j-export-fo:11.5.3'
@@ -420,6 +433,11 @@ dependencies {
         api 'com.google.protobuf:protobuf-java:3.25.6'
         api 'com.fasterxml.woodstox:woodstox-core:6.4.0'
         api 'org.apache.lucene:lucene-queryparser:9.12.1'
+
+        api 'com.microsoft.azure:msal4j:1.23.1'
+        api 'com.google.auth:google-auth-library-oauth2-http:1.39.1'
+
+        api 'org.liquibase:liquibase-core:4.25.1!!'//see https://github.com/jmix-framework/jmix/issues/3888
     }
 }
 

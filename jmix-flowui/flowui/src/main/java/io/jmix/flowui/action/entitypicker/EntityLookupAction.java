@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.action.entitypicker;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -27,14 +26,17 @@ import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.EntityMultiPickerComponent;
 import io.jmix.flowui.component.EntityPickerComponent;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.LookupView;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
@@ -51,6 +53,8 @@ import java.util.function.Predicate;
 @ActionType(EntityLookupAction.ID)
 public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, EntityPickerComponent<E>, E>
         implements ViewOpeningAction {
+
+    private static final Logger log = LoggerFactory.getLogger(EntityLookupAction.class);
 
     public static final String ID = "entity_lookup";
 
@@ -69,13 +73,6 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
-    }
-
     @Autowired
     public void setDialogWindows(DialogWindows dialogWindows) {
         this.dialogWindows = dialogWindows;
@@ -84,6 +81,15 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.entityPicker.lookup.description");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.ENTITY_LOOKUP_ACTION);
+        }
     }
 
     @Autowired
@@ -120,7 +126,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
 
     @Override
     public void setOpenMode(@Nullable OpenMode openMode) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, OpenMode.class.getSimpleName());
     }
 
     @Nullable
@@ -154,7 +160,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
 
     @Override
     public void setRouteParametersProvider(@Nullable RouteParametersProvider provider) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, RouteParametersProvider.class.getSimpleName());
     }
 
     @Nullable
@@ -166,7 +172,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
 
     @Override
     public void setQueryParametersProvider(@Nullable QueryParametersProvider provider) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, QueryParametersProvider.class.getSimpleName());
     }
 
     @Override

@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.main;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
@@ -55,7 +54,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     protected UiComponents uiComponents;
     protected ViewRegistry viewRegistry;
 
-    protected MenuItemProvider<ListMenu.MenuItem> itemProvider;
+    protected MenuItemProvider<MenuItem> itemProvider;
     protected Subscription itemCollectionChangedSubscription;
 
     @Override
@@ -136,7 +135,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     }
 
     @Override
-    public void setMenuItemProvider(@Nullable MenuItemProvider<ListMenu.MenuItem> itemProvider) {
+    public void setMenuItemProvider(@Nullable MenuItemProvider<MenuItem> itemProvider) {
         if (Objects.equals(this.itemProvider, itemProvider)) {
             return;
         }
@@ -151,14 +150,14 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
     }
 
-    protected void onMenuItemCollectionChanged(MenuItemProvider.CollectionChangeEvent<ListMenu.MenuItem> e) {
+    protected void onMenuItemCollectionChanged(MenuItemProvider.CollectionChangeEvent<MenuItem> e) {
         removeAllMenuItems();
         e.getItems().forEach(this::addMenuItem);
     }
 
     @Override
     @Nullable
-    public MenuItemProvider<ListMenu.MenuItem> getMenuItemProvider() {
+    public MenuItemProvider<MenuItem> getMenuItemProvider() {
         return this.itemProvider;
     }
 
@@ -197,15 +196,13 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
-        public ViewMenuItem withDescription(@Nullable String description) {
-            super.withDescription(description);
-            return this;
+        public ViewMenuItem withVisible(boolean visible) {
+            return (ViewMenuItem) super.withVisible(visible);
         }
 
         @Override
-        @Deprecated(since="2.2", forRemoval=true)
-        public ViewMenuItem withIcon(@Nullable VaadinIcon icon) {
-            super.withIcon(icon);
+        public ViewMenuItem withDescription(@Nullable String description) {
+            super.withDescription(description);
             return this;
         }
 
@@ -304,15 +301,13 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
-        public BeanMenuItem withDescription(@Nullable String description) {
-            super.withDescription(description);
-            return this;
+        public BeanMenuItem withVisible(boolean visible) {
+            return (BeanMenuItem) super.withVisible(visible);
         }
 
         @Override
-        @Deprecated(since="2.2", forRemoval=true)
-        public BeanMenuItem withIcon(@Nullable VaadinIcon icon) {
-            super.withIcon(icon);
+        public BeanMenuItem withDescription(@Nullable String description) {
+            super.withDescription(description);
             return this;
         }
 
@@ -323,7 +318,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
-        public BeanMenuItem withSuffixComponent(Component suffixComponent) {
+        public BeanMenuItem withSuffixComponent(@Nullable Component suffixComponent) {
             return (BeanMenuItem) super.withSuffixComponent(suffixComponent);
         }
 

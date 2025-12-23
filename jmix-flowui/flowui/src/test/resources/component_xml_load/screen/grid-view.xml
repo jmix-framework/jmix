@@ -110,7 +110,7 @@
                       css="color:blue"
                       classNames="cssClassName3, cssClassName4"
                       text="Menu 1"
-                      icon="ABACUS"
+                      icon="vaadin:abacus"
                       whiteSpace="NOWRAP">
                     <item id="item1"
                           text="Item 1"/>
@@ -227,7 +227,7 @@
                       css="color:blue"
                       classNames="cssClassName3, cssClassName4"
                       text="Menu 1"
-                      icon="ABACUS"
+                      icon="vaadin:abacus"
                       whiteSpace="NOWRAP">
                     <item id="item1"
                           text="Item 1"/>

@@ -17,14 +17,15 @@
 package test_support.repository;
 
 
-import io.jmix.core.repository.FetchPlan;
-import io.jmix.core.repository.JmixDataRepository;
-import io.jmix.core.repository.Query;
+import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.repository.*;
+import io.jmix.data.PersistenceHints;
+import jakarta.persistence.QueryHint;
 import org.springframework.data.repository.query.Param;
 import test_support.entity.repository.Customer;
+import test_support.entity.repository.CustomerGrade;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public interface CustomerRepository extends JmixDataRepository<Customer, UUID> {
     @FetchPlan("repository_Customer.full")
@@ -64,4 +65,40 @@ public interface CustomerRepository extends JmixDataRepository<Customer, UUID> {
 
     @Query("select c from repository$Customer c where c.name like :name and c.address.city like :city")
     List<Customer> findByQueryWithReversedNamedParametersOrder(@Param("city") String city, @Param("name") String name);
+
+
+    //Scalar queries
+    @Query(value = "select count(c) from repository$Customer c", properties = "count")
+    List<KeyValueEntity> countAllByScalarQueryAndReturnKeyValueEntity();
+
+    @Query(value = "select count(c) from repository$Customer c")
+    List<Long> countAllByScalarQueryAndReturnLongList();
+
+    @Query(value = "select count(c) from repository$Customer c")
+    long countAllByScalarQueryAndReturnLong();
+
+    @Query(value = "select count(c) from repository$Customer c")
+    Set<Long> countAllByScalarQueryAndReturnLongSet();
+
+    @Query(value = "select count(c) from repository$Customer c")
+    LinkedHashSet<Long> countAllByScalarQueryAndReturnLinkedHashSet();
+
+    @Query(value = "select count(c) from repository$Customer c")
+    Collection<Long> countAllByScalarQueryAndReturnCollection();
+
+    @Query(value = "select count(c), 12 from repository$Customer c", properties = {"count", "constant"})
+    KeyValueEntity countAllByScalarQueryWithComplexResult();
+
+    @Query(value = "select count(c) from repository$Customer c where c.name like ?1")
+    Integer countAllByScalarQueryWithParams(String name);
+
+    @Query(value = "select distinct c.grade from repository$Customer c order by c.name")
+    List<CustomerGrade> getAllGrades();
+
+    @Query("select e.grade from repository$Customer e order by e.name desc")
+    @QueryHints(@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false"))
+    List<CustomerGrade> queryGradesByContext();
+
+    @Query("select e.grade from repository$Customer e order by e.name desc")
+    List<CustomerGrade> queryGradesByContext(JmixDataRepositoryContext context);
 }

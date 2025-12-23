@@ -52,7 +52,7 @@ public class RelativeDateInterval implements BaseDateInterval {
 
     @Override
     public String apply(String property) {
-        return String.format("{E}.%s %s %s", property, operation.getValue(), relativeDateTimeMomentName);
+        return String.format("%s.%s %s %s", "%s", "%s", operation.getValue(), relativeDateTimeMomentName);
     }
 
     /**

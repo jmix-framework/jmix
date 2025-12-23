@@ -32,6 +32,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.flowui.kit.meta.StudioAPI;
 import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -55,6 +56,7 @@ import static org.apache.commons.lang3.StringUtils.isNoneBlank;
  *     and invoke {@link StudioPreviewComponentLoader#load(Element, Element) load method}
  * </p>
  */
+@StudioAPI
 @SuppressWarnings("unused")
 final class StudioPreviewComponentProvider {
 

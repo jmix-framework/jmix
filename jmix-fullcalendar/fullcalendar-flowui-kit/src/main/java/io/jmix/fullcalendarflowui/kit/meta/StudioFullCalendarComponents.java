@@ -148,6 +148,7 @@ public interface StudioFullCalendarComponents {
                     @StudioProperty(xmlAttribute = "eventOrderStrict", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "eventOverlap", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "eventResizableFromStart", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "eventSingleClickThreshold", type = StudioPropertyType.INTEGER, defaultValue = "250"),
                     @StudioProperty(xmlAttribute = "eventStartEditable", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "eventTextColor",
                             category = StudioProperty.Category.LOOK_AND_FEEL,

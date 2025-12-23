@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-/**
- * Used for Studio preview.
- * Don't rename or refactor classes and packages.
- */
+@StudioAPI(description =
+        "Used for Studio preview." +
+                "Don't rename or refactor classes and packages.")
 package io.jmix.flowui.devserver;
+
+import io.jmix.flowui.kit.meta.StudioAPI;

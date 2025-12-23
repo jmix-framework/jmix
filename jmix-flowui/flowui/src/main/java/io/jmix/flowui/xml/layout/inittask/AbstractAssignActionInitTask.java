@@ -22,23 +22,17 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.sys.ValuePathHelper;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import org.springframework.lang.Nullable;
 
 import java.util.function.Consumer;
 
-public abstract class AbstractAssignActionInitTask<C extends Component> extends AbstractInitTask {
+public abstract class AbstractAssignActionInitTask<C> extends AbstractInitTask {
 
     protected C component;
     protected String actionId;
 
     protected Consumer<Action> afterExecuteHandler;
-
-    @Deprecated(since = "2.3", forRemoval = true)
-    public AbstractAssignActionInitTask(C component, String actionId, View<?> view) {
-        this(component, actionId);
-    }
 
     public AbstractAssignActionInitTask(C component, String actionId) {
         this.component = component;

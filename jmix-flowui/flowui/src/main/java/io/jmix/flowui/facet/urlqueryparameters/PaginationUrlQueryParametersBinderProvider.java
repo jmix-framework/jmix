@@ -20,7 +20,6 @@ import com.google.common.base.Preconditions;
 import io.jmix.flowui.component.PaginationComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
@@ -84,11 +83,6 @@ public class PaginationUrlQueryParametersBinderProvider extends AbstractUrlQuery
             this.firstResultParam = firstResultParam;
             this.maxResultsParam = maxResultsParam;
             this.urlParamSerializer = urlParamSerializer;
-        }
-
-        @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing
         }
 
         @Override

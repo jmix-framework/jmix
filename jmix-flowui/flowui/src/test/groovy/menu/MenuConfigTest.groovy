@@ -16,11 +16,15 @@
 
 package menu
 
-
+import com.vaadin.flow.component.html.Image
+import com.vaadin.flow.component.icon.FontIcon
+import com.vaadin.flow.component.icon.SvgIcon
+import com.vaadin.flow.component.icon.VaadinIcon
 import io.jmix.flowui.kit.component.KeyCombination
 import io.jmix.flowui.menu.MenuConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import test_support.ComponentTestUtils
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/menuconfig/menu.xml"])
@@ -32,17 +36,19 @@ class MenuConfigTest extends FlowuiTestSpecification {
     def "Load menu form XML with nested menu"() {
         when:
         def rootItems = menuConfig.getRootItems()
-        then:
 
+        then:
         rootItems.size() == 2
 
+        and:
         def applicationMenu = rootItems.get(0)
         applicationMenu.getId() == "application"
         applicationMenu.getBean() == null
         applicationMenu.getBeanMethod() == null
         applicationMenu.getClassNames() == null
         applicationMenu.getDescription() == "Application"
-        applicationMenu.getIcon() == "TABLE"
+        applicationMenu.getIcon() == VaadinIcon.TABLE.create().icon
+        ComponentTestUtils.isSameIcon(applicationMenu.iconComponent, VaadinIcon.TABLE)
         applicationMenu.getParent() == null
         applicationMenu.getProperties() == []
         applicationMenu.getRouteParameters() == []
@@ -56,13 +62,16 @@ class MenuConfigTest extends FlowuiTestSpecification {
         def applicationMenuChildren = applicationMenu.getChildren()
         applicationMenuChildren.size() == 2
 
+
+        and:
         def applicationView = applicationMenuChildren.get(0)
         applicationView.getId() == "Application.view"
         applicationView.getBean() == null
         applicationView.getBeanMethod() == null
         applicationView.getClassNames() == null
         applicationView.getDescription() == "app view"
-        applicationView.getIcon() == "ABACUS"
+        applicationView.getIcon() == VaadinIcon.ABACUS.create().icon
+        ComponentTestUtils.isSameIcon(applicationView.iconComponent, VaadinIcon.ABACUS)
         applicationView.getParent() == applicationMenu
         applicationView.getProperties() == []
         applicationView.getRouteParameters() == []
@@ -75,13 +84,15 @@ class MenuConfigTest extends FlowuiTestSpecification {
         !applicationView.isSeparator()
         applicationView.getChildren() == []
 
+        and:
         def nestedMenu = applicationMenuChildren.get(1)
         nestedMenu.getId() == "nestedMenu"
         nestedMenu.getBean() == null
         nestedMenu.getBeanMethod() == null
         nestedMenu.getClassNames() == null
         nestedMenu.getDescription() == null
-        nestedMenu.getIcon() == null
+        nestedMenu.getIcon() == VaadinIcon.CHECK.create().icon
+        ComponentTestUtils.isSameIcon(nestedMenu.iconComponent, VaadinIcon.CHECK)
         nestedMenu.getParent() == applicationMenu
         nestedMenu.getProperties() == []
         nestedMenu.getRouteParameters() == []
@@ -95,6 +106,7 @@ class MenuConfigTest extends FlowuiTestSpecification {
         def nestedMenuChildren = nestedMenu.getChildren()
         nestedMenuChildren.size() == 1
 
+        and:
         def nestedView = nestedMenuChildren.get(0)
         nestedView.getId() == "Nested.view"
         nestedView.getBean() == null
@@ -102,6 +114,7 @@ class MenuConfigTest extends FlowuiTestSpecification {
         nestedView.getClassNames() == null
         nestedView.getDescription() == null
         nestedView.getIcon() == null
+        (nestedView.iconComponent as SvgIcon).src == "/icons/check-solid-full.svg"
         nestedView.getParent() == nestedMenu
         nestedView.getProperties() == []
         nestedView.getRouteParameters() == []
@@ -114,6 +127,7 @@ class MenuConfigTest extends FlowuiTestSpecification {
         !nestedView.isSeparator()
         nestedView.getChildren() == []
 
+        and:
         def administrationMenu = rootItems.get(1)
         administrationMenu.getId() == "administration"
         administrationMenu.getBean() == null
@@ -121,6 +135,8 @@ class MenuConfigTest extends FlowuiTestSpecification {
         administrationMenu.getClassNames() == null
         administrationMenu.getDescription() == null
         administrationMenu.getIcon() == null
+        ComponentTestUtils.isSameFontIcon(administrationMenu.iconComponent as FontIcon,
+                "lumo-icons", "")
         administrationMenu.getParent() == null
         administrationMenu.getProperties() == []
         administrationMenu.getRouteParameters() == []
@@ -134,6 +150,7 @@ class MenuConfigTest extends FlowuiTestSpecification {
         def administrationMenuChildren = administrationMenu.getChildren()
         administrationMenuChildren.size() == 1
 
+        and:
         def administrationView = administrationMenuChildren.get(0)
         administrationView.getId() == "Administration.view"
         administrationView.getBean() == null
@@ -141,6 +158,7 @@ class MenuConfigTest extends FlowuiTestSpecification {
         administrationView.getClassNames() == null
         administrationView.getDescription() == null
         administrationView.getIcon() == null
+        (administrationView.iconComponent as Image).src == "/icons/icon.png"
         administrationView.getParent() == administrationMenu
         administrationView.getProperties() == []
         administrationView.getRouteParameters() == []

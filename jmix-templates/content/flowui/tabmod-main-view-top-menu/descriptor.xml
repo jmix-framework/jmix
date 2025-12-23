@@ -2,8 +2,11 @@
 <mainView xmlns="http://jmix.io/schema/tabmod/main-view"
           title="${messageKeys['mainViewTopMenuTitle']}">
     <actions>
-        <action id="logoutAction"
-                type="logout"/>
+        <%if (createUserMenu) {%>
+        <action id="logoutAction" text="msg:///actions.logout.text" type="logout"/>
+        <%} else {%>
+        <action id="logoutAction" type="logout"/>
+        <%}%>
     </actions>
     <appLayout classNames="jmix-main-view-top-menu-app-layout">
         <navigationBar>
@@ -20,6 +23,21 @@
                                         tabNavigation="true"
                                         width="100%"/>
                     </nav>
+                    <%if (createUserMenu) {%>
+                    <userMenu id="userMenu"
+                              themeNames="tertiary" classNames="ms-auto me-m">
+                        <items>
+                            <separator/>
+                            <actionItem id="substituteUserMenuItem"
+                                        themeNames="non-checkable">
+                                <action id="substituteUserAction" type="sec_userMenuSubstituteUser"/>
+                            </actionItem>
+                            <separator/>
+                            <actionItem id="logoutMenuItem" ref="logoutAction"
+                                        themeNames="non-checkable"/>
+                        </items>
+                    </userMenu>
+                    <%} else {%>
                     <hbox id="userHeaderBox"
                           classNames="jmix-main-view-top-menu-user-box">
                         <userIndicator id="userIndicator"/>
@@ -27,6 +45,7 @@
                                 action="logoutAction"
                                 classNames="jmix-logout-button"/>
                     </hbox>
+                    <%}%>
                 </header>
             </vbox>
         </navigationBar>
@@ -44,7 +63,16 @@
             </mainTabSheet>
             <initialLayout id="initialLayout"
                            classNames="jmix-initial-layout"
+                           alignItems="CENTER" justifyContent="CENTER"
                            width="100%" height="100%">
+                <vbox alignItems="CENTER" maxWidth="40em" >
+                    <image resource="icons/icon.png" height="5rem"/>
+                    <h1 text="${messageKeys['applicationTitleText']}"/>
+                </vbox>
+                <!--
+                    This is the work area - central part of the view.
+                    Put your components here.
+                -->
             </initialLayout>
         </workArea>
     </appLayout>

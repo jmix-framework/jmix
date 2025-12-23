@@ -37,7 +37,6 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.sys.AppCookies;
-import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.securityflowui.accesscontext.UiLoginToUiContext;
@@ -49,6 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
@@ -60,6 +60,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -94,12 +95,12 @@ public class LoginViewSupport {
     protected ViewNavigators viewNavigators;
     protected AccessManager accessManager;
     protected Messages messages;
-    protected ExtendedClientDetailsProvider clientDetailsProvider;
     protected DeviceTimeZoneProvider deviceTimeZoneProvider;
     protected RememberMeServices rememberMeServices;
     protected ApplicationEventPublisher applicationEventPublisher;
     protected VaadinDefaultRequestCache requestCache;
     protected ViewRegistry viewRegistry;
+    protected List<AuthDetailsValidator> authDetailsValidators = Collections.emptyList();
 
     protected AppCookies cookies;
 
@@ -157,15 +158,6 @@ public class LoginViewSupport {
         this.requestCache = requestCache;
     }
 
-    /**
-     * @deprecated use {@link DeviceTimeZoneProvider} instead
-     */
-    @Deprecated(since = "2.4", forRemoval = true)
-    @Autowired
-    public void setClientDetailsProvider(ExtendedClientDetailsProvider clientDetailsProvider) {
-        this.clientDetailsProvider = clientDetailsProvider;
-    }
-
     @Autowired
     public void setDeviceTimeZoneProvider(DeviceTimeZoneProvider deviceTimeZoneProvider) {
         this.deviceTimeZoneProvider = deviceTimeZoneProvider;
@@ -179,6 +171,11 @@ public class LoginViewSupport {
     @Autowired
     public void setViewRegistry(ViewRegistry viewRegistry) {
         this.viewRegistry = viewRegistry;
+    }
+
+    @Autowired(required = false)
+    public void setAuthDetailsValidators(List<AuthDetailsValidator> authDetailsValidators) {
+        this.authDetailsValidators = authDetailsValidators;
     }
 
     /**
@@ -195,6 +192,16 @@ public class LoginViewSupport {
      * @throws AuthenticationException if exception occurs while authentication process
      */
     public Authentication authenticate(AuthDetails authDetails) throws AuthenticationException {
+        for (AuthDetailsValidator validator : authDetailsValidators) {
+            AuthDetailsValidationResult validationResult = validator.validate(authDetails);
+            if (!validationResult.isValid()) {
+                throw new DisabledException(
+                        validationResult.getMessage(),
+                        validationResult.getException()
+                );
+            }
+        }
+
         Authentication authenticationToken = authenticationManager.authenticate(
                 createAuthenticationToken(
                         authDetails.getUsername(),

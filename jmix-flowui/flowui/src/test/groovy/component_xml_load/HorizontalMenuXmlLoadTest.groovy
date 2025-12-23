@@ -18,11 +18,11 @@ package component_xml_load
 
 import com.vaadin.flow.component.Key
 import com.vaadin.flow.component.KeyModifier
-import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import component_xml_load.screen.HorizontalMenuView
 import io.jmix.flowui.component.horizontalmenu.HorizontalMenu
 import org.springframework.boot.test.context.SpringBootTest
+import test_support.ComponentTestUtils
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/horizontalmenu/menu.xml"])
@@ -65,8 +65,7 @@ class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
         parentApplicationItem.getId().isPresent()
         parentApplicationItem.getId().get() == "application"
         parentApplicationItem.getTitle() == "Application title"
-        (parentApplicationItem.prefixComponent as Icon).element.getAttribute("icon") ==
-                VaadinIcon.TABLE.create().element.getAttribute("icon")
+        ComponentTestUtils.isSameIcon(parentApplicationItem.prefixComponent, VaadinIcon.TABLE)
         parentApplicationItem.getClassNames().containsAll(List.of("className1", "className2"))
         parentApplicationItem.getChildItems().size() == 3
         parentApplicationItem.getMenu() == menu
@@ -82,8 +81,7 @@ class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
         applicationViewMenuItem.getId().isPresent()
         applicationViewMenuItem.getId().get() == "Application.view"
         applicationViewMenuItem.getTitle() == "Application view"
-        (applicationViewMenuItem.prefixComponent as Icon).element.getAttribute("icon") ==
-                VaadinIcon.ABACUS.create().element.getAttribute("icon")
+        ComponentTestUtils.isSameIcon(applicationViewMenuItem.prefixComponent, VaadinIcon.ABACUS)
         applicationViewMenuItem.getMenu() == menu
         applicationViewMenuItem.getParentMenuItem() == applicationItem
         applicationViewMenuItem.getTooltip().getText() == "app view"

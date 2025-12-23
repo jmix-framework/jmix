@@ -67,7 +67,7 @@ class ConditionParameterWithAppPropertyTest extends DataSpec {
 
     void "Simple conditions always skipping if skip-null-or-empty-conditions-by-default is true"() {
         expect:
-        List<Customer> customers = customerRepository.findAll(Sort.by("name")).toList()
+        List<Customer> customers = customerRepository.findAll(Sort.by("name"))
         customers.size() == 3
         customers[0].name == null
         customers[1].name == ""

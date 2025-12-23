@@ -149,11 +149,17 @@ public class Reporting implements ReportingAPI {
             String paramName = reportParameter.getAlias();
 
             Object parameterValue = handledParams.get(paramName);
-            if (reportParameter instanceof ReportParameterWithDefaultValue) {
-                String parameterDefaultValue = ((ReportParameterWithDefaultValue) reportParameter).getDefaultValue();
-                if (parameterValue == null && parameterDefaultValue != null) {
-                    parameterValue = objectToStringConverter.convertFromString(reportParameter.getParameterClass(), parameterDefaultValue);
+            if (parameterValue == null && reportParameter instanceof ReportParameterWithDefaultValue parameterWithDefault) {
+                DefaultValueProvider<?> provider = parameterWithDefault.getDefaultValueProvider();
+                if (provider != null) {
+                    parameterValue = provider.getDefaultValue(reportParameter);
                     handledParams.put(paramName, parameterValue);
+                } else {
+                    String parameterDefaultValue = parameterWithDefault.getDefaultValue();
+                    if (parameterDefaultValue != null) {
+                        parameterValue = objectToStringConverter.convertFromString(reportParameter.getParameterClass(), parameterDefaultValue);
+                        handledParams.put(paramName, parameterValue);
+                    }
                 }
             }
 

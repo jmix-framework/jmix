@@ -33,6 +33,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
@@ -77,6 +78,8 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     protected DataComponents dataComponents;
     @Autowired
     protected MsgBundleTools msgBundleTools;
+    @Autowired
+    protected Icons icons;
 
     @ViewComponent
     protected InstanceContainer<Category> categoryDc;
@@ -175,6 +178,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
                     messageTools,
                     uiComponents,
                     dataComponents,
+                    icons,
                     getViewData().getDataContext());
 
             localizationComponent.setNameMsgBundle(getEditedEntity().getLocaleNames());

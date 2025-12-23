@@ -48,6 +48,7 @@ import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
+import io.jmix.dynattr.model.ReferenceToEntity;
 import io.jmix.dynattr.utils.DynAttrStringUtils;
 import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
@@ -68,6 +69,7 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.valuepicker.JmixValuePicker;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -203,6 +205,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected DynAttrUiHelper dynAttrUiHelper;
     @Autowired
     protected EntityStates entityStates;
+    @Autowired
+    protected Icons icons;
 
     @ViewComponent
     protected JmixCheckbox lookupField;
@@ -428,6 +432,9 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             objectDefaultEntityId = referenceToEntitySupport.getReferenceId(entity);
         }
 
+        if (getEditedEntity().getDefaultEntity() == null) {
+            getEditedEntity().setDefaultEntity(metadata.create(ReferenceToEntity.class));
+        }
         getEditedEntity().setObjectDefaultEntityId(objectDefaultEntityId);
     }
 
@@ -688,6 +695,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                     messageTools,
                     uiComponents,
                     dataComponents,
+                    icons,
                     getViewData().getDataContext());
             localizationFragment.setNameMsgBundle(getEditedEntity().getNameMsgBundle());
             localizationFragment.setDescriptionMsgBundle(getEditedEntity().getDescriptionsMsgBundle());

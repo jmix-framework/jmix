@@ -17,7 +17,6 @@
 package io.jmix.reportsflowui.action;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
@@ -26,7 +25,8 @@ import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.EntityDataUnit;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.Report;
@@ -65,13 +65,17 @@ public class ShowExecutionReportHistoryAction<E> extends ListDataComponentAction
     }
 
     @Autowired
-    public void setDialogWindows(DialogWindows dialogWindows) {
-        this.dialogWindows = dialogWindows;
+    public void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.SHOW_EXECUTION_REPORT_HISTORY_ACTION);
+        }
     }
 
-    @Override
-    protected void initAction() {
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.CLOCK);
+    @Autowired
+    public void setDialogWindows(DialogWindows dialogWindows) {
+        this.dialogWindows = dialogWindows;
     }
 
     protected void openLookup(MetaClass metaClass) {

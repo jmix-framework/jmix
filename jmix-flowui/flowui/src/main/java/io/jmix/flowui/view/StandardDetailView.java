@@ -41,6 +41,7 @@ import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.event.view.ViewSetupLockEvent;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
@@ -48,7 +49,6 @@ import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -63,7 +63,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <T> entity class
  */
-public class StandardDetailView<T> extends StandardView implements DetailView<T>, ReadOnlyAwareView {
+public class StandardDetailView<T> extends StandardView implements DetailView<T>, ReadOnlyTracker {
 
     public static final String NEW_ENTITY_ID = "new";
     public static final String DEFAULT_ROUTE_PARAM = "id";
@@ -281,12 +281,6 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         ValidationErrors errors = new ValidationErrors();
         if (isCrossFieldValidationEnabled()) {
             ViewValidation viewValidation = getViewValidation();
-
-            // io.jmix.flowui.component.validation.group.UiCrossFieldChecks is deprecated
-            // added for compatibility
-            errors.addAll(viewValidation.validateBeanGroup(
-                    io.jmix.flowui.component.validation.group.UiCrossFieldChecks.class, getEditedEntity()));
-
             errors.addAll(viewValidation.validateBeanGroup(UiCrossFieldChecks.class, getEditedEntity()));
         }
 
@@ -423,6 +417,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             this.readOnly = readOnly;
 
             getReadOnlyViewSupport().setViewReadOnly(this, readOnly);
+            fireEvent(new ReadOnlyChangeEvent(this, readOnly));
         }
     }
 
@@ -805,7 +800,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                     || inMemoryContext.isUpdatePermitted(getEditedEntity()));
 
             if (isPermittedBySecurity) {
-                SetupLockEvent event = new SetupLockEvent(this);
+                ViewSetupLockEvent<StandardDetailView<T>> event = new ViewSetupLockEvent<>(this);
                 getApplicationContext().publishEvent(event);
 
                 this.entityLockStatus = event.getLockStatus();
@@ -955,6 +950,11 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return getEventBus().addListener(ValidationEvent.class, listener);
     }
 
+    @Override
+    public Registration addReadOnlyStateChangeListener(ComponentEventListener<ReadOnlyChangeEvent> listener) {
+        return getEventBus().addListener(ReadOnlyChangeEvent.class, listener);
+    }
+
     /**
      * @return true if the edited entity should be reloaded before setting to the data container.
      */
@@ -980,31 +980,6 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     @Override
     public void setReloadSaved(boolean reloadSaved) {
         this.reloadSaved = reloadSaved;
-    }
-
-    /**
-     * Event sent when the view requests an external lock, if one is defined.
-     */
-    public static class SetupLockEvent extends ApplicationEvent {
-
-        protected LockStatus lockStatus = LockStatus.NOT_SUPPORTED;
-
-        public SetupLockEvent(StandardDetailView<?> view) {
-            super(view);
-        }
-
-        @Override
-        public StandardDetailView<?> getSource() {
-            return ((StandardDetailView<?>) super.getSource());
-        }
-
-        public LockStatus getLockStatus() {
-            return lockStatus;
-        }
-
-        public void setLockStatus(LockStatus lockStatus) {
-            this.lockStatus = lockStatus;
-        }
     }
 
     /**

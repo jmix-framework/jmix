@@ -1,6 +1,22 @@
 <%
-        def dlId="${entity.uncapitalizedClassName}Dl"
-        %>
+def dlId="${entity.uncapitalizedClassName}Dl"
+
+private String getRepositoryIdFqn() {
+    try {
+        return repository.getIdFqn()
+    } catch(Exception e) {
+        return "java.util.UUID"
+    }
+}
+
+private String getRepositoryIdClassName() {
+    try {
+        return repository.getIdClassName()
+    } catch(Exception e) {
+        return "UUID"
+    }
+}
+%>
 package ${packageName};
 
 import ${entity.fqn};
@@ -14,11 +30,14 @@ import io.jmix.flowui.view.*;
 <%if (useDataRepositories){%>
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
+import io.jmix.core.FetchPlan;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Set;
+import ${repository.getQualifiedName()};
 
-import static io.jmix.core.repository.JmixDataRepositoryUtils.*;
+import java.util.Optional;
+import java.util.Set;
+import ${getRepositoryIdFqn()};
 <%}%>
 <%if (classComment) {%>
 ${classComment}
@@ -30,6 +49,11 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
 
     @Autowired
     private ${repository.getQualifiedName()} repository;
+
+    @Install(to = "${dlId}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
+    private Optional<${entity.className}> loadDelegate(${getRepositoryIdClassName()} id, FetchPlan fetchPlan){
+        return repository.findById(id, fetchPlan);
+    }
 
     @Install(target = Target.DATA_CONTEXT)
     private Set<Object> saveDelegate(SaveContext saveContext) {
@@ -43,12 +67,7 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
           if (compositeAttrs.length() > 0){
               compositeAttrs = compositeAttrs.substring(0, compositeAttrs.length() - 2);
               println """// ${entity.className} has the following @Composition attributes: $compositeAttrs.
-                       // To save them, either add cascade in JPA annotation or pass to appropriate repository manually."""}
+                       // Make sure they have CascadeType.ALL in @OneToMany annotation."""}
         %>return Set.of(repository.save(getEditedEntity()));
-    }
-
-    @Install(to = "${dlId}", target = Target.DATA_LOADER)
-    private ${entity.className} loadDelegate(LoadContext<${entity.className}> context){
-        return repository.getById(extractEntityId(context), context.getFetchPlan());
     }<%}%>
 }

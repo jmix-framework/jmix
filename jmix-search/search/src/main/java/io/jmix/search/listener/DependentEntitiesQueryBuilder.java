@@ -1,0 +1,200 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.search.listener;
+
+import io.jmix.core.Id;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
+import io.jmix.search.listener.dynattr.DynamicAttributeReferenceFieldResolver;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+
+/**
+ * A builder class for constructing queries to retrieve dependent entities based on various criteria.
+ * The {@code DependentEntitiesQueryBuilder} is primarily designed to handle both static and dynamic
+ * attribute references with optional multi-level properties.
+ */
+public class DependentEntitiesQueryBuilder {
+
+    public static final String REFERENCES_WITH_TWO_OR_MORE_LEVELS_ARE_NOT_SUPPORTED_MESSAGE =
+            "References with two or more levels are not supported for dynamic attributes. " +
+                    "The entity type: %s. The property path: %s";
+
+    protected String entityName;
+    protected MetaClass referencedMetaClass;
+    protected MetaPropertyPath propertyPath;
+    protected MetaClass targetMetaClass;
+    protected Id<?> targetEntityId;
+
+    protected int currentEntityIndex;
+    protected String currentEntityAlias;
+    protected StringBuilder currentPropertyPathSb;
+    protected StringBuilder querySb;
+    protected int propertiesLevels;
+    protected MetaProperty currentLevelProperty;
+    protected int currentLevelPropertyIndex;
+    protected String targetPrimaryKeyName;
+
+    protected Map<String, Object> parameters;
+    protected final MetadataTools metadataTools;
+    protected final DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver;
+    protected final DynamicAttributesSupport dynamicAttributesSupport;
+
+    DependentEntitiesQueryBuilder(MetadataTools metadataTools,
+                                  DynamicAttributeReferenceFieldResolver dynamicAttributeReferenceFieldResolver,
+                                  DynamicAttributesSupport dynamicAttributesSupport) {
+        this.metadataTools = metadataTools;
+        this.dynamicAttributeReferenceFieldResolver = dynamicAttributeReferenceFieldResolver;
+        this.dynamicAttributesSupport = dynamicAttributesSupport;
+    }
+
+    protected DependentEntitiesQueryBuilder loadEntity(MetaClass metaClass) {
+        this.entityName = metaClass.getName();
+        this.referencedMetaClass = metaClass;
+        return this;
+    }
+
+    protected DependentEntitiesQueryBuilder byProperty(MetaPropertyPath propertyPath) {
+        this.propertyPath = propertyPath;
+        return this;
+    }
+
+    protected DependentEntitiesQueryBuilder dependedOn(MetaClass metaClass, Id<?> entityId) {
+        this.targetMetaClass = metaClass;
+        this.targetEntityId = entityId;
+        return this;
+    }
+
+    protected DependentEntitiesQuery buildQuery() {
+        if (!dynamicAttributesSupport.isDynamicAttribute(propertyPath)) {
+            initQuery();
+            processProperties();
+        } else {
+            if (!hasExtraLevels(propertyPath)) {
+                initDynamicQuery();
+                processDynamicProperty();
+            } else {
+                throw new IllegalStateException(String.format(REFERENCES_WITH_TWO_OR_MORE_LEVELS_ARE_NOT_SUPPORTED_MESSAGE, referencedMetaClass.getName(), propertyPath.toString()));
+            }
+        }
+        return new DependentEntitiesQuery(querySb.toString(), parameters);
+    }
+
+    protected boolean hasExtraLevels(MetaPropertyPath propertyPath) {
+        return propertyPath.getMetaProperties().length > 1;
+    }
+
+    protected void initDynamicQuery() {
+        parameters = new HashMap<>();
+        currentEntityIndex = 1;
+        currentEntityAlias = "e1";
+        targetPrimaryKeyName = metadataTools.getPrimaryKeyName(targetMetaClass);
+        initPropertyPathStringBuilderForCurrentEntity();
+        querySb = new StringBuilder("select ")
+                .append(currentEntityAlias)
+                .append(" from ")
+                .append(entityName)
+                .append(' ')
+                .append(currentEntityAlias)
+                .append(" where exists (")
+                .append("select r from dynat_CategoryAttributeValue r where r.entityValue.")
+                .append(dynamicAttributeReferenceFieldResolver.getFieldName(referencedMetaClass))
+                .append(" =:ref and r.entity.")
+                .append(dynamicAttributeReferenceFieldResolver.getFieldName(targetMetaClass))
+                .append(" = ")
+                .append(currentEntityAlias)
+                .append(".")
+                .append(targetPrimaryKeyName)
+                .append(")");
+    }
+
+    protected void initQuery() {
+        parameters = new HashMap<>();
+        currentEntityIndex = 1;
+        currentEntityAlias = "e1";
+        initPropertyPathStringBuilderForCurrentEntity();
+        querySb = new StringBuilder("select ")
+                .append(currentEntityAlias)
+                .append(" from ")
+                .append(entityName)
+                .append(' ')
+                .append(currentEntityAlias);
+    }
+
+    protected void processProperties() {
+        targetPrimaryKeyName = metadataTools.getPrimaryKeyName(targetMetaClass);
+        MetaProperty[] metaProperties = propertyPath.getMetaProperties();
+        propertiesLevels = metaProperties.length;
+        currentLevelPropertyIndex = 0;
+        Stream.of(metaProperties).forEach(this::processPropertyLevel);
+    }
+
+    protected void processDynamicProperty() {
+        parameters.put("ref", targetEntityId.getValue());
+    }
+
+    protected void processPropertyLevel(MetaProperty property) {
+        currentLevelProperty = property;
+
+        appendCurrentLevelProperty();
+        if (isJoinRequired(property)) {
+            joinWithNextEntity();
+            initPropertyPathStringBuilderForCurrentEntity();
+        }
+        if (isLastLevelProperty()) {
+            appendWhereBlock();
+        }
+
+        currentLevelPropertyIndex++;
+    }
+
+    protected boolean isLastLevelProperty() {
+        return currentLevelPropertyIndex == propertiesLevels - 1;
+    }
+
+    protected boolean isJoinRequired(MetaProperty property) {
+        boolean oneToMany = property.getAnnotatedElement().isAnnotationPresent(OneToMany.class);
+        boolean manyToMany = property.getAnnotatedElement().isAnnotationPresent(ManyToMany.class);
+        return oneToMany || manyToMany;
+    }
+
+    protected void appendCurrentLevelProperty() {
+        currentPropertyPathSb.append('.').append(currentLevelProperty.getName());
+    }
+
+    protected void joinWithNextEntity() {
+        currentEntityIndex++;
+        currentEntityAlias = "e" + currentEntityIndex;
+        querySb.append(" join ").append(currentPropertyPathSb).append(' ').append(currentEntityAlias);
+    }
+
+    protected void initPropertyPathStringBuilderForCurrentEntity() {
+        currentPropertyPathSb = new StringBuilder(currentEntityAlias);
+    }
+
+    protected void appendWhereBlock() {
+        querySb.append(" where ").append(currentPropertyPathSb).append('.').append(targetPrimaryKeyName).append(" = :ref");
+        parameters.put("ref", targetEntityId.getValue());
+    }
+}

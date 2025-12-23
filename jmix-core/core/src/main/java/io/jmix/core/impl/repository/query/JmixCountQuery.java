@@ -29,7 +29,7 @@ import org.springframework.data.repository.query.parser.PartTree;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class JmixCountQuery extends JmixStructuredQuery {
+public class JmixCountQuery extends JmixStructuredEntityQuery {
 
     public JmixCountQuery(DataManager dataManager,
                           Metadata jmixMetadata,
@@ -47,6 +47,4 @@ public class JmixCountQuery extends JmixStructuredQuery {
     public Object execute(Object[] parameters) {
         return dataManager.getCount(prepareQueryContext(parameters));
     }
-
-
 }

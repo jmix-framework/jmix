@@ -18,7 +18,7 @@
       title="msg://MessageTemplateParametersInputDialog.title"
       focusComponent="form">
     <actions>
-        <action id="saveAction" icon="CHECK" text="msg:///actions.Ok" actionVariant="PRIMARY"/>
+        <action id="saveAction" icon="OK" text="msg:///actions.Ok" actionVariant="PRIMARY"/>
         <action id="closeAction" type="view_close"/>
     </actions>
     <layout>

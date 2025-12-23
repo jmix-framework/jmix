@@ -17,9 +17,9 @@
 package io.jmix.core.repository;
 
 import io.jmix.core.LoadContext;
-import io.jmix.core.annotation.Experimental;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * Helper class for {@link JmixDataRepository}. Provides methods to build {@link JmixDataRepositoryContext} by {@link LoadContext}.
  */
-@Experimental
 public class JmixDataRepositoryUtils {
     /**
      * @return {@link JmixDataRepositoryContext} with Jmix-specific parameters extracted from {@code context}
@@ -43,11 +42,16 @@ public class JmixDataRepositoryUtils {
     }
 
     /**
-     * @return {@link PageRequest} with {@code firstResult}, {@code maxResults} and {@code sort} extracted from {@code context}
+     * @return {@link Pageable} created from {@code firstResult}, {@code maxResults} and {@code sort} extracted from {@code context}.
+     * If {@code maxResults} is 0, {@code firstResult} is ignored and only {@code sort} is used by the returned unpaged object.
+     *
      * @throws RuntimeException if {@link LoadContext#getQuery()}} is null
      */
-    public static PageRequest buildPageRequest(LoadContext<?> context) {
+    public static Pageable buildPageRequest(LoadContext<?> context) {
         LoadContext.Query query = getQuery(context);
+        if (query.getMaxResults() <= 0) {
+            return Pageable.unpaged(LoaderHelper.jmixToSpringSort(query.getSort()));
+        }
         return PageRequest.of(
                 query.getFirstResult() / query.getMaxResults(),
                 query.getMaxResults(),

@@ -8,13 +8,6 @@
             </collection>
             <collection id="queryParametersDc" property="queryParameters"/>
         </instance>
-        <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup" fetchPlan="_local">
-            <loader id="groupsDl">
-                <query>
-                    <![CDATA[select rg from report_ReportGroup rg order by rg.createTs asc]]>
-                </query>
-            </loader>
-        </collection>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
@@ -51,6 +44,12 @@
                                required="true"
                                requiredMessage="msg://fillReportNameMsg"
                                width="100%"/>
+                    <textField id="reportCodeField"
+                               property="code"
+                               label="msg://reportCode"
+                               required="true"
+                               requiredMessage="msg://fillReportCodeMsg"
+                               width="100%"/>
                     <radioButtonGroup id="reportTypeGenerateField"
                                       themeNames="vertical"
                                       label="msg://reportBuildType"/>
@@ -78,7 +77,7 @@
                         <action id="up" type="list_itemTracking" icon="ARROW_UP"/>
                         <action id="down" type="list_itemTracking" icon="ARROW_DOWN"/>
                         <action id="remove" type="list_remove"/>
-                        <action id="edit" text="msg://editRegion" icon="PENCIL"/>
+                        <action id="edit" text="msg://editRegion" icon="PENCIL" type="list_itemTracking"/>
                     </actions>
                 </dataGrid>
             </vbox>

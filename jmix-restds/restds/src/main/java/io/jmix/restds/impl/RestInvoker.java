@@ -116,7 +116,9 @@ public class RestInvoker implements InitializingBean {
         permissionsPath = environment.getProperty(dataStoreName + ".permissionsPath", "/permissions");
         capabilitiesPath = environment.getProperty(dataStoreName + ".capabilitiesPath", "/capabilities");
 
-        restClient = RestClient.builder()
+        RestClient.Builder builder = applicationContext.getBean(RestClient.Builder.class);
+
+        restClient = builder
                 .baseUrl(baseUrl)
                 .messageConverters(converters ->
                         converters.add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8)))

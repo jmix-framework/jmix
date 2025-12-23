@@ -34,4 +34,6 @@ public class FormLayoutView extends StandardView {
     public FormLayout formLayoutCustomColumns;
     @ViewComponent
     public FormLayout formLayoutWithResponsiveSteps;
+    @ViewComponent
+    public FormLayout formLayoutWithRows;
 }

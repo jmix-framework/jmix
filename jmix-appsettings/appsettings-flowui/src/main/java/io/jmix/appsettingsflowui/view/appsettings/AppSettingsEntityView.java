@@ -62,7 +62,8 @@ import jakarta.persistence.Convert;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Route(value = "app-settings", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "app-settings", layout = DefaultMainViewParent.class)
+@Route(value = "appset/app-settings", layout = DefaultMainViewParent.class)
 @ViewController("appSettings.view")
 @ViewDescriptor("app-settings-entity-view.xml")
 @DialogMode(width = "50em", height = "37.5em")
@@ -80,6 +81,8 @@ public class AppSettingsEntityView extends StandardView {
     @ViewComponent
     protected HorizontalLayout buttonsPanel;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected AppSettings appSettings;
     @Autowired
@@ -96,12 +99,6 @@ public class AppSettingsEntityView extends StandardView {
     protected DataComponents dataComponents;
     @Autowired
     protected ViewValidation viewValidation;
-    // Keep for compatibility, to prevent possible compilation errors,
-    // if someone has extended this view and is using Messages.
-    @Autowired
-    protected Messages messages;
-    @ViewComponent
-    protected MessageBundle messageBundle;
     @Autowired
     protected AppSettingsTools appSettingsTools;
     @Autowired

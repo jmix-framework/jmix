@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.action.genericfilter;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.genericfilter.Configuration;
@@ -25,7 +24,8 @@ import io.jmix.flowui.component.genericfilter.converter.FilterConverter;
 import io.jmix.flowui.component.genericfilter.registration.FilterComponents;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.entity.filter.FilterCondition;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -46,16 +46,18 @@ public class GenericFilterCopyAction extends GenericFilterAction<GenericFilterCo
         super(ID);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.COPY);
-    }
-
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.genericFilter.Copy");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.GENERIC_FILTER_COPY_ACTION);
+        }
     }
 
     @Autowired

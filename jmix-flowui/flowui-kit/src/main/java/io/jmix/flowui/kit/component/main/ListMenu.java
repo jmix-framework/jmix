@@ -20,13 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.details.Details;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Hr;
-import com.vaadin.flow.component.html.ListItem;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.html.UnorderedList;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
@@ -58,11 +52,9 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     protected static final String JMIX_MENUBAR_ITEM_CLASS_NAME = "jmix-menubar-item";
     protected static final String JMIX_MENUBAR_SUMMARY_ICON_CONTAINER_CLASS_NAME = "jmix-menubar-summary-icon-container";
     protected static final String MENUBAR_SUMMARY_CLASS_NAME = "menubar-summary";
-    protected static final String MENUBAR_ICON_CLASS_NAME = "menubar-icon";
     protected static final String MENUBAR_LIST_CLASS_NAME = "menubar-list";
 
     protected static final String JMIX_MENU_ITEM_LINK_CLASS_NAME = "jmix-menu-item-link";
-    protected static final String LINK_ICON_CLASS_NAME = "link-icon";
     protected static final String LINK_TEXT_CLASS_NAME = "link-text";
     protected static final String PREFIX_COMPONENT_CLASS_NAME = "prefix-component";
     protected static final String SUFFIX_COMPONENT_CLASS_NAME = "suffix-component";
@@ -299,14 +291,11 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         routerLink.addClassNames(JMIX_MENU_ITEM_LINK_CLASS_NAME, FLEX_CLASS_NAME);
         routerLink.addClassNames(menuItem.getClassNames().toArray(new String[0]));
         routerLink.setHighlightCondition(HighlightConditions.never());
+        routerLink.setVisible(menuItem.isVisible());
 
         Component prefixComponent = menuItem.getPrefixComponent();
         if (prefixComponent != null) {
             setPrefixComponent(routerLink, prefixComponent, null);
-        } else if (menuItem.getIcon() != null) {
-            Icon icon = new Icon(menuItem.getIcon());
-            icon.addClassName(LINK_ICON_CLASS_NAME);
-            routerLink.add(icon);
         }
 
         Span text = new Span(getTitle(menuItem));
@@ -363,6 +352,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         menuItemComponent.addClassName(JMIX_MENUBAR_ITEM_CLASS_NAME);
         menuItemComponent.addClassNames(menuBarItem.getClassNames().toArray(new String[0]));
         menuItemComponent.setOpened(menuBarItem.isOpened());
+        menuItemComponent.setVisible(menuBarItem.isVisible());
 
         Div div = new Div();
         div.setWidthFull();
@@ -372,10 +362,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         Component prefixComponent = menuBarItem.getPrefixComponent();
         if (prefixComponent != null) {
             setPrefixComponent(div, prefixComponent, null);
-        } else if (menuBarItem.getIcon() != null) {
-            Icon icon = new Icon(menuBarItem.getIcon());
-            icon.addClassName(MENUBAR_ICON_CLASS_NAME);
-            div.add(icon);
         }
 
         Span summary = new Span();
@@ -531,13 +517,13 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         protected String id;
         protected String title;
         protected String description;
-        protected VaadinIcon icon;
         protected List<String> classNames;
         protected Consumer<MenuItem> clickHandler;
         protected Consumer<ListMenuBarOpenedChangeEvent> openedChangeHandler;
         protected KeyCombination shortcutCombination;
         protected Component prefixComponent;
         protected Component suffixComponent;
+        protected boolean visible = true;
 
         protected ListMenu menuComponent;
 
@@ -607,29 +593,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          */
         public MenuItem withDescription(@Nullable String description) {
             this.description = description;
-            return this;
-        }
-
-        /**
-         * @return icon or {@code null} if not set
-         * @deprecated use {@link #getPrefixComponent()}
-         */
-        @Nullable
-        @Deprecated(since = "2.2", forRemoval = true)
-        public VaadinIcon getIcon() {
-            return icon;
-        }
-
-        /**
-         * Sets icon that should be displayed to the left of the {@link #getTitle()}.
-         *
-         * @param icon icon to set
-         * @return current menu instance
-         * @deprecated use {@link #withPrefixComponent(Component)} or {@link #setPrefixComponent(Component)}
-         */
-        @Deprecated(since = "2.2", forRemoval = true)
-        public MenuItem withIcon(@Nullable VaadinIcon icon) {
-            this.icon = icon;
             return this;
         }
 
@@ -777,6 +740,33 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         /**
+         * @return {@code true} if menu item is visible, {@code false} otherwise
+         */
+        public boolean isVisible() {
+            return visible;
+        }
+
+        /**
+         * Sets whether a menu item should be visible.
+         *
+         * @param visible {@code true} if menu item should be visible, {@code false} otherwise
+         * @return current menu item instance
+         */
+        public MenuItem withVisible(boolean visible) {
+            this.visible = visible;
+            return this;
+        }
+
+        /**
+         * Sets whether a menu item should be visible.
+         *
+         * @param visible {@code true} if menu item should be visible, {@code false} otherwise
+         */
+        public void setVisible(boolean visible) {
+            this.visible = visible;
+        }
+
+        /**
          * @return {@code true} if menu item is {@link MenuBarItem} that contains other items,
          * {@code false} otherwise
          */
@@ -858,14 +848,13 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         @Override
-        public MenuBarItem withDescription(@Nullable String description) {
-            return (MenuBarItem) super.withDescription(description);
+        public MenuBarItem withVisible(boolean visible) {
+            return (MenuBarItem) super.withVisible(visible);
         }
 
         @Override
-        @Deprecated(since = "2.2", forRemoval = true)
-        public MenuBarItem withIcon(@Nullable VaadinIcon icon) {
-            return (MenuBarItem) super.withIcon(icon);
+        public MenuBarItem withDescription(@Nullable String description) {
+            return (MenuBarItem) super.withDescription(description);
         }
 
         @Override
@@ -1024,15 +1013,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
             children.clear();
             children = null;
-        }
-
-        /**
-         * @return immutable list of child items
-         * @deprecated use {@link #getChildItems()}
-         */
-        @Deprecated
-        public List<MenuItem> getChildren() {
-            return getChildItems();
         }
 
         @Override

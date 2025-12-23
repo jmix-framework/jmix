@@ -23,8 +23,6 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.dom.ClassList;
@@ -35,7 +33,9 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -169,7 +169,7 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
     @Nullable
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents().create(JmixButton.class);
-        closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
+        closeButton.setIcon(icons().get(JmixFontIcon.CLOSE_SMALL));
         closeButton.addThemeVariants(
                 ButtonVariant.LUMO_TERTIARY_INLINE,
                 ButtonVariant.LUMO_ICON,
@@ -188,7 +188,6 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
 
     protected Div createHeaderWrapper() {
         Div headerWrapper = uiComponents().create(Div.class);
-        headerWrapper.setWidthFull();
         headerWrapper.setClassName(BASE_CLASS_NAME + "-header-wrapper");
 
         headerContent = uiComponents().create(HorizontalLayout.class);
@@ -651,5 +650,9 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
 
     protected UiComponents uiComponents() {
         return applicationContext.getBean(UiComponents.class);
+    }
+
+    protected Icons icons() {
+        return applicationContext.getBean(Icons.class);
     }
 }

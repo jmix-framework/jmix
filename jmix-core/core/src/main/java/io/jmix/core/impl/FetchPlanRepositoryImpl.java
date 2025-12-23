@@ -313,7 +313,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
             if (isPersistent(metaClass, metaProperty)) {
                 if (!metaProperty.getRange().isClass()) {
                     fetchPlanBuilder.add(metaProperty.getName());
-                } else if (metadataTools.isEmbedded(metaProperty)) {
+                } else if (metaProperty.getType() == MetaProperty.Type.EMBEDDED) {
                     addClassAttributeWithFetchPlan(metaProperty, FetchPlan.BASE, fetchPlanBuilder, info, visited);
                 }
             }

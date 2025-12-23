@@ -37,6 +37,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,6 +47,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Component("core_InstanceNameProvider")
 public class InstanceNameProviderImpl implements InstanceNameProvider {
+
+    public static final String UNFETCHED_EXCEPTION_MESSAGE_PREFIX = "Cannot get unfetched attribute [";
 
     @Autowired
     protected Metadata metadata;
@@ -61,6 +64,9 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
 
     @Autowired
     protected MetadataTools metadataTools;
+
+    @Autowired
+    protected CoreProperties coreProperties;
 
     private final Logger log = LoggerFactory.getLogger(InstanceNameProviderImpl.class);
 
@@ -102,6 +108,32 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
         }
     }
 
+    protected static class EvaluationResult {
+
+        public final String instanceName;
+        public final IllegalStateException exception;
+
+        public EvaluationResult(String instanceName) {
+            this.instanceName = instanceName;
+            this.exception = null;
+        }
+
+        public EvaluationResult(IllegalStateException exception) {
+            this.instanceName = "";
+            this.exception = exception;
+        }
+
+        public boolean isSuccessful() {
+            return exception == null;
+        }
+
+        //should be called only in case of EvaluationResult#exception is specified
+        public String getUnfetchedAttributeName() {
+            String message = Objects.requireNonNull(exception, "Invalid EvaluationResult usage").getMessage();
+            return message.substring(UNFETCHED_EXCEPTION_MESSAGE_PREFIX.length(), message.indexOf("]"));
+        }
+    }
+
     public ArgumentResolverComposite getResolvers() {
         return resolvers;
     }
@@ -120,35 +152,89 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
 
     @Override
     public String getInstanceName(Object instance) {
+        return getInstanceName(instance, metadata.getClass(instance));
+    }
+
+    @Override
+    public String getInstanceName(Object instance, Class<?> clazz) {
+        return getInstanceName(instance, metadata.getClass(clazz));
+    }
+
+    @Override
+    public String getInstanceName(Object instance, MetaClass metaClass) {
         checkNotNullArgument(instance, "instance is null");
 
-        MetaClass metaClass = metadata.getClass(instance);
-
         Optional<InstanceNameRec> optional = instanceNameRecCache.getUnchecked(metaClass);
-        if (!optional.isPresent()) {
+        if (optional.isEmpty()) {
             return instance.toString();
         }
 
         InstanceNameRec rec = optional.get();
 
+        EvaluationResult result = getInstanceName(rec, instance);
+        if (result.isSuccessful()) {
+            return result.instanceName;
+        } else {
+            if (metaClass.getAncestor() != null) {
+                if (coreProperties.isInstanceNameFallbackEnabled()) {
+                    log.debug("Error getting instance name for {} as instance of {} because of unfetched attribute '{}'. " +
+                                    "Trying to get instance name for entity as instance of {}.",
+                            instance,
+                            metaClass.getName(),
+                            result.getUnfetchedAttributeName(),
+                            metaClass.getAncestor().getName());
+                    return getInstanceName(instance, metaClass.getAncestor());
+                } else {
+                    throw new RuntimeException(
+                            String.format("Error getting instance name for %s as instance of %s because of unfetched attributes. " +
+                                            "Fallback to ancestor instance name definition is disabled " +
+                                            "(see `jmix.core.instance-name-fallback-enabled` property). `).",
+                                    instance,
+                                    metaClass.getName()),
+                            result.exception);
+                }
+            } else {
+                throw new RuntimeException(String.format("Error getting instance name for %s as instance of %s because of unfetched attributes. " +
+                                "No ancestors to get fallback instance name definition.",
+                        instance,
+                        metaClass.getName()),
+                        result.exception);
+            }
+        }
+    }
+
+    protected EvaluationResult getInstanceName(InstanceNameRec rec, Object instance) {
         if (rec.method != null) {
             try {
                 Object result = rec.method.invoke(instance, methodArgumentsProvider.getMethodArgumentValues(rec.method));
-                return (String) result;
+                return new EvaluationResult((String) result);
             } catch (Exception e) {
+                if (e instanceof InvocationTargetException) {
+                    Throwable target = ((InvocationTargetException) e).getTargetException();
+                    if (target instanceof IllegalStateException && target.getMessage().startsWith(UNFETCHED_EXCEPTION_MESSAGE_PREFIX)) {
+                        return new EvaluationResult((IllegalStateException) target);
+                    }
+                }
+                throw new RuntimeException("Error getting instance name", e);
+            }
+        } else {
+            try {
+                Object[] values = new Object[rec.nameProperties.length];
+                for (int i = 0; i < rec.nameProperties.length; i++) {
+                    MetaProperty property = rec.nameProperties[i];
+
+                    Object value = EntityValues.getValue(instance, property.getName());
+                    values[i] = metadataTools.format(value, property);
+                }
+
+                return new EvaluationResult(String.format(rec.format, values));
+            } catch (Exception e) {
+                if (e instanceof IllegalStateException && e.getMessage().startsWith(UNFETCHED_EXCEPTION_MESSAGE_PREFIX)) {
+                    return new EvaluationResult((IllegalStateException) e);
+                }
                 throw new RuntimeException("Error getting instance name", e);
             }
         }
-
-        Object[] values = new Object[rec.nameProperties.length];
-        for (int i = 0; i < rec.nameProperties.length; i++) {
-            MetaProperty property = rec.nameProperties[i];
-
-            Object value = EntityValues.getValue(instance, property.getName());
-            values[i] = metadataTools.format(value, property);
-        }
-
-        return String.format(rec.format, values);
     }
 
     @Override
@@ -188,7 +274,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
     public InstanceNameRec parseNamePattern(MetaClass metaClass) {
         Method method = null;
         MetaProperty selectedNameProperty = null;
-        List<Method> instanceNameMethods = Stream.of(metaClass.getJavaClass().getMethods())
+        List<Method> instanceNameMethods = Stream.of(metaClass.getJavaClass().getDeclaredMethods())
                 .filter(m -> AnnotatedElementUtils.findMergedAnnotation(m, InstanceName.class) != null)
                 .collect(Collectors.toList());
         List<MetaProperty> nameProperties = metaClass.getProperties().stream()
@@ -197,6 +283,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
                 .collect(Collectors.toList());
         if (!instanceNameMethods.isEmpty()) {
             method = instanceNameMethods.get(0);
+            method.setAccessible(true);
         } else if (!nameProperties.isEmpty()) {
             selectedNameProperty = nameProperties.get(0);
 
@@ -208,8 +295,20 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
                     selectedNameProperty = current;//use the one declared in extending class
                 }
             }
-        }
-        if (instanceNameMethods.isEmpty() && nameProperties.isEmpty()) {
+        } else {
+            if (metaClass.getAncestor() != null) {
+                InstanceNameRec ancestorRec = parseNamePattern(metaClass.getAncestor());
+                if (ancestorRec != null) {
+                    //find descendant class corresponding MetaProperties
+                    MetaProperty[] actualProperties = new MetaProperty[ancestorRec.nameProperties.length];
+                    for (int i = 0; i < ancestorRec.nameProperties.length; i++) {
+                        actualProperties[i] = metaClass.getProperty(ancestorRec.nameProperties[i].getName());
+                        if (actualProperties[i] == null)
+                            throw new RuntimeException("Ancestor property is not registered in descendant. Should not happen.");
+                    }
+                    return new InstanceNameRec(ancestorRec.format, ancestorRec.method, actualProperties);
+                }
+            }
             return null;
         }
         validateInstanceNameAnnotation(metaClass, instanceNameMethods, nameProperties, selectedNameProperty);
@@ -221,7 +320,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
     private void validateInstanceNameAnnotation(MetaClass metaClass,
                                                 List<Method> instanceNameMethods,
                                                 List<MetaProperty> nameProperties,
-                                                MetaProperty selectedNameProperty) {
+                                                @Nullable MetaProperty selectedNameProperty) {
         if (instanceNameMethods.size() > 1) {
             log.warn("Multiple @InstanceName annotated methods found in {} class, method {} will be used for instance name",
                     metaClass.getName(),

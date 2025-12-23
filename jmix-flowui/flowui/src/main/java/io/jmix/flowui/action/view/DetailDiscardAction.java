@@ -16,10 +16,10 @@
 
 package io.jmix.flowui.action.view;
 
-import io.jmix.flowui.action.ActionType;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.action.ActionType;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,16 +36,18 @@ public class DetailDiscardAction<E> extends OperationResultViewAction<DetailDisc
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.BAN);
-    }
-
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.Cancel");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.DETAIL_DISCARD_ACTION);
+        }
     }
 
     @Override

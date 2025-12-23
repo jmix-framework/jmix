@@ -28,6 +28,7 @@ package io.jmix.flowui.kit.meta;
  * This enum is typically used in annotations to specify the criteria under which certain
  * functionality should be available based on dependencies.
  */
+@StudioAPI
 public enum RequiredDependenciesStrategy {
     OR, AND
 }

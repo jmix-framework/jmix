@@ -112,10 +112,10 @@
                     .withHeader("Confirm")
                     .withText("Are you sure?")
                     .withActions(
-                        io.jmix.flowui.action.DialogAction(DialogAction.Type.YES)
+                        io.jmix.flowui.action.DialogAction(io.jmix.flowui.action.DialogAction.Type.YES)
                             .withVariant(io.jmix.flowui.kit.action.ActionVariant.PRIMARY)
-                            .withHandler { e: ActionPerformedEvent? -> },
-                        io.jmix.flowui.action.DialogAction(DialogAction.Type.NO)
+                            .withHandler { e: io.jmix.flowui.kit.action.ActionPerformedEvent? -> },
+                        io.jmix.flowui.action.DialogAction(io.jmix.flowui.action.DialogAction.Type.NO)
                     )
                     .open()
                 ]]>
@@ -481,10 +481,10 @@
                     override fun progress(changes: MutableList<Int?>) {
                         // show progress in the UI
                         val lastValue = changes.get(changes.size - 1)!!.toDouble()
-                        progressBar.setValue(lastValue / 10);
+                        // progressBar.setValue(lastValue / 10);
                     }
 
-                    fun done(result: String) {
+                    override fun done(result: String) {
                         // show result in the UI
                         notifications.show(result)
                     }
@@ -531,7 +531,7 @@
                     42
                 }
                 .withResultHandler { result ->
-                    notifications.show("Done! Result: $result")
+                    notifications.show("Done! Result: \$result")
                 }
                 .supplyAsync()
                 ]]>
@@ -638,7 +638,7 @@
             <variableInputParameter code="container" text="Component container"/>
             <text language="java">
                 <![CDATA[
-                ${IS_FINAL}java.util.Collection<com.vaadin.flow.component.Component> components = UiComponentUtils.getComponents(${container});
+                ${IS_FINAL}java.util.Collection<com.vaadin.flow.component.Component> components = io.jmix.flowui.component.UiComponentUtils.getComponents(${container});
                 ]]>
             </text>
             <text language="kotlin">

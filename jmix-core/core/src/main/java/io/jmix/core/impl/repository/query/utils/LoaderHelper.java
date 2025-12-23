@@ -19,6 +19,7 @@ package io.jmix.core.impl.repository.query.utils;
 import io.jmix.core.FluentLoader;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Sort;
+import io.jmix.core.ValueLoadContext;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.lang.Nullable;
@@ -36,6 +37,14 @@ public class LoaderHelper {
 
     @SuppressWarnings("DataFlowIssue")
     public static void applyPageableForLoadContext(LoadContext<?> loadContext, Pageable pageable) {
+        if (pageable.isPaged()) {
+            loadContext.getQuery().setFirstResult((int) pageable.getOffset());
+            loadContext.getQuery().setMaxResults(pageable.getPageSize());
+        }
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    public static void applyPageableForValueLoadContext(ValueLoadContext loadContext, Pageable pageable) {
         if (pageable.isPaged()) {
             loadContext.getQuery().setFirstResult((int) pageable.getOffset());
             loadContext.getQuery().setMaxResults(pageable.getPageSize());

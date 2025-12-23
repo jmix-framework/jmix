@@ -32,6 +32,7 @@ import io.jmix.restds.impl.RestAuthenticationManagerSupplier;
 import io.jmix.restds.filestorage.RestFileStorage;
 import io.jmix.restds.impl.RestPasswordAuthenticator;
 import io.jmix.restds.impl.RestTokenHolder;
+import io.jmix.samples.restds.common.SampleRestDsCommonConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
 import jakarta.persistence.EntityManagerFactory;
@@ -50,6 +51,9 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.client.RestClient;
+
+import io.micrometer.observation.ObservationRegistry;
 import test_support.security.TestInMemoryUserRepository;
 import test_support.security.TestRestUserRepository;
 
@@ -60,7 +64,8 @@ import javax.sql.DataSource;
 @Import({RestDsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class,
         CoreConfiguration.class})
 @PropertySource("classpath:/test_support/test-app.properties")
-@JmixModule(dependsOn = {RestDsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class})
+@JmixModule(dependsOn = {RestDsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class,
+        SampleRestDsCommonConfiguration.class})
 public class TestRestDsConfiguration {
 
     @Bean
@@ -153,5 +158,17 @@ public class TestRestDsConfiguration {
     @Primary
     public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
         return new LocalApplicationEventChannelSupplier();
+    }
+
+    @Bean
+    @Primary
+    public RestClient.Builder restClientBuilder(ObservationRegistry observationRegistry) {
+        return RestClient.builder().observationRegistry(observationRegistry);
+    }
+
+    @Bean
+    @Primary
+    public ObservationRegistry observationRegistry() {
+        return ObservationRegistry.NOOP;
     }
 }

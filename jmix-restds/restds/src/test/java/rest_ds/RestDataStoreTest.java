@@ -21,6 +21,7 @@ import io.jmix.core.Id;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,11 +29,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import test_support.BaseRestDsIntegrationTest;
 import test_support.SampleServiceConnection;
 import test_support.TestSupport;
-import test_support.entity.Country;
-import test_support.entity.Customer;
-import test_support.entity.CustomerRegionDto;
+import test_support.entity.*;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -140,6 +140,44 @@ public class RestDataStoreTest extends BaseRestDsIntegrationTest {
                 .optional();
 
         assertThat(optionalCustomer).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    void testConditionWithOffsetDateTime() {
+        Customer customer1 = createCustomer(null, "testCondition-cust-1-" + now);
+
+        List<Customer> customers = dataManager.load(Customer.class)
+                .condition(PropertyCondition.lessOrEqual("createdDate", OffsetDateTime.now()))
+                .list();
+
+        assertThat(customers).isNotEmpty();
+    }
+
+    @Test
+    void testConditionWithEnum() {
+        Customer customer = createCustomer(null, "testCondition-cust-1-" + now);
+
+        CustomerContact contact1 = dataManager.create(CustomerContact.class);
+        contact1.setCustomer(customer);
+        contact1.setContactValue("abc");
+        contact1.setContactType(ContactType.EMAIL);
+
+        CustomerContact contact2 = dataManager.create(CustomerContact.class);
+        contact2.setCustomer(customer);
+        contact2.setContactValue("def");
+        contact2.setContactType(ContactType.PHONE);
+
+        dataManager.save(customer, contact1, contact2);
+
+        List<CustomerContact> contacts = dataManager.load(CustomerContact.class)
+                .condition(LogicalCondition.and(
+                                PropertyCondition.equal("customer", customer),
+                                PropertyCondition.equal("contactType", ContactType.EMAIL)
+                        ))
+                .list();
+
+        assertThat(contacts).size().isEqualTo(1);
+        assertThat(contacts.get(0)).isEqualTo(contact1);
     }
 
     @Test
@@ -279,6 +317,9 @@ public class RestDataStoreTest extends BaseRestDsIntegrationTest {
         CustomerRegionDto updatedRegion = dataManager.save(region);
 
         assertThat(updatedRegion).isEqualTo(region);
+
+        long count = dataManager.getCount(new LoadContext(metadata.getClass(CustomerRegionDto.class)));
+        assertThat(count).isGreaterThan(0);
 
         // delete
 

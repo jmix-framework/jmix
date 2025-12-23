@@ -27,7 +27,9 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.AccessManager;
+import io.jmix.core.SaveContext;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.validation.ValidationErrors;
@@ -44,16 +46,14 @@ import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Route(value = "quartz/jobmodels/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "quartz/jobmodels/:id", layout = DefaultMainViewParent.class)
+@Route(value = "quartz/job-models/:id", layout = DefaultMainViewParent.class)
 @ViewController("quartz_JobModel.detail")
 @ViewDescriptor("job-model-detail-view.xml")
 @EditedEntityContainer("jobModelDc")
@@ -323,6 +323,11 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
         }
 
         quartzService.updateQuartzJob(getEditedEntity(), jobDataParamsDc.getItems(), triggerModelDc.getItems(), replaceJobIfExists);
+    }
+
+    @Install(target = Target.DATA_CONTEXT)
+    private Set<Object> saveDelegate(final SaveContext saveContext) {
+        return saveContext.getEntitiesToSave();
     }
 
     @Subscribe("jobDataParamsTable.addNewDataParam")

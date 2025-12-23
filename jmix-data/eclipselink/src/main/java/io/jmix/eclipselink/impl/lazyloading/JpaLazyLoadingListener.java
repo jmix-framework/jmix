@@ -20,7 +20,9 @@ import io.jmix.core.*;
 import io.jmix.core.constraint.InMemoryConstraint;
 import io.jmix.core.datastore.DataStoreAfterEntityLoadEvent;
 import io.jmix.core.datastore.DataStoreEventListener;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.LoadedPropertiesInfo;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -35,6 +37,9 @@ import org.eclipse.persistence.internal.expressions.FieldExpression;
 import org.eclipse.persistence.internal.expressions.ParameterExpression;
 import org.eclipse.persistence.internal.expressions.RelationExpression;
 import org.eclipse.persistence.internal.indirection.QueryBasedValueHolder;
+import org.eclipse.persistence.internal.indirection.WrappingValueHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,9 +53,12 @@ import java.util.stream.Collectors;
 import static io.jmix.eclipselink.impl.lazyloading.AbstractSingleValueHolder.PREV_SOFT_DELETION;
 import static io.jmix.eclipselink.impl.lazyloading.AbstractSingleValueHolder.SOFT_DELETION_ABSENT;
 import static io.jmix.eclipselink.impl.lazyloading.ValueHoldersSupport.*;
+import static io.jmix.eclipselink.impl.lazyloading.ValueHoldersSupport.setSingleValueHolder;
 
 @Component("eclipselink_JpaLazyLoadingInterceptor")
 public class JpaLazyLoadingListener implements DataStoreEventListener {
+    private static final Logger log = LoggerFactory.getLogger(JpaLazyLoadingListener.class);
+
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -113,8 +121,9 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
         for (Map.Entry<Object, Set<FetchPlan>> entry : collectedFetchPlans.entrySet()) {
             MetaClass metaClass = metadata.getClass(entry.getKey());
             for (MetaProperty property : metaClass.getProperties()) {
-                if (property.getRange().isClass() && !metadataTools.isEmbedded(property) &&
-                        !isPropertyContainedInFetchPlans(property, entry.getValue()) &&
+                if (property.getRange().isClass()
+                        && property.getType() != MetaProperty.Type.EMBEDDED
+                        && !isPropertyContainedInFetchPlans(property, entry.getValue()) &&
                         metadataTools.getCrossDataStoreReferenceIdProperty(property.getStore().getName(), property) == null) {
                     if (!entityStates.isLoaded(entry.getKey(), property.getName())) {
                         if (property.getRange().getCardinality().isMany()) {
@@ -168,30 +177,44 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
 
             if (eclipselinkProperties.isDisableLazyLoading()) {
                 wrappedValueHolder = new NonLoadingValueHolder(beanFactory, (ValueHolderInterface) originalValueHolder, owner, property);
-            } else if (metadataTools.isOwningSide(property)) {
-                QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(originalValueHolder);
-                if (queryBasedValueHolder != null) {
-                    Object entityId;
+            } else {
+                if (metadataTools.isOwningSide(property)) {
+                    QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(originalValueHolder);
+                    if (queryBasedValueHolder != null) {
+                        Object entityId;
 
-                    MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(property.getRange().asClass());
-                    if (pkProperty != null && metadataTools.isEmbedded(pkProperty)) {
-                        entityId = buildEmbeddedIdByValueHolder(pkProperty, queryBasedValueHolder);
+                        MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(property.getRange().asClass());
+                        if (pkProperty != null && pkProperty.getType() == MetaProperty.Type.EMBEDDED) {
+                            entityId = buildEmbeddedIdByValueHolder(pkProperty, queryBasedValueHolder);
+                        } else {
+                            entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
+                        }
+
+                        wrappedValueHolder =
+                                new SingleValueOwningPropertyHolder(beanFactory, (ValueHolderInterface) originalValueHolder,
+                                        owner, property, entityId);
+
+                        wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
                     } else {
-                        entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
+                        Object value = unwrapToValueIfInstantiated(originalValueHolder);
+                        if (value != null) {
+                            setSingleValue(owner, property.getName(), value);
+                            setSingleValueHolder(owner, property.getName(), null);
+                            LoadedPropertiesInfo loadedPropertiesInfo = EntitySystemAccess.getEntityEntry(owner).getLoadedPropertiesInfo();
+                            if (loadedPropertiesInfo != null) {
+                                loadedPropertiesInfo.registerProperty(property.getName(), true);
+                            }
+                        } else {
+                            logUnprocessedValueHolder(owner, property, originalValueHolder);
+                        }
                     }
-
-                    wrappedValueHolder =
-                            new SingleValueOwningPropertyHolder(beanFactory, (ValueHolderInterface) originalValueHolder,
-                                    owner, property, entityId);
+                } else {
+                    //noinspection ConstantConditions
+                    wrappedValueHolder = new SingleValueMappedByPropertyHolder(beanFactory, (ValueHolderInterface) originalValueHolder,
+                            owner, property);
 
                     wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
                 }
-            } else {
-                //noinspection ConstantConditions
-                wrappedValueHolder = new SingleValueMappedByPropertyHolder(beanFactory, (ValueHolderInterface) originalValueHolder,
-                        owner, property);
-
-                wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
             }
 
             setSingleValueHolder(owner, property.getName(), wrappedValueHolder);
@@ -211,7 +234,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                 } else {
                     Object entityId;
                     MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(property.getRange().asClass());
-                    if (pkProperty != null && metadataTools.isEmbedded(pkProperty)) {
+                    if (pkProperty != null && pkProperty.getType() == MetaProperty.Type.EMBEDDED) {
                         entityId = buildEmbeddedIdByValueHolder(pkProperty, queryBasedValueHolder);
                     } else {
                         entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
@@ -224,8 +247,40 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                     wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
                 }
                 setSingleValueHolder(owner, property.getName(), wrappedValueHolder);
+            } else {
+                Object value = unwrapToValueIfInstantiated(originalValueHolder);
+                if (value != null) {
+                    setSingleValue(owner, property.getName(), value);
+                    setSingleValueHolder(owner, property.getName(), null);
+
+                    LoadedPropertiesInfo loadedPropertiesInfo = EntitySystemAccess.getEntityEntry(owner).getLoadedPropertiesInfo();
+                    if (loadedPropertiesInfo != null) {
+                        loadedPropertiesInfo.registerProperty(property.getName(), true);
+                    }
+                } else {
+                    logUnprocessedValueHolder(owner, property, originalValueHolder);
+                }
             }
         }
+    }
+
+    protected void logUnprocessedValueHolder(Object owner, MetaProperty property, Object originalValueHolder) {
+        final int MAX_ITERATION = 5;
+
+        StringBuilder builder = new StringBuilder().append(originalValueHolder.getClass().getSimpleName());
+        Object currentValueHolder = originalValueHolder;
+        int iteration = 0; //Just in case. Prevents potential cyclic reference chains (e.g., VH1->VH2, VH2->VH3, VH3->VH1)
+        while (currentValueHolder instanceof WrappingValueHolder<?> wrappingValueHolder
+                && wrappingValueHolder.getWrappedValueHolder() != null
+                && wrappingValueHolder.getWrappedValueHolder() != currentValueHolder
+                && iteration++ < MAX_ITERATION) {
+            currentValueHolder = wrappingValueHolder.getWrappedValueHolder();
+            builder.append("->").append(currentValueHolder.getClass().getSimpleName());
+        }
+
+        log.warn("Neither QueryBasedValueHolder nor " +
+                        "instantiated one have been provided for property '{}' of entity '{}-{}'. Cannot process value holder '{}'",
+                property.getName(), owner.getClass().getName(), EntityValues.getId(owner), builder);
     }
 
     protected void collectFetchPlans(Object instance, FetchPlan fetchPlan, Map<Object, Set<FetchPlan>> collectedFetchPlans) {

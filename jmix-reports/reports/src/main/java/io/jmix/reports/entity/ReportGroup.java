@@ -16,6 +16,7 @@
 
 package io.jmix.reports.entity;
 
+import io.jmix.core.CopyingSystemState;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.TenantId;
@@ -40,7 +41,7 @@ import java.util.UUID;
 @Table(name = "REPORT_GROUP")
 @JmixEntity
 @SuppressWarnings("unused")
-public class ReportGroup {
+public class ReportGroup implements CopyingSystemState<ReportGroup> {
 
     private static final long serialVersionUID = 5399528790289039413L;
 
@@ -90,6 +91,17 @@ public class ReportGroup {
     @Column(name = "SYS_TENANT_ID")
     @TenantId
     private String sysTenantId;
+
+    @Transient
+    @JmixProperty
+    protected ReportSource source;
+
+    /**
+     * Message key for localized caption. Used by annotated groups.
+     */
+    @Transient
+    @JmixProperty
+    protected String titleMessageKey;
 
     public UUID getId() {
         return id;
@@ -187,6 +199,22 @@ public class ReportGroup {
         this.sysTenantId = sysTenantId;
     }
 
+    public ReportSource getSource() {
+        return source;
+    }
+
+    public void setSource(ReportSource source) {
+        this.source = source;
+    }
+
+    public String getTitleMessageKey() {
+        return titleMessageKey;
+    }
+
+    public void setTitleMessageKey(String titleMessageKey) {
+        this.titleMessageKey = titleMessageKey;
+    }
+
     @JmixProperty
     @DependsOnProperties("code")
     public Boolean getSystemFlag() {
@@ -196,6 +224,16 @@ public class ReportGroup {
     @InstanceName
     @DependsOnProperties({"title", "localeNames"})
     public String getInstanceName(MsgBundleTools msgBundleTools) {
-        return msgBundleTools.getLocalizedValue(localeNames, title);
+        return msgBundleTools.getLocalizedValue(titleMessageKey, localeNames, title);
+    }
+
+    @PostLoad
+    public void postLoad() {
+        this.source = ReportSource.DATABASE;
+    }
+
+    @Override
+    public void copyFrom(ReportGroup source) {
+        this.source = source.source;
     }
 }

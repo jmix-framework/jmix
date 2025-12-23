@@ -58,7 +58,7 @@ public class MenuResourcePolicyModelCreateView extends MultipleResourcePolicyMod
 
     @Autowired
     private Metadata metadata;
-    @Autowired
+    @ViewComponent
     private MessageBundle messageBundle;
 
     private String viewId;

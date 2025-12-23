@@ -50,6 +50,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<JmixFormLayout> {
     protected MessageTools messageTools;
 
     protected LabelsPosition defaultLabelPosition = LabelsPosition.TOP;
+    protected boolean autoResponsive = false;
 
     @Override
     protected JmixFormLayout createComponent() {
@@ -65,7 +66,18 @@ public class FormLayoutLoader extends AbstractComponentLoader<JmixFormLayout> {
 
         loadData(resultComponent, element);
         loadLabelPosition(element);
+        loadAutoResponsive(element);
         loadString(element, "labelWidth", resultComponent::setLabelWidth);
+        loadBoolean(element, "autoRows", resultComponent::setAutoRows);
+        loadInteger(element, "maxColumns", resultComponent::setMaxColumns);
+        loadInteger(element, "minColumns", resultComponent::setMinColumns);
+        loadString(element, "columnWidth", resultComponent::setColumnWidth);
+        loadString(element, "labelSpacing", resultComponent::setLabelSpacing);
+        loadString(element, "columnSpacing", resultComponent::setColumnSpacing);
+        loadString(element, "rowSpacing", resultComponent::setRowSpacing);
+        loadBoolean(element, "expandColumns", resultComponent::setExpandColumns);
+        loadBoolean(element, "expandFields", resultComponent::setExpandFields);
+        loadBoolean(element, "labelsAside", resultComponent::setLabelsAside);
 
         loadSubComponents();
     }
@@ -83,6 +95,13 @@ public class FormLayoutLoader extends AbstractComponentLoader<JmixFormLayout> {
                 .ifPresent(labelsPosition -> defaultLabelPosition = labelsPosition);
     }
 
+    protected void loadAutoResponsive(Element element) {
+        loadBoolean(element, "autoResponsive", autoResponsive -> {
+            resultComponent.setAutoResponsive(autoResponsive);
+            this.autoResponsive = autoResponsive;
+        });
+    }
+
     protected void loadSubComponents() {
         loadResponsiveSteps(resultComponent, element);
 
@@ -98,16 +117,31 @@ public class FormLayoutLoader extends AbstractComponentLoader<JmixFormLayout> {
             componentLoader.loadComponent();
             Component child = componentLoader.getResultComponent();
 
-            String label = getLabel(child);
-            if (label == null) {
-                label = generatePropertyLabel(child);
-                setLabel(child, label);
-            }
-            setWidthFull(child);
+            if (child instanceof FormLayout.FormRow formRow) {
+                resultComponent.add(formRow);
 
-            resultComponent.add(child);
-            loadInteger(subElement, "colspan")
-                    .ifPresent(it -> resultComponent.setColspan(child, it));
+                formRow.getChildren().forEach(rowItem -> {
+                    String label = getLabel(rowItem);
+                    if (label == null) {
+                        label = generatePropertyLabel(rowItem);
+                        setLabel(rowItem, label);
+                    }
+                });
+            } else {
+                String label = getLabel(child);
+                if (label == null) {
+                    label = generatePropertyLabel(child);
+                    setLabel(child, label);
+                }
+
+                if (!autoResponsive) {
+                    setWidthFull(child);
+                }
+
+                resultComponent.add(child);
+                loadInteger(subElement, "colspan")
+                        .ifPresent(it -> resultComponent.setColspan(child, it));
+            }
         }
     }
 
@@ -232,6 +266,59 @@ public class FormLayoutLoader extends AbstractComponentLoader<JmixFormLayout> {
         protected void loadSubComponent() {
             pendingLoadComponent.loadComponent();
             pendingLoadComponent = null;
+        }
+    }
+
+    public static class FormRowLoader extends AbstractComponentLoader<FormLayout.FormRow> {
+
+        protected List<ComponentLoader<?>> pendingLoadComponents;
+
+        @Override
+        protected FormLayout.FormRow createComponent() {
+            return new FormLayout.FormRow();
+        }
+
+        @Override
+        public void initComponent() {
+            super.initComponent();
+            createSubComponent(resultComponent, element);
+        }
+
+        @Override
+        public void loadComponent() {
+            loadSubComponent();
+        }
+
+        protected void createSubComponent(FormLayout.FormRow resultComponent, Element element) {
+            if (pendingLoadComponents == null) {
+                pendingLoadComponents = new ArrayList<>();
+            }
+
+            List<Element> childElements = element.elements();
+            if (childElements.isEmpty()) {
+                return;
+            }
+
+            LayoutLoader loader = getLayoutLoader();
+
+            for (Element childElement : childElements) {
+                ComponentLoader<?> componentLoader = loader.createComponentLoader(childElement);
+                componentLoader.initComponent();
+
+                pendingLoadComponents.add(componentLoader);
+
+                Component childComponent = componentLoader.getResultComponent();
+                resultComponent.add(childComponent);
+
+                loadInteger(childElement, "colspan")
+                        .ifPresent(it -> resultComponent.setColspan(childComponent, it));
+            }
+        }
+
+        protected void loadSubComponent() {
+            pendingLoadComponents.forEach(ComponentLoader::loadComponent);
+            pendingLoadComponents.clear();
+            pendingLoadComponents = null;
         }
     }
 

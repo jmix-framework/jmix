@@ -18,14 +18,14 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://searchFieldSettingsView.title">
     <actions>
-        <action id="saveAction" type="view_close" icon="CHECK" text="OK"/>
-        <action id="closeAction" type="view_close" icon="BAN"/>
+        <action id="saveAction" type="view_close" icon="OK" text="msg:///actions.Ok"/>
+        <action id="closeAction" type="view_close"/>
     </actions>
     <layout>
-        <formLayout>
+        <formLayout id="mainForm">
             <select id="searchStrategySelector" label="msg://searchFieldSettingsView.strategy" datatype="string"
                     emptySelectionAllowed="false"/>
-            <integerField id="searchSizeField" label="msg://searchFieldSettingsView.size" min="1" max="1000"/>
+            <integerField id="searchSizeField" label="msg://searchFieldSettingsView.size" min="1" max="10000" required="true"/>
             <multiSelectComboBox id="searchEntitiesComboBox" label="msg://searchFieldSettingsView.entities"
                                  selectedItemsOnTop="true" />
         </formLayout>

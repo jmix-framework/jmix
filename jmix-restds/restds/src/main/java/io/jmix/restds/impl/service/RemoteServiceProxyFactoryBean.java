@@ -28,10 +28,21 @@ import java.lang.reflect.Proxy;
 public class RemoteServiceProxyFactoryBean implements FactoryBean<Object>, ApplicationContextAware {
 
     protected Class<?> serviceInterface;
+    protected String storeName;
+    protected String serviceName;
+
     protected ApplicationContext applicationContext;
 
     public void setServiceInterface(Class<?> serviceInterface) {
         this.serviceInterface = serviceInterface;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -64,6 +75,6 @@ public class RemoteServiceProxyFactoryBean implements FactoryBean<Object>, Appli
     @Nullable
     protected Object invokeServiceMethod(Method method, Object[] args) {
         RemoteServiceInvoker serviceInvoker = applicationContext.getBean(RemoteServiceInvoker.class);
-        return serviceInvoker.invokeServiceMethod(serviceInterface, method, args);
+        return serviceInvoker.invokeServiceMethod(storeName, serviceName, method, args);
     }
 }

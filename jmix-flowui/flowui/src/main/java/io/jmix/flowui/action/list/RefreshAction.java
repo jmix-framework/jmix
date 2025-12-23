@@ -16,12 +16,12 @@
 
 package io.jmix.flowui.action.list;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.EmptyDataUnit;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.DataLoader;
@@ -45,16 +45,18 @@ public class RefreshAction<E> extends ListDataComponentAction<RefreshAction<E>, 
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.REFRESH);
-    }
-
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.Refresh");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.REFRESH_ACTION);
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -17,6 +17,7 @@
 package io.jmix.securitydata.user;
 
 import com.google.common.base.Strings;
+import io.jmix.core.EntitySet;
 import io.jmix.core.Metadata;
 import io.jmix.core.SaveContext;
 import io.jmix.core.UnconstrainedDataManager;
@@ -205,7 +206,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         changePassword(userDetails, oldPassword, newPassword);
 
         if (saveChanges) {
-            dataManager.save(userDetails);
+            userDetails = dataManager.save(userDetails);
             eventPublisher.publishEvent(new SingleUserPasswordChangeEvent(userName, newPassword));
         }
 
@@ -248,7 +249,12 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         }
 
         if (saveChanges) {
-            dataManager.save(saveContext);
+            EntitySet entitySet = dataManager.save(saveContext);
+            usernamePasswordMap = usernamePasswordMap.entrySet().stream()
+                    .collect(Collectors.toMap(entry ->
+                                    entitySet.get(entry.getKey()),
+                            Map.Entry::getValue));
+
             resetRememberMe(users);
             eventPublisher.publishEvent(new UserPasswordResetEvent(usernamePasswordMap.entrySet().stream()
                     .collect(Collectors.toMap(entry -> entry.getKey().getUsername(), Map.Entry::getValue))));

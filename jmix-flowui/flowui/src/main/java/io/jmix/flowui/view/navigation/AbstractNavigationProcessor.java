@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.view.navigation;
 
+import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.vaadin.flow.component.UI;
@@ -133,7 +134,7 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
             Location location = new Location(url, queryParameters);
 
             Router router = ui.getInternals().getRouter();
-            router.navigate(ui, location, NavigationTrigger.UI_NAVIGATE, null, true, false);
+            router.navigate(ui, location, NavigationTrigger.UI_NAVIGATE, (BaseJsonNode) null, true, false);
         } else {
             navigationSupport.navigate(navigationTargetType, routeParameters, queryParameters);
         }

@@ -22,6 +22,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.*;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
@@ -29,7 +30,6 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.data.provider.HasListDataView;
-import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementConstants;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
@@ -65,19 +65,19 @@ public final class ComponentUtils {
      * otherwise the passed string is considered as {@link VaadinIcon} constant
      * name.
      *
-     * @param iconString a string representing an icon
+     * @param iconName a string representing an icon name
      * @return a new instance of {@link Icon} component
      */
-    public static Icon parseIcon(String iconString) {
-        if (iconString.contains(":")) {
-            String[] parts = iconString.split(":");
+    public static Icon parseIcon(String iconName) {
+        if (iconName.contains(":")) {
+            String[] parts = iconName.split(":");
             if (parts.length != 2) {
                 throw new IllegalStateException("Unexpected number of icon parts, must be two");
             }
 
             return new Icon(parts[0], parts[1]);
         } else {
-            VaadinIcon vaadinIcon = VaadinIcon.valueOf(iconString);
+            VaadinIcon vaadinIcon = VaadinIcon.valueOf(iconName);
             return convertToIcon(vaadinIcon);
         }
     }
@@ -101,17 +101,17 @@ public final class ComponentUtils {
      * @return icon component copy
      */
     public static Component copyIcon(Component icon) {
-        Component copy;
         if (icon instanceof Icon iconComponent) {
-            copy = copyIconComponent(iconComponent);
+            return copyIconComponent(iconComponent);
         } else if (icon instanceof SvgIcon svgIcon) {
-            copy = copySvgIcon(svgIcon);
+            return copySvgIcon(svgIcon);
         } else if (icon instanceof FontIcon fontIcon) {
-            copy = copyFontIcon(fontIcon);
+            return copyFontIcon(fontIcon);
+        } else if (icon instanceof Image image) {
+            return copyImage(image);
         } else {
             throw new IllegalArgumentException(icon.getClass().getSimpleName() + " is not supported");
         }
-        return copy;
     }
 
     /**
@@ -159,38 +159,50 @@ public final class ComponentUtils {
      */
     public static FontIcon copyFontIcon(FontIcon fontIcon) {
         FontIcon copy = new FontIcon(fontIcon.getIconClassNames());
-        copy.setFontFamily(fontIcon.getFontFamily());
-        copy.setCharCode(fontIcon.getCharCode());
-        copy.setLigature(fontIcon.getLigature());
+
+        if (!Strings.isNullOrEmpty(fontIcon.getFontFamily())) {
+            copy.setFontFamily(fontIcon.getFontFamily());
+        }
+
+        if (!Strings.isNullOrEmpty(fontIcon.getCharCode())) {
+            copy.setCharCode(fontIcon.getCharCode());
+        }
+
+        if (!Strings.isNullOrEmpty(fontIcon.getLigature())) {
+            copy.setLigature(fontIcon.getLigature());
+        }
 
         copyAbstractIconAttributes(fontIcon, copy);
         return copy;
     }
 
     /**
-     * @param element    the parent component element to add the components to
-     * @param slot       the name of the slot inside the parent
-     * @param components components to add to the specified slot.
-     * @deprecated {@link com.vaadin.flow.component.shared.SlotUtils#addToSlot(HasElement, String, Component...)} instead
+     * Creates a copy of an image component.
+     *
+     * @param image am image component to copy
+     * @return an image component copy
      */
-    @Deprecated(since = "2.1", forRemoval = true)
-    public static void addComponentsToSlot(Element element, String slot, Component... components) {
-        for (Component component : components) {
-            component.getElement().setAttribute("slot", slot);
-            element.appendChild(component.getElement());
-        }
-    }
+    public static Image copyImage(Image image) {
+        Image copy = new Image(image.getSrc(), image.getAlt().orElse(null));
 
-    /**
-     * @param element the component element to get children from
-     * @param slot    the name of the slot inside the parent
-     * @deprecated use {@link com.vaadin.flow.component.shared.SlotUtils#clearSlot(HasElement, String)} instead
-     */
-    @Deprecated(since = "2.1", forRemoval = true)
-    public static void clearSlot(Element element, String slot) {
-        element.getChildren()
-                .filter(child -> slot.equals(child.getAttribute("slot")))
-                .forEach(element::removeChild);
+        copy.setText(image.getText());
+        copy.setWhiteSpace(image.getWhiteSpace());
+        copy.setVisible(image.isVisible());
+        copy.setEnabled(image.isEnabled());
+        copy.addClassNames(image.getClassNames().toArray(new String[0]));
+
+        copy.setWidth(image.getWidth());
+        copy.setMinWidth(image.getMinWidth());
+        copy.setMaxWidth(image.getMaxWidth());
+        copy.setHeight(image.getHeight());
+        copy.setMinHeight(image.getMinHeight());
+        copy.setMaxHeight(image.getMaxHeight());
+
+        image.getAriaLabel().ifPresent(copy::setAriaLabel);
+        image.getAriaLabelledBy().ifPresent(copy::setAriaLabelledBy);
+        image.getTitle().ifPresent(copy::setTitle);
+
+        return copy;
     }
 
     /**

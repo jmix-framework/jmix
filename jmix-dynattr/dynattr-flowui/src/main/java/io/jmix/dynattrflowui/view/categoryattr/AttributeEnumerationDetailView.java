@@ -24,7 +24,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -38,11 +37,13 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
@@ -77,6 +78,8 @@ public class AttributeEnumerationDetailView extends StandardView {
     protected DataComponents dataComponents;
     @Autowired
     protected MessageTools messageTools;
+    @Autowired
+    protected Icons icons;
 
     @ViewComponent
     protected VerticalLayout localizationBox;
@@ -164,7 +167,7 @@ public class AttributeEnumerationDetailView extends StandardView {
 
     protected JmixButton createEditorSaveButton(DataGridEditor<AttributeLocalizedEnumValue> editor) {
         JmixButton saveButton = uiComponents.create(JmixButton.class);
-        saveButton.setIcon(VaadinIcon.CHECK.create());
+        saveButton.setIcon(icons.get(JmixFontIcon.CHECK));
         saveButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         saveButton.addClickListener(__ -> editor.save());
 
@@ -173,7 +176,7 @@ public class AttributeEnumerationDetailView extends StandardView {
 
     protected JmixButton createEditorCancelButton(DataGridEditor<AttributeLocalizedEnumValue> editor) {
         JmixButton cancelButton = uiComponents.create(JmixButton.class);
-        cancelButton.setIcon(VaadinIcon.CLOSE.create());
+        cancelButton.setIcon(icons.get(JmixFontIcon.CLOSE));
         cancelButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
         cancelButton.addClickListener(__ -> editor.cancel());
@@ -201,7 +204,7 @@ public class AttributeEnumerationDetailView extends StandardView {
     protected JmixButton createEditorEditButton(DataGridEditor<AttributeLocalizedEnumValue> editor,
                                                 AttributeLocalizedEnumValue currentItem) {
         JmixButton editorButton = uiComponents.create(JmixButton.class);
-        editorButton.setIcon(VaadinIcon.PENCIL.create());
+        editorButton.setIcon(icons.get(JmixFontIcon.PENCIL));
 
         editorButton.addClickListener(__ -> {
             if (editor.isOpen()) {
@@ -215,7 +218,7 @@ public class AttributeEnumerationDetailView extends StandardView {
 
     protected JmixButton createEditorRemoveButton(AttributeLocalizedEnumValue currentItem) {
         JmixButton removeButton = uiComponents.create(JmixButton.class);
-        removeButton.setIcon(VaadinIcon.TRASH.create());
+        removeButton.setIcon(icons.get(JmixFontIcon.TRASH));
         removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
         removeButton.addClickListener(__ -> {
@@ -239,7 +242,7 @@ public class AttributeEnumerationDetailView extends StandardView {
                     localizedEnumValuesDl.load();
                 })
                 .withVariant(ActionVariant.DANGER)
-                .withIcon(VaadinIcon.TRASH.create());
+                .withIcon(icons.get(JmixFontIcon.TRASH));
         button.setAction(removeAction);
     }
 
@@ -308,6 +311,7 @@ public class AttributeEnumerationDetailView extends StandardView {
                     messageTools,
                     uiComponents,
                     dataComponents,
+                    icons,
                     getViewData().getDataContext());
             localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
             localizationFragment.removeDescriptionColumn();

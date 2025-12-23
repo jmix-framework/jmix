@@ -600,6 +600,48 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
+     * Adds an event single-click listener.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     */
+    public Registration addEventSingleClickListener(ComponentEventListener<EventSingleClickEvent> listener) {
+        if (!getEventBus().hasListener(EventSingleClickEvent.class)) {
+            attachEventSingleClickDomEventListener();
+        }
+
+        Registration registration = getEventBus().addListener(EventSingleClickEvent.class, listener);
+
+        return () -> {
+            registration.remove();
+            if (!getEventBus().hasListener(EventSingleClickEvent.class)) {
+                detachEventSingleClickDomEventListener();
+            }
+        };
+    }
+
+    /**
+     * Adds an event double-click listener.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     */
+    public Registration addEventDoubleClickListener(ComponentEventListener<EventDoubleClickEvent> listener) {
+        if (!getEventBus().hasListener(EventDoubleClickEvent.class)) {
+            attachEventDoubleClickDomEventListener();
+        }
+
+        Registration registration = getEventBus().addListener(EventDoubleClickEvent.class, listener);
+
+        return () -> {
+            registration.remove();
+            if (!getEventBus().hasListener(EventDoubleClickEvent.class)) {
+                detachEventDoubleClickDomEventListener();
+            }
+        };
+    }
+
+    /**
      * Adds a listener that is invoked when the user mouses over a calendar event.
      *
      * @param listener listener to add
@@ -711,18 +753,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
      * @return a registration object for removing an event listener added to a component
      */
     public Registration addSelectListener(ComponentEventListener<SelectEvent> listener) {
-        if (!getEventBus().hasListener(SelectEvent.class)) {
-            attachSelectDomEventListener();
-        }
-
-        Registration registration = getEventBus().addListener(SelectEvent.class, listener);
-
-        return () -> {
-            registration.remove();
-            if (!getEventBus().hasListener(SelectEvent.class)) {
-                detachSelectDomEventListener();
-            }
-        };
+        return getEventBus().addListener(SelectEvent.class, listener);
     }
 
     /**
@@ -1119,6 +1150,37 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     @Override
+    protected void onEventSingleClick(EventSingleClickDomEvent event) {
+        DomEventMouse clientContext = deserializer.deserialize(event.getContext(), DomEventMouse.class);
+
+        AbstractDataProviderManager dataProviderManager = getDataProviderManager(clientContext.getEvent().getSourceId());
+        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), dataProviderManager);
+
+        getEventBus().fireEvent(
+                new EventSingleClickEvent(this, event.isFromClient(),
+                        new MouseEventDetails(clientContext.getMouseDetails()),
+                        calendarEvent,
+                        dataProviderManager.getDataProvider(),
+                        createDisplayModeInfo(clientContext.getView()))
+        );
+    }
+
+    @Override
+    protected void onEventDoubleClick(EventDoubleClickDomEvent event) {
+        DomEventMouse clientContext = deserializer.deserialize(event.getContext(), DomEventMouse.class);
+
+        AbstractDataProviderManager dataProviderManager = getDataProviderManager(clientContext.getEvent().getSourceId());
+        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), dataProviderManager);
+
+        getEventBus().fireEvent(
+                new EventDoubleClickEvent(this, event.isFromClient(),
+                        new MouseEventDetails(clientContext.getMouseDetails()),
+                        calendarEvent,
+                        dataProviderManager.getDataProvider(),
+                        createDisplayModeInfo(clientContext.getView())));
+    }
+
+    @Override
     protected void onEventMouseEnter(EventMouseEnterDomEvent event) {
         DomEventMouse clientContext = deserializer.deserialize(event.getContext(), DomEventMouse.class);
 
@@ -1206,6 +1268,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Override
     protected void onSelect(SelectDomEvent event) {
+        super.onSelect(event);
+
         DomSelect clientEvent = deserializer.deserialize(event.getContext(), DomSelect.class);
 
         MouseEventDetails mouseEventDetails = clientEvent.getMouseDetails() != null
@@ -1224,6 +1288,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Override
     protected void onUnselect(UnselectDomEvent event) {
+        super.onUnselect(event);
+
         DomUnselect clientEvent = deserializer.deserialize(event.getContext(), DomUnselect.class);
 
         MouseEventDetails mouseEventDetails = clientEvent.getMouseDetails() != null

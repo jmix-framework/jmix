@@ -52,7 +52,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     protected List<HasMenuItem> items = new ArrayList<>();
 
     protected JmixMenuItem dropdownItem;
-    protected Icon iconComponent;
+    protected Component iconComponent;
 
     protected abstract JmixMenuItem getDropdownItem();
 
@@ -190,7 +190,10 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
 
     @Override
     public List<DropdownButtonItem> getItems() {
-        return Collections.unmodifiableList(items);
+        return items.stream()
+                .filter(userMenuItem -> !(userMenuItem instanceof SeparatorUserMenuItem))
+                .map(hasMenuItem -> (DropdownButtonItem) hasMenuItem)
+                .toList();
     }
 
     @Override
@@ -227,12 +230,16 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
 
     @Override
     public void addSeparator() {
-        getDropdownItem().getSubMenu().add(new Hr());
+        Hr separator = new Hr();
+        getDropdownItem().getSubMenu().addComponent(separator);
+        addItemInternal(new SeparatorUserMenuItem(separator, this), -1);
     }
 
     @Override
     public void addSeparatorAtIndex(int index) {
-        getDropdownItem().getSubMenu().addComponentAtIndex(index, new Hr());
+        Hr separator = new Hr();
+        getDropdownItem().getSubMenu().addComponentAtIndex(index, separator);
+        addItemInternal(new SeparatorUserMenuItem(separator, this), index);
     }
 
     @Override
@@ -250,9 +257,22 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         return getContent().addDetachListener(listener);
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     @Override
     public Icon getIcon() {
+        return iconComponent instanceof Icon icon ? icon : null;
+    }
+
+    @Deprecated(since = "3.0", forRemoval = true)
+    @Override
+    public void setIcon(@Nullable Icon icon) {
+        setIconComponent(icon);
+    }
+
+    @Nullable
+    @Override
+    public Component getIconComponent() {
         return iconComponent;
     }
 
@@ -527,7 +547,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         protected static final String ACTION_ITEM_ICON_CLASS_NAME = "jmix-dropdown-button-item-icon";
         protected static final String ACTION_ITEM_WRAPPER_CLASS_NAME = "jmix-dropdown-button-item-wrapper";
 
-        protected Icon iconComponent;
+        protected Component iconComponent;
         protected Div actionLayout;
 
         protected Action action;
@@ -554,7 +574,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         protected void setupAction() {
             setEnabled(action.isEnabled());
             setVisible(action.isVisible());
-            updateContent(action.getText(), action.getIcon());
+            updateContent(action.getText(), action.getIconComponent());
 
             item.addClickListener(this::onItemClick);
             action.addPropertyChangeListener(this::onActionPropertyChange);
@@ -568,7 +588,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
             switch (event.getPropertyName()) {
                 case Action.PROP_TEXT:
                 case Action.PROP_ICON:
-                    updateContent(action.getText(), action.getIcon());
+                    updateContent(action.getText(), action.getIconComponent());
                     break;
                 case Action.PROP_ENABLED:
                     setEnabled((Boolean) event.getNewValue());
@@ -580,7 +600,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
             }
         }
 
-        protected void updateContent(String text, Icon icon) {
+        protected void updateContent(String text, Component icon) {
             actionLayout.setText(text);
 
             if (icon != null && icon.getElement().isTextNode()) {
@@ -765,5 +785,67 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     protected interface MenuItemProvider<T> {
 
         MenuItem createMenuItem(T content);
+    }
+
+    /**
+     * Blank item needed for correct insertion by index.
+     */
+    protected static class SeparatorUserMenuItem implements HasMenuItem {
+
+        protected final Component separator;
+        protected final DropdownButtonComponent parent;
+
+        public SeparatorUserMenuItem(Component separator,
+                                     DropdownButtonComponent parent) {
+            this.separator = separator;
+            this.parent = parent;
+        }
+
+        @Override
+        public DropdownButtonComponent getParent() {
+            return parent;
+        }
+
+        @Override
+        public void setItem(MenuItem item) {
+            throw new UnsupportedOperationException("%s is not linked with MenuItem"
+                    .formatted(getClass().getSimpleName()));
+        }
+
+        @Override
+        public MenuItem getItem() {
+            throw new UnsupportedOperationException("%s is not linked with MenuItem"
+                    .formatted(getClass().getSimpleName()));
+        }
+
+        @Override
+        public String getId() {
+            return "";
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+            separator.setVisible(visible);
+        }
+
+        @Override
+        public boolean isVisible() {
+            return separator.isVisible();
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {
+
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
+
+        @Override
+        public Registration addClickListener(Consumer<ClickEvent> listener) {
+            return null;
+        }
     }
 }

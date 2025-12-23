@@ -99,6 +99,18 @@ public class ItemsPerPage extends JmixItemsPerPage implements ApplicationContext
         return itemsPerPageSelect.addValueChangeListener(listener);
     }
 
+    @Override
+    public void setItemsPerPageItems(List<Integer> itemsPerPageItems) {
+        super.setItemsPerPageItems(itemsPerPageItems);
+
+        if (loader != null) {
+            initItemsPerPageOptions();
+
+            int defaultValue = getDefaultItemValue(processedItems, loader.getEntityMetaClass());
+            setItemsPerPageValue(defaultValue);
+        }
+    }
+
     /**
      * @return current items count for page
      */

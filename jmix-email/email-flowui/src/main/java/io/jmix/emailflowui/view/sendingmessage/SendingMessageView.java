@@ -19,6 +19,7 @@ package io.jmix.emailflowui.view.sendingmessage;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
 import io.jmix.email.EmailDataProvider;
 import io.jmix.email.EmailerProperties;
@@ -56,7 +57,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
-@Route(value = "email/sendingmessage", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "email/sendingmessage", layout = DefaultMainViewParent.class)
+@Route(value = "email/sending-message", layout = DefaultMainViewParent.class)
 @ViewController("email_sendingMessageView")
 @ViewDescriptor("sending-message-view.xml")
 @DialogMode(width = "80em", height = "65em", resizable = true)

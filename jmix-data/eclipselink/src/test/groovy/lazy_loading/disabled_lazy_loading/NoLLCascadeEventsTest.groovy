@@ -39,6 +39,6 @@ import test_support.listeners.cascade_operations.TestCascadeItemEventListener
 
 
 
-@TestPropertySource(properties = ["jmix.eclipselink.disableLazyLoading = true"])
+@TestPropertySource(properties = ["jmix.eclipselink.disable-lazy-loading = true"])
 class NoLLCascadeEventsTest extends CascadeEventsTest {
 }

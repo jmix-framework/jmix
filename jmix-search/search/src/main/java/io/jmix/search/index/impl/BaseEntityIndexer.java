@@ -22,10 +22,12 @@ import com.fasterxml.jackson.databind.node.*;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexResult;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
@@ -53,7 +55,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
     protected final IndexStateRegistry indexStateRegistry;
     protected final MetadataTools metadataTools;
     protected final SearchProperties searchProperties;
-
+    protected final DynamicAttributesSupport dynamicAttributesSupport;
     protected final ObjectMapper objectMapper;
 
     public BaseEntityIndexer(UnconstrainedDataManager dataManager,
@@ -63,7 +65,8 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                              IdSerialization idSerialization,
                              IndexStateRegistry indexStateRegistry,
                              MetadataTools metadataTools,
-                             SearchProperties searchProperties) {
+                             SearchProperties searchProperties,
+                             DynamicAttributesSupport dynamicAttributesSupport) {
         this.dataManager = dataManager;
         this.fetchPlans = fetchPlans;
         this.indexConfigurationManager = indexConfigurationManager;
@@ -72,6 +75,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
         this.indexStateRegistry = indexStateRegistry;
         this.metadataTools = metadataTools;
         this.searchProperties = searchProperties;
+        this.dynamicAttributesSupport = dynamicAttributesSupport;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -226,6 +230,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                                     .load(metaClass.getJavaClass())
                                     .id(id)
                                     .fetchPlan(fetchPlan)
+                                    .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                                     .optional())
                             .filter(Optional::isPresent)
                             .map(Optional::get)
@@ -238,6 +243,7 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                             .load(metaClass.getJavaClass())
                             .query(queryString)
                             .parameter("ids", entityIds)
+                            .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                             .fetchPlan(fetchPlan)
                             .list();
                 }
@@ -250,16 +256,19 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
     protected FetchPlan createFetchPlan(IndexConfiguration indexConfiguration) {
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexConfiguration.getEntityClass());
         indexConfiguration.getMapping().getFields().values().forEach(field -> {
-            log.trace("Add property to fetch plan: {}", field.getEntityPropertyFullName());
-            fetchPlanBuilder.add(field.getEntityPropertyFullName());
-            field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {
-                log.trace("Add instance name related property to fetch plan: {}", instanceNameRelatedProperty.toPathString());
-                if (instanceNameRelatedProperty.getRange().isClass()) {
-                    fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString(), FetchPlan.INSTANCE_NAME);
-                } else {
-                    fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
-                }
-            });
+            String entityPropertyFullName = field.getEntityPropertyFullName();
+            if (!dynamicAttributesSupport.isDynamicAttributeName(entityPropertyFullName)) {
+                log.trace("Add property to fetch plan: {}", entityPropertyFullName);
+                fetchPlanBuilder.add(entityPropertyFullName);
+                field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {
+                    log.trace("Add instance name related property to fetch plan: {}", instanceNameRelatedProperty.toPathString());
+                    if (instanceNameRelatedProperty.getRange().isClass()) {
+                        fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString(), FetchPlan.INSTANCE_NAME);
+                    } else {
+                        fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
+                    }
+                });
+            }
         });
 
         indexConfiguration.getMapping()

@@ -16,7 +16,6 @@
 
 package io.jmix.dataimport.property.populator.impl;
 
-import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -31,9 +30,9 @@ import io.jmix.dataimport.property.populator.PropertyMappingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +40,7 @@ import java.util.Map;
 @Component("datimp_ReferenceValueProvider")
 public class ReferenceValueProvider {
     public static final Logger log = LoggerFactory.getLogger(ReferenceValueProvider.class);
-    @Autowired
-    protected MetadataTools metadataTools;
+
     @Autowired
     protected ReferenceCreator referenceCreator;
     @Autowired
@@ -53,7 +51,7 @@ public class ReferenceValueProvider {
     @Nullable
     public Object getSingleEntity(PropertyMappingContext context, @Nullable List<Object> createdReferences) {
         MetaProperty referenceMetaProperty = context.getMetaProperty();
-        if (metadataTools.isEmbedded(referenceMetaProperty)) {
+        if (referenceMetaProperty.getType() == MetaProperty.Type.EMBEDDED) {
             return processEmbeddedReferenceMapping(context);
         }
 

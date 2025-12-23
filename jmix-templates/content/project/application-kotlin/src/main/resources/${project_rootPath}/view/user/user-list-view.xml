@@ -30,18 +30,22 @@
             <properties include=".*"/>
         </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="usersDataGrid.createAction"/>
-            <button id="editButton" action="usersDataGrid.editAction"/>
-            <button id="removeButton" action="usersDataGrid.removeAction"/>
-            <button id="showRoleAssignmentsButton" action="usersDataGrid.showRoleAssignmentsAction"/>
-            <dropdownButton id="additionalButton" text="msg://additionalMenu" icon="COG">
-                <items>
-                    <actionItem id="changePasswordItem" ref="usersDataGrid.changePasswordAction"/>
-                    <actionItem id="resetPasswordItem" ref="usersDataGrid.resetPasswordAction"/>
-                    <actionItem id="showUserSubstitutionsItem" ref="usersDataGrid.showUserSubstitutionsAction"/>
-                </items>
-            </dropdownButton>
-            <simplePagination id="pagination" dataLoader="usersDl"/>
+            <startSlot>
+                <button id="createButton" action="usersDataGrid.createAction"/>
+                <button id="editButton" action="usersDataGrid.editAction"/>
+                <button id="removeButton" action="usersDataGrid.removeAction"/>
+                <button id="showRoleAssignmentsButton" action="usersDataGrid.showRoleAssignmentsAction"/>
+                <dropdownButton id="additionalButton" text="msg://additionalMenu" icon="COG">
+                    <items>
+                        <actionItem id="changePasswordItem" ref="usersDataGrid.changePasswordAction"/>
+                        <actionItem id="resetPasswordItem" ref="usersDataGrid.resetPasswordAction"/>
+                        <actionItem id="showUserSubstitutionsItem" ref="usersDataGrid.showUserSubstitutionsAction"/>
+                    </items>
+                </dropdownButton>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="usersDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="usersDataGrid"
                   width="100%"

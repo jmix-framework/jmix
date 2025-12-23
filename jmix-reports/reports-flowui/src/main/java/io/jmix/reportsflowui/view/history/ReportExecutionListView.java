@@ -17,25 +17,36 @@
 package io.jmix.reportsflowui.view.history;
 
 
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.FileRef;
+import io.jmix.flowui.Actions;
+import io.jmix.core.MetadataTools;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reportsflowui.download.ReportDownloader;
+import io.jmix.reportsflowui.view.run.ReportExcelHelper;
+import io.jmix.reports.entity.ReportSource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Route(value = "reports/executions", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/executions", layout = DefaultMainViewParent.class)
+@Route(value = "report/executions", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportExecution.list")
 @ViewDescriptor("report-execution-list-view.xml")
 @LookupComponent("executionsDataGrid")
@@ -46,15 +57,38 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     protected CollectionLoader<ReportExecution> executionsDl;
     @ViewComponent
     protected DataGrid<ReportExecution> executionsDataGrid;
+    @ViewComponent
+    private HorizontalLayout buttonsPanel;
+    @ViewComponent
+    private JmixButton downloadBtn;
 
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
+    @Autowired
+    protected Actions actions;
     @Autowired
     protected ReportDownloader downloader;
     @Autowired
     protected SecondsToTextFormatter durationFormatter;
+    @Autowired(required = false)
+    protected ReportExcelHelper reportExcelHelper;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     protected List<Report> filterByReports;
+
+    @Subscribe
+    public void onBeforeShow(final BeforeShowEvent event) {
+        createExcelButton();
+    }
+
+    protected void createExcelButton() {
+        if (reportExcelHelper != null) {
+            int replacementId = buttonsPanel.indexOf(downloadBtn);
+            JmixButton exportButton = reportExcelHelper.createExportButton(executionsDataGrid);
+            buttonsPanel.addComponentAtIndex(replacementId, exportButton);
+        }
+    }
 
     @Supply(to = "executionsDataGrid.executionTimeSec", subject = "renderer")
     protected Renderer<ReportExecution> executionsDataGridExecutionTimeRenderer() {
@@ -94,20 +128,13 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
         return super.getPageTitle();
     }
 
-    @Subscribe
-    public void onQueryParametersChange(final QueryParametersChangeEvent event) {
-        if (CollectionUtils.isNotEmpty(filterByReports)) {
-            executionsDl.setParameter("reportIds", filterByReports);
-        }
-    }
-
     protected String getReportsNames() {
         if (CollectionUtils.isEmpty(filterByReports)) {
             return "";
         }
 
         return filterByReports.stream()
-                .map(Report::getName)
+                .map(metadataTools::getInstanceName)
                 .collect(Collectors.joining(", "));
     }
 
@@ -121,5 +148,22 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
 
     public void setFilterByReports(List<Report> filterByReports) {
         this.filterByReports = filterByReports;
+
+        Set<UUID> reportIds = new HashSet<>();
+        Set<String> reportCodes = new HashSet<>();
+
+        for (Report filterByReport : filterByReports) {
+            if (filterByReport.getSource() == ReportSource.DATABASE) {
+                reportIds.add(filterByReport.getId());
+            } else {
+                reportCodes.add(filterByReport.getCode());
+            }
+        }
+        if (!reportIds.isEmpty()) {
+            executionsDl.setParameter("reportIds", reportIds);
+        }
+        if (!reportCodes.isEmpty()) {
+            executionsDl.setParameter("reportCodes", reportCodes);
+        }
     }
 }

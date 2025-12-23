@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.action.genericfilter;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.flowui.DialogWindows;
@@ -37,13 +36,14 @@ import io.jmix.flowui.component.genericfilter.registration.FilterComponents;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.entity.filter.FilterCondition;
 import io.jmix.flowui.entity.filter.HeaderFilterCondition;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.LookupView.ValidationContext;
 import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -76,8 +76,6 @@ public class GenericFilterAddConditionAction extends GenericFilterAction<Generic
     protected void initAction() {
         super.initAction();
 
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PLUS);
-
         initDefaultSelectValidator();
         initDefaultSelectHandler();
     }
@@ -86,6 +84,15 @@ public class GenericFilterAddConditionAction extends GenericFilterAction<Generic
     protected void setMessages(Messages messages) {
         this.messages = messages;
         this.text = messages.getMessage("actions.genericFilter.AddCondition");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.GENERIC_FILTER_ADD_CONDITION_ACTION);
+        }
     }
 
     @Autowired

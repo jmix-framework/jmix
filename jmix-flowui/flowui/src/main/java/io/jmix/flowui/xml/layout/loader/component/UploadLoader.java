@@ -20,7 +20,6 @@ import com.google.common.base.Splitter;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.upload.Receiver;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
@@ -29,15 +28,16 @@ import io.jmix.flowui.component.upload.JmixUpload;
 import io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer;
 import io.jmix.flowui.component.upload.receiver.MultiFileTemporaryStorageBuffer;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import org.dom4j.Element;
 import org.springframework.beans.BeansException;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
+
+    protected IconLoaderSupport iconLoaderSupport;
 
     @Override
     protected JmixUpload createComponent() {
@@ -154,28 +154,29 @@ public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
                     component.setDropLabel(dropLabelComponent);
                 });
 
-        loadIcon(element, "dropLabelIcon", component::setDropLabelIcon);
+        iconLoaderSupport().loadIcon(element, "dropLabelIcon", component::setDropLabelIcon);
     }
 
     protected void loadUploadButton(JmixUpload component, Element element) {
-        Button uploadButton = factory.create(Button.class);
-
         Optional<String> uploadText = loadResourceString(element, "uploadText", context.getMessageGroup());
-        Optional<Icon> uploadIcon = loadString(element, "uploadIcon").map(ComponentUtils::parseIcon);
+        Optional<Component> uploadIcon = iconLoaderSupport().loadIcon(element, "uploadIcon");
 
         if (uploadText.isEmpty() && uploadIcon.isEmpty()) {
             return;
         }
 
+        Button uploadButton = factory.create(Button.class);
         uploadIcon.ifPresent(uploadButton::setIcon);
         uploadText.ifPresent(uploadButton::setText);
 
         component.setUploadButton(uploadButton);
     }
 
-    protected void loadIcon(Element element, String attributeName, Consumer<Component> iconSetter) {
-        loadString(element, attributeName)
-                .map(ComponentUtils::parseIcon)
-                .ifPresent(iconSetter);
+    protected IconLoaderSupport iconLoaderSupport() {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, context);
+        }
+
+        return iconLoaderSupport;
     }
 }

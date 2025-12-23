@@ -557,6 +557,13 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
                 detachEntity(em, entity, context.getFetchPlans().get(entity), true);
             }
 
+            // detach entities deleted by @OnDelete- policies to avoid repeatedly generated deleted events leading to SO
+            for (EntityChangedEventInfo info : eventsInfo) {
+                if (entityStates.isManaged(info.getEntity()) && info.getType() == EntityChangedEvent.Type.DELETED) {
+                    detachEntity(em, info.getEntity(), context.getFetchPlans().get(info.getEntity()), true);
+                }
+            }
+
             entityChangedEventManager.publish(events);
         }
     }
@@ -724,7 +731,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             @Override
             public boolean skip(MetaProperty property) {
                 return !property.getRange().isClass()
-                        || metadataTools.isEmbedded(property)
+                        || property.getType() == MetaProperty.Type.EMBEDDED
                         || !metadataTools.isJpa(property)
                         || !metadataTools.isJpaEntity(property.getRange().asClass());
             }

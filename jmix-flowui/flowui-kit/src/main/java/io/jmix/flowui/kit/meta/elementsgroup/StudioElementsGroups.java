@@ -17,9 +17,12 @@
 package io.jmix.flowui.kit.meta.elementsgroup;
 
 import io.jmix.flowui.kit.meta.StudioElementsGroup;
+import io.jmix.flowui.kit.meta.StudioMetaConstants;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+
+import static io.jmix.flowui.kit.meta.StudioMetaConstants.TAG_PREFIX;
 
 @StudioUiKit
 public interface StudioElementsGroups {
@@ -61,6 +64,29 @@ public interface StudioElementsGroups {
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#_elements"
     )
     void items();
+
+    @StudioElementsGroup(
+            name = "Items",
+            elementClassFqn = "io.jmix.flowui.kit.component.usermenu.UserMenuItem",
+            xmlElement = "items",
+            target = {"io.jmix.flowui.component.usermenu.UserMenu"}
+//            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#_elements"
+    )
+    void userMenuItems();
+
+    @StudioElementsGroup(
+            name = "Items",
+            elementClassFqn = "io.jmix.flowui.kit.component.usermenu.UserMenuItem",
+            xmlElement = "items",
+            target = {"io.jmix.flowui.kit.component.usermenu.UserMenuItem"},
+            unsupportedTarget = {
+                    "io.jmix.flowui.kit.component.stub.UserMenuStubSeparatorItem",
+                    "io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem",
+                    "io.jmix.flowui.component.usermenu.ViewUserMenuItem"
+            }
+//            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#_elements"
+    )
+    void userMenuItemItems();
 
     @StudioElementsGroup(
             name = "ResponsiveSteps",
@@ -127,7 +153,7 @@ public interface StudioElementsGroups {
             elementClassFqn = "io.jmix.flowui.kit.stub.StudioGenericComponentPropertyElement",
             xmlElement = "properties",
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/properties.svg",
-            target = {"com.vaadin.flow.component.Component", "tag:component"}
+            target = TAG_PREFIX + "component"
     )
     void genericComponentProperties();
 }

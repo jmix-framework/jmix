@@ -17,6 +17,7 @@
 package io.jmix.flowui.app.filter.condition;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H4;
 import io.jmix.flowui.action.genericfilter.GenericFilterAddConditionAction;
 import io.jmix.flowui.action.list.RemoveAction;
@@ -139,6 +140,17 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
         operationTextVisibleField.setVisible(entityToEdit.getVisible());
     }
 
+    @Override
+    protected void refreshChildrenConditions() {
+        super.refreshChildrenConditions();
+
+        // lazy initialization of a multi selection model
+        if (!getCollectionContainer().getItems().isEmpty()
+                && conditionsTreeDataGrid.getSelectionMode() != Grid.SelectionMode.MULTI) {
+            conditionsTreeDataGrid.enableMultiSelect();
+        }
+    }
+
     @Subscribe(id = "filterConditionDc", target = Target.DATA_CONTAINER)
     public void onFilterConditionDcItemPropertyChange(ItemPropertyChangeEvent<GroupFilterCondition> event) {
         String property = event.getProperty();
@@ -150,6 +162,7 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
 
     @Subscribe
     protected void onReady(ReadyEvent event) {
+        refreshMoveButtonsState(null);
         getCollectionContainer().addItemChangeListener(itemChangeEvent ->
                 refreshMoveButtonsState(itemChangeEvent.getItem()));
         operationField.addValueChangeListener(valueChangeEvent -> {

@@ -19,7 +19,6 @@ package io.jmix.flowui.action.valuepicker;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
@@ -33,8 +32,9 @@ import io.jmix.flowui.app.propertyfilter.dateinterval.DateIntervalSupport;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.flowui.component.PickerComponent;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.View;
@@ -62,16 +62,18 @@ public class DateIntervalAction
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
-    }
-
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.valuePicker.dateInterval.description");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.DATE_INTERVAL_ACTION);
+        }
     }
 
     @Autowired

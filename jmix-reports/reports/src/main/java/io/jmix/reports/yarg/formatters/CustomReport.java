@@ -25,8 +25,18 @@ import java.util.Map;
  * This interface may be implemented if you need custom formatting logic, not covered by and provided formatter
  * Example: you need to merge pdfs created by another reports
  */
+@FunctionalInterface
 public interface CustomReport {
 
+    /**
+     * Generate output document using given bands structure and data, input parameters and root Report object.
+     * The output document may be a file, or a serialized Java object which will be interpreted later, e.g. for displaying in UI.
+     *
+     * @param report root Report object
+     * @param rootBand expanded tree structure of bands with their loaded data entries
+     * @param params input parameters
+     * @return output document in binary form
+     */
     byte[] createReport(Report report, BandData rootBand, Map<String, Object> params);
 
 }

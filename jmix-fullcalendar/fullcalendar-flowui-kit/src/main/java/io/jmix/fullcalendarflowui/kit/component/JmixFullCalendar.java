@@ -60,9 +60,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     protected JsonFactory jsonFactory;
 
-    protected CalendarDisplayMode displayMode;
-    protected LocalDate currentDate;
-
     protected Map<String, StateTree.ExecutionRegistration> itemsDataProvidersExecutionMap = new HashMap<>(2);
     protected Map<String, StateTree.ExecutionRegistration> callbackDataProvidersExecutionMap = new HashMap<>(2);
     protected StateTree.ExecutionRegistration synchronizeOptionsExecution;
@@ -71,6 +68,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     protected Registration datesSetDomRegistration;
     protected Registration moreLinkClickDomRegistration;
     protected Registration eventClickDomRegistration;
+    protected Registration eventSingleClickDomRegistration;
+    protected Registration eventDoubleClickDomRegistration;
     protected Registration eventMouseEnterDomRegistration;
     protected Registration eventMouseLeaveDomRegistration;
     protected Registration eventDropDomRegistration;
@@ -94,6 +93,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         attachMoreLinkClickDomEventListener();
         attachDayNavigationLinkClickDomEventListener();
         attachWeekNavigationLinkClickDomEventListener();
+        attachSelectDomEventListener();
     }
 
     /**
@@ -124,8 +124,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * @return current calendar display mode
      */
     public CalendarDisplayMode getCurrentCalendarDisplayMode() {
-        if (displayMode != null) {
-            return displayMode;
+        CalendarDisplayMode currentDisplayMode = options.getCurrentView().getValue();
+        if (currentDisplayMode != null) {
+            return currentDisplayMode;
         }
         CalendarDisplayMode initialDisplayMode = options.getInitialDisplayMode().getValue();
         if (initialDisplayMode != null) {
@@ -270,7 +271,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getValidRange().setEnd(end);
     }
 
-
     /**
      * Sets the date range where the user can navigate and where events can be displayed.
      * <p>
@@ -350,7 +350,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * @return the current date of the calendar
      */
     public LocalDate getDate() {
-        return currentDate;
+        return options.getCurrentDate().getValue();
     }
 
     /**
@@ -2053,6 +2053,30 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getProgressiveEventRendering().setValue(progressiveEventRendering);
     }
 
+    /**
+     * @return the threshold for event single-click
+     */
+    public int getEventSingleClickThreshold() {
+        return getElement().getProperty("eventSingleClickThreshold", 250);
+    }
+
+    /**
+     * Sets the threshold for event single-click. The threshold defines a delay, in milliseconds,
+     * after which the event is triggered.
+     * <p>
+     * The default value is {@code 250}.
+     *
+     * @param threshold the time interval in milliseconds. Must be a non-negative integer.
+     * @throws IllegalArgumentException if the threshold is negative
+     */
+    public void setEventSingleClickThreshold(int threshold) {
+        if (threshold < 0) {
+            throw new IllegalArgumentException("Threshold cannot be negative");
+        }
+
+        getElement().setProperty("eventSingleClickThreshold", threshold);
+    }
+
     protected JsonFactory createJsonFactory() {
         return new JreJsonFactory();
     }
@@ -2151,6 +2175,32 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         if (eventClickDomRegistration != null) {
             eventClickDomRegistration.remove();
             eventClickDomRegistration = null;
+        }
+    }
+
+    protected void attachEventSingleClickDomEventListener() {
+        if (eventSingleClickDomRegistration == null) {
+            eventSingleClickDomRegistration = addListener(EventSingleClickDomEvent.class, this::onEventSingleClick);
+        }
+    }
+
+    protected void detachEventSingleClickDomEventListener() {
+        if (eventSingleClickDomRegistration != null) {
+            eventSingleClickDomRegistration.remove();
+            eventSingleClickDomRegistration = null;
+        }
+    }
+
+    protected void attachEventDoubleClickDomEventListener() {
+        if (eventDoubleClickDomRegistration == null) {
+            eventDoubleClickDomRegistration = addListener(EventDoubleClickDomEvent.class, this::onEventDoubleClick);
+        }
+    }
+
+    protected void detachEventDoubleClickDomEventListener() {
+        if (eventDoubleClickDomRegistration != null) {
+            eventDoubleClickDomRegistration.remove();
+            eventDoubleClickDomRegistration = null;
         }
     }
 
@@ -2260,52 +2310,64 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     protected void onEventClick(EventClickDomEvent event) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
+    }
+
+    protected void onEventSingleClick(EventSingleClickDomEvent event) {
+        // Stub, used in inheritors
+    }
+
+    protected void onEventDoubleClick(EventDoubleClickDomEvent event) {
+        // Stub, used in inheritors
     }
 
     protected void onEventMouseEnter(EventMouseEnterDomEvent event) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
     }
 
     protected void onEventMouseLeave(EventMouseLeaveDomEvent event) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
     }
 
     protected void onDatesSet(DatesSetDomEvent event) {
-        displayMode = getDisplayMode(event.getViewType());
-        currentDate = CalendarDateTimeUtils.parseIsoDate(event.getCurrentDate());
+        options.getCurrentView().setValue(getDisplayMode(event.getViewType()));
+        options.getCurrentDate().setValue(CalendarDateTimeUtils.parseIsoDate(event.getCurrentDate()));
     }
 
     protected void onMoreLinkClick(MoreLinkClickDomEvent event) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
     }
 
     protected void onEventDrop(EventDropDomEvent event) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
     }
 
     protected void onEventResize(EventResizeDomEvent event) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
     }
 
     protected void onDateClick(DateClickDomEvent event) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
     }
 
     protected void onSelect(SelectDomEvent event) {
-        // Stub, is used in inheritors
+        JsonObject context = event.getContext();
+
+        options.getCurrentSelection().setAllDay(context.getBoolean("allDay"));
+        options.getCurrentSelection().setStartDateTime(context.getString("startDateTime"));
+        options.getCurrentSelection().setEndDateTime(context.getString("endDateTime"));
     }
 
     protected void onUnselect(UnselectDomEvent event) {
-        // Stub, is used in inheritors
+        options.getCurrentSelection().clear();
     }
 
     protected void onDayNavigationLinkClick(DayNavigationLinkClickDomEvent event) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
     }
 
     protected void onWeekNavigationLinkClick(WeekNavigationLinkClickDomEvent event) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
     }
 
     protected CalendarDisplayMode getDisplayMode(String id) {
@@ -2324,31 +2386,31 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     @ClientCallable
     protected JsonArray fetchCalendarItems(String sourceId, String start, String end) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
         return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getMoreLinkClassNames(JsonObject jsonContext) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
         return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getDayHeaderClassNames(JsonObject jsonContext) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
         return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getDayCellClassNames(JsonObject jsonContext) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
         return jsonFactory.createArray();
     }
 
     @ClientCallable
     protected JsonArray getSlotLabelClassNames(JsonObject jsonContext) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
         return jsonFactory.createArray();
     }
 
@@ -2359,12 +2421,12 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     @ClientCallable
     protected JsonObject getDayCellBottomTextInfo(JsonObject jsonContext) {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
         return jsonFactory.createObject();
     }
 
     protected void addDataProvidersOnAttach() {
-        // Stub, is used in inheritors
+        // Stub, used in inheritors
     }
 
     @Override
@@ -2372,8 +2434,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         // All request-update methods do not register JS function call,
         // since the component is not attached. Thus, in onAttach we should
         // call them again.
-        // Also, if a component was reattached, it looses all configuration
-        // on a client side, so we should restore it.
+        // Also, if a component was reattached, it loses all configuration
+        // on the client side, so we should restore it.
         updateInitialOptions();
 
         addDataProvidersOnAttach();

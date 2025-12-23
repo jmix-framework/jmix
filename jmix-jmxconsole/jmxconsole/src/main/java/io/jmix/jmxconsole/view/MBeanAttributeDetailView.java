@@ -19,6 +19,7 @@ package io.jmix.jmxconsole.view;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.view.*;
 import io.jmix.jmxconsole.AttributeComponentProvider;
@@ -28,7 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
 
-@Route(value = "jmxconsole/mbeanattr/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "jmxconsole/mbeanattr/:id", layout = DefaultMainViewParent.class)
+@Route(value = "jmxcon/mbean-attr/:id", layout = DefaultMainViewParent.class)
 @ViewController("jmxcon_ManagedBeanAttribute.detail")
 @ViewDescriptor("mbean-attribute-detail-view.xml")
 @EditedEntityContainer("attrDc")
@@ -39,9 +41,9 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
     @Autowired
     protected AttributeComponentProvider attributeComponentProvider;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected Notifications notifications;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     protected AbstractField<?, ?> attributeField;
 
@@ -110,7 +112,7 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
 
     @Override
     public String getPageTitle() {
-        if (getEditedEntity().getName() != null) {
+        if (getEditedEntityOrNull() != null && getEditedEntity().getName() != null) {
             return getEditedEntity().getName();
         } else {
             return super.getPageTitle();

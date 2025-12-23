@@ -21,8 +21,6 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.NativeLabel;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -36,6 +34,7 @@ import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -131,12 +130,12 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
             if (selectAllItems == null) {
                 selectAllItems = createButton(
                         "jmix-twin-column-select-all-items-action",
-                        new Icon(VaadinIcon.ANGLE_DOUBLE_RIGHT),
+                        JmixFontIcon.TWIN_COLUMN_SELECT_ALL.create(),
                         (ComponentEventListener<ClickEvent<Button>>) event ->
                                 moveItems(items, selectedItems, true));
                 deselectAllItems = createButton(
                         "jmix-twin-column-deselect-all-items-action",
-                        new Icon(VaadinIcon.ANGLE_DOUBLE_LEFT),
+                        JmixFontIcon.TWIN_COLUMN_DESELECT_ALL.create(),
                         (ComponentEventListener<ClickEvent<Button>>) event ->
                                 moveItems(selectedItems, items, true));
             }
@@ -374,13 +373,13 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
 
         selectItems = createButton(
                 "jmix-twin-column-select-items-action",
-                new Icon(VaadinIcon.ANGLE_RIGHT),
+                JmixFontIcon.TWIN_COLUMN_SELECT.create(),
                 (ComponentEventListener<ClickEvent<Button>>) event ->
                         moveItems(items, selectedItems, false));
 
         deselectItems = createButton(
                 "jmix-twin-column-deselect-items-action",
-                new Icon(VaadinIcon.ANGLE_LEFT),
+                JmixFontIcon.TWIN_COLUMN_DESELECT.create(),
                 (ComponentEventListener<ClickEvent<Button>>) event ->
                         moveItems(selectedItems, items, false));
 
@@ -398,7 +397,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
         return new MultiSelectListBox<>();
     }
 
-    protected Button createButton(String className, Icon icon,
+    protected Button createButton(String className, Component icon,
                                   ComponentEventListener<ClickEvent<Button>> clickListener) {
         Button button = new Button();
         button.setClassName(className);
@@ -417,7 +416,9 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     protected void columnItemDoubleClicked(MultiSelectListBox<V> from,
                                            MultiSelectListBox<V> to,
                                            Integer itemIndex) {
-        moveItems(from, to, Collections.singletonList(from.getListDataView().getItem(itemIndex)));
+        if (!isReadOnly()) {
+            moveItems(from, to, Collections.singletonList(from.getListDataView().getItem(itemIndex)));
+        }
     }
 
     protected void recreateItems(Collection<V> newItems) {

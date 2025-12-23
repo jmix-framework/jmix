@@ -20,7 +20,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.Range;
@@ -36,13 +35,16 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.data.EntityValueSource;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.WindowBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -65,6 +67,8 @@ public class MultiValueSelectAction<E>
         extends PickerAction<MultiValueSelectAction<E>, PickerComponent<Collection<E>>, Collection<E>>
         implements InitializingBean, ViewOpeningAction {
 
+    private static final Logger log = LoggerFactory.getLogger(MultiValueSelectAction.class);
+
     public static final String ID = "multi_value_select";
     public static final String DEFAULT_MULTI_VALUE_SELECT_VIEW = "multiValueSelectDialog";
 
@@ -85,13 +89,6 @@ public class MultiValueSelectAction<E>
         super(id);
     }
 
-    @Override
-    protected void initAction() {
-        super.initAction();
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
-    }
-
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
         this.uiComponentProperties = uiComponentProperties;
@@ -100,6 +97,15 @@ public class MultiValueSelectAction<E>
     @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.MULTI_VALUE_SELECT_ACTION);
+        }
     }
 
     @Autowired
@@ -152,7 +158,7 @@ public class MultiValueSelectAction<E>
 
     @Override
     public void setOpenMode(@Nullable OpenMode openMode) {
-        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, OpenMode.class.getSimpleName());
     }
 
     /**
@@ -208,7 +214,7 @@ public class MultiValueSelectAction<E>
 
     @Override
     public void setRouteParametersProvider(@Nullable RouteParametersProvider provider) {
-        throw new UnsupportedOperationException("Select view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, RouteParametersProvider.class.getSimpleName());
     }
 
     @Nullable
@@ -220,7 +226,7 @@ public class MultiValueSelectAction<E>
 
     @Override
     public void setQueryParametersProvider(@Nullable QueryParametersProvider provider) {
-        throw new UnsupportedOperationException("Select view opens in a dialog window only");
+        log.warn("{} doesn't support setting {}", ID, QueryParametersProvider.class.getSimpleName());
     }
 
     @Override
@@ -238,6 +244,7 @@ public class MultiValueSelectAction<E>
         viewInitializer.setViewConfigurer(viewConfigurer);
     }
 
+    @Nullable
     @Override
     public <V extends View<?>> Consumer<V> getViewConfigurer() {
         return viewInitializer.getViewConfigurer();

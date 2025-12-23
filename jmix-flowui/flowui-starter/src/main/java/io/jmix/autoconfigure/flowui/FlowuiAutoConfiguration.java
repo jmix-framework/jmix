@@ -19,11 +19,13 @@ package io.jmix.autoconfigure.flowui;
 import io.jmix.core.*;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.*;
+import io.jmix.flowui.component.groupgrid.adapter.DefaultGroupDataGridAdapterFactory;
+import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
+import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterProvider;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.flowui.sys.ViewSupport;
-import io.jmix.flowui.sys.vaadin.SecurityContextHolderAtmosphereInterceptor;
 import io.jmix.flowui.view.ViewAttributes;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.builder.DetailWindowBuilderProcessor;
@@ -37,7 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -75,12 +76,6 @@ public class FlowuiAutoConfiguration {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
         actionsConfiguration.setBasePackages(Collections.singletonList(jmixModules.getLast().getBasePackage()));
         return actionsConfiguration;
-    }
-
-    @Bean("flowui_SecurityContextHolderAtmosphereInterceptor")
-    @ConditionalOnProperty(name = "jmix.ui.websocket-request-security-context-provided")
-    public SecurityContextHolderAtmosphereInterceptor securityContextHolderAtmosphereInterceptor() {
-        return new SecurityContextHolderAtmosphereInterceptor();
     }
 
     @Bean("flowui_ViewNavigators")
@@ -181,5 +176,12 @@ public class FlowuiAutoConfiguration {
     @ConditionalOnMissingBean
     public ViewAttributes viewAttributes(String viewId) {
         return new ViewAttributes(viewId);
+    }
+
+    @Bean("flowui_GroupDataGridAdapterFactory")
+    @ConditionalOnMissingBean
+    public GroupDataGridAdapterFactory groupDataGridAdapterFactory(@Autowired(required = false)
+                                                                   List<GroupDataGridAdapterProvider> providers) {
+        return new DefaultGroupDataGridAdapterFactory(providers);
     }
 }

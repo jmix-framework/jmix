@@ -26,6 +26,7 @@ import io.jmix.flowui.Actions;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.list.RemoveAction;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionPropertyContainer;
@@ -61,6 +62,7 @@ public class TableEditFragment extends AbstractDescriptionEditFragment<TableEdit
     protected Actions actions;
     protected Notifications notifications;
     protected Messages messages;
+    protected Icons icons;
 
     protected InstanceContainer<TemplateTableDescription> templateTableDescriptionDc;
     protected CollectionPropertyContainer<TemplateTableBand> templateTableBandsDc;
@@ -86,6 +88,7 @@ public class TableEditFragment extends AbstractDescriptionEditFragment<TableEdit
         actions = applicationContext.getBean(Actions.class);
         notifications = applicationContext.getBean(Notifications.class);
         messages = applicationContext.getBean(Messages.class);
+        icons = applicationContext.getBean(Icons.class);
     }
 
     protected void initComponent() {
@@ -106,7 +109,7 @@ public class TableEditFragment extends AbstractDescriptionEditFragment<TableEdit
     }
 
     protected TableEditFragmentContent createContent() {
-        return new TableEditFragmentContent(uiComponents, metadata, actions, messages);
+        return new TableEditFragmentContent(uiComponents, metadata, actions, messages, icons);
     }
 
     protected void initBands() {

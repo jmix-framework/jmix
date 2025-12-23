@@ -46,8 +46,8 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -420,7 +420,7 @@ public class InputDialog extends StandardView {
             if (action instanceof DialogAction) {
                 DialogAction.Type type = ((DialogAction) action).getType();
                 button.setText(messages.getMessage(type.getMsgKey()));
-                button.setIcon(type.getVaadinIcon().create());
+                button.setIcon(type.getIcon());
             }
 
             actionBox.add(button);
@@ -610,8 +610,11 @@ public class InputDialog extends StandardView {
 
         /**
          * Checks that the dialog was closed with the given {@code outcome}.
+         *
+         * @param outcome dialog outcome
+         * @return {@code true} if the dialog was closed with the given {@code outcome}
          */
-        public boolean closedWith(StandardOutcome outcome) {
+        public boolean closedWith(DialogOutcome outcome) {
             return outcome.getCloseAction().equals(closeAction);
         }
     }

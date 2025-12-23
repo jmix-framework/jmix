@@ -120,6 +120,16 @@ public @interface StudioComponent {
     StudioSupplyHandler[] supplyHandlers() default {};
 
     /**
+     * Additional non-standard @Subscription handlers.
+     */
+    StudioCustomSubscription[] customSubscriptions() default {};
+
+    /**
+     * Additional non-standard @Install handlers.
+     */
+    StudioCustomInstall[] customInstalls() default {};
+
+    /**
      * Describes the available children information.
      *
      * @see StudioAvailableChildrenInfo

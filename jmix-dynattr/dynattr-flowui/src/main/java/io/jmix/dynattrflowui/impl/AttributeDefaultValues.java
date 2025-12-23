@@ -66,10 +66,14 @@ public class AttributeDefaultValues {
             if (attribute.getDefaultValue() != null) {
                 if (attribute.isCollection()) {
                     if (attribute.getDataType() == AttributeType.ENTITY) {
-                        List<Object> defaultEntities = Stream.of(attribute.getDefaultValue())
-                                .map(id -> reloadEntity(attribute, id))
-                                .collect(Collectors.toList());
-                        EntityValues.setValue(entity, propertyName, defaultEntities);
+                        if (((Collection<?>) attribute.getDefaultValue()).isEmpty()) {
+                            EntityValues.setValue(entity, propertyName, new ArrayList<>());
+                        } else {
+                            List<Object> defaultEntities = Stream.of(attribute.getDefaultValue())
+                                    .map(id -> reloadEntity(attribute, id))
+                                    .collect(Collectors.toList());
+                            EntityValues.setValue(entity, propertyName, defaultEntities);
+                        }
                     } else {
                         //noinspection unchecked
                         EntityValues.setValue(entity, propertyName,
@@ -98,7 +102,7 @@ public class AttributeDefaultValues {
         MetaClass metaClass = metadata.getClass(Objects.requireNonNull(attribute.getJavaType()));
         String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
         return dataManager.load(attribute.getJavaType())
-                .query(String.format("e.%s = ?1", pkName), entityId)
+                .query(String.format(attribute.isCollection() ? "e.%s in ?1" : "e.%s = ?1", pkName), entityId)
                 .fetchPlan(FetchPlan.INSTANCE_NAME)
                 .optional()
                 .orElse(null);

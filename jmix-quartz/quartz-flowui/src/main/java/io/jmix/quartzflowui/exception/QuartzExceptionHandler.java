@@ -17,30 +17,32 @@
 package io.jmix.quartzflowui.exception;
 
 import com.vaadin.flow.component.notification.Notification;
+import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.exception.AbstractUiExceptionHandler;
-import io.jmix.flowui.view.MessageBundle;
 import io.jmix.quartz.exception.QuartzJobSaveException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component 
+@Component
 public class QuartzExceptionHandler extends AbstractUiExceptionHandler {
+
+    @Autowired
+    protected Messages messages;
     @Autowired
     protected Notifications notifications;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected UiViewProperties viewProperties;
+
     public QuartzExceptionHandler() {
         super(QuartzJobSaveException.class.getName());
     }
 
     @Override
     protected void doHandle(String className, String message, Throwable throwable) {
-        messageBundle.setMessageGroup("io.jmix.quartzflowui.view.template");
-        notifications.create(messageBundle.getMessage("notification.template.validation.header"), message)
+        notifications.create(messages.getMessage("io.jmix.quartzflowui.view.template",
+                        "notification.template.validation.header"), message)
                 .withDuration(viewProperties.getValidationNotificationDuration())
                 .withPosition(Notification.Position.valueOf(viewProperties.getValidationNotificationPosition()))
                 .withType(Notifications.Type.valueOf(viewProperties.getValidationNotificationType()))

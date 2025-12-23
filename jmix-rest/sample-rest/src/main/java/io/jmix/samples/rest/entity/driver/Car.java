@@ -41,6 +41,7 @@ public class Car extends StandardEntity {
     @Column(name = "VIN")
     private String vin;
 
+    @Valid
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COLOUR_ID")
     private Colour colour;

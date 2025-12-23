@@ -165,7 +165,7 @@
             <column name="START_TIME"/>
         </createIndex>
 
-        <insert tableName="REPORT_GROUP" dbms="postgresql, mssql, hsqldb">
+        <insert tableName="REPORT_GROUP" dbms="postgresql, mssql, hsqldb, h2">
             <column name="ID" value="4e083530-0b9c-11e1-9b41-6bdaa41bff94"/>
             <column name="CREATE_TS" valueDate="current_timestamp"/>
             <column name="CREATED_BY" value="admin"/>
@@ -267,7 +267,7 @@
         </modifySql>
     </changeSet>
 
-    <changeSet id="4-another-db" author="reports" context="!cuba" dbms="mssql, hsqldb, oracle">
+    <changeSet id="4-another-db" author="reports" context="!cuba" dbms="mssql, hsqldb, h2, oracle">
         <createIndex tableName="REPORT_GROUP" indexName="IDX_REPORT_GROUP_UNIQ_TITLE" unique="true">
             <column name="TITLE"/>
             <column name="DELETE_TS"/>
@@ -339,7 +339,7 @@
         </modifySql>
     </changeSet>
 
-    <changeSet id="5-another-db" author="reports" context="!cuba" dbms="mssql, hsqldb, oracle">
+    <changeSet id="5-another-db" author="reports" context="!cuba" dbms="mssql, hsqldb, h2, oracle">
         <createIndex tableName="REPORT_REPORT" indexName="IDX_REPORT_REPORT_UNIQ_NAME" unique="true">
             <column name="NAME"/>
             <column name="DELETE_TS"/>

@@ -75,6 +75,11 @@ public class Stores {
         return MAIN.equals(name);
     }
 
+    /**
+     * @param name data store name
+     * @return data store instance
+     * @throws IllegalArgumentException if there is no data store with the given name
+     */
     public Store get(String name) {
         Store store = stores.get(name);
         if (store == null) {

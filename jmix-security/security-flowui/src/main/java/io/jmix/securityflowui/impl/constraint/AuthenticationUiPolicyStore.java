@@ -30,7 +30,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -62,7 +64,7 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
     }
 
     protected <T> Stream<T> extractFromAuthenticationByScope(Function<ResourceRole, Stream<T>> extractor) {
-        Stream<T> stream = Stream.empty();
+        List<Stream<T>> streams = new ArrayList<>();
 
         Authentication authentication = currentAuthentication.getAuthentication();
         String scope = getScope(authentication);
@@ -77,7 +79,7 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
                         if (isAppliedForScope(resourceRole, scope)) {
                             Stream<T> extractedStream = extractor.apply(resourceRole);
                             if (extractedStream != null) {
-                                stream = Stream.concat(stream, extractedStream);
+                                streams.add(extractedStream);
                             }
                         }
                     }
@@ -85,7 +87,7 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
             }
         }
 
-        return stream;
+        return streams.stream().flatMap(Function.identity());
     }
 
     @Nullable

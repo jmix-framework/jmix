@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -37,11 +36,13 @@ import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.entity.filter.FilterValueComponent;
 import io.jmix.flowui.entity.filter.JpqlFilterCondition;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
-import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -79,12 +80,12 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
     @ViewComponent
     protected JmixCheckbox hasInExpressionField;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -99,6 +100,8 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
     protected SingleFilterSupport singleFilterSupport;
     @Autowired
     protected Notifications notifications;
+    @Autowired
+    protected Icons icons;
 
     protected MetaClass filterMetaClass;
 
@@ -317,7 +320,7 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
 
     protected void createHelperButton(JmixTextArea textArea) {
         JmixButton helperButton = uiComponents.create(JmixButton.class);
-        helperButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        helperButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
         helperButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
 
         String message = messageBundle.getMessage(

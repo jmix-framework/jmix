@@ -18,6 +18,7 @@ package io.jmix.securityflowui.view.rowlevelrole;
 
 import com.google.common.io.Files;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
@@ -52,7 +53,8 @@ import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
 import static io.jmix.security.model.RoleSourceType.DATABASE;
 
-@Route(value = "sec/rowlevelrolemodels", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "sec/rowlevelrolemodels", layout = DefaultMainViewParent.class)
+@Route(value = "sec/row-level-role-models", layout = DefaultMainViewParent.class)
 @ViewController("sec_RowLevelRoleModel.list")
 @ViewDescriptor("row-level-role-model-list-view.xml")
 @LookupComponent("roleModelsTable")

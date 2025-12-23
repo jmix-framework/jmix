@@ -19,12 +19,15 @@ package io.jmix.data.impl;
 import com.google.common.base.Preconditions;
 import io.jmix.core.Stores;
 import io.jmix.data.Sequence;
-import io.jmix.data.persistence.SequenceSupport;
 import io.jmix.data.Sequences;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.data.persistence.SequenceSupport;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringTokenizer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
@@ -33,9 +36,6 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.ResultSet;
@@ -65,14 +65,6 @@ public class SequencesImpl implements Sequences {
         Preconditions.checkNotNull(sequence, "Sequence can't be null");
         checkSequenceName(sequence.getName());
         String sqlScript = getSequenceSupport(sequence).getNextValueSql(sequence.getName());
-        return getResult(sequence, sqlScript);
-    }
-
-    @Override
-    public long getCurrentValue(Sequence sequence) {
-        Preconditions.checkNotNull(sequence, "Sequence can't be null");
-        checkSequenceName(sequence.getName());
-        String sqlScript = getSequenceSupport(sequence).getCurrentValueSql(sequence.getName());
         return getResult(sequence, sqlScript);
     }
 

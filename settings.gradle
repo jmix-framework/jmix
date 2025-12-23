@@ -118,6 +118,8 @@ includeProject('sample-rest', 'jmix-rest/sample-rest')
 
 includeProject('restds', 'jmix-restds/restds')
 includeProject('restds-starter', 'jmix-restds/restds-starter')
+includeProject('sample-rest-common', 'jmix-restds/sample-common')
+includeProject('sample-rest-common-starter', 'jmix-restds/sample-common-starter')
 includeProject('sample-rest-service', 'jmix-restds/sample-rest-service')
 
 includeProject('reports', 'jmix-reports/reports')

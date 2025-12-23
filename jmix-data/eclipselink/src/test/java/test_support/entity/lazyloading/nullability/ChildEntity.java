@@ -22,6 +22,10 @@ public class ChildEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private ParentEntity parentEntity;
 
+    @JoinColumn(name = "ADDITIONAL_PARENT_ENTITY_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ParentEntity additionalParentEntity;
+
     @JoinColumn(name = "ADDITIONAL_ENTITY_ID")
     @ManyToOne(fetch = FetchType.LAZY)
     private AdditionalEntity additionalEntity;
@@ -56,5 +60,13 @@ public class ChildEntity {
 
     public void setAdditionalEntity(AdditionalEntity additionalEntity) {
         this.additionalEntity = additionalEntity;
+    }
+
+    public ParentEntity getAdditionalParentEntity() {
+        return additionalParentEntity;
+    }
+
+    public void setAdditionalParentEntity(ParentEntity additionalParentEntity) {
+        this.additionalParentEntity = additionalParentEntity;
     }
 }

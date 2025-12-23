@@ -21,7 +21,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="1-other" author="reports" dbms="postgresql,hsqldb,oracle">
+    <changeSet id="1-other" author="reports" dbms="postgresql,hsqldb,h2,oracle">
         <dropNotNullConstraint tableName="REPORT_REPORT" columnName="GROUP_ID"/>
     </changeSet>
 

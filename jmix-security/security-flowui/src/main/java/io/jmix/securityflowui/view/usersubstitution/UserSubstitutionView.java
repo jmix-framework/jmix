@@ -20,13 +20,13 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
-import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.*;
 import io.jmix.security.usersubstitution.UserSubstitutionModel;
 import io.jmix.security.usersubstitution.UserSubstitutionPersistence;
@@ -37,7 +37,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Collection;
 import java.util.List;
 
-@Route(value = "sec/usersubstitution/:username", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "sec/usersubstitution/:username", layout = DefaultMainViewParent.class)
+@Route(value = "sec/user-substitution/:username", layout = DefaultMainViewParent.class)
 @ViewController("sec_UserSubstitution.view")
 @ViewDescriptor("user-substitution-view.xml")
 @DialogMode(width = "64em")
@@ -48,7 +49,7 @@ public class UserSubstitutionView extends StandardView {
     @ViewComponent
     protected CollectionLoader<UserSubstitutionModel> userSubstitutionsDl;
 
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
     @Autowired
     protected MetadataTools metadataTools;
@@ -90,12 +91,6 @@ public class UserSubstitutionView extends StandardView {
         );
     }
 
-    @Subscribe("saveAction")
-    protected void onSaveAction(ActionPerformedEvent event) {
-        getViewData().getDataContext().save();
-        close(StandardOutcome.SAVE);
-    }
-
     @Subscribe("closeAction")
     protected void onCloseAction(ActionPerformedEvent event) {
         if (getViewData().getDataContext().hasChanges()) {
@@ -126,12 +121,6 @@ public class UserSubstitutionView extends StandardView {
         });
     }
 
-    @Subscribe(target = Target.DATA_CONTEXT)
-    public void onPostSave(DataContext.PostSaveEvent postCommitEvent) {
-        UserSubstitutionsChangedEvent event = new UserSubstitutionsChangedEvent(username);
-        getApplicationContext().publishEvent(event);
-    }
-
     @Install(to = "userSubstitutionsDl", target = Target.DATA_LOADER)
     protected List<UserSubstitutionModel> userSubstitutionsDlLoadDelegate(final LoadContext<UserSubstitutionModel> loadContext) {
         return getUserSubstitutionService().loadSubstitutionsOf(username);
@@ -140,6 +129,9 @@ public class UserSubstitutionView extends StandardView {
     @Install(to = "substitutionDataGrid.remove", subject = "delegate")
     protected void substitutionDataGridRemoveDelegate(final Collection<UserSubstitutionModel> collection) {
         getUserSubstitutionService().remove(collection);
+
+        UserSubstitutionsChangedEvent event = new UserSubstitutionsChangedEvent(username);
+        getApplicationContext().publishEvent(event);
     }
 
     protected UserSubstitutionPersistence getUserSubstitutionService() {

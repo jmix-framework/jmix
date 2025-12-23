@@ -20,13 +20,12 @@ import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -36,6 +35,7 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.audit.EntityLog;
 import io.jmix.audit.entity.EntityLogAttr;
 import io.jmix.audit.entity.EntityLogItem;
@@ -62,11 +62,13 @@ import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataContext;
@@ -94,7 +96,8 @@ import java.util.stream.Stream;
 import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
-@Route(value = "audit/entitylog", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "audit/entitylog", layout = DefaultMainViewParent.class)
+@Route(value = "audit/entity-log", layout = DefaultMainViewParent.class)
 @ViewController("entityLog.view")
 @ViewDescriptor("entity-log-view.xml")
 @LookupComponent("entityLogTable")
@@ -187,6 +190,8 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     protected Notifications notifications;
     @Autowired
     protected PolicyStore policyStore;
+    @Autowired
+    protected Icons icons;
 
     protected Object selectedEntity;
 
@@ -490,7 +495,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                 enabledAttr = item.getAttributes();
             for (MetaProperty property : metaProperties) {
                 if (allowLogProperty(property)) {
-                    if (metadataTools.isEmbedded(property)) {
+                    if (property.getType() == MetaProperty.Type.EMBEDDED) {
                         MetaClass embeddedMetaClass = property.getRange().asClass();
                         for (MetaProperty embeddedProperty : embeddedMetaClass.getProperties()) {
                             if (allowLogProperty(embeddedProperty)) {
@@ -660,16 +665,10 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         );
     }
 
-    protected Icon createCheckboxIconByAttributeValue(Boolean attributeValue) {
-        Icon icon = uiComponents.create(Icon.class);
-
-        if (Boolean.TRUE.equals(attributeValue)) {
-            icon.setIcon(VaadinIcon.CHECK_SQUARE_O);
-        } else {
-            icon.setIcon(VaadinIcon.THIN_SQUARE);
-        }
-
-        return icon;
+    protected Component createCheckboxIconByAttributeValue(Boolean attributeValue) {
+        return Boolean.TRUE.equals(attributeValue)
+                ? icons.get(JmixFontIcon.CHECK_SQUARE_O)
+                : icons.get(JmixFontIcon.THIN_SQUARE);
     }
 
     @Subscribe("searchBtn")
@@ -756,7 +755,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
             return false;
         }
         if (range.isClass() && range.getCardinality().isMany()) {
-            return false;
+            return metadataTools.isOwningSide(metaProperty);
         }
         return true;
     }

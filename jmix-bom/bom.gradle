@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.5.8")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.5.9")
     api platform('software.amazon.awssdk:bom:2.25.60')
 
     def freeVersion = version
@@ -452,11 +452,6 @@ dependencies {
         api 'com.google.auth:google-auth-library-oauth2-http:1.39.1'
 
         api 'org.liquibase:liquibase-core:4.25.1!!'//see https://github.com/jmix-framework/jmix/issues/3888
-
-        // Quartz 2.5.1 has an issue with PostgreSQL https://github.com/quartz-scheduler/quartz/issues/1407
-        // TODO: remove this explicit dependencies after update to Spring Boot 3.5.9
-        api 'org.quartz-scheduler:quartz:2.5.2'
-        api 'org.quartz-scheduler:quartz-jobs:2.5.2'
     }
 }
 

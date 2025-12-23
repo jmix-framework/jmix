@@ -25,6 +25,8 @@ import io.jmix.dynattr.*;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.model.*;
 
 import java.util.Comparator;
@@ -75,7 +77,18 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
     }
 
     protected String getOwnerId(Component owner) {
-        return owner.getId().orElseThrow();
+        String ownerId = owner.getId()
+                .orElseThrow(() -> new IllegalStateException(
+                        "Cannot embed dynamic attributes into a component without an ID"));
+
+        if (owner instanceof Fragment<?> fragment) {
+            ownerId = FragmentUtils.getHostView(fragment)
+                    .getId()
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Cannot embed dynamic attributes into a component with a host view without an ID"))
+                    + "." + ownerId;
+        }
+        return ownerId;
     }
 
     protected void setLoadDynamicAttributes(InstanceContainer<?> container) {

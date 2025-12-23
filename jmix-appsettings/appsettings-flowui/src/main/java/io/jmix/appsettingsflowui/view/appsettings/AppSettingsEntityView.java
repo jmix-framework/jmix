@@ -425,7 +425,7 @@ public class AppSettingsEntityView extends StandardView {
         return container;
     }
 
-    private FetchPlan createFetchPlan() {
+    protected FetchPlan createFetchPlan() {
         FetchPlanBuilder builder = fetchPlans.builder(currentMetaClass.getJavaClass()).addFetchPlan(FetchPlan.LOCAL);
         for (MetaProperty property : currentMetaClass.getProperties()) {
             if (metadataTools.isElementCollection(property)) {

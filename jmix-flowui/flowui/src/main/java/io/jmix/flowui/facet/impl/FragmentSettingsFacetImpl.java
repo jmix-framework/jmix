@@ -26,6 +26,7 @@ import io.jmix.flowui.facet.settings.FragmentSettings;
 import io.jmix.flowui.facet.settings.FragmentSettingsJson;
 import io.jmix.flowui.facet.settings.SettingsFacetUrlQueryParametersHelper;
 import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.settings.UserSettingsService;
@@ -51,7 +52,13 @@ public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSet
 
     @Override
     protected FragmentSettings createSettings(FacetOwner owner) {
-        return new FragmentSettingsJson(owner.getId()
+        String hostId = FragmentUtils.getHostView((FragmentOwner) owner).getId()
+                .orElseThrow(() ->
+                        new IllegalStateException("Cannot create " + FragmentSettings.class.getSimpleName()
+                                + " because the host of " + owner.getClass().getSimpleName()
+                                + " does not contain an id"));
+
+        return new FragmentSettingsJson(hostId + "." + owner.getId()
                 .orElseThrow(() ->
                         new IllegalStateException("Cannot create " + FragmentSettings.class.getSimpleName() +
                                 " because " + owner.getClass().getSimpleName() + " does not contain an id"))

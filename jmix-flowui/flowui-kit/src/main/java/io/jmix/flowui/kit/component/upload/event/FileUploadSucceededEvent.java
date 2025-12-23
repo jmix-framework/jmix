@@ -24,8 +24,7 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 
 /**
- * Event is fired when {@link SucceededEvent} of {@link Upload} is occurred. See
- * {@link Upload#addSucceededListener(ComponentEventListener)} for details.
+ * Event is fired when {@link SucceededEvent} of {@link Upload} is occurred.
  *
  * @param <C> type of upload field
  * @see SucceededEvent

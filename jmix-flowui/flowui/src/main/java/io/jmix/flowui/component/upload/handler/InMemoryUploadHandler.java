@@ -18,7 +18,8 @@ package io.jmix.flowui.component.upload.handler;
 
 import com.vaadin.flow.server.streams.*;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.component.streams.TransferProgressNotifier;
+import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
@@ -29,6 +30,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 
+/**
+ * Upload handler for storing the upload in-memory. Data is returned as a
+ * {@code byte[]} to the given successHandler.
+ */
 @Component("flowui_InMemoryUploadHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InMemoryUploadHandler

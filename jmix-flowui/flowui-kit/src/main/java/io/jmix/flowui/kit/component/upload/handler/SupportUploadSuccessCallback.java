@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.upload.handler;
+package io.jmix.flowui.kit.component.upload.handler;
 
 import com.vaadin.flow.server.streams.UploadMetadata;
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.io.IOException;
 import java.io.Serializable;
 
-// TODO: gg, move to the kit?
+/**
+ * Interface to support handling upload success callbacks for uploaded data.
+ * <p>
+ * Provides a mechanism to set a callback that will be invoked upon the successful
+ * upload operation.
+ *
+ * @param <V> the type of the uploaded data
+ */
 public interface SupportUploadSuccessCallback<V> {
 
     void setUploadSuccessCallback(@Nullable UploadSuccessCallback<V> successCallback);

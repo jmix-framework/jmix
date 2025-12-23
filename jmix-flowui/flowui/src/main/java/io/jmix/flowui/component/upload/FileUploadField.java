@@ -30,7 +30,6 @@ import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.FileFieldDelegate;
 import io.jmix.flowui.component.upload.handler.InMemoryUploadHandler;
-import io.jmix.flowui.component.upload.handler.SupportUploadSuccessCallback;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -39,6 +38,7 @@ import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.upload.JmixUploadI18N;
 import io.jmix.flowui.kit.component.upload.event.FileUploadFileRejectedEvent;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback.UploadContext;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,13 +104,9 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
     @Override
     protected UploadHandler createUploadHandler() {
         InMemoryUploadHandler uploadHandler = applicationContext.getBean(InMemoryUploadHandler.class);
-        uploadHandler.setUploadSuccessCallback(this::onUploadSuccessCallback);
+        uploadHandler.setUploadSuccessCallback(this::onSucceeded);
         uploadHandler.addTransferProgressListener(createDefaultTransferProgressListener());
         return uploadHandler;
-    }
-
-    protected void onUploadSuccessCallback(SupportUploadSuccessCallback.UploadContext<byte[]> context) {
-        onSucceeded(context.getUploadMetadata(), context.getData());
     }
 
     protected FileFieldDelegate<FileUploadField, byte[], byte[]> createFieldDelegate() {

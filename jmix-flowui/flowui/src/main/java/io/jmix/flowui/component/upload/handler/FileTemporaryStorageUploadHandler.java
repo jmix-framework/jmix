@@ -18,7 +18,8 @@ package io.jmix.flowui.component.upload.handler;
 
 import com.vaadin.flow.server.streams.*;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.component.streams.TransferProgressNotifier;
+import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback;
 import io.jmix.flowui.upload.TemporaryStorage;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -27,6 +28,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 
+/**
+ * Upload handler for storing upload stream into a temporary storage.
+ */
 @Component("flowui_FileTemporaryStorageUploadHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FileTemporaryStorageUploadHandler

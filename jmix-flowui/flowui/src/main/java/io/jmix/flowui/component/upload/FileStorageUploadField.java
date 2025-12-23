@@ -23,7 +23,6 @@ import com.vaadin.flow.component.upload.FileRejectedEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.server.streams.TransferContext;
 import com.vaadin.flow.server.streams.UploadHandler;
-import com.vaadin.flow.server.streams.UploadMetadata;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.flowui.Notifications;
@@ -32,7 +31,6 @@ import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.FileFieldDelegate;
 import io.jmix.flowui.component.upload.handler.FileTemporaryStorageUploadHandler;
-import io.jmix.flowui.component.upload.handler.SupportUploadSuccessCallback.UploadContext;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -43,6 +41,7 @@ import io.jmix.flowui.kit.component.upload.JmixFileStorageUploadField;
 import io.jmix.flowui.kit.component.upload.JmixUploadI18N;
 import io.jmix.flowui.kit.component.upload.event.FileUploadFileRejectedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback.UploadContext;
 import io.jmix.flowui.upload.TemporaryStorage;
 import io.jmix.flowui.upload.TemporaryStorage.FileInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -119,16 +118,16 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     @Override
     protected UploadHandler createUploadHandler() {
         FileTemporaryStorageUploadHandler uploadHandler = applicationContext.getBean(FileTemporaryStorageUploadHandler.class);
-        uploadHandler.setUploadSuccessCallback(this::onUploadSuccessCallback);
+        uploadHandler.setUploadSuccessCallback(this::onSucceeded);
         uploadHandler.addTransferProgressListener(createDefaultTransferProgressListener());
         return uploadHandler;
     }
 
-    protected void onUploadSuccessCallback(UploadContext<FileInfo> context) {
-        UploadMetadata metadata = context.getUploadMetadata();
-        saveFile(metadata, context.getData());
+    @Override
+    protected void onSucceeded(UploadContext<FileInfo> context) {
+        saveFile(context);
 
-        super.onSucceeded(context.getUploadMetadata(), context.getData());
+        super.onSucceeded(context);
     }
 
     protected FileFieldDelegate<FileStorageUploadField, FileRef, FileRef> createFieldDelegate() {
@@ -275,13 +274,13 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
         return super.addFileUploadSucceededListener(listener);
     }
 
-    protected void saveFile(UploadMetadata metadata, FileInfo fileInfo) {
+    protected void saveFile(UploadContext<FileInfo> context) {
         if (getFileStoragePutMode() == FileStoragePutMode.IMMEDIATE) {
             checkFileStorageInitialized();
 
             FileRef fileRef = temporaryStorage.putFileIntoStorage(
-                    fileInfo.getId(),
-                    metadata.fileName(),
+                    context.getData().getId(),
+                    context.getUploadMetadata().fileName(),
                     fileStorage);
 
             setInternalValue(fileRef, true);

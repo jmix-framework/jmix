@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.streams;
+package io.jmix.flowui.kit.component.streams;
 
+import com.vaadin.flow.server.streams.TransferProgressAwareHandler;
 import com.vaadin.flow.server.streams.TransferProgressListener;
 import com.vaadin.flow.shared.Registration;
 
-// TODO: gg, move to the kit?
+/**
+ * An interface for components that support adding transfer processes listeners.
+ * <p>
+ * NOTE: used to change {@link TransferProgressAwareHandler#addTransferProgressListener(TransferProgressListener)}
+ * access level to public.
+ */
 public interface TransferProgressNotifier {
 
     Registration addTransferProgressListener(TransferProgressListener listener);

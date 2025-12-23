@@ -24,8 +24,8 @@ import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.flow.server.streams.UploadMetadata;
 import io.jmix.core.FileTypesHelper;
 import io.jmix.core.Messages;
-import io.jmix.flowui.component.streams.TransferProgressNotifier;
-import io.jmix.flowui.component.upload.handler.SupportUploadSuccessCallback;
+import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -115,7 +115,7 @@ public class JmixUpload extends Upload implements ApplicationContextAware, Initi
     @Override
     public void setUploadHandler(UploadHandler handler) {
         if (handler instanceof TransferProgressNotifier transferProgressNotifier) {
-            transferProgressNotifier.addTransferProgressListener(new DefaultTransferProgressListener(this));
+            transferProgressNotifier.addTransferProgressListener(createDefaultTransferProgressListener());
         }
 
         if (handler instanceof SupportUploadSuccessCallback supportUploadSuccessCallback) {
@@ -131,36 +131,47 @@ public class JmixUpload extends Upload implements ApplicationContextAware, Initi
                 uploadMetadata.fileName(), uploadMetadata.contentType(), uploadMetadata.contentLength()));
     }
 
-    protected class DefaultTransferProgressListener implements TransferProgressListener {
+    protected void onStarted(TransferContext context) {
+        fireEvent(new StartedEvent(this,
+                context.fileName(), FileTypesHelper.getMIMEType(context.fileName()), context.contentLength()));
+    }
 
-        protected final JmixUpload upload;
+    protected void onProgressUpdate(TransferContext context, long transferredBytes, long totalBytes) {
+        fireEvent(new ProgressUpdateEvent(this,
+                transferredBytes, totalBytes, context.fileName()));
+    }
 
-        public DefaultTransferProgressListener(JmixUpload upload) {
-            this.upload = upload;
-        }
+    protected void onError(TransferContext context, IOException reason) {
+        fireEvent(new FailedEvent(this, context.fileName(),
+                FileTypesHelper.getMIMEType(context.fileName()), context.contentLength(), reason));
+    }
 
-        @Override
-        public void onStart(TransferContext context) {
-            upload.fireEvent(new StartedEvent(upload,
-                    context.fileName(), FileTypesHelper.getMIMEType(context.fileName()), context.contentLength()));
-        }
+    protected void onComplete(TransferContext context, long transferredBytes) {
+        fireEvent(new FinishedEvent(this,
+                context.fileName(), FileTypesHelper.getMIMEType(context.fileName()), context.contentLength()));
+    }
 
-        @Override
-        public void onProgress(TransferContext context, long transferredBytes, long totalBytes) {
-            upload.fireEvent(new ProgressUpdateEvent(upload,
-                    transferredBytes, totalBytes, context.fileName()));
-        }
+    protected TransferProgressListener createDefaultTransferProgressListener() {
+        return new TransferProgressListener() {
+            @Override
+            public void onStart(TransferContext context) {
+                onStarted(context);
+            }
 
-        @Override
-        public void onError(TransferContext context, IOException reason) {
-            upload.fireEvent(new FailedEvent(upload, context.fileName(),
-                    FileTypesHelper.getMIMEType(context.fileName()), context.contentLength(), reason));
-        }
+            @Override
+            public void onProgress(TransferContext context, long transferredBytes, long totalBytes) {
+                onProgressUpdate(context, transferredBytes, totalBytes);
+            }
 
-        @Override
-        public void onComplete(TransferContext context, long transferredBytes) {
-            upload.fireEvent(new FinishedEvent(upload,
-                    context.fileName(), FileTypesHelper.getMIMEType(context.fileName()), context.contentLength()));
-        }
+            @Override
+            public void onError(TransferContext context, IOException reason) {
+                onError(context, reason);
+            }
+
+            @Override
+            public void onComplete(TransferContext context, long transferredBytes) {
+                onComplete(context, transferredBytes);
+            }
+        };
     }
 }

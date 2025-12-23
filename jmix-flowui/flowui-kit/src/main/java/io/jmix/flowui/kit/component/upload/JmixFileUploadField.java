@@ -18,7 +18,7 @@ package io.jmix.flowui.kit.component.upload;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.server.streams.UploadHandler;
-import com.vaadin.flow.server.streams.UploadMetadata;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback.UploadContext;
 import jakarta.annotation.Nullable;
 import org.apache.commons.io.FileUtils;
 
@@ -98,15 +98,15 @@ public class JmixFileUploadField<C extends AbstractSingleUploadField<C, byte[], 
     }
 
     @Override
-    protected void onSucceeded(UploadMetadata metadata, byte[] data) {
-        saveFile(metadata, data);
+    protected void onSucceeded(UploadContext<byte[]> context) {
+        saveFile(context);
 
-        super.onSucceeded(metadata, data);
+        super.onSucceeded(context);
     }
 
-    protected void saveFile(UploadMetadata metadata, byte[] data) {
-        uploadedFileName = metadata.fileName();
-        setInternalValue(data, true);
+    protected void saveFile(UploadContext<byte[]> context) {
+        uploadedFileName = context.getUploadMetadata().fileName();
+        setInternalValue(context.getData(), true);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class JmixFileUploadField<C extends AbstractSingleUploadField<C, byte[], 
     @Override
     protected UploadHandler createUploadHandler() {
         return UploadHandler.inMemory((metadata, data) ->
-                        onSucceeded(metadata, data),
+                        onSucceeded(new UploadContext<>(metadata, data)),
                 createDefaultTransferProgressListener());
     }
 

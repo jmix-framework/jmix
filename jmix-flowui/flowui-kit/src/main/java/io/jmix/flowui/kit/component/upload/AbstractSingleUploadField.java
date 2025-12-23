@@ -36,6 +36,8 @@ import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.flow.server.streams.UploadMetadata;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.upload.event.*;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback.UploadContext;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,8 +160,6 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     }
 
     protected void initUploadComponent(JmixUploadButton upload) {
-        // TODO: gg, why we need to postpone adding event listeners?
-//        upload.setUploadHandler(createUploadHandler());
         Component uploadButtonComponent = createUploadButtonComponent();
         initUploadButtonComponent(uploadButtonComponent);
         upload.setUploadButton(uploadButtonComponent);
@@ -328,10 +328,11 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         return getEventBus().addListener(FileUploadSucceededEvent.class, (ComponentEventListener) listener);
     }
 
-    protected void onSucceeded(UploadMetadata metadata, EV data) {
+    protected void onSucceeded(UploadContext<EV> context) {
+        UploadMetadata metadata = context.getUploadMetadata();
         getEventBus().fireEvent(new FileUploadSucceededEvent<>(this,
                 metadata.fileName(), metadata.contentType(), metadata.contentLength(),
-                data));
+                context.getData()));
     }
 
     /**

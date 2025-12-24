@@ -17,13 +17,14 @@
 package io.jmix.flowui.download;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.*;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.asynctask.UiAsyncTasks;
 import io.jmix.flowui.component.filedownloader.JmixFileDownloader;
+import io.jmix.flowui.component.filedownloader.JmixFileDownloader.DownloadContext;
 import io.jmix.flowui.exception.IllegalConcurrentAccessException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +58,7 @@ public class DownloaderImpl implements Downloader {
 
     protected Messages messages;
     protected UiAsyncTasks uiAsyncTasks;
-
+    protected UiComponents uiComponents;
     protected FileStorageLocator fileStorageLocator;
     protected FileStorage fileStorage;
 
@@ -109,6 +110,11 @@ public class DownloaderImpl implements Downloader {
     @Autowired
     public void setUiAsyncTasks(UiAsyncTasks uiAsyncTasks) {
         this.uiAsyncTasks = uiAsyncTasks;
+    }
+
+    @Autowired
+    public void setUiComponents(UiComponents uiComponents) {
+        this.uiComponents = uiComponents;
     }
 
     protected boolean defaultViewFilePredicate(String fileExtension) {
@@ -176,32 +182,35 @@ public class DownloaderImpl implements Downloader {
             }
         }
 
-        JmixFileDownloader fileDownloader = new JmixFileDownloader();
+        JmixFileDownloader fileDownloader = createFileDownloader();
 
         UI ui = UI.getCurrent();
-
         ui.add(fileDownloader);
 
-        log.debug("added {} in {}", JmixFileDownloader.class.getSimpleName(), ui);
+        log.debug("added {} in {}", fileDownloader.getClass().getSimpleName(), ui);
 
-        fileDownloader.setFileName(resourceName);
         fileDownloader.setCacheMaxAgeSec(uiProperties.getFileDownloaderCacheMaxAgeSec());
         fileDownloader.addDownloadFinishedListener(this::fileDownloaderRemoveHandler);
         fileDownloader.setFileNotFoundExceptionHandler(this::handleFileNotFoundException);
 
-        StreamResource resource = new StreamResource(resourceName, dataProvider::getStream);
+        DownloadContext downloadContext = createDownloadContext(dataProvider, resourceName, downloadFormat,
+                (!showNewWindow || !isBrowserSupportsPopups()) && !isIPhone());
+        fileDownloader.downloadFile(downloadContext);
+    }
 
-        if (downloadFormat != null && StringUtils.isNotEmpty(downloadFormat.getContentType())) {
-            resource.setContentType(downloadFormat.getContentType() + DEFAULT_CHARSET_SUFFIX);
-        } else {
-            resource.setContentType(FileTypesHelper.getMIMEType(resourceName) + DEFAULT_CHARSET_SUFFIX);
-        }
+    protected JmixFileDownloader createFileDownloader() {
+        return uiComponents.create(JmixFileDownloader.class);
+    }
 
-        if (showNewWindow && isBrowserSupportsPopups() || isIPhone()) {
-            fileDownloader.viewDocument(resource);
-        } else {
-            fileDownloader.downloadFile(resource);
-        }
+    protected DownloadContext createDownloadContext(DownloadDataProvider dataProvider,
+                                                    String resourceName,
+                                                    @Nullable DownloadFormat downloadFormat,
+                                                    boolean isDownload) {
+        String contentType = downloadFormat != null
+                ? downloadFormat.getContentType() + DEFAULT_CHARSET_SUFFIX
+                : FileTypesHelper.getMIMEType(resourceName) + DEFAULT_CHARSET_SUFFIX;
+
+        return new DownloadContext(dataProvider, resourceName, contentType, isDownload);
     }
 
     /**

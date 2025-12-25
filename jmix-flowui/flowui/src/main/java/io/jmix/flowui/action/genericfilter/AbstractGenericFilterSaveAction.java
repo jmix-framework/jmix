@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
@@ -230,7 +230,7 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
 
     protected Component formItemMapper(Component formItem) {
         return formItem.getChildren()
-                .filter(component -> !(component instanceof Label)) // FormItem uses Label for... label
+                .filter(component -> !(component instanceof NativeLabel))
                 .findAny()
                 .orElseThrow();
     }

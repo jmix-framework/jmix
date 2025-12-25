@@ -21,10 +21,12 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.upload.FinishedEvent;
 import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.server.streams.TransferContext;
+import com.vaadin.flow.server.streams.TransferProgressListener;
 
 /**
  * Event is fired when {@link FinishedEvent} of {@link Upload} is occurred. See
- * {@link Upload#addFinishedListener(ComponentEventListener)} for details.
+ * {@link TransferProgressListener#onComplete(TransferContext, long)} for details.
  *
  * @param <C> type of upload field
  * @see FinishedEvent

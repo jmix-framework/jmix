@@ -128,7 +128,6 @@ public class RelativeDateIntervalField extends CustomField<RelativeDateInterval>
 
         select.setStatusChangeHandler(this::onValidationStatusChange);
         select.addValidationStatusChangeListener(__ -> updateInvalidState());
-        select.addClientValidatedEventListener(__ -> updateInvalidState());
 
         select.setRequiredMessage(
                 messages.getMessage(getClass(),

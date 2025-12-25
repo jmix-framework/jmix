@@ -25,7 +25,7 @@ import com.vaadin.flow.server.streams.UploadMetadata;
 import io.jmix.core.FileTypesHelper;
 import io.jmix.core.Messages;
 import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
-import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -118,15 +118,15 @@ public class JmixUpload extends Upload implements ApplicationContextAware, Initi
             transferProgressNotifier.addTransferProgressListener(createDefaultTransferProgressListener());
         }
 
-        if (handler instanceof SupportUploadSuccessCallback supportUploadSuccessCallback) {
-            supportUploadSuccessCallback.setUploadSuccessCallback(this::onSuccess);
+        if (handler instanceof SupportUploadSuccessHandler supportUploadSuccessHandler) {
+            supportUploadSuccessHandler.setUploadSuccessHandler(this::onSuccess);
         }
 
         super.setUploadHandler(handler);
     }
 
-    protected void onSuccess(SupportUploadSuccessCallback.UploadContext context) {
-        UploadMetadata uploadMetadata = context.getUploadMetadata();
+    protected void onSuccess(SupportUploadSuccessHandler.UploadSuccessContext context) {
+        UploadMetadata uploadMetadata = context.uploadMetadata();
         fireEvent(new SucceededEvent(this,
                 uploadMetadata.fileName(), uploadMetadata.contentType(), uploadMetadata.contentLength()));
     }

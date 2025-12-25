@@ -38,7 +38,6 @@ import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.upload.JmixUploadI18N;
 import io.jmix.flowui.kit.component.upload.event.FileUploadFileRejectedEvent;
-import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback.UploadContext;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,7 +103,7 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
     @Override
     protected UploadHandler createUploadHandler() {
         InMemoryUploadHandler uploadHandler = applicationContext.getBean(InMemoryUploadHandler.class);
-        uploadHandler.setUploadSuccessCallback(this::onSucceeded);
+        uploadHandler.setUploadSuccessHandler(this::onSucceeded);
         uploadHandler.addTransferProgressListener(createDefaultTransferProgressListener());
         return uploadHandler;
     }

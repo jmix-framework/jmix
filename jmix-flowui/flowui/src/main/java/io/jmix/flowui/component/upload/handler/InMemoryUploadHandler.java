@@ -19,7 +19,7 @@ package io.jmix.flowui.component.upload.handler;
 import com.vaadin.flow.server.streams.*;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
-import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
@@ -38,9 +38,9 @@ import java.io.UncheckedIOException;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InMemoryUploadHandler
         extends TransferProgressAwareHandler<UploadEvent, InMemoryUploadHandler>
-        implements UploadHandler, TransferProgressNotifier, SupportUploadSuccessCallback<byte[]> {
+        implements UploadHandler, TransferProgressNotifier, SupportUploadSuccessHandler<byte[]> {
 
-    protected UploadSuccessCallback<byte[]> successCallback;
+    protected UploadSuccessHandler<byte[]> successHandler;
 
     public InMemoryUploadHandler() {
     }
@@ -62,8 +62,8 @@ public class InMemoryUploadHandler
         }
         event.getUI().access(() -> {
             try {
-                if (successCallback != null) {
-                    successCallback.complete(new UploadContext<>(
+                if (successHandler != null) {
+                    successHandler.complete(new UploadSuccessContext<>(
                             new UploadMetadata(event.getFileName(), event.getContentType(), event.getFileSize()),
                             data));
                 }
@@ -81,8 +81,8 @@ public class InMemoryUploadHandler
     }
 
     @Override
-    public void setUploadSuccessCallback(@Nullable UploadSuccessCallback<byte[]> successCallback) {
-        this.successCallback = successCallback;
+    public void setUploadSuccessHandler(@Nullable UploadSuccessHandler<byte[]> handler) {
+        this.successHandler = handler;
     }
 
     @Override

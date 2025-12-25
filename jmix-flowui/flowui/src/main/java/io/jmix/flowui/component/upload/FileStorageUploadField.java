@@ -41,7 +41,7 @@ import io.jmix.flowui.kit.component.upload.JmixFileStorageUploadField;
 import io.jmix.flowui.kit.component.upload.JmixUploadI18N;
 import io.jmix.flowui.kit.component.upload.event.FileUploadFileRejectedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
-import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback.UploadContext;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler.UploadSuccessContext;
 import io.jmix.flowui.upload.TemporaryStorage;
 import io.jmix.flowui.upload.TemporaryStorage.FileInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -118,13 +118,13 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     @Override
     protected UploadHandler createUploadHandler() {
         FileTemporaryStorageUploadHandler uploadHandler = applicationContext.getBean(FileTemporaryStorageUploadHandler.class);
-        uploadHandler.setUploadSuccessCallback(this::onSucceeded);
+        uploadHandler.setUploadSuccessHandler(this::onSucceeded);
         uploadHandler.addTransferProgressListener(createDefaultTransferProgressListener());
         return uploadHandler;
     }
 
     @Override
-    protected void onSucceeded(UploadContext<FileInfo> context) {
+    protected void onSucceeded(UploadSuccessContext<FileInfo> context) {
         saveFile(context);
 
         super.onSucceeded(context);
@@ -274,13 +274,13 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
         return super.addFileUploadSucceededListener(listener);
     }
 
-    protected void saveFile(UploadContext<FileInfo> context) {
+    protected void saveFile(UploadSuccessContext<FileInfo> context) {
         if (getFileStoragePutMode() == FileStoragePutMode.IMMEDIATE) {
             checkFileStorageInitialized();
 
             FileRef fileRef = temporaryStorage.putFileIntoStorage(
-                    context.getData().getId(),
-                    context.getUploadMetadata().fileName(),
+                    context.data().getId(),
+                    context.uploadMetadata().fileName(),
                     fileStorage);
 
             setInternalValue(fileRef, true);

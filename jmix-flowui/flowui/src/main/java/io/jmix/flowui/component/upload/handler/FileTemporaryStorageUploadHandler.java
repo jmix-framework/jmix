@@ -19,11 +19,11 @@ package io.jmix.flowui.component.upload.handler;
 import com.vaadin.flow.server.streams.*;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
-import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler;
 import io.jmix.flowui.upload.TemporaryStorage;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -35,11 +35,11 @@ import java.io.*;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FileTemporaryStorageUploadHandler
         extends TransferProgressAwareHandler<UploadEvent, FileTemporaryStorageUploadHandler>
-        implements UploadHandler, TransferProgressNotifier, SupportUploadSuccessCallback<TemporaryStorage.FileInfo> {
+        implements UploadHandler, TransferProgressNotifier, SupportUploadSuccessHandler<TemporaryStorage.FileInfo> {
 
     protected final TemporaryStorage temporaryStorage;
 
-    protected UploadSuccessCallback<TemporaryStorage.FileInfo> successCallback;
+    protected UploadSuccessHandler<TemporaryStorage.FileInfo> successCallback;
     protected TemporaryStorage.FileInfo fileInfo;
 
     public FileTemporaryStorageUploadHandler(TemporaryStorage temporaryStorage) {
@@ -67,7 +67,7 @@ public class FileTemporaryStorageUploadHandler
         event.getUI().access(() -> {
             try {
                 if (successCallback != null) {
-                    successCallback.complete(new UploadContext<>(metadata, fileInfo));
+                    successCallback.complete(new UploadSuccessContext<>(metadata, fileInfo));
                 }
             } catch (IOException e) {
                 throw new UncheckedIOException("Error in file upload callback", e);
@@ -81,8 +81,8 @@ public class FileTemporaryStorageUploadHandler
     }
 
     @Override
-    public void setUploadSuccessCallback(@Nullable UploadSuccessCallback<TemporaryStorage.FileInfo> successCallback) {
-        this.successCallback = successCallback;
+    public void setUploadSuccessHandler(@Nullable UploadSuccessHandler<TemporaryStorage.FileInfo> handler) {
+        this.successCallback = handler;
     }
 
     public TemporaryStorage.FileInfo getFileInfo() {

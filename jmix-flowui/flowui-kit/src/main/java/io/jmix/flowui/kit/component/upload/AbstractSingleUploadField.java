@@ -36,8 +36,7 @@ import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.flow.server.streams.UploadMetadata;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.upload.event.*;
-import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback;
-import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessCallback.UploadContext;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler.UploadSuccessContext;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -328,11 +327,11 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         return getEventBus().addListener(FileUploadSucceededEvent.class, (ComponentEventListener) listener);
     }
 
-    protected void onSucceeded(UploadContext<EV> context) {
-        UploadMetadata metadata = context.getUploadMetadata();
+    protected void onSucceeded(UploadSuccessContext<EV> context) {
+        UploadMetadata metadata = context.uploadMetadata();
         getEventBus().fireEvent(new FileUploadSucceededEvent<>(this,
                 metadata.fileName(), metadata.contentType(), metadata.contentLength(),
-                context.getData()));
+                context.data()));
     }
 
     /**

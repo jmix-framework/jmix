@@ -30,16 +30,31 @@ import java.io.Serializable;
  *
  * @param <V> the type of the uploaded data
  */
+// TODO: gg, rename to handler
 public interface SupportUploadSuccessCallback<V> {
 
+    /**
+     * Sets a handler to be invoked upon the successful completion of an upload operation.
+     * <p>
+     * The provided callback is triggered when the upload process completes successfully,
+     * enabling further processing of the uploaded data.
+     * <p>
+     * If {@code null} is passed as the parameter, any previously set callback will be cleared.
+     *
+     * @param successCallback the handler to be executed on a successful upload;
+     *                        may be {@code null} to clear any existing handler
+     * @param <V>             the type of the uploaded data
+     */
     void setUploadSuccessCallback(@Nullable UploadSuccessCallback<V> successCallback);
 
+    // TODO: gg, rename to UploadSuccessHandler
     @FunctionalInterface
-    public interface UploadSuccessCallback<V> extends Serializable {
+    interface UploadSuccessCallback<V> extends Serializable {
 
         void complete(UploadContext<V> context) throws IOException;
     }
 
+    // TODO: gg, rename to UploadSuccessContext, convert to record
     class UploadContext<V> {
 
         protected final UploadMetadata uploadMetadata;

@@ -122,7 +122,7 @@ public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSet
         }
     }
 
-    private void onOwnerViewDetach(ComponentEvent<?> componentEvent) {
+    protected void onOwnerViewDetach(ComponentEvent<?> componentEvent) {
         checkAttachedToOwner();
 
         if (saveSettingsDelegate != null) {

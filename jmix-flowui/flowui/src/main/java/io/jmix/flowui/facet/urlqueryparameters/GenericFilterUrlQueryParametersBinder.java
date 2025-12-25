@@ -489,7 +489,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         return Strings.isNullOrEmpty(conditionParam) ? DEFAULT_CONDITION_PARAM : conditionParam;
     }
 
-    public String _getConditionParam() {
+    protected String _getConditionParam() {
         return getOwnerId("genericFilter") + "_" + getConditionParam();
     }
 

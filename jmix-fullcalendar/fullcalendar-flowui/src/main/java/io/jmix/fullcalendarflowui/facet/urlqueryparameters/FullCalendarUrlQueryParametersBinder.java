@@ -108,7 +108,7 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
         return Strings.isNullOrEmpty(calendarDateParam) ? CALENDAR_DATE_PARAM : calendarDateParam;
     }
 
-    public String _getCalendarDateParam() {
+    protected String _getCalendarDateParam() {
         return getOwnerId("calendar") + "_" + getCalendarDateParam();
     }
 

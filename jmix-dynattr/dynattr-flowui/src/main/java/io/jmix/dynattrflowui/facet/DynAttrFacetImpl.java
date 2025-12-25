@@ -42,7 +42,7 @@ public class DynAttrFacetImpl extends AbstractFacet implements DynAttrFacet {
         subscribe();
     }
 
-    private void subscribe() {
+    protected void subscribe() {
         FacetOwner owner = getOwner();
         if (owner == null) {
             throw new IllegalStateException("%s is not attached to owner"

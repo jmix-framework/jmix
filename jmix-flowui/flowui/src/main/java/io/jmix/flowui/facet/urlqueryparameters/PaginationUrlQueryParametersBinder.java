@@ -170,7 +170,7 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
         return Strings.isNullOrEmpty(maxResultsParam) ? MAX_RESULTS_PARAM : maxResultsParam;
     }
 
-    public String _getMaxResultsParam() {
+    protected String _getMaxResultsParam() {
         return getOwnerId("pagination") + "_" + getMaxResultsParam();
     }
 

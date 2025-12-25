@@ -26,6 +26,7 @@ import io.jmix.core.FileTypesHelper;
 import io.jmix.core.Messages;
 import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
 import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler.UploadSuccessContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -119,34 +120,34 @@ public class JmixUpload extends Upload implements ApplicationContextAware, Initi
         }
 
         if (handler instanceof SupportUploadSuccessHandler supportUploadSuccessHandler) {
-            supportUploadSuccessHandler.setUploadSuccessHandler(this::onSuccess);
+            supportUploadSuccessHandler.setUploadSuccessHandler(this::onUploadSuccess);
         }
 
         super.setUploadHandler(handler);
     }
 
-    protected void onSuccess(SupportUploadSuccessHandler.UploadSuccessContext context) {
+    protected void onUploadSuccess(UploadSuccessContext context) {
         UploadMetadata uploadMetadata = context.uploadMetadata();
         fireEvent(new SucceededEvent(this,
                 uploadMetadata.fileName(), uploadMetadata.contentType(), uploadMetadata.contentLength()));
     }
 
-    protected void onStarted(TransferContext context) {
+    protected void onUploadStart(TransferContext context) {
         fireEvent(new StartedEvent(this,
                 context.fileName(), FileTypesHelper.getMIMEType(context.fileName()), context.contentLength()));
     }
 
-    protected void onProgressUpdate(TransferContext context, long transferredBytes, long totalBytes) {
+    protected void onUploadProgress(TransferContext context, long transferredBytes, long totalBytes) {
         fireEvent(new ProgressUpdateEvent(this,
                 transferredBytes, totalBytes, context.fileName()));
     }
 
-    protected void onError(TransferContext context, IOException reason) {
+    protected void onUploadError(TransferContext context, IOException reason) {
         fireEvent(new FailedEvent(this, context.fileName(),
                 FileTypesHelper.getMIMEType(context.fileName()), context.contentLength(), reason));
     }
 
-    protected void onComplete(TransferContext context, long transferredBytes) {
+    protected void onUploadComplete(TransferContext context, long transferredBytes) {
         fireEvent(new FinishedEvent(this,
                 context.fileName(), FileTypesHelper.getMIMEType(context.fileName()), context.contentLength()));
     }
@@ -155,22 +156,22 @@ public class JmixUpload extends Upload implements ApplicationContextAware, Initi
         return new TransferProgressListener() {
             @Override
             public void onStart(TransferContext context) {
-                onStarted(context);
+                onUploadStart(context);
             }
 
             @Override
             public void onProgress(TransferContext context, long transferredBytes, long totalBytes) {
-                onProgressUpdate(context, transferredBytes, totalBytes);
+                onUploadProgress(context, transferredBytes, totalBytes);
             }
 
             @Override
             public void onError(TransferContext context, IOException reason) {
-                onError(context, reason);
+                onUploadError(context, reason);
             }
 
             @Override
             public void onComplete(TransferContext context, long transferredBytes) {
-                onComplete(context, transferredBytes);
+                onUploadComplete(context, transferredBytes);
             }
         };
     }

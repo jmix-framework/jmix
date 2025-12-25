@@ -38,6 +38,9 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Predicate;
 
+/**
+ * A handler for managing file download/view requests triggered by {@link Downloader}.
+ */
 @Component("flowui_DownloaderExportHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderExportHandler>
@@ -63,9 +66,6 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
 
     @Override
     public void handleDownloadRequest(DownloadEvent event) throws IOException {
-        VaadinRequest request = event.getRequest();
-        VaadinSession session = event.getSession();
-
         String fileName = downloadContext.fileName();
         String contentType = downloadContext.contentType();
         event.setFileName(fileName);

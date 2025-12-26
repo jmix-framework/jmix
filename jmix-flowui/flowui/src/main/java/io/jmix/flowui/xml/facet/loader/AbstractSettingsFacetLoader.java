@@ -31,12 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class SettingsFacetLoader extends AbstractFacetLoader<SettingsFacet> {
-
-    @Override
-    protected SettingsFacet createFacet() {
-        return facets.create(SettingsFacet.class);
-    }
+public abstract class AbstractSettingsFacetLoader extends AbstractFacetLoader<SettingsFacet<?>> {
 
     @Override
     public void loadFacet() {
@@ -44,8 +39,8 @@ public class SettingsFacetLoader extends AbstractFacetLoader<SettingsFacet> {
         if (facets instanceof FacetsImpl facetsImpl) {
             FacetProvider<SettingsFacet> provider = facetsImpl.getProvider(SettingsFacet.class);
 
-            if (provider != null) {
-                provider.loadFromXml(resultFacet, element, context);
+            if (provider != null && context instanceof ComponentLoader.ComponentContext componentContext) {
+                provider.loadFromXml(resultFacet, element, componentContext);
                 return;
             }
         }

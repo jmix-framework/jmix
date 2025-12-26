@@ -26,7 +26,6 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.fragment.Fragment;
-import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.ActionHolder;
@@ -255,7 +254,7 @@ public final class AutowireUtils {
                                                                           Target targetType) {
         return Strings.isNullOrEmpty(targetId) ? switch (targetType) {
             case COMPONENT, CONTROLLER -> fragment;
-            case HOST_CONTROLLER -> findHostView(fragment);
+            case HOST_CONTROLLER -> FragmentUtils.getHostView(fragment);
             case DATA_CONTEXT -> FragmentUtils.getFragmentData(fragment).getDataContext();
             default -> throw new UnsupportedOperationException(String.format("Unsupported @%s target '%s'",
                     annotation.getClass().getSimpleName(), targetType));
@@ -792,17 +791,6 @@ public final class AutowireUtils {
     }
 
     @Nullable
-    private static View<?> findHostView(FragmentOwner fragmentOwner) {
-        if (fragmentOwner instanceof View<?> view) {
-            return view;
-        } else if (fragmentOwner instanceof Fragment<?> fragment) {
-            return findHostView(FragmentUtils.getParentController(fragment));
-        }
-
-        throw new IllegalStateException("Unknown parent type: " + fragmentOwner.getClass().getName());
-    }
-
-    @Nullable
     private static Action findActionCandidate(Composite<?> component, String targetId) {
         HasActions hasActions = null;
         if (component instanceof View<?> view) {
@@ -820,6 +808,10 @@ public final class AutowireUtils {
     private static Facet findFacetCandidate(Composite<?> component, String targetId) {
         if (component instanceof View<?> view) {
             return ViewControllerUtils.getViewFacets(view).getFacet(targetId);
+        }
+
+        if (component instanceof Fragment<?> fragment) {
+            return FragmentUtils.getFragmentFacets(fragment).getFacet(targetId);
         }
 
         return null;

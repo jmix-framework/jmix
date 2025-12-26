@@ -3,13 +3,16 @@ package io.jmix.datatools.datamodel.engine.impl;
 import io.jmix.datatools.DatatoolsProperties;
 import io.jmix.datatools.datamodel.app.RelationType;
 import io.jmix.datatools.datamodel.engine.DiagramConstructor;
+import io.jmix.datatools.datamodel.engine.PlantUMLEncoder;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.HexFormat;
 import java.util.List;
+import java.util.zip.Deflater;
 
 public class PlantUmlDiagramConstructor implements DiagramConstructor {
     protected DatatoolsProperties datatoolsProperties;
@@ -19,9 +22,11 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
     protected String relationTemplate;
     protected String urlTemplate;
     protected RestClient restClient;
+    protected PlantUMLEncoder plantUMLEncoder;
 
     public PlantUmlDiagramConstructor(DatatoolsProperties datatoolsProperties) {
         this.datatoolsProperties = datatoolsProperties;
+        this.plantUMLEncoder = new PlantUMLEncoderImpl();
         configureEngine();
     }
 
@@ -34,8 +39,24 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
     }
 
     protected byte[] receiveDiagramFile(String diagramDescription) {
-        String ecnodedString = HexFormat.of().formatHex(diagramDescription.getBytes());
-        String endpoint = String.format(urlTemplate, ecnodedString);
+        //String ecnodedString = HexFormat.of().formatHex(diagramDescription.getBytes());
+        String endpoint;
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION, true);
+        deflater.setInput(diagramDescription.getBytes(StandardCharsets.UTF_8));
+        deflater.finish();
+
+        byte[] buffer = new byte[1024];
+        while (!deflater.finished()) {
+            int count = deflater.deflate(buffer);
+            outputStream.write(buffer, 0, count);
+        }
+
+        deflater.end();
+
+        endpoint = String.format(urlTemplate, plantUMLEncoder.encode(outputStream.toByteArray()));
 
         byte[] resultPngBuf = restClient.get()
                 .uri(endpoint)
@@ -60,7 +81,7 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
         String baseUrl = datatoolsProperties.getDiagramConstructor().getHost() == null
                 ? "https://www.plantuml.com"
                 : datatoolsProperties.getDiagramConstructor().getHost();
-        urlTemplate = "/plantuml/png/~h%s";
+        urlTemplate = "/plantuml/png/%s";
         entityTemplate = "entity %s {\n";
         attributeTemplate = "    %s : %s\n";
         relationTemplate = "%s %s %s\n";

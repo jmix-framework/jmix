@@ -16,6 +16,8 @@
 
 package io.jmix.datatools.datamodel.impl;
 
+import io.jmix.core.JmixModuleDescriptor;
+import io.jmix.core.JmixModules;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.persistence.DbmsType;
@@ -29,7 +31,6 @@ import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -42,6 +43,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component("datatl_DataModelManager")
@@ -52,15 +54,23 @@ public class DataModelManagerImpl implements DataModelManager {
 
     protected final DataSource dataSource;
     protected final DbmsType dbmsType;
+    protected final JmixModules jmixModules;
+
+    protected final JmixModuleDescriptor mainModuleInfo;
 
     protected List<EntityModel> filteredModels;
 
-    public DataModelManagerImpl(Metadata metadata, DataSource dataSource, DiagramConstructor diagramConstructor, DbmsType dbmsType) {
+    public DataModelManagerImpl(Metadata metadata, DataSource dataSource, DiagramConstructor diagramConstructor, DbmsType dbmsType,
+                                JmixModules jmixModules) {
         this.metadata = metadata;
         this.dataModelHolder = new DataModelHolder();
         this.dataSource = dataSource;
         this.diagramConstructor = diagramConstructor;
         this.dbmsType = dbmsType;
+        this.jmixModules = jmixModules;
+
+        this.mainModuleInfo = jmixModules.getLast();
+
         constructDataModel();
     }
 
@@ -206,11 +216,14 @@ public class DataModelManagerImpl implements DataModelManager {
             }
         }
 
+        String entityBasePackage = getEntityBasePackage(entity);
+        boolean isSystem = !entityBasePackage.equals(mainModuleInfo.getBasePackage());
+
         String currentEntityType = entity.getName();
 
         String entityDescription = diagramConstructor.constructEntityDescription(currentEntityType, attributeModelsList);
 
-        EntityModel entityModel = constructEntityModel(entity);
+        EntityModel entityModel = constructEntityModel(entity, isSystem);
 
         DataModel dataModel = new DataModel(
                 currentEntityType,
@@ -225,10 +238,30 @@ public class DataModelManagerImpl implements DataModelManager {
         return dataModel;
     }
 
-    protected EntityModel constructEntityModel(MetaClass entity) {
+    protected String getEntityBasePackage(MetaClass entity) {
+        String[] splittedPackageName = entity.getJavaClass().getPackage().getName().split("\\.");
+        StringBuilder entityBasePackage = new StringBuilder(3);
+
+        int maxId = 3;
+        int cutId = maxId-1;
+
+        for (int i = 0; i < maxId; i++) {
+            entityBasePackage.append(splittedPackageName[i]);
+
+            if (i != cutId) {
+                entityBasePackage.append(".");
+            }
+        }
+
+        return entityBasePackage.toString();
+    }
+
+    protected EntityModel constructEntityModel(MetaClass entity, boolean isSystem) {
         EntityModel entityModel = metadata.create(EntityModel.class);
 
         entityModel.setName(entity.getName());
+        entityModel.setDataStore(entity.getStore().getName());
+        entityModel.setIsSystem(isSystem);
         entityModel.setTableName(entity.getJavaClass().isAnnotationPresent(Table.class)
                 ? entity.getJavaClass().getAnnotation(Table.class).name()
                 : "");
@@ -304,7 +337,8 @@ public class DataModelManagerImpl implements DataModelManager {
         return attributeModel;
     }
 
-    protected String getDatabaseColumnType(String schemaName, String catalogName, String tableName, String columnName, @Nullable AttributeModel attributeModel) {
+    protected String getDatabaseColumnType(@Nullable String schemaName, @Nullable String catalogName, String tableName,
+                                           String columnName, @Nullable AttributeModel attributeModel) {
         try (Connection conn = dataSource.getConnection()) {
             DatabaseMetaData dbMetaData = conn.getMetaData();
 
@@ -365,13 +399,13 @@ public class DataModelManagerImpl implements DataModelManager {
 
     protected void constructDataModel() {
         Collection<MetaClass> metaClasses  = metadata.getClasses();
+        List<JmixModuleDescriptor> modulesList = jmixModules.getAll();
+        JmixModuleDescriptor appPackageModule = jmixModules.getLast();
 
         for (MetaClass metaClass : metaClasses) {
             if (metaClass.getJavaClass().isAnnotationPresent(Entity.class)
             && metaClass.getJavaClass().isAnnotationPresent(Table.class)) {
-                if (!metaClass.getJavaClass().getPackage().getName().startsWith("io.jmix")) {
-                    createEntityDescription(metaClass, false);
-                }
+                createEntityDescription(metaClass, false);
             }
         }
     }

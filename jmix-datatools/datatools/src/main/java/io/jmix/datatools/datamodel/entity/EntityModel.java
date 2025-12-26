@@ -19,6 +19,8 @@ package io.jmix.datatools.datamodel.entity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
@@ -31,6 +33,28 @@ public class EntityModel {
     private String name;
 
     private String tableName;
+
+    @JmixProperty(mandatory = true)
+    @NotNull
+    private String dataStore;
+
+    private Boolean isSystem;
+
+    public String getDataStore() {
+        return dataStore;
+    }
+
+    public void setDataStore(String dataStore) {
+        this.dataStore = dataStore;
+    }
+
+    public Boolean getIsSystem() {
+        return isSystem;
+    }
+
+    public void setIsSystem(Boolean isSystem) {
+        this.isSystem = isSystem;
+    }
 
     public String getTableName() {
         return tableName;

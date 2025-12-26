@@ -14,6 +14,7 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <settings auto="true"/>
     </facets>
     <actions>
         <action id="selectAction" type="lookup_select"/>
@@ -27,6 +28,8 @@
                 <textField id="entityNameFilter" datatype="string"/>
                 <button id="searchButton" icon="vaadin:search" text="msg://dataModelListView.searchButton.text"/>
                 <button id="diagramButton" icon="vaadin:sitemap" text="msg://dataModelListView.diagramButton.text"/>
+                <checkbox id="showSystemCheckBox" label="msg://io.jmix.datatoolsflowui.view.datamodel/dataModelListView.showSystemEntities.text"
+                          alignSelf="CENTER" value="false"/>
             </hbox>
         <flexLayout id="contentBox" classNames="jmix-data-model-list-view-content-wrapper">
             <vbox css="flex-grow: 1;" padding="false" width="unset">
@@ -38,6 +41,7 @@
                           columnReorderingAllowed="true" height="100%" alignSelf="START">
                     <columns resizable="true">
                         <column property="name"/>
+                        <column property="dataStore"/>
                         <column property="tableName"/>
                     </columns>
                 </dataGrid>
@@ -54,8 +58,8 @@
                         <column property="javaType"/>
                         <column property="columnName"/>
                         <column property="dbType"/>
-                        <column property="isNullable"/>
-                        <column property="isMandatory"/>
+                        <column property="isNullable" textAlign="CENTER"/>
+                        <column property="isMandatory" textAlign="CENTER"/>
                     </columns>
                 </dataGrid>
             </vbox>

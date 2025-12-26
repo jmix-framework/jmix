@@ -1,9 +1,7 @@
 package io.jmix.datatoolsflowui.view.datamodel;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.KeyPressEvent;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -13,6 +11,8 @@ import io.jmix.datatools.datamodel.DataModel;
 import io.jmix.datatools.datamodel.DataModelManager;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -23,10 +23,7 @@ import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Route(value = "datatl/data-model", layout = DefaultMainViewParent.class)
@@ -37,7 +34,11 @@ import java.util.stream.Stream;
 public class DataModelListView extends StandardListView<EntityModel> {
     @Autowired
     protected DataModelManager dataModelManager;
-
+    
+    @ViewComponent
+    private JmixCheckbox showSystemCheckBox;
+    @ViewComponent
+    private DataGrid<EntityModel> entityModelsDataGrid;
     @ViewComponent
     private CollectionLoader<EntityModel> entityModelsDl;
     @ViewComponent
@@ -72,15 +73,57 @@ public class DataModelListView extends StandardListView<EntityModel> {
 
         if (entityNames == null) {
             List<EntityModel> model = dataModelManager.getDataModelHolder().getDataModels().values()
-                    .stream().map(DataModel::getEntityModel).toList();
+                    .stream().map(DataModel::getEntityModel)
+                    .filter(e -> {
+                        if (showSystemCheckBox.getValue()) {
+                            return true;
+                        } else {
+                            return e.getIsSystem().equals(false);
+                        }
+                    })
+                    .toList();
+            changeDataStoreColumnVisibility(model);
             entityModelsDc.setItems(model);
             return model;
         }
 
-        List<EntityModel> model = entityNames.stream().map(e -> dataModelManager.getDataModelHolder().getEntityModel(e)).toList();
+        List<EntityModel> model = entityNames.stream()
+                .map(e -> dataModelManager.getDataModelHolder().getEntityModel(e))
+                .filter(e -> {
+                    if (showSystemCheckBox.getValue()) {
+                        return true;
+                    } else {
+                        return e.getIsSystem().equals(false);
+                    }
+                })
+                .toList();
+
+        changeDataStoreColumnVisibility(model);
         entityModelsDc.setItems(model);
         return model;
     }
+
+    protected void changeDataStoreColumnVisibility(List<EntityModel> model) {
+        Set<String> byDataSet = new HashSet<>();
+
+        for (EntityModel em : model) {
+            byDataSet.add(em.getDataStore());
+        }
+
+        Grid.Column<EntityModel> dataStoreColumn = entityModelsDataGrid.getColumnByKey("dataStore");
+
+        if (byDataSet.size() <= 1) {
+            if (dataStoreColumn != null) {
+                entityModelsDataGrid.removeColumn(dataStoreColumn);
+            }
+        } else {
+            if (dataStoreColumn == null) {
+                entityModelsDataGrid.addColumn("dataStore");
+            }
+        }
+    }
+    
+    
 
     @Install(to = "attributeModelsDl", target = Target.DATA_LOADER)
     protected List<AttributeModel> attributeModelsDlLoadDelegate(LoadContext<AttributeModel> loadContext) {
@@ -90,7 +133,7 @@ public class DataModelListView extends StandardListView<EntityModel> {
     @Subscribe(id = "diagramButton", subject = "clickListener")
     public void onDiagramButtonClick(final ClickEvent<JmixButton> event) {
         dataModelManager.setFilteredModels(entityModelsDl.getContainer().getItems());
-        UI.getCurrent().getPage().open("/data-diagram-view");
+        UI.getCurrent().getPage().open("datatl/data-diagram");
     }
 
     @Subscribe("entityModelsDataGrid")
@@ -155,5 +198,10 @@ public class DataModelListView extends StandardListView<EntityModel> {
     @Subscribe("entityNameFilter")
     public void onEntityNameFilterKeyPress(final KeyPressEvent event) {
         entityNameFilter.setInvalid(false);
+    }
+
+    @Subscribe("showSystemCheckBox")
+    public void onShowSystemCheckBoxComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixCheckbox, Boolean> event) {
+        entityModelsDl.load();
     }
 }

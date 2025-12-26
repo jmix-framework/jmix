@@ -55,6 +55,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("formRow", FormLayoutLoader.FormRowLoader.class);
         loaders.put("card", CardLoader.class);
         loaders.put("gridLayout", GridLayoutLoader.class);
+        loaders.put("drawerLayout", DrawerLayoutLoader.class);
 
         /* Components */
         loaders.put("button", ButtonLoader.class);

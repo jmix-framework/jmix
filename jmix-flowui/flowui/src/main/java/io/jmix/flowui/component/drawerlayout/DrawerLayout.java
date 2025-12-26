@@ -48,34 +48,16 @@ public class DrawerLayout extends JmixDrawerLayout implements ComponentContainer
     @Nullable
     @Override
     public Object getSubPart(String name) {
-        if (getLayout() != null) {
-            Optional<Component> component = findComponent(getLayout(), name);
+        if (getContent() != null) {
+            Optional<Component> component = findComponent(getContent(), name);
             if (component.isPresent()) {
                 return component.get();
             }
         }
-        if (!getDrawerHeaderComponents().isEmpty()) {
-            for (Component component : getDrawerHeaderComponents()) {
-                Optional<Component> headerComponent = findComponent(component, name);
-                if (headerComponent.isPresent()) {
-                    return headerComponent.get();
-                }
-            }
-        }
-        if (!getDrawerContentComponents().isEmpty()) {
-            for (Component component : getDrawerContentComponents()) {
-                Optional<Component> contentComponent = findComponent(component, name);
-                if (contentComponent.isPresent()) {
-                    return contentComponent.get();
-                }
-            }
-        }
-        if (!getDrawerFooterComponents().isEmpty()) {
-            for (Component component : getDrawerFooterComponents()) {
-                Optional<Component> footerComponent = findComponent(component, name);
-                if (footerComponent.isPresent()) {
-                    return footerComponent.get();
-                }
+        if (getDrawerContent() != null) {
+            Optional<Component> contentComponent = findComponent(getDrawerContent(), name);
+            if (contentComponent.isPresent()) {
+                return contentComponent.get();
             }
         }
         return null;

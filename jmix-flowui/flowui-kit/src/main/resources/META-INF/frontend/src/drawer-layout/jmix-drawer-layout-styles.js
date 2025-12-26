@@ -69,14 +69,6 @@ export const drawerLayoutStyles = css`
         display: none;
     }
 
-    [part='drawerHeader'] {
-        display: flex;
-        gap: var(--jmix-drawer-layout-drawer-footer-gap);
-        flex-wrap: wrap;
-        overflow: clip;
-        width: 100%;
-    }
-
     [part='drawerContent'] {
         box-sizing: border-box;
         height: 100%;
@@ -87,32 +79,8 @@ export const drawerLayoutStyles = css`
         width: 100%;
     }
 
-    [part='drawerFooter'] {
-        background-color: var(--lumo-contrast-5pct);
-        display: flex;
-        gap: var(--jmix-drawer-layout-drawer-footer-gap);
-        justify-content: flex-end;
-        flex-wrap: wrap;
-        overflow: clip;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    :host([theme~='drawerHeaderPadding']) [part='drawerHeader'] {
-        padding: var(--jmix-drawer-layout-drawer-header-padding);
-    }
-
     :host([theme~='drawerContentPadding']) [part='drawerContent'] {
         padding: var(--jmix-drawer-layout-drawer-content-padding);
-    }
-
-    :host([theme~='drawerFooterPadding']) [part='drawerFooter'] {
-        padding: var(--jmix-drawer-layout-drawer-footer-padding);
-    }
-
-    [part='drawerHeader'][hidden],
-    [part='drawerFooter'][hidden] {
-        display: none;
     }
 
   :host([drawer-opened][modal]:not([theme~='blurred-curtain'])) {

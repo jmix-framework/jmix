@@ -23,18 +23,12 @@ import com.vaadin.flow.dom.ElementUtil;
 import com.vaadin.flow.dom.PropertyChangeEvent;
 import jakarta.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class JmixDrawerLayout extends Component implements HasSize {
 
     protected Component content;
-    protected List<Component> headerComponents = new ArrayList<>();
-    protected List<Component> drawerContentComponents = new ArrayList<>();
-    protected List<Component> footerComponents = new ArrayList<>();
+    protected Component drawerContent;
 
-    protected ContentInertManager contentInertManager;
+    protected ComponentInertManager componentInertManager;
 
     public JmixDrawerLayout() {
         // Workaround for: https://github.com/vaadin/flow/issues/3496
@@ -47,7 +41,7 @@ public class JmixDrawerLayout extends Component implements HasSize {
      * @return the layout content
      */
     @Nullable
-    public Component getLayout() {
+    public Component getContent() {
         return content;
     }
 
@@ -56,17 +50,17 @@ public class JmixDrawerLayout extends Component implements HasSize {
      *
      * @param content the content to set
      */
-    public void setLayout(@Nullable Component content) {
+    public void setContent(@Nullable Component content) {
         if (this.content != null) {
             updateContentInert(false);
-            contentInertManager = null;
+            componentInertManager = null;
             removeComponent(this.content);
         }
 
         this.content = content;
 
         if (content != null) {
-            contentInertManager = new ContentInertManager(content);
+            componentInertManager = createComponentInertManager(content);
 
             addComponent(content);
             updateSlot("contentSlot", content);
@@ -75,59 +69,11 @@ public class JmixDrawerLayout extends Component implements HasSize {
         }
     }
 
-    // TODO: pinyazhin add to layout?
-
-    /**
-     * @return drawer panel header components
-     */
-    public List<Component> getDrawerHeaderComponents() {
-        return Collections.unmodifiableList(headerComponents);
-    }
-
-    /**
-     * Sets the drawer panel header component.
-     *
-     * @param drawerHeader drawer panel header component
-     */
-    public void setDrawerHeader(@Nullable Component drawerHeader) {
-        if (!headerComponents.isEmpty()) {
-            removeComponent(headerComponents.toArray(new Component[0]));
-            headerComponents.clear();
-        }
-
-        if (drawerHeader != null) {
-            headerComponents.add(drawerHeader);
-            addComponent(drawerHeader);
-            updateSlot("drawerHeaderSlot", drawerHeader);
-        }
-    }
-
-    /**
-     * Adds components to the drawer panel header.
-     *
-     * @param components components to add
-     */
-    public void addToDrawerHeader(Component... components) {
-        headerComponents.addAll(List.of(components));
-        addComponent(components);
-        updateSlot("drawerHeaderSlot", components);
-    }
-
-    /**
-     * Removes components from the drawer panel header.
-     *
-     * @param components components to remove
-     */
-    public void removeFromDrawerHeader(Component... components) {
-        headerComponents.removeAll(List.of(components));
-        removeComponent(components);
-    }
-
     /**
      * @return drawer panel content components
      */
-    public List<Component> getDrawerContentComponents() {
-        return Collections.unmodifiableList(drawerContentComponents);
+    public Component getDrawerContent() {
+        return drawerContent;
     }
 
     /**
@@ -136,88 +82,17 @@ public class JmixDrawerLayout extends Component implements HasSize {
      * @param drawerContent content to set
      */
     public void setDrawerContent(@Nullable Component drawerContent) {
-        if (!drawerContentComponents.isEmpty()) {
-            removeComponent(drawerContentComponents.toArray(new Component[0]));
-            drawerContentComponents.clear();
+        if (this.drawerContent != null) {
+            removeComponent(this.drawerContent);
+            this.drawerContent = null;
         }
 
         if (drawerContent != null) {
-            drawerContentComponents.add(drawerContent);
+            this.drawerContent = drawerContent;
             addComponent(drawerContent);
             updateSlot("drawerContentSlot", drawerContent);
         }
     }
-
-    /**
-     * Adds components to the drawer panel content.
-     *
-     * @param components components to add
-     */
-    public void addToDrawerContent(Component... components) {
-        drawerContentComponents.addAll(List.of(components));
-        addComponent(components);
-        updateSlot("drawerContentSlot", components);
-    }
-
-    /**
-     * Removes components from the drawer panel content.
-     *
-     * @param components components to remove
-     */
-    public void removeFromDrawerContent(Component... components) {
-        drawerContentComponents.removeAll(List.of(components));
-        removeComponent(components);
-    }
-
-    /**
-     * @return drawer footer components
-     */
-    public List<Component> getDrawerFooterComponents() {
-        return Collections.unmodifiableList(footerComponents);
-    }
-
-    /**
-     * Sets the drawer footer component.
-     *
-     * @param drawerFooter drawer footer component
-     */
-    public void setDrawerFooter(@Nullable Component drawerFooter) {
-        if (!footerComponents.isEmpty()) {
-            removeComponent(footerComponents.toArray(new Component[0]));
-            footerComponents.clear();
-        }
-
-        if (drawerFooter != null) {
-            footerComponents.add(drawerFooter);
-            addComponent(drawerFooter);
-            updateSlot("drawerFooterSlot", drawerFooter);
-        }
-    }
-
-    /**
-     * Adds components to the drawer footer.
-     * <p>
-     * Note, components that are not fit in the drawer will be hidden. In such cases wrap components to
-     * a component container and configure a scroll.
-     *
-     * @param components components to add
-     */
-    public void addToDrawerFooter(Component... components) {
-        footerComponents.addAll(List.of(components));
-        addComponent(components);
-        updateSlot("drawerFooterSlot", components);
-    }
-
-    /**
-     * Removes components from the drawer footer.
-     *
-     * @param components components to remove
-     */
-    public void removeFromDrawerFooter(Component... components) {
-        footerComponents.removeAll(List.of(components));
-        removeComponent(components);
-    }
-
 
     /**
      * @return whether the drawer panel is modal
@@ -374,8 +249,8 @@ public class JmixDrawerLayout extends Component implements HasSize {
     }
 
     protected void updateContentInert(boolean modal) {
-        if (contentInertManager != null) {
-            contentInertManager.setInert(modal);
+        if (componentInertManager != null) {
+            componentInertManager.setInert(modal);
         }
     }
 
@@ -395,6 +270,10 @@ public class JmixDrawerLayout extends Component implements HasSize {
         }
     }
 
+    protected ComponentInertManager createComponentInertManager(Component content) {
+        return new ComponentInertManager(content);
+    }
+
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
@@ -409,14 +288,14 @@ public class JmixDrawerLayout extends Component implements HasSize {
         updateContentInert(false);
     }
 
-    protected static class ContentInertManager {
+    protected static class ComponentInertManager {
 
-        protected final Component content;
+        protected final Component component;
 
         protected boolean inert;
 
-        public ContentInertManager(Component content) {
-            this.content = content;
+        public ComponentInertManager(Component component) {
+            this.component = component;
         }
 
         public void setInert(boolean inert) {
@@ -424,7 +303,7 @@ public class JmixDrawerLayout extends Component implements HasSize {
                 return;
             }
             this.inert = inert;
-            ElementUtil.setInert(content.getElement(), inert);
+            ElementUtil.setInert(component.getElement(), inert);
         }
 
         public boolean isInert() {

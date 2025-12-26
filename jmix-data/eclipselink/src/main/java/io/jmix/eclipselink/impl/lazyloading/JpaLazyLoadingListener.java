@@ -121,8 +121,9 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
         for (Map.Entry<Object, Set<FetchPlan>> entry : collectedFetchPlans.entrySet()) {
             MetaClass metaClass = metadata.getClass(entry.getKey());
             for (MetaProperty property : metaClass.getProperties()) {
-                if (property.getRange().isClass()
-                        && property.getType() != MetaProperty.Type.EMBEDDED
+                if ((property.getRange().isClass()
+                            && property.getType() != MetaProperty.Type.EMBEDDED
+                            || metadataTools.isElementCollection(property))
                         && !isPropertyContainedInFetchPlans(property, entry.getValue()) &&
                         metadataTools.getCrossDataStoreReferenceIdProperty(property.getStore().getName(), property) == null) {
                     if (!entityStates.isLoaded(entry.getKey(), property.getName())) {
@@ -161,7 +162,11 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
             if (eclipselinkProperties.isDisableLazyLoading()) {
                 wrappedValueHolder = new NonLoadingValueHolder(beanFactory, (ValueHolderInterface) valueHolder, owner, property);
             } else {
-                wrappedValueHolder = new CollectionValuePropertyHolder(beanFactory, (ValueHolderInterface) valueHolder, owner, property);
+                if (metadataTools.isElementCollection(property)) {
+                    wrappedValueHolder = new ElementCollectionValueHolder(beanFactory, (ValueHolderInterface<?>) valueHolder, owner, property);
+                } else {
+                    wrappedValueHolder = new CollectionValuePropertyHolder(beanFactory, (ValueHolderInterface<?>) valueHolder, owner, property);
+                }
                 wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
             }
 

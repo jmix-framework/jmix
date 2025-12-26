@@ -9,6 +9,7 @@ import io.jmix.core.metamodel.annotation.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,6 +46,16 @@ public class Customer {
     private CustomerAddress address;
 
     private FileRef document;
+
+    private List<String> phones;
+
+    public List<String> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<String> phones) {
+        this.phones = phones;
+    }
 
     public FileRef getDocument() {
         return document;

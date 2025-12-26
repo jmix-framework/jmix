@@ -94,6 +94,12 @@
         <property name="name"/>
     </fetchPlan>
 
+    <fetchPlan class="io.jmix.samples.rest.entity.driver.Driver"
+               name="driverWithNameAndPhones">
+        <property name="name"/>
+        <property name="phones"/>
+    </fetchPlan>
+
     <fetchPlan class="io.jmix.samples.rest.entity.driver.CarToken" name="carTokenEdit" extends="_local">
         <property name="garageToken" fetchPlan="_local"/>
     </fetchPlan>

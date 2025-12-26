@@ -487,6 +487,15 @@ public class MetadataTools {
         return Boolean.TRUE.equals(metaProperty.getAnnotatedElement().isAnnotationPresent(Secret.class));
     }
 
+    /**
+     * Determine whether the given property is an element collection.
+     * An element collection is a collection of simple types, such as strings, numbers, or dates.
+     * In a JPA entity, an element collection attribute is annotated with {@code @ElementCollection}.
+     */
+    public boolean isElementCollection(MetaProperty metaProperty) {
+        return metaProperty.getRange().isDatatype() && metaProperty.getRange().getCardinality().isMany();
+    }
+
     public Map<String, Object> getMetaAnnotationAttributes(Map<String, Object> metaAnnotations, Class<?> metaAnnotationClass) {
         @SuppressWarnings("unchecked")
         Map<String, Object> map = (Map<String, Object>) metaAnnotations.get(metaAnnotationClass.getName());

@@ -38,6 +38,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class JmixMultiValuePicker<V> extends MultiValuePicker<V>
@@ -159,5 +161,17 @@ public class JmixMultiValuePicker<V> extends MultiValuePicker<V>
     @Override
     public boolean isEmpty() {
         return super.isEmpty() || CollectionUtils.isEmpty(getValue());
+    }
+
+    @Override
+    public Collection<V> getEmptyValue() {
+        if (getValueSource() != null) {
+            Class<Collection<V>> collectionType = getValueSource().getType();
+            if (List.class.isAssignableFrom(collectionType))
+                return Collections.emptyList();
+            else
+                return Collections.emptySet();
+        }
+        return super.getEmptyValue();
     }
 }

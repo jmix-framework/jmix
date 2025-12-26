@@ -179,7 +179,11 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
             if (canUpdateMasterRefs()) {
                 updateMasterRefs(value);
             } else {
-                EntityValues.setValueEx(item, metaPropertyPath.toPathString(), value);
+                if (isCollectionPropertyType()) {
+                    setCollectionValue(item, value);
+                } else {
+                    EntityValues.setValueEx(item, metaPropertyPath.toPathString(), value);
+                }
             }
         }
     }
@@ -281,7 +285,7 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
         Collection<? extends V> itemValue = EntityValues.getValueEx(getItem(), metaPropertyPath.toPathString());
         Collection<? extends V> oldValue = copyPropertyCollection(itemValue);
 
-        EntityValues.setValueEx(getItem(), metaPropertyPath.toPathString(), value);
+        setCollectionValue(getItem(), value);
 
         container.mute();
 
@@ -371,5 +375,18 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
 
         //noinspection ConstantConditions
         return CollectionUtils.isEqualCollection(newValue, oldValue);
+    }
+
+    protected void setCollectionValue(E item, @Nullable V value) {
+        Object valueToSet = value;
+        if (value != null) {
+            Class<?> propertyType = metaPropertyPath.getMetaProperty().getJavaType();
+            if (List.class.isAssignableFrom(propertyType) && !(value instanceof List)) {
+                valueToSet = new ArrayList<>((Collection<?>) value);
+            } else if (Set.class.isAssignableFrom(propertyType) && !(value instanceof Set)) {
+                valueToSet = new LinkedHashSet<>((Collection<?>) value);
+            }
+        }
+        EntityValues.setValueEx(item, metaPropertyPath.toPathString(), valueToSet);
     }
 }

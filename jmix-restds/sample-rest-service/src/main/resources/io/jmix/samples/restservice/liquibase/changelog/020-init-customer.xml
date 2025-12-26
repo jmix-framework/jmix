@@ -29,4 +29,20 @@
             <column name="DOCUMENT" type="VARCHAR(1024)"/>
         </createTable>
     </changeSet>
+
+    <changeSet id="2" author="sample-rest-service">
+        <createTable tableName="CUSTOMER_PHONE">
+            <column name="CUSTOMER_ID" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PHONE" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="sample-rest-service">
+        <addForeignKeyConstraint baseColumnNames="CUSTOMER_ID" baseTableName="CUSTOMER_PHONE"
+                                 constraintName="FK_CUSTOMER_PHONE_ON_CUSTOMER" referencedColumnNames="ID"
+                                 referencedTableName="CUSTOMER"/>
+    </changeSet>
+
 </databaseChangeLog>

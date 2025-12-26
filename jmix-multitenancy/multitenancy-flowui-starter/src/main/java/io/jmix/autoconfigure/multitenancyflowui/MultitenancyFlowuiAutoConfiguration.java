@@ -20,9 +20,11 @@ import io.jmix.core.DataManager;
 import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.multitenancyflowui.MultitenancyFlowuiConfiguration;
 import io.jmix.multitenancyflowui.MultitenancyUiSupport;
+import io.jmix.multitenancyflowui.impl.SameTenantRoleAssignmentCandidatePredicate;
 import io.jmix.multitenancyflowui.impl.SameTenantUserSubstitutionCandidatePredicate;
 import io.jmix.multitenancyflowui.impl.TenantAuthDetailsValidator;
 import io.jmix.securityflowui.authentication.AuthDetailsValidator;
+import io.jmix.securityflowui.util.RoleAssignmentCandidatePredicate;
 import io.jmix.securityflowui.util.UserSubstitutionCandidatePredicate;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -38,6 +40,12 @@ public class MultitenancyFlowuiAutoConfiguration {
     @ConditionalOnClass(name = "io.jmix.securityflowui.util.UserSubstitutionCandidatePredicate")
     public UserSubstitutionCandidatePredicate sameTenantUserSubstitutionCandidatePredicate(TenantProvider tenantProvider) {
         return new SameTenantUserSubstitutionCandidatePredicate(tenantProvider);
+    }
+
+    @Bean("mten_SameTenantRoleAssignmentCandidatePredicate")
+    @ConditionalOnClass(name = "io.jmix.securityflowui.util.RoleAssignmentCandidatePredicate")
+    public RoleAssignmentCandidatePredicate sameTenantRoleAssignmentCandidatePredicate(TenantProvider tenantProvider) {
+        return new SameTenantRoleAssignmentCandidatePredicate(tenantProvider);
     }
 
     @Configuration(proxyBeanMethods = false)

@@ -140,6 +140,15 @@ public class LockManagerImpl implements LockManager {
     }
 
     @Override
+    public void unlock(String name, String id, boolean force) {
+        if (force || isCurrentUserLock(getLockInfo(name, id))) {
+            unlock(name, id);
+        } else {
+            log.debug("Cannot unlock {}[{}]: not owned by current user", name, id);
+        }
+    }
+
+    @Override
     public void unlock(Object entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
@@ -203,6 +212,11 @@ public class LockManagerImpl implements LockManager {
     @Override
     public void reloadConfiguration() {
         config = null;
+    }
+
+    protected boolean isCurrentUserLock(@Nullable LockInfo lockInfo) {
+        return lockInfo == null
+                || currentAuthentication.getUser().getUsername().equals(lockInfo.getUsername());
     }
 
     public static class LockKey implements Serializable {

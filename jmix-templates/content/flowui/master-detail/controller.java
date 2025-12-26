@@ -1,8 +1,24 @@
 <%
-        def isDataGridTable = tableType.getXmlName().equals("dataGrid")
-        def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
-        def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
-    %>
+def isDataGridTable = tableType.getXmlName().equals("dataGrid")
+def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
+def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
+
+private String getRepositoryIdFqn() {
+    try {
+        return repository.getIdFqn()
+    } catch(Exception e) {
+        return "java.util.UUID"
+    }
+}
+
+private String getRepositoryIdClassName() {
+    try {
+        return repository.getIdClassName()
+    } catch(Exception e) {
+        return "UUID"
+    }
+}
+%>
 package ${packageName};
 
 import ${entity.fqn};<%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%>
@@ -38,15 +54,18 @@ import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
-<%if (useDataRepositories){%>
+<%if (useDataRepositories){%>import org.springframework.data.domain.Pageable;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import java.util.Collection;
 import java.util.List;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
+import io.jmix.core.FetchPlan;
 
+import java.util.Optional;
 import java.util.Set;
-
-import static io.jmix.core.repository.JmixDataRepositoryUtils.*;<%}%>
+import ${getRepositoryIdFqn()};
+<%}%>
 import static io.jmix.flowui.component.delegate.AbstractFieldDelegate.PROPERTY_INVALID;
 <%if (classComment) {%>
 ${classComment}
@@ -354,9 +373,14 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
                 .compose(() -> close(StandardOutcome.SAVE));
     }<%if (useDataRepositories){%>
 
-    @Install(to = "${tableDl}", target = Target.DATA_LOADER)
-    private List<${entity.className}> listLoadDelegate(LoadContext<${entity.className}> context){
-        return repository.findAll(buildPageRequest(context), buildRepositoryContext(context)).getContent();
+    @Install(to = "${tableDl}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
+    private List<${entity.className}> listLoadDelegate(Pageable pageable, JmixDataRepositoryContext context){
+        return repository.findAllSlice(pageable, context).getContent();
+    }
+
+    @Install(to = "pagination", subject = "totalCountByRepositoryDelegate")
+    private Long paginationTotalCountByRepositoryDelegate(final JmixDataRepositoryContext context) {
+        return repository.count(context);
     }<%if (tableActions.contains("remove")) {%>
 
     @Install(to = "${tableId}.removeAction", subject = "delegate")
@@ -364,9 +388,9 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         repository.deleteAll(collection);
     }<%}%>
 
-    @Install(to = "${detailDl}", target = Target.DATA_LOADER)
-    private ${entity.className} detailLoadDelegate(LoadContext<${entity.className}> context){
-        return repository.getById(extractEntityId(context), context.getFetchPlan());
+    @Install(to = "${detailDl}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
+    private Optional<${entity.className}> detailLoadDelegate(${getRepositoryIdClassName()} id, FetchPlan fetchPlan){
+        return repository.findById(id, fetchPlan);
     }
 
     @Install(target = Target.DATA_CONTEXT)

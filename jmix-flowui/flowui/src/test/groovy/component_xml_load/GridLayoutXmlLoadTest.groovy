@@ -23,6 +23,7 @@ import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
 import io.jmix.flowui.component.textfield.TypedTextField
 import io.jmix.flowui.data.items.ContainerDataProvider
+import io.jmix.flowui.kit.component.Alignment
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -78,6 +79,9 @@ class GridLayoutXmlLoadTest extends FlowuiTestSpecification {
             children.count() == 2
             children.find { (it.id.orElse("") == "gridLayoutChild1") } instanceof NativeLabel
             children.find { (it.id.orElse("") == "gridLayoutChild2") } instanceof TypedTextField
+
+            getAlignSelf(gridLayoutView.gridLayoutChild2) == Alignment.START
+            getJustifySelf(gridLayoutView.gridLayoutChild2) == Alignment.END
         }
     }
 

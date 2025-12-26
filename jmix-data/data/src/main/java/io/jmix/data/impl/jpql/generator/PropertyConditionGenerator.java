@@ -146,7 +146,8 @@ public class PropertyConditionGenerator implements ConditionGenerator {
                     property,
                     PropertyConditionUtils.getJpqlOperation(propertyCondition));
         } else if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)) {
-            return PropertyConditionUtils.getJpqlOperation(propertyCondition);
+            return PropertyConditionUtils.getJpqlOperation(propertyCondition)
+                    .formatted(entityAlias, property);
         } else if (PropertyConditionUtils.isDateEqualsOperation(propertyCondition)) {
             return PropertyConditionUtils.getJpqlOperation(propertyCondition)
                     .formatted(entityAlias,

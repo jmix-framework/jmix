@@ -129,7 +129,6 @@ public class DateRangePicker extends CustomField<CustomDateInterval>
         datePicker.addTypedValueChangeListener(this::onStartDateValueChange);
         datePicker.setStatusChangeHandler(this::onValidationStatusChange);
         datePicker.addValidationStatusChangeListener(__ -> updateInvalidState());
-        datePicker.addClientValidatedEventListener(__ -> updateInvalidState());
 
         datePicker.setRequiredMessage(messages.getMessage(getClass(), "DateRangePicker.requiredMessage"));
         datePicker.setRequired(true);
@@ -138,8 +137,8 @@ public class DateRangePicker extends CustomField<CustomDateInterval>
     @Override
     protected CustomDateInterval generateModelValue() {
         return new CustomDateInterval(
-                datatype.getId(),
                 metaPropertyPath.getFirstPropertyName(),
+                datatype.getId(),
                 convertValueToModel(startDatePicker.getTypedValue()),
                 convertValueToModel(endDatePicker.getTypedValue())
         );

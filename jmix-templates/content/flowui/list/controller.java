@@ -17,9 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
-import java.util.List;
-
-import static io.jmix.core.repository.JmixDataRepositoryUtils.*;<%}%>
+import java.util.List;<%}%>
 
 <%if (classComment) {%>
 ${classComment}
@@ -35,7 +33,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     @Install(to = "${tableDl}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
     private List<${entity.className}> loadDelegate(Pageable pageable, JmixDataRepositoryContext context){
-        return repository.findAll(pageable, context).getContent();
+        return repository.findAllSlice(pageable, context).getContent();
     }<%if (tableActions.contains("remove")) {%>
 
     @Install(to = "${tableId}.removeAction", subject = "delegate")

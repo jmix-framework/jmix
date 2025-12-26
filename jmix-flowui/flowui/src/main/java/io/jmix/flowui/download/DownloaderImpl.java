@@ -17,20 +17,27 @@
 package io.jmix.flowui.download;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.streams.DownloadHandler;
 import io.jmix.core.*;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.asynctask.UiAsyncTasks;
-import io.jmix.flowui.component.filedownloader.JmixFileDownloader;
+import io.jmix.flowui.download.DownloaderExportHandler.FileNotFoundContext;
+import io.jmix.flowui.download.SupportDownloadSuccessHandler.DownloadSuccessContext;
 import io.jmix.flowui.exception.IllegalConcurrentAccessException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -47,17 +54,17 @@ import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  */
 @Component("flowui_Downloader")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class DownloaderImpl implements Downloader {
+public class DownloaderImpl implements Downloader, ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(DownloaderImpl.class);
     protected static final String DEFAULT_CHARSET_SUFFIX = ";charset=UTF-8";
 
+    protected ApplicationContext applicationContext;
     protected UiProperties uiProperties;
     protected CoreProperties coreProperties;
-
     protected Messages messages;
     protected UiAsyncTasks uiAsyncTasks;
-
+    protected UiComponents uiComponents;
     protected FileStorageLocator fileStorageLocator;
     protected FileStorage fileStorage;
 
@@ -86,6 +93,11 @@ public class DownloaderImpl implements Downloader {
         this.useViewList = false;
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
     @Autowired
     public void setUiProperties(UiProperties uiProperties) {
         this.uiProperties = uiProperties;
@@ -109,6 +121,11 @@ public class DownloaderImpl implements Downloader {
     @Autowired
     public void setUiAsyncTasks(UiAsyncTasks uiAsyncTasks) {
         this.uiAsyncTasks = uiAsyncTasks;
+    }
+
+    @Autowired
+    public void setUiComponents(UiComponents uiComponents) {
+        this.uiComponents = uiComponents;
     }
 
     protected boolean defaultViewFilePredicate(String fileExtension) {
@@ -176,32 +193,55 @@ public class DownloaderImpl implements Downloader {
             }
         }
 
-        JmixFileDownloader fileDownloader = new JmixFileDownloader();
+        DownloadContext downloadContext = createDownloadContext(dataProvider, resourceName, downloadFormat,
+                (!showNewWindow || !isBrowserSupportsPopups()) && !isIPhone());
+
+        Anchor fileDownloader = createFileDownloaderComponent(downloadContext);
+        initFileDownloaderComponent(fileDownloader, downloadContext);
 
         UI ui = UI.getCurrent();
-
         ui.add(fileDownloader);
 
-        log.debug("added {} in {}", JmixFileDownloader.class.getSimpleName(), ui);
+        log.debug("added {} in {}", fileDownloader.getClass().getSimpleName(), ui);
 
-        fileDownloader.setFileName(resourceName);
-        fileDownloader.setCacheMaxAgeSec(uiProperties.getFileDownloaderCacheMaxAgeSec());
-        fileDownloader.addDownloadFinishedListener(this::fileDownloaderRemoveHandler);
-        fileDownloader.setFileNotFoundExceptionHandler(this::handleFileNotFoundException);
+        downloadFile(fileDownloader);
+    }
 
-        StreamResource resource = new StreamResource(resourceName, dataProvider::getStream);
+    protected void downloadFile(Anchor fileDownloader) {
+        fileDownloader.getElement().executeJs("this.click()");
+    }
 
-        if (downloadFormat != null && StringUtils.isNotEmpty(downloadFormat.getContentType())) {
-            resource.setContentType(downloadFormat.getContentType() + DEFAULT_CHARSET_SUFFIX);
-        } else {
-            resource.setContentType(FileTypesHelper.getMIMEType(resourceName) + DEFAULT_CHARSET_SUFFIX);
-        }
+    protected Anchor createFileDownloaderComponent(DownloadContext downloadContext) {
+        return uiComponents.create(Anchor.class);
+    }
 
-        if (showNewWindow && isBrowserSupportsPopups() || isIPhone()) {
-            fileDownloader.viewDocument(resource);
-        } else {
-            fileDownloader.downloadFile(resource);
-        }
+    protected void initFileDownloaderComponent(Anchor fileDownloader, DownloadContext downloadContext) {
+        fileDownloader.setHref(createDownloadHandler(downloadContext));
+        fileDownloader.setTarget(downloadContext.download()
+                ? AnchorTarget.DEFAULT
+                : AnchorTarget.BLANK);
+    }
+
+    protected DownloadHandler createDownloadHandler(DownloadContext downloadContext) {
+        DownloaderExportHandler downloadHandler =
+                applicationContext.getBean(DownloaderExportHandler.class, downloadContext);
+
+        downloadHandler.setDownloadSuccessHandler(this::fileDownloaderRemoveHandler);
+        downloadHandler.setFileNotFoundExceptionHandler(this::handleFileNotFoundException);
+
+        return downloadHandler;
+    }
+
+    protected DownloadContext createDownloadContext(DownloadDataProvider dataProvider,
+                                                    String resourceName,
+                                                    @Nullable DownloadFormat downloadFormat,
+                                                    boolean download) {
+        String contentType = downloadFormat != null
+                ? downloadFormat.getContentType() + DEFAULT_CHARSET_SUFFIX
+                : FileTypesHelper.getMIMEType(resourceName) + DEFAULT_CHARSET_SUFFIX;
+
+        return new DownloadContext(dataProvider, resourceName, contentType,
+                uiProperties.getFileDownloaderCacheMaxAgeSec(), download);
     }
 
     /**
@@ -258,7 +298,7 @@ public class DownloaderImpl implements Downloader {
         }
     }
 
-    protected void fileDownloaderRemoveHandler(JmixFileDownloader.DownloadFinishedEvent event) {
+    protected void fileDownloaderRemoveHandler(DownloadSuccessContext context) {
         uiAsyncTasks.runnableConfigurer(() -> {
                     try {
                         // timer
@@ -267,16 +307,16 @@ public class DownloaderImpl implements Downloader {
                         log.debug("{} exception in background task", e.getClass().getName(), e);
                     }
                 })
-                .withResultHandler(event.getSource()::removeFromParent)
+                .withResultHandler(context.owningComponent()::removeFromParent)
                 .withTimeout(62, TimeUnit.SECONDS)
                 .runAsync();
     }
 
-    protected boolean handleFileNotFoundException(JmixFileDownloader.FileNotFoundContext fileNotFoundEvent) {
-        Exception exception = fileNotFoundEvent.getException();
-        VaadinResponse response = fileNotFoundEvent.getResponse();
+    protected boolean handleFileNotFoundException(FileNotFoundContext fileNotFoundEvent) {
+        Exception reason = fileNotFoundEvent.reason();
+        VaadinResponse response = fileNotFoundEvent.response();
 
-        if (!(exception instanceof FileStorageException storageException)) {
+        if (!(reason instanceof FileStorageException storageException)) {
             return false;
         }
 

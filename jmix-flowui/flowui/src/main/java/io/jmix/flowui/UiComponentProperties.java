@@ -23,6 +23,7 @@ import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.factory.EntityFieldCreationSupport;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.FilterConfigurationDetail;
+import io.jmix.flowui.component.grid.DataGrid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -144,6 +145,11 @@ public class UiComponentProperties {
      */
     boolean checkboxRequiredStateInitializationEnabled;
 
+    /**
+     * Whether the entire {@link DataGrid} should be refreshed when an item is replaced in the data provider.
+     */
+    boolean gridRefreshAllOnItemReplace;
+
     public UiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -171,7 +177,8 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean showErrorMessageBelowField,
             @DefaultValue("true") boolean immediateRequiredValidationEnabled,
             @DefaultValue("true") boolean defaultTrimEnabled,
-            @DefaultValue("true") boolean checkboxRequiredStateInitializationEnabled) {
+            @DefaultValue("true") boolean checkboxRequiredStateInitializationEnabled,
+            @DefaultValue("false") boolean gridRefreshAllOnItemReplace) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -207,6 +214,8 @@ public class UiComponentProperties {
         this.defaultTrimEnabled = defaultTrimEnabled;
 
         this.checkboxRequiredStateInitializationEnabled = checkboxRequiredStateInitializationEnabled;
+
+        this.gridRefreshAllOnItemReplace = gridRefreshAllOnItemReplace;
     }
 
     public String getGridCreateShortcut() {
@@ -366,5 +375,12 @@ public class UiComponentProperties {
      */
     public boolean isCheckboxRequiredStateInitializationEnabled() {
         return checkboxRequiredStateInitializationEnabled;
+    }
+
+    /**
+     * @see #gridRefreshAllOnItemReplace
+     */
+    public boolean isGridRefreshAllOnItemReplace() {
+        return gridRefreshAllOnItemReplace;
     }
 }

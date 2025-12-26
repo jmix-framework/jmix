@@ -21,12 +21,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
-import com.vaadin.flow.component.shared.ClientValidationUtil;
-import com.vaadin.flow.component.shared.HasClientValidation;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.HasValidationProperties;
-import com.vaadin.flow.data.binder.*;
-import com.vaadin.flow.shared.Registration;
+import com.vaadin.flow.data.binder.HasValidator;
+import com.vaadin.flow.data.binder.ValidationResult;
+import com.vaadin.flow.data.binder.Validator;
 import elemental.json.JsonFactory;
 import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
@@ -51,7 +50,7 @@ import java.util.List;
 )
 @JsModule("./src/code-editor/jmix-code-editor.js")
 public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, String>
-        implements CompositionNotifier, Focusable<JmixCodeEditor>, HasClientValidation, HasHelper,
+        implements CompositionNotifier, Focusable<JmixCodeEditor>, HasHelper,
         HasLabel, HasTitle, HasSize, HasStyle, HasTooltip, HasValidationProperties,
         HasValidator<String>, InputNotifier, KeyNotifier {
 
@@ -100,7 +99,7 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
         setFontSize(FONT_SIZE_DEFAULT_VALUE);
 
         addValueChangeListener(e -> validate());
-        addClientValidatedEventListener(e -> validate());
+        addValidationStatusChangeListener(e -> validate());
     }
 
     /**
@@ -432,6 +431,7 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
         getElement().setProperty(PROPERTY_VALUE, newPresentationValue);
     }
 
+    @Override
     public String getEmptyValue() {
         return "";
     }
@@ -447,18 +447,13 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
                 : ValidationResult.error("");
     }
 
-    public Registration addValidationStatusChangeListener(ValidationStatusChangeListener<String> listener) {
-        return addClientValidatedEventListener((event) ->
-                listener.validationStatusChanged(new ValidationStatusChangeEvent<>(this, !isInvalid())));
-    }
-
     protected void validate() {
         setInvalid(getValidationSupport().isInvalid(getValue()));
     }
 
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
-        ClientValidationUtil.preventWebComponentFromModifyingInvalidState(this);
+        getElement().setProperty("manualValidation", true);
     }
 
     protected void onCodeEditorValueChangedEvent(JmixCodeEditorValueChangedEvent event) {

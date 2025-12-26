@@ -294,7 +294,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
             }
         }
 
-        if (tabs.getComponentCount() != 0) {
+        if (tabs.getTabCount() != 0) {
             tabs.setVisible(true);
         }
     }

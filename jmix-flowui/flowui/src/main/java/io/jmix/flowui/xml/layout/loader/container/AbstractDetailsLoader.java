@@ -54,7 +54,7 @@ public abstract class AbstractDetailsLoader<C extends Details> extends AbstractC
                 componentLoader.initComponent();
                 pendingLoadComponents.add(componentLoader);
 
-                resultComponent.addContent(componentLoader.getResultComponent());
+                resultComponent.add(componentLoader.getResultComponent());
             }
         }
     }

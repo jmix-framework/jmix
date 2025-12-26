@@ -68,6 +68,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 value: null,
                 observer: '_onI18nChange',
             },
+            eventSingleClickThreshold: {
+                type: Number,
+                value: 250,
+            },
             /**
              * @Override
              */
@@ -483,6 +487,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onEventClick(e) {
+        this._onEventSingleClick(e);
+
         this.dispatchEvent(new CustomEvent("jmix-event-click", {
             detail: {
                 context: {
@@ -492,6 +498,42 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 }
             }
         }))
+    }
+
+    _onEventSingleClick(e) {
+        if (this.eventSingleClickTimeoutId) {
+            clearTimeout(this.eventSingleClickTimeoutId);
+            this.eventSingleClickTimeoutId = null;
+            return;
+        }
+
+        this.eventSingleClickTimeoutId = setTimeout(() => {
+            this.eventSingleClickTimeoutId = null;
+            if (e.jsEvent.detail !== 1) {
+                return;
+            }
+            this.dispatchEvent(new CustomEvent("jmix-event-single-click", {
+                detail: {
+                    context: {
+                        event: utils.eventToServerData(e.event),
+                        mouseDetails: utils.createMouseDetails(e.jsEvent),
+                        view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
+                    }
+                }
+            }))
+        }, this.eventSingleClickThreshold);
+    }
+
+    _onEvenDoubleClick(dbClickEvent, eventDidMountEvent) {
+        this.dispatchEvent(new CustomEvent("jmix-event-double-click", {
+            detail: {
+                context: {
+                    event: utils.eventToServerData(eventDidMountEvent.event),
+                    mouseDetails: utils.createMouseDetails(dbClickEvent),
+                    view: utils.createViewInfo(eventDidMountEvent.view, this.formatDate.bind(this)),
+                }
+            }
+        }));
     }
 
     _onEventMouseEnter(e) {
@@ -736,6 +778,9 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             this.contextMenuDetails['mouseDetails'] = utils.createMouseDetails(jsEvent);
             this.contextMenuDetails['event'] = utils.eventToServerData(e.event);
         });
+        // The "dbclick" event does not work, probably because of the timing when
+        // eventDidMount is called. Use 'ondblclick' attribute.
+        e.el.ondblclick = (dbClickEvent) => this._onEvenDoubleClick(dbClickEvent, e);;
     }
 
     _onNavLinkDayClick(date) {

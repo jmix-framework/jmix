@@ -71,6 +71,7 @@ export function createViewInfo(view, dateFormatter) {
 
 export function createMouseDetails(jsEvent) {
     return {
+        clickCount: jsEvent.detail,
         button: jsEvent.button,
         pageX: jsEvent.pageX,
         pageY: jsEvent.pageY,

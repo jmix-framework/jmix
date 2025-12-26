@@ -40,6 +40,7 @@ class JoinAliasTest extends BaseConditionJoinTest {
     def "test condition for nested M2Ms with ORs on different levels"() {
         when: "mixed nested m2m relations are used in condition"
         def res = dataManager.load(ModuleA)
+                .query("select distinct a from test_ModuleA a")
                 .condition(
                         LogicalCondition.or(
                                 LogicalCondition.or(

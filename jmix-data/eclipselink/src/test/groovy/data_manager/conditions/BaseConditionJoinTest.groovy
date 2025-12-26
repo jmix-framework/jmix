@@ -65,7 +65,7 @@ class BaseConditionJoinTest extends DataSpec {
         def b3 = dataManager.create(ModuleB)
         b3.name = "B3"
         b3.maxCount = 3
-        b2.recommendedCs = [c3]
+        b3.recommendedCs = [c3]
 
         dataManager.save(b1, b2, b3)
 

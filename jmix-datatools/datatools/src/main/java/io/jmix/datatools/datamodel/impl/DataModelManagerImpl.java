@@ -201,6 +201,14 @@ public class DataModelManagerImpl implements DataModelManager {
 
                 attributeModel = constructAttribute(fieldName, fieldType, field.isAnnotationPresent(NotNull.class));
 
+                JoinTable annotation = field.getAnnotation(JoinTable.class);
+
+                String columnName = annotation.name()
+                        + "."
+                        + annotation.joinColumns()[0].name();
+
+                attributeModel.setColumnName(columnName);
+
                 relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.MANY_TO_MANY);
                 Relation relation = new Relation(fieldType, relationDescription);
 

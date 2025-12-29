@@ -40,7 +40,8 @@ public class PlantUMLEncoderImpl implements PlantUMLEncoder {
             return "";
         }
 
-        byte[] encodedBytes = new byte[((compressedData.length + 2) / 3) * 4]; // length is always equals 4
+        // length is always equals 4
+        byte[] encodedBytes = new byte[((compressedData.length + 2) / 3) * 4];
         int outputPos = 0;
 
         int i = 0;
@@ -91,8 +92,8 @@ public class PlantUMLEncoderImpl implements PlantUMLEncoder {
             encodedBytes[outputPos++] = padding;
             encodedBytes[outputPos++] = padding;
         }
-        // If equal to 3 - no padding needed
 
+        // If equal to 3 - no padding needed
         return new String(encodedBytes, 0, outputPos, StandardCharsets.UTF_8);
     }
 }

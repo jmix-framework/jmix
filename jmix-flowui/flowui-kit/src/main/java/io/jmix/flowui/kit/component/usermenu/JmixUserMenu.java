@@ -17,11 +17,9 @@
 package io.jmix.flowui.kit.component.usermenu;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
@@ -49,14 +47,12 @@ import java.util.function.Consumer;
  * @param <USER> the type of the user associated with the menu
  */
 public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
-        implements HasTextMenuItems, HasActionMenuItems, HasComponentMenuItems,
-        HasEnabled, HasTitle, HasOverlayClassName, HasSubParts,
-        HasThemeVariant<UserMenuVariant>, Focusable<JmixUserMenu<USER>> {
+        implements HasTextMenuItems, HasActionMenuItems, HasComponentMenuItems, HasEnabled,
+        HasTitle, HasSubParts, HasThemeVariant<UserMenuVariant>, Focusable<JmixUserMenu<USER>> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
     protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-user-menu";
     protected static final String BASE_CLASS_NAME = "jmix-user-menu";
-    protected static final String OVERLAY_CLASS_NAME = BASE_CLASS_NAME + "-overlay";
     public static final String BUTTON_CONTENT_CLASS_NAME = BASE_CLASS_NAME + "-button-content";
 
     protected JmixMenuItem userMenuItem;
@@ -83,7 +79,6 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
     protected JmixMenuBar initContent() {
         JmixMenuBar content = super.initContent();
         content.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, ATTRIBUTE_JMIX_ROLE_VALUE);
-        content.setOverlayClassName(OVERLAY_CLASS_NAME);
 
         return content;
     }
@@ -337,12 +332,6 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
      */
     public void setOpenOnHover(boolean openOnHover) {
         getContent().setOpenOnHover(openOnHover);
-    }
-
-    @Override
-    public void setOverlayClassName(@Nullable String overlayClassName) {
-        HasOverlayClassName.super.setOverlayClassName(OVERLAY_CLASS_NAME + " " +
-                Strings.nullToEmpty(overlayClassName));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

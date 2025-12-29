@@ -54,12 +54,6 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
         this.applicationContext = applicationContext;
     }
 
-    @Override
-    @StudioIgnore
-    public Grid.Column<E> setClassNameGenerator(SerializableFunction<E, String> classNameGenerator) {
-        return super.setClassNameGenerator(classNameGenerator);
-    }
-
     /**
      * Sets the filtering for a column. If the filtering is enabled,
      * a filter button will be added to the column header.

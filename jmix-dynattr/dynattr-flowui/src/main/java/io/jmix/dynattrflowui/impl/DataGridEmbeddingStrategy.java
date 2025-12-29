@@ -17,7 +17,6 @@
 package io.jmix.dynattrflowui.impl;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.data.renderer.Renderer;
 import io.jmix.core.AccessManager;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
@@ -32,7 +31,6 @@ import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
-import io.jmix.flowui.view.View;
 
 import java.util.List;
 
@@ -57,7 +55,7 @@ public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
     }
 
     @Override
-    protected void embed(Component component, View<?> owner, List<AttributeDefinition> attributes) {
+    protected void embed(Component component, List<AttributeDefinition> attributes) {
         DataGrid<?> dataGrid = (DataGrid<?>) component;
         for (AttributeDefinition attribute : attributes) {
             addAttributeColumn(dataGrid, attribute);

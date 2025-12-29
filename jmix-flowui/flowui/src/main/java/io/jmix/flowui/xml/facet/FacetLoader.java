@@ -22,7 +22,7 @@ import io.jmix.core.JmixModulesAwareBeanSelector;
 import io.jmix.flowui.Facets;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.Facet;
-import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
+import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -73,11 +73,12 @@ public class FacetLoader {
      * @param context loading context
      * @return loaded facet
      */
-    public Facet load(Element element, ComponentContext context) {
+    public Facet load(Element element, ComponentLoader.Context context) {
         io.jmix.flowui.xml.facet.loader.FacetLoader<?> facetLoader = getLoader(element, context);
         if (facetLoader == null) {
             // fallback
-            return _load(element, context);
+            // we can cast safety because loaders exist for the fragment facets
+            return _load(element, (ComponentLoader.ComponentContext) context);
         }
 
         facetLoader.initFacet();
@@ -87,7 +88,7 @@ public class FacetLoader {
 
     @Nullable
     protected io.jmix.flowui.xml.facet.loader.FacetLoader<?> getLoader(Element element,
-                                                                       ComponentContext context) {
+                                                                       ComponentLoader.Context context) {
         Class<? extends io.jmix.flowui.xml.facet.loader.FacetLoader<?>> loaderClass =
                 facetLoaderResolver.getLoader(element);
 
@@ -101,7 +102,7 @@ public class FacetLoader {
     protected io.jmix.flowui.xml.facet.loader.FacetLoader<?> initLoader(
             Element element,
             Class<? extends io.jmix.flowui.xml.facet.loader.FacetLoader<?>> loaderClass,
-            ComponentContext context
+            ComponentLoader.Context context
     ) {
         Constructor<? extends io.jmix.flowui.xml.facet.loader.FacetLoader<?>> constructor;
 
@@ -128,7 +129,7 @@ public class FacetLoader {
     // for backward compatibility
     @Deprecated(since = "3.0", forRemoval = true)
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected Facet _load(Element element, ComponentContext context) {
+    protected Facet _load(Element element, ComponentLoader.ComponentContext context) {
         Collection<FacetProvider<?>> facetProviders = registrations.get(element.getName());
         FacetProvider facetProvider = beanSelector.selectFrom(facetProviders);
         if (facetProvider == null) {

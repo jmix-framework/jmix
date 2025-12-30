@@ -19,7 +19,6 @@ import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
-import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
@@ -46,7 +45,6 @@ import java.util.stream.Stream;
 @LookupComponent("entityModelsDataGrid")
 @DialogMode(width = "50em")
 public class DataModelListView extends StandardListView<EntityModel> {
-    private static final String DETAILS_OPENED_URL_PARAM = "detailsOpened";
     private static final String FILTER_URL_PARAM = "entity-filter-text";
 
     @Autowired
@@ -58,8 +56,6 @@ public class DataModelListView extends StandardListView<EntityModel> {
     @Autowired
     protected ViewValidation viewValidation;
 
-    @ViewComponent
-    private JmixDetails filterFieldDetails;
     @ViewComponent
     private UrlQueryParametersFacet entityNameFilterQueryParameters;
     @ViewComponent
@@ -81,13 +77,6 @@ public class DataModelListView extends StandardListView<EntityModel> {
     private class EntityNameUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
 
         public EntityNameUrlQueryParametersBinder() {
-            filterFieldDetails.addOpenedChangeListener(event -> {
-                boolean opened = event.isOpened();
-                QueryParameters qp = new QueryParameters(ImmutableMap.of(DETAILS_OPENED_URL_PARAM,
-                        opened ? Collections.singletonList("1") : Collections.emptyList()));
-                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
-            });
-
             entityNameFilter.addValueChangeListener(event -> {
                 String text = event.getValue();
                 QueryParameters qp = new QueryParameters(ImmutableMap.of(FILTER_URL_PARAM,
@@ -98,11 +87,6 @@ public class DataModelListView extends StandardListView<EntityModel> {
 
         @Override
         public void updateState(QueryParameters queryParameters) {
-            List<String> detailsOpenedStrings = queryParameters.getParameters().get(DETAILS_OPENED_URL_PARAM);
-            if (detailsOpenedStrings != null) {
-                filterFieldDetails.setOpened("1".equals(detailsOpenedStrings.get(0)));
-            }
-
             List<String> textStrings = queryParameters.getParameters().get(FILTER_URL_PARAM);
             if (textStrings != null && !textStrings.isEmpty()) {
                 entityNameFilter.setValue(textStrings.get(0));

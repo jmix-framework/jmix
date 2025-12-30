@@ -26,12 +26,10 @@
             classNames="jmix-data-model-list-view-layout">
             <hbox id="buttonsPanel" classNames="buttons-panel">
                 <p text="msg://dataModelListView.buttonspanel.title"/>
-                <details id="filterFieldDetails">
-                    <textField id="entityNameFilter" datatype="string" minWidth="400px">
-                        <tooltip text="msg://io.jmix.datatoolsflowui.view.datamodel/dataModelListView.entityNameFilter.tooltip.text"
-                                 manual="true" position="END_BOTTOM"/>
-                    </textField>
-                </details>
+                <textField id="entityNameFilter" datatype="string" minWidth="400px">
+                    <tooltip text="msg://io.jmix.datatoolsflowui.view.datamodel/dataModelListView.entityNameFilter.tooltip.text"
+                             manual="true" position="END_BOTTOM"/>
+                </textField>
                 <button id="searchButton" icon="vaadin:search" text="msg://dataModelListView.searchButton.text"/>
                 <button id="diagramButton" icon="vaadin:sitemap" text="msg://dataModelListView.diagramButton.text"/>
                 <checkbox id="showSystemCheckBox" label="msg://io.jmix.datatoolsflowui.view.datamodel/dataModelListView.showSystemEntities.text"
@@ -64,9 +62,9 @@
                         <column property="attributeName"/>
                         <column property="javaType"/>
                         <column property="columnName"/>
-                        <column property="dbType"/>
-                        <column property="isNullable" textAlign="CENTER"/>
-                        <column property="isMandatory" textAlign="CENTER"/>
+                        <column property="dbType" flexGrow="2"/>
+                        <column property="isNullable" textAlign="CENTER" flexGrow="0" autoWidth="true"/>
+                        <column property="isMandatory" textAlign="CENTER" flexGrow="0" autoWidth="true"/>
                     </columns>
                 </dataGrid>
             </vbox>

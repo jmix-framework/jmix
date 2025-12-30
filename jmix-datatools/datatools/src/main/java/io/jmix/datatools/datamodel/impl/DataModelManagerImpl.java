@@ -81,6 +81,8 @@ public class DataModelManagerImpl implements DataModelManager {
         Map<RelationType, List<Relation>> relationsMap = new HashMap<>();
         String relationDescription;
 
+        //entity.getProperties()
+
         for (Field field : fields) {
             AttributeModel attributeModel = null;
             String fieldName = null, fieldType = null;

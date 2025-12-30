@@ -25,6 +25,7 @@ import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.drawerlayout.JmixDrawerLayout;
 import jakarta.annotation.Nullable;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -33,7 +34,17 @@ import static io.jmix.flowui.component.UiComponentUtils.findFragment;
 
 @Tag("jmix-drawer-layout")
 @JsModule("./src/drawer-layout/jmix-drawer-layout.js")
-public class DrawerLayout extends JmixDrawerLayout implements ComponentContainer, HasSubParts {
+public class DrawerLayout extends JmixDrawerLayout implements ComponentContainer, HasSubParts,
+        InitializingBean {
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        initComponent();
+    }
+
+    protected void initComponent() {
+        getThemeNames().add("dimmed-curtain");
+    }
 
     @Override
     public Optional<Component> findOwnComponent(String id) {

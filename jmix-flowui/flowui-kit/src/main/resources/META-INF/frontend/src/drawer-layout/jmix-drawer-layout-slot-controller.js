@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { SlotController } from '@vaadin/component-base/src/slot-controller.js';
 
 export class JmixDrawerLayoutSlotController extends SlotController {
@@ -5,6 +21,9 @@ export class JmixDrawerLayoutSlotController extends SlotController {
     constructor(host, slotName) {
         super(host, slotName, 'div', { multiple: true });
 
+        // Contains nodes that belong to a slot. These nodes can be detached from the
+        // slot and moved to the overlay when fullscreen is enabled and device with
+        // small screen is detected.
         this.actualNodes = [];
     }
 
@@ -32,12 +51,6 @@ export class JmixDrawerLayoutSlotController extends SlotController {
                 node.parentElement.removeChild(node);
             }
         }
-    }
-
-    attachDefaultNode(node) {
-        const defaultNode = super.attachDefaultNode(node);
-        defaultNode.classList.add('jmix-drawer-layout-no-content');
-        return defaultNode;
     }
 
     getActualNodes() {

@@ -23,7 +23,7 @@ import com.vaadin.flow.dom.ElementUtil;
 import com.vaadin.flow.dom.PropertyChangeEvent;
 import jakarta.annotation.Nullable;
 
-public class JmixDrawerLayout extends Component implements HasSize {
+public class JmixDrawerLayout extends Component implements HasSize, HasTheme {
 
     protected Component content;
     protected Component drawerContent;

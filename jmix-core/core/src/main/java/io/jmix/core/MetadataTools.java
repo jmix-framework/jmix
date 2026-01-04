@@ -418,7 +418,8 @@ public class MetadataTools {
      */
     public boolean isJpa(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
-        return metaProperty.getStore().getDescriptor().isJpa();
+        return metaProperty.getStore().getDescriptor().isJpa()
+                && metaProperty.getDeclaringClass() != null; // not a dynamic property
     }
 
     /**

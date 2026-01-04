@@ -23,7 +23,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty {
+public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty, CloneableMetaProperty {
 
     private Store store;
     private MetaClass domain;
@@ -62,6 +62,13 @@ public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty
         annotatedElement = prototype.annotatedElement;
         javaType = prototype.javaType;
         declaringClass = prototype.declaringClass;
+    }
+
+    @Override
+    public MetaPropertyImpl makeClone(MetaClass metaClass) {
+        MetaPropertyImpl metaProperty = new MetaPropertyImpl(this);
+        metaProperty.setDomain(metaClass);
+        return metaProperty;
     }
 
     @Override

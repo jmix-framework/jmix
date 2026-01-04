@@ -232,4 +232,8 @@ public class ExtendedEntities {
     public void registerReplacedMetaClass(MetaClass metaClass) {
         replacedMetaClasses.put(metaClass.getJavaClass(), metaClass);
     }
+
+    public void unregisterReplacedMetaClass(MetaClass metaClass) {
+
+    }
 }

@@ -275,6 +275,7 @@ dependencies {
         api "io.jmix.translations:jmix-translations-tr:$freeVersion"
         api "io.jmix.translations:jmix-translations-es:$freeVersion"
         api "io.jmix.translations:jmix-translations-pt-br:$freeVersion"
+        api "io.jmix.translations:jmix-translations-cs:$freeVersion"
 
         api "io.jmix.tabbedmode:jmix-tabbedmode-flowui:$premiumVersion"
         api "io.jmix.tabbedmode:jmix-tabbedmode-flowui-starter:$premiumVersion"

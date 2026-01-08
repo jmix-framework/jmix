@@ -20,13 +20,19 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.facet.FragmentSettingsFacet;
 import io.jmix.flowui.facet.SettingsFacet;
+import io.jmix.flowui.facet.ViewSettingsFacet;
 import io.jmix.flowui.facet.impl.SettingsFacetUtils;
+import io.jmix.flowui.facet.settings.UiComponentSettings;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @Internal
@@ -37,8 +43,21 @@ public final class TabSheetUtils {
     }
 
     public static void applySettingsToTabContent(JmixTabSheet tabSheet, Tab tab) {
-        View<?> view = UiComponentUtils.getView(tabSheet);
+        Optional<? extends SettingsFacet<?>> settingsFacet;
+        Component owner;
+
+        Fragment<?> fragment = UiComponentUtils.findFragment(tabSheet);
+        if (fragment != null) {
+            settingsFacet = getFragmentFacet(fragment);
+            owner = fragment;
+        } else {
+            View<?> view = UiComponentUtils.getView(tabSheet);
+            settingsFacet = getViewFacet(view);
+            owner = view;
+        }
+
         Component tabContent = tabSheet.getContentByTab(tab);
+
         List<Component> tabComponents = new ArrayList<>();
         if (UiComponentUtils.isContainer(tabContent)) {
             tabComponents.addAll(UiComponentUtils.getComponents(tabContent));
@@ -46,25 +65,41 @@ public final class TabSheetUtils {
             tabComponents.add(tabContent);
         }
 
-        ViewControllerUtils.getViewFacets(view).getFacets().forEach(facet -> {
-            if (facet instanceof SettingsFacet settingsFacet) {
+        settingsFacet.ifPresent(facet -> processSettingsFacet(facet, owner, tabComponents));
+    }
 
-                if (settingsFacet.getSettings() == null) {
-                    throw new IllegalStateException("SettingsFacet is not attached to the view");
-                }
+    private static Optional<? extends SettingsFacet<?>> getFragmentFacet(Fragment<?> fragment) {
+        return FragmentUtils.getFragmentFacets(fragment).getFacets()
+                .filter(facet -> facet instanceof FragmentSettingsFacet)
+                .map(FragmentSettingsFacet.class::cast)
+                .findAny();
+    }
 
-                Consumer<SettingsFacet.SettingsContext> applySettingsDelegate =
-                        settingsFacet.getApplySettingsDelegate();
+    private static Optional<? extends SettingsFacet<?>> getViewFacet(View<?> view) {
+        return ViewControllerUtils.getViewFacets(view).getFacets()
+                .filter(facet -> facet instanceof ViewSettingsFacet)
+                .map(ViewSettingsFacet.class::cast)
+                .findAny();
+    }
 
-                if (applySettingsDelegate != null) {
-                    applySettingsDelegate.accept(new SettingsFacet.SettingsContext(
-                            view,
-                            new ArrayList<>(tabComponents),
-                            settingsFacet.getSettings()));
-                } else {
-                    SettingsFacetUtils.applySettings(settingsFacet, tabComponents);
-                }
-            }
-        });
+    private static <S extends UiComponentSettings<S>> void processSettingsFacet(SettingsFacet<S> settingsFacet, Component owner,
+                                                                                List<Component> tabComponents) {
+        if (settingsFacet.getSettings() == null) {
+            throw new IllegalStateException("SettingsFacet is not attached to the view");
+        }
+
+        Consumer<? super SettingsFacet.SettingsContext<S>> applySettingsDelegate =
+                settingsFacet.getApplySettingsDelegate();
+
+        if (applySettingsDelegate != null) {
+            SettingsFacet.SettingsContext<S> context = new SettingsFacet.SettingsContext<>(
+                    owner,
+                    new ArrayList<>(tabComponents),
+                    settingsFacet.getSettings());
+
+            applySettingsDelegate.accept(context);
+        } else {
+            SettingsFacetUtils.applySettings(settingsFacet, tabComponents);
+        }
     }
 }

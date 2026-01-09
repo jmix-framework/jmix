@@ -16,14 +16,13 @@
 
 package io.jmix.search.utils;
 
-import com.google.common.base.Strings;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.exception.FileParseException;
 import io.jmix.search.exception.UnsupportedFileFormatException;
-import org.apache.commons.io.FilenameUtils;
+import io.jmix.search.index.fileparsing.FileParserKit;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
@@ -31,10 +30,6 @@ import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.microsoft.OfficeParser;
 import org.apache.tika.parser.microsoft.OfficeParserConfig;
 import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
-import org.apache.tika.parser.odf.OpenDocumentParser;
-import org.apache.tika.parser.pdf.PDFParser;
-import org.apache.tika.parser.rtf.RTFParser;
-import org.apache.tika.parser.txt.TXTParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +37,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Optional;
 
 @Component
 public class FileProcessor {
@@ -50,28 +44,35 @@ public class FileProcessor {
     private static final Logger log = LoggerFactory.getLogger(FileProcessor.class);
 
     protected FileStorageLocator fileStorageLocator;
+    protected FileParserProvider fileParserProvider;
 
-    public FileProcessor(FileStorageLocator fileStorageLocator) {
+    public FileProcessor(FileStorageLocator fileStorageLocator, FileParserProvider fileParserProvider) {
         this.fileStorageLocator = fileStorageLocator;
+        this.fileParserProvider = fileParserProvider;
     }
 
     public String extractFileContent(FileRef fileRef) throws FileParseException, UnsupportedFileFormatException {
         Preconditions.checkNotNullArgument(fileRef);
         log.debug("Extract content of file {}", fileRef);
         FileStorage fileStorage = fileStorageLocator.getByName(fileRef.getStorageName());
-        Parser parser = getParser(fileRef);
+        FileParserKit parsingBundle = getParserKit(fileRef);
+        Parser parser = parsingBundle.parser();
         log.debug("Parser for file {}: {}", fileRef, parser);
 
         StringWriter stringWriter = new StringWriter();
-        ParseContext parseContext = createParseContext();
         try (InputStream stream = fileStorage.openStream(fileRef)) {
-            parser.parse(stream, new BodyContentHandler(stringWriter), new Metadata(), parseContext);
+            parser.parse(
+                    stream,
+                    parsingBundle.contentHandlerGenerator().apply(stringWriter),
+                    parsingBundle.metadata(),
+                    parsingBundle.parseContext());
         } catch (OfficeXmlFileException e) {
+            //Protection from Office 2007 documents with old .doc extension.
             if (parser instanceof OfficeParser) {
                 parser = new OOXMLParser();
                 try (InputStream secondStream = fileStorage.openStream(fileRef)) {
                     stringWriter = new StringWriter();
-                    parser.parse(secondStream, new BodyContentHandler(stringWriter), new Metadata(), parseContext);
+                    parser.parse(secondStream, new BodyContentHandler(stringWriter), new Metadata(), parsingBundle.parseContext());
                 } catch (Exception e1) {
                     log.error("Unable to parse OOXML file '{}'", fileRef.getFileName(), e1);
                     throw new FileParseException(fileRef.getFileName(), "Fail to parse OOXML file via OOXMLParser", e);
@@ -85,55 +86,7 @@ public class FileProcessor {
         return stringWriter.toString();
     }
 
-    protected Parser getParser(FileRef fileRef) throws UnsupportedFileFormatException {
-        Optional<Parser> parserOpt = getParserOpt(fileRef);
-        return parserOpt.orElseThrow(() -> new UnsupportedFileFormatException(fileRef.getFileName()));
-    }
-
-    protected ParseContext createParseContext() {
-        ParseContext parseContext = new ParseContext();
-
-        OfficeParserConfig officeParserConfig = new OfficeParserConfig();
-        officeParserConfig.setIncludeHeadersAndFooters(false);
-        parseContext.set(OfficeParserConfig.class, officeParserConfig);
-
-        return parseContext;
-    }
-
-    protected Optional<Parser> getParserOpt(FileRef fileRef) {
-        Parser parser;
-        String ext = FilenameUtils.getExtension(fileRef.getFileName()).toLowerCase();
-        if (Strings.isNullOrEmpty(ext)) {
-            log.warn("Unable to create a parser for a file without extension");
-            parser = null;
-        } else {
-            switch (ext) {
-                case "pdf":
-                    parser = new PDFParser();
-                    break;
-                case "doc":
-                case "xls":
-                    parser = new OfficeParser();
-                    break;
-                case "docx":
-                case "xlsx":
-                    parser = new OOXMLParser();
-                    break;
-                case "odt":
-                case "ods":
-                    parser = new OpenDocumentParser();
-                    break;
-                case "rtf":
-                    parser = new RTFParser();
-                    break;
-                case "txt":
-                    parser = new TXTParser();
-                    break;
-                default:
-                    log.warn("Unsupported file extension: {}", ext);
-                    parser = null;
-            }
-        }
-        return Optional.ofNullable(parser);
+    protected FileParserKit getParserKit(FileRef fileRef) throws UnsupportedFileFormatException {
+        return fileParserProvider.getParserKit(fileRef);
     }
 }

@@ -23,8 +23,7 @@ export const drawerLayoutDialogOverlayStyles = css`
         border-radius: 0 !important;
     }
 
-    :host([fullscreen]) [part='header'] ::slotted(:not([disabled])),
-    :host([fullscreen]) [part='footer'] ::slotted(:not([disabled])) {
-      pointer-events: auto;
+    [part='content'] {
+      padding: var(--lumo-space-s);
     }
 `;

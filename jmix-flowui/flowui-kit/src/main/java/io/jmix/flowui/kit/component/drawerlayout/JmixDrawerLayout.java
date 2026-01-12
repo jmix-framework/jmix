@@ -21,6 +21,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementUtil;
 import com.vaadin.flow.dom.PropertyChangeEvent;
+import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.Nullable;
 
 public class JmixDrawerLayout extends Component implements HasSize, HasTheme {
@@ -33,6 +34,7 @@ public class JmixDrawerLayout extends Component implements HasSize, HasTheme {
     public JmixDrawerLayout() {
         // Workaround for: https://github.com/vaadin/flow/issues/3496
         getElement().setProperty("drawerOpened", false);
+        getThemeNames().add("dimmed-curtain");
 
         attachDrawerOpenedChangedListener();
     }
@@ -173,14 +175,31 @@ public class JmixDrawerLayout extends Component implements HasSize, HasTheme {
         getElement().setProperty("closeOnModalityCurtainClick", closeOnClick);
     }
 
-    // TODO: pinyazhin, events - close, open, modality-click
-
-    public boolean isDisplayOverlayOnSmallScreen() {
-        return getElement().getProperty("displayOverlayOnSmallScreen", true);
+    /**
+     * @return whether the drawer should be displayed as an overlay on small screens.
+     */
+    public boolean isDisplayAsOverlayOnSmallScreen() {
+        return getElement().getProperty("displayAsOverlayOnSmallScreen", true);
     }
 
-    public void setDisplayOverlayOnSmallScreen(boolean displayOverlay) {
-        getElement().setProperty("displayOverlayOnSmallScreen", displayOverlay);
+    /**
+     * Sets whether the drawer should be displayed as an overlay on small screens.
+     * <p>
+     * The default value is {@code true}.
+     *
+     * @param displayAsOverlay displayAsOverlay option
+     */
+    public void setDisplayAsOverlayOnSmallScreen(boolean displayAsOverlay) {
+        getElement().setProperty("displayAsOverlayOnSmallScreen", displayAsOverlay);
+    }
+
+    @Nullable
+    public String getOverlayAriaLabel() {
+        return getElement().getProperty("overlayAriaLabel");
+    }
+
+    public void setOverlayAriaLabel(String ariaLabel) {
+        getElement().setProperty("overlayAriaLabel", ariaLabel);
     }
 
     /**
@@ -339,6 +358,36 @@ public class JmixDrawerLayout extends Component implements HasSize, HasTheme {
     @Synchronize(property = "drawerOpened", value = "drawer-opened-changed", allowInert = true)
     public boolean isDrawerOpened() {
         return getElement().getProperty("drawerOpened", false);
+    }
+
+    /**
+     * Adds a listener to handle modality curtain clicks.
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addModalityCurtainClickListener(ComponentEventListener<ModalityCurtainClickEvent> listener) {
+        return addListener(ModalityCurtainClickEvent.class, listener);
+    }
+
+    /**
+     * Adds a listener to handle drawer open events.
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addDrawerOpenListener(ComponentEventListener<DrawerOpenEvent> listener) {
+        return addListener(DrawerOpenEvent.class, listener);
+    }
+
+    /**
+     * Adds a listener to handle drawer close events.
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addDrawerCloseListener(ComponentEventListener<DrawerCloseEvent> listener) {
+        return addListener(DrawerCloseEvent.class, listener);
     }
 
     /**

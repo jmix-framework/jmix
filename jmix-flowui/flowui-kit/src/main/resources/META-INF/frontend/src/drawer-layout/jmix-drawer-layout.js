@@ -46,13 +46,10 @@ class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixi
 
             <jmix-drawer-layout-dialog
                     id="dialog"
-                    opened="[[_computeDialogOpened(drawerOpened, _displayOverlay)]]"
-                    fullscreen="[[_displayOverlay]]"
-                    aria-label="[[__dialogAriaLabel]]"
-                    no-close-on-outside-click="[[__isDirty]]"
-                    no-close-on-esc="[[__isDirty]]"
+                    opened="[[_computeDialogOpened(drawerOpened, _displayAsOverlay)]]"
+                    fullscreen="[[_displayAsOverlay]]"
+                    aria-label="[[overlayAriaLabel]]"
                     theme$="[[_theme]]"
-                    on-opened-changed="__onDialogOpened"
                   ></jmix-drawer-layout-dialog>
         `;
     }
@@ -65,9 +62,9 @@ class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixi
         super.ready();
 
         this.addController(
-            new MediaQueryController(this._displayOverlayMediaQuery, (matches) => {
-                this._displayOverlay = this.displayOverlayOnSmallScreen ? matches : false;
-                this.toggleAttribute('overlay', this._displayOverlay);
+            new MediaQueryController(this._displayAsOverlayMediaQuery, (matches) => {
+                this._displayAsOverlay = this.displayAsOverlayOnSmallScreen ? matches : false;
+                this.toggleAttribute('overlay', this._displayAsOverlay);
             }),
         );
 

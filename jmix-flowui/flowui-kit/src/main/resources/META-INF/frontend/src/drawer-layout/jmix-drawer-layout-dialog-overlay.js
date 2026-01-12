@@ -41,15 +41,9 @@ class JmixDrawerLayoutDialogOverlay extends OverlayMixin(DirMixin(ThemableMixin(
             <div part="backdrop" id="backdrop" hidden$="[[!withBackdrop]]"></div>
             <div part="overlay" id="overlay" tabindex="0">
                 <section id="resizerContainer" class="resizer-container">
-                    <header part="header">
-                        <slot name="drawerHeaderSlot"></slot>
-                    </header>
                     <div part="content" id="content">
                         <slot name="drawerContentSlot"></slot>
                     </div>
-                    <footer part="footer">
-                        <slot id="drawerFooterSlot" name="drawerFooterSlot"></slot>
-                    </footer>
                 </section>
             </div>
         `;
@@ -57,10 +51,6 @@ class JmixDrawerLayoutDialogOverlay extends OverlayMixin(DirMixin(ThemableMixin(
 
     ready() {
         super.ready();
-
-        // Set attributes to display header and footer
-        this.setAttribute('has-header', '');
-        this.setAttribute('has-footer', '');
     }
 }
 

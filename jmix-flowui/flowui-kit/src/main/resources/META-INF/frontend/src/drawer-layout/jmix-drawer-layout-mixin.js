@@ -56,9 +56,14 @@ export const JmixDrawerLayoutMixin = (superClass) =>
                 notify: true,
                 sync: true,
             },
-            displayOverlayOnSmallScreen: {
+            displayAsOverlayOnSmallScreen: {
                 type: Boolean,
                 value: true,
+                notify: true,
+                sync: true,
+            },
+            overlayAriaLabel: {
+                type: String,
                 notify: true,
                 sync: true,
             },
@@ -66,14 +71,14 @@ export const JmixDrawerLayoutMixin = (superClass) =>
                 type: Boolean,
                 value: true,
             },
-            _displayOverlayMediaQuery: {
+            _displayAsOverlayMediaQuery: {
                 type: String,
-                value: '(max-width: 600px), (max-height: 600px)', /* TODO: pinyazhin why OR and 600px? */
+                value: '(max-width: 600px), (max-height: 600px)',
             },
-            _displayOverlay: {
+            _displayAsOverlay: {
                 type: Boolean,
                 value: false,
-                observer: '_displayOverlayChanged',
+                observer: '_displayAsOverlayChanged',
             },
         };
     }
@@ -107,16 +112,6 @@ export const JmixDrawerLayoutMixin = (superClass) =>
 
         if (opened) {
             this._moveDrawerChildren();
-
-            // TODO: pinyazhin focus fields or drawer itself?
-            // When using bottom aside editor position,
-             // auto-focus the editor element on open.
-             /*if (this._form.parentElement === this) {
-               this.$.editor.setAttribute('tabindex', '0');
-               this.$.editor.focus();
-             } else {
-               this.$.editor.removeAttribute('tabindex');
-             }*/
         }
     }
 
@@ -227,6 +222,10 @@ export const JmixDrawerLayoutMixin = (superClass) =>
      */
     _getDrawerLayoutTransition() {
        const transition = this._getStylePropertyValue('--jmix-drawer-layout-transition');
+       if (transition === 'none') {
+           return 0;
+       }
+       // Transition duration is in ms (e.g.)
        if (transition.length === 0) {
            return 0;
        }
@@ -251,7 +250,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
      *
      * @private
      */
-    _displayOverlayChanged(fullscreen, oldFullscreen) {
+    _displayAsOverlayChanged(fullscreen, oldFullscreen) {
         this._moveDrawerChildren();
     }
 
@@ -260,8 +259,8 @@ export const JmixDrawerLayoutMixin = (superClass) =>
      *
      * @private
      */
-    _computeDialogOpened(opened, displayOverlay) {
-      return displayOverlay ? opened : false;
+    _computeDialogOpened(opened, displayAsOverlay) {
+      return displayAsOverlay ? opened : false;
     }
 
     /**
@@ -270,7 +269,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
      * @private
      */
     _moveDrawerChildren() {
-      if (this._displayOverlay) {
+      if (this._displayAsOverlay) {
         // Move to dialog
         this._moveDrawerChildrenTo(this.$.dialog.$.overlay);
       } else {
@@ -318,7 +317,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
      * @private
      */
     _updateControllers(...existingChildren) {
-        if (!existingChildren || !this._displayOverlay || !this._contentController) {
+        if (!existingChildren || !this._displayAsOverlay || !this._contentController) {
             return;
         }
 

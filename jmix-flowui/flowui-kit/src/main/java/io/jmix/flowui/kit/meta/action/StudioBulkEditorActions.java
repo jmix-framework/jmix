@@ -23,7 +23,7 @@ import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit(requiredDependencies = "io.jmix.bulkeditor:jmix-bulkeditor-starter")
-public interface StudioBulkEditorActions {
+interface StudioBulkEditorActions {
 
     @StudioAction(
             type = "bulked_edit",

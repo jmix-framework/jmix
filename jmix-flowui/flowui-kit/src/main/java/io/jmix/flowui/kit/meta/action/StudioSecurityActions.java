@@ -22,7 +22,7 @@ import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit(requiredDependencies = "io.jmix.security:jmix-security-flowui-starter")
-public interface StudioSecurityActions {
+interface StudioSecurityActions {
 
     @StudioAction(
             type = "sec_showRoleAssignments",

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,5 +16,7 @@
 
 package io.jmix.flowui.kit.component.stub;
 
-interface JpqlFilterJpql extends StudioStubComponent {
+import com.vaadin.flow.component.HasComponents;
+
+interface IconElement extends StudioStubComponent, HasComponents {
 }

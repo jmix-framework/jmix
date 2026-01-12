@@ -20,6 +20,10 @@ import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.FontIcon;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
@@ -34,7 +38,7 @@ import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy.ClassFqnSt
 import static io.jmix.flowui.kit.meta.StudioMetaConstants.IDENTIFIER_PREFIX;
 
 @StudioUiKit
-public interface StudioElements {
+interface StudioElements {
 
     @StudioElement(
             name = "AccordionPanel",
@@ -1150,6 +1154,194 @@ public interface StudioElements {
             )
     )
     void prefix();
+
+    @StudioElement(
+            name = "Icon",
+            xmlElement = "icon",
+            classFqn = "io.jmix.flowui.kit.component.stub.StubIconElement",
+            target = {
+                    "io.jmix.flowui.kit.action.BaseAction",
+
+                    "com.vaadin.flow.component.applayout.DrawerToggle",
+
+                    "io.jmix.flowui.kit.component.button.JmixButton",
+                    "io.jmix.flowui.kit.component.combobutton.ComboButton",
+                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
+
+                    "io.jmix.flowui.component.upload.JmixUpload",
+                    "io.jmix.flowui.component.upload.FileUploadField",
+                    "io.jmix.flowui.component.upload.FileStorageUploadField",
+
+                    "io.jmix.webdavflowui.component.WebdavDocumentUploadField",
+                    "io.jmix.notificationsflowui.component.notificationsindicator.NotificationsIndicator"
+            },
+            unlimitedCount = false,
+            isInjectable = false,
+            injectionIdentifier = StudioComponent.EMPTY_INJECTION_IDENTIFIER,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    totalChildrenCount = 1,
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "image", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "icon", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "svgIcon", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "fontIcon", maxCount = 1)
+                    }
+            )
+    )
+    void icon();
+
+    @StudioElement(
+            name = "Icon",
+            classFqn = "com.vaadin.flow.component.icon.Icon",
+            xmlElement = "icon",
+            target = "io.jmix.flowui.kit.component.stub.StubIconElement",
+            icon = "io/jmix/flowui/kit/meta/icon/component/icon.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/icon.html",
+            isInjectable = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "color", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ICON, required = true),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "size", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true")
+            }
+    )
+    Icon nestedIcon();
+
+    @StudioElement(
+            name = "SvgIcon",
+            classFqn = "com.vaadin.flow.component.icon.SvgIcon",
+            xmlElement = "svgIcon",
+            target = "io.jmix.flowui.kit.component.stub.StubIconElement",
+            icon = "io/jmix/flowui/kit/meta/icon/component/svgIcon.svg",
+            isInjectable = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "color", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "resource", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "size", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true")
+            }
+    )
+    SvgIcon svgIcon();
+
+    @StudioElement(
+            name = "FontIcon",
+            classFqn = "com.vaadin.flow.component.icon.FontIcon",
+            xmlElement = "fontIcon",
+            target = "io.jmix.flowui.kit.component.stub.StubIconElement",
+            icon = "io/jmix/flowui/kit/meta/icon/component/fontIcon.svg",
+            isInjectable = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "charCode", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "color", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "fontFamily", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "iconClassNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "ligature", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "size", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true")
+            }
+    )
+    FontIcon fontIcon();
+
+    @StudioElement(
+            name = "Image",
+            classFqn = "io.jmix.flowui.component.image.JmixImage",
+            xmlElement = "image",
+            target = "io.jmix.flowui.kit.meta.element.stub.StubImageElement",
+            icon = "io/jmix/flowui/kit/meta/icon/html/image.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/image.html",
+            isInjectable = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "alternateText", type = StudioPropertyType.LOCALIZED_STRING,
+                            setMethod = "setAlt"),
+                    @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "dataContainer", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF),
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "maxWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "minHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "property", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.PROPERTY_REF),
+                    @StudioProperty(xmlAttribute = "resource", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING,
+                            setMethod = "setSrc"),
+                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
+                            options = {"fill", "contain", "cover", "scale-down"}),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "whiteSpace", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
+                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
+                                    "INITIAL"}),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
+            }
+    )
+    Image image();
 
     @StudioElement(
             name = "Suffix",

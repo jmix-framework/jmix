@@ -23,7 +23,7 @@ import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
-public interface StudioListDataComponentActions {
+interface StudioListDataComponentActions {
 
     @StudioAction(
             type = "list_create",

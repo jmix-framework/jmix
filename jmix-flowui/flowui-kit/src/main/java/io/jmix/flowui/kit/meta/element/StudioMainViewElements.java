@@ -21,7 +21,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
-public interface StudioMainViewElements {
+interface StudioMainViewElements {
 
     @StudioElement(
             name = "NavigationBar",

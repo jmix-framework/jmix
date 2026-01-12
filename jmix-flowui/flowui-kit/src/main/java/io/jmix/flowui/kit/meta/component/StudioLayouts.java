@@ -35,7 +35,7 @@ import static io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.ANY_TAG;
 import static io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN;
 
 @StudioUiKit
-public interface StudioLayouts {
+interface StudioLayouts {
 
     @StudioComponent(
             name = "Details",

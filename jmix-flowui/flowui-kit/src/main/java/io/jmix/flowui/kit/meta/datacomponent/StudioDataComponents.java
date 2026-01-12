@@ -22,7 +22,7 @@ import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
-public interface StudioDataComponents {
+interface StudioDataComponents {
 
     @StudioDataComponent(
             name = "Collection Container",

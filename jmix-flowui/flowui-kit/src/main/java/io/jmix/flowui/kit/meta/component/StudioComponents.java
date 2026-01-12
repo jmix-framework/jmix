@@ -67,7 +67,7 @@ import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.component.preview.StudioGenericComponentPreview;
 
 @StudioUiKit
-public interface StudioComponents {
+interface StudioComponents {
 
     @StudioComponent(
             name = "GenericComponent",

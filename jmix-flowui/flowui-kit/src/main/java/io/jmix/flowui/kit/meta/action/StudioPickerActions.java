@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.meta.action;
 import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
-public interface StudioPickerActions {
+interface StudioPickerActions {
 
     @StudioAction(
             classFqn = "io.jmix.flowui.kit.action.BaseAction",

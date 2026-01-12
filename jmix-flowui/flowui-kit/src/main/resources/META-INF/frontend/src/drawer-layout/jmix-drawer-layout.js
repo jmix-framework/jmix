@@ -46,8 +46,8 @@ class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixi
 
             <jmix-drawer-layout-dialog
                     id="dialog"
-                    opened="[[_computeDialogOpened(drawerOpened, _fullscreen)]]"
-                    fullscreen="[[_fullscreen]]"
+                    opened="[[_computeDialogOpened(drawerOpened, _displayOverlay)]]"
+                    fullscreen="[[_displayOverlay]]"
                     aria-label="[[__dialogAriaLabel]]"
                     no-close-on-outside-click="[[__isDirty]]"
                     no-close-on-esc="[[__isDirty]]"
@@ -65,9 +65,9 @@ class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixi
         super.ready();
 
         this.addController(
-            new MediaQueryController(this._fullscreenMediaQuery, (matches) => {
-                this._fullscreen = this.fullscreenOnSmallDevice ? matches : false;
-                this.toggleAttribute('fullscreen', this._fullscreen);
+            new MediaQueryController(this._displayOverlayMediaQuery, (matches) => {
+                this._displayOverlay = this.displayOverlayOnSmallScreen ? matches : false;
+                this.toggleAttribute('overlay', this._displayOverlay);
             }),
         );
 

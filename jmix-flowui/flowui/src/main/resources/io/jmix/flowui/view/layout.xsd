@@ -4300,6 +4300,7 @@
                 <xs:attribute name="drawerVerticalMinSize" type="componentSize"/>
                 <xs:attribute name="drawerVerticalSize" type="componentSize"/>
                 <xs:attribute name="modal" type="xs:boolean"/>
+                <xs:attribute name="displayOverlayOnSmallScreen" type="xs:boolean"/>
                 <xs:attribute name="closeOnModalityCurtainClick" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>

@@ -56,7 +56,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
                 notify: true,
                 sync: true,
             },
-            displayOverlayOnSmallScreens: {
+            displayOverlayOnSmallScreen: {
                 type: Boolean,
                 value: true,
                 notify: true,
@@ -66,18 +66,14 @@ export const JmixDrawerLayoutMixin = (superClass) =>
                 type: Boolean,
                 value: true,
             },
-            fullscreenOnSmallDevice: {
-                type: Boolean,
-                value: true,
-            },
-            _fullscreenMediaQuery: {
+            _displayOverlayMediaQuery: {
                 type: String,
                 value: '(max-width: 600px), (max-height: 600px)', /* TODO: pinyazhin why OR and 600px? */
             },
-            _fullscreen: {
+            _displayOverlay: {
                 type: Boolean,
                 value: false,
-                observer: '_fullscreenChanged',
+                observer: '_displayOverlayChanged',
             },
         };
     }
@@ -255,7 +251,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
      *
      * @private
      */
-    _fullscreenChanged(fullscreen, oldFullscreen) {
+    _displayOverlayChanged(fullscreen, oldFullscreen) {
         this._moveDrawerChildren();
     }
 
@@ -264,8 +260,8 @@ export const JmixDrawerLayoutMixin = (superClass) =>
      *
      * @private
      */
-    _computeDialogOpened(opened, fullscreen) {
-      return fullscreen ? opened : false;
+    _computeDialogOpened(opened, displayOverlay) {
+      return displayOverlay ? opened : false;
     }
 
     /**
@@ -274,7 +270,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
      * @private
      */
     _moveDrawerChildren() {
-      if (this._fullscreen) {
+      if (this._displayOverlay) {
         // Move to dialog
         this._moveDrawerChildrenTo(this.$.dialog.$.overlay);
       } else {
@@ -322,7 +318,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
      * @private
      */
     _updateControllers(...existingChildren) {
-        if (!existingChildren || !this._fullscreen || !this._contentController) {
+        if (!existingChildren || !this._displayOverlay || !this._contentController) {
             return;
         }
 

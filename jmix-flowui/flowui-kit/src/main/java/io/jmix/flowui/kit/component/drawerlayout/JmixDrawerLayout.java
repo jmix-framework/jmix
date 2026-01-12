@@ -175,6 +175,14 @@ public class JmixDrawerLayout extends Component implements HasSize, HasTheme {
 
     // TODO: pinyazhin, events - close, open, modality-click
 
+    public boolean isDisplayOverlayOnSmallScreen() {
+        return getElement().getProperty("displayOverlayOnSmallScreen", true);
+    }
+
+    public void setDisplayOverlayOnSmallScreen(boolean displayOverlay) {
+        getElement().setProperty("displayOverlayOnSmallScreen", displayOverlay);
+    }
+
     /**
      * Note that this does not return the actual size of the drawer panel but the height which has been set using
      * {@link #setDrawerVerticalSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-vertical-size}.

@@ -97,7 +97,7 @@ export const drawerLayoutStyles = css`
         touch-action: manipulation;
     }
 
-    :host([drawer-opened][fullscreen]) [part='drawer'] {
+    :host([drawer-opened][overlay]) [part='drawer'] {
         visibility: hidden;
     }
 

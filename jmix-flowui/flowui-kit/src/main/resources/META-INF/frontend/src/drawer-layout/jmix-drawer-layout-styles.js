@@ -29,7 +29,6 @@ export const drawerLayoutStyles = css`
         --jmix-drawer-layout-drawer-horizontal-max-size: 25rem;
         --jmix-drawer-layout-drawer-horizontal-min-size: 15rem;
 
-        /* TODO: pinyazhin, support no animation? */
         --jmix-drawer-layout-transition: 200ms;
     }
 
@@ -101,12 +100,12 @@ export const drawerLayoutStyles = css`
         visibility: hidden;
     }
 
-    :host([drawer-opened][modal][theme~='dimmed-curtain']) [part='modalityCurtain'] {
+    :host([drawer-opened][modal]) [part='modalityCurtain'] {
         animation: var(--jmix-drawer-layout-transition) jmix-modality-curtain-dimmed-enter both;
         will-change: opacity;
     }
 
-    :host(:not([drawer-opened])[modal][theme~='dimmed-curtain']) [part='modalityCurtain']:not([hidden]) {
+    :host(:not([drawer-opened])[modal]) [part='modalityCurtain']:not([hidden]) {
         animation: var(--jmix-drawer-layout-transition) jmix-modality-curtain-dimmed-out both;
         will-change: opacity;
     }

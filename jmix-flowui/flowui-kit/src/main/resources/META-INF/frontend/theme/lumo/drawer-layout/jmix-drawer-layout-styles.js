@@ -25,11 +25,11 @@ const drawerLayoutStyles = css`
         box-shadow: var(--lumo-box-shadow-m);
     }
 
-    :host([drawer-opened][modal][theme~='dimmed-curtain']) [part='modalityCurtain'] {
+    :host([drawer-opened][modal]) [part='modalityCurtain'] {
         background-color: var(--lumo-shade-20pct);
     }
 
-    :host(:not([drawer-opened])[modal][theme~='dimmed-curtain']) [part='modalityCurtain']:not([hidden]) {
+    :host(:not([drawer-opened])[modal]) [part='modalityCurtain']:not([hidden]) {
         background-color: var(--lumo-shade-20pct);
     }
 

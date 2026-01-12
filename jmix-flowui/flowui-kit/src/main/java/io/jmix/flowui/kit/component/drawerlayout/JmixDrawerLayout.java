@@ -24,7 +24,7 @@ import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.Nullable;
 
-public class JmixDrawerLayout extends Component implements HasSize, HasTheme {
+public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
 
     protected Component content;
     protected Component drawerContent;
@@ -34,7 +34,6 @@ public class JmixDrawerLayout extends Component implements HasSize, HasTheme {
     public JmixDrawerLayout() {
         // Workaround for: https://github.com/vaadin/flow/issues/3496
         getElement().setProperty("drawerOpened", false);
-        getThemeNames().add("dimmed-curtain");
 
         attachDrawerOpenedChangedListener();
     }
@@ -309,7 +308,7 @@ public class JmixDrawerLayout extends Component implements HasSize, HasTheme {
      * @return the max-width defined for the drawer panel
      */
     @Nullable
-    public String getDrawerMaxWidth() {
+    public String getDrawerHorizontalMaxSize() {
         return getElement().getStyle().get("--jmix-drawer-layout-drawer-horizontal-max-size");
     }
 

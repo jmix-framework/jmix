@@ -48,6 +48,7 @@ public class DrawerLayoutLoader extends AbstractComponentLoader<DrawerLayout> {
     @Override
     public void loadComponent() {
         componentLoader().loadSizeAttributes(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
 
         loadEnum(element, DrawerPlacement.class, "drawerPlacement", resultComponent::setDrawerPlacement);
         loadEnum(element, DrawerMode.class, "drawerMode", resultComponent::setDrawerMode);

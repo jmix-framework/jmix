@@ -4290,9 +4290,12 @@
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassNames"/>
 
-                <xs:attribute name="drawerPlacement" type="drawerPlacementType"/>
+                <xs:attribute name="closeOnModalityCurtainClick" type="xs:boolean"/>
+                <xs:attribute name="displayAsOverlayOnSmallScreen" type="xs:boolean"/>
                 <xs:attribute name="drawerMode" type="drawerModeType"/>
+                <xs:attribute name="drawerPlacement" type="drawerPlacementType"/>
                 <xs:attribute name="drawerHorizontalMaxSize" type="componentSize"/>
                 <xs:attribute name="drawerHorizontalMinSize" type="componentSize"/>
                 <xs:attribute name="drawerHorizontalSize" type="componentSize"/>
@@ -4300,9 +4303,7 @@
                 <xs:attribute name="drawerVerticalMinSize" type="componentSize"/>
                 <xs:attribute name="drawerVerticalSize" type="componentSize"/>
                 <xs:attribute name="modal" type="xs:boolean"/>
-                <xs:attribute name="displayAsOverlayOnSmallScreen" type="xs:boolean"/>
                 <xs:attribute name="overlayAriaLabel" type="resourceString"/>
-                <xs:attribute name="closeOnModalityCurtainClick" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

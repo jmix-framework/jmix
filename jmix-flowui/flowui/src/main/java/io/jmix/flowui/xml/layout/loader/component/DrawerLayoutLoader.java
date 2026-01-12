@@ -53,6 +53,12 @@ public class DrawerLayoutLoader extends AbstractComponentLoader<DrawerLayout> {
         loadEnum(element, DrawerMode.class, "drawerMode", resultComponent::setDrawerMode);
         loadBoolean(element, "modal", resultComponent::setModal);
         loadBoolean(element, "closeOnModalityCurtainClick", resultComponent::setCloseOnModalityCurtainClick);
+        loadString(element, "drawerHorizontalMaxSize", resultComponent::setDrawerHorizontalMaxSize);
+        loadString(element, "drawerHorizontalMinSize", resultComponent::setDrawerHorizontalMinSize);
+        loadString(element, "drawerHorizontalSize", resultComponent::setDrawerHorizontalSize);
+        loadString(element, "drawerVerticalMaxSize", resultComponent::setDrawerVerticalMaxSize);
+        loadString(element, "drawerVerticalMinSize", resultComponent::setDrawerVerticalMinSize);
+        loadString(element, "drawerVerticalSize", resultComponent::setDrawerVerticalSize);
 
         loadSubComponents();
     }

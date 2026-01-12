@@ -39,6 +39,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
                 reflectToAttribute: true,
                 value: 'overlay',
                 notify: true,
+                observer: '_drawerModeChanged',
                 sync: true,
             },
             modal: {
@@ -96,8 +97,13 @@ export const JmixDrawerLayoutMixin = (superClass) =>
         this._updateModalityCurtainHidden();
     }
 
+      _drawerModeChanged(drawerMode) {
+          this._updateContentAnimation();
+      }
+
     _drawerOpenedChanged(opened, oldOpened) {
         this._updateModalityCurtainHidden();
+        this._updateContentAnimation();
 
         if (!opened && oldOpened) {
             this._closeDrawer();
@@ -145,6 +151,45 @@ export const JmixDrawerLayoutMixin = (superClass) =>
         } else if (!shouldBeHidden) {
             // Display curtain immediately
             this._modalityCurtainHidden = false;
+        }
+    }
+
+    _updateContentAnimation() {
+        if (this.drawerMode == 'overlay') {
+            this.$.content.style.maxWidth = '100%';
+            this.$.content.style.maxHeight = '100%';
+            return;
+        }
+        if (this.drawerPlacement === 'left'
+                || this.drawerPlacement === 'right'
+                || this.drawerPlacement === 'inline-start'
+                || this.drawerPlacement === 'inline-end') {
+            let realWidth = this.$.drawer.getBoundingClientRect().width + 'px';
+            if (this.drawerOpened) {
+                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-horizontal-size', realWidth);
+                this.$.content.style.maxWidth = 'calc(100% - var(--_jmix-drawer-layout-drawer-horizontal-size))';
+
+                // Clear height if drawerPlacement changed when drawer is opened
+                this.$.content.style.maxHeight = '100%';
+                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-vertical-size', '');
+            } else {
+                this.$.content.style.maxWidth = '100%';
+                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-horizontal-size', '');
+            }
+        }
+        if (this.drawerPlacement === 'top' || this.drawerPlacement === 'bottom') {
+            let realHeight = this.$.drawer.getBoundingClientRect().height + 'px';
+            if (this.drawerOpened) {
+                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-vertical-size', realHeight);
+                this.$.content.style.maxHeight = 'calc(100% - var(--_jmix-drawer-layout-drawer-vertical-size))';
+
+                // Clear width if drawerPlacement changed when drawer is opened
+                this.$.content.style.maxWidth = '100%';
+                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-horizontal-size', '');
+            } else {
+                this.$.content.style.maxHeight = '100%';
+                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-vertical-size', '');
+            }
         }
     }
 
@@ -277,7 +322,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
      * @private
      */
     _updateControllers(...existingChildren) {
-        if (!existingChildren || !this._fullscreen) {
+        if (!existingChildren || !this._fullscreen || !this._contentController) {
             return;
         }
 

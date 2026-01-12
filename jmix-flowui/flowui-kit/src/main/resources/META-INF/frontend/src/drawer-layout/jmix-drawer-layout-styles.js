@@ -21,8 +21,15 @@ export const drawerLayoutStyles = css`
         display: block;
         box-sizing: border-box;
 
-        --jmix-drawer-layout-drawer-height: 12em;
-        --jmix-drawer-layout-drawer-width: 20em;
+        --jmix-drawer-layout-drawer-vertical-size: auto;
+        --jmix-drawer-layout-drawer-vertical-max-size: 14rem;
+        --jmix-drawer-layout-drawer-vertical-min-size: 10rem;
+
+        --jmix-drawer-layout-drawer-horizontal-size: auto;
+        --jmix-drawer-layout-drawer-horizontal-max-size: 25rem;
+        --jmix-drawer-layout-drawer-horizontal-min-size: 15rem;
+
+        /* TODO: pinyazhin, support no animation? */
         --jmix-drawer-layout-transition: 200ms;
     }
 
@@ -106,35 +113,52 @@ export const drawerLayoutStyles = css`
 
     /* Drawer placement */
 
+    :host([drawer-placement='']) [part='drawer'],
+    :host([drawer-placement='left']) [part='drawer'],
+    :host([drawer-placement='right']) [part='drawer'],
+    :host([drawer-placement='inline-start']) [part='drawer'],
+    :host([drawer-placement='inline-end']) [part='drawer'] {
+        width: var(--jmix-drawer-layout-drawer-horizontal-size);
+        max-width: var(--jmix-drawer-layout-drawer-horizontal-max-size);
+        min-width: var(--jmix-drawer-layout-drawer-horizontal-min-size);
+    }
+
+    :host([drawer-placement='bottom']) [part='drawer'],
+    :host([drawer-placement='top']) [part='drawer'] {
+        height: var(--jmix-drawer-layout-drawer-vertical-size);
+        max-height: var(--jmix-drawer-layout-drawer-vertical-max-size);
+        min-height: var(--jmix-drawer-layout-drawer-vertical-min-size);
+    }
+
+    :host([drawer-placement='top']) ::slotted([slot='drawerContentSlot']),
+    :host([drawer-placement='bottom']) ::slotted([slot='drawerContentSlot']) {
+        max-height: var(--jmix-drawer-layout-drawer-vertical-max-size);
+    }
+
     :host([drawer-placement='left']) [part='drawer'] {
         transform: translateX(-100%);
         left: 0;
-        width: var(--jmix-drawer-layout-drawer-width);
     }
 
     :host([drawer-placement='']) [part='drawer'],
     :host([drawer-placement='right']) [part='drawer'] {
         transform: translateX(100%);
         right: 0;
-        width: var(--jmix-drawer-layout-drawer-width);
     }
 
     :host([drawer-placement='top']) [part='drawer'] {
         transform: translateY(-100%);
         top: 0;
-        height: var(--jmix-drawer-layout-drawer-height);
     }
 
     :host([drawer-placement='bottom']) [part='drawer'] {
         transform: translateY(100%);
         bottom: 0;
-        height: var(--jmix-drawer-layout-drawer-height);
     }
 
     :host([drawer-placement='inline-start']) [part='drawer'] {
         transform: translateX(-100%);
         inset-inline-start: 0;
-        width: var(--jmix-drawer-layout-drawer-width);
     }
 
     :host([drawer-placement='inline-start'][dir='rtl']) [part='drawer'] {
@@ -144,7 +168,6 @@ export const drawerLayoutStyles = css`
     :host([drawer-placement='inline-end']) [part='drawer'] {
         transform: translateX(100%);
         inset-inline-end: 0;
-        width: var(--jmix-drawer-layout-drawer-width);
     }
 
     :host([drawer-placement='inline-end'][dir='rtl']) [part='drawer'] {
@@ -165,20 +188,12 @@ export const drawerLayoutStyles = css`
         margin-left: auto;
     }
 
-    :host([drawer-opened][drawer-placement='left'][drawer-mode='push']) [part='content'] {
-        max-width: calc(100% - var(--jmix-drawer-layout-drawer-width));
-    }
-
     :host([drawer-opened][drawer-placement='inline-start']) [part='drawer'] {
         transform: translateX(0%);
     }
 
     :host([drawer-placement='inline-start'][drawer-mode='push']) [part='content'] {
         margin-inline-start: auto;
-    }
-
-    :host([drawer-opened][drawer-placement='inline-start'][drawer-mode='push']) [part='content'] {
-        max-width: calc(100% - var(--jmix-drawer-layout-drawer-width));
     }
 
     :host([drawer-opened][drawer-placement='inline-end']) [part='drawer'] {
@@ -189,29 +204,9 @@ export const drawerLayoutStyles = css`
         margin-inline-end: auto;
     }
 
-    :host([drawer-opened][drawer-placement='inline-end'][drawer-mode='push']) [part='content'] {
-        max-width: calc(100% - var(--jmix-drawer-layout-drawer-width));
-    }
-
     :host([drawer-opened][drawer-placement='']) [part='drawer'],
     :host([drawer-opened][drawer-placement='right']) [part='drawer'] {
         transform: translateX(0%);
-    }
-
-    :host([drawer-placement='right'][drawer-mode='push']) [part='content'],
-    :host([drawer-placement='left'][drawer-mode='push']) [part='content'],
-    :host([drawer-placement='inline-start'][drawer-mode='push']) [part='content'],
-    :host([drawer-placement='inline-end'][drawer-mode='push']) [part='content'] {
-        max-width: 100%;
-    }
-
-    :host([drawer-opened][drawer-placement='right'][drawer-mode='push']) [part='content'] {
-        max-width: calc(100% - var(--jmix-drawer-layout-drawer-width));
-    }
-
-    :host([drawer-placement='top'][drawer-mode='push']) [part='content'],
-    :host([drawer-placement='bottom'][drawer-mode='push']) [part='content'] {
-        max-height: 100%;
     }
 
     :host([drawer-placement='top'][drawer-mode='push']) [part='content'] {
@@ -222,22 +217,8 @@ export const drawerLayoutStyles = css`
         align-self: end;
     }
 
-    :host([drawer-opened][drawer-placement='top'][drawer-mode='push']) [part='content'] {
-        max-height: calc(100% - var(--jmix-drawer-layout-drawer-height));
-    }
-
-    :host([drawer-opened][drawer-placement='bottom'][drawer-mode='push']) [part='content'] {
-        max-height: calc(100% - var(--jmix-drawer-layout-drawer-height));
-    }
-
-    :host([drawer-opened][drawer-placement='top']) [part='drawer'] {
-        height: var(--jmix-drawer-layout-drawer-height);
-        width: 100%;
-        transform: translateY(0%);
-    }
-
+    :host([drawer-opened][drawer-placement='top']) [part='drawer'],
     :host([drawer-opened][drawer-placement='bottom']) [part='drawer'] {
-        height: var(--jmix-drawer-layout-drawer-height);
         width: 100%;
         transform: translateY(0%);
     }

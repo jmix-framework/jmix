@@ -173,6 +173,158 @@ public class JmixDrawerLayout extends Component implements HasSize, HasTheme {
         getElement().setProperty("closeOnModalityCurtainClick", closeOnClick);
     }
 
+    // TODO: pinyazhin, events - close, open, modality-click
+
+    /**
+     * Note that this does not return the actual size of the drawer panel but the height which has been set using
+     * {@link #setDrawerVerticalSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-vertical-size}.
+     *
+     * @return the height defined for the drawer panel
+     */
+    @Nullable
+    public String getDrawerVerticalSize() {
+        return getElement().getStyle().get("--jmix-drawer-layout-drawer-vertical-size");
+    }
+
+    /**
+     * Sets the height of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#TOP},
+     * {@link DrawerPlacement#BOTTOM}).
+     * <p>
+     * The height should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * <p>
+     * If the provided height value is {@code null} then height is removed from the component style.
+     *
+     * @param size height to set
+     */
+    public void setDrawerVerticalSize(@Nullable String size) {
+        getElement().getStyle().set("--jmix-drawer-layout-drawer-vertical-size", size);
+    }
+
+    /**
+     * Note that this does not return the actual size of the drawer panel but the max-height which has been set using
+     * {@link #setDrawerVerticalMaxSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-vertical-max-size}.
+     *
+     * @return the max-height defined for the drawer panel
+     */
+    @Nullable
+    public String getDrawerVerticalMaxSize() {
+        return getElement().getStyle().get("--jmix-drawer-layout-drawer-vertical-max-size");
+    }
+
+    /**
+     * Sets the max-height of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#TOP},
+     * {@link DrawerPlacement#BOTTOM}).
+     * <p>
+     * The max-height should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * <p>
+     * If the provided max-height value is {@code null} then max-height is removed from the component style.
+     *
+     * @param maxSize max-height to set
+     */
+    public void setDrawerVerticalMaxSize(@Nullable String maxSize) {
+        getElement().getStyle().set("--jmix-drawer-layout-drawer-vertical-max-size", maxSize);
+    }
+
+    /**
+     * Note that this does not return the actual size of the drawer panel but the min-height which has been set using
+     * {@link #setDrawerVerticalMinSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-vertical-min-size}.
+     *
+     * @return the min-height defined for the drawer panel
+     */
+    @Nullable
+    public String getDrawerVerticalMinSize() {
+        return getElement().getStyle().get("--jmix-drawer-layout-drawer-vertical-min-size");
+    }
+
+    /**
+     * Sets the min-height of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#TOP},
+     * {@link DrawerPlacement#BOTTOM}).
+     * <p>
+     * The min-height should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * <p>
+     * If the provided min-height value is {@code null} then min-height is removed from the component style.
+     *
+     * @param minSize min-height to set
+     */
+    public void setDrawerVerticalMinSize(@Nullable String minSize) {
+        getElement().getStyle().set("--jmix-drawer-layout-drawer-vertical-min-size", minSize);
+    }
+
+    /**
+     * Note that this does not return the actual size of the drawer panel but the width which has been set using
+     * {@link #setDrawerHorizontalSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-horizontal-size}.
+     *
+     * @return the width defined for the drawer panel
+     */
+    @Nullable
+    public String getDrawerHorizontalSize() {
+        return getElement().getStyle().get("--jmix-drawer-layout-drawer-horizontal-size");
+    }
+
+    /**
+     * Sets the width of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#LEFT},
+     * {@link DrawerPlacement#RIGHT}, {@link DrawerPlacement#INLINE_START}, {@link DrawerPlacement#INLINE_END}).
+     * <p>
+     * The width should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * <p>
+     * If the provided width value is {@code null} then width is removed from the component style.
+     *
+     * @param size width to set
+     */
+    public void setDrawerHorizontalSize(@Nullable String size) {
+        getElement().getStyle().set("--jmix-drawer-layout-drawer-horizontal-size", size);
+    }
+
+    /**
+     * Note that this does not return the actual size of the drawer panel but the max-width which has been set using
+     * {@link #setDrawerHorizontalMaxSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-horizontal-max-size}.
+     *
+     * @return the max-width defined for the drawer panel
+     */
+    @Nullable
+    public String getDrawerMaxWidth() {
+        return getElement().getStyle().get("--jmix-drawer-layout-drawer-horizontal-max-size");
+    }
+
+    /**
+     * Sets the max-width of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#LEFT},
+     * {@link DrawerPlacement#RIGHT}, {@link DrawerPlacement#INLINE_START}, {@link DrawerPlacement#INLINE_END}).
+     * <p>
+     * The max-width should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * <p>
+     * If the provided width value is {@code null} then max-width is removed from the component style.
+     *
+     * @param maxSize max-width to set
+     */
+    public void setDrawerHorizontalMaxSize(@Nullable String maxSize) {
+        getElement().getStyle().set("--jmix-drawer-layout-drawer-horizontal-max-size", maxSize);
+    }
+
+    /**
+     * Note that this does not return the actual size of the drawer panel but the min-width which has been set using
+     * {@link #setDrawerHorizontalMinSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-horizontal-min-size}.
+     *
+     * @return the min-width defined for the drawer panel
+     */
+    @Nullable
+    public String getDrawerHorizontalMinSize() {
+        return getElement().getStyle().get("--jmix-drawer-layout-drawer-horizontal-min-size");
+    }
+
+    /**
+     * Sets the min-width of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#LEFT},
+     * {@link DrawerPlacement#RIGHT}, {@link DrawerPlacement#INLINE_START}, {@link DrawerPlacement#INLINE_END}).
+     * <p>
+     * The min-width should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * <p>
+     * If the provided min-width value is {@code null} then min-width is removed from the component style.
+     *
+     * @param minSize min-width to set
+     */
+    public void setDrawerHorizontalMinSize(@Nullable String minSize) {
+        getElement().getStyle().set("--jmix-drawer-layout-drawer-horizontal-min-size", minSize);
+    }
+
     /**
      * @return whether the drawer is opened
      */

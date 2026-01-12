@@ -4293,8 +4293,13 @@
 
                 <xs:attribute name="drawerPlacement" type="drawerPlacementType"/>
                 <xs:attribute name="drawerMode" type="drawerModeType"/>
+                <xs:attribute name="drawerHorizontalMaxSize" type="componentSize"/>
+                <xs:attribute name="drawerHorizontalMinSize" type="componentSize"/>
+                <xs:attribute name="drawerHorizontalSize" type="componentSize"/>
+                <xs:attribute name="drawerVerticalMaxSize" type="componentSize"/>
+                <xs:attribute name="drawerVerticalMinSize" type="componentSize"/>
+                <xs:attribute name="drawerVerticalSize" type="componentSize"/>
                 <xs:attribute name="modal" type="xs:boolean"/>
-                <xs:attribute name="drawerPadding" type="xs:boolean"/>
                 <xs:attribute name="closeOnModalityCurtainClick" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>

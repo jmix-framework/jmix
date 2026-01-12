@@ -73,6 +73,13 @@ class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixi
 
         this._contentController = new JmixDrawerLayoutSlotController(this, 'drawerContentSlot');
         this.addController(this._contentController);
+
+        this._attachDrawerSizeObserver();
+    }
+
+    _attachDrawerSizeObserver() {
+        const observer = new ResizeObserver(entries => { this._updateContentAnimation(); });
+        observer.observe(this.$.drawer);
     }
 }
 

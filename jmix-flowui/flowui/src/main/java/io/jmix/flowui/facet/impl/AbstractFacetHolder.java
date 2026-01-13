@@ -17,7 +17,7 @@
 package io.jmix.flowui.facet.impl;
 
 import com.vaadin.flow.component.Composite;
-import io.jmix.flowui.component.HasFacetsComponents;
+import io.jmix.flowui.component.HasFacets;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.facet.FacetOwner;
 import org.springframework.lang.Nullable;
@@ -29,9 +29,9 @@ import java.util.stream.Stream;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * Abstract implementation of {@link HasFacetsComponents}.
+ * Abstract implementation of {@link HasFacets}.
  */
-public abstract class AbstractFacetComponentsHolder implements HasFacetsComponents {
+public abstract class AbstractFacetHolder implements HasFacets {
 
     protected Set<Facet> facets = null; // lazily initialized linked hash set
 

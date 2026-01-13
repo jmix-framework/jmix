@@ -16,10 +16,10 @@
 
 package io.jmix.flowui.view;
 
-import io.jmix.flowui.component.HasFacetsComponents;
+import io.jmix.flowui.component.HasFacets;
 
 /**
  * Interface for managing facets associated with a {@link View}.
  */
-public interface ViewFacets extends HasFacetsComponents {
+public interface ViewFacets extends HasFacets {
 }

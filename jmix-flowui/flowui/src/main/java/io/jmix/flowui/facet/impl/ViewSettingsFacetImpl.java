@@ -18,7 +18,7 @@ package io.jmix.flowui.facet.impl;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DetachEvent;
-import io.jmix.flowui.component.HasFacetsComponents;
+import io.jmix.flowui.component.HasFacets;
 import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.ViewSettingsFacet;
@@ -124,7 +124,7 @@ public class ViewSettingsFacetImpl extends AbstractSettingsFacet<ViewSettings>
     }
 
     @Override
-    protected HasFacetsComponents getFacets() {
+    protected HasFacets getFacets() {
         View<?> view = (View<?>) getOwnerComponent();
         return ViewControllerUtils.getViewFacets(view);
     }

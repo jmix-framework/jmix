@@ -18,7 +18,7 @@ package io.jmix.flowui.fragment.impl;
 
 import com.vaadin.flow.component.Composite;
 import io.jmix.flowui.facet.FacetOwner;
-import io.jmix.flowui.facet.impl.AbstractFacetComponentsHolder;
+import io.jmix.flowui.facet.impl.AbstractFacetHolder;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentFacets;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("flowui_FragmentFacets")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class FragmentFacetsImpl extends AbstractFacetComponentsHolder implements FragmentFacets {
+public class FragmentFacetsImpl extends AbstractFacetHolder implements FragmentFacets {
 
     protected final Fragment<?> fragment;
 

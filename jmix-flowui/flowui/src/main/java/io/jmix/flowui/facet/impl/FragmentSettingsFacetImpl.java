@@ -18,7 +18,7 @@ package io.jmix.flowui.facet.impl;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DetachEvent;
-import io.jmix.flowui.component.HasFacetsComponents;
+import io.jmix.flowui.component.HasFacets;
 import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.FragmentSettingsFacet;
 import io.jmix.flowui.facet.settings.ComponentSettingsManager;
@@ -139,7 +139,7 @@ public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSet
     }
 
     @Override
-    protected HasFacetsComponents getFacets() {
+    protected HasFacets getFacets() {
         Fragment<?> fragment = (Fragment<?>) getOwnerComponent();
         return FragmentUtils.getFragmentFacets(fragment);
     }

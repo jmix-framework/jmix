@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 /**
  * Interface defining methods for managing facet API elements.
  */
-public interface HasFacetsComponents {
+public interface HasFacets {
 
     /**
      * Adds a facet to a view.

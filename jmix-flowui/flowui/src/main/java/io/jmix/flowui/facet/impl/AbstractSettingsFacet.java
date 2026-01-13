@@ -22,7 +22,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.component.HasFacetsComponents;
+import io.jmix.flowui.component.HasFacets;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.SettingsFacet;
@@ -285,7 +285,7 @@ public abstract class AbstractSettingsFacet<S extends UiComponentSettings<S>> ex
             return resultComponents;
         }
 
-        HasFacetsComponents facets = getFacets();
+        HasFacets facets = getFacets();
         List<UrlQueryParametersFacet> urlQueryFacets = facets.getFacets()
                 .filter(f -> f instanceof UrlQueryParametersFacet)
                 .map(UrlQueryParametersFacet.class::cast)
@@ -309,7 +309,7 @@ public abstract class AbstractSettingsFacet<S extends UiComponentSettings<S>> ex
         return resultComponents;
     }
 
-    protected abstract HasFacetsComponents getFacets();
+    protected abstract HasFacets getFacets();
 
     protected Composite<?> getOwnerComponent() {
         checkAttachedToOwner();

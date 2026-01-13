@@ -18,7 +18,7 @@ package io.jmix.flowui.view.impl;
 
 import com.vaadin.flow.component.Composite;
 import io.jmix.flowui.facet.FacetOwner;
-import io.jmix.flowui.facet.impl.AbstractFacetComponentsHolder;
+import io.jmix.flowui.facet.impl.AbstractFacetHolder;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewFacets;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("flowui_ViewFacets")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ViewFacetsImpl extends AbstractFacetComponentsHolder implements ViewFacets {
+public class ViewFacetsImpl extends AbstractFacetHolder implements ViewFacets {
 
     protected final View<?> view;
 

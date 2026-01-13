@@ -16,10 +16,10 @@
 
 package io.jmix.flowui.fragment;
 
-import io.jmix.flowui.component.HasFacetsComponents;
+import io.jmix.flowui.component.HasFacets;
 
 /**
  * Interface for managing facets associated with a {@link Fragment}.
  */
-public interface FragmentFacets extends HasFacetsComponents {
+public interface FragmentFacets extends HasFacets {
 }

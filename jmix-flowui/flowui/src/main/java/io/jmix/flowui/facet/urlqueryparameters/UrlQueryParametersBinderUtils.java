@@ -26,6 +26,6 @@ public final class UrlQueryParametersBinderUtils {
     }
 
     public static String getPaginationMaxResultsParam(PaginationUrlQueryParametersBinder binder) {
-        return binder._getMaxResultsParam();
+        return binder.getMaxResultsParamInternal();
     }
 }

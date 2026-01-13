@@ -43,9 +43,7 @@ import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent.FilterComponentsChangeEvent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.SingleFilterSupport;
-import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
-import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.KeyValueCollectionLoader;
@@ -182,8 +180,8 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         }
 
         return ImmutableMap.of(
-                _getConfigurationParam(), configurationParam,
-                _getConditionParam(), conditionParams
+                getConfigurationParamInternal(), configurationParam,
+                getConditionParamInternal(), conditionParams
         );
     }
 
@@ -218,9 +216,9 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     public void updateState(QueryParameters queryParameters) {
         Map<String, List<String>> parameters = queryParameters.getParameters();
 
-        if (parameters.containsKey(getConfigurationParam()) || parameters.containsKey(_getConfigurationParam())) {
-            List<String> configurationParam = parameters.containsKey(_getConfigurationParam())
-                    ? parameters.get(_getConfigurationParam())
+        if (parameters.containsKey(getConfigurationParam()) || parameters.containsKey(getConfigurationParamInternal())) {
+            List<String> configurationParam = parameters.containsKey(getConfigurationParamInternal())
+                    ? parameters.get(getConfigurationParamInternal())
                     // the fallback option should be removed in future versions
                     : parameters.get(getConfigurationParam());
 
@@ -230,9 +228,9 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
                     .findAny();
 
             currentConfiguration.ifPresent(configuration -> {
-                if (parameters.containsKey(getConditionParam()) || parameters.containsKey(_getConditionParam())) {
-                    List<String> conditionParams = parameters.containsKey(_getConditionParam())
-                            ? parameters.get(_getConditionParam())
+                if (parameters.containsKey(getConditionParam()) || parameters.containsKey(getConditionParamInternal())) {
+                    List<String> conditionParams = parameters.containsKey(getConditionParamInternal())
+                            ? parameters.get(getConditionParamInternal())
                             // the fallback option should be removed in future versions
                             : parameters.get(getConditionParam());
                     updateConfigurationConditions(configuration, conditionParams);
@@ -240,9 +238,9 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
                 FilterUtils.setCurrentConfiguration(filter, configuration, true);
             });
-        } else if (parameters.containsKey(getConditionParam()) || parameters.containsKey(_getConditionParam())) {
-            List<String> conditionParams = parameters.containsKey(_getConditionParam())
-                    ? parameters.get(_getConditionParam())
+        } else if (parameters.containsKey(getConditionParam()) || parameters.containsKey(getConditionParamInternal())) {
+            List<String> conditionParams = parameters.containsKey(getConditionParamInternal())
+                    ? parameters.get(getConditionParamInternal())
                     // the fallback option should be removed in future versions
                     : parameters.get(getConditionParam());
 
@@ -457,14 +455,14 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
      * is null or empty, a default name is returned.
      *
      * @return the configuration parameter name if set, otherwise the default configuration parameter name
-     * @deprecated use {@link #_getConfigurationParam()} ()} instead
+     * @deprecated use {@link #getConfigurationParamInternal()} ()} instead
      */
     @Deprecated(since = "3.0", forRemoval = true)
     public String getConfigurationParam() {
         return Strings.isNullOrEmpty(configurationParam) ? DEFAULT_CONFIGURATION_PARAM : configurationParam;
     }
 
-    protected String _getConfigurationParam() {
+    protected String getConfigurationParamInternal() {
         return getOwnerId("genericFilter") + "_" + getConfigurationParam();
     }
 
@@ -482,14 +480,14 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
      * is null or empty, a default name is returned.
      *
      * @return the condition parameter name if set, otherwise the default condition parameter name
-     * @deprecated use {@link #_getConditionParam()} instead
+     * @deprecated use {@link #getConditionParamInternal()} instead
      */
     @Deprecated(since = "3.0", forRemoval = true)
     public String getConditionParam() {
         return Strings.isNullOrEmpty(conditionParam) ? DEFAULT_CONDITION_PARAM : conditionParam;
     }
 
-    protected String _getConditionParam() {
+    protected String getConditionParamInternal() {
         return getOwnerId("genericFilter") + "_" + getConditionParam();
     }
 

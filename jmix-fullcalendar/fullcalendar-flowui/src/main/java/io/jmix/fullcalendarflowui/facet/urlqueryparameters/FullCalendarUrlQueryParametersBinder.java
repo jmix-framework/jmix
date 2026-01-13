@@ -65,18 +65,18 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
     @Override
     public void updateState(QueryParameters queryParameters) {
         Map<String, List<String>> parameters = queryParameters.getParameters();
-        if (parameters.containsKey(getCalendarDisplayModeParam()) || parameters.containsKey(_getCalendarDisplayModeParam())) {
-            String serializedDisplayMode = parameters.containsKey(_getCalendarDisplayModeParam())
-                    ? parameters.get(_getCalendarDisplayModeParam()).get(0)
+        if (parameters.containsKey(getCalendarDisplayModeParam()) || parameters.containsKey(getCalendarDisplayModeParamInternal())) {
+            String serializedDisplayMode = parameters.containsKey(getCalendarDisplayModeParamInternal())
+                    ? parameters.get(getCalendarDisplayModeParamInternal()).get(0)
                     // the fallback option should be removed in future versions
                     : parameters.get(getCalendarDisplayModeParam()).get(0);
             String displayModeId = urlParamSerializer.deserialize(String.class, serializedDisplayMode);
 
             fullCalendar.setCalendarDisplayMode(FullCalendarUtils.getDisplayMode(fullCalendar, displayModeId));
         }
-        if (parameters.containsKey(getCalendarDateParam()) || parameters.containsKey(_getCalendarDateParam())) {
-            String serializedNavigateToDate = parameters.containsKey(_getCalendarDateParam())
-                    ? parameters.get(_getCalendarDateParam()).get(0)
+        if (parameters.containsKey(getCalendarDateParam()) || parameters.containsKey(getCalendarDateParamInternal())) {
+            String serializedNavigateToDate = parameters.containsKey(getCalendarDateParamInternal())
+                    ? parameters.get(getCalendarDateParamInternal()).get(0)
                     : parameters.get(getCalendarDateParam()).get(0);
             LocalDate date = urlParamSerializer.deserialize(LocalDate.class, serializedNavigateToDate);
 
@@ -85,14 +85,14 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
     }
 
     /**
-     * @deprecated use {@link #_getCalendarDisplayModeParam()} instead
+     * @deprecated use {@link #getCalendarDisplayModeParamInternal()} instead
      */
     @Deprecated(since = "3.0", forRemoval = true)
     public String getCalendarDisplayModeParam() {
         return Strings.isNullOrEmpty(calendarDisplayModeParam) ? CALENDAR_DISPLAY_MODE_PARAM : calendarDisplayModeParam;
     }
 
-    protected String _getCalendarDisplayModeParam() {
+    protected String getCalendarDisplayModeParamInternal() {
         return getOwnerId("calendar") + "_" + getCalendarDisplayModeParam();
     }
 
@@ -101,14 +101,14 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
     }
 
     /**
-     * @deprecated use {@link #_getCalendarDateParam()} instead
+     * @deprecated use {@link #getCalendarDateParamInternal()} instead
      */
     @Deprecated(since = "3.0", forRemoval = true)
     public String getCalendarDateParam() {
         return Strings.isNullOrEmpty(calendarDateParam) ? CALENDAR_DATE_PARAM : calendarDateParam;
     }
 
-    protected String _getCalendarDateParam() {
+    protected String getCalendarDateParamInternal() {
         return getOwnerId("calendar") + "_" + getCalendarDateParam();
     }
 
@@ -131,8 +131,8 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
     public ImmutableMap<String, String> serializeQueryParameters(CalendarDisplayMode calendarDisplayMode,
                                                                  LocalDate localDate) {
         return ImmutableMap.of(
-                _getCalendarDisplayModeParam(), urlParamSerializer.serialize(calendarDisplayMode.getId()),
-                _getCalendarDateParam(), urlParamSerializer.serialize(localDate)
+                getCalendarDisplayModeParamInternal(), urlParamSerializer.serialize(calendarDisplayMode.getId()),
+                getCalendarDateParamInternal(), urlParamSerializer.serialize(localDate)
         );
     }
 }

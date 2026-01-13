@@ -53,6 +53,14 @@ public class FilterUtils {
         genericFilter.updateDataLoaderInitialCondition(condition);
     }
 
+    /**
+     * Finds and returns the current owner of the specified {@link GenericFilter}.
+     * The owner is determined by checking if the {@link GenericFilter} attached to
+     * a fragment or a view.
+     *
+     * @param genericFilter the {@link GenericFilter} for which the current owner is to be found
+     * @return the current owner of the {@link  GenericFilter}, or {@code null} if no owner is found
+     */
     @Internal
     @Nullable
     public static Composite<?> findCurrentOwner(GenericFilter genericFilter) {
@@ -64,6 +72,14 @@ public class FilterUtils {
         return currentOwner;
     }
 
+    /**
+     * Retrieves a facet of the specified type from the current owner of the given {@link GenericFilter}.
+     *
+     * @param genericFilter the {@link GenericFilter} whose current owner is queried for the specified facet type
+     * @param facetClass    the {@link Class} of the facet to be retrieved
+     * @param <T>           the type of the facet to be returned
+     * @return the facet of the specified type if found, or {@code null} if no such facet exists
+     */
     @Internal
     @Nullable
     public static <T extends Facet> T getFacet(GenericFilter genericFilter, Class<T> facetClass) {
@@ -71,6 +87,16 @@ public class FilterUtils {
         return getFacet(currentOwner, facetClass);
     }
 
+    /**
+     * Retrieves a facet of the specified type from the given owner.
+     *
+     * @param currentOwner the current owning {@link Composite} instance from which to retrieve the facet
+     *                     (a {@link Fragment} or a {@link View}),
+     *                     or {@code null} if no owner is currently available
+     * @param facetClass   the {@link Class} of the facet to be retrieved, must not be {@code null}
+     * @param <T>          the type of the facet to be returned
+     * @return the facet of the specified type if found, or {@code null} if no such facet exists
+     */
     @Internal
     @Nullable
     public static <T extends Facet> T getFacet(@Nullable Composite<?> currentOwner, Class<T> facetClass) {

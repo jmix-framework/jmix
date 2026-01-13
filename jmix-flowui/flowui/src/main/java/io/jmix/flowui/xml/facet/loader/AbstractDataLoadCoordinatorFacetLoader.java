@@ -28,7 +28,6 @@ import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.impl.FacetsImpl;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.facet.FacetProvider;

@@ -19,7 +19,6 @@ package io.jmix.dynattrflowui;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.annotation.Internal;
 import io.jmix.dynattrflowui.impl.EmbeddingStrategy;
-import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

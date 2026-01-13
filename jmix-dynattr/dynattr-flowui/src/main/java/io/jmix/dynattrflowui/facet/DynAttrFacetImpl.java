@@ -17,8 +17,6 @@
 package io.jmix.dynattrflowui.facet;
 
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.server.streams.DownloadHandler;
 import io.jmix.core.annotation.Internal;
 import io.jmix.dynattrflowui.impl.AttributeDefaultValues;
 import io.jmix.flowui.facet.FacetOwner;

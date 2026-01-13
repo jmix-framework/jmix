@@ -28,7 +28,6 @@ import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.facet.dataloadcoordinator.OnComponentValueChangedLoadTrigger;
 import io.jmix.flowui.facet.dataloadcoordinator.OnContainerItemChangedLoadTrigger;
-import io.jmix.flowui.facet.dataloadcoordinator.OnViewEventLoadTrigger;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.impl.DataLoadersHelper;

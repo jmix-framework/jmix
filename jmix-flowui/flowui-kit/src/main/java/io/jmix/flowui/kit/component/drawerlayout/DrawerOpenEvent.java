@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@ package io.jmix.flowui.kit.component.drawerlayout;
 
 import com.vaadin.flow.component.ComponentEvent;
 
+/**
+ * Event fired when the drawer panel is opened.
+ */
 public class DrawerOpenEvent extends ComponentEvent<JmixDrawerLayout> {
 
     public DrawerOpenEvent(JmixDrawerLayout source, boolean fromClient) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 
+/**
+ * Event fired when the user clicks on the modality curtain.
+ */
 @DomEvent("jmix-drawer-layout-modality-curtain-click")
 public class ModalityCurtainClickEvent extends ComponentEvent<JmixDrawerLayout> {
 
@@ -52,26 +55,44 @@ public class ModalityCurtainClickEvent extends ComponentEvent<JmixDrawerLayout> 
         this.shiftKey = shiftKey;
     }
 
+    /**
+     * @return the X coordinate of the mouse pointer relative to the whole document
+     */
     public int getPageX() {
         return pageX;
     }
 
+    /**
+     * @return the Y coordinate of the mouse pointer relative to the whole document
+     */
     public int getPageY() {
         return pageY;
     }
 
+    /**
+     * @return {@code true} if the {@code alt} key was down when the mouse event was fired
+     */
     public boolean isAltKey() {
         return altKey;
     }
 
+    /**
+     * @return {@code true} if the {@code control} key was down when the mouse event was fired
+     */
     public boolean isCtrlKey() {
         return ctrlKey;
     }
 
+    /**
+     * @return {@code true} if the {@code meta} key was down when the mouse event was fired
+     */
     public boolean isMetaKey() {
         return metaKey;
     }
 
+    /**
+     * @return {@code true} if the {@code shift} key was down when the mouse event was fired.
+     */
     public boolean isShiftKey() {
         return shiftKey;
     }

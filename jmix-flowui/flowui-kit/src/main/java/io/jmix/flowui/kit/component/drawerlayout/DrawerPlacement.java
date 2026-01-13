@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,38 @@
 
 package io.jmix.flowui.kit.component.drawerlayout;
 
+/**
+ * Represents the placement of the drawer panel relative to the main content.
+ */
 public enum DrawerPlacement {
 
+    /**
+     * The drawer panel is placed at the top of the main content.
+     */
     TOP,
+
+    /**
+     * The drawer panel is placed to the right of the main content. Does not consider RTL mode.
+     */
     RIGHT,
+
+    /**
+     * The drawer panel is placed at the bottom of the main content.
+     */
     BOTTOM,
+
+    /**
+     * The drawer panel is placed to the left of the main content. Does not consider RTL mode.
+     */
     LEFT,
+
+    /**
+     * The drawer panel is placed at the start position depending on the directionality (RTL or LTR) of the layout.
+     */
     INLINE_START,
+
+    /**
+     * The drawer panel is placed at the end position depending on the directionality (RTL or LTR) of the layout.
+     */
     INLINE_END
 }

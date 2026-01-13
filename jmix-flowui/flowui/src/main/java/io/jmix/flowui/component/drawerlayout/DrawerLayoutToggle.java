@@ -23,6 +23,9 @@ import com.vaadin.flow.component.dependency.JsModule;
 import io.jmix.flowui.kit.component.drawerlayout.JmixDrawerLayoutToggle;
 import org.springframework.lang.Nullable;
 
+/**
+ * Toggle button for opening and closing the drawer panel in a {@link DrawerLayout}.
+ */
 @Tag("jmix-drawer-layout-toggle")
 @JsModule("./src/drawer-layout/jmix-drawer-layout-toggle.js")
 public class DrawerLayoutToggle extends JmixDrawerLayoutToggle {

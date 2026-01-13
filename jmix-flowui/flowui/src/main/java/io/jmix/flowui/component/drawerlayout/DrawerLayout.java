@@ -29,18 +29,34 @@ import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiPredicate;
 
+import static io.jmix.flowui.component.UiComponentUtils.sameId;
+
+/**
+ * The drawer layout component provides a container for a main content area and a drawer panel.
+ *
+ * @see DrawerLayoutToggle
+ */
 @Tag("jmix-drawer-layout")
 @JsModule("./src/drawer-layout/jmix-drawer-layout.js")
 public class DrawerLayout extends JmixDrawerLayout implements ComponentContainer, HasSubParts {
 
     @Override
     public Optional<Component> findOwnComponent(String id) {
-        return Optional.empty();
+        return getOwnComponents().stream()
+                .filter(component -> sameId(component, id))
+                .findAny();
     }
 
     @Override
     public Collection<Component> getOwnComponents() {
-        return List.of();
+        List<Component> ownComponents = new ArrayList<>();
+        if (getContent() != null) {
+            ownComponents.add(getContent());
+        }
+        if (getDrawerContent() != null) {
+            ownComponents.add(getDrawerContent());
+        }
+        return ownComponents.isEmpty() ? Collections.emptyList() : List.copyOf(ownComponents);
     }
 
     @Nullable

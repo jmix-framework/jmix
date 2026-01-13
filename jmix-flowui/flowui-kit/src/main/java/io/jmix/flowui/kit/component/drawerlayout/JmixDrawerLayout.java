@@ -181,8 +181,8 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
     /**
      * @return whether the drawer should be displayed as an overlay on small screens.
      */
-    public boolean isDisplayAsOverlayOnSmallScreen() {
-        return getElement().getProperty("displayAsOverlayOnSmallScreen", true);
+    public boolean isDisplayAsOverlayOnSmallDevices() {
+        return getElement().getProperty("displayAsOverlayOnSmallDevices", true);
     }
 
     /**
@@ -192,8 +192,8 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
      *
      * @param displayAsOverlay displayAsOverlay option
      */
-    public void setDisplayAsOverlayOnSmallScreen(boolean displayAsOverlay) {
-        getElement().setProperty("displayAsOverlayOnSmallScreen", displayAsOverlay);
+    public void setDisplayAsOverlayOnSmallDevices(boolean displayAsOverlay) {
+        getElement().setProperty("displayAsOverlayOnSmallDevices", displayAsOverlay);
     }
 
     @Nullable

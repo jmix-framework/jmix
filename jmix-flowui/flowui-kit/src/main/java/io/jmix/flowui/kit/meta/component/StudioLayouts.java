@@ -436,7 +436,7 @@ public interface StudioLayouts {
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "displayAsOverlayOnSmallScreen", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "displayAsOverlayOnSmallDevices", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "drawerHorizontalMaxSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "drawerHorizontalMinSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "drawerHorizontalSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),

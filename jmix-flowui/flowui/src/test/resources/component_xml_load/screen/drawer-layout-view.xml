@@ -19,7 +19,7 @@
         <drawerLayout id="drawerLayoutAttributes"
                       classNames="cssClassName1, cssClassName2"
                       closeOnModalityCurtainClick="false"
-                      displayAsOverlayOnSmallScreen="false"
+                      displayAsOverlayOnSmallDevices="false"
                       css="color:red"
                       drawerHorizontalMaxSize="10em"
                       drawerHorizontalMinSize="8em"

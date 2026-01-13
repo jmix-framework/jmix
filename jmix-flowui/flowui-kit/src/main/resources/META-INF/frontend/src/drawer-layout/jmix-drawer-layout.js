@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixi
 
         this.addController(
             new MediaQueryController(this._displayAsOverlayMediaQuery, (matches) => {
-                this._displayAsOverlay = this.displayAsOverlayOnSmallScreen ? matches : false;
+                this._displayAsOverlay = this.displayAsOverlayOnSmallDevices ? matches : false;
                 this.toggleAttribute('overlay', this._displayAsOverlay);
             }),
         );

@@ -4293,7 +4293,7 @@
                 <xs:attributeGroup ref="hasClassNames"/>
 
                 <xs:attribute name="closeOnModalityCurtainClick" type="xs:boolean"/>
-                <xs:attribute name="displayAsOverlayOnSmallScreen" type="xs:boolean"/>
+                <xs:attribute name="displayAsOverlayOnSmallDevices" type="xs:boolean"/>
                 <xs:attribute name="drawerMode" type="drawerModeType"/>
                 <xs:attribute name="drawerPlacement" type="drawerPlacementType"/>
                 <xs:attribute name="drawerHorizontalMaxSize" type="componentSize"/>

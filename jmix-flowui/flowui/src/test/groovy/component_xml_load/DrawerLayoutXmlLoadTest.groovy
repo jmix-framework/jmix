@@ -39,7 +39,7 @@ class DrawerLayoutXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "drawerLayoutAttributes"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             !closeOnModalityCurtainClick
-            !displayAsOverlayOnSmallScreen
+            !displayAsOverlayOnSmallDevices
             style.get("color") == "red"
             drawerHorizontalMaxSize == "10em"
             drawerHorizontalMinSize == "8em"

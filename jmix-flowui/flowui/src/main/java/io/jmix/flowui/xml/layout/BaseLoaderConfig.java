@@ -93,6 +93,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("entityComboBox", EntityComboBoxLoader.class);
         loaders.put("listMenu", ListMenuLoader.class);
         loaders.put("drawerToggle", DrawerToggleLoader.class);
+        loaders.put("drawerLayoutToggle", DrawerLayoutToggleLoader.class);
         loaders.put("userIndicator", UserIndicatorLoader.class);
         loaders.put("userMenu", UserMenuLoader.class);
         loaders.put("dataGrid", DataGridLoader.class);

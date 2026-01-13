@@ -4326,6 +4326,30 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <!-- DrawerLayoutToggle -->
+
+    <xs:complexType name="drawerLayoutToggleComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
+                <xs:attribute name="drawerLayoutId" type="xs:string"/>
+
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="themeNames" type="buttonThemeNames"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasIcon"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="responsiveStepsType">
         <xs:sequence maxOccurs="unbounded">
             <xs:element name="responsiveStep">
@@ -5493,6 +5517,7 @@
                 <xs:element name="fragment" type="fragmentComponent"/>
                 <xs:element name="markdown" type="markdownComponent"/>
                 <xs:element name="drawerLayout" type="drawerLayoutComponent"/>
+                <xs:element name="drawerLayoutToggle" type="drawerLayoutToggleComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

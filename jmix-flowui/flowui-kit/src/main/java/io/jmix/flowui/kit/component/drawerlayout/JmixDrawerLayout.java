@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,9 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
             addComponent(content);
             updateSlot("contentSlot", content);
 
-            updateContentInert(isModal());
+            if (isDrawerOpened()) {
+                updateContentInert(isModal());
+            }
         }
     }
 
@@ -113,7 +115,9 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
     public void setModal(boolean modal) {
         getElement().setProperty("modal", modal);
 
-        updateContentInert(modal);
+        if (isDrawerOpened()) {
+            updateContentInert(modal);
+        }
     }
 
     /**
@@ -411,10 +415,21 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
         }
     }
 
+    /**
+     * Opens or closes the drawer panel depending on drawer's state.
+     */
+    public void toggleDrawer() {
+        if (isDrawerOpened()) {
+            closeDrawer();
+        } else {
+            openDrawer();
+        }
+    }
+
     protected void doSetOpened(boolean opened, boolean fromClient) {
         getElement().setProperty("drawerOpened", opened);
 
-        updateContentInert(isModal());
+        updateContentInert(opened && isModal());
 
         if (opened) {
             fireEvent(new DrawerOpenEvent(this, fromClient));
@@ -486,7 +501,9 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        updateContentInert(isModal());
+        if (isDrawerOpened()) {
+            updateContentInert(isModal());
+        }
     }
 
     @Override

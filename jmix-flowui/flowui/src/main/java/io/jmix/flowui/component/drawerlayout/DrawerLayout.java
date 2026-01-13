@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,6 @@ import jakarta.annotation.Nullable;
 
 import java.util.*;
 import java.util.function.BiPredicate;
-
-import static io.jmix.flowui.component.UiComponentUtils.findFragment;
 
 @Tag("jmix-drawer-layout")
 @JsModule("./src/drawer-layout/jmix-drawer-layout.js")
@@ -64,11 +62,10 @@ public class DrawerLayout extends JmixDrawerLayout implements ComponentContainer
     }
 
     protected Optional<Component> findComponent(Component component, String id) {
-        BiPredicate<Component, String> idComparator = findFragment(component) == null
+        BiPredicate<Component, String> idComparator = UiComponentUtils.findFragment(component) == null
                 ? UiComponentUtils::sameId
                 : FragmentUtils::sameId;
 
-        // TODO: pinyazhin should we search inside the fragment?
         if (idComparator.test(component, id)) {
             return Optional.of(component);
         } else if (UiComponentUtils.sameId(component, id)) {

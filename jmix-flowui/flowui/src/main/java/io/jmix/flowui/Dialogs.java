@@ -27,6 +27,9 @@ import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.app.inputdialog.InputParameter;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.component.draweroverly.DrawerOverlay;
+import io.jmix.flowui.component.draweroverly.DrawerOverlayCloseActionEvent;
+import io.jmix.flowui.component.draweroverly.DrawerOverlayOpenedChangeEvent;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.view.DialogWindow;
@@ -455,6 +458,29 @@ public interface Dialogs {
          * Opens the background task dialog.
          */
         Dialog open();
+    }
+
+    // TODO: pinyazhin, implement and think about components in tests.
+    interface DrawerOverlayBuilder extends HasHeader<DrawerOverlayBuilder>,
+            HasStyle<DrawerOverlayBuilder>,
+            HasModal<DrawerOverlayBuilder>,
+            Closeable<DrawerOverlayBuilder> {
+
+        DrawerOverlayBuilder withHeader(Component header);
+
+        DrawerOverlayBuilder withContent(Component content);
+
+        DrawerOverlayBuilder withFooter(Component footer);
+
+        DrawerOverlayBuilder withOpenedChangeListener(ComponentEventListener<DrawerOverlayOpenedChangeEvent> listener);
+
+        DrawerOverlayBuilder withCloseActionListener(ComponentEventListener<DrawerOverlayCloseActionEvent> listener);
+
+        // todo overlayRole?
+
+        DrawerOverlay build();
+
+        DrawerOverlay open();
     }
 
     /**

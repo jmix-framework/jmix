@@ -16,7 +16,21 @@
 
 package io.jmix.flowui.component.draweroverly;
 
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.draweroverlay.JmixDrawerOverlay;
 
 public class DrawerOverlay extends JmixDrawerOverlay {
+
+    public Registration addOpenedChangeListener(ComponentEventListener<DrawerOverlayOpenedChangeEvent> listener) {
+        return getContent().addOpenedChangeListener(event -> {
+            listener.onComponentEvent(new DrawerOverlayOpenedChangeEvent(this, event.isFromClient()));
+        });
+    }
+
+    public Registration addCloseActionListener(ComponentEventListener<DrawerOverlayCloseActionEvent> listener) {
+        return getContent().addDialogCloseActionListener(event -> {
+            listener.onComponentEvent(new DrawerOverlayCloseActionEvent(this, event.isFromClient()));
+        });
+    }
 }

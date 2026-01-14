@@ -44,6 +44,8 @@ public class StoreDescriptorsRegistry {
     protected NoopStoreDescriptor noopStoreDescriptor;
     @Autowired
     protected Environment environment;
+    @Autowired
+    protected Map<String, StoreDescriptor> storeDescriptorBeans;
     @Autowired(required = false)
     protected List<AdditionalStoreDescriptorProvider> additionalStoreDescriptorProviders;
 
@@ -108,7 +110,7 @@ public class StoreDescriptorsRegistry {
     protected StoreDescriptor resolveStoreDescriptor(String storeName) {
         String descriptorName = environment.getProperty("jmix.core.store-descriptor-" + storeName);
         if (descriptorName != null) {
-            StoreDescriptor descriptor = descriptors.get(descriptorName);
+            StoreDescriptor descriptor = storeDescriptorBeans.get(descriptorName);
             if (descriptor != null) {
                 return descriptor;
             } else {

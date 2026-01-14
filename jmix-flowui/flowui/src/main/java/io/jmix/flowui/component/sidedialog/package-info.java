@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.drawerlayout;
+@NonNullApi
+package io.jmix.flowui.component.sidedialog;
 
-/**
- * Defines the way how should the drawer panel should be displayed.
- */
-public enum DrawerMode {
-
-    /**
-     * The drawer panel overlays the content.
-     */
-    OVERLAY,
-
-    /**
-     * The drawer panel pushes the content.
-     */
-    PUSH
-}
+import org.springframework.lang.NonNullApi;

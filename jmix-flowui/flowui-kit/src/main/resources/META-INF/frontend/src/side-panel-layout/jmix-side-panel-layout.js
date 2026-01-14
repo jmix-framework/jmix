@@ -20,11 +20,11 @@ import { registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaa
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
 import { ControllerMixin } from '@vaadin/component-base/src/controller-mixin.js';
 import { MediaQueryController } from '@vaadin/component-base/src/media-query-controller.js';
-import { JmixDrawerLayoutSlotController } from './jmix-drawer-layout-slot-controller.js';
+import { JmixDrawerLayoutSlotController } from './jmix-side-panel-layout-slot-controller.js';
 
-import { JmixDrawerLayoutMixin } from './jmix-drawer-layout-mixin.js';
-import { drawerLayoutStyles } from './jmix-drawer-layout-styles.js';
-import './jmix-drawer-layout-dialog.js';
+import { JmixDrawerLayoutMixin } from './jmix-side-panel-layout-mixin.js';
+import { drawerLayoutStyles } from './jmix-side-panel-layout-styles.js';
+import './jmix-side-panel-layout-dialog.js';
 
 registerStyles('jmix-drawer-layout', drawerLayoutStyles, { moduleId: 'jmix-drawer-layout-styles' });
 

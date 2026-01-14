@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package component_xml_load.screen;
+package io.jmix.flowui.kit.component.sidepanellayout;
 
-import com.vaadin.flow.router.Route;
-import io.jmix.flowui.component.sidepanellayout.DrawerLayout;
-import io.jmix.flowui.view.*;
+/**
+ * Defines the way how should the drawer panel should be displayed.
+ */
+public enum DrawerMode {
 
-@Route("drawer-layout-view")
-@ViewController("DrawerLayoutView")
-@ViewDescriptor("drawer-layout-view.xml")
-public class DrawerLayoutView extends StandardView {
+    /**
+     * The drawer panel overlays the content.
+     */
+    OVERLAY,
 
-    @ViewComponent
-    public DrawerLayout drawerLayoutAttributes;
+    /**
+     * The drawer panel pushes the content.
+     */
+    PUSH
 }

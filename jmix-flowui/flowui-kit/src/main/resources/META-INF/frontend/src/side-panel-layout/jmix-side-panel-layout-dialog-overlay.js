@@ -23,7 +23,7 @@ import { registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaa
 
 import { dialogOverlay, resizableOverlay } from '@vaadin/dialog/src/vaadin-dialog-styles.js';
 import { overlayStyles } from '@vaadin/overlay/src/vaadin-overlay-styles.js';
-import { drawerLayoutDialogOverlayStyles } from './jmix-drawer-layout-dialog-overlay-styles.js';
+import { drawerLayoutDialogOverlayStyles } from './jmix-side-panel-layout-dialog-overlay-styles.js';
 
 registerStyles('jmix-drawer-layout-dialog-overlay',
     [overlayStyles, dialogOverlay, resizableOverlay, drawerLayoutDialogOverlayStyles],

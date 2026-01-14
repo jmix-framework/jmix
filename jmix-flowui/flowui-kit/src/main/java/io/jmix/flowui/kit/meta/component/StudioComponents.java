@@ -48,7 +48,7 @@ import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
-import io.jmix.flowui.kit.component.drawerlayout.JmixDrawerLayoutToggle;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixDrawerLayoutToggle;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.drawerlayout;
+package io.jmix.flowui.kit.component.sidepanellayout;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;

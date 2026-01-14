@@ -18,8 +18,8 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.drawerlayout.DrawerLayout;
-import io.jmix.flowui.component.drawerlayout.DrawerLayoutToggle;
+import io.jmix.flowui.component.sidepanellayout.DrawerLayout;
+import io.jmix.flowui.component.sidepanellayout.DrawerLayoutToggle;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.IconLoaderSupport;

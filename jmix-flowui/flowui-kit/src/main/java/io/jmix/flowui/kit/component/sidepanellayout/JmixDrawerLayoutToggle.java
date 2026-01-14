@@ -14,41 +14,34 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.drawerlayout;
+package io.jmix.flowui.kit.component.sidepanellayout;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
-import io.jmix.flowui.kit.component.drawerlayout.JmixDrawerLayoutToggle;
-import org.springframework.lang.Nullable;
 
-/**
- * Toggle button for opening and closing the drawer panel in a {@link DrawerLayout}.
- */
 @Tag("jmix-drawer-layout-toggle")
-@JsModule("./src/drawer-layout/jmix-drawer-layout-toggle.js")
-public class DrawerLayoutToggle extends JmixDrawerLayoutToggle {
+@JsModule("./src/side-panel-layout/jmix-side-panel-layout-toggle.js")
+public class JmixDrawerLayoutToggle extends Button {
 
-    protected DrawerLayout drawerLayout;
-
-    @Nullable
-    public DrawerLayout getDrawerLayout() {
-        return drawerLayout;
+    public JmixDrawerLayoutToggle() {
+        attachClickListener();
     }
 
-    public void setDrawerLayout(@Nullable DrawerLayout drawerLayout) {
-        this.drawerLayout = drawerLayout;
+    public void setIcon(Component icon) {
+        super.setIcon(icon);
+        // the slot attribute needs to be removed because vaadin-drawer-toggle
+        // template doesn't have prefix and suffix slots
+        icon.getElement().removeAttribute("slot");
     }
 
-    @Override
+    protected void attachClickListener() {
+        addClickListener(this::onClick);
+    }
+
     protected void onClick(ClickEvent<Button> event) {
-        super.onClick(event);
-
-        if (drawerLayout == null) {
-            throw new IllegalStateException(DrawerLayout.class.getSimpleName() + " is not set");
-        }
-
-        drawerLayout.toggleDrawer();
+        // To be used in subclasses
     }
 }

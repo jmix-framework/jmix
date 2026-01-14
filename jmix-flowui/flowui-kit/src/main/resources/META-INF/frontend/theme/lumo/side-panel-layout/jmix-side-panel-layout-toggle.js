@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,5 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.flowui.component.drawerlayout;
-
-import org.springframework.lang.NonNullApi;
+import '../../../src/side-panel-layout/jmix-side-panel-layout-toggle.js';
+import './jmix-side-panel-layout-toggle-styles.js';

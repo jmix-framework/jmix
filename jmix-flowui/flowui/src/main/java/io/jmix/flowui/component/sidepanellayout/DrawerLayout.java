@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.drawerlayout;
+package io.jmix.flowui.component.sidepanellayout;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.dependency.JsModule;
 import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.HasSubParts;
-import io.jmix.flowui.kit.component.drawerlayout.JmixDrawerLayout;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixDrawerLayout;
 import jakarta.annotation.Nullable;
 
 import java.util.*;
@@ -36,8 +34,6 @@ import static io.jmix.flowui.component.UiComponentUtils.sameId;
  *
  * @see DrawerLayoutToggle
  */
-@Tag("jmix-drawer-layout")
-@JsModule("./src/drawer-layout/jmix-drawer-layout.js")
 public class DrawerLayout extends JmixDrawerLayout implements ComponentContainer, HasSubParts {
 
     @Override

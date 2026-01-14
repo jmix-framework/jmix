@@ -17,7 +17,7 @@
 package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.component.drawerlayout.DrawerLayoutToggle;
+import io.jmix.flowui.component.sidepanellayout.DrawerLayoutToggle;
 import io.jmix.flowui.view.*;
 
 @Route("drawer-layout-toggle-view")

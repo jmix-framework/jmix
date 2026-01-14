@@ -14,5 +14,16 @@
  * limitations under the License.
  */
 
-import '../../../src/drawer-layout/jmix-drawer-layout-toggle.js';
-import './jmix-drawer-layout-toggle-styles.js';
+package io.jmix.flowui.kit.component.sidepanellayout;
+
+import com.vaadin.flow.component.ComponentEvent;
+
+/**
+ * Event fired when the drawer panel is closed.
+ */
+public class DrawerCloseEvent extends ComponentEvent<JmixDrawerLayout> {
+
+    public DrawerCloseEvent(JmixDrawerLayout source, boolean fromClient) {
+        super(source, fromClient);
+    }
+}

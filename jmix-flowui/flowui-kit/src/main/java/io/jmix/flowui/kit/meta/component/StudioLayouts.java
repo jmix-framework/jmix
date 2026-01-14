@@ -26,13 +26,12 @@ import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
-import io.jmix.flowui.kit.component.drawerlayout.JmixDrawerLayout;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixDrawerLayout;
 import io.jmix.flowui.kit.component.gridlayout.JmixGridLayout;
 import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.ClassInfo;
 import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.TagInfo;
 
-import static io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.ANY_TAG;
 import static io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN;
 
 @StudioUiKit

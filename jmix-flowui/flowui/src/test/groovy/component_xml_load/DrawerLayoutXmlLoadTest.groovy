@@ -17,8 +17,8 @@
 package component_xml_load
 
 import component_xml_load.screen.DrawerLayoutView
-import io.jmix.flowui.kit.component.drawerlayout.DrawerMode
-import io.jmix.flowui.kit.component.drawerlayout.DrawerPlacement
+import io.jmix.flowui.kit.component.sidepanellayout.DrawerMode
+import io.jmix.flowui.kit.component.sidepanellayout.DrawerPlacement
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 

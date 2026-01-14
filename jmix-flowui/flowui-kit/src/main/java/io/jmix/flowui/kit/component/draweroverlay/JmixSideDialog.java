@@ -21,7 +21,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.Style;
-import io.jmix.flowui.kit.component.drawerlayout.DrawerPlacement;
+import io.jmix.flowui.kit.component.sidepanellayout.DrawerPlacement;
 import jakarta.annotation.Nullable;
 
 import java.util.*;

@@ -17,10 +17,10 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.component.drawerlayout.DrawerLayout;
+import io.jmix.flowui.component.sidepanellayout.DrawerLayout;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.kit.component.drawerlayout.DrawerMode;
-import io.jmix.flowui.kit.component.drawerlayout.DrawerPlacement;
+import io.jmix.flowui.kit.component.sidepanellayout.DrawerMode;
+import io.jmix.flowui.kit.component.sidepanellayout.DrawerPlacement;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;

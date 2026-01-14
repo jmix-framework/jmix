@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.drawerlayout;
+package io.jmix.flowui.kit.component.sidepanellayout;
 
 /**
  * Represents the placement of the drawer panel relative to the main content.

@@ -14,5 +14,7 @@
  * limitations under the License.
  */
 
-import '../../../src/drawer-layout/jmix-drawer-layout.js';
-import './jmix-drawer-layout-styles.js';
+@NonNullApi
+package io.jmix.flowui.component.sidepanellayout;
+
+import org.springframework.lang.NonNullApi;

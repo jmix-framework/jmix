@@ -21,7 +21,7 @@ import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { DirMixin } from '@vaadin/component-base/src/dir-mixin.js';
 import { isEmptyTextNode } from '@vaadin/component-base/src/dom-utils.js';
 import { registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-import { jmixDrawerToggleLayout } from './jmix-drawer-layout-toggle-styles.js';
+import { jmixDrawerToggleLayout } from './jmix-side-panel-layout-toggle-styles.js';
 
 registerStyles('jmix-drawer-layout-toggle', [buttonStyles, jmixDrawerToggleLayout], { moduleId: 'jmix-drawer-layout-toggle-styles' });
 

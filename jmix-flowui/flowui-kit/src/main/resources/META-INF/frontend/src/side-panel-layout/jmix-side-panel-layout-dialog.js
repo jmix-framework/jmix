@@ -20,7 +20,7 @@ import { ThemePropertyMixin } from '@vaadin/vaadin-themable-mixin/vaadin-theme-p
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 
-import './jmix-drawer-layout-dialog-overlay.js';
+import './jmix-side-panel-layout-dialog-overlay.js';
 
 class JmixDrawerLayoutDialog extends DialogBaseMixin(OverlayClassMixin(ThemePropertyMixin(PolymerElement))) {
     static get is() {

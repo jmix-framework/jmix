@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.drawerlayout;
+package io.jmix.flowui.kit.component.sidepanellayout;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementUtil;
 import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.Nullable;
 
+@Tag("jmix-drawer-layout")
+@JsModule("./src/side-panel-layout/jmix-side-panel-layout.js")
 public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
 
     protected Component content;

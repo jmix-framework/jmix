@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.draweroverly;
+package io.jmix.flowui.kit.component.draweroverlay;
 
-import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dialog.Dialog;
 
-public class DrawerOverlayOpenedChangeEvent extends ComponentEvent<DrawerOverlay> {
-
-    protected final boolean opened;
-    
-    public DrawerOverlayOpenedChangeEvent(DrawerOverlay source, boolean fromClient) {
-        super(source, fromClient);
-        
-        this.opened = source.isOpened();
-    }
-
-    public boolean isOpened() {
-        return opened;
-    }
+@Tag("jmix-side-dialog")
+@JsModule("./src/side-dialog/jmix-side-dialog.js")
+public class JmixSideDialogOverlay extends Dialog {
 }

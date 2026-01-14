@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,5 @@
  * limitations under the License.
  */
 
-import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-
-const jmixDrawerOverlayDialogOverlay = css`
-
-    :host([opening]),
-    :host([closing]) {
-        animation: var(--jmix-drawer-overlay-transition-duration) lumo-overlay-dummy-animation;
-    }
-`;
-
-registerStyles('jmix-drawer-overlay-dialog-overlay', [jmixDrawerOverlayDialogOverlay],
- { moduleId: 'jmix-lumo-drawer-overlay-dialog-overlay' });
+import '../../../src/side-dialog/jmix-side-dialog-overlay.js';
+import './jmix-side-dialog-overlay-styles.js';

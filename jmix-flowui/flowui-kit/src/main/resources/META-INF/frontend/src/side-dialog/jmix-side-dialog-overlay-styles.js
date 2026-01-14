@@ -16,16 +16,16 @@
 
 import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-export const jmixDrawerOverlayDialogOverlayStyles = css`
+export const jmixSideDialogOverlayStyles = css`
     :host {
         top: 0;
         bottom: 0;
         right: 0;
         left: 0;
 
-        --jmix-drawer-overlay-transition-duration: 200ms;
-        --jmix-drawer-overlay-horizontal-size: 20em;
-        --jmix-drawer-overlay-vertical-size: 18em;
+        --jmix-side-dialog-transition-duration: 200ms;
+        --jmix-side-dialog-horizontal-size: 20em;
+        --jmix-side-dialog-vertical-size: 18em;
     }
 
     :host [part='overlay'] {
@@ -50,14 +50,14 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
     :host([opening][drawer-placement='right']) [part='overlay'] {
         transform: translateX(100%);
 
-        animation: jmix-drawer-overlay-right-opening var(--jmix-drawer-overlay-transition-duration) ease-in-out both;
+        animation: jmix-side-dialog-right-opening var(--jmix-side-dialog-transition-duration) ease-in-out both;
     }
 
     :host([closing][drawer-placement='']) [part='overlay'],
     :host([closing][drawer-placement='right']) [part='overlay'] {
         transform: translateX(0);
 
-        animation: jmix-drawer-overlay-right-closing var(--jmix-drawer-overlay-transition-duration) ease-in-out both;
+        animation: jmix-side-dialog-right-closing var(--jmix-side-dialog-transition-duration) ease-in-out both;
     }
 
     /* LEFT */
@@ -75,13 +75,13 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
     :host([opening][drawer-placement='left']) [part='overlay'] {
         transform: translateX(-100%);
 
-        animation: jmix-drawer-overlay-left-opening var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-left-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     :host([closing][drawer-placement='left']) [part='overlay'] {
         transform: translateX(0);
 
-        animation: jmix-drawer-overlay-left-closing var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-left-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     /* TOP */
@@ -94,13 +94,13 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
     :host([opening][drawer-placement='top']) [part='overlay'] {
         transform: translateY(-100%);
 
-        animation: jmix-drawer-overlay-top-opening var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-top-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     :host([closing][drawer-placement='top']) [part='overlay'] {
         transform: translateY(0);
 
-        animation: jmix-drawer-overlay-top-closing var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-top-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     /* Bottom */
@@ -113,13 +113,13 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
     :host([opening][drawer-placement='bottom']) [part='overlay'] {
         transform: translateY(100%);
 
-        animation: jmix-drawer-overlay-bottom-opening var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-bottom-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     :host([closing][drawer-placement='bottom']) [part='overlay'] {
         transform: translateY(0);
 
-        animation: jmix-drawer-overlay-bottom-closing var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-bottom-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     /* Inline start */
@@ -132,25 +132,25 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
     :host([opening][drawer-placement='inline-start']) [part='overlay'] {
         transform: translateX(-100%);
 
-        animation: jmix-drawer-overlay-left-opening var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-left-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     :host([opening][drawer-placement='inline-start'][dir='rtl']) [part='overlay'] {
         transform: translateX(100%);
 
-        animation: jmix-drawer-overlay-inline-start-rtl-opening var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-inline-start-rtl-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     :host([closing][drawer-placement='inline-start']) [part='overlay'] {
         transform: translateX(0%);
 
-        animation: jmix-drawer-overlay-left-closing var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-left-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     :host([closing][drawer-placement='inline-start'][dir='rtl']) [part='overlay'] {
         transform: translateX(100%);
 
-        animation: jmix-drawer-overlay-inline-start-rtl-closing var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-inline-start-rtl-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     /* Inline end */
@@ -163,25 +163,25 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
     :host([opening][drawer-placement='inline-end']) [part='overlay'] {
         transform: translateX(100%);
 
-        animation: jmix-drawer-overlay-right-opening var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-right-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     :host([opening][drawer-placement='inline-end'][dir='rtl']) [part='overlay'] {
         transform: translateX(-100%);
 
-        animation: jmix-drawer-overlay-inline-end-rtl-opening var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-inline-end-rtl-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     :host([closing][drawer-placement='inline-end']) [part='overlay'] {
         transform: translateX(0%);
 
-        animation: jmix-drawer-overlay-right-closing var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-right-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     :host([closing][drawer-placement='inline-end'][dir='rtl']) [part='overlay'] {
         transform: translateX(100%);
 
-        animation: jmix-drawer-overlay-inline-end-rtl-closing var(--jmix-drawer-overlay-transition-duration) ease-in-out forwards;
+        animation: jmix-side-dialog-inline-end-rtl-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
     :host([drawer-placement="left"]) [part='overlay'],
@@ -189,12 +189,12 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
     :host([drawer-placement="inline-start"]) [part='overlay'],
     :host([drawer-placement="inline-end"]) [part='overlay'] {
         height: 100%;
-        width: var(--jmix-drawer-overlay-horizontal-size);
+        width: var(--jmix-side-dialog-horizontal-size);
     }
 
     :host([drawer-placement="top"]) [part='overlay'],
     :host([drawer-placement="bottom"]) [part='overlay'] {
-        height: var(--jmix-drawer-overlay-vertical-size);
+        height: var(--jmix-side-dialog-vertical-size);
         width: 100%;
     }
 
@@ -205,7 +205,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
 
     /* Right */
 
-    @keyframes jmix-drawer-overlay-right-opening {
+    @keyframes jmix-side-dialog-right-opening {
       0% {
         transform: translateX(100%);
       }
@@ -214,7 +214,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
       }
     }
 
-    @keyframes jmix-drawer-overlay-right-closing {
+    @keyframes jmix-side-dialog-right-closing {
       0% {
         transform: translateX(0);
       }
@@ -225,7 +225,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
 
     /* Left */
 
-    @keyframes jmix-drawer-overlay-left-opening {
+    @keyframes jmix-side-dialog-left-opening {
       0% {
         transform: translateX(-100%);
       }
@@ -234,7 +234,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
       }
     }
 
-    @keyframes jmix-drawer-overlay-left-closing {
+    @keyframes jmix-side-dialog-left-closing {
       0% {
         transform: translateX(0);
       }
@@ -245,7 +245,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
 
     /* Inline start RTL */
 
-    @keyframes jmix-drawer-overlay-inline-start-rtl-opening {
+    @keyframes jmix-side-dialog-inline-start-rtl-opening {
       0% {
         transform: translateX(100%);
       }
@@ -254,7 +254,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
       }
     }
 
-    @keyframes jmix-drawer-overlay-inline-start-rtl-closing {
+    @keyframes jmix-side-dialog-inline-start-rtl-closing {
       0% {
         transform: translateX(0%);
       }
@@ -265,7 +265,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
 
     /* Inline end RTL */
 
-    @keyframes jmix-drawer-overlay-inline-end-rtl-opening {
+    @keyframes jmix-side-dialog-inline-end-rtl-opening {
         0% {
             transform: translateX(-100%);
         }
@@ -274,7 +274,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
         }
     }
 
-    @keyframes jmix-drawer-overlay-inline-end-rtl-closing {
+    @keyframes jmix-side-dialog-inline-end-rtl-closing {
          0% {
             transform: translateX(0%);
         }
@@ -285,7 +285,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
 
     /* Top */
 
-    @keyframes jmix-drawer-overlay-top-opening {
+    @keyframes jmix-side-dialog-top-opening {
         0% {
             transform: translateY(-100%);
         }
@@ -294,7 +294,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
         }
     }
 
-    @keyframes jmix-drawer-overlay-top-closing {
+    @keyframes jmix-side-dialog-top-closing {
         0% {
             transform: translateY(0);
         }
@@ -305,7 +305,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
 
     /* Bottom */
 
-    @keyframes jmix-drawer-overlay-bottom-opening {
+    @keyframes jmix-side-dialog-bottom-opening {
         0% {
             transform: translateY(100%);
         }
@@ -314,7 +314,7 @@ export const jmixDrawerOverlayDialogOverlayStyles = css`
         }
     }
 
-    @keyframes jmix-drawer-overlay-bottom-closing {
+    @keyframes jmix-side-dialog-bottom-closing {
         0% {
             transform: translateY(0);
         }

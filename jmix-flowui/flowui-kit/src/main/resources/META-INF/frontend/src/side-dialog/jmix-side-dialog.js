@@ -20,12 +20,12 @@ import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ControllerMixin } from '@vaadin/component-base/src/controller-mixin.js';
 import { Dialog } from '@vaadin/dialog/src/vaadin-dialog.js';
 
-import './jmix-drawer-overlay-dialog-overlay.js';
+import './jmix-side-dialog-overlay.js';
 
-class JmixDrawerOverlayDialog extends ControllerMixin(Dialog) {
+class JmixSideDialog extends ControllerMixin(Dialog) {
 
     static get is() {
-        return 'jmix-drawer-overlay-dialog';
+        return 'jmix-side-dialog';
     }
 
     static get template() {
@@ -36,7 +36,7 @@ class JmixDrawerOverlayDialog extends ControllerMixin(Dialog) {
                 }
             </style>
 
-            <jmix-drawer-overlay-dialog-overlay
+            <jmix-side-dialog-overlay
                 id="overlay"
                 role$="[[overlayRole]]"
                 header-title="[[headerTitle]]"
@@ -51,7 +51,7 @@ class JmixDrawerOverlayDialog extends ControllerMixin(Dialog) {
                 restore-focus-on-close
                 focus-trap
                 drawer-placement$="[[drawerPlacement]]"
-            ></jmix-drawer-overlay-dialog-overlay>
+            ></jmix-side-dialog-overlay>
         `;
     }
 
@@ -87,6 +87,6 @@ class JmixDrawerOverlayDialog extends ControllerMixin(Dialog) {
     }
 }
 
-defineCustomElement(JmixDrawerOverlayDialog);
+defineCustomElement(JmixSideDialog);
 
-export { JmixDrawerOverlayDialog };
+export { JmixSideDialog };

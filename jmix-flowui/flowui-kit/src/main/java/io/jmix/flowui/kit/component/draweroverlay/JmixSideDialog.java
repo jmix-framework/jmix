@@ -26,7 +26,7 @@ import jakarta.annotation.Nullable;
 
 import java.util.*;
 
-public class JmixDrawerOverlay extends Composite<JmixDrawerDialog> implements HasComponents, HasSize {
+public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements HasComponents, HasSize {
 
     protected DrawerHeader header;
     protected DrawerFooter footer;
@@ -120,7 +120,7 @@ public class JmixDrawerOverlay extends Composite<JmixDrawerDialog> implements Ha
     @Override
     public Style getStyle() {
         throw new UnsupportedOperationException(
-                JmixDrawerOverlay.class.getSimpleName() + " does not support adding styles using this method");
+                JmixSideDialog.class.getSimpleName() + " does not support adding styles using this method");
     }
 
     public boolean isFullscreenOnSmallDevices() {

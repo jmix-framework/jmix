@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.draweroverly;
+package io.jmix.flowui.component.sidedialog;
 
 import com.vaadin.flow.component.ComponentEvent;
 
-public class DrawerOverlayCloseActionEvent extends ComponentEvent<DrawerOverlay> {
+public class SideDialogOpenedChangeEvent extends ComponentEvent<SideDialog> {
 
-    public DrawerOverlayCloseActionEvent(DrawerOverlay source, boolean fromClient) {
+    protected final boolean opened;
+    
+    public SideDialogOpenedChangeEvent(SideDialog source, boolean fromClient) {
         super(source, fromClient);
+        
+        this.opened = source.isOpened();
+    }
+
+    public boolean isOpened() {
+        return opened;
     }
 }

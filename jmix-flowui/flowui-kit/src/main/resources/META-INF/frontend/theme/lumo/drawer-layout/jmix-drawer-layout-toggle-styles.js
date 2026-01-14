@@ -55,4 +55,5 @@ const jmixDrawerLayoutToggle = css`
     }
 `;
 
+// TODO: pinyazhin, rename to "lumo-drawer.." after updating Vaadin to 25
 registerStyles('jmix-drawer-layout-toggle', [button, jmixDrawerLayoutToggle], { moduleId: 'jmix-lumo-drawer-layout-toggle' });

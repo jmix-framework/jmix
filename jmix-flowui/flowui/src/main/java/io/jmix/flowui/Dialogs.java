@@ -27,9 +27,9 @@ import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.app.inputdialog.InputParameter;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
-import io.jmix.flowui.component.draweroverly.DrawerOverlay;
-import io.jmix.flowui.component.draweroverly.DrawerOverlayCloseActionEvent;
-import io.jmix.flowui.component.draweroverly.DrawerOverlayOpenedChangeEvent;
+import io.jmix.flowui.component.sidedialog.SideDialog;
+import io.jmix.flowui.component.sidedialog.SideDialogCloseActionEvent;
+import io.jmix.flowui.component.sidedialog.SideDialogOpenedChangeEvent;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.view.DialogWindow;
@@ -461,26 +461,26 @@ public interface Dialogs {
     }
 
     // TODO: pinyazhin, implement and think about components in tests.
-    interface DrawerOverlayBuilder extends HasHeader<DrawerOverlayBuilder>,
-            HasStyle<DrawerOverlayBuilder>,
-            HasModal<DrawerOverlayBuilder>,
-            Closeable<DrawerOverlayBuilder> {
+    interface SideDialogBuilder extends HasHeader<SideDialogBuilder>,
+            HasStyle<SideDialogBuilder>,
+            HasModal<SideDialogBuilder>,
+            Closeable<SideDialogBuilder> {
 
-        DrawerOverlayBuilder withHeader(Component header);
+        SideDialogBuilder withHeaderComponent(Component header);
 
-        DrawerOverlayBuilder withContent(Component content);
+        SideDialogBuilder withContentComponent(Component content);
 
-        DrawerOverlayBuilder withFooter(Component footer);
+        SideDialogBuilder withFooterComponent(Component footer);
 
-        DrawerOverlayBuilder withOpenedChangeListener(ComponentEventListener<DrawerOverlayOpenedChangeEvent> listener);
+        SideDialogBuilder withOpenedChangeListener(ComponentEventListener<SideDialogOpenedChangeEvent> listener);
 
-        DrawerOverlayBuilder withCloseActionListener(ComponentEventListener<DrawerOverlayCloseActionEvent> listener);
+        SideDialogBuilder withCloseActionListener(ComponentEventListener<SideDialogCloseActionEvent> listener);
 
         // todo overlayRole?
 
-        DrawerOverlay build();
+        SideDialog build();
 
-        DrawerOverlay open();
+        SideDialog open();
     }
 
     /**

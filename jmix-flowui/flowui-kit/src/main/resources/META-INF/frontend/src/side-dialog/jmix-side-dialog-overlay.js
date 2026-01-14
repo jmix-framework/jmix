@@ -18,18 +18,18 @@ import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import { DialogOverlay } from '@vaadin/dialog/src/vaadin-dialog-overlay.js';
 
-import { jmixDrawerOverlayDialogOverlayStyles } from './jmix-drawer-overlay-dialog-overlay-styles.js';
+import { jmixSideDialogOverlayStyles } from './jmix-side-dialog-overlay-styles.js';
 
-registerStyles('jmix-drawer-overlay-dialog-overlay',
-    [jmixDrawerOverlayDialogOverlayStyles],
-    { moduleId: 'jmix-drawer-overlay-dialog-overlay-styles', },
+registerStyles('jmix-side-dialog-overlay',
+    [jmixSideDialogOverlayStyles],
+    { moduleId: 'jmix-side-dialog-overlay-styles', },
 );
 
-class JmixDrawerOverlayDialogOverlay extends DialogOverlay {
+class JmixSideDialogOverlay extends DialogOverlay {
 
     static get is() {
-      return 'jmix-drawer-overlay-dialog-overlay';
+      return 'jmix-side-dialog-overlay';
     }
 }
 
-defineCustomElement(JmixDrawerOverlayDialogOverlay);
+defineCustomElement(JmixSideDialogOverlay);

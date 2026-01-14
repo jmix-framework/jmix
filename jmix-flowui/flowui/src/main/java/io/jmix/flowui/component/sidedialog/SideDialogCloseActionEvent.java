@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.draweroverlay;
+package io.jmix.flowui.component.sidedialog;
 
-import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.ComponentEvent;
 
-@Tag("jmix-drawer-overlay-dialog")
-@JsModule("./src/drawer-overlay/jmix-drawer-overlay-dialog.js")
-public class JmixDrawerDialog extends Dialog {
+public class SideDialogCloseActionEvent extends ComponentEvent<SideDialog> {
+
+    public SideDialogCloseActionEvent(SideDialog source, boolean fromClient) {
+        super(source, fromClient);
+    }
 }

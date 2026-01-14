@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.draweroverly;
+package io.jmix.flowui.component.sidedialog;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.kit.component.draweroverlay.JmixDrawerOverlay;
+import io.jmix.flowui.kit.component.draweroverlay.JmixSideDialog;
 
-public class DrawerOverlay extends JmixDrawerOverlay {
+public class SideDialog extends JmixSideDialog {
 
-    public Registration addOpenedChangeListener(ComponentEventListener<DrawerOverlayOpenedChangeEvent> listener) {
+    public Registration addOpenedChangeListener(ComponentEventListener<SideDialogOpenedChangeEvent> listener) {
         return getContent().addOpenedChangeListener(event -> {
-            listener.onComponentEvent(new DrawerOverlayOpenedChangeEvent(this, event.isFromClient()));
+            listener.onComponentEvent(new SideDialogOpenedChangeEvent(this, event.isFromClient()));
         });
     }
 
-    public Registration addCloseActionListener(ComponentEventListener<DrawerOverlayCloseActionEvent> listener) {
+    public Registration addCloseActionListener(ComponentEventListener<SideDialogCloseActionEvent> listener) {
         return getContent().addDialogCloseActionListener(event -> {
-            listener.onComponentEvent(new DrawerOverlayCloseActionEvent(this, event.isFromClient()));
+            listener.onComponentEvent(new SideDialogCloseActionEvent(this, event.isFromClient()));
         });
     }
 }

@@ -37,7 +37,7 @@ class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixi
                     <slot name="contentSlot"></slot>
                 </div>
                 <div id="modalityCurtain" part="modalityCurtain" hidden$="[[_modalityCurtainHidden]]"></div>
-                <div id="drawer" part="drawer" hidden$="[[!drawerOpened]]">
+                <div id="drawer" part="drawer">
                     <div id="drawerContent" part="drawerContent">
                          <slot name="drawerContentSlot"></slot>
                     </div>
@@ -75,7 +75,7 @@ class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixi
     }
 
     _attachDrawerSizeObserver() {
-        const observer = new ResizeObserver(entries => { this._updateContentAnimation(); });
+        const observer = new ResizeObserver(entries => { this._updateContentSize(); });
         observer.observe(this.$.drawer);
     }
 }

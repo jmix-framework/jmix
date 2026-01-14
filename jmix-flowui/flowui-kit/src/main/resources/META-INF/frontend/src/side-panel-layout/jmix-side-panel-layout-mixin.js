@@ -99,14 +99,15 @@ export const JmixDrawerLayoutMixin = (superClass) =>
     }
 
       _drawerModeChanged(drawerMode) {
-          this._updateContentAnimation();
+          this._updateContentSize();
       }
 
     _drawerOpenedChanged(opened, oldOpened) {
         this._updateModalityCurtainHidden();
-        this._updateContentAnimation();
+        this._updateContentSize();
 
-        if (!opened && oldOpened) {
+        // Explicitly set drawerOpened to false to fire close event.
+        if (!opened) {
             this._closeDrawer();
         }
 
@@ -145,7 +146,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
         }
     }
 
-    _updateContentAnimation() {
+    _updateContentSize() {
         if (this.drawerMode == 'overlay') {
             this.$.content.style.maxWidth = '100%';
             this.$.content.style.maxHeight = '100%';

@@ -74,11 +74,10 @@ export const drawerLayoutStyles = css`
         position: absolute;
         box-sizing: border-box;
         transition:
-              transform var(--jmix-drawer-layout-transition),
-              visibility var(--jmix-drawer-layout-transition);
-    }
-
-    [part='drawer'][hidden] {
+            transform var(--jmix-drawer-layout-transition),
+            opacity var(--jmix-drawer-layout-transition),
+            visibility 0s linear var(--jmix-drawer-layout-transition);
+        opacity: 0.99;
         visibility: hidden;
     }
 
@@ -93,11 +92,14 @@ export const drawerLayoutStyles = css`
 
     :host([drawer-opened]) [part='drawer'] {
         visibility: visible;
+        opacity: 1;
         touch-action: manipulation;
-    }
-
-    :host([drawer-opened][overlay]) [part='drawer'] {
-        visibility: hidden;
+        visibility: visible;
+        touch-action: manipulation;
+        transition:
+            transform var(--jmix-drawer-layout-transition),
+            opacity var(--jmix-drawer-layout-transition),
+            visibility 0s;
     }
 
     :host([drawer-opened][modal]) [part='modalityCurtain'] {
@@ -175,8 +177,18 @@ export const drawerLayoutStyles = css`
 
     /* Animation */
 
-    :host([drawer-opened][drawer-placement='left']) [part='drawer'] {
+    :host([drawer-opened][drawer-placement='']) [part='drawer'],
+    :host([drawer-opened][drawer-placement='right']) [part='drawer'],
+    :host([drawer-opened][drawer-placement='left']) [part='drawer'],
+    :host([drawer-opened][drawer-placement='inline-start']) [part='drawer'],
+    :host([drawer-opened][drawer-placement='inline-end']) [part='drawer'] {
         transform: translateX(0%);
+    }
+
+    :host([drawer-opened][drawer-placement='top']) [part='drawer'],
+    :host([drawer-opened][drawer-placement='bottom']) [part='drawer'] {
+        width: 100%;
+        transform: translateY(0%);
     }
 
     :host([drawer-placement='left'][drawer-mode='push']) [part='content'] {
@@ -187,25 +199,12 @@ export const drawerLayoutStyles = css`
         margin-left: auto;
     }
 
-    :host([drawer-opened][drawer-placement='inline-start']) [part='drawer'] {
-        transform: translateX(0%);
-    }
-
     :host([drawer-placement='inline-start'][drawer-mode='push']) [part='content'] {
         margin-inline-start: auto;
     }
 
-    :host([drawer-opened][drawer-placement='inline-end']) [part='drawer'] {
-        transform: translateX(0%);
-    }
-
     :host([drawer-placement='inline-end'][drawer-mode='push']) [part='content'] {
         margin-inline-end: auto;
-    }
-
-    :host([drawer-opened][drawer-placement='']) [part='drawer'],
-    :host([drawer-opened][drawer-placement='right']) [part='drawer'] {
-        transform: translateX(0%);
     }
 
     :host([drawer-placement='top'][drawer-mode='push']) [part='content'] {
@@ -214,12 +213,6 @@ export const drawerLayoutStyles = css`
          * When TOP mode is used, we need to align content to bottom for smooth animation.
          */
         align-self: end;
-    }
-
-    :host([drawer-opened][drawer-placement='top']) [part='drawer'],
-    :host([drawer-opened][drawer-placement='bottom']) [part='drawer'] {
-        width: 100%;
-        transform: translateY(0%);
     }
 
     @keyframes jmix-modality-curtain-dimmed-enter {
@@ -231,24 +224,6 @@ export const drawerLayoutStyles = css`
     @keyframes jmix-modality-curtain-dimmed-out {
         100% {
             opacity: 0;
-        }
-    }
-
-    @keyframes jmix-modality-curtain-blur-enter {
-        0% {
-            backdrop-filter: blur(0);
-        }
-        100% {
-            backdrop-filter: blur(1px);
-        }
-    }
-
-    @keyframes jmix-modality-curtain-blur-out {
-        0% {
-            backdrop-filter: blur(1px);
-        }
-        100% {
-            backdrop-filter: blur(0);
         }
     }
 `;

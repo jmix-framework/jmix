@@ -17,13 +17,18 @@
 package io.jmix.flowui.kit.component.sidepanellayout;
 
 import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.DomEvent;
 
 /**
- * Event fired when the drawer panel is opened.
+ * The event is fired after the drawer panel fully opened and animation is finished.
+ * <p>
+ * Use this event when you need to perform actions that might affect drawer animation like
+ * focusing an element inside the drawer.
  */
-public class DrawerOpenEvent extends ComponentEvent<JmixDrawerLayout> {
+@DomEvent("jmix-drawer-layout-after-open-event")
+public class DrawerAfterOpenEvent extends ComponentEvent<JmixDrawerLayout> {
 
-    public DrawerOpenEvent(JmixDrawerLayout source, boolean fromClient) {
+    public DrawerAfterOpenEvent(JmixDrawerLayout source, boolean fromClient) {
         super(source, fromClient);
     }
 }

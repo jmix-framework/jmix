@@ -92,10 +92,55 @@ export const JmixDrawerLayoutMixin = (superClass) =>
         this.$.dialog.$.overlay.addEventListener('vaadin-overlay-outside-click', (e) => this._closeDrawer());
         this.$.dialog.$.overlay.addEventListener('vaadin-overlay-escape-press', (e) => this._closeDrawer());
 
-        this._curtainHideTimeout = null;
+        this.$.drawer.addEventListener('transitionstart', (e) => this._onDrawerTransitionStart(e));
+        this.$.drawer.addEventListener('transitionend', (e) => this._onDrawerTransitionEnd(e));
 
         // Update the modality curtain, because component can be reattached to UI.
         this._updateModalityCurtainHidden();
+    }
+
+    /**
+     * Focuses the specified component. If the drawer is animating, the focus will be set after
+     * the animation is finished.
+     *
+     * @param {HTMLElement} focusComponent
+     */
+    focusComponent(focusComponent) {
+        if (!focusComponent || this._contentController.getActualNodes().includes(focusComponent)) {
+            return
+        }
+
+        if (!this.animating) {
+           focusComponent.focus();
+        } else {
+            const checkInterval = setInterval(() => {
+                if (!this.animating && this.drawerOpened) {
+                    focusComponent.focus();
+                    clearInterval(checkInterval);
+                }
+            }, 20);
+            setTimeout(() => clearInterval(checkInterval), this._getDrawerLayoutTransition());
+        }
+    }
+
+    _onDrawerTransitionStart(e) {
+        if (e.target !== this.$.drawer && e.propertyName !== 'transform') {
+            return;
+        }
+
+        this.animating = true;
+    }
+
+    _onDrawerTransitionEnd(e) {
+        if (e.target !== this.$.drawer && e.propertyName !== 'transform') {
+            return;
+        }
+
+        this.animating = false;
+
+        if (this.drawerOpened) {
+            this.dispatchEvent(new CustomEvent('jmix-drawer-layout-after-open-event'));
+        }
     }
 
       _drawerModeChanged(drawerMode) {
@@ -105,11 +150,6 @@ export const JmixDrawerLayoutMixin = (superClass) =>
     _drawerOpenedChanged(opened, oldOpened) {
         this._updateModalityCurtainHidden();
         this._updateContentSize();
-
-        // Explicitly set drawerOpened to false to fire close event.
-        if (!opened) {
-            this._closeDrawer();
-        }
 
         if (opened) {
             this._moveDrawerChildren();
@@ -133,13 +173,11 @@ export const JmixDrawerLayoutMixin = (superClass) =>
         const shouldBeHidden = this._computeModalityCurtainHidden(this.drawerOpened, this.modal);
 
         if (shouldBeHidden && !this._modalityCurtainHidden) {
-            const transitionDuration = this._getDrawerLayoutTransition();
-
             // The drawer is closing, so hide the curtain after a delay
             this._curtainHideTimeout = setTimeout(() => {
                 this._modalityCurtainHidden = true;
                 this._curtainHideTimeout = null;
-            }, transitionDuration);
+            }, this._getDrawerLayoutTransition());
         } else if (!shouldBeHidden) {
             // Display curtain immediately
             this._modalityCurtainHidden = false;
@@ -265,7 +303,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
     }
 
     /**
-     * Decides where to move the drawer children: dialog or component.
+     * Moves the drawer children to the dialog or component depending on how the drawer is displayed.
      *
      * @private
      */
@@ -280,7 +318,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
     }
 
     /**
-     * Moves the drawer children to the target element: dialog or component.
+     * Moves the drawer children to the target element (dialog or component).
      *
      * @private
      */

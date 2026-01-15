@@ -382,8 +382,17 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
      * @param listener listener to add
      * @return a registration for removing the listener
      */
-    public Registration addDrawerOpenListener(ComponentEventListener<DrawerOpenEvent> listener) {
-        return addListener(DrawerOpenEvent.class, listener);
+    public Registration addDrawerBeforeOpenListener(ComponentEventListener<DrawerBeforeOpenEvent> listener) {
+        return addListener(DrawerBeforeOpenEvent.class, listener);
+    }
+
+    /**
+     * Adds a listener to handle drawer after open events.
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addDrawerAfterOpenListener(ComponentEventListener<DrawerAfterOpenEvent> listener) {
+        return addListener(DrawerAfterOpenEvent.class, listener);
     }
 
     /**
@@ -399,7 +408,7 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
     /**
      * Opens the drawer panel.
      *
-     * @see DrawerOpenEvent
+     * @see DrawerBeforeOpenEvent
      */
     public void openDrawer() {
         if (!isDrawerOpened()) {
@@ -435,7 +444,7 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
         updateContentInert(opened && isModal());
 
         if (opened) {
-            fireEvent(new DrawerOpenEvent(this, fromClient));
+            fireEvent(new DrawerBeforeOpenEvent(this, fromClient));
         } else {
             fireEvent(new DrawerCloseEvent(this, fromClient));
         }

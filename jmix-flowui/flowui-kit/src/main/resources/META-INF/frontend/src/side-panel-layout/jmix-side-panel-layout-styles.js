@@ -75,9 +75,7 @@ export const drawerLayoutStyles = css`
         box-sizing: border-box;
         transition:
             transform var(--jmix-drawer-layout-transition),
-            opacity var(--jmix-drawer-layout-transition),
             visibility 0s linear var(--jmix-drawer-layout-transition);
-        opacity: 0.99;
         visibility: hidden;
     }
 
@@ -92,13 +90,11 @@ export const drawerLayoutStyles = css`
 
     :host([drawer-opened]) [part='drawer'] {
         visibility: visible;
-        opacity: 1;
         touch-action: manipulation;
         visibility: visible;
         touch-action: manipulation;
         transition:
             transform var(--jmix-drawer-layout-transition),
-            opacity var(--jmix-drawer-layout-transition),
             visibility 0s;
     }
 

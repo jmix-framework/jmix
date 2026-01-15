@@ -69,9 +69,6 @@ public class ConditionGenerationContext {
             ConditionGenerationContext childContext = new ConditionGenerationContext(childCondition, context.counter);
             childContext.copy(context);
             createdContexts.put(childCondition, childContext);
-            if (childCondition instanceof LogicalCondition) {
-                createChildContexts((LogicalCondition) childCondition, childContext);
-            }
         }
         return createdContexts;
     }

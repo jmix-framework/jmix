@@ -20,15 +20,15 @@ import { registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaa
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
 import { ControllerMixin } from '@vaadin/component-base/src/controller-mixin.js';
 import { MediaQueryController } from '@vaadin/component-base/src/media-query-controller.js';
-import { JmixDrawerLayoutSlotController } from './jmix-side-panel-layout-slot-controller.js';
+import { JmixSidePanelLayoutSlotController } from './jmix-side-panel-layout-slot-controller.js';
 
-import { JmixDrawerLayoutMixin } from './jmix-side-panel-layout-mixin.js';
-import { drawerLayoutStyles } from './jmix-side-panel-layout-styles.js';
+import { JmixSidePanelLayoutMixin } from './jmix-side-panel-layout-mixin.js';
+import { sidePanelLayoutStyles } from './jmix-side-panel-layout-styles.js';
 import './jmix-side-panel-layout-dialog.js';
 
-registerStyles('jmix-drawer-layout', drawerLayoutStyles, { moduleId: 'jmix-drawer-layout-styles' });
+registerStyles('jmix-side-panel-layout', sidePanelLayoutStyles, { moduleId: 'jmix-side-panel-layout-styles' });
 
-class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixin(ThemableMixin(PolymerElement)))) {
+class JmixSidePanelLayout extends JmixSidePanelLayoutMixin(ElementMixin(ControllerMixin(ThemableMixin(PolymerElement)))) {
 
     static get template() {
         return html`
@@ -44,18 +44,18 @@ class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixi
                 </div>
             </div>
 
-            <jmix-drawer-layout-dialog
+            <jmix-side-panel-layout-dialog
                     id="dialog"
                     opened="[[_computeDialogOpened(drawerOpened, _displayAsOverlay)]]"
                     fullscreen="[[_displayAsOverlay]]"
                     aria-label="[[overlayAriaLabel]]"
                     theme$="[[_theme]]"
-                  ></jmix-drawer-layout-dialog>
+                  ></jmix-side-panel-layout-dialog>
         `;
     }
 
     static get is() {
-      return 'jmix-drawer-layout';
+      return 'jmix-side-panel-layout';
     }
 
     ready() {
@@ -68,7 +68,7 @@ class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixi
             }),
         );
 
-        this._contentController = new JmixDrawerLayoutSlotController(this, 'drawerContentSlot');
+        this._contentController = new JmixSidePanelLayoutSlotController(this, 'drawerContentSlot');
         this.addController(this._contentController);
 
         this._attachDrawerSizeObserver();
@@ -80,6 +80,6 @@ class JmixDrawerLayout extends JmixDrawerLayoutMixin(ElementMixin(ControllerMixi
     }
 }
 
-defineCustomElement(JmixDrawerLayout);
+defineCustomElement(JmixSidePanelLayout);
 
-export { JmixDrawerLayout };
+export { JmixSidePanelLayout };

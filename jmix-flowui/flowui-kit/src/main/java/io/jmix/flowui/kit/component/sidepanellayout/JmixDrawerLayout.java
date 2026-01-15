@@ -25,7 +25,7 @@ import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.Nullable;
 
-@Tag("jmix-drawer-layout")
+@Tag("jmix-side-panel-layout")
 @JsModule("./src/side-panel-layout/jmix-side-panel-layout.js")
 public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
 
@@ -210,13 +210,13 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
 
     /**
      * Note that this does not return the actual size of the drawer panel but the height which has been set using
-     * {@link #setDrawerVerticalSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-vertical-size}.
+     * {@link #setDrawerVerticalSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-vertical-size}.
      *
      * @return the height defined for the drawer panel
      */
     @Nullable
     public String getDrawerVerticalSize() {
-        return getElement().getStyle().get("--jmix-drawer-layout-drawer-vertical-size");
+        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-vertical-size");
     }
 
     /**
@@ -230,18 +230,18 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
      * @param size height to set
      */
     public void setDrawerVerticalSize(@Nullable String size) {
-        getElement().getStyle().set("--jmix-drawer-layout-drawer-vertical-size", size);
+        getElement().getStyle().set("--jmix-side-panel-layout-drawer-vertical-size", size);
     }
 
     /**
      * Note that this does not return the actual size of the drawer panel but the max-height which has been set using
-     * {@link #setDrawerVerticalMaxSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-vertical-max-size}.
+     * {@link #setDrawerVerticalMaxSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-vertical-max-size}.
      *
      * @return the max-height defined for the drawer panel
      */
     @Nullable
     public String getDrawerVerticalMaxSize() {
-        return getElement().getStyle().get("--jmix-drawer-layout-drawer-vertical-max-size");
+        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-vertical-max-size");
     }
 
     /**
@@ -255,18 +255,18 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
      * @param maxSize max-height to set
      */
     public void setDrawerVerticalMaxSize(@Nullable String maxSize) {
-        getElement().getStyle().set("--jmix-drawer-layout-drawer-vertical-max-size", maxSize);
+        getElement().getStyle().set("--jmix-side-panel-layout-drawer-vertical-max-size", maxSize);
     }
 
     /**
      * Note that this does not return the actual size of the drawer panel but the min-height which has been set using
-     * {@link #setDrawerVerticalMinSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-vertical-min-size}.
+     * {@link #setDrawerVerticalMinSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-vertical-min-size}.
      *
      * @return the min-height defined for the drawer panel
      */
     @Nullable
     public String getDrawerVerticalMinSize() {
-        return getElement().getStyle().get("--jmix-drawer-layout-drawer-vertical-min-size");
+        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-vertical-min-size");
     }
 
     /**
@@ -280,18 +280,18 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
      * @param minSize min-height to set
      */
     public void setDrawerVerticalMinSize(@Nullable String minSize) {
-        getElement().getStyle().set("--jmix-drawer-layout-drawer-vertical-min-size", minSize);
+        getElement().getStyle().set("--jmix-side-panel-layout-drawer-vertical-min-size", minSize);
     }
 
     /**
      * Note that this does not return the actual size of the drawer panel but the width which has been set using
-     * {@link #setDrawerHorizontalSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-horizontal-size}.
+     * {@link #setDrawerHorizontalSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-horizontal-size}.
      *
      * @return the width defined for the drawer panel
      */
     @Nullable
     public String getDrawerHorizontalSize() {
-        return getElement().getStyle().get("--jmix-drawer-layout-drawer-horizontal-size");
+        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-horizontal-size");
     }
 
     /**
@@ -305,18 +305,18 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
      * @param size width to set
      */
     public void setDrawerHorizontalSize(@Nullable String size) {
-        getElement().getStyle().set("--jmix-drawer-layout-drawer-horizontal-size", size);
+        getElement().getStyle().set("--jmix-side-panel-layout-drawer-horizontal-size", size);
     }
 
     /**
      * Note that this does not return the actual size of the drawer panel but the max-width which has been set using
-     * {@link #setDrawerHorizontalMaxSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-horizontal-max-size}.
+     * {@link #setDrawerHorizontalMaxSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-horizontal-max-size}.
      *
      * @return the max-width defined for the drawer panel
      */
     @Nullable
     public String getDrawerHorizontalMaxSize() {
-        return getElement().getStyle().get("--jmix-drawer-layout-drawer-horizontal-max-size");
+        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-horizontal-max-size");
     }
 
     /**
@@ -330,18 +330,18 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
      * @param maxSize max-width to set
      */
     public void setDrawerHorizontalMaxSize(@Nullable String maxSize) {
-        getElement().getStyle().set("--jmix-drawer-layout-drawer-horizontal-max-size", maxSize);
+        getElement().getStyle().set("--jmix-side-panel-layout-drawer-horizontal-max-size", maxSize);
     }
 
     /**
      * Note that this does not return the actual size of the drawer panel but the min-width which has been set using
-     * {@link #setDrawerHorizontalMinSize(String)} or using CSS property {@code --jmix-drawer-layout-drawer-horizontal-min-size}.
+     * {@link #setDrawerHorizontalMinSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-horizontal-min-size}.
      *
      * @return the min-width defined for the drawer panel
      */
     @Nullable
     public String getDrawerHorizontalMinSize() {
-        return getElement().getStyle().get("--jmix-drawer-layout-drawer-horizontal-min-size");
+        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-horizontal-min-size");
     }
 
     /**
@@ -355,7 +355,7 @@ public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
      * @param minSize min-width to set
      */
     public void setDrawerHorizontalMinSize(@Nullable String minSize) {
-        getElement().getStyle().set("--jmix-drawer-layout-drawer-horizontal-min-size", minSize);
+        getElement().getStyle().set("--jmix-side-panel-layout-drawer-horizontal-min-size", minSize);
     }
 
     /**

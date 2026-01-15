@@ -22,7 +22,7 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
 
-@Tag("jmix-drawer-layout-toggle")
+@Tag("jmix-side-panel-layout-toggle")
 @JsModule("./src/side-panel-layout/jmix-side-panel-layout-toggle.js")
 public class JmixDrawerLayoutToggle extends Button {
 

@@ -18,7 +18,7 @@ import { dialogOverlay } from '@vaadin/dialog/theme/lumo/vaadin-dialog-styles.js
 import { overlay } from '@vaadin/vaadin-lumo-styles/mixins/overlay.js';
 import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-const drawerLayoutStyles = css`
+const sidePanelLayoutStyles = css`
 
     [part='drawer'] {
         background-color: var(--lumo-base-color);
@@ -59,9 +59,9 @@ const drawerLayoutStyles = css`
     }
 `;
 
-registerStyles('jmix-drawer-layout-dialog-overlay', [overlay, dialogOverlay],
-    { moduleId: 'lumo-jmix-drawer-layout-dialog-overlay' },
+registerStyles('jmix-side-panel-layout-dialog-overlay', [overlay, dialogOverlay],
+    { moduleId: 'lumo-jmix-side-panel-layout-dialog-overlay' },
 );
 
-registerStyles('jmix-drawer-layout', [drawerLayoutStyles],
-    { moduleId: 'lumo-jmix-drawer-layout'})
+registerStyles('jmix-side-panel-layout', [sidePanelLayoutStyles],
+    { moduleId: 'lumo-jmix-side-panel-layout'})

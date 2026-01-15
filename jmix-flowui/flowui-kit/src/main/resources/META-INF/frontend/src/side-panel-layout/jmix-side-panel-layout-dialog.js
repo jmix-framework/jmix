@@ -22,9 +22,9 @@ import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 
 import './jmix-side-panel-layout-dialog-overlay.js';
 
-class JmixDrawerLayoutDialog extends DialogBaseMixin(OverlayClassMixin(ThemePropertyMixin(PolymerElement))) {
+class JmixSidePanelLayoutDialog extends DialogBaseMixin(OverlayClassMixin(ThemePropertyMixin(PolymerElement))) {
     static get is() {
-        return 'jmix-drawer-layout-dialog';
+        return 'jmix-side-panel-layout-dialog';
     }
 
     static get properties() {
@@ -47,7 +47,7 @@ class JmixDrawerLayoutDialog extends DialogBaseMixin(OverlayClassMixin(ThemeProp
                 }
             </style>
 
-            <jmix-drawer-layout-dialog-overlay
+            <jmix-side-panel-layout-dialog-overlay
                 id="overlay"
                 opened="[[opened]]"
                 aria-label$="[[ariaLabel]]"
@@ -61,9 +61,9 @@ class JmixDrawerLayoutDialog extends DialogBaseMixin(OverlayClassMixin(ThemeProp
                 fullscreen$="[[fullscreen]]"
                 role="dialog"
                 focus-trap
-            ></jmix-drawer-layout-dialog-overlay>
+            ></jmix-side-panel-layout-dialog-overlay>
         `;
     }
 }
 
-defineCustomElement(JmixDrawerLayoutDialog);
+defineCustomElement(JmixSidePanelLayoutDialog);

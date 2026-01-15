@@ -24,7 +24,7 @@ import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themab
 /*
  * CAUTION! Copied from packages/app-layout/theme/lumo/vaadin-drawer-toggle-styles.js
  */
-const jmixDrawerLayoutToggle = css`
+const sidePanelDrawerLayoutToggleStyles = css`
     :host {
         width: var(--lumo-size-l);
         height: var(--lumo-size-l);
@@ -56,4 +56,4 @@ const jmixDrawerLayoutToggle = css`
 `;
 
 // TODO: pinyazhin, rename to "lumo-drawer.." after updating Vaadin to 25
-registerStyles('jmix-drawer-layout-toggle', [button, jmixDrawerLayoutToggle], { moduleId: 'jmix-lumo-drawer-layout-toggle' });
+registerStyles('jmix-side-panel-layout-toggle', [button, sidePanelDrawerLayoutToggleStyles], { moduleId: 'jmix-lumo-side-panel-layout-toggle' });

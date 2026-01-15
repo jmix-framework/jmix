@@ -21,14 +21,14 @@ import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { DirMixin } from '@vaadin/component-base/src/dir-mixin.js';
 import { isEmptyTextNode } from '@vaadin/component-base/src/dom-utils.js';
 import { registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-import { jmixDrawerToggleLayout } from './jmix-side-panel-layout-toggle-styles.js';
+import { jmixSidePanelToggleLayout } from './jmix-side-panel-layout-toggle-styles.js';
 
-registerStyles('jmix-drawer-layout-toggle', [buttonStyles, jmixDrawerToggleLayout], { moduleId: 'jmix-drawer-layout-toggle-styles' });
+registerStyles('jmix-side-panel-layout-toggle', [buttonStyles, jmixSidePanelToggleLayout], { moduleId: 'jmix-side-panel-layout-toggle-styles' });
 
-class JmixDrawerLayoutToggle extends ButtonMixin(DirMixin(ThemableMixin(PolymerElement))) {
+class JmixSidePanelLayoutToggle extends ButtonMixin(DirMixin(ThemableMixin(PolymerElement))) {
 
     static get is() {
-        return 'jmix-drawer-layout-toggle';
+        return 'jmix-side-panel-layout-toggle';
     }
 
     static get template() {
@@ -63,9 +63,7 @@ class JmixDrawerLayoutToggle extends ButtonMixin(DirMixin(ThemableMixin(PolymerE
 
         this._toggleFallbackIcon();
 
-        this.$.slot.addEventListener('slotchange', () => {
-            this._toggleFallbackIcon();
-        });
+        this.$.slot.addEventListener('slotchange', () => this._toggleFallbackIcon());
     }
 
     _toggleFallbackIcon() {
@@ -76,6 +74,6 @@ class JmixDrawerLayoutToggle extends ButtonMixin(DirMixin(ThemableMixin(PolymerE
     }
 }
 
-defineCustomElement(JmixDrawerLayoutToggle);
+defineCustomElement(JmixSidePanelLayoutToggle);
 
-export { JmixDrawerLayoutToggle };
+export { JmixSidePanelLayoutToggle };

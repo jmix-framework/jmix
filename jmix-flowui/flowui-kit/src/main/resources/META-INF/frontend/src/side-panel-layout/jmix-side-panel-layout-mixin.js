@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-export const JmixDrawerLayoutMixin = (superClass) =>
-    class JmixDrawerLayoutMixin extends superClass {
+export const JmixSidePanelLayoutMixin = (superClass) =>
+    class JmixSidePanelLayoutMixin extends superClass {
 
     static get properties() {
         return {
@@ -119,7 +119,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
                     clearInterval(checkInterval);
                 }
             }, 20);
-            setTimeout(() => clearInterval(checkInterval), this._getDrawerLayoutTransition());
+            setTimeout(() => clearInterval(checkInterval), this._getDrawerTransition());
         }
     }
 
@@ -177,7 +177,7 @@ export const JmixDrawerLayoutMixin = (superClass) =>
             this._curtainHideTimeout = setTimeout(() => {
                 this._modalityCurtainHidden = true;
                 this._curtainHideTimeout = null;
-            }, this._getDrawerLayoutTransition());
+            }, this._getDrawerTransition());
         } else if (!shouldBeHidden) {
             // Display curtain immediately
             this._modalityCurtainHidden = false;
@@ -196,29 +196,29 @@ export const JmixDrawerLayoutMixin = (superClass) =>
                 || this.drawerPlacement === 'inline-end') {
             let realWidth = this.$.drawer.getBoundingClientRect().width + 'px';
             if (this.drawerOpened) {
-                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-horizontal-size', realWidth);
-                this.$.content.style.maxWidth = 'calc(100% - var(--_jmix-drawer-layout-drawer-horizontal-size))';
+                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-horizontal-size', realWidth);
+                this.$.content.style.maxWidth = 'calc(100% - var(--_jmix-side-panel-layout-drawer-horizontal-size))';
 
                 // Clear height if drawerPlacement changed when drawer is opened
                 this.$.content.style.maxHeight = '100%';
-                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-vertical-size', '');
+                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-vertical-size', '');
             } else {
                 this.$.content.style.maxWidth = '100%';
-                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-horizontal-size', '');
+                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-horizontal-size', '');
             }
         }
         if (this.drawerPlacement === 'top' || this.drawerPlacement === 'bottom') {
             let realHeight = this.$.drawer.getBoundingClientRect().height + 'px';
             if (this.drawerOpened) {
-                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-vertical-size', realHeight);
-                this.$.content.style.maxHeight = 'calc(100% - var(--_jmix-drawer-layout-drawer-vertical-size))';
+                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-vertical-size', realHeight);
+                this.$.content.style.maxHeight = 'calc(100% - var(--_jmix-side-panel-layout-drawer-vertical-size))';
 
                 // Clear width if drawerPlacement changed when drawer is opened
                 this.$.content.style.maxWidth = '100%';
-                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-horizontal-size', '');
+                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-horizontal-size', '');
             } else {
                 this.$.content.style.maxHeight = '100%';
-                this.$.content.style.setProperty('--_jmix-drawer-layout-drawer-vertical-size', '');
+                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-vertical-size', '');
             }
         }
     }
@@ -259,8 +259,8 @@ export const JmixDrawerLayoutMixin = (superClass) =>
      *
      * @private
      */
-    _getDrawerLayoutTransition() {
-       const transition = this._getStylePropertyValue('--jmix-drawer-layout-transition');
+    _getDrawerTransition() {
+       const transition = this._getStylePropertyValue('--jmix-side-panel-layout-transition');
        if (transition === 'none') {
            return 0;
        }

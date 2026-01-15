@@ -16,7 +16,7 @@
 
 import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-const jmixSideDialogOverlay = css`
+const jmixSideDialogOverlayStyles = css`
 
     :host([opening]),
     :host([closing]) {
@@ -24,5 +24,5 @@ const jmixSideDialogOverlay = css`
     }
 `;
 
-registerStyles('jmix-side-dialog-overlay', [jmixSideDialogOverlay],
+registerStyles('jmix-side-dialog-overlay', [jmixSideDialogOverlayStyles],
  { moduleId: 'jmix-lumo-side-dialog-overlay' });

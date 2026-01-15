@@ -23,17 +23,17 @@ import { registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaa
 
 import { dialogOverlay, resizableOverlay } from '@vaadin/dialog/src/vaadin-dialog-styles.js';
 import { overlayStyles } from '@vaadin/overlay/src/vaadin-overlay-styles.js';
-import { drawerLayoutDialogOverlayStyles } from './jmix-side-panel-layout-dialog-overlay-styles.js';
+import { sidePanelLayoutDialogOverlayStyles } from './jmix-side-panel-layout-dialog-overlay-styles.js';
 
-registerStyles('jmix-drawer-layout-dialog-overlay',
-    [overlayStyles, dialogOverlay, resizableOverlay, drawerLayoutDialogOverlayStyles],
-    { moduleId: 'jmix-drawer-layout-dialog-overlay-styles', },
+registerStyles('jmix-side-panel-layout-dialog-overlay',
+    [overlayStyles, dialogOverlay, resizableOverlay, sidePanelLayoutDialogOverlayStyles],
+    { moduleId: 'jmix-side-panel-layout-dialog-overlay-styles', },
 );
 
-class JmixDrawerLayoutDialogOverlay extends OverlayMixin(DirMixin(ThemableMixin(PolymerElement))) {
+class JmixSidePanelLayoutDialogOverlay extends OverlayMixin(DirMixin(ThemableMixin(PolymerElement))) {
 
     static get is() {
-      return 'jmix-drawer-layout-dialog-overlay';
+      return 'jmix-side-panel-layout-dialog-overlay';
     }
 
     static get template() {
@@ -54,6 +54,6 @@ class JmixDrawerLayoutDialogOverlay extends OverlayMixin(DirMixin(ThemableMixin(
     }
 }
 
-defineCustomElement(JmixDrawerLayoutDialogOverlay);
+defineCustomElement(JmixSidePanelLayoutDialogOverlay);
 
-export { JmixDrawerLayoutDialogOverlay };
+export { JmixSidePanelLayoutDialogOverlay };

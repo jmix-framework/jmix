@@ -16,20 +16,20 @@
 
 import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-export const drawerLayoutStyles = css`
+export const sidePanelLayoutStyles = css`
     :host {
         display: block;
         box-sizing: border-box;
 
-        --jmix-drawer-layout-drawer-vertical-size: auto;
-        --jmix-drawer-layout-drawer-vertical-max-size: 14rem;
-        --jmix-drawer-layout-drawer-vertical-min-size: 10rem;
+        --jmix-side-panel-layout-drawer-vertical-size: auto;
+        --jmix-side-panel-layout-drawer-vertical-max-size: 14rem;
+        --jmix-side-panel-layout-drawer-vertical-min-size: 10rem;
 
-        --jmix-drawer-layout-drawer-horizontal-size: auto;
-        --jmix-drawer-layout-drawer-horizontal-max-size: 25rem;
-        --jmix-drawer-layout-drawer-horizontal-min-size: 15rem;
+        --jmix-side-panel-layout-drawer-horizontal-size: auto;
+        --jmix-side-panel-layout-drawer-horizontal-max-size: 25rem;
+        --jmix-side-panel-layout-drawer-horizontal-min-size: 15rem;
 
-        --jmix-drawer-layout-transition: 200ms;
+        --jmix-side-panel-layout-transition: 200ms;
     }
 
     [part='layout'] {
@@ -50,8 +50,8 @@ export const drawerLayoutStyles = css`
         height: 100%;
         box-sizing: border-box;
         transition:
-            max-height var(--jmix-drawer-layout-transition),
-            max-width var(--jmix-drawer-layout-transition);
+            max-height var(--jmix-side-panel-layout-transition),
+            max-width var(--jmix-side-panel-layout-transition);
     }
 
     [part='modalityCurtain'] {
@@ -74,8 +74,8 @@ export const drawerLayoutStyles = css`
         position: absolute;
         box-sizing: border-box;
         transition:
-            transform var(--jmix-drawer-layout-transition),
-            visibility 0s linear var(--jmix-drawer-layout-transition);
+            transform var(--jmix-side-panel-layout-transition),
+            visibility 0s linear var(--jmix-side-panel-layout-transition);
         visibility: hidden;
     }
 
@@ -94,17 +94,17 @@ export const drawerLayoutStyles = css`
         visibility: visible;
         touch-action: manipulation;
         transition:
-            transform var(--jmix-drawer-layout-transition),
+            transform var(--jmix-side-panel-layout-transition),
             visibility 0s;
     }
 
     :host([drawer-opened][modal]) [part='modalityCurtain'] {
-        animation: var(--jmix-drawer-layout-transition) jmix-modality-curtain-dimmed-enter both;
+        animation: var(--jmix-side-panel-layout-transition) jmix-modality-curtain-dimmed-enter both;
         will-change: opacity;
     }
 
     :host(:not([drawer-opened])[modal]) [part='modalityCurtain']:not([hidden]) {
-        animation: var(--jmix-drawer-layout-transition) jmix-modality-curtain-dimmed-out both;
+        animation: var(--jmix-side-panel-layout-transition) jmix-modality-curtain-dimmed-out both;
         will-change: opacity;
     }
 
@@ -115,21 +115,21 @@ export const drawerLayoutStyles = css`
     :host([drawer-placement='right']) [part='drawer'],
     :host([drawer-placement='inline-start']) [part='drawer'],
     :host([drawer-placement='inline-end']) [part='drawer'] {
-        width: var(--jmix-drawer-layout-drawer-horizontal-size);
-        max-width: var(--jmix-drawer-layout-drawer-horizontal-max-size);
-        min-width: var(--jmix-drawer-layout-drawer-horizontal-min-size);
+        width: var(--jmix-side-panel-layout-drawer-horizontal-size);
+        max-width: var(--jmix-side-panel-layout-drawer-horizontal-max-size);
+        min-width: var(--jmix-side-panel-layout-drawer-horizontal-min-size);
     }
 
     :host([drawer-placement='bottom']) [part='drawer'],
     :host([drawer-placement='top']) [part='drawer'] {
-        height: var(--jmix-drawer-layout-drawer-vertical-size);
-        max-height: var(--jmix-drawer-layout-drawer-vertical-max-size);
-        min-height: var(--jmix-drawer-layout-drawer-vertical-min-size);
+        height: var(--jmix-side-panel-layout-drawer-vertical-size);
+        max-height: var(--jmix-side-panel-layout-drawer-vertical-max-size);
+        min-height: var(--jmix-side-panel-layout-drawer-vertical-min-size);
     }
 
     :host([drawer-placement='top']) ::slotted([slot='drawerContentSlot']),
     :host([drawer-placement='bottom']) ::slotted([slot='drawerContentSlot']) {
-        max-height: var(--jmix-drawer-layout-drawer-vertical-max-size);
+        max-height: var(--jmix-side-panel-layout-drawer-vertical-max-size);
     }
 
     :host([drawer-placement='left']) [part='drawer'] {

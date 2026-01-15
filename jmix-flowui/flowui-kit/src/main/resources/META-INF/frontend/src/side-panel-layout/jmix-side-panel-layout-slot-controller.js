@@ -16,7 +16,7 @@
 
 import { SlotController } from '@vaadin/component-base/src/slot-controller.js';
 
-export class JmixDrawerLayoutSlotController extends SlotController {
+export class JmixSidePanelLayoutSlotController extends SlotController {
 
     constructor(host, slotName) {
         super(host, slotName, 'div', { multiple: true });

@@ -16,7 +16,7 @@
 
 import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-export const drawerLayoutDialogOverlayStyles = css`
+export const sidePanelLayoutDialogOverlayStyles = css`
     :host([fullscreen]) [part='overlay'] {
         height: 100%;
         width: 100%;

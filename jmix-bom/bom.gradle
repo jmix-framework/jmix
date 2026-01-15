@@ -300,10 +300,15 @@ dependencies {
         api "io.jmix.uiconstraints:jmix-uiconstraints:$premiumVersion"
         api "io.jmix.uiconstraints:jmix-uiconstraints-starter:$premiumVersion"
 
-        api "io.jmix.vcc:vaadin-commercial-components:$premiumVersion"
-        api "io.jmix.vcc:vaadin-commercial-components-starter:$premiumVersion"
-        api "io.jmix.vcc:vaadin-commercial-components-kit:$premiumVersion"
-        api "io.jmix.vcc:vaadin-commercial-components-devserver-kit:$premiumVersion"
+        api "io.jmix.vcc:vaadin-dashboard:$premiumVersion"
+        api "io.jmix.vcc:vaadin-dashboard-starter:$premiumVersion"
+        api "io.jmix.vcc:vaadin-dashboard-kit:$premiumVersion"
+        api "io.jmix.vcc:vaadin-dashboard-devserver-kit:$premiumVersion"
+
+        api "io.jmix.vcc:vaadin-spreadsheet:$premiumVersion"
+        api "io.jmix.vcc:vaadin-spreadsheet-starter:$premiumVersion"
+        api "io.jmix.vcc:vaadin-spreadsheet-kit:$premiumVersion"
+        api "io.jmix.vcc:vaadin-spreadsheet-devserver-kit:$premiumVersion"
 
         api "io.jmix.webdav:jmix-webdav:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"
@@ -342,8 +347,8 @@ dependencies {
         api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
         api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
-        api "com.vaadin:vaadin-board-flow:$vaadinFlowVersion"
         api "com.vaadin:vaadin-spreadsheet-flow:$vaadinFlowVersion"
+        api "com.vaadin:vaadin-dashboard-flow:$vaadinFlowVersion"
 
         api 'org.spockframework:spock-core:2.3-groovy-4.0'
         api 'org.spockframework:spock-spring:2.3-groovy-4.0'

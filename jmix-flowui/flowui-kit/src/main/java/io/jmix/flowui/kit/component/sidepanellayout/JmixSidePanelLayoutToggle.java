@@ -24,9 +24,9 @@ import com.vaadin.flow.component.dependency.JsModule;
 
 @Tag("jmix-side-panel-layout-toggle")
 @JsModule("./src/side-panel-layout/jmix-side-panel-layout-toggle.js")
-public class JmixDrawerLayoutToggle extends Button {
+public class JmixSidePanelLayoutToggle extends Button {
 
-    public JmixDrawerLayoutToggle() {
+    public JmixSidePanelLayoutToggle() {
         attachClickListener();
     }
 

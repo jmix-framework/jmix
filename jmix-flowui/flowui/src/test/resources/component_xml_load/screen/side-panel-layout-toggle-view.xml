@@ -16,13 +16,13 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
-        <drawerLayoutToggle id="drawerLayoutToggle"
+        <sidePanelLayoutToggle id="sidePanelLayoutToggle"
                             ariaLabel="ariaLabel"
                             ariaLabelledBy="ariaLabelledBy"
                             autofocus="true"
                             classNames="className1, className2"
                             css="color:red"
-                            drawerLayoutId="drawerLayout"
+                            sidePanelLayoutId="sidePanelLayout"
                             clickShortcut="O"
                             focusShortcut="A"
                             height="100px"
@@ -34,9 +34,9 @@
                             tabIndex="2"
                             themeNames="primary icon"
                             width="100px"/>
-        <drawerLayout id="drawerLayout">
-            <drawerLayoutToggle id="innerDrawerLayoutToggle"/>
+        <sidePanelLayout id="sidePanelLayout">
+            <sidePanelLayoutToggle id="innerSidePanelLayoutToggle"/>
             <span text="stub"/>
-        </drawerLayout>
+        </sidePanelLayout>
     </layout>
 </view>

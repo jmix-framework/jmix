@@ -23,8 +23,8 @@ import com.vaadin.flow.component.EventData;
 /**
  * Event fired when the user clicks on the modality curtain.
  */
-@DomEvent("jmix-drawer-layout-modality-curtain-click")
-public class ModalityCurtainClickEvent extends ComponentEvent<JmixDrawerLayout> {
+@DomEvent("jmix-side-panel-layout-modality-curtain-click")
+public class ModalityCurtainClickEvent extends ComponentEvent<JmixSidePanelLayout> {
 
     protected final int pageX;
 
@@ -38,13 +38,13 @@ public class ModalityCurtainClickEvent extends ComponentEvent<JmixDrawerLayout> 
 
     protected final boolean shiftKey;
 
-    public ModalityCurtainClickEvent(JmixDrawerLayout source, boolean fromClient,
-                                @EventData("event.detail.originalEvent.pageX") Integer pageX,
-                                @EventData("event.detail.originalEvent.pageY") Integer pageY,
-                                @EventData("event.detail.originalEvent.altKey") Boolean altKey,
-                                @EventData("event.detail.originalEvent.ctrlKey") Boolean ctrlKey,
-                                @EventData("event.detail.originalEvent.metaKey") Boolean metaKey,
-                                @EventData("event.detail.originalEvent.shiftKey") Boolean shiftKey) {
+    public ModalityCurtainClickEvent(JmixSidePanelLayout source, boolean fromClient,
+                                     @EventData("event.detail.originalEvent.pageX") Integer pageX,
+                                     @EventData("event.detail.originalEvent.pageY") Integer pageY,
+                                     @EventData("event.detail.originalEvent.altKey") Boolean altKey,
+                                     @EventData("event.detail.originalEvent.ctrlKey") Boolean ctrlKey,
+                                     @EventData("event.detail.originalEvent.metaKey") Boolean metaKey,
+                                     @EventData("event.detail.originalEvent.shiftKey") Boolean shiftKey) {
         super(source, fromClient);
 
         this.pageX = pageX;

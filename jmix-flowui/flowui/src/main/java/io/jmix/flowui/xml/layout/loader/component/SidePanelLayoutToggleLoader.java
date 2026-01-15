@@ -18,21 +18,21 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.sidepanellayout.DrawerLayout;
-import io.jmix.flowui.component.sidepanellayout.DrawerLayoutToggle;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayoutToggle;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 
 import static com.vaadin.flow.dom.ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME;
 
-public class DrawerLayoutToggleLoader extends AbstractComponentLoader<DrawerLayoutToggle> {
+public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePanelLayoutToggle> {
 
     protected IconLoaderSupport iconLoaderSupport;
 
     @Override
-    protected DrawerLayoutToggle createComponent() {
-        return factory.create(DrawerLayoutToggle.class);
+    protected SidePanelLayoutToggle createComponent() {
+        return factory.create(SidePanelLayoutToggle.class);
     }
 
     @Override
@@ -105,11 +105,11 @@ public class DrawerLayoutToggleLoader extends AbstractComponentLoader<DrawerLayo
                 throw new GuiDevelopmentException("Component with the '" + drawerLayoutId + "' ID is not found",
                         context);
             }
-            if (component instanceof DrawerLayout drawerLayout) {
-                resultComponent.setDrawerLayout(drawerLayout);
+            if (component instanceof SidePanelLayout drawerLayout) {
+                resultComponent.setSidePanelLayout(drawerLayout);
             } else {
                 throw new GuiDevelopmentException("Component with the '" + drawerLayoutId +
-                        "' ID is not the " + DrawerLayout.class.getSimpleName() + " class or its subclass", context);
+                        "' ID is not the " + SidePanelLayout.class.getSimpleName() + " class or its subclass", context);
             }
         }
     }
@@ -123,15 +123,15 @@ public class DrawerLayoutToggleLoader extends AbstractComponentLoader<DrawerLayo
                 return;
             }
             while (parent != null) {
-                if (parent instanceof DrawerLayout drawerLayout) {
-                    resultComponent.setDrawerLayout(drawerLayout);
+                if (parent instanceof SidePanelLayout drawerLayout) {
+                    resultComponent.setSidePanelLayout(drawerLayout);
                     return;
                 }
                 parent = parent.getParent().orElse(null);
             }
 
             throw new GuiDevelopmentException("DrawerLayoutToggle component must be placed inside "
-                    + DrawerLayout.class.getSimpleName() +
+                    + SidePanelLayout.class.getSimpleName() +
                     " or define 'drawerLayoutId' attribute", context);
         }
     }

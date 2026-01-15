@@ -139,7 +139,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
         this.animating = false;
 
         if (this.drawerOpened) {
-            this.dispatchEvent(new CustomEvent('jmix-drawer-layout-after-open-event'));
+            this.dispatchEvent(new CustomEvent('jmix-side-panel-layout-after-open-event'));
         }
     }
 

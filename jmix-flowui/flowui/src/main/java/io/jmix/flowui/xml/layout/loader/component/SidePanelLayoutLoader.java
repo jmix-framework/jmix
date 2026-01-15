@@ -17,7 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.component.sidepanellayout.DrawerLayout;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.sidepanellayout.DrawerMode;
 import io.jmix.flowui.kit.component.sidepanellayout.DrawerPlacement;
@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class DrawerLayoutLoader extends AbstractComponentLoader<DrawerLayout> {
+public class SidePanelLayoutLoader extends AbstractComponentLoader<SidePanelLayout> {
 
     protected List<ComponentLoader<?>> pendingLoadComponents = new ArrayList<>();
 
@@ -41,8 +41,8 @@ public class DrawerLayoutLoader extends AbstractComponentLoader<DrawerLayout> {
     }
 
     @Override
-    protected DrawerLayout createComponent() {
-        return factory.create(DrawerLayout.class);
+    protected SidePanelLayout createComponent() {
+        return factory.create(SidePanelLayout.class);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class DrawerLayoutLoader extends AbstractComponentLoader<DrawerLayout> {
         loadSubComponents();
     }
 
-    protected void createSubComponents(DrawerLayout drawerLayout, Element element) {
+    protected void createSubComponents(SidePanelLayout drawerLayout, Element element) {
         List<Element> elements = element.elements();
         if (elements.size() != 2) {
             throw new GuiDevelopmentException(String.format(

@@ -28,9 +28,9 @@ import com.vaadin.flow.component.ComponentEvent;
  *
  * @see DrawerAfterOpenEvent
  */
-public class DrawerBeforeOpenEvent extends ComponentEvent<JmixDrawerLayout> {
+public class DrawerBeforeOpenEvent extends ComponentEvent<JmixSidePanelLayout> {
 
-    public DrawerBeforeOpenEvent(JmixDrawerLayout source, boolean fromClient) {
+    public DrawerBeforeOpenEvent(JmixSidePanelLayout source, boolean fromClient) {
         super(source, fromClient);
     }
 }

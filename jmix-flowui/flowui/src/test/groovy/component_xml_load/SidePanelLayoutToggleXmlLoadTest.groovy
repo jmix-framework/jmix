@@ -16,48 +16,56 @@
 
 package component_xml_load
 
-import component_xml_load.screen.DrawerLayoutView
-import io.jmix.flowui.kit.component.sidepanellayout.DrawerMode
-import io.jmix.flowui.kit.component.sidepanellayout.DrawerPlacement
+import com.vaadin.flow.component.icon.FontIcon
+import component_xml_load.screen.SidePanelLayoutToggleView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-class DrawerLayoutXmlLoadTest extends FlowuiTestSpecification {
+class SidePanelLayoutToggleXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
         registerViewBasePackages("component_xml_load.screen")
     }
 
-    def "Load DrawerLayout attributes"() {
+    def "Load SidePanelLayoutToggle attributes"() {
         when: "Open the view"
-        def view = navigateToView(DrawerLayoutView)
+        def view = navigateToView(SidePanelLayoutToggleView)
 
         then: "Check all attributes"
-        verifyAll(view.drawerLayoutAttributes) {
-            id.get() == "drawerLayoutAttributes"
-            classNames.containsAll(["cssClassName1", "cssClassName2"])
-            !closeOnModalityCurtainClick
-            !displayAsOverlayOnSmallDevices
+        verifyAll(view.sidePanelLayoutToggle) {
+            id.get() == "sidePanelLayoutToggle"
+            ariaLabel.orElse(null) == "ariaLabel"
+            autofocus
+            classNames.containsAll(["className1", "className2"])
             style.get("color") == "red"
-            drawerHorizontalMaxSize == "10em"
-            drawerHorizontalMinSize == "8em"
-            drawerHorizontalSize == "9em"
-            drawerMode == DrawerMode.PUSH
-            drawerPlacement == DrawerPlacement.TOP
-            drawerVerticalMaxSize == "10em"
-            drawerVerticalMinSize == "8em"
-            drawerVerticalSize == "9em"
+            sidePanelLayout != null
             height == "100px"
+            icon != null
             maxHeight == "100px"
             maxWidth == "100px"
             minHeight == "100px"
             minWidth == "100px"
-            !modal
-            overlayAriaLabel == "overlayAriaLabel"
+            tabIndex == 2
+            themeNames.containsAll(["primary", "icon"])
             visible
             width == "100px"
         }
+
+        when: "Retrieve an icon"
+        FontIcon icon = (FontIcon) view.sidePanelLayoutToggle.icon;
+
+        then: "Check icon name"
+        icon.iconClassNames.collect().containsAll("jmix-font-icon", "jmix-font-icon-abacus")
+    }
+
+    def "Check setting SidePanelLayout to toggle without specifying ID"() {
+        when: "Open the view"
+        def view = navigateToView(SidePanelLayoutToggleView)
+
+        then: "Check that SidePanelLayout is set"
+
+        view.innerSidePanelLayoutToggle.sidePanelLayout != null
     }
 }

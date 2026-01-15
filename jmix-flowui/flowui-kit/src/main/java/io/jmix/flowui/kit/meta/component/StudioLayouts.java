@@ -26,7 +26,7 @@ import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
-import io.jmix.flowui.kit.component.sidepanellayout.JmixDrawerLayout;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayout;
 import io.jmix.flowui.kit.component.gridlayout.JmixGridLayout;
 import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.ClassInfo;
@@ -418,10 +418,10 @@ public interface StudioLayouts {
     Accordion accordion();
 
     @StudioComponent(
-            name = "DrawerLayout",
-            classFqn = "io.jmix.flowui.component.drawerlayout.DrawerLayout",
+            name = "SidePanelLayout",
+            classFqn = "io.jmix.flowui.component.sidepanellayout.SidePanelLayout",
             category = "Layouts",
-            xmlElement = "drawerLayout",
+            xmlElement = "sidePanelLayout",
             icon = "io/jmix/flowui/kit/meta/icon/component/drawerToggle.svg", // TODO: pinyazhin, icon
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -463,7 +463,7 @@ public interface StudioLayouts {
                     @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
             }
     )
-    JmixDrawerLayout drawerLayout();
+    JmixSidePanelLayout sidePanelLayout();
 
     @StudioComponent(
             name = "FormLayout",

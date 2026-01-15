@@ -16,7 +16,7 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
-        <drawerLayout id="drawerLayoutAttributes"
+        <sidePanelLayout id="sidePanelLayoutAttributes"
                       classNames="cssClassName1, cssClassName2"
                       closeOnModalityCurtainClick="false"
                       displayAsOverlayOnSmallDevices="false"
@@ -39,6 +39,6 @@
                       width="100px">
             <span/>
             <span/>
-        </drawerLayout>
+        </sidePanelLayout>
     </layout>
 </view>

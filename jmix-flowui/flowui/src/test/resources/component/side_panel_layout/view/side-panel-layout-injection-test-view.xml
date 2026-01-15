@@ -16,19 +16,19 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
-        <drawerLayout id="drawerLayout">
+        <sidePanelLayout id="sidePanelLayout">
             <dataGrid id="citiesDataGrid" metaClass="pc_City">
                 <columns>
                     <column property="name"/>
                 </columns>
             </dataGrid>
-            <vbox id="drawerLayoutContentBox">
+            <vbox id="sidePanelLayoutContentBox">
                 <button id="closeButton" text="Close"/>
             </vbox>
-        </drawerLayout>
-        <drawerLayout id="drawerLayoutWithFragment">
+        </sidePanelLayout>
+        <sidePanelLayout id="sidePanelLayoutWithFragment">
             <span text="Content"/>
             <fragment id="testAddressFragment" class="component.fragment.component.TestAddressFragment"/>
-        </drawerLayout>
+        </sidePanelLayout>
     </layout>
 </view>

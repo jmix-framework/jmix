@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package component.drawer_layout.view;
+package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
-import component.fragment.component.TestAddressFragment;
-import io.jmix.flowui.component.grid.DataGrid;
-import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
 import io.jmix.flowui.view.*;
-import test_support.entity.City;
 
-@Route("drawer-layout-injection-test-view")
-@ViewController("DrawerLayoutInjectionTestView")
-@ViewDescriptor(value = "drawer-layout-injection-test-view.xml", path = "drawer-layout-injection-test-view.xml")
-public class DrawerLayoutInjectionTestView extends StandardView {
-
-    @ViewComponent
-    public DataGrid<City> citiesDataGrid;
+@Route("side-panel-layout-view")
+@ViewController("SidePanelLayoutView")
+@ViewDescriptor("side-panel-layout-view.xml")
+public class SidePanelLayoutView extends StandardView {
 
     @ViewComponent
-    public JmixButton closeButton;
-
-    @ViewComponent
-    public TestAddressFragment testAddressFragment;
+    public SidePanelLayout sidePanelLayoutAttributes;
 }

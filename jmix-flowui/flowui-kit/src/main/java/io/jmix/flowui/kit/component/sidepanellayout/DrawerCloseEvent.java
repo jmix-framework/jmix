@@ -21,9 +21,9 @@ import com.vaadin.flow.component.ComponentEvent;
 /**
  * Event fired when the drawer panel is closed.
  */
-public class DrawerCloseEvent extends ComponentEvent<JmixDrawerLayout> {
+public class DrawerCloseEvent extends ComponentEvent<JmixSidePanelLayout> {
 
-    public DrawerCloseEvent(JmixDrawerLayout source, boolean fromClient) {
+    public DrawerCloseEvent(JmixSidePanelLayout source, boolean fromClient) {
         super(source, fromClient);
     }
 }

@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package component.drawer_layout
+package component.side_panel_layout
 
-import component.drawer_layout.view.DrawerLayoutInjectionTestView
+import component.side_panel_layout.view.SidePanelLayoutInjectionTestView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-class DrawerLayoutTest extends FlowuiTestSpecification {
+class SidePanelLayoutTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerViewBasePackages("component.drawer_layout.view")
+        registerViewBasePackages("component.side_panel_layout.view")
     }
 
-    def "Inject sub component from DrawerLayout"() {
+    def "Inject sub component from SidePanelLayout"() {
         when: "Open the view"
-        def view = navigateToView(DrawerLayoutInjectionTestView)
+        def view = navigateToView(SidePanelLayoutInjectionTestView)
 
         then:
         view.citiesDataGrid != null

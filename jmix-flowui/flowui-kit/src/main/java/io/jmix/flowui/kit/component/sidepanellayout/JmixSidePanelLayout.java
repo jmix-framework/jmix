@@ -27,14 +27,14 @@ import jakarta.annotation.Nullable;
 
 @Tag("jmix-side-panel-layout")
 @JsModule("./src/side-panel-layout/jmix-side-panel-layout.js")
-public class JmixDrawerLayout extends Component implements HasSize, HasStyle {
+public class JmixSidePanelLayout extends Component implements HasSize, HasStyle {
 
     protected Component content;
     protected Component drawerContent;
 
     protected ComponentInertManager componentInertManager;
 
-    public JmixDrawerLayout() {
+    public JmixSidePanelLayout() {
         // Workaround for: https://github.com/vaadin/flow/issues/3496
         getElement().setProperty("drawerOpened", false);
 

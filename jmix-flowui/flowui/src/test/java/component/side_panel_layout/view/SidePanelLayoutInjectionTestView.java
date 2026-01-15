@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package component_xml_load.screen;
+package component.side_panel_layout.view;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.component.sidepanellayout.DrawerLayoutToggle;
+import component.fragment.component.TestAddressFragment;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
+import test_support.entity.City;
 
-@Route("drawer-layout-toggle-view")
-@ViewController("DrawerLayoutToggleView")
-@ViewDescriptor("drawer-layout-toggle-view.xml")
-public class DrawerLayoutToggleView extends StandardView {
+@Route("side-panel-layout-injection-test-view")
+@ViewController("SidePanelLayoutInjectionTestView")
+@ViewDescriptor("side-panel-layout-injection-test-view.xml")
+public class SidePanelLayoutInjectionTestView extends StandardView {
 
     @ViewComponent
-    public DrawerLayoutToggle drawerLayoutToggle;
+    public DataGrid<City> citiesDataGrid;
+
     @ViewComponent
-    public DrawerLayoutToggle innerDrawerLayoutToggle;
+    public JmixButton closeButton;
+
+    @ViewComponent
+    public TestAddressFragment testAddressFragment;
 }

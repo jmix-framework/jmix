@@ -25,10 +25,10 @@ import com.vaadin.flow.component.DomEvent;
  * Use this event when you need to perform actions that might affect drawer animation like
  * focusing an element inside the drawer.
  */
-@DomEvent("jmix-drawer-layout-after-open-event")
-public class DrawerAfterOpenEvent extends ComponentEvent<JmixDrawerLayout> {
+@DomEvent("jmix-side-panel-layout-after-open-event")
+public class DrawerAfterOpenEvent extends ComponentEvent<JmixSidePanelLayout> {
 
-    public DrawerAfterOpenEvent(JmixDrawerLayout source, boolean fromClient) {
+    public DrawerAfterOpenEvent(JmixSidePanelLayout source, boolean fromClient) {
         super(source, fromClient);
     }
 }

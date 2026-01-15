@@ -4281,8 +4281,8 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- DrawerLayout -->
-    <xs:complexType name="drawerLayoutComponent">
+    <!-- SidePanelLayout -->
+    <xs:complexType name="sidePanelLayoutComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence minOccurs="0">
@@ -4326,16 +4326,16 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <!-- DrawerLayoutToggle -->
+    <!-- SidePanelLayoutToggle -->
 
-    <xs:complexType name="drawerLayoutToggleComponent">
+    <xs:complexType name="sidePanelLayoutToggleComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
                     <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
                 </xs:sequence>
 
-                <xs:attribute name="drawerLayoutId" type="xs:string"/>
+                <xs:attribute name="sidePanelLayoutId" type="xs:string"/>
 
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="buttonThemeNames"/>
@@ -5516,8 +5516,8 @@
                 <xs:element name="component" type="genericComponent"/>
                 <xs:element name="fragment" type="fragmentComponent"/>
                 <xs:element name="markdown" type="markdownComponent"/>
-                <xs:element name="drawerLayout" type="drawerLayoutComponent"/>
-                <xs:element name="drawerLayoutToggle" type="drawerLayoutToggleComponent"/>
+                <xs:element name="sidePanelLayout" type="sidePanelLayoutComponent"/>
+                <xs:element name="sidePanelLayoutToggle" type="sidePanelLayoutToggleComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

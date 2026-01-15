@@ -48,7 +48,7 @@ import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
-import io.jmix.flowui.kit.component.sidepanellayout.JmixDrawerLayoutToggle;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayoutToggle;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
@@ -1207,10 +1207,10 @@ public interface StudioComponents {
     DrawerToggle drawerToggle();
 
     @StudioComponent(
-            name = "DrawerLayoutToggle",
-            classFqn = "io.jmix.flowui.component.drawerlayout.DrawerLayoutToggle",
+            name = "SidePanelLayoutToggle",
+            classFqn = "io.jmix.flowui.component.sidepanellayout.SidePanelLayoutToggle",
             category = "Components",
-            xmlElement = "drawerLayoutToggle",
+            xmlElement = "sidePanelLayoutToggle",
             icon = "io/jmix/flowui/kit/meta/icon/component/drawerToggle.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -1229,7 +1229,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "drawerLayoutId", type = StudioPropertyType.COMPONENT_REF),
+                    @StudioProperty(xmlAttribute = "sidePanelLayoutId", type = StudioPropertyType.COMPONENT_REF),
                     @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "maxHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
@@ -1244,7 +1244,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
             }
     )
-    JmixDrawerLayoutToggle drawerLayoutToggle();
+    JmixSidePanelLayoutToggle sidePanelLayoutToggle();
 
     @StudioComponent(
             name = "EmailField",

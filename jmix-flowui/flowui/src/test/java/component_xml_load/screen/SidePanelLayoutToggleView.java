@@ -17,14 +17,16 @@
 package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.component.sidepanellayout.DrawerLayout;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayoutToggle;
 import io.jmix.flowui.view.*;
 
-@Route("drawer-layout-view")
-@ViewController("DrawerLayoutView")
-@ViewDescriptor("drawer-layout-view.xml")
-public class DrawerLayoutView extends StandardView {
+@Route("side-panel-layout-toggle-view")
+@ViewController("SidePanelLayoutToggleView")
+@ViewDescriptor("side-panel-layout-toggle-view.xml")
+public class SidePanelLayoutToggleView extends StandardView {
 
     @ViewComponent
-    public DrawerLayout drawerLayoutAttributes;
+    public SidePanelLayoutToggle sidePanelLayoutToggle;
+    @ViewComponent
+    public SidePanelLayoutToggle innerSidePanelLayoutToggle;
 }

@@ -18,33 +18,33 @@ package io.jmix.flowui.component.sidepanellayout;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
-import io.jmix.flowui.kit.component.sidepanellayout.JmixDrawerLayoutToggle;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayoutToggle;
 import org.springframework.lang.Nullable;
 
 /**
- * Toggle button for opening and closing the drawer panel in a {@link DrawerLayout}.
+ * Toggle button for opening and closing the drawer panel in a {@link SidePanelLayout}.
  */
-public class DrawerLayoutToggle extends JmixDrawerLayoutToggle {
+public class SidePanelLayoutToggle extends JmixSidePanelLayoutToggle {
 
-    protected DrawerLayout drawerLayout;
+    protected SidePanelLayout sidePanelLayout;
 
     @Nullable
-    public DrawerLayout getDrawerLayout() {
-        return drawerLayout;
+    public SidePanelLayout getSidePanelLayout() {
+        return sidePanelLayout;
     }
 
-    public void setDrawerLayout(@Nullable DrawerLayout drawerLayout) {
-        this.drawerLayout = drawerLayout;
+    public void setSidePanelLayout(@Nullable SidePanelLayout sidePanelLayout) {
+        this.sidePanelLayout = sidePanelLayout;
     }
 
     @Override
     protected void onClick(ClickEvent<Button> event) {
         super.onClick(event);
 
-        if (drawerLayout == null) {
-            throw new IllegalStateException(DrawerLayout.class.getSimpleName() + " is not set");
+        if (sidePanelLayout == null) {
+            throw new IllegalStateException(SidePanelLayout.class.getSimpleName() + " is not set");
         }
 
-        drawerLayout.toggleDrawer();
+        sidePanelLayout.toggleDrawer();
     }
 }

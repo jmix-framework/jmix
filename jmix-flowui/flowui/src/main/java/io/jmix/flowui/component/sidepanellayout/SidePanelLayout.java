@@ -21,7 +21,7 @@ import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.HasSubParts;
-import io.jmix.flowui.kit.component.sidepanellayout.JmixDrawerLayout;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayout;
 import jakarta.annotation.Nullable;
 
 import java.util.*;
@@ -32,9 +32,9 @@ import static io.jmix.flowui.component.UiComponentUtils.sameId;
 /**
  * The drawer layout component provides a container for a main content area and a drawer panel.
  *
- * @see DrawerLayoutToggle
+ * @see SidePanelLayoutToggle
  */
-public class DrawerLayout extends JmixDrawerLayout implements ComponentContainer, HasSubParts {
+public class SidePanelLayout extends JmixSidePanelLayout implements ComponentContainer, HasSubParts {
 
     @Override
     public Optional<Component> findOwnComponent(String id) {

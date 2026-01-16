@@ -17,8 +17,8 @@
 package test_support;
 
 import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.flowui.facet.settings.ComponentSettingsManager;
 import io.jmix.flowui.facet.settings.ViewSettings;
-import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
 import io.jmix.flowui.facet.settings.ViewSettingsJson;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowui.testassist.UiTestUtils;
@@ -37,7 +37,7 @@ public abstract class AbstractSettingsTest {
     @Autowired
     protected SystemAuthenticator authenticator;
     @Autowired
-    protected ViewSettingsComponentManager settingsManager;
+    protected ComponentSettingsManager settingsManager;
     @Autowired
     protected ViewNavigationSupport navigationSupport;
 

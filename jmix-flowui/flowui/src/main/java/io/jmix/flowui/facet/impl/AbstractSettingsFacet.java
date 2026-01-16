@@ -19,22 +19,20 @@ package io.jmix.flowui.facet.impl;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.component.HasFacets;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
+import io.jmix.flowui.facet.settings.ComponentSettingsManager;
 import io.jmix.flowui.facet.settings.SettingsFacetUrlQueryParametersHelper;
-import io.jmix.flowui.facet.settings.ViewSettings;
-import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
-import io.jmix.flowui.facet.settings.ViewSettingsJson;
+import io.jmix.flowui.facet.settings.UiComponentSettings;
 import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
-import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewControllerUtils;
-import io.jmix.flowui.view.ViewFacets;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,16 +44,17 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * An implementation of the {@link SettingsFacet} interface that provides functionality
- * for managing and applying settings related to views and their components.
+ * An abstract implementation of the {@link SettingsFacet} interface that provides functionality
+ * for managing and applying settings related to {@link FacetOwner} and their components.
  */
-public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
+public abstract class AbstractSettingsFacet<S extends UiComponentSettings<S>> extends AbstractFacet
+        implements SettingsFacet<S> {
 
-    private static final Logger log = LoggerFactory.getLogger(SettingsFacetImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractSettingsFacet.class);
 
     protected SettingsFacetUrlQueryParametersHelper settingsHelper;
     protected ReflectionCacheManager reflectionCacheManager;
-    protected ViewSettingsComponentManager settingsManager;
+    protected ComponentSettingsManager settingsManager;
     protected UserSettingsCache userSettingsCache;
     @Nullable
     private final UserSettingsService userSettingsService;
@@ -63,25 +62,21 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     protected Set<String> componentIds;
     protected Set<String> excludedComponentIds;
 
-    protected ViewSettings viewSettings;
+    protected S componentSettings;
 
     protected boolean auto = false;
 
-    protected ViewEventListener beforeShowListener;
-    protected ViewEventListener readyListener;
-    protected ViewEventListener detachListener;
-
-    protected Consumer<SettingsContext> applySettingsDelegate;
-    protected Consumer<SettingsContext> applyDataLoadingSettingsDelegate;
-    protected Consumer<SettingsContext> saveSettingsDelegate;
+    protected Consumer<SettingsContext<S>> applySettingsDelegate;
+    protected Consumer<SettingsContext<S>> applyDataLoadingSettingsDelegate;
+    protected Consumer<SettingsContext<S>> saveSettingsDelegate;
 
     protected QueryParameters viewQueryParameters;
 
-    public SettingsFacetImpl(SettingsFacetUrlQueryParametersHelper settingsHelper,
-                             ReflectionCacheManager reflectionCacheManager,
-                             UserSettingsCache userSettingsCache,
-                             ViewSettingsComponentManager settingsManager,
-                             @Nullable UserSettingsService userSettingsService) {
+    protected AbstractSettingsFacet(SettingsFacetUrlQueryParametersHelper settingsHelper,
+                                    ReflectionCacheManager reflectionCacheManager,
+                                    UserSettingsCache userSettingsCache,
+                                    ComponentSettingsManager settingsManager,
+                                    @Nullable UserSettingsService userSettingsService) {
         this.settingsHelper = settingsHelper;
         this.reflectionCacheManager = reflectionCacheManager;
         this.settingsManager = settingsManager;
@@ -100,8 +95,8 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     }
 
     @Override
-    public ViewSettings getSettings() {
-        return viewSettings;
+    public S getSettings() {
+        return componentSettings;
     }
 
     @Override
@@ -110,7 +105,7 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
         components = excludeUrlQueryParametersFacetComponents(components);
 
-        applyViewSettings(components);
+        applyComponentSettings(components);
     }
 
     @Override
@@ -119,14 +114,14 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
         components = excludeUrlQueryParametersFacetComponents(components);
 
-        applyDataLoadingViewSettings(components);
+        applyDataLoadingComponentSettings(components);
     }
 
     @Override
     public void saveSettings() {
         Collection<Component> components = getManagedComponents();
 
-        saveViewSettings(components);
+        saveComponentSettings(components);
     }
 
     @Override
@@ -160,58 +155,58 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
     @Override
     public Collection<Component> getManagedComponents() {
-        checkAttachedToView();
+        checkAttachedToOwner();
 
-        Collection<Component> viewComponents = UiComponentUtils.getComponents(
-                Objects.requireNonNull(getView()).getContent());
+        Collection<Component> ownerComponents = UiComponentUtils.getComponents(
+                Objects.requireNonNull(getOwnerComponent()).getContent());
 
-        return getManagedComponentsFromCollection(viewComponents);
+        return getManagedComponentsFromCollection(ownerComponents);
     }
 
     @Nullable
     @Override
-    public Consumer<SettingsContext> getApplySettingsDelegate() {
+    public Consumer<SettingsContext<S>> getApplySettingsDelegate() {
         return applySettingsDelegate;
     }
 
     @Override
-    public void setApplySettingsDelegate(@Nullable Consumer<SettingsContext> delegate) {
+    public void setApplySettingsDelegate(@Nullable Consumer<SettingsContext<S>> delegate) {
         this.applySettingsDelegate = delegate;
     }
 
     @Nullable
     @Override
-    public Consumer<SettingsContext> getApplyDataLoadingSettingsDelegate() {
+    public Consumer<SettingsContext<S>> getApplyDataLoadingSettingsDelegate() {
         return applyDataLoadingSettingsDelegate;
     }
 
     @Override
-    public void setApplyDataLoadingSettingsDelegate(@Nullable Consumer<SettingsContext> delegate) {
+    public void setApplyDataLoadingSettingsDelegate(@Nullable Consumer<SettingsContext<S>> delegate) {
         this.applyDataLoadingSettingsDelegate = delegate;
     }
 
     @Nullable
     @Override
-    public Consumer<SettingsContext> getSaveSettingsDelegate() {
+    public Consumer<SettingsContext<S>> getSaveSettingsDelegate() {
         return saveSettingsDelegate;
     }
 
     @Override
-    public void setSaveSettingsDelegate(@Nullable Consumer<SettingsContext> delegate) {
+    public void setSaveSettingsDelegate(@Nullable Consumer<SettingsContext<S>> delegate) {
         this.saveSettingsDelegate = delegate;
     }
 
     @Override
-    public void setOwner(@Nullable View<?> owner) {
+    public <T extends Composite<?> & FacetOwner> void setOwner(@Nullable T owner) {
         super.setOwner(owner);
 
-        unsubscribeViewLifecycle();
+        unsubscribeOwnerLifecycle();
 
         if (owner != null) {
-            viewSettings = createViewSettings(owner);
-            initViewSettings(viewSettings);
+            componentSettings = createSettings(owner);
+            initSettings(componentSettings);
 
-            subscribeViewLifecycle();
+            subscribeOwnerLifecycle();
 
             if (!isSettingsEnabled()) {
                 log.warn("SettingsFacet does not work for '{}' because UserSettingsService implementation is not available",
@@ -220,121 +215,61 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
         }
     }
 
-    protected Collection<Component> getManagedComponentsFromCollection(Collection<Component> viewComponents) {
+    protected Collection<Component> getManagedComponentsFromCollection(Collection<Component> ownerComponents) {
         Collection<Component> components = Collections.emptyList();
         if (auto) {
-            components = viewComponents;
+            components = ownerComponents;
         } else if (CollectionUtils.isNotEmpty(componentIds)) {
-            components = viewComponents
+            components = ownerComponents
                     .stream()
-                    .filter(c -> componentIds.contains(c.getId().orElse(null)))
+                    .filter(c -> componentIds.contains(UiComponentUtils.getComponentId(c).orElse(null)))
                     .collect(Collectors.toList());
         }
 
         if (CollectionUtils.isNotEmpty(excludedComponentIds)) {
             components = components.stream()
-                    .filter(component -> !excludedComponentIds.contains(component.getId().orElse(null)))
+                    .filter(component ->
+                            !excludedComponentIds.contains(UiComponentUtils.getComponentId(component).orElse(null)))
                     .collect(Collectors.toList());
         }
         return components;
     }
 
-    protected ViewSettings createViewSettings(View<?> view) {
-        return new ViewSettingsJson(view.getId()
-                .orElseThrow(() ->
-                        new IllegalStateException("Cannot create " + ViewSettings.class.getSimpleName() +
-                                " because " + view.getClass().getSimpleName() + " does not contain an id")));
-    }
+    protected abstract S createSettings(FacetOwner owner);
 
-    protected void initViewSettings(ViewSettings viewSettings) {
+    protected void initSettings(S settings) {
         if (isSettingsEnabled()) {
-            String rawSettings = userSettingsCache.get(viewSettings.getViewId());
-            viewSettings.initialize(rawSettings);
+            String rawSettings = userSettingsCache.get(settings.getOwnerId());
+            settings.initialize(rawSettings);
         }
     }
 
-    protected void unsubscribeViewLifecycle() {
-        if (beforeShowListener != null) {
-            beforeShowListener.unsubscribe();
-            beforeShowListener = null;
-        }
-        if (readyListener != null) {
-            readyListener.unsubscribe();
-            readyListener = null;
-        }
-        if (detachListener != null) {
-            detachListener.unsubscribe();
-            detachListener = null;
-        }
-    }
+    protected abstract void unsubscribeOwnerLifecycle();
 
-    protected void subscribeViewLifecycle() {
-        View<?> view = getView();
+    protected abstract void subscribeOwnerLifecycle();
 
-        beforeShowListener = new ViewEventListener(view, View.BeforeShowEvent.class, this::onViewBeforeShow);
-        readyListener = new ViewEventListener(view, View.ReadyEvent.class, this::onViewReady);
-        detachListener = new ViewEventListener(view, DetachEvent.class, this::onViewDetach);
-        detachListener = new ViewEventListener(view, View.QueryParametersChangeEvent.class, this::onQueryParametersChange);
-    }
-
-    protected void onViewBeforeShow(ComponentEvent<?> event) {
-        checkAttachedToView();
-
-        if (applyDataLoadingSettingsDelegate != null) {
-            applyDataLoadingSettingsDelegate.accept(createSettingsContext());
-        } else {
-            applyDataLoadingSettings();
-        }
-    }
-
-    protected void onViewReady(ComponentEvent<?> event) {
-        checkAttachedToView();
-
-        if (applySettingsDelegate != null) {
-            applySettingsDelegate.accept(createSettingsContext());
-        } else {
-            applySettings();
-        }
-    }
-
-    protected void onViewDetach(ComponentEvent<?> event) {
-        checkAttachedToView();
-
-        if (saveSettingsDelegate != null) {
-            saveSettingsDelegate.accept(createSettingsContext());
-        } else {
-            saveSettings();
-        }
-    }
-
-    protected void onQueryParametersChange(ComponentEvent<?> event) {
-        if (event instanceof View.QueryParametersChangeEvent) {
-            viewQueryParameters = ((View.QueryParametersChangeEvent) event).getQueryParameters();
-        }
-    }
-
-    protected void applyViewSettings(Collection<Component> components) {
+    protected void applyComponentSettings(Collection<Component> components) {
         if (isSettingsEnabled()) {
-            settingsManager.applySettings(components, viewSettings);
+            settingsManager.applySettings(components, componentSettings);
         }
     }
 
-    protected void applyDataLoadingViewSettings(Collection<Component> components) {
+    protected void applyDataLoadingComponentSettings(Collection<Component> components) {
         if (isSettingsEnabled()) {
-            settingsManager.applyDataLoadingSettings(components, viewSettings);
+            settingsManager.applyDataLoadingSettings(components, componentSettings);
         }
     }
 
-    protected void saveViewSettings(Collection<Component> components) {
+    protected void saveComponentSettings(Collection<Component> components) {
         if (isSettingsEnabled()) {
-            settingsManager.saveSettings(components, viewSettings);
+            settingsManager.saveSettings(components, componentSettings);
         }
     }
 
-    protected void checkAttachedToView() {
+    protected void checkAttachedToOwner() {
         if (getOwner() == null) {
             throw new IllegalStateException(
-                    SettingsFacet.class.getSimpleName() + " is not attached to " + View.class.getSimpleName());
+                    SettingsFacet.class.getSimpleName() + " is not attached to " + FacetOwner.class.getSimpleName());
         }
     }
 
@@ -344,17 +279,16 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
     protected Collection<Component> excludeUrlQueryParametersFacetComponents(Collection<Component> components) {
         Collection<Component> resultComponents = new ArrayList<>(components);
-        View<?> view = getView();
 
         if (viewQueryParameters == null
                 || viewQueryParameters.getParameters().isEmpty()) {
             return resultComponents;
         }
 
-        ViewFacets viewFacets = ViewControllerUtils.getViewFacets(view);
-        List<UrlQueryParametersFacet> urlQueryFacets = viewFacets.getFacets()
+        HasFacets facets = getFacets();
+        List<UrlQueryParametersFacet> urlQueryFacets = facets.getFacets()
                 .filter(f -> f instanceof UrlQueryParametersFacet)
-                .map(f -> (UrlQueryParametersFacet) f)
+                .map(UrlQueryParametersFacet.class::cast)
                 .toList();
 
         if (urlQueryFacets.isEmpty()) {
@@ -375,29 +309,31 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
         return resultComponents;
     }
 
-    protected View<?> getView() {
-        checkAttachedToView();
+    protected abstract HasFacets getFacets();
+
+    protected Composite<?> getOwnerComponent() {
+        checkAttachedToOwner();
 
         // Used only to hide inspection, cannot be null here
         return Objects.requireNonNull(getOwner());
     }
 
-    protected SettingsContext createSettingsContext() {
-        View<?> owner = getView();
+    protected SettingsContext<S> createSettingsContext() {
+        Composite<?> owner = getOwnerComponent();
 
-        return new SettingsContext(owner, getManagedComponents(), viewSettings);
+        return new SettingsContext<>(owner, getManagedComponents(), componentSettings);
     }
 
-    protected class ViewEventListener {
+    protected class OwnerEventListener {
 
-        protected View<?> view;
+        protected FacetOwner owner;
         protected Class<?> eventClass;
         protected Consumer<ComponentEvent<?>> listener;
 
         protected Registration registration;
 
-        public ViewEventListener(View<?> view, Class<?> eventClass, Consumer<ComponentEvent<?>> listener) {
-            this.view = view;
+        public OwnerEventListener(FacetOwner owner, Class<?> eventClass, Consumer<ComponentEvent<?>> listener) {
+            this.owner = owner;
             this.eventClass = eventClass;
             this.listener = listener;
 
@@ -406,14 +342,15 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
 
         protected void subscribe() {
             MethodHandle addListenerMethod = reflectionCacheManager.getTargetAddListenerMethod(
-                    view.getClass(), eventClass, null
+                    owner.getClass(), eventClass, null
             );
             if (addListenerMethod == null) {
                 throw new IllegalStateException("Cannot find addListener method for " + eventClass);
             }
 
             try {
-                registration = (Registration) addListenerMethod.invoke(view, (ComponentEventListener<?>) event -> listener.accept(event));
+                registration = (Registration) addListenerMethod.invoke(owner,
+                        (ComponentEventListener<?>) event -> listener.accept(event));
             } catch (Error e) {
                 throw e;
             } catch (Throwable e) {

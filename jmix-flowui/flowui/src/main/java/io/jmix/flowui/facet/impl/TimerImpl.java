@@ -17,14 +17,15 @@
 package io.jmix.flowui.facet.impl;
 
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.Timer;
 import io.jmix.flowui.kit.component.timer.JmixTimer;
-import io.jmix.flowui.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 /**
@@ -105,19 +106,19 @@ public class TimerImpl extends AbstractFacet implements Timer {
     }
 
     @Override
-    public void setOwner(@Nullable View<?> owner) {
+    public <T extends Composite<?> & FacetOwner> void setOwner(@Nullable T owner) {
         if (owner != null) {
             super.setOwner(owner);
-            registerInView(owner);
+            registerInOwner(owner);
         } else {
             if (this.owner != null) {
-                unregisterInView(this.owner);
+                unregisterInOwner(this.owner);
             }
             super.setOwner(null);
         }
     }
 
-    protected void registerInView(View<?> owner) {
+    protected void registerInOwner(Composite<?> owner) {
         if (owner.isAttached()) {
             attachTimer(owner);
         } else {
@@ -126,28 +127,28 @@ public class TimerImpl extends AbstractFacet implements Timer {
         addDetachListener(owner);
     }
 
-    protected void attachTimer(View<?> owner) {
+    protected void attachTimer(Composite<?> owner) {
         owner.getContent().getElement().appendChild(timerImpl.getElement());
     }
 
-    protected void registerOnAttach(View<?> owner) {
+    protected void registerOnAttach(Composite<?> owner) {
         owner.addAttachListener(e -> attachTimer(owner));
     }
 
-    protected void addDetachListener(View<?> owner) {
+    protected void addDetachListener(Composite<?> owner) {
         owner.addDetachListener(e -> detachTimer(owner));
     }
 
-    protected void detachTimer(View<?> owner) {
+    protected void detachTimer(Composite<?> owner) {
         owner.getContent().getElement().removeChild(timerImpl.getElement());
 
-        // If view is annotated with @PreserveOnRefresh and user refreshes a page,
-        // Vaadin creates new UI and move the same server side objects there.
+        // If an owner is annotated with @PreserveOnRefresh and a user refreshes a page,
+        // Vaadin creates a new UI and moves the same server side objects there.
         // But Timer isn't a server side component, so we need to remove it from the node tree manually
         timerImpl.getElement().removeFromTree();
     }
 
-    protected void unregisterInView(View<?> owner) {
+    protected void unregisterInOwner(Composite<?> owner) {
         detachTimer(owner);
     }
 

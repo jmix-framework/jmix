@@ -47,7 +47,7 @@ public class PaginationUrlQueryParametersBinderProvider extends AbstractUrlQuery
     }
 
     @Override
-    public void load(UrlQueryParametersFacet facet, Element element, ComponentLoader.ComponentContext context) {
+    public void load(UrlQueryParametersFacet facet, Element element, ComponentLoader.Context context) {
         String componentId = loadRequiredAttribute(element, "component", context);
         String binderId = loadAttribute(element, "id");
         String firstResultParam = loadAttribute(element, "firstResultParam");
@@ -90,7 +90,7 @@ public class PaginationUrlQueryParametersBinderProvider extends AbstractUrlQuery
             Preconditions.checkState(facet.getOwner() != null, "%s owner is not set",
                     UrlQueryParametersFacet.NAME);
 
-            com.vaadin.flow.component.Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
+            com.vaadin.flow.component.Component component = getComponent(facet.getOwner(), componentId);
             if (!(component instanceof PaginationComponent)) {
                 throw new IllegalStateException(String.format("'%s' is not a pagination component", componentId));
             }

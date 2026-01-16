@@ -45,12 +45,13 @@ import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler.U
 import io.jmix.flowui.upload.TemporaryStorage;
 import io.jmix.flowui.upload.TemporaryStorage.FileInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
+import org.springframework.boot.servlet.autoconfigure.MultipartProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
@@ -71,7 +72,7 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     protected Downloader downloader;
     protected Notifications notifications;
     protected Messages messages;
-    protected ObjectProvider<MultipartProperties> multipartPropertiesProvider;
+    protected ObjectProvider<@NonNull MultipartProperties> multipartPropertiesProvider;
 
     protected FileFieldDelegate<FileStorageUploadField, FileRef, FileRef> fieldDelegate;
 

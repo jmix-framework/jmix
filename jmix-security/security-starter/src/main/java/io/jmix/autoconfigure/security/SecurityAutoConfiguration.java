@@ -21,8 +21,8 @@ import io.jmix.security.SecurityConfiguration;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RowLevelRoleRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.cache.autoconfigure.JCacheManagerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -35,6 +35,7 @@ import javax.cache.configuration.MutableConfiguration;
 @Import({CoreConfiguration.class, SecurityConfiguration.class})
 public class SecurityAutoConfiguration {
 
+    // TODO [SB4] Consider switch to Spring Cache
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})
     JCacheManagerCustomizer resourceRolesCacheCustomizer() {
@@ -47,6 +48,7 @@ public class SecurityAutoConfiguration {
         };
     }
 
+    // TODO [SB4] Consider switch to Spring Cache
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})
     JCacheManagerCustomizer rowLevelRolesCacheCustomizer() {

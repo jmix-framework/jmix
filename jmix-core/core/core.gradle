@@ -23,6 +23,8 @@ archivesBaseName = 'jmix-core'
 dependencies {
     api 'org.springframework.boot:spring-boot'
     api 'org.springframework.boot:spring-boot-starter-validation'
+    api 'org.springframework.boot:spring-boot-cache' //todo [SB4]
+    api 'org.springframework.boot:spring-boot-starter-liquibase' //todo [SB4]
     api 'org.springframework:spring-context'
     api 'org.springframework:spring-context-support'
     api 'org.springframework:spring-webmvc'

@@ -19,6 +19,7 @@ package io.jmix.core.impl.repository.query;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.repository.JmixDataRepositoryContext;
 import org.springframework.core.MethodParameter;
+import org.springframework.data.core.TypeInformation;
 import org.springframework.data.repository.query.Parameter;
 
 /**
@@ -27,7 +28,7 @@ import org.springframework.data.repository.query.Parameter;
 public class JmixParameter extends Parameter {
 
     protected JmixParameter(MethodParameter parameter) {
-        super(parameter);
+        super(parameter, TypeInformation.fromMethodParameter(parameter));
     }
 
     @Override

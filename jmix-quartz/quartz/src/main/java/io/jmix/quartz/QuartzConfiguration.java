@@ -6,6 +6,7 @@ import io.jmix.data.DataConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
@@ -13,5 +14,6 @@ import org.springframework.context.annotation.PropertySource;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
 @PropertySource(name = "io.jmix.quartz", value = "classpath:/io/jmix/quartz/module.properties")
+//@DependsOn("liquibase")
 public class QuartzConfiguration {
 }

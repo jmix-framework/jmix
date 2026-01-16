@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.*;
  * Controller that performs CRUD entity operations
  */
 @RestController("rest_EntitiesController")
-@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.entities-path}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.entities-path}", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EntitiesController {
 
     @Autowired

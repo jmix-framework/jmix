@@ -16,9 +16,10 @@
 
 package test_support;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.ElasticsearchTransport;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
+import co.elastic.clients.transport.rest5_client.Rest5ClientTransport;
+import co.elastic.clients.transport.rest5_client.low_level.Rest5Client;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
@@ -44,10 +45,7 @@ import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import io.jmix.security.SecurityConfiguration;
 import jakarta.persistence.EntityManagerFactory;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.http.HttpHost;
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import org.elasticsearch.client.RestClient;
-
+import org.apache.hc.core5.http.HttpHost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -64,6 +62,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.net.URISyntaxException;
 
 @Configuration
 @Import({
@@ -105,12 +104,16 @@ public class ElasticsearchTestConfiguration {
     @Bean
     public ElasticsearchClient baseOpenSearchClient() {
         String url = searchProperties.getServerUrl();
+        HttpHost httpHost;
+        try {
+            httpHost = HttpHost.create(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Invalid Elasticsearch URL: " + url, e);
+        }
 
-        RestClient restClient = RestClient
-                .builder(HttpHost.create(url))
-                .build();
+        Rest5Client restClient = Rest5Client.builder(httpHost).build();
 
-        ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        Rest5ClientTransport transport = new Rest5ClientTransport(restClient, new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
     }
 

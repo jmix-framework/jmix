@@ -27,6 +27,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.ArrayList;
@@ -68,7 +70,9 @@ public class CoreSecurityConfiguration {
                 )
                 .logout(logout -> logout.logoutSuccessUrl("/#login"))
                 .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers.frameOptions().sameOrigin());
+                .headers(headers ->
+                        headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                );
         return http.build();
     }
 
@@ -82,8 +86,8 @@ public class CoreSecurityConfiguration {
         providers.add(new SystemAuthenticationProvider(userRepository));
         providers.add(new SubstitutedUserAuthenticationProvider(userRepository));
 
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userRepository);
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userRepository);
+        //daoAuthenticationProvider.setUserDetailsService(userRepository);
         daoAuthenticationProvider.setPreAuthenticationChecks(preAuthenticationChecks);
         daoAuthenticationProvider.setPostAuthenticationChecks(postAuthenticationChecks);
 

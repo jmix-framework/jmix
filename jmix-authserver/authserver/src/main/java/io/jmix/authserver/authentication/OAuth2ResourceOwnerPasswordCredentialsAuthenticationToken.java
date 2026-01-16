@@ -2,7 +2,6 @@ package io.jmix.authserver.authentication;
 
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationGrantAuthenticationToken;
 
 import java.util.Collections;
@@ -28,7 +27,7 @@ public class OAuth2ResourceOwnerPasswordCredentialsAuthenticationToken extends O
                                                                         Authentication clientPrincipal,
                                                                         @Nullable Set<String> scopes,
                                                                         @Nullable Map<String, Object> additionalParameters) {
-        super(AuthorizationGrantType.PASSWORD, clientPrincipal, additionalParameters);
+        super(PasswordAuthorizationGrantTypeHelper.PASSWORD_GRANT_TYPE, clientPrincipal, additionalParameters);
         this.username = username;
         this.password = password;
         this.scopes = Collections.unmodifiableSet(

@@ -113,7 +113,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("menuFilterField", MenuFilterFieldLoader.class);
         loaders.put("horizontalMenu", HorizontalMenuLoader.class);
         loaders.put("richTextEditor", RichTextEditorLoader.class);
-        loaders.put("sidePanelLayoutToggle", SidePanelLayoutToggleLoader.class);
+        loaders.put("sidePanelLayoutCloser", SidePanelLayoutToggleLoader.class);
         loaders.put("twinColumn", TwinColumnLoader.class);
         loaders.put("markdown", MarkdownLoader.class);
 

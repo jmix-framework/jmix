@@ -19,20 +19,20 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
-import io.jmix.flowui.component.sidepanellayout.SidePanelLayoutToggle;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayoutCloser;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 
 import static com.vaadin.flow.dom.ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME;
 
-public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePanelLayoutToggle> {
+public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePanelLayoutCloser> {
 
     protected IconLoaderSupport iconLoaderSupport;
 
     @Override
-    protected SidePanelLayoutToggle createComponent() {
-        return factory.create(SidePanelLayoutToggle.class);
+    protected SidePanelLayoutCloser createComponent() {
+        return factory.create(SidePanelLayoutCloser.class);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePan
                 parent = parent.getParent().orElse(null);
             }
 
-            throw new GuiDevelopmentException(SidePanelLayoutToggle.class.getSimpleName()
+            throw new GuiDevelopmentException(SidePanelLayoutCloser.class.getSimpleName()
                     + " component must be placed inside "
                     + SidePanelLayout.class.getSimpleName() +
                     " or define 'sidePanelLayoutId' attribute", context);

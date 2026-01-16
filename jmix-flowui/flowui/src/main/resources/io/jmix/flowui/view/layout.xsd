@@ -4326,9 +4326,9 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <!-- SidePanelLayoutToggle -->
+    <!-- SidePanelLayoutCloser -->
 
-    <xs:complexType name="sidePanelLayoutToggleComponent">
+    <xs:complexType name="sidePanelLayoutCloserComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
@@ -5517,7 +5517,7 @@
                 <xs:element name="fragment" type="fragmentComponent"/>
                 <xs:element name="markdown" type="markdownComponent"/>
                 <xs:element name="sidePanelLayout" type="sidePanelLayoutComponent"/>
-                <xs:element name="sidePanelLayoutToggle" type="sidePanelLayoutToggleComponent"/>
+                <xs:element name="sidePanelLayoutCloser" type="sidePanelLayoutCloserComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

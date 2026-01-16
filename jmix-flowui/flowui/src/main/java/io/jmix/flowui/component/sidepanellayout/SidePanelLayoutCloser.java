@@ -18,13 +18,13 @@ package io.jmix.flowui.component.sidepanellayout;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
-import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayoutToggle;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayoutCloser;
 import org.springframework.lang.Nullable;
 
 /**
- * Toggle button for opening and closing the side panel in a {@link SidePanelLayout}.
+ * The button for closing the side panel in a {@link SidePanelLayout}.
  */
-public class SidePanelLayoutToggle extends JmixSidePanelLayoutToggle {
+public class SidePanelLayoutCloser extends JmixSidePanelLayoutCloser {
 
     protected SidePanelLayout sidePanelLayout;
 
@@ -45,6 +45,6 @@ public class SidePanelLayoutToggle extends JmixSidePanelLayoutToggle {
             throw new IllegalStateException(SidePanelLayout.class.getSimpleName() + " is not set");
         }
 
-        sidePanelLayout.toggleSidePanel();
+        sidePanelLayout.closeSidePanel();
     }
 }

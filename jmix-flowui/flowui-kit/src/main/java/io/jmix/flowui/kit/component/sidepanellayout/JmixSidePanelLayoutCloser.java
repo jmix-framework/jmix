@@ -22,17 +22,17 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
 
-@Tag("jmix-side-panel-layout-toggle")
-@JsModule("./src/side-panel-layout/jmix-side-panel-layout-toggle.js")
-public class JmixSidePanelLayoutToggle extends Button {
+@Tag("jmix-side-panel-layout-closer")
+@JsModule("./src/side-panel-layout/jmix-side-panel-layout-closer.js")
+public class JmixSidePanelLayoutCloser extends Button {
 
-    public JmixSidePanelLayoutToggle() {
+    public JmixSidePanelLayoutCloser() {
         attachClickListener();
     }
 
     public void setIcon(Component icon) {
         super.setIcon(icon);
-        // The slot attribute needs to be removed because jmix-side-panel-layout-toggle
+        // The slot attribute needs to be removed because jmix-side-panel-layout-closer
         // template doesn't have prefix and suffix slots
         icon.getElement().removeAttribute("slot");
     }

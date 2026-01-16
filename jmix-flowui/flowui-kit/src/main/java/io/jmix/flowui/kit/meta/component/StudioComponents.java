@@ -48,7 +48,7 @@ import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
-import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayoutToggle;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayoutCloser;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
@@ -1207,10 +1207,10 @@ public interface StudioComponents {
     DrawerToggle drawerToggle();
 
     @StudioComponent(
-            name = "SidePanelLayoutToggle",
-            classFqn = "io.jmix.flowui.component.sidepanellayout.SidePanelLayoutToggle",
+            name = "SidePanelLayoutCloser",
+            classFqn = "io.jmix.flowui.component.sidepanellayout.SidePanelLayoutCloser",
             category = "Components",
-            xmlElement = "sidePanelLayoutToggle",
+            xmlElement = "sidePanelLayoutCloser",
             icon = "io/jmix/flowui/kit/meta/icon/component/drawerToggle.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -1244,7 +1244,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
             }
     )
-    JmixSidePanelLayoutToggle sidePanelLayoutToggle();
+    JmixSidePanelLayoutCloser sidePanelLayoutCloser();
 
     @StudioComponent(
             name = "EmailField",

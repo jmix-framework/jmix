@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-import '../../../src/side-panel-layout/jmix-side-panel-layout-toggle.js';
-import './jmix-side-panel-layout-toggle-styles.js';
+import '../../../src/side-panel-layout/jmix-side-panel-layout-closer.js';
+import './jmix-side-panel-layout-closer-styles.js';

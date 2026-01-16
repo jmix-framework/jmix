@@ -32,7 +32,7 @@ import static io.jmix.flowui.component.UiComponentUtils.sameId;
 /**
  * The side panel layout component provides a container for a main content area and a side panel.
  *
- * @see SidePanelLayoutToggle
+ * @see SidePanelLayoutCloser
  */
 public class SidePanelLayout extends JmixSidePanelLayout implements ComponentContainer, HasSubParts {
 

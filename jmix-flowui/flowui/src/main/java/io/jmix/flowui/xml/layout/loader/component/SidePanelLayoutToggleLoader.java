@@ -49,22 +49,22 @@ public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePan
         componentLoader().loadAriaLabel(resultComponent, element);
         componentLoader().loadClickNotifierAttributes(resultComponent, element);
 
-        loadString(element, "drawerLayoutId")
+        loadString(element, "sidePanelLayoutId")
                 .ifPresentOrElse(
                         id -> {
                             if (getContext() instanceof ComponentContext componentContext) {
-                                componentContext.addPreInitTask(new FindDrawerLayoutTask(id));
+                                componentContext.addPreInitTask(new FindSidePanelLayoutTask(id));
                             } else if (getContext() instanceof FragmentContext fragmentContext) {
                                 // TODO: pinyazhin, fragment's pre-init
-                                fragmentContext.addInitTask(new FindDrawerLayoutTask(id));
+                                fragmentContext.addInitTask(new FindSidePanelLayoutTask(id));
                             }
                         },
                         () -> {
                             if (getContext() instanceof ComponentContext componentContext) {
-                                componentContext.addPreInitTask(new FindDrawerLayoutToggleParentTask());
+                                componentContext.addPreInitTask(new FindSidePanelLayoutToggleParentTask());
                             } else if (getContext() instanceof FragmentContext fragmentContext) {
                                 // TODO: pinyazhin, fragment's pre-init
-                                fragmentContext.addInitTask(new FindDrawerLayoutToggleParentTask());
+                                fragmentContext.addInitTask(new FindSidePanelLayoutToggleParentTask());
                             }
                         }
                 );
@@ -78,11 +78,11 @@ public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePan
         return iconLoaderSupport;
     }
 
-    protected class FindDrawerLayoutTask implements InitTask {
+    protected class FindSidePanelLayoutTask implements InitTask {
 
         protected String drawerLayoutId;
 
-        public FindDrawerLayoutTask(String drawerLayoutId) {
+        public FindSidePanelLayoutTask(String drawerLayoutId) {
             this.drawerLayoutId = drawerLayoutId;
         }
 
@@ -114,7 +114,7 @@ public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePan
         }
     }
 
-    protected class FindDrawerLayoutToggleParentTask implements InitTask {
+    protected class FindSidePanelLayoutToggleParentTask implements InitTask {
 
         @Override
         public void execute(Context context) {
@@ -130,9 +130,10 @@ public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePan
                 parent = parent.getParent().orElse(null);
             }
 
-            throw new GuiDevelopmentException("DrawerLayoutToggle component must be placed inside "
+            throw new GuiDevelopmentException(SidePanelLayoutToggle.class.getSimpleName()
+                    + " component must be placed inside "
                     + SidePanelLayout.class.getSimpleName() +
-                    " or define 'drawerLayoutId' attribute", context);
+                    " or define 'sidePanelLayoutId' attribute", context);
         }
     }
 }

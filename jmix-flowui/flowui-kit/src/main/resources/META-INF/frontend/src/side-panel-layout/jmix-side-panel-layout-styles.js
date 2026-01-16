@@ -21,15 +21,15 @@ export const sidePanelLayoutStyles = css`
         display: block;
         box-sizing: border-box;
 
-        --jmix-side-panel-layout-drawer-vertical-size: auto;
-        --jmix-side-panel-layout-drawer-vertical-max-size: 14rem;
-        --jmix-side-panel-layout-drawer-vertical-min-size: 10rem;
+        --jmix-side-panel-vertical-size: auto;
+        --jmix-side-panel-vertical-max-size: 14rem;
+        --jmix-side-panel-vertical-min-size: 10rem;
 
-        --jmix-side-panel-layout-drawer-horizontal-size: auto;
-        --jmix-side-panel-layout-drawer-horizontal-max-size: 25rem;
-        --jmix-side-panel-layout-drawer-horizontal-min-size: 15rem;
+        --jmix-side-panel-horizontal-size: auto;
+        --jmix-side-panel-horizontal-max-size: 25rem;
+        --jmix-side-panel-horizontal-min-size: 15rem;
 
-        --jmix-side-panel-layout-transition: 200ms;
+        --jmix-side-panel-transition: 200ms;
     }
 
     [part='layout'] {
@@ -50,8 +50,8 @@ export const sidePanelLayoutStyles = css`
         height: 100%;
         box-sizing: border-box;
         transition:
-            max-height var(--jmix-side-panel-layout-transition),
-            max-width var(--jmix-side-panel-layout-transition);
+            max-height var(--jmix-side-panel-transition),
+            max-width var(--jmix-side-panel-transition);
     }
 
     [part='modalityCurtain'] {
@@ -65,7 +65,7 @@ export const sidePanelLayoutStyles = css`
         display: none;
     }
 
-    [part='drawer'] {
+    [part='sidePanel'] {
         display: flex;
         flex-direction: column;
         height: 100%;
@@ -74,12 +74,12 @@ export const sidePanelLayoutStyles = css`
         position: absolute;
         box-sizing: border-box;
         transition:
-            transform var(--jmix-side-panel-layout-transition),
-            visibility 0s linear var(--jmix-side-panel-layout-transition);
+            transform var(--jmix-side-panel-transition),
+            visibility 0s linear var(--jmix-side-panel-transition);
         visibility: hidden;
     }
 
-    [part='drawerContent'] {
+    [part='sidePanelContent'] {
         box-sizing: border-box;
         height: 100%;
         display: flex;
@@ -88,106 +88,106 @@ export const sidePanelLayoutStyles = css`
         width: 100%;
     }
 
-    :host([drawer-opened]) [part='drawer'] {
+    :host([side-panel-opened]) [part='sidePanel'] {
         visibility: visible;
         touch-action: manipulation;
         visibility: visible;
         touch-action: manipulation;
         transition:
-            transform var(--jmix-side-panel-layout-transition),
+            transform var(--jmix-side-panel-transition),
             visibility 0s;
     }
 
-    :host([drawer-opened][modal]) [part='modalityCurtain'] {
-        animation: var(--jmix-side-panel-layout-transition) jmix-modality-curtain-dimmed-enter both;
+    :host([side-panel-opened][modal]) [part='modalityCurtain'] {
+        animation: var(--jmix-side-panel-transition) jmix-modality-curtain-dimmed-enter both;
         will-change: opacity;
     }
 
-    :host(:not([drawer-opened])[modal]) [part='modalityCurtain']:not([hidden]) {
-        animation: var(--jmix-side-panel-layout-transition) jmix-modality-curtain-dimmed-out both;
+    :host(:not([side-panel-opened])[modal]) [part='modalityCurtain']:not([hidden]) {
+        animation: var(--jmix-side-panel-transition) jmix-modality-curtain-dimmed-out both;
         will-change: opacity;
     }
 
-    /* Drawer placement */
+    /* SidePanel placement */
 
-    :host([drawer-placement='']) [part='drawer'],
-    :host([drawer-placement='left']) [part='drawer'],
-    :host([drawer-placement='right']) [part='drawer'],
-    :host([drawer-placement='inline-start']) [part='drawer'],
-    :host([drawer-placement='inline-end']) [part='drawer'] {
-        width: var(--jmix-side-panel-layout-drawer-horizontal-size);
-        max-width: var(--jmix-side-panel-layout-drawer-horizontal-max-size);
-        min-width: var(--jmix-side-panel-layout-drawer-horizontal-min-size);
+    :host([side-panel-placement='']) [part='sidePanel'],
+    :host([side-panel-placement='left']) [part='sidePanel'],
+    :host([side-panel-placement='right']) [part='sidePanel'],
+    :host([side-panel-placement='inline-start']) [part='sidePanel'],
+    :host([side-panel-placement='inline-end']) [part='sidePanel'] {
+        width: var(--jmix-side-panel-horizontal-size);
+        max-width: var(--jmix-side-panel-horizontal-max-size);
+        min-width: var(--jmix-side-panel-horizontal-min-size);
     }
 
-    :host([drawer-placement='bottom']) [part='drawer'],
-    :host([drawer-placement='top']) [part='drawer'] {
-        height: var(--jmix-side-panel-layout-drawer-vertical-size);
-        max-height: var(--jmix-side-panel-layout-drawer-vertical-max-size);
-        min-height: var(--jmix-side-panel-layout-drawer-vertical-min-size);
+    :host([side-panel-placement='bottom']) [part='sidePanel'],
+    :host([side-panel-placement='top']) [part='sidePanel'] {
+        height: var(--jmix-side-panel-vertical-size);
+        max-height: var(--jmix-side-panel-vertical-max-size);
+        min-height: var(--jmix-side-panel-vertical-min-size);
     }
 
-    :host([drawer-placement='top']) ::slotted([slot='drawerContentSlot']),
-    :host([drawer-placement='bottom']) ::slotted([slot='drawerContentSlot']) {
-        max-height: var(--jmix-side-panel-layout-drawer-vertical-max-size);
+    :host([side-panel-placement='top']) ::slotted([slot='sidePanelContentSlot']),
+    :host([side-panel-placement='bottom']) ::slotted([slot='sidePanelContentSlot']) {
+        max-height: var(--jmix-side-panel-vertical-max-size);
     }
 
-    :host([drawer-placement='left']) [part='drawer'] {
+    :host([side-panel-placement='left']) [part='sidePanel'] {
         transform: translateX(-100%);
         left: 0;
     }
 
-    :host([drawer-placement='']) [part='drawer'],
-    :host([drawer-placement='right']) [part='drawer'] {
+    :host([side-panel-placement='']) [part='sidePanel'],
+    :host([side-panel-placement='right']) [part='sidePanel'] {
         transform: translateX(100%);
         right: 0;
     }
 
-    :host([drawer-placement='top']) [part='drawer'] {
+    :host([side-panel-placement='top']) [part='sidePanel'] {
         transform: translateY(-100%);
         top: 0;
     }
 
-    :host([drawer-placement='bottom']) [part='drawer'] {
+    :host([side-panel-placement='bottom']) [part='sidePanel'] {
         transform: translateY(100%);
         bottom: 0;
     }
 
-    :host([drawer-placement='inline-start']) [part='drawer'] {
+    :host([side-panel-placement='inline-start']) [part='sidePanel'] {
         transform: translateX(-100%);
         inset-inline-start: 0;
     }
 
-    :host([drawer-placement='inline-start'][dir='rtl']) [part='drawer'] {
+    :host([side-panel-placement='inline-start'][dir='rtl']) [part='sidePanel'] {
         transform: translateX(100%);
     }
 
-    :host([drawer-placement='inline-end']) [part='drawer'] {
+    :host([side-panel-placement='inline-end']) [part='sidePanel'] {
         transform: translateX(100%);
         inset-inline-end: 0;
     }
 
-    :host([drawer-placement='inline-end'][dir='rtl']) [part='drawer'] {
+    :host([side-panel-placement='inline-end'][dir='rtl']) [part='sidePanel'] {
         transform: translateX(-100%);
     }
 
     /* Animation */
 
-    :host([drawer-opened][drawer-placement='']) [part='drawer'],
-    :host([drawer-opened][drawer-placement='right']) [part='drawer'],
-    :host([drawer-opened][drawer-placement='left']) [part='drawer'],
-    :host([drawer-opened][drawer-placement='inline-start']) [part='drawer'],
-    :host([drawer-opened][drawer-placement='inline-end']) [part='drawer'] {
+    :host([side-panel-opened][side-panel-placement='']) [part='sidePanel'],
+    :host([side-panel-opened][side-panel-placement='right']) [part='sidePanel'],
+    :host([side-panel-opened][side-panel-placement='left']) [part='sidePanel'],
+    :host([side-panel-opened][side-panel-placement='inline-start']) [part='sidePanel'],
+    :host([side-panel-opened][side-panel-placement='inline-end']) [part='sidePanel'] {
         transform: translateX(0%);
     }
 
-    :host([drawer-opened][drawer-placement='top']) [part='drawer'],
-    :host([drawer-opened][drawer-placement='bottom']) [part='drawer'] {
+    :host([side-panel-opened][side-panel-placement='top']) [part='sidePanel'],
+    :host([side-panel-opened][side-panel-placement='bottom']) [part='sidePanel'] {
         width: 100%;
         transform: translateY(0%);
     }
 
-    :host([drawer-placement='left'][drawer-mode='push']) [part='content'] {
+    :host([side-panel-placement='left'][side-panel-mode='push']) [part='content'] {
         /*
          * Since we change content max-width, the content shrinks itself to start.
          * When LEFT mode is used, we need to align content to end for smooth animation.
@@ -195,15 +195,15 @@ export const sidePanelLayoutStyles = css`
         margin-left: auto;
     }
 
-    :host([drawer-placement='inline-start'][drawer-mode='push']) [part='content'] {
+    :host([side-panel-placement='inline-start'][side-panel-mode='push']) [part='content'] {
         margin-inline-start: auto;
     }
 
-    :host([drawer-placement='inline-end'][drawer-mode='push']) [part='content'] {
+    :host([side-panel-placement='inline-end'][side-panel-mode='push']) [part='content'] {
         margin-inline-end: auto;
     }
 
-    :host([drawer-placement='top'][drawer-mode='push']) [part='content'] {
+    :host([side-panel-placement='top'][side-panel-mode='push']) [part='content'] {
         /*
          * Since we change content max-height, the content shrinks itself to top.
          * When TOP mode is used, we need to align content to bottom for smooth animation.

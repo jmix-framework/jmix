@@ -22,7 +22,7 @@ import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayoutToggle;
 import org.springframework.lang.Nullable;
 
 /**
- * Toggle button for opening and closing the drawer panel in a {@link SidePanelLayout}.
+ * Toggle button for opening and closing the side panel in a {@link SidePanelLayout}.
  */
 public class SidePanelLayoutToggle extends JmixSidePanelLayoutToggle {
 
@@ -45,6 +45,6 @@ public class SidePanelLayoutToggle extends JmixSidePanelLayoutToggle {
             throw new IllegalStateException(SidePanelLayout.class.getSimpleName() + " is not set");
         }
 
-        sidePanelLayout.toggleDrawer();
+        sidePanelLayout.toggleSidePanel();
     }
 }

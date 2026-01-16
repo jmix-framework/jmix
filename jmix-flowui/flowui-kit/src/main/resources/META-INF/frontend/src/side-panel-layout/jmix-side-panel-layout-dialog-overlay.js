@@ -42,7 +42,7 @@ class JmixSidePanelLayoutDialogOverlay extends OverlayMixin(DirMixin(ThemableMix
             <div part="overlay" id="overlay" tabindex="0">
                 <section id="resizerContainer" class="resizer-container">
                     <div part="content" id="content">
-                        <slot name="drawerContentSlot"></slot>
+                        <slot name="sidePanelContentSlot"></slot>
                     </div>
                 </section>
             </div>

@@ -19,27 +19,27 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
 
     static get properties() {
         return {
-            drawerOpened: {
+            sidePanelOpened: {
                 type: Boolean,
                 value: false,
                 reflectToAttribute: true,
                 notify: true,
-                observer: '_drawerOpenedChanged',
+                observer: '_sidePanelOpenedChanged',
                 sync: true,
             },
-            drawerPlacement: {
+            sidePanelPlacement: {
                 type: String,
                 reflectToAttribute: true,
                 value: 'right',
                 notify: true,
                 sync: true,
             },
-            drawerMode: {
+            sidePanelMode: {
                 type: String,
                 reflectToAttribute: true,
                 value: 'overlay',
                 notify: true,
-                observer: '_drawerModeChanged',
+                observer: '_sidePanelModeChanged',
                 sync: true,
             },
             modal: {
@@ -89,18 +89,18 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
         this.modalityCurtain = this.$.modalityCurtain;
         this.modalityCurtain.addEventListener('click', (e) => this._onModalityCurtainClick(e));
 
-        this.$.dialog.$.overlay.addEventListener('vaadin-overlay-outside-click', (e) => this._closeDrawer());
-        this.$.dialog.$.overlay.addEventListener('vaadin-overlay-escape-press', (e) => this._closeDrawer());
+        this.$.dialog.$.overlay.addEventListener('vaadin-overlay-outside-click', (e) => this._closeSidePanel());
+        this.$.dialog.$.overlay.addEventListener('vaadin-overlay-escape-press', (e) => this._closeSidePanel());
 
-        this.$.drawer.addEventListener('transitionstart', (e) => this._onDrawerTransitionStart(e));
-        this.$.drawer.addEventListener('transitionend', (e) => this._onDrawerTransitionEnd(e));
+        this.$.sidePanel.addEventListener('transitionstart', (e) => this._onSidePanelTransitionStart(e));
+        this.$.sidePanel.addEventListener('transitionend', (e) => this._onSidePanelTransitionEnd(e));
 
         // Update the modality curtain, because component can be reattached to UI.
         this._updateModalityCurtainHidden();
     }
 
     /**
-     * Focuses the specified component. If the drawer is animating, the focus will be set after
+     * Focuses the specified component. If the side panel is animating, the focus will be set after
      * the animation is finished.
      *
      * @param {HTMLElement} focusComponent
@@ -114,45 +114,45 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
            focusComponent.focus();
         } else {
             const checkInterval = setInterval(() => {
-                if (!this.animating && this.drawerOpened) {
+                if (!this.animating && this.sidePanelOpened) {
                     focusComponent.focus();
                     clearInterval(checkInterval);
                 }
             }, 20);
-            setTimeout(() => clearInterval(checkInterval), this._getDrawerTransition());
+            setTimeout(() => clearInterval(checkInterval), this._getSidePanelTransition());
         }
     }
 
-    _onDrawerTransitionStart(e) {
-        if (e.target !== this.$.drawer && e.propertyName !== 'transform') {
+    _onSidePanelTransitionStart(e) {
+        if (e.target !== this.$.sidePanel && e.propertyName !== 'transform') {
             return;
         }
 
         this.animating = true;
     }
 
-    _onDrawerTransitionEnd(e) {
-        if (e.target !== this.$.drawer && e.propertyName !== 'transform') {
+    _onSidePanelTransitionEnd(e) {
+        if (e.target !== this.$.sidePanel && e.propertyName !== 'transform') {
             return;
         }
 
         this.animating = false;
 
-        if (this.drawerOpened) {
+        if (this.sidePanelOpened) {
             this.dispatchEvent(new CustomEvent('jmix-side-panel-layout-after-open-event'));
         }
     }
 
-      _drawerModeChanged(drawerMode) {
+      _sidePanelModeChanged(sidePanelMode) {
           this._updateContentSize();
       }
 
-    _drawerOpenedChanged(opened, oldOpened) {
+    _sidePanelOpenedChanged(opened, oldOpened) {
         this._updateModalityCurtainHidden();
         this._updateContentSize();
 
         if (opened) {
-            this._moveDrawerChildren();
+            this._moveSidePanelChildren();
         }
     }
 
@@ -170,14 +170,14 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
             this._curtainHideTimeout = null;
         }
 
-        const shouldBeHidden = this._computeModalityCurtainHidden(this.drawerOpened, this.modal);
+        const shouldBeHidden = this._computeModalityCurtainHidden(this.sidePanelOpened, this.modal);
 
         if (shouldBeHidden && !this._modalityCurtainHidden) {
-            // The drawer is closing, so hide the curtain after a delay
+            // The side panel is closing, so hide the curtain after a delay
             this._curtainHideTimeout = setTimeout(() => {
                 this._modalityCurtainHidden = true;
                 this._curtainHideTimeout = null;
-            }, this._getDrawerTransition());
+            }, this._getSidePanelTransition());
         } else if (!shouldBeHidden) {
             // Display curtain immediately
             this._modalityCurtainHidden = false;
@@ -185,40 +185,40 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     }
 
     _updateContentSize() {
-        if (this.drawerMode == 'overlay') {
+        if (this.sidePanelMode == 'overlay') {
             this.$.content.style.maxWidth = '100%';
             this.$.content.style.maxHeight = '100%';
             return;
         }
-        if (this.drawerPlacement === 'left'
-                || this.drawerPlacement === 'right'
-                || this.drawerPlacement === 'inline-start'
-                || this.drawerPlacement === 'inline-end') {
-            let realWidth = this.$.drawer.getBoundingClientRect().width + 'px';
-            if (this.drawerOpened) {
-                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-horizontal-size', realWidth);
-                this.$.content.style.maxWidth = 'calc(100% - var(--_jmix-side-panel-layout-drawer-horizontal-size))';
+        if (this.sidePanelPlacement === 'left'
+                || this.sidePanelPlacement === 'right'
+                || this.sidePanelPlacement === 'inline-start'
+                || this.sidePanelPlacement === 'inline-end') {
+            let realWidth = this.$.sidePanel.getBoundingClientRect().width + 'px';
+            if (this.sidePanelOpened) {
+                this.$.content.style.setProperty('--_jmix-side-panel-horizontal-size', realWidth);
+                this.$.content.style.maxWidth = 'calc(100% - var(--_jmix-side-panel-horizontal-size))';
 
-                // Clear height if drawerPlacement changed when drawer is opened
+                // Clear height if sidePanelPlacement changed when side panel is opened
                 this.$.content.style.maxHeight = '100%';
-                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-vertical-size', '');
+                this.$.content.style.setProperty('--_jmix-side-panel-vertical-size', '');
             } else {
                 this.$.content.style.maxWidth = '100%';
-                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-horizontal-size', '');
+                this.$.content.style.setProperty('--_jmix-side-panel-horizontal-size', '');
             }
         }
-        if (this.drawerPlacement === 'top' || this.drawerPlacement === 'bottom') {
-            let realHeight = this.$.drawer.getBoundingClientRect().height + 'px';
-            if (this.drawerOpened) {
-                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-vertical-size', realHeight);
-                this.$.content.style.maxHeight = 'calc(100% - var(--_jmix-side-panel-layout-drawer-vertical-size))';
+        if (this.sidePanelPlacement === 'top' || this.sidePanelPlacement === 'bottom') {
+            let realHeight = this.$.sidePanel.getBoundingClientRect().height + 'px';
+            if (this.sidePanelOpened) {
+                this.$.content.style.setProperty('--_jmix-side-panel-vertical-size', realHeight);
+                this.$.content.style.maxHeight = 'calc(100% - var(--_jmix-side-panel-vertical-size))';
 
-                // Clear width if drawerPlacement changed when drawer is opened
+                // Clear width if sidePanelPlacement changed when side panel is opened
                 this.$.content.style.maxWidth = '100%';
-                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-horizontal-size', '');
+                this.$.content.style.setProperty('--_jmix-side-panel-horizontal-size', '');
             } else {
                 this.$.content.style.maxHeight = '100%';
-                this.$.content.style.setProperty('--_jmix-side-panel-layout-drawer-vertical-size', '');
+                this.$.content.style.setProperty('--_jmix-side-panel-vertical-size', '');
             }
         }
     }
@@ -228,8 +228,8 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
      *
      * @protected
      */
-    _computeModalityCurtainHidden(drawerOpened, modal) {
-        return !drawerOpened || !modal;
+    _computeModalityCurtainHidden(sidePanelOpened, modal) {
+        return !sidePanelOpened || !modal;
     }
 
     /**
@@ -239,19 +239,19 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
      */
     _onModalityCurtainClick(e) {
         if (this.closeOnModalityCurtainClick) {
-            this.drawerOpened = false;
+            this.sidePanelOpened = false;
         }
 
-        this.dispatchEvent(new CustomEvent('jmix-drawer-layout-modality-curtain-click', { detail: { originalEvent: e} }));
+        this.dispatchEvent(new CustomEvent('jmix-side-panel-layout-modality-curtain-click-event', { detail: { originalEvent: e} }));
     }
 
     /**
-     * Closes the drawer.
+     * Closes the side panel.
      *
      * @protected
      */
-    _closeDrawer() {
-        this.drawerOpened = false;
+    _closeSidePanel() {
+        this.sidePanelOpened = false;
     }
 
     /**
@@ -259,8 +259,8 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
      *
      * @private
      */
-    _getDrawerTransition() {
-       const transition = this._getStylePropertyValue('--jmix-side-panel-layout-transition');
+    _getSidePanelTransition() {
+       const transition = this._getStylePropertyValue('--jmix-side-panel-transition');
        if (transition === 'none') {
            return 0;
        }
@@ -290,7 +290,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
      * @private
      */
     _displayAsOverlayChanged(fullscreen, oldFullscreen) {
-        this._moveDrawerChildren();
+        this._moveSidePanelChildren();
     }
 
     /**
@@ -303,26 +303,26 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     }
 
     /**
-     * Moves the drawer children to the dialog or component depending on how the drawer is displayed.
+     * Moves the side panel children to the dialog or component depending on how the side panel is displayed.
      *
      * @private
      */
-    _moveDrawerChildren() {
+    _moveSidePanelChildren() {
       if (this._displayAsOverlay) {
         // Move to dialog
-        this._moveDrawerChildrenTo(this.$.dialog.$.overlay);
+        this._moveSidePanelChildrenTo(this.$.dialog.$.overlay);
       } else {
         // Move to component
-        this._moveDrawerChildrenTo(this);
+        this._moveSidePanelChildrenTo(this);
       }
     }
 
     /**
-     * Moves the drawer children to the target element (dialog or component).
+     * Moves the side panel children to the target element (dialog or component).
      *
      * @private
      */
-    _moveDrawerChildrenTo(target) {
+    _moveSidePanelChildrenTo(target) {
       // If the component is not fully initialized
       if (!this._contentController) {
           return;
@@ -351,7 +351,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
      * Server callable function.
      *
      * Updates the controllers to remove any elements that are no longer in the DOM.
-     * @param existingChildren the existing children of the drawer layout
+     * @param existingChildren the existing children of the side panel layout
      *
      * @private
      */
@@ -370,7 +370,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
         });
 
         // Update dialog overlay if opened
-        if (this.drawerOpened && removedElements.length > 0) {
+        if (this.sidePanelOpened && removedElements.length > 0) {
             for (const element of removedElements) {
                 this.$.dialog.$.overlay.removeChild(element);
             }

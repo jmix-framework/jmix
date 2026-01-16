@@ -32,7 +32,7 @@ public class JmixSidePanelLayoutToggle extends Button {
 
     public void setIcon(Component icon) {
         super.setIcon(icon);
-        // the slot attribute needs to be removed because vaadin-drawer-toggle
+        // The slot attribute needs to be removed because jmix-side-panel-layout-toggle
         // template doesn't have prefix and suffix slots
         icon.getElement().removeAttribute("slot");
     }

@@ -19,18 +19,18 @@ package io.jmix.flowui.kit.component.sidepanellayout;
 import com.vaadin.flow.component.ComponentEvent;
 
 /**
- * Event fired before opening the drawer. Drawer panel is not displayed and animation is not started.
+ * Event fired before opening the side panel. Side panel is not displayed and animation is not started.
  * <p>
- * Use this event when you need to add/remove components to the drawer panel before it is opened.
+ * Use this event when you need to add/remove components to the side panel before it is opened.
  * <p>
- * <strong>Note</strong> that within this event focusing an element inside the drawer might break
- * the drawer animation.
+ * <strong>Note</strong> that within this event focusing an element inside the side panel might break
+ * the side panel animation.
  *
- * @see DrawerAfterOpenEvent
+ * @see SidePanelAfterOpenEvent
  */
-public class DrawerBeforeOpenEvent extends ComponentEvent<JmixSidePanelLayout> {
+public class SidePanelBeforeOpenEvent extends ComponentEvent<JmixSidePanelLayout> {
 
-    public DrawerBeforeOpenEvent(JmixSidePanelLayout source, boolean fromClient) {
+    public SidePanelBeforeOpenEvent(JmixSidePanelLayout source, boolean fromClient) {
         super(source, fromClient);
     }
 }

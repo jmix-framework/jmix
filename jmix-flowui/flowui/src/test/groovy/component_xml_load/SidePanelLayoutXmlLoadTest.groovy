@@ -17,8 +17,8 @@
 package component_xml_load
 
 import component_xml_load.screen.SidePanelLayoutView
-import io.jmix.flowui.kit.component.sidepanellayout.DrawerMode
-import io.jmix.flowui.kit.component.sidepanellayout.DrawerPlacement
+import io.jmix.flowui.kit.component.sidepanellayout.SidePanelMode
+import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPlacement
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
@@ -41,14 +41,14 @@ class SidePanelLayoutXmlLoadTest extends FlowuiTestSpecification {
             !closeOnModalityCurtainClick
             !displayAsOverlayOnSmallDevices
             style.get("color") == "red"
-            drawerHorizontalMaxSize == "10em"
-            drawerHorizontalMinSize == "8em"
-            drawerHorizontalSize == "9em"
-            drawerMode == DrawerMode.PUSH
-            drawerPlacement == DrawerPlacement.TOP
-            drawerVerticalMaxSize == "10em"
-            drawerVerticalMinSize == "8em"
-            drawerVerticalSize == "9em"
+            sidePanelHorizontalMaxSize == "10em"
+            sidePanelHorizontalMinSize == "8em"
+            sidePanelHorizontalSize == "9em"
+            sidePanelMode == SidePanelMode.PUSH
+            sidePanelPlacement == SidePanelPlacement.TOP
+            sidePanelVerticalMaxSize == "10em"
+            sidePanelVerticalMinSize == "8em"
+            sidePanelVerticalSize == "9em"
             height == "100px"
             maxHeight == "100px"
             maxWidth == "100px"

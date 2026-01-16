@@ -50,14 +50,14 @@ class JmixSideDialog extends ControllerMixin(Dialog) {
                 draggable$="[[draggable]]"
                 restore-focus-on-close
                 focus-trap
-                drawer-placement$="[[drawerPlacement]]"
+                side-panel-placement$="[[sidePanelPlacement]]"
             ></jmix-side-dialog-overlay>
         `;
     }
 
     static get properties() {
         return {
-            drawerPlacement: {
+            sidePanelPlacement: {
                 type: String,
                 reflectToAttribute: true,
                 value: 'right',

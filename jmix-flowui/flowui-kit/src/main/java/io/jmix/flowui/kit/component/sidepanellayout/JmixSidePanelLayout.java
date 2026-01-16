@@ -30,15 +30,15 @@ import jakarta.annotation.Nullable;
 public class JmixSidePanelLayout extends Component implements HasSize, HasStyle {
 
     protected Component content;
-    protected Component drawerContent;
+    protected Component sidePanelContent;
 
     protected ComponentInertManager componentInertManager;
 
     public JmixSidePanelLayout() {
         // Workaround for: https://github.com/vaadin/flow/issues/3496
-        getElement().setProperty("drawerOpened", false);
+        getElement().setProperty("sidePanelOpened", false);
 
-        attachDrawerOpenedChangedListener();
+        attachSidePanelOpenedChangedListener();
     }
 
     /**
@@ -50,7 +50,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Sets the content that should be overlapped or pushed aside by the drawer panel.
+     * Sets the content that should be overlapped or pushed aside by the side panel.
      *
      * @param content the content to set
      */
@@ -69,109 +69,109 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
             addComponent(content);
             updateSlot("contentSlot", content);
 
-            if (isDrawerOpened()) {
+            if (isSidePanelOpened()) {
                 updateContentInert(isModal());
             }
         }
     }
 
     /**
-     * @return drawer panel content components
+     * @return side panel content components
      */
-    public Component getDrawerContent() {
-        return drawerContent;
+    public Component getSidePanelContent() {
+        return sidePanelContent;
     }
 
     /**
-     * Sets the drawer panel content components.
+     * Sets the side panel content components.
      *
-     * @param drawerContent content to set
+     * @param sidePanelContent content to set
      */
-    public void setDrawerContent(@Nullable Component drawerContent) {
-        if (this.drawerContent != null) {
-            removeComponent(this.drawerContent);
-            this.drawerContent = null;
+    public void setSidePanelContent(@Nullable Component sidePanelContent) {
+        if (this.sidePanelContent != null) {
+            removeComponent(this.sidePanelContent);
+            this.sidePanelContent = null;
         }
 
-        if (drawerContent != null) {
-            this.drawerContent = drawerContent;
-            addComponent(drawerContent);
-            updateSlot("drawerContentSlot", drawerContent);
+        if (sidePanelContent != null) {
+            this.sidePanelContent = sidePanelContent;
+            addComponent(sidePanelContent);
+            updateSlot("sidePanelContentSlot", sidePanelContent);
         }
     }
 
     /**
-     * @return whether the drawer panel is modal
+     * @return whether the side panel is modal
      */
     public boolean isModal() {
         return getElement().getProperty("modal", true);
     }
 
     /**
-     * Sets whether the drawer panel should be modal. If {@code true}, the {@link #content} will not receive requests
-     * from clinet-side even if the modality curtain is removed.
+     * Sets whether the side panel should be modal. If {@code true}, the {@link #content} will not receive requests
+     * from client-side even if the modality curtain is removed.
      * <p>
      * The default value is {@code true}.
      *
-     * @param modal whether the drawer panel should be modal
+     * @param modal whether the side panel should be modal
      */
     public void setModal(boolean modal) {
         getElement().setProperty("modal", modal);
 
-        if (isDrawerOpened()) {
+        if (isSidePanelOpened()) {
             updateContentInert(modal);
         }
     }
 
     /**
-     * @return the drawer mode
+     * @return the side panel mode
      */
-    public DrawerMode getDrawerMode() {
-        String mode = getElement().getProperty("drawerMode");
+    public SidePanelMode getSidePanelMode() {
+        String mode = getElement().getProperty("sidePanelMode");
         if (Strings.isNullOrEmpty(mode)) {
-            return DrawerMode.OVERLAY;
+            return SidePanelMode.OVERLAY;
         }
-        return DrawerMode.valueOf(mode.toUpperCase());
+        return SidePanelMode.valueOf(mode.toUpperCase());
     }
 
     /**
-     * Sets the way how should the drawer panel should be displayed.
+     * Sets the way how should the side panel be displayed.
      *
-     * @param drawerMode drawer mode to set
+     * @param panelMode side panel mode to set
      */
-    public void setDrawerMode(DrawerMode drawerMode) {
-        getElement().setProperty("drawerMode", drawerMode.name().toLowerCase());
+    public void setSidePanelMode(SidePanelMode panelMode) {
+        getElement().setProperty("sidePanelMode", panelMode.name().toLowerCase());
     }
 
     /**
-     * @return the drawer placement
+     * @return the side panel placement
      */
-    public DrawerPlacement getDrawerPlacement() {
-        String placement = getElement().getProperty("drawerPlacement");
+    public SidePanelPlacement getSidePanelPlacement() {
+        String placement = getElement().getProperty("sidePanelPlacement");
         if (Strings.isNullOrEmpty(placement)) {
-            return DrawerPlacement.RIGHT;
+            return SidePanelPlacement.RIGHT;
         }
-        return DrawerPlacement.valueOf(placement.toUpperCase().replace("-", "_"));
+        return SidePanelPlacement.valueOf(placement.toUpperCase().replace("-", "_"));
     }
 
     /**
-     * Sets the drawer placement.
+     * Sets the side panel placement.
      *
-     * @param placement drawer placement to set
+     * @param placement side panel placement to set
      */
-    public void setDrawerPlacement(DrawerPlacement placement) {
-        getElement().setProperty("drawerPlacement", placement.name().toLowerCase().replace("_", "-"));
+    public void setSidePanelPlacement(SidePanelPlacement placement) {
+        getElement().setProperty("sidePanelPlacement", placement.name().toLowerCase().replace("_", "-"));
     }
 
     /**
-     * @return whether the drawer should be closed when the modality curtain is clicked
+     * @return whether the side panel should be closed when the modality curtain is clicked
      */
     public boolean isCloseOnModalityCurtainClick() {
         return getElement().getProperty("closeOnModalityCurtainClick", true);
     }
 
     /**
-     * Sets whether the drawer should be closed when the modality curtain is clicked.
+     * Sets whether the side panel should be closed when the modality curtain is clicked.
      * <p>
      * The default value is {@code true}.
      *
@@ -182,14 +182,14 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * @return whether the drawer should be displayed as an overlay on small screens.
+     * @return whether the side panel should be displayed as an overlay on small screens.
      */
     public boolean isDisplayAsOverlayOnSmallDevices() {
         return getElement().getProperty("displayAsOverlayOnSmallDevices", true);
     }
 
     /**
-     * Sets whether the drawer should be displayed as an overlay on small screens.
+     * Sets whether the side panel should be displayed as an overlay on small screens.
      * <p>
      * The default value is {@code true}.
      *
@@ -209,19 +209,19 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Note that this does not return the actual size of the drawer panel but the height which has been set using
-     * {@link #setDrawerVerticalSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-vertical-size}.
+     * Note that this does not return the actual size of the side panel but the height which has been set using
+     * {@link #setSidePanelVerticalSize(String)} or using CSS property {@code --jmix-side-panel-vertical-size}.
      *
-     * @return the height defined for the drawer panel
+     * @return the height defined for the side panel
      */
     @Nullable
-    public String getDrawerVerticalSize() {
-        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-vertical-size");
+    public String getSidePanelVerticalSize() {
+        return getElement().getStyle().get("--jmix-side-panel-vertical-size");
     }
 
     /**
-     * Sets the height of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#TOP},
-     * {@link DrawerPlacement#BOTTOM}).
+     * Sets the height of the side panel when side placement is horizontal ({@link SidePanelPlacement#TOP},
+     * {@link SidePanelPlacement#BOTTOM}).
      * <p>
      * The height should be in a format understood by the browser, e.g. "100px" or "2.5rem".
      * <p>
@@ -229,24 +229,24 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      *
      * @param size height to set
      */
-    public void setDrawerVerticalSize(@Nullable String size) {
-        getElement().getStyle().set("--jmix-side-panel-layout-drawer-vertical-size", size);
+    public void setSidePanelVerticalSize(@Nullable String size) {
+        getElement().getStyle().set("--jmix-side-panel-vertical-size", size);
     }
 
     /**
-     * Note that this does not return the actual size of the drawer panel but the max-height which has been set using
-     * {@link #setDrawerVerticalMaxSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-vertical-max-size}.
+     * Note that this does not return the actual size of the side panel but the max-height which has been set using
+     * {@link #setSidePanelVerticalMaxSize(String)} or using CSS property {@code --jmix-side-panel-vertical-max-size}.
      *
-     * @return the max-height defined for the drawer panel
+     * @return the max-height defined for the side panel
      */
     @Nullable
-    public String getDrawerVerticalMaxSize() {
-        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-vertical-max-size");
+    public String getSidePanelVerticalMaxSize() {
+        return getElement().getStyle().get("--jmix-side-panel-vertical-max-size");
     }
 
     /**
-     * Sets the max-height of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#TOP},
-     * {@link DrawerPlacement#BOTTOM}).
+     * Sets the max-height of the side panel when side panel placement is horizontal ({@link SidePanelPlacement#TOP},
+     * {@link SidePanelPlacement#BOTTOM}).
      * <p>
      * The max-height should be in a format understood by the browser, e.g. "100px" or "2.5rem".
      * <p>
@@ -254,24 +254,24 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      *
      * @param maxSize max-height to set
      */
-    public void setDrawerVerticalMaxSize(@Nullable String maxSize) {
-        getElement().getStyle().set("--jmix-side-panel-layout-drawer-vertical-max-size", maxSize);
+    public void setSidePanelVerticalMaxSize(@Nullable String maxSize) {
+        getElement().getStyle().set("--jmix-side-panel-vertical-max-size", maxSize);
     }
 
     /**
-     * Note that this does not return the actual size of the drawer panel but the min-height which has been set using
-     * {@link #setDrawerVerticalMinSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-vertical-min-size}.
+     * Note that this does not return the actual size of the side panel but the min-height which has been set using
+     * {@link #setSidePanelVerticalMinSize(String)} or using CSS property {@code --jmix-side-panel-vertical-min-size}.
      *
-     * @return the min-height defined for the drawer panel
+     * @return the min-height defined for the side panel
      */
     @Nullable
-    public String getDrawerVerticalMinSize() {
-        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-vertical-min-size");
+    public String getSidePanelVerticalMinSize() {
+        return getElement().getStyle().get("--jmix-side-panel-vertical-min-size");
     }
 
     /**
-     * Sets the min-height of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#TOP},
-     * {@link DrawerPlacement#BOTTOM}).
+     * Sets the min-height of the side panel when placement is horizontal ({@link SidePanelPlacement#TOP},
+     * {@link SidePanelPlacement#BOTTOM}).
      * <p>
      * The min-height should be in a format understood by the browser, e.g. "100px" or "2.5rem".
      * <p>
@@ -279,24 +279,24 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      *
      * @param minSize min-height to set
      */
-    public void setDrawerVerticalMinSize(@Nullable String minSize) {
-        getElement().getStyle().set("--jmix-side-panel-layout-drawer-vertical-min-size", minSize);
+    public void setSidePanelVerticalMinSize(@Nullable String minSize) {
+        getElement().getStyle().set("--jmix-side-panel-vertical-min-size", minSize);
     }
 
     /**
-     * Note that this does not return the actual size of the drawer panel but the width which has been set using
-     * {@link #setDrawerHorizontalSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-horizontal-size}.
+     * Note that this does not return the actual size of the side panel but the width which has been set using
+     * {@link #setSidePanelHorizontalSize(String)} or using CSS property {@code --jmix-side-panel-horizontal-size}.
      *
-     * @return the width defined for the drawer panel
+     * @return the width defined for the side panel
      */
     @Nullable
-    public String getDrawerHorizontalSize() {
-        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-horizontal-size");
+    public String getSidePanelHorizontalSize() {
+        return getElement().getStyle().get("--jmix-side-panel-horizontal-size");
     }
 
     /**
-     * Sets the width of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#LEFT},
-     * {@link DrawerPlacement#RIGHT}, {@link DrawerPlacement#INLINE_START}, {@link DrawerPlacement#INLINE_END}).
+     * Sets the width of the side panel when placement is horizontal ({@link SidePanelPlacement#LEFT},
+     * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START}, {@link SidePanelPlacement#INLINE_END}).
      * <p>
      * The width should be in a format understood by the browser, e.g. "100px" or "2.5rem".
      * <p>
@@ -304,24 +304,24 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      *
      * @param size width to set
      */
-    public void setDrawerHorizontalSize(@Nullable String size) {
-        getElement().getStyle().set("--jmix-side-panel-layout-drawer-horizontal-size", size);
+    public void setSidePanelHorizontalSize(@Nullable String size) {
+        getElement().getStyle().set("--jmix-side-panel-horizontal-size", size);
     }
 
     /**
-     * Note that this does not return the actual size of the drawer panel but the max-width which has been set using
-     * {@link #setDrawerHorizontalMaxSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-horizontal-max-size}.
+     * Note that this does not return the actual size of the side panel but the max-width which has been set using
+     * {@link #setSidePanelHorizontalMaxSize(String)} or using CSS property {@code --jmix-side-panel-horizontal-max-size}.
      *
-     * @return the max-width defined for the drawer panel
+     * @return the max-width defined for the side panel
      */
     @Nullable
-    public String getDrawerHorizontalMaxSize() {
-        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-horizontal-max-size");
+    public String getSidePanelHorizontalMaxSize() {
+        return getElement().getStyle().get("--jmix-side-panel-horizontal-max-size");
     }
 
     /**
-     * Sets the max-width of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#LEFT},
-     * {@link DrawerPlacement#RIGHT}, {@link DrawerPlacement#INLINE_START}, {@link DrawerPlacement#INLINE_END}).
+     * Sets the max-width of the side panel when placement is horizontal ({@link SidePanelPlacement#LEFT},
+     * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START}, {@link SidePanelPlacement#INLINE_END}).
      * <p>
      * The max-width should be in a format understood by the browser, e.g. "100px" or "2.5rem".
      * <p>
@@ -329,24 +329,24 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      *
      * @param maxSize max-width to set
      */
-    public void setDrawerHorizontalMaxSize(@Nullable String maxSize) {
-        getElement().getStyle().set("--jmix-side-panel-layout-drawer-horizontal-max-size", maxSize);
+    public void setSidePanelHorizontalMaxSize(@Nullable String maxSize) {
+        getElement().getStyle().set("--jmix-side-panel-horizontal-max-size", maxSize);
     }
 
     /**
-     * Note that this does not return the actual size of the drawer panel but the min-width which has been set using
-     * {@link #setDrawerHorizontalMinSize(String)} or using CSS property {@code --jmix-side-panel-layout-drawer-horizontal-min-size}.
+     * Note that this does not return the actual size of the side panel but the min-width which has been set using
+     * {@link #setSidePanelHorizontalMinSize(String)} or using CSS property {@code --jmix-side-panel-horizontal-min-size}.
      *
-     * @return the min-width defined for the drawer panel
+     * @return the min-width defined for the side panel
      */
     @Nullable
-    public String getDrawerHorizontalMinSize() {
-        return getElement().getStyle().get("--jmix-side-panel-layout-drawer-horizontal-min-size");
+    public String getSidePanelHorizontalMinSize() {
+        return getElement().getStyle().get("--jmix-side-panel-horizontal-min-size");
     }
 
     /**
-     * Sets the min-width of the drawer panel when drawer placement is horizontal ({@link DrawerPlacement#LEFT},
-     * {@link DrawerPlacement#RIGHT}, {@link DrawerPlacement#INLINE_START}, {@link DrawerPlacement#INLINE_END}).
+     * Sets the min-width of the side panel when placement is horizontal ({@link SidePanelPlacement#LEFT},
+     * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START}, {@link SidePanelPlacement#INLINE_END}).
      * <p>
      * The min-width should be in a format understood by the browser, e.g. "100px" or "2.5rem".
      * <p>
@@ -354,16 +354,16 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      *
      * @param minSize min-width to set
      */
-    public void setDrawerHorizontalMinSize(@Nullable String minSize) {
-        getElement().getStyle().set("--jmix-side-panel-layout-drawer-horizontal-min-size", minSize);
+    public void setSidePanelHorizontalMinSize(@Nullable String minSize) {
+        getElement().getStyle().set("--jmix-side-panel-horizontal-min-size", minSize);
     }
 
     /**
-     * @return whether the drawer is opened
+     * @return whether the side panel is opened
      */
-    @Synchronize(property = "drawerOpened", value = "drawer-opened-changed", allowInert = true)
-    public boolean isDrawerOpened() {
-        return getElement().getProperty("drawerOpened", false);
+    @Synchronize(property = "sidePanelOpened", value = "side-panel-opened-changed", allowInert = true)
+    public boolean isSidePanelOpened() {
+        return getElement().getProperty("sidePanelOpened", false);
     }
 
     /**
@@ -377,76 +377,76 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Adds a listener to handle drawer open events.
+     * Adds a listener to handle side panel open events.
      *
      * @param listener listener to add
      * @return a registration for removing the listener
      */
-    public Registration addDrawerBeforeOpenListener(ComponentEventListener<DrawerBeforeOpenEvent> listener) {
-        return addListener(DrawerBeforeOpenEvent.class, listener);
+    public Registration addSidePanelBeforeOpenListener(ComponentEventListener<SidePanelBeforeOpenEvent> listener) {
+        return addListener(SidePanelBeforeOpenEvent.class, listener);
     }
 
     /**
-     * Adds a listener to handle drawer after open events.
+     * Adds a listener to handle the side panel after open events.
      * @param listener listener to add
      * @return a registration for removing the listener
      */
-    public Registration addDrawerAfterOpenListener(ComponentEventListener<DrawerAfterOpenEvent> listener) {
-        return addListener(DrawerAfterOpenEvent.class, listener);
+    public Registration addSidePanelAfterOpenListener(ComponentEventListener<SidePanelAfterOpenEvent> listener) {
+        return addListener(SidePanelAfterOpenEvent.class, listener);
     }
 
     /**
-     * Adds a listener to handle drawer close events.
+     * Adds a listener to handle side panel close events.
      *
      * @param listener listener to add
      * @return a registration for removing the listener
      */
-    public Registration addDrawerCloseListener(ComponentEventListener<DrawerCloseEvent> listener) {
-        return addListener(DrawerCloseEvent.class, listener);
+    public Registration addSidePanelCloseListener(ComponentEventListener<SidePanelCloseEvent> listener) {
+        return addListener(SidePanelCloseEvent.class, listener);
     }
 
     /**
-     * Opens the drawer panel.
+     * Opens the side panel.
      *
-     * @see DrawerBeforeOpenEvent
+     * @see SidePanelBeforeOpenEvent
      */
-    public void openDrawer() {
-        if (!isDrawerOpened()) {
+    public void openSidePanel() {
+        if (!isSidePanelOpened()) {
             doSetOpened(true, false);
         }
     }
 
     /**
-     * Closes the drawer panel.
+     * Closes the side panel.
      *
-     * @see DrawerCloseEvent
+     * @see SidePanelCloseEvent
      */
-    public void closeDrawer() {
-        if (isDrawerOpened()) {
+    public void closeSidePanel() {
+        if (isSidePanelOpened()) {
             doSetOpened(false, false);
         }
     }
 
     /**
-     * Opens or closes the drawer panel depending on drawer's state.
+     * Opens or closes the side panel depending on the panel's state.
      */
-    public void toggleDrawer() {
-        if (isDrawerOpened()) {
-            closeDrawer();
+    public void toggleSidePanel() {
+        if (isSidePanelOpened()) {
+            closeSidePanel();
         } else {
-            openDrawer();
+            openSidePanel();
         }
     }
 
     protected void doSetOpened(boolean opened, boolean fromClient) {
-        getElement().setProperty("drawerOpened", opened);
+        getElement().setProperty("sidePanelOpened", opened);
 
         updateContentInert(opened && isModal());
 
         if (opened) {
-            fireEvent(new DrawerBeforeOpenEvent(this, fromClient));
+            fireEvent(new SidePanelBeforeOpenEvent(this, fromClient));
         } else {
-            fireEvent(new DrawerCloseEvent(this, fromClient));
+            fireEvent(new SidePanelCloseEvent(this, fromClient));
         }
     }
 
@@ -477,7 +477,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
                 .toList()
                 .toArray(new Element[0]);
 
-        // When fullscreen enabled and the drawer is opened, removed components are not deleted from
+        // When fullscreen enabled and the side panel is opened, removed components are not deleted from
         // the client side. We need to explicitly send existing children to the client to delete the
         // difference.
         getElement().callJsFunction("_updateControllers", existingChildren);
@@ -495,11 +495,11 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
         }
     }
 
-    protected void attachDrawerOpenedChangedListener() {
-        getElement().addPropertyChangeListener("drawerOpened", this::onDrawerOpenedChanged);
+    protected void attachSidePanelOpenedChangedListener() {
+        getElement().addPropertyChangeListener("sidePanelOpened", this::onSidePanelOpenedChanged);
     }
 
-    protected void onDrawerOpenedChanged(PropertyChangeEvent event) {
+    protected void onSidePanelOpenedChanged(PropertyChangeEvent event) {
         if (event.isUserOriginated()) {
             doSetOpened((boolean) event.getValue(), event.isUserOriginated());
         }
@@ -513,7 +513,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        if (isDrawerOpened()) {
+        if (isSidePanelOpened()) {
             updateContentInert(isModal());
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,18 @@
 
 package io.jmix.flowui.kit.component.sidepanellayout;
 
-import com.vaadin.flow.component.ComponentEvent;
-
 /**
- * Event fired when the drawer panel is closed.
+ * Defines the way how should the side panel should be displayed.
  */
-public class DrawerCloseEvent extends ComponentEvent<JmixSidePanelLayout> {
+public enum SidePanelMode {
 
-    public DrawerCloseEvent(JmixSidePanelLayout source, boolean fromClient) {
-        super(source, fromClient);
-    }
+    /**
+     * The side panel overlays the content.
+     */
+    OVERLAY,
+
+    /**
+     * The side panel pushes the content.
+     */
+    PUSH
 }

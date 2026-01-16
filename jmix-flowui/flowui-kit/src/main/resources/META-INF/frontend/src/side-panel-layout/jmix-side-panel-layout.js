@@ -37,16 +37,16 @@ class JmixSidePanelLayout extends JmixSidePanelLayoutMixin(ElementMixin(Controll
                     <slot name="contentSlot"></slot>
                 </div>
                 <div id="modalityCurtain" part="modalityCurtain" hidden$="[[_modalityCurtainHidden]]"></div>
-                <div id="drawer" part="drawer">
-                    <div id="drawerContent" part="drawerContent">
-                         <slot name="drawerContentSlot"></slot>
+                <div id="sidePanel" part="sidePanel">
+                    <div id="sidePanelContent" part="sidePanelContent">
+                         <slot name="sidePanelContentSlot"></slot>
                     </div>
                 </div>
             </div>
 
             <jmix-side-panel-layout-dialog
                     id="dialog"
-                    opened="[[_computeDialogOpened(drawerOpened, _displayAsOverlay)]]"
+                    opened="[[_computeDialogOpened(sidePanelOpened, _displayAsOverlay)]]"
                     fullscreen="[[_displayAsOverlay]]"
                     aria-label="[[overlayAriaLabel]]"
                     theme$="[[_theme]]"
@@ -68,15 +68,15 @@ class JmixSidePanelLayout extends JmixSidePanelLayoutMixin(ElementMixin(Controll
             }),
         );
 
-        this._contentController = new JmixSidePanelLayoutSlotController(this, 'drawerContentSlot');
+        this._contentController = new JmixSidePanelLayoutSlotController(this, 'sidePanelContentSlot');
         this.addController(this._contentController);
 
-        this._attachDrawerSizeObserver();
+        this._attachSidePanelSizeObserver();
     }
 
-    _attachDrawerSizeObserver() {
+    _attachSidePanelSizeObserver() {
         const observer = new ResizeObserver(entries => { this._updateContentSize(); });
-        observer.observe(this.$.drawer);
+        observer.observe(this.$.sidePanel);
     }
 }
 

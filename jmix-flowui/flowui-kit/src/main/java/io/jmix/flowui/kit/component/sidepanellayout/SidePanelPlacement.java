@@ -17,37 +17,37 @@
 package io.jmix.flowui.kit.component.sidepanellayout;
 
 /**
- * Represents the placement of the drawer panel relative to the main content.
+ * Represents the placement of the side panel relative to the main content.
  */
-public enum DrawerPlacement {
+public enum SidePanelPlacement {
 
     /**
-     * The drawer panel is placed at the top of the main content.
+     * The side panel is placed at the top of the main content.
      */
     TOP,
 
     /**
-     * The drawer panel is placed to the right of the main content. Does not consider RTL mode.
+     * The side panel is placed to the right of the main content. Does not consider RTL mode.
      */
     RIGHT,
 
     /**
-     * The drawer panel is placed at the bottom of the main content.
+     * The side panel is placed at the bottom of the main content.
      */
     BOTTOM,
 
     /**
-     * The drawer panel is placed to the left of the main content. Does not consider RTL mode.
+     * The side panel is placed to the left of the main content. Does not consider RTL mode.
      */
     LEFT,
 
     /**
-     * The drawer panel is placed at the start position depending on the directionality (RTL or LTR) of the layout.
+     * The side panel is placed at the start position depending on the directionality (RTL or LTR) of the layout.
      */
     INLINE_START,
 
     /**
-     * The drawer panel is placed at the end position depending on the directionality (RTL or LTR) of the layout.
+     * The side panel is placed at the end position depending on the directionality (RTL or LTR) of the layout.
      */
     INLINE_END
 }

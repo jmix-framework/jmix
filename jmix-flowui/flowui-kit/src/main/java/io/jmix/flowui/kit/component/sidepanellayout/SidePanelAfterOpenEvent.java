@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,19 @@
 
 package io.jmix.flowui.kit.component.sidepanellayout;
 
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.DomEvent;
+
 /**
- * Defines the way how should the drawer panel should be displayed.
+ * The event is fired after the side panel fully opened and animation is finished.
+ * <p>
+ * Use this event when you need to perform actions that might affect side panel animation like
+ * focusing an element inside the side panel.
  */
-public enum DrawerMode {
+@DomEvent("jmix-side-panel-layout-after-open-event")
+public class SidePanelAfterOpenEvent extends ComponentEvent<JmixSidePanelLayout> {
 
-    /**
-     * The drawer panel overlays the content.
-     */
-    OVERLAY,
-
-    /**
-     * The drawer panel pushes the content.
-     */
-    PUSH
+    public SidePanelAfterOpenEvent(JmixSidePanelLayout source, boolean fromClient) {
+        super(source, fromClient);
+    }
 }

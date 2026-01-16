@@ -4294,21 +4294,21 @@
 
                 <xs:attribute name="closeOnModalityCurtainClick" type="xs:boolean"/>
                 <xs:attribute name="displayAsOverlayOnSmallDevices" type="xs:boolean"/>
-                <xs:attribute name="drawerMode" type="drawerModeType"/>
-                <xs:attribute name="drawerPlacement" type="drawerPlacementType"/>
-                <xs:attribute name="drawerHorizontalMaxSize" type="componentSize"/>
-                <xs:attribute name="drawerHorizontalMinSize" type="componentSize"/>
-                <xs:attribute name="drawerHorizontalSize" type="componentSize"/>
-                <xs:attribute name="drawerVerticalMaxSize" type="componentSize"/>
-                <xs:attribute name="drawerVerticalMinSize" type="componentSize"/>
-                <xs:attribute name="drawerVerticalSize" type="componentSize"/>
+                <xs:attribute name="sidePanelMode" type="sidePanelModeType"/>
+                <xs:attribute name="sidePanelPlacement" type="sidePanelPlacementType"/>
+                <xs:attribute name="sidePanelHorizontalMaxSize" type="componentSize"/>
+                <xs:attribute name="sidePanelHorizontalMinSize" type="componentSize"/>
+                <xs:attribute name="sidePanelHorizontalSize" type="componentSize"/>
+                <xs:attribute name="sidePanelVerticalMaxSize" type="componentSize"/>
+                <xs:attribute name="sidePanelVerticalMinSize" type="componentSize"/>
+                <xs:attribute name="sidePanelVerticalSize" type="componentSize"/>
                 <xs:attribute name="modal" type="xs:boolean"/>
                 <xs:attribute name="overlayAriaLabel" type="resourceString"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:simpleType name="drawerPlacementType">
+    <xs:simpleType name="sidePanelPlacementType">
         <xs:restriction>
             <xs:enumeration value="TOP"/>
             <xs:enumeration value="RIGHT"/>
@@ -4319,7 +4319,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="drawerModeType">
+    <xs:simpleType name="sidePanelModeType">
         <xs:restriction>
             <xs:enumeration value="PUSH"/>
             <xs:enumeration value="OVERFLOW"/>

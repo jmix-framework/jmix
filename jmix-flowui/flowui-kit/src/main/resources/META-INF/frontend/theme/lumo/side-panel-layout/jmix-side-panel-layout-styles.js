@@ -20,41 +20,41 @@ import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themab
 
 const sidePanelLayoutStyles = css`
 
-    [part='drawer'] {
+    [part='sidePanel'] {
         background-color: var(--lumo-base-color);
         box-shadow: var(--lumo-box-shadow-m);
     }
 
-    :host([drawer-opened][modal]) [part='modalityCurtain'] {
+    :host([side-panel-opened][modal]) [part='modalityCurtain'] {
         background-color: var(--lumo-shade-20pct);
     }
 
-    :host(:not([drawer-opened])[modal]) [part='modalityCurtain']:not([hidden]) {
+    :host(:not([side-panel-opened])[modal]) [part='modalityCurtain']:not([hidden]) {
         background-color: var(--lumo-shade-20pct);
     }
 
-    :host([drawer-opened][drawer-placement='inline-start']) [part='drawer'] {
+    :host([side-panel-opened][side-panel-placement='inline-start']) [part='sidePanel'] {
         border-inline-end: 1px solid var(--lumo-contrast-10pct);
     }
 
-    :host([drawer-opened][drawer-placement='inline-end']) [part='drawer'] {
+    :host([side-panel-opened][side-panel-placement='inline-end']) [part='sidePanel'] {
         border-inline-start: 1px solid var(--lumo-contrast-10pct);
     }
 
-    :host([drawer-opened][drawer-placement='']) [part='drawer'],
-    :host([drawer-opened][drawer-placement='right']) [part='drawer'] {
+    :host([side-panel-opened][side-panel-placement='']) [part='sidePanel'],
+    :host([side-panel-opened][side-panel-placement='right']) [part='sidePanel'] {
         border-left: 1px solid var(--lumo-contrast-10pct);
     }
 
-    :host([drawer-opened][drawer-placement='left']) [part='drawer'] {
+    :host([side-panel-opened][side-panel-placement='left']) [part='sidePanel'] {
         border-right: 1px solid var(--lumo-contrast-10pct);
     }
 
-    :host([drawer-opened][drawer-placement='top']) [part='drawer'] {
+    :host([side-panel-opened][side-panel-placement='top']) [part='sidePanel'] {
         border-block-end: 1px solid var(--lumo-contrast-10pct);
     }
 
-    :host([drawer-opened][drawer-placement='bottom']) [part='drawer'] {
+    :host([side-panel-opened][side-panel-placement='bottom']) [part='sidePanel'] {
         border-block-start: 1px solid var(--lumo-contrast-10pct);
     }
 `;

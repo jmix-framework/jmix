@@ -19,8 +19,8 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.kit.component.sidepanellayout.DrawerMode;
-import io.jmix.flowui.kit.component.sidepanellayout.DrawerPlacement;
+import io.jmix.flowui.kit.component.sidepanellayout.SidePanelMode;
+import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPlacement;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
@@ -50,43 +50,43 @@ public class SidePanelLayoutLoader extends AbstractComponentLoader<SidePanelLayo
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
 
-        loadEnum(element, DrawerPlacement.class, "drawerPlacement", resultComponent::setDrawerPlacement);
-        loadEnum(element, DrawerMode.class, "drawerMode", resultComponent::setDrawerMode);
+        loadEnum(element, SidePanelPlacement.class, "sidePanelPlacement", resultComponent::setSidePanelPlacement);
+        loadEnum(element, SidePanelMode.class, "sidePanelMode", resultComponent::setSidePanelMode);
         loadBoolean(element, "modal", resultComponent::setModal);
         loadBoolean(element, "closeOnModalityCurtainClick", resultComponent::setCloseOnModalityCurtainClick);
         loadBoolean(element, "displayAsOverlayOnSmallDevices", resultComponent::setDisplayAsOverlayOnSmallDevices);
         loadString(element, "overlayAriaLabel", resultComponent::setOverlayAriaLabel);
-        loadString(element, "drawerHorizontalMaxSize", resultComponent::setDrawerHorizontalMaxSize);
-        loadString(element, "drawerHorizontalMinSize", resultComponent::setDrawerHorizontalMinSize);
-        loadString(element, "drawerHorizontalSize", resultComponent::setDrawerHorizontalSize);
-        loadString(element, "drawerVerticalMaxSize", resultComponent::setDrawerVerticalMaxSize);
-        loadString(element, "drawerVerticalMinSize", resultComponent::setDrawerVerticalMinSize);
-        loadString(element, "drawerVerticalSize", resultComponent::setDrawerVerticalSize);
+        loadString(element, "sidePanelHorizontalMaxSize", resultComponent::setSidePanelHorizontalMaxSize);
+        loadString(element, "sidePanelHorizontalMinSize", resultComponent::setSidePanelHorizontalMinSize);
+        loadString(element, "sidePanelHorizontalSize", resultComponent::setSidePanelHorizontalSize);
+        loadString(element, "sidePanelVerticalMaxSize", resultComponent::setSidePanelVerticalMaxSize);
+        loadString(element, "sidePanelVerticalMinSize", resultComponent::setSidePanelVerticalMinSize);
+        loadString(element, "sidePanelVerticalSize", resultComponent::setSidePanelVerticalSize);
 
         loadSubComponents();
     }
 
-    protected void createSubComponents(SidePanelLayout drawerLayout, Element element) {
+    protected void createSubComponents(SidePanelLayout sidePanelLayout, Element element) {
         List<Element> elements = element.elements();
         if (elements.size() != 2) {
             throw new GuiDevelopmentException(String.format(
-                    drawerLayout.getClass().getSimpleName() + " '%s' must contain only two children",
+                    sidePanelLayout.getClass().getSimpleName() + " '%s' must contain only two children",
                     resultComponent.getId()), context, "Component ID", resultComponent.getId());
         }
 
         LayoutLoader layoutLoader = getLayoutLoader();
 
         ComponentLoader<?> contentLoader = layoutLoader.createComponentLoader(elements.get(0));
-        ComponentLoader<?> drawerContentLoader = layoutLoader.createComponentLoader(elements.get(1));
+        ComponentLoader<?> sidePanelContentLoader = layoutLoader.createComponentLoader(elements.get(1));
 
         contentLoader.initComponent();
-        drawerContentLoader.initComponent();
+        sidePanelContentLoader.initComponent();
 
         pendingLoadComponents.add(contentLoader);
-        pendingLoadComponents.add(drawerContentLoader);
+        pendingLoadComponents.add(sidePanelContentLoader);
 
         resultComponent.setContent(contentLoader.getResultComponent());
-        resultComponent.setDrawerContent(drawerContentLoader.getResultComponent());
+        resultComponent.setSidePanelContent(sidePanelContentLoader.getResultComponent());
     }
 
     protected void createSubComponents(List<ComponentLoader<?>> loaders, Consumer<List<Component>> setter) {

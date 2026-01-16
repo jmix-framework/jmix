@@ -34,8 +34,8 @@ export class JmixSidePanelLayoutSlotController extends SlotController {
             this.actualNodes.push(node);
         }
 
-        if (this.host.drawerOpened) {
-          this.host._moveDrawerChildren();
+        if (this.host.sidePanelOpened) {
+          this.host._moveSidePanelChildren();
         }
     }
 

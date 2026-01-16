@@ -21,7 +21,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.Style;
-import io.jmix.flowui.kit.component.sidepanellayout.DrawerPlacement;
+import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPlacement;
 import jakarta.annotation.Nullable;
 
 import java.util.*;
@@ -131,16 +131,16 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
         getElement().setProperty("fullscreenOnSmallDevices", fullscreenOnSmallDevice);
     }
 
-    public DrawerPlacement getDrawerPlacement() {
-        String placement = getElement().getProperty("drawerPlacement");
+    public SidePanelPlacement getSidePanelPlacement() {
+        String placement = getElement().getProperty("sidePanelPlacement");
         if (Strings.isNullOrEmpty(placement)) {
-            return DrawerPlacement.RIGHT;
+            return SidePanelPlacement.RIGHT;
         }
-        return DrawerPlacement.valueOf(placement.toUpperCase().replace("-", "_"));
+        return SidePanelPlacement.valueOf(placement.toUpperCase().replace("-", "_"));
     }
 
-    public void setDrawerPlacement(DrawerPlacement placement) {
-        getElement().setProperty("drawerPlacement", placement.name().toLowerCase().replace("_", "-"));
+    public void setSidePanelPlacement(SidePanelPlacement placement) {
+        getElement().setProperty("sidePanelPlacement", placement.name().toLowerCase().replace("_", "-"));
     }
 
     public boolean isOpened() {

@@ -23,7 +23,7 @@ import com.vaadin.flow.component.EventData;
 /**
  * Event fired when the user clicks on the modality curtain.
  */
-@DomEvent("jmix-side-panel-layout-modality-curtain-click")
+@DomEvent("jmix-side-panel-layout-modality-curtain-click-event")
 public class ModalityCurtainClickEvent extends ComponentEvent<JmixSidePanelLayout> {
 
     protected final int pageX;

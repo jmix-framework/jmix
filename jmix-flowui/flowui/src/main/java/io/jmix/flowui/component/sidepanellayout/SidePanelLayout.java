@@ -30,7 +30,7 @@ import java.util.function.BiPredicate;
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
 /**
- * The drawer layout component provides a container for a main content area and a drawer panel.
+ * The side panel layout component provides a container for a main content area and a side panel.
  *
  * @see SidePanelLayoutToggle
  */
@@ -49,8 +49,8 @@ public class SidePanelLayout extends JmixSidePanelLayout implements ComponentCon
         if (getContent() != null) {
             ownComponents.add(getContent());
         }
-        if (getDrawerContent() != null) {
-            ownComponents.add(getDrawerContent());
+        if (getSidePanelContent() != null) {
+            ownComponents.add(getSidePanelContent());
         }
         return ownComponents.isEmpty() ? Collections.emptyList() : List.copyOf(ownComponents);
     }
@@ -64,8 +64,8 @@ public class SidePanelLayout extends JmixSidePanelLayout implements ComponentCon
                 return component.get();
             }
         }
-        if (getDrawerContent() != null) {
-            Optional<Component> contentComponent = findComponent(getDrawerContent(), name);
+        if (getSidePanelContent() != null) {
+            Optional<Component> contentComponent = findComponent(getSidePanelContent(), name);
             if (contentComponent.isPresent()) {
                 return contentComponent.get();
             }

@@ -34,27 +34,27 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* RIGHT - default */
 
-    :host([drawer-placement='']),
-    :host([drawer-placement='right']) {
+    :host([side-panel-placement='']),
+    :host([side-panel-placement='right']) {
         align-items: flex-end;
         margin-right: 0;
     }
 
-    :host([drawer-placement=''][dir='rtl']),
-    :host([drawer-placement='right'][dir='rtl']) {
+    :host([side-panel-placement=''][dir='rtl']),
+    :host([side-panel-placement='right'][dir='rtl']) {
         align-items: flex-start;
         margin-left: 0;
     }
 
-    :host([opening][drawer-placement='']) [part='overlay'],
-    :host([opening][drawer-placement='right']) [part='overlay'] {
+    :host([opening][side-panel-placement='']) [part='overlay'],
+    :host([opening][side-panel-placement='right']) [part='overlay'] {
         transform: translateX(100%);
 
         animation: jmix-side-dialog-right-opening var(--jmix-side-dialog-transition-duration) ease-in-out both;
     }
 
-    :host([closing][drawer-placement='']) [part='overlay'],
-    :host([closing][drawer-placement='right']) [part='overlay'] {
+    :host([closing][side-panel-placement='']) [part='overlay'],
+    :host([closing][side-panel-placement='right']) [part='overlay'] {
         transform: translateX(0);
 
         animation: jmix-side-dialog-right-closing var(--jmix-side-dialog-transition-duration) ease-in-out both;
@@ -62,23 +62,23 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* LEFT */
 
-    :host([drawer-placement="left"]) {
+    :host([side-panel-placement="left"]) {
         align-items: flex-start;
         margin-left: 0;
     }
 
-    :host([drawer-placement='left'][dir='rtl']) {
+    :host([side-panel-placement='left'][dir='rtl']) {
         align-items: flex-end;
         margin-right: 0;
     }
 
-    :host([opening][drawer-placement='left']) [part='overlay'] {
+    :host([opening][side-panel-placement='left']) [part='overlay'] {
         transform: translateX(-100%);
 
         animation: jmix-side-dialog-left-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][drawer-placement='left']) [part='overlay'] {
+    :host([closing][side-panel-placement='left']) [part='overlay'] {
         transform: translateX(0);
 
         animation: jmix-side-dialog-left-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
@@ -86,18 +86,18 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* TOP */
 
-    :host([drawer-placement="top"]:not([fullscreen])) {
+    :host([side-panel-placement="top"]:not([fullscreen])) {
         margin-top: 0;
         align-self: flex-start;
     }
 
-    :host([opening][drawer-placement='top']) [part='overlay'] {
+    :host([opening][side-panel-placement='top']) [part='overlay'] {
         transform: translateY(-100%);
 
         animation: jmix-side-dialog-top-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][drawer-placement='top']) [part='overlay'] {
+    :host([closing][side-panel-placement='top']) [part='overlay'] {
         transform: translateY(0);
 
         animation: jmix-side-dialog-top-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
@@ -105,18 +105,18 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* Bottom */
 
-    :host([drawer-placement="bottom"]:not([fullscreen])) {
+    :host([side-panel-placement="bottom"]:not([fullscreen])) {
         margin-bottom: 0;
         align-self: flex-end;
     }
 
-    :host([opening][drawer-placement='bottom']) [part='overlay'] {
+    :host([opening][side-panel-placement='bottom']) [part='overlay'] {
         transform: translateY(100%);
 
         animation: jmix-side-dialog-bottom-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][drawer-placement='bottom']) [part='overlay'] {
+    :host([closing][side-panel-placement='bottom']) [part='overlay'] {
         transform: translateY(0);
 
         animation: jmix-side-dialog-bottom-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
@@ -124,30 +124,30 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* Inline start */
 
-    :host([drawer-placement="inline-start"]) {
+    :host([side-panel-placement="inline-start"]) {
         align-items: start;
         margin-inline-start: 0;
     }
 
-    :host([opening][drawer-placement='inline-start']) [part='overlay'] {
+    :host([opening][side-panel-placement='inline-start']) [part='overlay'] {
         transform: translateX(-100%);
 
         animation: jmix-side-dialog-left-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
-    :host([opening][drawer-placement='inline-start'][dir='rtl']) [part='overlay'] {
+    :host([opening][side-panel-placement='inline-start'][dir='rtl']) [part='overlay'] {
         transform: translateX(100%);
 
         animation: jmix-side-dialog-inline-start-rtl-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][drawer-placement='inline-start']) [part='overlay'] {
+    :host([closing][side-panel-placement='inline-start']) [part='overlay'] {
         transform: translateX(0%);
 
         animation: jmix-side-dialog-left-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][drawer-placement='inline-start'][dir='rtl']) [part='overlay'] {
+    :host([closing][side-panel-placement='inline-start'][dir='rtl']) [part='overlay'] {
         transform: translateX(100%);
 
         animation: jmix-side-dialog-inline-start-rtl-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
@@ -155,45 +155,45 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* Inline end */
 
-    :host([drawer-placement="inline-end"]) {
+    :host([side-panel-placement="inline-end"]) {
         align-items: end;
         margin-inline-end: 0;
     }
 
-    :host([opening][drawer-placement='inline-end']) [part='overlay'] {
+    :host([opening][side-panel-placement='inline-end']) [part='overlay'] {
         transform: translateX(100%);
 
         animation: jmix-side-dialog-right-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
-    :host([opening][drawer-placement='inline-end'][dir='rtl']) [part='overlay'] {
+    :host([opening][side-panel-placement='inline-end'][dir='rtl']) [part='overlay'] {
         transform: translateX(-100%);
 
         animation: jmix-side-dialog-inline-end-rtl-opening var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][drawer-placement='inline-end']) [part='overlay'] {
+    :host([closing][side-panel-placement='inline-end']) [part='overlay'] {
         transform: translateX(0%);
 
         animation: jmix-side-dialog-right-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][drawer-placement='inline-end'][dir='rtl']) [part='overlay'] {
+    :host([closing][side-panel-placement='inline-end'][dir='rtl']) [part='overlay'] {
         transform: translateX(100%);
 
         animation: jmix-side-dialog-inline-end-rtl-closing var(--jmix-side-dialog-transition-duration) ease-in-out forwards;
     }
 
-    :host([drawer-placement="left"]) [part='overlay'],
-    :host([drawer-placement="right"]) [part='overlay'],
-    :host([drawer-placement="inline-start"]) [part='overlay'],
-    :host([drawer-placement="inline-end"]) [part='overlay'] {
+    :host([side-panel-placement="left"]) [part='overlay'],
+    :host([side-panel-placement="right"]) [part='overlay'],
+    :host([side-panel-placement="inline-start"]) [part='overlay'],
+    :host([side-panel-placement="inline-end"]) [part='overlay'] {
         height: 100%;
         width: var(--jmix-side-dialog-horizontal-size);
     }
 
-    :host([drawer-placement="top"]) [part='overlay'],
-    :host([drawer-placement="bottom"]) [part='overlay'] {
+    :host([side-panel-placement="top"]) [part='overlay'],
+    :host([side-panel-placement="bottom"]) [part='overlay'] {
         height: var(--jmix-side-dialog-vertical-size);
         width: 100%;
     }

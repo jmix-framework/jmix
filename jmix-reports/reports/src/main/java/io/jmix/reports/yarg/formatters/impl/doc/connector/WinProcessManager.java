@@ -61,7 +61,7 @@ public class WinProcessManager extends JavaProcessManager implements ProcessMana
 
     @Override
     public void kill(Process process, List<Long> pids) {
-        log.info("Windows office process manager is going to kill following processes " + pids);
+        log.info("Windows office process manager is going to kill following processes {}", pids);
         for (Long pid : pids) {
             try {
                 if (PID_UNKNOWN != pid) {
@@ -72,7 +72,7 @@ public class WinProcessManager extends JavaProcessManager implements ProcessMana
                     super.kill(process, Collections.singletonList(pid));
                 }
             } catch (IOException e) {
-                log.error(String.format("An error occurred while killing process %d in windows system. Process.destroy() will be called.", pid), e);
+                log.error("An error occurred while killing process {} in windows system. Process.destroy() will be called.", pid, e);
                 super.kill(process, Collections.singletonList(pid));
             }
         }

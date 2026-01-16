@@ -19,7 +19,7 @@ package io.jmix.securityresourceserver.requestmatcher.impl;
 import io.jmix.securityresourceserver.requestmatcher.AuthenticatedRequestMatcherProvider;
 import io.jmix.securityresourceserver.requestmatcher.urlprovider.AuthenticatedUrlPatternsProvider;
 import io.jmix.securityresourceserver.requestmatcher.util.RequestMatcherUtils;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class AuthenticatedUrlPatternsRequestMatcherProvider implements Authentic
     public RequestMatcher getAuthenticatedRequestMatcher() {
         List<RequestMatcher> requestMatchers = authenticatedUrlPatternsProviders.stream()
                 .flatMap(urlPatternProvider -> urlPatternProvider.getAuthenticatedUrlPatterns().stream())
-                .map(AntPathRequestMatcher::new)
+                .map(PathPatternRequestMatcher::pathPattern)
                 .collect(Collectors.toList());
         return RequestMatcherUtils.createCombinedRequestMatcher(requestMatchers);
     }

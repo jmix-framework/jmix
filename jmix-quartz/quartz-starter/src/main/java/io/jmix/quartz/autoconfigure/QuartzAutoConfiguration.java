@@ -19,7 +19,7 @@ package io.jmix.quartz.autoconfigure;
 import io.jmix.quartz.QuartzConfiguration;
 import io.jmix.quartz.service.RunningJobsCache;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
+import org.springframework.boot.cache.autoconfigure.JCacheManagerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
@@ -29,6 +29,8 @@ import javax.cache.configuration.MutableConfiguration;
 @AutoConfiguration
 @Import({QuartzConfiguration.class})
 public class QuartzAutoConfiguration {
+
+    // TODO [SB4] Consider switch to Spring Cache
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})
     JCacheManagerCustomizer runningJobsCacheCustomizer() {

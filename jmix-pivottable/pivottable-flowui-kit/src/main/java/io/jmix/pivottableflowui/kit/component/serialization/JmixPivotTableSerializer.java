@@ -89,7 +89,7 @@ public class JmixPivotTableSerializer {
         itemsObjectMapper.registerModule(module);
         itemsObjectMapper.setFilterProvider(createFilterProvider());
 
-        itemsObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        itemsObjectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
     }
 
     protected SimpleModule createModule() {

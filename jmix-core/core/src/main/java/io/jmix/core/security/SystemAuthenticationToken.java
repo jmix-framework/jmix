@@ -35,7 +35,7 @@ public class SystemAuthenticationToken extends AbstractAuthenticationToken {
     }
 
     public SystemAuthenticationToken(@Nullable Object principal) {
-        super(null);
+        super((Collection<? extends GrantedAuthority>) null);
         this.principal = principal;
         setAuthenticated(false);
     }

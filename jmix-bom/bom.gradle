@@ -67,8 +67,13 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.5.6")
+    api platform("org.springframework.boot:spring-boot-dependencies:4.0.1")
     api platform('software.amazon.awssdk:bom:2.25.60')
+
+
+    // TODO [SB4]
+    //api platform('io.rest-assured:rest-assured-bom:6.0.0')
+    //
 
     def freeVersion = version
     def premiumVersion = version
@@ -341,8 +346,8 @@ dependencies {
         api "com.vaadin:vaadin-spreadsheet-flow:$vaadinFlowVersion"
         api "com.vaadin:vaadin-dashboard-flow:$vaadinFlowVersion"
 
-        api 'org.spockframework:spock-core:2.3-groovy-4.0'
-        api 'org.spockframework:spock-spring:2.3-groovy-4.0'
+        api 'org.spockframework:spock-core:2.4-groovy-5.0'
+        api 'org.spockframework:spock-spring:2.4-groovy-5.0'
 
         api 'io.swagger.core.v3:swagger-models-jakarta:2.2.17'
         api 'io.swagger.core.v3:swagger-core-jakarta:2.2.17'
@@ -436,8 +441,8 @@ dependencies {
         api 'io.vavr:vavr:0.9.3'
         api 'org.jetbrains:annotations:22.0.0'
 
-        api 'org.opensearch.client:opensearch-java:2.13.0'
-        api 'org.opensearch.client:opensearch-rest-client:2.14.0'
+        api 'org.opensearch.client:opensearch-java:3.4.0'
+        api 'org.opensearch.client:opensearch-rest-client:3.4.0'
 
         api 'com.github.f4b6a3:uuid-creator:6.0.0'
 
@@ -451,6 +456,12 @@ dependencies {
         api 'com.google.auth:google-auth-library-oauth2-http:1.39.1'
 
         api 'org.liquibase:liquibase-core:4.25.1!!'//see https://github.com/jmix-framework/jmix/issues/3888
+
+        // TODO Spring Boot 4
+        api 'org.springframework.session:spring-session-hazelcast:4.0.0-M2'
+        api 'com.hazelcast:hazelcast:5.6.0' // TODO [SB4] spring-session-hazelcast:4.0.0-M2 uses hazelcast:5.5.0
+        api 'io.rest-assured:rest-assured:6.0.0' //todo [SB4] 'io.rest-assured:rest-assured-bom:6.0.0' ?
+
     }
 }
 

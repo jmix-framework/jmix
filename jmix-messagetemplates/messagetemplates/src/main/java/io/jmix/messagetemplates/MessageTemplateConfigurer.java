@@ -19,8 +19,8 @@ package io.jmix.messagetemplates;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties;
-import org.springframework.boot.autoconfigure.freemarker.FreeMarkerVariablesCustomizer;
+import org.springframework.boot.freemarker.autoconfigure.FreeMarkerProperties;
+import org.springframework.boot.freemarker.autoconfigure.FreeMarkerVariablesCustomizer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import java.io.IOException;

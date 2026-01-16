@@ -26,6 +26,8 @@ import org.eclipse.persistence.internal.jpa.EntityManagerImpl;
 import org.springframework.beans.factory.ListableBeanFactory;
 
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class JmixEntityManagerFactory implements EntityManagerFactory {
 
@@ -95,6 +97,11 @@ public class JmixEntityManagerFactory implements EntityManagerFactory {
     }
 
     @Override
+    public String getName() {
+        return ""; //TODO [SB4]
+    }
+
+    @Override
     public Map<String, Object> getProperties() {
         return delegate.getProperties();
     }
@@ -110,6 +117,16 @@ public class JmixEntityManagerFactory implements EntityManagerFactory {
     }
 
     @Override
+    public PersistenceUnitTransactionType getTransactionType() {
+        return null; //TODO [SB4]
+    }
+
+    @Override
+    public SchemaManager getSchemaManager() {
+        return null; //TODO [SB4]
+    }
+
+    @Override
     public void addNamedQuery(String name, Query query) {
         delegate.addNamedQuery(name, query);
     }
@@ -122,5 +139,25 @@ public class JmixEntityManagerFactory implements EntityManagerFactory {
     @Override
     public <T> void addNamedEntityGraph(String graphName, EntityGraph<T> entityGraph) {
         delegate.addNamedEntityGraph(graphName, entityGraph);
+    }
+
+    @Override
+    public <R> Map<String, TypedQueryReference<R>> getNamedQueries(Class<R> aClass) {
+        return Map.of(); //TODO [SB4]
+    }
+
+    @Override
+    public <E> Map<String, EntityGraph<? extends E>> getNamedEntityGraphs(Class<E> aClass) {
+        return Map.of(); //TODO [SB4]
+    }
+
+    @Override
+    public void runInTransaction(Consumer<EntityManager> consumer) {
+        //TODO [SB4]
+    }
+
+    @Override
+    public <R> R callInTransaction(Function<EntityManager, R> function) {
+        return null; //TODO [SB4]
     }
 }

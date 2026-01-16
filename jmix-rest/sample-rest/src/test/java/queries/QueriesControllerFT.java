@@ -111,7 +111,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         params.put("login", "bob");
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals(MediaType.APPLICATION_JSON_UTF8_VALUE, responseContentType(response));
+            assertEquals(MediaType.APPLICATION_JSON_VALUE, responseContentType(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(1, ctx.<Collection>read("$").size());
             assertEquals("Company", ctx.read("$.[0].group.name"));
@@ -131,7 +131,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         Map<String, String> params = new HashMap<>();
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals(MediaType.APPLICATION_JSON_UTF8_VALUE, responseContentType(response));
+            assertEquals(MediaType.APPLICATION_JSON_VALUE, responseContentType(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(1, ctx.<Collection>read("$").size());
             assertEquals("admin", ctx.read("$.[0].login"));
@@ -147,7 +147,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         String json = getFileContent("coloursByNames.json", null);
         try (CloseableHttpResponse response = sendPost(url, oauthToken, json, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals(MediaType.APPLICATION_JSON_UTF8_VALUE, responseContentType(response));
+            assertEquals(MediaType.APPLICATION_JSON_VALUE, responseContentType(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(2, ctx.<Collection>read("$").size());
             assertEquals("Colour 1", ctx.read("$.[0].name"));
@@ -169,7 +169,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         String json = getFileContent("coloursByIds.json", replacements);
         try (CloseableHttpResponse response = sendPost(url, oauthToken, json, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals(MediaType.APPLICATION_JSON_UTF8_VALUE, responseContentType(response));
+            assertEquals(MediaType.APPLICATION_JSON_VALUE, responseContentType(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(2, ctx.<Collection>read("$").size());
             assertEquals(coloursUuids.get(0).toString(), ctx.read("$.[0].id"));
@@ -190,7 +190,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         params.put("returnCount", "true");
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals(MediaType.APPLICATION_JSON_UTF8_VALUE, responseContentType(response));
+            assertEquals(MediaType.APPLICATION_JSON_VALUE, responseContentType(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(1, ctx.<Collection>read("$").size());
 
@@ -208,7 +208,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         params.put("login", "bob");
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals(MediaType.APPLICATION_JSON_UTF8_VALUE, responseContentType(response));
+            assertEquals(MediaType.APPLICATION_JSON_VALUE, responseContentType(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(1, ctx.<Collection>read("$").size());
 
@@ -237,7 +237,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         params.put("login", "bob");
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals(MediaType.APPLICATION_JSON_UTF8_VALUE, responseContentType(response));
+            assertEquals(MediaType.APPLICATION_JSON_VALUE, responseContentType(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(1, ctx.<Collection>read("$").size());
 
@@ -371,7 +371,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         params.put("returnCount", "true");
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals(MediaType.APPLICATION_JSON_UTF8_VALUE, responseContentType(response));
+            assertEquals(MediaType.APPLICATION_JSON_VALUE, responseContentType(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(1, ctx.<Collection>read("$").size());
             assertEquals("001", ctx.read("$.[0].oldVin"));

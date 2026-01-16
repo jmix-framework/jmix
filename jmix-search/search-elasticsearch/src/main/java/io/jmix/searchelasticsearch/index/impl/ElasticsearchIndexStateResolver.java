@@ -40,7 +40,7 @@ public class ElasticsearchIndexStateResolver extends IndexStateResolver<IndexSta
     protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
         try {
-            return client.indices().get(builder -> builder.index(indexName).includeDefaults(true)).result();
+            return client.indices().get(builder -> builder.index(indexName).includeDefaults(true)).indices();
         } catch (IOException e) {
             throw new RuntimeException("Unable to load metadata of index '" + indexName + "'", e);
         }

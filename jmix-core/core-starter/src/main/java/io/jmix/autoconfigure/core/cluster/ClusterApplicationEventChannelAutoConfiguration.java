@@ -23,12 +23,12 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
+//import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
 @ConditionalOnMissingBean(ClusterApplicationEventChannelSupplier.class)
-@AutoConfigureAfter(HazelcastAutoConfiguration.class)
+// @AutoConfigureAfter(HazelcastAutoConfiguration.class) // TODO [SB4][hazelcast]
 @ConditionalOnClass(HazelcastInstance.class)
 @ConditionalOnSingleCandidate(HazelcastInstance.class)
 public class ClusterApplicationEventChannelAutoConfiguration {

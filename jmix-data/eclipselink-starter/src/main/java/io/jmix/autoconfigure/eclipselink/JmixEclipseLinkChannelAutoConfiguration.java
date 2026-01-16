@@ -22,7 +22,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
+//import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +31,7 @@ import org.springframework.core.annotation.Order;
 
 @AutoConfiguration
 @ConditionalOnMissingBean(EclipseLinkChannelSupplier.class)
-@AutoConfigureAfter(HazelcastAutoConfiguration.class)
+//@AutoConfigureAfter(HazelcastAutoConfiguration.class) //todo [SB4][hazelcast]
 @Import({JmixEclipseLinkChannelAutoConfiguration.HazelcastChannelConfiguration.class,
         JmixEclipseLinkChannelAutoConfiguration.NoOpChannelConfiguration.class})
 public class JmixEclipseLinkChannelAutoConfiguration {

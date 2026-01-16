@@ -35,6 +35,7 @@ public class SubstitutedUserAuthenticationProvider implements AuthenticationProv
         SubstitutedUserAuthenticationToken substitutedAuthentication = (SubstitutedUserAuthenticationToken) authentication;
 
         String substitutedUserName = (String) substitutedAuthentication.getSubstitutedPrincipal();
+        // TODO [SB4] FactorGrantedAuthority is missed on loading
         UserDetails substitutedUser = userDetailsService.loadUserByUsername(substitutedUserName);
 
         SubstitutedUserAuthenticationToken authenticated = new SubstitutedUserAuthenticationToken(

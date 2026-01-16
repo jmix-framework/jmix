@@ -60,8 +60,7 @@ public class StandardAuthenticationProvidersProducer {
         providers.add(new SystemAuthenticationProvider(userRepository));
         providers.add(new SubstitutedUserAuthenticationProvider(userRepository));
 
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userRepository);
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userRepository);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
         daoAuthenticationProvider.setPreAuthenticationChecks(preAuthenticationChecks);
         daoAuthenticationProvider.setPostAuthenticationChecks(postAuthenticationChecks);

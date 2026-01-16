@@ -33,7 +33,7 @@ public class JavaProcessManager implements ProcessManager {
 
     @Override
     public void kill(Process process, List<Long> pids) {
-        log.info("Java office process manager is going to kill following processes " + pids);
+        log.info("Java office process manager is going to kill following processes {}", pids);
         if (process != null)
             process.destroy();
     }

@@ -23,11 +23,11 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
+/*import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
 
 import org.springframework.boot.autoconfigure.session.HazelcastSessionProperties;
 import org.springframework.boot.autoconfigure.session.SessionProperties;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.ServerProperties;*/
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.context.ApplicationEventPublisher;
@@ -48,14 +48,14 @@ import java.util.stream.Collectors;
  * <p>
  * {@link SpringHttpSessionConfiguration} import avoided in order to use Jmix bean implementations which add Vaadin compatibility.
  */
-@AutoConfiguration(after = HazelcastAutoConfiguration.class)
+/*@AutoConfiguration(after = HazelcastAutoConfiguration.class)
 @ConditionalOnClass({HazelcastInstance.class, HazelcastIndexedSessionRepository.class})
 @ConditionalOnSingleCandidate(HazelcastInstance.class)
 @ConditionalOnMissingBean(SessionRepository.class)
-@EnableConfigurationProperties(HazelcastSessionProperties.class)
+@EnableConfigurationProperties(HazelcastSessionProperties.class)*/
 public class JmixHazelcastSessionsAutoConfiguration {
-
-    private HazelcastInstance hazelcastInstance;
+    // TODO [SB4][hazelcast]
+    /*private HazelcastInstance hazelcastInstance;
     private ApplicationEventPublisher applicationEventPublisher;
     private IndexResolver<Session> indexResolver;
     private List<SessionRepositoryCustomizer<HazelcastIndexedSessionRepository>> sessionRepositoryCustomizers;
@@ -143,5 +143,5 @@ public class JmixHazelcastSessionsAutoConfiguration {
     @Autowired(required = false)
     public void setSessionIdGenerator(SessionIdGenerator sessionIdGenerator) {
         this.sessionIdGenerator = sessionIdGenerator;
-    }
+    }*/
 }

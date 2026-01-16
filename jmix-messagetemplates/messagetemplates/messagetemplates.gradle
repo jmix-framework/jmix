@@ -26,6 +26,8 @@ dependencies {
 
     api 'org.freemarker:freemarker'
 
+    api 'org.springframework.boot:spring-boot-starter-freemarker' //TODO [SB4]
+
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.springframework.boot:spring-boot-test'

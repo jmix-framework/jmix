@@ -25,8 +25,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import liquibase.integration.spring.SpringLiquibase;
-import org.apache.http.HttpHost;
-import org.apache.http.client.CredentialsProvider;
+import org.apache.hc.core5.http.HttpHost;
 import org.mockito.Mockito;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
@@ -38,8 +37,8 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import javax.net.ssl.SSLContext;
 import javax.sql.DataSource;
+import java.net.URISyntaxException;
 
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
@@ -94,8 +93,15 @@ public class OpenSearchIndexingTestConfiguration {
 
     @Bean
     public OpenSearchClient testOpenSearchClient(SearchProperties searchProperties) {
-        HttpHost host = HttpHost.create(searchProperties.getServerUrl());
-        RestClient restClient = RestClient.builder(host).build();
+        String url = searchProperties.getServerUrl();
+        HttpHost httpHost;
+        try {
+            httpHost = HttpHost.create(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Invalid OpenSearch URL: " + url, e);
+        }
+
+        RestClient restClient = RestClient.builder(httpHost).build();
 
         final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
         return new OpenSearchClient(transport);

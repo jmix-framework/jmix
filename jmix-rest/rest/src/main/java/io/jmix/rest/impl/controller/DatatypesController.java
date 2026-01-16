@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Controller that is used for getting datatypes information.
  */
 @RestController("rest_DatatypesController")
-@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.metadata-path}/datatypes", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.metadata-path}/datatypes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DatatypesController {
     @Autowired
     protected DatatypesControllerManager datatypesControllerManager;

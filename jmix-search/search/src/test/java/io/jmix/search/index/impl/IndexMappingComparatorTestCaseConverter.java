@@ -16,14 +16,27 @@
 
 package io.jmix.search.index.impl;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregationException;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregator;
 import org.junit.jupiter.params.converter.ArgumentConversionException;
 import org.junit.jupiter.params.converter.ArgumentConverter;
 
-public class IndexMappingComparatorTestCaseConverter implements ArgumentConverter {
-    @Override
+public class IndexMappingComparatorTestCaseConverter implements ArgumentsAggregator {
+    /*@Override
     public Object convert(Object source, ParameterContext context) throws ArgumentConversionException {
         String[] parts = ((String) source).split(";");
         return IndexMappingComparatorTestCase.testCase(parts[0], parts[1], MappingComparingResult.valueOf(parts[2]));
+    }*/
+
+    @Override
+    public @Nullable Object aggregateArguments(ArgumentsAccessor accessor, ParameterContext context) throws ArgumentsAggregationException {
+        return IndexMappingComparatorTestCase.testCase(
+                accessor.getString(0),
+                accessor.getString(1),
+                MappingComparingResult.valueOf(accessor.getString(2))
+        );
     }
 }

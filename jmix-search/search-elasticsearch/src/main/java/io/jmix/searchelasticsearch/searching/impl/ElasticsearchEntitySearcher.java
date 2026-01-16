@@ -3,8 +3,10 @@ package io.jmix.searchelasticsearch.searching.impl;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
+import co.elastic.clients.util.NamedValue;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -145,11 +147,17 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
     }
 
     protected void configureHighlight(SearchRequest.Builder requestBuilder) {
+        // TODO [SB4] ES Rest Client 9 changed approach of configuration. Now differs from OpenSearch which keep using ola approach
+        HighlightField highlightField = HighlightField.of(fieldBuilder ->
+                fieldBuilder
+                        .preTags("<b>")
+                        .postTags("</b>")
+        );
+
         requestBuilder.highlight(highlightBuilder ->
-                highlightBuilder.requireFieldMatch(true)
-                        .fields("*", highlightFieldBuilder ->
-                                highlightFieldBuilder.preTags("<b>").postTags("</b>")
-                        )
+                highlightBuilder
+                        .requireFieldMatch(true)
+                        .fields(new NamedValue<>("*", highlightField))
         );
     }
 

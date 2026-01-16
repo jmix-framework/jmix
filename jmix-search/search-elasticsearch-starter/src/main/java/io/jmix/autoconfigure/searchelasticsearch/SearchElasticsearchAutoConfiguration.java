@@ -18,7 +18,8 @@ package io.jmix.autoconfigure.searchelasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
+import co.elastic.clients.transport.rest5_client.Rest5ClientTransport;
+import co.elastic.clients.transport.rest5_client.low_level.Rest5Client;
 import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.data.DataConfiguration;
@@ -39,12 +40,16 @@ import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrateg
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategyProvider;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.elasticsearch.client.RestClient;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -54,8 +59,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.lang.Nullable;
 
 import javax.net.ssl.SSLContext;
+import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.List;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class,
@@ -72,25 +77,39 @@ public class SearchElasticsearchAutoConfiguration {
     @Bean("search_ElasticsearchClient")
     @ConditionalOnMissingBean(ElasticsearchClient.class)
     public ElasticsearchClient elasticsearchClient() {
+        String url = searchProperties.getServerUrl();
+        HttpHost httpHost;
+        try {
+            httpHost = HttpHost.create(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Invalid Elasticsearch URL: " + url, e);
+        }
+
         CredentialsProvider credentialsProvider = createCredentialsProvider();
         SSLContext sslContext = sslConfigurer.createSslContext();
 
-        String url = searchProperties.getServerUrl();
-        RestClient restClient = RestClient
-                .builder(HttpHost.create(url))
+        Rest5Client restClient = Rest5Client
+                .builder(httpHost)
                 .setHttpClientConfigCallback(httpClientBuilder -> {
                     if (credentialsProvider != null) {
                         httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
                     }
                     if (sslContext != null) {
-                        httpClientBuilder.setSSLContext(sslContext);
+                        TlsStrategy tlsStrategy = ClientTlsStrategyBuilder.create()
+                                .setSslContext(sslContext)
+                                .build();
+
+                        PoolingAsyncClientConnectionManager connectionManager =
+                                PoolingAsyncClientConnectionManagerBuilder.create()
+                                        .setTlsStrategy(tlsStrategy)
+                                        .build();
+
+                        httpClientBuilder.setConnectionManager(connectionManager);
                     }
-                    return httpClientBuilder;
                 })
                 .build();
 
-
-        RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        Rest5ClientTransport transport = new Rest5ClientTransport(restClient, new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
     }
 
@@ -177,16 +196,30 @@ public class SearchElasticsearchAutoConfiguration {
 
     @Nullable
     protected CredentialsProvider createCredentialsProvider() {
-        CredentialsProvider credentialsProvider = null;
-        if (!Strings.isNullOrEmpty(searchProperties.getServerLogin())) {
-            credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(
-                            searchProperties.getServerLogin(),
-                            searchProperties.getServerPassword()
-                    )
-            );
+        if (Strings.isNullOrEmpty(searchProperties.getServerLogin())) {
+            return null;
         }
+
+        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        AuthScope authScope = createAuthScope();
+        UsernamePasswordCredentials credentials = createCredentials();
+        credentialsProvider.setCredentials(authScope, credentials);
+
         return credentialsProvider;
+    }
+
+    protected AuthScope createAuthScope() {
+        // TODO [SB4] Same as AuthScope.ANY from old HttpClient 4
+        return new AuthScope(null, null, -1, null, null);
+    }
+
+    protected UsernamePasswordCredentials createCredentials() {
+        String login = searchProperties.getServerLogin();
+        String passwordString = searchProperties.getServerPassword();
+        char[] password = StringUtils.isNotEmpty(passwordString)
+                ? passwordString.toCharArray()
+                : new char[0];
+
+        return new UsernamePasswordCredentials(login, password);
     }
 }

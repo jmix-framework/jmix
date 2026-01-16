@@ -26,11 +26,11 @@ import java.util.Properties;
 
 import io.jmix.flowui.devserver.servlet.JmixServletContextListener;
 import io.jmix.flowui.devserver.servlet.JmixSystemPropertiesLifeCycleListener;
-import org.eclipse.jetty.ee10.annotations.AnnotationConfiguration;
-import org.eclipse.jetty.ee10.webapp.Configurations;
-import org.eclipse.jetty.ee10.webapp.JettyWebXmlConfiguration;
-import org.eclipse.jetty.ee10.webapp.WebAppContext;
-import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
+import org.eclipse.jetty.ee11.annotations.AnnotationConfiguration;
+import org.eclipse.jetty.ee11.webapp.Configurations;
+import org.eclipse.jetty.ee11.webapp.JettyWebXmlConfiguration;
+import org.eclipse.jetty.ee11.webapp.WebAppContext;
+import org.eclipse.jetty.ee11.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
 import org.eclipse.jetty.util.resource.Resource;

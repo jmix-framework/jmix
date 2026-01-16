@@ -41,7 +41,7 @@ import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import io.jmix.security.SecurityConfiguration;
 import jakarta.persistence.EntityManagerFactory;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
@@ -63,6 +63,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.net.URISyntaxException;
 
 @Configuration
 @Import({
@@ -104,12 +105,16 @@ public class OpenSearchTestConfiguration {
     @Bean
     public OpenSearchClient baseOpenSearchClient() {
         String url = searchProperties.getServerUrl();
+        HttpHost httpHost;
+        try {
+            httpHost = HttpHost.create(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Invalid OpenSearch URL: " + url, e);
+        }
 
-        RestClient restClient = RestClient
-                .builder(HttpHost.create(url))
-                .build();
+        RestClient restClient = RestClient.builder(httpHost).build();
 
-        OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
         return new OpenSearchClient(transport);
     }
 

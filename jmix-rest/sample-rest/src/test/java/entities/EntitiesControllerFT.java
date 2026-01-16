@@ -2356,6 +2356,33 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         }
     }
 
+    @Test
+    void createComplexValidatedEntity() throws Exception {
+        Map<String, String> replacements = new HashMap<>();
+        UUID rootEntityId = dirtyData.createRootEntityId();
+        replacements.put("$ROOT_ID$", rootEntityId.toString());
+        UUID nestedEntityId = dirtyData.createNestedEntityId();
+        replacements.put("$NESTED_ID$", nestedEntityId.toString());
+
+        String json = getFileContent("nestedEntity.json", replacements);
+        String url = baseUrl + "/entities/rest_NestedEntity";
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, null)) {
+            assertEquals(HttpStatus.SC_CREATED, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals("rest_NestedEntity", ctx.read("$._entityName"));
+            assertEquals(nestedEntityId.toString(), ctx.read("$.id"));
+        }
+
+        json = getFileContent("rootEntity.json", replacements);
+        url = baseUrl + "/entities/rest_RootEntity";
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, null)) {
+            assertEquals(HttpStatus.SC_CREATED, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals("rest_RootEntity", ctx.read("$._entityName"));
+            assertEquals(rootEntityId.toString(), ctx.read("$.id"));
+        }
+    }
+
     private void executePrepared(String sql, Object... params) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {

@@ -223,7 +223,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      * Sets the height of the side panel when side placement is horizontal ({@link SidePanelPlacement#TOP},
      * {@link SidePanelPlacement#BOTTOM}).
      * <p>
-     * The height should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * The height should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
      * If the provided height value is {@code null} then height is removed from the component style.
      *
@@ -248,7 +248,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      * Sets the max-height of the side panel when side panel placement is horizontal ({@link SidePanelPlacement#TOP},
      * {@link SidePanelPlacement#BOTTOM}).
      * <p>
-     * The max-height should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * The max-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
      * If the provided max-height value is {@code null} then max-height is removed from the component style.
      *
@@ -273,7 +273,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      * Sets the min-height of the side panel when placement is horizontal ({@link SidePanelPlacement#TOP},
      * {@link SidePanelPlacement#BOTTOM}).
      * <p>
-     * The min-height should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * The min-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
      * If the provided min-height value is {@code null} then min-height is removed from the component style.
      *
@@ -298,7 +298,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      * Sets the width of the side panel when placement is horizontal ({@link SidePanelPlacement#LEFT},
      * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START}, {@link SidePanelPlacement#INLINE_END}).
      * <p>
-     * The width should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * The width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
      * If the provided width value is {@code null} then width is removed from the component style.
      *
@@ -323,7 +323,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      * Sets the max-width of the side panel when placement is horizontal ({@link SidePanelPlacement#LEFT},
      * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START}, {@link SidePanelPlacement#INLINE_END}).
      * <p>
-     * The max-width should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * The max-width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
      * If the provided width value is {@code null} then max-width is removed from the component style.
      *
@@ -348,7 +348,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      * Sets the min-width of the side panel when placement is horizontal ({@link SidePanelPlacement#LEFT},
      * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START}, {@link SidePanelPlacement#INLINE_END}).
      * <p>
-     * The min-width should be in a format understood by the browser, e.g. "100px" or "2.5rem".
+     * The min-width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
      * If the provided min-width value is {@code null} then min-width is removed from the component style.
      *

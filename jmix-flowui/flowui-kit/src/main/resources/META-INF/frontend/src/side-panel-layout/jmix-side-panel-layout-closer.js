@@ -36,7 +36,6 @@ class JmixSidePanelLayoutCloser extends ButtonMixin(DirMixin(ThemableMixin(Polym
             <slot id="slot">
                 <div part="icon"></div>
             </slot>
-            <div part="icon" hidden$="[[!_showFallbackIcon]]"></div>
         `;
     }
 
@@ -46,30 +45,7 @@ class JmixSidePanelLayoutCloser extends ButtonMixin(DirMixin(ThemableMixin(Polym
                type: String,
                reflectToAttribute: true,
            },
-
-           _showFallbackIcon: {
-               type: Boolean,
-               value: false,
-           },
        };
-    }
-
-    constructor() {
-        super();
-    }
-
-    ready() {
-        super.ready();
-
-        this._toggleFallbackIcon();
-
-        this.$.slot.addEventListener('slotchange', () => this._toggleFallbackIcon());
-    }
-
-    _toggleFallbackIcon() {
-      const nodes = this.$.slot.assignedNodes();
-
-      this._showFallbackIcon = nodes.length > 0 && nodes.every((node) => isEmptyTextNode(node));
     }
 }
 

@@ -54,4 +54,12 @@ export const jmixSidePanelCloserLayout = css`
     [part='icon']::before {
        top: 12px;
     }
+
+    @media (forced-colors: active) {
+
+        :host {
+            outline: 1px solid;
+            outline-offset: -1px;
+        }
+    }
 `;

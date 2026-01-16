@@ -22,12 +22,12 @@ export const sidePanelLayoutStyles = css`
         box-sizing: border-box;
 
         --jmix-side-panel-vertical-size: auto;
-        --jmix-side-panel-vertical-max-size: 14rem;
-        --jmix-side-panel-vertical-min-size: 10rem;
+        --jmix-side-panel-vertical-max-size: 14em;
+        --jmix-side-panel-vertical-min-size: 10em;
 
         --jmix-side-panel-horizontal-size: auto;
-        --jmix-side-panel-horizontal-max-size: 25rem;
-        --jmix-side-panel-horizontal-min-size: 15rem;
+        --jmix-side-panel-horizontal-max-size: 26em;
+        --jmix-side-panel-horizontal-min-size: 14em;
 
         --jmix-side-panel-transition: 200ms;
     }
@@ -220,6 +220,13 @@ export const sidePanelLayoutStyles = css`
     @keyframes jmix-modality-curtain-dimmed-out {
         100% {
             opacity: 0;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        :host {
+            --jmix-side-panel-transition: none !important;
         }
     }
 `;

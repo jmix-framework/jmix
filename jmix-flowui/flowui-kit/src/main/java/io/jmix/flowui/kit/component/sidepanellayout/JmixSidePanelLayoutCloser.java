@@ -21,20 +21,42 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
+import jakarta.annotation.Nullable;
 
 @Tag("jmix-side-panel-layout-closer")
 @JsModule("./src/side-panel-layout/jmix-side-panel-layout-closer.js")
 public class JmixSidePanelLayoutCloser extends Button {
 
+    protected Component icon;
+
     public JmixSidePanelLayoutCloser() {
         attachClickListener();
+        setIcon(null);
     }
 
-    public void setIcon(Component icon) {
-        super.setIcon(icon);
+    @Nullable
+    @Override
+    public Component getIcon() {
+        return icon;
+    }
+
+    public void setIcon(@Nullable Component icon) {
+        this.icon = icon;
+
+        setIconInternal(icon);
+    }
+
+    protected void setIconInternal(@Nullable Component icon) {
+        super.setIcon(icon == null
+                ? JmixFontIcon.SIDE_PANEL_LAYOUT_CLOSER.create()
+                : icon);
+
         // The slot attribute needs to be removed because jmix-side-panel-layout-closer
         // template doesn't have prefix and suffix slots
-        icon.getElement().removeAttribute("slot");
+        if (super.getIcon() != null) {
+            super.getIcon().getElement().removeAttribute("slot");
+        }
     }
 
     protected void attachClickListener() {

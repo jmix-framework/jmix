@@ -48,7 +48,6 @@ const sidePanelSidePanelLayoutCloserStyles = css`
     [part='icon']::before {
         font-family: lumo-icons;
         font-size: var(--lumo-icon-size-m);
-        content: var(--lumo-icons-cross);
     }
 
     :host([slot~='navbar']) {

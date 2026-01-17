@@ -21,10 +21,13 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
 import io.jmix.flowui.kit.event.EventBus;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
+/**
+ * An abstract class for binding a UI component with URL query parameters.
+ */
 public abstract class AbstractUrlQueryParametersBinder implements UrlQueryParametersFacet.Binder {
 
     protected String id;
@@ -51,6 +54,11 @@ public abstract class AbstractUrlQueryParametersBinder implements UrlQueryParame
         getEventBus().fireEvent(event);
     }
 
+    /**
+     * Returns the component associated with this binder.
+     *
+     * @return the component instance if available, or {@code null} if no component is associated
+     */
     @Nullable
     public abstract Component getComponent();
 

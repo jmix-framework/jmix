@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mainView xmlns="http://jmix.io/schema/tabmod/main-view"
+          title="${messageKeys['mainViewSideMenuTitle']}">
+    <actions>
+        <%if (createUserMenu) {%>
+        <action id="logoutAction" text="msg:///actions.logout.text" type="logout"/>
+        <%} else {%>
+        <action id="logoutAction" type="logout"/>
+        <%}%>
+    </actions>
+    <appLayout primarySection="NAVBAR">
+        <navigationBar>
+            <header id="header" classNames="jmix-main-view-header">
+                <drawerToggle id="drawerToggle"
+                              classNames="jmix-main-view-drawer-toggle"
+                              themeNames="contrast"
+                              ariaLabel="${messageKeys['drawerToggleAriaLabel']}"/>
+                <h2 id="applicationTitle"
+                    text="${messageKeys['applicationTitleText']}"
+                    classNames="jmix-main-view-application-title">
+                </h2>
+                <%if (createUserMenu) {%>
+                <userMenu id="userMenu"
+                          themeNames="tertiary" classNames="ms-auto me-m">
+                    <items>
+                        <separator/>
+                        <actionItem id="substituteUserMenuItem"
+                                    themeNames="non-checkable">
+                            <action id="substituteUserAction" type="sec_userMenuSubstituteUser"/>
+                        </actionItem>
+                        <separator/>
+                        <actionItem id="logoutMenuItem" ref="logoutAction"
+                                    themeNames="non-checkable"/>
+                    </items>
+                </userMenu>
+                <%}%>
+            </header>
+        </navigationBar>
+        <drawerLayout>
+            <section id="section" classNames="jmix-main-view-section">
+                <nav id="navigation"
+                     classNames="jmix-main-view-navigation"
+                     ariaLabel="${messageKeys['navigationAriaLabel']}">
+                    <listMenu id="menu"/>
+                </nav>
+                <%if (!createUserMenu) {%>
+                <footer id="footer" classNames="jmix-main-view-footer">
+                    <userIndicator id="userIndicator"/>
+                    <button id="logoutButton"
+                            action="logoutAction"
+                            classNames="jmix-logout-button"/>
+                </footer>
+                <%}%>
+            </section>
+        </drawerLayout>
+        <workArea id="workArea"
+                  classNames="jmix-work-area">
+            <mainTabSheet id="mainTabSheet"
+                          classNames="jmix-main-tabsheet"
+                          tabsDraggable="true"
+                          width="100%" height="100%">
+                <actions>
+                    <action id="closeThisTabAction" type="tabmod_closeThisTab"/>
+                    <action id="closeOthersTabsAction" type="tabmod_closeOtherTabs"/>
+                    <action id="closeAllTabsAction" type="tabmod_closeAllTabs"/>
+                </actions>
+            </mainTabSheet>
+            <initialLayout id="initialLayout"
+                           classNames="jmix-initial-layout"
+                           alignItems="CENTER" justifyContent="CENTER"
+                           width="100%" height="100%">
+                <vbox alignItems="CENTER" maxWidth="40em" >
+                    <image resource="icons/icon.png" height="5rem"/>
+                    <h1 text="${messageKeys['applicationTitleText']}"/>
+                </vbox>
+                <!--
+                    This is the work area - central part of the view.
+                    Put your components here.
+                -->
+            </initialLayout>
+        </workArea>
+    </appLayout>
+</mainView>

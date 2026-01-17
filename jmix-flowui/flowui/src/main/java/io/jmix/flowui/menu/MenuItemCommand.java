@@ -16,9 +16,21 @@
 
 package io.jmix.flowui.menu;
 
+/**
+ * Represents a command that can be associated with a menu item,
+ * providing a description and the logic to be executed when the command is run.
+ */
 public interface MenuItemCommand {
 
+    /**
+     * Returns the description of this command.
+     *
+     * @return description of this command
+     */
     String getDescription();
 
+    /**
+     * Executes the logic associated with this command.
+     */
     void run();
 }

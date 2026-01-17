@@ -22,4 +22,6 @@ public class TestSupport {
 
     public static final UUID UUID_1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
+    public static final UUID UUID_10 = UUID.fromString("00000000-0000-0000-0000-000000000010");
+
 }

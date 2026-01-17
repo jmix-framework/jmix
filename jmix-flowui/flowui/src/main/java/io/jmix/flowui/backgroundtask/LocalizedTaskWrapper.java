@@ -21,6 +21,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.exception.DefaultUiExceptionHandler;
 import io.jmix.flowui.impl.DialogsImpl;
 import io.jmix.flowui.view.View;
 import org.slf4j.Logger;
@@ -54,6 +55,7 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
 
     protected Messages messages;
     protected Notifications notifications;
+    protected DefaultUiExceptionHandler defaultUiExceptionHandler;
 
     protected BackgroundTask<T, V> wrappedTask;
     protected Consumer<CloseViewContext> closeViewHandler;
@@ -75,11 +77,30 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
         this.notifications = notifications;
     }
 
+    @Autowired
+    public void setDefaultUiExceptionHandler(DefaultUiExceptionHandler defaultUiExceptionHandler) {
+        this.defaultUiExceptionHandler = defaultUiExceptionHandler;
+    }
+
+    /**
+     * Returns the close view handler, which is a consumer that is executed when a particular
+     * view or task needs to be closed.
+     *
+     * @return the close view handler as a {@link Consumer} of {@link CloseViewContext},
+     *         or {@code null} if no handler is set.
+     */
     @Nullable
     public Consumer<CloseViewContext> getCloseViewHandler() {
         return closeViewHandler;
     }
 
+    /**
+     * Sets a consumer as the close view handler. The provided handler defines the actions
+     * to execute when a view needs to be closed.
+     *
+     * @param closeViewHandler a {@link Consumer} of {@link CloseViewContext} that handles view closure,
+     *                         or {@code null} to remove an existing handler.
+     */
     public void setCloseViewHandler(@Nullable Consumer<CloseViewContext> closeViewHandler) {
         this.closeViewHandler = closeViewHandler;
     }
@@ -157,20 +178,7 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
     }
 
     protected void showExecutionError(Exception ex) {
-        View<?> ownerView = wrappedTask.getOwnerView();
-        if (ownerView != null && UI.getCurrent() != null) {
-            notifications.create(messages.getMessage("localizedTaskWrapper.executionError.message"))
-                    .withType(Notifications.Type.ERROR)
-                    .show();
-
-            /* todo ExceptionDialog */
-            /*Dialogs dialogs = Instantiator.get(UI.getCurrent()).getOrCreate(Dialogs.class);
-            dialogs.createExceptionDialog()
-                    .withThrowable(ex)
-                    .withCaption(messages.getMessage("localizedTaskWrapper.executionError.message"))
-                    .withMessage(ex.getLocalizedMessage())
-                    .show();*/
-        }
+        defaultUiExceptionHandler.handle(ex);
     }
 
     protected void notifyCloseViewHandler() {
@@ -179,6 +187,10 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
         }
     }
 
+    /**
+     * Encapsulates the context in which a localized task is executed, providing access
+     * to the associated {@link LocalizedTaskWrapper}.
+     */
     public static class CloseViewContext {
 
         protected LocalizedTaskWrapper taskWrapper;

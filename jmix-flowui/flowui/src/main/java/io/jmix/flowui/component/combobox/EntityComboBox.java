@@ -274,7 +274,7 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
 
     @Override
     protected ValuePickerActionSupport createActionsSupport() {
-        return new JmixValuePickerActionSupport(this);
+        return applicationContext.getBean(JmixValuePickerActionSupport.class, this);
     }
 
     protected void onDataProviderDataRefresh(DataChangeEvent.DataRefreshEvent<V> event) {

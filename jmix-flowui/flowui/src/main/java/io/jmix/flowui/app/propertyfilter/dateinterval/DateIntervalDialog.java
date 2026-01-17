@@ -158,7 +158,7 @@ public class DateIntervalDialog extends StandardView {
      *
      * @param metaPropertyPath meta property path
      */
-    public void setMetaPropertyPath(@Nullable MetaPropertyPath metaPropertyPath) {
+    public void setMetaPropertyPath(MetaPropertyPath metaPropertyPath) {
         this.mpp = metaPropertyPath;
     }
 

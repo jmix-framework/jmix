@@ -20,7 +20,6 @@ import com.google.common.base.Preconditions;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
@@ -32,6 +31,12 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+/**
+ * Provides a specific implementation of {@link UrlQueryParametersBinderProvider}
+ * that supports the binding of URL query parameters to {@link PropertyFilter} components.
+ * The provider is responsible for parsing XML configuration and initializing the binding
+ * between {@link PropertyFilter} components and URL query parameters.
+ */
 @Component("flowui_PropertyFilterUrlQueryParametersBinderProvider")
 public class PropertyFilterUrlQueryParametersBinderProvider extends AbstractUrlQueryParametersBinderProvider
         implements ApplicationContextAware {
@@ -64,6 +69,16 @@ public class PropertyFilterUrlQueryParametersBinderProvider extends AbstractUrlQ
         ));
     }
 
+    /**
+     * A task responsible for initializing a property filter component and binding it
+     * to URL query parameters within the context of a {@link UrlQueryParametersFacet}.
+     * <p>
+     * It handles the delayed initialization of a {@link PropertyFilter} component by linking it
+     * with a {@link PropertyFilterUrlQueryParametersBinder}. The binder includes relevant
+     * configurations such as an optional binder ID, parameter name, and a reference to
+     * {@link UrlParamSerializer} for serializing URL parameters. The initialized binder is registered
+     * to the owning {@link UrlQueryParametersFacet}.
+     */
     public static class PropertyFilterQueryParametersBinderInitTask implements ComponentLoader.InitTask {
 
         protected final UrlQueryParametersFacet facet;
@@ -85,11 +100,6 @@ public class PropertyFilterUrlQueryParametersBinderProvider extends AbstractUrlQ
             this.parameter = parameter;
             this.urlParamSerializer = urlParamSerializer;
             this.applicationContext = applicationContext;
-        }
-
-        @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing
         }
 
         @Override

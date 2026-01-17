@@ -32,18 +32,39 @@ public class LocaleItem {
         this.value = value;
     }
 
+    /**
+     * Returns the value associated with this instance.
+     *
+     * @return the string value
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * Sets the value associated with this instance.
+     *
+     * @param value the new value to set
+     */
     public void setValue(String value) {
         this.value = value;
     }
 
+    /**
+     * Returns the label associated with this instance.
+     *
+     * @return the label
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * Sets the label for this object. The label represents a descriptive
+     * text or title associated with the object.
+     *
+     * @param label the label text to set, must not be null
+     */
     public void setLabel(String label) {
         this.label = label;
     }

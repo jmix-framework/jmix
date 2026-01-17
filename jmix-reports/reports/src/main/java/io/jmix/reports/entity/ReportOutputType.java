@@ -20,17 +20,56 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.lang.Nullable;
 
+/**
+ * Kind of output content produced by the reporting.
+ * Generally, reporting produces either a document file or a set of data to be displayed in a UI component.
+ */
 public enum ReportOutputType implements EnumClass<Integer> {
+    /**
+     * Old-school binary Excel document.
+     */
     XLS(0, JmixReportOutputType.xls),
+    /**
+     * Old-school binary Word document.
+     */
     DOC(10, JmixReportOutputType.doc),
+    /**
+     * PDF document.
+     */
     PDF(20, JmixReportOutputType.pdf),
+    /**
+     * HTML output.
+     */
     HTML(30, JmixReportOutputType.html),
+    /**
+     * DOCX document.
+     */
     DOCX(40, JmixReportOutputType.docx),
+    /**
+     * XLSX document.
+     */
     XLSX(50, JmixReportOutputType.xlsx),
+    /**
+     * Any custom output, the format is determined by the template renderer.
+     */
     CUSTOM(60, JmixReportOutputType.custom),
+    /**
+     * <b>Note: not supported at the moment.</b>
+     * The produced output is displayed in the application UI in a Chart component.
+     */
     CHART(70, JmixReportOutputType.chart),
+    /**
+     * CSV (comma-separated values) file.
+     */
     CSV(80, JmixReportOutputType.csv),
+    /**
+     * The produced output is displayed in the application UI in a DataGrid component.
+     */
     TABLE(90, JmixReportOutputType.table),
+    /**
+     * <b>Note: not supported at the moment.</b>
+     * The produced output is displayed in the application UI in a Pivot Table component.
+     */
     PIVOT_TABLE(100, JmixReportOutputType.pivot);
 
     private Integer id;

@@ -72,7 +72,7 @@ public interface ReportRunner {
      *                 .run();
      * </pre>
      *
-     * @param report report entity
+     * @param report report entity (with any fetch plan)
      * @return instance of {@link FluentReportRunner}
      */
     FluentReportRunner byReportEntity(Report report);

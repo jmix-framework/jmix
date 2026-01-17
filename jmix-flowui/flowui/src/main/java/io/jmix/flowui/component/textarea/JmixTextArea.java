@@ -164,7 +164,7 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
 
     @Override
     protected void setModelValue(String newModelValue, boolean fromClient) {
-        if (isTrimEnabled()) {
+        if (isTrimEnabled() && fromClient) {
             newModelValue = StringUtils.trimToNull(newModelValue);
 
             setPresentationValue(Strings.nullToEmpty(newModelValue));

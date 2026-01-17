@@ -28,4 +28,6 @@ dependencies {
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.spockframework:spock-spring"
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

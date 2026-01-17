@@ -18,15 +18,10 @@ package io.jmix.flowuirestds;
 
 import com.google.common.base.Strings;
 import io.jmix.core.JmixOrder;
+import io.jmix.core.MetadataMutationTools;
 import io.jmix.core.MetadataPostProcessor;
-import io.jmix.core.Stores;
 import io.jmix.core.annotation.Internal;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Session;
-import io.jmix.core.metamodel.model.Store;
-import io.jmix.core.metamodel.model.impl.MetaClassImpl;
-import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
 import io.jmix.flowuirestds.genericfilter.FilterConfiguration;
 import io.jmix.flowuirestds.settings.UserSettingsItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,25 +38,14 @@ public class RestDsEntityConfigurer implements MetadataPostProcessor {
     private String uiConfigStore;
 
     @Autowired
-    protected Stores stores;
+    private MetadataMutationTools metadataMutationTools;
 
     @Override
     public void process(Session session) {
         if (Strings.isNullOrEmpty(uiConfigStore))
             return;
 
-        Store store = stores.get(uiConfigStore);
-
-        configureEntity(session, UserSettingsItem.class, store);
-        configureEntity(session, FilterConfiguration.class, store);
-    }
-
-    private void configureEntity(Session session, Class<?> entityClass, Store store) {
-        MetaClass userSettingsClass = session.getClass(entityClass);
-        ((MetaClassImpl) userSettingsClass).setStore(store);
-
-        for (MetaProperty property : userSettingsClass.getProperties()) {
-            ((MetaPropertyImpl) property).setStore(store);
-        }
+        metadataMutationTools.setStore(session.getClass(UserSettingsItem.class), uiConfigStore);
+        metadataMutationTools.setStore(session.getClass(FilterConfiguration.class), uiConfigStore);
     }
 }

@@ -21,6 +21,9 @@ import Options, {
     MORE_LINK_CLICK,
     DAY_HEADER_CLASS_NAMES,
     DAY_CELL_CLASS_NAMES,
+    CURRENT_DATE,
+    CURRENT_SELECTION,
+    CURRENT_VIEW,
     SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES, NAV_LINK_DAY_CLICK, NAV_LINK_WEEK_CLICK, DAY_CELL_BOTTOM_TEXT
 } from './Options.js';
 
@@ -65,6 +68,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 value: null,
                 observer: '_onI18nChange',
             },
+            eventSingleClickThreshold: {
+                type: Number,
+                value: 250,
+            },
             /**
              * @Override
              */
@@ -105,6 +112,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         // So call it again to update locale.
         this._onI18nChange(this.i18n);
 
+        // When component is reattached, it loses currently navigated date and other options.
+        // Restore state if possible.
+        this._restoreState();
+
         this.render();
 
         this._setupResizeListener();
@@ -123,6 +134,25 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         }
 
         new ResizeObserver(onResize.bind(this)).observe(this.calendarElement);
+    }
+
+    _restoreState() {
+        const currentView = this.jmixOptions.getOption(CURRENT_VIEW);
+        if (currentView) {
+            this.calendar.changeView(currentView);
+        }
+        const currentDate = this.jmixOptions.getOption(CURRENT_DATE);
+        if (currentDate) {
+            this.calendar.gotoDate(currentDate);
+        }
+        const currentSelection = this.jmixOptions.getOption(CURRENT_SELECTION);
+        if (currentSelection) {
+            this.suppressSelectEvent = true;
+
+            this.select(currentSelection.allDay, currentSelection.startDateTime, currentSelection.endDateTime);
+
+            this.suppressSelectEvent = false;
+        }
     }
 
     /**
@@ -188,6 +218,16 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     _updateSyncSourcesData(context) {
         this.dataHolder.set(context.sourceId, context.data);
 
+        this.calendar.getEventSourceById(context.sourceId).refetch();
+    }
+
+    /**
+     * Server callable function.
+     * <p>
+     * Invokes <code>#refetch()</code> function of event source to reload data.
+     * @param context an object contains sourceId
+     */
+    _updateAsyncSourcesData(context) {
         this.calendar.getEventSourceById(context.sourceId).refetch();
     }
 
@@ -447,6 +487,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onEventClick(e) {
+        this._onEventSingleClick(e);
+
         this.dispatchEvent(new CustomEvent("jmix-event-click", {
             detail: {
                 context: {
@@ -456,6 +498,42 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 }
             }
         }))
+    }
+
+    _onEventSingleClick(e) {
+        if (this.eventSingleClickTimeoutId) {
+            clearTimeout(this.eventSingleClickTimeoutId);
+            this.eventSingleClickTimeoutId = null;
+            return;
+        }
+
+        this.eventSingleClickTimeoutId = setTimeout(() => {
+            this.eventSingleClickTimeoutId = null;
+            if (e.jsEvent.detail !== 1) {
+                return;
+            }
+            this.dispatchEvent(new CustomEvent("jmix-event-single-click", {
+                detail: {
+                    context: {
+                        event: utils.eventToServerData(e.event),
+                        mouseDetails: utils.createMouseDetails(e.jsEvent),
+                        view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
+                    }
+                }
+            }))
+        }, this.eventSingleClickThreshold);
+    }
+
+    _onEvenDoubleClick(dbClickEvent, eventDidMountEvent) {
+        this.dispatchEvent(new CustomEvent("jmix-event-double-click", {
+            detail: {
+                context: {
+                    event: utils.eventToServerData(eventDidMountEvent.event),
+                    mouseDetails: utils.createMouseDetails(dbClickEvent),
+                    view: utils.createViewInfo(eventDidMountEvent.view, this.formatDate.bind(this)),
+                }
+            }
+        }));
     }
 
     _onEventMouseEnter(e) {
@@ -545,17 +623,19 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onSelect(e) {
-        this.dispatchEvent(new CustomEvent('jmix-select', {
-            detail: {
-                context: {
-                    startDateTime: this.formatDate(e.start),
-                    endDateTime: this.formatDate(e.end),
-                    allDay: e.allDay,
-                    view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
-                    ...(e.jsEvent) && {mouseDetails: utils.createMouseDetails(e.jsEvent)},
+        if (!this.suppressSelectEvent) {
+            this.dispatchEvent(new CustomEvent('jmix-select', {
+                detail: {
+                    context: {
+                        startDateTime: this.formatDate(e.start),
+                        endDateTime: this.formatDate(e.end),
+                        allDay: e.allDay,
+                        view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
+                        ...(e.jsEvent) && {mouseDetails: utils.createMouseDetails(e.jsEvent)},
+                    }
                 }
-            }
-        }));
+            }));
+        }
     }
 
     _onUnselect(e) {
@@ -636,7 +716,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         div.className = JMIX_DAY_CELL_BOTTOM_TEXT;
         div.innerText = textInfo.text;
         if (textInfo.classNames) {
-            div.classList.add(textInfo.classNames);
+            div.classList.add(...textInfo.classNames);
         }
         return div;
     }
@@ -698,6 +778,9 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             this.contextMenuDetails['mouseDetails'] = utils.createMouseDetails(jsEvent);
             this.contextMenuDetails['event'] = utils.eventToServerData(e.event);
         });
+        // The "dbclick" event does not work, probably because of the timing when
+        // eventDidMount is called. Use 'ondblclick' attribute.
+        e.el.ondblclick = (dbClickEvent) => this._onEvenDoubleClick(dbClickEvent, e);;
     }
 
     _onNavLinkDayClick(date) {
@@ -743,7 +826,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
      * details for 'vaadin-context-menu-before-open' event that will be
      * sent to FullCalendarContextMenu#onBeforeOpenMenu().
      * @param e
-     * @returns
+     * @returns details object
      */
     getContextMenuBeforeOpenDetail(e) {
         const details = this.contextMenuDetails;

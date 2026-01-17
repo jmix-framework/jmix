@@ -23,6 +23,12 @@ import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
 
+/**
+ * Abstract base class for performing aggregation operations on collections
+ * of numerical data.
+ *
+ * @param <T> the type of number being aggregated
+ */
 public abstract class AbstractNumberAggregation<T extends Number> extends AbstractAggregation<T> {
 
     protected AbstractNumberAggregation(Class<T> clazz) {

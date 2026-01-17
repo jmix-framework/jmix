@@ -41,7 +41,6 @@ public final class OptionUtils {
     public static final String BUSINESS_HOURS = "businessHours";
     public static final String DATE_ALIGNMENT = "dateAlignment";
     public static final String DATE_INCREMENT = "dateIncrement";
-    public static final String DAY_CELL_BOTTOM_TEXT = "dayCellBottomText";
     public static final String DAY_CELL_CLASS_NAMES = "dayCellClassNames";
     public static final String DAY_HEADER_CLASS_NAMES = "dayHeaderClassNames";
     public static final String DAY_HEADERS = "dayHeaders";
@@ -59,6 +58,7 @@ public final class OptionUtils {
     public static final String EVENT_DRAG_MIN_DISTANCE = "eventDragMinDistance";
     public static final String EVENT_DURATION_EDITABLE = "eventDurationEditable";
     public static final String EVENT_INTERACTIVE = "eventInteractive";
+    public static final String EVENT_LONG_PRESS_DELAY = "eventLongPressDelay";
     public static final String EVENT_MAX_STACK = "eventMaxStack";
     public static final String EVENT_ORDER_STRICT = "eventOrderStrict";
     public static final String EVENT_OVERLAP = "eventOverlap";
@@ -68,7 +68,6 @@ public final class OptionUtils {
     public static final String EXPAND_ROWS = "expandRows";
     public static final String FORCE_EVENT_DURATION = "forceEventDuration";
     public static final String HIDDEN_DAYS = "hiddenDays";
-    public static final String EVENT_LONG_PRESS_DELAY = "eventLongPressDelay";
     public static final String MORE_LINK_CLICK = "moreLinkClick";
     public static final String MORE_LINK_CLASS_NAMES = "moreLinkClassNames";
     public static final String NAV_LINKS = "navLinks";
@@ -96,6 +95,26 @@ public final class OptionUtils {
     public static final String WEEK_NUMBERS = "weekNumbers";
     public static final String WINDOW_RESIZE_DELAY = "windowResizeDelay";
     public static final String EVENT_ORDER = "eventOrder";
+
+    /**
+     * Jmix option. Used for restoring current date when component is reattached.
+     */
+    public static final String CURRENT_DATE = "currentDate";
+
+    /**
+     * Jmix option. Used for restoring current selection when a component is reattached.
+     */
+    public static final String CURRENT_SELECTION = "currentSelection";
+
+    /**
+     * Jmix option. Used for restoring current display mode when a component is reattached.
+     */
+    public static final String CURRENT_VIEW = "currentView";
+
+    /**
+     * Jmix option. Used for generating bottom text in cell and class names for it.
+     */
+    public static final String DAY_CELL_BOTTOM_TEXT = "dayCellBottomText";
 
     private OptionUtils() {
     }

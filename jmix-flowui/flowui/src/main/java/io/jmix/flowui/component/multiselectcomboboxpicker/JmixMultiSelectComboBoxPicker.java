@@ -420,7 +420,7 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
     @Override
     protected ValuePickerActionSupport createActionsSupport() {
-        return new JmixValuePickerActionSupport(this);
+        return applicationContext.getBean(JmixValuePickerActionSupport.class, this);
     }
 
     protected void onDataProviderDataRefresh(DataChangeEvent.DataRefreshEvent<V> event) {

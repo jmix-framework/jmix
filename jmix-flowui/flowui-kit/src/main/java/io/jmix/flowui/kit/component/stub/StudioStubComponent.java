@@ -16,8 +16,5 @@
 
 package io.jmix.flowui.kit.component.stub;
 
-/**
- * For Studio use only.
- */
 interface StudioStubComponent {
 }

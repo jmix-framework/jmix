@@ -5,9 +5,8 @@
 
 package io.jmix.chartsflowui.kit.meta;
 
-/**
- * Stub interface for collecting colors.
- * Used for studio use only.
- */
+import io.jmix.flowui.kit.meta.StudioAPI;
+
+@StudioAPI(description = "Stub interface for collecting colors")
 interface StudioChartColorPalette {
 }

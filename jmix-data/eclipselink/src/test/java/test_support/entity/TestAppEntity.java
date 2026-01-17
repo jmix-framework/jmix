@@ -48,6 +48,10 @@ public class TestAppEntity extends BaseEntity {
     @JoinColumn(name = "AUTHOR_ID")
     private User author;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MAIN_ITEM_ID")
+    private TestAppEntityItem mainItem;
+
     public String getName() {
         return name;
     }
@@ -98,5 +102,13 @@ public class TestAppEntity extends BaseEntity {
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public TestAppEntityItem getMainItem() {
+        return mainItem;
+    }
+
+    public void setMainItem(TestAppEntityItem mainItem) {
+        this.mainItem = mainItem;
     }
 }

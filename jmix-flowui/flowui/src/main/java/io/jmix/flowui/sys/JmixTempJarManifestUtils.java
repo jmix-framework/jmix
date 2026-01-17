@@ -1,5 +1,6 @@
 package io.jmix.flowui.sys;
 
+import io.jmix.core.annotation.Internal;
 import org.apache.commons.lang3.SystemUtils;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
@@ -18,6 +19,7 @@ import java.nio.charset.StandardCharsets;
  * Also see issue and comments:
  * <a href="https://github.com/jmix-framework/jmix/issues/1571">jmix-framework/jmix#1571</a>
  */
+@Internal
 public class JmixTempJarManifestUtils {
 
     public static boolean isGradleTempJarClassPathUsed() {

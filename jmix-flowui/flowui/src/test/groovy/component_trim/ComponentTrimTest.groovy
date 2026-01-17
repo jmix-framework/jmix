@@ -16,6 +16,7 @@
 
 package component_trim
 
+
 import component_trim.view.ComponentTrimView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
@@ -28,26 +29,27 @@ class ComponentTrimTest extends FlowuiTestSpecification {
         registerViewBasePackages "component_trim.view"
     }
 
-    def "#hasTrimming trimming"() {
-        given: "Opened view with #hasTrimming component"
+    def "TextArea trimming"() {
+        given: "Opened view with TextArea component"
         def view = navigateToView ComponentTrimView
-        def hasTrimmingComponent = view."$hasTrimming"
+        def hasTrimmingComponent = view.textArea
         def valueForTrimming = "  value for trimming   "
 
-        when: "Trimming is enabled for #hasTrimming"
-        hasTrimmingComponent.value = valueForTrimming
+        when: "Trimming is enabled for TextArea"
+        // setting value from client
+        hasTrimmingComponent.class.getDeclaredMethod('setModelValue', String.class, boolean.class)
+                .tap {
+                    accessible = true
+                }.invoke hasTrimmingComponent, valueForTrimming, true
 
         then: "The value will be trimmed"
         valueForTrimming.trim().equals hasTrimmingComponent.value
 
-        when: "Trimming is disabled for #hasTrimming"
+        when: "Trimming is disabled for TextArea"
         hasTrimmingComponent.trimEnabled = false
         hasTrimmingComponent.setValue valueForTrimming
 
         then: "The value will not be trimmed"
         valueForTrimming.equals hasTrimmingComponent.value
-
-        where:
-        hasTrimming << ["textField", "textArea"]
     }
 }

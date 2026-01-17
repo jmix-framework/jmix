@@ -34,6 +34,11 @@ public interface SupportsAfterViewNavigationHandler<V extends View> {
      */
     Optional<Consumer<AfterViewNavigationEvent<V>>> getAfterNavigationHandler();
 
+    /**
+     * Represents an event that is triggered after navigation to a specific view has occurred.
+     *
+     * @param <V> the type of the view associated with this event
+     */
     class AfterViewNavigationEvent<V> extends EventObject {
 
         protected final V view;
@@ -43,6 +48,11 @@ public interface SupportsAfterViewNavigationHandler<V extends View> {
             this.view = view;
         }
 
+        /**
+         * Returns the view associated with this event.
+         *
+         * @return the view associated with this event
+         */
         public V getView() {
             return view;
         }

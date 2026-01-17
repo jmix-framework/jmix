@@ -81,10 +81,14 @@ public class ShowEntityInfoAction extends SecuredListDataComponentAction<ShowEnt
         visibleBySpecificUiPermission = context.isPermitted();
     }
 
+    protected boolean isVisibleBySpecificUiPermission() {
+        return visibleBySpecificUiPermission;
+    }
+
     @Override
-    public boolean isVisibleByUiPermissions() {
-        return visibleBySpecificUiPermission
-                && super.isVisibleByUiPermissions();
+    protected void setVisibleInternal(boolean visible) {
+        super.setVisibleInternal(visible
+                && isVisibleBySpecificUiPermission());
     }
 
     @Override

@@ -40,6 +40,15 @@ public class FetchPlans {
     }
 
     /**
+     * Returns {@link FetchPlan} builder for the given entity class
+     * and include all properties from plan with {@code fetchPlanName}.
+     */
+    public FetchPlanBuilder builder(Class<?> entityClass, String fetchPlanName) {
+        return new FetchPlanBuilder(this, metadata, metadataTools, fetchPlanRepository, entityClass)
+                .addFetchPlan(fetchPlanName);
+    }
+
+    /**
      * Returns {@link FetchPlan} builder that contains all properties from {@code fetchPlan}
      */
     public FetchPlanBuilder builder(FetchPlan fetchPlan) {

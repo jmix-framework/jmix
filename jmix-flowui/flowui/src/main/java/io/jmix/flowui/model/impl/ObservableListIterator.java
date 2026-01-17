@@ -26,6 +26,13 @@ import java.util.ListIterator;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+/**
+ * An extension of {@link ForwardingListIterator} that provides observation capabilities for list iteration operations.
+ * This class notifies when new items are added to the underlying list and supports tracking changes through
+ * various collection change events.
+ *
+ * @param <T> the type of elements returned by this iterator.
+ */
 class ObservableListIterator<T> extends ForwardingListIterator<T> {
 
     private final ListIterator<T> delegate;

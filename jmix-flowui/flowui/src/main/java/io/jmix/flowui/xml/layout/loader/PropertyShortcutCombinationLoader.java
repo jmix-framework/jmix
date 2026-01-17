@@ -16,57 +16,48 @@
 
 package io.jmix.flowui.xml.layout.loader;
 
-import com.google.common.collect.ImmutableMap;
-import io.jmix.flowui.UiComponentProperties;
-import io.jmix.flowui.UiViewProperties;
+import io.jmix.flowui.xml.layout.loader.shortcut.ShortcutAliasProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Loads and resolves shortcut combinations from multiple property sources.
+ * <p>
+ * Aggregates shortcut aliases from all registered {@link ShortcutAliasProvider} implementations
+ * and provides methods to check for alias existence and resolve aliases to actual shortcut values.
+ */
 @Component("flowui_PropertyShortcutLoader")
 public class PropertyShortcutCombinationLoader {
 
-    protected static final Map<String, Function<UiComponentProperties, String>> COMPONENTS_SHORTCUT_ALIASES =
-            ImmutableMap.<String, Function<UiComponentProperties, String>>builder()
-                    .put("GRID_CREATE_SHORTCUT", UiComponentProperties::getGridCreateShortcut)
-                    .put("GRID_ADD_SHORTCUT", UiComponentProperties::getGridAddShortcut)
-                    .put("GRID_EDIT_SHORTCUT", UiComponentProperties::getGridEditShortcut)
-                    .put("GRID_READ_SHORTCUT", UiComponentProperties::getGridReadShortcut)
-                    .put("GRID_REMOVE_SHORTCUT", UiComponentProperties::getGridRemoveShortcut)
-                    .put("PICKER_LOOKUP_SHORTCUT", UiComponentProperties::getPickerLookupShortcut)
-                    .put("PICKER_OPEN_SHORTCUT", UiComponentProperties::getPickerOpenShortcut)
-                    .put("PICKER_CLEAR_SHORTCUT", UiComponentProperties::getPickerClearShortcut)
-                    .build();
+    protected List<ShortcutAliasProvider<?>> providers;
 
-    protected static final Map<String, Function<UiViewProperties, String>> VIEWS_SHORTCUT_ALIASES =
-            ImmutableMap.<String, Function<UiViewProperties, String>>builder()
-                    .put("SAVE_SHORTCUT", UiViewProperties::getSaveShortcut)
-                    .put("CLOSE_SHORTCUT", UiViewProperties::getCloseShortcut)
-                    .build();
-
-    protected UiComponentProperties componentProperties;
-    protected UiViewProperties viewProperties;
-
-    public PropertyShortcutCombinationLoader(UiComponentProperties componentProperties, UiViewProperties viewProperties) {
-        this.componentProperties = componentProperties;
-        this.viewProperties = viewProperties;
+    @Autowired
+    public void setProviders(List<ShortcutAliasProvider<?>> providers) {
+        this.providers = providers;
     }
 
     public boolean contains(String alias) {
-        return COMPONENTS_SHORTCUT_ALIASES.containsKey(alias)
-                || VIEWS_SHORTCUT_ALIASES.containsKey(alias);
+        for (ShortcutAliasProvider<?> aliasesProvider : providers) {
+            if (aliasesProvider.getAliases().containsKey(alias)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getShortcut(String alias) {
-        Function<UiComponentProperties, String> componentsShortcut = COMPONENTS_SHORTCUT_ALIASES.get(alias);
-        if (componentsShortcut != null) {
-            return componentsShortcut.apply(componentProperties);
-        }
+        for (ShortcutAliasProvider<?> aliasesProvider : providers) {
+            Map<String, ? extends Function<?, String>> aliases = aliasesProvider.getAliases();
+            Function<Object, String> shortcutFunction = (Function<Object, String>) aliases.get(alias);
 
-        Function<UiViewProperties, String> viewsShortcut = VIEWS_SHORTCUT_ALIASES.get(alias);
-        if (viewsShortcut != null) {
-            return viewsShortcut.apply(viewProperties);
+            if (shortcutFunction != null) {
+                Object propertyClass = aliasesProvider.getPropertyClass();
+                return shortcutFunction.apply(propertyClass);
+            }
         }
 
         throw new IllegalStateException(String.format("There is no shortcutCombination for alias '%s'", alias));

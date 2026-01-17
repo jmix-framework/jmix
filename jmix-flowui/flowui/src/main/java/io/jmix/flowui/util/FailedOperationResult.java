@@ -18,6 +18,9 @@ package io.jmix.flowui.util;
 
 import java.util.function.Supplier;
 
+/**
+ * Represents an {@link OperationResult} that indicates a failed operation.
+ */
 public final class FailedOperationResult implements OperationResult {
 
     public static final OperationResult INSTANCE = new FailedOperationResult();

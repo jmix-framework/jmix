@@ -20,6 +20,11 @@ import com.vaadin.flow.data.binder.ValidationResult;
 
 import java.io.Serializable;
 
+/**
+ * Provides validation support for the {@link JmixCodeEditor} component.
+ * This class handles the validation logic for checking if a value is required
+ * and ensures compliance with the required constraint.
+ */
 public class CodeEditorValidationSupport implements Serializable {
 
     private final JmixCodeEditor field;
@@ -35,7 +40,8 @@ public class CodeEditorValidationSupport implements Serializable {
     }
 
     boolean isInvalid(String value) {
-        ValidationResult requiredValidation = ValidationUtil.checkRequired(required, value, field.getEmptyValue());
+        ValidationResult requiredValidation =
+                ValidationUtil.validateRequiredConstraint("", required, value, field.getEmptyValue());
         return requiredValidation.isError();
     }
 }

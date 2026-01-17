@@ -16,34 +16,19 @@
 
 package io.jmix.bulkeditor.view;
 
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Focusable;
-import com.vaadin.flow.component.HasLabel;
-import com.vaadin.flow.component.HasSize;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.bulkeditor.view.BulkEditViewDataLoadSupport.LoadDescriptor;
-import io.jmix.core.DataManager;
-import io.jmix.core.EntitySet;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanBuilder;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.FetchPlans;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.SaveContext;
+import io.jmix.core.*;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -61,23 +46,16 @@ import io.jmix.flowui.component.UiComponentsGenerator;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
-import io.jmix.flowui.view.ChangeTrackerCloseAction;
-import io.jmix.flowui.view.CloseAction;
-import io.jmix.flowui.view.DialogMode;
-import io.jmix.flowui.view.MessageBundle;
-import io.jmix.flowui.view.StandardOutcome;
-import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
-import io.jmix.flowui.view.ViewValidation;
+import io.jmix.flowui.view.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.metadata.BeanDescriptor;
 import org.apache.commons.lang3.StringUtils;
@@ -87,20 +65,14 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@RouteAlias(value = "bulk-edit", layout = DefaultMainViewParent.class)
+@Route(value = "bulked/bulk-edit", layout = DefaultMainViewParent.class)
 @ViewController("bulkEditorWindow")
 @ViewDescriptor("bulk-edit-view.xml")
-@Route("bulk-edit")
 @DialogMode(resizable = true, width = "64em", height = "48em", minWidth = "18em")
 public class BulkEditView<E> extends StandardView {
 
@@ -115,10 +87,12 @@ public class BulkEditView<E> extends StandardView {
     @ViewComponent
     protected FormLayout fieldLayout;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected BulkEditViewDataLoadSupport dataLoadSupport;
     @Autowired
-    protected DataManager dataManager;
+    protected DataComponents dataComponents;
     @Autowired
     protected Dialogs dialogs;
     @Autowired
@@ -128,11 +102,7 @@ public class BulkEditView<E> extends StandardView {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected Metadata metadata;
-    @Autowired
-    protected MetadataTools metadataTools;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -141,6 +111,8 @@ public class BulkEditView<E> extends StandardView {
     protected UiComponents uiComponents;
     @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
+    @Autowired
+    protected Icons icons;
     @Autowired
     protected jakarta.validation.Validator validator;
     @Autowired
@@ -156,6 +128,12 @@ public class BulkEditView<E> extends StandardView {
 
     protected List<E> items;
     protected FetchPlan fetchPlan;
+    protected EntitySet saved;
+
+    @Subscribe
+    public void onInit(InitEvent event) {
+        getViewData().setDataContext(dataComponents.createDataContext());
+    }
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -208,7 +186,7 @@ public class BulkEditView<E> extends StandardView {
             case DATATYPE, ENUM -> builder.add(metaProperty.getName());
             case EMBEDDED, ASSOCIATION, COMPOSITION -> {
                 MetaClass propMetaClass = metaProperty.getRange().asClass();
-                FetchPlan propFetchPlan = metadataTools.isEmbedded(metaProperty)
+                FetchPlan propFetchPlan = metaProperty.getType() == MetaProperty.Type.EMBEDDED
                         ? createEmbeddedFetchPlan(propMetaClass, fqn)
                         : fetchPlanRepository.getFetchPlan(propMetaClass, FetchPlan.INSTANCE_NAME);
 
@@ -238,9 +216,14 @@ public class BulkEditView<E> extends StandardView {
         return builder.build();
     }
 
+    @SuppressWarnings("unchecked")
     protected void loadItems() {
-        LoadDescriptor<E> ld = new LoadDescriptor<>(context.getSelectedItems(), context.getMetaClass(), fetchPlan);
-        items = dataLoadSupport.reload(ld);
+        MetaClass metaClass = context.getMetaClass();
+
+        LoadDescriptor<E> ld = new LoadDescriptor<>(context.getSelectedItems(), metaClass, fetchPlan);
+        items = ((List<E>) getViewData().getDataContext()
+                .merge(dataLoadSupport.reload(ld))
+                .getAll(metaClass.getJavaClass()));
     }
 
     protected void createDataComponents() {
@@ -347,7 +330,7 @@ public class BulkEditView<E> extends StandardView {
 
     protected JmixButton createClearButton(AbstractField<?, ?> field, boolean isFieldRequired) {
         JmixButton button = uiComponents.create(JmixButton.class);
-        button.setIcon(VaadinIcon.ERASER.create());
+        button.setIcon(icons.get(JmixFontIcon.ERASER));
 
         if (isFieldRequired) {
             //set visibility to hidden to add a spacer instead of button
@@ -364,7 +347,7 @@ public class BulkEditView<E> extends StandardView {
             editField.setEnabled(!editField.isEnabled());
             Button button = e.getSource();
 
-            button.setIcon(editField.isEnabled() ? VaadinIcon.ERASER.create() : VaadinIcon.EDIT.create());
+            button.setIcon(editField.isEnabled() ? icons.get(JmixFontIcon.ERASER) : icons.get(JmixFontIcon.EDIT));
             Tooltip.forComponent(button).setText(messageBundle.getMessage(editField.isEnabled()
                     ? "bulk.clearAttribute"
                     : "bulk.editAttribute"
@@ -509,7 +492,7 @@ public class BulkEditView<E> extends StandardView {
         if (path != null) {
             Object currentItem = item;
             for (MetaProperty property : path.getMetaProperties()) {
-                if (metadataTools.isEmbedded(property)) {
+                if (property.getType() == MetaProperty.Type.EMBEDDED) {
                     Object currentItemValue = EntityValues.getValue(currentItem, property.getName());
                     if (currentItemValue == null) {
                         Object newItem = metadata.create(property.getRange().asClass());
@@ -553,7 +536,7 @@ public class BulkEditView<E> extends StandardView {
             }
         }
 
-        EntitySet saved = dataManager.save(new SaveContext().saving(items));
+        saved = getViewData().getDataContext().save(true);
 
         Logger logger = LoggerFactory.getLogger(BulkEditView.class);
         logger.info("Applied bulk editing for {} entries of {}. Changed properties: {}",
@@ -565,5 +548,13 @@ public class BulkEditView<E> extends StandardView {
                 .show();
 
         close(StandardOutcome.SAVE);
+    }
+
+    /**
+     * @return saved items
+     */
+    @Nullable
+    public EntitySet getSavedItems() {
+        return saved;
     }
 }

@@ -58,13 +58,57 @@ public class AuthServerProperties {
      */
     String authorizeEndpoint;
 
+    /**
+     * Name of url parameter within logout request which contains url to redirect to after logout
+     */
+    String postLogoutUrlRedirectParameterName;
+
+    /**
+     * Whether referer header value can be used as a target URL after logout.
+     * <p>
+     * Note: URL specified within {@link #postLogoutUrlRedirectParameterName} parameter has more priority
+     */
+    boolean useRefererPostLogout;
+
+    /**
+     * Whether URL parameters will be checked for access token during logout.
+     */
+    boolean logoutUrlParameterCheckForTokenEnabled;
+
+    /**
+     * Whether body form parameters will be checked for access token during logout.
+     */
+    boolean logoutBodyFormParameterCheckForTokenEnabled;
+
+    /**
+     * Name of the header to check for access token during logout. 'Authorization' by default.
+     */
+    String logoutAccessTokenHeaderName;
+
+    /**
+     * Name of the URL parameter to check for access token during logout. 'token' by default.
+     */
+    String logoutAccessTokenUrlParameterName;
+
+    /**
+     * Name of the body form parameter to check for access token during logout. 'token' by default.
+     */
+    String logoutAccessTokenBodyFormParameterName;
+
     public AuthServerProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
             @DefaultValue("false") boolean useInMemoryAuthorizationService,
             @DefaultValue Map<String, JmixClient> client,
             @DefaultValue("/as-login") String loginPageUrl,
             @DefaultValue("as-login.html") String loginPageViewName,
-            @DefaultValue("/oauth2/authorize") String authorizeEndpoint
+            @DefaultValue("/oauth2/authorize") String authorizeEndpoint,
+            @DefaultValue("false") boolean useRefererPostLogout,
+            @DefaultValue("false") boolean logoutUrlParameterCheckForTokenEnabled,
+            @DefaultValue("false") boolean logoutBodyFormParameterCheckForTokenEnabled,
+            @DefaultValue("Authorization") String logoutAccessTokenHeaderName,
+            @DefaultValue("token") String logoutAccessTokenUrlParameterName,
+            @DefaultValue("token") String logoutAccessTokenBodyFormParameterName,
+            String postLogoutUrlRedirectParameterName
     ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.useInMemoryAuthorizationService = useInMemoryAuthorizationService;
@@ -72,6 +116,13 @@ public class AuthServerProperties {
         this.loginPageUrl = loginPageUrl;
         this.loginPageViewName = loginPageViewName;
         this.authorizeEndpoint = authorizeEndpoint;
+        this.postLogoutUrlRedirectParameterName = postLogoutUrlRedirectParameterName;
+        this.useRefererPostLogout = useRefererPostLogout;
+        this.logoutUrlParameterCheckForTokenEnabled = logoutUrlParameterCheckForTokenEnabled;
+        this.logoutBodyFormParameterCheckForTokenEnabled = logoutBodyFormParameterCheckForTokenEnabled;
+        this.logoutAccessTokenHeaderName = logoutAccessTokenHeaderName;
+        this.logoutAccessTokenUrlParameterName = logoutAccessTokenUrlParameterName;
+        this.logoutAccessTokenBodyFormParameterName = logoutAccessTokenBodyFormParameterName;
     }
 
     public boolean isUseDefaultConfiguration() {
@@ -96,6 +147,34 @@ public class AuthServerProperties {
 
     public String getAuthorizeEndpoint() {
         return authorizeEndpoint;
+    }
+
+    public String getPostLogoutUrlRedirectParameterName() {
+        return postLogoutUrlRedirectParameterName;
+    }
+
+    public boolean isUseRefererPostLogout() {
+        return useRefererPostLogout;
+    }
+
+    public boolean isLogoutUrlParameterCheckForTokenEnabled() {
+        return logoutUrlParameterCheckForTokenEnabled;
+    }
+
+    public boolean isLogoutBodyFormParameterCheckForTokenEnabled() {
+        return logoutBodyFormParameterCheckForTokenEnabled;
+    }
+
+    public String getLogoutAccessTokenHeaderName() {
+        return logoutAccessTokenHeaderName;
+    }
+
+    public String getLogoutAccessTokenUrlParameterName() {
+        return logoutAccessTokenUrlParameterName;
+    }
+
+    public String getLogoutAccessTokenBodyFormParameterName() {
+        return logoutAccessTokenBodyFormParameterName;
     }
 
     /**

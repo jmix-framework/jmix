@@ -23,13 +23,17 @@ import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * A generic abstract builder class for constructing dialog windows with specific configurations and listeners.
+ *
+ * @param <V> the type of the view associated with the dialog window
+ */
 public class AbstractWindowBuilder<V extends View<?>> implements DialogWindowBuilder<V> {
 
     protected final View<?> origin;

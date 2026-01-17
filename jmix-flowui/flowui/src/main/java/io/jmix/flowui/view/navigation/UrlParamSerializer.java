@@ -38,6 +38,10 @@ import java.util.stream.Collectors;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * The utility class that is responsible for serializing and deserializing
+ * various data types into string representations suitable for URL parameters.
+ */
 @Component("flowui_UrlParamSerializer")
 public class UrlParamSerializer {
 

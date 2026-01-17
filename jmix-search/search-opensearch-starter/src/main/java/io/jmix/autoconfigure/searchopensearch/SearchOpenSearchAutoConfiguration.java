@@ -24,9 +24,9 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
+import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
-import io.jmix.search.searching.SearchUtils;
 import io.jmix.search.utils.SslConfigurer;
 import io.jmix.searchopensearch.SearchOpenSearchConfiguration;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsProvider;
@@ -46,11 +46,10 @@ import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.transport.OpenSearchTransport;
 import org.opensearch.client.transport.rest_client.RestClientTransport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.lang.Nullable;
@@ -64,8 +63,6 @@ import java.util.Collection;
         SearchConfiguration.class,
         SearchOpenSearchConfiguration.class})
 public class SearchOpenSearchAutoConfiguration {
-
-    private static final Logger log = LoggerFactory.getLogger(SearchOpenSearchAutoConfiguration.class);
 
     @Autowired
     protected SearchProperties searchProperties;
@@ -95,6 +92,7 @@ public class SearchOpenSearchAutoConfiguration {
     }
 
     @Bean("search_OpenSearchIndexManager")
+    @ConditionalOnProperty(name = "jmix.search.enabled", matchIfMissing = true)
     protected IndexManager openSearchIndexManager(OpenSearchClient client,
                                                   IndexStateRegistry indexStateRegistry,
                                                   IndexConfigurationManager indexConfigurationManager,
@@ -115,6 +113,7 @@ public class SearchOpenSearchAutoConfiguration {
     }
 
     @Bean("search_OpenSearchEntityIndexer")
+    @ConditionalOnProperty(name = "jmix.search.enabled", matchIfMissing = true)
     protected EntityIndexer openSearchEntityIndexer(UnconstrainedDataManager dataManager,
                                                     FetchPlans fetchPlans,
                                                     IndexConfigurationManager indexConfigurationManager,
@@ -123,7 +122,8 @@ public class SearchOpenSearchAutoConfiguration {
                                                     IndexStateRegistry indexStateRegistry,
                                                     MetadataTools metadataTools,
                                                     SearchProperties searchProperties,
-                                                    OpenSearchClient client) {
+                                                    OpenSearchClient client,
+                                                    DynamicAttributesSupport dynamicAttributesSupport) {
         return new OpenSearchEntityIndexer(dataManager,
                 fetchPlans,
                 indexConfigurationManager,
@@ -132,10 +132,12 @@ public class SearchOpenSearchAutoConfiguration {
                 indexStateRegistry,
                 metadataTools,
                 searchProperties,
-                client);
+                client,
+                dynamicAttributesSupport);
     }
 
     @Bean("search_OpenSearchEntitySearcher")
+    @ConditionalOnProperty(name = "jmix.search.enabled", matchIfMissing = true)
     protected EntitySearcher openSearchEntitySearcher(OpenSearchClient client,
                                                       IndexConfigurationManager indexConfigurationManager,
                                                       Metadata metadata,
@@ -146,8 +148,7 @@ public class SearchOpenSearchAutoConfiguration {
                                                       IdSerialization idSerialization,
                                                       SecureOperations secureOperations,
                                                       PolicyStore policyStore,
-                                                      OpenSearchSearchStrategyProvider searchStrategyManager,
-                                                      SearchUtils searchUtils) {
+                                                      OpenSearchSearchStrategyProvider searchStrategyManager) {
         return new OpenSearchEntitySearcher(
                 client,
                 indexConfigurationManager,
@@ -159,8 +160,7 @@ public class SearchOpenSearchAutoConfiguration {
                 idSerialization,
                 secureOperations,
                 policyStore,
-                searchStrategyManager,
-                searchUtils
+                searchStrategyManager
         );
     }
 

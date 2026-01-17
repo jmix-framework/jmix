@@ -127,6 +127,7 @@ public class AddConditionView extends StandardListView<FilterCondition> {
 
         propertiesHeaderCondition = getHeaderFilterConditionByCaption(propertiesCaption);
         if (propertiesHeaderCondition != null) {
+            filterConditionsTreeDataGrid.setItemSelectableProvider(item -> !propertiesHeaderCondition.equals(item));
             filterConditionsTreeDataGrid.expand(propertiesHeaderCondition);
         }
     }

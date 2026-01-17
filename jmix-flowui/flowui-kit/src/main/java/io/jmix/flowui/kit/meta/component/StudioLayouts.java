@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.meta.component;
 
 import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.card.Card;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -25,14 +26,16 @@ import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
-import io.jmix.flowui.kit.meta.StudioComponent;
-import io.jmix.flowui.kit.meta.StudioConvertStrategy;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.component.gridlayout.JmixGridLayout;
+import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.ClassInfo;
+import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.TagInfo;
+
+import static io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.ANY_TAG;
+import static io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN;
 
 @StudioUiKit
-public interface StudioLayouts {
+interface StudioLayouts {
 
     @StudioComponent(
             name = "Details",
@@ -53,6 +56,10 @@ public interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
@@ -71,7 +78,8 @@ public interface StudioLayouts {
                             options = {"filled", "reverse", "small"}),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"},
+                            defaultValue = "AUTO")
             }
     )
     Details details();
@@ -93,6 +101,10 @@ public interface StudioLayouts {
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "alignItems", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -133,7 +145,8 @@ public interface StudioLayouts {
                             options = {"spacing-xs", "spacing-s", "spacing", "spacing-l", "spacing-xl"}),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"},
+                            defaultValue = "AUTO"),
                     @StudioProperty(xmlAttribute = "wrap", category = StudioProperty.Category.LOOK_AND_FEEL,
                             type = StudioPropertyType.BOOLEAN, defaultValue = "false")
             }
@@ -157,6 +170,10 @@ public interface StudioLayouts {
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "alignItems", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -222,6 +239,10 @@ public interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -234,7 +255,8 @@ public interface StudioLayouts {
                     @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "maxHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "minHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"},
+                            defaultValue = "AUTO"),
                     @StudioProperty(xmlAttribute = "maxWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "expand", category = StudioProperty.Category.POSITION, type = StudioPropertyType.STRING),
@@ -281,9 +303,16 @@ public interface StudioLayouts {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "flexLayout"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
             }),
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @ClassInfo(qualifiedName = FLOW_COMPONENT_FQN, maxCount = 1)
+            ),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
@@ -303,7 +332,7 @@ public interface StudioLayouts {
                             options = {"VERTICAL", "HORIZONTAL", "BOTH", "NONE"}),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "100%")
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "AUTO")
             }
     )
     Scroller scroller();
@@ -328,6 +357,10 @@ public interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
@@ -347,7 +380,7 @@ public interface StudioLayouts {
                             options = {"small", "minimal", "splitter-spacing"}),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "100%")
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "AUTO")
             }
     )
     SplitLayout splitLayout();
@@ -364,6 +397,10 @@ public interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
@@ -375,7 +412,7 @@ public interface StudioLayouts {
                     @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "100%")
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "AUTO")
             }
     )
     Accordion accordion();
@@ -392,25 +429,43 @@ public interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "autoResponsive", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "autoRows", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "columnSpacing", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "columnWidth", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "dataContainer", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "expandColumns", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "expandFields", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "labelsAside", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "labelSpacing", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "labelWidth", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "labelsPosition", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.formlayout.FormLayout$ResponsiveStep$LabelsPosition",
                             options = {"ASIDE", "TOP"}),
+                    @StudioProperty(xmlAttribute = "maxColumns", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "maxHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "maxWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "minColumns", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "minHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "rowSpacing", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "100%")
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "AUTO")
             }
     )
     FormLayout formLayout();
@@ -427,6 +482,10 @@ public interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
@@ -441,8 +500,121 @@ public interface StudioLayouts {
                                     "hide-scroll-buttons", "equal-width-tabs", "bordered", "no-padding"}),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"},
+                            defaultValue = "AUTO")
             }
     )
     TabSheet tabSheet();
+
+    @StudioComponent(
+            name = "Card",
+            classFqn = "io.jmix.flowui.component.card.JmixCard",
+            category = "Layouts",
+            xmlElement = "card",
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION,
+                            type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION,
+                            type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE,
+                            type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", category = StudioProperty.Category.SIZE,
+                            type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "maxWidth", category = StudioProperty.Category.SIZE,
+                            type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "minHeight", category = StudioProperty.Category.SIZE,
+                            type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE,
+                            type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "titleHeadingLevel", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "subtitle", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.VALUES_LIST,
+                            options = {"elevated", "outlined", "horizontal", "stretch-media", "cover-media"}),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE,
+                            type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = {
+                            @TagInfo(qualifiedName = "title", maxCount = 1),
+                            @TagInfo(qualifiedName = "subtitle", maxCount = 1),
+                            @TagInfo(qualifiedName = "media", maxCount = 1),
+                            @TagInfo(qualifiedName = "content", maxCount = 1),
+                            @TagInfo(qualifiedName = "headerPrefix", maxCount = 1),
+                            @TagInfo(qualifiedName = "header", maxCount = 1),
+                            @TagInfo(qualifiedName = "headerSuffix", maxCount = 1),
+                            @TagInfo(qualifiedName = "footer", maxCount = 1),
+                    }
+            )
+    )
+    Card card();
+
+    @StudioComponent(
+            name = "GridLayout",
+            classFqn = "io.jmix.flowui.component.gridlayout.GridLayout",
+            category = "Layouts",
+            xmlElement = "gridLayout",
+            icon = "io/jmix/flowui/kit/meta/icon/layout/gridLayout.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "columnMinWidth", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "gap", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "maxWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "itemsContainer", category = StudioProperty.Category.DATA_BINDING,
+                            type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF, typeParameter = "T"),
+                    @StudioProperty(xmlAttribute = "itemsEnum", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.ENUM_CLASS,
+                            typeParameter = "T"),
+                    @StudioProperty(xmlAttribute = "minHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
+            },
+            supplyHandlers = {
+                    @StudioSupplyHandler(
+                            methodName = "setRenderer",
+                            parameterType = "com.vaadin.flow.data.renderer.ComponentRenderer"
+                    )
+            }
+    )
+    JmixGridLayout<?> gridLayout();
 }

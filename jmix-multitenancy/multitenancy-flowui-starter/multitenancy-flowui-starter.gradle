@@ -21,5 +21,9 @@ archivesBaseName = 'jmix-multitenancy-flowui-starter'
 dependencies {
     api project(':multitenancy-flowui')
 
+    compileOnly project(':security-flowui')
+
     api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    compileOnly project(':security-flowui')
 }

@@ -22,6 +22,7 @@ import com.vaadin.flow.component.listbox.MultiSelectListBox
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import component_xml_load.screen.TwinColumnView
 import io.jmix.core.DataManager
+import io.jmix.core.FetchPlan
 import io.jmix.core.SaveContext
 import io.jmix.flowui.component.twincolumn.TwinColumn
 import io.jmix.flowui.sys.BeanUtil
@@ -105,7 +106,7 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load TwinColumn component with datasource from XML"() {
         given: "An entity with some property"
-        def zoo = dataManager.load(Zoo).all().one()
+        def zoo = dataManager.load(Zoo).all().fetchPlan(b->b.add("animals", FetchPlan.INSTANCE_NAME)).one()
 
         when: "Open the ComponentView and load data"
         def twinColumnView = navigateToView(TwinColumnView.class)

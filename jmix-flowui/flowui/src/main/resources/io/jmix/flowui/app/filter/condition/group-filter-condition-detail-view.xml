@@ -60,7 +60,6 @@
                               dataContainer="filterConditionsDc"
                               hierarchyProperty="parent"
                               themeNames="no-row-borders no-header"
-                              selectionMode="MULTI"
                               width="100%">
                     <actions>
                         <action id="addCondition" type="genericFilter_addCondition" actionVariant="PRIMARY"/>

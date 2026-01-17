@@ -2,10 +2,7 @@ package io.jmix.securityflowui.view.roleassignment;
 
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeLeaveEvent;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.*;
 import io.jmix.core.*;
 import io.jmix.core.security.UserRepository;
 import io.jmix.flowui.Notifications;
@@ -28,6 +25,8 @@ import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentModel;
 import io.jmix.security.role.assignment.RoleAssignmentPersistence;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import io.jmix.securityflowui.view.resourcerole.ResourceRoleModelLookupView;
+import io.jmix.securityflowui.view.rowlevelrole.RowLevelRoleModelLookupView;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,7 +36,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Route(value = "sec/roleassignment/:username", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "sec/roleassignment/:username", layout = DefaultMainViewParent.class)
+@Route(value = "sec/role-assignment/:username", layout = DefaultMainViewParent.class)
 @ViewController("roleAssignmentView")
 @ViewDescriptor("role-assignment-view.xml")
 public class RoleAssignmentView extends StandardView {
@@ -68,8 +68,6 @@ public class RoleAssignmentView extends StandardView {
     @Autowired
     private EntityStates entityStates;
     @Autowired
-    private MessageBundle messageBundle;
-    @Autowired
     private MetadataTools metadataTools;
     @Autowired
     private UserRepository userRepository;
@@ -77,6 +75,8 @@ public class RoleAssignmentView extends StandardView {
     private Notifications notifications;
     @Autowired
     protected UrlParamSerializer urlParamSerializer;
+    @ViewComponent
+    private MessageBundle messageBundle;
 
     private UserDetails user;
 
@@ -231,6 +231,16 @@ public class RoleAssignmentView extends StandardView {
                     return assignmentModel;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Install(to = "resourceRoleAssignmentsTable.addResourceRole", subject = "viewConfigurer")
+    private void resourceRoleAssignmentsTableAddResourceRoleViewConfigurer(final ResourceRoleModelLookupView resourceRoleModelLookupView) {
+        resourceRoleModelLookupView.setUser(user);
+    }
+
+    @Install(to = "rowLevelRoleAssignmentsTable.addRowLevelRole", subject = "viewConfigurer")
+    private void rowLevelRoleAssignmentsTableAddRowLevelRoleViewConfigurer(final RowLevelRoleModelLookupView rowLevelRoleModelLookupView) {
+        rowLevelRoleModelLookupView.setUser(user);
     }
 
     @Subscribe("resourceRoleAssignmentsTable.remove")

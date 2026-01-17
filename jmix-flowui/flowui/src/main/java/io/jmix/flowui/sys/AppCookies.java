@@ -15,6 +15,7 @@
  */
 package io.jmix.flowui.sys;
 
+import io.jmix.core.annotation.Internal;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,6 +28,7 @@ import java.util.Map;
 
 import static java.lang.System.identityHashCode;
 
+@Internal
 public class AppCookies {
 
     public static final String COOKIE_LOCALE = "LAST_LOCALE";

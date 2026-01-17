@@ -17,6 +17,7 @@
 package io.jmix.flowui.model.impl;
 
 import io.jmix.core.Sort;
+import io.jmix.core.comparator.EntityValuesComparator;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -42,6 +43,11 @@ public abstract class BaseContainerSorter implements Sorter {
         this.beanFactory = beanFactory;
     }
 
+    /**
+     * Returns the container holding a collection of entity instances.
+     *
+     * @return the {@link CollectionContainer} instance
+     */
     public CollectionContainer<?> getContainer() {
         return container;
     }

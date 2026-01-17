@@ -18,6 +18,7 @@ package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.server.*;
+import io.jmix.core.annotation.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -35,6 +36,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Holds vaadin sessions for all users
  */
+@Internal
 @Component("flowui_SessionHolder")
 public class SessionHolder implements VaadinServiceInitListener {
 
@@ -100,34 +102,34 @@ public class SessionHolder implements VaadinServiceInitListener {
             return null;
         }
 
-        SecurityContext securityContext = (SecurityContext) wrappedSession.getAttribute(
-                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-        if (securityContext == null || securityContext.getAuthentication() == null) {
+        try {
+            SecurityContext securityContext = (SecurityContext) wrappedSession.getAttribute(
+                    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+            if (securityContext == null || securityContext.getAuthentication() == null) {
+                return null;
+            }
+            Authentication authentication = securityContext.getAuthentication();
+            if (!(authentication.getPrincipal() instanceof UserDetails)) {
+                return null;
+            }
+            return ((UserDetails) authentication.getPrincipal()).getUsername();
+        } catch (Exception ex) {
+            log.warn("Failed to get username from Vaadin session", ex);
             return null;
         }
-        Authentication authentication = securityContext.getAuthentication();
-        if (!(authentication.getPrincipal() instanceof UserDetails)) {
-            return null;
-        }
-        return ((UserDetails) authentication.getPrincipal()).getUsername();
     }
 
+    /**
+     * Returns the current state of the given {@link VaadinSession}.
+     * If the session holds a lock, the state of the session is returned.
+     * Otherwise, {@code VaadinSessionState.OPEN} is returned as a default state.
+     *
+     * @param session the {@link VaadinSession} for which the state is being retrieved
+     * @return the state of the session as {@link VaadinSessionState}.
+     * May return {@code VaadinSessionState.OPEN} if the session does not hold a lock.
+     */
     protected VaadinSessionState getVaadinSessionState(VaadinSession session) {
-        VaadinSessionState state;
-        if (session.hasLock()) {
-            state = session.getState();
-        } else {
-            // When session is 'CLOSED' it may not have lock,
-            // but we still need to get its state
-            try {
-                session.lock();
-                state = session.getState();
-            } finally {
-                session.unlock();
-            }
-        }
-
-        return state;
+        return session.hasLock() ? session.getState() : VaadinSessionState.OPEN;
     }
 
     @Override

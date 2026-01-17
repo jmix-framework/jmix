@@ -58,6 +58,11 @@ public enum DialogOutcome {
         this.closeAction = closeAction;
     }
 
+    /**
+     * Returns the {@link CloseAction} associated with this instance.
+     *
+     * @return the {@link CloseAction} associated with this instance
+     */
     public CloseAction getCloseAction() {
         return closeAction;
     }

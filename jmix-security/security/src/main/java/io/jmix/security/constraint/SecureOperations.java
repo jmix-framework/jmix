@@ -58,9 +58,4 @@ public interface SecureOperations {
      * Check if the current user has the given specific permission.
      */
     boolean isSpecificPermitted(String resourceName, PolicyStore policyStore);
-
-    /**
-     * Check if the current user has a permission to the given GraphQL resource.
-     */
-    boolean isGraphQLPermitted(String resourceName, PolicyStore policyStore);
 }

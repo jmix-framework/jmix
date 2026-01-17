@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import test_support.DataSpec
 import test_support.entity.TestAppEntity
 import test_support.entity.TestAppEntityItem
+import test_support.entity.sec.User
 
 class DataManagerPropertyConditionTest extends DataSpec {
 
@@ -381,21 +382,21 @@ class DataManagerPropertyConditionTest extends DataSpec {
     def "PropertyCondition generator join to one test"() {
         when:
 
-        def property = PropertyCondition.equal("appEntity.name","Test").skipNullOrEmpty()
+        def property = PropertyCondition.equal("appEntity.name", "Test").skipNullOrEmpty()
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntityItem"
         context.entityAlias = "e"
 
         then:
 
-        ""==propertyConditionGenerator.generateJoin(context)
-        propertyConditionGenerator.generateWhere(context).contains("e.appEntity.name =")
+        " left join e.appEntity cje_0" == propertyConditionGenerator.generateJoin(context)
+        propertyConditionGenerator.generateWhere(context).contains("cje_0.name =")
     }
 
     def "PropertyCondition generator join to many test"() {
         when:
 
-        def property = PropertyCondition.equal("items.name","Test").skipNullOrEmpty()
+        def property = PropertyCondition.equal("items.name", "Test").skipNullOrEmpty()
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntity"
         context.entityAlias = "e"
@@ -403,49 +404,138 @@ class DataManagerPropertyConditionTest extends DataSpec {
         then:
 
         propertyConditionGenerator.generateJoin(context).contains("join e.items ")
-        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias+".name =")
+        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias + ".name =")
     }
 
     def "PropertyCondition generator join to one and many test"() {
         when:
 
-        def property = PropertyCondition.equal("appEntity.items.name","Test").skipNullOrEmpty()
+        def property = PropertyCondition.equal("appEntity.items.name", "Test").skipNullOrEmpty()
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntityItem"
         context.entityAlias = "e"
 
         then:
 
-        propertyConditionGenerator.generateJoin(context).contains("join e.appEntity.items ")
-        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias+".name =")
+        propertyConditionGenerator.generateJoin(context).contains(" left join e.appEntity cje_0 left join cje_0.items cje_1")
+        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias + ".name =")
     }
+
 
     def "PropertyCondition generator multiple join to many test"() {
         when:
 
-        def property = PropertyCondition.equal("items.appEntity.items.name","Test").skipNullOrEmpty()
+        def property = PropertyCondition.equal("items.appEntity.items.name", "Test").skipNullOrEmpty()
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntity"
         context.entityAlias = "e"
 
         then:
 
-        propertyConditionGenerator.generateJoin(context).count("join ")==2
-        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias+".name =")
+        propertyConditionGenerator.generateJoin(context).count("join ") == 3
+        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias + ".name =")
     }
 
     def "PropertyCondition generator multiple join to one and many test"() {
         when:
 
-        def property = PropertyCondition.equal("appEntity.items.appEntity.items.name","Test").skipNullOrEmpty()
+        def property = PropertyCondition.equal("appEntity.items.appEntity.items.name", "Test").skipNullOrEmpty()
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntityItem"
         context.entityAlias = "e"
+        def joinClause = propertyConditionGenerator.generateJoin(context)
+        def whereClause = propertyConditionGenerator.generateWhere(context)
 
         then:
 
-        propertyConditionGenerator.generateJoin(context).count("join ")==2
-        propertyConditionGenerator.generateJoin(context).count("appEntity.items")==2
-        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias+".name =")
+        joinClause.count("join ") == 4
+        joinClause.count("left join cje_") == 3
+        whereClause.contains(context.joinAlias + ".name =")
+    }
+
+    def "basic outer join generation test"() {
+        setup:
+        TestAppEntity entity1 = dataManager.create(TestAppEntity)
+        entity1.name = "e1"
+        entity1.number = 1
+
+        User user = dataManager.create(User)
+        user.name = "u1"
+        entity1.author = user
+
+        TestAppEntity entity2 = dataManager.create(TestAppEntity)
+        entity2.name = "e2"
+        entity2.number = 2
+
+        dataManager.save(user, entity1, entity2)
+
+        when:
+        List<TestAppEntity> orConditionResult
+                = dataManager.load(TestAppEntity)
+                .condition(LogicalCondition.or(
+                        PropertyCondition.createWithValue("author.name", PropertyCondition.Operation.EQUAL, "u1"),
+                        PropertyCondition.createWithValue("number", PropertyCondition.Operation.EQUAL, "2")
+                ))
+                .list()
+
+
+        then:
+        orConditionResult.size() == 2
+
+
+        cleanup:
+        jdbc.update("DELETE FROM TEST_APP_ENTITY")
+        jdbc.update("DELETE FROM SEC_USER")
+
+    }
+
+    def "outer join generation test with param and jpql"() {
+        setup:
+        TestAppEntity entity1 = dataManager.create(TestAppEntity)
+        entity1.name = "e1"
+        entity1.number = 1
+
+        User user = dataManager.create(User)
+        user.name = "u1"
+        user.firstName = "fn1"
+        entity1.author = user
+
+        TestAppEntityItem mainItem = dataManager.create(TestAppEntityItem)
+        mainItem.name = "ma1"
+        entity1.mainItem = mainItem
+
+        TestAppEntity entity2 = dataManager.create(TestAppEntity)
+        entity2.name = "e2"
+        entity2.number = 2
+        entity2.mainItem = mainItem
+
+        TestAppEntity entity3 = dataManager.create(TestAppEntity)
+        entity3.name = "e2"
+        entity3.number = 2
+
+        dataManager.save(user, mainItem, entity1, entity2, entity3)
+
+
+        when:
+        List<TestAppEntity> orConditionResult
+                = dataManager.load(TestAppEntity)
+                .query("select e from test_TestAppEntity e left join e.mainItem a_0 where a_0.name = 'ma1'")
+                .condition(LogicalCondition.or(
+                        PropertyCondition.createWithParameterName("author.name", PropertyCondition.Operation.EQUAL, "authorName"),
+                        PropertyCondition.createWithParameterName("number", PropertyCondition.Operation.EQUAL, "number")
+                ))
+                .parameter("number", "2")
+                .parameter("authorName", "u1")
+                .list()
+
+
+        then:
+        orConditionResult.size() == 2 //entity3 filtered out by query condition
+
+
+        cleanup:
+        jdbc.update("DELETE FROM TEST_APP_ENTITY")
+        jdbc.update("DELETE FROM SEC_USER")
+        jdbc.update("DELETE FROM TEST_APP_ENTITY_ITEM")
     }
 }

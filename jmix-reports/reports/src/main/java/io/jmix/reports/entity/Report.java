@@ -15,6 +15,8 @@
  */
 package io.jmix.reports.entity;
 
+import io.jmix.core.CopyingSystemState;
+import io.jmix.reports.delegate.ParametersCrossValidator;
 import io.jmix.reports.yarg.structure.ReportBand;
 import io.jmix.reports.yarg.structure.ReportFieldFormat;
 import io.jmix.core.annotation.DeletedBy;
@@ -45,7 +47,7 @@ import java.util.*;
 @Listeners("report_ReportDetachListener")
 @JmixEntity
 @SuppressWarnings("unused")
-public class Report implements io.jmix.reports.yarg.structure.Report {
+public class Report implements io.jmix.reports.yarg.structure.Report, CopyingSystemState<Report> {
     private static final long serialVersionUID = -2817764915661205093L;
     protected static final String IDX_SEPARATOR = ",";
 
@@ -98,9 +100,6 @@ public class Report implements io.jmix.reports.yarg.structure.Report {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DEFAULT_TEMPLATE_ID")
     protected ReportTemplate defaultTemplate;
-
-    @Column(name = "REPORT_TYPE")
-    protected Integer reportType;
 
     @Column(name = "DESCRIPTION", length = 500)
     protected String description;
@@ -172,6 +171,20 @@ public class Report implements io.jmix.reports.yarg.structure.Report {
     @Transient
     @JmixProperty
     protected Boolean validationOn = false;
+
+    @Transient
+    protected ParametersCrossValidator parametersCrossValidator;
+
+    @Transient
+    @JmixProperty
+    protected ReportSource source;
+
+    /**
+     * Message key for localized caption. Used by annotated reports.
+     */
+    @Transient
+    @JmixProperty
+    protected String nameMessageKey;
 
     public Boolean getIsTmp() {
         return isTmp;
@@ -279,14 +292,6 @@ public class Report implements io.jmix.reports.yarg.structure.Report {
     public void setValuesFormats(List<ReportValueFormat> valuesFormats) {
         if (valuesFormats == null) valuesFormats = Collections.emptyList();
         this.valuesFormats = valuesFormats;
-    }
-
-    public ReportType getReportType() {
-        return reportType != null ? ReportType.fromId(reportType) : null;
-    }
-
-    public void setReportType(ReportType reportType) {
-        this.reportType = reportType != null ? reportType.getId() : null;
     }
 
     public Set<ReportRole> getReportRoles() {
@@ -475,9 +480,39 @@ public class Report implements io.jmix.reports.yarg.structure.Report {
         this.validationOn = validationOn;
     }
 
+    public ParametersCrossValidator getParametersCrossValidator() {
+        return parametersCrossValidator;
+    }
+
+    public void setParametersCrossValidator(ParametersCrossValidator parametersCrossValidator) {
+        this.parametersCrossValidator = parametersCrossValidator;
+    }
+
+    public ReportSource getSource() {
+        return source;
+    }
+
+    public void setSource(ReportSource source) {
+        this.source = source;
+    }
+
+    public String getNameMessageKey() {
+        return nameMessageKey;
+    }
+
+    public void setNameMessageKey(String nameMessageKey) {
+        this.nameMessageKey = nameMessageKey;
+    }
+
     @InstanceName
     @DependsOnProperties({"localeNames", "name"})
     public String getInstanceName(MsgBundleTools msgBundleTools) {
-        return msgBundleTools.getLocalizedValue(localeNames, name);
+        return msgBundleTools.getLocalizedValue(nameMessageKey, localeNames, name);
+    }
+
+    @Override
+    public void copyFrom(Report source) {
+        this.parametersCrossValidator = source.parametersCrossValidator;
+        this.source = source.source;
     }
 }

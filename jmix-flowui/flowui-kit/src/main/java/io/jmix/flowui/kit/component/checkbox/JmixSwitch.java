@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.NativeLabel;
-import com.vaadin.flow.component.shared.ClientValidationUtil;
 import com.vaadin.flow.component.shared.HasValidationProperties;
 import com.vaadin.flow.component.shared.InputField;
 import com.vaadin.flow.component.shared.ValidationUtil;
@@ -30,6 +29,9 @@ import com.vaadin.flow.data.binder.Validator;
 
 import java.util.Optional;
 
+/**
+ * JmixSwitch is an input field representing a binary choice.
+ */
 @Tag("jmix-switch")
 @JsModule("./src/checkbox/jmix-switch.js")
 public class JmixSwitch extends AbstractSinglePropertyField<JmixSwitch, Boolean>
@@ -65,7 +67,7 @@ public class JmixSwitch extends AbstractSinglePropertyField<JmixSwitch, Boolean>
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        ClientValidationUtil.preventWebComponentFromModifyingInvalidState(this);
+        getElement().setProperty("manualValidation", true);
     }
 
     /**

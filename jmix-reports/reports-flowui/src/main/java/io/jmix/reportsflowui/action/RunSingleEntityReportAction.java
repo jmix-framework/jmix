@@ -16,14 +16,14 @@
 
 package io.jmix.reportsflowui.action;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.view.DetailCloseAction;
 import io.jmix.flowui.action.view.ViewAction;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -43,13 +43,20 @@ public class RunSingleEntityReportAction<E> extends ViewAction<DetailCloseAction
 
     public RunSingleEntityReportAction(String id) {
         super(id);
-
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PRINT);
     }
 
     @Autowired
     public void setMessages(Messages messages) {
         this.text = messages.getMessage(getClass(), "actions.Report");
+    }
+
+    @Autowired
+    public void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.RUN_SINGLE_ENTITY_REPORT_ACTION);
+        }
     }
 
     @Autowired

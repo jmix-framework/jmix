@@ -17,6 +17,7 @@
 package io.jmix.flowui.data.aggregation.impl;
 
 import io.jmix.flowui.component.AggregationInfo;
+import io.jmix.flowui.data.aggregation.Aggregation;
 import io.jmix.flowui.data.aggregation.NumberAggregationHelper;
 import org.springframework.lang.Nullable;
 
@@ -24,6 +25,9 @@ import java.sql.Time;
 import java.util.Collection;
 import java.util.EnumSet;
 
+/**
+ * Implementation of {@link Aggregation} intended for aggregating {@link Time} values.
+ */
 public class TimeAggregation extends CountAggregation<Time> {
 
     public TimeAggregation() {

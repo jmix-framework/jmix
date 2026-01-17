@@ -19,6 +19,11 @@ package io.jmix.flowui.action.entitypicker;
 
 import io.jmix.flowui.action.ActionType;
 
+/**
+ * Opens a one-to-one composition entity using the entity detail view.
+ *
+ * @param <E> entity type
+ */
 @ActionType(EntityOpenCompositionAction.ID)
 public class EntityOpenCompositionAction<E> extends EntityOpenAction<E> {
 

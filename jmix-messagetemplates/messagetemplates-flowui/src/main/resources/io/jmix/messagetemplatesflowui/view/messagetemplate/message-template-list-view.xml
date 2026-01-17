@@ -58,6 +58,14 @@
             <button id="editButton" action="messageTemplatesDataGrid.edit"/>
             <button id="removeButton" action="messageTemplatesDataGrid.remove"/>
             <button id="copyButton" action="messageTemplatesDataGrid.copy"/>
+            <dropdownButton id="exportButton" text="msg://exportButton.text" icon="DOWNLOAD">
+                <items>
+                    <actionItem id="exportJsonAction" ref="messageTemplatesDataGrid.exportJson"/>
+                    <actionItem id="exportZipAction" ref="messageTemplatesDataGrid.exportZip"/>
+                </items>
+            </dropdownButton>
+            <fileUploadField id="importField" uploadIcon="UPLOAD" acceptedFileTypes=".json,.zip"
+                             uploadText="msg://importField.uploadText"/>
             <simplePagination id="pagination" dataLoader="messageTemplatesDl"/>
         </hbox>
         <dataGrid id="messageTemplatesDataGrid"
@@ -71,6 +79,10 @@
                 <action id="remove" type="list_remove"/>
                 <action id="copy" type="list_itemTracking" icon="COPY"
                         text="msg://messageTemplatesDataGrid.copyAction.text"/>
+                <action id="exportJson" icon="FILE_CODE"
+                        text="msg://messageTemplatesDataGrid.exportJsonAction.text"/>
+                <action id="exportZip" icon="FILE_ZIP"
+                        text="msg://messageTemplatesDataGrid.exportZipAction.text"/>
             </actions>
             <columns resizable="true">
                 <column property="name"/>

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import 'ace-builds/src-noconflict/ace.js';
-import 'ace-builds/esm-resolver.js';
+import 'ace-builds/src-min-noconflict/ace.js';
+import './jmix-esm-resolver.js';
 import {keyWordCompleter, snippetCompleter, textCompleter} from 'ace-builds/src-noconflict/ext-language_tools.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';

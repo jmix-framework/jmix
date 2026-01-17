@@ -23,7 +23,7 @@ public class IconLoader extends AbstractIconLoader<Icon> {
 
     @Override
     protected Icon createComponent() {
-        return componentLoader().loadIcon(element)
+        return componentLoader().loadIconSetIcon(element)
                 .orElseThrow(() -> new GuiDevelopmentException("Icon attribute is required", context));
     }
 }

@@ -437,7 +437,7 @@ class OrderRepositoryTest extends DataSpec {
         ordersDesc[4] == order1 && ordersDesc[4].customer.address.city == "Samara"//[Samara - Fri Jan 01 00:00:00 SAMT 2010]
 
         when:
-        Iterable<SalesOrder> ordersAll = orderRepository.findAll(Sort.by(Sort.Direction.ASC, "customer.address.city", "date"))
+        List<SalesOrder> ordersAll = orderRepository.findAll(Sort.by(Sort.Direction.ASC, "customer.address.city", "date"))
         then:
         ordersAll[0] == order1
         ordersAll[1] == order2
@@ -545,6 +545,26 @@ class OrderRepositoryTest extends DataSpec {
         SalesOrder order = orderRepository.getByExtractedNumber("Use number 111 please")
         then:
         order.number == "111"
+    }
+
+
+    void 'scalar queries with entity return property works correctly'() {
+        when:
+        def res = orderRepository.findOrderCountsByCustomer()
+
+        then:
+        res != null
+        res[0].getValue("customer") == customer3
+        res[0].getValue("count") == 1
+        res[0].getValue("earliestOrderDate") == null
+
+        res[2].getValue("customer") == customer1
+        res[2].getValue("count") == 2
+        res[2].getValue("earliestOrderDate") == order1.date
+
+        res[1].getValue("customer") == customer2
+        res[1].getValue("count") == 2
+        res[1].getValue("earliestOrderDate") == order3.date
     }
 
 }

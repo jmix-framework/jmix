@@ -18,49 +18,31 @@ package io.jmix.searchelasticsearch.searching.strategy.impl;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import io.jmix.core.Metadata;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.SearchUtils;
-import io.jmix.search.searching.impl.AbstractSearchStrategy;
-import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
-import io.jmix.security.constraint.PolicyStore;
-import io.jmix.security.constraint.SecureOperations;
+import io.jmix.searchelasticsearch.searching.strategy.ElasticSearchQueryConfigurer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
 import java.util.stream.Collectors;
+
+import static io.jmix.search.searching.AbstractSearchQueryConfigurer.NO_VIRTUAL_SUBFIELDS;
+import static io.jmix.search.searching.AbstractSearchQueryConfigurer.WITH_PREFIX_VIRTUAL_SUBFIELDS;
 
 /**
  * Class that encapsulates logic of {@link SearchStrategy} that searches documents by prefix.
  */
 @Component("search_StartsWithElasticsearchSearchStrategy")
-public class StartsWithElasticsearchSearchStrategy extends AbstractSearchStrategy implements ElasticsearchSearchStrategy {
+public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearchStrategy{
 
-    protected final IndexConfigurationManager indexConfigurationManager;
     protected final SearchProperties searchProperties;
-    protected final SecureOperations secureOperations;
-    protected final PolicyStore policyStore;
-    protected final Metadata metadata;
-    protected final SearchUtils searchUtils;
 
-    public StartsWithElasticsearchSearchStrategy(IndexConfigurationManager indexConfigurationManager,
-                                                 SearchProperties searchProperties,
-                                                 SecureOperations secureOperations,
-                                                 PolicyStore policyStore,
-                                                 Metadata metadata,
-                                                 SearchUtils searchUtils) {
-        this.indexConfigurationManager = indexConfigurationManager;
+    public StartsWithElasticsearchSearchStrategy(SearchProperties searchProperties,
+                                                 ElasticSearchQueryConfigurer elasticSearchQueryConfigurator) {
+        super(elasticSearchQueryConfigurator);
         this.searchProperties = searchProperties;
-        this.secureOperations = secureOperations;
-        this.policyStore = policyStore;
-        this.metadata = metadata;
-        this.searchUtils = searchUtils;
     }
 
     @Override
@@ -69,42 +51,46 @@ public class StartsWithElasticsearchSearchStrategy extends AbstractSearchStrateg
     }
 
     @Override
-    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+    public void configureRequest(SearchRequestContext<SearchRequest.Builder> requestContext) {
         int maxPrefixSize = searchProperties.getMaxPrefixLength();
-        if (isSearchTermExceedMaxPrefixSize(searchContext.getSearchText(), maxPrefixSize)
+        if (isSearchTermExceedMaxPrefixSize(requestContext.getSearchContext().getSearchText(), maxPrefixSize)
                 && searchProperties.isWildcardPrefixQueryEnabled()) {
-            Set<String> effectiveFieldsToSearch = searchUtils.resolveEffectiveSearchFields(searchContext.getEntities());
-            configureWildcardQuery(requestBuilder, searchContext, effectiveFieldsToSearch);
+            configureWildcardQuery(requestContext);
         } else {
-            configureTermsQuery(requestBuilder, searchContext);
+            configureTermsQuery(requestContext);
         }
     }
 
-    protected void configureTermsQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
-        requestBuilder.query(queryBuilder ->
-                queryBuilder.multiMatch(multiMatchQueryBuilder ->
-                        multiMatchQueryBuilder.fields("*")
-                                .query(searchContext.getEscapedSearchText())
-                                .type(TextQueryType.BestFields)
-                )
+    protected void configureTermsQuery(SearchRequestContext<SearchRequest.Builder> requestContext) {
+        queryConfigurer.configureRequest(
+                requestContext,
+                WITH_PREFIX_VIRTUAL_SUBFIELDS,
+                (queryBuilder, scope) ->
+                        queryBuilder.multiMatch(multiMatchQueryBuilder ->
+                                multiMatchQueryBuilder.fields(scope.getFieldList())
+                                        .query(requestContext.getSearchContext().getEscapedSearchText())
+                                        .type(TextQueryType.BestFields)
+                        )
         );
     }
 
-    protected void configureWildcardQuery(SearchRequest.Builder requestBuilder, SearchContext searchContext, Set<String> effectiveFieldsToSearch) {
-        String searchText = searchContext.getEscapedSearchText();
+    protected void configureWildcardQuery(SearchRequestContext<SearchRequest.Builder> requestContext) {
+        String searchText = requestContext.getSearchContext().getEscapedSearchText();
         String[] searchTerms = searchText.split("\\s+");
         String queryText = Arrays.stream(searchTerms)
                 .filter(StringUtils::isNotBlank)
                 .map(term -> term + "*")
                 .collect(Collectors.joining(" "));
-
-        requestBuilder.query(queryBuilder ->
-                queryBuilder.queryString(queryStringQueryBuilder ->
-                        queryStringQueryBuilder
-                                .fields(new ArrayList<>(effectiveFieldsToSearch))
-                                .analyzeWildcard(true)
-                                .query(queryText)
-                )
+        queryConfigurer.configureRequest(
+                requestContext,
+                NO_VIRTUAL_SUBFIELDS,
+                (queryBuilder, scope) ->
+                        queryBuilder.queryString(queryStringQueryBuilder ->
+                                queryStringQueryBuilder
+                                        .fields(scope.getFieldList())
+                                        .analyzeWildcard(true)
+                                        .query(queryText)
+                        )
         );
     }
 

@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.LoadContext;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -42,7 +43,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Route(value = "jmxconsole", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "jmxconsole", layout = DefaultMainViewParent.class)
+@Route(value = "jmxcon/jmx-console", layout = DefaultMainViewParent.class)
 @ViewController("jmxcon_JmxConsoleView")
 @ViewDescriptor("jmx-console-view.xml")
 @LookupComponent("mbeansDataGrid")

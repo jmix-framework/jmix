@@ -17,9 +17,18 @@
 package io.jmix.flowui.kit.component.upload;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.server.streams.UploadHandler;
+import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 
-public class JmixFileStorageUploadField<C extends AbstractSingleUploadField<C, V>, V>
-        extends AbstractSingleUploadField<C, V> {
+/**
+ * JmixFileStorageUploadField is a component for file upload functionality that integrates with a file storage system.
+ * This field provides options for handling file upload operations and storing files into the file storage.
+ *
+ * @param <C> the type of the upload field
+ * @param <V> the value type of the upload field
+ */
+public class JmixFileStorageUploadField<C extends AbstractSingleUploadField<C, V, EV>, V, EV>
+        extends AbstractSingleUploadField<C, V, EV> {
 
     protected FileStoragePutMode fileStoragePutMode = FileStoragePutMode.IMMEDIATE;
     protected String fileStorageName;
@@ -76,5 +85,19 @@ public class JmixFileStorageUploadField<C extends AbstractSingleUploadField<C, V
     @Override
     protected String getDefaultUploadText() {
         return UPLOAD;
+    }
+
+    @Override
+    protected UploadHandler createUploadHandler() {
+        return UploadHandler.toTempFile((metadata, file) -> {
+            getEventBus().fireEvent(new FileUploadSucceededEvent<>(this,
+                    metadata.fileName(), metadata.contentType(), metadata.contentLength(),
+                    file));
+        }, createDefaultTransferProgressListener());
+    }
+
+    @Override
+    protected String getContentType(String fileName) {
+        return "unknown";
     }
 }

@@ -96,7 +96,7 @@ import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APP
  *     }
  * }
  * </pre>
- * For annotation based approach use {@link UiTest} annotation to configure the extension.
+ * For annotation-based approach use {@link UiTest} annotation to configure the extension.
  */
 public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEachCallback, AfterEachCallback {
 
@@ -124,7 +124,7 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
     /**
      * Sets view base packages. Views under these packages will be available in test.
      * <p>
-     * Note that depending on the test's configuration all application views may be available.
+     * Note that depending on the test's configuration, all application views may be available.
      *
      * @param viewBasePackages view base packages
      * @return current instance of extension

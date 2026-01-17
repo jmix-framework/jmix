@@ -15,27 +15,32 @@
  */
 package io.jmix.reports.entity;
 
-import io.jmix.reports.yarg.structure.ReportParameterWithDefaultValue;
+import io.jmix.core.CopyingSystemState;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
+import io.jmix.reports.delegate.ParameterTransformer;
+import io.jmix.reports.delegate.ParameterValidator;
 import io.jmix.reports.util.MsgBundleTools;
+import io.jmix.reports.yarg.structure.DefaultValueProvider;
+import io.jmix.reports.yarg.structure.ReportParameterWithDefaultValue;
+import jakarta.persistence.Id;
 import org.apache.commons.lang3.StringUtils;
 
-import jakarta.persistence.Id;
 import java.util.UUID;
 
-@JmixEntity(name = "report_ReportInputParameter")
+@JmixEntity(name = "report_ReportInputParameter", annotatedPropertiesOnly = true)
 @SystemLevel
 @SuppressWarnings("unused")
-public class ReportInputParameter implements ReportParameterWithDefaultValue {
+public class ReportInputParameter implements ReportParameterWithDefaultValue, CopyingSystemState<ReportInputParameter> {
 
     private static final long serialVersionUID = 6231014880104406246L;
 
     @Id
+    @JmixProperty
     @JmixGeneratedValue
     protected UUID id;
 
@@ -101,6 +106,19 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
 
     @JmixProperty
     protected Boolean defaultDateIsCurrent = false;
+
+    /**
+     * Message key for localized caption. Used by annotated reports.
+     */
+    @JmixProperty
+    protected String nameMessageKey;
+
+    /* The following attributes are excluded from JSON serialization as they aren't meta properties */
+    protected ParameterValidator<?> validationDelegate;
+
+    protected ParameterTransformer<?> transformationDelegate;
+
+    protected DefaultValueProvider<?> defaultValueProvider;
 
     public UUID getId() {
         return id;
@@ -220,7 +238,7 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
     @InstanceName
     @DependsOnProperties({"localeNames", "name"})
     public String getInstanceName(MsgBundleTools msgBundleTools) {
-        return msgBundleTools.getLocalizedValue(localeNames, name);
+        return msgBundleTools.getLocalizedValue(nameMessageKey, localeNames, name);
     }
 
     @Override
@@ -291,6 +309,14 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
         this.validationOn = validationOn;
     }
 
+    public ParameterValidator<?> getValidationDelegate() {
+        return validationDelegate;
+    }
+
+    public void setValidationDelegate(ParameterValidator<?> validationDelegate) {
+        this.validationDelegate = validationDelegate;
+    }
+
     public Boolean getHidden() {
         return hidden;
     }
@@ -305,5 +331,37 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
 
     public void setDefaultDateIsCurrent(Boolean defaultDateIsCurrent) {
         this.defaultDateIsCurrent = defaultDateIsCurrent;
+    }
+
+    public ParameterTransformer<?> getTransformationDelegate() {
+        return transformationDelegate;
+    }
+
+    public void setTransformationDelegate(ParameterTransformer<?> transformationDelegate) {
+        this.transformationDelegate = transformationDelegate;
+    }
+
+    @Override
+    public DefaultValueProvider<?> getDefaultValueProvider() {
+        return defaultValueProvider;
+    }
+
+    public void setDefaultValueProvider(DefaultValueProvider<?> defaultValueProvider) {
+        this.defaultValueProvider = defaultValueProvider;
+    }
+
+    public String getNameMessageKey() {
+        return nameMessageKey;
+    }
+
+    public void setNameMessageKey(String nameMessageKey) {
+        this.nameMessageKey = nameMessageKey;
+    }
+
+    @Override
+    public void copyFrom(ReportInputParameter source) {
+        this.validationDelegate = source.validationDelegate;
+        this.transformationDelegate = source.transformationDelegate;
+        this.defaultValueProvider = source.defaultValueProvider;
     }
 }

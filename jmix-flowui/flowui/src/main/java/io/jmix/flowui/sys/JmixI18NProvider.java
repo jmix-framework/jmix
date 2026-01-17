@@ -19,11 +19,13 @@ package io.jmix.flowui.sys;
 import com.vaadin.flow.i18n.I18NProvider;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
+import io.jmix.core.annotation.Internal;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Locale;
 
+@Internal
 @Component("flowui_JmixI18NProvider")
 public class JmixI18NProvider implements I18NProvider {
 

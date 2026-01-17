@@ -26,6 +26,6 @@ import java.lang.annotation.Target;
  * Development tools do not generate database migration scripts for such entities.
  */
 @Target({ElementType.TYPE})
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface DbView {
 }

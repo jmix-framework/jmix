@@ -22,7 +22,6 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.customfield.CustomField;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.SelectVariant;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
@@ -42,8 +41,10 @@ import io.jmix.flowui.component.textfield.JmixIntegerField;
 import io.jmix.flowui.component.validation.PositiveOrZeroValidator;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -69,6 +70,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
     protected UiComponents uiComponents;
     protected Messages messages;
     protected Dialogs dialogs;
+    protected Icons icons;
 
     protected String requiredMessage;
 
@@ -91,6 +93,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
         uiComponents = applicationContext.getBean(UiComponents.class);
         messages = applicationContext.getBean(Messages.class);
         dialogs = applicationContext.getBean(Dialogs.class);
+        icons = applicationContext.getBean(Icons.class);
     }
 
     protected void initComponent() {
@@ -125,7 +128,6 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
 
         numberField.setStatusChangeHandler(this::onValidationStatusChange);
         numberField.addValidationStatusChangeListener(__ -> updateInvalidState());
-        numberField.addClientValidatedEventListener(__ -> updateInvalidState());
         numberField.setRequiredMessage(
                 messages.getMessage(getClass(), "NextLastIntervalField.numberField.requiredMessage"));
         numberField.setRequired(true);
@@ -145,7 +147,6 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
 
         timeUnitSelect.setStatusChangeHandler(this::onValidationStatusChange);
         timeUnitSelect.addValidationStatusChangeListener(__ -> updateInvalidState());
-        timeUnitSelect.addClientValidatedEventListener(__ -> updateInvalidState());
         timeUnitSelect.setRequiredMessage(
                 messages.getMessage(getClass(), "NextLastIntervalField.timeUnitSelect.requiredMessage"));
         timeUnitSelect.setRequired(true);
@@ -182,7 +183,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
 
     protected void initIncludingCurrentHelperBtn(HorizontalLayout includingCurrentBox) {
         includingCurrentHelperBtn = uiComponents.create(JmixButton.class);
-        includingCurrentHelperBtn.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        includingCurrentHelperBtn.setIcon(icons.get(JmixFontIcon.INTERVAL_FIELD_HELP));
         includingCurrentHelperBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 
         includingCurrentHelperBtn.addClickListener(this::onIncludingCurrentHelperBtnClick);

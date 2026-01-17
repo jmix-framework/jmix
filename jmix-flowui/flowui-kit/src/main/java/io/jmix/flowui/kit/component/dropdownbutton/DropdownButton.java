@@ -16,16 +16,18 @@
 
 package io.jmix.flowui.kit.component.dropdownbutton;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.shared.HasThemeVariant;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
-
 import jakarta.annotation.Nullable;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class DropdownButton extends AbstractDropdownButton {
+/**
+ * Represents a dropdown button component. This class is used as a customizable
+ * button with an associated dropdown menu.
+ */
+public class DropdownButton extends AbstractDropdownButton implements HasThemeVariant<DropdownButtonVariant> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-dropdown-button";
 
@@ -84,7 +86,7 @@ public class DropdownButton extends AbstractDropdownButton {
     }
 
     @Override
-    public void setIcon(@Nullable Icon icon) {
+    public void setIconComponent(@Nullable Component icon) {
         if (icon != null && icon.getElement().isTextNode()) {
             throw new IllegalArgumentException(
                     "Text node can't be used as an icon.");
@@ -97,32 +99,27 @@ public class DropdownButton extends AbstractDropdownButton {
         updateIconSlot();
     }
 
+    /**
+     * Returns whether if the dropdown indicator is currently visible.
+     *
+     * @return {@code true} if the dropdown indicator is visible, {@code false} otherwise
+     */
     public boolean isDropdownIndicatorVisible() {
         return dropdownIndicatorVisible;
     }
 
+    /**
+     * Sets the visibility of the dropdown indicator.
+     *
+     * @param dropdownIndicatorVisible {@code true} to display the indicator,
+     *                                 or {@code false} to hide it.
+     */
     public void setDropdownIndicatorVisible(boolean dropdownIndicatorVisible) {
         if (this.dropdownIndicatorVisible != dropdownIndicatorVisible) {
             this.dropdownIndicatorVisible = dropdownIndicatorVisible;
 
             updateDropdownIconSlot();
         }
-    }
-
-    public void addThemeVariants(DropdownButtonVariant... variants) {
-        List<String> variantsToAdd = Stream.of(variants)
-                .map(DropdownButtonVariant::getVariantName)
-                .collect(Collectors.toList());
-
-        getThemeNames().addAll(variantsToAdd);
-    }
-
-    public void removeThemeVariants(DropdownButtonVariant... variants) {
-        List<String> variantsToRemove = Stream.of(variants)
-                .map(DropdownButtonVariant::getVariantName)
-                .collect(Collectors.toList());
-
-        getThemeNames().removeAll(variantsToRemove);
     }
 
     protected void updateIconSlot() {

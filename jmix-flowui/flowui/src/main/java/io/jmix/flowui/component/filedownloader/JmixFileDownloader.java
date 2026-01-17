@@ -23,6 +23,7 @@ import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.server.*;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
+import io.jmix.flowui.download.DownloaderExportHandler;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+/**
+ * @deprecated use {@link DownloaderExportHandler} with a regular {@link Anchor} instead.
+ * Will be removed either in the next major release or when Vaadin remove {@link StreamResource}.
+ */
+@Deprecated(since = "3.0", forRemoval = true)
 @Internal
 public class JmixFileDownloader extends Composite<Anchor> {
 

@@ -19,6 +19,7 @@ package io.jmix.jmxconsole.view;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.TimeSource;
 import io.jmix.flowui.Notifications;
@@ -48,7 +49,8 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 
-@Route(value = "jmxconsole/mbeanresult", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "jmxconsole/mbeanresult", layout = DefaultMainViewParent.class)
+@Route(value = "jmxcon/mbean-result", layout = DefaultMainViewParent.class)
 @ViewController("sys_MBeanOperationResultView")
 @ViewDescriptor("mbean-operation-result-view.xml")
 @DialogMode(width = "60em", resizable = true)
@@ -60,12 +62,12 @@ public class MBeanOperationResultView extends StandardView {
     @ViewComponent
     protected VerticalLayout resultVBox;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected JmxControl jmxControl;
     @Autowired
     protected UiProperties uiProperties;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected BackgroundWorker backgroundWorker;
     @Autowired

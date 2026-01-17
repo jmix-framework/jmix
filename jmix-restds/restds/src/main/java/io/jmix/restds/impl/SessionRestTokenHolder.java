@@ -18,17 +18,17 @@ package io.jmix.restds.impl;
 
 import io.jmix.core.session.SessionData;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component("restds_SessionRestTokenHolder")
 public class SessionRestTokenHolder implements RestTokenHolder {
 
     private static final String ACCESS_TOKEN_SESSION_ATTR = SessionRestTokenHolder.class.getName() + ".accessToken";
     private static final String REFRESH_TOKEN_SESSION_ATTR = SessionRestTokenHolder.class.getName() + ".refreshToken";
 
-    @Autowired
-    private ObjectProvider<SessionData> sessionDataProvider;
+    private final ObjectProvider<SessionData> sessionDataProvider;
+
+    public SessionRestTokenHolder(ObjectProvider<SessionData> sessionDataProvider) {
+        this.sessionDataProvider = sessionDataProvider;
+    }
 
     @Override
     public String getAccessToken() {

@@ -16,12 +16,20 @@
 
 package io.jmix.search.searching.impl;
 
+import io.jmix.search.searching.SearchQueryConfigurer;
 import io.jmix.search.searching.SearchStrategy;
 
 /**
  * Base class for all search strategies.
  */
-public abstract class AbstractSearchStrategy implements SearchStrategy {
+public abstract class AbstractSearchStrategy<RB, QC extends SearchQueryConfigurer<RB, ?, ?>>
+        implements SearchStrategy<RB> {
+
+    protected final QC queryConfigurer;
+
+    protected AbstractSearchStrategy(QC queryConfigurer) {
+        this.queryConfigurer = queryConfigurer;
+    }
 
     @Override
     public String toString() {

@@ -22,7 +22,7 @@ import io.jmix.flowui.kit.meta.StudioIgnore;
 
 import java.util.function.Consumer;
 
-interface DropdownButtonStubSeparator extends DropdownButtonItem {
+interface DropdownButtonStubSeparator extends StudioStubComponent, DropdownButtonItem {
 
     @StudioIgnore
     @Override

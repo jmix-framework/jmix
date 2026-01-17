@@ -79,7 +79,8 @@ public class EntitySet extends ForwardingSet<Object> implements Serializable {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
         Preconditions.checkNotNullArgument(entityId, "entityId is null");
         return (Optional<T>) entities.stream()
-                .filter(entity -> entityClass.equals(entity.getClass()) && EntityValues.getId(entity).equals(entityId))
+                .filter(entity ->
+                        entityClass.isAssignableFrom(entity.getClass()) && entityId.equals(EntityValues.getId(entity)))
                 .findFirst();
     }
 

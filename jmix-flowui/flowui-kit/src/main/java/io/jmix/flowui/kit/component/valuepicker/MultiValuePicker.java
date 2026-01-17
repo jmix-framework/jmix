@@ -24,6 +24,11 @@ import com.vaadin.flow.shared.Registration;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * A component that allows selection and management of multiple values.
+ *
+ * @param <V> the type of values managed by the picker
+ */
 public class MultiValuePicker<V> extends ValuePickerBase<MultiValuePicker<V>, Collection<V>>
         implements HasPrefix, HasSuffix {
 

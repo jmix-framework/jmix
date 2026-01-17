@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.sys;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import java.util.Map;
 /**
  * Class provides information about view controller.
  */
+@Internal
 public class ViewControllerMeta {
 
     private static final Logger log = LoggerFactory.getLogger(ViewControllerMeta.class);

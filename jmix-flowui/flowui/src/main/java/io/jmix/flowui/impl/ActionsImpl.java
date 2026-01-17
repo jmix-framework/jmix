@@ -45,6 +45,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of the {@link Actions} interface that manages the creation and registration
+ * of action types annotated with {@link ActionType}. It initializes and resolves action classes,
+ * making them available for use within the application context.
+ */
 @Component("flowui_Actions")
 public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshedEvent> {
 

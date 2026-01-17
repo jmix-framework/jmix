@@ -17,11 +17,7 @@
 package io.jmix.flowui.kit.component.grid;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.HasComponents;
-import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.component.html.Div;
@@ -35,6 +31,13 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasAction;
 import jakarta.annotation.Nullable;
 
+/**
+ * A wrapper class for encapsulating a grid menu item with associated actions and UI components.
+ * This class represents a composite UI component, enabling the addition of text, prefix, suffix,
+ * tooltip, and action functionality to a grid menu item.
+ *
+ * @param <T> the type of the grid menu item's data
+ */
 public class GridMenuItemActionWrapper<T> extends Composite<Div>
         implements HasText, HasComponents, HasPrefix, HasSuffix, HasTooltip, HasAction {
 
@@ -67,10 +70,20 @@ public class GridMenuItemActionWrapper<T> extends Composite<Div>
         return div;
     }
 
+    /**
+     * Returns the associated menu item of type {@link GridMenuItem}.
+     *
+     * @return the {@link GridMenuItem} instance associated with this component
+     */
     public GridMenuItem<T> getMenuItem() {
         return menuItem;
     }
 
+    /**
+     * Sets the {@link GridMenuItem} associated with this component.
+     *
+     * @param menuItem the {@link GridMenuItem} to be set
+     */
     public void setMenuItem(GridMenuItem<T> menuItem) {
         this.menuItem = menuItem;
     }
@@ -86,25 +99,54 @@ public class GridMenuItemActionWrapper<T> extends Composite<Div>
         getActionSupport().setAction(action, overrideComponentProperties);
     }
 
+    /**
+     * Adds a listener for click events on a menu item within the grid's context menu.
+     * This allows handling specific actions when a menu item is clicked.
+     *
+     * @param clickListener the listener to handle {@link GridContextMenu.GridContextMenuItemClickEvent} events
+     * @return a {@link Registration} object for removing the listener, if needed
+     */
     public Registration addMenuItemClickListener(
             ComponentEventListener<GridContextMenu.GridContextMenuItemClickEvent<T>> clickListener) {
         return menuItem.addMenuItemClickListener(clickListener);
     }
 
+    /**
+     * Determines whether the associated menu item is checkable.
+     *
+     * @return true if the menu item is checkable and not null, false otherwise
+     */
     public boolean isCheckable() {
         return menuItem != null && menuItem.isCheckable();
     }
 
+    /**
+     * Sets the checkable state of the associated menu item.
+     *
+     * @param checkable a boolean value indicating whether the menu item should be checkable.
+     *                  If true, the menu item can be checked; otherwise, it cannot be checked
+     */
     public void setCheckable(boolean checkable) {
         if (menuItem != null) {
             menuItem.setCheckable(checkable);
         }
     }
 
+    /**
+     * Determines whether the associated menu item is currently checked.
+     *
+     * @return true if the associated menu item is not {@code null} and is checked, false otherwise
+     */
     public boolean isChecked() {
         return menuItem != null && menuItem.isChecked();
     }
 
+    /**
+     * Sets the checked state of the associated menu item.
+     *
+     * @param checked a boolean value indicating whether the menu item should be marked as checked.
+     *                If true, the menu item will be checked; otherwise, it will be unchecked
+     */
     public void setChecked(boolean checked) {
         if (menuItem != null) {
             menuItem.setChecked(checked);
@@ -262,6 +304,11 @@ public class GridMenuItemActionWrapper<T> extends Composite<Div>
         getContent().addComponentAsFirst(component);
     }
 
+    /**
+     * Returns the {@link GridMenuItemActionSupport} instance associated with this wrapper.
+     *
+     * @return the {@link GridMenuItemActionSupport} instance linked to the menu item.
+     */
     public GridMenuItemActionSupport getActionSupport() {
         if (actionSupport == null) {
             actionSupport = createActionSupport();

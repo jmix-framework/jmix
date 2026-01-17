@@ -16,10 +16,7 @@
 
 package test_support;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.JmixModules;
-import io.jmix.core.Resources;
-import io.jmix.core.Stores;
+import io.jmix.core.*;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.core.impl.JmixMessageSource;
@@ -29,6 +26,8 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.dynattr.DynAttrConfiguration;
+import io.jmix.dynattr.DynAttrManager;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
@@ -38,9 +37,11 @@ import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.StartupIndexSynchronizer;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
+import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.security.SecurityConfiguration;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
@@ -64,11 +65,14 @@ import javax.sql.DataSource;
         DataConfiguration.class,
         EclipselinkConfiguration.class,
         SecurityConfiguration.class,
-        SearchConfiguration.class})
+        SearchConfiguration.class,
+        DynAttrConfiguration.class})
 public class BaseSearchTestConfiguration {
 
     @Autowired
     SearchProperties searchProperties;
+    @Autowired
+    AutowireCapableBeanFactory beanFactory;
 
     // Test Search beans
 
@@ -88,6 +92,16 @@ public class BaseSearchTestConfiguration {
                                      IndexStateRegistry indexStateRegistry,
                                      SearchProperties searchProperties) {
         return new TestNoopIndexManager(indexConfigurationManager, indexStateRegistry, searchProperties);
+    }
+
+    @Bean("search_JpaIndexingQueueManager")
+    public IndexingQueueManager indexingQueueManager() {
+        return beanFactory.createBean(TestJpaIndexingQueueManager.class);
+    }
+
+    @Bean
+    public TestIndexingQueueItemsTracker testIndexingQueueItemsTracker(IdSerialization idSerialization) {
+        return new TestIndexingQueueItemsTracker(idSerialization);
     }
 
     @Bean
@@ -146,5 +160,11 @@ public class BaseSearchTestConfiguration {
     @Bean
     public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
         return new LocalApplicationEventChannelSupplier();
+    }
+
+    @Bean
+    @Primary
+    public DynAttrManager dynAttrManager() {
+        return new NoopDynAttrManagerImpl();
     }
 }

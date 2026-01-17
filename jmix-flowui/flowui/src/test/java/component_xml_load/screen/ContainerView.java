@@ -18,6 +18,7 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
+import com.vaadin.flow.component.card.Card;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -53,6 +54,9 @@ public class ContainerView extends StandardView {
     public HorizontalLayout hboxId;
 
     @ViewComponent
+    public HorizontalLayout hboxWithItemsAlignmentId;
+
+    @ViewComponent
     public FlexLayout flexLayoutId;
 
     @ViewComponent
@@ -78,4 +82,10 @@ public class ContainerView extends StandardView {
 
     @ViewComponent
     public JmixTabSheet tabSheetId;
+
+    @ViewComponent
+    public Card cardId;
+
+    @ViewComponent
+    public Card cardWithTitlesId;
 }

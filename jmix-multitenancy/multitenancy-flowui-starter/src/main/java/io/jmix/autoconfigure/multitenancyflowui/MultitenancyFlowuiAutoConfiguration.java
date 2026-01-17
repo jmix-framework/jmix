@@ -16,11 +16,46 @@
 
 package io.jmix.autoconfigure.multitenancyflowui;
 
+import io.jmix.core.DataManager;
+import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.multitenancyflowui.MultitenancyFlowuiConfiguration;
+import io.jmix.multitenancyflowui.MultitenancyUiSupport;
+import io.jmix.multitenancyflowui.impl.SameTenantRoleAssignmentCandidatePredicate;
+import io.jmix.multitenancyflowui.impl.SameTenantUserSubstitutionCandidatePredicate;
+import io.jmix.multitenancyflowui.impl.TenantAuthDetailsValidator;
+import io.jmix.securityflowui.authentication.AuthDetailsValidator;
+import io.jmix.securityflowui.util.RoleAssignmentCandidatePredicate;
+import io.jmix.securityflowui.util.UserSubstitutionCandidatePredicate;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
 @Import({MultitenancyFlowuiConfiguration.class})
 public class MultitenancyFlowuiAutoConfiguration {
+
+    @Bean("mten_SameTenantUserSubstitutionCandidatePredicate")
+    @ConditionalOnClass(name = "io.jmix.securityflowui.util.UserSubstitutionCandidatePredicate")
+    public UserSubstitutionCandidatePredicate sameTenantUserSubstitutionCandidatePredicate(TenantProvider tenantProvider) {
+        return new SameTenantUserSubstitutionCandidatePredicate(tenantProvider);
+    }
+
+    @Bean("mten_SameTenantRoleAssignmentCandidatePredicate")
+    @ConditionalOnClass(name = "io.jmix.securityflowui.util.RoleAssignmentCandidatePredicate")
+    public RoleAssignmentCandidatePredicate sameTenantRoleAssignmentCandidatePredicate(TenantProvider tenantProvider) {
+        return new SameTenantRoleAssignmentCandidatePredicate(tenantProvider);
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(AuthDetailsValidator.class)
+    public static class MultitenancyUiLoginConfiguration {
+
+        @Bean("mten_TenantAuthDetailsValidator")
+        public AuthDetailsValidator tenantAuthDetailsValidator(DataManager dataManager,
+                                                               MultitenancyUiSupport multitenancyUiSupport) {
+            return new TenantAuthDetailsValidator(dataManager, multitenancyUiSupport);
+        }
+    }
 }

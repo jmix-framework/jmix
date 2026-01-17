@@ -46,6 +46,30 @@ public interface InstanceNameProvider {
     String getInstanceName(Object instance);
 
     /**
+     * Gets entity instance name defined by {@link InstanceName} annotation in {@code metaClass}
+     * or its ancestor if {@link CoreProperties#instanceNameFallbackEnabled} is true.
+     *
+     * @param instance   instance
+     * @param metaClass  class to get @InstanceName definition from
+     *
+     * @return instance name
+     * @see CoreProperties#instanceNameFallbackEnabled
+     */
+    String getInstanceName(Object instance, MetaClass metaClass);
+
+    /**
+     * Gets entity instance name defined by {@link InstanceName} annotation in {@code entityClass}
+     * or its ancestor if {@link CoreProperties#instanceNameFallbackEnabled} is true.
+     *
+     * @param instance   instance
+     * @param entityClass class to get @InstanceName definition from
+     *
+     * @return instance name
+     * @see CoreProperties#instanceNameFallbackEnabled
+     */
+    String getInstanceName(Object instance, Class<?> entityClass);
+
+    /**
      * Return a collection of properties included into entity's name pattern (see {@link InstanceName}).
      *
      * @param metaClass   entity metaclass

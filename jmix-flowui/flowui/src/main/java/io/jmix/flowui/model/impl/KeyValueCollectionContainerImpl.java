@@ -29,6 +29,10 @@ import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Implementation of the {@link KeyValueCollectionContainer} interface,
+ * providing functionality for managing a collection of {@link KeyValueEntity} instances.
+ */
 public class KeyValueCollectionContainerImpl
         extends CollectionContainerImpl<KeyValueEntity> implements KeyValueCollectionContainer {
 

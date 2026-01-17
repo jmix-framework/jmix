@@ -123,8 +123,7 @@ public class InspectorFormLayoutBuilder {
                         continue;
                     }
                     if (metaProperty.getType() != MetaProperty.Type.ENUM
-                            && (EntityFormLayoutUtils.isByteArray(metaProperty)
-                            || EntityFormLayoutUtils.isUuid(metaProperty))
+                            && (EntityFormLayoutUtils.isByteArray(metaProperty))
                     ) {
                         continue;
                     }
@@ -214,7 +213,7 @@ public class InspectorFormLayoutBuilder {
             pickerField.setWidthFull();
 
             isReadonly = isReadonly || (disabledProperties != null && disabledProperties.contains(metaProperty.getName()));
-            if (range.isClass() && !metadataTools.isEmbedded(metaProperty)) {
+            if (range.isClass() && metaProperty.getType() != MetaProperty.Type.EMBEDDED) {
                 pickerField.setReadOnly(!metadataTools.isOwningSide(metaProperty) || isReadonly);
             } else {
                 pickerField.setReadOnly(isReadonly);

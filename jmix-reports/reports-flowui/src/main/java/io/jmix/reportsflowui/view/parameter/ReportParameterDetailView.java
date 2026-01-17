@@ -4,11 +4,11 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -29,6 +29,7 @@ import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ParameterClassResolver;
@@ -52,7 +53,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-@Route(value = "reports/parameters/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/parameters/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/parameters/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportInputParameter.detail")
 @ViewDescriptor("report-parameter-detail-view.xml")
 @EditedEntityContainer("parameterDc")
@@ -170,7 +172,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     }
 
     protected void initLocaleField() {
-        Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
+        FontIcon helpIcon = JmixFontIcon.QUESTION_CIRCLE.create();
         helpIcon.addClassNames(
                 ReportStyleConstants.FIELD_ICON_SIZE_CLASS_NAME,
                 ReportStyleConstants.FIELD_ICON_CLASS_NAME
@@ -180,7 +182,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         localeField.setSuffixComponent(helpIcon);
     }
 
-    protected void onLocaleFieldHelpIconClick(ClickEvent<Icon> event) {
+    protected void onLocaleFieldHelpIconClick(ClickEvent<?> event) {
         dialogs.createMessageDialog()
                 .withHeader(messages.getMessage(getClass(), "parameters.localeTextHelp.header"))
                 .withContent(new Html(messages.getMessage(getClass(), "parameters.localeTextHelp.text")))

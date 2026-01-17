@@ -23,7 +23,14 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Represents a data unit bound to a collection of entity items. Provides capabilities
+ * for managing the collection and interacting with its state and events.
+ *
+ * @param <E> the type of entity items in the collection
+ */
 public interface EntityItems<E> extends EntityDataUnit {
+
     /**
      * Set current item in the source.
      *
@@ -75,6 +82,11 @@ public interface EntityItems<E> extends EntityDataUnit {
             return (EntityItems<T>) super.getSource();
         }
 
+        /**
+         * Retrieves the list of items.
+         *
+         * @return a list of items
+         */
         public List<T> getItems() {
             return items;
         }

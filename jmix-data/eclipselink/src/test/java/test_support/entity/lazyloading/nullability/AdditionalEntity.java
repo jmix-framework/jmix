@@ -4,6 +4,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import jakarta.persistence.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -18,9 +19,11 @@ public class AdditionalEntity {
 
     @Column(name = "NAME")
     private String name;
+
     @JoinTable(name = "PARENT_ADDITIONAL_ENTITY_LINK",
             joinColumns = @JoinColumn(name = "ADDITIONAL_ENTITY_ID"),
-            inverseJoinColumns = @JoinColumn(name = "PARENT_ENTITY_ID"))
+            inverseJoinColumns = @JoinColumn(name = "PARENT_ENTITY_ID"),
+            foreignKey = @ForeignKey(name = "FK_PARENT_ADDITIONAL_ENTITY_LINK", value = ConstraintMode.NO_CONSTRAINT))
     @ManyToMany
     private List<ParentEntity> parentEntities;
 

@@ -24,6 +24,11 @@ import io.jmix.flowui.view.View;
 
 import java.lang.invoke.MethodHandle;
 
+/**
+ * Implementation of the {@link DataLoadCoordinator.Trigger} interface.
+ * It registers an event listener on a specified view's event and invokes the associated
+ * {@link DataLoader} when the event occurs, triggering data loading operations.
+ */
 public class OnViewEventLoadTrigger implements DataLoadCoordinator.Trigger {
 
     protected final DataLoader loader;

@@ -21,17 +21,20 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
 import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.view.*;
 import io.jmix.security.usersubstitution.UserSubstitutionModel;
 import io.jmix.security.usersubstitution.UserSubstitutionPersistence;
+import io.jmix.securityflowui.util.UserSubstitutionCandidatePredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
+
+import static io.jmix.securityflowui.util.PredicateUtils.combineUserSubstitutionPredicates;
 
 @ViewController("sec_UserSubstitution.detail")
 @ViewDescriptor("user-substitution-detail-view.xml")
@@ -41,15 +44,26 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
 
     @ViewComponent
     protected JmixComboBox<String> substitutedUsernameField;
+    @ViewComponent
+    private TypedTextField<String> usernameField;
 
+    @ViewComponent
+    protected MessageBundle messagesBundle;
     @Autowired
     protected EntityStates entityStates;
     @Autowired
     protected UserRepository userRepository;
-    @Autowired
-    protected MessageBundle messagesBundle;
     @Autowired(required = false)
     protected UserSubstitutionPersistence userSubstitutionPersistence;
+    @Autowired(required = false)
+    protected List<UserSubstitutionCandidatePredicate> userSubstitutionCandidatePredicates = Collections.emptyList();
+
+    protected UserSubstitutionCandidatePredicate compositeUserSubstitutionCandidatePredicate;
+
+    @Subscribe
+    public void onInit(final InitEvent event) {
+        compositeUserSubstitutionCandidatePredicate = combineUserSubstitutionPredicates(userSubstitutionCandidatePredicates);
+    }
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -61,7 +75,12 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
         String enteredValue = query.getFilter()
                 .orElse("");
 
+        String targetUsername = usernameField.getValue();
+        UserDetails targetUser = userRepository.loadUserByUsername(targetUsername);
         return userRepository.getByUsernameLike(enteredValue).stream()
+                .filter(substitutionCandidate ->
+                        compositeUserSubstitutionCandidatePredicate.test(targetUser, substitutionCandidate)
+                )
                 .map(UserDetails::getUsername)
                 .filter(name -> !name.equals(getEditedEntity().getUsername()))
                 .skip(query.getOffset())
@@ -86,6 +105,10 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
     @Install(target = Target.DATA_CONTEXT)
     protected Set<Object> saveDelegate(final SaveContext saveContext) {
         UserSubstitutionModel saved = getUserSubstitutionService().save(getEditedEntity());
+
+        UserSubstitutionsChangedEvent event = new UserSubstitutionsChangedEvent(getEditedEntity().getUsername());
+        getApplicationContext().publishEvent(event);
+
         return Set.of(saved);
     }
 

@@ -104,5 +104,9 @@ class JmixExtension {
          * false, then entities enhancing steps will be executed on each classes compilation.
          */
         boolean skipUnmodifiedEntitiesEnhancing = true
+
+        List<String> nonJpaPackages = []
+
+        List<String> nonJpaClasses = []
     }
 }

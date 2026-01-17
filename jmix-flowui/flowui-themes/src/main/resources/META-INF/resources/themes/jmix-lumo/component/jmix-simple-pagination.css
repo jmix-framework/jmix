@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-.buttons-panel .jmix-simple-pagination:last-child {
+.buttons-panel .jmix-simple-pagination:not([slot]):last-child {
     margin-inline-start: auto
 }
 

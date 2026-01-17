@@ -60,7 +60,7 @@ import { TabSheetMixin } from '@vaadin/tabsheet/src/vaadin-tabsheet-mixin.js';
  * @mixes ThemableMixin
  * @mixes ControllerMixin
  */
-// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.7.3]
+// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.9.0]
 class JmixTabSheet extends TabSheetMixin(ThemableMixin(ElementMixin(ControllerMixin(PolymerElement)))) {
     static get template() {
         return html`
@@ -84,6 +84,10 @@ class JmixTabSheet extends TabSheetMixin(ThemableMixin(ElementMixin(ControllerMi
                     flex: 1;
                     align-self: stretch;
                     min-width: 8em;
+                }
+
+                ::slotted([hidden]) {
+                    display: none !important;
                 }
 
                 [part='content'] {

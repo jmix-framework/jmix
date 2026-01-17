@@ -26,7 +26,22 @@ import io.jmix.flowui.kit.action.Action;
  */
 public interface Actions {
 
+    /**
+     * Creates an instance of an action by its type identifier.
+     *
+     * @param <T>          the type of the action, extending {@link Action}
+     * @param actionTypeId the identifier of the action type
+     * @return an instance of the specified action type
+     */
     <T extends Action> T create(String actionTypeId);
 
+    /**
+     * Creates an instance of a specified action type.
+     *
+     * @param <T>          the type of the action to be created, which must extend the Action class
+     * @param actionTypeId the unique identifier of the action type to create
+     * @param id           the identifier for the specific instance of the action
+     * @return an instance of the specified action type
+     */
     <T extends Action> T create(String actionTypeId, String id);
 }

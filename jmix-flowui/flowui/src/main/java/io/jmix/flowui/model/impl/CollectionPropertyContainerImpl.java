@@ -22,10 +22,16 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.model.CollectionPropertyContainer;
 import io.jmix.flowui.model.InstanceContainer;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 
+/**
+ * Implementation of the {@link CollectionPropertyContainer} interface that manages a collection of entities
+ * as a property of a master entity.
+ *
+ * @param <E> the type of items in the collection
+ */
 public class CollectionPropertyContainerImpl<E>
         extends CollectionContainerImpl<E> implements CollectionPropertyContainer<E> {
 

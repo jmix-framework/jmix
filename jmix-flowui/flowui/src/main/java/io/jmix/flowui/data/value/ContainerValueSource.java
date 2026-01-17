@@ -37,6 +37,14 @@ import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * Provides a value source implementation powered by an {@link InstanceContainer}.
+ * It binds a container's property with a value source that reflects changes to the property
+ * or its individual elements, and allows bidirectional updates.
+ *
+ * @param <E> the type of entity contained in the {@link InstanceContainer}
+ * @param <V> the type of the bound property value
+ */
 public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, ApplicationContextAware {
 
     protected final InstanceContainer<E> container;
@@ -334,6 +342,11 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
         return mpp.getMetaProperty().getInverse();
     }
 
+    /**
+     * Returns the {@link InstanceContainer} associated with this value source.
+     *
+     * @return the associated instance container
+     */
     public InstanceContainer<E> getContainer() {
         return container;
     }

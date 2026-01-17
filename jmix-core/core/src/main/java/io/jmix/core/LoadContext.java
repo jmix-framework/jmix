@@ -29,7 +29,6 @@ import org.springframework.lang.Nullable;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Class that defines parameters for loading entities from the database via {@link DataManager}.
@@ -55,9 +54,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     protected FetchPlan fetchPlan;
     protected Object id;
     protected List<Object> idList = new ArrayList<>(0);
-    protected List<Query> prevQueries = new ArrayList<>(0);
     protected List<AccessConstraint<?>> accessConstraints = new ArrayList<>();
-    protected int queryKey;
 
     protected boolean loadPartialEntities = true;
     protected boolean joinTransaction = true;
@@ -179,31 +176,6 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     }
 
     /**
-     * DEPRECATED, will be removed in 3.0.
-     */
-    @Deprecated(forRemoval = true)
-    public List<Query> getPreviousQueries() {
-        return prevQueries;
-    }
-
-    /**
-     * DEPRECATED, will be removed in 3.0.
-     */
-    @Deprecated(forRemoval = true)
-    public int getQueryKey() {
-        return queryKey;
-    }
-
-    /**
-     * DEPRECATED, will be removed in 3.0.
-     */
-    @Deprecated(forRemoval = true)
-    public LoadContext<E> setQueryKey(int queryKey) {
-        this.queryKey = queryKey;
-        return this;
-    }
-
-    /**
      * @return custom hints which are used by the query
      */
     public Map<String, Object> getHints() {
@@ -295,8 +267,6 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         ctx.query = query != null ? query.copy() : null;
         ctx.fetchPlan = fetchPlan;
         ctx.id = id;
-        ctx.prevQueries.addAll(prevQueries.stream().map(Query::copy).collect(Collectors.toList()));
-        ctx.queryKey = queryKey;
         if (hints != null) {
             ctx.setHints(new HashMap<>(hints));
         }
@@ -427,7 +397,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
          * @param condition root query condition
          * @return this query instance for chaining
          */
-        public Query setCondition(Condition condition) {
+        public Query setCondition(@Nullable Condition condition) {
             this.condition = condition;
             return this;
         }

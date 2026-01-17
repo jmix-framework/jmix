@@ -28,12 +28,14 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.ComponentGenerationStrategy;
+import io.jmix.flowui.component.HasZoneId;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
@@ -48,6 +50,7 @@ import io.jmix.flowui.data.SupportsValueSource;
 import jakarta.persistence.Lob;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -66,6 +69,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected Actions actions;
     protected Messages messages;
     protected DatatypeRegistry datatypeRegistry;
+    protected CurrentAuthentication currentAuthentication;
 
     public AbstractComponentGenerationStrategy(UiComponents uiComponents,
                                                Metadata metadata,
@@ -81,6 +85,11 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         this.datatypeRegistry = datatypeRegistry;
         this.messages = messages;
         this.entityFieldCreationSupport = entityFieldCreationSupport;
+    }
+
+    @Autowired
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.currentAuthentication = currentAuthentication;
     }
 
     @Nullable
@@ -197,6 +206,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected Component createTimePicker(ComponentGenerationContext context) {
         TypedTimePicker timeField = uiComponents.create(TypedTimePicker.class);
         setValueSource(timeField, context);
+        setupZoneId(timeField);
 
         Element xmlDescriptor = context.getXmlDescriptor();
         String datatype = xmlDescriptor == null ? null : xmlDescriptor.attributeValue("datatype");
@@ -211,6 +221,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected Component createDateTimePicker(ComponentGenerationContext context) {
         TypedDateTimePicker dateTimeField = uiComponents.create(TypedDateTimePicker.class);
         setValueSource(dateTimeField, context);
+        setupZoneId(dateTimeField);
 
         Element xmlDescriptor = context.getXmlDescriptor();
         String datatype = xmlDescriptor == null ? null : xmlDescriptor.attributeValue("datatype");
@@ -300,5 +311,10 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     @SuppressWarnings("unchecked")
     protected void setValueSource(SupportsValueSource<?> field, ComponentGenerationContext context) {
         field.setValueSource(context.getValueSource());
+    }
+
+    protected void setupZoneId(HasZoneId component) {
+        ZoneId zoneId = currentAuthentication.getTimeZone().toZoneId();
+        component.setZoneId(zoneId);
     }
 }

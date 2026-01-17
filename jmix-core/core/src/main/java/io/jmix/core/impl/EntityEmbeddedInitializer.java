@@ -16,7 +16,9 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.*;
+import io.jmix.core.EntityInitializer;
+import io.jmix.core.JmixOrder;
+import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -30,14 +32,13 @@ public class EntityEmbeddedInitializer implements EntityInitializer, Ordered {
 
     @Autowired
     protected Metadata metadata;
-    @Autowired
-    protected MetadataTools metadataTools;
 
     @Override
     public void initEntity(Object entity) {
         MetaClass metaClass = metadata.getClass(entity);
         for (MetaProperty property : metaClass.getProperties()) {
-            if (property.getRange().isClass() && metadataTools.isEmbedded(property)) {
+            if (property.getRange().isClass()
+                    && property.getType() == MetaProperty.Type.EMBEDDED) {
                 EmbeddedParameters embeddedParameters = property.getAnnotatedElement().getAnnotation(EmbeddedParameters.class);
                 if (embeddedParameters != null && !embeddedParameters.nullAllowed()) {
                     MetaClass embeddableMetaClass = property.getRange().asClass();

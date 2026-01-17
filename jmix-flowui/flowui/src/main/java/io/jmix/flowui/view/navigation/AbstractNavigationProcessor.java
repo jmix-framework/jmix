@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.view.navigation;
 
+import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.vaadin.flow.component.UI;
@@ -35,6 +36,12 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.Optional;
 
+/**
+ * Abstract base class for implementing navigation processors that handle
+ * navigation to specific views using a defined navigator.ting between views.
+ *
+ * @param <N> the type of navigator this processor handles
+ */
 public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigator> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractNavigationProcessor.class);
@@ -55,6 +62,12 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
         this.navigationSupport = navigationSupport;
     }
 
+    /**
+     * Processes navigation logic based on the provided navigator instance.
+     *
+     * @param navigator the navigator instance containing the context and information
+     *                  required for processing the navigation.
+     */
     @SuppressWarnings("rawtypes")
     public void processNavigation(N navigator) {
         Class<? extends View> viewClass = getViewClass(navigator);
@@ -121,7 +134,7 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
             Location location = new Location(url, queryParameters);
 
             Router router = ui.getInternals().getRouter();
-            router.navigate(ui, location, NavigationTrigger.UI_NAVIGATE, null, true, false);
+            router.navigate(ui, location, NavigationTrigger.UI_NAVIGATE, (BaseJsonNode) null, true, false);
         } else {
             navigationSupport.navigate(navigationTargetType, routeParameters, queryParameters);
         }

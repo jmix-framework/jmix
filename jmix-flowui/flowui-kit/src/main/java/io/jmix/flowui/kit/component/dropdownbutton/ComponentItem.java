@@ -17,10 +17,27 @@
 package io.jmix.flowui.kit.component.dropdownbutton;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.flowui.kit.component.HasContent;
 
-public interface ComponentItem extends DropdownButtonItem {
+/**
+ * Represents an item in a dropdown button that can display a custom component.
+ * The {@code ComponentItem} interface allows associating a UI component with
+ * the dropdown item and provides methods to manage its content.
+ */
+public interface ComponentItem extends DropdownButtonItem, HasContent {
 
+    /**
+     * Sets the content component for the dropdown item.
+     *
+     * @param content the {@link Component} to be set as the content
+     */
     void setContent(Component content);
 
+    /**
+     * Returns the content component associated with this dropdown item.
+     *
+     * @return the {@link Component} currently set as the content
+     */
+    @Override
     Component getContent();
 }

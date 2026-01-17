@@ -64,12 +64,24 @@ public @interface StudioAvailableChildrenInfo {
     ConditionPolicy conditionPolicy() default ConditionPolicy.ALL;
 
     /**
+     * Returns the total number of children allowed for a component.
+     * The default value is {@link Integer#MAX_VALUE}, which indicates
+     * no specific limit on the number of children.
+     */
+    int totalChildrenCount() default Integer.MAX_VALUE;
+
+    /**
      * Description of how many times a component tag can occur inside the current component.
      */
     @interface TagInfo {
         String qualifiedName();
 
         long maxCount();
+
+        /**
+         * Enables or disables inspection by Studio plugin for this info.
+         */
+        boolean enableInspection() default true;
     }
 
     /**
@@ -79,6 +91,11 @@ public @interface StudioAvailableChildrenInfo {
         String qualifiedName();
 
         long maxCount();
+
+        /**
+         * Enables or disables inspection by Studio plugin for this info.
+         */
+        boolean enableInspection() default true;
     }
 
     /**

@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component.combobutton;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -29,20 +29,22 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import jakarta.annotation.Nullable;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+/**
+ * ComboButton is a UI component that provides a combination of a button and a dropdown menu,
+ * allowing users to trigger an action or open a menu of options.
+ */
 public class ComboButton extends AbstractDropdownButton
-        implements ClickNotifier<MenuItem>, HasAction, HasShortcutCombination {
+        implements ClickNotifier<MenuItem>, HasAction, HasShortcutCombination, HasThemeVariant<ComboButtonVariant> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-combo-button-icon";
 
     protected JmixMenuItem buttonItem;
-    protected Icon dropdownIcon = new Icon(VaadinIcon.CHEVRON_DOWN);
+    protected Component dropdownIcon = JmixFontIcon.COMBO_BUTTON_DROPDOWN.create();
 
     protected ComboButtonActionSupport actionSupport;
     protected ShortcutRegistration shortcutRegistration;
@@ -92,7 +94,7 @@ public class ComboButton extends AbstractDropdownButton
     }
 
     @Override
-    public void setIcon(@Nullable Icon icon) {
+    public void setIconComponent(@Nullable Component icon) {
         if (icon != null && icon.getElement().isTextNode()) {
             throw new IllegalArgumentException(
                     "Text node can't be used as an icon.");
@@ -132,12 +134,35 @@ public class ComboButton extends AbstractDropdownButton
         return getActionSupport().getAction();
     }
 
+    /**
+     * Returns the icon to be displayed in the dropdown area of the component.
+     *
+     * @return the icon to be displayed in the dropdown area of the component
+     * @deprecated use {@link #getDropdownIconComponent()} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     public Icon getDropdownIcon() {
+        return dropdownIcon instanceof Icon icon ? icon : null;
+    }
+
+    /**
+     * Sets the icon to be displayed in the dropdown area of the component.
+     *
+     * @param icon the icon to be set, or {@code null} to remove the dropdown icon
+     * @deprecated use {@link #setDropdownIconComponent(Component)} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
+    public void setDropdownIcon(@Nullable Icon icon) {
+        setDropdownIconComponent(icon);
+    }
+
+    @Nullable
+    public Component getDropdownIconComponent() {
         return dropdownIcon;
     }
 
-    public void setDropdownIcon(@Nullable Icon icon) {
+    public void setDropdownIconComponent(@Nullable Component icon) {
         if (dropdownIcon != null) {
             dropdownIcon.getParent()
                     .ifPresent(component -> dropdownIcon.getElement().removeFromParent());
@@ -171,22 +196,6 @@ public class ComboButton extends AbstractDropdownButton
     @Override
     public KeyCombination getShortcutCombination() {
         return shortcutCombination;
-    }
-
-    public void addThemeVariants(ComboButtonVariant... variants) {
-        List<String> variantsToAdd = Stream.of(variants)
-                .map(ComboButtonVariant::getVariantName)
-                .collect(Collectors.toList());
-
-        getThemeNames().addAll(variantsToAdd);
-    }
-
-    public void removeThemeVariants(ComboButtonVariant... variants) {
-        List<String> variantsToRemove = Stream.of(variants)
-                .map(ComboButtonVariant::getVariantName)
-                .collect(Collectors.toList());
-
-        getThemeNames().removeAll(variantsToRemove);
     }
 
     protected ComboButtonActionSupport getActionSupport() {

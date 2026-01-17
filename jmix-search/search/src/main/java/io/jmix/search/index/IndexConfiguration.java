@@ -116,4 +116,17 @@ public class IndexConfiguration {
     public ExtendedSearchSettings getExtendedSearchSettings() {
         return extendedSearchSettings;
     }
+
+    @Override
+    public String toString() {
+        return "IndexConfiguration{" +
+                "entityName='" + entityName + '\'' +
+                ", entityClass=" + entityClass +
+                ", affectedEntityClasses=" + affectedEntityClasses +
+                ", indexName='" + indexName + '\'' +
+                ", mapping=" + mapping +
+                ", indexablePredicate=" + indexablePredicate +
+                ", extendedSearchSettings=" + extendedSearchSettings +
+                '}';
+    }
 }

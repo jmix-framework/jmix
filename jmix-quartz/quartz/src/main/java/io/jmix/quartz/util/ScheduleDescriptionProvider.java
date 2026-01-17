@@ -63,7 +63,7 @@ public class ScheduleDescriptionProvider {
         }
 
         if (scheduleType == ScheduleType.CRON_EXPRESSION) {
-            return triggerModel.getCronExpression();
+            return String.format("%s (%s)", triggerModel.getCronExpression(), triggerModel.getTimeZoneId());
         }
 
         Long repeatInterval = triggerModel.getRepeatInterval();

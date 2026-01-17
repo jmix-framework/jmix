@@ -22,7 +22,6 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -38,7 +37,9 @@ import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 import org.springframework.beans.factory.InitializingBean;
@@ -64,6 +65,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
     protected UiComponents uiComponents;
     protected Messages messages;
     protected PropertyFilterSupport propertyFilterSupport;
+    protected Icons icons;
 
     protected HeaderFilterContext context;
 
@@ -95,6 +97,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         uiComponents = applicationContext.getBean(UiComponents.class);
         messages = applicationContext.getBean(Messages.class);
         propertyFilterSupport = applicationContext.getBean(PropertyFilterSupport.class);
+        icons = applicationContext.getBean(Icons.class);
     }
 
     protected void initComponent() {
@@ -175,7 +178,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
     protected void initFunnelButton() {
         filterButton = uiComponents.create(JmixButton.class);
         filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE, ButtonVariant.LUMO_ICON);
-        filterButton.setIcon(VaadinIcon.FILTER.create());
+        filterButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER));
         filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
         filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_ROLE);
         filterButton.addClickListener(this::onFilterButtonClick);
@@ -238,7 +241,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     protected JmixButton createApplyButton() {
         JmixButton applyButton = uiComponents.create(JmixButton.class);
-        applyButton.setIcon(VaadinIcon.CHECK.create());
+        applyButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER_APPLY));
         applyButton.setText(messages.getMessage("columnFilter.apply.text"));
 
         applyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -257,7 +260,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     protected JmixButton createCancelButton() {
         JmixButton cancelButton = uiComponents.create(JmixButton.class);
-        cancelButton.setIcon(VaadinIcon.BAN.create());
+        cancelButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER_CANCEL));
         cancelButton.setText(messages.getMessage("columnFilter.cancel.text"));
 
         cancelButton.addClickListener(this::onCancelButtonClick);
@@ -300,7 +303,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         JmixButton clearButton = uiComponents.create(JmixButton.class);
 
         clearButton.addThemeVariants(ButtonVariant.LUMO_ICON);
-        clearButton.setIcon(VaadinIcon.ERASER.create());
+        clearButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER_CLEAR));
         clearButton.addClickListener(this::onClearButtonClick);
 
         return clearButton;

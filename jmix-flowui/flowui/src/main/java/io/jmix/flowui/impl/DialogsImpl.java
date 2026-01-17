@@ -26,8 +26,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.shared.Registration;
@@ -45,8 +43,10 @@ import io.jmix.flowui.backgroundtask.LocalizedTaskWrapper;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.event.dialog.DialogClosedEvent;
 import io.jmix.flowui.event.dialog.DialogOpenedEvent;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +57,9 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Implementation of the {@link Dialogs} interface, providing methods for creating different types of dialogs.
+ */
 @org.springframework.stereotype.Component("flowui_Dialogs")
 public class DialogsImpl implements Dialogs {
 
@@ -70,9 +73,12 @@ public class DialogsImpl implements Dialogs {
     protected BackgroundWorker backgroundWorker;
     protected ApplicationContext applicationContext;
 
-    public DialogsImpl(ApplicationContext applicationContext, Messages messages,
+    public DialogsImpl(ApplicationContext applicationContext,
+                       Messages messages,
                        UiViewProperties flowUiViewProperties,
-                       DialogWindows dialogWindows, UiComponents uiComponents, BackgroundWorker backgroundWorker) {
+                       DialogWindows dialogWindows,
+                       UiComponents uiComponents,
+                       BackgroundWorker backgroundWorker) {
         this.messages = messages;
         this.flowUiViewProperties = flowUiViewProperties;
         this.dialogWindows = dialogWindows;
@@ -103,7 +109,7 @@ public class DialogsImpl implements Dialogs {
     }
 
     protected Button createButton(Action action, Dialog dialog) {
-        Button button = new Button();
+        Button button = uiComponents.create(Button.class);
 
         if (action instanceof DialogAction dialogAction) {
             DialogAction.Type type = dialogAction.getType();
@@ -111,7 +117,7 @@ public class DialogsImpl implements Dialogs {
             button.setId(type.getId());
             button.addClassName(type.getId() + BUTTON_CLASS_NAMES_POSTFIX);
             button.setText(messages.getMessage(type.getMsgKey()));
-            button.setIcon(type.getVaadinIcon().create());
+            button.setIcon(type.getIcon());
         }
 
         button.setEnabled(action.isEnabled());
@@ -120,8 +126,8 @@ public class DialogsImpl implements Dialogs {
             button.setText(action.getText());
         }
 
-        if (action.getIcon() != null) {
-            button.setIcon(action.getIcon());
+        if (action.getIconComponent() != null) {
+            button.setIcon(action.getIconComponent());
         }
 
         button.addClickListener(event -> {
@@ -132,6 +138,11 @@ public class DialogsImpl implements Dialogs {
         return button;
     }
 
+    /**
+     * Implementation of the {@link OptionDialogBuilder} that enables configuring and building option dialogs.
+     * This class provides a variety of methods to customize the appearance and behavior of the dialog,
+     * including setting headers, content, dimensions, actions, and event listeners.
+     */
     public class OptionDialogBuilderImpl implements OptionDialogBuilder {
 
         protected Dialog dialog;
@@ -454,6 +465,10 @@ public class DialogsImpl implements Dialogs {
         }
     }
 
+    /**
+     * Implementation of the {@link MessageDialogBuilder} interface that provides functionality
+     * for building and configuring a message dialog in a fluent manner.
+     */
     public class MessageDialogBuilderImpl implements MessageDialogBuilder {
 
         protected Dialog dialog;
@@ -734,6 +749,11 @@ public class DialogsImpl implements Dialogs {
         }
     }
 
+    /**
+     * Implementation of the {@link InputDialogBuilder} interface designed to facilitate the creation and customization
+     * of {@link InputDialog} components. This class provides methods to configure dialog properties such as dimensions,
+     * position, input parameters, actions, and other features.
+     */
     public class InputDialogBuilderImpl implements InputDialogBuilder {
 
         protected InputDialog inputDialog;
@@ -832,24 +852,41 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        /**
+         * Returns the collection of {@link InputParameter} objects associated with the {@code InputDialog}.
+         *
+         * @return a collection of {@link InputParameter} objects
+         */
         public Collection<InputParameter> getParameters() {
             return inputDialog.getParameters();
         }
 
+        @Override
         public InputDialogBuilder withResponsiveSteps(List<ResponsiveStep> responsiveSteps) {
             inputDialog.setResponsiveSteps(responsiveSteps);
             return this;
         }
 
+        /**
+         * Returns a list of responsive steps used in the {@code FormLayout} of the {@code InputDialog}.
+         *
+         * @return a {@code List} of {@link ResponsiveStep} objects representing the responsive steps
+         */
         public List<ResponsiveStep> getResponsiveSteps() {
             return inputDialog.getResponsiveSteps();
         }
 
+        @Override
         public InputDialogBuilder withLabelsPosition(LabelsPosition labelsPosition) {
             inputDialog.setLabelsPosition(labelsPosition);
             return this;
         }
 
+        /**
+         * Returns the position of labels for components in the {@link InputDialog}.
+         *
+         * @return the {@link LabelsPosition} of the labels
+         */
         public LabelsPosition getLabelsPosition() {
             return inputDialog.getLabelsPosition();
         }
@@ -866,6 +903,11 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        /**
+         * Returns the collection of {@link Action} objects associated with the {@link InputDialog}.
+         *
+         * @return a collection of {@link Action} objects
+         */
         public Collection<Action> getActions() {
             return inputDialog.getActions();
         }
@@ -883,6 +925,12 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        /**
+         * Returns the predefined dialog actions associated with the input dialog.
+         * By default, this is {@link DialogActions#OK_CANCEL}.
+         *
+         * @return the predefined dialog actions
+         */
         public DialogActions getDialogActions() {
             return inputDialog.getDialogActions();
         }
@@ -898,6 +946,11 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        /**
+         * Returns the validator function associated with the input dialog.
+         *
+         * @return the validator function associated with the input dialog
+         */
         public Function<InputDialog.ValidationContext, ValidationErrors> getValidator() {
             return inputDialog.getValidator();
         }
@@ -915,6 +968,14 @@ public class DialogsImpl implements Dialogs {
         }
     }
 
+    /**
+     * Implementation of {@link BackgroundTaskDialogBuilder} that facilitates creating and managing
+     * dialogs for running background tasks with progress display, cancel functionality,
+     * and customizable UI elements.
+     *
+     * @param <T> the type of the progress update values provided by the task, extending {@link Number}
+     * @param <V> the result type of the background task
+     */
     public class BackgroundTaskDialogBuilderImpl<T extends Number, V> implements BackgroundTaskDialogBuilder<T, V> {
 
         protected Dialog dialog;
@@ -976,8 +1037,9 @@ public class DialogsImpl implements Dialogs {
 
             cancelButton = uiComponents.create(Button.class);
             cancelButton.setText(messages.getMessage("actions.Cancel"));
-            cancelButton.setIcon(new Icon(VaadinIcon.BAN));
             cancelButton.addClickListener(this::onCancelButtonClick);
+            Icons icons = applicationContext.getBean(Icons.class);
+            cancelButton.setIcon(icons.get(JmixFontIcon.DIALOG_CANCEL));
         }
 
         @Override
@@ -1186,6 +1248,11 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        /**
+         * Constructs and returns a {@link Dialog} instance, configured based on the current state of the builder.
+         *
+         * @return the configured {@link Dialog} instance
+         */
         public Dialog build() {
             if (isIndeterminateMode()) {
                 progressTextSpan.setVisible(false);

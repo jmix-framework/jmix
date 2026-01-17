@@ -21,18 +21,12 @@ import io.jmix.core.FileStorage;
 
 import org.springframework.lang.Nullable;
 
+import java.util.function.Predicate;
+
 /**
  * Generic interface to download data from the system.
  */
 public interface Downloader {
-
-    /**
-     * Sets a file storage where the files will be downloaded from.
-     *
-     * @param fileStorage file storage
-     */
-    @Deprecated(since = "2.3", forRemoval = true)
-    void setFileStorage(FileStorage fileStorage);
 
     /**
      * @return {@code true} if downloader should open a new window with the file content
@@ -45,6 +39,15 @@ public interface Downloader {
      * @param showNewWindow {@code true} if downloader opens new window, otherwise {@code false}
      */
     void setShowNewWindow(boolean showNewWindow);
+
+    /**
+     * Sets a predicate that checks if file is allowed to be opened.
+     * It takes file extension as an input parameter and returns {@code true} if file is allowed to be opened or
+     * {@code false} if file should be downloaded.
+     *
+     * @param viewFilePredicate predicate
+     */
+    default void setViewFilePredicate(Predicate<String> viewFilePredicate) {}
 
     /**
      * Downloads an arbitrary resource defined by a DownloadDataProvider.

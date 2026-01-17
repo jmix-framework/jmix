@@ -16,12 +16,8 @@
 package io.jmix.flowui.menu;
 
 import com.google.common.base.Strings;
-import io.jmix.core.JmixModules;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.Resources;
+import com.vaadin.flow.component.Text;
+import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -30,10 +26,15 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.menu.MenuItem.MenuItemParameter;
 import io.jmix.flowui.menu.MenuItem.MenuItemProperty;
+import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.lang.Nullable;
@@ -41,13 +42,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -55,7 +50,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Holds information about the main menu structure.
  */
 @Component("flowui_MenuConfig")
-public class MenuConfig {
+public class MenuConfig implements ApplicationContextAware {
 
     private final Logger log = LoggerFactory.getLogger(MenuConfig.class);
 
@@ -63,6 +58,7 @@ public class MenuConfig {
 
     protected List<MenuItem> rootItems = new ArrayList<>();
 
+    protected ApplicationContext applicationContext;
     protected Resources resources;
     protected Messages messages;
     protected MessageTools messageTools;
@@ -72,6 +68,8 @@ public class MenuConfig {
     protected JmixModules modules;
     protected Metadata metadata;
     protected MetadataTools metadataTools;
+
+    protected IconLoaderSupport iconLoaderSupport;
 
     protected volatile boolean initialized;
 
@@ -91,10 +89,27 @@ public class MenuConfig {
         this.metadataTools = metadataTools;
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    /**
+     * Returns the title of a menu item based on its identifier.
+     *
+     * @param id the unique identifier of the menu item
+     * @return the title of the menu item
+     */
     public String getItemTitle(String id) {
         return messages.getMessage("menu-config." + id);
     }
 
+    /**
+     * Returns the title of the specified menu item.
+     *
+     * @param menuItem the {@link MenuItem} object representing the menu item
+     * @return the title of the menu item
+     */
     public String getItemTitle(MenuItem menuItem) {
         String title = menuItem.getTitle();
         if (StringUtils.isNotEmpty(title)) {
@@ -206,6 +221,7 @@ public class MenuConfig {
                 loadShortcutCombination(menuItem, element);
                 loadClassNames(element, menuItem);
                 loadOpened(element, menuItem);
+                loadVisible(element, menuItem);
                 loadTitle(element, menuItem);
                 loadDescription(element, menuItem);
                 loadMenuItems(element, menuItem, menusByIdPaths);
@@ -229,6 +245,8 @@ public class MenuConfig {
                 if (StringUtils.isNotBlank(id)) {
                     menuItem.setDescriptor(element);
                 }
+            } else if ("icon".equals(element.getName())) {
+                addItem = false;
             } else {
                 log.warn(String.format("Unknown tag '%s' in menu-config", element.getName()));
             }
@@ -303,6 +321,7 @@ public class MenuConfig {
         loadIcon(element, menuItem);
         loadShortcutCombination(menuItem, element);
         loadClassNames(element, menuItem);
+        loadVisible(element, menuItem);
         loadTitle(element, menuItem);
         loadDescription(element, menuItem);
 
@@ -344,6 +363,14 @@ public class MenuConfig {
         }
     }
 
+    protected void loadVisible(Element element, MenuItem menuItem) {
+        String visible = element.attributeValue("visible");
+
+        if (StringUtils.isNotEmpty(visible)) {
+            menuItem.setVisible(Boolean.parseBoolean(visible));
+        }
+    }
+
     protected void loadTitle(Element element, MenuItem menuItem) {
         String title = element.attributeValue("title");
 
@@ -369,11 +396,7 @@ public class MenuConfig {
     }
 
     protected void loadIcon(Element element, MenuItem menuItem) {
-        String icon = element.attributeValue("icon");
-
-        if (StringUtils.isNotEmpty(icon)) {
-            menuItem.setIcon(icon);
-        }
+        getIconLoaderSupport().loadIcon(element, menuItem::setIconComponent);
     }
 
     protected String loadResourceString(@Nullable String ref) {
@@ -566,6 +589,15 @@ public class MenuConfig {
         }
     }
 
+    /**
+     * Finds a {@link MenuItem} by its identifier within a given {@link MenuItem} hierarchy.
+     * This method searches recursively through the children of the menu item to locate
+     * the menu item with the specified identifier. If the item is not found, {@code null} is returned.
+     *
+     * @param id   the identifier of the desired {@link MenuItem}
+     * @param item the root {@link MenuItem} to start the search from
+     * @return the {@link MenuItem} with the specified identifier, or {@code null} if no such item is found
+     */
     @Nullable
     public MenuItem findItem(String id, MenuItem item) {
         if (id.equals(item.getId())) {
@@ -580,5 +612,23 @@ public class MenuConfig {
             }
         }
         return null;
+    }
+
+    protected IconLoaderSupport getIconLoaderSupport() {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, createLoaderContext());
+        }
+
+        return iconLoaderSupport;
+    }
+
+    protected ComponentLoader.Context createLoaderContext() {
+        // Using some non 'HasComponents' origin as a placeholder since
+        // MenuConfig doesn't represent a component itself.
+        MenuLoaderContext context = new MenuLoaderContext(new Text(getClass().getSimpleName()));
+        context.setFullOriginId(MENU_CONFIG_XML_PROP);
+        context.setMessageGroup("");
+
+        return context;
     }
 }

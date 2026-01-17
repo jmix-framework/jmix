@@ -105,7 +105,7 @@ public class PessimisticLockSupport {
     public void unlock(Object entityId) {
         Preconditions.checkNotNullArgument(entityId);
 
-        lockManager.unlock(getLockName(), entityId.toString());
+        lockManager.unlock(getLockName(), entityId.toString(), false);
     }
 
     protected String getLockName() {

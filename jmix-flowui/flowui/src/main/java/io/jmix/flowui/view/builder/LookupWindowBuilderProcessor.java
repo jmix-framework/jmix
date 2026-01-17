@@ -20,7 +20,6 @@ import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.core.*;
-import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -38,12 +37,12 @@ import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Internal
-@Component("flowui_LookupWindowBuilderProcessor")
+/**
+ * Processes and builds {@link DialogWindow} instances for views using a {@link LookupWindowBuilder}.
+ */
 public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor {
 
     protected Metadata metadata;

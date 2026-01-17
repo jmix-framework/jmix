@@ -21,8 +21,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.CheckboxGroupVariant;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.UiComponents;
@@ -30,20 +28,24 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.PickerComponent;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.fullcalendarflowui.FullCalendarProperties;
 import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.model.DaysOfWeek;
 import io.jmix.fullcalendarflowui.datatype.DaysOfWeekDatatypeUtils;
-import io.jmix.fullcalendarflowui.FullCalendarProperties;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
 import java.time.temporal.WeekFields;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Action is used for editing {@link DaysOfWeek} datatype in {@link ValuePicker} field.
@@ -54,6 +56,7 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
 
     public static final String ID = "fcalen_daysOfWeekEdit";
 
+    protected Icons icons;
     protected Messages messages;
     protected FullCalendarProperties calendarFlowuiProperties;
     protected CurrentAuthentication currentAuthentication;
@@ -70,6 +73,16 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
     @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    public void setIcons(Icons icons) {
+        this.icons = icons;
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.DAYS_OF_WEEK_EDIT_ACTION);
+        }
     }
 
     @Autowired
@@ -97,11 +110,6 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
         } else {
             setDescription(messages.getMessage(getClass(), "daysOfWeekEdit.description"));
         }
-    }
-
-    @Override
-    protected void initAction() {
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
     }
 
     @Override
@@ -151,7 +159,7 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
 
     protected Button createHeaderCloseButton(Dialog dialog) {
         JmixButton closeButton = uiComponents.create(JmixButton.class);
-        closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
+        closeButton.setIcon(icons.get(JmixFontIcon.CLOSE_SMALL));
         closeButton.addThemeVariants(
                 ButtonVariant.LUMO_TERTIARY_INLINE,
                 ButtonVariant.LUMO_ICON,

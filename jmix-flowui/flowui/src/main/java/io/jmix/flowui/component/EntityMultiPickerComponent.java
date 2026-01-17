@@ -18,5 +18,11 @@ package io.jmix.flowui.component;
 
 import java.util.Collection;
 
+/**
+ * A specialized interface for picker components that enables the selection or management
+ * of multiple entities within a collection.
+ *
+ * @param <E> the type of entity contained in the collection managed by the component
+ */
 public interface EntityMultiPickerComponent<E> extends EntityPickerComponent<Collection<E>> {
 }

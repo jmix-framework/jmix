@@ -1,0 +1,38 @@
+{
+  "properties" : {
+    "+secondString" : {
+      "analyzer" : "english",
+      "type" : "text"
+    },
+    "name" : {
+      "type" : "text"
+    },
+    "+dynamicStringAttributeCode" : {
+      "analyzer" : "english",
+      "type" : "text"
+    },
+    "firstTextValue" : {
+      "analyzer" : "english",
+      "type" : "text"
+    },
+    "+secondReference" : {
+      "properties" : {
+        "_instance_name" : {
+          "analyzer" : "english",
+          "type" : "text"
+        }
+      }
+    },
+    "+dynamicEnumAttributeCode" : {
+      "analyzer" : "english",
+      "type" : "text"
+    },
+    "secondTextValue" : {
+      "analyzer" : "english",
+      "type" : "text"
+    },
+    "_instance_name" : {
+      "type" : "text"
+    }
+  }
+}

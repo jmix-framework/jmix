@@ -63,6 +63,11 @@ public interface ListDataComponent<T> {
      */
     void select(Collection<T> items);
 
+    /**
+     * Deselects the row corresponding to the given item in this component.
+     *
+     * @param item the item instance whose corresponding row should be deselected
+     */
     void deselect(T item);
 
     /**

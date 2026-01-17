@@ -5,16 +5,16 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Iterables;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.searching.*;
+import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchRequestContext;
+import io.jmix.search.searching.SearchResult;
+import io.jmix.search.searching.impl.AbstractEntitySearcher;
 import io.jmix.search.searching.impl.SearchResultImpl;
 import io.jmix.search.utils.Constants;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
@@ -24,7 +24,6 @@ import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.util.*;
@@ -33,27 +32,17 @@ import java.util.stream.Collectors;
 /**
  * Implementation for Elasticsearch
  */
-public class ElasticsearchEntitySearcher implements EntitySearcher {
+public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implements EntitySearcher {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchEntitySearcher.class);
-
-    protected static final TypeReference<Map<String, Object>> GENERIC_MAP_TYPE_REF = new TypeReference<>() {
-    };
 
     protected final ElasticsearchClient client;
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final Metadata metadata;
-    protected final MetadataTools metadataTools;
-    protected final DataManager secureDataManager;
     protected final InstanceNameProvider instanceNameProvider;
-    protected final SearchProperties searchProperties;
-    protected final IdSerialization idSerialization;
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
     protected final ElasticsearchSearchStrategyProvider searchStrategyManager;
-    protected final SearchUtils searchUtils;
-
-    protected final ObjectMapper objectMapper;
 
     public ElasticsearchEntitySearcher(ElasticsearchClient client,
                                        IndexConfigurationManager indexConfigurationManager,
@@ -65,22 +54,15 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
                                        IdSerialization idSerialization,
                                        SecureOperations secureOperations,
                                        PolicyStore policyStore,
-                                       ElasticsearchSearchStrategyProvider searchStrategyManager,
-                                       SearchUtils searchUtils) {
+                                       ElasticsearchSearchStrategyProvider searchStrategyManager) {
+        super(metadataTools, searchProperties, secureDataManager, idSerialization);
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.metadata = metadata;
-        this.metadataTools = metadataTools;
-        this.secureDataManager = secureDataManager;
         this.instanceNameProvider = instanceNameProvider;
-        this.searchProperties = searchProperties;
-        this.idSerialization = idSerialization;
         this.secureOperations = secureOperations;
         this.policyStore = policyStore;
         this.searchStrategyManager = searchStrategyManager;
-        this.searchUtils = searchUtils;
-
-        this.objectMapper = new ObjectMapper();
     }
 
 
@@ -95,16 +77,17 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
 
         ElasticsearchSearchStrategy searchStrategy = resolveSearchStrategy(searchStrategyName);
         SearchResultImpl searchResult = initSearchResult(searchContext, searchStrategy);
-        List<String> targetIndexes = searchUtils.resolveEffectiveTargetIndexes(searchContext.getEntities());
-        if (targetIndexes.isEmpty()) {
-            return searchResult;
-        }
 
         boolean moreDataAvailable;
         do {
-            SearchRequest searchRequest = createRequest(
-                    searchContext, targetIndexes, searchStrategy, searchResult.getEffectiveOffset()
+            SearchRequestContext<SearchRequest.Builder> requestContext = createRequest(
+                    searchContext, searchStrategy, searchResult.getEffectiveOffset()
             );
+
+            if (!requestContext.isRequestPossible()) {
+                return searchResult;
+            }
+            SearchRequest searchRequest = requestContext.getRequestBuilder().build();
             SearchResponse<ObjectNode> searchResponse;
             try {
                 log.debug("Search Request: {}", searchRequest);
@@ -134,35 +117,21 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
         return new SearchResultImpl(searchContext, searchStrategy.getName());
     }
 
-    protected List<String> resolveTargetIndexes(SearchContext searchContext) {
-        Collection<String> requestedEntities = searchContext.getEntities();
-        if (requestedEntities.isEmpty()) {
-            requestedEntities = indexConfigurationManager.getAllIndexedEntities();
-        }
-
-        return requestedEntities.stream()
-                .map(metadata::getClass)
-                .filter(metaClass -> secureOperations.isEntityReadPermitted(metaClass, policyStore))
-                .map(metaClass -> indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(IndexConfiguration::getIndexName)
-                .collect(Collectors.toList());
-    }
-
     protected ElasticsearchSearchStrategy resolveSearchStrategy(String searchStrategyName) {
         return searchStrategyManager.getSearchStrategyByName(searchStrategyName);
     }
 
-    protected SearchRequest createRequest(SearchContext searchContext,
-                                          List<String> targetIndexes,
-                                          ElasticsearchSearchStrategy searchStrategy,
-                                          int offset) {
+    protected SearchRequestContext<SearchRequest.Builder> createRequest(SearchContext searchContext,
+                                                                        ElasticsearchSearchStrategy searchStrategy,
+                                                                        int offset) {
         SearchRequest.Builder builder = new SearchRequest.Builder();
-        initRequest(builder, targetIndexes);
-        searchStrategy.configureRequest(builder, searchContext);
-        applyPostStrategyRequestSettings(builder, searchContext, offset);
-        return builder.build();
+        SearchRequestContext<SearchRequest.Builder> requestContext = new SearchRequestContext<>(builder, searchContext);
+        searchStrategy.configureRequest(requestContext);
+        if (requestContext.isRequestPossible()) {
+            initRequest(builder, new ArrayList<>(requestContext.getEffectiveIndexes()));
+            applyPostStrategyRequestSettings(builder, searchContext, offset);
+        }
+        return requestContext;
     }
 
     protected void initRequest(SearchRequest.Builder builder, List<String> targetIndexes) {
@@ -235,75 +204,10 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
                         String instanceName = (String) source.get(Constants.INSTANCE_NAME_FIELD);
                         displayedName = StringUtils.isEmpty(instanceName) ? entityId : instanceName;
                     }
-                    searchResultImpl.addEntry(createSearchResultEntry(entityId, displayedName, metaClass.getName(), hit));
+                    searchResultImpl.addEntry(createSearchResultEntry(entityId, displayedName, metaClass.getName(), hit.highlight()));
                 }
                 searchResultImpl.incrementOffset();
             }
         }
-    }
-
-    protected boolean isResultFull(SearchResultImpl searchResultImpl, SearchContext searchContext) {
-        return searchResultImpl.getSize() >= searchContext.getSize();
-    }
-
-    @Nullable
-    protected Map<String, Object> objectNodeToMap(@Nullable ObjectNode node) {
-        if (node == null) {
-            return null;
-        }
-        return objectMapper.convertValue(node, GENERIC_MAP_TYPE_REF);
-    }
-
-    protected SearchResultEntry createSearchResultEntry(String entityId, String instanceName, String entityName, Hit<ObjectNode> searchHit) {
-        Map<String, List<String>> highlightFields = searchHit.highlight();
-        List<FieldHit> fieldHits = new ArrayList<>();
-        highlightFields.forEach((f, h) -> {
-            if (isDisplayedField(f)) {
-                String highlights = String.join("...", h);
-                fieldHits.add(new FieldHit(formatFieldName(f), highlights));
-            }
-        });
-        return new SearchResultEntry(entityId, instanceName, entityName, fieldHits);
-    }
-
-    protected boolean isDisplayedField(String fieldName) {
-        return !Constants.INSTANCE_NAME_FIELD.equals(fieldName);
-    }
-
-    protected String formatFieldName(String fieldName) {
-        return StringUtils.removeEnd(fieldName, "." + Constants.INSTANCE_NAME_FIELD);
-    }
-
-    protected Set<String> reloadIds(MetaClass metaClass, Collection<Object> entityIds) {
-        Set<String> result = new HashSet<>();
-        String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
-        for (Collection<Object> idsPartition : Iterables.partition(entityIds, searchProperties.getSearchReloadEntitiesBatchSize())) {
-            log.debug("Load instance names for ids: {}", idsPartition);
-
-            List<Object> partitionResult;
-            if (metadataTools.hasCompositePrimaryKey(metaClass)) {
-                partitionResult = idsPartition.stream()
-                        .map(id -> secureDataManager
-                                .load(metaClass.getJavaClass())
-                                .id(id)
-                                .fetchPlanProperties(primaryKeyName)
-                                .optional())
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .collect(Collectors.toList());
-            } else {
-                partitionResult = secureDataManager
-                        .load(metaClass.getJavaClass())
-                        .query("select e from " + metaClass.getName() + " e where e." + primaryKeyName + " in :ids")
-                        .parameter("ids", idsPartition)
-                        .fetchPlanProperties(primaryKeyName)
-                        .list();
-            }
-
-            partitionResult.stream()
-                    .map(instance -> idSerialization.idToString(Id.of(instance)))
-                    .forEach(result::add);
-        }
-        return result;
     }
 }

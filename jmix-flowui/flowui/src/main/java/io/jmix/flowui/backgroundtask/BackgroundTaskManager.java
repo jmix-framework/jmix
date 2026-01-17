@@ -25,7 +25,13 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+/**
+ * Manages background tasks within a Vaadin application session, allowing tasks to be added, removed,
+ * or all tasks to be canceled. Each task is represented by a {@link Future} object, and the class provides
+ * utilities to interact with the current Vaadin session to ensure proper thread synchronization and instance management.
+ */
 public class BackgroundTaskManager {
+
     private static final Logger log = LoggerFactory.getLogger(BackgroundTaskManager.class);
 
     private transient Set<Future<?>> taskSet;

@@ -113,6 +113,14 @@
               code="asideLabelsPosition"
               step="1"
               propertyType="BOOLEAN"/>
+    <property caption="List view fixed footer"
+              step="1"
+              code="listFixedFooter"
+              propertyType="BOOLEAN"/>
+    <property caption="Detail view fixed footer"
+              step="1"
+              code="detailFixedFooter"
+              propertyType="BOOLEAN"/>
     <property caption="List view fetch plan"
               step="2"
               code="listFetchPlan"

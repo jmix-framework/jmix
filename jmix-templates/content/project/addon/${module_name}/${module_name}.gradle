@@ -11,7 +11,8 @@ dependencies {
     }
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
 
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'com.h2database:h2'
 }
 
 configurations.implementation {

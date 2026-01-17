@@ -19,6 +19,12 @@ package io.jmix.flowui.data;
 import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.model.CollectionContainer;
 
+/**
+ * Interface to be implemented by components that support handling items
+ * based on a {@link CollectionContainer}.
+ *
+ * @param <E> the type of items managed by the container
+ */
 public interface SupportsItemsContainer<E> {
 
     /**

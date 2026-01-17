@@ -19,7 +19,7 @@ package io.jmix.eclipselink.impl.dbms;
 import org.eclipse.persistence.exceptions.ConversionException;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.mappings.converters.Converter;
-import org.eclipse.persistence.platform.database.oracle.Oracle21Platform;
+import org.eclipse.persistence.platform.database.oracle.Oracle23Platform;
 import org.eclipse.persistence.queries.Call;
 
 import java.io.Writer;
@@ -28,7 +28,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.UUID;
 
-public class JmixOraclePlatform extends Oracle21Platform implements UuidMappingInfo {
+public class JmixOraclePlatform extends Oracle23Platform implements UuidMappingInfo {
 
     @Override
     public Object convertObject(Object sourceObject, Class javaClass) throws ConversionException {

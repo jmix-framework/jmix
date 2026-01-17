@@ -35,6 +35,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -194,6 +195,6 @@ public class EntityPicker<V> extends ValuePickerBase<EntityPicker<V>, V>
 
     @Override
     protected ValuePickerActionSupport createActionsSupport() {
-        return new JmixValuePickerActionSupport(this);
+        return applicationContext.getBean(JmixValuePickerActionSupport.class, this);
     }
 }

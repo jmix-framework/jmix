@@ -18,6 +18,7 @@ package io.jmix.rest.impl.config;
 
 import com.google.common.base.Strings;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.common.util.Dom4j;
 import io.jmix.rest.RestProperties;
@@ -52,9 +53,8 @@ import java.util.stream.Collectors;
 public class RestQueriesConfiguration {
 
     /**
-     * @deprecated Use {@link RestProperties#getQueriesConfig()}
+     * Corresponds to {@link RestProperties#getQueriesConfig()}
      */
-    @Deprecated(forRemoval = true)
     protected static final String JMIX_REST_QUERIES_CONFIG_PROP_NAME = "jmix.rest.queries-config";
 
     private final Logger log = LoggerFactory.getLogger(RestQueriesConfiguration.class);
@@ -67,7 +67,7 @@ public class RestQueriesConfiguration {
     protected Resources resources;
 
     @Autowired
-    protected RestProperties restProperties;
+    protected JmixModules jmixModules;
 
     protected List<QueryInfo> queries = new ArrayList<>();
 
@@ -138,22 +138,24 @@ public class RestQueriesConfiguration {
     }
 
     protected void init() {
-        String configName = restProperties.getQueriesConfig();
-        StringTokenizer tokenizer = new StringTokenizer(configName);
-        for (String location : tokenizer.getTokenArray()) {
-            Resource resource = resources.getResource(location);
-            if (resource.exists()) {
-                InputStream stream = null;
-                try {
-                    stream = resource.getInputStream();
-                    loadConfig(Dom4j.readDocument(stream).getRootElement());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } finally {
-                    IOUtils.closeQuietly(stream);
+        List<String> moduleConfigs = jmixModules.getPropertyValues(JMIX_REST_QUERIES_CONFIG_PROP_NAME);
+        for (String moduleConfig : moduleConfigs) {
+            StringTokenizer tokenizer = new StringTokenizer(moduleConfig);
+            for (String location : tokenizer.getTokenArray()) {
+                Resource resource = resources.getResource(location);
+                if (resource.exists()) {
+                    InputStream stream = null;
+                    try {
+                        stream = resource.getInputStream();
+                        loadConfig(Dom4j.readDocument(stream).getRootElement());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        IOUtils.closeQuietly(stream);
+                    }
+                } else {
+                    log.warn("Resource {} not found, ignore it", location);
                 }
-            } else {
-                log.warn("Resource {} not found, ignore it", location);
             }
         }
     }

@@ -16,8 +16,10 @@
 
 package io.jmix.core.impl.scanning;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.core.type.classreading.MetadataReader;
 
+@Internal
 public interface ClasspathScanCandidateDetector {
 
     boolean isCandidate(MetadataReader metadataReader);

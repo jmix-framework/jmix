@@ -105,8 +105,8 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
             <vbox id="detailsLayout" height="100%">
                 ${formXml}
                 <hbox id="detailActions">
-                    <button id="saveButton" text="msg:///actions.Save" icon="CHECK" themeNames="primary"/>
-                    <button id="cancelButton" text="msg:///actions.Cancel" icon="BAN"/>
+                    <button id="saveButton" text="msg:///actions.Save" icon="OK" themeNames="primary"/>
+                    <button id="cancelButton" text="msg:///actions.Cancel" icon="CANCEL"/>
                 </hbox>
             </vbox>
         </formLayout>

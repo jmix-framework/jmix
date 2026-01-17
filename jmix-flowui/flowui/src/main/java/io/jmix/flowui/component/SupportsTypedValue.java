@@ -25,16 +25,47 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.meta.StudioIgnore;
 import org.springframework.lang.Nullable;
 
+/**
+ * Interface that defines a contract for components supporting a typed value.
+ *
+ * @param <C> the type of the component implementing this interface
+ * @param <E> the type of the value change event
+ * @param <V> the type of the value supported by the component
+ * @param <P> the presentation type of the value
+ */
 public interface SupportsTypedValue<C extends Component, E extends HasValue.ValueChangeEvent<P>, V, P> extends HasValue<E, P> {
 
+    /**
+     * Returns the typed value associated with the component.
+     *
+     * @return the typed value of the component, or {@code null} if no value is set
+     */
     @Nullable
     V getTypedValue();
 
+    /**
+     * Sets the typed value of the component to the specified value.
+     *
+     * @param value the new typed value to set, or {@code null} if the value should be unset
+     */
     @StudioIgnore
     void setTypedValue(@Nullable V value);
 
+    /**
+     * Adds a listener to be notified of changes to the typed value of the component.
+     *
+     * @param listener the listener to be added; it will handle {@link TypedValueChangeEvent} triggered
+     *                 by changes to the component's typed value
+     * @return a {@link Registration} object that can be used to remove the listener
+     */
     Registration addTypedValueChangeListener(ComponentEventListener<TypedValueChangeEvent<C, V>> listener);
 
+    /**
+     * Represents a value change event for components that support typed values.
+     *
+     * @param <C> the type of the component that fires this event
+     * @param <V> the type of the value associated with the component
+     */
     class TypedValueChangeEvent<C extends Component, V> extends ComponentEvent<C>
             implements HasValue.ValueChangeEvent<V> {
 

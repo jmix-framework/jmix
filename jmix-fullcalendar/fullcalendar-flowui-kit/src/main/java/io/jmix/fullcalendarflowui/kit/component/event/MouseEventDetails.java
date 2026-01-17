@@ -23,6 +23,8 @@ import io.jmix.fullcalendarflowui.kit.component.model.dom.DomMouseEventDetails;
  */
 public class MouseEventDetails {
 
+    protected int clickCount;
+
     protected final MouseButton button;
 
     protected final int pageX;
@@ -38,7 +40,8 @@ public class MouseEventDetails {
     protected final boolean shiftKey;
 
     public MouseEventDetails(DomMouseEventDetails event) {
-        this(MouseButton.of(event.getButton()),
+        this(event.getClickCount(),
+                MouseButton.of(event.getButton()),
                 event.getPageX(),
                 event.getPageY(),
                 event.isAltKey(),
@@ -47,13 +50,15 @@ public class MouseEventDetails {
                 event.isShiftKey());
     }
 
-    public MouseEventDetails(MouseButton button,
+    public MouseEventDetails(int clickCount,
+                             MouseButton button,
                              int pageX,
                              int pageY,
                              boolean altKey,
                              boolean ctrlKey,
                              boolean metaKey,
                              boolean shiftKey) {
+        this.clickCount = clickCount;
         this.button = button;
         this.pageX = pageX;
         this.pageY = pageY;
@@ -61,6 +66,13 @@ public class MouseEventDetails {
         this.ctrlKey = ctrlKey;
         this.metaKey = metaKey;
         this.shiftKey = shiftKey;
+    }
+
+    /**
+     * @return the number of consecutive clicks recently recorded
+     */
+    public int getClickCount() {
+        return clickCount;
     }
 
     /**

@@ -23,6 +23,8 @@ group = 'io.jmix.samples'
 version = '0.0.1'
 
 dependencies {
+    implementation project(':sample-rest-common-starter')
+
     implementation project(':core-starter')
     implementation project(':eclipselink-starter')
     implementation project(':rest-starter')

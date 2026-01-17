@@ -22,7 +22,6 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -57,8 +56,7 @@ public class FilterConfiguration implements Serializable {
 
     @Column(name = "ROOT_CONDITION")
     @Lob
-    @Convert(converter = FilterConditionConverter.class)
-    protected LogicalFilterCondition rootCondition;
+    protected String rootCondition;
 
     @TenantId
     @Column(name = "SYS_TENANT_ID")
@@ -116,11 +114,11 @@ public class FilterConfiguration implements Serializable {
         this.defaultForAll = defaultForAll;
     }
 
-    public LogicalFilterCondition getRootCondition() {
+    public String getRootCondition() {
         return rootCondition;
     }
 
-    public void setRootCondition(LogicalFilterCondition rootCondition) {
+    public void setRootCondition(String rootCondition) {
         this.rootCondition = rootCondition;
     }
 

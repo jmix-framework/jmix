@@ -18,8 +18,28 @@ package io.jmix.reports.entity;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
+/**
+ * Convenient built-in transformations for input parameter values entered by user.
+ * Transformed value is passed to the data set loading stage, instead of original value.
+ */
 public enum PredefinedTransformation implements EnumClass<Integer> {
-    STARTS_WITH(0), CONTAINS(1), ENDS_WITH(2);
+    /**
+     * Convert text value into a mask working as "starts with" condition.
+     * Meant to be used in "like" expression in SQL or JPQL query.
+     */
+    STARTS_WITH(0),
+
+    /**
+     * Convert text value into a mask working as "contains" condition.
+     * Meant to be used in "like" expression in SQL or JPQL query.
+     */
+    CONTAINS(1),
+
+    /**
+     * Convert text value into a mask working as "ends with" condition.
+     * Meant to be used in "like" expression in SQL or JPQL query.
+     */
+    ENDS_WITH(2);
 
     private Integer id;
 

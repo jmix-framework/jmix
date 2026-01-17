@@ -23,6 +23,11 @@ import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Helper class for aggregating numerical values. This class provides methods
+ * for adding numbers to a collection and performing basic aggregation
+ * operations such as sum, average, minimum, and maximum.
+ */
 public class NumberAggregationHelper {
 
     protected final List<Double> items = new ArrayList<>();
@@ -30,10 +35,21 @@ public class NumberAggregationHelper {
     public NumberAggregationHelper() {
     }
 
+    /**
+     * Adds a new numerical item to the collection for aggregation operations.
+     *
+     * @param newItem the numerical value to be added to the collection
+     */
     public void addItem(Double newItem) {
         items.add(newItem);
     }
 
+    /**
+     * Calculates the total sum of all numerical values in the collection.
+     * Null values in the collection are ignored during the calculation.
+     *
+     * @return the sum of all non-null numerical values in the collection
+     */
     public Double sum() {
         double sum = 0d;
         for (final Double item : items) {
@@ -45,6 +61,12 @@ public class NumberAggregationHelper {
         return sum;
     }
 
+    /**
+     * Computes the average value of all numerical items in the collection.
+     * If the collection is empty, returns {@code null}.
+     *
+     * @return the average value of the items in the collection, or {@code null} if the collection is empty
+     */
     @Nullable
     public Double avg() {
         return items.isEmpty()
@@ -52,6 +74,12 @@ public class NumberAggregationHelper {
                 : sum() / items.size();
     }
 
+    /**
+     * Determines the minimum value from the collection of numerical items.
+     * If the collection is empty, returns {@code null}.
+     *
+     * @return the minimum value among the items in the collection, or {@code null} if the collection is empty
+     */
     @Nullable
     public Double min() {
         return items.isEmpty()
@@ -59,6 +87,12 @@ public class NumberAggregationHelper {
                 : NumberUtils.min(ArrayUtils.toPrimitive(items.toArray(new Double[0])));
     }
 
+    /**
+     * Determines the maximum value among the numerical items in the collection.
+     * If the collection is empty, returns {@code null}.
+     *
+     * @return the maximum value among the numerical items, or {@code null} if the collection is empty
+     */
     @Nullable
     public Double max() {
         return items.isEmpty()

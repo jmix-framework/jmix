@@ -39,7 +39,6 @@ dependencies {
 
     api 'org.apache.httpcomponents:httpclient'
 
-    api 'commons-logging:commons-logging'
     api 'org.apache.commons:commons-lang3'
     api 'commons-io:commons-io'
     api('org.dom4j:dom4j') {
@@ -52,8 +51,6 @@ dependencies {
     api 'org.openoffice:juh'
     api 'org.openoffice:ridl'
     api 'org.openoffice:unoil'
-    api 'org.apache.avalon.framework:avalon-framework-api'
-    api 'org.apache.avalon.framework:avalon-framework-impl'
 
     api 'javax.media.jai:com.springsource.javax.media.jai.core'
 
@@ -118,7 +115,6 @@ dependencies {
     api 'org.jsoup:jsoup'
     api 'com.jayway.jsonpath:json-path'
     api 'com.opencsv:opencsv'
-    api 'org.olap4j:olap4j'
 
     api('net.sf.jasperreports:jasperreports') {
         exclude group: 'org.apache.lucene'
@@ -137,6 +133,7 @@ dependencies {
     api 'jakarta.xml.bind:jakarta.xml.bind-api'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.spockframework:spock-spring"
@@ -144,8 +141,12 @@ dependencies {
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'
     testImplementation 'ch.qos.logback:logback-classic'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.liquibase:liquibase-core'
+    testImplementation project(':security-data')
 
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }

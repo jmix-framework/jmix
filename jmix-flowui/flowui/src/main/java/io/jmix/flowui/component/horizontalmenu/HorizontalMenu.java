@@ -210,6 +210,7 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
         JmixMenuItem wrapper = index == ADD_TO_END_INDEX
                 ? hasMenuItems.addItem(menuItem)
                 : hasMenuItems.addItemAtIndex(index, menuItem);
+        wrapper.setId(getMenuItemId(menuItem));
         wrapper.addClassName(ITEM_WRAPPER_CLASS_NAME);
         menuItem.setMenuItemWrapper(wrapper);
 
@@ -220,7 +221,7 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
 
     protected void addComponentToSubMenu(Component component, JmixSubMenu subMenu, int index) {
         if (index == ADD_TO_END_INDEX) {
-            subMenu.add(component);
+            subMenu.addComponent(component);
         } else {
             subMenu.addComponentAtIndex(index, component);
         }

@@ -17,6 +17,7 @@
 package io.jmix.flowui.data.grid;
 
 import com.vaadin.flow.data.provider.AbstractDataProvider;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Sort;
@@ -24,16 +25,14 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.event.EventBus;
-import io.jmix.flowui.model.BaseCollectionLoader;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionLoader;
-import io.jmix.flowui.model.HasLoader;
+import io.jmix.flowui.model.*;
+import io.jmix.flowui.model.CollectionContainer.CollectionChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -42,14 +41,24 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of {@link DataProvider} that connects a {@link CollectionContainer}
+ * to a {@link DataGrid}. This class allows seamless synchronization
+ * between the container and the grid, supporting selection, sorting, and event listeners.
+ *
+ * @param <T> the type of entity contained in the associated {@link CollectionContainer}
+ */
 public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
         implements ContainerDataUnit<T>, EntityDataGridItems<T>, DataGridItems.Sortable<T> {
+
+    public static final String PROPERTY_REPLACE_ITEM = "<replaceItem>";
 
     private static final Logger log = LoggerFactory.getLogger(ContainerDataGridItems.class);
 
     protected CollectionContainer<T> container;
 
     protected boolean suppressSorting;
+    private boolean refreshAllOnItemReplace;
 
     private EventBus eventBus;
 
@@ -70,8 +79,18 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
         getEventBus().fireEvent(new SelectedItemChangeEvent<>(this, event.getItem()));
     }
 
-    protected void containerCollectionChanged(@SuppressWarnings("unused") CollectionContainer.CollectionChangeEvent<T> event) {
-        getEventBus().fireEvent(new ItemSetChangeEvent<>(this));
+    protected void containerCollectionChanged(@SuppressWarnings("unused") CollectionChangeEvent<T> event) {
+        // In case of 'SET_ITEM' we don't need to refresh the entire items' collection.
+        // Instead of creating a new event type for this case, we re-use 'ValueChangeEvent'
+        // with a specific 'property' value.
+        if (!refreshAllOnItemReplace
+                && event.getChangeType() == CollectionChangeType.SET_ITEM) {
+            event.getChanges().forEach(item ->
+                    getEventBus().fireEvent(new ValueChangeEvent<>(this,
+                            item, PROPERTY_REPLACE_ITEM, null, null)));
+        } else {
+            getEventBus().fireEvent(new ItemSetChangeEvent<>(this));
+        }
     }
 
     protected void containerItemPropertyChanged(CollectionContainer.ItemPropertyChangeEvent<T> event) {
@@ -153,6 +172,29 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
     @Override
     public void enableSorting() {
         suppressSorting = false;
+    }
+
+    /**
+     * Returns whether the entire {@link DataGrid} should be refreshed when an item is replaced in the container
+     * (i.e., when a {@link CollectionChangeEvent} is fired with the {@link CollectionChangeType#SET_ITEM} change type).
+     *
+     * @return {@code true} if the entire {@link DataGrid} should be refreshed when an item is replaced;
+     * {@code false} otherwise.
+     */
+    public boolean isRefreshAllOnItemReplace() {
+        return refreshAllOnItemReplace;
+    }
+
+    /**
+     * Sets whether the entire {@link DataGrid} should be refreched when an item is replaced in the container
+     * (i.e., when a {@link CollectionChangeEvent} is fired with {@link CollectionChangeType#SET_ITEM} change type).
+     *
+     * @param refreshAllOnItemSet {@code true} to refresh all items in the {@link DataGrid} when an item
+     *                            is replaced in the container; {@code false} to limit updates
+     *                            only to the affected item.
+     */
+    public void setRefreshAllOnItemReplace(boolean refreshAllOnItemSet) {
+        this.refreshAllOnItemReplace = refreshAllOnItemSet;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

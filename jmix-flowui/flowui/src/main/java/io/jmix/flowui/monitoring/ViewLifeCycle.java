@@ -16,14 +16,52 @@
 
 package io.jmix.flowui.monitoring;
 
+
+import io.jmix.flowui.view.View;
+
+/**
+ * Enum representing the lifecycle phases of a {@link View}.
+ */
 public enum ViewLifeCycle {
+
+    /**
+     * Phase when the {@link View} instance is created
+     */
     CREATE("create"),
+
+    /**
+     * Phase when the {@link View} data is being loaded from XML
+     */
     LOAD("load"),
+
+    /**
+     * Phase when the {@link View} is being initialized
+     */
     INIT("init"),
+
+    /**
+     * Phase immediately before the {@link View} is shown to the user
+     */
     BEFORE_SHOW("beforeShow"),
+
+    /**
+     * Phase when the {@link View} is fully initialized and ready for interaction
+     */
     READY("ready"),
+
+    /**
+     * Phase when dependencies are being injected into the {@link View}
+     */
     INJECT("inject"),
+
+    /**
+     * Phase immediately before the {@link View} is closed
+     */
     BEFORE_CLOSE("beforeClose"),
+
+    /**
+     * Phase after the {@link View} has been closed
+     */
     AFTER_CLOSE("afterClose");
 
     private final String name;
@@ -37,6 +75,11 @@ public enum ViewLifeCycle {
         return name;
     }
 
+    /**
+     * Gets the string name representation of the lifecycle phase.
+     *
+     * @return the name of the lifecycle phase
+     */
     public String getName() {
         return name;
     }

@@ -22,5 +22,11 @@ import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.SupportsUserAction;
 
+/**
+ * Represents a component that facilitates selection or picking of values and provides additional
+ * capabilities such as support for actions, value sources, user-related actions, and DOM element manipulation.
+ *
+ * @param <V> the type of the value handled by the component
+ */
 public interface PickerComponent<V> extends SupportsValueSource<V>, HasActions, SupportsUserAction<V>, HasElement {
 }

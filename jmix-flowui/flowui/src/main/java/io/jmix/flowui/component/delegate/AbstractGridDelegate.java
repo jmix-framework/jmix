@@ -18,10 +18,7 @@ package io.jmix.flowui.component.delegate;
 
 import com.google.common.base.Strings;
 import com.google.common.primitives.Booleans;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.Shortcuts;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.grid.editor.EditorCloseEvent;
@@ -44,11 +41,15 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.Fragments;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.action.list.ReadAction;
+import io.jmix.flowui.app.datagrid.DataGridEmptyStateByPermissionsFragment;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.SupportsEnterPress.EnterPressEvent;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
@@ -59,6 +60,7 @@ import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.aggregation.Aggregation;
 import io.jmix.flowui.data.aggregation.Aggregations;
 import io.jmix.flowui.data.aggregation.impl.AggregatableDelegate;
+import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
 import io.jmix.flowui.kit.action.Action;
@@ -85,6 +87,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected ApplicationContext applicationContext;
 
+    protected Fragments fragments;
     protected MetadataTools metadataTools;
     protected MessageTools messageTools;
     protected AccessManager accessManager;
@@ -104,6 +107,13 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected Consumer<EnterPressEvent<C>> enterPressHandler;
 
     protected Consumer<ColumnSecurityContext<E>> afterColumnSecurityApplyHandler;
+
+    protected String emptyStateTextInternal;
+    protected Component emptyStateComponentInternal;
+
+    protected Consumer<String> componentEmptyStateTextDelegate;
+    protected Consumer<Component> componentEmptyStateComponentDelegate;
+    protected Registration emptyStateByPermissionRegistration;
 
     protected boolean aggregatable;
     protected EnhancedDataGrid.AggregationPosition aggregationPosition = EnhancedDataGrid.AggregationPosition.BOTTOM;
@@ -140,6 +150,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected void autowireDependencies() {
+        fragments = applicationContext.getBean(Fragments.class);
         metadataTools = applicationContext.getBean(MetadataTools.class);
         messageTools = applicationContext.getBean(MessageTools.class);
         accessManager = applicationContext.getBean(AccessManager.class);
@@ -176,6 +187,11 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
         if (dataGridItems != null) {
             this.dataGridItems = dataGridItems;
+
+            if (dataGridItems instanceof ContainerDataGridItems<?> containerDataGridItems) {
+                UiComponentProperties properties = applicationContext.getBean(UiComponentProperties.class);
+                containerDataGridItems.setRefreshAllOnItemReplace(properties.isGridRefreshAllOnItemReplace());
+            }
 
             bind(dataGridItems);
             updateAggregationRow();
@@ -248,15 +264,21 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                 break;
             }
         }
-        //selection model doesn't provide direct access to selected items,
-        //so to update the model we are forced to deselect all items and select new items again
-        //to handle any changes in item collection or items themselves
+
+        refreshSelectionInternal(itemsToSelect);
+    }
+
+    protected void refreshSelectionInternal(Collection<E> itemsToSelect) {
+        // Selection model doesn't provide direct access to selected items,
+        // so to update the model we are forced to deselect all items and select new items again
+        // to handle any changes in item collection or items themselves
         deselectAll();
         select(itemsToSelect);
     }
 
     protected void itemsValueChanged(DataGridItems.ValueChangeEvent<E> event) {
-        if (itemIsBeingEdited(event.getItem())) {
+        E item = event.getItem();
+        if (itemIsBeingEdited(item)) {
             DataGridEditor<E> editor = ((DataGridEditor<E>) getComponent().getEditor());
             // Do not interrupt the save process
             if (editor.isBuffered() && !editor.isSaving()) {
@@ -270,8 +292,22 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             }
         }
 
-        component.getDataCommunicator().refresh(event.getItem());
+        component.getDataCommunicator().refresh(item);
+
+        if (ContainerDataGridItems.PROPERTY_REPLACE_ITEM.equals(event.getProperty())) {
+            // refresh selection because it contains an old item instance
+            refreshSelectionIfNeeded(item);
+        }
+
         updateAggregationRow();
+    }
+
+    protected void refreshSelectionIfNeeded(E replacedItem) {
+        Set<E> selectedItems = new HashSet<>(getSelectedItems());
+        if (selectedItems.remove(replacedItem)) {
+            selectedItems.add(replacedItem);
+            refreshSelectionInternal(selectedItems);
+        }
     }
 
     protected boolean itemIsBeingEdited(E item) {
@@ -729,12 +765,82 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                                 isPropertyEnabledBySecurity(e.getValue())));
             }
         }
+
+        updateEmptyState();
     }
 
     public boolean isPropertyEnabledBySecurity(MetaPropertyPath mpp) {
         EntityAttributeContext context = new EntityAttributeContext(mpp);
         accessManager.applyRegisteredConstraints(context);
         return context.canView();
+    }
+
+    public String getEmptyStateText() {
+        return emptyStateTextInternal;
+    }
+
+    public void setEmptyStateText(String emptyStateText) {
+        this.emptyStateTextInternal = emptyStateText;
+        this.emptyStateComponentInternal = null;
+
+        updateEmptyState();
+    }
+
+    public Component getEmptyStateComponent() {
+        return emptyStateComponentInternal;
+    }
+
+    public void setEmptyStateComponent(Component emptyStateComponent) {
+        this.emptyStateComponentInternal = emptyStateComponent;
+        this.emptyStateTextInternal = null;
+
+        updateEmptyState();
+    }
+
+    public void setEmptyStateTextDelegate(Consumer<String> emptyStateTextDelegate) {
+        this.componentEmptyStateTextDelegate = emptyStateTextDelegate;
+    }
+
+    public void setEmptyStateComponentDelegate(Consumer<Component> emptyStateComponentDelegate) {
+        this.componentEmptyStateComponentDelegate = emptyStateComponentDelegate;
+    }
+
+    protected void updateEmptyState() {
+        if (emptyStateByPermissionRegistration != null) {
+            emptyStateByPermissionRegistration.remove();
+            emptyStateByPermissionRegistration = null;
+        }
+
+        if (MapUtils.isNotEmpty(propertyColumns) &&
+                !CollectionUtils.containsAny(component.getColumns(), propertyColumns.keySet())) {
+            setupEmptyStateByPermissionComponent();
+        } else if (emptyStateComponentInternal != null) {
+            componentEmptyStateComponentDelegate.accept(emptyStateComponentInternal);
+        } else if (emptyStateTextInternal != null) {
+            componentEmptyStateTextDelegate.accept(emptyStateTextInternal);
+        } else {
+            // to remove any empty state component
+            componentEmptyStateComponentDelegate.accept(null);
+        }
+    }
+
+    protected void setupEmptyStateByPermissionComponent() {
+        if (component.isAttached()) {
+            initEmptyStateByPermissionsComponent();
+        } else {
+            emptyStateByPermissionRegistration = component.addAttachListener(event -> {
+                event.unregisterListener();
+                emptyStateByPermissionRegistration = null;
+
+                initEmptyStateByPermissionsComponent();
+            });
+        }
+    }
+
+    protected void initEmptyStateByPermissionsComponent() {
+        DataGridEmptyStateByPermissionsFragment gridEmptyStateFragment =
+                fragments.create(UiComponentUtils.getView(component), DataGridEmptyStateByPermissionsFragment.class);
+        componentEmptyStateComponentDelegate.accept(gridEmptyStateFragment);
     }
 
     public List<Grid.Column<E>> getColumns() {
@@ -755,7 +861,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     public void removeColumn(Grid.Column<E> column) {
         columns.remove(column);
 
-        propertyColumns.keySet().remove(column);
+        propertyColumns.remove(column);
         removeAggregationInfo(column);
     }
 
@@ -829,7 +935,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         if (item != null) {
             // have to select clicked item to make action work, otherwise
             // consecutive clicks on the same item deselect it
-            component.select(item);
+            // selection from client is mandatory due to programmatic selection ignores selectableProvider
+            component.getSelectionModel().selectFromClient(item);
         }
 
         if (enterPressHandler != null) {

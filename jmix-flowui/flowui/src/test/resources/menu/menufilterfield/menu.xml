@@ -20,12 +20,12 @@
           title="Application title"
           opened="true"
           description="Application"
-          icon="TABLE">
+          icon="vaadin:table">
         <item id="Application.view"
               view="MenuFilterFieldView"
               title="Application view"
               description="app view"
-              icon="ABACUS"
+              icon="vaadin:abacus"
               shortcutCombination="Control-Enter"/>
         <menu id="nestedMenu"
               title="Nested menu">

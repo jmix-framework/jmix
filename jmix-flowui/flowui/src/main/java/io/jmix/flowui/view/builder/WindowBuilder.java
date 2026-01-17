@@ -96,11 +96,24 @@ public class WindowBuilder<V extends View<?>> extends AbstractWindowBuilder<V> i
         return this;
     }
 
+    /**
+     * Sets the view identifier to be opened.
+     *
+     * @param viewId the identifier of the view to be opened
+     * @return this instance for chaining
+     */
     public WindowBuilder<V> withViewId(@Nullable String viewId) {
         this.viewId = viewId;
         return this;
     }
 
+    /**
+     * Configures the window builder with the specified view class.
+     *
+     * @param <T>       the type of the view that extends {@code View<?>}
+     * @param viewClass the class of the view to be opened
+     * @return a new {@code WindowBuilder} instance configured with the specified view class
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public <T extends View<?>> WindowBuilder<T> withViewClass(Class<T> viewClass) {
         return new WindowBuilder(this, viewClass);

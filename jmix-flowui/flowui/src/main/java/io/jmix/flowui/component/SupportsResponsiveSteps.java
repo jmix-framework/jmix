@@ -17,6 +17,7 @@
 package io.jmix.flowui.component;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,6 +52,9 @@ public interface SupportsResponsiveSteps {
         setResponsiveSteps(Arrays.asList(steps));
     }
 
+    /**
+     * A class used in describing the responsive layouting behavior of a component.
+     */
     class ResponsiveStep {
 
         private final String minWidth;
@@ -86,19 +90,40 @@ public interface SupportsResponsiveSteps {
             this.labelsPosition = labelsPosition;
         }
 
+        /**
+         * Returns the minimum width as a CSS string value after which the current
+         * responsive step is to be applied.
+         *
+         * @return the minimum width
+         */
         public String getMinWidth() {
             return minWidth;
         }
 
+        /**
+         * Returns the number of columns the layout should have
+         *
+         * @return the number of columns the layout should have
+         */
         public int getColumns() {
             return columns;
         }
 
+        /**
+         * Returns the position where label components are displayed in the layout.
+         *
+         * @return the {@link LabelsPosition} value indicating the position of the labels,
+         * or {@code null} if the label position is not specified
+         */
         @Nullable
         public LabelsPosition getLabelsPosition() {
             return labelsPosition;
         }
 
+        /**
+         * Specifies the position of labels relative to their associated components
+         * in a responsive layout.
+         */
         public enum LabelsPosition {
 
             /**

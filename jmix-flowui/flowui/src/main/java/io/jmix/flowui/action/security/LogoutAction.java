@@ -17,13 +17,13 @@
 package io.jmix.flowui.action.security;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.BaseAction;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.sys.LogoutSupport;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,12 +49,21 @@ public class LogoutAction extends BaseAction implements ExecutableAction, Applic
     }
 
     protected void initAction() {
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.SIGN_OUT);
+        // hook to be implemented
     }
 
     @Autowired
     public void setMessages(Messages messages) {
         this.description = messages.getMessage("actions.logout.description");
+    }
+
+    @Autowired
+    protected void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.LOGOUT_ACTION);
+        }
     }
 
     @Override

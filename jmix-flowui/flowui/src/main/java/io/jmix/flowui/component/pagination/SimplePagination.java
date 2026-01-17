@@ -23,11 +23,14 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.DataLoadContext;
+import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.repository.JmixDataRepositoryContext;
+import io.jmix.core.repository.JmixDataRepositoryUtils;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiProperties;
@@ -87,6 +90,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     protected Registration itemsPerPageValueChangeRegistration;
 
     protected Function<DataLoadContext, Integer> totalCountDelegate;
+    protected Function<JmixDataRepositoryContext, Long> totalCountByRepositoryDelegate;
 
     protected boolean samePage;
     protected boolean lastPage = false;
@@ -158,9 +162,16 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     }
 
     /**
-     * Sets default value for the select component.
+     * Sets default value for the select component. This value is applied when new loader is set or new items per page
+     * are provided:
+     * <ul>
+     *     <li>{@link #setPaginationLoader(PaginationDataLoader)}</li>
+     *     <li>{@link #setItemsPerPageItems(List)}</li>
+     * </ul>
+     * The {@code null} value makes component to use entity page size as default value.
      *
      * @param defaultValue value to set
+     * @see UiProperties#getEntityPageSize(String)
      */
     public void setItemsPerPageDefaultValue(@Nullable Integer defaultValue) {
         itemsPerPage.setItemsPerPageDefaultValue(defaultValue);
@@ -243,6 +254,24 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
 
         if (loader != null) {
             loader.setTotalCountDelegate(totalCountDelegate);
+        }
+    }
+
+    public Function<JmixDataRepositoryContext, Long> getTotalCountByRepositoryDelegate() {
+        return totalCountByRepositoryDelegate;
+    }
+
+    public void setTotalCountByRepositoryDelegate(Function<JmixDataRepositoryContext, Long> delegate) {
+        this.totalCountByRepositoryDelegate = delegate;
+
+        if (loader != null) {
+            loader.setTotalCountDelegate(dataLoadContext -> {
+                if (dataLoadContext instanceof LoadContext<?> loadContext) {
+                    return Math.toIntExact(totalCountByRepositoryDelegate.apply(JmixDataRepositoryUtils.buildRepositoryContext(loadContext)));
+                } else {
+                    throw new IllegalArgumentException("Data repository supports only LoadContext");
+                }
+            });
         }
     }
 

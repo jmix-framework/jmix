@@ -18,6 +18,11 @@ package component_xml_load
 
 import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.accordion.AccordionPanel
+import com.vaadin.flow.component.avatar.Avatar
+import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.card.CardVariant
+import com.vaadin.flow.component.html.Image
+import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.orderedlayout.*
 import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.tabs.Tab
@@ -28,6 +33,7 @@ import io.jmix.flowui.component.checkbox.JmixCheckbox
 import io.jmix.flowui.component.textfield.TypedTextField
 import io.jmix.flowui.kit.component.button.JmixButton
 import org.springframework.boot.test.context.SpringBootTest
+import spock.lang.Ignore
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
@@ -70,6 +76,20 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
 
         where:
         container << ["vbox", "hbox"]
+    }
+
+    def "Load hbox container with #slot aligned items from XML"() {
+        when: "Open the ContainerView"
+        def containerView = navigateToView ContainerView
+
+        then: "hbox container with #slot aligned items will be loaded"
+        def button = (containerView.hboxWithItemsAlignmentId
+                .children.find { it.getId().orElse(null) == "${slot}Button" }) as JmixButton
+        button.element.getAttribute("slot") == slot
+
+        where:
+        // in case of "start" slot the attribute will not be set
+        slot << ["middle", "end"]
     }
 
     def "Load flexLayout container from XML"() {
@@ -279,6 +299,65 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             (tabs[1] as Tab).getId().orElse(null) == "tab2"
             (tabs[1] as Tab).getLabel() == "tab2Label"
             (tabSheet.getContentByTab(tabs[1] as Tab) as TypedTextField).getValue() == "tab2Child"
+        }
+    }
+
+    // CAUTION: remove after Vaadin 24.8 update
+    @Ignore("The Card component is an experimental feature for Vaadin <24.8")
+    def "Load card component from XML"() {
+        when: "ContainerView is opened"
+        def containerView = navigateToView ContainerView
+
+        then: "Card attributes will be loaded"
+        verifyAll(containerView.cardId) {
+            id.get() == "cardId"
+            ariaLabel.orElse(null) == "ariaLabel"
+            ariaLabelledBy.orElse(null) == "ariaLabelledBy"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
+            enabled
+            height == "50px"
+            maxHeight == "55px"
+            maxWidth == "120px"
+            minHeight == "40px"
+            minWidth == "80px"
+            themeNames.containsAll(
+                    [CardVariant.LUMO_OUTLINED, CardVariant.LUMO_ELEVATED,
+                     CardVariant.LUMO_HORIZONTAL, CardVariant.LUMO_STRETCH_MEDIA]
+                            .collect { it.variantName }
+            )
+            titleAsText == "Title"
+            (subtitle as HasText).text == "SubTitle"
+            element.getProperty("titleHeadingLevel", 0) == 5
+            visible
+            width == "100px"
+
+            (headerPrefix.children.findFirst().orElse(null) as Avatar).name == "Jmix"
+            (headerSuffix.children.findFirst().orElse(null) as Span).text == "Fullstack"
+
+            (media as Image).alt.orElse(null) == "No image"
+            children.count() == 2
+            children.anyMatch { (it as HasText).text.contains "Paragraph" }
+
+            footerComponents.size() == 2
+            footerComponents.any { (it as Button).text.contains "Footer button" }
+        }
+    }
+
+    // CAUTION: remove after Vaadin 24.8 update
+    @Ignore("The Card component is an experimental feature for Vaadin 24.7")
+    def "Load card component from XML with title nested element"() {
+        when: "ContainerView opened"
+        def containerView = navigateToView ContainerView
+
+        then: "Card title and subtitle nested elements will be loaded, corresponding attributes ignored"
+        verifyAll(containerView.cardWithTitlesId) {
+            titleAsText.isEmpty()
+            title instanceof Span
+            (title as HasText).text == "titleComponent"
+
+            subtitle instanceof Span
+            (subtitle as HasText).text == "subtitleComponent"
         }
     }
 }

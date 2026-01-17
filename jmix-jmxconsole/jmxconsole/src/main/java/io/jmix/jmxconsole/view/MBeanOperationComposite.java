@@ -126,7 +126,7 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
         form = uiComponents.create(JmixDetails.class);
         form.setWidthFull();
         form.setHeightFull();
-        form.addContent(verticalLayout);
+        form.add(verticalLayout);
         form.setOpened(false);
 
         initComponents();

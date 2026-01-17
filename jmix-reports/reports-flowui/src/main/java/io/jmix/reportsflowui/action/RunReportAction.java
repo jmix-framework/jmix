@@ -18,17 +18,16 @@ package io.jmix.reportsflowui.action;
 
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import io.jmix.core.DataManager;
-import io.jmix.core.Id;
 import io.jmix.core.Messages;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
@@ -57,7 +56,7 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
     public static final String DEFAULT_SINGLE_ENTITY_ALIAS = "entity";
     public static final String DEFAULT_LIST_OF_ENTITIES_ALIAS = "entities";
 
-    protected DataManager dataManager;
+    protected ReportRepository reportRepository;
     protected DialogWindows dialogWindows;
     protected UiReportRunner uiReportRunner;
     protected ReportsClientProperties reportsClientProperties;
@@ -76,13 +75,22 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
     }
 
     @Autowired
+    public void setIcons(Icons icons) {
+        // Check for 'null' for backward compatibility because 'icon' can be set in
+        // the 'initAction()' method which is called before injection.
+        if (this.icon == null) {
+            this.icon = icons.get(JmixFontIcon.RUN_REPORT_ACTION);
+        }
+    }
+
+    @Autowired
     public void setDialogWindows(DialogWindows dialogWindows) {
         this.dialogWindows = dialogWindows;
     }
 
     @Autowired
-    public void setDataManager(DataManager dataManager) {
-        this.dataManager = dataManager;
+    public void setReportRepository(ReportRepository reportRepository) {
+        this.reportRepository = reportRepository;
     }
 
     @Autowired
@@ -93,11 +101,6 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
     @Autowired
     public void setReportsClientProperties(ReportsClientProperties reportsClientProperties) {
         this.reportsClientProperties = reportsClientProperties;
-    }
-
-    @Override
-    protected void initAction() {
-        this.icon = ComponentUtils.convertToIcon(VaadinIcon.PRINT);
     }
 
     @Override
@@ -122,9 +125,7 @@ public class RunReportAction<E> extends ListDataComponentAction<RunReportAction<
         if (CollectionUtils.isNotEmpty(reports)) {
             Report report = reports.iterator().next();
 
-            report = dataManager.load(Id.of(report))
-                    .fetchPlan("report.edit")
-                    .one();
+            report = reportRepository.reloadForRunning(report);
 
             if (report.getInputParameters() != null
                     && report.getInputParameters().size() > 0

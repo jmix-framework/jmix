@@ -20,6 +20,11 @@ import com.google.common.collect.ForwardingIterator;
 
 import java.util.Iterator;
 
+/**
+ * A wrapper around an {@link Iterator} that enables observation of iteration operations.
+ *
+ * @param <T> the type of elements returned by this iterator
+ */
 class ObservableIterator<T> extends ForwardingIterator<T> {
 
     private final Iterator<T> delegate;

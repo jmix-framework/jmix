@@ -1,6 +1,0 @@
-query($id: String!){
-    scr_CarById(id: $id) {
-        _instanceName
-        price
-    }
-}

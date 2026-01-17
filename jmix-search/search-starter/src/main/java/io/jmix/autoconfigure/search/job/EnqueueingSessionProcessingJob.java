@@ -16,6 +16,7 @@
 
 package io.jmix.autoconfigure.search.job;
 
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -29,10 +30,14 @@ public class EnqueueingSessionProcessingJob implements Job {
     private static final Logger log = LoggerFactory.getLogger(EnqueueingSessionProcessingJob.class);
 
     @Autowired
+    protected SearchProperties searchProperties;
+    @Autowired
     private IndexingQueueManager indexingQueueManager;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        indexingQueueManager.processNextEnqueueingSession();
+        if (searchProperties.isEnabled()) {
+            indexingQueueManager.processNextEnqueueingSession();
+        }
     }
 }

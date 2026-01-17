@@ -32,6 +32,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Class that is responsible for registering and managing aggregation strategies for various data types.
+ * It provides mechanisms for retrieving the appropriate aggregation logic based on the Java class type.
+ */
 @Component("flowui_Aggregations")
 public class Aggregations {
 
@@ -45,6 +49,13 @@ public class Aggregations {
         this.datatypeRegistry = datatypeRegistry;
     }
 
+    /**
+     * Returns the aggregation strategy associated with the specified Java class type.
+     *
+     * @param clazz the class type for which the aggregation strategy is requested
+     * @param <T>   the type of the aggregation result
+     * @return the aggregation strategy for the specified class type, or {@code null} if no mapping exists
+     */
     @Nullable
     public <T> Aggregation<T> get(Class<T> clazz) {
         if (datatypeToAggregation == null) {

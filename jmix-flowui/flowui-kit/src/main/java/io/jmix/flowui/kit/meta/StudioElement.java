@@ -28,6 +28,20 @@ import java.lang.annotation.Target;
 public @interface StudioElement {
 
     /**
+     * Optional.
+     * <p></p>
+     *
+     * Unique element identifier.
+     * <p></p>
+     *
+     * Can be useful to identify the element in
+     * {@link StudioElement#target} and {@link StudioElement#unsupportedTarget}.
+     *
+     * @see StudioMetaConstants#IDENTIFIER_PREFIX
+     */
+    String identifier() default "";
+
+    /**
      * @see StudioComponent#name
      */
     String name() default "";
@@ -101,6 +115,16 @@ public @interface StudioElement {
      * @see StudioComponent#supplyHandlers
      */
     StudioSupplyHandler[] supplyHandlers() default {};
+
+    /**
+     * @see StudioComponent#customSubscriptions
+     */
+    StudioCustomSubscription[] customSubscriptions() default {};
+
+    /**
+     * @see StudioComponent#customInstalls
+     */
+    StudioCustomInstall[] customInstalls() default {};
 
     /**
      * @see StudioComponent#availableChildren

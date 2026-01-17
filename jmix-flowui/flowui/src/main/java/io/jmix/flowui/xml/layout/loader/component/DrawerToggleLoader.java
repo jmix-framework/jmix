@@ -18,10 +18,13 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 
 import static com.vaadin.flow.dom.ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME;
 
 public class DrawerToggleLoader extends AbstractComponentLoader<DrawerToggle> {
+
+    protected IconLoaderSupport iconLoaderSupport;
 
     @Override
     protected DrawerToggle createComponent() {
@@ -34,13 +37,20 @@ public class DrawerToggleLoader extends AbstractComponentLoader<DrawerToggle> {
                 getContext().getMessageGroup(), ariaLabel ->
                         resultComponent.getElement().setAttribute(ARIA_LABEL_ATTRIBUTE_NAME, ariaLabel));
 
-        componentLoader().loadIcon(element, resultComponent::setIcon);
+        iconLoaderSupport().loadIcon(element, resultComponent::setIcon);
         componentLoader().loadClassNames(resultComponent, element);
-        componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
         componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
+
+    protected IconLoaderSupport iconLoaderSupport() {
+        if (iconLoaderSupport == null) {
+            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, context);
+        }
+
+        return iconLoaderSupport;
     }
 }

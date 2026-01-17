@@ -164,6 +164,7 @@ class UnconstrainedDataManagerRowLevelConstraintsTest extends SecurityDataSpecif
 
         def oneToManyEntity = unconstrainedDataManager.load(OneToManyEntity.class)
                 .id(oneToManyId)
+                .fetchPlan(b -> b.add("manyToOneEntities"))
                 .accessConstraints(RowLevelConstraint)
                 .one()
 

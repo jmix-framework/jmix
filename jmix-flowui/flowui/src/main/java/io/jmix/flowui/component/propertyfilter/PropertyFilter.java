@@ -385,6 +385,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         IN_LIST(Type.LIST),
         NOT_IN_LIST(Type.LIST),
         IN_INTERVAL(Type.INTERVAL),
+        DATE_EQUALS(Type.DATE),
         IS_COLLECTION_EMPTY(Type.UNARY),
         MEMBER_OF_COLLECTION(Type.VALUE),
         NOT_MEMBER_OF_COLLECTION(Type.VALUE);
@@ -441,7 +442,12 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
              * Requires a field suitable for selecting a range of values of
              * the same type as the property value.
              */
-            INTERVAL
+            INTERVAL,
+
+            /**
+             * Requires a field suitable for selecting a single date value.
+             */
+            DATE
         }
     }
 

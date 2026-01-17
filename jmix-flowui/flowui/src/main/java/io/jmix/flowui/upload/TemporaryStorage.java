@@ -34,6 +34,7 @@ public interface TemporaryStorage {
      * Listener to be notified about the progress of uploading file into the temporary storage.
      */
     interface UploadProgressListener {
+
         /**
          * @param fileId        temporary file ID
          * @param receivedBytes current uploaded bytes count
@@ -112,7 +113,11 @@ public interface TemporaryStorage {
      */
     FileRef putFileIntoStorage(UUID fileId, String fileName);
 
+    /**
+     * Encapsulates metadata about a file that is temporarily stored.
+     */
     class FileInfo {
+
         private UUID id;
         private File file;
 
@@ -121,10 +126,20 @@ public interface TemporaryStorage {
             this.id = id;
         }
 
+        /**
+         * Returns the associated file.
+         *
+         * @return the associated file
+         */
         public File getFile() {
             return file;
         }
 
+        /**
+         * Returns the unique identifier associated with the file.
+         *
+         * @return the unique identifier
+         */
         public UUID getId() {
             return id;
         }

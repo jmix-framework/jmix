@@ -22,11 +22,16 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.shared.SlotUtils;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.*;
-
 import jakarta.annotation.Nullable;
+
 import java.util.Objects;
 
-
+/**
+ * Represents a button component that supports integration with actions, handling of
+ * shortcut keys, and customizable visual appearance, including an icon.
+ * <p>
+ * This component is primarily designed to be used with {@link ValuePicker} component.
+ */
 @Tag("jmix-value-picker-button")
 @JsModule("./src/value-picker-button/jmix-value-picker-button.js")
 public class ValuePickerButton extends Component
@@ -63,12 +68,27 @@ public class ValuePickerButton extends Component
         return new ValuePickerButtonActionSupport(this);
     }
 
+    /**
+     * Returns the icon component associated with this instance.
+     *
+     * @return the icon component
+     * @throws IllegalStateException if no icon component is set
+     */
     public Component getIcon() {
         Preconditions.checkState(iconComponent != null, "No icon set");
 
         return iconComponent;
     }
 
+    /**
+     * Sets the icon for the component. The provided icon must be a valid
+     * component and cannot be a text node. If an icon is already set, it will
+     * be replaced with the new one.
+     *
+     * @param icon the component to be used as an icon; must not be null
+     * @throws NullPointerException     if the icon is null
+     * @throws IllegalArgumentException if the icon is a text node
+     */
     public void setIcon(Component icon) {
         Preconditions.checkNotNull(icon, "Icon cannot be null");
 

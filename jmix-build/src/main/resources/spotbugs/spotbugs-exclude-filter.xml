@@ -85,19 +85,6 @@
     </Match>
 
     <Match>
-        <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
-        <!-- @deprecated since 2.2, will be removed later -->
-        <Class name="io.jmix.flowui.kit.component.HasPlaceholder"/>
-    </Match>
-
-    <Match>
-        <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
-        <Class name="io.jmix.flowui.xml.layout.loader.AbstractComponentLoader"/>
-        <!-- @deprecated since 2.5, will be removed later -->
-        <Field name="environment"/>
-    </Match>
-
-    <Match>
         <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
         <Class name="io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentProvider"/>
         <!-- for internal studio usage -->
@@ -131,6 +118,23 @@
         <Class name="io.jmix.flowui.component.delegate.AbstractDataViewDelegate"/>
         <!-- false positive, the class can be extended in the user's project -->
         <Method name="valueBindingChanged"/>
+    </Match>
+
+    <!-- GroupGrid add-on -->
+
+    <Match>
+        <Bug pattern="SE_NO_SERIALVERSIONID">
+            <Class name="io.jmix.groupgridflowui.kit.vaadin.grid.CellFocusEvent"/>
+            <Class name="io.jmix.groupgridflowui.kit.vaadin.grid.contextmenu.GridContextMenu$GridContextMenuItemClickEvent"/>
+            <Class name="io.jmix.groupgridflowui.kit.vaadin.grid.contextmenu.GridContextMenu$GridContextMenuOpenedEvent"/>
+        </Bug>
+    </Match>
+
+    <Match>
+        <Bug pattern="DCN_NULLPOINTER_EXCEPTION">
+            <Class name="io.jmix.groupgridflowui.kit.vaadin.grid.Grid"/>
+            <Method name="applyValueProvider"/>
+        </Bug>
     </Match>
 
     <!-- Ignored problems in classes -->

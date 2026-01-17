@@ -19,11 +19,31 @@ package io.jmix.flowui.data.binding;
 import com.vaadin.flow.component.HasValue;
 import io.jmix.flowui.data.ValueSource;
 
+/**
+ * Represents a binding between a UI component and a {@link ValueSource}.
+ * This interface allows synchronization of the component's value with the
+ * underlying value source and provides methods to manage this binding.
+ *
+ * @param <V> the type of the value being bound
+ */
 public interface ValueBinding<V> extends JmixBinding {
 
+    /**
+     * Returns the {@link ValueSource} associated with this binding.
+     *
+     * @return the value source used for this binding
+     */
     ValueSource<V> getValueSource();
 
+    /**
+     * Returns the component associated with this binding.
+     *
+     * @return the component associated with this binding
+     */
     HasValue<?, V> getComponent();
 
+    /**
+     * Activates binding between a UI component and a {@link ValueSource}.
+     */
     void activate();
 }

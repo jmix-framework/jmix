@@ -25,23 +25,30 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.core.repository.JmixDataRepositoryContext;
+import io.jmix.core.repository.JmixDataRepositoryUtils;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static io.jmix.flowui.monitoring.UiMonitoring.*;
+import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
+import static io.jmix.flowui.monitoring.UiMonitoring.stopDataLoaderTimerSample;
 
 /**
+ * Implementation of the {@link CollectionLoader} interface used for loading entities into a {@link CollectionContainer}.
  *
+ * @param <E> the type of entities being loaded
  */
 public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
@@ -70,6 +77,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     protected Sort sort;
     protected Map<String, Serializable> hints = new HashMap<>();
     protected Function<LoadContext<E>, List<E>> delegate;
+    protected BiFunction<Pageable, JmixDataRepositoryContext, List<E>> loadFromRepositoryDelegate;
     protected EventHub events = new EventHub();
     protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider = __ -> DataLoaderMonitoringInfo.empty();
 
@@ -114,10 +122,17 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
         Timer.Sample sample = startTimerSample(meterRegistry);
 
-        if (delegate == null) {
+        if (loadFromRepositoryDelegate == null && delegate == null) {
             list = dataManager.loadList(loadContext);
         } else {
-            list = delegate.apply(loadContext);
+            if (loadFromRepositoryDelegate != null) {
+                list = loadFromRepositoryDelegate.apply(
+                        JmixDataRepositoryUtils.buildPageRequest(loadContext),
+                        JmixDataRepositoryUtils.buildRepositoryContext(loadContext)
+                );
+            } else {
+                list = delegate.apply(loadContext);
+            }
             if (list == null) {
                 return false;
             }
@@ -271,7 +286,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     }
 
     @Override
-    public void setCondition(Condition condition) {
+    public void setCondition(@Nullable Condition condition) {
         this.condition = condition;
     }
 
@@ -383,6 +398,16 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     @Override
     public void setLoadDelegate(Function<LoadContext<E>, List<E>> delegate) {
         this.delegate = delegate;
+    }
+
+    @Override
+    public BiFunction<Pageable, JmixDataRepositoryContext, List<E>> getLoadFromRepositoryDelegate() {
+        return loadFromRepositoryDelegate;
+    }
+
+    @Override
+    public void setLoadFromRepositoryDelegate(BiFunction<Pageable, JmixDataRepositoryContext, List<E>> delegate) {
+        this.loadFromRepositoryDelegate = delegate;
     }
 
     @SuppressWarnings("unchecked")

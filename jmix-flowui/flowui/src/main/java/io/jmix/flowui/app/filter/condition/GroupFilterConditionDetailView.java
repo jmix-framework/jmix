@@ -17,12 +17,14 @@
 package io.jmix.flowui.app.filter.condition;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H4;
 import io.jmix.flowui.action.genericfilter.GenericFilterAddConditionAction;
 import io.jmix.flowui.action.list.RemoveAction;
 import io.jmix.flowui.action.logicalfilter.LogicalFilterEditAction;
 import io.jmix.flowui.action.view.DetailSaveCloseAction;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.select.JmixSelect;
@@ -33,11 +35,13 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.InstanceContainer.ItemPropertyChangeEvent;
 import io.jmix.flowui.view.*;
 import org.springframework.lang.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @ViewController("flowui_GroupFilterCondition.detail")
 @ViewDescriptor("group-filter-condition-detail-view.xml")
@@ -53,6 +57,8 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
     protected CollectionContainer<FilterCondition> filterConditionsDc;
     @ViewComponent
     protected JmixSelect<LogicalFilterComponent.Operation> operationField;
+    @ViewComponent
+    protected JmixCheckbox operationTextVisibleField;
     @ViewComponent
     protected H4 groupConditionTitle;
 
@@ -123,8 +129,40 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
         event.getEntity().setStyleName(GROUP_FILTER_CLASS_NAME);
     }
 
+    @Override
+    protected void setupEntityToEdit(GroupFilterCondition entityToEdit) {
+        initCheckboxesState(entityToEdit);
+
+        super.setupEntityToEdit(entityToEdit);
+    }
+
+    protected void initCheckboxesState(GroupFilterCondition entityToEdit) {
+        operationTextVisibleField.setVisible(entityToEdit.getVisible());
+    }
+
+    @Override
+    protected void refreshChildrenConditions() {
+        super.refreshChildrenConditions();
+
+        // lazy initialization of a multi selection model
+        if (!getCollectionContainer().getItems().isEmpty()
+                && conditionsTreeDataGrid.getSelectionMode() != Grid.SelectionMode.MULTI) {
+            conditionsTreeDataGrid.enableMultiSelect();
+        }
+    }
+
+    @Subscribe(id = "filterConditionDc", target = Target.DATA_CONTAINER)
+    public void onFilterConditionDcItemPropertyChange(ItemPropertyChangeEvent<GroupFilterCondition> event) {
+        String property = event.getProperty();
+
+        if ("visible".equals(property)) {
+            operationTextVisibleField.setVisible(Boolean.TRUE.equals(event.getValue()));
+        }
+    }
+
     @Subscribe
     protected void onReady(ReadyEvent event) {
+        refreshMoveButtonsState(null);
         getCollectionContainer().addItemChangeListener(itemChangeEvent ->
                 refreshMoveButtonsState(itemChangeEvent.getItem()));
         operationField.addValueChangeListener(valueChangeEvent -> {
@@ -189,6 +227,11 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
             Collections.swap(ownConditions, selectedOwnItemIndex, selectedOwnItemIndex + 1);
             refreshMoveButtonsState(selectedCondition);
         }
+    }
+
+    @Install(to = "conditionsTreeDataGrid", subject = "itemSelectableProvider")
+    protected boolean conditionsTreeDataGridItemSelectableProvider(FilterCondition filterCondition) {
+        return !Objects.equals(filterCondition, getEditedEntity());
     }
 
     @Install(to = "operationField", subject = "itemLabelGenerator")

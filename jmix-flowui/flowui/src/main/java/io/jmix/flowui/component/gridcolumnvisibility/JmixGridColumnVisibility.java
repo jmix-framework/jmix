@@ -17,16 +17,7 @@
 package io.jmix.flowui.component.gridcolumnvisibility;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.AttachNotifier;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.DetachNotifier;
-import com.vaadin.flow.component.Focusable;
-import com.vaadin.flow.component.HasEnabled;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.HasStyle;
-import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.Icon;
@@ -51,8 +42,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -75,7 +66,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     protected MetadataTools metadataTools;
 
     protected JmixMenuItem dropdownItem;
-    protected Icon icon;
+    protected Component icon;
 
     protected Grid<?> grid;
 
@@ -117,11 +108,47 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
+     * @return icon of the component
+     * @deprecated use {@link #getIconComponent()} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
+    @Nullable
+    public Icon getIcon() {
+        return icon instanceof Icon iconComponent ? iconComponent : null;
+    }
+
+    /**
      * Sets component icon.
      *
      * @param icon icon to set
+     * @deprecated use {@link #setIconComponent(Component)} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public void setIcon(@Nullable Icon icon) {
+        setIconComponent(icon);
+    }
+
+    /**
+     * Returns the icon component associated with this component, if available.
+     *
+     * @return the icon component, or {@code null} if no icon has been set
+     */
+    @Nullable
+    public Component getIconComponent() {
+        return icon;
+    }
+
+    /**
+     * Sets the given component as the icon of this component.
+     *
+     * @param icon the component to be set as the icon, or {@code null} to remove the current icon
+     */
+    public void setIconComponent(@Nullable Component icon) {
+        if (icon != null && icon.getElement().isTextNode()) {
+            throw new IllegalArgumentException(
+                    "Text node can't be used as an icon.");
+        }
+
         if (this.icon != null) {
             dropdownItem.remove(this.icon);
         }
@@ -144,14 +171,6 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         } else {
             removeThemeVariants(GridColumnVisibilityVariant.ICON);
         }
-    }
-
-    /**
-     * @return icon of the component
-     */
-    @Nullable
-    public Icon getIcon() {
-        return icon;
     }
 
     /**
@@ -525,6 +544,8 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
                 DataGridColumn<?> column = menuItem.getColumn();
                 column.setVisible(true);
             }
+
+            getGrid().recalculateColumnWidths();
         }
 
         public void refresh() {
@@ -682,6 +703,9 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         @Override
         public void toggleVisibility() {
             column.setVisible(!column.isVisible());
+            if (column.isVisible()) {
+                column.getGrid().recalculateColumnWidths();
+            }
         }
     }
 }

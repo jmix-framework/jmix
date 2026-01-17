@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.meta.action;
 import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit(requiredDependencies = "io.jmix.flowui:jmix-flowui-data-starter")
-public interface StudioGenericFilterDataActions {
+interface StudioGenericFilterDataActions {
 
     @StudioAction(
             type = "genericFilter_remove",

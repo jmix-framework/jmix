@@ -21,6 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ * Represents the result of an operation with an {@code UNKNOWN} status.
+ * This class is used when the success or failure state of the operation
+ * cannot be determined immediately, and provides mechanisms for defining
+ * callbacks for success and failure events.
+ */
 @NotThreadSafe
 public class UnknownOperationResult implements OperationResult {
 
@@ -75,6 +81,10 @@ public class UnknownOperationResult implements OperationResult {
         return this;
     }
 
+    /**
+     * Marks the operation result as failed and notify all associated
+     * failure listeners.
+     */
     public void fail() {
         for (Runnable otherwiseListener : otherwiseListeners) {
             otherwiseListener.run();
@@ -82,6 +92,10 @@ public class UnknownOperationResult implements OperationResult {
         otherwiseListeners.clear();
     }
 
+    /**
+     * Marks the operation result as successful and notifies all associated
+     * success listeners by running their callbacks.
+     */
     public void success() {
         for (Runnable thenListener : thenListeners) {
             thenListener.run();

@@ -30,6 +30,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.FontIcon;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -201,6 +202,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected Tab mainTabSheetDetailsTab;
     @ViewComponent
     protected MessageBundle messageBundle;
+    @ViewComponent
+    protected NativeLabel codeEditorLabel;
 
     @Autowired
     protected ReportsPersistence reportsPersistence;
@@ -654,13 +657,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
         Report editedReport = getEditedEntity();
         Optional<UUID> reportId;
 
-        if (reportCode == null) {
-            markFieldAndPreventSave(codeField, "detailsTab.codeField.isEmpty.text", event);
-            showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.isEmpty.text");
-            return;
-        }
-
         try {
+            if (reportCode == null) {
+                markFieldAndPreventSave(codeField, "detailsTab.codeField.isEmpty.text", event);
+                showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.isEmpty.text");
+                return;
+            }
+
             if (entityStates.isNew(editedReport)) {
                 if (reportRepository.existsReportByCode(reportCode)) {
                     markFieldAndPreventSave(codeField, "detailsTab.codeField.alreadyExists.text", event);
@@ -1260,12 +1263,19 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (dataSet.getType() != null) {
             switch (dataSet.getType()) {
                 case SQL:
+                    codeEditorLabel.setText(messageBundle.getMessage("report.sqlScript.title"));
+                    dataStoreField.setVisible(true);
+                    isProcessTemplateField.setVisible(true);
+                    dataSetScriptBox.setVisible(true);
+                    break;
                 case JPQL:
+                    codeEditorLabel.setText(messageBundle.getMessage("report.jpqlScript.title"));
                     dataStoreField.setVisible(true);
                     isProcessTemplateField.setVisible(true);
                     dataSetScriptBox.setVisible(true);
                     break;
                 case GROOVY:
+                    codeEditorLabel.setText(messageBundle.getMessage("report.groovyScript.title"));
                     dataSetScriptBox.setVisible(true);
                     break;
                 case SINGLE:

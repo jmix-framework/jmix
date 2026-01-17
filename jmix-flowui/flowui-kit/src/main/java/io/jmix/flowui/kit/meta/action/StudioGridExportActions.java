@@ -23,7 +23,7 @@ import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit(requiredDependencies = "io.jmix.gridexport:jmix-gridexport-flowui-starter")
-public interface StudioGridExportActions {
+interface StudioGridExportActions {
 
     @StudioAction(
             type = "grdexp_excelExport",

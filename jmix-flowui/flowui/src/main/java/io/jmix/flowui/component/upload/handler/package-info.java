@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.xml.layout.loader.html;
+@NonNullApi
+package io.jmix.flowui.component.upload.handler;
 
-import com.vaadin.flow.component.html.Label;
-
-public class LabelLoader extends AbstractHtmlContainerLoader<Label> {
-
-    @Override
-    protected Label createComponent() {
-        return factory.create(Label.class);
-    }
-
-    @Override
-    public void loadComponent() {
-        super.loadComponent();
-
-        loaderSupport.loadString(element, "setFor", resultComponent::setFor);
-    }
-}
+import org.springframework.lang.NonNullApi;

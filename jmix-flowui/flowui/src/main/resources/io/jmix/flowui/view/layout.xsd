@@ -1449,6 +1449,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="uploadUploadHandlerEnum">
+        <xs:restriction>
+            <xs:enumeration value="IN_MEMORY"/>
+            <xs:enumeration value="FILE_TEMPORARY_STORAGE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="labelPositionType">
         <xs:restriction>
             <xs:enumeration value="ASIDE"/>
@@ -2508,6 +2515,7 @@
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="colspan" type="xs:integer"/>
         <xs:attribute name="alignSelf" type="alignEnum"/>
+        <xs:attribute name="justifySelf" type="alignEnum"/>
         <xs:attribute name="css" type="xs:string"/>
 
         <!-- enable XSD extension here -->
@@ -4482,6 +4490,9 @@
                 <xs:attribute name="receiverType" type="uploadReceiverEnum"/>
                 <xs:attribute name="receiverFqn" type="xs:string"/>
 
+                <xs:attribute name="uploadHandlerType" type="uploadUploadHandlerEnum"/>
+                <xs:attribute name="uploadHandlerFqn" type="xs:string"/>
+
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasSize"/>
@@ -5501,6 +5512,7 @@
                 <xs:attribute name="visible" type="xs:boolean"/>
                 <xs:attribute name="colspan" type="xs:integer"/>
                 <xs:attribute name="alignSelf" type="alignEnum"/>
+                <xs:attribute name="justifySelf" type="alignEnum"/>
                 <xs:attribute name="css" type="xs:string"/>
                 <xs:attribute name="themeNames" type="spacingThemeNames"/>
                 <xs:attribute name="wrap" type="xs:boolean"/>

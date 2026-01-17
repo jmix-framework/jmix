@@ -127,6 +127,13 @@ public interface JmixDataRepository<T, ID> extends ListPagingAndSortingRepositor
 
     /**
      * Returns a {@link Slice} of entities meeting the paging restriction provided in the {@code Pageable} object.
+     *
+     * @return a page of entities
+     */
+    Slice<T> findAllSlice(Pageable pageable);
+
+    /**
+     * Returns a {@link Slice} of entities meeting the paging restriction provided in the {@code Pageable} object.
      * Entities will be loaded according to passed {@code fetchPlan}
      *
      * @param fetchPlan to load entities. {@link FetchPlan#BASE} will be used if {@code fetchPlan == null}

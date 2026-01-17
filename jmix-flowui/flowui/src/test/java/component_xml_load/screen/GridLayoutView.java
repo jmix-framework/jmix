@@ -18,6 +18,7 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.gridlayout.GridLayout;
+import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewComponent;
@@ -38,4 +39,7 @@ public class GridLayoutView extends StandardView {
 
     @ViewComponent
     public CollectionContainer<Order> ordersDc;
+
+    @ViewComponent
+    public TypedTextField<String> gridLayoutChild2;
 }

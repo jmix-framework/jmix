@@ -25,4 +25,11 @@ import java.util.function.BiPredicate;
  * Accepts the user to be substituted and another user as substitution candidate.
  */
 public interface UserSubstitutionCandidatePredicate extends BiPredicate<UserDetails, UserDetails> {
+
+    /**
+     * Wraps the generic {@code BiPredicate<UserDetails, UserDetails>} in {@link UserSubstitutionCandidatePredicate} type.
+     */
+    static UserSubstitutionCandidatePredicate of(BiPredicate<UserDetails, UserDetails> p) {
+        return p::test;
+    }
 }

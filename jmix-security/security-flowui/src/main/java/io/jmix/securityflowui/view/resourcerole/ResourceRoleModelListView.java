@@ -216,7 +216,7 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     }
 
     @Subscribe("importField")
-    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
+    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField, byte[]> event) {
         try {
             byte[] bytes = importField.getValue();
             Assert.notNull(bytes, "Uploaded file does not contains data");

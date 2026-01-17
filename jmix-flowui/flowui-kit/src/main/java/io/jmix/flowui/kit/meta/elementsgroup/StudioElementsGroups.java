@@ -25,7 +25,7 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 import static io.jmix.flowui.kit.meta.StudioMetaConstants.TAG_PREFIX;
 
 @StudioUiKit
-public interface StudioElementsGroups {
+interface StudioElementsGroups {
 
     @StudioElementsGroup(
             name = "Columns",

@@ -69,6 +69,7 @@
                     <xs:attribute name="eventOrderStrict" type="xs:boolean"/>
                     <xs:attribute name="eventOverlap" type="xs:boolean"/>
                     <xs:attribute name="eventResizableFromStart" type="xs:boolean"/>
+                    <xs:attribute name="eventSingleClickThreshold" type="xs:integer"/>
                     <xs:attribute name="eventStartEditable" type="xs:boolean"/>
                     <xs:attribute name="eventTextColor" type="colorType"/>
                     <xs:attribute name="expandRows" type="xs:boolean"/>

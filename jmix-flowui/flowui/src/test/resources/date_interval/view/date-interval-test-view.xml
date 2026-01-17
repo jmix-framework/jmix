@@ -17,8 +17,10 @@
 <view xmlns="http://jmix.io/schema/flowui/view">
     <data>
         <collection id="ordersDc"
-                    class="test_support.entity.sales.Order"
-                    fetchPlan="_local">
+                    class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base">
+                <property name="orderLines" fetchPlan="_base"/>
+            </fetchPlan>
             <loader id="ordersDl">
                 <query>
                     <![CDATA[select e from test_Order e]]>
@@ -32,6 +34,10 @@
     <layout>
         <propertyFilter id="dateFilter"
                         property="date"
+                        operation="IN_INTERVAL"
+                        dataLoader="ordersDl"/>
+        <propertyFilter id="nestedOrderLineFilter"
+                        property="orderLines.createTs"
                         operation="IN_INTERVAL"
                         dataLoader="ordersDl"/>
     </layout>

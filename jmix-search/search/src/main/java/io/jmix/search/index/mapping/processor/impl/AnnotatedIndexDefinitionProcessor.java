@@ -62,6 +62,7 @@ import java.util.stream.Collectors;
 public class AnnotatedIndexDefinitionProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotatedIndexDefinitionProcessor.class);
+    private static final String MAPPINGS_CONFLICT_ERROR_MESSAGE = "Conflicted mapping fields: '%s' and '%s'. Specify the different values of order for them.";
 
     protected final Metadata metadata;
     protected final MappingFieldAnnotationProcessorsRegistry mappingFieldAnnotationProcessorsRegistry;
@@ -364,7 +365,7 @@ public class AnnotatedIndexDefinitionProcessor {
                     int order1 = v1.getOrder();
                     int order2 = v2.getOrder();
                     if (order1 == order2) {
-                        throw new RuntimeException("Conflicted mapping fields: '" + v1.getIndexPropertyFullName() + "' and '" + v2.getIndexPropertyFullName() + "'");
+                        throw new RuntimeException(String.format(MAPPINGS_CONFLICT_ERROR_MESSAGE, v1.getIndexPropertyFullName(), v2.getIndexPropertyFullName()));
                     }
                     return order1 < order2 ? v2 : v1;
                 }));

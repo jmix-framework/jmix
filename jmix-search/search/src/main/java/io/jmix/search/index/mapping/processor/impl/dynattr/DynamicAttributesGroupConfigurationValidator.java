@@ -18,6 +18,7 @@ package io.jmix.search.index.mapping.processor.impl.dynattr;
 
 import io.jmix.search.exception.IndexConfigurationException;
 import io.jmix.search.index.mapping.DynamicAttributesGroupConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,7 +43,6 @@ public class DynamicAttributesGroupConfigurationValidator {
 
     protected void checkCategory(String categoryName) {
         checkIsNotBlank(categoryName, CATEGORY);
-        checkForbiddenSymbols(categoryName, CATEGORY);
         checkNotWildcardOnly(categoryName, CATEGORY);
     }
 
@@ -71,7 +71,7 @@ public class DynamicAttributesGroupConfigurationValidator {
     }
 
     protected void checkNotWildcardOnly(String name, ArgumentType argumentType) {
-        if ("*".equals(name)) {
+        if (StringUtils.containsOnly(name, '*')) {
             throw new IndexConfigurationException(String.format("%s name can't be a wildcard without any text. " +
                     "But wildcards like '*abc', 'abc*', 'a*b*c' are supported.", argumentType.nameWithCapitalLetter));
         }

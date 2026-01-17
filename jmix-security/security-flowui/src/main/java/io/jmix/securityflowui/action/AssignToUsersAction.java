@@ -32,22 +32,34 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport;
+import io.jmix.security.model.BaseRole;
 import io.jmix.security.model.BaseRoleModel;
 import io.jmix.security.model.ResourceRoleModel;
 import io.jmix.security.model.RowLevelRoleModel;
+import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentPersistence;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import io.jmix.securityflowui.util.RoleAssignmentCandidatePredicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static io.jmix.securityflowui.util.PredicateUtils.combineRoleAssignmentPredicates;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @ActionType(AssignToUsersAction.ID)
 public class AssignToUsersAction<E extends BaseRoleModel>
         extends SecuredListDataComponentAction<AssignToUsersAction<E>, E> {
+
+    private static final Logger log = getLogger(AssignToUsersAction.class);
 
     public static final String ID = "sec_assignToUsers";
 
@@ -59,6 +71,11 @@ public class AssignToUsersAction<E extends BaseRoleModel>
 
     protected RoleAssignmentPersistence roleAssignmentPersistence;
     protected UserRepository userRepository;
+
+    protected RoleAssignmentCandidatePredicate compositeRoleAssignmentCandidatePredicate;
+
+    protected ResourceRoleRepository resourceRoleRepository;
+    protected RowLevelRoleRepository rowLevelRoleRepository;
 
     protected E selectedItem;
 
@@ -78,6 +95,25 @@ public class AssignToUsersAction<E extends BaseRoleModel>
     @Autowired
     public void setNotifications(Notifications notifications) {
         this.notifications = notifications;
+    }
+
+    @Autowired(required = false)
+    public void setRoleAssignmentCandidatePredicates(List<RoleAssignmentCandidatePredicate> roleAssignmentCandidatePredicates) {
+        List<RoleAssignmentCandidatePredicate> predicates = CollectionUtils.isEmpty(roleAssignmentCandidatePredicates)
+                ? Collections.emptyList()
+                : roleAssignmentCandidatePredicates;
+
+        this.compositeRoleAssignmentCandidatePredicate = combineRoleAssignmentPredicates(predicates);
+    }
+
+    @Autowired
+    public void setResourceRoleRepository(ResourceRoleRepository resourceRoleRepository) {
+        this.resourceRoleRepository = resourceRoleRepository;
+    }
+
+    @Autowired
+    public void setRowLevelRoleRepository(RowLevelRoleRepository rowLevelRoleRepository) {
+        this.rowLevelRoleRepository = rowLevelRoleRepository;
     }
 
     @Autowired
@@ -141,9 +177,32 @@ public class AssignToUsersAction<E extends BaseRoleModel>
             throw new IllegalStateException(message);
         }
 
+        Class<? extends BaseRoleModel> roleClass = selectedItem.getClass();
+
+        BaseRole baseRole = ResourceRoleModel.class.isAssignableFrom(roleClass)
+                ? resourceRoleRepository.findRoleByCode(selectedItem.getCode())
+                : rowLevelRoleRepository.findRoleByCode(selectedItem.getCode());
+
         DialogWindow<View<?>> dialog = dialogWindows
                 .lookup(UiComponentUtils.getView(((Component) target)), userClass)
                 .withSelectHandler(this::selectHandler)
+                .withSelectValidator(validationContext -> {
+                    if (baseRole == null) {
+                        return true;
+                    }
+                    Collection<?> selectedItems = validationContext.getSelectedItems();
+                    for (Object item : selectedItems) {
+                        if (item instanceof UserDetails userDetails) {
+                            boolean applicable = compositeRoleAssignmentCandidatePredicate.test(userDetails, baseRole);
+                            if (!applicable) {
+                                log.warn("Role '{}' can't be assigned to user '{}'", baseRole.getName(), userDetails.getUsername());
+                                showNotificationIncorrectUserSelected(userDetails);
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                })
                 .withAfterCloseListener(this::showNotification)
                 .build();
 
@@ -217,6 +276,20 @@ public class AssignToUsersAction<E extends BaseRoleModel>
 
         notifications.create(title, message)
                 .withType(Notifications.Type.SUCCESS)
+                .show();
+    }
+
+    protected void showNotificationIncorrectUserSelected(UserDetails user) {
+        String title = messages.getMessage(getClass(), "assignToUsersAction.incorrectUserSelectedNotificationTitle");
+        String message = messages.formatMessage(
+                getClass(),
+                "assignToUsersAction.incorrectUserSelectedNotificationMessage",
+                selectedItem.getName(), user.getUsername()
+        );
+
+        notifications.create(title, message)
+                .withType(Notifications.Type.WARNING)
+                .withCloseable(false)
                 .show();
     }
 

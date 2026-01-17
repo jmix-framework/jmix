@@ -24,11 +24,12 @@ import io.jmix.core.metamodel.model.MetaClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
+import test_support.addon1.TestAddon1Configuration
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.jmix_entities.*
 import test_support.base.TestBaseConfiguration
 
-@ContextConfiguration(classes = [CoreConfiguration, TestAppConfiguration, TestBaseConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, TestAppConfiguration, TestAddon1Configuration, TestBaseConfiguration])
 class JmixEntityTest extends Specification {
 
     @Autowired

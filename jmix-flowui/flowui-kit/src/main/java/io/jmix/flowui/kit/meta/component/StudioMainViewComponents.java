@@ -26,7 +26,7 @@ import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
-public interface StudioMainViewComponents {
+interface StudioMainViewComponents {
     @StudioComponent(
             name = "AppLayout",
             classFqn = "com.vaadin.flow.component.applayout.AppLayout",

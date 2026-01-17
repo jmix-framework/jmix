@@ -16,7 +16,10 @@
 
 package io.jmix.flowui.xml.layout.loader.container;
 
+import com.vaadin.flow.component.HasComponents;
 import io.jmix.flowui.component.gridlayout.GridLayout;
+import io.jmix.flowui.kit.component.Alignment;
+import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 import org.dom4j.Element;
 
@@ -33,6 +36,15 @@ public class GridLayoutLoader extends AbstractContainerLoader<GridLayout<?>> {
     public void initComponent() {
         super.initComponent();
         createSubComponents(resultComponent, element);
+    }
+
+    @Override
+    protected void postCreateSubComponent(HasComponents container, Element subElement,
+                                          ComponentLoader<?> componentLoader) {
+        loadEnum(subElement, Alignment.class, "alignSelf", alignSelf ->
+                resultComponent.setAlignSelf(alignSelf, componentLoader.getResultComponent()));
+        loadEnum(subElement, Alignment.class, "justifySelf", justifySelf ->
+                resultComponent.setJustifySelf(justifySelf, componentLoader.getResultComponent()));
     }
 
     @Override

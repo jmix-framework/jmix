@@ -377,7 +377,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         menuList.addClassNames(MENUBAR_LIST_CLASS_NAME, LIST_NONE_CLASS_NAME, MARGIN_NONE_CLASS_NAME,
                 PADDING_NONE_CLASS_NAME);
 
-        menuItemComponent.setContent(menuList);
+        menuItemComponent.removeAll();
+        menuItemComponent.add(menuList);
 
         addMenuOpenedChangeListener(menuItemComponent, menuBarItem);
 

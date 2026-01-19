@@ -26,14 +26,13 @@
                 type="view_close"/>
     </actions>
 
-    <layout expand="fieldLayoutScroller">
+    <layout expand="contentBox"
+            alignItems="STRETCH" padding="false" spacing="false">
         <div id="infoDiv"
              text="msg://bulkEditor.info"
+             css="border-radius: unset;"
              themeNames="badge"/>
-
-        <scroller id="fieldLayoutScroller"
-                  scrollBarsDirection="VERTICAL"
-                  width="100%">
+        <vbox id="contentBox" classNames="overflow-auto" expand="fieldLayout">
             <formLayout id="fieldLayout">
                 <responsiveSteps>
                     <responsiveStep minWidth="0"
@@ -44,9 +43,9 @@
                                     columns="3"/>
                 </responsiveSteps>
             </formLayout>
-        </scroller>
+        </vbox>
 
-        <hbox id="buttonsBox">
+        <hbox id="buttonsBox" classNames="px-m py-s bg-contrast-5">
             <button id="applyBtn"
                     action="applyChanges"/>
             <button id="cancelBtn"

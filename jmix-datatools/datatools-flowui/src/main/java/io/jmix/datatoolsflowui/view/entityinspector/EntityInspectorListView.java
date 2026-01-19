@@ -1123,7 +1123,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
             MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
             LoadContext<?> ctx = new LoadContext<>(metaClass)
                     .setIds(ids)
-                    .setFetchPlan(fetchPlan);
+                    .setFetchPlan(fetchPlan)
+                    .setHint("jmix.softDeletion", false);
 
             return dataManager.loadList(ctx);
         }

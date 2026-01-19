@@ -99,9 +99,9 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
                 <div part="error-message">
                     <slot name="error-message"></slot>
                 </div>
+
+                <slot name="tooltip"></slot>
             </div>
-            
-            <slot name="tooltip"></slot>
         `;
     }
 

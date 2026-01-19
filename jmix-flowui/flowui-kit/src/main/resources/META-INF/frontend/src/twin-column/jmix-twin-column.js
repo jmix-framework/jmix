@@ -50,9 +50,9 @@ export class JmixTwinColumn extends InputFieldMixin(ThemableMixin(ElementMixin(P
             <div part="error-message">
               <slot name="error-message"></slot>
             </div>
-        </vaadin-vertical-layout>
 
-        <slot name="tooltip"></slot>
+            <slot name="tooltip"></slot>
+        </vaadin-vertical-layout>
         `;
       }
 

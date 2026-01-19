@@ -26,7 +26,7 @@ registerStyles('jmix-multi-select-combo-box-picker', [],{
     moduleId: 'jmix-multi-select-combo-box-picker-styles'
 });
 
-// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 24.9.0]
+// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 24.9.9]
 class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
 
     static get is() {
@@ -110,9 +110,9 @@ class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
                 <div part="error-message">
                     <slot name="error-message"></slot>
                 </div>
-            </div>
 
-            <slot name="tooltip"></slot>
+                <slot name="tooltip"></slot>
+            </div>
         `;
     }
 

@@ -46,8 +46,8 @@ export class JmixSwitch extends SwitchMixin(ElementMixin(ThemableMixin(PolymerEl
                 <div part="error-message">
                     <slot name="error-message"></slot>
                 </div>
+                <slot name="tooltip"></slot>
             </div>
-            <slot name="tooltip"></slot>
         `;
     }
 

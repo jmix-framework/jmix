@@ -55,9 +55,9 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 <div part="error-message">
                     <slot name="error-message"></slot>
                 </div>
-            </div>
 
-            <slot name="tooltip"></slot>
+                <slot name="tooltip"></slot>
+            </div>
         `;
     }
 

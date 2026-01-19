@@ -25,6 +25,7 @@ import java.util.UUID;
 
 @JmixEntity
 public class AttributeModel {
+
     @JmixGeneratedValue
     @JmixId
     private UUID id;

@@ -13,7 +13,7 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.LoadContext;
 import io.jmix.datatools.datamodel.DataModel;
-import io.jmix.datatools.datamodel.DataModelManager;
+import io.jmix.datatools.datamodel.DataModelSupport;
 import io.jmix.datatools.datamodel.engine.DiagramConstructor;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
@@ -44,66 +43,52 @@ import java.util.stream.Stream;
 @ViewDescriptor(path = "data-model-list-view.xml")
 @LookupComponent("entityModelsDataGrid")
 @DialogMode(width = "50em")
-public class DataModelListView extends StandardListView<EntityModel> {
-    private static final String FILTER_URL_PARAM = "entity-filter-text";
+public class EntityModelListView extends StandardListView<EntityModel> {
+
+    protected static final String FILTER_URL_PARAM = "entity-filter-text";
 
     @Autowired
-    protected DataModelManager dataModelManager;
+    protected DataModelSupport dataModelManager;
     @Autowired
-    private UiComponents uiComponents;
+    protected UiComponents uiComponents;
     @Autowired
-    private DiagramConstructor diagramConstructor;
+    protected DiagramConstructor diagramConstructor;
     @Autowired
     protected ViewValidation viewValidation;
 
     @ViewComponent
-    private UrlQueryParametersFacet entityNameFilterQueryParameters;
+    private JmixButton searchButton;
     @ViewComponent
-    private JmixCheckbox showSystemCheckBox;
+    protected MessageBundle messageBundle;
     @ViewComponent
-    private DataGrid<EntityModel> entityModelsDataGrid;
+    protected UrlQueryParametersFacet entityNameFilterQueryParameters;
     @ViewComponent
-    private CollectionLoader<EntityModel> entityModelsDl;
+    protected JmixCheckbox showSystemCheckBox;
     @ViewComponent
-    private CollectionContainer<EntityModel> entityModelsDc;
+    protected DataGrid<EntityModel> entityModelsDataGrid;
     @ViewComponent
-    private CollectionContainer<AttributeModel> attributeModelsDc;
+    protected CollectionLoader<EntityModel> entityModelsDl;
+    @ViewComponent
+    protected CollectionContainer<EntityModel> entityModelsDc;
+    @ViewComponent
+    protected CollectionContainer<AttributeModel> attributeModelsDc;
     @ViewComponent
     protected TypedTextField<String> entityNameFilter;
 
     @Autowired
     protected Icons icons;
 
-    private class EntityNameUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
-
-        public EntityNameUrlQueryParametersBinder() {
-            entityNameFilter.addValueChangeListener(event -> {
-                String text = event.getValue();
-                QueryParameters qp = new QueryParameters(ImmutableMap.of(FILTER_URL_PARAM,
-                        text != null ? Collections.singletonList(text) : Collections.emptyList()));
-                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
-            });
-        }
-
-        @Override
-        public void updateState(QueryParameters queryParameters) {
-            List<String> textStrings = queryParameters.getParameters().get(FILTER_URL_PARAM);
-            if (textStrings != null && !textStrings.isEmpty()) {
-                entityNameFilter.setValue(textStrings.get(0));
-            }
-        }
-
-        @Override
-        public Component getComponent() {
-            return null;
-        }
-    }
-
+    private Set<String> dataStoreNames;
 
     @Subscribe
     public void onInit(final InitEvent event) {
         entityNameFilterQueryParameters.registerBinder(new EntityNameUrlQueryParametersBinder());
+        setDataStoreNames();
         initEntityNameFilterTooltip();
+    }
+
+    protected void setDataStoreNames() {
+        this.dataStoreNames = dataModelManager.getDataModelProvider().getDataModels().keySet();
     }
 
     @Install(to = "entityModelsDl", target = Target.DATA_LOADER)
@@ -122,13 +107,14 @@ public class DataModelListView extends StandardListView<EntityModel> {
         }
 
         if (entityNames == null) {
-            List<EntityModel> model = dataModelManager.getDataModelHolder().getDataModels().values()
-                    .stream().map(DataModel::getEntityModel)
-                    .filter(e -> {
+            List<EntityModel> model = dataModelManager.getDataModelProvider().getDataModels().values().stream()
+                    .flatMap(e -> e.values().stream())
+                    .map(DataModel::getEntityModel)
+                    .filter(entityModel -> {
                         if (showSystemCheckBox.getValue()) {
                             return true;
                         } else {
-                            return e.getIsSystem().equals(false);
+                            return entityModel.getIsSystem().equals(false);
                         }
                     })
                     .toList();
@@ -138,12 +124,20 @@ public class DataModelListView extends StandardListView<EntityModel> {
         }
 
         List<EntityModel> model = entityNames.stream()
-                .map(e -> dataModelManager.getDataModelHolder().getEntityModel(e))
-                .filter(e -> {
+                .flatMap(entityName -> {
+                    List<EntityModel> result = new ArrayList<>();
+
+                    for (String dataStore : dataStoreNames) {
+                        result.add(dataModelManager.getDataModelProvider().getEntityModel(dataStore, entityName));
+                    }
+
+                    return result.stream();
+                })
+                .filter(entityModel -> {
                     if (showSystemCheckBox.getValue()) {
                         return true;
                     } else {
-                        return e.getIsSystem().equals(false);
+                        return entityModel.getIsSystem().equals(false);
                     }
                 })
                 .toList();
@@ -170,15 +164,15 @@ public class DataModelListView extends StandardListView<EntityModel> {
     }
 
     protected void changeDataStoreColumnVisibility(List<EntityModel> model) {
-        Set<String> byDataSet = new HashSet<>();
+        Set<String> dataStores = new HashSet<>();
 
         for (EntityModel em : model) {
-            byDataSet.add(em.getDataStore());
+            dataStores.add(em.getDataStore());
         }
 
         Grid.Column<EntityModel> dataStoreColumn = entityModelsDataGrid.getColumnByKey("dataStore");
 
-        if (byDataSet.size() <= 1) {
+        if (dataStores.size() <= 1) {
             if (dataStoreColumn != null) {
                 entityModelsDataGrid.removeColumn(dataStoreColumn);
             }
@@ -200,7 +194,7 @@ public class DataModelListView extends StandardListView<EntityModel> {
 
         if (!diagramConstructor.pingService()) {
             errors.add("Remote diagramming service is not available.");
-        };
+        }
 
         if (!errors.isEmpty()) {
             viewValidation.showValidationErrors(errors);
@@ -208,6 +202,8 @@ public class DataModelListView extends StandardListView<EntityModel> {
         }
 
         dataModelManager.setFilteredModels(entityModelsDl.getContainer().getItems());
+
+        // opening a new browser tab
         UI.getCurrent().getPage().open("datatl/data-diagram");
     }
 
@@ -215,7 +211,8 @@ public class DataModelListView extends StandardListView<EntityModel> {
     public void onEntityModelsDataGridItemClick(final ItemClickEvent<EntityModel> event) {
         EntityModel selectedModel = event.getItem();
 
-        attributeModelsDc.setItems(dataModelManager.getDataModelHolder().getAttributesByEntity(selectedModel.getName()));
+        attributeModelsDc.setItems(dataModelManager.getDataModelProvider()
+                .getAttributesByEntity(selectedModel.getDataStore(), selectedModel.getName()));
 
     }
 
@@ -225,20 +222,24 @@ public class DataModelListView extends StandardListView<EntityModel> {
         try {
             pattern = Pattern.compile(userInput, Pattern.CASE_INSENSITIVE);
         } catch (PatternSyntaxException pse) {
-            entityNameFilter.setErrorMessage("Regular expression syntax is invalid");
+            entityNameFilter.setErrorMessage(messageBundle.getMessage("entityModelListView.entityNameFilter.regexp.syntaxError.message"));
             entityNameFilter.setInvalid(true);
             return;
         }
 
-        List<String> findedEntityNames = dataModelManager.getDataModelHolder().getDataModels().keySet().stream()
-                .filter(name -> name.matches(pattern.pattern())).toList();
+        List<String> findedEntityNames = new ArrayList<>();
+
+        for (String dataStore : dataStoreNames) {
+            findedEntityNames.addAll(dataModelManager.getDataModelProvider().getDataModels(dataStore).keySet().stream()
+                    .filter(name -> name.matches(pattern.pattern())).toList());
+        }
 
         applyLoadContextWithFiltering(findedEntityNames);
     }
 
     protected void applyLoadContextWithFiltering(List<String> findedEntityNames) {
         if (findedEntityNames.isEmpty()) {
-            entityNameFilter.setErrorMessage("Entities not found");
+            entityNameFilter.setErrorMessage(messageBundle.getMessage("entityModelListView.entityNameFilter.regexp.entityError.message"));
             entityNameFilter.setInvalid(true);
             return;
         }
@@ -251,7 +252,11 @@ public class DataModelListView extends StandardListView<EntityModel> {
     }
 
     protected void searchByEnumeration(List<String> requestedNames) {
-        Set<String> allEntityNames = dataModelManager.getDataModelHolder().getDataModels().keySet();
+        Set<String> allEntityNames = new HashSet<>();
+
+        for (String dataStore : dataStoreNames) {
+            allEntityNames.addAll(dataModelManager.getDataModelProvider().getDataModels(dataStore).keySet());
+        }
 
         List<String> findedEntityNames = new ArrayList<>();
 
@@ -262,17 +267,6 @@ public class DataModelListView extends StandardListView<EntityModel> {
                 }
             }
         }
-
-//        List<String> findedEntityNames = requestedNames.stream()
-//                .filter(e -> dataModelManager.getDataModelHolder().isModelExists(e))
-//                .map(e -> dataModelManager.getDataModelHolder().getDataModel(e).getEntityModel().getName()).toList();
-
-        /*
-         TODO: Is it necessary to search by table names?
-        if (findedEntityNames.isEmpty()) {
-
-        }
-         */
 
         applyLoadContextWithFiltering(findedEntityNames);
     }
@@ -332,6 +326,44 @@ public class DataModelListView extends StandardListView<EntityModel> {
 
     @Subscribe("showSystemCheckBox")
     public void onShowSystemCheckBoxComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixCheckbox, Boolean> event) {
-        entityModelsDl.load();
+        if (entityNameFilter.getValue().isBlank()) {
+            entityModelsDl.load();
+        } else {
+            searchButton.click();
+        }
+    }
+
+    @Subscribe("entityNameFilter")
+    public void onEntityNameFilterComponentValueChange(final AbstractField.ComponentValueChangeEvent<TypedTextField<String>, String> event) {
+        if (event.getValue().isBlank()) {
+            entityModelsDl.load();
+        } else {
+            searchButton.click();
+        }
+    }
+
+    private class EntityNameUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+
+        public EntityNameUrlQueryParametersBinder() {
+            entityNameFilter.addValueChangeListener(event -> {
+                String text = event.getValue();
+                QueryParameters qp = new QueryParameters(ImmutableMap.of(FILTER_URL_PARAM,
+                        text != null ? Collections.singletonList(text) : Collections.emptyList()));
+                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
+            });
+        }
+
+        @Override
+        public void updateState(QueryParameters queryParameters) {
+            List<String> textStrings = queryParameters.getParameters().get(FILTER_URL_PARAM);
+            if (textStrings != null && !textStrings.isEmpty()) {
+                entityNameFilter.setValue(textStrings.get(0));
+            }
+        }
+
+        @Override
+        public Component getComponent() {
+            return null;
+        }
     }
 }

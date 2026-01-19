@@ -16,6 +16,17 @@
 
 package io.jmix.datatools.datamodel.engine;
 
+/**
+ * PlantUML encoder that adds support for encoding diagram description, compressed by deflate algorithm,
+ * in a Base64-like format for further sending as a URL parameter
+ */
 public interface PlantUMLEncoder {
+
+    /**
+     * Provides encoding in a base64-like format
+     * @param compressedData a base64-encoded, compressed by deflate algorithm, string description of the chart
+     * to be re-encoded
+     * @return a string description of the chart, encoded in a base64-like format
+     */
     String encode(byte[] compressedData);
 }

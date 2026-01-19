@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://dataModelListView.title"
+      title="msg://entityModelListView.title"
       focusComponent="entityModelsDataGrid">
     <data>
         <collection id="entityModelsDc"
@@ -25,19 +25,21 @@
             expand="contentBox"
             classNames="jmix-data-model-list-view-layout">
             <hbox id="buttonsPanel" classNames="buttons-panel">
-                <p text="msg://dataModelListView.buttonspanel.title"/>
-                <textField id="entityNameFilter" datatype="string" minWidth="400px">
-                    <tooltip text="msg://io.jmix.datatoolsflowui.view.datamodel/dataModelListView.entityNameFilter.tooltip.text"
-                             manual="true" position="END_BOTTOM"/>
+                <p text="msg://entityModelListView.buttonsPanel.title"/>
+                <textField id="entityNameFilter" datatype="string" minWidth="35em"
+                           placeholder="msg://entityModelListView.entityNameFilter.placeholder.text"
+                           clearButtonVisible="true">
+                    <tooltip text="msg://entityModelListView.entityNameFilter.tooltip.text"
+                             manual="false" position="END_BOTTOM"/>
                 </textField>
-                <button id="searchButton" icon="vaadin:search" text="msg://dataModelListView.searchButton.text"/>
-                <button id="diagramButton" icon="vaadin:sitemap" text="msg://dataModelListView.diagramButton.text"/>
-                <checkbox id="showSystemCheckBox" label="msg://io.jmix.datatoolsflowui.view.datamodel/dataModelListView.showSystemEntities.text"
+                <button id="searchButton" icon="vaadin:search" text="msg://entityModelListView.searchButton.text"/>
+                <button id="diagramButton" icon="vaadin:sitemap" text="msg://entityModelListView.diagramButton.text"/>
+                <checkbox id="showSystemCheckBox" label="msg://io.jmix.datatoolsflowui.view.datamodel/entityModelListView.showSystemEntities.text"
                           alignSelf="CENTER" value="false"/>
             </hbox>
         <flexLayout id="contentBox" classNames="jmix-data-model-list-view-content-wrapper">
             <vbox css="flex-grow: 1;" padding="false" width="unset">
-                <h4 text="msg://dataModelListView.entityModelsDataGrid.title"/>
+                <h4 text="msg://entityModelListView.entityModelsDataGrid.title"/>
                 <dataGrid id="entityModelsDataGrid"
                           width="100%"
                           minHeight="20em"
@@ -51,7 +53,7 @@
                 </dataGrid>
             </vbox>
             <vbox css="flex-grow: 2;" padding="false" width="unset">
-                <h4 text="msg://dataModelListView.attributeModelsDataGrid.title"/>
+                <h4 text="msg://entityModelListView.attributeModelsDataGrid.title"/>
                 <dataGrid id="attributeModelsDataGrid"
                           width="100%"
                           minHeight="20em"

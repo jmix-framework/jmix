@@ -18,18 +18,24 @@ package io.jmix.datatools.datamodel.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
+/**
+ * A DTO class that represents data model for one entity
+ */
 @JmixEntity
 public class EntityModel {
+
     @JmixGeneratedValue
     @JmixId
     private UUID id;
 
+    @InstanceName
     private String name;
 
     private String tableName;
@@ -79,5 +85,4 @@ public class EntityModel {
     public void setId(UUID id) {
         this.id = id;
     }
-
 }

@@ -42,9 +42,14 @@ public class DatatoolsConfiguration {
     public DiagramConstructor jpqlDataLoader() {
         EngineType engineType = datatoolsProperties.getDiagramConstructor().getEngineType();
 
+        // Temporarily, support has been added only for PlantUML. Support for Mermaid will be added in the future.
         switch (engineType) {
             case PLANTUML -> {
                 return new PlantUmlDiagramConstructor(datatoolsProperties);
+            }
+            case MERMAID -> {
+                throw new IllegalStateException("Failed to create datatl_DiagramConstructor bean: " +
+                        "Mermaid support is not yet implemented");
             }
             default -> throw new IllegalStateException("Failed to create datatl_DiagramConstructor bean");
         }

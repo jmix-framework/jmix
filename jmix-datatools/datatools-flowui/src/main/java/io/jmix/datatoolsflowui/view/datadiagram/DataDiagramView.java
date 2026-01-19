@@ -1,13 +1,10 @@
 package io.jmix.datatoolsflowui.view.datadiagram;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
-import io.jmix.datatools.datamodel.DataModelManager;
+import io.jmix.datatools.datamodel.DataModelSupport;
 import io.jmix.flowui.component.image.JmixImage;
-import io.jmix.flowui.download.Downloader;
-import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,8 +14,9 @@ import java.io.ByteArrayInputStream;
 @ViewController(id = "datatl_dataDiagramView")
 @ViewDescriptor(path = "data-diagram-view.xml")
 public class DataDiagramView extends StandardView {
+
     @Autowired
-    protected DataModelManager dataModelManager;
+    protected DataModelSupport dataModelSupport;
 
     @ViewComponent
     private JmixImage<Object> diagramImage;
@@ -30,9 +28,9 @@ public class DataDiagramView extends StandardView {
 
     public void generateDiagram() {
         // hack to passing filtered entities list to this view that open in a neighboring tab
-        byte[] rawResult = dataModelManager.filteredModelsCount() == dataModelManager.getDataModelHolder().modelsCount()
-                ? dataModelManager.generateDiagram()
-                : dataModelManager.generateFilteredDiagram();
+        byte[] rawResult = dataModelSupport.filteredModelsCount() == dataModelSupport.getDataModelProvider().modelsCount()
+                ? dataModelSupport.generateDiagram()
+                : dataModelSupport.generateFilteredDiagram();
 
         DownloadHandler downloadHandler = DownloadHandler.fromInputStream(e ->
                 new DownloadResponse(

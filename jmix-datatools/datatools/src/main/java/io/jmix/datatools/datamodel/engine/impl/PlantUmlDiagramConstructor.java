@@ -19,20 +19,61 @@ import java.util.List;
 import java.util.zip.Deflater;
 
 public class PlantUmlDiagramConstructor implements DiagramConstructor {
-    protected DatatoolsProperties datatoolsProperties;
-    protected String template;
-    protected String baseUrl;
-    protected String entityTemplate;
-    protected String attributeTemplate;
-    protected String relationTemplate;
-    protected String urlTemplate;
-    protected RestClient restClient;
-    protected PlantUMLEncoder plantUMLEncoder;
+
+    protected final DatatoolsProperties datatoolsProperties;
+    protected final PlantUMLEncoder plantUMLEncoder;
+    protected final String template;
+    protected final String entityTemplate;
+    protected final String attributeTemplate;
+    protected final String relationTemplate;
+    protected final String urlTemplate;
+    protected final RestClient restClient;
 
     public PlantUmlDiagramConstructor(DatatoolsProperties datatoolsProperties) {
         this.datatoolsProperties = datatoolsProperties;
-        this.plantUMLEncoder = new PlantUMLEncoderImpl();
-        configureEngine();
+        this.plantUMLEncoder = createEncoder();
+        this.template = createTemplate();
+        this.urlTemplate = createURLTemplate();
+        this.entityTemplate = createEntityTemplate();
+        this.attributeTemplate = createAttributeTemplate();
+        this.relationTemplate = createRelationTemplate();
+        String baseUrl = createBaseURL();
+        this.restClient = configureClient(baseUrl);
+    }
+
+    protected String createBaseURL() {
+        return datatoolsProperties.getDiagramConstructor().getHost() == null
+                ? "https://www.plantuml.com"
+                : datatoolsProperties.getDiagramConstructor().getHost();
+    }
+
+    protected PlantUMLEncoder createEncoder() {
+        return new PlantUMLEncoderImpl();
+    }
+
+    protected String createTemplate() {
+        return  """
+                @startuml
+                {0}
+                
+                {1}
+                @enduml
+                """;
+    }
+
+    protected String createURLTemplate() {
+        return "/plantuml/png/%s";
+    }
+
+    protected String createEntityTemplate() {
+        return "entity %s {\n";
+    }
+    protected String createAttributeTemplate() {
+        return "    %s : %s\n";
+    }
+
+    protected String createRelationTemplate() {
+        return "%s %s %s\n";
     }
 
     protected RestClient configureClient(String baseUrl) {
@@ -76,25 +117,6 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
             throw new IllegalStateException("The diagram was not received");
         }
         return resultPngBuf;
-    }
-
-    protected void configureEngine() {
-        template =
-                """
-                @startuml
-                {0}
-                
-                {1}
-                @enduml
-                """;
-        baseUrl = datatoolsProperties.getDiagramConstructor().getHost() == null
-                ? "https://www.plantuml.com"
-                : datatoolsProperties.getDiagramConstructor().getHost();
-        urlTemplate = "/plantuml/png/%s";
-        entityTemplate = "entity %s {\n";
-        attributeTemplate = "    %s : %s\n";
-        relationTemplate = "%s %s %s\n";
-        restClient = configureClient(baseUrl);
     }
 
     @Override

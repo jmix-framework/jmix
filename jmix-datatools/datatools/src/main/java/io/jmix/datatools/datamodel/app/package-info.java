@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.datatools.datamodel;
+@Internal
+package io.jmix.datatools.datamodel.app;
 
-import io.jmix.datatools.datamodel.entity.EntityModel;
-
-import java.util.List;
-
-
-public interface DataModelManager {
-
-    void setFilteredModels(List<EntityModel> filteredModels);
-
-    int filteredModelsCount();
-
-    DataModelHolder getDataModelHolder();
-
-    byte[] generateFilteredDiagram();
-
-    byte[] generateDiagram();
-}
+import io.jmix.core.annotation.Internal;

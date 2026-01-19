@@ -3,11 +3,13 @@ package io.jmix.datatools.datamodel.app;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import org.springframework.lang.Nullable;
 
-
+/**
+ * Enum describes the engine type manually selected by the user in the application.properties file
+ */
 public enum EngineType implements EnumClass<String> {
 
-    PLANTUML("A"),
-    MERMAID("B");
+    PLANTUML("PlantUML"),
+    MERMAID("Mermaid");
 
     private final String id;
 

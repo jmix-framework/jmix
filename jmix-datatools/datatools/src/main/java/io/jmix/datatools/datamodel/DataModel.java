@@ -7,17 +7,21 @@ import io.jmix.datatools.datamodel.entity.EntityModel;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class DataModel {
+
     private String entityName;
+    private String dataStore;
     private EntityModel entityModel;
     private List<AttributeModel> attributeModels;
     private Map<RelationType, List<Relation>> relations;
     private String entityDescription;
 
-    public DataModel(String entityName, EntityModel entityModel, Map<RelationType, List<Relation>> relations,
+    public DataModel(String entityName, String dataStore, EntityModel entityModel, Map<RelationType, List<Relation>> relations,
                      String entityDescription, List<AttributeModel> attributeModels) {
         this.entityName = entityName;
+        this.dataStore = dataStore;
         this.entityModel = entityModel;
         this.relations = relations;
         this.entityDescription = entityDescription;
@@ -26,6 +30,10 @@ public class DataModel {
 
     public void setEntityName(String entityName) {
         this.entityName = entityName;
+    }
+
+    public void setDataStore(String dataStore) {
+        this.dataStore = dataStore;
     }
 
     public void setEntityModel(EntityModel entityModel) {
@@ -46,6 +54,10 @@ public class DataModel {
 
     public String getEntityName() {
         return entityName;
+    }
+
+    public String getDataStore() {
+        return dataStore;
     }
 
     public EntityModel getEntityModel() {

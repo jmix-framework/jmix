@@ -23,8 +23,8 @@ import io.jmix.core.DataLoadContext;
 import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.kit.component.pagination.AbstractPagination;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Function;
 
 /**
@@ -89,6 +89,14 @@ public interface PaginationComponent<T extends AbstractPagination> {
     Registration addAfterRefreshListener(ComponentEventListener<AfterRefreshEvent<T>> listener);
 
     /**
+     * Adds pagination state change listener.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener
+     */
+    Registration addPaginationStateChangeListener(ComponentEventListener<PaginationStateChangeEvent<T>> listener);
+
+    /**
      * The event that is fired before refreshing the data, when the user clicks next, previous, etc.
      * <br>
      * You can prevent the data container refresh by invoking {@link BeforeRefreshEvent#preventRefresh()},
@@ -129,6 +137,16 @@ public interface PaginationComponent<T extends AbstractPagination> {
 
         public AfterRefreshEvent(T source) {
             super(source, false);
+        }
+    }
+
+    /**
+     * Fired when pagination state changes.
+     */
+    class PaginationStateChangeEvent<T extends AbstractPagination> extends ComponentEvent<T> {
+
+        public PaginationStateChangeEvent(T source, boolean fromClient) {
+            super(source, fromClient);
         }
     }
 }

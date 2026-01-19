@@ -33,8 +33,8 @@ import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.core.repository.JmixDataRepositoryUtils;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.UiComponentProperties;
-import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundTaskHandler;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
@@ -51,7 +51,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -240,6 +239,13 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     @Override
     public Registration addAfterRefreshListener(ComponentEventListener<AfterRefreshEvent<SimplePagination>> listener) {
         return addListener(AfterRefreshEvent.class, (ComponentEventListener) listener);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public Registration addPaginationStateChangeListener(
+            ComponentEventListener<PaginationStateChangeEvent<SimplePagination>> listener) {
+        return addListener(PaginationStateChangeEvent.class, (ComponentEventListener) listener);
     }
 
     @Nullable
@@ -500,6 +506,8 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
                 setSilentlyItemsPerPageValue(maxResult);
             }
         }
+
+        firePaginationStateChangedEvent();
     }
 
     protected void updateItemsPerPageAvailability() {
@@ -679,6 +687,12 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
 
     protected void fireAfterRefreshEvent() {
         AfterRefreshEvent<SimplePagination> event = new AfterRefreshEvent<>(this);
+
+        fireEvent(event);
+    }
+
+    protected void firePaginationStateChangedEvent() {
+        PaginationStateChangeEvent<SimplePagination> event = new PaginationStateChangeEvent<>(this, false);
 
         fireEvent(event);
     }

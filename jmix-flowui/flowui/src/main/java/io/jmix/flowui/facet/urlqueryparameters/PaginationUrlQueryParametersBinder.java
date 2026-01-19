@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.QueryParameters;
 import io.jmix.flowui.component.PaginationComponent;
+import io.jmix.flowui.component.pagination.SimplePagination;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
@@ -64,7 +65,7 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
     }
 
     protected void initComponent(PaginationComponent<?> pagination) {
-        pagination.addAfterRefreshListener(this::onAfterRefresh);
+        pagination.addPaginationStateChangeListener(this::onPaginationStateChanged);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
         );
     }
 
-    protected void onAfterRefresh(PaginationComponent.AfterRefreshEvent<?> event) {
+    protected void onPaginationStateChanged(SimplePagination.PaginationStateChangeEvent<?> type) {
         getPaginationLoader().ifPresent(paginationLoader -> {
             QueryParameters queryParameters = QueryParameters.simple(serializeQueryParameters(paginationLoader));
 

@@ -17,15 +17,19 @@
 package io.jmix.quartzflowui.exception;
 
 import com.vaadin.flow.component.notification.Notification;
+import io.jmix.core.JmixOrder;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.exception.AbstractUiExceptionHandler;
 import io.jmix.flowui.view.MessageBundle;
 import io.jmix.quartz.exception.QuartzJobSaveException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-@Component 
+@Component
+@Component
+@Order(JmixOrder.LOWEST_PRECEDENCE - 60)
 public class QuartzExceptionHandler extends AbstractUiExceptionHandler {
     @Autowired
     protected Notifications notifications;

@@ -15,6 +15,7 @@
  */
 package io.jmix.reportsflowui.exception;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.exception.AbstractUiExceptionHandler;
@@ -23,6 +24,7 @@ import io.jmix.flowui.sys.BeanUtil;
 import io.jmix.reports.exception.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;
 
@@ -30,6 +32,7 @@ import org.springframework.lang.Nullable;
  * Handles reporting exceptions.
  */
 @Component("report_ReportExceptionHandler")
+@Order(JmixOrder.LOWEST_PRECEDENCE - 50)
 public class ReportExceptionHandler extends AbstractUiExceptionHandler {
 
     protected final Messages messages;

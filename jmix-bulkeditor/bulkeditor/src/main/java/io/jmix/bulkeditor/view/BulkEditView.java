@@ -51,6 +51,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.DataComponents;
+import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
@@ -84,6 +85,8 @@ public class BulkEditView<E> extends StandardView {
     @ViewComponent
     protected FormLayout fieldLayout;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected BulkEditViewDataLoadSupport dataLoadSupport;
     @Autowired
@@ -97,8 +100,6 @@ public class BulkEditView<E> extends StandardView {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected Metadata metadata;
     @Autowired
     protected MetadataTools metadataTools;
@@ -110,6 +111,8 @@ public class BulkEditView<E> extends StandardView {
     protected UiComponents uiComponents;
     @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
+    @Autowired
+    protected EntityStates entityStates;
     @Autowired
     protected jakarta.validation.Validator validator;
     @Autowired
@@ -145,7 +148,7 @@ public class BulkEditView<E> extends StandardView {
                     .collect(Collectors.toSet());
 
             fetchPlan = createFetchPlan(context.getMetaClass(), managedEmbeddedProperties);
-            loadItems();
+            setupItemsToEdit();
 
             createDataComponents();
         }
@@ -213,14 +216,84 @@ public class BulkEditView<E> extends StandardView {
         return builder.build();
     }
 
+    protected void setupItemsToEdit() {
+        Collection<E> selectedItems = context.getSelectedItems();
+        ArrayList<E> itemsToReload = new ArrayList<>();
+        items = new ArrayList<>(selectedItems.size());
+
+        for (E item : selectedItems) {
+
+            if (entityStates.isNew(item) || doNotReloadEditedEntity(item)) {
+                E mergedItem = getViewData().getDataContext().merge(item);
+                items.add(mergedItem);
+            } else {
+                itemsToReload.add(item);
+            }
+        }
+
+        List<E> reloadedItems = reloadItems(itemsToReload);
+
+        items.addAll(reloadedItems);
+    }
+
     @SuppressWarnings("unchecked")
-    protected void loadItems() {
+    protected List<E> reloadItems(List<E> items) {
         MetaClass metaClass = context.getMetaClass();
 
-        LoadDescriptor<E> ld = new LoadDescriptor<>(context.getSelectedItems(), metaClass, fetchPlan);
-        items = ((List<E>) getViewData().getDataContext()
+        LoadDescriptor<E> ld = new LoadDescriptor<>(items, metaClass, fetchPlan);
+        return ((List<E>) getViewData().getDataContext()
                 .merge(dataLoadSupport.reload(ld))
                 .getAll(metaClass.getJavaClass()));
+    }
+
+    protected boolean doNotReloadEditedEntity(E item) {
+        if (isEntityModifiedInParentContext(item)) {
+            return entityStates.isLoadedWithFetchPlan(item, fetchPlan);
+        }
+
+        return false;
+    }
+
+    protected boolean isEntityModifiedInParentContext(E item) {
+        boolean result = false;
+        DataContext parentDc = getViewData().getDataContext().getParent();
+        while (!result && parentDc != null) {
+            result = isEntityModifiedRecursive(item, parentDc, new HashSet<>());
+            parentDc = parentDc.getParent();
+        }
+        return result;
+    }
+
+    protected boolean isEntityModifiedRecursive(Object entity, DataContext dataContext, HashSet<Object> visited) {
+        if (visited.contains(entity)) {
+            return false;
+        }
+        visited.add(entity);
+
+        if (dataContext.isModified(entity) || dataContext.isRemoved(entity))
+            return true;
+
+        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
+            if (property.getRange().isClass()
+                    && entityStates.isLoaded(entity, property.getName())) {
+                Object value = EntityValues.getValue(entity, property.getName());
+                if (value == null) {
+                    continue;
+                }
+
+                if (value instanceof Collection) {
+                    for (Object item : ((Collection<?>) value)) {
+                        if (isEntityModifiedRecursive(item, dataContext, visited)) {
+                            return true;
+                        }
+                    }
+                } else if (isEntityModifiedRecursive(value, dataContext, visited)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     protected void createDataComponents() {
@@ -418,7 +491,7 @@ public class BulkEditView<E> extends StandardView {
 
         if (!validationErrors.isEmpty()) {
             viewValidation.showValidationErrors(validationErrors);
-            loadItems();
+            setupItemsToEdit();
         } else {
             List<String> fields = new ArrayList<>();
             for (Map.Entry<String, AbstractField<?, ?>> fieldEntry : dataFields.entrySet()) {
@@ -516,7 +589,7 @@ public class BulkEditView<E> extends StandardView {
                                     .withVariant(ActionVariant.PRIMARY)
                                     .withHandler(event -> commitBulkChanges()),
                             new DialogAction(Type.CANCEL)
-                                    .withHandler(e -> loadItems()))
+                                    .withHandler(e -> setupItemsToEdit()))
                     .open();
         } else {
             commitBulkChanges();

@@ -168,8 +168,11 @@ public class ActionLoaderSupport implements ApplicationContextAware {
         Element propertiesEl = element.element("properties");
         if (propertiesEl != null) {
             for (Element propertyEl : propertiesEl.elements("property")) {
+                String stringValue = loaderSupport
+                        .loadResourceString(propertyEl, "value", context.getMessageGroup())
+                        .orElse("");
                 loaderSupport.loadString(propertyEl, "name",
-                        name -> propertyLoader.load(targetAction, name, propertyEl.attributeValue("value")));
+                        name -> propertyLoader.load(targetAction, name, stringValue));
             }
         }
     }

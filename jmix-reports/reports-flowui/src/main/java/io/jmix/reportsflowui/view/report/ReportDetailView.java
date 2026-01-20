@@ -1391,9 +1391,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
         dataStoreField.setItems(new ListDataProvider<>(stores));
         dataStoreField.setItemLabelGenerator(storeName -> {
             if (Stores.MAIN.equals(storeName)) {
-                return messageBundle.getMessage("dataSet.dataStoreMain");
+                return messageBundle.getMessage("bandsTab.dataSet.dataStoreMain");
             }
-            return Strings.nullToEmpty(storeName);
+            if (storeName == null) {
+                return dataStoreField.getEmptySelectionCaption();
+            }
+            return storeName;
         });
     }
 

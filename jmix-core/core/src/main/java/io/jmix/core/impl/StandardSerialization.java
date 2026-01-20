@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl;
 
-import org.apache.commons.lang3.ClassUtils;
+import io.jmix.core.ClassManager;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,6 +31,9 @@ public class StandardSerialization {
 
     @Autowired
     protected BeanFactory beanFactory;
+
+    @Autowired
+    protected ClassManager classManager;
 
     public void serialize(Object object, OutputStream os) {
         ObjectOutputStream out = null;
@@ -67,7 +70,8 @@ public class StandardSerialization {
                 ois = new ObjectInputStream(is) {
                     @Override
                     protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-                        return ClassUtils.getClass(StandardSerialization.class.getClassLoader(), desc.getName());
+                        Class<?> clazz = classManager.findClass(desc.getName());
+                        return clazz != null ? clazz : super.resolveClass(desc);
                     }
                 };
             }

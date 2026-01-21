@@ -106,8 +106,15 @@ public class GridExportProperties {
          */
         boolean useSxssf;
 
-        public ExcelExporterProperties(@DefaultValue("true") boolean useSxssf) {
+        /**
+         * Pattern to determine whether a cell value should be prefixed with a quote.
+         */
+        String quotePrefixedPattern;
+
+        public ExcelExporterProperties(@DefaultValue("true") boolean useSxssf,
+                                       @DefaultValue("^[=+\\-@].*") String quotePrefixedPattern) {
             this.useSxssf = useSxssf;
+            this.quotePrefixedPattern = quotePrefixedPattern;
         }
 
         /**
@@ -115,6 +122,13 @@ public class GridExportProperties {
          */
         public boolean isUseSxssf() {
             return useSxssf;
+        }
+
+        /**
+         * @see #quotePrefixedPattern
+         */
+        public String getQuotePrefixedPattern() {
+            return quotePrefixedPattern;
         }
     }
 }

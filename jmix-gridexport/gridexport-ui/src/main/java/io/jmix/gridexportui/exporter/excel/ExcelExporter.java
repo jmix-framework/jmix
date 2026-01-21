@@ -16,6 +16,7 @@
  */
 package io.jmix.gridexportui.exporter.excel;
 
+import com.google.common.base.Strings;
 import io.jmix.core.Entity;
 import io.jmix.core.Id;
 import io.jmix.core.entity.EntityValues;
@@ -27,7 +28,6 @@ import io.jmix.gridexportui.GridExportProperties;
 import io.jmix.gridexportui.action.ExportAction;
 import io.jmix.gridexportui.exporter.AbstractTableExporter;
 import io.jmix.gridexportui.exporter.ExportMode;
-import io.jmix.gridexportui.exporter.ExporterSortHelper;
 import io.jmix.gridexportui.exporter.entitiesloader.AllEntitiesLoader;
 import io.jmix.gridexportui.exporter.entitiesloader.AllEntitiesLoaderFactory;
 import io.jmix.ui.Notifications;
@@ -91,6 +91,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
     protected CellStyle dateTimeFormatCellStyle;
     protected CellStyle integerFormatCellStyle;
     protected CellStyle doubleFormatCellStyle;
+    protected CellStyle quotePrefixedCellStyle;
 
     protected ExcelAutoColumnSizer[] sizers;
 
@@ -497,6 +498,16 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         doubleFormatCellStyle = wb.createCellStyle();
         String doubleFormat = getMessage("excelExporter.doubleFormat");
         doubleFormatCellStyle.setDataFormat(format.getFormat(doubleFormat));
+
+        // to prevent code injection, e.g. '=cmd'
+        quotePrefixedCellStyle = createQuotePrefixedCellStyle();
+    }
+
+    protected CellStyle createQuotePrefixedCellStyle() {
+        CellStyle cellStyle = wb.createCellStyle();
+        cellStyle.setQuotePrefixed(true);
+
+        return cellStyle;
     }
 
     private short getBuiltinFormat(String format) {
@@ -856,10 +867,20 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             String str = sizersIndex == 0 ? createSpaceString(level) + strValue : strValue;
             str = str + childCountValue;
             cell.setCellValue(createStringCellValue(str));
+
+            if (needsQuotePrefixedStyle(str)) {
+                cell.setCellStyle(quotePrefixedCellStyle);
+            }
+
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
         }
+    }
+
+    protected boolean needsQuotePrefixedStyle(String value) {
+        String pattern = gridExportProperties.getExcel().getQuotePrefixedPattern();
+        return !Strings.isNullOrEmpty(pattern) && value.matches(pattern);
     }
 
     private RichTextString createStringCellValue(String str) {

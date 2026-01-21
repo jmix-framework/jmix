@@ -16,17 +16,15 @@
 
 package io.jmix.flowui.kit.component.draweroverlay;
 
-import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.Style;
 import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPlacement;
-import jakarta.annotation.Nullable;
 
 import java.util.*;
 
-public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements HasComponents, HasSize {
+public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements HasComponents {
 
     protected DrawerHeader header;
     protected DrawerFooter footer;
@@ -41,70 +39,28 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
         getContent().addComponentAtIndex(index, component);
     }
 
-    @Nullable
-    @Override
-    public String getWidth() {
-        return getContent().getWidth();
+    public void setHorizontalSize(String size) {
+        getContent().setWidth(size);
     }
 
-    @Override
-    public void setWidth(@Nullable String width) {
-        getContent().setWidth(width);
+    public void setHorizontalMinSize(String minSize) {
+        getContent().setMinWidth(minSize);
     }
 
-    @Nullable
-    @Override
-    public String getMaxWidth() {
-        return getContent().getMaxWidth();
+    public void setHorizontalMaxSize(String maxSize) {
+        getContent().setMaxWidth(maxSize);
     }
 
-    @Override
-    public void setMaxWidth(@Nullable String maxWidth) {
-        getContent().setMaxWidth(maxWidth);
+    public void setVerticalSize(String size) {
+        getContent().setHeight(size);
     }
 
-    @Nullable
-    @Override
-    public String getMinWidth() {
-        return getContent().getMinWidth();
+    public void setVerticalMaxSize(String maxSize) {
+        getContent().setMaxHeight(maxSize);
     }
 
-    @Override
-    public void setMinWidth(@Nullable String minWidth) {
-        getContent().setMinWidth(minWidth);
-    }
-
-    @Nullable
-    @Override
-    public String getHeight() {
-        return getContent().getHeight();
-    }
-
-    @Override
-    public void setHeight(@Nullable String height) {
-        getContent().setHeight(height);
-    }
-
-    @Nullable
-    @Override
-    public String getMaxHeight() {
-        return getContent().getMaxHeight();
-    }
-
-    @Override
-    public void setMaxHeight(@Nullable String maxHeight) {
-        getContent().setMaxHeight(maxHeight);
-    }
-
-    @Nullable
-    @Override
-    public String getMinHeight() {
-        return getContent().getMinHeight();
-    }
-
-    @Override
-    public void setMinHeight(@Nullable String minHeight) {
-        getContent().setMinHeight(minHeight);
+    public void setVerticalMinSize(String minSize) {
+        getContent().setMinHeight(minSize);
     }
 
     @Override
@@ -132,15 +88,11 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     public SidePanelPlacement getSidePanelPlacement() {
-        String placement = getElement().getProperty("sidePanelPlacement");
-        if (Strings.isNullOrEmpty(placement)) {
-            return SidePanelPlacement.RIGHT;
-        }
-        return SidePanelPlacement.valueOf(placement.toUpperCase().replace("-", "_"));
+        return getContent().getSidePanelPlacement();
     }
 
     public void setSidePanelPlacement(SidePanelPlacement placement) {
-        getElement().setProperty("sidePanelPlacement", placement.name().toLowerCase().replace("_", "-"));
+        getContent().setSidePanelPlacement(placement);
     }
 
     public boolean isOpened() {
@@ -155,14 +107,6 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
         getContent().close();
     }
 
-    public void toggle() {
-        if (isOpened()) {
-            close();
-        } else {
-            open();
-        }
-    }
-
     // TODO: pinyazhin, wait Vaadin 25
     public boolean isModal() {
         return getContent().isModal();
@@ -171,8 +115,6 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     public void setModal(boolean modal) {
         getContent().setModal(modal);
     }
-
-    // TODO: pinyazhin min/max width, height?
 
     public boolean isCloseOnEsc() {
         return getContent().isCloseOnEsc();

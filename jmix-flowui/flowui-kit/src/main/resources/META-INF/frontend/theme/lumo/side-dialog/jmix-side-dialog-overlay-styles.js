@@ -20,7 +20,7 @@ const jmixSideDialogOverlayStyles = css`
 
     :host([opening]),
     :host([closing]) {
-        animation: var(--jmix-side-dialog-transition-duration) lumo-overlay-dummy-animation;
+        animation: var(--_transition-duration) lumo-overlay-dummy-animation;
     }
 `;
 

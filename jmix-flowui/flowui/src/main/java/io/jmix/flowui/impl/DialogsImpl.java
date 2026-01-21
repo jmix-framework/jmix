@@ -30,6 +30,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.*;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.inputdialog.InputDialogAction;
@@ -40,12 +41,16 @@ import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundTaskHandler;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.LocalizedTaskWrapper;
+import io.jmix.flowui.component.sidedialog.SideDialog;
+import io.jmix.flowui.component.sidedialog.SideDialogCloseActionEvent;
+import io.jmix.flowui.component.sidedialog.SideDialogOpenedChangeEvent;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.event.dialog.DialogClosedEvent;
 import io.jmix.flowui.event.dialog.DialogOpenedEvent;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
@@ -106,6 +111,11 @@ public class DialogsImpl implements Dialogs {
     public <T extends Number, V> BackgroundTaskDialogBuilder<T, V> createBackgroundTaskDialog(
             BackgroundTask<T, V> backgroundTask) {
         return new BackgroundTaskDialogBuilderImpl<>(backgroundTask);
+    }
+
+    @Override
+    public SideDialogBuilder createSideDialog() {
+        return new SideDialogBuilderImpl();
     }
 
     protected Button createButton(Action action, Dialog dialog) {
@@ -500,7 +510,6 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
-        @Nullable
         @Override
         public String getHeader() {
             return dialog.getHeaderTitle();
@@ -1344,6 +1353,235 @@ public class DialogsImpl implements Dialogs {
             } else {
                 applicationContext.publishEvent(new DialogClosedEvent(dialog));
             }
+        }
+    }
+
+    public class SideDialogBuilderImpl implements SideDialogBuilder {
+
+        protected SideDialog sideDialog;
+
+        public SideDialogBuilderImpl() {
+            sideDialog = createSideDialog();
+        }
+
+        @Override
+        public SideDialogBuilder withHeaderComponents(Component... components) {
+            sideDialog.getHeader().add(components);
+            return this;
+        }
+
+        @Override
+        public SideDialogBuilder withHeaderProvider(Function<SideDialog, Component> headerProvider) {
+            Preconditions.checkNotNullArgument(headerProvider, "headerProvider cannot be null");
+
+            Component headerComponent = headerProvider.apply(sideDialog);
+            if (headerComponent != null) {
+                sideDialog.getHeader().add(headerComponent);
+            }
+            return this;
+        }
+
+        @Override
+        public SideDialogBuilder withContentComponents(Component... components) {
+            sideDialog.add(components);
+            return this;
+        }
+
+        @Override
+        public SideDialogBuilder withContentProvider(Function<SideDialog, Component> contentProvider) {
+            Preconditions.checkNotNullArgument(contentProvider, "contentProvider cannot be null");
+
+            Component contentComponent = contentProvider.apply(sideDialog);
+            if (contentComponent != null) {
+                sideDialog.add(contentComponent);
+            }
+            return this;
+        }
+
+        @Override
+        public SideDialogBuilder withFooterComponents(Component... components) {
+            sideDialog.getFooter().add(components);
+            return this;
+        }
+
+        @Override
+        public SideDialogBuilder withFooterProvider(Function<SideDialog, Component> footerProvider) {
+            Preconditions.checkNotNullArgument(footerProvider, "footerProvider cannot be null");
+
+            Component footerComponent = footerProvider.apply(sideDialog);
+            if (footerComponent != null) {
+                sideDialog.getFooter().add(footerComponent);
+            }
+            return this;
+        }
+
+        @Override
+        public SideDialogBuilder withOpenedChangeListener(ComponentEventListener<SideDialogOpenedChangeEvent> listener) {
+            sideDialog.addOpenedChangeListener(listener);
+            return this;
+        }
+
+        @Override
+        public SideDialogBuilder withCloseActionListener(ComponentEventListener<SideDialogCloseActionEvent> listener) {
+            sideDialog.addCloseActionListener(listener);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getHorizontalSize() {
+            return sideDialog.getHorizontalSize();
+        }
+
+        @Override
+        public SideDialogBuilder withHorizontalSize(@Nullable String size) {
+            sideDialog.setHorizontalSize(size);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getHorizontalMaxSize() {
+            return sideDialog.getHorizontalMaxSize();
+        }
+
+        @Override
+        public SideDialogBuilder withHorizontalMaxSize(@Nullable String maxSize) {
+            sideDialog.setHorizontalMaxSize(maxSize);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getHorizontalMinSize() {
+            return sideDialog.getHorizontalMinSize();
+        }
+
+        @Nullable
+
+        @Override
+        public SideDialogBuilder withHorizontalMinSize(@Nullable String minSize) {
+            sideDialog.setHorizontalMinSize(minSize);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getVerticalSize() {
+            return sideDialog.getVerticalSize();
+        }
+
+        @Override
+        public SideDialogBuilder withVerticalSize(@Nullable String size) {
+            sideDialog.setVerticalSize(size);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getVerticalMaxSize() {
+            return sideDialog.getVerticalMaxSize();
+        }
+
+        @Override
+        public SideDialogBuilder withVerticalMaxSize(@Nullable String maxSize) {
+            sideDialog.setVerticalMaxSize(maxSize);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getVerticalMinSize() {
+            return sideDialog.getVerticalMinSize();
+        }
+
+        @Override
+        public SideDialogBuilder withVerticalMinSize(@Nullable String minSize) {
+            sideDialog.setVerticalMinSize(minSize);
+            return this;
+        }
+
+        @Override
+        public boolean isFullscreenOnSmallDevices() {
+            return sideDialog.isFullscreenOnSmallDevices();
+        }
+
+        @Override
+        public SideDialogBuilder withFullscreenOnSmallDevices(boolean fullscreen) {
+            sideDialog.setFullscreenOnSmallDevices(fullscreen);
+            return this;
+        }
+
+        @Override
+        public SideDialogPlacement getSideDialogPlacement() {
+            return sideDialog.getSideDialogPlacement();
+        }
+
+        @Override
+        public SideDialogBuilder withSideDialogPlacement(SideDialogPlacement placement) {
+            sideDialog.setSideDialogPlacement(placement);
+            return this;
+        }
+
+        @Override
+        public SideDialog open() {
+            sideDialog.open();
+            return sideDialog;
+        }
+
+        @Override
+        public SideDialog build() {
+            return sideDialog;
+        }
+
+        @Override
+        public boolean isCloseOnOutsideClick() {
+            return sideDialog.isCloseOnOutsideClick();
+        }
+
+        @Override
+        public SideDialogBuilder withCloseOnOutsideClick(boolean closeOnOutsideClick) {
+            sideDialog.setCloseOnOutsideClick(closeOnOutsideClick);
+            return this;
+        }
+
+        @Override
+        public boolean isCloseOnEsc() {
+            return sideDialog.isCloseOnEsc();
+        }
+
+        @Override
+        public SideDialogBuilder withCloseOnEsc(boolean closeOnEsc) {
+            sideDialog.setCloseOnEsc(closeOnEsc);
+            return this;
+        }
+
+        @Override
+        public SideDialogBuilder withHeader(String header) {
+            sideDialog.setHeaderTitle(header);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getHeader() {
+            return sideDialog.getHeaderTitle();
+        }
+
+        @Override
+        public SideDialogBuilder withClassName(@Nullable String className) {
+            sideDialog.setClassName(className);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getClassName() {
+            return sideDialog.getClassName();
+        }
+
+        protected SideDialog createSideDialog() {
+            return uiComponents.create(SideDialog.class);
         }
     }
 }

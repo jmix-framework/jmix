@@ -18,6 +18,9 @@ package io.jmix.flowui.component.sidedialog;
 
 import com.vaadin.flow.component.ComponentEvent;
 
+/**
+ * Event fired when the {@link SideDialog} is opened or closed.
+ */
 public class SideDialogOpenedChangeEvent extends ComponentEvent<SideDialog> {
 
     protected final boolean opened;
@@ -28,6 +31,9 @@ public class SideDialogOpenedChangeEvent extends ComponentEvent<SideDialog> {
         this.opened = source.isOpened();
     }
 
+    /**
+     * @return {@code true} if the dialog is opened, {@code false} otherwise
+     */
     public boolean isOpened() {
         return opened;
     }

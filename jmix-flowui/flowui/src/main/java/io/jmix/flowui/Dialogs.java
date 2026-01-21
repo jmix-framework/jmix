@@ -32,6 +32,7 @@ import io.jmix.flowui.component.sidedialog.SideDialogCloseActionEvent;
 import io.jmix.flowui.component.sidedialog.SideDialogOpenedChangeEvent;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import org.springframework.lang.Nullable;
@@ -122,6 +123,22 @@ public interface Dialogs {
      * @return builder
      */
     <T extends Number, V> BackgroundTaskDialogBuilder<T, V> createBackgroundTaskDialog(BackgroundTask<T, V> backgroundTask);
+
+    /**
+     * Creates side dialog builder.
+     * <p>
+     * Example of showing a side dialog:
+     * <pre>
+     * dialogs.createSideDialog()
+     *         .withHeader("User Profile")
+     *         .withContentComponents(createContent())
+     *         .withFooterProvider(this::createFooter)
+     *         .withSideDialogPlacement(SideDialogPlacement.LEFT)
+     *         .open();
+     * </pre>
+      * @return builder
+     */
+    SideDialogBuilder createSideDialog();
 
     interface OptionDialogBuilder extends DialogBuilder<OptionDialogBuilder>,
             HasText<OptionDialogBuilder>,
@@ -461,26 +478,225 @@ public interface Dialogs {
     }
 
     // TODO: pinyazhin, implement and think about components in tests.
+
+    /**
+     * Builder for {@link SideDialog}.
+     */
     interface SideDialogBuilder extends HasHeader<SideDialogBuilder>,
             HasStyle<SideDialogBuilder>,
-            HasModal<SideDialogBuilder>,
             Closeable<SideDialogBuilder> {
 
-        SideDialogBuilder withHeaderComponent(Component header);
+        /**
+         * Adds components to the header of the dialog.
+         *
+         * @param components components to add
+         * @return builder
+         */
+        SideDialogBuilder withHeaderComponents(Component... components);
 
-        SideDialogBuilder withContentComponent(Component content);
+        /**
+         * Sets a provider for the header component of the dialog. The components from the provider are
+         * <strong>added</strong> to the header of the dialog. If the provider returns {@code null},
+         * no components are added.
+         *
+         * @param headerProvider provider for the header component
+         * @return builder
+         */
+        SideDialogBuilder withHeaderProvider(Function<SideDialog, Component> headerProvider);
 
-        SideDialogBuilder withFooterComponent(Component footer);
+        /**
+         * Adds components to the footer of the dialog.
+         *
+         * @param components components to add
+         * @return builder
+         */
+        SideDialogBuilder withContentComponents(Component... components);
 
+        /**
+         * Sets a provider for the content component of the dialog. The components from the provider are
+         * <strong>added</strong> to the content area of the dialog. If the provider returns {@code null},
+         * no components are added.
+         *
+         * @param contentProvider provider for the content component
+         * @return builder
+         */
+        SideDialogBuilder withContentProvider(Function<SideDialog, Component> contentProvider);
+
+        /**
+         * Adds components to the footer of the dialog.
+         *
+         * @param components components to add
+         * @return builder
+         */
+        SideDialogBuilder withFooterComponents(Component... components);
+
+        /**
+         * Sets a provider for the footer component of the dialog. The components from the provider are
+         * <strong>added</strong> to the footer of the dialog. If the provider returns {@code null},
+         * no components are added.
+         *
+         * @param footerProvider provider for the footer component
+         * @return builder
+         */
+        SideDialogBuilder withFooterProvider(Function<SideDialog, Component> footerProvider);
+
+        /**
+         * Sets a listener for the opened change event of the dialog.
+         *
+         * @param listener listener for the opened change event
+         * @return builder
+         */
         SideDialogBuilder withOpenedChangeListener(ComponentEventListener<SideDialogOpenedChangeEvent> listener);
 
+        /**
+         * Sets a listener for the close action event of the dialog.
+         *
+         * @param listener listener for the close action event
+         * @return builder
+         * @see SideDialog#addCloseActionListener(ComponentEventListener)
+         */
         SideDialogBuilder withCloseActionListener(ComponentEventListener<SideDialogCloseActionEvent> listener);
 
-        // todo overlayRole?
+        /**
+         * @return horizontal size of the dialog or {@code null} if not set
+         * @see SideDialog#getHorizontalSize()
+         */
+        @Nullable
+        String getHorizontalSize();
 
+        /**
+         * Sets the horizontal size of the dialog.
+         *
+         * @param size the width of the dialog
+         * @return builder
+         * @see SideDialog#setHorizontalSize(String)
+         */
+        SideDialogBuilder withHorizontalSize(@Nullable String size);
+
+        /**
+         * @return horizontal max size of the dialog or {@code null} if not set
+         * @see SideDialog#getHorizontalMaxSize()
+         */
+        @Nullable
+        String getHorizontalMaxSize();
+
+        /**
+         * Sets the horizontal max size of the dialog.
+         *
+         * @param maxSize the maximum width of the dialog
+         * @return builder
+         * @see SideDialog#setHorizontalMaxSize(String)
+         */
+        SideDialogBuilder withHorizontalMaxSize(@Nullable String maxSize);
+
+        /**
+         * @return horizontal min size of the dialog or {@code null} if not set
+         * @see SideDialog#getHorizontalMinSize()
+         */
+        @Nullable
+        String getHorizontalMinSize();
+
+        /**
+         * Sets the horizontal min size of the dialog.
+         *
+         * @param minSize the minimum width of the dialog
+         * @return builder
+         * @see SideDialog#setHorizontalMinSize(String)
+         */
+        SideDialogBuilder withHorizontalMinSize(@Nullable String minSize);
+
+        /**
+         * @return vertical size of the dialog or {@code null} if not set
+         * @see SideDialog#getVerticalSize()
+         */
+        @Nullable
+        String getVerticalSize();
+
+        /**
+         * Sets the vertical size of the dialog.
+         *
+         * @param size the height of the dialog
+         * @return builder
+         * @see SideDialog#setVerticalSize(String)
+         */
+        SideDialogBuilder withVerticalSize(@Nullable String size);
+
+        /**
+         * @return vertical max size of the dialog or {@code null} if not set
+         * @see SideDialog#getVerticalMaxSize()
+         */
+        @Nullable
+        String getVerticalMaxSize();
+
+        /**
+         * Sets the vertical max size of the dialog.
+         *
+         * @param maxSize the maximum height of the dialog
+         * @return builder
+         * @see SideDialog#setVerticalMaxSize(String)
+         */
+        SideDialogBuilder withVerticalMaxSize(@Nullable String maxSize);
+
+        /**
+         * @return vertical min size of the dialog or {@code null} if not set
+         * @see SideDialog#getVerticalMinSize()
+         */
+        @Nullable
+        String getVerticalMinSize();
+
+        /**
+         * Sets the vertical min size of the dialog.
+         *
+         * @param minSize the minimum height of the dialog
+         * @return builder
+         * @see SideDialog#setVerticalMinSize(String)
+         */
+        SideDialogBuilder withVerticalMinSize(@Nullable String minSize);
+
+        /**
+         * @return {@code true} if the dialog is fullscreen on small devices, {@code false} otherwise
+         */
+        boolean isFullscreenOnSmallDevices();
+
+        /**
+         * Sets the fullscreen mode on small devices.
+         *
+         * @param fullscreen fullscreen option
+         * @return builder
+         * @see SideDialog#setFullscreenOnSmallDevices(boolean)
+         */
+        SideDialogBuilder withFullscreenOnSmallDevices(boolean fullscreen);
+
+        /**
+         * @return placement of the dialog
+         */
+        SideDialogPlacement getSideDialogPlacement();
+
+        /**
+         * Sets the placement of the dialog.
+         *
+         * @param placement placement of the dialog
+         * @return builder
+         */
+        SideDialogBuilder withSideDialogPlacement(SideDialogPlacement placement);
+
+        /**
+         * Opens the dialog.
+         *
+         * @return opened dialog
+         */
+        SideDialog open();
+
+        /**
+         * Builds the dialog.
+         *
+         * @return created dialog
+         */
         SideDialog build();
 
-        SideDialog open();
+        // TODO: pinyazhin, add setRole after upgrading to Vaadin 25
+
+        // TODO: pinyazhin, add modality after upgrading to Vaadin 25
     }
 
     /**

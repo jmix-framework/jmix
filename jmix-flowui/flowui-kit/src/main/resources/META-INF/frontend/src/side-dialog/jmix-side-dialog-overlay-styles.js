@@ -48,27 +48,27 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* Right - default */
 
-    :host([side-panel-placement='']),
-    :host([side-panel-placement='right']) {
+    :host([side-dialog-placement='']),
+    :host([side-dialog-placement='right']) {
         align-items: flex-end;
         margin-right: 0;
     }
 
-    :host([side-panel-placement=''][dir='rtl']),
-    :host([side-panel-placement='right'][dir='rtl']) {
+    :host([side-dialog-placement=''][dir='rtl']),
+    :host([side-dialog-placement='right'][dir='rtl']) {
         align-items: flex-start;
         margin-left: 0;
     }
 
-    :host([opening][side-panel-placement='']) [part='overlay'],
-    :host([opening][side-panel-placement='right']) [part='overlay'] {
+    :host([opening][side-dialog-placement='']) [part='overlay'],
+    :host([opening][side-dialog-placement='right']) [part='overlay'] {
         transform: translateX(100%);
 
         animation: jmix-side-dialog-right-opening var(--_transition-duration) ease-in-out both;
     }
 
-    :host([closing][side-panel-placement='']) [part='overlay'],
-    :host([closing][side-panel-placement='right']) [part='overlay'] {
+    :host([closing][side-dialog-placement='']) [part='overlay'],
+    :host([closing][side-dialog-placement='right']) [part='overlay'] {
         transform: translateX(0);
 
         animation: jmix-side-dialog-right-closing var(--_transition-duration) ease-in-out both;
@@ -76,23 +76,23 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* Left */
 
-    :host([side-panel-placement="left"]) {
+    :host([side-dialog-placement="left"]) {
         align-items: flex-start;
         margin-left: 0;
     }
 
-    :host([side-panel-placement='left'][dir='rtl']) {
+    :host([side-dialog-placement='left'][dir='rtl']) {
         align-items: flex-end;
         margin-right: 0;
     }
 
-    :host([opening][side-panel-placement='left']) [part='overlay'] {
+    :host([opening][side-dialog-placement='left']) [part='overlay'] {
         transform: translateX(-100%);
 
         animation: jmix-side-dialog-left-opening var(--_transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][side-panel-placement='left']) [part='overlay'] {
+    :host([closing][side-dialog-placement='left']) [part='overlay'] {
         transform: translateX(0);
 
         animation: jmix-side-dialog-left-closing var(--_transition-duration) ease-in-out forwards;
@@ -100,19 +100,19 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* Top */
 
-    :host([side-panel-placement="top"]:not([fullscreen])) {
+    :host([side-dialog-placement="top"]:not([fullscreen])) {
         margin-top: 0;
         align-self: flex-start;
         max-height: 100vh;
     }
 
-    :host([opening][side-panel-placement='top']) [part='overlay'] {
+    :host([opening][side-dialog-placement='top']) [part='overlay'] {
         transform: translateY(-100%);
 
         animation: jmix-side-dialog-top-opening var(--_transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][side-panel-placement='top']) [part='overlay'] {
+    :host([closing][side-dialog-placement='top']) [part='overlay'] {
         transform: translateY(0);
 
         animation: jmix-side-dialog-top-closing var(--_transition-duration) ease-in-out forwards;
@@ -120,19 +120,19 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* Bottom */
 
-    :host([side-panel-placement="bottom"]:not([fullscreen])) {
+    :host([side-dialog-placement="bottom"]:not([fullscreen])) {
         margin-bottom: 0;
         align-self: flex-end;
         max-height: 100vh;
     }
 
-    :host([opening][side-panel-placement='bottom']) [part='overlay'] {
+    :host([opening][side-dialog-placement='bottom']) [part='overlay'] {
         transform: translateY(100%);
 
         animation: jmix-side-dialog-bottom-opening var(--_transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][side-panel-placement='bottom']) [part='overlay'] {
+    :host([closing][side-dialog-placement='bottom']) [part='overlay'] {
         transform: translateY(0);
 
         animation: jmix-side-dialog-bottom-closing var(--_transition-duration) ease-in-out forwards;
@@ -140,30 +140,30 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* Inline start */
 
-    :host([side-panel-placement="inline-start"]) {
+    :host([side-dialog-placement="inline-start"]) {
         align-items: start;
         margin-inline-start: 0;
     }
 
-    :host([opening][side-panel-placement='inline-start']) [part='overlay'] {
+    :host([opening][side-dialog-placement='inline-start']) [part='overlay'] {
         transform: translateX(-100%);
 
         animation: jmix-side-dialog-left-opening var(--_transition-duration) ease-in-out forwards;
     }
 
-    :host([opening][side-panel-placement='inline-start'][dir='rtl']) [part='overlay'] {
+    :host([opening][side-dialog-placement='inline-start'][dir='rtl']) [part='overlay'] {
         transform: translateX(100%);
 
         animation: jmix-side-dialog-inline-start-rtl-opening var(--_transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][side-panel-placement='inline-start']) [part='overlay'] {
+    :host([closing][side-dialog-placement='inline-start']) [part='overlay'] {
         transform: translateX(0%);
 
         animation: jmix-side-dialog-left-closing var(--_transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][side-panel-placement='inline-start'][dir='rtl']) [part='overlay'] {
+    :host([closing][side-dialog-placement='inline-start'][dir='rtl']) [part='overlay'] {
         transform: translateX(100%);
 
         animation: jmix-side-dialog-inline-start-rtl-closing var(--_transition-duration) ease-in-out forwards;
@@ -171,47 +171,47 @@ export const jmixSideDialogOverlayStyles = css`
 
     /* Inline end */
 
-    :host([side-panel-placement="inline-end"]) {
+    :host([side-dialog-placement="inline-end"]) {
         align-items: end;
         margin-inline-end: 0;
     }
 
-    :host([opening][side-panel-placement='inline-end']) [part='overlay'] {
+    :host([opening][side-dialog-placement='inline-end']) [part='overlay'] {
         transform: translateX(100%);
 
         animation: jmix-side-dialog-right-opening var(--_transition-duration) ease-in-out forwards;
     }
 
-    :host([opening][side-panel-placement='inline-end'][dir='rtl']) [part='overlay'] {
+    :host([opening][side-dialog-placement='inline-end'][dir='rtl']) [part='overlay'] {
         transform: translateX(-100%);
 
         animation: jmix-side-dialog-inline-end-rtl-opening var(--_transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][side-panel-placement='inline-end']) [part='overlay'] {
+    :host([closing][side-dialog-placement='inline-end']) [part='overlay'] {
         transform: translateX(0%);
 
         animation: jmix-side-dialog-right-closing var(--_transition-duration) ease-in-out forwards;
     }
 
-    :host([closing][side-panel-placement='inline-end'][dir='rtl']) [part='overlay'] {
+    :host([closing][side-dialog-placement='inline-end'][dir='rtl']) [part='overlay'] {
         transform: translateX(100%);
 
         animation: jmix-side-dialog-inline-end-rtl-closing var(--_transition-duration) ease-in-out forwards;
     }
 
-    :host([side-panel-placement="left"]) [part='overlay'],
-    :host([side-panel-placement="right"]) [part='overlay'],
-    :host([side-panel-placement="inline-start"]) [part='overlay'],
-    :host([side-panel-placement="inline-end"]) [part='overlay'] {
+    :host([side-dialog-placement="left"]) [part='overlay'],
+    :host([side-dialog-placement="right"]) [part='overlay'],
+    :host([side-dialog-placement="inline-start"]) [part='overlay'],
+    :host([side-dialog-placement="inline-end"]) [part='overlay'] {
         height: 100%;
         max-width: var(--_horizontal-max-size);
         min-width: var(--_horizontal-min-size);
         width: var(--_horizontal-size);
     }
 
-    :host([side-panel-placement="top"]) [part='overlay'],
-    :host([side-panel-placement="bottom"]) [part='overlay'] {
+    :host([side-dialog-placement="top"]) [part='overlay'],
+    :host([side-dialog-placement="bottom"]) [part='overlay'] {
         height: var(--_vertical-size);
         max-height: var(--_vertical-max-size);
         min-height: var(--_vertical-min-size);

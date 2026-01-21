@@ -18,6 +18,9 @@ package io.jmix.flowui.component.sidedialog;
 
 import com.vaadin.flow.component.ComponentEvent;
 
+/**
+ * Event fired when the user clicks outside the overlay or presses the escape key.
+ */
 public class SideDialogCloseActionEvent extends ComponentEvent<SideDialog> {
 
     public SideDialogCloseActionEvent(SideDialog source, boolean fromClient) {

@@ -46,18 +46,16 @@ class JmixSideDialog extends ControllerMixin(Dialog) {
                 theme$="[[_theme]]"
                 modeless="[[modeless]]"
                 with-backdrop="[[!modeless]]"
-                resizable$="[[resizable]]"
-                draggable$="[[draggable]]"
                 restore-focus-on-close
                 focus-trap
-                side-panel-placement$="[[sidePanelPlacement]]"
+                side-dialog-placement$="[[sideDialogPlacement]]"
             ></jmix-side-dialog-overlay>
         `;
     }
 
     static get properties() {
         return {
-            sidePanelPlacement: {
+            sideDialogPlacement: {
                 type: String,
                 reflectToAttribute: true,
                 value: 'right',

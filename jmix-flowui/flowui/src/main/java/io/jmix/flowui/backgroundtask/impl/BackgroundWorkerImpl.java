@@ -28,6 +28,8 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.backgroundtask.*;
 import io.jmix.flowui.event.BackgroundTaskUnhandledExceptionEvent;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +69,8 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
     @Autowired
     protected TimeSource timeSource;
 
+    protected ObservationRegistry observationRegistry;
+
     protected UiBackgroundTaskProperties properties;
 
     protected ExecutorService executorService;
@@ -79,6 +83,11 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
         this.properties = properties;
 
         createThreadPoolExecutor();
+    }
+
+    @Autowired(required = false)
+    public void setObservationRegistry(ObservationRegistry observationRegistry) {
+        this.observationRegistry = observationRegistry;
     }
 
     protected void createThreadPoolExecutor() {
@@ -397,9 +406,20 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
         @ExecutedOnUIThread
         @Override
         public final void startExecution() {
+            Observation parentObservation = observationRegistry == null
+                    ? null
+                    : observationRegistry.getCurrentObservation();
+
             // Start thread
-            executorService.execute(() ->
-                    future.run()
+            executorService.execute(() -> {
+                        if (parentObservation != null) {
+                            try (Observation.Scope scope = parentObservation.openScope()) {
+                                future.run();
+                            }
+                        } else {
+                            future.run();
+                        }
+                    }
             );
         }
 

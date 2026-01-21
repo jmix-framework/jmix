@@ -44,6 +44,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,8 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
     private static final Logger log = LoggerFactory.getLogger(EntityLogImpl.class);
 
     public static final String RESOURCE_HOLDER_KEY = EntityLogResourceHolder.class.getName();
+
+    private static final int INSTANCE_NAME_MAX_LENGTH = 1000;
 
     @Autowired
     protected TimeSource timeSource;
@@ -569,7 +572,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
             item.setSubstitutedUsername(findSubstitutedUsername());
             item.setType(type);
             item.setEntity(extendedEntities.getOriginalOrThisMetaClass(metaClass).getName());
-            item.setEntityInstanceName(metadataTools.getInstanceName(entity));
+            item.setEntityInstanceName(generateEntityInstanceName(entity));
             item.getEntityRef().setObjectEntityId(referenceToEntitySupport.getReferenceId(entity));
             item.setAttributes(entityLogAttrs);
         }
@@ -688,7 +691,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
         item.setSubstitutedUsername(findSubstitutedUsername());
         item.setType(type);
         item.setEntity(entityName);
-        item.setEntityInstanceName(metadataTools.getInstanceName(entity));
+        item.setEntityInstanceName(generateEntityInstanceName(entity));
         if (metadataTools.hasDbGeneratedPrimaryKey(metadata.getClass(entity)) && EntityLogItem.Type.CREATE.equals(type)) {
             item.setDbGeneratedIdEntity(entity);
         } else {
@@ -696,6 +699,11 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
         }
         item.setAttributes(createLogAttributes(entity, attributes, type, null));
         return item;
+    }
+
+    protected String generateEntityInstanceName(Object entity) {
+        String instanceName = metadataTools.getInstanceName(entity);
+        return StringUtils.truncate(instanceName, INSTANCE_NAME_MAX_LENGTH);
     }
 
     protected Set<String> getAllAttributes(Object entity) {

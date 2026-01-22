@@ -21,7 +21,6 @@ import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.shared.Registration;
@@ -44,7 +43,7 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         implements DropdownButtonComponent, AttachNotifier, DetachNotifier,
-        HasTitle, HasSize, HasTheme, HasEnabled, HasStyle, HasOverlayClassName, HasText,
+        HasTitle, HasSize, HasTheme, HasEnabled, HasStyle, HasText,
         Focusable<AbstractDropdownButton> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
@@ -319,16 +318,6 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     @Override
     public boolean hasClassName(String className) {
         return getContent().hasClassName(className);
-    }
-
-    @Override
-    public String getOverlayClassName() {
-        return getContent().getOverlayClassName();
-    }
-
-    @Override
-    public void setOverlayClassName(String overlayClassName) {
-        getContent().setOverlayClassName(overlayClassName);
     }
 
     @Override

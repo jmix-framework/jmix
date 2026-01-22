@@ -38,7 +38,6 @@ public class UserMenuLoader extends AbstractComponentLoader<UserMenu> {
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadClassNames(resultComponent, element);
-        componentLoader().loadOverlayClass(resultComponent, element);
         componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
 

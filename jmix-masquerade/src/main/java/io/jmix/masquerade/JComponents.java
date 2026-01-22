@@ -83,7 +83,7 @@ public class JComponents {
         // in case of view-like-composite: dialogs or views
         if (testView != null && !testView.id().isEmpty()) {
             if (DialogWindow.class.isAssignableFrom(clazz)) {
-                By xpathBy = xpath("//vaadin-dialog-overlay[vaadin-scroller[vaadin-vertical-layout[@%s='%s']]]"
+                By xpathBy = xpath("//vaadin-dialog[vaadin-scroller[vaadin-vertical-layout[@%s='%s']]]"
                         .formatted(UI_TEST_ID, testView.id()));
 
                 return wireClassBy(clazz, xpathBy);

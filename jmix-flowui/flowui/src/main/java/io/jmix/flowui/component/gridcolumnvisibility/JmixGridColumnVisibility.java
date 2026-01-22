@@ -21,7 +21,6 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.MessageTools;
@@ -54,7 +53,7 @@ import java.util.stream.IntStream;
  */
 public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         implements AttachNotifier, DetachNotifier, ApplicationContextAware, InitializingBean,
-        HasTitle, HasSize, HasThemeVariant<GridColumnVisibilityVariant>, HasEnabled, HasStyle, HasOverlayClassName,
+        HasTitle, HasSize, HasThemeVariant<GridColumnVisibilityVariant>, HasEnabled, HasStyle,
         HasText, Focusable<AbstractDropdownButton> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";

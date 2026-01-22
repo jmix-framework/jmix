@@ -36,7 +36,6 @@ public interface SupportUploadSuccessHandler<V> {
      *
      * @param handler the handler to be executed on a successful upload;
      *                may be {@code null} to clear any existing handler
-     * @param <V>     the type of the uploaded data
      */
     void setUploadSuccessHandler(@Nullable UploadSuccessHandler<V> handler);
 

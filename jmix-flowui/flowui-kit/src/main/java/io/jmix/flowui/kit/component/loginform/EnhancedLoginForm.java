@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component.loginform;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.login.LoginForm;
-import com.vaadin.flow.internal.JsonSerializer;
+import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.Nullable;
 
@@ -147,7 +147,7 @@ public class EnhancedLoginForm extends LoginForm {
                 .map(locale -> new LocaleItem(generateItemLabel(locale), localeToString(locale)))
                 .collect(Collectors.toList());
 
-        getElement().setPropertyJson("locales", JsonSerializer.toJson(localeItems));
+        getElement().setPropertyJson("locales", JacksonUtils.beanToJson(localeItems));
         //From 2.3 the locales combo box shows if there is at least one locale.
         // To hide locales - set visibility explicitly.
         if (!visibilitySetExplicitly && !localeItems.isEmpty()) {

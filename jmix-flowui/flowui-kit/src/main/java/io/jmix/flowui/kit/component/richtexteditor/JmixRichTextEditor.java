@@ -16,14 +16,16 @@
 
 package io.jmix.flowui.kit.component.richtexteditor;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.function.SerializableConsumer;
-import com.vaadin.flow.internal.JsonSerializer;
-import elemental.json.JsonObject;
+import com.vaadin.flow.internal.JacksonUtils;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -121,19 +123,26 @@ public class JmixRichTextEditor extends AbstractSinglePropertyField<JmixRichText
      * @param i18n the internationalized properties, not {@code null}
      */
     public void setI18n(RichTextEditorI18n i18n) {
-        Objects.requireNonNull(i18n, "The I18N properties object should not be null");
+        Preconditions.checkNotNull(i18n, "The I18N properties object should not be null");
         this.i18n = i18n;
 
         runBeforeClientResponse(ui -> {
             if (i18n == this.i18n) {
-                JsonObject i18nObject = (JsonObject) JsonSerializer.toJson(this.i18n);
-                for (String key : i18nObject.keys()) {
-                    getElement().executeJs("this.set('i18n." + key + "', $0)", i18nObject.get(key));
-                }
-
-                getElement().callJsFunction("applyLocalization");
+                setI18nWithJS();
             }
         });
+    }
+
+    protected void setI18nWithJS() {
+        ObjectNode i18nJson = JacksonUtils.beanToJson(i18n);
+
+        // Assign new I18N object to WC, by merging the existing
+        // WC I18N, and the values from the new RichTextEditorI18n instance,
+        // into an empty object
+        getElement().executeJs("this.i18n = Object.assign({}, this.i18n, $0);",
+                i18nJson);
+
+        getElement().callJsFunction("applyLocalization");
     }
 
     protected void runBeforeClientResponse(SerializableConsumer<UI> command) {
@@ -158,6 +167,7 @@ public class JmixRichTextEditor extends AbstractSinglePropertyField<JmixRichText
     /**
      * The internationalization properties for {@link JmixRichTextEditor}.
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class RichTextEditorI18n implements Serializable {
         protected String bold;
         protected String italic;

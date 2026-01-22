@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.upload.handler;
 
+import com.vaadin.flow.server.communication.TransferUtil;
 import com.vaadin.flow.server.streams.*;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;

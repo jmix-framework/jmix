@@ -130,7 +130,8 @@ public class ContainerTreeDataGridItems<E> extends ContainerDataGridItems<E>
     }
 
     @Nullable
-    protected E getParent(E item) {
+    @Override
+    public E getParent(E item) {
         Preconditions.checkNotNullArgument(item);
         return EntityValues.getValue(item, hierarchyProperty);
     }

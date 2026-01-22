@@ -20,7 +20,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.UploadI18N;
-import com.vaadin.flow.internal.JsonSerializer;
+import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.flow.shared.Registration;
 
@@ -51,7 +51,7 @@ public class JmixUploadButton extends Upload {
         }
 
         if (this.i18n.getUploadDialog() != null) {
-            getElement().setPropertyJson("jmixI18n", JsonSerializer.toJson(this.i18n));
+            getElement().setPropertyJson("jmixI18n", JacksonUtils.beanToJson(this.i18n));
         }
     }
 

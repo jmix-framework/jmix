@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.view.navigation;
 
-import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.vaadin.flow.component.UI;
@@ -32,6 +31,7 @@ import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.SupportsAfterViewNavigationHandler.AfterViewNavigationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.node.BaseJsonNode;
 
 import java.net.URL;
 import java.util.Optional;

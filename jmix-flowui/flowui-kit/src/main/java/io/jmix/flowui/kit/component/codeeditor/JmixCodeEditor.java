@@ -16,8 +16,6 @@
 package io.jmix.flowui.kit.component.codeeditor;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
@@ -26,15 +24,16 @@ import com.vaadin.flow.component.shared.HasValidationProperties;
 import com.vaadin.flow.data.binder.HasValidator;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.binder.Validator;
-import elemental.json.JsonFactory;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.codeeditor.autocomplete.Suggester;
 import io.jmix.flowui.kit.component.codeeditor.autocomplete.Suggestion;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -79,7 +78,6 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     protected Suggester suggester;
 
     protected ObjectMapper objectMapper;
-    protected JsonFactory jsonFactory;
 
     public JmixCodeEditor() {
         super(PROPERTY_VALUE, "", true);
@@ -418,7 +416,7 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      * @see #setSuggester(Suggester)
      */
     @ClientCallable
-    protected JsonValue getSuggestions(String value, Double cursorPosition, String prefix) {
+    protected JsonNode getSuggestions(String value, Double cursorPosition, String prefix) {
         List<Suggestion> suggestions = suggester == null
                 ? Collections.emptyList()
                 : suggester.getSuggestions(new Suggester.SuggestionContext(value, cursorPosition.intValue(), prefix));
@@ -472,35 +470,34 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
         return validationSupport;
     }
 
-    protected JsonValue serialize(Object object) {
+    protected JsonNode serialize(Object object) {
+        // TODO: gg, looks like it can be simplified
         String rawJson;
 
         try {
             rawJson = getObjectMapper().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot serialize", e);
         }
 
         log.debug("Serialized {}", rawJson);
 
-        return getJsonFactory().parse(rawJson);
+        try {
+            return getObjectMapper().readTree(rawJson);
+        } catch (JacksonException e) {
+            throw new IllegalStateException("Cannot deserialize", e);
+        }
     }
 
     protected ObjectMapper getObjectMapper() {
         if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            objectMapper = JsonMapper.builder()
+                    .changeDefaultPropertyInclusion(incl ->
+                            incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                    .build();
         }
 
         return objectMapper;
-    }
-
-    protected JsonFactory getJsonFactory() {
-        if (jsonFactory == null) {
-            jsonFactory = new JreJsonFactory();
-        }
-
-        return jsonFactory;
     }
 
     /**

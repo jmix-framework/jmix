@@ -3007,7 +3007,6 @@
         <xs:attribute name="css" type="xs:string"/>
 
         <xs:attributeGroup ref="hasId"/>
-        <xs:attributeGroup ref="hasEnabled"/>
         <xs:attributeGroup ref="hasClassNames"/>
     </xs:complexType>
 

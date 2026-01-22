@@ -779,7 +779,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         componentLoader().loadCss(contextMenu, contextMenuElement);
         componentLoader().loadClassNames(contextMenu, contextMenuElement);
-        componentLoader().loadEnabled(contextMenu, contextMenuElement);
 
         for (Element childItemElement : contextMenuElement.elements()) {
             addContextMenuItem(contextMenu::addItem, contextMenu::addComponent, childItemElement);

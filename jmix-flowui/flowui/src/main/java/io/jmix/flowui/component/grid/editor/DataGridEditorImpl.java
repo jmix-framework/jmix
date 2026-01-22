@@ -28,7 +28,6 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.shared.Registration;
-import elemental.json.JsonObject;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
@@ -48,10 +47,11 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.ViewValidation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -278,7 +278,7 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
     }
 
     @Override
-    public void generateData(@Nullable T item, JsonObject jsonObject) {
+    public void generateData(@Nullable T item, ObjectNode jsonObject) {
         if (item != null && item.equals(edited)) {
             jsonObject.put(EDITING, true);
         } else {

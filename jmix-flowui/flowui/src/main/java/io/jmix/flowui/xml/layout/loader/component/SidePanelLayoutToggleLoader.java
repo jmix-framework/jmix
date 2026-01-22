@@ -80,10 +80,10 @@ public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePan
 
     protected class FindSidePanelLayoutTask implements InitTask {
 
-        protected String drawerLayoutId;
+        protected String sidePanelLayoutId;
 
-        public FindSidePanelLayoutTask(String drawerLayoutId) {
-            this.drawerLayoutId = drawerLayoutId;
+        public FindSidePanelLayoutTask(String sidePanelLayoutId) {
+            this.sidePanelLayoutId = sidePanelLayoutId;
         }
 
         @Override
@@ -100,15 +100,15 @@ public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePan
                 return;
             }
 
-            Component component = UiComponentUtils.findComponent(origin, drawerLayoutId).orElse(null);
+            Component component = UiComponentUtils.findComponent(origin, sidePanelLayoutId).orElse(null);
             if (component == null) {
-                throw new GuiDevelopmentException("Component with the '" + drawerLayoutId + "' ID is not found",
+                throw new GuiDevelopmentException("Component with the '" + sidePanelLayoutId + "' ID is not found",
                         context);
             }
-            if (component instanceof SidePanelLayout drawerLayout) {
-                resultComponent.setSidePanelLayout(drawerLayout);
+            if (component instanceof SidePanelLayout sidePanelLayout) {
+                resultComponent.setSidePanelLayout(sidePanelLayout);
             } else {
-                throw new GuiDevelopmentException("Component with the '" + drawerLayoutId +
+                throw new GuiDevelopmentException("Component with the '" + sidePanelLayoutId +
                         "' ID is not the " + SidePanelLayout.class.getSimpleName() + " class or its subclass", context);
             }
         }
@@ -123,8 +123,8 @@ public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePan
                 return;
             }
             while (parent != null) {
-                if (parent instanceof SidePanelLayout drawerLayout) {
-                    resultComponent.setSidePanelLayout(drawerLayout);
+                if (parent instanceof SidePanelLayout sidePanelLayout) {
+                    resultComponent.setSidePanelLayout(sidePanelLayout);
                     return;
                 }
                 parent = parent.getParent().orElse(null);

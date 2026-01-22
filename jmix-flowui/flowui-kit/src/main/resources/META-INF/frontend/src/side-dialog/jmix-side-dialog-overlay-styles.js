@@ -344,4 +344,10 @@ export const jmixSideDialogOverlayStyles = css`
             transform: translateY(100%);
         }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+        :host {
+            --_transition-duration: none !important;
+        }
+    }
 `;

@@ -443,7 +443,7 @@ public interface StudioLayouts {
                             classFqn = "io.jmix.flowui.kit.component.sidepanellayout.SidePanelMode",
                             defaultValue = "OVERFLOW",
                             options = {"OVERFLOW", "PUSH"}),
-                    @StudioProperty(xmlAttribute = "drawerPlacement", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
+                    @StudioProperty(xmlAttribute = "sidePanelPlacement", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.kit.component.sidepanellayout.SidePanelPlacement",
                             defaultValue = "RIGHT",
                             options = {"LEFT", "RIGHT", "INLINE_START", "INLINE_END", "TOP", "BOTTOM"}),

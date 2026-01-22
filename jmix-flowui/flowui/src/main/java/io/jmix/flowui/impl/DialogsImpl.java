@@ -42,8 +42,6 @@ import io.jmix.flowui.backgroundtask.BackgroundTaskHandler;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.LocalizedTaskWrapper;
 import io.jmix.flowui.component.sidedialog.SideDialog;
-import io.jmix.flowui.component.sidedialog.SideDialogCloseActionEvent;
-import io.jmix.flowui.component.sidedialog.SideDialogOpenedChangeEvent;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.event.dialog.DialogClosedEvent;
 import io.jmix.flowui.event.dialog.DialogOpenedEvent;
@@ -1356,17 +1354,31 @@ public class DialogsImpl implements Dialogs {
         }
     }
 
+    /**
+     * Implementation of {@link SideDialogBuilder} that facilitates creating and managing side dialogs.
+     */
     public class SideDialogBuilderImpl implements SideDialogBuilder {
 
         protected SideDialog sideDialog;
 
+        protected List<Consumer<SideDialog>> componentConsumers = new ArrayList<>();
+
+        protected List<Component> headerComponents;
+        protected List<Component> contentComponents;
+        protected List<Component> footerComponents;
+
         public SideDialogBuilderImpl() {
             sideDialog = createSideDialog();
+            initDialog(sideDialog);
         }
 
         @Override
         public SideDialogBuilder withHeaderComponents(Component... components) {
-            sideDialog.getHeader().add(components);
+            componentConsumers.add((sideDialog) -> {
+                headerComponents().addAll(Arrays.asList(components));
+                sideDialog.getHeader().add(components);
+            });
+
             return this;
         }
 
@@ -1374,16 +1386,24 @@ public class DialogsImpl implements Dialogs {
         public SideDialogBuilder withHeaderProvider(Function<SideDialog, Component> headerProvider) {
             Preconditions.checkNotNullArgument(headerProvider, "headerProvider cannot be null");
 
-            Component headerComponent = headerProvider.apply(sideDialog);
-            if (headerComponent != null) {
-                sideDialog.getHeader().add(headerComponent);
-            }
+            componentConsumers.add((sideDialog) -> {
+                Component headerComponent = headerProvider.apply(sideDialog);
+                if (headerComponent != null) {
+                    headerComponents().add(headerComponent);
+                    sideDialog.getHeader().add(headerComponent);
+                }
+            });
+
             return this;
         }
 
         @Override
         public SideDialogBuilder withContentComponents(Component... components) {
-            sideDialog.add(components);
+            componentConsumers.add((sideDialog) -> {
+                contentComponents().addAll(Arrays.asList(components));
+                sideDialog.add(components);
+            });
+
             return this;
         }
 
@@ -1391,16 +1411,24 @@ public class DialogsImpl implements Dialogs {
         public SideDialogBuilder withContentProvider(Function<SideDialog, Component> contentProvider) {
             Preconditions.checkNotNullArgument(contentProvider, "contentProvider cannot be null");
 
-            Component contentComponent = contentProvider.apply(sideDialog);
-            if (contentComponent != null) {
-                sideDialog.add(contentComponent);
-            }
+            componentConsumers.add((sideDialog) -> {
+                Component contentComponent = contentProvider.apply(sideDialog);
+                if (contentComponent != null) {
+                    contentComponents().add(contentComponent);
+                    sideDialog.add(contentComponent);
+                }
+            });
+
             return this;
         }
 
         @Override
         public SideDialogBuilder withFooterComponents(Component... components) {
-            sideDialog.getFooter().add(components);
+            componentConsumers.add((sideDialog) -> {
+                footerComponents().addAll(Arrays.asList(components));
+                sideDialog.getFooter().add(components);
+            });
+
             return this;
         }
 
@@ -1408,96 +1436,100 @@ public class DialogsImpl implements Dialogs {
         public SideDialogBuilder withFooterProvider(Function<SideDialog, Component> footerProvider) {
             Preconditions.checkNotNullArgument(footerProvider, "footerProvider cannot be null");
 
-            Component footerComponent = footerProvider.apply(sideDialog);
-            if (footerComponent != null) {
-                sideDialog.getFooter().add(footerComponent);
-            }
+            componentConsumers.add(sideDialog -> {
+                Component footerComponent = footerProvider.apply(sideDialog);
+                if (footerComponent != null) {
+                    footerComponents().add(footerComponent);
+                    sideDialog.getFooter().add(footerComponent);
+                }
+            });
+
             return this;
         }
 
         @Override
-        public SideDialogBuilder withOpenedChangeListener(ComponentEventListener<SideDialogOpenedChangeEvent> listener) {
+        public SideDialogBuilder withOpenedChangeListener(ComponentEventListener<Dialog.OpenedChangeEvent> listener) {
             sideDialog.addOpenedChangeListener(listener);
             return this;
         }
 
         @Override
-        public SideDialogBuilder withCloseActionListener(ComponentEventListener<SideDialogCloseActionEvent> listener) {
-            sideDialog.addCloseActionListener(listener);
+        public SideDialogBuilder withCloseActionListener(ComponentEventListener<Dialog.DialogCloseActionEvent> listener) {
+            sideDialog.addDialogCloseActionListener(listener);
             return this;
         }
 
         @Nullable
         @Override
-        public String getHorizontalSize() {
-            return sideDialog.getHorizontalSize();
+        public String getWidth() {
+            return sideDialog.getWidth();
         }
 
         @Override
-        public SideDialogBuilder withHorizontalSize(@Nullable String size) {
-            sideDialog.setHorizontalSize(size);
+        public SideDialogBuilder withWidth(@Nullable String value) {
+            sideDialog.setWidth(value);
             return this;
         }
 
         @Nullable
         @Override
-        public String getHorizontalMaxSize() {
-            return sideDialog.getHorizontalMaxSize();
+        public String getMaxWidth() {
+            return sideDialog.getMaxWidth();
         }
 
         @Override
-        public SideDialogBuilder withHorizontalMaxSize(@Nullable String maxSize) {
-            sideDialog.setHorizontalMaxSize(maxSize);
+        public SideDialogBuilder withMaxWidth(@Nullable String value) {
+            sideDialog.setMaxWidth(value);
             return this;
         }
 
         @Nullable
         @Override
-        public String getHorizontalMinSize() {
-            return sideDialog.getHorizontalMinSize();
+        public String getMinWidth() {
+            return sideDialog.getMinWidth();
         }
 
         @Nullable
 
         @Override
-        public SideDialogBuilder withHorizontalMinSize(@Nullable String minSize) {
-            sideDialog.setHorizontalMinSize(minSize);
+        public SideDialogBuilder withMinWidth(@Nullable String value) {
+            sideDialog.setMinWidth(value);
             return this;
         }
 
         @Nullable
         @Override
-        public String getVerticalSize() {
-            return sideDialog.getVerticalSize();
+        public String getHeight() {
+            return sideDialog.getHeight();
         }
 
         @Override
-        public SideDialogBuilder withVerticalSize(@Nullable String size) {
-            sideDialog.setVerticalSize(size);
+        public SideDialogBuilder withHeight(@Nullable String value) {
+            sideDialog.setHeight(value);
             return this;
         }
 
         @Nullable
         @Override
-        public String getVerticalMaxSize() {
-            return sideDialog.getVerticalMaxSize();
+        public String getMaxHeight() {
+            return sideDialog.getMaxHeight();
         }
 
         @Override
-        public SideDialogBuilder withVerticalMaxSize(@Nullable String maxSize) {
-            sideDialog.setVerticalMaxSize(maxSize);
+        public SideDialogBuilder withMaxHeight(@Nullable String value) {
+            sideDialog.setMaxHeight(value);
             return this;
         }
 
         @Nullable
         @Override
-        public String getVerticalMinSize() {
-            return sideDialog.getVerticalMinSize();
+        public String getMinHeight() {
+            return sideDialog.getMinHeight();
         }
 
         @Override
-        public SideDialogBuilder withVerticalMinSize(@Nullable String minSize) {
-            sideDialog.setVerticalMinSize(minSize);
+        public SideDialogBuilder withMinHeight(@Nullable String value) {
+            sideDialog.setMinHeight(value);
             return this;
         }
 
@@ -1525,12 +1557,26 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public SideDialog open() {
+            sideDialog = build();
             sideDialog.open();
+
             return sideDialog;
         }
 
         @Override
         public SideDialog build() {
+            sideDialog.removeAll();
+            sideDialog.getHeader().removeAll();
+            sideDialog.getFooter().removeAll();
+
+            headerComponents().clear();
+            contentComponents().clear();
+            footerComponents().clear();
+
+            for (Consumer<SideDialog> consumer : componentConsumers) {
+                consumer.accept(sideDialog);
+            }
+
             return sideDialog;
         }
 
@@ -1582,6 +1628,46 @@ public class DialogsImpl implements Dialogs {
 
         protected SideDialog createSideDialog() {
             return uiComponents.create(SideDialog.class);
+        }
+
+        protected void initDialog(SideDialog dialog) {
+            if (applicationContext.getBean(UiComponentProperties.class).isDialogsOpenedChangeEventsEnabled()) {
+                dialog.addOpenedChangeListener(this::fireDialogOpenedChangeEvent);
+            }
+        }
+
+        protected List<Component> headerComponents() {
+            if (headerComponents == null) {
+                headerComponents = new ArrayList<>();
+            }
+            return headerComponents;
+        }
+
+        protected List<Component> contentComponents() {
+            if (contentComponents == null) {
+                contentComponents = new ArrayList<>();
+            }
+            return contentComponents;
+        }
+
+        protected List<Component> footerComponents() {
+            if (footerComponents == null) {
+                footerComponents = new ArrayList<>();
+            }
+            return footerComponents;
+        }
+
+        protected void fireDialogOpenedChangeEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
+            if (openedChangeEvent.isOpened()) {
+                List<Component> header = headerComponents == null ? Collections.emptyList() : headerComponents;
+                List<Component> content = contentComponents == null ? Collections.emptyList() : contentComponents;
+                List<Component> footer = footerComponents == null ? Collections.emptyList() : footerComponents;
+
+                DialogOpenedEvent dialogOpenedEvent = new DialogOpenedEvent(sideDialog, header, content, footer);
+                applicationContext.publishEvent(dialogOpenedEvent);
+            } else {
+                applicationContext.publishEvent(new DialogClosedEvent(sideDialog));
+            }
         }
     }
 }

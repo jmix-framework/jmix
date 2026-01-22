@@ -19,8 +19,10 @@ package io.jmix.flowui.event.dialog;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import io.jmix.flowui.Dialogs.SideDialogBuilder;
 import org.springframework.context.ApplicationEvent;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,10 +33,31 @@ public class DialogOpenedEvent extends ApplicationEvent {
     protected Component content;
     protected List<Button> buttons;
 
+    protected List<Component> headerComponents;
+    protected List<Component> contentComponents;
+    protected List<Component> footerComponents;
+
+    public DialogOpenedEvent(Dialog dialog,
+                             List<Component> headerComponents,
+                             List<Component> contentComponents,
+                             List<Component> footerComponents) {
+        super(dialog);
+        this.content = contentComponents.isEmpty() ? null : contentComponents.get(0);
+        buttons = Collections.emptyList();
+
+        this.headerComponents = headerComponents;
+        this.contentComponents = contentComponents;
+        this.footerComponents = footerComponents;
+    }
+
     public DialogOpenedEvent(Dialog dialog, Component content, List<Button> singleton) {
         super(dialog);
         this.content = content;
         this.buttons = singleton;
+
+        this.headerComponents = Collections.emptyList();
+        this.contentComponents = Collections.singletonList(content);
+        this.footerComponents = Collections.emptyList();
     }
 
     @Override
@@ -43,10 +66,42 @@ public class DialogOpenedEvent extends ApplicationEvent {
     }
 
     /**
+     * Returns the dialog content component. If the dialog content includes multiple components,
+     * the first component is returned.
+     *
      * @return content of the opened dialog
      */
     public Component getContent() {
         return content;
+    }
+
+    /**
+     * Returns header components of the opened dialog if the builder of the dialog supports setting components to
+     * the header (e.g. {@link SideDialogBuilder}).
+     *
+     * @return header components
+     */
+    public List<Component> getHeaderComponents() {
+        return Collections.unmodifiableList(headerComponents);
+    }
+
+    /**
+     * Returns content components of the opened dialog.
+     *
+     * @return content components
+     */
+    public List<Component> getContentComponents() {
+        return Collections.unmodifiableList(contentComponents);
+    }
+
+    /**
+     * Returns footer components of the opened dialog if the builder of the dialog supports setting components to
+     * the footer (e.g. {@link SideDialogBuilder}).
+     *
+     * @return footer components
+     */
+    public List<Component> getFooterComponents() {
+        return Collections.unmodifiableList(footerComponents);
     }
 
     /**

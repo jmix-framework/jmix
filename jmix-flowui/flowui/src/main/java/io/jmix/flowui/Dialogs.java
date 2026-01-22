@@ -28,8 +28,6 @@ import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.app.inputdialog.InputParameter;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.component.sidedialog.SideDialog;
-import io.jmix.flowui.component.sidedialog.SideDialogCloseActionEvent;
-import io.jmix.flowui.component.sidedialog.SideDialogOpenedChangeEvent;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
@@ -136,7 +134,8 @@ public interface Dialogs {
      *         .withSideDialogPlacement(SideDialogPlacement.LEFT)
      *         .open();
      * </pre>
-      * @return builder
+     *
+     * @return builder
      */
     SideDialogBuilder createSideDialog();
 
@@ -477,8 +476,6 @@ public interface Dialogs {
         Dialog open();
     }
 
-    // TODO: pinyazhin, implement and think about components in tests.
-
     /**
      * Builder for {@link SideDialog}.
      */
@@ -498,6 +495,34 @@ public interface Dialogs {
          * Sets a provider for the header component of the dialog. The components from the provider are
          * <strong>added</strong> to the header of the dialog. If the provider returns {@code null},
          * no components are added.
+         * <p>
+         * Usage example:
+         * <pre>
+         * &#064;Autowired
+         * private Dialogs dialogs;
+         * &#064;Autowired
+         * private UiComponents uiComponents;
+         *
+         * &#064;Subscribe
+         * public void onInit(final InitEvent event) {
+         *     dialogs.createSideDialog()
+         *             .withHeaderProvider((sideDialog) -> {
+         *                 HorizontalLayout layout = new HorizontalLayout();
+         *                 layout.add(new H2("User profile"));
+         *
+         *                 JmixButton closeButton = uiComponents.create(JmixButton.class);
+         *                 closeButton.setIcon(JmixFontIcon.CLOSE.create());
+         *                 closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+         *                 closeButton.addClickListener(__ -> sideDialog.close());
+         *
+         *                 layout.add(closeButton);
+         *                 return layout;
+         *             })
+         *             .withContentComponents(createContent())
+         *             .withSideDialogPlacement(SideDialogPlacement.LEFT)
+         *             .open();
+         * }
+         * </pre>
          *
          * @param headerProvider provider for the header component
          * @return builder
@@ -516,6 +541,36 @@ public interface Dialogs {
          * Sets a provider for the content component of the dialog. The components from the provider are
          * <strong>added</strong> to the content area of the dialog. If the provider returns {@code null},
          * no components are added.
+         * <p>
+         * Usage example:
+         * <pre>
+         * &#064;Autowired
+         * private Dialogs dialogs;
+         * &#064;Autowired
+         * private UiComponents uiComponents;
+         *
+         * &#064;Subscribe("usersDataGrid")
+         * public void onUsersDataGridItemDoubleClick(final ItemDoubleClickEvent<User> event) {
+         *     User user = event.getItem();
+         *     dialogs.createSideDialog()
+         *             .withHeaderProvider(this::createHeader)
+         *             .withContentProvider(sideDialog -> {
+         *                 FormLayout formLayout = uiComponents.create(FormLayout.class);
+         *
+         *                 TypedTextField<String> usernameField = uiComponents.create(TypedTextField.class);
+         *                 usernameField.setValue(user.getUsername());
+         *                 usernameField.setReadOnly(true);
+         *                 formLayout.addFormItem(usernameField, "Username");
+         *
+         *                 JmixEmailField emailField = uiComponents.create(JmixEmailField.class);
+         *                 emailField.setValue(Strings.nullToEmpty(user.getEmail()));
+         *                 emailField.setReadOnly(true);
+         *                 formLayout.addFormItem(emailField, "Email");
+         *
+         *                 return formLayout;
+         *             }).open();
+         * }
+         * </pre>
          *
          * @param contentProvider provider for the content component
          * @return builder
@@ -534,6 +589,31 @@ public interface Dialogs {
          * Sets a provider for the footer component of the dialog. The components from the provider are
          * <strong>added</strong> to the footer of the dialog. If the provider returns {@code null},
          * no components are added.
+         * <p>
+         * Usage example:
+         * <pre>
+         * &#064;Autowired
+         * private Dialogs dialogs;
+         * &#064;Autowired
+         * private UiComponents uiComponents;
+         *
+         * &#064;Subscribe
+         * public void onInit(final InitEvent event) {
+         *     dialogs.createSideDialog()
+         *             .withHeaderProvider(this::createHeader)
+         *             .withContentComponents(createContent())
+         *             .withFooterProvider(sideDialog -> {
+         *                 JmixButton okButton = uiComponents.create(JmixButton.class);
+         *                 okButton.addClickListener(__ -> sideDialog.close());
+         *
+         *                 HorizontalLayout layout = new HorizontalLayout();
+         *                 layout.add(okButton);
+         *                 return layout;
+         *             })
+         *             .withSideDialogPlacement(SideDialogPlacement.LEFT)
+         *             .open();
+         * }
+         * </pre>
          *
          * @param footerProvider provider for the footer component
          * @return builder
@@ -546,112 +626,111 @@ public interface Dialogs {
          * @param listener listener for the opened change event
          * @return builder
          */
-        SideDialogBuilder withOpenedChangeListener(ComponentEventListener<SideDialogOpenedChangeEvent> listener);
+        SideDialogBuilder withOpenedChangeListener(ComponentEventListener<Dialog.OpenedChangeEvent> listener);
 
         /**
          * Sets a listener for the close action event of the dialog.
          *
          * @param listener listener for the close action event
          * @return builder
-         * @see SideDialog#addCloseActionListener(ComponentEventListener)
          */
-        SideDialogBuilder withCloseActionListener(ComponentEventListener<SideDialogCloseActionEvent> listener);
+        SideDialogBuilder withCloseActionListener(ComponentEventListener<Dialog.DialogCloseActionEvent> listener);
 
         /**
          * @return horizontal size of the dialog or {@code null} if not set
-         * @see SideDialog#getHorizontalSize()
+         * @see SideDialog#getWidth()
          */
         @Nullable
-        String getHorizontalSize();
+        String getWidth();
 
         /**
          * Sets the horizontal size of the dialog.
          *
-         * @param size the width of the dialog
+         * @param value the width of the dialog
          * @return builder
-         * @see SideDialog#setHorizontalSize(String)
+         * @see SideDialog#setWidth(String)
          */
-        SideDialogBuilder withHorizontalSize(@Nullable String size);
+        SideDialogBuilder withWidth(@Nullable String value);
 
         /**
          * @return horizontal max size of the dialog or {@code null} if not set
-         * @see SideDialog#getHorizontalMaxSize()
+         * @see SideDialog#getMaxWidth()
          */
         @Nullable
-        String getHorizontalMaxSize();
+        String getMaxWidth();
 
         /**
          * Sets the horizontal max size of the dialog.
          *
-         * @param maxSize the maximum width of the dialog
+         * @param value the maximum width of the dialog
          * @return builder
-         * @see SideDialog#setHorizontalMaxSize(String)
+         * @see SideDialog#setMaxWidth(String)
          */
-        SideDialogBuilder withHorizontalMaxSize(@Nullable String maxSize);
+        SideDialogBuilder withMaxWidth(@Nullable String value);
 
         /**
          * @return horizontal min size of the dialog or {@code null} if not set
-         * @see SideDialog#getHorizontalMinSize()
+         * @see SideDialog#getMinWidth()
          */
         @Nullable
-        String getHorizontalMinSize();
+        String getMinWidth();
 
         /**
          * Sets the horizontal min size of the dialog.
          *
-         * @param minSize the minimum width of the dialog
+         * @param value the minimum width of the dialog
          * @return builder
-         * @see SideDialog#setHorizontalMinSize(String)
+         * @see SideDialog#setMinWidth(String)
          */
-        SideDialogBuilder withHorizontalMinSize(@Nullable String minSize);
+        SideDialogBuilder withMinWidth(@Nullable String value);
 
         /**
          * @return vertical size of the dialog or {@code null} if not set
-         * @see SideDialog#getVerticalSize()
+         * @see SideDialog#getHeight()
          */
         @Nullable
-        String getVerticalSize();
+        String getHeight();
 
         /**
          * Sets the vertical size of the dialog.
          *
-         * @param size the height of the dialog
+         * @param value the height of the dialog
          * @return builder
-         * @see SideDialog#setVerticalSize(String)
+         * @see SideDialog#setHeight(String)
          */
-        SideDialogBuilder withVerticalSize(@Nullable String size);
+        SideDialogBuilder withHeight(@Nullable String value);
 
         /**
          * @return vertical max size of the dialog or {@code null} if not set
-         * @see SideDialog#getVerticalMaxSize()
+         * @see SideDialog#getMaxHeight()
          */
         @Nullable
-        String getVerticalMaxSize();
+        String getMaxHeight();
 
         /**
          * Sets the vertical max size of the dialog.
          *
-         * @param maxSize the maximum height of the dialog
+         * @param value the maximum height of the dialog
          * @return builder
-         * @see SideDialog#setVerticalMaxSize(String)
+         * @see SideDialog#setMaxHeight(String)
          */
-        SideDialogBuilder withVerticalMaxSize(@Nullable String maxSize);
+        SideDialogBuilder withMaxHeight(@Nullable String value);
 
         /**
          * @return vertical min size of the dialog or {@code null} if not set
-         * @see SideDialog#getVerticalMinSize()
+         * @see SideDialog#getMinHeight()
          */
         @Nullable
-        String getVerticalMinSize();
+        String getMinHeight();
 
         /**
          * Sets the vertical min size of the dialog.
          *
-         * @param minSize the minimum height of the dialog
+         * @param value the minimum height of the dialog
          * @return builder
-         * @see SideDialog#setVerticalMinSize(String)
+         * @see SideDialog#setMinHeight(String)
          */
-        SideDialogBuilder withVerticalMinSize(@Nullable String minSize);
+        SideDialogBuilder withMinHeight(@Nullable String value);
 
         /**
          * @return {@code true} if the dialog is fullscreen on small devices, {@code false} otherwise

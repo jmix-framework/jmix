@@ -33,8 +33,8 @@ public record DownloadContext(DownloadDataProvider dataProvider, String fileName
      * Returns the maximum time in seconds during which the file will be considered relevant.
      * Makes sense for using the built-in PDF viewer in the Chrome browser.
      *
-     * @param cacheMaxAgeSec the maximum time in seconds during which the file will be considered relevant
-     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#response_directives">Cache-Control HTTP | MDN</a>
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#response_directives">
+     *     Cache-Control HTTP | MDN</a>
      */
     @Override
     public int cacheMaxAgeSec() {

@@ -104,6 +104,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
     protected CellStyle integerFormatCellStyle;
     protected CellStyle doubleFormatCellStyle;
     protected CellStyle decimalFormatCellStyle;
+    protected CellStyle quotePrefixedCellStyle;
 
     protected ExcelAutoColumnSizer[] sizers;
 
@@ -559,6 +560,16 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         decimalFormatCellStyle = wb.createCellStyle();
         String decimalFormat = getMessage("excelExporter.decimalFormat");
         decimalFormatCellStyle.setDataFormat(decimalDataFormat.getFormat(decimalFormat));
+
+        // to prevent code injection, e.g. '=cmd'
+        quotePrefixedCellStyle = createQuotePrefixedCellStyle();
+    }
+
+    protected CellStyle createQuotePrefixedCellStyle() {
+        CellStyle cellStyle = wb.createCellStyle();
+        cellStyle.setQuotePrefixed(true);
+
+        return cellStyle;
     }
 
     protected short getBuiltinFormat(String format) {
@@ -767,13 +778,23 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             String str = sizersIndex == 0 ? createSpaceString(level) + strValue : strValue;
             str = str + childCountValue;
             cell.setCellValue(createStringCellValue(str));
+
+            if (needsQuotePrefixedStyle(str)) {
+                cell.setCellStyle(quotePrefixedCellStyle);
+            }
+
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
         }
     }
 
-    private RichTextString createStringCellValue(String str) {
+    protected boolean needsQuotePrefixedStyle(String value) {
+        String pattern = gridExportProperties.getExcel().getQuotePrefixedPattern();
+        return !Strings.isNullOrEmpty(pattern) && value.matches(pattern);
+    }
+
+    protected RichTextString createStringCellValue(String str) {
         return new XSSFRichTextString(str);
     }
 

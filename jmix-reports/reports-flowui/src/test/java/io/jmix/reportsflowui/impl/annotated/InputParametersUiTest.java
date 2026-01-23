@@ -17,13 +17,13 @@
 package io.jmix.reportsflowui.impl.annotated;
 
 import io.jmix.core.MetadataTools;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.testassist.notification.NotificationInfo;
-import io.jmix.reportsflowui.test_support.OpenedDialogViewsTracker;
 import io.jmix.reportsflowui.test_support.report.PublishersAndGamesReport;
 import io.jmix.reportsflowui.test_support.report.SampleDefaultValueReport;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class InputParametersUiTest extends BaseRunReportUiTest {
 
     @Autowired
-    OpenedDialogViewsTracker openedDialogViewsTracker;
+    DialogWindows dialogWindows;
 
     @Autowired
     MetadataTools metadataTools;
@@ -48,7 +48,8 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
         // when
         launchReportFromRunView(reportCode);
 
-        InputParametersDialog parametersDialog = (InputParametersDialog) openedDialogViewsTracker.getLastOpenedView();
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
         assertThat(parametersDialog).isNotNull();
         assertThat(parametersDialog.getPageTitle()).isEqualTo("Input parameters");
 
@@ -73,7 +74,8 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
 
         // when
         launchReportFromRunView(reportCode);
-        InputParametersDialog parametersDialog = (InputParametersDialog) openedDialogViewsTracker.getLastOpenedView();
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
 
         TypedDatePicker startDateField = findParameterField(parametersDialog, "param_startDate");
         startDateField.setValue(parseDate(startDateStr));
@@ -100,7 +102,8 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
 
         // when
         launchReportFromRunView(reportCode);
-        InputParametersDialog parametersDialog = (InputParametersDialog) openedDialogViewsTracker.getLastOpenedView();
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
 
         TypedDatePicker startDateField = findParameterField(parametersDialog, "param_startDate");
         startDateField.setValue(parseDate(startDateStr));
@@ -125,7 +128,8 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
 
         // when
         launchReportFromRunView(reportCode);
-        InputParametersDialog parametersDialog = (InputParametersDialog) openedDialogViewsTracker.getLastOpenedView();
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
 
         // then
         EntityPicker field = findParameterField(parametersDialog, "param_" + parameterAlias);

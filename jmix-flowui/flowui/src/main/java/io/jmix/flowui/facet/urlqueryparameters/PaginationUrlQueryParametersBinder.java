@@ -75,11 +75,13 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
     }
 
     protected void onAfterRefresh(PaginationComponent.AfterRefreshEvent<?> event) {
-        getPaginationLoader().ifPresent(paginationLoader -> {
-            QueryParameters queryParameters = QueryParameters.simple(serializeQueryParameters(paginationLoader));
+        if (((Component) pagination).isAttached()) {
+            getPaginationLoader().ifPresent(paginationLoader -> {
+                QueryParameters queryParameters = QueryParameters.simple(serializeQueryParameters(paginationLoader));
 
-            fireQueryParametersChanged(new UrlQueryParametersChangeEvent(this, queryParameters));
-        });
+                fireQueryParametersChanged(new UrlQueryParametersChangeEvent(this, queryParameters));
+            });
+        }
     }
 
     /**

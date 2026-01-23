@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.sidepanellayout;
+package io.jmix.flowui.component.sidepanellayout;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayout;
 
 /**
  * The event is fired after the side panel fully opened and animation is finished.
@@ -26,9 +27,9 @@ import com.vaadin.flow.component.DomEvent;
  * focusing an element inside the side panel.
  */
 @DomEvent("jmix-side-panel-layout-after-open-event")
-public class SidePanelAfterOpenEvent extends ComponentEvent<JmixSidePanelLayout> {
+public class SidePanelAfterOpenEvent extends ComponentEvent<SidePanelLayout> {
 
-    public SidePanelAfterOpenEvent(JmixSidePanelLayout source, boolean fromClient) {
+    public SidePanelAfterOpenEvent(SidePanelLayout source, boolean fromClient) {
         super(source, fromClient);
     }
 }

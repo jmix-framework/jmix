@@ -22,7 +22,6 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementUtil;
 import com.vaadin.flow.dom.PropertyChangeEvent;
-import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.Nullable;
 
 @Tag("jmix-side-panel-layout")
@@ -189,7 +188,8 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Sets whether the side panel should be displayed as an overlay on small screens.
+     * Sets whether the side panel should be displayed as an overlay on small screens. When enabled, the overlay
+     * appears in fullscreen mode.
      * <p>
      * The default value is {@code true}.
      *
@@ -367,48 +367,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Adds a listener to handle modality curtain clicks.
-     *
-     * @param listener listener to add
-     * @return a registration for removing the listener
-     */
-    public Registration addModalityCurtainClickListener(ComponentEventListener<ModalityCurtainClickEvent> listener) {
-        return addListener(ModalityCurtainClickEvent.class, listener);
-    }
-
-    /**
-     * Adds a listener to handle side panel open events.
-     *
-     * @param listener listener to add
-     * @return a registration for removing the listener
-     */
-    public Registration addSidePanelBeforeOpenListener(ComponentEventListener<SidePanelBeforeOpenEvent> listener) {
-        return addListener(SidePanelBeforeOpenEvent.class, listener);
-    }
-
-    /**
-     * Adds a listener to handle the side panel after open events.
-     * @param listener listener to add
-     * @return a registration for removing the listener
-     */
-    public Registration addSidePanelAfterOpenListener(ComponentEventListener<SidePanelAfterOpenEvent> listener) {
-        return addListener(SidePanelAfterOpenEvent.class, listener);
-    }
-
-    /**
-     * Adds a listener to handle side panel close events.
-     *
-     * @param listener listener to add
-     * @return a registration for removing the listener
-     */
-    public Registration addSidePanelCloseListener(ComponentEventListener<SidePanelCloseEvent> listener) {
-        return addListener(SidePanelCloseEvent.class, listener);
-    }
-
-    /**
      * Opens the side panel.
-     *
-     * @see SidePanelBeforeOpenEvent
      */
     public void openSidePanel() {
         if (!isSidePanelOpened()) {
@@ -418,8 +377,6 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
 
     /**
      * Closes the side panel.
-     *
-     * @see SidePanelCloseEvent
      */
     public void closeSidePanel() {
         if (isSidePanelOpened()) {
@@ -444,10 +401,18 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
         updateContentInert(opened && isModal());
 
         if (opened) {
-            fireEvent(new SidePanelBeforeOpenEvent(this, fromClient));
+            fireSidePanelBeforeOpenEvent(fromClient);
         } else {
-            fireEvent(new SidePanelCloseEvent(this, fromClient));
+            fireSidePanelCloseEvent( fromClient);
         }
+    }
+
+    protected void fireSidePanelBeforeOpenEvent(boolean fromClient) {
+        // To be used in subclasses
+    }
+
+    protected void fireSidePanelCloseEvent(boolean fromClient) {
+        // To be used in subclasses
     }
 
     protected void addComponent(Component... components) {

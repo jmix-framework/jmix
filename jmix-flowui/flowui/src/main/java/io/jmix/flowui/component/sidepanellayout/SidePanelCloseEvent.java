@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.sidepanellayout;
+package io.jmix.flowui.component.sidepanellayout;
 
 import com.vaadin.flow.component.ComponentEvent;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayout;
 
 /**
  * Event fired when the side panel is closed.
  */
-public class SidePanelCloseEvent extends ComponentEvent<JmixSidePanelLayout> {
+public class SidePanelCloseEvent extends ComponentEvent<SidePanelLayout> {
 
-    public SidePanelCloseEvent(JmixSidePanelLayout source, boolean fromClient) {
+    public SidePanelCloseEvent(SidePanelLayout source, boolean fromClient) {
         super(source, fromClient);
     }
 }

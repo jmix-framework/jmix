@@ -17,11 +17,13 @@
 package io.jmix.flowui.component.sidepanellayout;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.HasSubParts;
-import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayout;
+import io.jmix.flowui.kit.component.sidepanellayout.*;
 import jakarta.annotation.Nullable;
 
 import java.util.*;
@@ -71,6 +73,55 @@ public class SidePanelLayout extends JmixSidePanelLayout implements ComponentCon
             }
         }
         return null;
+    }
+
+    /**
+     * Adds a listener to handle modality curtain clicks.
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addModalityCurtainClickListener(ComponentEventListener<ModalityCurtainClickEvent> listener) {
+        return addListener(ModalityCurtainClickEvent.class, listener);
+    }
+
+    /**
+     * Adds a listener to handle side panel open events.
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addSidePanelBeforeOpenListener(ComponentEventListener<SidePanelBeforeOpenEvent> listener) {
+        return addListener(SidePanelBeforeOpenEvent.class, listener);
+    }
+
+    /**
+     * Adds a listener to handle the side panel after open events.
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addSidePanelAfterOpenListener(ComponentEventListener<SidePanelAfterOpenEvent> listener) {
+        return addListener(SidePanelAfterOpenEvent.class, listener);
+    }
+
+    /**
+     * Adds a listener to handle side panel close events.
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addSidePanelCloseListener(ComponentEventListener<SidePanelCloseEvent> listener) {
+        return addListener(SidePanelCloseEvent.class, listener);
+    }
+
+    @Override
+    protected void fireSidePanelBeforeOpenEvent(boolean fromClient) {
+        fireEvent(new SidePanelBeforeOpenEvent(this, fromClient));
+    }
+
+    @Override
+    protected void fireSidePanelCloseEvent(boolean fromClient) {
+        fireEvent(new SidePanelCloseEvent(this, fromClient));
     }
 
     protected Optional<Component> findComponent(Component component, String id) {

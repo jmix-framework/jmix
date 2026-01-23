@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.sidepanellayout;
+package io.jmix.flowui.component.sidepanellayout;
 
 import com.vaadin.flow.component.ComponentEvent;
 
 /**
- * Event fired before opening the side panel. Side panel is not displayed and animation is not started.
+ * Event fired before opening the side panel. The side panel is not displayed and animation is not started yet.
  * <p>
  * Use this event when you need to add/remove components to the side panel before it is opened.
  * <p>
@@ -28,9 +28,9 @@ import com.vaadin.flow.component.ComponentEvent;
  *
  * @see SidePanelAfterOpenEvent
  */
-public class SidePanelBeforeOpenEvent extends ComponentEvent<JmixSidePanelLayout> {
+public class SidePanelBeforeOpenEvent extends ComponentEvent<SidePanelLayout> {
 
-    public SidePanelBeforeOpenEvent(JmixSidePanelLayout source, boolean fromClient) {
+    public SidePanelBeforeOpenEvent(SidePanelLayout source, boolean fromClient) {
         super(source, fromClient);
     }
 }

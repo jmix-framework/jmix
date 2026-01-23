@@ -143,10 +143,20 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
         }
     }
 
-      _sidePanelModeChanged(sidePanelMode) {
-          this._updateContentSize();
-      }
+    /**
+     * Observer for {@code sidePanelMode} property.
+     *
+     * @private
+     */
+    _sidePanelModeChanged(sidePanelMode) {
+        this._updateContentSize();
+    }
 
+    /**
+     * Observer for {@code sidePanelOpened} property.
+     *
+     * @private
+     */
     _sidePanelOpenedChanged(opened, oldOpened) {
         this._updateModalityCurtainHidden();
         this._updateContentSize();
@@ -156,7 +166,12 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
         }
     }
 
-    _modalChanged(mask, oldMask) {
+    /**
+     * Observer for {@code modal} property.
+     *
+     * @private
+     */
+    _modalChanged() {
         this._updateModalityCurtainHidden();
     }
 

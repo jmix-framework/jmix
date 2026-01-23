@@ -64,8 +64,8 @@ public interface UnconstrainedDataManager {
 
     /**
      * Saves entity instances to their data stores.
-     * <p><b>Note:</b> Each object is reloaded separately with its own fetch plan.
-     * If there are no explicit fetch plans for the entity, the plan based on the current state of the entity will be used.</p>
+     * <p>Each object is reloaded separately with its own fetch plan.
+     * If the fetch plan is not specified in {@link SaveContext}, it's created using the current state of the entity.</p>
      *
      * @param context {@link SaveContext} object, containing entities and other information
      * @return set of saved instances
@@ -77,7 +77,7 @@ public interface UnconstrainedDataManager {
 
     /**
      * Saves entities to their data stores and reloads them to return the saved instances.
-     * <p><b>Note:</b> Each object is reloaded separately with its own fetch plan that is based on the current state of the entity.</p>
+     * <p>Each object is reloaded separately with its own fetch plan that is based on the current state of the entity.</p>
      *
      * @param entities entities to save
      * @return set of saved instances
@@ -96,7 +96,7 @@ public interface UnconstrainedDataManager {
 
     /**
      * Saves a collection of entities to their data stores and reloads them to return the saved instances.
-     * <p><b>Note:</b> Each object is reloaded separately with its own fetch plan that is based on the current state of the entity.</p>
+     * <p>Each object is reloaded separately with its own fetch plan that is based on the current state of the entity.</p>
      *
      * @param entities entities to save
      * @return set of saved instances

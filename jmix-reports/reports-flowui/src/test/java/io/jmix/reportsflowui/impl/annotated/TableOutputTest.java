@@ -17,11 +17,11 @@
 package io.jmix.reportsflowui.impl.annotated;
 
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.reportsflowui.test_support.OpenedDialogViewsTracker;
 import io.jmix.reportsflowui.test_support.report.PublishersAndGamesReport;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.run.ReportTableView;
@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TableOutputTest extends BaseRunReportUiTest {
 
     @Autowired
-    OpenedDialogViewsTracker openedDialogViewsTracker;
+    DialogWindows dialogWindows;
 
     @Test
     public void testTableOutput() {
@@ -44,7 +44,8 @@ public class TableOutputTest extends BaseRunReportUiTest {
 
         // when
         launchReportFromRunView(reportCode);
-        InputParametersDialog parametersDialog = (InputParametersDialog) openedDialogViewsTracker.getLastOpenedView();
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
 
         TypedDatePicker startDateField = findParameterField(parametersDialog, "param_startDate");
         startDateField.setValue(parseDate(startDateStr));
@@ -55,7 +56,8 @@ public class TableOutputTest extends BaseRunReportUiTest {
         runButton.click();
 
         // then
-        ReportTableView tableOutputDialog = (ReportTableView) openedDialogViewsTracker.getLastOpenedView();
+        ReportTableView tableOutputDialog = (ReportTableView) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
 
         // band #1
         DataGrid<KeyValueEntity> publishersGrid = findComponent(tableOutputDialog, "PublishersTable");

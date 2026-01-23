@@ -17,12 +17,6 @@
 package io.jmix.chartsflowui.kit.component.serialization;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
 import io.jmix.chartsflowui.kit.component.model.*;
 import io.jmix.chartsflowui.kit.component.model.axis.AxisLine;
 import io.jmix.chartsflowui.kit.component.model.axis.Radar;
@@ -43,6 +37,12 @@ import io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.std.SimpleFilterProvider;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,8 +52,7 @@ public class JmixChartSerializer {
 
     private static final Logger log = LoggerFactory.getLogger(JmixChartSerializer.class);
 
-    protected ObjectMapper objectMapper = new ObjectMapper();
-    protected JreJsonFactory jsonFactory = new JreJsonFactory();
+    protected ObjectMapper objectMapper;
 
     public JmixChartSerializer() {
         initSerializer();
@@ -67,12 +66,15 @@ public class JmixChartSerializer {
         SimpleModule module = createModule();
         getSerializers().forEach(module::addSerializer);
 
-        objectMapper.registerModule(module);
-        objectMapper.setFilterProvider(createFilterProvider());
+        JsonMapper.Builder builder = JsonMapper.builder()
+                .changeDefaultPropertyInclusion(incl ->
+                        incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .addModule(module)
+                .filterProvider(createFilterProvider());
 
-        initMapperMixIns();
+        initMapperMixIns(builder);
 
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper = builder.build();
     }
 
     protected SimpleModule createModule() {
@@ -100,70 +102,70 @@ public class JmixChartSerializer {
         ).collect(Collectors.toList());
     }
 
-    protected void initMapperMixIns() {
-        objectMapper.addMixIn(ChartOptions.class, JmixChartMixins.ChartOptions.class);
-        objectMapper.addMixIn(Title.class, JmixChartMixins.Title.class);
-        objectMapper.addMixIn(AbstractRichText.class, JmixChartMixins.AbstractRichText.class);
-        objectMapper.addMixIn(AbstractLegend.class, JmixChartMixins.AbstractLegend.class);
-        objectMapper.addMixIn(Brush.class, JmixChartMixins.Brush.class);
-        objectMapper.addMixIn(Grid.class, JmixChartMixins.Grid.class);
-        objectMapper.addMixIn(AxisLine.class, JmixChartMixins.AbstractAxis.AxisLine.class);
-        objectMapper.addMixIn(AreaStyle.class, JmixChartMixins.AreaStyle.class);
-        objectMapper.addMixIn(Radar.class, JmixChartMixins.Radar.class);
-        objectMapper.addMixIn(AbstractDataZoom.class, JmixChartMixins.AbstractDataZoom.class);
-        objectMapper.addMixIn(AbstractVisualMap.class, JmixChartMixins.AbstractVisualMap.class);
-        objectMapper.addMixIn(AbstractBorderedTextStyle.class, JmixChartMixins.AbstractBorderedTextStyle.class);
-        objectMapper.addMixIn(Toolbox.class, JmixChartMixins.Toolbox.class);
-        objectMapper.addMixIn(MagicTypeFeature.class, JmixChartMixins.MagicTypeFeature.class);
-        objectMapper.addMixIn(BrushFeature.class, JmixChartMixins.BrushFeature.class);
-        objectMapper.addMixIn(Emphasis.IconStyle.class, JmixChartMixins.ToolboxEmphasisIconStyle.class);
-        objectMapper.addMixIn(LineSeries.LabelLine.class, JmixChartMixins.LabelLine.class);
-        objectMapper.addMixIn(ScatterSeries.LabelLine.class, JmixChartMixins.LabelLine.class);
-        objectMapper.addMixIn(EffectScatterSeries.LabelLine.class, JmixChartMixins.LabelLine.class);
-        objectMapper.addMixIn(MarkPoint.Point.class, JmixChartMixins.MarkPoint.Point.class);
-        objectMapper.addMixIn(MarkLine.Point.class, JmixChartMixins.MarkLine.Point.class);
-        objectMapper.addMixIn(MarkArea.PointPair.class, JmixChartMixins.MarkArea.PointPair.class);
-        objectMapper.addMixIn(MarkArea.Point.class, JmixChartMixins.MarkArea.Point.class);
-        objectMapper.addMixIn(LineSeries.class, JmixChartMixins.Series.class);
-        objectMapper.addMixIn(BarSeries.class, JmixChartMixins.Series.class);
-        objectMapper.addMixIn(ScatterSeries.class, JmixChartMixins.Series.class);
-        objectMapper.addMixIn(EffectScatterSeries.class, JmixChartMixins.Series.class);
-        objectMapper.addMixIn(BoxplotSeries.class, JmixChartMixins.Series.class);
-        objectMapper.addMixIn(CandlestickSeries.class, JmixChartMixins.Series.class);
-        objectMapper.addMixIn(CandlestickSeries.ItemStyle.class, JmixChartMixins.CandlestickSeries.ItemStyle.class);
-        objectMapper.addMixIn(FunnelSeries.class, JmixChartMixins.FunnelSeries.class);
+    protected void initMapperMixIns(JsonMapper.Builder builder) {
+        builder.addMixIn(ChartOptions.class, JmixChartMixins.ChartOptions.class);
+        builder.addMixIn(Title.class, JmixChartMixins.Title.class);
+        builder.addMixIn(AbstractRichText.class, JmixChartMixins.AbstractRichText.class);
+        builder.addMixIn(AbstractLegend.class, JmixChartMixins.AbstractLegend.class);
+        builder.addMixIn(Brush.class, JmixChartMixins.Brush.class);
+        builder.addMixIn(Grid.class, JmixChartMixins.Grid.class);
+        builder.addMixIn(AxisLine.class, JmixChartMixins.AbstractAxis.AxisLine.class);
+        builder.addMixIn(AreaStyle.class, JmixChartMixins.AreaStyle.class);
+        builder.addMixIn(Radar.class, JmixChartMixins.Radar.class);
+        builder.addMixIn(AbstractDataZoom.class, JmixChartMixins.AbstractDataZoom.class);
+        builder.addMixIn(AbstractVisualMap.class, JmixChartMixins.AbstractVisualMap.class);
+        builder.addMixIn(AbstractBorderedTextStyle.class, JmixChartMixins.AbstractBorderedTextStyle.class);
+        builder.addMixIn(Toolbox.class, JmixChartMixins.Toolbox.class);
+        builder.addMixIn(MagicTypeFeature.class, JmixChartMixins.MagicTypeFeature.class);
+        builder.addMixIn(BrushFeature.class, JmixChartMixins.BrushFeature.class);
+        builder.addMixIn(Emphasis.IconStyle.class, JmixChartMixins.ToolboxEmphasisIconStyle.class);
+        builder.addMixIn(LineSeries.LabelLine.class, JmixChartMixins.LabelLine.class);
+        builder.addMixIn(ScatterSeries.LabelLine.class, JmixChartMixins.LabelLine.class);
+        builder.addMixIn(EffectScatterSeries.LabelLine.class, JmixChartMixins.LabelLine.class);
+        builder.addMixIn(MarkPoint.Point.class, JmixChartMixins.MarkPoint.Point.class);
+        builder.addMixIn(MarkLine.Point.class, JmixChartMixins.MarkLine.Point.class);
+        builder.addMixIn(MarkArea.PointPair.class, JmixChartMixins.MarkArea.PointPair.class);
+        builder.addMixIn(MarkArea.Point.class, JmixChartMixins.MarkArea.Point.class);
+        builder.addMixIn(LineSeries.class, JmixChartMixins.Series.class);
+        builder.addMixIn(BarSeries.class, JmixChartMixins.Series.class);
+        builder.addMixIn(ScatterSeries.class, JmixChartMixins.Series.class);
+        builder.addMixIn(EffectScatterSeries.class, JmixChartMixins.Series.class);
+        builder.addMixIn(BoxplotSeries.class, JmixChartMixins.Series.class);
+        builder.addMixIn(CandlestickSeries.class, JmixChartMixins.Series.class);
+        builder.addMixIn(CandlestickSeries.ItemStyle.class, JmixChartMixins.CandlestickSeries.ItemStyle.class);
+        builder.addMixIn(FunnelSeries.class, JmixChartMixins.FunnelSeries.class);
     }
 
     protected SimpleFilterProvider createFilterProvider() {
         return new SimpleFilterProvider();
     }
 
-    public JsonValue parseRawJson(String rawJson) {
-        return jsonFactory.parse(rawJson);
+    public JsonNode parseRawJson(String rawJson) {
+        return objectMapper.readTree(rawJson);
     }
 
-    public JsonValue serialize(ChartOptions options) {
-        JsonValue serializedValue = serialize(options, ChartOptions.class);
+    public JsonNode serialize(ChartOptions options) {
+        JsonNode serializedValue = serialize(options, ChartOptions.class);
         options.unmarkDirtyInDepth();
         return serializedValue;
     }
 
-    public JsonValue serializeDataSet(DataSet dataSet) {
+    public JsonNode serializeDataSet(DataSet dataSet) {
         return serialize(dataSet, DataSet.class);
     }
 
-    public JsonValue serializeChangedItems(ChartIncrementalChanges<? extends DataItem> changedItems) {
+    public JsonNode serializeChangedItems(ChartIncrementalChanges<? extends DataItem> changedItems) {
         return serialize(changedItems, ChartIncrementalChanges.class);
     }
 
-    protected JsonValue serialize(Object object, Class<?> objectClass) {
+    protected JsonNode serialize(Object object, Class<?> objectClass) {
         String rawJson;
 
         log.debug("Starting serialize {}", objectClass.getSimpleName());
 
         try {
             rawJson = objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException(String.format("Cannot serialize %s", objectClass.getSimpleName()), e);
         }
 

@@ -24,9 +24,6 @@ import com.vaadin.flow.data.provider.KeyMapper;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
 import io.jmix.chartsflowui.kit.component.event.*;
 import io.jmix.chartsflowui.kit.component.model.*;
 import io.jmix.chartsflowui.kit.component.model.axis.*;
@@ -49,6 +46,9 @@ import io.jmix.chartsflowui.kit.component.serialization.JmixChartSerializer;
 import io.jmix.chartsflowui.kit.data.chart.ChartItems;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
 import jakarta.annotation.Nullable;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.*;
 
@@ -118,10 +118,10 @@ public class JmixChart extends Component implements HasSize {
     }
 
     /**
-     * @return additional JSON options as a {@link JsonValue}
+     * @return additional JSON options as a {@link JsonNode}
      */
     @Nullable
-    public JsonValue getNativeJson() {
+    public JsonNode getNativeJson() {
         return options.getNativeJson();
     }
 
@@ -902,16 +902,16 @@ public class JmixChart extends Component implements HasSize {
     }
 
     protected void performUpdateChartOptions(ExecutionContext context) {
-        JsonObject resultJson = new JreJsonFactory().createObject();
+        ObjectNode resultJson = new ObjectMapper().createObjectNode();
 
         if (options.isDirtyInDepth()) {
-            JsonValue optionsJson = serializer.serialize(options);
-            resultJson.put("options", optionsJson);
+            JsonNode optionsJson = serializer.serialize(options);
+            resultJson.putIfAbsent("options", optionsJson);
         }
 
-        JsonValue nativeJson = getNativeJson();
+        JsonNode nativeJson = getNativeJson();
         if (nativeJson != null) {
-            resultJson.put("nativeJson", nativeJson);
+            resultJson.putIfAbsent("nativeJson", nativeJson);
         }
 
         callPendingJsFunction("_updateChart", resultJson);
@@ -920,13 +920,13 @@ public class JmixChart extends Component implements HasSize {
     }
 
     protected void performUpdateChartData(ExecutionContext context) {
-        JsonObject resultJson = new JreJsonFactory().createObject();
+        ObjectNode resultJson = new ObjectMapper().createObjectNode();
 
         // drop all keys before redraw
         dataItemKeys.removeAll();
 
-        JsonValue dataJson = serializer.serializeDataSet(options.getDataSet());
-        resultJson.put("dataset", dataJson);
+        JsonNode dataJson = serializer.serializeDataSet(options.getDataSet());
+        resultJson.putIfAbsent("dataset", dataJson);
 
         callPendingJsFunction("_updateChartDataset", resultJson);
 
@@ -935,10 +935,10 @@ public class JmixChart extends Component implements HasSize {
     }
 
     protected void performIncrementalUpdateChartDataSet(ExecutionContext context) {
-        JsonObject resultJson = new JreJsonFactory().createObject();
+        ObjectNode resultJson = new ObjectMapper().createObjectNode();
 
-        JsonValue changedItemsJson = serializer.serializeChangedItems(changedItems.get(getDataSet()));
-        resultJson.put("changedItems", changedItemsJson);
+        JsonNode changedItemsJson = serializer.serializeChangedItems(changedItems.get(getDataSet()));
+        resultJson.putIfAbsent("changedItems", changedItemsJson);
 
         for (ChartIncrementalChanges<?> changes : changedItems.values()) {
             Collection<? extends DataItem> removedItems = changes.getRemovedItems();
@@ -987,7 +987,7 @@ public class JmixChart extends Component implements HasSize {
      * @param function   JavaScript function to execute
      * @param resultJson resultJson
      */
-    protected synchronized void callPendingJsFunction(String function, JsonObject resultJson) {
+    protected synchronized void callPendingJsFunction(String function, ObjectNode resultJson) {
         if (clientReady) {
             callJsFunction(function, resultJson);
         } else {
@@ -1001,7 +1001,7 @@ public class JmixChart extends Component implements HasSize {
         }
     }
 
-    protected void callJsFunction(String function, JsonObject resultJson) {
+    protected void callJsFunction(String function, ObjectNode resultJson) {
         getElement().callJsFunction(function, resultJson);
     }
 
@@ -1176,9 +1176,9 @@ public class JmixChart extends Component implements HasSize {
     @SuppressWarnings("ClassCanBeRecord")
     protected static class PendingJsFunction {
         protected final String function;
-        protected final JsonObject resultJson;
+        protected final ObjectNode resultJson;
 
-        public PendingJsFunction(String function, JsonObject resultJson) {
+        public PendingJsFunction(String function, ObjectNode resultJson) {
             this.function = function;
             this.resultJson = resultJson;
         }
@@ -1187,7 +1187,7 @@ public class JmixChart extends Component implements HasSize {
             return function;
         }
 
-        public JsonObject getResultJson() {
+        public ObjectNode getResultJson() {
             return resultJson;
         }
     }

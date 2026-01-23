@@ -16,17 +16,17 @@
 
 package io.jmix.chartsflowui.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.DataSet;
 import io.jmix.chartsflowui.kit.component.serialization.ChartIncrementalChanges;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
-import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -41,8 +41,8 @@ public class ChartIncrementalChangesSerializer extends AbstractDataSerializer<Ch
 
     @SuppressWarnings("unchecked")
     @Override
-    public void serializeNonNullValue(ChartIncrementalChanges value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(ChartIncrementalChanges value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         gen.writeStartObject();
 
         writeItems("add", value.getAddedItems(), value.getSource(), gen, provider);
@@ -53,13 +53,13 @@ public class ChartIncrementalChangesSerializer extends AbstractDataSerializer<Ch
     }
 
     protected void writeItems(String propertyName, @Nullable Collection<? extends DataItem> items,
-                              DataSet.Source<?> source, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+                              DataSet.Source<?> source, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         if (items == null) {
             return;
         }
 
-        gen.writeArrayFieldStart(propertyName);
+        gen.writeArrayPropertyStart(propertyName);
         for (DataItem item : items) {
             serializeDataItem(item, gen, provider, source.getCategoryField(), source.getValueFields());
         }

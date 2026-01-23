@@ -16,11 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkLine;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 public class MarkLineDataSerializer extends AbstractSerializer<MarkLine.Data> {
 
@@ -29,21 +28,21 @@ public class MarkLineDataSerializer extends AbstractSerializer<MarkLine.Data> {
     }
 
     @Override
-    public void serializeNonNullValue(MarkLine.Data value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(MarkLine.Data value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         gen.writeStartArray();
 
         if (value.getSinglePointLines() != null) {
             for (MarkLine.Point point : value.getSinglePointLines()) {
-                gen.writeObject(point);
+                gen.writePOJO(point);
             }
         }
 
         if (value.getPairPointLines() != null) {
             for (MarkLine.PointPair pointPair : value.getPairPointLines()) {
                 gen.writeStartArray();
-                gen.writeObject(pointPair.getStartPoint());
-                gen.writeObject(pointPair.getEndPoint());
+                gen.writePOJO(pointPair.getStartPoint());
+                gen.writePOJO(pointPair.getEndPoint());
                 gen.writeEndArray();
             }
         }

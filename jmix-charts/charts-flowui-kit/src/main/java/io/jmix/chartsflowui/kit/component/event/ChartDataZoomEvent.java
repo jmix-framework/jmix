@@ -18,9 +18,9 @@ package io.jmix.chartsflowui.kit.component.event;
 
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartDataZoomEventDetail;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Event fired after the chart data range is zoomed .
@@ -31,7 +31,7 @@ public class ChartDataZoomEvent extends AbstractChartEvent<ChartDataZoomEventDet
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "datazoom";
 
     public ChartDataZoomEvent(JmixChart source, boolean fromClient,
-                              @EventData("event.detail") JsonObject detail) {
+                              @EventData("event.detail") ObjectNode detail) {
         super(source, fromClient, detail, ChartDataZoomEventDetail.class);
     }
 }

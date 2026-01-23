@@ -16,10 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.event;
 
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.BaseChartEventDetail;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Base chart event for mouse.
@@ -31,13 +31,11 @@ public abstract class AbstractChartMouseEvent<T extends BaseChartEventDetail> ex
     protected String value;
 
     protected AbstractChartMouseEvent(JmixChart source, boolean fromClient,
-                                      JsonObject detail, JsonValue value, Class<T> detailClass) {
+                                      ObjectNode detail, JsonNode value, Class<T> detailClass) {
         super(source, fromClient, detail, detailClass);
 
-        if (value instanceof JsonObject) {
-            this.value = value.toJson();
-        } else if (value != null) {
-            this.value = value.asString();
+        if (value != null) {
+            this.value = value.toString();
         }
     }
 

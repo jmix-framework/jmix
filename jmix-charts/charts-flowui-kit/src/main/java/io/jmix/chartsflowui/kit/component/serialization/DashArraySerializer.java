@@ -16,11 +16,11 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.shared.Decal;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 public class DashArraySerializer extends AbstractSerializer<Decal.DashArray> {
@@ -30,7 +30,8 @@ public class DashArraySerializer extends AbstractSerializer<Decal.DashArray> {
     }
 
     @Override
-    public void serializeNonNullValue(Decal.DashArray value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serializeNonNullValue(Decal.DashArray value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
 
         if (value.getNumber() != null) {
             gen.writeNumber(value.getNumber());

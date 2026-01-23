@@ -16,9 +16,6 @@
 
 package io.jmix.chartsflowui.kit.component.model;
 
-import elemental.json.JsonException;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.model.axis.*;
 import io.jmix.chartsflowui.kit.component.model.datazoom.AbstractDataZoom;
@@ -30,6 +27,9 @@ import io.jmix.chartsflowui.kit.component.model.toolbox.Toolbox;
 import io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap;
 import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,8 +53,8 @@ public class ChartOptions extends ChartObservableObject {
     protected List<AbstractVisualMap<?>> visualMap;
 
     protected final JmixChart chart;
-    protected JsonValue nativeJson;
-    protected JreJsonFactory parser = new JreJsonFactory();
+    protected JsonNode nativeJson;
+    protected ObjectMapper parser = new ObjectMapper();
 
     protected List<AbstractSeries<?>> seriesList;
     protected List<XAxis> xAxes;
@@ -91,13 +91,13 @@ public class ChartOptions extends ChartObservableObject {
     }
 
     @Nullable
-    public JsonValue getNativeJson() {
+    public JsonNode getNativeJson() {
         return nativeJson;
     }
 
     @Nullable
     protected String getNativeJsonString() {
-        return this.nativeJson == null ? null : this.nativeJson.toJson();
+        return this.nativeJson == null ? null : this.nativeJson.toString();
     }
 
     public void setNativeJson(String nativeJson) {
@@ -105,11 +105,11 @@ public class ChartOptions extends ChartObservableObject {
             return;
         }
 
-        JsonValue jsonObject = null;
+        JsonNode jsonObject = null;
         if (nativeJson != null) {
             try {
-                jsonObject = parser.parse(nativeJson);
-            } catch (JsonException e) {
+                jsonObject = parser.readTree(nativeJson);
+            } catch (JacksonException e) {
                 throw new IllegalStateException("Unable to parse JSON options");
             }
         }

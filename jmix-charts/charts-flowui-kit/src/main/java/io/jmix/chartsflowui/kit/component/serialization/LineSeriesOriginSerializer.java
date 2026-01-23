@@ -16,11 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.series.LineSeries;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 public class LineSeriesOriginSerializer extends AbstractSerializer<LineSeries.AreaStyle.Origin> {
 
@@ -29,10 +28,10 @@ public class LineSeriesOriginSerializer extends AbstractSerializer<LineSeries.Ar
     }
 
     @Override
-    public void serializeNonNullValue(LineSeries.AreaStyle.Origin value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(LineSeries.AreaStyle.Origin value, JsonGenerator gen,
+                                      SerializationContext provider) throws JacksonException {
         if (value.getValue() != null) {
-            gen.writeObject(value.getValue());
+            gen.writePOJO(value.getValue());
         } else if (value.getType() != null) {
             gen.writeString(value.getType().getId());
         }

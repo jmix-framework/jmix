@@ -18,9 +18,9 @@ package io.jmix.chartsflowui.kit.component.event;
 
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartRenderedEventDetail;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Event is fired every time a component is rendered on the client-side.
@@ -31,7 +31,7 @@ public class ChartRenderedEvent extends AbstractChartEvent<ChartRenderedEventDet
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "rendered";
 
     public ChartRenderedEvent(JmixChart source, boolean fromClient,
-                              @EventData("event.detail") JsonObject detail) {
+                              @EventData("event.detail") ObjectNode detail) {
         super(source, fromClient, detail, ChartRenderedEventDetail.class);
     }
 }

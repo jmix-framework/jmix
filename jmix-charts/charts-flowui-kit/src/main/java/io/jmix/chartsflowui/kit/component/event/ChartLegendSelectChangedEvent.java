@@ -18,9 +18,9 @@ package io.jmix.chartsflowui.kit.component.event;
 
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartLegendSelectChangedEventDetail;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Event will be fired when users toggle legend selector in legend component.
@@ -31,7 +31,7 @@ public class ChartLegendSelectChangedEvent extends AbstractChartEvent<ChartLegen
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "legendselectchanged";
 
     public ChartLegendSelectChangedEvent(JmixChart source, boolean fromClient,
-                                         @EventData("event.detail") JsonObject detail) {
+                                         @EventData("event.detail") ObjectNode detail) {
         super(source, fromClient, detail, ChartLegendSelectChangedEventDetail.class);
     }
 }

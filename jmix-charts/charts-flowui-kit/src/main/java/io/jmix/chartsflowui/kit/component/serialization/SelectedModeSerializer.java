@@ -16,11 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.shared.SelectedMode;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 public class SelectedModeSerializer extends AbstractSerializer<SelectedMode> {
 
@@ -29,8 +28,8 @@ public class SelectedModeSerializer extends AbstractSerializer<SelectedMode> {
     }
 
     @Override
-    public void serializeNonNullValue(SelectedMode value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(SelectedMode value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         if (SelectedMode.DISABLED.equals(value)) {
             gen.writeBoolean(false);
         } else {

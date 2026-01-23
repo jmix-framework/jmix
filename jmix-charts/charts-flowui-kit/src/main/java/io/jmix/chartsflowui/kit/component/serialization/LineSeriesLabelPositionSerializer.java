@@ -16,11 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.series.Label;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 public class LineSeriesLabelPositionSerializer extends AbstractSerializer<Label.Position> {
 
@@ -29,8 +28,8 @@ public class LineSeriesLabelPositionSerializer extends AbstractSerializer<Label.
     }
 
     @Override
-    public void serializeNonNullValue(Label.Position value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(Label.Position value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         if (value.getCoordinates() != null) {
             gen.writeArray(value.getCoordinates(), 0, 2);
         } else if (value.getPositionType() != null) {

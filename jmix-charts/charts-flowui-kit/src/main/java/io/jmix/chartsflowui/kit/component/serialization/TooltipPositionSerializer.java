@@ -16,11 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 public class TooltipPositionSerializer extends AbstractSerializer<AbstractTooltip.Position> {
 
@@ -29,11 +28,12 @@ public class TooltipPositionSerializer extends AbstractSerializer<AbstractToolti
     }
 
     @Override
-    public void serializeNonNullValue(AbstractTooltip.Position value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(AbstractTooltip.Position value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         if (value.getCoordinates() != null) {
             gen.writeArray(value.getCoordinates(), 0, 2);
-        } if (value.getItemTriggerPosition() != null) {
+        }
+        if (value.getItemTriggerPosition() != null) {
             gen.writeString(value.getItemTriggerPosition().getId());
         }
     }

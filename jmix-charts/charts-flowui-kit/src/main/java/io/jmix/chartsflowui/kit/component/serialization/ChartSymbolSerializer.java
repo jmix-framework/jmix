@@ -16,11 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.shared.HasSymbols;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 public class ChartSymbolSerializer extends AbstractSerializer<HasSymbols.Symbol> {
 
@@ -29,8 +28,8 @@ public class ChartSymbolSerializer extends AbstractSerializer<HasSymbols.Symbol>
     }
 
     @Override
-    public void serializeNonNullValue(HasSymbols.Symbol value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(HasSymbols.Symbol value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         if (value.getType() != null) {
             gen.writeString(value.getType().getId());
         } else if (value.getIcon() != null) {

@@ -16,8 +16,6 @@
 
 package io.jmix.chartsflowui.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.serialization.AbstractSerializer;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
 import io.jmix.core.Messages;
@@ -25,8 +23,10 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -71,8 +71,8 @@ public abstract class AbstractDataSerializer<T> extends AbstractSerializer<T> {
         this.metadataTools = metadataTools;
     }
 
-    protected void serializeDataItem(DataItem dataItem, JsonGenerator gen, SerializerProvider provider,
-                                     String categoryField, List<String> fields) throws IOException {
+    protected void serializeDataItem(DataItem dataItem, JsonGenerator gen, SerializationContext provider,
+                                     String categoryField, List<String> fields) throws JacksonException {
         gen.writeStartObject();
         writeIfNotNull(categoryField, formatValue(dataItem.getValue(categoryField)), gen, provider);
 

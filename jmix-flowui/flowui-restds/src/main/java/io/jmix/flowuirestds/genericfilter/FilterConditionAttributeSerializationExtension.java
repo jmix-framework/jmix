@@ -16,9 +16,6 @@
 
 package io.jmix.flowuirestds.genericfilter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import io.jmix.core.EntityAttributeSerializationExtension;
@@ -26,17 +23,20 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 @Component("flowui_RestDsFilterConditionAttributeSerializationExtension")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 public class FilterConditionAttributeSerializationExtension implements EntityAttributeSerializationExtension {
 
-    protected ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
-            .build()
-            .configure(SerializationFeature.INDENT_OUTPUT, true);
+    protected ObjectMapper objectMapper = JsonMapper.builder()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .build();
 
     @Override
     public boolean supports(MetaProperty property) {
@@ -52,7 +52,7 @@ public class FilterConditionAttributeSerializationExtension implements EntityAtt
             String result;
             try {
                 result = objectMapper.writeValueAsString(propertyValue);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeException("Error serializing LogicalFilterCondition to JSON", e);
             }
             return new JsonPrimitive(result);
@@ -66,7 +66,7 @@ public class FilterConditionAttributeSerializationExtension implements EntityAtt
         String json = element.getAsString();
         try {
             return objectMapper.readValue(json, LogicalFilterCondition.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException("Error deserializing LogicalFilterCondition from JSON", e);
         }
     }

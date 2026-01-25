@@ -16,7 +16,6 @@
 
 package io.jmix.oidc;
 
-import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.oidc.userinfo.JmixOidcUserService;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 /**
  * Provides Vaadin security to the project. Configures authentication using the OAuth 2.0 or OpenID Connect provider.
  */
-public class OidcVaadinWebSecurity extends VaadinWebSecurity {
+public class OidcVaadinWebSecurity {
 
     protected JmixOidcUserService jmixOidcUserService;
     protected OidcProperties oidcProperties;
@@ -50,14 +49,14 @@ public class OidcVaadinWebSecurity extends VaadinWebSecurity {
         this.clientRegistrationRepository = clientRegistrationRepository;
     }
 
-    @Override
+    /*@Override
     protected void configure(HttpSecurity http) throws Exception {
         //apply Jmix configuration
         configureJmixSpecifics(http);
 
         //apply Vaadin configuration
         super.configure(http);
-    }
+    }*/
 
     protected void configureJmixSpecifics(HttpSecurity http) throws Exception {
         JmixHttpSecurityUtils.configureAnonymous(http);
@@ -84,9 +83,9 @@ public class OidcVaadinWebSecurity extends VaadinWebSecurity {
     /**
      * Temporary workaround until https://github.com/vaadin/flow/issues/19075 is fixed
      */
-    @Override
+    /*@Override
     protected void configure(WebSecurity web) throws Exception {
         super.configure(web);
         web.ignoring().requestMatchers(PathPatternRequestMatcher.pathPattern("/VAADIN/push/**"));
-    }
+    }*/
 }

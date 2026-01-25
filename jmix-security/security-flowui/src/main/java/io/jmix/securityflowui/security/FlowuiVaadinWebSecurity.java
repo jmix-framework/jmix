@@ -22,7 +22,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.internal.RouteUtil;
 import com.vaadin.flow.server.VaadinServletContext;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
-import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.core.H2ConsoleProperties;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
@@ -51,7 +50,7 @@ import java.util.Optional;
 /**
  * Provides default Vaadin and Jmix FlowUI security to the project.
  */
-public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
+public class FlowuiVaadinWebSecurity {
 
     private static Logger log = LoggerFactory.getLogger(FlowuiVaadinWebSecurity.class);
 
@@ -96,14 +95,14 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
         vaadinDefaultRequestCache.setDelegateRequestCache(getDelegateRequestCache());
     }
 
-    @Override
+    /*@Override
     protected void configure(HttpSecurity http) throws Exception {
         //apply Jmix configuration
         configureJmixSpecifics(http);
 
         //apply Vaadin configuration
         super.configure(http);
-    }
+    }*/
 
     /**
      * Configures the {@link HttpSecurity} by adding Jmix-specific settings.
@@ -151,7 +150,7 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
         }
         Class<? extends View<?>> controllerClass =
                 viewRegistry.getViewInfo(loginViewId).getControllerClass();
-        setLoginView(http, controllerClass, getLogoutSuccessUrl());
+//        setLoginView(http, controllerClass, getLogoutSuccessUrl());
     }
 
     protected String getLogoutSuccessUrl() {
@@ -183,7 +182,7 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
         if (!loginPath.startsWith("/")) {
             loginPath = "/" + loginPath;
         }
-        loginPath = applyUrlMapping(loginPath);
+//        loginPath = applyUrlMapping(loginPath);
 
         return loginPath;
     }
@@ -191,7 +190,7 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     /**
      * Temporary workaround until https://github.com/vaadin/flow/issues/19075 is fixed
      */
-    @Override
+    /*@Override
     protected void configure(WebSecurity web) throws Exception {
         super.configure(web);
         web.ignoring().requestMatchers(PathPatternRequestMatcher.pathPattern("/VAADIN/push/**"));
@@ -199,7 +198,7 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
         if (h2ConsoleProperties != null && h2ConsoleProperties.isEnabled()) {
             web.ignoring().requestMatchers(PathPatternRequestMatcher.pathPattern(h2ConsoleProperties.getPath() + "/**"));
         }
-    }
+    }*/
 
     protected RequestCache getDelegateRequestCache() {
         HttpSessionRequestCache cache = new HttpSessionRequestCache();

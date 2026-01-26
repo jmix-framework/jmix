@@ -17,26 +17,24 @@
 package io.jmix.pivottableflowui.kit.component.serialization;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.fasterxml.jackson.databind.ser.std.DateSerializer;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
 import io.jmix.pivottableflowui.kit.component.model.AggregationMode;
 import io.jmix.pivottableflowui.kit.component.model.Order;
 import io.jmix.pivottableflowui.kit.component.model.PivotTableOptions;
 import io.jmix.pivottableflowui.kit.component.model.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.ext.javatime.ser.LocalDateSerializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.ser.std.SimpleFilterProvider;
+import tools.jackson.databind.ser.std.StdSerializer;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -51,13 +49,11 @@ public class JmixPivotTableSerializer {
     public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss.SSS";
     public static final String DEFAULT_DATE_TIME_FORMAT = DEFAULT_DATE_FORMAT + " " + DEFAULT_TIME_FORMAT;
 
-    protected final DateFormat dateFormatter = new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
     protected final DateTimeFormatter temporalDateFormatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
     protected final DateTimeFormatter temporalDateTimeFormatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
 
     protected ObjectMapper optionsObjectMapper = new ObjectMapper();
     protected ObjectMapper itemsObjectMapper = new ObjectMapper();
-    protected JreJsonFactory jsonFactory = new JreJsonFactory();
 
     public JmixPivotTableSerializer() {
         initSerializer();
@@ -76,20 +72,25 @@ public class JmixPivotTableSerializer {
         module.addDeserializer(AggregationMode.class, new EnumIdDeserializer<>(AggregationMode.class));
         module.addDeserializer(Order.class, new EnumIdDeserializer<>(Order.class));
 
-        optionsObjectMapper.registerModule(module);
-        optionsObjectMapper.setFilterProvider(createFilterProvider());
-
-        optionsObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        optionsObjectMapper = JsonMapper.builder()
+                .changeDefaultPropertyInclusion(incl ->
+                        incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .addModule(module)
+                .filterProvider(createFilterProvider())
+                .build();
     }
 
     private void initItemsMapper() {
         SimpleModule module = createModule();
         getItemsSerializers().forEach(module::addSerializer);
 
-        itemsObjectMapper.registerModule(module);
-        itemsObjectMapper.setFilterProvider(createFilterProvider());
-
-        itemsObjectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+        itemsObjectMapper = JsonMapper.builder()
+                .changeDefaultPropertyInclusion(incl ->
+                        incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .addModule(module)
+                .filterProvider(createFilterProvider())
+                .build();
     }
 
     protected SimpleModule createModule() {
@@ -102,7 +103,7 @@ public class JmixPivotTableSerializer {
                 new JsFunctionSerializer(),
                 new LocalDateSerializer(temporalDateFormatter),
                 new LocalDateTimeSerializer(temporalDateTimeFormatter),
-                new DateSerializer(false, dateFormatter)
+                new DefaultDateSerializer()
         ).collect(Collectors.toList());
     }
 
@@ -112,7 +113,7 @@ public class JmixPivotTableSerializer {
                 new JsFunctionSerializer(),
                 new LocalDateSerializer(temporalDateFormatter),
                 new LocalDateTimeSerializer(temporalDateTimeFormatter),
-                new DateSerializer(false, dateFormatter)
+                new DefaultDateSerializer()
         ).collect(Collectors.toList());
     }
 
@@ -120,20 +121,20 @@ public class JmixPivotTableSerializer {
         return new SimpleFilterProvider();
     }
 
-    public JsonValue parseRawJson(String rawJson) {
-        return jsonFactory.parse(rawJson);
+    public JsonNode parseRawJson(String rawJson, ObjectMapper objectMapper) {
+        return objectMapper.readTree(rawJson);
     }
 
-    public JsonValue serializeOptions(PivotTableOptions options) {
+    public JsonNode serializeOptions(PivotTableOptions options) {
         return serialize(options, PivotTableOptions.class, optionsObjectMapper);
     }
 
-    public JsonValue serializeItems(List<Map<String, Object>> dataItems) {
+    public JsonNode serializeItems(List<Map<String, Object>> dataItems) {
         return serialize(dataItems, dataItems.getClass(), itemsObjectMapper);
     }
 
-    public <T> Object deserialize(JsonObject jsonObject, Class<T> objectClass) {
-        return deserialize(jsonObject.toJson(), objectClass);
+    public <T> Object deserialize(ObjectNode jsonObject, Class<T> objectClass) {
+        return deserialize(jsonObject.toString(), objectClass);
     }
 
     public <T> Object deserialize(String jsonContent, Class<T> objectClass) {
@@ -143,7 +144,7 @@ public class JmixPivotTableSerializer {
 
         try {
             deserializedObject = optionsObjectMapper.readValue(jsonContent, objectClass);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException(String.format("Cannot deserialize %s to %s",
                     jsonContent, objectClass.getSimpleName()), e);
         }
@@ -151,19 +152,19 @@ public class JmixPivotTableSerializer {
         return deserializedObject;
     }
 
-    protected JsonValue serialize(Object object, Class<?> objectClass, ObjectMapper objectMapper) {
+    protected JsonNode serialize(Object object, Class<?> objectClass, ObjectMapper objectMapper) {
         String rawJson;
 
         log.debug("Starting serialize {}", objectClass.getSimpleName());
 
         try {
             rawJson = objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException(String.format("Cannot serialize %s", objectClass.getSimpleName()), e);
         }
 
         log.debug("Serialized {}: {}", objectClass.getSimpleName(), rawJson);
 
-        return parseRawJson(rawJson);
+        return parseRawJson(rawJson, objectMapper);
     }
 }

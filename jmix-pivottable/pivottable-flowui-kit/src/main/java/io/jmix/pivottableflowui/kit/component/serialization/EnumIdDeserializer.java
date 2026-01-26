@@ -16,30 +16,30 @@
 
 package io.jmix.pivottableflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import io.jmix.pivottableflowui.kit.component.model.SerializedEnum;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.deser.std.StdDeserializer;
 
-import java.io.IOException;
 import java.util.EnumSet;
 
-public class EnumIdDeserializer<E extends Enum<E>> extends JsonDeserializer<E> {
+public class EnumIdDeserializer<E extends Enum<E>> extends StdDeserializer<E> {
 
     private final Class<E> serializedEnumClass;
 
     public EnumIdDeserializer(Class<E> serializedEnumClass) {
+        super(serializedEnumClass);
         this.serializedEnumClass = serializedEnumClass;
     }
 
     @Override
     public E deserialize(JsonParser jsonParser,
-                         DeserializationContext deserializationContext) throws IOException, JacksonException {
-        JsonToken token = jsonParser.getCurrentToken();
+                         DeserializationContext deserializationContext) throws JacksonException {
+        JsonToken token = jsonParser.currentToken();
         if (token == JsonToken.VALUE_STRING) {
-            String textId = jsonParser.getText();
+            String textId = jsonParser.getString();
 
             return EnumSet.allOf(serializedEnumClass)
                     .stream()

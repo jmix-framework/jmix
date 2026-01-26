@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,27 @@
 
 package io.jmix.pivottableflowui.kit.component.serialization;
 
-import io.jmix.pivottableflowui.kit.component.model.SerializedEnum;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
-public class EnumIdSerializer extends AbstractSerializer<SerializedEnum> {
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-    public EnumIdSerializer() {
-        super(SerializedEnum.class);
+import static io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer.DEFAULT_DATE_TIME_FORMAT;
+
+public class DefaultDateSerializer extends StdSerializer<Date> {
+
+    protected final DateFormat dateFormatter = new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
+
+    protected DefaultDateSerializer() {
+        super(Date.class);
     }
 
     @Override
-    public void serializeNonNullValue(SerializedEnum value, JsonGenerator gen, SerializationContext provider)
-            throws JacksonException {
-        gen.writeString(value.getId());
+    public void serialize(Date value, JsonGenerator gen, SerializationContext provider) throws JacksonException {
+        gen.writeString(dateFormatter.format(value));
     }
 }

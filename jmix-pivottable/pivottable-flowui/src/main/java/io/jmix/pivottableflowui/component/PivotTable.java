@@ -16,10 +16,7 @@
 
 package io.jmix.pivottableflowui.component;
 
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.vaadin.flow.function.SerializableConsumer;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
@@ -36,6 +33,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
@@ -84,8 +84,8 @@ public class PivotTable<T> extends JmixPivotTable<T> implements ApplicationConte
 
     protected void requestPivotData(Consumer<PivotData> consumer) {
         getElement().executeJs("return this._getTableElementData();")
-                .then((SerializableConsumer<JsonValue>) jsonValue -> {
-                    PivotData pivotData = (PivotData) serializer.deserialize((JsonObject) jsonValue, PivotData.class);
+                .then((SerializableConsumer<JsonNode>) jsonValue -> {
+                    PivotData pivotData = (PivotData) serializer.deserialize((ObjectNode) jsonValue, PivotData.class);
                     consumer.accept(pivotData);
                 });
     }

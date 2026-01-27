@@ -30,11 +30,6 @@ class JmixSideDialogOverlay extends DialogOverlay {
     static get is() {
       return 'jmix-side-dialog-overlay';
     }
-
-    _getStylePropertyValue(property) {
-      const customPropertyValue = getComputedStyle(this).getPropertyValue(property);
-      return (customPropertyValue || '').trim().toLowerCase();
-    }
 }
 
 defineCustomElement(JmixSideDialogOverlay);

@@ -32,7 +32,7 @@ const sidePanelSidePanelLayoutCloserStyles = css`
         margin: 0 var(--lumo-space-s);
         padding: 0;
         background: transparent;
-        color: var(--lumo-secondary-text-color);
+        color: var(--lumo-secondary-text-color); /* Added in Jmix */
     }
 
     [part='icon'],
@@ -48,6 +48,7 @@ const sidePanelSidePanelLayoutCloserStyles = css`
     [part='icon']::before {
         font-family: lumo-icons;
         font-size: var(--lumo-icon-size-m);
+        /*content: var(--lumo-icons-menu);  Removed in Jmix */
     }
 
     :host([slot~='navbar']) {

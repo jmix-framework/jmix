@@ -76,8 +76,9 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * @return side panel content components
+     * @return side panel content components or {@code null} if no side panel content is set
      */
+    @Nullable
     public Component getSidePanelContent() {
         return sidePanelContent;
     }
@@ -200,12 +201,21 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
         getElement().setProperty("displayAsOverlayOnSmallDevices", displayAsOverlay);
     }
 
+    /**
+     * @return the aria-label for the overlay or {@code null} if no aria-label is set.
+     */
     @Nullable
     public String getOverlayAriaLabel() {
         return getElement().getProperty("overlayAriaLabel");
     }
 
-    public void setOverlayAriaLabel(String ariaLabel) {
+    /**
+     * Sets the aria-label for the overlay.
+     *
+     * @param ariaLabel aria-label to set
+     * @see #setDisplayAsOverlayOnSmallDevices(boolean)
+     */
+    public void setOverlayAriaLabel(@Nullable String ariaLabel) {
         getElement().setProperty("overlayAriaLabel", ariaLabel);
     }
 

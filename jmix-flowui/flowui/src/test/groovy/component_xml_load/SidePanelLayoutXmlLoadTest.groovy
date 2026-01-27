@@ -16,7 +16,7 @@
 
 package component_xml_load
 
-import component_xml_load.screen.SidePanelLayoutView
+import component_xml_load.screen.SidePanelLayoutTestView
 import io.jmix.flowui.kit.component.sidepanellayout.SidePanelMode
 import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPlacement
 import org.springframework.boot.test.context.SpringBootTest
@@ -32,7 +32,7 @@ class SidePanelLayoutXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load SidePanelLayout attributes"() {
         when: "Open the view"
-        def view = navigateToView(SidePanelLayoutView)
+        def view = navigateToView(SidePanelLayoutTestView)
 
         then: "Check all attributes"
         verifyAll(view.sidePanelLayoutAttributes) {

@@ -55,6 +55,7 @@ export const jmixSidePanelCloserLayout = css`
        top: 12px;
     }
 
+    /* Jmix */
     @media (forced-colors: active) {
 
         :host {

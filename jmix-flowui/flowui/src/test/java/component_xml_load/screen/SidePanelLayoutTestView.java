@@ -17,16 +17,14 @@
 package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.component.sidepanellayout.SidePanelLayoutCloser;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
 import io.jmix.flowui.view.*;
 
-@Route("side-panel-layout-closer-view")
-@ViewController("SidePanelLayoutCloserView")
-@ViewDescriptor("side-panel-layout-closer-view.xml")
-public class SidePanelLayoutCloserView extends StandardView {
+@Route("side-panel-layout-test-view")
+@ViewController("SidePanelLayoutTestView")
+@ViewDescriptor("side-panel-layout-test-view.xml")
+public class SidePanelLayoutTestView extends StandardView {
 
     @ViewComponent
-    public SidePanelLayoutCloser sidePanelLayoutCloser;
-    @ViewComponent
-    public SidePanelLayoutCloser innerSidePanelLayoutCloser;
+    public SidePanelLayout sidePanelLayoutAttributes;
 }

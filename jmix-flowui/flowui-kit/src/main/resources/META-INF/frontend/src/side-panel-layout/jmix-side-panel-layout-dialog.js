@@ -23,6 +23,7 @@ import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import './jmix-side-panel-layout-dialog-overlay.js';
 
 class JmixSidePanelLayoutDialog extends DialogBaseMixin(OverlayClassMixin(ThemePropertyMixin(PolymerElement))) {
+
     static get is() {
         return 'jmix-side-panel-layout-dialog';
     }

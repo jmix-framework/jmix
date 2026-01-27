@@ -17,7 +17,7 @@
 package component_xml_load
 
 import com.vaadin.flow.component.icon.FontIcon
-import component_xml_load.screen.SidePanelLayoutCloserView
+import component_xml_load.screen.SidePanelLayoutCloserTestView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
@@ -31,7 +31,7 @@ class SidePanelLayoutCloserXmlLoadTest extends FlowuiTestSpecification {
 
     def "Load SidePanelLayoutCloser attributes"() {
         when: "Open the view"
-        def view = navigateToView(SidePanelLayoutCloserView)
+        def view = navigateToView(SidePanelLayoutCloserTestView)
 
         then: "Check all attributes"
         verifyAll(view.sidePanelLayoutCloser) {
@@ -62,7 +62,7 @@ class SidePanelLayoutCloserXmlLoadTest extends FlowuiTestSpecification {
 
     def "Check setting SidePanelLayout to close without specifying ID"() {
         when: "Open the view"
-        def view = navigateToView(SidePanelLayoutCloserView)
+        def view = navigateToView(SidePanelLayoutCloserTestView)
 
         then: "Check that SidePanelLayout is set"
 

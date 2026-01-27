@@ -68,9 +68,19 @@ class JmixPlugin implements Plugin<Project> {
                 project.configurations.create('enhancing')
                 project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:4.0.6-3-jmix')
 
+                def enhanceMainTask = project.tasks.register('enhanceJmixMain') {
+                    doLast(new EnhancingAction('main'))
+                }
+                def enhanceTestTask = project.tasks.register('enhanceJmixTest') {
+                    doLast(new EnhancingAction('test'))
+                }
+
+                def mainCompileTasks = []
+                def testCompileTasks = []
+
                 if (javaPlugin) {
-                    project.tasks.findByName('compileJava').doLast(new EnhancingAction('main'))
-                    project.tasks.findByName('compileTestJava').doLast(new EnhancingAction('test'))
+                    mainCompileTasks.add(project.tasks.named('compileJava'))
+                    testCompileTasks.add(project.tasks.named('compileTestJava'))
                 }
 
                 /**
@@ -78,12 +88,47 @@ class JmixPlugin implements Plugin<Project> {
                  * So we need run EnhancingAction after compileKotlin.
                  */
                 if (kotlinPlugin) {
-                    project.tasks.findByName('compileKotlin').doLast(new EnhancingAction('main'))
-                    project.tasks.findByName('compileTestKotlin').doLast(new EnhancingAction('test'))
+                    mainCompileTasks.add(project.tasks.named('compileKotlin'))
+                    testCompileTasks.add(project.tasks.named('compileTestKotlin'))
                 }
 
-                project.tasks.findByName('classes').doLast({ EnhancingAction.copyGeneratedFiles(project, 'main') })
-                project.tasks.findByName('testClasses').doLast({ EnhancingAction.copyGeneratedFiles(project, 'test') })
+                enhanceMainTask.configure {
+                    dependsOn(mainCompileTasks)
+                    onlyIf { !mainCompileTasks.isEmpty() && mainCompileTasks.any { it.get().state.didWork } }
+                }
+                enhanceTestTask.configure {
+                    dependsOn(testCompileTasks)
+                    onlyIf { !testCompileTasks.isEmpty() && testCompileTasks.any { it.get().state.didWork } }
+                }
+
+                def copyEnhancingResourcesMainTask = project.tasks.register('copyJmixEnhancingResourcesMain') {
+                    doLast({ EnhancingAction.copyGeneratedFiles(project, 'main') })
+                }
+                def copyEnhancingResourcesTestTask = project.tasks.register('copyJmixEnhancingResourcesTest') {
+                    doLast({ EnhancingAction.copyGeneratedFiles(project, 'test') })
+                }
+
+                copyEnhancingResourcesMainTask.configure {
+                    dependsOn(enhanceMainTask)
+                    onlyIf { enhanceMainTask.get().state.didWork }
+                    if (project.tasks.findByName('processResources')) {
+                        mustRunAfter(project.tasks.named('processResources'))
+                    }
+                }
+                copyEnhancingResourcesTestTask.configure {
+                    dependsOn(enhanceTestTask)
+                    onlyIf { enhanceTestTask.get().state.didWork }
+                    if (project.tasks.findByName('processTestResources')) {
+                        mustRunAfter(project.tasks.named('processTestResources'))
+                    }
+                }
+
+                project.tasks.named('classes') {
+                    dependsOn(copyEnhancingResourcesMainTask)
+                }
+                project.tasks.named('testClasses') {
+                    dependsOn(copyEnhancingResourcesTestTask)
+                }
             }
 
             if (isJmixApp(project)) {

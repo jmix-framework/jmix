@@ -115,7 +115,8 @@ public class JsonDataLoader extends AbstractDataLoader {
             return Collections.emptyList();
         } catch (Throwable e) {
             throw new DataLoadingException(
-                    String.format("An error occurred while loading data with script [%s]", reportQuery.getScript()), e);
+                    String.format("An error occurred while loading data by path query [%s] with script: [%s]",
+                            jsonPathScript, jsonData), e);
         }
 
         return result;

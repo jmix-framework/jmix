@@ -47,17 +47,17 @@ class ${detailControllerName}<%if (useDataRepositories){%>(private val repositor
 
     @Install(target = Target.DATA_CONTEXT)
     private fun saveDelegate(saveContext: SaveContext): Set<Any> {
-        <%def compositeAttrs = ''
-          detailFetchPlan.orderedRootProperties.each {property ->
-              def propAttr = detailFetchPlan.entity.getAttribute(property.name)
-              if (propAttr != null && propAttr.hasAnnotation('Composition')) {
-                  compositeAttrs = compositeAttrs + property.name + ', '
-              }
-          }
-          if (compositeAttrs.length() > 0){
-              compositeAttrs = compositeAttrs.substring(0, compositeAttrs.length() - 2);
-              println """// ${entity.className} has the following @Composition attributes: $compositeAttrs.
-               // Make sure they have CascadeType.ALL in @OneToMany annotation."""}
-        %>return mutableSetOf(repository.save(editedEntity))
+        <%
+        def compositeAttrs = []
+        detailFetchPlan.orderedRootProperties.each { property ->
+            def propAttr = detailFetchPlan.entity.getAttribute(property.name)
+            if (propAttr != null && propAttr.hasAnnotation('Composition')) {
+                    compositeAttrs << property.name
+            }
+        }
+        if (!compositeAttrs.isEmpty()) {
+            out.println("        // ${entity.className} has the following @Composition attributes: ${compositeAttrs.join(', ')}.")
+            out.println("        // Make sure they have CascadeType.ALL in @OneToMany annotation.")
+        }%>return mutableSetOf(repository.save(editedEntity))
     }<%}%>
 }

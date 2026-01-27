@@ -22,10 +22,22 @@ import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.H2Platform;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.UUID;
 
 public class JmixH2Platform extends H2Platform implements UuidMappingInfo {
+
+    @Override
+    public void initializeConnectionData(Connection connection) throws SQLException {
+        super.initializeConnectionData(connection);
+        // Set LEGACY mode for each new connection until https://github.com/eclipse-ee4j/eclipselink/issues/1393 is fixed
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("SET MODE LEGACY");
+        }
+    }
 
     @Override
     public Object convertObject(Object sourceObject, Class javaClass) throws ConversionException {

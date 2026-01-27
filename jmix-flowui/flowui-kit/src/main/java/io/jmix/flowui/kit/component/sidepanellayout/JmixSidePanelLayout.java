@@ -22,6 +22,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementUtil;
 import com.vaadin.flow.dom.PropertyChangeEvent;
+import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
 import jakarta.annotation.Nullable;
 
 @Tag("jmix-side-panel-layout")
@@ -209,89 +210,18 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Note that this does not return the actual size of the side panel but the height which has been set using
-     * {@link #setSidePanelVerticalSize(String)} or using CSS property {@code --jmix-side-panel-vertical-size}.
-     *
-     * @return the height defined for the side panel
-     */
-    @Nullable
-    public String getSidePanelVerticalSize() {
-        return getElement().getStyle().get("--jmix-side-panel-vertical-size");
-    }
-
-    /**
-     * Sets the height of the side panel when side placement is horizontal ({@link SidePanelPlacement#TOP},
-     * {@link SidePanelPlacement#BOTTOM}).
+     * Returns the width of the side panel when horizontal placement is configured ({@link SidePanelPlacement#LEFT},
+     * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START} or
+     * {@link SidePanelPlacement#INLINE_END}).
      * <p>
-     * The height should be in a format understood by the browser, e.g. "100px" or "2.5em".
-     * <p>
-     * If the provided height value is {@code null} then height is removed from the component style.
-     *
-     * @param size height to set
-     */
-    public void setSidePanelVerticalSize(@Nullable String size) {
-        getElement().getStyle().set("--jmix-side-panel-vertical-size", size);
-    }
-
-    /**
-     * Note that this does not return the actual size of the side panel but the max-height which has been set using
-     * {@link #setSidePanelVerticalMaxSize(String)} or using CSS property {@code --jmix-side-panel-vertical-max-size}.
-     *
-     * @return the max-height defined for the side panel
-     */
-    @Nullable
-    public String getSidePanelVerticalMaxSize() {
-        return getElement().getStyle().get("--jmix-side-panel-vertical-max-size");
-    }
-
-    /**
-     * Sets the max-height of the side panel when side panel placement is horizontal ({@link SidePanelPlacement#TOP},
-     * {@link SidePanelPlacement#BOTTOM}).
-     * <p>
-     * The max-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
-     * <p>
-     * If the provided max-height value is {@code null} then max-height is removed from the component style.
-     *
-     * @param maxSize max-height to set
-     */
-    public void setSidePanelVerticalMaxSize(@Nullable String maxSize) {
-        getElement().getStyle().set("--jmix-side-panel-vertical-max-size", maxSize);
-    }
-
-    /**
-     * Note that this does not return the actual size of the side panel but the min-height which has been set using
-     * {@link #setSidePanelVerticalMinSize(String)} or using CSS property {@code --jmix-side-panel-vertical-min-size}.
-     *
-     * @return the min-height defined for the side panel
-     */
-    @Nullable
-    public String getSidePanelVerticalMinSize() {
-        return getElement().getStyle().get("--jmix-side-panel-vertical-min-size");
-    }
-
-    /**
-     * Sets the min-height of the side panel when placement is horizontal ({@link SidePanelPlacement#TOP},
-     * {@link SidePanelPlacement#BOTTOM}).
-     * <p>
-     * The min-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
-     * <p>
-     * If the provided min-height value is {@code null} then min-height is removed from the component style.
-     *
-     * @param minSize min-height to set
-     */
-    public void setSidePanelVerticalMinSize(@Nullable String minSize) {
-        getElement().getStyle().set("--jmix-side-panel-vertical-min-size", minSize);
-    }
-
-    /**
      * Note that this does not return the actual size of the side panel but the width which has been set using
-     * {@link #setSidePanelHorizontalSize(String)} or using CSS property {@code --jmix-side-panel-horizontal-size}.
+     * {@link #setSidePanelHorizontalSize(String)}.
      *
-     * @return the width defined for the side panel
+     * @return the width defined for the side panel or {@code null} if width is not set
      */
     @Nullable
     public String getSidePanelHorizontalSize() {
-        return getElement().getStyle().get("--jmix-side-panel-horizontal-size");
+        return getElement().getProperty("sidePanelHorizontalSize");
     }
 
     /**
@@ -300,23 +230,28 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      * <p>
      * The width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
-     * If the provided width value is {@code null} then width is removed from the component style.
+     * The default value is taken from the CSS property {@code --jmix-side-panel-layout-horizontal-size}. If it is not
+     * set, the default value is {@code auto}.
      *
-     * @param size width to set
+     * @param size width to set or {@code null} to remove the inline width from the style
      */
     public void setSidePanelHorizontalSize(@Nullable String size) {
-        getElement().getStyle().set("--jmix-side-panel-horizontal-size", size);
+        getElement().setProperty("sidePanelHorizontalSize", size);
     }
 
     /**
+     * Returns the max-width of the side panel when horizontal placement is configured ({@link SidePanelPlacement#LEFT},
+     * {@link SidePanelPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
+     * {@link SideDialogPlacement#INLINE_END}).
+     * <p>
      * Note that this does not return the actual size of the side panel but the max-width which has been set using
-     * {@link #setSidePanelHorizontalMaxSize(String)} or using CSS property {@code --jmix-side-panel-horizontal-max-size}.
+     * {@link #setSidePanelHorizontalMaxSize(String)}.
      *
-     * @return the max-width defined for the side panel
+     * @return the max-width defined for the side panel or {@code null} if max-width is not set
      */
     @Nullable
     public String getSidePanelHorizontalMaxSize() {
-        return getElement().getStyle().get("--jmix-side-panel-horizontal-max-size");
+        return getElement().getProperty("sidePanelHorizontalMaxSize");
     }
 
     /**
@@ -325,23 +260,28 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      * <p>
      * The max-width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
-     * If the provided width value is {@code null} then max-width is removed from the component style.
+     * The default max-width is taken from the theme variable {@code --jmix-side-panel-layout-horizontal-max-size}.
+     * If it is not set, the default value is {@code 50%}.
      *
-     * @param maxSize max-width to set
+     * @param maxSize max-width to set or {@code null} to remove the inline max-width property from the style
      */
     public void setSidePanelHorizontalMaxSize(@Nullable String maxSize) {
-        getElement().getStyle().set("--jmix-side-panel-horizontal-max-size", maxSize);
+        getElement().setProperty("sidePanelHorizontalMaxSize", maxSize);
     }
 
     /**
+     * Returns the min-width of the side panel when horizontal placement is configured ({@link SidePanelPlacement#LEFT},
+     * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START} or
+     * {@link SidePanelPlacement#INLINE_END}).
+     * <p>
      * Note that this does not return the actual size of the side panel but the min-width which has been set using
-     * {@link #setSidePanelHorizontalMinSize(String)} or using CSS property {@code --jmix-side-panel-horizontal-min-size}.
+     * {@link #setSidePanelHorizontalMinSize(String)}.
      *
-     * @return the min-width defined for the side panel
+     * @return the min-width defined for the side panel or {@code null} if the min-width is not set
      */
     @Nullable
     public String getSidePanelHorizontalMinSize() {
-        return getElement().getStyle().get("--jmix-side-panel-horizontal-min-size");
+        return getElement().getProperty("sidePanelHorizontalMinSize");
     }
 
     /**
@@ -350,12 +290,100 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      * <p>
      * The min-width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
-     * If the provided min-width value is {@code null} then min-width is removed from the component style.
+     * The default min-width is taken from the theme variable {@code --jmix-side-panel-layout-horizontal-min-size}.
+     * If it is not set, the default value is {@code 14em}.
      *
-     * @param minSize min-width to set
+     * @param minSize min-width to set or {@code null} to remove the inline min-width property from the style
      */
     public void setSidePanelHorizontalMinSize(@Nullable String minSize) {
-        getElement().getStyle().set("--jmix-side-panel-horizontal-min-size", minSize);
+        getElement().setProperty("sidePanelHorizontalMinSize", minSize);
+    }
+
+    /**
+     * Returns the height of the side panel when vertical placement is configured ({@link SidePanelPlacement#TOP},
+     * {@link SidePanelPlacement#BOTTOM}).
+     * <p>
+     * Note that this does not return the actual size of the side panel but the height which has been set using
+     * {@link #setSidePanelVerticalSize(String)}.
+     *
+     * @return the height defined for the side panel or {@code null} if the height is not set
+     */
+    @Nullable
+    public String getSidePanelVerticalSize() {
+        return getElement().getProperty("sidePanelVerticalSize");
+    }
+
+    /**
+     * Sets the height of the side panel when side placement is horizontal ({@link SidePanelPlacement#TOP},
+     * {@link SidePanelPlacement#BOTTOM}).
+     * <p>
+     * The height should be in a format understood by the browser, e.g. "100px" or "2.5em".
+     * <p>
+     * The default height is taken from the theme variable {@code --jmix-side-panel-layout-vertical-size}. If it is
+     * not set, the default value is {@code auto}.
+     *
+     * @param size height to set or {@code null} to remove the inline height property from the style
+     */
+    public void setSidePanelVerticalSize(@Nullable String size) {
+        getElement().setProperty("sidePanelVerticalSize", size);
+    }
+
+    /**
+     * Returns the max-height of the dialog when vertical placement is configured ({@link SidePanelPlacement#TOP},
+     * {@link SidePanelPlacement#BOTTOM}).
+     * <p>
+     * Note that this does not return the actual size of the side panel but the max-height which has been set using
+     * {@link #setSidePanelVerticalMaxSize(String)}.
+     *
+     * @return the max-height defined for the side panel or {@code null} if the max-height is not set
+     */
+    @Nullable
+    public String getSidePanelVerticalMaxSize() {
+        return getElement().getProperty("sidePanelVerticalMaxSize");
+    }
+
+    /**
+     * Sets the max-height of the side panel when side panel placement is horizontal ({@link SidePanelPlacement#TOP},
+     * {@link SidePanelPlacement#BOTTOM}).
+     * <p>
+     * The max-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
+     * <p>
+     * The default max-height is taken from the theme variable {@code --jmix-side-panel-layout-vertical-max-size}.
+     * If it is not set, the default value is {@code 50%}.
+     *
+     * @param maxSize max-height to set or {@code null} to remove the inline max-height property from style
+     */
+    public void setSidePanelVerticalMaxSize(@Nullable String maxSize) {
+        getElement().setProperty("sidePanelVerticalMaxSize", maxSize);
+    }
+
+    /**
+     * Returns the min-height of the dialog when vertical placement is configured ({@link SidePanelPlacement#TOP},
+     * {@link SidePanelPlacement#BOTTOM}).
+     * <p>
+     * Note that this does not return the actual size of the side panel but the min-height which has been set using
+     * {@link #setSidePanelVerticalMinSize(String)}.
+     *
+     * @return the min-height defined for the side panel or {@code null} if the min-height is not set
+     */
+    @Nullable
+    public String getSidePanelVerticalMinSize() {
+        return getElement().getProperty("sidePanelVerticalMinSize");
+    }
+
+    /**
+     * Sets the min-height of the side panel when placement is horizontal ({@link SidePanelPlacement#TOP},
+     * {@link SidePanelPlacement#BOTTOM}).
+     * <p>
+     * The min-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
+     * <p>
+     * The default min-height is taken from the theme variable {@code --jmix-side-panel-layout-vertical-min-size}.
+     * If it is not set, the default value is {@code 10em}.
+     *
+     * @param minSize min-height to set or {@code null} to remove the inline min-height property from style
+     */
+    public void setSidePanelVerticalMinSize(@Nullable String minSize) {
+        getElement().setProperty("sidePanelVerticalMinSize", minSize);
     }
 
     /**
@@ -403,7 +431,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
         if (opened) {
             fireSidePanelBeforeOpenEvent(fromClient);
         } else {
-            fireSidePanelCloseEvent( fromClient);
+            fireSidePanelCloseEvent(fromClient);
         }
     }
 

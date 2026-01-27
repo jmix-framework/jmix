@@ -422,7 +422,7 @@ public interface StudioLayouts {
             classFqn = "io.jmix.flowui.component.sidepanellayout.SidePanelLayout",
             category = "Layouts",
             xmlElement = "sidePanelLayout",
-            icon = "io/jmix/flowui/kit/meta/icon/component/drawerToggle.svg", // TODO: pinyazhin, icon
+            icon = "io/jmix/flowui/kit/meta/icon/layout/sidePanelLayout.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

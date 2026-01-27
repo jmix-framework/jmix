@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.event.dialog;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dialog.Dialog;
 import org.springframework.context.ApplicationEvent;
 
@@ -24,12 +25,12 @@ import org.springframework.context.ApplicationEvent;
  */
 public class DialogClosedEvent extends ApplicationEvent {
 
-    public DialogClosedEvent(Dialog dialog) {
+    public DialogClosedEvent(Component dialog) {
         super(dialog);
     }
 
     @Override
-    public Dialog getSource() {
-        return ((Dialog) super.getSource());
+    public Component getSource() {
+        return (Component) super.getSource();
     }
 }

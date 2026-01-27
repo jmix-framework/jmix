@@ -32,6 +32,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
                 reflectToAttribute: true,
                 value: 'right',
                 notify: true,
+                observer: '_sidePanelPlacementChanged',
                 sync: true,
             },
             sidePanelMode: {
@@ -67,6 +68,36 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
                 notify: true,
                 sync: true,
             },
+            sidePanelHorizontalSize: {
+                type: String,
+                notify: true,
+                sync: true,
+            },
+            sidePanelHorizontalMinSize: {
+                type: String,
+                notify: true,
+                sync: true,
+            },
+            sidePanelHorizontalMaxSize: {
+                type: String,
+                notify: true,
+                sync: true,
+            },
+            sidePanelVerticalSize: {
+                type: String,
+                notify: true,
+                sync: true,
+            },
+            sidePanelVerticalMinSize: {
+                type: String,
+                notify: true,
+                sync: true,
+            },
+            sidePanelVerticalMaxSize: {
+                type: String,
+                notify: true,
+                sync: true,
+            },
             _modalityCurtainHidden: {
                 type: Boolean,
                 value: true,
@@ -81,6 +112,13 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
                 observer: '_displayAsOverlayChanged',
             },
         };
+    }
+
+    static get observers() {
+        return [
+            '_updateSidePanelHorizontalSizes(sidePanelHorizontalSize, sidePanelHorizontalMinSize, sidePanelHorizontalMaxSize)',
+            '_updateSidePanelVerticalSizes(sidePanelVerticalSize, sidePanelVerticalMinSize, sidePanelVerticalMaxSize)',
+        ];
     }
 
     ready() {
@@ -175,6 +213,15 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
         this._updateModalityCurtainHidden();
     }
 
+    /**
+     * Observer for {@code sidePanelPlacement} property.
+     *
+     * @private
+     */
+    _sidePanelPlacementChanged() {
+        this._updateSidePanelSizes();
+    }
+
     _updateModalityCurtainHidden() {
         if (!this.modalityCurtain) {
             return;
@@ -196,6 +243,70 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
         } else if (!shouldBeHidden) {
             // Display curtain immediately
             this._modalityCurtainHidden = false;
+        }
+    }
+
+    _updateSidePanelSizes() {
+        this._updateSidePanelHorizontalSizes(this.sidePanelHorizontalSize, this.sidePanelHorizontalMinSize,
+                this.sidePanelHorizontalMaxSize);
+        this._updateSidePanelVerticalSizes(this.sidePanelVerticalSize, this.sidePanelVerticalMinSize,
+                this.sidePanelVerticalMaxSize);
+    }
+
+    _updateSidePanelHorizontalSizes(size, minSize, maxSize) {
+        if (this.sidePanelPlacement !== 'right'
+                && this.sidePanelPlacement !== 'left'
+                && this.sidePanelPlacement !== 'inline-start'
+                && this.sidePanelPlacement !== 'inline-end') {
+            this.$.sidePanel.style.removeProperty('width');
+            this.$.sidePanel.style.removeProperty('min-width');
+            this.$.sidePanel.style.removeProperty('max-width');
+            return;
+        }
+
+        if (size) {
+            this.$.sidePanel.style.setProperty('width', size);
+        } else {
+            this.$.sidePanel.style.removeProperty('width');
+        }
+
+        if (minSize) {
+            this.$.sidePanel.style.setProperty('min-width', minSize);
+        } else {
+            this.$.sidePanel.style.removeProperty('min-width');
+        }
+
+        if (maxSize) {
+            this.$.sidePanel.style.setProperty('max-width', maxSize);
+        } else {
+            this.$.sidePanel.style.removeProperty('max-width');
+        }
+    }
+
+    _updateSidePanelVerticalSizes(size, minSize, maxSize) {
+        if (this.sidePanelPlacement !== 'top' && this.sidePanelPlacement !== 'bottom') {
+            this.$.sidePanel.style.removeProperty('height');
+            this.$.sidePanel.style.removeProperty('min-height');
+            this.$.sidePanel.style.removeProperty('max-height');
+            return;
+        }
+
+        if (size) {
+            this.$.sidePanel.style.setProperty('height', size);
+        } else {
+            this.$.sidePanel.style.removeProperty('height');
+        }
+
+        if (minSize) {
+            this.$.sidePanel.style.setProperty('min-height', minSize);
+        } else {
+            this.$.sidePanel.style.removeProperty('min-height');
+        }
+
+        if (maxSize) {
+            this.$.sidePanel.style.setProperty('max-height', maxSize);
+        } else {
+            this.$.sidePanel.style.removeProperty('max-height');
         }
     }
 
@@ -275,7 +386,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
      * @private
      */
     _getSidePanelTransition() {
-       const transition = this._getStylePropertyValue('--jmix-side-panel-transition');
+       const transition = this._getStylePropertyValue('--_transition-duration');
        if (transition === 'none') {
            return 0;
        }

@@ -42,6 +42,8 @@ import io.jmix.flowui.backgroundtask.BackgroundTaskHandler;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.LocalizedTaskWrapper;
 import io.jmix.flowui.component.sidedialog.SideDialog;
+import io.jmix.flowui.component.sidedialog.SideDialogCloseActionEvent;
+import io.jmix.flowui.component.sidedialog.SideDialogOpenedChangeEvent;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.event.dialog.DialogClosedEvent;
 import io.jmix.flowui.event.dialog.DialogOpenedEvent;
@@ -1355,7 +1357,7 @@ public class DialogsImpl implements Dialogs {
     }
 
     /**
-     * Implementation of {@link SideDialogBuilder} that facilitates creating and managing side dialogs.
+     * Implementation of {@link SideDialogBuilder} that facilitates creating and managing {@link SideDialog}s.
      */
     public class SideDialogBuilderImpl implements SideDialogBuilder {
 
@@ -1448,88 +1450,88 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public SideDialogBuilder withOpenedChangeListener(ComponentEventListener<Dialog.OpenedChangeEvent> listener) {
+        public SideDialogBuilder withOpenedChangeListener(ComponentEventListener<SideDialogOpenedChangeEvent> listener) {
             sideDialog.addOpenedChangeListener(listener);
             return this;
         }
 
         @Override
-        public SideDialogBuilder withCloseActionListener(ComponentEventListener<Dialog.DialogCloseActionEvent> listener) {
+        public SideDialogBuilder withCloseActionListener(ComponentEventListener<SideDialogCloseActionEvent> listener) {
             sideDialog.addDialogCloseActionListener(listener);
             return this;
         }
 
         @Nullable
         @Override
-        public String getWidth() {
-            return sideDialog.getWidth();
+        public String getHorizontalSize() {
+            return sideDialog.getHorizontalSize();
         }
 
         @Override
-        public SideDialogBuilder withWidth(@Nullable String value) {
-            sideDialog.setWidth(value);
+        public SideDialogBuilder withHorizontalSize(@Nullable String value) {
+            sideDialog.setHorizontalSize(value);
             return this;
         }
 
         @Nullable
         @Override
-        public String getMaxWidth() {
-            return sideDialog.getMaxWidth();
+        public String getHorizontalMaxSize() {
+            return sideDialog.getHorizontalMaxSize();
         }
 
         @Override
-        public SideDialogBuilder withMaxWidth(@Nullable String value) {
-            sideDialog.setMaxWidth(value);
+        public SideDialogBuilder withHorizontalMaxSize(@Nullable String value) {
+            sideDialog.setHorizontalMaxSize(value);
             return this;
         }
 
         @Nullable
         @Override
-        public String getMinWidth() {
-            return sideDialog.getMinWidth();
+        public String getHorizontalMinSize() {
+            return sideDialog.getHorizontalMinSize();
         }
 
         @Nullable
 
         @Override
-        public SideDialogBuilder withMinWidth(@Nullable String value) {
-            sideDialog.setMinWidth(value);
+        public SideDialogBuilder withHorizontalMinSize(@Nullable String value) {
+            sideDialog.setHorizontalMinSize(value);
             return this;
         }
 
         @Nullable
         @Override
-        public String getHeight() {
-            return sideDialog.getHeight();
+        public String getVerticalSize() {
+            return sideDialog.getVerticalSize();
         }
 
         @Override
-        public SideDialogBuilder withHeight(@Nullable String value) {
-            sideDialog.setHeight(value);
+        public SideDialogBuilder withVerticalSize(@Nullable String value) {
+            sideDialog.setVerticalSize(value);
             return this;
         }
 
         @Nullable
         @Override
-        public String getMaxHeight() {
-            return sideDialog.getMaxHeight();
+        public String getVerticalMaxSize() {
+            return sideDialog.getVerticalMaxSize();
         }
 
         @Override
-        public SideDialogBuilder withMaxHeight(@Nullable String value) {
-            sideDialog.setMaxHeight(value);
+        public SideDialogBuilder withVerticalMaxSize(@Nullable String value) {
+            sideDialog.setVerticalMaxSize(value);
             return this;
         }
 
         @Nullable
         @Override
-        public String getMinHeight() {
-            return sideDialog.getMinHeight();
+        public String getVerticalMinSize() {
+            return sideDialog.getVerticalMinSize();
         }
 
         @Override
-        public SideDialogBuilder withMinHeight(@Nullable String value) {
-            sideDialog.setMinHeight(value);
+        public SideDialogBuilder withVerticalMinSize(@Nullable String value) {
+            sideDialog.setVerticalMinSize(value);
             return this;
         }
 
@@ -1657,13 +1659,11 @@ public class DialogsImpl implements Dialogs {
             return footerComponents;
         }
 
-        protected void fireDialogOpenedChangeEvent(Dialog.OpenedChangeEvent openedChangeEvent) {
+        protected void fireDialogOpenedChangeEvent(SideDialogOpenedChangeEvent openedChangeEvent) {
             if (openedChangeEvent.isOpened()) {
-                List<Component> header = headerComponents == null ? Collections.emptyList() : headerComponents;
-                List<Component> content = contentComponents == null ? Collections.emptyList() : contentComponents;
-                List<Component> footer = footerComponents == null ? Collections.emptyList() : footerComponents;
-
-                DialogOpenedEvent dialogOpenedEvent = new DialogOpenedEvent(sideDialog, header, content, footer);
+                DialogOpenedEvent dialogOpenedEvent =
+                        new DialogOpenedEvent(sideDialog, sideDialog.getHeader().getComponents(),
+                                sideDialog.getContentComponents(), sideDialog.getFooter().getComponents());
                 applicationContext.publishEvent(dialogOpenedEvent);
             } else {
                 applicationContext.publishEvent(new DialogClosedEvent(sideDialog));

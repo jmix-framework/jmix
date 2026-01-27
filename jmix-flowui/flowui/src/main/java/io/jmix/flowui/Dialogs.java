@@ -28,6 +28,8 @@ import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.app.inputdialog.InputParameter;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.component.sidedialog.SideDialog;
+import io.jmix.flowui.component.sidedialog.SideDialogCloseActionEvent;
+import io.jmix.flowui.component.sidedialog.SideDialogOpenedChangeEvent;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
@@ -626,7 +628,7 @@ public interface Dialogs {
          * @param listener listener for the opened change event
          * @return builder
          */
-        SideDialogBuilder withOpenedChangeListener(ComponentEventListener<Dialog.OpenedChangeEvent> listener);
+        SideDialogBuilder withOpenedChangeListener(ComponentEventListener<SideDialogOpenedChangeEvent> listener);
 
         /**
          * Sets a listener for the close action event of the dialog.
@@ -634,103 +636,103 @@ public interface Dialogs {
          * @param listener listener for the close action event
          * @return builder
          */
-        SideDialogBuilder withCloseActionListener(ComponentEventListener<Dialog.DialogCloseActionEvent> listener);
+        SideDialogBuilder withCloseActionListener(ComponentEventListener<SideDialogCloseActionEvent> listener);
 
         /**
          * @return horizontal size of the dialog or {@code null} if not set
-         * @see SideDialog#getWidth()
+         * @see SideDialog#getHorizontalSize()
          */
         @Nullable
-        String getWidth();
+        String getHorizontalSize();
 
         /**
          * Sets the horizontal size of the dialog.
          *
          * @param value the width of the dialog
          * @return builder
-         * @see SideDialog#setWidth(String)
+         * @see SideDialog#setHorizontalSize(String)
          */
-        SideDialogBuilder withWidth(@Nullable String value);
+        SideDialogBuilder withHorizontalSize(@Nullable String value);
 
         /**
          * @return horizontal max size of the dialog or {@code null} if not set
-         * @see SideDialog#getMaxWidth()
+         * @see SideDialog#getHorizontalMaxSize()
          */
         @Nullable
-        String getMaxWidth();
+        String getHorizontalMaxSize();
 
         /**
          * Sets the horizontal max size of the dialog.
          *
          * @param value the maximum width of the dialog
          * @return builder
-         * @see SideDialog#setMaxWidth(String)
+         * @see SideDialog#setHorizontalMaxSize(String)
          */
-        SideDialogBuilder withMaxWidth(@Nullable String value);
+        SideDialogBuilder withHorizontalMaxSize(@Nullable String value);
 
         /**
          * @return horizontal min size of the dialog or {@code null} if not set
-         * @see SideDialog#getMinWidth()
+         * @see SideDialog#getHorizontalMinSize()
          */
         @Nullable
-        String getMinWidth();
+        String getHorizontalMinSize();
 
         /**
          * Sets the horizontal min size of the dialog.
          *
          * @param value the minimum width of the dialog
          * @return builder
-         * @see SideDialog#setMinWidth(String)
+         * @see SideDialog#setHorizontalMinSize(String)
          */
-        SideDialogBuilder withMinWidth(@Nullable String value);
+        SideDialogBuilder withHorizontalMinSize(@Nullable String value);
 
         /**
          * @return vertical size of the dialog or {@code null} if not set
-         * @see SideDialog#getHeight()
+         * @see SideDialog#getVerticalSize()
          */
         @Nullable
-        String getHeight();
+        String getVerticalSize();
 
         /**
          * Sets the vertical size of the dialog.
          *
          * @param value the height of the dialog
          * @return builder
-         * @see SideDialog#setHeight(String)
+         * @see SideDialog#setVerticalSize(String)
          */
-        SideDialogBuilder withHeight(@Nullable String value);
+        SideDialogBuilder withVerticalSize(@Nullable String value);
 
         /**
          * @return vertical max size of the dialog or {@code null} if not set
-         * @see SideDialog#getMaxHeight()
+         * @see SideDialog#getVerticalMaxSize()
          */
         @Nullable
-        String getMaxHeight();
+        String getVerticalMaxSize();
 
         /**
          * Sets the vertical max size of the dialog.
          *
          * @param value the maximum height of the dialog
          * @return builder
-         * @see SideDialog#setMaxHeight(String)
+         * @see SideDialog#setVerticalMaxSize(String)
          */
-        SideDialogBuilder withMaxHeight(@Nullable String value);
+        SideDialogBuilder withVerticalMaxSize(@Nullable String value);
 
         /**
          * @return vertical min size of the dialog or {@code null} if not set
-         * @see SideDialog#getMinHeight()
+         * @see SideDialog#getVerticalMinSize()
          */
         @Nullable
-        String getMinHeight();
+        String getVerticalMinSize();
 
         /**
          * Sets the vertical min size of the dialog.
          *
          * @param value the minimum height of the dialog
          * @return builder
-         * @see SideDialog#setMinHeight(String)
+         * @see SideDialog#setVerticalMinSize(String)
          */
-        SideDialogBuilder withMinHeight(@Nullable String value);
+        SideDialogBuilder withVerticalMinSize(@Nullable String value);
 
         /**
          * @return {@code true} if the dialog is fullscreen on small devices, {@code false} otherwise

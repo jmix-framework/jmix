@@ -1211,7 +1211,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.sidepanellayout.SidePanelLayoutCloser",
             category = "Components",
             xmlElement = "sidePanelLayoutCloser",
-            icon = "io/jmix/flowui/kit/meta/icon/component/drawerToggle.svg",
+            icon = "io/jmix/flowui/kit/meta/icon/component/sidePanelLayoutCloser.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package component_xml_load.screen;
+package io.jmix.flowui.component.sidedialog;
 
-import com.vaadin.flow.router.Route;
-import io.jmix.flowui.component.sidepanellayout.SidePanelLayoutCloser;
-import io.jmix.flowui.view.*;
+import com.vaadin.flow.component.ComponentEvent;
 
-@Route("side-panel-layout-toggle-view")
-@ViewController("SidePanelLayoutToggleView")
-@ViewDescriptor("side-panel-layout-toggle-view.xml")
-public class SidePanelLayoutToggleView extends StandardView {
+/**
+ * Event fired when the user clicks outside the overlay or presses the escape key.
+ */
+public class SideDialogCloseActionEvent extends ComponentEvent<SideDialog> {
 
-    @ViewComponent
-    public SidePanelLayoutCloser sidePanelLayoutToggle;
-    @ViewComponent
-    public SidePanelLayoutCloser innerSidePanelLayoutToggle;
+    public SideDialogCloseActionEvent(SideDialog source, boolean fromClient) {
+        super(source, fromClient);
+    }
 }

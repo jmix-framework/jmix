@@ -107,6 +107,7 @@ class JmixSideDialog extends ControllerMixin(Dialog) {
         return [
             '_updateHorizontalSizes(horizontalSize, horizontalMinSize, horizontalMaxSize)',
             '_updateVerticalSizes(verticalSize, verticalMinSize, verticalMaxSize)',
+            '_onSideDialogPlacementChanged(sideDialogPlacement)',
         ];
     }
 
@@ -121,50 +122,90 @@ class JmixSideDialog extends ControllerMixin(Dialog) {
         );
     }
 
+    /**
+     * Observer for the `horizontalSize`, `horizontalMinSize` and `horizontalMaxSize` properties.
+     *
+     * @protected
+     */
     _updateHorizontalSizes(size, minSize, maxSize) {
-        let resultSize = size;
-        if (!size) {
-            const cssValue = this.$.overlay._getStylePropertyValue('--jmix-side-dialog-horizontal-size');
-            resultSize = cssValue ? cssValue : this.$.overlay._getStylePropertyValue('--_default-horizontal-size');;
+        if (this.sideDialogPlacement !== 'right'
+                 && this.sideDialogPlacement !== 'left'
+                 && this.sideDialogPlacement !== 'inline-start'
+                 && this.sideDialogPlacement !== 'inline-end') {
+            this.$.overlay.$.overlay.style.removeProperty('width');
+            this.$.overlay.$.overlay.style.removeProperty('min-width');
+            this.$.overlay.$.overlay.style.removeProperty('max-width');
+            return;
         }
-        this.$.overlay.style.setProperty('--_horizontal-size', resultSize);
 
-        let resultMinSize = minSize;
-        if (!minSize) {
-            const cssValue = this.$.overlay._getStylePropertyValue('--jmix-side-dialog-horizontal-min-size');
-            resultMinSize = cssValue ? cssValue : this.$.overlay._getStylePropertyValue('--_default-horizontal-min-size');
+        if (size) {
+            this.$.overlay.$.overlay.style.setProperty('width', size);
+        } else {
+            this.$.overlay.$.overlay.style.removeProperty('width');
         }
-        this.$.overlay.style.setProperty('--_horizontal-min-size', resultMinSize);
 
-        let resultMaxSize = maxSize;
-        if (!maxSize) {
-            const cssValue = this.$.overlay._getStylePropertyValue('--jmix-side-dialog-horizontal-max-size');
-            resultMaxSize = cssValue ? cssValue : this.$.overlay._getStylePropertyValue('--_default-horizontal-max-size');
+        if (minSize) {
+            this.$.overlay.$.overlay.style.setProperty('min-width', minSize);
+        } else {
+            this.$.overlay.$.overlay.style.removeProperty('min-width');
         }
-        this.$.overlay.style.setProperty('--_horizontal-max-size', resultMaxSize);
+
+        if (maxSize) {
+            this.$.overlay.$.overlay.style.setProperty('max-width', maxSize);
+        } else {
+            this.$.overlay.$.overlay.style.removeProperty('max-width');
+        }
     }
 
+    /**
+     * Observer for the `verticalSize`, `verticalMinSize` and `verticalMaxSize` properties.
+     *
+     * @protected
+     */
     _updateVerticalSizes(size, minSize, maxSize) {
-        let resultSize = size;
-        if (!size) {
-            const cssValue = this.$.overlay._getStylePropertyValue('--jmix-side-dialog-vertical-size');
-            resultSize = cssValue ? cssValue : this.$.overlay._getStylePropertyValue('--_default-vertical-size');;
+        if (this.sideDialogPlacement !== 'top' && this.sideDialogPlacement !== 'bottom') {
+            this.$.overlay.$.overlay.style.removeProperty('height');
+            this.$.overlay.$.overlay.style.removeProperty('min-height');
+            this.$.overlay.$.overlay.style.removeProperty('max-height');
+            return;
         }
-        this.$.overlay.style.setProperty('--_vertical-size', resultSize);
 
-        let resultMinSize = minSize;
-        if (!minSize) {
-            const cssValue = this.$.overlay._getStylePropertyValue('--jmix-side-dialog-vertical-min-size');
-            resultMinSize = cssValue ? cssValue : this.$.overlay._getStylePropertyValue('--_default-vertical-min-size');
+        if (size) {
+            this.$.overlay.$.overlay.style.setProperty('height', size);
+        } else {
+            this.$.overlay.$.overlay.style.removeProperty('height');
         }
-        this.$.overlay.style.setProperty('--_vertical-min-size', resultMinSize);
 
-        let resultMaxSize = maxSize;
-        if (!maxSize) {
-            const cssValue = this.$.overlay._getStylePropertyValue('--jmix-side-dialog-vertical-max-size');
-            resultMaxSize = cssValue ? cssValue : this.$.overlay._getStylePropertyValue('--_default-vertical-max-size');
+        if (minSize) {
+            this.$.overlay.$.overlay.style.setProperty('min-height', minSize);
+        } else {
+            this.$.overlay.$.overlay.style.removeProperty('min-height');
         }
-        this.$.overlay.style.setProperty('--_vertical-max-size', resultMaxSize);
+
+       if (maxSize) {
+            this.$.overlay.$.overlay.style.setProperty('max-height', maxSize);
+       } else {
+            this.$.overlay.$.overlay.style.removeProperty('max-height');
+       }
+    }
+
+    /**
+     * Observer for the `sideDialogPlacement` property.
+     *
+     * @protected
+     */
+    _onSideDialogPlacementChanged(placement) {
+        this._updateSizes();
+    }
+
+    /**
+     * Server callable function.
+     *
+     * @private
+     */
+    _updateSizes() {
+        this._updateHorizontalSizes(this.horizontalSize, this.horizontalMinSize, this.horizontalMaxSize);
+        this._updateVerticalSizes(this.verticalSize, this.verticalMinSize, this.verticalMaxSize);
     }
 }
 

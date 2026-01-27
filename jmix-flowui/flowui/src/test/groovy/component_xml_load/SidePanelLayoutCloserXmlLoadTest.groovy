@@ -17,25 +17,25 @@
 package component_xml_load
 
 import com.vaadin.flow.component.icon.FontIcon
-import component_xml_load.screen.SidePanelLayoutToggleView
+import component_xml_load.screen.SidePanelLayoutCloserView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-class SidePanelLayoutToggleXmlLoadTest extends FlowuiTestSpecification {
+class SidePanelLayoutCloserXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
         registerViewBasePackages("component_xml_load.screen")
     }
 
-    def "Load SidePanelLayoutToggle attributes"() {
+    def "Load SidePanelLayoutCloser attributes"() {
         when: "Open the view"
-        def view = navigateToView(SidePanelLayoutToggleView)
+        def view = navigateToView(SidePanelLayoutCloserView)
 
         then: "Check all attributes"
-        verifyAll(view.sidePanelLayoutToggle) {
-            id.get() == "sidePanelLayoutToggle"
+        verifyAll(view.sidePanelLayoutCloser) {
+            id.get() == "sidePanelLayoutCloser"
             ariaLabel.orElse(null) == "ariaLabel"
             autofocus
             classNames.containsAll(["className1", "className2"])
@@ -54,18 +54,18 @@ class SidePanelLayoutToggleXmlLoadTest extends FlowuiTestSpecification {
         }
 
         when: "Retrieve an icon"
-        FontIcon icon = (FontIcon) view.sidePanelLayoutToggle.icon;
+        FontIcon icon = (FontIcon) view.sidePanelLayoutCloser.icon;
 
         then: "Check icon name"
         icon.iconClassNames.collect().containsAll("jmix-font-icon", "jmix-font-icon-abacus")
     }
 
-    def "Check setting SidePanelLayout to toggle without specifying ID"() {
+    def "Check setting SidePanelLayout to close without specifying ID"() {
         when: "Open the view"
-        def view = navigateToView(SidePanelLayoutToggleView)
+        def view = navigateToView(SidePanelLayoutCloserView)
 
         then: "Check that SidePanelLayout is set"
 
-        view.innerSidePanelLayoutToggle.sidePanelLayout != null
+        view.innerSidePanelLayoutCloser.sidePanelLayout != null
     }
 }

@@ -17,13 +17,14 @@
 package io.jmix.flowui.testassist.dialog;
 
 import com.google.common.collect.Iterables;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.flowui.event.dialog.DialogClosedEvent;
 import io.jmix.flowui.event.dialog.DialogOpenedEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -40,10 +41,10 @@ import java.util.Map;
  *     <li>last opened dialog has index {@code openedDialogs.size() - 1}</li>
  * </ul>
  */
-@Component("flowui_OpenedDialogs")
+@org.springframework.stereotype.Component("flowui_OpenedDialogs")
 public class OpenedDialogs {
 
-    protected static Map<Dialog, DialogInfo> openedDialogs = new LinkedHashMap<>();
+    protected static Map<Component, DialogInfo> openedDialogs = new LinkedHashMap<>();
 
     /**
      * @return immutable list of {@link DialogInfo}s
@@ -66,24 +67,24 @@ public class OpenedDialogs {
      * Closes opened {@link Dialog}s and removes them from the storage map.
      */
     public void closeOpenedDialogs() {
-        Iterator<Dialog> iterator = openedDialogs.keySet().iterator();
+        Iterator<Component> iterator = openedDialogs.keySet().iterator();
 
         while (iterator.hasNext()) {
-            Dialog dialog = iterator.next();
+            Component dialog = iterator.next();
             iterator.remove();
-            dialog.close();
+            unwrapDialog(dialog).close();
         }
     }
 
     @EventListener
     protected void onDialogOpened(DialogOpenedEvent event) {
-        Dialog dialog = event.getSource();
+        Component dialog = event.getSource();
         openedDialogs.put(dialog, mapToDialogInfo(event));
     }
 
     @EventListener
     protected void onDialogClosed(DialogClosedEvent event) {
-        Dialog dialog = event.getSource();
+        Component dialog = event.getSource();
         openedDialogs.remove(dialog);
     }
 
@@ -94,5 +95,12 @@ public class OpenedDialogs {
                 .withHeaderComponents(event.getHeaderComponents())
                 .withContentComponents(event.getContentComponents())
                 .withFooterComponents(event.getFooterComponents());
+    }
+
+    protected Dialog unwrapDialog(Component component) {
+        if (component instanceof Composite<?> composite) {
+            return (Dialog) composite.getContent();
+        }
+        return (Dialog) component;
     }
 }

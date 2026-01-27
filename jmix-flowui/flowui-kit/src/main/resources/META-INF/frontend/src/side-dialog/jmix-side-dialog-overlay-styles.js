@@ -25,21 +25,13 @@ export const jmixSideDialogOverlayStyles = css`
 
         --_transition-duration: var(--jmix-side-dialog-transition-duration, 200ms);
 
-        --_default-horizontal-size: auto;
-        --_default-horizontal-max-size: 50%;
-        --_default-horizontal-min-size: 16em;
+        --_horizontal-size: var(--jmix-side-dialog-horizontal-size, auto);
+        --_horizontal-max-size: var(--jmix-side-dialog-horizontal-max-size, 50%);
+        --_horizontal-min-size: var(--jmix-side-dialog-horizontal-min-size, 16em);
 
-        --_default-vertical-size: auto;
-        --_default-vertical-max-size: 50%;
-        --_default-vertical-min-size: 16em;
-
-        --_horizontal-size: var(--jmix-side-dialog-horizontal-size, var(--_default-horizontal-size));
-        --_horizontal-max-size: var(--jmix-side-dialog-horizontal-max-size, var(--_default-horizontal-max-size));
-        --_horizontal-min-size: var(--jmix-side-dialog-horizontal-min-size, var(--_default-horizontal-min-size));
-
-        --_vertical-size: var(--jmix-side-dialog-vertical-size, var(--_default-vertical-size));
-        --_vertical-max-size: var(--jmix-side-dialog-vertical-max-size, var(--_default-vertical-max-size));
-        --_vertical-min-size: var(--jmix-side-dialog-vertical-min-size, var(--_default-vertical-min-size));
+        --_vertical-size: var(--jmix-side-dialog-vertical-size, auto);
+        --_vertical-max-size: var(--jmix-side-dialog-vertical-max-size, 50vh);
+        --_vertical-min-size: var(--jmix-side-dialog-vertical-min-size, 16em);
     }
 
     :host [part='overlay'] {

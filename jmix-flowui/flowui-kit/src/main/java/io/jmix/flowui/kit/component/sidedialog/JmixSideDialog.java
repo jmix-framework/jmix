@@ -16,33 +16,49 @@
 
 package io.jmix.flowui.kit.component.sidedialog;
 
-import com.google.common.base.Strings;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.shared.Registration;
+import com.vaadin.flow.component.*;
+import com.vaadin.flow.dom.ClassList;
+import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.dom.Style;
 import jakarta.annotation.Nullable;
 
-/**
- * The extension of the {@link Dialog} component that functions as a drawer panel. It has a popping-out animation of the
- * dialog and enables configuring the dialog placement.
- */
-@Tag("jmix-side-dialog")
-@JsModule("./src/side-dialog/jmix-side-dialog.js")
-public class JmixSideDialog extends Dialog {
+import java.util.*;
+
+public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements HasComponents {
+
+    protected DrawerHeader header;
+    protected DrawerFooter footer;
+
+    @Override
+    public void add(Collection<Component> components) {
+        getContent().add(components);
+    }
+
+    @Override
+    public void addComponentAtIndex(int index, Component component) {
+        getContent().addComponentAtIndex(index, component);
+    }
+
+    /**
+     * @return the content of the dialog
+     */
+    public List<Component> getContentComponents() {
+        return getContent().getChildren().toList();
+    }
 
     /**
      * Returns the width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
      * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
      * {@link SideDialogPlacement#INLINE_END}).
+     * <p>
+     * Note that this does not return the actual size of the dialog but the width which has been set using
+     * {@link #setHorizontalSize(String)}.
      *
      * @return the width of the dialog or {@code null} if the width is not set
      */
     @Nullable
-    @Override
-    public String getWidth() {
-        return getElement().getProperty("horizontalSize");
+    public String getHorizontalSize() {
+        return getContent().getWidth();
     }
 
     /**
@@ -55,54 +71,25 @@ public class JmixSideDialog extends Dialog {
      * The default width is taken from the theme variable {@code --jmix-side-dialog-horizontal-size}. If it is not set,
      * the default value is {@code auto}.
      *
-     * @param value the width of the dialog or {@code null} to set default width
+     * @param size the width of the dialog or {@code null} to remove the inline width from the style
      */
-    @Override
-    public void setWidth(@Nullable String value) {
-        getElement().setProperty("horizontalSize", value);
-    }
-
-    /**
-     * Returns the min-width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
-     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
-     * {@link SideDialogPlacement#INLINE_END}).
-     *
-     * @return the min-width of the dialog or {@code null} if the width is not set
-     */
-    @Nullable
-    @Override
-    public String getMinWidth() {
-        return getElement().getProperty("horizontalMinSize");
-    }
-
-    /**
-     * Sets the min-width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
-     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
-     * {@link SideDialogPlacement#INLINE_END}).
-     * <p>
-     * The min-width should be in a format understood by the browser, e.g. "100px" or "2.5em".
-     * <p>
-     * The default min-width is taken from the theme variable {@code --jmix-side-dialog-horizontal-min-size}. If it is
-     * not set, the default value is {@code 16em}.
-     *
-     * @param value the min-width of the dialog or {@code null} to set default min-width
-     */
-    @Override
-    public void setMinWidth(@Nullable String value) {
-        getElement().setProperty("horizontalMinSize", value);
+    public void setHorizontalSize(@Nullable String size) {
+        getContent().setWidth(size);
     }
 
     /**
      * Returns the max-width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
      * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
      * {@link SideDialogPlacement#INLINE_END}).
+     * <p>
+     * Note that this does not return the actual size of the dialog but the max-width which has been set using
+     * {@link #setHorizontalMaxSize(String)}.
      *
      * @return the max-width of the dialog or {@code null} if the width is not set
      */
     @Nullable
-    @Override
-    public String getMaxWidth() {
-        return getElement().getProperty("horizontalMaxSize");
+    public String getHorizontalMaxSize() {
+        return getContent().getMaxWidth();
     }
 
     /**
@@ -115,23 +102,55 @@ public class JmixSideDialog extends Dialog {
      * The default max-width is taken from the theme variable {@code --jmix-side-dialog-horizontal-max-size}. If it is
      * not set, the default value is {@code 50%}.
      *
-     * @param value the max-width of the dialog or {@code null} to set default max-width
+     * @param maxSize the max-width of the dialog or {@code null} to remove the inline max-width property from the style
      */
-    @Override
-    public void setMaxWidth(@Nullable String value) {
-        getElement().setProperty("horizontalMaxSize", value);
+    public void setHorizontalMaxSize(@Nullable String maxSize) {
+        getContent().setMaxWidth(maxSize);
+    }
+
+    /**
+     * Returns the min-width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
+     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
+     * {@link SideDialogPlacement#INLINE_END}).
+     * <p>
+     * Note that this does not return the actual size of the dialog but the min-width which has been set using
+     * {@link #setHorizontalMinSize(String)}.
+     *
+     * @return the min-width of the dialog or {@code null} if the min-width is not set
+     */
+    @Nullable
+    public String getHorizontalMinSize() {
+        return getContent().getMinWidth();
+    }
+
+    /**
+     * Sets the min-width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
+     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
+     * {@link SideDialogPlacement#INLINE_END}).
+     * <p>
+     * The min-width should be in a format understood by the browser, e.g. "100px" or "2.5em".
+     * <p>
+     * The default min-width is taken from the theme variable {@code --jmix-side-dialog-horizontal-min-size}. If it is
+     * not set, the default value is {@code 16em}.
+     *
+     * @param minSize the min-width of the dialog or {@code null} to remove the inline min-width property from the style
+     */
+    public void setHorizontalMinSize(@Nullable String minSize) {
+        getContent().setMinWidth(minSize);
     }
 
     /**
      * Returns the height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
      * {@link SideDialogPlacement#BOTTOM}).
+     * <p>
+     * Note that this does not return the actual size of the dialog but the height which has been set using
+     * {@link #setVerticalSize(String)}.
      *
      * @return the height of the dialog or {@code null} if the height is not set
      */
     @Nullable
-    @Override
-    public String getHeight() {
-        return getElement().getProperty("verticalSize");
+    public String getVerticalSize() {
+        return getContent().getHeight();
     }
 
     /**
@@ -143,23 +162,53 @@ public class JmixSideDialog extends Dialog {
      * The default height is taken from the theme variable {@code --jmix-side-dialog-vertical-size}. If it is
      * not set, the default value is {@code auto}.
      *
-     * @param value the height of the dialog or {@code null} to set default height
+     * @param size the height of the dialog or {@code null} to remove the inline height property from the style
      */
-    @Override
-    public void setHeight(@Nullable String value) {
-        getElement().setProperty("verticalSize", value);
+    public void setVerticalSize(@Nullable String size) {
+        getContent().setHeight(size);
+    }
+
+    /**
+     * Returns the max-height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
+     * {@link SideDialogPlacement#BOTTOM}).
+     * <p>
+     * Note that this does not return the actual size of the side panel but the max-height which has been set using
+     * {@link #setVerticalMaxSize(String)}.
+     *
+     * @return the max-height of the dialog or {@code null} if the max-height is not set
+     */
+    @Nullable
+    public String getVerticalMaxSize() {
+        return getContent().getMaxHeight();
+    }
+
+    /**
+     * Sets the max-height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
+     * {@link SideDialogPlacement#BOTTOM}).
+     * <p>
+     * The max-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
+     * <p>
+     * The default max-height is taken from the theme variable {@code --jmix-side-dialog-vertical-max-size}. If it is
+     * not set, the default value is {@code 50vh}.
+     *
+     * @param maxSize the max-height of the dialog or {@code null} to remove the inline max-height property from style
+     */
+    public void setVerticalMaxSize(@Nullable String maxSize) {
+        getContent().setMaxHeight(maxSize);
     }
 
     /**
      * Returns the min-height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
      * {@link SideDialogPlacement#BOTTOM}).
+     * <p>
+     * Note that this does not return the actual size of the side panel but the min-height which has been set using
+     * {@link #setVerticalMinSize(String)}.
      *
      * @return the min-height of the dialog or {@code null} if the min-height is not set
      */
     @Nullable
-    @Override
-    public String getMinHeight() {
-        return getElement().getProperty("verticalMinSize");
+    public String getVerticalMinSize() {
+        return getContent().getMinHeight();
     }
 
     /**
@@ -171,120 +220,26 @@ public class JmixSideDialog extends Dialog {
      * The default min-height is taken from the theme variable {@code --jmix-side-dialog-vertical-min-size}. If it is
      * not set, the default value is {@code 16em}.
      *
-     * @param value the min-height of the dialog or {@code null} to set default min-height
+     * @param minSize the min-height of the dialog or {@code null} to remove the inline min-height property from style
      */
-    @Override
-    public void setMinHeight(@Nullable String value) {
-        getElement().setProperty("verticalMinSize", value);
-    }
-
-    /**
-     * Returns the max-height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
-     * {@link SideDialogPlacement#BOTTOM}).
-     *
-     * @return the max-height of the dialog or {@code null} if the max-height is not set
-     */
-    @Nullable
-    @Override
-    public String getMaxHeight() {
-        return getElement().getProperty("verticalMaxSize");
-    }
-
-    /**
-     * Sets the max-height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
-     * {@link SideDialogPlacement#BOTTOM}).
-     * <p>
-     * The max-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
-     * <p>
-     * The default max-height is taken from the theme variable {@code --jmix-side-dialog-vertical-max-size}. If it is
-     * not set, the default value is {@code 50%}.
-     *
-     * @param value the max-height of the dialog or {@code null} to set default max-height
-     */
-    @Override
-    public void setMaxHeight(@Nullable String value) {
-        getElement().setProperty("verticalMaxSize", value);
-    }
-
-    /**
-     * Sets the full width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
-     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
-     * {@link SideDialogPlacement#INLINE_END}).
-     */
-    @Override
-    public void setWidthFull() {
-        super.setWidthFull();
-
-        setMaxWidth("100%");
-    }
-
-    /**
-     * Sets the height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
-     * {@link SideDialogPlacement#BOTTOM}).
-     */
-    @Override
-    public void setHeightFull() {
-        super.setHeightFull();
-
-        setMaxHeight("100%");
-    }
-
-    /**
-     * Sets defaults to vertical and horizontal sizes.
-     */
-    @Override
-    public void setSizeUndefined() {
-        super.setSizeUndefined();
+    public void setVerticalMinSize(@Nullable String minSize) {
+        getContent().setMinHeight(minSize);
     }
 
     @Override
-    public void setDraggable(boolean draggable) {
-        throw new UnsupportedOperationException("Draggable is not supported for side dialog");
+    public void setClassName(String className) {
+        getContent().addClassNames(className);
     }
 
     @Override
-    public void setResizable(boolean resizable) {
-        throw new UnsupportedOperationException("Resizable is not supported for side dialog");
+    public ClassList getClassNames() {
+        return getContent().getClassNames();
     }
 
     @Override
-    public void setTop(String top) {
-        throw new UnsupportedOperationException("Top position is not supported for side dialog, use setSideDialogPlacement() instead");
-    }
-
-    @Override
-    public void setLeft(String left) {
-        throw new UnsupportedOperationException("Left position is not supported for side dialog, use setSideDialogPlacement() instead");
-    }
-
-    @Override
-    public Registration addResizeListener(ComponentEventListener<DialogResizeEvent> listener) {
-        throw new UnsupportedOperationException("Resize listener is not supported for side dialog");
-    }
-
-    @Override
-    public Registration addDraggedListener(ComponentEventListener<DialogDraggedEvent> listener) {
-        throw new UnsupportedOperationException("Dragged listener is not supported for side dialog");
-    }
-
-    /**
-     * @return the dialog placement
-     */
-    public SideDialogPlacement getSideDialogPlacement() {
-        String placement = getElement().getProperty("sideDialogPlacement");
-        if (Strings.isNullOrEmpty(placement)) {
-            return SideDialogPlacement.RIGHT;
-        }
-        return SideDialogPlacement.valueOf(placement.toUpperCase().replace("-", "_"));
-    }
-
-    /**
-     * Sets the dialog placement. The default value is {@link SideDialogPlacement#RIGHT}.
-     *
-     * @param placement the dialog placement
-     */
-    public void setSideDialogPlacement(SideDialogPlacement placement) {
-        getElement().setProperty("sideDialogPlacement", placement.name().toLowerCase().replace("_", "-"));
+    public Style getStyle() {
+        throw new UnsupportedOperationException(
+                JmixSideDialog.class.getSimpleName() + " does not support adding styles using this method");
     }
 
     /**
@@ -303,5 +258,245 @@ public class JmixSideDialog extends Dialog {
      */
     public void setFullscreenOnSmallDevices(boolean fullscreenOnSmallDevice) {
         getElement().setProperty("fullscreenOnSmallDevices", fullscreenOnSmallDevice);
+    }
+
+    /**
+     * @return the side dialog placement
+     */
+    public SideDialogPlacement getSideDialogPlacement() {
+        return getContent().getSideDialogPlacement();
+    }
+
+    /**
+     * Sets the side dialog placement.
+     * <p>
+     * The default value is {@link SideDialogPlacement#RIGHT}.
+     *
+     * @param placement the side dialog placement
+     */
+    public void setSideDialogPlacement(SideDialogPlacement placement) {
+        getContent().setSideDialogPlacement(placement);
+    }
+
+    /**
+     * @return {@code true} if the dialog is opened, {@code false} otherwise
+     */
+    public boolean isOpened() {
+        return getContent().isOpened();
+    }
+
+    /**
+     * Opens the dialog.
+     */
+    public void open() {
+        getContent().open();
+    }
+
+    /**
+     * Closes the dialog.
+     */
+    public void close() {
+        getContent().close();
+    }
+
+    // TODO: pinyazhin, replace by getModality() after upgrading Vaadin 25
+    public boolean isModal() {
+        return getContent().isModal();
+    }
+
+    // TODO: pinyazhin, replace by setModality() after upgrading Vaadin 25
+    public void setModal(boolean modal) {
+        getContent().setModal(modal);
+    }
+
+    /**
+     * @return {@code true} if the dialog should be closed when hitting the ESC key
+     */
+    public boolean isCloseOnEsc() {
+        return getContent().isCloseOnEsc();
+    }
+
+    /**
+     * Sets whether this dialog can be closed by hitting the ESC key or not.
+     * <p>
+     * The default value is {@code true}.
+     *
+     * @param closeOnEsc closeOnEsc option
+     */
+    public void setCloseOnEsc(boolean closeOnEsc) {
+        getContent().setCloseOnEsc(closeOnEsc);
+    }
+
+    /**
+     * @return {@code true} if the dialog should be closed when clicking outside it
+     */
+    public boolean isCloseOnOutsideClick() {
+        return getContent().isCloseOnOutsideClick();
+    }
+
+    /**
+     * Sets whether this dialog can be closed by clicking outside it or not.
+     * <p>
+     * The default value is {@code true}.
+     *
+     * @param closeOnOutsideClick closeOnOutsideClick option
+     */
+    public void setCloseOnOutsideClick(boolean closeOnOutsideClick) {
+        getContent().setCloseOnOutsideClick(closeOnOutsideClick);
+    }
+
+    /**
+     * @return the title to be rendered on the dialog header or empty string if not set
+     */
+    public String getHeaderTitle() {
+        return getContent().getHeaderTitle();
+    }
+
+    /**
+     * Sets the title to be rendered on the dialog header.
+     *
+     * @param title the title to set or {@code null} to remove the header title
+     */
+    public void setHeaderTitle(@Nullable String title) {
+        getContent().setHeaderTitle(title);
+    }
+
+    // TODO: pinyazhin, replace by setRole after upgrading Vaadin 25
+    public String getOverlayRole() {
+        return getContent().getOverlayRole();
+    }
+
+    // TODO: pinyazhin, replace by setRole after upgrading Vaadin 25
+    public void setOverlayRole(String role) {
+        getContent().setOverlayRole(role);
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+
+        getContent().setVisible(visible);
+    }
+
+    /**
+     * @return the header of the dialog
+     */
+    public DrawerHeader getHeader() {
+        if (header == null) {
+            header = new DrawerHeader();
+        }
+        return header;
+    }
+
+    /**
+     * @return the footer of the dialog
+     */
+    public DrawerFooter getFooter() {
+        if (footer == null) {
+            footer = new DrawerFooter();
+        }
+        return footer;
+    }
+
+    /**
+     * Represents the header section of the side dialog.
+     */
+    public class DrawerHeader extends AbstractDrawerHeaderFooter {
+
+        @Override
+        protected HasComponents getHeaderFooter() {
+            return getContent().getHeader();
+        }
+    }
+
+    /**
+     * Represents the footer section of the side dialog.
+     */
+    public class DrawerFooter extends AbstractDrawerHeaderFooter {
+        @Override
+        protected HasComponents getHeaderFooter() {
+            return getContent().getFooter();
+        }
+    }
+
+    protected abstract class AbstractDrawerHeaderFooter implements HasComponents {
+
+        protected List<Component> components;
+
+        @Override
+        public void add(Component... components) {
+            components().addAll(Arrays.asList(components));
+
+            getHeaderFooter().add(components);
+        }
+
+        @Override
+        public void add(Collection<Component> components) {
+            components().addAll(components);
+
+            getHeaderFooter().add(components);
+        }
+
+        @Override
+        public void add(String text) {
+            Text textComponent = new Text(text);
+
+            components().add(textComponent);
+
+            getHeaderFooter().add(textComponent);
+        }
+
+        @Override
+        public void remove(Component... components) {
+            components().removeAll(Arrays.asList(components));
+
+            getHeaderFooter().remove(components);
+        }
+
+        @Override
+        public void remove(Collection<Component> components) {
+            components().removeAll(components);
+
+            getHeaderFooter().remove(components);
+        }
+
+        @Override
+        public void removeAll() {
+            components().clear();
+
+            getHeaderFooter().removeAll();
+        }
+
+        @Override
+        public void addComponentAtIndex(int index, Component component) {
+            components().add(index, component);
+
+            getHeaderFooter().addComponentAtIndex(index, component);
+        }
+
+        @Override
+        public void addComponentAsFirst(Component component) {
+            components().add(0, component);
+
+            getHeaderFooter().addComponentAsFirst(component);
+        }
+
+        public List<Component> getComponents() {
+            return components == null ? Collections.emptyList() : List.copyOf(components);
+        }
+
+        @Override
+        public Element getElement() {
+            return getContent().getHeader().getElement();
+        }
+
+        protected abstract HasComponents getHeaderFooter();
+
+        protected List<Component> components() {
+            if (components == null) {
+                this.components = new ArrayList<>();
+            }
+            return components;
+        }
     }
 }

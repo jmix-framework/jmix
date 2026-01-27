@@ -1,0 +1,23 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M8 12H7V13H8V12Z" fill="#AFB1B3"/>
+    <path fill-rule="evenodd" clip-rule="evenodd"
+          d="M3 4V5V6V7V8V9V10V11V12H2V11V10V9V8V7V6V5V4H3ZM3 4V3H4H5H6H7V4H6H5H4H3ZM3 13V12H4H5H6V13H5H4H3Z"
+          fill="#AFB1B3"/>
+    <path d="M4 5.5H7M4 7.5H7M4.5 9.5H6.5V10.5H4.5V9.5Z" stroke="#AFB1B3"/>
+    <rect x="13" y="12" width="1" height="1" fill="#272727"/>
+    <path d="M13 3H14V4H13V3Z" fill="#272727"/>
+    <rect x="5" y="12" width="1" height="1" fill="#AFB1B3"/>
+    <rect x="9" y="12" width="1" height="1" fill="#AFB1B3"/>
+    <rect x="11" y="12" width="1" height="1" fill="#AFB1B3"/>
+    <rect x="13" y="11" width="1" height="2" fill="#AFB1B3"/>
+    <rect x="13" y="9" width="1" height="1" fill="#AFB1B3"/>
+    <rect x="13" y="7" width="1" height="1" fill="#AFB1B3"/>
+    <rect x="13" y="5" width="1" height="1" fill="#AFB1B3"/>
+    <rect x="10" y="3" width="1" height="1" fill="#AFB1B3"/>
+    <rect x="8" y="3" width="1" height="2" fill="#AFB1B3"/>
+    <rect x="8" y="6" width="1" height="1" fill="#AFB1B3"/>
+    <rect x="8" y="8" width="1" height="1" fill="#AFB1B3"/>
+    <rect x="8" y="10" width="1" height="1" fill="#AFB1B3"/>
+    <rect x="12" y="3" width="2" height="1" fill="#AFB1B3"/>
+    <rect x="6" y="12" width="1" height="1" fill="#AFB1B3"/>
+</svg>

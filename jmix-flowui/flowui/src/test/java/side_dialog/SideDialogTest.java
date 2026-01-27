@@ -18,6 +18,7 @@ package side_dialog;
 
 import io.jmix.flowui.component.sidedialog.SideDialog;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.sidedialog.JmixSideDialogOverlay;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
@@ -60,7 +61,8 @@ public class SideDialogTest {
 
         Assertions.assertNotNull(dialogInfo);
         Assertions.assertTrue(dialogInfo.getDialog().isOpened());
-        Assertions.assertInstanceOf(SideDialog.class, dialogInfo.getDialog());
+        Assertions.assertInstanceOf(JmixSideDialogOverlay.class, dialogInfo.getDialog());
+        Assertions.assertInstanceOf(SideDialog.class, dialogInfo.getDialogComponent());
 
         Assertions.assertEquals(1, dialogInfo.getHeaderComponents().size());
         Assertions.assertEquals(1, dialogInfo.getContentComponents().size());

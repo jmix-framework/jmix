@@ -26,7 +26,7 @@ import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 
 import static com.vaadin.flow.dom.ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME;
 
-public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePanelLayoutCloser> {
+public class SidePanelLayoutCloserLoader extends AbstractComponentLoader<SidePanelLayoutCloser> {
 
     protected IconLoaderSupport iconLoaderSupport;
 
@@ -61,10 +61,10 @@ public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePan
                         },
                         () -> {
                             if (getContext() instanceof ComponentContext componentContext) {
-                                componentContext.addPreInitTask(new FindSidePanelLayoutToggleParentTask());
+                                componentContext.addPreInitTask(new FindSidePanelLayoutCloserParentTask());
                             } else if (getContext() instanceof FragmentContext fragmentContext) {
                                 // TODO: pinyazhin, fragment's pre-init
-                                fragmentContext.addInitTask(new FindSidePanelLayoutToggleParentTask());
+                                fragmentContext.addInitTask(new FindSidePanelLayoutCloserParentTask());
                             }
                         }
                 );
@@ -114,7 +114,7 @@ public class SidePanelLayoutToggleLoader extends AbstractComponentLoader<SidePan
         }
     }
 
-    protected class FindSidePanelLayoutToggleParentTask implements InitTask {
+    protected class FindSidePanelLayoutCloserParentTask implements InitTask {
 
         @Override
         public void execute(Context context) {

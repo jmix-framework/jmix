@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+package io.jmix.flowui.component.sidedialog;
 
-const jmixSideDialogOverlayStyles = css`
+import com.vaadin.flow.component.ComponentEvent;
 
-    :host([opening]),
-    :host([closing]) {
-        animation: var(--_transition-duration) lumo-overlay-dummy-animation;
+/**
+ * Event fired when the {@link SideDialog} is opened or closed.
+ */
+public class SideDialogOpenedChangeEvent extends ComponentEvent<SideDialog> {
+
+    protected final boolean opened;
+
+    public SideDialogOpenedChangeEvent(SideDialog source, boolean fromClient) {
+        super(source, fromClient);
+
+        this.opened = source.isOpened();
     }
-`;
 
-// todo: pinyazhin, rename to 'lumo-side...' after upgrading to Vaadin 25
-registerStyles('jmix-side-dialog-overlay', [jmixSideDialogOverlayStyles],
- { moduleId: 'jmix-lumo-side-dialog-overlay' });
+    /**
+     * @return {@code true} if the dialog is opened, {@code false} otherwise
+     */
+    public boolean isOpened() {
+        return opened;
+    }
+}

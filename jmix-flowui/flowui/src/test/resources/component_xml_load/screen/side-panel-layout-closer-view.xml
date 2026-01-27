@@ -16,7 +16,7 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
-        <sidePanelLayoutToggle id="sidePanelLayoutToggle"
+        <sidePanelLayoutCloser id="sidePanelLayoutCloser"
                             ariaLabel="ariaLabel"
                             ariaLabelledBy="ariaLabelledBy"
                             autofocus="true"
@@ -35,7 +35,7 @@
                             themeNames="primary icon"
                             width="100px"/>
         <sidePanelLayout id="sidePanelLayout">
-            <sidePanelLayoutToggle id="innerSidePanelLayoutToggle"/>
+            <sidePanelLayoutCloser id="innerSidePanelLayoutCloser"/>
             <span text="stub"/>
         </sidePanelLayout>
     </layout>

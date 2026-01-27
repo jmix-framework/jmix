@@ -17,9 +17,11 @@
 package io.jmix.flowui.testassist.dialog;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.flowui.Dialogs.SideDialogBuilder;
+import io.jmix.flowui.component.sidedialog.SideDialog;
 
 import java.util.List;
 
@@ -28,7 +30,7 @@ import java.util.List;
  */
 public class DialogInfo {
 
-    protected final Dialog dialog;
+    protected final Component dialog;
 
     protected Component content;
     protected List<Button> buttons;
@@ -38,11 +40,12 @@ public class DialogInfo {
     protected List<Component> footerComponents;
 
     /**
-     * Creates a {@link DialogInfo} of the passed {@link Dialog}.
+     * Creates a {@link DialogInfo} of the passed {@link Component}.
      *
-     * @param dialog {@link Dialog} to create {@link DialogInfo}
+     * @param dialog the component should be a {@link Dialog} or {@link Composite}
+     *               that contains a {@link Dialog} as content
      */
-    public DialogInfo(Dialog dialog) {
+    public DialogInfo(Component dialog) {
         this.dialog = dialog;
     }
 
@@ -103,15 +106,32 @@ public class DialogInfo {
     }
 
     /**
+     * Returns the {@link Dialog} instance. For dialogs based on {@link Composite} to get an instance of
+     * component use {@link #getDialogComponent()}.
+     *
      * @return {@link Dialog} instance
      */
     public Dialog getDialog() {
+        if (dialog instanceof Composite<?> composite) {
+            return (Dialog) composite.getContent();
+        }
+        return (Dialog) dialog;
+    }
+
+    /**
+     * Returns the dialog component. For message dialog and other simple dialogs it is a {@link Dialog} itself.
+     * For complicated dialogs it can be a {@link Composite} that contains a {@link Dialog} as content
+     * (e.g. {@link SideDialog}).
+     *
+     * @return dialog component
+     */
+    public Component getDialogComponent() {
         return dialog;
     }
 
     /**
-     * Returns the {@link Dialog} content component. If the dialog content includes multiple components,
-     * the first component is returned.
+     * Returns the {@link Dialog} content component (e.g., for message dialog, option dialog, etc.).
+     * If the dialog content includes multiple components, the first component is returned.
      *
      * @return the {@link Dialog} content
      */
@@ -120,6 +140,8 @@ public class DialogInfo {
     }
 
     /**
+     * Returns the button list if the dialog footer contains only buttons (e.g., message dialog, option dialog, etc.).
+     *
      * @return list of the {@link Dialog} buttons
      */
     public List<Button> getButtons() {
@@ -146,8 +168,7 @@ public class DialogInfo {
     }
 
     /**
-     * The list of footer components of the {@link Dialog} if the builder supports setting components to the footer
-     * (e.g. {@link SideDialogBuilder}).
+     * The list of footer components of the {@link Dialog}.
      *
      * @return list of footer components
      */

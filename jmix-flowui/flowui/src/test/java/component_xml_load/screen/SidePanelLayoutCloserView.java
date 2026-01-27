@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+package component_xml_load.screen;
 
-const jmixSideDialogOverlayStyles = css`
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayoutCloser;
+import io.jmix.flowui.view.*;
 
-    :host([opening]),
-    :host([closing]) {
-        animation: var(--_transition-duration) lumo-overlay-dummy-animation;
-    }
-`;
+@Route("side-panel-layout-closer-view")
+@ViewController("SidePanelLayoutCloserView")
+@ViewDescriptor("side-panel-layout-closer-view.xml")
+public class SidePanelLayoutCloserView extends StandardView {
 
-// todo: pinyazhin, rename to 'lumo-side...' after upgrading to Vaadin 25
-registerStyles('jmix-side-dialog-overlay', [jmixSideDialogOverlayStyles],
- { moduleId: 'jmix-lumo-side-dialog-overlay' });
+    @ViewComponent
+    public SidePanelLayoutCloser sidePanelLayoutCloser;
+    @ViewComponent
+    public SidePanelLayoutCloser innerSidePanelLayoutCloser;
+}

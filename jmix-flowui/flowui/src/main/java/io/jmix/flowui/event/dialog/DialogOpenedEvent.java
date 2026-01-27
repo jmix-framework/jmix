@@ -20,8 +20,10 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.flowui.Dialogs.SideDialogBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationEvent;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,37 +39,43 @@ public class DialogOpenedEvent extends ApplicationEvent {
     protected List<Component> contentComponents;
     protected List<Component> footerComponents;
 
-    public DialogOpenedEvent(Dialog dialog,
+    public DialogOpenedEvent(Dialog dialog, Component content, List<Button> buttons) {
+        this(dialog,
+                Collections.emptyList(),
+                Collections.singletonList(content),
+                CollectionUtils.isEmpty(buttons) ? Collections.emptyList() : new ArrayList<>(buttons));
+    }
+
+    public DialogOpenedEvent(Component dialog,
                              List<Component> headerComponents,
                              List<Component> contentComponents,
                              List<Component> footerComponents) {
         super(dialog);
-        this.content = contentComponents.isEmpty() ? null : contentComponents.get(0);
-        buttons = Collections.emptyList();
 
         this.headerComponents = headerComponents;
         this.contentComponents = contentComponents;
         this.footerComponents = footerComponents;
-    }
 
-    public DialogOpenedEvent(Dialog dialog, Component content, List<Button> singleton) {
-        super(dialog);
-        this.content = content;
-        this.buttons = singleton;
+        this.content = contentComponents.isEmpty() ? null : contentComponents.get(0);
 
-        this.headerComponents = Collections.emptyList();
-        this.contentComponents = Collections.singletonList(content);
-        this.footerComponents = Collections.emptyList();
+        if (CollectionUtils.isEmpty(footerComponents)) {
+            buttons = Collections.emptyList();
+        } else {
+            boolean allMatchButton = footerComponents.stream().allMatch(component -> component instanceof Button);
+            if (allMatchButton) {
+                buttons = footerComponents.stream().map(component -> (Button) component).toList();
+            }
+        }
     }
 
     @Override
-    public Dialog getSource() {
-        return ((Dialog) super.getSource());
+    public Component getSource() {
+        return (Component) super.getSource();
     }
 
     /**
-     * Returns the dialog content component. If the dialog content includes multiple components,
-     * the first component is returned.
+     * Returns the dialog content component (e.g., for message dialog, option dialog, etc.).
+     * If the dialog content includes multiple components, the first component is returned.
      *
      * @return content of the opened dialog
      */

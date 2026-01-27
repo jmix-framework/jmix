@@ -21,15 +21,15 @@ export const sidePanelLayoutStyles = css`
         display: block;
         box-sizing: border-box;
 
-        --jmix-side-panel-vertical-size: auto;
-        --jmix-side-panel-vertical-max-size: 14em;
-        --jmix-side-panel-vertical-min-size: 10em;
+        --_transition-duration: var(--jmix-side-panel-layout-transition, 200ms);
 
-        --jmix-side-panel-horizontal-size: auto;
-        --jmix-side-panel-horizontal-max-size: 26em;
-        --jmix-side-panel-horizontal-min-size: 14em;
+        --_horizontal-size: var(--jmix-side-panel-layout-horizontal-size, auto);
+        --_horizontal-max-size: var(--jmix-side-panel-layout-horizontal-max-size, 50%);
+        --_horizontal-min-size: var(--jmix-side-panel-layout-horizontal-min-size, 14em);
 
-        --jmix-side-panel-transition: 200ms;
+        --_vertical-size: var(--jmix-side-panel-layout-vertical-size, auto);
+        --_vertical-max-size: var(--jmix-side-panel-layout-vertical-max-size, 50%);
+        --_vertical-min-size: var(--jmix-side-panel-layout-vertical-min-size, 10em);
     }
 
     [part='layout'] {
@@ -50,8 +50,8 @@ export const sidePanelLayoutStyles = css`
         height: 100%;
         box-sizing: border-box;
         transition:
-            max-height var(--jmix-side-panel-transition),
-            max-width var(--jmix-side-panel-transition);
+            max-height var(--_transition-duration),
+            max-width var(--_transition-duration);
     }
 
     [part='modalityCurtain'] {
@@ -74,18 +74,21 @@ export const sidePanelLayoutStyles = css`
         position: absolute;
         box-sizing: border-box;
         transition:
-            transform var(--jmix-side-panel-transition),
-            visibility 0s linear var(--jmix-side-panel-transition);
+            transform var(--_transition-duration),
+            visibility 0s linear var(--_transition-duration);
         visibility: hidden;
     }
 
     [part='sidePanelContent'] {
         box-sizing: border-box;
-        height: 100%;
         display: flex;
+        height: 100%;
+        width: 100%;
+        min-height: 0;
+        flex: 1 1 auto;
         flex-direction: column;
         align-items: flex-start;
-        width: 100%;
+        overflow: hidden;
     }
 
     :host([side-panel-opened]) [part='sidePanel'] {
@@ -94,17 +97,17 @@ export const sidePanelLayoutStyles = css`
         visibility: visible;
         touch-action: manipulation;
         transition:
-            transform var(--jmix-side-panel-transition),
+            transform var(--_transition-duration),
             visibility 0s;
     }
 
     :host([side-panel-opened][modal]) [part='modalityCurtain'] {
-        animation: var(--jmix-side-panel-transition) jmix-modality-curtain-dimmed-enter both;
+        animation: var(--_transition-duration) jmix-modality-curtain-dimmed-enter both;
         will-change: opacity;
     }
 
     :host(:not([side-panel-opened])[modal]) [part='modalityCurtain']:not([hidden]) {
-        animation: var(--jmix-side-panel-transition) jmix-modality-curtain-dimmed-out both;
+        animation: var(--_transition-duration) jmix-modality-curtain-dimmed-out both;
         will-change: opacity;
     }
 
@@ -115,21 +118,22 @@ export const sidePanelLayoutStyles = css`
     :host([side-panel-placement='right']) [part='sidePanel'],
     :host([side-panel-placement='inline-start']) [part='sidePanel'],
     :host([side-panel-placement='inline-end']) [part='sidePanel'] {
-        width: var(--jmix-side-panel-horizontal-size);
-        max-width: var(--jmix-side-panel-horizontal-max-size);
-        min-width: var(--jmix-side-panel-horizontal-min-size);
+        width: var(--_horizontal-size);
+        max-width: var(--_horizontal-max-size);
+        min-width: var(--_horizontal-min-size);
     }
 
     :host([side-panel-placement='bottom']) [part='sidePanel'],
     :host([side-panel-placement='top']) [part='sidePanel'] {
-        height: var(--jmix-side-panel-vertical-size);
-        max-height: var(--jmix-side-panel-vertical-max-size);
-        min-height: var(--jmix-side-panel-vertical-min-size);
+        height: var(--_vertical-size);
+        max-height: var(--_vertical-max-size);
+        min-height: var(--_vertical-min-size);
     }
 
     :host([side-panel-placement='top']) ::slotted([slot='sidePanelContentSlot']),
     :host([side-panel-placement='bottom']) ::slotted([slot='sidePanelContentSlot']) {
-        max-height: var(--jmix-side-panel-vertical-max-size);
+        flex: 1 1 auto;
+        min-height: 0;
     }
 
     :host([side-panel-placement='left']) [part='sidePanel'] {
@@ -226,7 +230,7 @@ export const sidePanelLayoutStyles = css`
     @media (prefers-reduced-motion: reduce) {
 
         :host {
-            --jmix-side-panel-transition: none !important;
+            --_transition-duration: none !important;
         }
     }
 `;

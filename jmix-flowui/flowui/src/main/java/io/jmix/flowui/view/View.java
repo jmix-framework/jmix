@@ -33,6 +33,7 @@ import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.WebBrowserTools;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -141,7 +142,8 @@ public class View<T extends Component> extends Composite<T>
         afterNavigationProcessed = false;
 
         Sample sample = start(meterRegistry);
-        fireEvent(new ReadyEvent(this));
+        ViewObservationUtils.createViewEventObservation(this, ReadyEvent.class.getSimpleName())
+                .observe(() -> fireEvent(new ReadyEvent(this)));
         stopViewTimerSample(sample, meterRegistry, READY, getId().orElse(null));
 
         ViewOpenedEvent viewOpenedEvent = new ViewOpenedEvent(this);
@@ -175,7 +177,8 @@ public class View<T extends Component> extends Composite<T>
         fireEvent(new QueryParametersChangeEvent(this, event.getLocation().getQueryParameters()));
 
         Sample sample = startTimerSample(meterRegistry);
-        fireEvent(new BeforeShowEvent(this));
+        ViewObservationUtils.createViewEventObservation(this, BeforeShowEvent.class.getSimpleName())
+                .observe(() -> fireEvent(new BeforeShowEvent(this)));
         stopViewTimerSample(sample, meterRegistry, BEFORE_SHOW, getId().orElse(null));
     }
 
@@ -215,7 +218,8 @@ public class View<T extends Component> extends Composite<T>
                 BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
 
                 Sample beforeCloseSample = startTimerSample(meterRegistry);
-                fireEvent(beforeCloseEvent);
+                ViewObservationUtils.createViewEventObservation(this, BeforeCloseEvent.class.getSimpleName())
+                        .observe(() -> fireEvent(beforeCloseEvent));
                 stopViewTimerSample(beforeCloseSample, meterRegistry, BEFORE_CLOSE, getId().orElse(null));
 
                 if (beforeCloseEvent.isClosePrevented()) {
@@ -224,8 +228,10 @@ public class View<T extends Component> extends Composite<T>
                 }
 
                 AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
+
                 Sample afterCloseSample = startTimerSample(meterRegistry);
-                fireEvent(afterCloseEvent);
+                ViewObservationUtils.createViewEventObservation(this, AfterCloseEvent.class.getSimpleName())
+                        .observe(() -> fireEvent(afterCloseEvent));
                 stopViewTimerSample(afterCloseSample, meterRegistry, AFTER_CLOSE, getId().orElse(null));
 
                 ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
@@ -393,6 +399,13 @@ public class View<T extends Component> extends Composite<T>
 
     void setApplicationEventListeners(@Nullable List<ApplicationListener<?>> listeners) {
         this.applicationEventListeners = listeners;
+    }
+
+    @Internal
+    @Nullable
+    ObservationRegistry getObservationRegistry() {
+        return getApplicationContext().getBeanProvider(ObservationRegistry.class)
+                .getIfAvailable();
     }
 
     protected ViewData getViewData() {

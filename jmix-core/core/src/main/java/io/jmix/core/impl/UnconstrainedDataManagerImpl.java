@@ -40,7 +40,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static io.jmix.core.observation.ObservationHelper.*;
+import static io.jmix.core.observation.DataObservationUtils.*;
 
 @Primary
 @Component("core_UnconstrainedDataManager")

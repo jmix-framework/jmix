@@ -29,15 +29,17 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 @Internal
-public final class ObservationHelper {
+public final class DataObservationUtils {
 
-    private ObservationHelper() {
+    private static final String DATA_BASE_NAME = "jmix.data.load";
+
+    private DataObservationUtils() {
     }
 
     public static Observation createEntityLoadObservation(MetaClass metaClass, @Nullable LoadContext.Query query,
                                                           ObservationRegistry observationRegistry) {
-        Observation observation = Observation.createNotStarted("jmix.data.load", observationRegistry)
-                .contextualName("loading entity")
+        Observation observation = Observation.createNotStarted(DATA_BASE_NAME, observationRegistry)
+                .contextualName("load entity")
                 .lowCardinalityKeyValue("method", "load")
                 .lowCardinalityKeyValue("entity.name", metaClass.getName());
 
@@ -48,8 +50,8 @@ public final class ObservationHelper {
 
     public static Observation createEntityListLoadObservation(MetaClass metaClass, @Nullable LoadContext.Query query,
                                                               ObservationRegistry observationRegistry) {
-        Observation observation = Observation.createNotStarted("jmix.data.load", observationRegistry)
-                .contextualName("loading list of entities")
+        Observation observation = Observation.createNotStarted(DATA_BASE_NAME, observationRegistry)
+                .contextualName("load list of entities")
                 .lowCardinalityKeyValue("method", "loadList")
                 .lowCardinalityKeyValue("entity.name", metaClass.getName());
 
@@ -60,8 +62,8 @@ public final class ObservationHelper {
 
     public static Observation createEntityCountObservation(MetaClass metaClass, @Nullable LoadContext.Query query,
                                                            ObservationRegistry observationRegistry) {
-        Observation observation = Observation.createNotStarted("jmix.data.load", observationRegistry)
-                .contextualName("counting entities")
+        Observation observation = Observation.createNotStarted(DATA_BASE_NAME, observationRegistry)
+                .contextualName("count entities")
                 .lowCardinalityKeyValue("method", "getCount")
                 .lowCardinalityKeyValue("entity.name", metaClass.getName());
 
@@ -72,8 +74,8 @@ public final class ObservationHelper {
 
     public static Observation createValuesLoadObservation(ValueLoadContext context,
                                                           ObservationRegistry observationRegistry) {
-        Observation observation = Observation.createNotStarted("jmix.data.load", observationRegistry)
-                .contextualName("loading values")
+        Observation observation = Observation.createNotStarted(DATA_BASE_NAME, observationRegistry)
+                .contextualName("load values")
                 .lowCardinalityKeyValue("method", "loadValues")
                 .highCardinalityKeyValue("properties", context.getProperties().toString());
 
@@ -84,8 +86,8 @@ public final class ObservationHelper {
 
     public static Observation createValuesCountObservation(ValueLoadContext context,
                                                            ObservationRegistry observationRegistry) {
-        Observation observation = Observation.createNotStarted("jmix.data.load", observationRegistry)
-                .contextualName("loading values")
+        Observation observation = Observation.createNotStarted(DATA_BASE_NAME, observationRegistry)
+                .contextualName("load values")
                 .lowCardinalityKeyValue("method", "getCount")
                 .highCardinalityKeyValue("properties", context.getProperties().toString());
 

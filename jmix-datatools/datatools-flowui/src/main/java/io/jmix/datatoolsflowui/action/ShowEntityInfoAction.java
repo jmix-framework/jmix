@@ -26,7 +26,6 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.DialogWindow;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,16 +88,6 @@ public class ShowEntityInfoAction extends SecuredListDataComponentAction<ShowEnt
     protected void setVisibleInternal(boolean visible) {
         super.setVisibleInternal(visible
                 && isVisibleBySpecificUiPermission());
-    }
-
-    @Override
-    public void actionPerform(Component component) {
-        // if standard behaviour
-        if (!hasListener(ActionPerformedEvent.class)) {
-            execute();
-        } else {
-            super.actionPerform(component);
-        }
     }
 
     @Override

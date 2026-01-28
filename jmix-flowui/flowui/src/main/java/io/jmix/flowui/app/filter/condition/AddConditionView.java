@@ -22,6 +22,7 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.accesscontext.UiGenericFilterModifyJpqlConditionContext;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.builder.PropertyConditionBuilder;
@@ -30,7 +31,6 @@ import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.entity.filter.*;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
@@ -157,7 +157,7 @@ public class AddConditionView extends StandardListView<FilterCondition> {
                 "addConditionView.createDropdownButton.actionItemText",
                 messageTools.getEntityCaption(metaClass));
 
-        return new BaseAction("genericFilter_create" + detailViewId)
+        return new ObservableBaseAction("genericFilter_create" + detailViewId)
                 .withText(actionText)
                 .withHandler(event -> {
                     DialogWindow<View<?>> detailView = dialogWindows.detail(this, modelClass)

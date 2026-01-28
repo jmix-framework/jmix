@@ -19,6 +19,7 @@ package io.jmix.flowui.action.genericfilter;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.UiObservationUtils;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
@@ -81,7 +82,8 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            execute();
+            UiObservationUtils.createActionExeutionObservation(this, getObservationRegistry())
+                    .observe(this::execute);
         } else {
             super.actionPerform(component);
         }

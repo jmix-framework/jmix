@@ -25,6 +25,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.SaveContext;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.UiObservationUtils;
 import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -41,6 +42,7 @@ import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RolePersistence;
 import io.jmix.securityflowui.view.resourcepolicy.*;
+import io.micrometer.observation.ObservationRegistry;
 import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -176,9 +178,15 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         BaseAction action = new BaseAction(RandomStringUtils.randomAlphabetic(5)) {
             @Override
             public void actionPerform(Component component) {
-                dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicyTypeProvider.getCreatePolicyViewClass())
-                        .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)
-                        .open();
+                ObservationRegistry observationRegistry = getApplicationContext()
+                        .getBeanProvider(ObservationRegistry.class)
+                        .getIfAvailable();
+
+                UiObservationUtils.createActionExeutionObservation(this, observationRegistry)
+                                .observe(() ->
+                                        dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicyTypeProvider.getCreatePolicyViewClass())
+                                                .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)
+                                                .open());
             }
 
             @Nullable

@@ -25,13 +25,14 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.UiObservationUtils;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.ExecutableAction;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.util.WebBrowserTools;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
@@ -60,7 +61,7 @@ import java.util.function.Consumer;
  * </ol>
  */
 @ActionType(SubstituteUserAction.ID)
-public class SubstituteUserAction extends BaseAction implements ExecutableAction, ApplicationContextAware {
+public class SubstituteUserAction extends ObservableBaseAction implements ExecutableAction, ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(SubstituteUserAction.class);
 
@@ -126,7 +127,8 @@ public class SubstituteUserAction extends BaseAction implements ExecutableAction
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            execute();
+            UiObservationUtils.createActionExeutionObservation(this, getObservationRegistry())
+                    .observe(this::execute);
         } else {
             super.actionPerform(component);
         }

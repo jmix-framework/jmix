@@ -37,6 +37,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.accesscontext.UiGenericFilterModifyConfigurationContext;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterAddConditionAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterResetAction;
@@ -55,7 +56,6 @@ import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -907,7 +907,7 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected Action createConfigurationAction(Configuration configuration) {
-        return new BaseAction("genericFilter_select_" + configuration.getId())
+        return new ObservableBaseAction("genericFilter_select_" + configuration.getId())
                 .withText(getConfigurationName(configuration))
                 .withHandler(actionPerformedEvent -> {
                     setCurrentConfigurationInternal(configuration, true);

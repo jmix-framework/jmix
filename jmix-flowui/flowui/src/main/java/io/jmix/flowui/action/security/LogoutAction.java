@@ -18,11 +18,12 @@ package io.jmix.flowui.action.security;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.core.Messages;
+import io.jmix.flowui.UiObservationUtils;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.sys.LogoutSupport;
 import org.springframework.beans.BeansException;
@@ -31,7 +32,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 @ActionType(LogoutAction.ID)
-public class LogoutAction extends BaseAction implements ExecutableAction, ApplicationContextAware {
+public class LogoutAction extends ObservableBaseAction implements ExecutableAction, ApplicationContextAware {
 
     public static final String ID = "logout";
 
@@ -70,7 +71,8 @@ public class LogoutAction extends BaseAction implements ExecutableAction, Applic
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            execute();
+            UiObservationUtils.createActionExeutionObservation(this, getObservationRegistry())
+                    .observe(this::execute);
         } else {
             super.actionPerform(component);
         }

@@ -18,6 +18,7 @@ package io.jmix.flowui.action.usermenu;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
+import io.jmix.flowui.UiObservationUtils;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
@@ -103,7 +104,8 @@ public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends J
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            execute();
+            UiObservationUtils.createActionExeutionObservation(this, getObservationRegistry())
+                    .observe(this::execute);
         } else {
             super.actionPerform(component);
         }

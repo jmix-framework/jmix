@@ -16,14 +16,7 @@
 
 package io.jmix.fullcalendarflowui.component.serialization;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.vaadin.flow.data.provider.KeyMapper;
-import elemental.json.JsonArray;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
@@ -33,6 +26,12 @@ import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarSe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.node.ArrayNode;
 
 import java.util.List;
 import java.util.TimeZone;
@@ -43,8 +42,8 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
     protected KeyMapper<Object> crossDataProviderKeyMapper = new KeyMapper<>();
 
     @Override
-    protected List<JsonSerializer<?>> getSerializers() {
-        List<JsonSerializer<?>> serializers = super.getSerializers();
+    protected List<ValueSerializer<?>> getSerializers() {
+        List<ValueSerializer<?>> serializers = super.getSerializers();
         serializers.add(new EnumClassSerializer());
         serializers.add(new DaysOfWeekSerializer());
         return serializers;
@@ -92,13 +91,14 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
         protected CalendarEventSerializer eventSerializer;
         protected KeyMapper<Object> eventKeyMapper;
         protected String sourceId;
+        protected ObjectMapper dataObjectMapper; // TODO: pinyazhin, check that correctly works
 
         public FullCalendarDataSerializer(String sourceId, KeyMapper<Object> eventKeyMapper) {
             this.eventKeyMapper = eventKeyMapper;
             this.sourceId = sourceId;
 
             eventSerializer = createCalendarEventSerializer();
-            setupCalendarEventSerializer(objectMapper, eventSerializer);
+            dataObjectMapper = addCalendarEventSerializer(FullCalendarSerializer.this.objectMapper, eventSerializer);
         }
 
         public void setTimeZoneSupplier(Supplier<TimeZone> timeZoneSupplier) {
@@ -106,37 +106,37 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
             eventSerializer.setTimeZoneSupplier(timeZoneSupplier);
         }
 
-        public JsonValue serializeIncrementalData(IncrementalData incrementalData) {
-            String dataJson;
+        public JsonNode serializeIncrementalData(IncrementalData incrementalData) {
+            JsonNode json;
             try {
-                dataJson = objectMapper.writeValueAsString(incrementalData);
-            } catch (JsonProcessingException e) {
+                json = dataObjectMapper.valueToTree(incrementalData);
+            } catch (JacksonException e) {
                 throw new IllegalStateException("Cannot serialize calendar's incremental data", e);
             }
 
-            JsonObject json = jsonFactory.parse(dataJson);
-
-            log.debug("Serialized incremental data: {}", json.toJson());
+            log.debug("Serialized incremental data: {}", json);
 
             return json;
         }
 
-        public JsonArray serializeData(List<? extends CalendarEvent> items) {
+        public ArrayNode serializeData(List<? extends CalendarEvent> items) {
 
             log.debug("Starting serialize calendar's data: {} items", items.size());
 
-            String rawJson;
+            JsonNode json;
             try {
-                rawJson = objectMapper.writeValueAsString(items);
-            } catch (JsonProcessingException e) {
+                json = dataObjectMapper.valueToTree(items);
+            } catch (JacksonException e) {
                 throw new IllegalStateException("Cannot serialize calendar's data", e);
             }
 
-            JsonArray json = jsonFactory.parse(rawJson);
+            if (!json.isArray()) {
+                throw new IllegalStateException("Serialized data is not an array");
+            }
 
-            log.debug("Serialized data: {} items", json.toJson());
+            log.debug("Serialized data: {} items", json);
 
-            return json;
+            return (ArrayNode) json;
         }
 
         protected CalendarEventSerializer createCalendarEventSerializer() {
@@ -144,11 +144,14 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
                     FullCalendarSerializer.this.crossDataProviderKeyMapper);
         }
 
-        protected void setupCalendarEventSerializer(ObjectMapper objectMapper,
-                                                    CalendarEventSerializer eventSerializer) {
+        protected ObjectMapper addCalendarEventSerializer(ObjectMapper objectMapper,
+                                                          CalendarEventSerializer eventSerializer) {
             SimpleModule module = new SimpleModule();
             module.addSerializer(eventSerializer);
-            objectMapper.registerModule(module);
+
+            return objectMapper.rebuild()
+                    .addModule(module)
+                    .build();
         }
     }
 }

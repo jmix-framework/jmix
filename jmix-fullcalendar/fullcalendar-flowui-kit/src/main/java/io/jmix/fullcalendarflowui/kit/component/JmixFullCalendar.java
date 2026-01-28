@@ -20,12 +20,9 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
+import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
-import elemental.json.JsonArray;
-import elemental.json.JsonFactory;
-import elemental.json.JsonObject;
-import elemental.json.impl.JreJsonFactory;
 import io.jmix.flowui.kit.meta.StudioIgnore;
 import io.jmix.fullcalendarflowui.kit.component.event.dom.*;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
@@ -34,6 +31,8 @@ import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOpt
 import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarDeserializer;
 import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarSerializer;
 import jakarta.annotation.Nullable;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -57,8 +56,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     protected JmixFullCalendarSerializer serializer;
     protected JmixFullCalendarDeserializer deserializer;
     protected JmixFullCalendarOptions options;
-
-    protected JsonFactory jsonFactory;
 
     protected Map<String, StateTree.ExecutionRegistration> itemsDataProvidersExecutionMap = new HashMap<>(2);
     protected Map<String, StateTree.ExecutionRegistration> callbackDataProvidersExecutionMap = new HashMap<>(2);
@@ -86,7 +83,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         serializer = createSerializer();
         deserializer = createDeserializer();
         options = createOptions();
-        jsonFactory = createJsonFactory();
 
         attachCalendarOptionChangeListener();
         attachDatesSetDomEventListener();
@@ -2077,10 +2073,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         getElement().setProperty("eventSingleClickThreshold", threshold);
     }
 
-    protected JsonFactory createJsonFactory() {
-        return new JreJsonFactory();
-    }
-
     protected JmixFullCalendarSerializer createSerializer() {
         return new JmixFullCalendarSerializer();
     }
@@ -2115,7 +2107,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     protected void performUpdateOptions(boolean onlyDirty) {
-        JsonObject json = serializer.serializeOptions(onlyDirty
+        ObjectNode json = serializer.serializeOptions(onlyDirty
                 ? options.getDirtyOptions()
                 : options.getUpdatableOptions());
 
@@ -2138,7 +2130,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     protected void updateInitialOptions() {
         // Before the component is fully initialized, consider all options as initial
-        JsonObject json = serializer.serializeOptions(options.getAllOptions());
+        ObjectNode json = serializer.serializeOptions(options.getAllOptions());
         getElement().setPropertyJson("initialOptions", json);
     }
 
@@ -2351,11 +2343,11 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     protected void onSelect(SelectDomEvent event) {
-        JsonObject context = event.getContext();
+        ObjectNode context = event.getContext();
 
-        options.getCurrentSelection().setAllDay(context.getBoolean("allDay"));
-        options.getCurrentSelection().setStartDateTime(context.getString("startDateTime"));
-        options.getCurrentSelection().setEndDateTime(context.getString("endDateTime"));
+        options.getCurrentSelection().setAllDay(context.get("allDay").asBoolean());
+        options.getCurrentSelection().setStartDateTime(context.get("startDateTime").asString());
+        options.getCurrentSelection().setEndDateTime(context.get("endDateTime").asString());
     }
 
     protected void onUnselect(UnselectDomEvent event) {
@@ -2385,44 +2377,44 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     @ClientCallable
-    protected JsonArray fetchCalendarItems(String sourceId, String start, String end) {
+    protected ArrayNode fetchCalendarItems(String sourceId, String start, String end) {
         // Stub, used in inheritors
-        return jsonFactory.createArray();
+        return JacksonUtils.createArrayNode();
     }
 
     @ClientCallable
-    protected JsonArray getMoreLinkClassNames(JsonObject jsonContext) {
+    protected ArrayNode getMoreLinkClassNames(ObjectNode jsonContext) {
         // Stub, used in inheritors
-        return jsonFactory.createArray();
+        return JacksonUtils.createArrayNode();
     }
 
     @ClientCallable
-    protected JsonArray getDayHeaderClassNames(JsonObject jsonContext) {
+    protected ArrayNode getDayHeaderClassNames(ObjectNode jsonContext) {
         // Stub, used in inheritors
-        return jsonFactory.createArray();
+        return JacksonUtils.createArrayNode();
     }
 
     @ClientCallable
-    protected JsonArray getDayCellClassNames(JsonObject jsonContext) {
+    protected ArrayNode getDayCellClassNames(ObjectNode jsonContext) {
         // Stub, used in inheritors
-        return jsonFactory.createArray();
+        return JacksonUtils.createArrayNode();
     }
 
     @ClientCallable
-    protected JsonArray getSlotLabelClassNames(JsonObject jsonContext) {
+    protected ArrayNode getSlotLabelClassNames(ObjectNode jsonContext) {
         // Stub, used in inheritors
-        return jsonFactory.createArray();
+        return JacksonUtils.createArrayNode();
     }
 
     @ClientCallable
-    protected JsonArray getNowIndicatorClassNames(JsonObject jsonContext) {
-        return jsonFactory.createArray();
+    protected ArrayNode getNowIndicatorClassNames(ObjectNode jsonContext) {
+        return JacksonUtils.createArrayNode();
     }
 
     @ClientCallable
-    protected JsonObject getDayCellBottomTextInfo(JsonObject jsonContext) {
+    protected ObjectNode getDayCellBottomTextInfo(ObjectNode jsonContext) {
         // Stub, used in inheritors
-        return jsonFactory.createObject();
+        return JacksonUtils.createObjectNode();
     }
 
     protected void addDataProvidersOnAttach() {

@@ -1,12 +1,13 @@
 package io.jmix.fullcalendarflowui.component.data;
 
-import elemental.json.JsonValue;
 import io.jmix.core.annotation.Internal;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.data.ItemsCalendarDataProvider.ItemSetChangeEvent;
 import io.jmix.fullcalendarflowui.component.model.IncrementalData;
 import io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer;
 import org.springframework.lang.Nullable;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,11 +44,11 @@ public class ItemsDataProviderManager extends AbstractDataProviderManager {
         return itemId == null ? null : getDataProvider().getItem(itemId);
     }
 
-    public JsonValue serializeData() {
+    public ArrayNode serializeData() {
         return dataSerializer.serializeData(((ItemsCalendarDataProvider) dataProvider).getItems());
     }
 
-    public List<JsonValue> serializeIncrementalData() {
+    public List<JsonNode> serializeIncrementalData() {
         if (pendingIncrementalChanges == null || pendingIncrementalChanges.isEmpty()) {
             return Collections.emptyList();
         }

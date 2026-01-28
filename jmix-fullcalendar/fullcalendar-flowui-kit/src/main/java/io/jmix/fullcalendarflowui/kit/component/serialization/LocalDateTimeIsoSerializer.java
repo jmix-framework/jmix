@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.component.serialization;
+package io.jmix.fullcalendarflowui.kit.component.serialization;
 
-import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
-import io.jmix.fullcalendarflowui.component.model.DaysOfWeek;
+import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
 
-public class DaysOfWeekSerializer extends StdSerializer<DaysOfWeek> {
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-    public DaysOfWeekSerializer() {
-        super(DaysOfWeek.class);
+public class LocalDateTimeIsoSerializer extends StdSerializer<LocalDateTime> {
+
+    public LocalDateTimeIsoSerializer() {
+        super(LocalDateTime.class);
     }
 
     @Override
-    public void serialize(DaysOfWeek value, JsonGenerator gen, SerializationContext provider) {
-        if (value.getDaysOfWeek().isEmpty()) {
-            return;
-        }
-        int[] days = value.getDaysOfWeek().stream()
-                .mapToInt(DayOfWeek::getId)
-                .toArray();
-        gen.writeArray(days, 0, days.length);
+    public void serialize(LocalDateTime value, JsonGenerator gen, SerializationContext provider) throws JacksonException {
+        gen.writeString(value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
     }
 }

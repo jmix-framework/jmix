@@ -6,12 +6,12 @@ import com.vaadin.flow.component.contextmenu.ContextMenuBase;
 import com.vaadin.flow.component.contextmenu.MenuManager;
 import com.vaadin.flow.function.SerializableRunnable;
 import com.vaadin.flow.shared.Registration;
-import elemental.json.JsonObject;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.contextmenu.event.FullCalendarCellContext;
 import io.jmix.fullcalendarflowui.component.contextmenu.event.FullCalendarContextMenuOpenedEvent;
 import io.jmix.fullcalendarflowui.component.serialization.FullCalendarDeserializer;
 import org.springframework.lang.Nullable;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.function.Function;
 
@@ -127,7 +127,7 @@ public class FullCalendarContextMenu extends ContextMenuBase<FullCalendarContext
     }
 
     @Override
-    protected boolean onBeforeOpenMenu(JsonObject eventDetail) {
+    protected boolean onBeforeOpenMenu(ObjectNode eventDetail) {
         cellContext = deserializer.deserializeCalendarCellContext(eventDetail, getTarget());
 
         if (contentMenuHandler != null) {

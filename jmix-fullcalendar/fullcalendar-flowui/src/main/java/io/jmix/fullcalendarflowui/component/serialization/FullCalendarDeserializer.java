@@ -16,7 +16,6 @@
 
 package io.jmix.fullcalendarflowui.component.serialization;
 
-import elemental.json.JsonObject;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
@@ -30,6 +29,8 @@ import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarDeserializer;
 import io.jmix.fullcalendarflowui.kit.component.model.dom.DomCalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.model.dom.DomMouseEventDetails;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.Objects;
 
@@ -37,19 +38,19 @@ import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.par
 
 public class FullCalendarDeserializer extends JmixFullCalendarDeserializer {
 
-    public FullCalendarCellContext deserializeCalendarCellContext(JsonObject json, FullCalendar calendar) {
+    public FullCalendarCellContext deserializeCalendarCellContext(ObjectNode json, FullCalendar calendar) {
         Preconditions.checkNotNullArgument(json);
         Preconditions.checkNotNullArgument(calendar);
 
-        DayCell dayCell = json.hasKey("dayCell")
-                ? deserializeDayCell(json.getObject("dayCell"))
+        DayCell dayCell = json.has("dayCell")
+                ? deserializeDayCell(json.get("dayCell"))
                 : null;
 
         CalendarEvent event = null;
         CalendarDataProvider dataProvider = null;
 
-        if (json.hasKey("event")) {
-            DomCalendarEvent domCalendarEvent = deserialize(json.getObject("event"), DomCalendarEvent.class);
+        if (json.has("event")) {
+            DomCalendarEvent domCalendarEvent = deserialize((ObjectNode) json.get("event"), DomCalendarEvent.class);
             AbstractDataProviderManager dataProviderManager = getDataProviderManager(domCalendarEvent, calendar);
 
             event = dataProviderManager.getCalendarEvent(domCalendarEvent.getId());
@@ -61,20 +62,21 @@ public class FullCalendarDeserializer extends JmixFullCalendarDeserializer {
         }
 
         DomMouseEventDetails domMouseEventDetails =
-                deserialize(json.getObject("mouseDetails"), DomMouseEventDetails.class);
+                deserialize((ObjectNode) json.get("mouseDetails"), DomMouseEventDetails.class);
 
         return new FullCalendarCellContext(dayCell, event, dataProvider, new MouseEventDetails(domMouseEventDetails));
     }
 
-    public DayCell deserializeDayCell(JsonObject json) {
+    public DayCell deserializeDayCell(JsonNode json) {
         Preconditions.checkNotNullArgument(json);
-        DayOfWeek dayOfWeek = DayOfWeek.fromId((int) json.getNumber("dow"));
-        return new DayCell(parseIsoDate(json.getString("date")),
-                json.getBoolean("isDisabled"),
-                json.getBoolean("isFuture"),
-                json.getBoolean("isOther"),
-                json.getBoolean("isPast"),
-                json.getBoolean("isToday"),
+
+        DayOfWeek dayOfWeek = DayOfWeek.fromId(json.get("dow").asInt());
+        return new DayCell(parseIsoDate(json.get("date").asString()),
+                json.get("isDisabled").asBoolean(),
+                json.get("isFuture").asBoolean(),
+                json.get("isOther").asBoolean(),
+                json.get("isPast").asBoolean(),
+                json.get("isToday").asBoolean(),
                 Objects.requireNonNull(dayOfWeek));
     }
 

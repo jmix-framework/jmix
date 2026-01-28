@@ -1,9 +1,9 @@
 package io.jmix.fullcalendarflowui.component.data;
 
-import elemental.json.JsonArray;
 import io.jmix.core.annotation.Internal;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer;
+import tools.jackson.databind.node.ArrayNode;
 
 import java.util.List;
 
@@ -28,13 +28,13 @@ public class CallbackDataProviderManager extends AbstractDataProviderManager {
         return (CallbackCalendarDataProvider) super.getDataProvider();
     }
 
-    public JsonArray fetchAndSerialize(CallbackCalendarDataProvider.ItemsFetchContext context) {
+    public ArrayNode fetchAndSerialize(CallbackCalendarDataProvider.ItemsFetchContext context) {
         lastFetchedEvents = getDataProvider().onItemsFetch(context);
 
         return serializeData(lastFetchedEvents);
     }
 
-    public JsonArray serializeData(List<CalendarEvent> calendarEvents) {
+    public ArrayNode serializeData(List<CalendarEvent> calendarEvents) {
         return dataSerializer.serializeData(calendarEvents);
     }
 

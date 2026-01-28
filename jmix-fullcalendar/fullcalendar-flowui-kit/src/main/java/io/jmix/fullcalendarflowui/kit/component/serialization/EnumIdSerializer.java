@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-
 package io.jmix.fullcalendarflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 /**
  * INTERNAL.
@@ -34,7 +31,7 @@ public class EnumIdSerializer extends StdSerializer<HasEnumId> {
     }
 
     @Override
-    public void serialize(HasEnumId value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(HasEnumId value, JsonGenerator gen, SerializationContext provider) {
         if (value == null) {
             gen.writeNull();
             return;

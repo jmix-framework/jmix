@@ -16,13 +16,10 @@
 
 package io.jmix.fullcalendarflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import elemental.json.JsonFactory;
-import elemental.json.impl.JreJsonFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,37 +29,36 @@ import java.util.List;
  */
 public abstract class AbstractFullCalendarSerializer {
 
-    protected JsonFactory jsonFactory;
     protected ObjectMapper objectMapper;
 
     public AbstractFullCalendarSerializer() {
-        jsonFactory = createJsonFactory();
         objectMapper = createObjectMapper();
-
-        initObjectMapper(objectMapper);
-    }
-
-    protected JsonFactory createJsonFactory() {
-        return new JreJsonFactory();
+        objectMapper = initObjectMapper(objectMapper);
     }
 
     protected ObjectMapper createObjectMapper() {
         return new ObjectMapper();
     }
 
-    protected void initObjectMapper(ObjectMapper objectMapper) {
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
+    protected ObjectMapper initObjectMapper(ObjectMapper objectMapper) {
         SimpleModule module = new SimpleModule();
         getSerializers().forEach(module::addSerializer);
-        objectMapper.registerModule(module);
+
+        return objectMapper.rebuild()
+                .addModule(module)
+                .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .build();
     }
 
-    protected List<JsonSerializer<?>> getSerializers() {
-        List<JsonSerializer<?>> serializers = new ArrayList<>(11);
+    protected List<ValueSerializer<?>> getSerializers() {
+        List<ValueSerializer<?>> serializers = new ArrayList<>(11);
         serializers.add(new EnumIdSerializer());
         serializers.add(new JsFunctionSerializer());
+        serializers.add(new LocalDateIsoSerializer());
+        serializers.add(new LocalTimeIsoSerializer());
+        serializers.add(new LocalDateTimeIsoSerializer());
+        serializers.add(new ZonedDateTimeIsoSerializer());
+        serializers.add(new TimeZoneSerializer());
         return serializers;
     }
 }

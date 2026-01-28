@@ -16,12 +16,11 @@
 
 package io.jmix.fullcalendarflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import elemental.json.JsonFactory;
-import elemental.json.JsonObject;
-import elemental.json.impl.JreJsonFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * INTERNAL.
@@ -32,17 +31,15 @@ public class JmixFullCalendarDeserializer {
 
     public JmixFullCalendarDeserializer() {
         objectMapper = createObjectMapper();
-
-        initObjectMapper(objectMapper);
     }
 
-    public <T> T deserialize(JsonObject json, Class<T> objectType) {
-        String rawJson = json.toJson();
+    public <T> T deserialize(ObjectNode json, Class<T> objectType) {
+        String rawJson = json.toString();
 
         T context;
         try {
             context = objectMapper.readValue(rawJson, objectType);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot deserialize JSON", e);
         }
 
@@ -50,10 +47,8 @@ public class JmixFullCalendarDeserializer {
     }
 
     protected ObjectMapper createObjectMapper() {
-        return new ObjectMapper();
-    }
-
-    protected void initObjectMapper(ObjectMapper objectMapper) {
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return JsonMapper.builder()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .build();
     }
 }

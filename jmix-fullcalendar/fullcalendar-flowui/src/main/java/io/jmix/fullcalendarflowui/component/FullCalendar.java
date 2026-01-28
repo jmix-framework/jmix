@@ -4,12 +4,9 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.internal.ExecutionContext;
+import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
-import elemental.json.JsonArray;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
@@ -38,6 +35,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -972,16 +972,16 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected void setI18nInternal(FullCalendarI18n i18n) {
-        JsonObject json = getSerializer().serializeObject(i18n);
+        ObjectNode json = getSerializer().serializeObject(i18n);
 
-        json.put("locale", getSerializer().serializeValue(currentAuthentication.getLocale()));
-        json.put("momentLocale", createCalendarLocalizedUnitNamesJson());
+        json.set("locale", getSerializer().serializeValue(currentAuthentication.getLocale()));
+        json.set("momentLocale", createCalendarLocalizedUnitNamesJson());
 
         getElement().setPropertyJson("i18n", json);
     }
 
     @Override
-    protected JsonArray fetchCalendarItems(String sourceId, String start, String end) {
+    protected ArrayNode fetchCalendarItems(String sourceId, String start, String end) {
         CallbackDataProviderManager dataProviderManager = (CallbackDataProviderManager) getDataProviderManager(sourceId);
 
         return dataProviderManager.fetchAndSerialize(
@@ -1034,7 +1034,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 .map(ep -> (ItemsDataProviderManager) ep)
                 .toList();
 
-        List<JsonValue> jsonValues = new ArrayList<>();
+        List<JsonNode> jsonValues = new ArrayList<>();
         for (ItemsDataProviderManager dataProviderManger : dataProviders) {
             jsonValues.addAll(dataProviderManger.serializeIncrementalData());
             dataProviderManger.clearIncrementalData();
@@ -1059,14 +1059,14 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected void performUpdateItemDataProvider(String dataProviderId) {
-        JsonObject resultJson = new JreJsonFactory().createObject();
+        ObjectNode resultJson = JacksonUtils.createObjectNode();
 
         ItemsDataProviderManager dataProviderManager =
                 (ItemsDataProviderManager) dataProvidersMap.get(dataProviderId);
 
-        JsonValue dataJson = dataProviderManager.serializeData();
+        ArrayNode dataJson = dataProviderManager.serializeData();
 
-        resultJson.put("data", dataJson);
+        resultJson.putArray("data").addAll(dataJson);
         resultJson.put("sourceId", dataProviderManager.getSourceId());
 
         getElement().callJsFunction("_updateSyncSourcesData", resultJson);
@@ -1086,7 +1086,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected void performUpdateCallbackDataProvider(String dataProviderId) {
-        JsonObject resultJson = new JreJsonFactory().createObject();
+        ObjectNode resultJson = JacksonUtils.createObjectNode();
 
         CallbackDataProviderManager dataProviderManager =
                 (CallbackDataProviderManager) dataProvidersMap.get(dataProviderId);
@@ -1316,9 +1316,9 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     @Override
-    protected JsonArray getMoreLinkClassNames(JsonObject jsonContext) {
+    protected ArrayNode getMoreLinkClassNames(ObjectNode jsonContext) {
         if (getMoreLinkClassNamesGenerator() == null) {
-            return jsonFactory.createArray();
+            return JacksonUtils.createArrayNode();
         }
 
         DomMoreLinkClassNames clientContext = deserializer.deserialize(jsonContext, DomMoreLinkClassNames.class);
@@ -1329,19 +1329,19 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         clientContext.getEventsCount(),
                         createDisplayModeInfo(clientContext.getView())));
 
-        JsonArray classNamesJson = classNames == null
-                ? jsonFactory.createArray()
+        ArrayNode classNamesJson = classNames == null
+                ? JacksonUtils.createArrayNode()
                 : getSerializer().toJsonArray(classNames);
 
-        log.debug("Serialized 'MoreLinkClassNames': {}", classNamesJson.toJson());
+        log.debug("Serialized 'MoreLinkClassNames': {}", classNamesJson);
 
         return classNamesJson;
     }
 
     @Override
-    protected JsonArray getDayHeaderClassNames(JsonObject jsonContext) {
+    protected ArrayNode getDayHeaderClassNames(ObjectNode jsonContext) {
         if (getDayHeaderClassNamesGenerator() == null) {
-            return jsonFactory.createArray();
+            return JacksonUtils.createArrayNode();
         }
 
         DomDayHeaderClassNames clientContext = deserializer.deserialize(jsonContext, DomDayHeaderClassNames.class);
@@ -1358,19 +1358,19 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         clientContext.isToday(),
                         createDisplayModeInfo(clientContext.getView())));
 
-        JsonArray classNamesJson = classNames == null
-                ? jsonFactory.createArray()
+        ArrayNode classNamesJson = classNames == null
+                ? JacksonUtils.createArrayNode()
                 : getSerializer().toJsonArray(classNames);
 
-        log.debug("Serialized day header's class names': {}", classNamesJson.toJson());
+        log.debug("Serialized day header's class names': {}", classNamesJson);
 
         return classNamesJson;
     }
 
     @Override
-    protected JsonArray getDayCellClassNames(JsonObject jsonContext) {
+    protected ArrayNode getDayCellClassNames(ObjectNode jsonContext) {
         if (getDayCellClassNamesGenerator() == null) {
-            return jsonFactory.createArray();
+            return JacksonUtils.createArrayNode();
         }
 
         DomDayCellClassNames clientContext = deserializer.deserialize(jsonContext, DomDayCellClassNames.class);
@@ -1387,19 +1387,19 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         clientContext.isToday(),
                         createDisplayModeInfo(clientContext.getView())));
 
-        JsonArray classNamesJson = classNames == null
-                ? jsonFactory.createArray()
+        ArrayNode classNamesJson = classNames == null
+                ? JacksonUtils.createArrayNode()
                 : getSerializer().toJsonArray(classNames);
 
-        log.debug("Serialized day cell's class names: {}", classNamesJson.toJson());
+        log.debug("Serialized day cell's class names: {}", classNamesJson);
 
         return classNamesJson;
     }
 
     @Override
-    protected JsonArray getSlotLabelClassNames(JsonObject jsonContext) {
+    protected ArrayNode getSlotLabelClassNames(ObjectNode jsonContext) {
         if (getSlotLabelClassNamesGenerator() == null) {
-            return jsonFactory.createArray();
+            return JacksonUtils.createArrayNode();
         }
 
         DomSlotLabelClassNames clientContext = deserializer.deserialize(jsonContext, DomSlotLabelClassNames.class);
@@ -1410,19 +1410,19 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         LocalTime.parse(clientContext.getTime()),
                         createDisplayModeInfo(clientContext.getView())));
 
-        JsonArray classNamesJson = classNames == null
-                ? jsonFactory.createArray()
+        ArrayNode classNamesJson = classNames == null
+                ? JacksonUtils.createArrayNode()
                 : getSerializer().toJsonArray(classNames);
 
-        log.debug("Serialized slot labels' class names: {}", classNamesJson.toJson());
+        log.debug("Serialized slot labels' class names: {}", classNamesJson);
 
         return classNamesJson;
     }
 
     @Override
-    protected JsonArray getNowIndicatorClassNames(JsonObject jsonContext) {
+    protected ArrayNode getNowIndicatorClassNames(ObjectNode jsonContext) {
         if (getNowIndicatorClassNamesGenerator() == null) {
-            return jsonFactory.createArray();
+            return JacksonUtils.createArrayNode();
         }
 
         DomNowIndicatorClassNames clientContext =
@@ -1435,19 +1435,19 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         toLocalDateTime(clientContext.getDateTime()),
                         createDisplayModeInfo(clientContext.getView())));
 
-        JsonArray classNamesJson = classNames == null
-                ? jsonFactory.createArray()
+        ArrayNode classNamesJson = classNames == null
+                ? JacksonUtils.createArrayNode()
                 : getSerializer().toJsonArray(classNames);
 
-        log.debug("Serialized now-indicator's class names: {}", classNamesJson.toJson());
+        log.debug("Serialized now-indicator's class names: {}", classNamesJson);
 
         return classNamesJson;
     }
 
     @Override
-    protected JsonObject getDayCellBottomTextInfo(JsonObject jsonContext) {
+    protected ObjectNode getDayCellBottomTextInfo(ObjectNode jsonContext) {
         if (getDayCellBottomTextGenerator() == null) {
-            return jsonFactory.createObject();
+            return JacksonUtils.createObjectNode();
         }
 
         DomDayCellBottomText clientContext = deserializer.deserialize(jsonContext, DomDayCellBottomText.class);
@@ -1465,7 +1465,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         createDisplayModeInfo(clientContext.getView())));
 
         if (text == null) {
-            return jsonFactory.createObject();
+            return JacksonUtils.createObjectNode();
         }
 
         List<String> classNames = null;
@@ -1485,10 +1485,10 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                     ));
         }
 
-        JsonObject result = jsonFactory.createObject();
+        ObjectNode result = JacksonUtils.createObjectNode();
         result.put("text", text);
         if (classNames != null) {
-            result.put("classNames", getSerializer().toJsonArray(classNames));
+            result.set("classNames", getSerializer().toJsonArray(classNames));
         }
         return result;
     }
@@ -1697,13 +1697,13 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 .withMoreLinkHint(getMessage("i18n.moreLinkHint"));
     }
 
-    protected JsonObject createCalendarLocalizedUnitNamesJson() {
-        JsonObject result = jsonFactory.createObject();
-        result.put("months", getSerializer().toJsonArray(getParsedByCommaMessage("months")));
-        result.put("monthsShort", getSerializer().toJsonArray(getParsedByCommaMessage("monthsShort")));
-        result.put("weekdays", getSerializer().toJsonArray(getParsedByCommaMessage("weekdays")));
-        result.put("weekdaysShort", getSerializer().toJsonArray(getParsedByCommaMessage("weekdaysShort")));
-        result.put("weekdaysMin", getSerializer().toJsonArray(getParsedByCommaMessage("weekdaysMin")));
+    protected ObjectNode createCalendarLocalizedUnitNamesJson() {
+        ObjectNode result = JacksonUtils.createObjectNode();
+        result.set("months", getSerializer().toJsonArray(getParsedByCommaMessage("months")));
+        result.set("monthsShort", getSerializer().toJsonArray(getParsedByCommaMessage("monthsShort")));
+        result.set("weekdays", getSerializer().toJsonArray(getParsedByCommaMessage("weekdays")));
+        result.set("weekdaysShort", getSerializer().toJsonArray(getParsedByCommaMessage("weekdaysShort")));
+        result.set("weekdaysMin", getSerializer().toJsonArray(getParsedByCommaMessage("weekdaysMin")));
         return result;
     }
 

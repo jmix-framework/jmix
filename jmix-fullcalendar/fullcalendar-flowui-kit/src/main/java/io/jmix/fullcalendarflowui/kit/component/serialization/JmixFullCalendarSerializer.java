@@ -16,20 +16,19 @@
 
 package io.jmix.fullcalendarflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import elemental.json.JsonArray;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
 import io.jmix.fullcalendarflowui.kit.component.model.option.CalendarOption;
 import io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ValueNode;
 
 import java.time.LocalDateTime;
 import java.util.*;
-
-import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.transformToZDT;
 
 /**
  * INTERNAL.
@@ -38,41 +37,45 @@ public class JmixFullCalendarSerializer extends AbstractFullCalendarSerializer {
 
     private static final Logger log = LoggerFactory.getLogger(JmixFullCalendarSerializer.class);
 
-    public JsonObject serializeObject(Object value) {
+    public ObjectNode serializeObject(Object value) {
         log.debug("Starting object: {}", value.getClass());
 
-        String rawJson;
+        JsonNode json;
         try {
-            rawJson = objectMapper.writeValueAsString(value);
-        } catch (JsonProcessingException e) {
+            json = objectMapper.valueToTree(value);
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot serialize object", e);
         }
 
-        JsonObject json = jsonFactory.parse(rawJson);
+        if (!json.isObject()) {
+            throw new IllegalStateException("Serialized object is not an JSON object");
+        }
 
         log.debug("Serialized object: {}", json);
 
-        return json;
+        return (ObjectNode) json;
     }
 
-    public JsonValue serializeValue(Object value) {
+    public ValueNode serializeValue(Object value) {
         log.debug("Starting value: {}", value.getClass());
 
-        String rawJson;
+        JsonNode json;
         try {
-            rawJson = objectMapper.writeValueAsString(value);
-        } catch (JsonProcessingException e) {
+            json = objectMapper.valueToTree(value);
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot serialize object", e);
         }
 
-        JsonValue json = jsonFactory.parse(rawJson);
+        if (!json.isValueNode()) {
+            throw new IllegalStateException("Serialized value is not a value node");
+        }
 
         log.debug("Serialized value: {}", json);
 
-        return json;
+        return (ValueNode) json;
     }
 
-    public JsonObject serializeOptions(Collection<CalendarOption> options) {
+    public ObjectNode serializeOptions(Collection<CalendarOption> options) {
         Map<String, Object> optionsMap = new HashMap<>(options.size());
         for (CalendarOption option : options) {
             optionsMap.put(
@@ -82,47 +85,43 @@ public class JmixFullCalendarSerializer extends AbstractFullCalendarSerializer {
 
         log.debug("Starting serialize {} calendar options", optionsMap.size());
 
-        String rawJson;
+        ObjectNode json;
         try {
-            rawJson = objectMapper.writeValueAsString(optionsMap);
-        } catch (JsonProcessingException e) {
+            json = objectMapper.valueToTree(optionsMap);
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot serialize calendar options", e);
         }
-
-        JsonObject json = jsonFactory.parse(rawJson);
 
         log.debug("Serialized options {}", json);
 
         return json;
     }
 
-    public JsonObject serializeCalendarDuration(CalendarDuration duration) {
+    public ObjectNode serializeCalendarDuration(CalendarDuration duration) {
         log.debug("Starting serialize calendar duration");
 
-        String rawJson;
+        ObjectNode objectNode;
         try {
-            rawJson = objectMapper.writeValueAsString(duration);
-        } catch (JsonProcessingException e) {
+            objectNode = objectMapper.valueToTree(duration);
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot serialize calendar duration", e);
         }
 
-        JsonObject json = jsonFactory.parse(rawJson);
+        log.debug("Serialized calendar duration {}", objectNode);
 
-        log.debug("Serialized calendar duration {}", json);
-
-        return json;
+        return objectNode;
     }
 
-    public JsonArray toJsonArray(List<String> list) {
-        JsonArray jsonArray = jsonFactory.createArray();
+    public ArrayNode toJsonArray(List<String> list) {
+        ArrayNode jsonArray = objectMapper.createArrayNode();
         for (int i = 0; i < list.size(); i++) {
             jsonArray.set(i, list.get(i));
         }
         return jsonArray;
     }
 
-    public JsonArray toJsonArrayJson(List<JsonValue> list) {
-        JsonArray jsonArray = jsonFactory.createArray();
+    public ArrayNode toJsonArrayJson(List<JsonNode> list) {
+        ArrayNode jsonArray = objectMapper.createArrayNode();
         for (int i = 0; i < list.size(); i++) {
             jsonArray.set(i, list.get(i));
         }

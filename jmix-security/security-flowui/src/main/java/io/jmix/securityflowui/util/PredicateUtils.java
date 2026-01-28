@@ -33,6 +33,16 @@ public class PredicateUtils {
     }
 
     /**
+     * Combines multiple {@link RoleHierarchyCandidatePredicate} into single {@link RoleHierarchyCandidatePredicate}.
+     *
+     * @param predicates predicates to combine
+     * @return composite predicate
+     */
+    public static RoleHierarchyCandidatePredicate combineRoleHierarchyPredicates(List<RoleHierarchyCandidatePredicate> predicates) {
+        return combineBiPredicates(predicates, RoleHierarchyCandidatePredicate::of);
+    }
+
+    /**
      * Combines multiple {@link UserSubstitutionCandidatePredicate} into single {@link UserSubstitutionCandidatePredicate}.
      *
      * @param predicates predicates to combine
@@ -46,9 +56,9 @@ public class PredicateUtils {
      * Combines multiple {@code BiPredicate<T, U>} into single {@code BiPredicate<T, U>}.
      *
      * @param predicates predicates to combine
+     * @param <T>        type of the first argument of the predicate
+     * @param <U>        type of the second argument of the predicate
      * @return composite predicate
-     * @param <T> type of the first argument of the predicate
-     * @param <U> type of the second argument of the predicate
      */
     public static <T, U> BiPredicate<T, U> combineBiPredicates(List<BiPredicate<T, U>> predicates) {
         return combineBiPredicates(predicates, Function.identity());
@@ -59,11 +69,11 @@ public class PredicateUtils {
      * and wrap the result into specific predicate subtype.
      *
      * @param predicates predicates to combine
-     * @param wrapper wrapper function
+     * @param wrapper    wrapper function
+     * @param <T>        type of the first argument of the predicate
+     * @param <U>        type of the second argument of the predicate
+     * @param <P>        type of the composite predicate
      * @return composite predicate
-     * @param <T> type of the first argument of the predicate
-     * @param <U> type of the second argument of the predicate
-     * @param <P> type of the composite predicate
      */
     public static <T, U, P extends BiPredicate<T, U>> P combineBiPredicates(List<P> predicates, Function<BiPredicate<T, U>, P> wrapper) {
         BiPredicate<T, U> combined = (t, u) -> {

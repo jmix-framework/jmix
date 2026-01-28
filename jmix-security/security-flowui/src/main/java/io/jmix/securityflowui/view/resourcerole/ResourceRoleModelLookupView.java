@@ -20,12 +20,14 @@ import com.vaadin.flow.router.Route;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
+import io.jmix.security.model.BaseRole;
 import io.jmix.security.model.ResourceRoleModel;
 import io.jmix.security.model.RoleModelConverter;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.securityflowui.component.rolefilter.RoleFilter;
 import io.jmix.securityflowui.component.rolefilter.RoleFilterChangeEvent;
 import io.jmix.securityflowui.util.RoleAssignmentCandidatePredicate;
+import io.jmix.securityflowui.util.RoleHierarchyCandidatePredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,6 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static io.jmix.securityflowui.util.PredicateUtils.combineRoleAssignmentPredicates;
+import static io.jmix.securityflowui.util.PredicateUtils.combineRoleHierarchyPredicates;
 
 @Route(value = "sec/resourcerolemodelslookup", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.lookup")
@@ -56,17 +59,22 @@ public class ResourceRoleModelLookupView extends StandardListView<ResourceRoleMo
 
     @Autowired(required = false)
     protected List<RoleAssignmentCandidatePredicate> roleAssignmentCandidatePredicates = Collections.emptyList();
+    @Autowired(required = false)
+    protected List<RoleHierarchyCandidatePredicate> roleHierarchyCandidatePredicates = Collections.emptyList();
 
     protected RoleAssignmentCandidatePredicate compositeRoleAssignmentCandidatePredicate;
+    protected RoleHierarchyCandidatePredicate compositeRoleHierarchyCandidatePredicate;
 
     private List<String> excludedRolesCodes = Collections.emptyList();
 
     private UserDetails user;
+    private BaseRole currentRole;
 
     @Subscribe
     public void onInit(InitEvent event) {
         initFilter();
         compositeRoleAssignmentCandidatePredicate = combineRoleAssignmentPredicates(roleAssignmentCandidatePredicates);
+        compositeRoleHierarchyCandidatePredicate = combineRoleHierarchyPredicates(roleHierarchyCandidatePredicates);
     }
 
     private void initFilter() {
@@ -91,10 +99,22 @@ public class ResourceRoleModelLookupView extends StandardListView<ResourceRoleMo
                 .filter(role -> (event == null || event.matches(role))
                         && !excludedRolesCodes.contains(role.getCode())
                 )
-                .filter(role -> compositeRoleAssignmentCandidatePredicate.test(user, role))
+                .filter(role -> {
+                    boolean allowed = true;
+                    if (currentRole != null) {
+                        // apply hierarchy predicates to find available base role candidates
+                        allowed = allowed && compositeRoleHierarchyCandidatePredicate.test(currentRole, role);
+                    }
+                    if (allowed && user != null) {
+                        // apply user-based predicates to find roles available for user
+                        allowed = allowed && compositeRoleAssignmentCandidatePredicate.test(user, role);
+                    }
+                    return allowed;
+                })
                 .map(roleModelConverter::createResourceRoleModel)
                 .sorted(Comparator.comparing(ResourceRoleModel::getName))
                 .collect(Collectors.toList());
+
         roleModelsDc.setItems(roleModels);
     }
 
@@ -104,5 +124,9 @@ public class ResourceRoleModelLookupView extends StandardListView<ResourceRoleMo
 
     public void setUser(UserDetails user) {
         this.user = user;
+    }
+
+    public void setCurrentRole(BaseRole currentRole) {
+        this.currentRole = currentRole;
     }
 }

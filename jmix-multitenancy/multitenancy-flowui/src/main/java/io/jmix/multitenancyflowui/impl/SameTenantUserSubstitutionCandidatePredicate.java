@@ -36,6 +36,10 @@ public class SameTenantUserSubstitutionCandidatePredicate implements UserSubstit
 
     @Override
     public boolean test(UserDetails firstUser, UserDetails secondUser) {
+        if (firstUser == null || secondUser == null) {
+            return false;
+        }
+
         String firstUserTenantId = tenantProvider.getTenantIdForUser(firstUser);
         String secondUserTenantId = tenantProvider.getTenantIdForUser(secondUser);
         return Objects.equals(firstUserTenantId, secondUserTenantId);

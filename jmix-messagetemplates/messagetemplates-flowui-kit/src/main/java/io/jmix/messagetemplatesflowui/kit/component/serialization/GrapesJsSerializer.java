@@ -25,7 +25,6 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.module.SimpleModule;
-import tools.jackson.databind.node.BaseJsonNode;
 import tools.jackson.databind.ser.std.SimpleFilterProvider;
 import tools.jackson.databind.ser.std.StdSerializer;
 
@@ -75,8 +74,8 @@ public class GrapesJsSerializer {
                 .collect(Collectors.toList());
     }
 
-    protected BaseJsonNode parseRawJson(String rawJson) {
-        return (BaseJsonNode) objectMapper.readTree(rawJson);
+    protected JsonNode parseRawJson(String rawJson) {
+        return objectMapper.readTree(rawJson);
     }
 
     /**
@@ -85,7 +84,7 @@ public class GrapesJsSerializer {
      * @param object object to serialize
      * @return {@link JsonNode} of the passed object
      */
-    public BaseJsonNode serialize(Object object) {
+    public JsonNode serialize(Object object) {
         String rawJson;
 
         try {

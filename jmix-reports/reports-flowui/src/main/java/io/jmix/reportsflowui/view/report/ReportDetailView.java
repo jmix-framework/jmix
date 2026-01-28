@@ -27,6 +27,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeLabel;
@@ -34,6 +35,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -287,6 +289,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
         initScreenIdField();
         initSingleDataSetTypeField();
         initJsonSourceTypeField();
+
+        initEntitiesParamFieldTooltip();
     }
 
     @Supply(to = "templatesDataGrid.alterable", subject = "renderer")
@@ -407,6 +411,28 @@ public class ReportDetailView extends StandardDetailView<Report> {
             }
         }
         bandsTreeDataGrid.focus();
+    }
+
+    protected void initEntitiesParamFieldTooltip() {
+        JmixButton entityParamFieldTooltipHelperButton = createHelperButton();
+        JmixButton entityListParamFieldTooltipHelperButton = createHelperButton();
+
+        Tooltip entityParamFieldTooltip = entityParamField.getTooltip();
+        Tooltip entityListParamFieldTooltip = entitiesParamField.getTooltip();
+
+        entityParamFieldTooltipHelperButton.addClickListener(e -> entityParamFieldTooltip.setOpened(!entityParamFieldTooltip.isOpened()));
+        entityListParamFieldTooltipHelperButton.addClickListener(e -> entityListParamFieldTooltip.setOpened(!entityListParamFieldTooltip.isOpened()));
+
+        entityParamField.setPrefixComponent(entityParamFieldTooltipHelperButton);
+        entitiesParamField.setPrefixComponent(entityListParamFieldTooltipHelperButton);
+    }
+
+    protected JmixButton createHelperButton() {
+        JmixButton helperButton = uiComponents.create(JmixButton.class);
+        helperButton.setIcon(VaadinIcon.QUESTION_CIRCLE.create());
+        helperButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+
+        return helperButton;
     }
 
     @Install(to = "bandsTreeDataGrid.remove", subject = "enabledRule")

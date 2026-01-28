@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { html, LitElement } from 'lit';
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
+import { PolylitMixin } from '@vaadin/component-base/src/polylit-mixin.js';
 import { TooltipController } from '@vaadin/component-base/src/tooltip-controller.js';
-import { registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import { LumoInjectionMixin } from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import { SwitchMixin } from './jmix-switch-mixin.js';
-import { switchStyles } from './jmix-switch-styles.js';
+import { switchStyles } from './styles/jmix-switch-styles.js';
 
-registerStyles('jmix-switch', switchStyles, { moduleId: 'jmix-switch-styles' });
-
-export class JmixSwitch extends SwitchMixin(ElementMixin(ThemableMixin(PolymerElement))) {
-
+export class JmixSwitch extends SwitchMixin(ElementMixin(ThemableMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
     static get is() {
         return 'jmix-switch';
     }
 
-    static get template() {
+    static get styles() {
+        return switchStyles;
+    }
+
+    render() {
         return html`
             <div class="jmix-switch-container">
                 <div part="switch" aria-hidden="true">
@@ -38,7 +41,7 @@ export class JmixSwitch extends SwitchMixin(ElementMixin(ThemableMixin(PolymerEl
                 <slot name="input"></slot>
                 <div part="label">
                     <slot name="label"></slot>
-                    <div part="required-indicator" on-click="_onRequiredIndicatorClick"></div>
+                    <div part="required-indicator" @click="${this._onRequiredIndicatorClick}"></div>
                 </div>
                 <div part="helper-text">
                     <slot name="helper"></slot>

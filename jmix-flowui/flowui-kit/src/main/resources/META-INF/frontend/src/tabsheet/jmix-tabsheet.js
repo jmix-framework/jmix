@@ -4,11 +4,13 @@
  * This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
  */
 import '@vaadin/tabsheet/src/vaadin-tabsheet-scroller.js';
-import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
-import { ControllerMixin } from '@vaadin/component-base/src/controller-mixin.js';
+import { html, LitElement } from 'lit';
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
+import { PolylitMixin } from '@vaadin/component-base/src/polylit-mixin.js';
+import { LumoInjectionMixin } from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import { tabSheetStyles } from '@vaadin/tabsheet/src/styles/vaadin-tabsheet-base-styles.js';
 import { TabSheetMixin } from '@vaadin/tabsheet/src/vaadin-tabsheet-mixin.js';
 
 /**
@@ -60,43 +62,19 @@ import { TabSheetMixin } from '@vaadin/tabsheet/src/vaadin-tabsheet-mixin.js';
  * @mixes ThemableMixin
  * @mixes ControllerMixin
  */
-// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.9.0]
-class JmixTabSheet extends TabSheetMixin(ThemableMixin(ElementMixin(ControllerMixin(PolymerElement)))) {
-    static get template() {
+// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 25.0.2]
+class JmixTabSheet extends TabSheetMixin(ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
+    static get is() {
+        return 'jmix-tabsheet';
+    }
+
+    static get styles() {
+        return tabSheetStyles;
+    }
+
+    /** @protected */
+    render() {
         return html`
-            <style>
-                :host([hidden]) {
-                    display: none !important;
-                }
-
-                :host {
-                    display: flex;
-                    flex-direction: column;
-                }
-
-                [part='tabs-container'] {
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                }
-
-                ::slotted([slot='tabs']) {
-                    flex: 1;
-                    align-self: stretch;
-                    min-width: 8em;
-                }
-
-                ::slotted([hidden]) {
-                    display: none !important;
-                }
-
-                [part='content'] {
-                    position: relative;
-                    flex: 1;
-                    box-sizing: border-box;
-                }
-            </style>
-
             <div part="tabs-container">
                 <slot name="prefix"></slot>
                 <slot name="tabs"></slot>
@@ -108,10 +86,6 @@ class JmixTabSheet extends TabSheetMixin(ThemableMixin(ElementMixin(ControllerMi
                 <slot id="panel-slot"></slot>
             </vaadin-tabsheet-scroller>
         `;
-    }
-
-    static get is() {
-        return 'jmix-tabsheet';
     }
 }
 

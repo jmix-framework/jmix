@@ -20,9 +20,9 @@ import '@vaadin/checkbox/src/vaadin-checkbox.js';
 import '@vaadin/select/src/vaadin-select.js';
 import '@vaadin/login/src/vaadin-login-form-wrapper.js';
 
-import {html} from '@polymer/polymer/polymer-element.js';
-import {defineCustomElement} from '@vaadin/component-base/src/define.js';
-import {LoginForm} from '@vaadin/login/src/vaadin-login-form.js';
+import { css, html } from 'lit';
+import { defineCustomElement } from '@vaadin/component-base/src/define.js';
+import { LoginForm } from '@vaadin/login/src/vaadin-login-form.js';
 
 /**
  * ### Styling
@@ -49,14 +49,41 @@ import {LoginForm} from '@vaadin/login/src/vaadin-login-form.js';
  */
 // CAUTION: copied from @vaadin/login [last update Vaadin 24.9.0]
 class JmixLoginForm extends LoginForm {
+    static get is() {
+        return 'jmix-login-form';
+    }
+
+    static get styles() {
+        return css`
+            vaadin-login-form-wrapper > form > * {
+                width: 100%;
+            }
+        `;
+    }
+
     static get template() {
         return html`
-            <style>
-                vaadin-login-form-wrapper > form > * {
-                    width: 100%;
-                }
-            </style>
             <vaadin-login-form-wrapper
+                    id="form"
+                    theme="${ifDefined(this._theme)}"
+                    .error="${this.error}"
+                    .i18n="${this.__effectiveI18n}"
+                    part="form"
+                    role="region"
+                    aria-labelledby="title"
+                    exportparts="error-message, error-message-title, error-message-description, footer"
+            >
+                <div id="title" slot="form-title" part="form-title" role="heading" aria-level="${this.headingLevel}">
+                    ${this.__effectiveI18n.form.title}
+                </div>
+                <slot name="form" slot="form"></slot>
+                <slot name="custom-form-area" slot="custom-form-area"></slot>
+                <slot name="submit" slot="submit"></slot>
+                <slot name="forgot-password" slot="forgot-password"></slot>
+                <slot name="footer" slot="footer"></slot>
+            </vaadin-login-form-wrapper>
+            
+            <!--<vaadin-login-form-wrapper
               id="vaadinLoginFormWrapper"
               theme$="[[_theme]]"
               error="[[error]]"
@@ -119,12 +146,8 @@ class JmixLoginForm extends LoginForm {
                 >
                     [[__effectiveI18n.form.forgotPassword]]
                 </vaadin-button>
-            </vaadin-login-form-wrapper>
+            </vaadin-login-form-wrapper>-->
         `;
-    }
-
-    static get is() {
-        return 'jmix-login-form';
     }
 
     static get properties() {
@@ -154,7 +177,7 @@ class JmixLoginForm extends LoginForm {
         }
     }
 
-    static get observers() {
+    /*static get observers() {
         return [
             '_onVisibilityPropertiesChanged(rememberMeVisibility, localesVisibility)',
             `_onLocalesPropertyChanged(locales)`
@@ -212,7 +235,7 @@ class JmixLoginForm extends LoginForm {
             this.dispatchEvent(customEvent);
         }
         this.$.localesSelect.jmixUserOriginated = true;
-    }
+    }*/
 }
 
 defineCustomElement(JmixLoginForm);

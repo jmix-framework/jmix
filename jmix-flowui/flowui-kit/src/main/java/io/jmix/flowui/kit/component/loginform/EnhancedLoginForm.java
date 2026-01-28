@@ -40,8 +40,9 @@ import java.util.stream.Collectors;
  * - Handle locale selection from a predefined set of locales.
  * - Respond to configuration changes in "Remember Me" option and locale selection via event listeners.
  */
-@Tag("jmix-login-form")
-@JsModule("./src/login-form/jmix-login-form.js")
+// TODO: gg, fix
+//@Tag("jmix-login-form")
+//@JsModule("./src/login-form/jmix-login-form.js")
 public class EnhancedLoginForm extends LoginForm {
 
     private static final String REMEMBER_ME_CHANGED_EVENT = "remember-me-changed";
@@ -147,7 +148,8 @@ public class EnhancedLoginForm extends LoginForm {
                 .map(locale -> new LocaleItem(generateItemLabel(locale), localeToString(locale)))
                 .collect(Collectors.toList());
 
-        getElement().setPropertyJson("locales", JacksonUtils.beanToJson(localeItems));
+        // TODO: gg, fix
+//        getElement().setPropertyJson("locales", JacksonUtils.beanToJson(localeItems));
         //From 2.3 the locales combo box shows if there is at least one locale.
         // To hide locales - set visibility explicitly.
         if (!visibilitySetExplicitly && !localeItems.isEmpty()) {
@@ -173,7 +175,8 @@ public class EnhancedLoginForm extends LoginForm {
         }
 
         if (isLocaleChanged(locale)) {
-            getElement().callJsFunction("selectLocale", localeToString(locale));
+            // TODO: gg, fix
+//            getElement().callJsFunction("selectLocale", localeToString(locale));
 
             handleLocaleChanged(false, locale);
         }
@@ -193,7 +196,8 @@ public class EnhancedLoginForm extends LoginForm {
      */
     public void setRememberMe(boolean rememberMe) {
         if (isRememberMeChanged(rememberMe)) {
-            getElement().callJsFunction("setRememberMe", rememberMe);
+            // TODO: gg, fix
+//            getElement().callJsFunction("setRememberMe", rememberMe);
 
             handleRememberMeChanged(false, rememberMe);
         }

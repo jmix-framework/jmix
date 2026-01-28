@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
  * @param <V> the type of the items managed by the component
  */
 @Tag("jmix-twin-column")
-@JsModule("./src/twin-column/jmix-twin-column.js")
+//@JsModule("./src/twin-column/jmix-twin-column.js")
 public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collection<V>>
         implements HasSize, HasHelper, HasAriaLabel, HasLabel, HasThemeVariant<TwinColumnVariant>,
         HasListDataView<V, TwinColumnListDataView<V>>, HasDataView<V, Void, TwinColumnDataView<V>> {

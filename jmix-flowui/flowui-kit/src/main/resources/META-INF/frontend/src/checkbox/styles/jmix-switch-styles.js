@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import { css } from 'lit';
 
-export const switchStyles = css`
+const jmixSwitch = css`
     
     :host {
         display: inline-block;
@@ -87,3 +87,6 @@ export const switchStyles = css`
         height: initial;
     }
 `;
+
+// export const switchStyles = [field, checkable('checkbox'), jmixSwitch];
+export const switchStyles = [ jmixSwitch ];

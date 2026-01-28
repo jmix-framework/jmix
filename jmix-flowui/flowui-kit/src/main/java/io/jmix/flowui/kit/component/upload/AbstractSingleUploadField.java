@@ -55,7 +55,7 @@ import java.util.List;
  * @param <EV> the value type of the {@link FileUploadSucceededEvent}
  */
 @Tag("jmix-upload-field")
-@JsModule("./src/uploadfield/jmix-upload-field.js")
+//@JsModule("./src/uploadfield/jmix-upload-field.js")
 public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadField<C, V, EV>, V, EV>
         extends AbstractField<C, V>
         implements HasLabel, HasHelper, HasSize, HasStyle, HasTooltip, HasTheme {

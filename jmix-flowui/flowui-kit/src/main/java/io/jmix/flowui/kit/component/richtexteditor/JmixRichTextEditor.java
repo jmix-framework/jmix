@@ -36,7 +36,7 @@ import java.util.Objects;
  * images, code blocks and more, to make text visually appealing and well-structured.
  */
 @Tag("jmix-rich-text-editor")
-@JsModule("./src/rich-text-editor/jmix-rich-text-editor.js")
+//@JsModule("./src/rich-text-editor/jmix-rich-text-editor.js")
 public class JmixRichTextEditor extends AbstractSinglePropertyField<JmixRichTextEditor, String>
         implements HasSize, HasTheme, HasLabel, HasHelper, HasThemeVariant<RichTextEditorVariant>,
         HasAriaLabel, HasValueChangeMode, KeyNotifier, InputNotifier, CompositionNotifier {

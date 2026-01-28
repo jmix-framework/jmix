@@ -30,7 +30,7 @@ import com.vaadin.flow.shared.Registration;
  * with {@link JmixUploadI18N} and support for internal error handling.
  */
 @Tag("jmix-upload-button")
-@JsModule("./src/upload-button/jmix-upload-button.js")
+//@JsModule("./src/upload-button/jmix-upload-button.js")
 public class JmixUploadButton extends Upload {
 
     protected JmixUploadI18N i18n = new JmixUploadI18N();

@@ -33,7 +33,7 @@ import java.util.Objects;
  * This component is primarily designed to be used with {@link ValuePicker} component.
  */
 @Tag("jmix-value-picker-button")
-@JsModule("./src/value-picker-button/jmix-value-picker-button.js")
+//@JsModule("./src/value-picker-button/jmix-value-picker-button.js")
 public class ValuePickerButton extends Component
         implements ClickNotifier<ValuePickerButton>, Focusable<ValuePickerButton>,
         HasStyle, HasTheme, HasTitle, HasAction, HasShortcutCombination {

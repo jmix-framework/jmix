@@ -19,6 +19,7 @@ package io.jmix.datatools.datamodel.impl;
 import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Metadata;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.persistence.DbmsType;
@@ -221,8 +222,7 @@ public class DataModelSupportImpl implements DataModelSupport {
             }
         }
 
-        String entityBasePackage = getEntityBasePackage(entity);
-        boolean isSystem = !entityBasePackage.equals(mainModuleInfo.getBasePackage());
+        boolean isSystem = entity.getJavaClass().isAnnotationPresent(SystemLevel.class);
 
         String currentEntityType = entity.getName();
 
@@ -242,24 +242,6 @@ public class DataModelSupportImpl implements DataModelSupport {
         dataModelProvider.putDataModel(dataModel);
 
         return dataModel;
-    }
-
-    protected String getEntityBasePackage(MetaClass entity) {
-        String[] splittedPackageName = entity.getJavaClass().getPackage().getName().split("\\.");
-        StringBuilder entityBasePackage = new StringBuilder(3);
-
-        int maxId = 3;
-        int cutId = maxId-1;
-
-        for (int i = 0; i < maxId; i++) {
-            entityBasePackage.append(splittedPackageName[i]);
-
-            if (i != cutId) {
-                entityBasePackage.append(".");
-            }
-        }
-
-        return entityBasePackage.toString();
     }
 
     protected EntityModel constructEntityModel(MetaClass entity, boolean isSystem) {

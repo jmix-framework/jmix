@@ -14,22 +14,24 @@ public interface DiagramConstructor {
     /**
      * Creates an entity description suitable for use in the selected library
      * @param entityName name of the entity for which the entity schema will be constructed
+     * @param dataStoreName name of data store
      * @param attributeModelList list of attributes of this entity
      * @return entity schema description that describes a single entity and its attributes in the form of
      * a string description of the library required format for further embedding into the general code of
      * the diagram to construct the final diagram
      */
-    String constructEntityDescription(String entityName, List<AttributeModel> attributeModelList);
+    String constructEntityDescription(String entityName, String dataStoreName, List<AttributeModel> attributeModelList);
 
     /**
      * Creates a relationship description suitable for use in the selected library
      * @param currentEntityType type of the entity for which the entity schema will be constructed
      * @param refEntityType type of entity referenced by the currentEntityType argument
      * @param relationType type of relationship between related entities
+     * @param dataStoreName name of data store
      * @return the relationship between two entities in the form of a string description of the library required format
      * for further embedding into the general code of the diagram to construct the final diagram
      */
-    String constructRelationDescription(String currentEntityType, String refEntityType, RelationType relationType);
+    String constructRelationDescription(String currentEntityType, String refEntityType, RelationType relationType, String dataStoreName);
 
     /**
      * Creates a diagram file in PNG format

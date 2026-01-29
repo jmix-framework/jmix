@@ -1,10 +1,13 @@
 package io.jmix.datatools.datamodel.engine.impl;
 
+import io.jmix.core.Metadata;
 import io.jmix.datatools.DatatoolsProperties;
 import io.jmix.datatools.datamodel.app.RelationType;
 import io.jmix.datatools.datamodel.engine.DiagramConstructor;
 import io.jmix.datatools.datamodel.engine.PlantUMLEncoder;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
@@ -16,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.Deflater;
 
 public class PlantUmlDiagramConstructor implements DiagramConstructor {
@@ -28,9 +32,12 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
     protected final String relationTemplate;
     protected final String urlTemplate;
     protected final RestClient restClient;
+    protected final int dataStoresCount;
 
-    public PlantUmlDiagramConstructor(DatatoolsProperties datatoolsProperties) {
+    public PlantUmlDiagramConstructor(DatatoolsProperties datatoolsProperties,
+                                      Metadata metadata) {
         this.datatoolsProperties = datatoolsProperties;
+        this.dataStoresCount = getDataStoresCount(metadata);
         this.plantUMLEncoder = createEncoder();
         this.template = createTemplate();
         this.urlTemplate = createURLTemplate();
@@ -39,6 +46,14 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
         this.relationTemplate = createRelationTemplate();
         String baseUrl = createBaseURL();
         this.restClient = configureClient(baseUrl);
+    }
+
+    protected int getDataStoresCount(Metadata metadata) {
+        return metadata.getClasses().stream()
+                .filter(e -> e.getJavaClass().isAnnotationPresent(Entity.class)
+                        && e.getJavaClass().isAnnotationPresent(Table.class))
+                .map(mc -> mc.getStore().getName())
+                .collect(Collectors.toSet()).size();
     }
 
     protected String createBaseURL() {
@@ -66,6 +81,9 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
     }
 
     protected String createEntityTemplate() {
+        if (dataStoresCount > 1) {
+            return "entity %s:%s {\n";
+        }
         return "entity %s {\n";
     }
     protected String createAttributeTemplate() {
@@ -73,6 +91,9 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
     }
 
     protected String createRelationTemplate() {
+        if (dataStoresCount > 1) {
+            return "\"%s:%s\" %s \"%s:%s\"\n";
+        }
         return "%s %s %s\n";
     }
 
@@ -120,8 +141,14 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
     }
 
     @Override
-    public String constructEntityDescription(String entityName, List<AttributeModel> attributeModelList) {
-        StringBuilder entityDescription = new StringBuilder(String.format(entityTemplate, entityName));
+    public String constructEntityDescription(String entityName, String dataStoreName, List<AttributeModel> attributeModelList) {
+        StringBuilder entityDescription;
+
+        if (dataStoresCount > 1) {
+            entityDescription = new StringBuilder(String.format(entityTemplate, entityName, dataStoreName));
+        } else {
+            entityDescription = new StringBuilder(String.format(entityTemplate, entityName));
+        }
 
         for (AttributeModel attribute : attributeModelList) {
             entityDescription.append(String.format(attributeTemplate, attribute.getAttributeName(), attribute.getJavaType()));
@@ -133,7 +160,7 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
     }
 
     @Override
-    public String constructRelationDescription(String currentEntityType, String refEntityType, RelationType relationType) {
+    public String constructRelationDescription(String currentEntityType, String refEntityType, RelationType relationType, String dataStoreName) {
         String relationSign = switch(relationType) {
             case MANY_TO_ONE -> "}--";
             case ONE_TO_MANY -> "--{";
@@ -141,6 +168,9 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
             case ONE_TO_ONE -> "--";
         };
 
+        if (dataStoresCount > 1) {
+            return String.format(relationTemplate, currentEntityType, dataStoreName, relationSign, refEntityType, dataStoreName);
+        }
         return String.format(relationTemplate, currentEntityType, relationSign, refEntityType);
     }
 

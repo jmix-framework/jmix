@@ -154,7 +154,7 @@ public class DataModelSupportImpl implements DataModelSupport {
                             fieldName, fieldType, entity, field.isMandatory());
                 }
 
-                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.MANY_TO_ONE);
+                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.MANY_TO_ONE, dataStoreName);
                 Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
                 putRelation(relationsMap, RelationType.MANY_TO_ONE, relation);
             }
@@ -165,7 +165,7 @@ public class DataModelSupportImpl implements DataModelSupport {
 
                 attributeModel = constructAttribute(fieldName, fieldType, field.getAnnotatedElement().isAnnotationPresent(NotNull.class));
 
-                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.ONE_TO_MANY);
+                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.ONE_TO_MANY, dataStoreName);
                 Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 
                 putRelation(relationsMap, RelationType.ONE_TO_MANY, relation);
@@ -187,7 +187,7 @@ public class DataModelSupportImpl implements DataModelSupport {
                     attributeModel = constructAttribute(fieldName, fieldType, isMandatory);
                 }
 
-                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.ONE_TO_ONE);
+                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.ONE_TO_ONE, dataStoreName);
                 Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 
                 putRelation(relationsMap, RelationType.ONE_TO_ONE, relation);
@@ -207,7 +207,7 @@ public class DataModelSupportImpl implements DataModelSupport {
 
                 attributeModel.setColumnName(columnName);
 
-                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.MANY_TO_MANY);
+                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.MANY_TO_MANY, dataStoreName);
                 Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 
                 putRelation(relationsMap, RelationType.MANY_TO_MANY, relation);
@@ -226,7 +226,7 @@ public class DataModelSupportImpl implements DataModelSupport {
 
         String currentEntityType = entity.getName();
 
-        String entityDescription = diagramConstructor.constructEntityDescription(currentEntityType, attributeModelsList);
+        String entityDescription = diagramConstructor.constructEntityDescription(currentEntityType, dataStoreName, attributeModelsList);
 
         EntityModel entityModel = constructEntityModel(entity, isSystem);
 
@@ -378,7 +378,7 @@ public class DataModelSupportImpl implements DataModelSupport {
     }
 
     protected void constructDataModel() {
-        Collection<MetaClass> metaClasses  = metadata.getClasses();
+        Collection<MetaClass> metaClasses = metadata.getClasses();
 
         for (MetaClass metaClass : metaClasses) {
             if (metaClass.getJavaClass().isAnnotationPresent(Entity.class)

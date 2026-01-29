@@ -1,16 +1,15 @@
 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M11 5.5H12M11 7.5H12M11.5 9V11" stroke="#AFB1B3"/>
-    <rect x="8" y="3" width="1" height="1" fill="#AFB1B3"/>
-    <rect x="6" y="3" width="1" height="1" fill="#AFB1B3"/>
-    <rect x="4" y="3" width="1" height="1" fill="#AFB1B3"/>
-    <rect x="4" y="3" width="1" height="1" fill="#AFB1B3"/>
-    <rect x="2" y="3" width="1" height="2" fill="#AFB1B3"/>
-    <rect x="5" y="12" width="1" height="1" fill="#AFB1B3"/>
-    <path d="M7 12H8V13H7V12Z" fill="#AFB1B3"/>
-    <rect x="4" y="12" width="1" height="2" transform="rotate(90 4 12)" fill="#AFB1B3"/>
-    <rect x="2" y="10" width="1" height="1" fill="#AFB1B3"/>
-    <rect x="2" y="8" width="1" height="1" fill="#AFB1B3"/>
-    <rect x="2" y="6" width="1" height="1" fill="#AFB1B3"/>
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M10 3H13H14V4V12V13H13H10H9V12V10V4H10V10V12H13V4H10V3Z"
-          fill="#AFB1B3"/>
+    <path d="M2 5V6H1V5H2Z" fill="#9AA7B0"/>
+    <path d="M2 11V12H1V11H2Z" fill="#9AA7B0"/>
+    <path d="M2 3V4H1V3H2Z" fill="#9AA7B0"/>
+    <path d="M3 1V2H1V1H3Z" fill="#9AA7B0"/>
+    <path d="M5 1V2H4V1H5Z" fill="#9AA7B0"/>
+    <path d="M4 14V15H3V14H4Z" fill="#9AA7B0"/>
+    <path d="M7 1V2H6V1H7Z" fill="#9AA7B0"/>
+    <path d="M6 14V15H5V14H6Z" fill="#9AA7B0"/>
+    <path d="M2 13L2 15H1L1 13H2Z" fill="#9AA7B0"/>
+    <path d="M2 9V10H1V9H2Z" fill="#9AA7B0"/>
+    <path d="M2 7V8H1V7H2Z" fill="#9AA7B0"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M14 1H8V2H7V10V14H8V15H14V14H15V2H14V1ZM14 2V14H8V10V2H14Z" fill="#9AA7B0"/>
+    <path d="M9 3.5H13M9 5.5H13M9 7.5H13M9 9.5H13M9 11.5H13" stroke="#9AA7B0"/>
 </svg>

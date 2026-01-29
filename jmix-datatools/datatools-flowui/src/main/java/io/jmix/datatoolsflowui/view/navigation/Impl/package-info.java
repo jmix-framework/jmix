@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.datatoolsflowui.view.navigation;
+@NonNullApi
+package io.jmix.datatoolsflowui.view.navigation.Impl;
 
-public interface DataDiagramViewSupport {
-
-    /**
-     * Provides navigation to the {@link io.jmix.datatoolsflowui.view.datadiagram.DataDiagramView}
-     */
-    void navigate();
-}
+import org.springframework.lang.NonNullApi;

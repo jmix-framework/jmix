@@ -17,6 +17,7 @@ import io.jmix.datatools.datamodel.DataModelSupport;
 import io.jmix.datatools.datamodel.engine.DiagramConstructor;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
+import io.jmix.datatoolsflowui.view.navigation.DataDiagramViewSupport;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -55,6 +56,8 @@ public class EntityModelListView extends StandardListView<EntityModel> {
     protected DiagramConstructor diagramConstructor;
     @Autowired
     protected ViewValidation viewValidation;
+    @Autowired
+    protected DataDiagramViewSupport dataDiagramViewSupport;
 
     @ViewComponent
     private JmixButton searchButton;
@@ -203,8 +206,8 @@ public class EntityModelListView extends StandardListView<EntityModel> {
 
         dataModelManager.setFilteredModels(entityModelsDl.getContainer().getItems());
 
-        // opening a new browser tab
-        UI.getCurrent().getPage().open("datatl/data-diagram");
+        // navigate to DataDiagramView
+        dataDiagramViewSupport.navigate();
     }
 
     @Subscribe("entityModelsDataGrid")

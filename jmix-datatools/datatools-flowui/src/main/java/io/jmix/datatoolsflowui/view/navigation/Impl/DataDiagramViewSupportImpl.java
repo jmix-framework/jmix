@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.datatoolsflowui.view.navigation;
+package io.jmix.datatoolsflowui.view.navigation.Impl;
 
-public interface DataDiagramViewSupport {
+import com.vaadin.flow.component.UI;
+import io.jmix.datatoolsflowui.view.navigation.DataDiagramViewSupport;
 
-    /**
-     * Provides navigation to the {@link io.jmix.datatoolsflowui.view.datadiagram.DataDiagramView}
-     */
-    void navigate();
+public class DataDiagramViewSupportImpl implements DataDiagramViewSupport {
+
+    @Override
+    public void navigate() {
+        UI.getCurrent().getPage().open("datatl/data-diagram");
+    }
 }

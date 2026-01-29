@@ -18,8 +18,13 @@ package io.jmix.flowui.component.sidedialog;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.kit.component.sidedialog.JmixSideDialog;
 import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * The composite component represents a side dialog with a header, content area, and footer. It functions as a drawer
@@ -28,7 +33,26 @@ import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
  * The side dialog manages the opening and closing of the dialog and its content, featuring a pop-out animation.
  * It can be configured to appear relative to the application window (see {@link SideDialogPlacement}).
  */
-public class SideDialog extends JmixSideDialog {
+public class SideDialog extends JmixSideDialog implements ApplicationContextAware, InitializingBean {
+
+    protected ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        initComponent();
+    }
+
+    protected void initComponent() {
+        SideDialogPlacement defaultPlacement = applicationContext.getBean(UiComponentProperties.class)
+                .getSideDialogDefaultPlacement();
+
+        setSideDialogPlacement(defaultPlacement);
+    }
 
     /**
      * Adds a listener for opened change events.

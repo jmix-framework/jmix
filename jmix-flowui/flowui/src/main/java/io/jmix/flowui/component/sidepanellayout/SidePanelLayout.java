@@ -19,12 +19,17 @@ package io.jmix.flowui.component.sidepanellayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.sidepanellayout.*;
 import jakarta.annotation.Nullable;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -36,7 +41,27 @@ import static io.jmix.flowui.component.UiComponentUtils.sameId;
  *
  * @see SidePanelLayoutCloser
  */
-public class SidePanelLayout extends JmixSidePanelLayout implements ComponentContainer, HasSubParts {
+public class SidePanelLayout extends JmixSidePanelLayout implements ComponentContainer, HasSubParts,
+        ApplicationContextAware, InitializingBean {
+
+    protected ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        initComponent();
+    }
+
+    protected void initComponent() {
+        SidePanelPlacement defaultPlacement = applicationContext.getBean(UiComponentProperties.class)
+                .getSidePanelLayoutDefaultPlacement();
+
+        setSidePanelPlacement(defaultPlacement);
+    }
 
     @Override
     public Optional<Component> findOwnComponent(String id) {

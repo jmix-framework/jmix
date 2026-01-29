@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* todo move to addon */
+/* todo move to addon styles */
 .jmix-role-assignment-layout {
     container-type: inline-size;
     container-name: jmix-role-assignment-layout;
@@ -23,8 +23,8 @@
     flex-direction: column;
 
     overflow: auto;
-    gap: var(--lumo-space-m);
-    padding: var(--lumo-space-m);
+    gap: var(--vaadin-gap-m);
+    padding: var(--vaadin-padding-m);
 }
 
 @container jmix-role-assignment-layout (min-width: 60em) {

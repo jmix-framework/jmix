@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import '@vaadin/component-base/src/styles/style-props.js';
 import { css } from 'lit';
+import { checkable } from '@vaadin/field-base/src/styles/checkable-base-styles.js';
+import { field } from '@vaadin/field-base/src/styles/field-base-styles.js';
 
 const jmixSwitch = css`
     
@@ -88,5 +91,5 @@ const jmixSwitch = css`
     }
 `;
 
-// export const switchStyles = [field, checkable('checkbox'), jmixSwitch];
-export const switchStyles = [ jmixSwitch ];
+export const switchStyles = [field, checkable('switch'), jmixSwitch];
+// export const switchStyles = [ jmixSwitch ];

@@ -21,4 +21,5 @@ archivesBaseName = 'jmix-flowui-themes'
 
 dependencies {
     api 'com.vaadin:vaadin-bom'
+    api 'com.vaadin:flow-server'
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* todo move to addon */
-.jmix-role-assignment-layout {
-    container-type: inline-size;
-    container-name: jmix-role-assignment-layout;
-}
 
-.jmix-role-assignment-content-wrapper {
-    flex-direction: column;
+@import '../src/components/jmix-switch.css';
 
-    overflow: auto;
-    gap: var(--lumo-space-m);
-    padding: var(--lumo-space-m);
-}
-
-@container jmix-role-assignment-layout (min-width: 60em) {
-    .jmix-role-assignment-content-wrapper {
-        flex-direction: row;
-    }
+:root::before,
+:host::before {
+    --_lumo-jmix-switch-inject: 1;
+    --_lumo-jmix-switch-inject-modules: lumo_components_jmix_switch;
 }

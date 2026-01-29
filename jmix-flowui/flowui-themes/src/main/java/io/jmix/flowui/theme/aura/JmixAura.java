@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* todo move to addon */
-.jmix-role-assignment-layout {
-    container-type: inline-size;
-    container-name: jmix-role-assignment-layout;
-}
 
-.jmix-role-assignment-content-wrapper {
-    flex-direction: column;
+package io.jmix.flowui.theme.aura;
 
-    overflow: auto;
-    gap: var(--lumo-space-m);
-    padding: var(--lumo-space-m);
-}
+import com.vaadin.flow.component.dependency.StyleSheet;
+import com.vaadin.flow.component.page.AppShellConfigurator;
 
-@container jmix-role-assignment-layout (min-width: 60em) {
-    .jmix-role-assignment-content-wrapper {
-        flex-direction: row;
-    }
+public class JmixAura {
+
+    /**
+     * The path to the Jmix  Aura stylesheet. Can be used as argument to a
+     * {@link StyleSheet} on an {@link AppShellConfigurator} class to apply the
+     * Aura theme to an application.
+     */
+    public static final String STYLESHEET = "themes/jmix-aura/jmix-aura.css";
 }

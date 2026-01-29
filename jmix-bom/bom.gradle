@@ -345,6 +345,7 @@ dependencies {
         api "com.vaadin:vaadin-board-flow:$vaadinFlowVersion"
         api "com.vaadin:vaadin-spreadsheet-flow:$vaadinFlowVersion"
         api "com.vaadin:vaadin-dashboard-flow:$vaadinFlowVersion"
+        api "com.vaadin:flow-server:$vaadinFlowVersion"
 
         api 'org.spockframework:spock-core:2.4-groovy-5.0'
         api 'org.spockframework:spock-spring:2.4-groovy-5.0'

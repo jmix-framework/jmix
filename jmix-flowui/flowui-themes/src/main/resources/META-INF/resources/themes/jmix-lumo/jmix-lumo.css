@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* todo move to addon */
-.jmix-role-assignment-layout {
-    container-type: inline-size;
-    container-name: jmix-role-assignment-layout;
-}
 
-.jmix-role-assignment-content-wrapper {
-    flex-direction: column;
+/*@import '../../lumo/lumo.css';*/
 
-    overflow: auto;
-    gap: var(--lumo-space-m);
-    padding: var(--lumo-space-m);
-}
+@import './app/index.css';
+@import './component/index.css';
+@import './components/index.css';
+@import './icons/jmix-font-icons.css';
+@import './icons/vaadin-icons/vaadin-icons.css';
 
-@container jmix-role-assignment-layout (min-width: 60em) {
-    .jmix-role-assignment-content-wrapper {
-        flex-direction: row;
-    }
+html {
+  /* TODO: gg, move to component? */
+  --jmix-simple-pagination-gap: 0.3em;
 }

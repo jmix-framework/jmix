@@ -78,6 +78,16 @@ class JmixPlugin implements Plugin<Project> {
                 def mainCompileTasks = []
                 def testCompileTasks = []
 
+                // Run enhancing when compile tasks actually produced outputs, including outputs restored from build cache.
+                // This avoids skipping enhancement on FROM_CACHE while still skipping for up-to-date/no-source compiles.
+                def shouldRunEnhancing = { taskProviders ->
+                    !taskProviders.isEmpty() && taskProviders.any { taskProvider ->
+                        def state = taskProvider.get().state
+                        def outcome = state.hasProperty('outcome') ? state.outcome?.toString() : null
+                        state.didWork || outcome == 'FROM_CACHE' || (state.skipMessage?.contains('FROM-CACHE') ?: false)
+                    }
+                }
+
                 if (javaPlugin) {
                     mainCompileTasks.add(project.tasks.named('compileJava'))
                     testCompileTasks.add(project.tasks.named('compileTestJava'))
@@ -94,11 +104,11 @@ class JmixPlugin implements Plugin<Project> {
 
                 enhanceMainTask.configure {
                     dependsOn(mainCompileTasks)
-                    onlyIf { !mainCompileTasks.isEmpty() && mainCompileTasks.any { it.get().state.didWork } }
+                    onlyIf { shouldRunEnhancing(mainCompileTasks) }
                 }
                 enhanceTestTask.configure {
                     dependsOn(testCompileTasks)
-                    onlyIf { !testCompileTasks.isEmpty() && testCompileTasks.any { it.get().state.didWork } }
+                    onlyIf { shouldRunEnhancing(testCompileTasks) }
                 }
 
                 def copyEnhancingResourcesMainTask = project.tasks.register('copyJmixEnhancingResourcesMain') {

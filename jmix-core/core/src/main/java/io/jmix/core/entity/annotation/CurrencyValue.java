@@ -26,6 +26,7 @@ import java.lang.annotation.Target;
 /**
  * Indicates that a field which is marked by this annotation contains currency value
  */
+@Deprecated(since = "3.0")
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @MetaAnnotation

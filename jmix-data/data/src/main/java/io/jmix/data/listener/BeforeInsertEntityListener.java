@@ -18,6 +18,7 @@ package io.jmix.data.listener;
 /**
  * Defines the contract for handling entities before they have been inserted into DB.
  */
+@Deprecated(since = "3.0")
 public interface BeforeInsertEntityListener<T> {
 
     /**

@@ -18,6 +18,7 @@ package io.jmix.data.listener;
 /**
  * Defines the contract for handling entities right before they are attached to an EntityManager on merge operation.
  */
+@Deprecated(since = "3.0")
 public interface BeforeAttachEntityListener<T> {
 
     /**

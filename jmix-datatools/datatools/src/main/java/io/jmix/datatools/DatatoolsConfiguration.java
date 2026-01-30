@@ -16,9 +16,15 @@
 
 package io.jmix.datatools;
 
+import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
+import io.jmix.datatools.datamodel.app.EngineType;
+import io.jmix.datatools.datamodel.engine.DiagramConstructor;
+import io.jmix.datatools.datamodel.engine.impl.PlantUmlDiagramConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -29,4 +35,26 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @JmixModule(dependsOn = DataConfiguration.class)
 @EnableTransactionManagement
 public class DatatoolsConfiguration {
+
+    @Autowired
+    protected DatatoolsProperties datatoolsProperties;
+    @Autowired
+    protected Metadata metadata;
+
+    @Bean("datatl_DiagramConstructor")
+    public DiagramConstructor diagramConstructor() {
+        EngineType engineType = datatoolsProperties.getDiagramConstructor().getEngineType();
+
+        // Temporarily, support has been added only for PlantUML. Support for Mermaid will be added in the future.
+        switch (engineType) {
+            case PLANTUML -> {
+                return new PlantUmlDiagramConstructor(datatoolsProperties, metadata);
+            }
+            case MERMAID -> {
+                throw new IllegalStateException("Failed to create datatl_DiagramConstructor bean: " +
+                        "Mermaid support is not yet implemented");
+            }
+            default -> throw new IllegalStateException("Failed to create datatl_DiagramConstructor bean");
+        }
+    }
 }

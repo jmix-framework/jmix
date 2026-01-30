@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {html, LitElement} from 'lit';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
-import {registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-import {gridLayoutStyles} from './jmix-grid-layout-styles.js';
-
-registerStyles('jmix-grid-layout', gridLayoutStyles, {moduleId: 'jmix-grid-layout-styles'});
+import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
+import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {gridLayoutStyles} from './styles/jmix-grid-layout-base-styles.js';
 
 /**
  * `JmixGridLayout` is a layout web component that arranges its child elements in a responsive grid.
@@ -40,9 +40,9 @@ registerStyles('jmix-grid-layout', gridLayoutStyles, {moduleId: 'jmix-grid-layou
  * - `gridGap` (String): Specifies the gap between grid items. Defaults to `'var(--lumo-space-s)'`.
  *
  */
-export class JmixGridLayout extends ElementMixin(ThemableMixin(PolymerElement)) {
+export class JmixGridLayout extends ElementMixin(ThemableMixin(PolylitMixin(LumoInjectionMixin(LitElement)))) {
 
-    static get template() {
+    render() {
         return html`
             <div part="items">
                 <slot></slot>
@@ -52,6 +52,10 @@ export class JmixGridLayout extends ElementMixin(ThemableMixin(PolymerElement)) 
 
     static get is() {
         return 'jmix-grid-layout';
+    }
+
+    static get styles() {
+        return [gridLayoutStyles];
     }
 
     static get properties() {

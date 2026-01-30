@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {html, LitElement} from 'lit';
+import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {DirMixin} from '@vaadin/component-base/src/dir-mixin.js';
-import {registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-import {gridItemStyles} from './jmix-grid-layout-item-styles.js';
+import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {gridItemStyles} from './styles/jmix-grid-layout-item-base-styles.js';
 import {ItemMixin} from './jmix-grid-layout-item-mixin.js';
-
-registerStyles('jmix-grid-layout-item', gridItemStyles, {moduleId: 'jmix-grid-layout-item-styles'});
 
 /**
  * JmixGridLayoutItem class is a web component that represents a {@link JmixGridLayout} item.
  * It is used as a container for content, where the content is placed inside the slot element.
  */
-export class JmixGridLayoutItem extends ItemMixin(ThemableMixin(DirMixin(PolymerElement))) {
+export class JmixGridLayoutItem extends ItemMixin(ThemableMixin(DirMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
 
-    static get template() {
+    render() {
         return html`
             <div part="content">
                 <slot></slot>
@@ -39,6 +39,10 @@ export class JmixGridLayoutItem extends ItemMixin(ThemableMixin(DirMixin(Polymer
 
     static get is() {
         return 'jmix-grid-layout-item';
+    }
+
+    static get styles() {
+        return [gridItemStyles];
     }
 }
 

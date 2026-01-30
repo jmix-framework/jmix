@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  * @param <T> the type of the items displayed in this layout
  */
 @Tag("jmix-grid-layout")
-//@JsModule("./src/grid-layout/jmix-grid-layout.js")
+@JsModule("./src/grid-layout/jmix-grid-layout.js")
 public class JmixGridLayout<T> extends Component implements HasSize, HasItemComponents<T>,
         HasListDataView<T, GridLayoutListDataView<T>>, HasDataView<T, Void, GridLayoutDataView<T>> {
 

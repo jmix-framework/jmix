@@ -93,8 +93,8 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
      */
     public ImmutableMap<String, String> serializeQueryParameters(PaginationDataLoader paginationLoader) {
         return ImmutableMap.of(
-                getFirstResultParam(), urlParamSerializer.serialize(paginationLoader.getFirstResult()),
-                getMaxResultsParam(), urlParamSerializer.serialize(paginationLoader.getMaxResults())
+                getFirstResultParamInternal(), urlParamSerializer.serialize(paginationLoader.getFirstResult()),
+                getMaxResultsParamInternal(), urlParamSerializer.serialize(paginationLoader.getMaxResults())
         );
     }
 
@@ -110,13 +110,23 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
     public void updateState(QueryParameters queryParameters) {
         getPaginationLoader().ifPresent(paginationLoader -> {
             Map<String, List<String>> parameters = queryParameters.getParameters();
-            if (parameters.containsKey(getFirstResultParam())) {
+            if (parameters.containsKey(getFirstResultParamInternal())) {
+                String serializedFirstResult = parameters.get(getFirstResultParamInternal()).get(0);
+                int firstResult = urlParamSerializer.deserialize(Integer.class, serializedFirstResult);
+                paginationLoader.setFirstResult(firstResult);
+            } else if (parameters.containsKey(getFirstResultParam())) {
+                // the fallback option should be removed in future versions
                 String serializedFirstResult = parameters.get(getFirstResultParam()).get(0);
                 int firstResult = urlParamSerializer.deserialize(Integer.class, serializedFirstResult);
                 paginationLoader.setFirstResult(firstResult);
             }
 
-            if (parameters.containsKey(getMaxResultsParam())) {
+            if (parameters.containsKey(getMaxResultsParamInternal())) {
+                String serializedMaxResults = parameters.get(getMaxResultsParamInternal()).get(0);
+                int maxResults = urlParamSerializer.deserialize(Integer.class, serializedMaxResults);
+                paginationLoader.setMaxResults(maxResults);
+            } else if (parameters.containsKey(getMaxResultsParam())) {
+                // the fallback option should be removed in future versions
                 String serializedMaxResults = parameters.get(getMaxResultsParam()).get(0);
                 int maxResults = urlParamSerializer.deserialize(Integer.class, serializedMaxResults);
                 paginationLoader.setMaxResults(maxResults);
@@ -129,9 +139,15 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
      * If the custom parameter name is not specified, a default parameter name is returned.
      *
      * @return the parameter name for the "first result" value, either a custom or default value
+     * @deprecated use {@link #getFirstResultParamInternal()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public String getFirstResultParam() {
         return Strings.isNullOrEmpty(firstResultParam) ? FIRST_RESULT_PARAM : firstResultParam;
+    }
+
+    protected String getFirstResultParamInternal() {
+        return getOwnerId("pagination") + "_" + getFirstResultParam();
     }
 
     /**
@@ -149,9 +165,15 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
      * If the custom parameter name is not specified, a default parameter name is returned.
      *
      * @return the parameter name for the "max results" value, either a custom or default value
+     * @deprecated use {@link #getMaxResultsParamInternal()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public String getMaxResultsParam() {
         return Strings.isNullOrEmpty(maxResultsParam) ? MAX_RESULTS_PARAM : maxResultsParam;
+    }
+
+    protected String getMaxResultsParamInternal() {
+        return getOwnerId("pagination") + "_" + getMaxResultsParam();
     }
 
     /**

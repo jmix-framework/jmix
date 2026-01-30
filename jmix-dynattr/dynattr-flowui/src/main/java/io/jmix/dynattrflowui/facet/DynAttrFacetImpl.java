@@ -16,11 +16,12 @@
 
 package io.jmix.dynattrflowui.facet;
 
+import com.vaadin.flow.component.Composite;
 import io.jmix.core.annotation.Internal;
 import io.jmix.dynattrflowui.impl.AttributeDefaultValues;
+import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.facet.impl.AbstractFacet;
 import io.jmix.flowui.view.StandardDetailView;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.lang.Nullable;
 
@@ -34,19 +35,21 @@ public class DynAttrFacetImpl extends AbstractFacet implements DynAttrFacet {
     }
 
     @Override
-    public void setOwner(@Nullable View<?> owner) {
+    public <T extends Composite<?> & FacetOwner> void setOwner(@Nullable T owner) {
         super.setOwner(owner);
         subscribe();
     }
 
-    private void subscribe() {
-        View<?> view = getOwner();
-        if (view == null) {
-            throw new IllegalStateException("DynAttrFacet is not attached to Frame");
+    protected void subscribe() {
+        FacetOwner owner = getOwner();
+        if (owner == null) {
+            throw new IllegalStateException("%s is not attached to owner"
+                    .formatted(DynAttrFacet.class.getSimpleName()));
         }
 
-        if (view instanceof StandardDetailView<?>) {
-            ViewControllerUtils.addInitEntityEventListener((StandardDetailView<?>) view, e -> attributeDefaultValues.initDefaultAttributeValues(e.getEntity()));
+        if (owner instanceof StandardDetailView<?> view) {
+            ViewControllerUtils.addInitEntityEventListener(view,
+                    e -> attributeDefaultValues.initDefaultAttributeValues(e.getEntity()));
         }
     }
 }

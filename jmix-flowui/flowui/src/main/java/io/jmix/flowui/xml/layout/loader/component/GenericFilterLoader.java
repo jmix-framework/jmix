@@ -16,8 +16,8 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.Composite;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponent;
@@ -32,8 +32,6 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.DataLoader;
-import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -266,10 +264,9 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
         getContext().addInitTask(new AbstractInitTask() {
             @Override
             public void execute(Context context) {
-                View<?> view = findParentView(context);
-
                 DataLoadCoordinator dataLoadCoordinator =
-                        ViewControllerUtils.getViewFacet(view, DataLoadCoordinator.class);
+                        FilterUtils.getFacet(resultComponent, DataLoadCoordinator.class);
+
                 if (dataLoadCoordinator == null
                         || dataLoadCoordinator.getTriggers().isEmpty()) {
                     List<FilterComponent> filterComponents =
@@ -290,22 +287,5 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
                 }
             }
         });
-    }
-
-    protected View<?> findParentView(Context context) {
-
-        Component origin;
-        Context parentContext = context;
-
-        do {
-            origin = parentContext.getOrigin();
-            parentContext = parentContext.getParentContext();
-        } while (!(origin instanceof View) && parentContext != null);
-
-        if (origin instanceof View<?> view) {
-            return view;
-        } else {
-            throw new GuiDevelopmentException("Cannot find parent " + View.class.getSimpleName(), context);
-        }
     }
 }

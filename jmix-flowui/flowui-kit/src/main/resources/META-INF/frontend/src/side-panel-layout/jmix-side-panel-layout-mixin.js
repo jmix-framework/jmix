@@ -51,7 +51,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
                 observer: '_modalChanged',
                 sync: true,
             },
-            closeOnModalityCurtainClick: {
+            closeOnOutsideClick: {
                 type: Boolean,
                 value: true,
                 notify: true,
@@ -364,7 +364,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
      * @protected
      */
     _onModalityCurtainClick(e) {
-        if (this.closeOnModalityCurtainClick) {
+        if (this.closeOnOutsideClick) {
             this.sidePanelOpened = false;
         }
 

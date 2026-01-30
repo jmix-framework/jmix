@@ -38,7 +38,7 @@ class SidePanelLayoutXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(view.sidePanelLayoutAttributes) {
             id.get() == "sidePanelLayoutAttributes"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
-            !closeOnModalityCurtainClick
+            !closeOnOutsideClick
             !displayAsOverlayOnSmallDevices
             style.get("color") == "red"
             sidePanelHorizontalMaxSize == "10em"

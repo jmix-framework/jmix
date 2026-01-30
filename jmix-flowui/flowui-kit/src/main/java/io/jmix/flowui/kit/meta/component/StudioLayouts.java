@@ -428,7 +428,7 @@ public interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "closeOnModalityCurtainClick",type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "closeOnOutsideClick",type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.kit.component.Alignment",
                             defaultValue = "AUTO",

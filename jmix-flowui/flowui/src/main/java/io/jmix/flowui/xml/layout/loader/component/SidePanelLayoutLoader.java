@@ -53,7 +53,7 @@ public class SidePanelLayoutLoader extends AbstractComponentLoader<SidePanelLayo
         loadEnum(element, SidePanelPlacement.class, "sidePanelPlacement", resultComponent::setSidePanelPlacement);
         loadEnum(element, SidePanelMode.class, "sidePanelMode", resultComponent::setSidePanelMode);
         loadBoolean(element, "modal", resultComponent::setModal);
-        loadBoolean(element, "closeOnModalityCurtainClick", resultComponent::setCloseOnModalityCurtainClick);
+        loadBoolean(element, "closeOnOutsideClick", resultComponent::setCloseOnOutsideClick);
         loadBoolean(element, "displayAsOverlayOnSmallDevices", resultComponent::setDisplayAsOverlayOnSmallDevices);
         loadString(element, "overlayAriaLabel", resultComponent::setOverlayAriaLabel);
         loadString(element, "sidePanelHorizontalMaxSize", resultComponent::setSidePanelHorizontalMaxSize);

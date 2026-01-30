@@ -4292,7 +4292,7 @@
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasClassNames"/>
 
-                <xs:attribute name="closeOnModalityCurtainClick" type="xs:boolean"/>
+                <xs:attribute name="closeOnOutsideClick" type="xs:boolean"/>
                 <xs:attribute name="displayAsOverlayOnSmallDevices" type="xs:boolean"/>
                 <xs:attribute name="sidePanelMode" type="sidePanelModeType"/>
                 <xs:attribute name="sidePanelPlacement" type="sidePanelPlacementType"/>

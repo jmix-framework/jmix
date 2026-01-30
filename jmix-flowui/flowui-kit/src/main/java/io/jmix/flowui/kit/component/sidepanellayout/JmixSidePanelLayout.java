@@ -165,21 +165,23 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * @return whether the side panel should be closed when the modality curtain is clicked
+     * @return whether the side panel should be closed when the user clicks on outside of panel but within
+     * the {@link JmixSidePanelLayout}
      */
-    public boolean isCloseOnModalityCurtainClick() {
-        return getElement().getProperty("closeOnModalityCurtainClick", true);
+    public boolean isCloseOnOutsideClick() {
+        return getElement().getProperty("closeOnOutsideClick", true);
     }
 
     /**
-     * Sets whether the side panel should be closed when the modality curtain is clicked.
+     * Sets whether the side panel should be closed when the user clicks on outside of panel but within the
+     * {@link JmixSidePanelLayout}.
      * <p>
      * The default value is {@code true}.
      *
-     * @param closeOnClick closeOnClick option
+     * @param closeOnOutsideClick closeOnClick option
      */
-    public void setCloseOnModalityCurtainClick(boolean closeOnClick) {
-        getElement().setProperty("closeOnModalityCurtainClick", closeOnClick);
+    public void setCloseOnOutsideClick(boolean closeOnOutsideClick) {
+        getElement().setProperty("closeOnOutsideClick", closeOnOutsideClick);
     }
 
     /**

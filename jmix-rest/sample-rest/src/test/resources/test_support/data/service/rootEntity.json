@@ -1,0 +1,7 @@
+{
+  "id": "$ROOT_ID$",
+  "name": "Entity 1",
+  "nestedEntity": {
+    "id": "$NESTED_ID$"
+  }
+}

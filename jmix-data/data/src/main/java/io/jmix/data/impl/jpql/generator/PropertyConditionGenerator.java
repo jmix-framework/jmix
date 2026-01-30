@@ -94,7 +94,7 @@ public class PropertyConditionGenerator implements ConditionGenerator {
                 } else {
                     joinBuilder.append(" left join ");
                 }
-                joinBuilder.append(joinPropertyBuilder + "." + basePropertyName + " " + joinAlias);
+                joinBuilder.append(joinPropertyBuilder + "." + baseProperty + " " + joinAlias);
                 joinPropertyBuilder = new StringBuilder(joinAlias);
             } else {
                 joinPropertyBuilder.append(".").append(baseProperty);
@@ -111,7 +111,7 @@ public class PropertyConditionGenerator implements ConditionGenerator {
         MetaProperty metaProperty = metaClass.getProperty(propertyName);
         if (metadataTools.isElementCollection(metaProperty)
                 && !propertyCondition.getOperation().equals(PropertyCondition.Operation.IS_COLLECTION_EMPTY)) {
-            String joinAlias = propertyName.substring(0, 3) + RandomStringUtils.insecure().nextNumeric(3);
+            String joinAlias = joinAliasPrefix + context.generateNextJoinIndex();
             context.setJoinAlias(joinAlias);
             context.setJoinProperty(propertyName);
             context.setJoinMetaClass(null);

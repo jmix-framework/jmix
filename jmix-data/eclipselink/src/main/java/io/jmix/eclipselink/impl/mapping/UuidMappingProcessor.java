@@ -26,8 +26,10 @@ import io.jmix.eclipselink.persistence.MappingProcessor;
 import io.jmix.eclipselink.persistence.MappingProcessorContext;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.mappings.DatabaseMapping;
+import org.eclipse.persistence.mappings.DirectCollectionMapping;
 import org.eclipse.persistence.mappings.DirectToFieldMapping;
 import org.eclipse.persistence.mappings.OneToOneMapping;
+import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.*;
 import org.eclipse.persistence.sessions.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,14 +56,15 @@ public class UuidMappingProcessor implements MappingProcessor {
         MetaProperty metaProperty = metaClass.getProperty(mapping.getAttributeName());
 
         if (metaProperty.getRange().isDatatype()) {
-            if (metaProperty.getJavaType().equals(UUID.class)) {
-                if (context.getSession().getPlatform() instanceof UuidMappingInfo) {
-                    UuidMappingInfo mappingInfo = (UuidMappingInfo) context.getSession().getPlatform();
-                    ((DirectToFieldMapping) mapping).setConverter(mappingInfo.getUuidConverter());
-                    setFieldProperties(mappingInfo, mapping.getField());
+            if (metaProperty.getRange().asDatatype().getJavaClass().equals(UUID.class)) {
+                DatabaseField databaseField = mapping instanceof DirectCollectionMapping collectionMapping ?
+                        collectionMapping.getDirectField() : mapping.getField();
+                if (context.getSession().getPlatform() instanceof UuidMappingInfo mappingInfo) {
+                    setUuidConverterToMapping(mappingInfo.getUuidConverter(), mapping);
+                    setFieldPropertiesFromUuidMappingInfo(mappingInfo, databaseField);
                 } else {
-                    ((DirectToFieldMapping) mapping).setConverter(UuidConverter.getInstance());
-                    setDatabaseFieldParameters(context.getSession(), mapping.getField());
+                    setUuidConverterToMapping(UuidConverter.getInstance(), mapping);
+                    setFieldPropertiesFromSession(context.getSession(), databaseField);
                 }
             }
         } else if (metaProperty.getRange().isClass() && !metaProperty.getRange().getCardinality().isMany()) {
@@ -69,22 +72,30 @@ public class UuidMappingProcessor implements MappingProcessor {
             if (refPkProperty != null && refPkProperty.getJavaType().equals(UUID.class)) {
                 for (DatabaseField field : ((OneToOneMapping) mapping).getForeignKeyFields()) {
                     if (context.getSession().getPlatform() instanceof UuidMappingInfo) {
-                        setFieldProperties((UuidMappingInfo) context.getSession().getPlatform(), field);
+                        setFieldPropertiesFromUuidMappingInfo((UuidMappingInfo) context.getSession().getPlatform(), field);
                     } else {
-                        setDatabaseFieldParameters(context.getSession(), field);
+                        setFieldPropertiesFromSession(context.getSession(), field);
                     }
                 }
             }
         }
     }
 
-    private void setFieldProperties(UuidMappingInfo mappingInfo, DatabaseField field) {
+    private void setUuidConverterToMapping(Converter converter, DatabaseMapping mapping) {
+        if (mapping instanceof DirectToFieldMapping fieldMapping) {
+            fieldMapping.setConverter(converter);
+        } else if (mapping instanceof DirectCollectionMapping collectionMapping) {
+            collectionMapping.setValueConverter(converter);
+        }
+    }
+
+    private void setFieldPropertiesFromUuidMappingInfo(UuidMappingInfo mappingInfo, DatabaseField field) {
         field.setSqlType(mappingInfo.getUuidSqlType());
         field.setType(mappingInfo.getUuidType());
         field.setColumnDefinition(mappingInfo.getUuidColumnDefinition());
     }
 
-    private void setDatabaseFieldParameters(Session session, DatabaseField field) {
+    private void setFieldPropertiesFromSession(Session session, DatabaseField field) {
         if (session.getPlatform() instanceof PostgreSQLPlatform) {
             field.setSqlType(Types.OTHER);
             field.setType(UUID.class);

@@ -26,6 +26,7 @@ import org.antlr.runtime.Token;
 import org.antlr.runtime.tree.CommonErrorNode;
 import org.antlr.runtime.tree.CommonTree;
 
+import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 
@@ -81,8 +82,11 @@ public class BaseJoinNode extends BaseCustomNode {
                 Pointer pointer = pathNode.resolvePointer(model, variableContext);
                 if (pointer instanceof NoPointer) {
                     invalidNodes.add(new ErrorRec(this, "Cannot resolve joined entity"));
-                } else if (pointer instanceof SimpleAttributePointer) {
-                    invalidNodes.add(new ErrorRec(this, "Joined entity resolved to a non-entity attribute"));
+                } else if (pointer instanceof SimpleAttributePointer simpleAttributePointer) {
+                    // simple type or element collection
+                    if (!Collection.class.isAssignableFrom(simpleAttributePointer.getAttribute().getSimpleType())) {
+                        invalidNodes.add(new ErrorRec(this, "Joined entity resolved to a non-entity attribute"));
+                    }
                 } else if (pointer instanceof EntityPointer) {
                     variableContext.addEntityVariable(variableName, ((EntityPointer) pointer).getEntity());
                 } else if (pointer instanceof CollectionPointer) {

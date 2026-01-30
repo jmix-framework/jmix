@@ -20,7 +20,8 @@ import '@vaadin/checkbox/src/vaadin-checkbox.js';
 import '@vaadin/select/src/vaadin-select.js';
 import '@vaadin/login/src/vaadin-login-form-wrapper.js';
 
-import { css, html } from 'lit';
+import { css, html, render } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { LoginForm } from '@vaadin/login/src/vaadin-login-form.js';
 
@@ -47,7 +48,7 @@ import { LoginForm } from '@vaadin/login/src/vaadin-login-form.js';
  * @fires {CustomEvent} remember-me-changed - Fired when "rememberMeCheckbox" is checked or unchecked.
  * @fires {CustomEvent} locale-selection-changed - Fired when selection in "localesSelect" is changed
  */
-// CAUTION: copied from @vaadin/login [last update Vaadin 24.9.0]
+// CAUTION: copied from @vaadin/login [last update Vaadin 25.0.0]
 class JmixLoginForm extends LoginForm {
     static get is() {
         return 'jmix-login-form';
@@ -90,8 +91,22 @@ class JmixLoginForm extends LoginForm {
     /**
      * @protected
      */
-    get _form() {
-      return this.querySelector('form');
+    get _additionalFieldsBox() {
+      return this.querySelector('#additionalFields');
+    }
+
+    /**
+     * @protected
+     */
+    get _rememberMeCheckbox() {
+      return this.querySelector('#rememberMeCheckbox');
+    }
+
+    /**
+     * @protected
+     */
+    get _localesSelect() {
+      return this.querySelector('#localesSelect');
     }
 
     /**
@@ -120,12 +135,80 @@ class JmixLoginForm extends LoginForm {
     }
 
     /**
+     * CAUTION: copied from @vaadin/login/src/vaadin-login-form-mixin.js [last update Vaadin 25.0.0]
      * @override
      */
     __renderSlottedForm() {
-        super.__renderSlottedForm();
+      render(
+        html`
+          <form method="POST" action="${ifDefined(this.action)}" @formdata="${this._onFormData}" slot="form">
+            <input id="csrf" type="hidden" />
+            <vaadin-text-field
+              name="username"
+              .label="${this.__effectiveI18n.form.username}"
+              .errorMessage="${this.__effectiveI18n.errorMessage.username}"
+              id="vaadinLoginUsername"
+              required
+              @keydown="${this._handleInputKeydown}"
+              autocapitalize="none"
+              autocorrect="off"
+              spellcheck="false"
+              autocomplete="username"
+              manual-validation
+            >
+              <input type="text" slot="input" @keyup="${this._handleInputKeyup}" />
+            </vaadin-text-field>
 
-        this._insertAdditionalFieldsToForm();
+            <vaadin-password-field
+              name="password"
+              .label="${this.__effectiveI18n.form.password}"
+              .errorMessage="${this.__effectiveI18n.errorMessage.password}"
+              id="vaadinLoginPassword"
+              required
+              @keydown="${this._handleInputKeydown}"
+              spellcheck="false"
+              autocomplete="current-password"
+              manual-validation
+            >
+              <input type="password" slot="input" @keyup="${this._handleInputKeyup}" />
+            </vaadin-password-field>
+
+            ${this._renderAdditionalFields()}
+          </form>
+
+          <vaadin-button slot="submit" theme="primary submit" @click="${this.submit}" .disabled="${this.disabled}">
+            ${this.__effectiveI18n.form.submit}
+          </vaadin-button>
+
+          <vaadin-button
+            slot="forgot-password"
+            theme="tertiary small"
+            @click="${this._onForgotPasswordClick}"
+            ?hidden="${this.noForgotPassword}"
+          >
+            ${this.__effectiveI18n.form.forgotPassword}
+          </vaadin-button>
+        `,
+        this,
+        { host: this },
+      );
+    }
+
+    _renderAdditionalFields() {
+        return html`
+            <div id="additionalFields" class="jmix-login-form-additional-fields-container">
+                <vaadin-checkbox
+                    id="rememberMeCheckbox"
+                    class="jmix-login-form-remember-me"
+                    @checked-changed="${this._onRememberMeValueChange}"
+                ></vaadin-checkbox>
+                <vaadin-select
+                    id="localesSelect"
+                    class="jmix-login-form-locales-select"
+                    @value-changed="${this._localeValueChanged}"
+                ></vaadin-select>
+            </div>
+        `;
     }
 
     /**
@@ -136,15 +219,15 @@ class JmixLoginForm extends LoginForm {
      * @public
      */
     selectLocale(localeString) {
-        if (!this.localesSelect) {
+        if (!this._localesSelect) {
             return;
         }
 
-        const currentValue = this.localesSelect.value;
+        const currentValue = this._localesSelect.value;
 
         if (localeString && currentValue !== localeString) {
-            this.localesSelect.jmixUserOriginated = false;
-            this.localesSelect.value = localeString;
+            this._localesSelect.jmixUserOriginated = false;
+            this._localesSelect.value = localeString;
         }
     }
 
@@ -195,8 +278,8 @@ class JmixLoginForm extends LoginForm {
      * @protected
      */
     _onLocalesChanged(items) {
-        if (this.localesSelect) {
-            this.localesSelect.items = items;
+        if (this._localesSelect) {
+            this._localesSelect.items = items;
         }
     }
 
@@ -208,9 +291,9 @@ class JmixLoginForm extends LoginForm {
      * @protected
      */
     _onVisibilityPropertiesChanged(rememberMeVisibility, localesVisibility) {
-        this.additionalFieldsBox.hidden = !rememberMeVisibility && !localesVisibility;
-        this.rememberMeCheckbox.hidden = !rememberMeVisibility;
-        this.localesSelect.hidden = !localesVisibility;
+        this._additionalFieldsBox.hidden = !rememberMeVisibility && !localesVisibility;
+        this._rememberMeCheckbox.hidden = !rememberMeVisibility;
+        this._localesSelect.hidden = !localesVisibility;
     }
 
     /**
@@ -220,47 +303,7 @@ class JmixLoginForm extends LoginForm {
      * @protected
      */
     _onI18nChanged(i18n) {
-        this.rememberMeCheckbox.label = this.i18n.form.rememberMe;
-    }
-
-    _insertAdditionalFieldsToForm() {
-        if (this.additionalFieldsBox) {
-            return;
-        }
-
-        this.additionalFieldsBox = document.createElement('div');
-        this.additionalFieldsBox.id = 'additionalFields';
-        this.additionalFieldsBox.classList.add('jmix-login-form-additional-fields-container');
-
-        this.rememberMeCheckbox = this._createRememberMeCheckbox();
-        this.localesSelect = this._createLocalesSelect();
-
-        this.additionalFieldsBox.appendChild(this.rememberMeCheckbox);
-        this.additionalFieldsBox.appendChild(this.localesSelect);
-
-        const additionalFieldsBox = this.additionalFieldsBox;
-
-        const submitButton = this._form.children[3];
-        this._form.insertBefore(additionalFieldsBox, submitButton);
-    }
-
-    _createRememberMeCheckbox() {
-        const rememberMeCheckbox = document.createElement('vaadin-checkbox');
-        rememberMeCheckbox.id = 'rememberMeCheckbox';
-        rememberMeCheckbox.classList.add('jmix-login-form-remember-me');
-        rememberMeCheckbox.addEventListener('checked-changed', (e) => this._onRememberMeValueChange(e));
-        rememberMeCheckbox.jmixUserOriginated = true;
-        return rememberMeCheckbox;
-    }
-
-    _createLocalesSelect() {
-        const localesSelect = document.createElement('vaadin-select');
-        localesSelect.id = 'localesSelect';
-        localesSelect.classList.add('jmix-login-form-locales-select');
-        localesSelect.items = this.locales;
-        localesSelect.addEventListener('value-changed', (e) => this._localeValueChanged(e));
-        localesSelect.jmixUserOriginated = true;
-        return localesSelect;
+        this._rememberMeCheckbox.label = this.i18n.form.rememberMe;
     }
 
     _localeValueChanged(e) {
@@ -270,19 +313,19 @@ class JmixLoginForm extends LoginForm {
             return;
         }
 
-        if (this.localesSelect.jmixUserOriginated) {
+        if (this._localesSelect.jmixUserOriginated) {
             const customEvent = new CustomEvent('locale-selection-changed', {detail: {localeString: localeString}});
             this.dispatchEvent(customEvent);
         }
-        this.localesSelect.jmixUserOriginated = true;
+        this._localesSelect.jmixUserOriginated = true;
     }
 
     _onRememberMeValueChange(e) {
-        if (this.rememberMeCheckbox.jmixUserOriginated) {
+        if (this._rememberMeCheckbox.jmixUserOriginated) {
             const customEvent = new CustomEvent('remember-me-changed', {detail: {checked: e.detail.value}});
             this.dispatchEvent(customEvent);
         }
-        this.rememberMeCheckbox.jmixUserOriginated = true;
+        this._rememberMeCheckbox.jmixUserOriginated = true;
     }
 }
 

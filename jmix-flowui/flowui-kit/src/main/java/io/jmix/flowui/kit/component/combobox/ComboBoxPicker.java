@@ -38,7 +38,7 @@ import java.util.Collection;
  * @param <V> the type of the items to be selectable from the combo box
  */
 @Tag("jmix-combo-box-picker")
-//@JsModule("./src/combo-box-picker/jmix-combo-box-picker.js")
+@JsModule("./src/combo-box-picker/jmix-combo-box-picker.js")
 public class ComboBoxPicker<V> extends ComboBox<V>
         implements SupportsUserAction<V>, HasActions, HasTitle {
 

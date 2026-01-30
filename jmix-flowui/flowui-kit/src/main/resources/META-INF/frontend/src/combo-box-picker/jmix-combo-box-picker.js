@@ -15,54 +15,44 @@
  */
 
 import '@vaadin/input-container/src/vaadin-input-container.js';
-import { html } from '@polymer/polymer';
-import { defineCustomElement } from '@vaadin/component-base/src/define.js';
-import { ComboBox } from '@vaadin/combo-box/src/vaadin-combo-box.js';
-import { registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {html} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
+import {defineCustomElement} from '@vaadin/component-base/src/define.js';
+import {ComboBox} from '@vaadin/combo-box/src/vaadin-combo-box.js';
+import {comboBoxStyles} from '@vaadin/combo-box/src/styles/vaadin-combo-box-base-styles.js';
+import {inputFieldShared} from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
+import {comboBoxPickerStyles} from "./styles/jmix-combo-box-picker-base-styles";
 
-registerStyles('jmix-combo-box-picker', [],{
-    moduleId: 'jmix-combo-box-picker-styles'
-});
-
-// CAUTION: copied from @vaadin/combo-box [last update Vaadin 24.9.0]
+// CAUTION: copied from @vaadin/combo-box [last update Vaadin 25.0.4]
 class JmixComboBoxPicker extends ComboBox {
 
     static get is() {
         return 'jmix-combo-box-picker';
     }
 
-    static get template() {
+    static get styles() {
+        return [inputFieldShared, comboBoxStyles, comboBoxPickerStyles];
+    }
+
+    /** @protected */
+    render() {
         return html`
-            <style>
-                [part="action-part"] ::slotted(*) {
-                    display: flex;
-                }
-
-                :host([readonly]) [part="action-part"] {
-                    display: none;
-                }
-
-                :host([opened]) {
-                    pointer-events: auto;
-                }
-            </style>
-
-            <div class="value-picker-container">
+            <div class="vaadin-combo-box-container">
                 <div part="label">
                     <slot name="label"></slot>
-                    <span part="required-indicator" aria-hidden="true" on-click="focus"></span>
+                    <span part="required-indicator" aria-hidden="true" @click="${this.focus}"></span>
                 </div>
 
                 <vaadin-input-container
                         part="input-field"
-                        readonly="[[readonly]]"
-                        disabled="[[disabled]]"
-                        invalid="[[invalid]]"
-                        theme$="[[_theme]]"
+                        .readonly="${this.readonly}"
+                        .disabled="${this.disabled}"
+                        .invalid="${this.invalid}"
+                        theme="${ifDefined(this._theme)}"
                 >
                     <slot name="prefix" slot="prefix"></slot>
                     <slot name="input"></slot>
-                    <div id="toggleButton" part="toggle-button" slot="suffix" aria-hidden="true"></div>
+                    <div id="toggleButton" part="field-button toggle-button" slot="suffix" aria-hidden="true"></div>
                     <!-- Jmix API -->
                     <div id="pickerAction" part="action-part" slot="suffix">
                         <slot name="actions"></slot>
@@ -76,18 +66,23 @@ class JmixComboBoxPicker extends ComboBox {
                 <div part="error-message">
                     <slot name="error-message"></slot>
                 </div>
+
+                <slot name="tooltip"></slot>
             </div>
 
             <vaadin-combo-box-overlay
                     id="overlay"
-                    opened="[[_overlayOpened]]"
-                    loading$="[[loading]]"
-                    theme$="[[_theme]]"
-                    position-target="[[_positionTarget]]"
+                    exportparts="overlay, content, loader"
+                    .owner="${this}"
+                    .dir="${this.dir}"
+                    .opened="${this._overlayOpened}"
+                    ?loading="${this.loading}"
+                    theme="${ifDefined(this._theme)}"
+                    .positionTarget="${this._positionTarget}"
                     no-vertical-overlap
-            ></vaadin-combo-box-overlay>
-
-            <slot name="tooltip"></slot>
+            >
+                <slot name="overlay"></slot>
+            </vaadin-combo-box-overlay>
         `;
     }
 
@@ -104,4 +99,4 @@ class JmixComboBoxPicker extends ComboBox {
 
 defineCustomElement(JmixComboBoxPicker);
 
-export { JmixComboBoxPicker }
+export {JmixComboBoxPicker}

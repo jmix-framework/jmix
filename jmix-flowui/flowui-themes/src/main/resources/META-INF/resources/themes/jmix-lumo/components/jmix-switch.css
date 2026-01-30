@@ -19,5 +19,5 @@
 :root::before,
 :host::before {
     --_lumo-jmix-switch-inject: 1;
-    --_lumo-jmix-switch-inject-modules: lumo_components_jmix_switch;
+    --_lumo-jmix-switch-inject-modules: lumo_components_jmix-switch;
 }

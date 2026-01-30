@@ -19,5 +19,5 @@
 :root::before,
 :host::before {
     --_lumo-jmix-value-picker-button-inject: 1;
-    --_lumo-jmix-value-picker-button-inject-modules: lumo_components_jmix_value_picker_button;
+    --_lumo-jmix-value-picker-button-inject-modules: lumo_components_jmix-value-picker-button;
 }

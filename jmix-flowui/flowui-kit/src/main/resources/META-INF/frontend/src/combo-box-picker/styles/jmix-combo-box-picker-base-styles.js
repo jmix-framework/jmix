@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import '@vaadin/component-base/src/styles/style-props.js';
+import {css} from 'lit';
 
+export const comboBoxPickerStyles = css`
+    [part="action-part"] ::slotted(*) {
+        display: flex;
+    }
 
-const entityComboBox = css`
-  [part="action-part"] ::slotted(*) {
-    gap: var(--lumo-space-xs);
-    margin-left: var(--lumo-space-xs);
-  }
-  
-  :host([has-actions]) [part="input-field"] {
-    padding-right: var(--lumo-space-xs);
-  }
+    :host([readonly]) [part="action-part"] {
+        display: none;
+    }
+
+    :host([opened]) {
+        pointer-events: auto;
+    }
 `;
-
-registerStyles('jmix-combo-box-picker', entityComboBox,{
-    moduleId: 'lumo-combo-box-picker-styles'
-});

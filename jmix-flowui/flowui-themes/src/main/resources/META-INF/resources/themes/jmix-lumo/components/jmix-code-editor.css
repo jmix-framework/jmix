@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import '@vaadin/input-container/theme/lumo/vaadin-input-container.js';
-import './jmix-code-editor-styles.js';
-import '../../../src/code-editor/jmix-code-editor.js';
+
+@import '../src/components/jmix-code-editor.css';
+
+:root::before,
+:host::before {
+    --_lumo-jmix-code-editor-inject: 1;
+    --_lumo-jmix-code-editor-inject-modules:
+            lumo_mixins_field-label,
+            lumo_mixins_field-required,
+            lumo_mixins_field-error-message,
+            lumo_mixins_field-helper,
+            lumo_mixins_field-base,
+            lumo_components_jmix_code_editor;
+}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {css} from 'lit';
 
 export const contentStyles = css `
 
@@ -1445,6 +1445,3 @@ export const contentStyles = css `
     font-family: monospace;
   }
 `
-
-// Register a module with ID for backwards compatibility.
-registerStyles('', contentStyles, { moduleId: 'jmix-code-editor-content-styles' });

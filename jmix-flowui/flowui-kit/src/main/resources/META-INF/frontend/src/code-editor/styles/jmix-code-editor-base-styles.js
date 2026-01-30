@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-import {contentStyles} from "./jmix-code-editor-content-styles";
+import '@vaadin/component-base/src/styles/style-props.js';
+import { css } from 'lit';
+import { contentStyles } from "./jmix-code-editor-content-styles";
 
 export const statesStyles = css`
 

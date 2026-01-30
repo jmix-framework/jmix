@@ -47,7 +47,7 @@ import java.util.List;
         value = "ace-builds",
         version = "1.39.0"
 )
-//@JsModule("./src/code-editor/jmix-code-editor.js")
+@JsModule("./src/code-editor/jmix-code-editor.js")
 public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, String>
         implements CompositionNotifier, Focusable<JmixCodeEditor>, HasHelper,
         HasLabel, HasTitle, HasSize, HasStyle, HasTooltip, HasValidationProperties,

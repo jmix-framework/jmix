@@ -60,7 +60,7 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinFlowVersion = '25.0.2'
+def vaadinFlowVersion = '25.0.4'
 
 javaPlatform {
     allowDependencies()
@@ -342,6 +342,7 @@ dependencies {
         api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
         api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
+        api "com.vaadin:vaadin-dev:$vaadinFlowVersion"
         api "com.vaadin:vaadin-board-flow:$vaadinFlowVersion"
         api "com.vaadin:vaadin-spreadsheet-flow:$vaadinFlowVersion"
         api "com.vaadin:vaadin-dashboard-flow:$vaadinFlowVersion"

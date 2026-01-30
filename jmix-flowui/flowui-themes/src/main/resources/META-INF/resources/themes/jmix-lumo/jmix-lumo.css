@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/*@import '../../lumo/lumo.css';*/
+/*@import url("@vaadin/vaadin-lumo-styles/lumo.css");*/
+
 @import './app/index.css';
 @import './component/index.css';
 @import './components/index.css';

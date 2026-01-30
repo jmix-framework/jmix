@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/*@import url('@vaadin/vaadin-lumo-styles/src/mixins/field-base.css');*/
+/*@import url('@vaadin/vaadin-lumo-styles/src/mixins/field-error-message.css');*/
+/*@import url('@vaadin/vaadin-lumo-styles/src/mixins/field-helper.css');*/
+/*@import url('@vaadin/vaadin-lumo-styles/src/mixins/field-label.css');*/
+/*@import url('@vaadin/vaadin-lumo-styles/src/mixins/field-required.css');*/
+/*@import url('@vaadin/vaadin-lumo-styles/components/input-container.css');*/
 @import '../src/components/jmix-code-editor.css';
 
 :root::before,

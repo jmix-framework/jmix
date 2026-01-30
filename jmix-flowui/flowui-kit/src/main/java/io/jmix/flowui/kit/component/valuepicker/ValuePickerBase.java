@@ -52,7 +52,7 @@ import static com.vaadin.flow.data.value.ValueChangeMode.eventForMode;
  * @param <V> the type of the value being picked or edited
  */
 @Tag("jmix-value-picker")
-//@JsModule("./src/value-picker/jmix-value-picker.js")
+@JsModule("./src/value-picker/jmix-value-picker.js")
 public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
         extends AbstractField<C, V>
         implements SupportsFormatter<V>, SupportsUserAction<V>, HasValidationProperties,

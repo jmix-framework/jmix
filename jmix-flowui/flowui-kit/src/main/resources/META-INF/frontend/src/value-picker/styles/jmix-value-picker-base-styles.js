@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,19 @@
  * limitations under the License.
  */
 
-import '../../../src/twin-column/jmix-twin-column.js';
+import '@vaadin/component-base/src/styles/style-props.js';
+import {css} from 'lit';
+
+export const jmixValuePickerStyles = css`
+    :host::before {
+        display: inline-flex;
+    }
+
+    [part="action-part"] ::slotted(*) {
+        display: flex;
+    }
+
+    :host([readonly]) [part="action-part"] {
+        display: none;
+    }
+`;

@@ -15,64 +15,42 @@
  */
 
 import '@vaadin/input-container/src/vaadin-input-container.js';
-import { html, PolymerElement } from '@polymer/polymer';
-import { defineCustomElement } from '@vaadin/component-base/src/define.js';
-import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
-import { TooltipController } from '@vaadin/component-base/src/tooltip-controller.js';
-import { InputController } from '@vaadin/field-base/src/input-controller.js';
-import { InputFieldMixin } from '@vaadin/field-base/src/input-field-mixin.js';
-import { LabelledInputController } from '@vaadin/field-base/src/labelled-input-controller.js';
-import { inputFieldShared } from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
-import { css, registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {html, LitElement} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
+import {defineCustomElement} from '@vaadin/component-base/src/define.js';
+import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
+import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
+import {TooltipController} from '@vaadin/component-base/src/tooltip-controller.js';
+import {LabelledInputController} from '@vaadin/field-base/src/labelled-input-controller.js';
+import {InputController} from '@vaadin/field-base/src/input-controller.js';
+import {InputFieldMixin} from '@vaadin/field-base/src/input-field-mixin.js';
+import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-/*
-* CAUTION! Styles for 'jmix-value-picker' component are applied in wrong order.
-* The 'inputFieldShared' from 'field-base/src/styles/input-field-shared-styles.js'
-* takes precedence over
-* 'inputFieldShared' from 'vaadin-lumo-styles/mixins/input-field-shared.js'
-* that is registered in 'jmix-value-picker-styles.js'. However, the same approach of
-* registering styles works correctly for Vaadin components.
-*/
-const valuePicker = css`
-  :host::before {
-    display: inline-flex;
-  }
-`;
-
-registerStyles('jmix-value-picker', [inputFieldShared, valuePicker], {
-    moduleId: 'jmix-value-picker-styles'
-});
-
-export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(PolymerElement))) {
+export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
 
     static get is() {
         return 'jmix-value-picker';
     }
 
-    static get template() {
+    /*static get styles() {
+        return [inputFieldShared, jmixValuePickerStyles];
+    }*/
+
+    render() {
         return html`
-            <style>
-                [part="action-part"] ::slotted(*) {
-                    display: flex;
-                }
-
-                :host([readonly]) [part="action-part"] {
-                    display: none;
-                }
-            </style>
-
             <div class="value-picker-container">
                 <div part="label">
                     <slot name="label"></slot>
-                    <span part="required-indicator" aria-hidden="true" on-click="focus"></span>
+                    <span part="required-indicator" aria-hidden="true" @click="${this.focus}"></span>
                 </div>
 
                 <vaadin-input-container
                         part="input-field"
-                        readonly="[[readonly]]"
-                        disabled="[[disabled]]"
-                        invalid="[[invalid]]"
-                        theme$="[[_theme]]"
+                        .readonly="${this.readonly}"
+                        .disabled="${this.disabled}"
+                        .invalid="${this.invalid}"
+                        theme="${ifDefined(this._theme)}"
                 >
                     <slot name="prefix" slot="prefix"></slot>
                     <slot name="input"></slot>
@@ -89,9 +67,9 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
                 <div part="error-message">
                     <slot name="error-message"></slot>
                 </div>
-            </div>
 
-            <slot name="tooltip"></slot>
+                <slot name="tooltip"></slot>
+            </div>
         `;
     }
 
@@ -124,7 +102,7 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
                 this._setFocusElement(input);
                 this.stateTarget = input;
                 this.ariaTarget = input;
-            })
+            }),
         );
         this.addController(new LabelledInputController(this.inputElement, this._labelController));
 

@@ -15,6 +15,7 @@
  */
 
 @media lumo_components_jmix_switch {
+
     /* Ex Base styles */
     :host {
         display: inline-block;

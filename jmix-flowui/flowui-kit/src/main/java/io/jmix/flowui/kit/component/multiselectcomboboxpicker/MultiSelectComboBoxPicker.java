@@ -39,7 +39,7 @@ import java.util.Set;
  * @param <V> the type of the items to be displayed and selected in the component
  */
 @Tag("jmix-multi-select-combo-box-picker")
-//@JsModule("./src/multi-select-combo-box-picker/jmix-multi-select-combo-box-picker.js")
+@JsModule("./src/multi-select-combo-box-picker/jmix-multi-select-combo-box-picker.js")
 public class MultiSelectComboBoxPicker<V> extends MultiSelectComboBox<V>
         implements SupportsUserAction<Collection<V>>, HasActions, HasTitle {
 

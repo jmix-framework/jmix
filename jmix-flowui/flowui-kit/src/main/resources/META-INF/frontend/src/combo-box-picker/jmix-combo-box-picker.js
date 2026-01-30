@@ -21,7 +21,7 @@ import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ComboBox} from '@vaadin/combo-box/src/vaadin-combo-box.js';
 import {comboBoxStyles} from '@vaadin/combo-box/src/styles/vaadin-combo-box-base-styles.js';
 import {inputFieldShared} from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
-import {comboBoxPickerStyles} from "./styles/jmix-combo-box-picker-base-styles";
+import {jmixComboBoxPickerStyles} from "./styles/jmix-combo-box-picker-base-styles";
 
 // CAUTION: copied from @vaadin/combo-box [last update Vaadin 25.0.4]
 class JmixComboBoxPicker extends ComboBox {
@@ -31,7 +31,7 @@ class JmixComboBoxPicker extends ComboBox {
     }
 
     static get styles() {
-        return [inputFieldShared, comboBoxStyles, comboBoxPickerStyles];
+        return [inputFieldShared, comboBoxStyles, jmixComboBoxPickerStyles];
     }
 
     /** @protected */

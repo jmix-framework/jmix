@@ -91,5 +91,4 @@ const jmixSwitch = css`
     }
 `;
 
-export const switchStyles = [field, checkable('switch'), jmixSwitch];
-// export const switchStyles = [ jmixSwitch ];
+export const jmixSwitchStyles = [field, checkable('switch'), jmixSwitch];

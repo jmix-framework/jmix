@@ -34,8 +34,8 @@
 
 :root::before,
 :host::before {
-  --_lumo-jmix-combo-box-picker-inject: 1;
-  --_lumo-jmix-combo-box-picker-inject-modules:
+    --_lumo-jmix-combo-box-picker-inject: 1;
+    --_lumo-jmix-combo-box-picker-inject-modules:
     lumo_mixins_field-label,
     lumo_mixins_field-required,
     lumo_mixins_field-error-message,

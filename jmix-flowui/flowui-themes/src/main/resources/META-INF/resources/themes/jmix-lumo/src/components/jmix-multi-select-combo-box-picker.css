@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,5 +14,23 @@
  * limitations under the License.
  */
 
-import './jmix-multi-select-combo-box-picker-styles.js';
-import '../../../src/multi-select-combo-box-picker/jmix-multi-select-combo-box-picker.js';
+@media lumo_components_jmix-multi-select-combo-box-picker {
+    /* Ex Base styles */
+    [part="action-part"] ::slotted(*) {
+        display: flex;
+    }
+
+    :host([readonly]) [part="action-part"] {
+        display: none;
+    }
+
+    /* Lumo styles */
+    [part="action-part"] ::slotted(*) {
+        gap: var(--lumo-space-xs);
+        margin-left: var(--lumo-space-xs);
+    }
+
+    :host([has-actions]) [part="input-field"] {
+        padding-right: var(--lumo-space-xs);
+    }
+}

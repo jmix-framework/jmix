@@ -21,7 +21,7 @@ import { TooltipController } from '@vaadin/component-base/src/tooltip-controller
 import { LumoInjectionMixin } from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import { SwitchMixin } from './jmix-switch-mixin.js';
-import { switchStyles } from './styles/jmix-switch-base-styles.js';
+import { jmixSwitchStyles } from './styles/jmix-switch-base-styles.js';
 
 export class JmixSwitch extends SwitchMixin(ElementMixin(ThemableMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
     static get is() {
@@ -29,7 +29,7 @@ export class JmixSwitch extends SwitchMixin(ElementMixin(ThemableMixin(PolylitMi
     }
 
     static get styles() {
-        return switchStyles;
+        return jmixSwitchStyles;
     }
 
     render() {

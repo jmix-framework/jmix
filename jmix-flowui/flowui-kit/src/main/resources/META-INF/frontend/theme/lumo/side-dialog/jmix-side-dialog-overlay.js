@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,5 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.event.dialog;
-
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.dialog.Dialog;
-import org.springframework.context.ApplicationEvent;
-
-/**
- * Application event that is sent after the dialog is closed.
- */
-public class DialogClosedEvent extends ApplicationEvent {
-
-    public DialogClosedEvent(Component dialog) {
-        super(dialog);
-    }
-
-    @Override
-    public Component getSource() {
-        return (Component) super.getSource();
-    }
-}
+import '../../../src/side-dialog/jmix-side-dialog-overlay.js';
+import './jmix-side-dialog-overlay-styles.js';

@@ -17,8 +17,11 @@
 package io.jmix.flowui.testassist.dialog;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import io.jmix.flowui.Dialogs.SideDialogBuilder;
+import io.jmix.flowui.component.sidedialog.SideDialog;
 
 import java.util.List;
 
@@ -27,17 +30,22 @@ import java.util.List;
  */
 public class DialogInfo {
 
-    protected final Dialog dialog;
+    protected final Component dialog;
 
     protected Component content;
     protected List<Button> buttons;
 
+    protected List<Component> headerComponents;
+    protected List<Component> contentComponents;
+    protected List<Component> footerComponents;
+
     /**
-     * Creates a {@link DialogInfo} of the passed {@link Dialog}.
+     * Creates a {@link DialogInfo} of the passed {@link Component}.
      *
-     * @param dialog {@link Dialog} to create {@link DialogInfo}
+     * @param dialog the component should be a {@link Dialog} or {@link Composite}
+     *               that contains a {@link Dialog} as content
      */
-    public DialogInfo(Dialog dialog) {
+    public DialogInfo(Component dialog) {
         this.dialog = dialog;
     }
 
@@ -64,13 +72,67 @@ public class DialogInfo {
     }
 
     /**
+     * Sets the {@code headerComponents} list of the {@link Dialog}.
+     *
+     * @param headerComponents list of the header components to set
+     * @return this
+     */
+    protected DialogInfo withHeaderComponents(List<Component> headerComponents) {
+        this.headerComponents = headerComponents;
+        return this;
+    }
+
+    /**
+     * Sets the {@code contentComponents} list of the {@link Dialog}.
+     *
+     * @param contentComponents list of the content components to set
+     * @return this
+     */
+    protected DialogInfo withContentComponents(List<Component> contentComponents) {
+        this.contentComponents = contentComponents;
+        this.content = contentComponents.isEmpty() ? null : contentComponents.get(0);
+        return this;
+    }
+
+    /**
+     * Sets the {@code footerComponents} list of the {@link Dialog}.
+     *
+     * @param footerComponents list of the footer components to set
+     * @return this
+     */
+    protected DialogInfo withFooterComponents(List<Component> footerComponents) {
+        this.footerComponents = footerComponents;
+        return this;
+    }
+
+    /**
+     * Returns the {@link Dialog} instance. For dialogs based on {@link Composite} to get an instance of
+     * component use {@link #getDialogComponent()}.
+     *
      * @return {@link Dialog} instance
      */
     public Dialog getDialog() {
+        if (dialog instanceof Composite<?> composite) {
+            return (Dialog) composite.getContent();
+        }
+        return (Dialog) dialog;
+    }
+
+    /**
+     * Returns the dialog component. For message dialog and other simple dialogs it is a {@link Dialog} itself.
+     * For complicated dialogs it can be a {@link Composite} that contains a {@link Dialog} as content
+     * (e.g. {@link SideDialog}).
+     *
+     * @return dialog component
+     */
+    public Component getDialogComponent() {
         return dialog;
     }
 
     /**
+     * Returns the {@link Dialog} content component (e.g., for message dialog, option dialog, etc.).
+     * If the dialog content includes multiple components, the first component is returned.
+     *
      * @return the {@link Dialog} content
      */
     public Component getContent() {
@@ -78,9 +140,39 @@ public class DialogInfo {
     }
 
     /**
+     * Returns the button list if the dialog footer contains only buttons (e.g., message dialog, option dialog, etc.).
+     *
      * @return list of the {@link Dialog} buttons
      */
     public List<Button> getButtons() {
         return buttons;
+    }
+
+    /**
+     * The list of header components of the {@link Dialog} if the builder supports setting components to the header
+     * (e.g. {@link SideDialogBuilder}).
+     *
+     * @return list of header components
+     */
+    public List<Component> getHeaderComponents() {
+        return headerComponents;
+    }
+
+    /**
+     * The list of content components of the {@link Dialog}.
+     *
+     * @return list of content components
+     */
+    public List<Component> getContentComponents() {
+        return contentComponents;
+    }
+
+    /**
+     * The list of footer components of the {@link Dialog}.
+     *
+     * @return list of footer components
+     */
+    public List<Component> getFooterComponents() {
+        return footerComponents;
     }
 }

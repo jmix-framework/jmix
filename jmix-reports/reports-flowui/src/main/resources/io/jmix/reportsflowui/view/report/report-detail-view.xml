@@ -167,11 +167,17 @@
                                             <comboBox id="entitiesParamField"
                                                       allowCustomValue="true"
                                                       clearButtonVisible="true"
-                                                      label="msg://bandsTab.dataSetTypeLayout.entitiesParamField.label"/>
+                                                      label="msg://bandsTab.dataSetTypeLayout.entitiesParamField.label">
+                                                <tooltip text="msg://bandsTab.dataSetTypeLayout.entitiesParamField.tooltip"
+                                                         manual="false" position="END_BOTTOM"/>
+                                            </comboBox>
                                             <comboBox id="entityParamField"
                                                       allowCustomValue="true"
                                                       clearButtonVisible="true"
-                                                      label="msg://bandsTab.dataSetTypeLayout.entityParamField.label"/>
+                                                      label="msg://bandsTab.dataSetTypeLayout.entityParamField.label">
+                                                <tooltip text="msg://bandsTab.dataSetTypeLayout.entitiesParamField.tooltip"
+                                                         manual="false" position="END_BOTTOM"/>
+                                            </comboBox>
                                             <checkbox id="isUseExistingFetchPlanField" dataContainer="dataSetsDc"
                                                       property="useExistingFetchPLan"
                                                       label="msg://bandsTab.dataSetTypeLayout.useExistingFetchPlan.label"/>

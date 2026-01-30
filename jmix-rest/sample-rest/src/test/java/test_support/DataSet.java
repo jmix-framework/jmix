@@ -59,6 +59,7 @@ public class DataSet {
     private Set<Long> compositeKeyEntityIds = new HashSet<>();
     private Set<Integer> compositeKeyEntityTenantIds = new HashSet<>();
     private Set<Integer> nonStandardIdNameEntityIds = new HashSet<>();
+    private Set<UUID> customerIds = new HashSet<>();
 
     private static AtomicLong compositeKeyEntityIdGen = new AtomicLong();
     private static AtomicInteger compositeKeyEntityTenantIdGen = new AtomicInteger();
@@ -164,6 +165,12 @@ public class DataSet {
     public void addCategoryAttributeValueId(UUID uuid) {
         if (uuid != null) {
             categoryAttributeValueIds.add(uuid);
+        }
+    }
+
+    public void addCustomerId(UUID uuid) {
+        if (uuid != null) {
+            customerIds.add(uuid);
         }
     }
 

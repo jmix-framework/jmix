@@ -1449,6 +1449,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="uploadUploadHandlerEnum">
+        <xs:restriction>
+            <xs:enumeration value="IN_MEMORY"/>
+            <xs:enumeration value="FILE_TEMPORARY_STORAGE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="labelPositionType">
         <xs:restriction>
             <xs:enumeration value="ASIDE"/>
@@ -4482,6 +4489,9 @@
 
                 <xs:attribute name="receiverType" type="uploadReceiverEnum"/>
                 <xs:attribute name="receiverFqn" type="xs:string"/>
+
+                <xs:attribute name="uploadHandlerType" type="uploadUploadHandlerEnum"/>
+                <xs:attribute name="uploadHandlerFqn" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasEnabled"/>

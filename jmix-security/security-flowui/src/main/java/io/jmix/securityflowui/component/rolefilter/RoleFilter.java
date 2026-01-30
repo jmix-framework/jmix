@@ -80,7 +80,7 @@ public class RoleFilter extends Composite<Details> implements InitializingBean {
     protected void initRootComponent() {
         getContent().setSummaryText(messages.getMessage(RoleFilter.class, "summaryText"));
         getContent().setWidthFull();
-        getContent().addContent(layout);
+        getContent().add(layout);
     }
 
     public boolean isNameFilterVisible() {

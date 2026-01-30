@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.meta.action;
 import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
-public interface StudioGenericFilterActions {
+interface StudioGenericFilterActions {
 
     @StudioAction(
             type = "genericFilter_addCondition",

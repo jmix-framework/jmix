@@ -150,7 +150,8 @@
                                             <select id="dataStoreField"
                                                     emptySelectionAllowed="true"
                                                     label="msg://bandsTab.dataSetTypeLayout.dataStoreField.label"
-                                                    property="dataStore"/>
+                                                    property="dataStore"
+                                                    emptySelectionCaption="msg://bandsTab.dataSetTypeLayout.dataStoreField.emptySelectionCaption"/>
                                             <responsiveSteps>
                                                 <responsiveStep minWidth="0" columns="1"/>
                                                 <responsiveStep minWidth="30em" columns="2"/>

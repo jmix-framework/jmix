@@ -28,13 +28,16 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+
+import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
+import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 
 @Component("data_PropertyConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
@@ -42,6 +45,12 @@ public class PropertyConditionGenerator implements ConditionGenerator {
 
     protected MetadataTools metadataTools;
     protected Metadata metadata;
+
+    @Value("${jmix.eclipselink.use-inner-join-in-condition:false}")
+    protected boolean useInnerJoinInCondition;
+
+    @Value("${jmix.eclipselink.condition-join-alias-prefix:cje_}")
+    protected String joinAliasPrefix;
 
     @Autowired
     public PropertyConditionGenerator(MetadataTools metadataTools, Metadata metadata) {
@@ -73,12 +82,19 @@ public class PropertyConditionGenerator implements ConditionGenerator {
 
             MetaProperty metaProperty = metaClass.getProperty(baseProperty);
 
-            if (metaProperty.getRange().getCardinality().isMany()) {
-                String joinAlias = baseProperty.substring(0, 3) + RandomStringUtils.insecure().nextNumeric(3);
+            if ((useInnerJoinInCondition && metaProperty.getRange().getCardinality().isMany()) ||
+                    (metaProperty.getType() == ASSOCIATION || metaProperty.getType() == COMPOSITION)) {
+                String joinAlias = joinAliasPrefix + context.generateNextJoinIndex();
+
                 context.setJoinAlias(joinAlias);
                 context.setJoinProperty(childProperty);
                 context.setJoinMetaClass(metaProperty.getRange().asClass());
-                joinBuilder.append(" join " + joinPropertyBuilder + "." + baseProperty + " " + joinAlias);
+                if (useInnerJoinInCondition) {
+                    joinBuilder.append(" join ");
+                } else {
+                    joinBuilder.append(" left join ");
+                }
+                joinBuilder.append(joinPropertyBuilder + "." + basePropertyName + " " + joinAlias);
                 joinPropertyBuilder = new StringBuilder(joinAlias);
             } else {
                 joinPropertyBuilder.append(".").append(baseProperty);

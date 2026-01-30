@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.xml.layout.loader.html;
+package test_support.entity.conditions;
 
-import com.vaadin.flow.component.html.Label;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
-public class LabelLoader extends AbstractHtmlContainerLoader<Label> {
+@JmixEntity
+@Table(name = "TEST_CONDITIONS_MODULE_C")
+@Entity(name = "test_ModuleC")
+public class ModuleC extends BaseModuleDefinition {
+    @Column(name = "MAX_SPEED")
+    private Double maxSpeed;
 
-    @Override
-    protected Label createComponent() {
-        return factory.create(Label.class);
+    public Double getMaxSpeed() {
+        return maxSpeed;
     }
 
-    @Override
-    public void loadComponent() {
-        super.loadComponent();
-
-        loaderSupport.loadString(element, "setFor", resultComponent::setFor);
+    public void setMaxSpeed(Double maxSpeed) {
+        this.maxSpeed = maxSpeed;
     }
 }

@@ -16,11 +16,11 @@
 
 package io.jmix.data.impl.jpql.generator;
 
-import com.google.common.base.Strings;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -60,7 +60,7 @@ public class ConditionJpqlGenerator {
         String joins = generateJoins(context);
         String where = generateWhere(context);
 
-        if (!Strings.isNullOrEmpty(joins)) {
+        if (StringUtils.isNotBlank(joins)) {
             transformer.addJoinAndWhere(joins, where);
         } else {
             transformer.addWhere(where);

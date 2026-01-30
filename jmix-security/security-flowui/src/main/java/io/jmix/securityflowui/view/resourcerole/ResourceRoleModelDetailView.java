@@ -208,8 +208,14 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     @Subscribe("childRolesTable.add")
     public void onChildRolesTableAdd(ActionPerformedEvent event) {
+        ResourceRoleModel resourceRoleModel = getEditedEntity();
+        ResourceRole currentRole = roleRepository.findRoleByCode(resourceRoleModel.getCode());
+
         DialogWindow<ResourceRoleModelLookupView> lookupDialog = dialogWindows.lookup(childRolesTable)
                 .withViewClass(ResourceRoleModelLookupView.class)
+                .withViewConfigurer(configurer -> {
+                    configurer.setCurrentRole(currentRole);
+                })
                 .build();
 
         List<String> excludedRolesCodes = childRolesDc.getItems().stream()
@@ -217,7 +223,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 .collect(Collectors.toList());
 
         if (codeField.isReadOnly()) {
-            excludedRolesCodes.add(getEditedEntity().getCode());
+            excludedRolesCodes.add(resourceRoleModel.getCode());
         }
 
         lookupDialog.getView().setExcludedRoles(excludedRolesCodes);

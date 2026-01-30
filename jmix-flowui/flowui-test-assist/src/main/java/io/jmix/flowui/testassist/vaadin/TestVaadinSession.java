@@ -17,14 +17,14 @@
 package io.jmix.flowui.testassist.vaadin;
 
 import com.vaadin.flow.server.VaadinService;
-import com.vaadin.flow.spring.SpringVaadinSession;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
-public class TestVaadinSession extends SpringVaadinSession {
+public class TestVaadinSession extends VaadinSession {
 
     public TestVaadinSession(VaadinService service) {
         super(service);

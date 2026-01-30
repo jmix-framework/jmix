@@ -20,7 +20,7 @@ import com.vaadin.flow.component.html.*;
 import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
-public interface StudioHTMLComponents {
+interface StudioHTMLComponents {
 
     @StudioComponent(
             name = "Anchor",

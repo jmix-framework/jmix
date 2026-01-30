@@ -23,7 +23,7 @@ import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
-public interface StudioViewActions {
+interface StudioViewActions {
 
     @StudioAction(
             type = "view_close",

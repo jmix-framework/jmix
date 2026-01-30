@@ -22,6 +22,7 @@ import io.jmix.core.querycondition.LogicalCondition;
 
 import org.springframework.lang.Nullable;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,24 +38,39 @@ public class ConditionGenerationContext {
     protected List<String> valueProperties;
     protected List<String> selectedExpressions;
 
-    protected Map<Condition, ConditionGenerationContext> childContexts = new HashMap<>();
+    protected Map<Condition, ConditionGenerationContext> childContexts;
+
+    protected IndexCounter counter;
 
     public ConditionGenerationContext(@Nullable Condition condition) {
         this.condition = condition;
+        this.counter = new IndexCounter();
         if (condition instanceof LogicalCondition) {
-            createChildContexts((LogicalCondition) condition, this);
+            this.childContexts = Collections.unmodifiableMap(createChildContexts((LogicalCondition) condition, this));
+        } else {
+            this.childContexts = Collections.emptyMap();
+        }
+
+    }
+
+    private ConditionGenerationContext(@Nullable Condition condition, IndexCounter counter) {
+        this.condition = condition;
+        this.counter = counter;
+        if (condition instanceof LogicalCondition) {
+            this.childContexts = Collections.unmodifiableMap(createChildContexts((LogicalCondition) condition, this));
+        } else {
+            this.childContexts = Collections.emptyMap();
         }
     }
 
-    private void createChildContexts(LogicalCondition logicalCondition, ConditionGenerationContext context) {
+    private Map<Condition, ConditionGenerationContext> createChildContexts(LogicalCondition logicalCondition, ConditionGenerationContext context) {
+        Map<Condition, ConditionGenerationContext> createdContexts = new HashMap<>();
         for (Condition childCondition : logicalCondition.getConditions()) {
-            ConditionGenerationContext childContext = new ConditionGenerationContext(childCondition);
+            ConditionGenerationContext childContext = new ConditionGenerationContext(childCondition, context.counter);
             childContext.copy(context);
-            getChildContexts().put(childCondition, childContext);
-            if (childCondition instanceof LogicalCondition){
-                createChildContexts((LogicalCondition) childCondition,childContext);
-            }
+            createdContexts.put(childCondition, childContext);
         }
+        return createdContexts;
     }
 
     @Nullable
@@ -123,8 +139,15 @@ public class ConditionGenerationContext {
         this.selectedExpressions = selectedExpressions;
     }
 
+    /**
+     * @return unmodifiable map of child contexts
+     */
     public Map<Condition, ConditionGenerationContext> getChildContexts() {
         return childContexts;
+    }
+
+    public int generateNextJoinIndex() {
+        return counter.getAndIncrement();
     }
 
     public void copy(ConditionGenerationContext context) {
@@ -132,5 +155,13 @@ public class ConditionGenerationContext {
         setEntityAlias(context.getEntityAlias());
         setSelectedExpressions(context.getSelectedExpressions());
         setValueProperties(context.getValueProperties());
+    }
+
+    public static class IndexCounter {
+        private int nextIndex = 0;
+
+        public int getAndIncrement() {
+            return nextIndex++;
+        }
     }
 }

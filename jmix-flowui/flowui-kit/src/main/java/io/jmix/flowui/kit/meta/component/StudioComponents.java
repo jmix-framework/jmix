@@ -67,7 +67,7 @@ import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.component.preview.StudioGenericComponentPreview;
 
 @StudioUiKit
-public interface StudioComponents {
+interface StudioComponents {
 
     @StudioComponent(
             name = "GenericComponent",
@@ -2862,7 +2862,10 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "receiverFqn", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "receiverType", type = StudioPropertyType.ENUMERATION,
                             options = {"MEMORY_BUFFER", "MULTI_FILE_MEMORY_BUFFER", "FILE_TEMPORARY_STORAGE_BUFFER",
-                                    "MULTI_FILE_TEMPORARY_STORAGE_BUFFER"}, defaultValue = "MEMORY_BUFFER"),
+                                    "MULTI_FILE_TEMPORARY_STORAGE_BUFFER"}),
+                    @StudioProperty(xmlAttribute = "uploadHandlerFqn", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "uploadHandlerType", type = StudioPropertyType.ENUMERATION,
+                            options = {"IN_MEMORY", "FILE_TEMPORARY_STORAGE"}, defaultValue = "IN_MEMORY"),
                     @StudioProperty(xmlAttribute = "uploadText", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "uploadIcon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,

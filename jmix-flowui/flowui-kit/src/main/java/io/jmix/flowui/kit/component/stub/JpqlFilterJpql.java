@@ -16,8 +16,5 @@
 
 package io.jmix.flowui.kit.component.stub;
 
-import io.jmix.flowui.kit.meta.StudioAPI;
-
-@StudioAPI
 interface JpqlFilterJpql extends StudioStubComponent {
 }

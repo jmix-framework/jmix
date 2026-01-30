@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.exception;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.validation.ValidationErrors;
@@ -23,6 +24,7 @@ import io.jmix.flowui.view.ViewValidation;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +36,7 @@ import java.util.Set;
  * Displays violation messages as screen notifications.
  */
 @Component
+@Order(JmixOrder.LOWEST_PRECEDENCE - 80)
 public class ConstraintViolationExceptionHandler extends AbstractUiExceptionHandler {
 
     @Autowired

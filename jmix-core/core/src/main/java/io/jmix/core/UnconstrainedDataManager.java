@@ -64,18 +64,25 @@ public interface UnconstrainedDataManager {
 
     /**
      * Saves entity instances to their data stores.
+     * <p>Each object is reloaded separately with its own fetch plan.
+     * If the fetch plan is not specified in {@link SaveContext}, it's created using the current state of the entity.</p>
      *
      * @param context {@link SaveContext} object, containing entities and other information
      * @return set of saved instances
+     *
+     * @see io.jmix.core.EntityStates#getCurrentFetchPlan(java.lang.Object)
+     * @see #saveWithoutReload(Object...)
      */
     EntitySet save(SaveContext context);
 
     /**
      * Saves entities to their data stores and reloads them to return the saved instances.
+     * <p>Each object is reloaded separately with its own fetch plan that is based on the current state of the entity.</p>
      *
      * @param entities entities to save
      * @return set of saved instances
      *
+     * @see io.jmix.core.EntityStates#getCurrentFetchPlan(java.lang.Object)
      * @see #saveWithoutReload(Object...)
      */
     EntitySet save(Object... entities);
@@ -89,20 +96,24 @@ public interface UnconstrainedDataManager {
 
     /**
      * Saves a collection of entities to their data stores and reloads them to return the saved instances.
+     * <p>Each object is reloaded separately with its own fetch plan that is based on the current state of the entity.</p>
      *
      * @param entities entities to save
      * @return set of saved instances
      *
+     * @see io.jmix.core.EntityStates#getCurrentFetchPlan(java.lang.Object)
      * @see #saveWithoutReload(Object...)
      */
     EntitySet saveAll(Collection<?> entities);
 
     /**
      * Saves the entity to its data store and reloads it to return the saved instance.
+     * The entity is reloaded with the fetch plan based on the current state of the entity.
      *
      * @param entity entity instance
      * @return saved instance
      *
+     * @see io.jmix.core.EntityStates#getCurrentFetchPlan(java.lang.Object)
      * @see #saveWithoutReload(Object...)
      */
     <E> E save(E entity);

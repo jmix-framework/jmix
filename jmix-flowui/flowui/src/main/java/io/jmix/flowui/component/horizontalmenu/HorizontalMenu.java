@@ -221,7 +221,7 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
 
     protected void addComponentToSubMenu(Component component, JmixSubMenu subMenu, int index) {
         if (index == ADD_TO_END_INDEX) {
-            subMenu.add(component);
+            subMenu.addComponent(component);
         } else {
             subMenu.addComponentAtIndex(index, component);
         }

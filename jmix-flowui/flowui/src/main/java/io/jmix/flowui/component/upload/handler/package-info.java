@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.test_support;
+@NonNullApi
+package io.jmix.flowui.component.upload.handler;
 
-import io.jmix.flowui.testassist.UiTestUtils;
-import io.jmix.flowui.view.DialogWindow;
-import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
-
-/**
- * Supplement for {@link UiTestUtils#getOpenedDialogs()}
- * which seems to not work for views opened via {@link io.jmix.flowui.DialogWindows#view(View, String)}.
- */
-public interface OpenedDialogViewsTracker {
-    @Nullable
-    DialogWindow<?> getLastOpenedDialogWindow();
-
-    @Nullable
-    View<?> getLastOpenedView();
-}
+import org.springframework.lang.NonNullApi;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- import '@vaadin/vaadin-lumo-styles/color.js';
- import '@vaadin/vaadin-lumo-styles/sizing.js';
- import '@vaadin/vaadin-lumo-styles/style.js';
- import '@vaadin/vaadin-lumo-styles/typography.js';
- import {inputFieldShared} from '@vaadin/vaadin-lumo-styles/mixins/input-field-shared.js';
- import {css, registerStyles} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-const jmixTwinColumnStyles = css`
+@media lumo_components_jmix-jmix-twin-column {
     .jmix-twin-column-container {
         display: flex;
         flex-direction: column;
         width: 100%;
         height: 100%;
+        align-items: flex-start;
+        box-sizing: border-box;
     }
 
     .jmix-twin-column-input-container {
@@ -98,6 +94,4 @@ const jmixTwinColumnStyles = css`
         height: var(--jmix-twin-column-column-height, 20em);
         max-height: var(--jmix-twin-column-column-max-height, 20em);
     }
-`;
-
-registerStyles('jmix-twin-column', [inputFieldShared, jmixTwinColumnStyles], {moduleId: 'jmix-twin-column-styles',});
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,17 @@
  * limitations under the License.
  */
 
-import '../../../src/twin-column/jmix-twin-column.js';
+@import '../src/components/jmix-twin-column.css';
+
+:root::before,
+:host::before {
+    --_lumo-jmix-jmix-twin-column-inject: 1;
+    --_lumo-jmix-jmix-twin-column-inject-modules:
+            lumo_mixins_field-label,
+            lumo_mixins_field-required,
+            lumo_mixins_field-error-message,
+            lumo_mixins_field-button,
+            lumo_mixins_field-helper,
+            lumo_mixins_field-base,
+            lumo_components_jmix-jmix-twin-column;
+}

@@ -37,10 +37,12 @@ class EntityUpdateDispatcherTest extends Specification {
 
     ApplicationContext applicationContext = Mock(ApplicationContext)
     DataManager dataManager = Mock(DataManager)
+
+    @Autowired
     EntityUpdateDispatcher dispatcher
 
     def setup() {
-        dispatcher = new EntityUpdateDispatcher(applicationContext, metadata)
+        dispatcher.applicationContext = applicationContext
     }
 
     def "test save with delegate"() {

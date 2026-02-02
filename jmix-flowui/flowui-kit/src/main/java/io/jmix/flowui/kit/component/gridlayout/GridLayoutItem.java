@@ -29,7 +29,7 @@ import com.vaadin.flow.data.binder.HasItemComponents;
  * @param <T> type of the item represented by this component
  */
 @Tag("jmix-grid-layout-item")
-//@JsModule("./src/grid-layout/jmix-grid-layout-item.js")
+@JsModule("./src/grid-layout/jmix-grid-layout-item.js")
 public class GridLayoutItem<T> extends Component implements HasItemComponents.ItemComponent<T>, HasComponents {
 
     protected final T item;

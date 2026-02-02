@@ -30,7 +30,7 @@ import org.springframework.context.ApplicationContext;
  */
 public abstract class AbstractFacetLoader<F extends Facet> implements FacetLoader<F> {
 
-    protected ComponentLoader.ComponentContext context;
+    protected ComponentLoader.Context context;
 
     protected Facets facets;
     protected LoaderSupport loaderSupport;
@@ -59,12 +59,12 @@ public abstract class AbstractFacetLoader<F extends Facet> implements FacetLoade
     }
 
     @Override
-    public ComponentLoader.ComponentContext getContext() {
+    public ComponentLoader.Context getContext() {
         return context;
     }
 
     @Override
-    public void setContext(ComponentLoader.ComponentContext context) {
+    public void setContext(ComponentLoader.Context context) {
         this.context = context;
     }
 

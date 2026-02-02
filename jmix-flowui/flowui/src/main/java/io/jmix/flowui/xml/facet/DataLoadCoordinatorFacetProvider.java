@@ -23,7 +23,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.facet.DataLoadCoordinator.LikeClause;
-import io.jmix.flowui.facet.impl.DataLoadCoordinatorImpl;
+import io.jmix.flowui.facet.impl.ViewDataLoadCoordinatorImpl;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
@@ -63,7 +63,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
 
     @Override
     public DataLoadCoordinator create() {
-        return new DataLoadCoordinatorImpl(reflectionCacheManager, queryParamValuesManager);
+        return new ViewDataLoadCoordinatorImpl(reflectionCacheManager, queryParamValuesManager);
     }
 
     @Override

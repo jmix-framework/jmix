@@ -72,6 +72,11 @@ public class FragmentsImpl implements Fragments {
 
     @Override
     public <F extends Fragment<?>> F create(FragmentOwner parent, Class<F> fragmentClass) {
+        return create(parent, fragmentClass, null);
+    }
+
+    @Override
+    public <F extends Fragment<?>> F create(FragmentOwner parent, Class<F> fragmentClass, @Nullable String fragmentId) {
         Preconditions.checkNotNullArgument(parent, "Parent must not be null");
         Preconditions.checkNotNullArgument(fragmentClass, Fragment.class.getSimpleName() + " class must not be null");
 
@@ -81,6 +86,10 @@ public class FragmentsImpl implements Fragments {
         ComponentLoader.Context hostContext = createHostLoaderContext(parent);
 
         F fragment = uiComponents.create(fragmentClass);
+        if (fragmentId != null) {
+            fragment.setId(fragmentId);
+        }
+
         init(hostContext, fragment);
 
         // perform automatic autowiring when the fragment is created programmatically
@@ -106,6 +115,9 @@ public class FragmentsImpl implements Fragments {
 
         FragmentActions actions = applicationContext.getBean(FragmentActions.class, fragment);
         FragmentUtils.setFragmentActions(fragment, actions);
+
+        FragmentFacets facets = applicationContext.getBean(FragmentFacets.class, fragment);
+        FragmentUtils.setFragmentFacets(fragment, facets);
 
         FragmentLoaderContext context;
         String descriptorPath = FragmentUtils.resolveDescriptorPath(fragment.getClass());
@@ -141,6 +153,12 @@ public class FragmentsImpl implements Fragments {
     }
 
     protected void postInit(Fragment<?> fragment, @Nullable FragmentLoaderContext context) {
+        if (context != null) {
+            // Pre InitTasks must be executed before DependencyManager
+            // invocation to have precedence over @Subscribe methods
+            context.executePreInitTasks();
+        }
+
         autowireFragment(fragment);
 
         // Init tasks should be executed after fragment is autowired,

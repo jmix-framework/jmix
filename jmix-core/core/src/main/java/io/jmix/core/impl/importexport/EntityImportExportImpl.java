@@ -69,6 +69,9 @@ public class EntityImportExportImpl implements EntityImportExport {
     protected UnconstrainedDataManager dataManager;
 
     @Autowired
+    protected EntityUpdateDispatcher entityUpdateDispatcher;
+
+    @Autowired
     protected MetadataTools metadataTools;
 
     @Autowired
@@ -278,7 +281,7 @@ public class EntityImportExportImpl implements EntityImportExport {
 
         saveContext.setAccessConstraints(accessConstraintsRegistry.getConstraints());
 
-        return dataManager.save(saveContext);
+        return entityUpdateDispatcher.save(dataManager, saveContext);
     }
 
     @Override

@@ -549,7 +549,7 @@ public final class UiComponentUtils {
      *     <li>If the component is attached to a fragment, the value of {@code fragmentId}
      *     {@link Attributes attribute} will be returned.</li>
      *     <li>If the component is attached to a view, the component's original id attribute will be returned.</li>
-     * </ol>
+     * </ul>
      *
      * @return the id, or and empty optional if no id has been set
      * @see Component#setId(String)

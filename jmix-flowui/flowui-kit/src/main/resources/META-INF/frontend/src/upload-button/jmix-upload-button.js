@@ -17,13 +17,17 @@ import '@vaadin/button/src/vaadin-button.js';
 import '@vaadin/dialog/src/vaadin-dialog.js';
 import {html, render} from 'lit';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
-
 import {Upload} from '@vaadin/upload/src/vaadin-upload.js';
+import {jmixUploadButtonStyles} from './styles/jmix-upload-button-base-styles.js';
 
 class JmixUploadButton extends Upload {
 
     static get is() {
         return 'jmix-upload-button';
+    }
+
+    static get styles() {
+        return jmixUploadButtonStyles;
     }
 
     static get properties() {
@@ -96,7 +100,12 @@ class JmixUploadButton extends Upload {
         // exception is thrown before the upload request reaches StreamReceiverHandler (see Vaadin
         // issue https://github.com/vaadin/flow/issues/13770). So we send custom event to inform
         // that upload failed.
-        this.dispatchEvent(new CustomEvent('jmix-upload-internal-error', {detail: {file: this.file, xhr: this.file.xhr}}));
+        this.dispatchEvent(new CustomEvent('jmix-upload-internal-error', {
+            detail: {
+                file: this.file,
+                xhr: this.file.xhr
+            }
+        }));
     }
 
     _openUploadDialogOnEvent(event) {

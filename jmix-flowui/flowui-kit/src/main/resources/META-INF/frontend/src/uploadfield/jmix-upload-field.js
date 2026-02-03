@@ -15,8 +15,9 @@
  */
 
 import '@vaadin/input-container/src/vaadin-input-container.js';
-import {html, PolymerElement} from '@polymer/polymer';
+import {html, LitElement} from 'lit';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
 import {TooltipController} from '@vaadin/component-base/src/tooltip-controller.js';
 import {DelegateFocusMixin} from '@vaadin/a11y-base/src/delegate-focus-mixin.js';
@@ -24,71 +25,37 @@ import {FieldMixin} from '@vaadin/field-base/src/field-mixin.js';
 import {InputConstraintsMixin} from '@vaadin/field-base/src/input-constraints-mixin.js';
 import {SlotStylesMixin} from '@vaadin/component-base/src/slot-styles-mixin.js';
 import {inputFieldShared} from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
-import {css, registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-
-/*
-* CAUTION! Styles for 'jmix-upload-field' component are applied in wrong order.
-* The 'inputFieldShared' from 'field-base/src/styles/input-field-shared-styles.js'
-* takes precedence over
-* 'inputFieldShared' from 'vaadin-lumo-styles/mixins/input-field-shared.js'
-* that is registered in 'jmix-upload-field-styles.js'. However, the same approach of
-* registering styles works correctly for Vaadin components.
-*/
-const uploadField = css`
-  :host::before {
-    display: inline-flex;
-  }
-  
-  /*
-   * Use "auto" width instead of default 12em, because upload field
-   * with visible file name is not fit in.
-   */
-  [class$='container'] {
-    width: var(--jmix-upload-field-default-width, var(--vaadin-field-default-width, auto));
-  }
-  
-  [part='input-field'] {
-      --vaadin-input-field-hover-highlight-opacity: 0;
-  }
-`;
-
-registerStyles('jmix-upload-field', [inputFieldShared, uploadField], {
-    moduleId: 'jmix-upload-field-styles'
-});
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
+import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import {jmixUploadFieldStyles} from "./styles/jmix-upload-field-base-styles";
 
 export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputConstraintsMixin(FieldMixin(ThemableMixin(
-    ElementMixin(PolymerElement)))))) {
+    ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement)))))))) {
 
     static get is() {
         return 'jmix-upload-field';
     }
 
-    static get template() {
+    static get styles() {
+        return [inputFieldShared, jmixUploadFieldStyles];
+    }
+
+    render() {
         return html`
-            <style>
-                vaadin-input-container {
-                    background-color: transparent;
-                    padding: 0;
-                    cursor: auto;
-                }
-
-                vaadin-input-container:after {
-                    border: 0;
-                }
-            </style>
-
             <div class="upload-field-container">
                 <div part="label">
                     <slot name="label"></slot>
-                    <span part="required-indicator" aria-hidden="true" on-click="focus"></span>
+                    <span part="required-indicator" aria-hidden="true" @click="${this.focus}"></span>
                 </div>
 
                 <vaadin-input-container
                         part="input-field"
-                        readonly="[[readonly]]"
-                        disabled="[[disabled]]"
-                        invalid="[[invalid]]"
-                        theme$="[[_theme]]">
+                        .readonly="${this.readonly}"
+                        .disabled="${this.disabled}"
+                        .invalid="${this.invalid}"
+                        theme="${ifDefined(this._theme)}"
+                >
                     <slot name="input"></slot>
                 </vaadin-input-container>
 
@@ -99,9 +66,9 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
                 <div part="error-message">
                     <slot name="error-message"></slot>
                 </div>
+
+                <slot name="tooltip"></slot>
             </div>
-            
-            <slot name="tooltip"></slot>
         `;
     }
 

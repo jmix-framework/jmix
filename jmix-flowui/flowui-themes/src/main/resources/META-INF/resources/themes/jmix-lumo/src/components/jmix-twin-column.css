@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@media lumo_components_jmix-jmix-twin-column {
+@media lumo_components_jmix-twin-column {
     .jmix-twin-column-container {
         display: flex;
         flex-direction: column;

@@ -26,6 +26,8 @@ import {InputController} from '@vaadin/field-base/src/input-controller.js';
 import {InputFieldMixin} from '@vaadin/field-base/src/input-field-mixin.js';
 import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {inputFieldShared} from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
+import {jmixValuePickerStyles} from "./styles/jmix-value-picker-base-styles";
 
 export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
 
@@ -33,9 +35,9 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
         return 'jmix-value-picker';
     }
 
-    /*static get styles() {
+    static get styles() {
         return [inputFieldShared, jmixValuePickerStyles];
-    }*/
+    }
 
     render() {
         return html`

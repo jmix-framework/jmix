@@ -14,5 +14,25 @@
  * limitations under the License.
  */
 
-import './jmix-upload-field-styles.js';
-import '../../../src/uploadfield/jmix-upload-field.js';
+import '@vaadin/component-base/src/styles/style-props.js';
+import {css} from 'lit';
+
+export const jmixUploadButtonStyles = css`
+  :host(:not([nodrop])) {
+    border: 0;
+    overflow: initial;
+    padding: 0;
+    transition: background-color 0.6s;
+  }
+  [part='drop-label'] {
+    display: none;
+  }
+
+  ::slotted(vaadin-button) {
+    margin: 0;
+  }
+  
+  ::slotted(vaadin-button[theme~="full-width"]) {
+    width: 100%;
+  }
+`;

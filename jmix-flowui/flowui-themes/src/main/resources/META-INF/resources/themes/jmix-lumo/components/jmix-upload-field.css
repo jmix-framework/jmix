@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,11 @@
  * limitations under the License.
  */
 
-import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+@import '../src/components/jmix-upload-field.css';
 
-const uploadButton = css`
-  :host(:not([nodrop])) {
-    border: 0;
-    overflow: initial;
-    padding: 0;
-    transition: background-color 0.6s;
-  }
-  [part='drop-label'] {
-    display: none;
-  }
-
-  ::slotted(vaadin-button) {
-    margin: 0;
-  }
-  
-  ::slotted(vaadin-button[theme~="full-width"]) {
-    width: 100%;
-  }
-`;
-
-registerStyles('jmix-upload-button', uploadButton, {
-    moduleId: 'lumo-jmix-upload-button-styles'
-});
+:root::before,
+:host::before {
+    --_lumo-jmix-upload-field-inject: 1;
+    --_lumo-jmix-upload-field-inject-modules:
+            lumo_components_jmix-upload-field;
+}

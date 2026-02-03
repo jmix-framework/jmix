@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-@import '../src/components/jmix-twin-column.css';
+@media lumo_components_jmix-upload-button {
+    :host(:not([nodrop])) {
+        border: 0;
+        overflow: initial;
+        padding: 0;
+        transition: background-color 0.6s;
+    }
+    [part='drop-label'] {
+        display: none;
+    }
 
-:root::before,
-:host::before {
-    --_lumo-jmix-twin-column-inject: 1;
-    --_lumo-jmix-twin-column-inject-modules:
-            lumo_mixins_field-label,
-            lumo_mixins_field-required,
-            lumo_mixins_field-error-message,
-            lumo_mixins_field-button,
-            lumo_mixins_field-helper,
-            lumo_mixins_field-base,
-            lumo_components_jmix-twin-column;
+    ::slotted(vaadin-button) {
+        margin: 0;
+    }
+
+    ::slotted(vaadin-button[theme~="full-width"]) {
+        width: 100%;
+    }
 }

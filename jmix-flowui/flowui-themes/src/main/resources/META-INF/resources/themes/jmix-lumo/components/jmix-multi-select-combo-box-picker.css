@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@import '../src/components/jmix-multi-select-combo-box-picker.css';
+@import '../src/mixins/picker-field-actions.css';
 
 :root::before,
 :host::before {
@@ -27,5 +27,5 @@
     lumo_mixins_field-helper,
     lumo_mixins_field-base,
     lumo_components_multi-select-combo-box,
-    lumo_components_jmix-multi-select-combo-box-picker;
+    lumo_mixins_picker-field-actions;
 }

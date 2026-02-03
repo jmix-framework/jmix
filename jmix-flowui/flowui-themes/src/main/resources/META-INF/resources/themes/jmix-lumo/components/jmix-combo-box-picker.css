@@ -14,23 +14,7 @@
  * limitations under the License.
  */
 
-/*@import '../src/mixins/combo-box-loader.css';*/
-/*@import '../src/mixins/combo-box-overlay.css';*/
-/*@import '../src/mixins/field-base.css';*/
-/*@import '../src/mixins/field-button.css';*/
-/*@import '../src/mixins/field-error-message.css';*/
-/*@import '../src/mixins/field-helper.css';*/
-/*@import '../src/mixins/field-label.css';*/
-/*@import '../src/mixins/field-required.css';*/
-/*@import '../src/mixins/loader.css';*/
-/*@import '../src/mixins/menu-overlay-core.css';*/
-/*@import '../src/mixins/overlay.css';*/
-/*@import '../src/components/combo-box-item.css';*/
-/*@import '../src/components/combo-box-overlay.css';*/
-/*@import '../src/components/combo-box.css';*/
-/*@import '../src/components/item.css';*/
-/*@import './input-container.css';*/
-@import '../src/components/jmix-combo-box-picker.css';
+@import '../src/mixins/picker-field-actions.css';
 
 :root::before,
 :host::before {
@@ -43,5 +27,5 @@
     lumo_mixins_field-helper,
     lumo_mixins_field-base,
     lumo_components_combo-box,
-    lumo_components_jmix-combo-box-picker;
+    lumo_mixins_picker-field-actions;
 }

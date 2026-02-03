@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-
+/*todo: migrate*/
 :host([class~='master-detail-layout']) #layout {
   height: inherit;
   align-items: flex-start;

@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-/*@import url('@vaadin/vaadin-lumo-styles/src/mixins/field-base.css');*/
-/*@import url('@vaadin/vaadin-lumo-styles/src/mixins/field-button.css');*/
-/*@import url('@vaadin/vaadin-lumo-styles/src/mixins/field-error-message.css');*/
-/*@import url('@vaadin/vaadin-lumo-styles/src/mixins/field-helper.css');*/
-/*@import url('@vaadin/vaadin-lumo-styles/src/mixins/field-label.css');*/
-/*@import url('@vaadin/vaadin-lumo-styles/src/mixins/field-required.css');*/
-/*@import url('@vaadin/vaadin-lumo-styles/components/input-container.css');*/
-@import '../src/components/jmix-value-picker.css';
+@import '../src/mixins/picker-field-actions.css';
 
 :root::before,
 :host::before {
@@ -30,8 +23,7 @@
             lumo_mixins_field-label,
             lumo_mixins_field-required,
             lumo_mixins_field-error-message,
-            lumo_mixins_field-button,
             lumo_mixins_field-helper,
             lumo_mixins_field-base,
-            lumo_components_jmix-value-picker;
+            lumo_mixins_picker-field-actions;
 }

@@ -17,17 +17,19 @@
 import './vendor/quill.min.js';
 import '@vaadin/button/src/vaadin-button.js';
 import '@vaadin/tooltip/src/vaadin-tooltip.js';
-import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {html, LitElement} from 'lit';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
-import {registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {timeOut} from '@vaadin/component-base/src/async.js';
 import {Debouncer} from '@vaadin/component-base/src/debounce.js';
 import {LabelMixin} from "@vaadin/field-base/src/label-mixin.js";
 import {FocusMixin} from '@vaadin/a11y-base/src/focus-mixin.js';
 import {HelperController} from "@vaadin/field-base/src/helper-controller.js";
+import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
 import {helper} from '@vaadin/vaadin-lumo-styles/mixins/helper.js';
-import {jmixRichTextEditorStyles} from './jmix-rich-text-editor-styles.js';
+import {jmixRichTextEditorStyles} from './styles/jmix-rich-text-editor-base-styles.js';
 
 const Quill = window.Quill;
 
@@ -89,19 +91,23 @@ const HANDLERS = [
     'code-block',
 ];
 
-registerStyles('jmix-rich-text-editor', [jmixRichTextEditorStyles, helper], {moduleId: 'jmix-rich-text-editor-styles'});
+class RichTextEditor extends ElementMixin(FocusMixin(LabelMixin(ThemableMixin(PolylitMixin(LumoInjectionMixin(LitElement)))))) {
 
-class RichTextEditor extends ElementMixin(FocusMixin(LabelMixin(ThemableMixin(PolymerElement)))) {
     static get is() {
         return 'jmix-rich-text-editor';
     }
 
-    static get template() {
+    static get styles() {
+        return [jmixRichTextEditorStyles, helper];
+    }
+
+    /** @protected */
+    render() {
         return html`
             <div class="jmix-rich-text-editor-wrapper">
                 <div part="label">
                     <slot name="label"></slot>
-                    <span part="required-indicator" aria-hidden="true"></span>
+                    <span part="required-indicator" aria-hidden="true" @click="${this.focus}"></span>
                 </div>
 
                 <div part="editor">

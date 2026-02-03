@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-
-export const jmixRichTextEditorStyles = css`
+@media lumo_components_jmix-rich-text-editor {
     :host {
         display: flex;
         box-sizing: content-box;
@@ -31,7 +29,7 @@ export const jmixRichTextEditorStyles = css`
         -webkit-text-size-adjust: 100%;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        
+
         padding: var(--lumo-space-xs) 0;
     }
 
@@ -76,14 +74,13 @@ export const jmixRichTextEditorStyles = css`
         border: 1px solid var(--lumo-contrast-20pct);
         border-radius: var(--lumo-border-radius-m);
     }
-    
+
     /**
      * Label styles
-     * 
+     *
      * Can be replaced with packages/vaadin-lumo-styles/mixins/required-field.js import
-     * after other required-field functionality is added 
+     * after other required-field functionality is added
      */
-
     [part='label'] {
         align-self: flex-start;
         color: var(--vaadin-input-field-label-color, var(--lumo-secondary-text-color));
@@ -126,7 +123,6 @@ export const jmixRichTextEditorStyles = css`
     }
 
     /* RTL specific styles */
-
     :host([dir='rtl']) [part='label'] {
         margin-left: 0;
         margin-right: calc(var(--lumo-border-radius-m) / 4);
@@ -136,4 +132,4 @@ export const jmixRichTextEditorStyles = css`
         padding-left: 1em;
         padding-right: 0;
     }
-`;
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-@import './jmix-switch.css';
-@import './jmix-code-editor.css';
-@import './jmix-combo-box-picker.css';
-@import './jmix-value-picker.css';
-@import './jmix-value-picker-button.css';
-@import './jmix-multi-select-combo-box-picker.css';
-@import './jmix-twin-column.css';
-@import './jmix-upload-button.css';
-@import './jmix-upload-field.css';
-@import './jmix-rich-text-editor.css';
+
+/* Vaadin-Icons */
+
+@import '../src/components/jmix-rich-text-editor.css';
+
+:root::before,
+:host::before {
+    --_lumo-jmix-rich-text-editor-inject: 1;
+    --_lumo-jmix-rich-text-editor-inject-modules:
+            lumo_mixins_field-helper,
+            lumo_components_jmix-rich-text-editor;
+}

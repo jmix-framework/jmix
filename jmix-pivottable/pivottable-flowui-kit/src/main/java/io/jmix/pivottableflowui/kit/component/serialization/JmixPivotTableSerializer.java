@@ -35,6 +35,8 @@ import tools.jackson.databind.node.ObjectNode;
 import tools.jackson.databind.ser.std.SimpleFilterProvider;
 import tools.jackson.databind.ser.std.StdSerializer;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +51,7 @@ public class JmixPivotTableSerializer {
     public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss.SSS";
     public static final String DEFAULT_DATE_TIME_FORMAT = DEFAULT_DATE_FORMAT + " " + DEFAULT_TIME_FORMAT;
 
+    protected final DateFormat dateFormatter = new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
     protected final DateTimeFormatter temporalDateFormatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
     protected final DateTimeFormatter temporalDateTimeFormatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
 
@@ -103,7 +106,7 @@ public class JmixPivotTableSerializer {
                 new JsFunctionSerializer(),
                 new LocalDateSerializer(temporalDateFormatter),
                 new LocalDateTimeSerializer(temporalDateTimeFormatter),
-                new DefaultDateSerializer()
+                new DateSerializer(dateFormatter)
         ).collect(Collectors.toList());
     }
 
@@ -113,7 +116,7 @@ public class JmixPivotTableSerializer {
                 new JsFunctionSerializer(),
                 new LocalDateSerializer(temporalDateFormatter),
                 new LocalDateTimeSerializer(temporalDateTimeFormatter),
-                new DefaultDateSerializer()
+                new DateSerializer(dateFormatter)
         ).collect(Collectors.toList());
     }
 

@@ -22,17 +22,15 @@ import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer.DEFAULT_DATE_TIME_FORMAT;
+public class DateSerializer extends StdSerializer<Date> {
 
-public class DefaultDateSerializer extends StdSerializer<Date> {
+    protected final DateFormat dateFormatter;
 
-    protected final DateFormat dateFormatter = new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
-
-    protected DefaultDateSerializer() {
+    protected DateSerializer(DateFormat dateFormatter) {
         super(Date.class);
+        this.dateFormatter = dateFormatter;
     }
 
     @Override

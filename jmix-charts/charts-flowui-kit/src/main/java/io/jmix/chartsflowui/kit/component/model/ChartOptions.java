@@ -28,8 +28,10 @@ import io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap;
 import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import tools.jackson.core.JacksonException;
+import tools.jackson.core.json.JsonReadFeature;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +56,9 @@ public class ChartOptions extends ChartObservableObject {
 
     protected final JmixChart chart;
     protected JsonNode nativeJson;
-    protected ObjectMapper parser = new ObjectMapper();
+    protected ObjectMapper parser = JsonMapper.builder()
+            .enable(JsonReadFeature.ALLOW_SINGLE_QUOTES)
+            .build();
 
     protected List<AbstractSeries<?>> seriesList;
     protected List<XAxis> xAxes;

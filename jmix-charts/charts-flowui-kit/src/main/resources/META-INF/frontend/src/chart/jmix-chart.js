@@ -16,17 +16,19 @@
 
 import * as echarts from 'echarts/dist/echarts.min';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
+import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
-import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {html, LitElement} from 'lit';
+import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
 import {ResizeMixin} from '@vaadin/component-base/src/resize-mixin.js';
 
-class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
+export class JmixChart extends ResizeMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement)))) {
 
     static get is() {
         return 'jmix-chart';
     }
 
-    static get template() {
+    render() {
         return html`
             <style>
                 :host {
@@ -347,5 +349,3 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
 }
 
 defineCustomElement(JmixChart);
-
-export {JmixChart};

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,5 @@
  * limitations under the License.
  */
 
-vaadin-form-item[theme~='jmix-group-filter-form-item']:not([label-position='top']) {
-  align-items: center;
-}
-
-vaadin-form-item[theme~='jmix-group-filter-form-item']:not([label-position='top'])::part(label) {
-  margin: 0;
-}
-
-vaadin-form-item[theme~='label-align-end']:not([label-position='top'])::part(label) {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
+@import './exception-dialog-window.css';
+@import './role-assignment-view.css';

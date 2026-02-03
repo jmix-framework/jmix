@@ -19,19 +19,21 @@
 }
 
 .jmix-simple-pagination {
+    --_gap: var(--jmix-simple-pagination-gap, 0.3em);
+
     align-items: center;
     display: flex;
-    gap: var(--jmix-simple-pagination-gap);
+    gap: var(--_gap);
 }
 
 .jmix-simple-pagination-status-bar {
-    margin: 0 var(--jmix-simple-pagination-gap);
+    margin: 0 var(--_gap);
     display: flex;
-    gap: var(--jmix-simple-pagination-gap);
+    gap: var(--_gap);
 }
 
 .jmix-simple-pagination .jmix-items-per-page {
-    gap: var(--jmix-simple-pagination-gap);
+    gap: var(--_gap);
 }
 
 .jmix-simple-pagination-total-count.link {

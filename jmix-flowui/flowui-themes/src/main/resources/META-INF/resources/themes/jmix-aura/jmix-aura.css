@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@import '../../aura/aura.css';
-
-@import url('app/exception-dialog-window.css');
-@import url('app/misc.css');
-@import url('app/role-assignment-view.css');
+@import './src/app/index.css';
+@import './src/components/index.css';
+@import './src/utility/index.css';

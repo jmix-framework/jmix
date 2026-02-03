@@ -22,3 +22,61 @@
     --_lumo-jmix-upload-field-inject-modules:
             lumo_components_jmix-upload-field;
 }
+
+jmix-upload-field[theme~="no-file-name"] .jmix-upload-button {
+    flex-grow: 1;
+}
+
+.jmix-upload-field-input-container {
+    align-items: center;
+    display: flex;
+    gap: var(--lumo-space-s);
+}
+
+.jmix-upload-field-file-name {
+    cursor: pointer;
+    margin: 0;
+}
+.jmix-upload-field-file-name:hover {
+    text-decoration: underline;
+}
+
+.jmix-upload-field-file-name.empty {
+    color: var(--lumo-body-text-color);
+    cursor: default;
+}
+
+.jmix-upload-field-clear {
+    color: var(--lumo-contrast-60pct);
+    font-size: var(--lumo-icon-size-m);
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+}
+
+.jmix-upload-field-clear:focus {
+    outline: none;
+    border-radius: var(--lumo-border-radius-s);
+    box-shadow: 0 0 0 2px var(--lumo-primary-color-50pct);
+}
+
+.jmix-upload-field-clear::before {
+    content: var(--lumo-icons-cross);
+    font-family: 'lumo-icons';
+    display: block;
+}
+
+.jmix-upload-field-clear:hover {
+    color: var(--lumo-contrast-90pct);
+}
+
+.jmix-upload-dialog-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 20em;
+}
+
+.jmix-upload-dialog-cancel-button {
+    align-self: end;
+}

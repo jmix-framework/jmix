@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@import './components/index.css';
-@import './src/app/index.css';
-@import './src/utility/index.css';
-@import './src/icons/index.css';
+@import './misc.css';

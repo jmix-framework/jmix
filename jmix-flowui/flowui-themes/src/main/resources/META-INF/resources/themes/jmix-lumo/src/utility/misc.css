@@ -19,6 +19,12 @@
   flex-wrap: wrap;
 }
 
+.bordered-panel {
+  border: 1px solid;
+  border-color: var(--lumo-contrast-20pct);
+  border-radius: var(--lumo-border-radius-l);
+}
+
 /*todo move to component styles*/
 .datetime-picker-container {
   display: flex;
@@ -34,10 +40,4 @@
 .datetime-picker-container vaadin-time-picker {
   min-width: 0;
   flex: 1 1.65 auto; /*same as for Vaadin Date Time Picker time-part*/
-}
-
-.bordered-panel {
-  border: 1px solid;
-  border-color: var(--lumo-contrast-20pct);
-  border-radius: var(--lumo-border-radius-l);
 }

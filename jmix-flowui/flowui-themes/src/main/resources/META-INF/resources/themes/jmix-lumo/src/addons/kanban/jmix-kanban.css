@@ -1,0 +1,138 @@
+/*
+ * Copyright (c) Haulmont 2026. All Rights Reserved.
+ * Use is subject to license terms.
+ */
+
+:root {
+    --smart-primary: var(--lumo-primary-color);
+    --smart-ui-state-selected: var(--lumo-contrast-5pct);
+    --smart-ui-state-border-selected: var(--lumo-primary-color-10pct);
+    --smart-surface: var(--lumo-contrast-5pct);
+    --smart-background: var(--lumo-base-color);
+    --smart-border-radius: var(--lumo-border-radius-s);
+    --smart-background-color: var(--lumo-body-text-color);
+    --smart-surface-color: var(--lumo-body-text-color);
+    --smart-ui-state-hover: var(--lumo-primary-color-10pct);
+}
+
+:root[theme="dark"] {
+    --smart-ui-state-color-hover: var(--lumo-primary-contrast-color);
+}
+
+.smart-kanban .swimlane {
+    border-color: var(--lumo-contrast-20pct);
+}
+
+.smart-kanban-list.dialog:focus {
+    outline: unset;
+}
+
+.smart-kanban.smart-kanban-column-color .smart-kanban-column:not(.smart-kanban-add-new-column),
+.smart-kanban .smart-kanban-column > .smart-kanban-column-header, .smart-kanban-task {
+    border-radius: var(--lumo-border-radius-m);
+}
+
+.smart-kanban.smart-kanban-column-color .smart-kanban-column:not(.smart-kanban-add-new-column) {
+    padding: var(--lumo-space-s);
+}
+
+.smart-kanban-list.dialog {
+    border-color: var(--lumo-contrast-20pct);
+    box-shadow: 0 0 0 1px var(--lumo-shade-5pct), var(--lumo-box-shadow-m);
+}
+
+.smart-kanban-list.dialog .item.selected {
+    color: var(--lumo-body-text-color);
+}
+
+.smart-kanban-task-progress-container {
+    height: 12px;
+}
+
+.smart-kanban-task-progress {
+    height: 4px;
+}
+
+.smart-kanban .smart-kanban-column > .smart-kanban-column-header {
+    --smart-surface-color: var(--lumo-header-text-color);
+    border-color: var(--lumo-contrast-20pct);
+}
+
+.smart-kanban-task-due.overdue {
+    color: var(--lumo-error-color);
+}
+
+.smart-kanban-task-due.overdue:after {
+    margin-left: var(--lumo-space-xs);
+}
+
+.smart-kanban-task {
+    grid-row-gap: var(--lumo-space-s);
+    padding: var(--lumo-space-s);
+    border-top-color: var(--lumo-contrast-20pct);
+    border-right-color: var(--lumo-contrast-20pct);
+    border-bottom-color: var(--lumo-contrast-20pct);
+}
+
+.smart-kanban .smart-kanban-task[selected] {
+    background-color: var(--lumo-primary-color-10pct);
+}
+
+.smart-kanban-task-tag {
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0.4em calc(0.5em + var(--lumo-border-radius-s) / 4);
+    --lumo-border-radius-s: 1em;
+    color: var(--lumo-primary-text-color);
+    background-color: var(--lumo-primary-color-10pct);
+    border-radius: var(--lumo-border-radius-s);
+    font-family: var(--lumo-font-family);
+    font-size: var(--lumo-font-size-xxs);
+    font-weight: 500;
+    text-transform: initial;
+    letter-spacing: initial;
+    min-width: calc(var(--lumo-line-height-xs) * 1em + 0.45em);
+    flex-shrink: 0;
+    margin-right: unset;
+}
+
+[task-tags] .smart-kanban-task-tags {
+    gap: var(--lumo-space-xs);
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    flex-wrap: wrap;
+}
+
+[task-priority] .smart-kanban-task-text, .smart-kanban-task-text {
+    gap: var(--lumo-space-s);
+    padding: unset;
+}
+
+[task-priority][editable][kanban-priority-read-only] .smart-kanban-task-text:hover .priority {
+    pointer-events: none;
+    background-image: unset;
+}
+
+[task-priority][editable][kanban-priority-read-only] .smart-kanban-task-text:hover .priority.low,
+[task-priority] .smart-kanban-task-text .priority.low, .smart-kanban-task-text .priority.low {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23006af5'%3E%3Cpath d='M2.73804 7.00207C1.96611 5.66874 2.92823 4 4.46889 4H19.5311C21.0718 4 22.0339 5.66874 21.262 7.00207L13.7309 20.0103C12.9605 21.3409 11.0395 21.3409 10.2691 20.0103L2.73804 7.00207Z'/%3E%3C/svg%3E");
+}
+
+[task-priority][editable][kanban-priority-read-only] .smart-kanban-task-text:hover .priority.average,
+[task-priority] .smart-kanban-task-text .priority.average, .smart-kanban-task-text .priority.average {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23005fdb'%3E%3Cpath d='M12 5.98999L19.53 19H4.47L12 5.98999ZM2.74 18C1.97 19.33 2.93 21 4.47 21H19.53C21.07 21 22.03 19.33 21.26 18L13.73 4.98999C12.96 3.65999 11.04 3.65999 10.27 4.98999L2.74 18Z'/%3E%3C/svg%3E");
+}
+
+[task-priority][editable][kanban-priority-read-only] .smart-kanban-task-text:hover .priority.high,
+[task-priority] .smart-kanban-task-text .priority.high, .smart-kanban-task-text .priority.high {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e71d13'%3E%3Cpath d='M2.73804 17.9979C1.96611 19.3313 2.92823 21 4.46889 21H19.5311C21.0718 21 22.0339 19.3313 21.262 17.9979L13.7309 4.98965C12.9605 3.65908 11.0395 3.65908 10.2691 4.98965L2.73804 17.9979Z'/%3E%3C/svg%3E");
+}
+
+[task-priority][editable][kanban-priority-read-only] .smart-kanban-task-text:hover .priority.critical,
+[task-priority] .smart-kanban-task-text .priority.critical, .smart-kanban-task-text .priority.critical {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e21c12'%3E%3Cpath d='M2.73804 17.9979C1.96611 19.3313 2.92823 21 4.46889 21H19.5311C21.0718 21 22.0339 19.3313 21.262 17.9979L13.7309 4.98965C12.9605 3.65908 11.0395 3.65908 10.2691 4.98965L2.73804 17.9979ZM13.5 17.5C13.5 18.3284 12.8284 19 12 19V19C11.1716 19 10.5 18.3284 10.5 17.5V17.5C10.5 16.6716 11.1716 16 12 16V16C12.8284 16 13.5 16.6716 13.5 17.5V17.5ZM13.5 13.5C13.5 14.3284 12.8284 15 12 15V15C11.1716 15 10.5 14.3284 10.5 13.5V9.5C10.5 8.67157 11.1716 8 12 8V8C12.8284 8 13.5 8.67157 13.5 9.5V13.5Z'/%3E%3C/svg%3E");
+}

@@ -40,6 +40,7 @@
 @import './jmix-grid-context-menu.css';
 @import './jmix-user-menu.css';
 @import './jmix-login-form.css';
+@import './jmix-tabsheet.css';
 
 /* Vaadin components */
 @import './vaadin-text-field.css';

@@ -25,6 +25,11 @@
   border-radius: var(--lumo-border-radius-l);
 }
 
+.footer-panel {
+  background-color: var(--lumo-contrast-5pct);
+  padding: var(--lumo-space-s) var(--lumo-space-m);
+}
+
 /*todo move to component styles*/
 .datetime-picker-container {
   display: flex;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-vaadin-password-field[readonly][class~='reset-password-field'] {
-    --vaadin-input-field-readonly-border: transparent;
-}
-
-vaadin-password-field[readonly][class~='reset-password-field']::part(reveal-button) {
-    color: var(--lumo-contrast);
+:root::before,
+:host::before {
+    --_lumo-jmix-tabsheet-inject: 1;
+    --_lumo-jmix-tabsheet-inject-modules:
+            lumo_mixins_loader,
+            lumo_components_tabsheet;
 }

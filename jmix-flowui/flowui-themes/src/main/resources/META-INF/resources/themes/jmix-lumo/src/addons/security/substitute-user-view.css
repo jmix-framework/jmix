@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
-@import './reset-password-view.css';
-@import './role-assignment-view.css';
-@import './substitute-user-view.css';
+.substitute-user-view-user-filter {
+    box-sizing: border-box;
+    padding: var(--lumo-space-m) var(--lumo-space-m) 0;
+}

@@ -110,7 +110,7 @@
         </flexLayout>
 
         <hbox id="detailActions"
-              classNames="px-m py-s bg-contrast-5">
+              classNames="footer-panel">
             <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>

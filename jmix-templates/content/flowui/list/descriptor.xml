@@ -72,7 +72,7 @@ def tableXml = api.processSnippet('table.xml',
         <%if (listFixedFooter) {%>
         </vbox>
         <hbox id="lookupActions" visible="false"
-              classNames="px-m py-s bg-contrast-5">
+              classNames="footer-panel">
         <%} else {%>
         <hbox id="lookupActions" visible="false">
         <%}%>

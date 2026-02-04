@@ -249,7 +249,7 @@
                 </tab>
             </tabSheet>
         </vbox>
-        <hbox id="detailButtonsBox" classNames="px-m py-s bg-contrast-5">
+        <hbox id="detailButtonsBox" classNames="footer-panel">
             <button action="windowCommitAndClose"/>
             <button action="windowClose"/>
         </hbox>

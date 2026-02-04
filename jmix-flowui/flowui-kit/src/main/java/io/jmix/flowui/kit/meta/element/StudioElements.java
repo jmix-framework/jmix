@@ -737,7 +737,13 @@ interface StudioElements {
             xmlElement = "tooltip",
             documentationLink = "%VERSION%/flow-ui/vc/components/tooltip.html",
             unlimitedCount = false,
-            target = {"io.jmix.flowui.component.textfield.JmixBigDecimalField",
+            target = {
+                    "com.vaadin.flow.component.tabs.Tab",
+                    "com.vaadin.flow.component.icon.Icon",
+                    "com.vaadin.flow.component.icon.SvgIcon",
+                    "com.vaadin.flow.component.icon.FontIcon",
+                    "io.jmix.flowui.component.image.JmixImage",
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.kit.component.button.JmixButton",
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
                     "io.jmix.flowui.component.checkbox.JmixCheckbox",
@@ -750,7 +756,6 @@ interface StudioElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.upload.FileStorageUploadField",
                     "io.jmix.flowui.component.upload.FileUploadField",
-                    "com.vaadin.flow.component.icon.Icon",
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.listbox.JmixListBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
@@ -770,7 +775,6 @@ interface StudioElements {
                     "io.jmix.flowui.component.genericfilter.GenericFilter",
                     "io.jmix.flowui.component.propertyfilter.PropertyFilter",
                     "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
-                    "com.vaadin.flow.component.tabs.Tab",
                     "io.jmix.flowui.component.menufilterfield.MenuFilterField"},
             properties = {
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -1156,9 +1160,53 @@ interface StudioElements {
     void prefix();
 
     @StudioElement(
+            name = "UploadIcon",
+            xmlElement = "uploadIcon",
+            classFqn = "io.jmix.flowui.kit.component.stub.UploadIconElement",
+            target = {
+                    "io.jmix.flowui.component.upload.JmixUpload",
+                    "io.jmix.flowui.component.upload.FileUploadField",
+                    "io.jmix.flowui.component.upload.FileStorageUploadField",
+                    "io.jmix.webdavflowui.component.WebdavDocumentUploadField"},
+            unlimitedCount = false,
+            isInjectable = false,
+            injectionIdentifier = StudioComponent.EMPTY_INJECTION_IDENTIFIER,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    totalChildrenCount = 1,
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "image", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "icon", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "svgIcon", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "fontIcon", maxCount = 1)
+                    }
+            )
+    )
+    void uploadIcon();
+
+    @StudioElement(
+            name = "DropLabelIcon",
+            xmlElement = "dropLabelIcon",
+            classFqn = "io.jmix.flowui.kit.component.stub.DropLabelIconElement",
+            target = "io.jmix.flowui.component.upload.JmixUpload",
+            unlimitedCount = false,
+            isInjectable = false,
+            injectionIdentifier = StudioComponent.EMPTY_INJECTION_IDENTIFIER,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    totalChildrenCount = 1,
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "image", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "icon", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "svgIcon", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "fontIcon", maxCount = 1)
+                    }
+            )
+    )
+    void dropLabelIcon();
+
+    @StudioElement(
             name = "Icon",
             xmlElement = "icon",
-            classFqn = "io.jmix.flowui.kit.component.stub.StubIconElement",
+            classFqn = "io.jmix.flowui.kit.component.stub.IconElement",
             target = {
                     "io.jmix.flowui.kit.action.BaseAction",
 
@@ -1166,15 +1214,7 @@ interface StudioElements {
 
                     "io.jmix.flowui.kit.component.button.JmixButton",
                     "io.jmix.flowui.kit.component.combobutton.ComboButton",
-                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
-
-                    "io.jmix.flowui.component.upload.JmixUpload",
-                    "io.jmix.flowui.component.upload.FileUploadField",
-                    "io.jmix.flowui.component.upload.FileStorageUploadField",
-
-                    "io.jmix.webdavflowui.component.WebdavDocumentUploadField",
-                    "io.jmix.notificationsflowui.component.notificationsindicator.NotificationsIndicator"
-            },
+                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton"},
             unlimitedCount = false,
             isInjectable = false,
             injectionIdentifier = StudioComponent.EMPTY_INJECTION_IDENTIFIER,
@@ -1194,7 +1234,11 @@ interface StudioElements {
             name = "Icon",
             classFqn = "com.vaadin.flow.component.icon.Icon",
             xmlElement = "icon",
-            target = "io.jmix.flowui.kit.component.stub.StubIconElement",
+            target = {
+                    "io.jmix.flowui.kit.component.stub.IconElement",
+                    "io.jmix.flowui.kit.component.stub.UploadIconElement",
+                    "io.jmix.flowui.kit.component.stub.ClearButtonIconElement",
+                    "io.jmix.flowui.kit.component.stub.DownloadButtonIconElement"},
             icon = "io/jmix/flowui/kit/meta/icon/component/icon.svg",
             documentationLink = "%VERSION%/flow-ui/vc/components/icon.html",
             isInjectable = false,
@@ -1225,7 +1269,11 @@ interface StudioElements {
             name = "SvgIcon",
             classFqn = "com.vaadin.flow.component.icon.SvgIcon",
             xmlElement = "svgIcon",
-            target = "io.jmix.flowui.kit.component.stub.StubIconElement",
+            target = {
+                    "io.jmix.flowui.kit.component.stub.IconElement",
+                    "io.jmix.flowui.kit.component.stub.UploadIconElement",
+                    "io.jmix.flowui.kit.component.stub.ClearButtonIconElement",
+                    "io.jmix.flowui.kit.component.stub.DownloadButtonIconElement"},
             icon = "io/jmix/flowui/kit/meta/icon/component/svgIcon.svg",
             isInjectable = false,
             properties = {
@@ -1256,7 +1304,11 @@ interface StudioElements {
             name = "FontIcon",
             classFqn = "com.vaadin.flow.component.icon.FontIcon",
             xmlElement = "fontIcon",
-            target = "io.jmix.flowui.kit.component.stub.StubIconElement",
+            target = {
+                    "io.jmix.flowui.kit.component.stub.IconElement",
+                    "io.jmix.flowui.kit.component.stub.UploadIconElement",
+                    "io.jmix.flowui.kit.component.stub.ClearButtonIconElement",
+                    "io.jmix.flowui.kit.component.stub.DownloadButtonIconElement"},
             icon = "io/jmix/flowui/kit/meta/icon/component/fontIcon.svg",
             isInjectable = false,
             properties = {
@@ -1289,7 +1341,11 @@ interface StudioElements {
             name = "Image",
             classFqn = "io.jmix.flowui.component.image.JmixImage",
             xmlElement = "image",
-            target = "io.jmix.flowui.kit.meta.element.stub.StubImageElement",
+            target = {
+                    "io.jmix.flowui.kit.component.stub.IconElement",
+                    "io.jmix.flowui.kit.component.stub.UploadIconElement",
+                    "io.jmix.flowui.kit.component.stub.ClearButtonIconElement",
+                    "io.jmix.flowui.kit.component.stub.DownloadButtonIconElement"},
             icon = "io/jmix/flowui/kit/meta/icon/html/image.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html-components/image.html",
             isInjectable = false,

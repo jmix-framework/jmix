@@ -32,6 +32,7 @@ dependencies {
     testImplementation project(':eclipselink')
     testImplementation project(':pessimisticlock')
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }

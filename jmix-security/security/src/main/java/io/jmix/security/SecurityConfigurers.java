@@ -35,7 +35,7 @@ public class SecurityConfigurers {
         Map<String, SecurityConfigurer> beans = BeanFactoryAnnotationUtils
                 .qualifiedBeansOfType(applicationContext.getBeanFactory(), SecurityConfigurer.class, qualifier);
         for (SecurityConfigurer configurer : beans.values()) {
-            http.apply(configurer);
+            http.apply(configurer); //todo [SB4] check. Replace with SecurityConfigurerAdapter and http.with(...)?
         }
     }
 }

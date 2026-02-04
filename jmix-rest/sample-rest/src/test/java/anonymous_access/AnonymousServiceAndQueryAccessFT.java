@@ -84,7 +84,7 @@ public class AnonymousServiceAndQueryAccessFT extends AbstractRestControllerFT {
         String url = baseUrl + "/queries/sec$User/currentUser";
         try (CloseableHttpResponse response = sendGet(url, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=utf-8", responseContentType(response).toLowerCase());
+            assertEquals("application/json", responseContentType(response).toLowerCase());
             ReadContext ctx = parseResponse(response);
             assertEquals(1, ctx.<Collection>read("$").size());
             assertEquals("anonymous", ctx.read("$.[0].login"));

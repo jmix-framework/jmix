@@ -50,7 +50,7 @@ public class ServicesController {
         } else {
             status = HttpStatus.OK;
         }
-        String contentType = result.isValidJson() ? "application/json;charset=UTF-8" : "text/plain;charset=UTF-8";
+        String contentType = result.isValidJson() ? "application/json" : "text/plain;charset=UTF-8";
         return ResponseEntity.status(status).header("Content-Type", contentType).body(result.getStringValue());
     }
 
@@ -68,7 +68,7 @@ public class ServicesController {
         } else {
             status = HttpStatus.OK;
         }
-        String contentType = result.isValidJson() ? "application/json;charset=UTF-8" : "text/plain;charset=UTF-8";
+        String contentType = result.isValidJson() ? "application/json" : "text/plain;charset=UTF-8";
         return ResponseEntity.status(status).header("Content-Type", contentType).body(result.getStringValue());
     }
 

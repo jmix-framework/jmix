@@ -14,12 +14,4 @@
  * limitations under the License.
  */
 
-/* Free */
-
-@import './messagetemplates/index.css';
-@import './pivottable/index.css';
-@import './reports/index.css';
-@import './security/index.css';
-
-/* Premium */
-
+@import './jmix-grapes-js.css';

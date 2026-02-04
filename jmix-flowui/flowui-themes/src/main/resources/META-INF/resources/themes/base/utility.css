@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,6 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.themes;
-
-import java.lang.annotation.*;
-
-/**
- * Indicates that the annotated class contains a definition for the CSS utility
- * classes so that Studio can suggest them.
- * <p>
- * NOTE: only {@code public static final} fields are considered as CSS class names.
- */
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface ThemeUtilityClasses {
-
-    /**
-     * @return user-friendly name of the annotated class
-     */
-    String name();
-}
+@import './src/utilities/layout.css';
+@import './src/utilities/spacing.css';
+@import './src/utilities/typography.css';

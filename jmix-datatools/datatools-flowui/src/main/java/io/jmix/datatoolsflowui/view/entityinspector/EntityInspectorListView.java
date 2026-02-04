@@ -31,7 +31,6 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.EntityValues;
@@ -78,6 +77,7 @@ import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
@@ -344,7 +344,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
     protected SimplePagination createPagination() {
         SimplePagination pagination = uiComponents.create(SimplePagination.class);
-        pagination.addClassName(LumoUtility.Margin.Start.AUTO);
+        pagination.addClassName(StyleUtility.Margin.Start.AUTO);
 
         DatatoolsUiProperties.EntityInspectorListView properties = datatoolsProperties.getEntityInspectorListView();
         pagination.setItemsPerPageVisible(properties.isItemsPerPageVisible());

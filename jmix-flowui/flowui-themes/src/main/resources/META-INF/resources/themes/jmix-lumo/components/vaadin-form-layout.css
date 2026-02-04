@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/*todo: migrate*/
+/* For removal! Works only with legacy @Theme. vaadin-form-layout doesn't support style injection */
 :host([class~='master-detail-layout']) #layout {
   height: inherit;
   align-items: flex-start;

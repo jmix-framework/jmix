@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.themes;
+package io.jmix.flowui.theme;
+
+import java.lang.annotation.*;
 
 /**
- * Contains the definition for all the CSS utility classes provided by Jmix Lumo.
+ * Indicates that the annotated class contains a definition for the CSS utility
+ * classes so that Studio can suggest them.
+ * <p>
+ * NOTE: only {@code public static final} fields are considered as CSS class names.
  */
-@SuppressWarnings("unused")
-@ThemeUtilityClasses(name = "Jmix Lumo")
-public final class JmixLumoUtility {
-
-    private JmixLumoUtility() {
-    }
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+// TODO: gg, rename?
+public @interface ThemeUtilityClasses {
 
     /**
-     * Containers related classes.
+     * @return user-friendly name of the annotated class
      */
-    public static final class Container {
-
-        public static final String BUTTONS_PANEL = "buttons-panel";
-        public static final String BORDERED_PANEL = "bordered-panel";
-
-        private Container() {
-        }
-    }
+    String name();
 }

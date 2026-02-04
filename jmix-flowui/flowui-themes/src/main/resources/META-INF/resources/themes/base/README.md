@@ -1,0 +1,1 @@
+Base styles suitable for any theme.

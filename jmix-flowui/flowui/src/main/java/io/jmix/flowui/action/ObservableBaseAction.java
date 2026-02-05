@@ -20,7 +20,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.di.Instantiator;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.UiObservationSupport;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
@@ -30,6 +32,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.function.Consumer;
 
+
+/**
+ * Base implementation of {@link Action} that introduces execution observation support.
+ *
+ * @see UiObservationSupport
+ */
 public class ObservableBaseAction extends BaseAction {
 
     @Autowired
@@ -93,6 +101,7 @@ public class ObservableBaseAction extends BaseAction {
         return (ObservableBaseAction) super.withHandler(handler);
     }
 
+    @Internal
     @Nullable
     protected UiObservationSupport getUiObservationSupport() {
         if (uiObservationSupport != null) {

@@ -14,6 +14,7 @@ import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
@@ -151,7 +152,7 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         entityTree = entityTreeComposite.getEntityTree();
         entityTree.expand(rootEntity);
 
-        ObservableBaseAction doubleClickAction = new ObservableBaseAction("doubleClick")
+        Action doubleClickAction = new ObservableBaseAction("doubleClick")
                 .withHandler(event -> addProperty());
         doubleClickAction.setEnabled(isUpdatePermitted());
         entityTree.addAction(doubleClickAction);

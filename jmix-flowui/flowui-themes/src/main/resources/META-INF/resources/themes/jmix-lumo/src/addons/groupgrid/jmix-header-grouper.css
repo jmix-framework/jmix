@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-/* Free */
+vaadin-grid [jmix-role='grouper-button']:hover {
+    color: var(--lumo-contrast);
+}
 
-@import './messagetemplates/index.css';
-@import './pivottable/index.css';
-@import './reports/index.css';
-@import './security/index.css';
+vaadin-grid [jmix-role='grouper-button'] {
+    color: var(--lumo-tertiary-text-color);
+}
 
-/* Premium */
+vaadin-grid-sorter[direction] [jmix-role='grouper-button'] {
+    color: var(--vaadin-selection-color-text, var(--lumo-primary-text-color));
+}
 
-@import './kanban/index.css';
-@import './groupgrid/index.css';
+.jmix-grouper-popover::part(content) {
+     padding: var(--lumo-space-xs) var(--lumo-space-xs);
+}
+
+.jmix-group-icon {
+    padding: 0.1em;
+    box-sizing: border-box;
+}

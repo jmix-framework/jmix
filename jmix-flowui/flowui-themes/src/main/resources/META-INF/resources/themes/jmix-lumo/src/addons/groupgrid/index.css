@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-/* Free */
-
-@import './messagetemplates/index.css';
-@import './pivottable/index.css';
-@import './reports/index.css';
-@import './security/index.css';
-
-/* Premium */
-
-@import './kanban/index.css';
-@import './groupgrid/index.css';
+@import './jmix-columns-grouper.css';
+@import './jmix-columns-grouper-item.css';
+@import './jmix-group-toggle.css';
+@import './jmix-header-grouper.css';

@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
-/* Free */
+vaadin-grid-tree-toggle.jmix-group-toggle {
+  &::part(toggle) {
+    align-items: center;
+    color: var(--lumo-contrast-70pct);
+    display: flex;
+    justify-content: center;
+    font-size: var(--lumo-font-size-m);
+  }
 
-@import './messagetemplates/index.css';
-@import './pivottable/index.css';
-@import './reports/index.css';
-@import './security/index.css';
+  &::part(toggle)::before {
+    content: "\e800";
+    font-family: Vaadin-Icons;
+  }
 
-/* Premium */
+  &[expanded]::part(toggle)::before {
+    content: "\e7f5";
+    font-family: Vaadin-Icons;
+    transform: unset;
+  }
 
-@import './kanban/index.css';
-@import './groupgrid/index.css';
+  &:hover::part(toggle) {
+    color: var(--lumo-contrast-90pct);
+  }
+}

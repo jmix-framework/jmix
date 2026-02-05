@@ -95,10 +95,6 @@ interface StudioElements {
             xmlElement = "actionItem",
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#actionItem",
             isInjectable = false,
-            target = {
-                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
-                    "io.jmix.flowui.kit.component.combobutton.ComboButton"
-            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.ACTION_REF)
@@ -417,10 +413,6 @@ interface StudioElements {
             xmlElement = "componentItem",
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#componentItem",
             isInjectable = false,
-            target = {
-                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
-                    "io.jmix.flowui.kit.component.combobutton.ComboButton"
-            },
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
                             qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
@@ -569,10 +561,6 @@ interface StudioElements {
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.TextItem",
             xmlElement = "textItem",
             isInjectable = false,
-            target = {
-                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
-                    "io.jmix.flowui.kit.component.combobutton.ComboButton"
-            },
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#textItem",
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
@@ -585,10 +573,6 @@ interface StudioElements {
             name = "Separator",
             classFqn = "io.jmix.flowui.kit.component.stub.DropdownButtonStubSeparator",
             xmlElement = "separator",
-            target = {
-                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
-                    "io.jmix.flowui.kit.component.combobutton.ComboButton"
-            },
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#separator"
     )
     DropdownButtonItem separator();
@@ -1159,6 +1143,26 @@ interface StudioElements {
     void prefix();
 
     @StudioElement(
+            name = "DropdownIcon",
+            xmlElement = "dropdownIcon",
+            classFqn = "io.jmix.flowui.kit.component.stub.DropdownIconElement",
+            target = "io.jmix.flowui.kit.component.combobutton.ComboButton",
+            unlimitedCount = false,
+            isInjectable = false,
+            injectionIdentifier = StudioComponent.EMPTY_INJECTION_IDENTIFIER,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    totalChildrenCount = 1,
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "image", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "icon", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "svgIcon", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "fontIcon", maxCount = 1)
+                    }
+            )
+    )
+    void dropdownIcon();
+
+    @StudioElement(
             name = "UploadIcon",
             xmlElement = "uploadIcon",
             classFqn = "io.jmix.flowui.kit.component.stub.UploadIconElement",
@@ -1236,6 +1240,7 @@ interface StudioElements {
             target = {
                     "io.jmix.flowui.kit.component.stub.IconElement",
                     "io.jmix.flowui.kit.component.stub.UploadIconElement",
+                    "io.jmix.flowui.kit.component.stub.DropdownIconElement",
                     "io.jmix.flowui.kit.component.stub.ClearButtonIconElement",
                     "io.jmix.flowui.kit.component.stub.DownloadButtonIconElement"},
             icon = "io/jmix/flowui/kit/meta/icon/component/icon.svg",
@@ -1271,6 +1276,7 @@ interface StudioElements {
             target = {
                     "io.jmix.flowui.kit.component.stub.IconElement",
                     "io.jmix.flowui.kit.component.stub.UploadIconElement",
+                    "io.jmix.flowui.kit.component.stub.DropdownIconElement",
                     "io.jmix.flowui.kit.component.stub.ClearButtonIconElement",
                     "io.jmix.flowui.kit.component.stub.DownloadButtonIconElement"},
             icon = "io/jmix/flowui/kit/meta/icon/component/svgIcon.svg",
@@ -1306,6 +1312,7 @@ interface StudioElements {
             target = {
                     "io.jmix.flowui.kit.component.stub.IconElement",
                     "io.jmix.flowui.kit.component.stub.UploadIconElement",
+                    "io.jmix.flowui.kit.component.stub.DropdownIconElement",
                     "io.jmix.flowui.kit.component.stub.ClearButtonIconElement",
                     "io.jmix.flowui.kit.component.stub.DownloadButtonIconElement"},
             icon = "io/jmix/flowui/kit/meta/icon/component/fontIcon.svg",
@@ -1343,6 +1350,7 @@ interface StudioElements {
             target = {
                     "io.jmix.flowui.kit.component.stub.IconElement",
                     "io.jmix.flowui.kit.component.stub.UploadIconElement",
+                    "io.jmix.flowui.kit.component.stub.DropdownIconElement",
                     "io.jmix.flowui.kit.component.stub.ClearButtonIconElement",
                     "io.jmix.flowui.kit.component.stub.DownloadButtonIconElement"},
             icon = "io/jmix/flowui/kit/meta/icon/html/image.svg",

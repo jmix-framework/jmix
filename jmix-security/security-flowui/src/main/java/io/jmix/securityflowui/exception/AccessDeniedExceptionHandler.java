@@ -16,10 +16,12 @@
 
 package io.jmix.securityflowui.exception;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.exception.AbstractUiExceptionHandler;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Component;
  * Displays violation messages as on-screen notifications.
  */
 @Component("sec_AccessDeniedExceptionHandler")
+@Order(JmixOrder.LOWEST_PRECEDENCE - 90)
 public class AccessDeniedExceptionHandler extends AbstractUiExceptionHandler {
 
     protected final Notifications notifications;

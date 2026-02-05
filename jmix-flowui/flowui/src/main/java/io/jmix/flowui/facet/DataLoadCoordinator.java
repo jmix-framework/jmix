@@ -19,13 +19,15 @@ package io.jmix.flowui.facet;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.view.View;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
 
 /**
- * A non-visual component for coordinating data loading operations in a view.
- * Manages the association of data loaders to various triggers, such as view
+ * A non-visual component for coordinating data loading operations in a {@link FacetOwner}.
+ * Manages the association of data loaders to various triggers, such as view or fragment
  * events, container item changes, or component value changes.
  */
 public interface DataLoadCoordinator extends Facet {
@@ -76,7 +78,9 @@ public interface DataLoadCoordinator extends Facet {
 
     /**
      * Configures triggers automatically relying upon parameter prefixes. All data containers that don't have a prefixed
-     * parameter in the query string, are configured to be triggered on {@code BeforeShowEvent} or {@code AttachEvent}.
+     * parameter in the query string are configured to be triggered
+     * on {@link View.BeforeShowEvent} in case of {@link View} facet owner
+     * or {@link Fragment.ReadyEvent} in case of {@link Fragment} facet owner or {@code AttachEvent}.
      */
     void configureAutomatically();
 

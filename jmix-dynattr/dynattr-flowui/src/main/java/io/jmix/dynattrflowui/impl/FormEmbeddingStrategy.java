@@ -34,7 +34,6 @@ import io.jmix.flowui.component.formlayout.JmixFormLayout;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.ValueSourceProvider;
 import io.jmix.flowui.data.value.ContainerValueSourceProvider;
-import io.jmix.flowui.view.View;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -65,7 +64,7 @@ public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
     }
 
     @Override
-    protected void embed(Component component, View<?> view, List<AttributeDefinition> attributes) {
+    protected void embed(Component component, List<AttributeDefinition> attributes) {
         FormLayout form = (FormLayout) component;
         for (AttributeDefinition attribute : attributes) {
             addAttributeComponent((JmixFormLayout) form, attribute);

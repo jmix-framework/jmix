@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.test_support;
+package facet_registration;
 
-import io.jmix.flowui.testassist.UiTestUtils;
-import io.jmix.flowui.view.DialogWindow;
-import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import io.jmix.core.impl.QueryParamValuesManager;
+import io.jmix.flowui.facet.impl.FragmentDataLoadCoordinatorImpl;
+import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 
-/**
- * Supplement for {@link UiTestUtils#getOpenedDialogs()}
- * which seems to not work for views opened via {@link io.jmix.flowui.DialogWindows#view(View, String)}.
- */
-public interface OpenedDialogViewsTracker {
-    @Nullable
-    DialogWindow<?> getLastOpenedDialogWindow();
+public class ExtFragmentDataLoadCoordinatorFacet extends FragmentDataLoadCoordinatorImpl {
 
-    @Nullable
-    View<?> getLastOpenedView();
+    public ExtFragmentDataLoadCoordinatorFacet(ReflectionCacheManager reflectionCacheManager,
+                                               QueryParamValuesManager queryParamValuesManager) {
+        super(reflectionCacheManager, queryParamValuesManager);
+    }
 }

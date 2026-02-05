@@ -520,6 +520,7 @@ public class FluentLoader<E> {
         private int maxResults;
         private Sort sort;
         private boolean cacheable;
+        private boolean distinct;
 
         protected ByQuery(FluentLoader<E> loader, String queryString, ApplicationContext applicationContext) {
             Preconditions.checkNotEmptyString(queryString, "queryString is empty");
@@ -563,6 +564,7 @@ public class FluentLoader<E> {
             loadContext.getQuery().setMaxResults(maxResults);
             loadContext.getQuery().setSort(sort);
             loadContext.getQuery().setCacheable(cacheable);
+            loadContext.getQuery().setDistinct(distinct);
 
             return loadContext;
         }
@@ -761,6 +763,16 @@ public class FluentLoader<E> {
             loader.lockMode = lockMode;
             return this;
         }
+
+        /**
+         * Indicates that the query results must contain only distinct values.
+         * The database query will include a DISTINCT clause.
+         * <p>False by default.
+         */
+        public ByQuery<E> distinct() {
+            this.distinct = true;
+            return this;
+        }
     }
 
     public static class ByCondition<E> {
@@ -774,6 +786,7 @@ public class FluentLoader<E> {
         private Sort sort;
         private boolean cacheable;
         private Condition condition;
+        private boolean distinct;
 
         protected ByCondition(FluentLoader<E> loader, String entityName, boolean jpaEntity, Condition condition) {
             this.loader = loader;
@@ -814,6 +827,7 @@ public class FluentLoader<E> {
             loadContext.getQuery().setMaxResults(maxResults);
             loadContext.getQuery().setSort(sort);
             loadContext.getQuery().setCacheable(cacheable);
+            loadContext.getQuery().setDistinct(distinct);
 
             return loadContext;
         }
@@ -1002,6 +1016,16 @@ public class FluentLoader<E> {
          */
         public ByCondition<E> lockMode(LockModeType lockMode) {
             loader.lockMode = lockMode;
+            return this;
+        }
+
+        /**
+         * Indicates that the query results must contain only distinct values.
+         * The database query will include a DISTINCT clause.
+         * <p>False by default.
+         */
+        public ByCondition<E> distinct() {
+            this.distinct = true;
             return this;
         }
     }

@@ -193,8 +193,8 @@ public final class ViewControllerUtils {
     /**
      * Returns a specific type of {@link Facet} associated with the given {@link View}.
      *
-     * @param view       the {@link View} from which the facet is to be retrieved; must not be null
-     * @param facetClass the class type of the facet to retrieve; must not be null
+     * @param view       the {@link View} from which the facet is to be retrieved; must not be {@code null}
+     * @param facetClass the class type of the facet to retrieve; must not be {@code null}
      * @param <T>        the type of the facet
      * @return the facet of the specified type if found; otherwise, {@code null}
      */

@@ -37,15 +37,19 @@ public class SameTenantRoleAssignmentCandidatePredicate implements RoleAssignmen
     }
 
     @Override
-    public boolean test(UserDetails userDetails, BaseRole baseRole) {
-        if (RoleSource.ANNOTATED_CLASS.equals(baseRole.getSource())) {
+    public boolean test(UserDetails userDetails, BaseRole role) {
+        if (RoleSource.ANNOTATED_CLASS.equals(role.getSource())
+                || userDetails == null) {
             return true;
+        }
+        if (role == null) {
+            return false;
         }
 
         String userTenant = tenantProvider.getTenantIdForUser(userDetails);
         // Convert "NO_TENANT" to null to match null tenant of role
         userTenant = TenantProvider.NO_TENANT.equals(userTenant) ? null : userTenant;
-        String roleTenant = baseRole.getTenantId();
+        String roleTenant = role.getTenantId();
 
         return Objects.equals(roleTenant, userTenant);
     }

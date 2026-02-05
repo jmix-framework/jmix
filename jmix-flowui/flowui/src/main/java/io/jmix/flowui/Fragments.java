@@ -20,6 +20,7 @@ import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.xml.layout.ComponentLoader;
+import org.springframework.lang.Nullable;
 
 
 /**
@@ -42,6 +43,26 @@ public interface Fragments {
      * @return fully initialized fragment instance
      */
     <F extends Fragment<?>> F create(FragmentOwner parent, Class<F> fragmentClass);
+
+    /**
+     * Creates a fragment instance by its controller class.
+     * <p>
+     * For example:
+     * <pre>{@code
+     *    AddressFragment addressFragment = fragments.create(this, AddressFragment.class, "addressFragment");
+     *    getContent().add(addressFragment);
+     * }</pre>
+     *
+     * @param parent        parent UI controller
+     * @param fragmentClass fragment controller class
+     * @param fragmentId    id that will be set to the fragment
+     * @param <F>           fragment type
+     * @return fully initialized fragment instance
+     */
+    default <F extends Fragment<?>> F create(FragmentOwner parent, Class<F> fragmentClass, @Nullable String fragmentId) {
+        // ignore ID by default for backward compatibility
+        return create(parent, fragmentClass);
+    }
 
     /**
      * Initializes passed fragment by processing {@link FragmentDescriptor}.

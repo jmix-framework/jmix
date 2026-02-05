@@ -18,7 +18,6 @@ package io.jmix.fullcalendarflowui.facet.urlqueryparameters;
 
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.urlqueryparameters.AbstractUrlQueryParametersBinderProvider;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
@@ -42,7 +41,7 @@ public class FullCalendarUrlQueryParametersBinderProvider extends AbstractUrlQue
     }
 
     @Override
-    public void load(UrlQueryParametersFacet facet, Element element, ComponentLoader.ComponentContext context) {
+    public void load(UrlQueryParametersFacet facet, Element element, ComponentLoader.Context context) {
         String componentId = loadRequiredAttribute(element, "component", context);
         String binderId = loadAttribute(element, "id");
         String displayModeParam = loadAttribute(element, "calendarDisplayModeParam");
@@ -81,7 +80,7 @@ public class FullCalendarUrlQueryParametersBinderProvider extends AbstractUrlQue
             Preconditions.checkState(facet.getOwner() != null, "%s owner is not set",
                     UrlQueryParametersFacet.NAME);
 
-            Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
+            Component component = getComponent(facet.getOwner(), componentId);
             if (!(component instanceof FullCalendar)) {
                 throw new IllegalStateException(String.format("'%s' is not a '%s' component", componentId,
                         FullCalendar.class.getSimpleName()));

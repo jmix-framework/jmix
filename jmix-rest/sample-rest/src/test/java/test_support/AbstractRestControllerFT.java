@@ -62,7 +62,7 @@ public abstract class AbstractRestControllerFT {
     protected int port;
 
     @Autowired
-    protected JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    protected JdbcTemplate jdbcTemplate;
 
     @Autowired
     protected InMemoryUserRepository userRepository;

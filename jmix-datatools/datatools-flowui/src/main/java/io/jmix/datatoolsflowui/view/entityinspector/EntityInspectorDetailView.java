@@ -94,6 +94,9 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     protected DataManager dataManager;
     @Autowired
     protected UrlParamSerializer urlParamSerializer;
+    @Autowired
+    protected EntityUpdateDispatcher entityUpdateDispatcher;
+
     @ViewComponent
     protected MessageBundle messageBundle;
 
@@ -117,6 +120,8 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
         dataContext = dataComponents.createDataContext();
         getViewData().setDataContext(dataContext);
         setReloadSaved(true);
+        dataContext.setSaveDelegate(saveContext ->
+                entityUpdateDispatcher.save(dataManager, saveContext));
     }
 
     @Override

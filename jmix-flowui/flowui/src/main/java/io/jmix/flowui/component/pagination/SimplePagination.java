@@ -315,6 +315,10 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     protected void onRefreshItems(CollectionChangeType changeType) {
         samePage = CollectionChangeType.REFRESH != changeType;
         onCollectionChanged();
+
+        if (!refreshing) {
+            fireAfterRefreshEvent();
+        }
     }
 
     protected void removeListeners() {
@@ -429,7 +433,13 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
 
         loader.setFirstResult(0);
         loader.setMaxResults(maxResult);
-        loader.refresh();
+
+        refreshing = true;
+        try {
+            loader.refresh();
+        } finally {
+            refreshing = false;
+        }
 
         fireAfterRefreshEvent();
     }

@@ -23,14 +23,13 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity(name = "ref$Driver")
 @JmixEntity
 @Table(name = "REF_DRIVER")
 public class Driver extends StandardEntity {
-
-    private static final long serialVersionUID = -3978805138573255022L;
 
     @InstanceName
     @Column(name = "NAME")
@@ -40,30 +39,17 @@ public class Driver extends StandardEntity {
     @EmbeddedParameters(nullAllowed = false)
     private Address address;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "DRIVER_GROUP_ID")
-//    private DriverGroup driverGroup;
-
     @Column(name = "STATUS")
     private Integer status;
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "PLATFORM_ENTITY_ID")
-//    protected SamplePlatformEntity platformEntity;
 
     @OneToMany(mappedBy = "driver")
     @Composition
     private Set<DriverAllocation> allocations;
 
-//    @ModelProperty
-//    public SamplePlatformEntity getPlatformEntityName() {
-//        if (!isLoaded(this, "platformEntity")
-//                || !isLoaded(this, "status")) {
-//            return null;
-//        }
-//
-//        return !Objects.equals(status, DriverStatus.ACTIVE.getId()) ? platformEntity : null;
-//    }
+    @ElementCollection
+    @CollectionTable(name = "REF_DRIVER_PHONE", joinColumns = @JoinColumn(name = "DRIVER_ID"))
+    @Column(name = "PHONE")
+    private List<String> phones;
 
     public String getName() {
         return name;
@@ -72,22 +58,6 @@ public class Driver extends StandardEntity {
     public void setName(String name) {
         this.name = name;
     }
-
-//    public DriverCallsign getCallsign() {
-//        return callsign;
-//    }
-//
-//    public void setCallsign(DriverCallsign callsign) {
-//        this.callsign = callsign;
-//    }
-//
-//    public DriverGroup getDriverGroup() {
-//        return driverGroup;
-//    }
-//
-//    public void setDriverGroup(DriverGroup driverGroup) {
-//        this.driverGroup = driverGroup;
-//    }
 
     public Address getAddress() {
         return address;
@@ -105,19 +75,19 @@ public class Driver extends StandardEntity {
         this.status = status == null ? null : status.getId();
     }
 
-//    public SamplePlatformEntity getPlatformEntity() {
-//        return platformEntity;
-//    }
-//
-//    public void setPlatformEntity(SamplePlatformEntity platformEntity) {
-//        this.platformEntity = platformEntity;
-//    }
-
     public Set<DriverAllocation> getAllocations() {
         return allocations;
     }
 
     public void setAllocations(Set<DriverAllocation> allocations) {
         this.allocations = allocations;
+    }
+
+    public List<String> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<String> phones) {
+        this.phones = phones;
     }
 }

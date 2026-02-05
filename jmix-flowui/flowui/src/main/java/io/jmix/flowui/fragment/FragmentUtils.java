@@ -23,6 +23,8 @@ import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.server.Attributes;
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.facet.Facet;
+import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.Nullable;
@@ -118,6 +120,47 @@ public final class FragmentUtils {
     }
 
     /**
+     * Returns the {@link FragmentFacets} associated with the specified {@link Fragment}.
+     *
+     * @param fragment the {@link Fragment} which to retrieve the associated {@link FragmentFacets},
+     *                 must not be {@code null}
+     * @return the {@link FragmentFacets} associated with the given {@link Fragment}
+     */
+    public static FragmentFacets getFragmentFacets(Fragment<?> fragment) {
+        return fragment.getFragmentFacets();
+    }
+
+    /**
+     * Sets the {@link FragmentFacets} for the specified {@link Fragment}.
+     *
+     * @param fragment       the {@link Fragment} for which the {@link FragmentFacets} are to be set,
+     *                       must not be {@code null}
+     * @param fragmentFacets the {@link FragmentFacets} to associate with the specified {@link Fragment},
+     *                       must not be {@code null}
+     */
+    public static void setFragmentFacets(Fragment<?> fragment, FragmentFacets fragmentFacets) {
+        fragment.setFragmentFacets(fragmentFacets);
+    }
+
+    /**
+     * Returns a specific type of {@link Facet} from the passed {@link Fragment}.
+     *
+     * @param fragment   the {@link Fragment} from which the facet is to be retrieved; must not be {@code null}
+     * @param facetClass the class type of the facet to retrieve; must not be {@code null}
+     * @param <T>        the type of the facet
+     * @return the facet of the specified type if found; otherwise, {@code null}
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <T extends Facet> T getFragmentFacet(Fragment<?> fragment, Class<T> facetClass) {
+        return (T) fragment.getFragmentFacets()
+                .getFacets()
+                .filter(facet -> facetClass.isAssignableFrom(facet.getClass()))
+                .findAny()
+                .orElse(null);
+    }
+
+    /**
      * Gets the owner of the passed {@link Fragment}.
      *
      * @param fragment fragment to get the owner
@@ -125,6 +168,22 @@ public final class FragmentUtils {
      */
     public static FragmentOwner getParentController(Fragment<?> fragment) {
         return fragment.getParentController();
+    }
+
+    /**
+     * Gets the {@link View} owner of the passed {@link FragmentOwner}.
+     *
+     * @param fragmentOwner fragment owner to get the host view
+     * @return the {@link View} owner of the passed fragment owner
+     */
+    public static View<?> getHostView(FragmentOwner fragmentOwner) {
+        if (fragmentOwner instanceof View<?> view) {
+            return view;
+        } else if (fragmentOwner instanceof Fragment<?> fragment) {
+            return getHostView(FragmentUtils.getParentController(fragment));
+        }
+
+        throw new IllegalStateException("Unknown parent type: " + fragmentOwner.getClass().getName());
     }
 
     /**
@@ -149,6 +208,22 @@ public final class FragmentUtils {
     public static boolean sameId(Component component, String id) {
         Optional<String> componentId = getComponentId(component);
         return componentId.isPresent() && id.equals(componentId.get());
+    }
+
+    /**
+     * Returns the component with the given id.
+     *
+     * @param fragment fragment to find component from
+     * @param id       component id
+     * @return the component with the given id
+     * @throws IllegalStateException    if fragment content doesn't contain components
+     * @throws IllegalArgumentException if component with given id is not found
+     */
+    public static Component getComponent(Fragment<?> fragment, String id) {
+        return findComponent(fragment, id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Component with id '%s' not fount".formatted(id)
+                ));
     }
 
     /**

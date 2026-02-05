@@ -25,8 +25,11 @@ import java.util.Collection;
 
 /**
  * Saves and restores settings for components.
+ *
+ * @deprecated use {@link ComponentSettingsManager} instead
  */
-public interface ViewSettingsComponentManager {
+@Deprecated(since = "3.0", forRemoval = true)
+public interface ViewSettingsComponentManager extends ComponentSettingsManager {
 
     /**
      * Applies settings from {@link ViewSettings} to provided components.
@@ -39,6 +42,11 @@ public interface ViewSettingsComponentManager {
      */
     void applySettings(Collection<Component> components, ViewSettings viewSettings);
 
+    @Override
+    default void applySettings(Collection<Component> components, UiComponentSettings<?> settings) {
+        applySettings(components, (ViewSettings) settings);
+    }
+
     /**
      * Applies data loading settings from {@link ViewSettings} to provided components.
      * <p>
@@ -50,6 +58,11 @@ public interface ViewSettingsComponentManager {
      */
     void applyDataLoadingSettings(Collection<Component> components, ViewSettings viewSettings);
 
+    @Override
+    default void applyDataLoadingSettings(Collection<Component> components, UiComponentSettings<?> settings) {
+        applyDataLoadingSettings(components, (ViewSettings) settings);
+    }
+
     /**
      * Persists settings if they are changed or {@link ViewSettings#isModified()} returns {@code true}.
      * <p>
@@ -60,4 +73,9 @@ public interface ViewSettingsComponentManager {
      * @param viewSettings screen settings
      */
     void saveSettings(Collection<Component> components, ViewSettings viewSettings);
+
+    @Override
+    default void saveSettings(Collection<Component> components, UiComponentSettings<?> settings) {
+        saveSettings(components, (ViewSettings) settings);
+    }
 }

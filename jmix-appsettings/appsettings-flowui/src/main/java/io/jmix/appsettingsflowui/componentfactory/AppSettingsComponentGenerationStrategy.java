@@ -34,6 +34,8 @@ import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
+import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
+import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.factory.AbstractComponentGenerationStrategy;
 import io.jmix.flowui.component.factory.EntityFieldCreationSupport;
@@ -41,9 +43,11 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.value.ContainerValueSource;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.core.Ordered;
 import org.springframework.lang.Nullable;
@@ -84,19 +88,19 @@ public class AppSettingsComponentGenerationStrategy
                 }
             }
 
-            if (isBoolean(metaProperty)) {
+            if (metadataTools.isElementCollection(metaProperty)) {
+                field = createMultiValuePickerField();
+
+            } else if (isBoolean(metaProperty)) {
                 field = createBooleanField();
-            }
 
-            if (isSecret(metaProperty)) {
+            } else if (isSecret(metaProperty)) {
                 field = createPasswordField();
-            }
 
-            if (range.isEnum()) {
+            } else if (range.isEnum()) {
                 field = createEnumField(range);
-            }
 
-            if (range.isClass()) {
+            } else if (range.isClass()) {
                 field = createEntityPickerField();
             }
 
@@ -107,6 +111,13 @@ public class AppSettingsComponentGenerationStrategy
         }
 
         return null;
+    }
+
+    protected JmixMultiValuePicker<?> createMultiValuePickerField() {
+        JmixMultiValuePicker<?> valuePicker = uiComponents.create(JmixMultiValuePicker.class);
+        valuePicker.addAction(actions.create(MultiValueSelectAction.ID));
+        valuePicker.addAction(actions.create(ValueClearAction.ID));
+        return valuePicker;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -154,7 +165,7 @@ public class AppSettingsComponentGenerationStrategy
     }
 
     protected boolean requireTextArea(MetaProperty metaProperty, @Nullable Object item) {
-        if (!String.class.equals(metaProperty.getJavaType())) {
+        if (!String.class.equals(metaProperty.getJavaType()) || metadataTools.isElementCollection(metaProperty)) {
             return false;
         }
 

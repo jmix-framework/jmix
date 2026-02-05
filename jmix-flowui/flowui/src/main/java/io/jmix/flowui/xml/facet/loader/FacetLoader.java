@@ -66,14 +66,14 @@ public interface FacetLoader<F extends Facet> {
     /**
      * Returns the context associated with the current facet loading and initialization process.
      *
-     * @return the {@link ComponentLoader.ComponentContext} instance
+     * @return the {@link ComponentLoader.Context} instance
      */
-    ComponentLoader.ComponentContext getContext();
+    ComponentLoader.Context getContext();
 
     /**
      * Sets the context for loading and initializing facet components.
      *
-     * @param context the {@link ComponentLoader.ComponentContext} instance to set
+     * @param context the {@link ComponentLoader.Context} instance to set
      */
-    void setContext(ComponentLoader.ComponentContext context);
+    void setContext(ComponentLoader.Context context);
 }

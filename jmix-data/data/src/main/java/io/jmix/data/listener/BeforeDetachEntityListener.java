@@ -19,6 +19,7 @@ package io.jmix.data.listener;
  * Defines the contract for handling entities right before they are detached from an EntityManager
  * on transaction commit.
  */
+@Deprecated(since = "3.0")
 public interface BeforeDetachEntityListener<T> {
 
     /**

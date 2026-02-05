@@ -152,8 +152,14 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
 
     @Subscribe("childRolesTable.add")
     public void onChildRolesTableAdd(ActionPerformedEvent event) {
+        RowLevelRoleModel rowLevelRoleModel = getEditedEntity();
+        RowLevelRole currentRole = roleRepository.findRoleByCode(rowLevelRoleModel.getCode());
+
         DialogWindow<RowLevelRoleModelLookupView> lookupDialog = dialogWindows.lookup(childRolesTable)
                 .withViewClass(RowLevelRoleModelLookupView.class)
+                .withViewConfigurer(configurer -> {
+                    configurer.setCurrentRole(currentRole);
+                })
                 .build();
 
         List<String> excludedRolesCodes = childRolesDc.getItems().stream()
@@ -161,7 +167,7 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
                 .collect(Collectors.toList());
 
         if (codeField.isReadOnly()) {
-            excludedRolesCodes.add(getEditedEntity().getCode());
+            excludedRolesCodes.add(rowLevelRoleModel.getCode());
         }
 
         lookupDialog.getView().setExcludedRoles(excludedRolesCodes);

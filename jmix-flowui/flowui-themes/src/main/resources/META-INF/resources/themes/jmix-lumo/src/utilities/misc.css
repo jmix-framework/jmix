@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-.buttons-panel {
-  width: 100%;
-  flex-wrap: wrap;
-}
-
 .bordered-panel {
   border: 1px solid;
   border-color: var(--lumo-contrast-20pct);
@@ -30,19 +25,3 @@
   padding: var(--lumo-space-s) var(--lumo-space-m);
 }
 
-/*todo move to component styles*/
-.datetime-picker-container {
-  display: flex;
-  align-items: baseline;
-  gap: calc(var(--lumo-space-xs) / 2);
-}
-
-.datetime-picker-container vaadin-date-picker {
-  min-width: 0;
-  flex: 1 1 auto; /*same as for Vaadin Date Time Picker date-part*/
-}
-
-.datetime-picker-container vaadin-time-picker {
-  min-width: 0;
-  flex: 1 1.65 auto; /*same as for Vaadin Date Time Picker time-part*/
-}

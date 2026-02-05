@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@import './src/utilities/flexbox-grid.css';
 @import './src/utilities/layout.css';
+@import './src/utilities/misc.css';
 @import './src/utilities/spacing.css';
 @import './src/utilities/typography.css';

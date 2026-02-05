@@ -32,7 +32,7 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout>
+    <layout classNames="message-template-block-detail-view">
         <formLayout id="form" dataContainer="messageTemplateBlockDc">
             <textField id="nameField" property="name"/>
             <textField id="labelField" property="label"/>

@@ -19,7 +19,6 @@ package io.jmix.flowui.theme;
 /**
  * Contains the definition for all CSS utility classes suitable for any theme.
  */
-@ThemeUtilityClasses(name = "Jmix Lumo")
 public final class StyleUtility {
 
     private StyleUtility() {
@@ -30,11 +29,131 @@ public final class StyleUtility {
      */
     public static final class Container {
 
-        // TODO: gg, implement
         public static final String BUTTONS_PANEL = "buttons-panel";
 
         private Container() {
         }
+    }
+
+    /**
+     * Classes for distributing space around and between items along a flexbox’s
+     * cross axis or a grid’s block axis. Applies to flexbox and grid layouts.
+     */
+    public static final class AlignContent {
+
+        public static final String AROUND = "content-around";
+        public static final String BETWEEN = "content-between";
+        public static final String CENTER = "content-center";
+        public static final String END = "content-end";
+        public static final String EVENLY = "content-evenly";
+        public static final String START = "content-start";
+        public static final String STRETCH = "content-stretch";
+
+        private AlignContent() {
+        }
+
+    }
+
+    /**
+     * Classes for aligning items along a flexbox’s cross axis or a grid’s block
+     * axis. Applies to flexbox and grid layouts.
+     */
+    public static final class AlignItems {
+        public static final String BASELINE = "items-baseline";
+        public static final String CENTER = "items-center";
+        public static final String END = "items-end";
+        public static final String START = "items-start";
+        public static final String STRETCH = "items-stretch";
+
+        private AlignItems() {
+        }
+
+    }
+
+    /**
+     * Classes for overriding individual items' align-item property. Applies to
+     * flexbox and grid items.
+     */
+    public static final class AlignSelf {
+
+        public static final String AUTO = "self-auto";
+        public static final String BASELINE = "self-baseline";
+        public static final String CENTER = "self-center";
+        public static final String END = "self-end";
+        public static final String START = "self-start";
+        public static final String STRETCH = "self-stretch";
+
+        private AlignSelf() {
+        }
+
+    }
+
+    /**
+     * Classes for setting how items grow and shrink in a flexbox layout.
+     * Applies to flexbox items.
+     */
+    public static final class Flex {
+
+        public static final String ONE = "flex-1";
+        public static final String AUTO = "flex-auto";
+        public static final String NONE = "flex-none";
+
+        public static final String GROW = "flex-grow";
+        public static final String GROW_NONE = "flex-grow-0";
+
+        public static final String SHRINK = "flex-shrink";
+        public static final String SHRINK_NONE = "flex-shrink-0";
+
+        private Flex() {
+        }
+
+    }
+
+    /**
+     * Classes for setting the flex direction of a flexbox layout.
+     */
+    public static final class FlexDirection {
+
+        public static final String COLUMN = "flex-col";
+        public static final String COLUMN_REVERSE = "flex-col-reverse";
+        public static final String ROW = "flex-row";
+        public static final String ROW_REVERSE = "flex-row-reverse";
+
+        private FlexDirection() {
+        }
+
+    }
+
+    /**
+     * Classes for setting how items wrap in a flexbox layout. Applies to
+     * flexbox layouts.
+     */
+    public static final class FlexWrap {
+
+        public static final String NOWRAP = "flex-nowrap";
+        public static final String WRAP = "flex-wrap";
+        public static final String WRAP_REVERSE = "flex-wrap-reverse";
+
+        private FlexWrap() {
+        }
+    }
+
+    /**
+     * Classes for aligning items along a flexbox’s main axis or a grid’s inline
+     * axis. Applies to flexbox and grid layouts.
+     */
+    public static final class JustifyContent {
+
+        public static final String AROUND = "justify-around";
+        public static final String BETWEEN = "justify-between";
+        public static final String CENTER = "justify-center";
+        public static final String END = "justify-end";
+        public static final String EVENLY = "justify-evenly";
+        public static final String START = "justify-start";
+
+        private JustifyContent() {
+        }
+
     }
 
     /**

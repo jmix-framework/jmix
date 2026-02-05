@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-jmix-tabsheet.entity-log-main-tab-sheet::part(content) {
+.entity-log-view {
+    container-type: inline-size;
+    container-name: entity-log-view;
+}
+
+.entity-log-view jmix-tabsheet.content-root::part(content) {
     padding: var(--lumo-space-s) var(--lumo-space-m) var(--lumo-space-m) var(--lumo-space-m);
 }
 
-.entity-log-grid-wrapper {
+.entity-log-view .data-grid-wrapper {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(42rem, 1fr));
     gap: var(--lumo-space-m);
 }
 
-.setup-logged-entity-wrapper {
+.entity-log-view .setup-logged-entity-wrapper {
     flex-direction: column;
 }
 
-.entity-log-wrapper {
-    container-type: inline-size;
-    container-name: entity-log-wrapper;
-}
+@container entity-log-view (min-width: 65em) {
 
-@container entity-log-wrapper (min-width: 65em) {
-
-    .setup-logged-entity-wrapper {
+    .entity-log-view .setup-logged-entity-wrapper {
         flex-direction: row;
     }
 
-    .logged-entity-details-wrapper {
+    .entity-log-view .logged-entity-details-wrapper {
         width: 100%;
     }
 }

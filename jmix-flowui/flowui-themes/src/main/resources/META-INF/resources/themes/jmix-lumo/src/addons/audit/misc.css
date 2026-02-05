@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-.reset-password-view .sub-label {
-    color: var(--lumo-secondary-text-color);
-    font-size: var(--lumo-font-size-s);
+.datetime-picker-container {
+    display: flex;
+    align-items: baseline;
+    gap: calc(var(--lumo-space-xs) / 2);
 }
 
-.reset-password-view .warning-message {
-    margin-top: var(--lumo-space-l);
+.datetime-picker-container vaadin-date-picker {
+    min-width: 0;
+    flex: 1 1 auto; /*same as for Vaadin Date Time Picker date-part*/
 }
 
-.reset-password-view .warning-icon {
-    padding: var(--lumo-space-xs);
-}
-
-.reset-password-view vaadin-password-field[readonly][class~='reset-password-field'] {
-    --vaadin-input-field-readonly-border: transparent;
-}
-
-.reset-password-view vaadin-password-field[readonly][class~='reset-password-field']::part(reveal-button) {
-    color: var(--lumo-contrast);
+.datetime-picker-container vaadin-time-picker {
+    min-width: 0;
+    flex: 1 1.65 auto; /*same as for Vaadin Date Time Picker time-part*/
 }

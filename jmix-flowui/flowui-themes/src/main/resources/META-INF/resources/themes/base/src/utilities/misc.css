@@ -14,23 +14,7 @@
  * limitations under the License.
  */
 
-.reset-password-view .sub-label {
-    color: var(--lumo-secondary-text-color);
-    font-size: var(--lumo-font-size-s);
-}
-
-.reset-password-view .warning-message {
-    margin-top: var(--lumo-space-l);
-}
-
-.reset-password-view .warning-icon {
-    padding: var(--lumo-space-xs);
-}
-
-.reset-password-view vaadin-password-field[readonly][class~='reset-password-field'] {
-    --vaadin-input-field-readonly-border: transparent;
-}
-
-.reset-password-view vaadin-password-field[readonly][class~='reset-password-field']::part(reveal-button) {
-    color: var(--lumo-contrast);
+.buttons-panel {
+    width: 100%;
+    flex-wrap: wrap;
 }

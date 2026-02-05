@@ -27,13 +27,13 @@
     </actions>
     <layout alignItems="STRETCH"
             padding="false" spacing="false"
-            expand="usersListWrapper">
-
+            expand="usersListWrapper"
+            classNames="substitute-user-view">
         <textField id="userFilter"
                    datatype="string"
                    placeholder="msg://userFilter.placeholder"
                    width="100%" maxWidth="30em"
-                   classNames="substitute-user-view-user-filter"
+                   classNames="user-filter"
                    clearButtonVisible="true">
             <prefix>
                 <icon icon="SEARCH"/>

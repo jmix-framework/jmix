@@ -40,6 +40,7 @@ public final class JmixLumoUtility {
         public static final String BUTTONS_PANEL = "buttons-panel";
 
         public static final String BORDERED_PANEL = "bordered-panel";
+        public static final String FOOTER_PANEL = "footer-panel";
 
         private Container() {
         }

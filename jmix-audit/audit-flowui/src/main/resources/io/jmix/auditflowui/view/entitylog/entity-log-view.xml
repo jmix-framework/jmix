@@ -93,8 +93,8 @@
             <pagination component="paginationLoggedEntity"/>
         </urlQueryParameters>
     </facets>
-    <layout padding="false" classNames="entity-log-wrapper">
-        <tabSheet id="tabsheet" width="100%" height="100%" classNames="entity-log-main-tab-sheet">
+    <layout padding="false" classNames="entity-log-view">
+        <tabSheet id="tabsheet" width="100%" height="100%" classNames="content-root">
             <tab id="view" label="msg://view">
                 <vbox id="viewWrapper" width="100%" height="100%"
                       padding="false" themeNames="spacing-s">
@@ -136,7 +136,7 @@
                             </hbox>
                         </vbox>
                     </details>
-                    <div width="100%" height="100%" classNames="entity-log-grid-wrapper">
+                    <div width="100%" height="100%" classNames="data-grid-wrapper">
                         <dataGrid id="entityLogTable" dataContainer="entityLogDc"
                                   width="100%" height="100%"
                                   minHeight="20em"

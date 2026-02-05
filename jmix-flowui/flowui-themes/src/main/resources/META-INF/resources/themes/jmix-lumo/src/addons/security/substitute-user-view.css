@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-.substitute-user-view-user-filter {
+.substitute-user-view .user-filter {
     box-sizing: border-box;
     padding: var(--lumo-space-m) var(--lumo-space-m) 0;
 }

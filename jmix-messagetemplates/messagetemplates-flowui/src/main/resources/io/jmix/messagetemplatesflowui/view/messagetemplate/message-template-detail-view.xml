@@ -44,12 +44,12 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout>
+    <layout classNames="message-template-detail-view">
         <tabSheet id="mainTabSheet" width="100%" height="100%">
             <tab id="detailsTab" label="msg://mainTabSheet.detailsTab.label">
                 <split id="mainSplit" width="100%" height="100%"
-                       splitterPosition="30" classNames="gap-xs">
-                    <formLayout id="form" dataContainer="messageTemplateDc" classNames="px-xs">
+                       splitterPosition="30" classNames="main-split">
+                    <formLayout id="form" dataContainer="messageTemplateDc">
                         <textField id="nameField" property="name"/>
                         <textField id="codeField" property="code"/>
                         <radioButtonGroup id="typeField" property="type"/>
@@ -61,7 +61,7 @@
                             </actions>
                         </entityComboBox>
                     </formLayout>
-                    <vbox id="contentBox" padding="false" classNames="px-xs">
+                    <vbox id="contentBox" padding="false">
                         <vbox id="plainTextAreaLayout" expand="plainTextArea"
                               width="100%" height="100%"
                               padding="false" visible="false">

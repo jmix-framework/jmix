@@ -20,12 +20,13 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.view.*;
 import io.jmix.messagetemplates.entity.MessageTemplateBlock;
@@ -77,14 +78,10 @@ public class MessageTemplateBlockDetailView extends StandardDetailView<MessageTe
 
     protected Div iconRenderer(String iconName) {
         Div div = new Div();
-        div.addClassNames(
-                LumoUtility.Gap.SMALL,
-                LumoUtility.Display.FLEX,
-                LumoUtility.AlignItems.CENTER
-        );
+        div.setClassName("icon-renderer");
 
         Icon icon = new Icon(iconName);
-        icon.addClassNames(LumoUtility.Margin.Start.SMALL);
+        icon.setClassName("icon-renderer-icon");
 
         Text text = new Text(iconName);
 

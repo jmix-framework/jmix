@@ -156,7 +156,7 @@ public class DataObservationSupport {
         return observation;
     }
 
-    private void addQueryHighCardinalityIfExist(Observation observation,
+    protected void addQueryHighCardinalityIfExist(Observation observation,
                                                 @Nullable DataLoadContextQuery query,
                                                 Supplier<String> queryGetter) {
         if (query != null && queryGetter.get() != null) {

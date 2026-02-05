@@ -26,15 +26,14 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.flowui.UiObservationUtils;
+import io.jmix.flowui.UiObservationSupport;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.model.DataLoader;
-import io.micrometer.observation.ObservationRegistry;
 import org.springframework.lang.Nullable;
 
 import java.util.Objects;
@@ -104,7 +103,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
             MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
 
             for (Operation operation : propertyFilterSupport.getAvailableOperations(metaClass, getProperty())) {
-                OperationChangeAction action = new OperationChangeAction(operation, this::setOperationInternal, this);
+                OperationChangeAction action = new OperationChangeAction(operation, this::setOperationInternal);
                 action.setText(getOperationText(operation));
                 operationSelector.addItem(operation.name(), action);
             }
@@ -351,30 +350,21 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         }
     }
 
-    @Nullable
-    ObservationRegistry getObservationRegistry() {
-        return applicationContext.getBeanProvider(ObservationRegistry.class)
-                .getIfAvailable();
-    }
-
-    protected static class OperationChangeAction extends BaseAction {
+    protected static class OperationChangeAction extends ObservableBaseAction {
 
         protected Operation operation;
         protected BiConsumer<Operation, Boolean> handler;
-        protected PropertyFilter<?> owner;
 
-        public OperationChangeAction(Operation operation, BiConsumer<Operation, Boolean> handler,
-                                     PropertyFilter<?> owner) {
+        public OperationChangeAction(Operation operation, BiConsumer<Operation, Boolean> handler) {
             super(operation.name());
 
             this.operation = operation;
             this.handler = handler;
-            this.owner = owner;
         }
 
         @Override
         public void actionPerform(Component component) {
-            UiObservationUtils.createActionExeutionObservation(this, owner.getObservationRegistry())
+            UiObservationSupport.createActionExeutionObservation(this, getUiObservationSupport())
                     .observe(() -> handler.accept(operation, true));
         }
     }

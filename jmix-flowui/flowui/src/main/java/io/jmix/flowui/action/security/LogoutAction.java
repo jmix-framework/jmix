@@ -18,7 +18,7 @@ package io.jmix.flowui.action.security;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.core.Messages;
-import io.jmix.flowui.UiObservationUtils;
+import io.jmix.flowui.UiObservationSupport;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.ObservableBaseAction;
@@ -71,7 +71,7 @@ public class LogoutAction extends ObservableBaseAction implements ExecutableActi
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            UiObservationUtils.createActionExeutionObservation(this, getObservationRegistry())
+            UiObservationSupport.createActionExeutionObservation(this, getUiObservationSupport())
                     .observe(this::execute);
         } else {
             super.actionPerform(component);

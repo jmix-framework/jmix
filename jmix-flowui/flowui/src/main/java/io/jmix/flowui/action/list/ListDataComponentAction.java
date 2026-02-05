@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.UiObservationUtils;
+import io.jmix.flowui.UiObservationSupport;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
@@ -143,7 +143,7 @@ public abstract class ListDataComponentAction<A extends ListDataComponentAction<
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            UiObservationUtils.createActionExeutionObservation(this, getObservationRegistry())
+            UiObservationSupport.createActionExeutionObservation(this, getUiObservationSupport())
                     .observe(this::execute);
         } else {
             super.actionPerform(component);

@@ -39,6 +39,8 @@ import java.util.stream.Collectors;
  * <p>
  * Observation functionality can be turned on or off using the {@code jmix.core.data-observation-enabled}
  * property in the application's configuration.
+ *
+ * @see CoreProperties#isDataObservationEnabled()
  */
 @Component("core_DataObservationSupport")
 public class DataObservationSupport {

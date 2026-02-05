@@ -18,7 +18,7 @@ package io.jmix.flowui.fragment;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
-import io.jmix.flowui.UiObservationUtils;
+import io.jmix.flowui.UiObservationSupport;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
@@ -125,7 +125,7 @@ public abstract class FragmentAction<A extends FragmentAction<A, C>, C extends F
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            UiObservationUtils.createActionExeutionObservation(this, getObservationRegistry())
+            UiObservationSupport.createActionExeutionObservation(this, getUiObservationSupport())
                     .observe(this::execute);
         } else {
             super.actionPerform(component);

@@ -37,8 +37,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static io.jmix.flowui.UiObservationUtils.createViewEventObservation;
-
 /**
  * Utility class providing helper methods related to view controllers.
  */
@@ -215,7 +213,7 @@ public final class ViewControllerUtils {
      * @param event the {@link ComponentEvent} to be fired; must not be null
      */
     public static void fireEvent(View<?> view, ComponentEvent<?> event) {
-        createViewEventObservation(view, event.getClass().getSimpleName(), view.getObservationRegistry())
+        view.getUiObservationSupport().createViewEventObservation(view, event.getClass().getSimpleName())
                 .observe(() -> ComponentUtil.fireEvent(view, event));
     }
 

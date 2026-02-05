@@ -25,7 +25,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.SaveContext;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.UiObservationUtils;
+import io.jmix.flowui.UiObservationSupport;
 import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -178,15 +178,13 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         BaseAction action = new BaseAction(RandomStringUtils.randomAlphabetic(5)) {
             @Override
             public void actionPerform(Component component) {
-                ObservationRegistry observationRegistry = getApplicationContext()
-                        .getBeanProvider(ObservationRegistry.class)
-                        .getIfAvailable();
+                UiObservationSupport uiObservationSupport = getApplicationContext().getBean(UiObservationSupport.class);
 
-                UiObservationUtils.createActionExeutionObservation(this, observationRegistry)
-                                .observe(() ->
-                                        dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicyTypeProvider.getCreatePolicyViewClass())
-                                                .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)
-                                                .open());
+                UiObservationSupport.createActionExeutionObservation(this, uiObservationSupport)
+                        .observe(() ->
+                                dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicyTypeProvider.getCreatePolicyViewClass())
+                                        .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)
+                                        .open());
             }
 
             @Nullable

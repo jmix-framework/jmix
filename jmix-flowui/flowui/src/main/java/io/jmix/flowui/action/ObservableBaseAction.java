@@ -20,12 +20,11 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.di.Instantiator;
-import io.jmix.flowui.UiObservationUtils;
+import io.jmix.flowui.UiObservationSupport;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.micrometer.observation.ObservationRegistry;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,8 +32,8 @@ import java.util.function.Consumer;
 
 public class ObservableBaseAction extends BaseAction {
 
-    @Autowired(required = false)
-    protected ObservationRegistry observationRegistry;
+    @Autowired
+    protected UiObservationSupport uiObservationSupport;
 
     public ObservableBaseAction(String id) {
         super(id);
@@ -44,7 +43,7 @@ public class ObservableBaseAction extends BaseAction {
     public void actionPerform(Component component) {
         if (eventBus != null) {
             ActionPerformedEvent event = new ActionPerformedEvent(this, component);
-            UiObservationUtils.createActionExeutionObservation(this, getObservationRegistry())
+            UiObservationSupport.createActionExeutionObservation(this, getUiObservationSupport())
                     .observe(() -> getEventBus().fireEvent(event));
         }
     }
@@ -95,22 +94,22 @@ public class ObservableBaseAction extends BaseAction {
     }
 
     @Nullable
-    protected ObservationRegistry getObservationRegistry() {
-        if (observationRegistry != null) {
-            return observationRegistry;
+    protected UiObservationSupport getUiObservationSupport() {
+        if (uiObservationSupport != null) {
+            return uiObservationSupport;
         }
 
         // try to instantiate bean in case of action created by a constructor
         UI ui = UI.getCurrent();
         if (ui != null) {
             try {
-                observationRegistry = Instantiator.get(ui)
-                        .getOrCreate(ObservationRegistry.class);
+                uiObservationSupport = Instantiator.get(ui)
+                        .getOrCreate(UiObservationSupport.class);
             } catch (Exception e) {
                 // expected case, ignore silently
             }
         }
 
-        return observationRegistry;
+        return uiObservationSupport;
     }
 }

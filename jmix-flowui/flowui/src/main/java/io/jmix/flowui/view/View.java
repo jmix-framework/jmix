@@ -21,6 +21,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
+import io.jmix.flowui.UiObservationSupport;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.event.view.ViewClosedEvent;
@@ -34,7 +35,6 @@ import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.WebBrowserTools;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -47,7 +47,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static io.jmix.flowui.UiObservationUtils.createViewEventObservation;
 import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
 import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
 import static io.jmix.flowui.monitoring.ViewLifeCycle.*;
@@ -76,6 +75,7 @@ public class View<T extends Component> extends Composite<T>
 
     private ApplicationContext applicationContext;
     private MeterRegistry meterRegistry;
+    private UiObservationSupport uiObservationSupport;
 
     private ViewData viewData;
     private ViewActions viewActions;
@@ -145,7 +145,7 @@ public class View<T extends Component> extends Composite<T>
         afterNavigationProcessed = false;
 
         Sample sample = start(meterRegistry);
-        createViewEventObservation(this, ReadyEvent.class.getSimpleName(), getObservationRegistry())
+        getUiObservationSupport().createViewEventObservation(this, ReadyEvent.class.getSimpleName())
                 .observe(() -> fireEvent(new ReadyEvent(this)));
         stopViewTimerSample(sample, meterRegistry, READY, getId().orElse(null));
 
@@ -180,7 +180,7 @@ public class View<T extends Component> extends Composite<T>
         fireEvent(new QueryParametersChangeEvent(this, event.getLocation().getQueryParameters()));
 
         Sample sample = startTimerSample(meterRegistry);
-        createViewEventObservation(this, BeforeShowEvent.class.getSimpleName(), getObservationRegistry())
+        getUiObservationSupport().createViewEventObservation(this, BeforeShowEvent.class.getSimpleName())
                 .observe(() -> fireEvent(new BeforeShowEvent(this)));
         stopViewTimerSample(sample, meterRegistry, BEFORE_SHOW, getId().orElse(null));
     }
@@ -221,7 +221,7 @@ public class View<T extends Component> extends Composite<T>
                 BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
 
                 Sample beforeCloseSample = startTimerSample(meterRegistry);
-                createViewEventObservation(this, BeforeCloseEvent.class.getSimpleName(), getObservationRegistry())
+                getUiObservationSupport().createViewEventObservation(this, BeforeCloseEvent.class.getSimpleName())
                         .observe(() -> fireEvent(beforeCloseEvent));
                 stopViewTimerSample(beforeCloseSample, meterRegistry, BEFORE_CLOSE, getId().orElse(null));
 
@@ -233,7 +233,7 @@ public class View<T extends Component> extends Composite<T>
                 AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
 
                 Sample afterCloseSample = startTimerSample(meterRegistry);
-                createViewEventObservation(this, AfterCloseEvent.class.getSimpleName(), getObservationRegistry())
+                getUiObservationSupport().createViewEventObservation(this, AfterCloseEvent.class.getSimpleName())
                         .observe(() -> fireEvent(afterCloseEvent));
                 stopViewTimerSample(afterCloseSample, meterRegistry, AFTER_CLOSE, getId().orElse(null));
 
@@ -404,13 +404,6 @@ public class View<T extends Component> extends Composite<T>
         this.applicationEventListeners = listeners;
     }
 
-    @Internal
-    @Nullable
-    ObservationRegistry getObservationRegistry() {
-        return getApplicationContext().getBeanProvider(ObservationRegistry.class)
-                .getIfAvailable();
-    }
-
     protected ViewData getViewData() {
         return viewData;
     }
@@ -443,6 +436,15 @@ public class View<T extends Component> extends Composite<T>
 
     protected ViewSupport getViewSupport() {
         return getApplicationContext().getBean(ViewSupport.class);
+    }
+
+    @Internal
+    UiObservationSupport getUiObservationSupport() {
+        if (uiObservationSupport == null) {
+            uiObservationSupport = getApplicationContext().getBean(UiObservationSupport.class);
+        }
+
+        return uiObservationSupport;
     }
 
     @Override

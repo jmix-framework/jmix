@@ -102,6 +102,13 @@ public class UiProperties {
      */
     boolean exceptionDialogModal;
 
+    /**
+     * Whether to enable UI observation for view lifecycle events and actions execution.
+     * <p>
+     * When observation is enabled, custom spans are created using the {@link io.micrometer.observation.Observation}.
+     */
+    boolean uiObservationEnabled;
+
     public UiProperties(@DefaultValue("false") boolean uiTestMode,
                         @DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
@@ -116,7 +123,8 @@ public class UiProperties {
                         @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
                         @DefaultValue("true") boolean useSessionFixationProtection,
                         @DefaultValue("false") boolean websocketRequestSecurityContextProvided,
-                        @DefaultValue("true") boolean exceptionDialogModal
+                        @DefaultValue("true") boolean exceptionDialogModal,
+                        @DefaultValue("false") boolean uiObservationEnabled
     ) {
         this.uiTestMode = uiTestMode;
         this.loginViewId = loginViewId;
@@ -133,6 +141,7 @@ public class UiProperties {
         this.useSessionFixationProtection = useSessionFixationProtection;
         this.websocketRequestSecurityContextProvided = websocketRequestSecurityContextProvided;
         this.exceptionDialogModal = exceptionDialogModal;
+        this.uiObservationEnabled = uiObservationEnabled;
     }
 
     /**
@@ -233,5 +242,12 @@ public class UiProperties {
      */
     public boolean isExceptionDialogModal() {
         return exceptionDialogModal;
+    }
+
+    /**
+     * @see #uiObservationEnabled
+     */
+    public boolean isUiObservationEnabled() {
+        return uiObservationEnabled;
     }
 }

@@ -742,7 +742,6 @@ interface StudioElements {
                     "com.vaadin.flow.component.icon.Icon",
                     "com.vaadin.flow.component.icon.SvgIcon",
                     "com.vaadin.flow.component.icon.FontIcon",
-                    "io.jmix.flowui.component.image.JmixImage",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.kit.component.button.JmixButton",
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",

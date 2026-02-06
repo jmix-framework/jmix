@@ -34,6 +34,7 @@ import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrflowui.impl.model.AttributeLocalizedEnumValue;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -41,7 +42,6 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
@@ -236,7 +236,7 @@ public class AttributeEnumerationDetailView extends StandardView {
     }
 
     protected void gradeRemoveItemColumnUpdater(JmixButton button, AttributeLocalizedEnumValue customer) {
-        Action removeAction = new BaseAction("remove_item_" + customer.getValue())
+        Action removeAction = new ObservableBaseAction("remove_item_" + customer.getValue())
                 .withHandler(actionPerformedEvent -> {
                     localizedEnumValues.remove(customer);
                     localizedEnumValuesDl.load();

@@ -20,7 +20,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.KeyCombination;
 import org.springframework.lang.Nullable;
 
@@ -30,7 +29,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class SecuredBaseAction extends BaseAction {
+public class SecuredBaseAction extends ObservableBaseAction {
 
     protected List<EnabledRule> enabledRules;
 

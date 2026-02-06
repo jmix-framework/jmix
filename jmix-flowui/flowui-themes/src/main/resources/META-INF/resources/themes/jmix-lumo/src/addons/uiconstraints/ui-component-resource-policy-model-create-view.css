@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-/* Free */
-
-@import './audit/index.css';
-@import './fullcalendar/index.css';
-@import './messagetemplates/index.css';
-@import './pivottable/index.css';
-@import './reports/index.css';
-@import './security/index.css';
-
-/* Premium */
-
-@import './bpm/index.css';
-@import './groupgrid/index.css';
-@import './kanban/index.css';
-@import './notifications/index.css';
-@import './uiconstraints/index.css';
+.ui-component-resource-policy-model-create-view .component-ids-editor-layout {
+    border: 1px var(--lumo-utility-border-style, solid) var(--lumo-contrast-20pct);
+    border-radius: var(--lumo-border-radius-m);
+    flex-shrink: 0;
+}

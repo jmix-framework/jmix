@@ -98,49 +98,37 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         if (container == null)
             throw new IllegalStateException("container is null");
 
-        E entity;
-
         LoadContext<E> loadContext = createLoadContext();
 
-        if (!needLoad())
+        if (sendPreLoadEvent(loadContext)) {
             return;
-
-        if (loadFromRepositoryDelegate == null && delegate == null) {
-            if (!sendPreLoadEvent(loadContext)) {
-                return;
-            }
-
-            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-
-            entity = dataManager.load(loadContext);
-
-            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
-
-            if (entity == null) {
-                throw new EntityAccessException(container.getEntityMetaClass(), entityId);
-            }
-        } else {
-            if (!sendPreLoadEvent(loadContext)) {
-                return;
-            }
-
-            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-
-            if (loadFromRepositoryDelegate != null) {
-                entity = loadFromRepositoryDelegate.apply(entityId, resolveFetchPlan()).orElse(null);
-            } else {
-                entity = delegate.apply(createLoadContext());
-            }
-
-            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
-
-            if (entity == null) {
-                return;
-            }
         }
 
+        E entity;
+
+        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
+        if (loadFromRepositoryDelegate != null) {
+            entity = loadFromRepositoryDelegate
+                    .apply(entityId, resolveFetchPlan())
+                    .orElse(null);
+        } else if (delegate != null) {
+            entity = delegate.apply(loadContext);
+        } else {
+            if (skipLoading()) return;
+            entity = dataManager.load(loadContext);
+        }
+
+        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
+
+        if (entity == null) {
+            if (loadFromRepositoryDelegate != null || delegate != null) {
+                return;
+            } else {
+                throw new EntityAccessException(container.getEntityMetaClass(), entityId);
+            }
+        }
 
         if (dataContext != null) {
             entity = dataContext.merge(entity, new MergeOptions().setFresh(true));
@@ -150,8 +138,8 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         sendPostLoadEvent(entity);
     }
 
-    protected boolean needLoad() {
-        return entityId != null || !Strings.isNullOrEmpty(query);
+    protected boolean skipLoading() {
+        return entityId == null & Strings.isNullOrEmpty(query);
     }
 
     /**
@@ -162,7 +150,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     public LoadContext<E> createLoadContext() {
         Class<E> entityClass = container.getEntityMetaClass().getJavaClass();
 
-        LoadContext<E> loadContext = new LoadContext(metadata.getClass(entityClass));
+        LoadContext<E> loadContext = new LoadContext<>(metadata.getClass(entityClass));
 
         if (entityId != null) {
             loadContext.setId(entityId);
@@ -179,15 +167,13 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         return loadContext;
     }
 
+    @Nullable
     protected FetchPlan resolveFetchPlan() {
-        FetchPlan fp = this.fetchPlan;
-        if (fp == null && fetchPlanName != null) {
-            fp = fetchPlanRepository.getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
-        }
-        if (fp == null) {
-            fp = container.getFetchPlan();
-        }
-        return fp;
+        if (this.fetchPlan != null) return this.fetchPlan;
+
+        return fetchPlanName != null
+                ? fetchPlanRepository.getFetchPlan(container.getEntityMetaClass(), fetchPlanName)
+                : container.getFetchPlan();
     }
 
     protected boolean sendPreLoadEvent(LoadContext<E> loadContext) {
@@ -200,7 +186,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
         UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.PRE_LOAD, info);
 
-        return !preLoadEvent.isLoadPrevented();
+        return preLoadEvent.isLoadPrevented();
     }
 
     protected void sendPostLoadEvent(E entity) {

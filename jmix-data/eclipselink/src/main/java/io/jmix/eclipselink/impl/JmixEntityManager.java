@@ -30,12 +30,9 @@ import io.jmix.data.impl.EntityListenerManager;
 import io.jmix.data.impl.EntityListenerType;
 import io.jmix.data.impl.converters.AuditConversionService;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
+import jakarta.persistence.criteria.*;
 import org.springframework.lang.Nullable;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaUpdate;
 import jakarta.persistence.metamodel.Metamodel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -176,6 +173,20 @@ public class JmixEntityManager implements EntityManager {
         return internalFind(entityClass, primaryKey, lockMode, properties);
     }
 
+
+    @Override
+    @Nullable
+    public <T> T find(Class<T> entityClass, Object primaryKey,
+                      FindOption... options) {
+        return internalFind(entityClass, primaryKey, options);
+    }
+
+    @Override
+    public <T> T find(EntityGraph<T> entityGraph, Object primaryKey,
+                      FindOption... options) {
+        return delegate.find(entityGraph, primaryKey, options);
+    }
+
     @Override
     public <T> T getReference(Class<T> entityClass, Object primaryKey) {
         //noinspection unchecked
@@ -184,6 +195,11 @@ public class JmixEntityManager implements EntityManager {
         T reference = delegate.getReference(effectiveClass, primaryKey);
         ((Entity) reference).__getEntityEntry().setNew(false);
         return reference;
+    }
+
+    @Override
+    public <T> T getReference(T entity) {
+        return delegate.getReference(entity);
     }
 
     @Override
@@ -214,6 +230,11 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
+    public void lock(Object entity, LockModeType lockMode, LockOption... options) {
+        delegate.lock(entity, lockMode, options);
+    }
+
+    @Override
     public void refresh(Object entity) {
         delegate.refresh(entity);
     }
@@ -231,6 +252,11 @@ public class JmixEntityManager implements EntityManager {
     @Override
     public void refresh(Object entity, LockModeType lockMode, Map<String, Object> properties) {
         delegate.refresh(entity, lockMode, properties);
+    }
+
+    @Override
+    public void refresh(Object entity, RefreshOption... options) {
+        delegate.refresh(entity, options);
     }
 
     @Override
@@ -254,6 +280,26 @@ public class JmixEntityManager implements EntityManager {
     @Override
     public LockModeType getLockMode(Object entity) {
         return delegate.getLockMode(entity);
+    }
+
+    @Override
+    public void setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        delegate.setCacheRetrieveMode(cacheRetrieveMode);
+    }
+
+    @Override
+    public void setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        delegate.setCacheStoreMode(cacheStoreMode);
+    }
+
+    @Override
+    public CacheRetrieveMode getCacheRetrieveMode() {
+        return delegate.getCacheRetrieveMode();
+    }
+
+    @Override
+    public CacheStoreMode getCacheStoreMode() {
+        return delegate.getCacheStoreMode();
     }
 
     @Override
@@ -282,6 +328,11 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
+    public <T> TypedQuery<T> createQuery(CriteriaSelect<T> selectQuery) {
+        return delegate.createQuery(selectQuery);
+    }
+
+    @Override
     public Query createQuery(CriteriaUpdate updateQuery) {
         return delegate.createQuery(updateQuery);
     }
@@ -304,6 +355,11 @@ public class JmixEntityManager implements EntityManager {
     @Override
     public <T> TypedQuery<T> createNamedQuery(String name, Class<T> resultClass) {
         return delegate.createNamedQuery(name, resultClass);
+    }
+
+    @Override
+    public <T> TypedQuery<T> createQuery(TypedQueryReference<T> reference) {
+        return delegate.createQuery(reference);
     }
 
     @Override
@@ -411,6 +467,16 @@ public class JmixEntityManager implements EntityManager {
         return delegate.getEntityGraphs(entityClass);
     }
 
+    @Override
+    public <C> void runWithConnection(ConnectionConsumer<C> action) {
+        delegate.runWithConnection(action);
+    }
+
+    @Override
+    public <C, T> T callWithConnection(ConnectionFunction<C, T> function) {
+        return delegate.callWithConnection(function);
+    }
+
     private void internalPersist(Object entity) {
         delegate.persist(entity);
         if (entity instanceof Entity) {
@@ -424,9 +490,24 @@ public class JmixEntityManager implements EntityManager {
         JmixUtil.setOriginalSoftDeletion(softDeletion);
     }
 
-    private boolean isSoftDeletion(Map<String, Object> properties) {
+    private boolean isSoftDeletion(@Nullable Map<String, Object> properties) {
         Boolean softDeletionInProps = properties == null ? null : (Boolean) properties.get(PersistenceHints.SOFT_DELETION);
         return (softDeletionInProps == null || softDeletionInProps) && PersistenceHints.isSoftDeletion(delegate);
+    }
+
+    @Nullable
+    private <T> T internalFind(Class<T> entityClass, Object primaryKey, FindOption... findOptions) {
+        Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
+        Preconditions.checkNotNullArgument(primaryKey, "primaryKey is null");
+
+        MetaClass metaClass = extendedEntities.getEffectiveMetaClass(entityClass);
+
+        log.debug("find {} by id={}", entityClass.getSimpleName(), primaryKey);
+        Class<T> javaClass = metaClass.getJavaClass();
+
+        T entity = delegate.find(javaClass, primaryKey, findOptions);
+
+        return considerSoftDelete(entity, null);
     }
 
     @Nullable
@@ -441,12 +522,17 @@ public class JmixEntityManager implements EntityManager {
             return findPartial(metaClass, primaryKey, fetchPlans);
         }
 
-        Object realId = primaryKey;
-        log.debug("find {} by id={}", entityClass.getSimpleName(), realId);
+        log.debug("find {} by id={}", entityClass.getSimpleName(), primaryKey);
         Class<T> javaClass = metaClass.getJavaClass();
 
-        T entity = delegate.find(javaClass, realId, lockMode, properties);
+        T entity = delegate.find(javaClass, primaryKey, lockMode, properties);
 
+        return considerSoftDelete(entity, properties);
+
+    }
+
+    @Nullable
+    private <T> T considerSoftDelete(@Nullable T entity, @Nullable Map<String, Object> properties) {
         if (entity != null && EntityValues.isSoftDeleted((Entity) entity)
                 && isSoftDeletion(properties))
             return null; // in case of entity cache

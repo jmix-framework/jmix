@@ -16,7 +16,7 @@
 
 package io.jmix.eclipselink.impl.support;
 
-import org.eclipse.persistence.exceptions.RemoteCommandManagerException;
+import org.eclipse.persistence.sessions.coordination.RemoteCommandManagerException;
 import org.eclipse.persistence.internal.sessions.coordination.RemoteConnection;
 import org.eclipse.persistence.sessions.coordination.RemoteCommandManager;
 import org.eclipse.persistence.sessions.coordination.broadcast.BroadcastTransportManager;

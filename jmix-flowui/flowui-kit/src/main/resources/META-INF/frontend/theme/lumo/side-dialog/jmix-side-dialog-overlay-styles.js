@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.event.dialog;
+import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.dialog.Dialog;
-import org.springframework.context.ApplicationEvent;
+const jmixSideDialogOverlayStyles = css`
 
-/**
- * Application event that is sent after the dialog is closed.
- */
-public class DialogClosedEvent extends ApplicationEvent {
-
-    public DialogClosedEvent(Component dialog) {
-        super(dialog);
+    :host([opening]),
+    :host([closing]) {
+        animation: var(--_transition-duration) lumo-overlay-dummy-animation;
     }
+`;
 
-    @Override
-    public Component getSource() {
-        return (Component) super.getSource();
-    }
-}
+// todo: pinyazhin, rename to 'lumo-side...' after upgrading to Vaadin 25
+registerStyles('jmix-side-dialog-overlay', [jmixSideDialogOverlayStyles],
+ { moduleId: 'jmix-lumo-side-dialog-overlay' });

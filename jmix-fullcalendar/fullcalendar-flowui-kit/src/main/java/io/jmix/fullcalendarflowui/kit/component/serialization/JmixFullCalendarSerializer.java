@@ -114,17 +114,19 @@ public class JmixFullCalendarSerializer extends AbstractFullCalendarSerializer {
 
     public ArrayNode toJsonArray(List<String> list) {
         ArrayNode jsonArray = objectMapper.createArrayNode();
-        for (int i = 0; i < list.size(); i++) {
-            jsonArray.set(i, list.get(i));
+
+        for (String json : list) {
+            jsonArray.add(json);
         }
+
         return jsonArray;
     }
 
     public ArrayNode toJsonArrayJson(List<JsonNode> list) {
         ArrayNode jsonArray = objectMapper.createArrayNode();
-        for (int i = 0; i < list.size(); i++) {
-            jsonArray.set(i, list.get(i));
-        }
+
+        jsonArray.addAll(list);
+
         return jsonArray;
     }
 

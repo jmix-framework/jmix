@@ -1,15 +1,33 @@
-import {html, PolymerElement} from '@polymer/polymer/polymer-element';
-import {ElementMixin} from '@vaadin/component-base/src/element-mixin';
-import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin';
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import {Calendar} from '@fullcalendar/core';
+import { html, LitElement } from 'lit';
+import { ElementMixin } from '@vaadin/component-base/src/element-mixin';
+import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin';
+import { PolylitMixin } from '@vaadin/component-base/src/polylit-mixin.js';
+import { LumoInjectionMixin } from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+
+import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import interactionPlugin from '@fullcalendar/interaction';
 import momentPlugin from '@fullcalendar/moment';
-import {toMoment} from '@fullcalendar/moment';
+import { toMoment } from '@fullcalendar/moment';
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 
 import moment from 'moment';
@@ -46,12 +64,7 @@ const DAY_GRID_MONTH = "dayGridMonth";
 const DAY_GRID_YEAR = "dayGridYear";
 const MULTI_MONTH_YEAR = "multiMonthYear";
 
-class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
-    static get template() {
-        return html`
-            <slot name="calendarSlot"/>
-        `;
-    }
+class JmixFullCalendar extends ElementMixin(ThemableMixin(PolylitMixin(LumoInjectionMixin(LitElement)))) {
 
     static get is() {
         return 'jmix-full-calendar';
@@ -79,6 +92,12 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 observer: '_onDirChane',
             },
         }
+    }
+
+    render() {
+        return html`
+            <slot name="calendarSlot"></slot>
+        `;
     }
 
     ready() {
@@ -116,7 +135,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         // Restore state if possible.
         this._restoreState();
 
-        this.render();
+        this.renderCalendar();
 
         this._setupResizeListener();
     }
@@ -818,6 +837,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
      * @private
      */
     _onDirChane(dir) {
+        if (!this.jmixOptions) {
+            return;
+        }
+
         this.jmixOptions.updateOption('direction', dir);
     }
 
@@ -901,7 +924,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.calendar.select({start: start, end: end, allDay: allDay});
     }
 
-    render() {
+    renderCalendar() {
         setTimeout((e) => this.calendar.render());
     }
 

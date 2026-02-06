@@ -216,8 +216,8 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
         if (!hiddenDays.isEmpty()) {
             ArrayNode jsonArray = JacksonUtils.createArrayNode();
 
-            for (int i = 0; i < hiddenDays.size(); i++) {
-                jsonArray.set(i, hiddenDays.get(i));
+            for (Integer value : hiddenDays) {
+                jsonArray.add(value);
             }
 
             resultComponent.getElement().callJsFunction("updateOption", "hiddenDays", jsonArray);
@@ -245,8 +245,7 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
     protected ArrayNode convertBusinessHoursToJson(List<NoOpBusinessHours> businessHours) {
         ArrayNode jsonArray = JacksonUtils.createArrayNode();
 
-        for (int i = 0; i < businessHours.size(); i++) {
-            NoOpBusinessHours entry = businessHours.get(i);
+        for (NoOpBusinessHours entry : businessHours) {
             ObjectNode jsonObject = JacksonUtils.createObjectNode();
             if (entry.getStartTime() != null) {
                 jsonObject.put("startTime", entry.getStartTime().toString());
@@ -257,12 +256,12 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
             if (!entry.getDaysOfWeek().isEmpty()) {
                 ArrayNode daysOfWeekJsonArray = JacksonUtils.createArrayNode();
                 List<Integer> daysOfWeek = new ArrayList<>(entry.getDaysOfWeek());
-                for (int j = 0; j < daysOfWeek.size(); j++) {
-                    daysOfWeekJsonArray.set(j, daysOfWeek.get(j));
+                for (Integer value : daysOfWeek) {
+                    daysOfWeekJsonArray.add(value);
                 }
                 jsonObject.set("daysOfWeek", daysOfWeekJsonArray);
             }
-            jsonArray.set(i, jsonObject);
+            jsonArray.add(jsonObject);
         }
 
         return jsonArray;

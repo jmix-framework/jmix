@@ -50,7 +50,6 @@ import java.util.*;
 @NpmPackage(value = "@fullcalendar/moment", version = "6.1.15")
 @NpmPackage(value = "moment", version = "2.30.1")
 @JsModule("./src/fullcalendar/jmix-full-calendar.js")
-@CssImport("./src/fullcalendar/jmix-full-calendar.css")
 public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     protected JmixFullCalendarSerializer serializer;

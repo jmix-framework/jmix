@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-const jmixFullCalendarStyle = document.createElement("style");
-jmixFullCalendarStyle.textContent = `
+import { css } from 'lit';
+
+export const jmixFullCalendarStyles = css`
+
     jmix-full-calendar {
        --fc-small-font-size: var(--lumo-font-size-s);
        --fc-page-bg-color: var(--lumo-base-color);
@@ -29,15 +31,15 @@ jmixFullCalendarStyle.textContent = `
        --fc-event-selected-overlay-color: var(--lumo-primary-color-10pct);
 
        --fc-list-event-hover-bg-color: var(--lumo-contrast-5pct);
-       
+
        /* TimeGrid events stack "show more" background-color */
        --fc-more-link-bg-color: #a6a6a6;
        --fc-more-link-text-color: inherit;                     /* default */
-       
+
        --fc-event-resizer-thickness: 8px;                      /* default */
        --fc-event-resizer-dot-total-width: 8px;                /* default */
        --fc-event-resizer-dot-border-width: 1px;               /* default */
-       
+
        --fc-non-business-color: var(--lumo-contrast-5pct);
        --fc-bg-event-color: rgb(143, 223, 130);                /* default */
        --fc-bg-event-opacity: 0.3;                             /* default */
@@ -57,49 +59,64 @@ jmixFullCalendarStyle.textContent = `
         box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
         outline: 0;
     }
-    
+
     jmix-full-calendar .fc .fc-highlight {
         background-image: linear-gradient(var(--fc-highlight-color), var(--fc-highlight-color));
         background-repeat: repeat;
         box-shadow: 0 1px 0 0 var(--fc-highlight-color);
     }
-    
+
     jmix-full-calendar .fc-more-link:hover {
         background-color: var(--lumo-contrast-10pct);
     }
-    
+
     jmix-full-calendar .fc-daygrid-day-number:focus-visible,
     jmix-full-calendar .fc-daygrid-week-number:focus-visible {
         border-radius: var(--lumo-border-radius-m);
         box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
         outline: 0;
     }
-    
+
     jmix-full-calendar .fc-timegrid-event:hover,
     jmix-full-calendar .fc-daygrid-block-event:hover {
         cursor: var(--lumo-clickable-cursor);
         filter: brightness(0.9) contrast(1.2);
     }
-    
+
     jmix-full-calendar .fc-daygrid-dot-event.fc-event-mirror,
     jmix-full-calendar .fc-daygrid-dot-event:hover {
         cursor: var(--lumo-clickable-cursor);
         background-color: var(--lumo-contrast-5pct);
     }
-    
+
     /* More link in events stack in time slots */
     jmix-full-calendar .fc-timegrid-col-events .fc-more-link:hover {
         filter: brightness(0.9) contrast(1.2);
         background-color: var(--fc-more-link-bg-color);
     }
-    
+
     jmix-full-calendar .jmix-day-cell-bottom-text {
         padding: var(--lumo-space-xs);
     }
-    
+
     jmix-full-calendar .fc-daygrid-day.jmix-has-bottom-text {
         position: relative;
     }
-`;
 
-document.head.append(jmixFullCalendarStyle);
+    /* Workaround cause the fixed issue is not really fixed?
+       https://github.com/fullcalendar/fullcalendar/issues/5532 */
+    .fc-more-popover {
+        max-height: 95%;
+        overflow-y: auto;
+    }
+
+    jmix-full-calendar a:not(:any-link) {
+        color: var(--lumo-body-text-color);
+    }
+
+    jmix-full-calendar .jmix-day-cell-bottom-text {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+`;

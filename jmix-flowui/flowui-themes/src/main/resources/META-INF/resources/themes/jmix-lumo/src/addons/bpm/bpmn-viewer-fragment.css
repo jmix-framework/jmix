@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-/* Free */
+.bpmn-viewer-fragment {
+    padding: var(--lumo-space-s);
 
-@import './audit/index.css';
-@import './fullcalendar/index.css';
-@import './messagetemplates/index.css';
-@import './pivottable/index.css';
-@import './reports/index.css';
-@import './security/index.css';
+    border: 1px solid var(--lumo-contrast-20pct);
+}
 
-/* Premium */
-
-@import './bpm/index.css';
-@import './groupgrid/index.css';
-@import './kanban/index.css';
-@import './notifications/index.css';
+.bpmn-viewer-fragment .fit-schema-button vaadin-icon {
+    transform: rotate(45deg);
+}

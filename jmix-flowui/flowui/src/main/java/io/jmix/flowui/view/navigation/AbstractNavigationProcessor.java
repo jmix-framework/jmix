@@ -31,7 +31,6 @@ import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.SupportsAfterViewNavigationHandler.AfterViewNavigationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.databind.node.BaseJsonNode;
 
 import java.net.URL;
 import java.util.Optional;
@@ -134,7 +133,7 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
             Location location = new Location(url, queryParameters);
 
             Router router = ui.getInternals().getRouter();
-            router.navigate(ui, location, NavigationTrigger.UI_NAVIGATE, (BaseJsonNode) null, true, false);
+            router.navigate(ui, location, NavigationTrigger.UI_NAVIGATE, null, true, false);
         } else {
             navigationSupport.navigate(navigationTargetType, routeParameters, queryParameters);
         }

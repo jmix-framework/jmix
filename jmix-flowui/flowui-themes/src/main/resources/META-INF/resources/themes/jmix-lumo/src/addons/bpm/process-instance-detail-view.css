@@ -1,0 +1,12 @@
+/*
+ * Copyright (c) Haulmont 2025. All Rights Reserved.
+ * Use is subject to license terms.
+ */
+
+.process-instance-detail-view vaadin-grid.tree-toggle-events-only vaadin-grid-tree-toggle {
+        pointer-events: none;
+
+        &::part(toggle) {
+            pointer-events: auto;
+        }
+}

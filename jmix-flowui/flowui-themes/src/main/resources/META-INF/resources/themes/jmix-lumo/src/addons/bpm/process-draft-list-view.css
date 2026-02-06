@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-/* Free */
+.process-draft-list-view,
+.process-draft-lookup-view {
+    vaadin-combo-box.hidden-toggle-button::part(toggle-button) {
+        display: none;
+    }
 
-@import './audit/index.css';
-@import './fullcalendar/index.css';
-@import './messagetemplates/index.css';
-@import './pivottable/index.css';
-@import './reports/index.css';
-@import './security/index.css';
+    .content-storages-data-grid {
+        margin-inline-end: var(--lumo-space-s);
+    }
 
-/* Premium */
-
-@import './bpm/index.css';
-@import './groupgrid/index.css';
-@import './kanban/index.css';
-@import './notifications/index.css';
+    .bpmn-viewer-fragment {
+        margin-inline-start: var(--lumo-space-s);
+    }
+}

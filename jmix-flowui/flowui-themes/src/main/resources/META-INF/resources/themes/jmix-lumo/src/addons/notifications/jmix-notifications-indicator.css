@@ -1,0 +1,214 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:root::before,
+:host::before {
+    --_lumo-jmix-notifications-indicator-inject: 1;
+    --_lumo-jmix-notifications-indicator-inject-modules: lumo_components_jmix-notifications-indicator;
+}
+
+@media lumo_components_jmix-notifications-indicator {
+    /* < Copied from src/vaadin-button.js >*/
+    :host {
+        display: inline-block;
+        position: relative;
+        outline: none;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+
+    :host([hidden]) {
+        display: none !important;
+    }
+
+    .jmix-ntf-indicator-container {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        height: 100%;
+        min-height: inherit;
+        text-shadow: inherit;
+        position: relative;
+    }
+
+    /* </ Copied from src/vaadin-button.js >*/
+    [part="icon"] {
+        display: flex;
+    }
+
+    [part='counter'] {
+        position: absolute;
+        display: flex;
+        border-radius: 50%;
+    }
+
+    :host(:not([loading])) [part="counter"] ::slotted(*) {
+        display: none !important;
+    }
+
+    /* Loading attribute */
+    :host([loading]) [part="counter"] ::slotted(*) {
+        display: block;
+        animation: notification-rotation-counterclockwise 2s infinite linear;
+    }
+
+    :host([loading]) [part="counter"] span {
+        display: none;
+    }
+
+    @keyframes notification-rotation-counterclockwise {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(-360deg);
+        }
+    }
+
+    /* Lumo styles */
+    :host {
+        /* Sizing */
+        --lumo-button-size: var(--lumo-size-m);
+        height: var(--lumo-button-size);
+        margin: var(--lumo-space-xs) 0;
+        box-sizing: border-box;
+        /* Style */
+        font-family: var(--lumo-font-family);
+        font-size: var(--lumo-font-size-m);
+        font-weight: 500;
+        color: var(--_lumo-button-color, var(--lumo-primary-text-color));
+        border-radius: var(--lumo-border-radius-m);
+        cursor: var(--lumo-clickable-cursor);
+        -webkit-tap-highlight-color: transparent;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        flex-shrink: 0;
+    }
+
+    /* For interaction states */
+    :host::before,
+    :host::after {
+        content: '';
+        /* We rely on the host always being relative */
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: currentColor;
+        border-radius: inherit;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Hover */
+    @media (any-hover: hover) {
+        :host(:hover)::before {
+            opacity: 0.02;
+        }
+    }
+
+    /* Active */
+    :host::after {
+        transition: opacity 1.4s, transform 0.1s;
+        filter: blur(8px);
+    }
+
+    :host([active])::before {
+        opacity: 0.05;
+        transition-duration: 0s;
+    }
+
+    :host([active])::after {
+        opacity: 0.1;
+        transition-duration: 0s, 0s;
+        transform: scale(0);
+    }
+
+    /* Keyboard focus */
+    :host([focus-ring]) {
+        box-shadow: 0 0 0 2px var(--lumo-primary-color-50pct);
+    }
+
+    :host([disabled]) {
+        pointer-events: none;
+        color: var(--lumo-disabled-text-color);
+    }
+
+    /* Icons */
+    [part] ::slotted(vaadin-icon) {
+        width: var(--lumo-icon-size-m);
+        height: var(--lumo-icon-size-m);
+        padding: 0;
+    }
+
+    [part] ::slotted(vaadin-icon) {
+        align-self: center;
+        box-sizing: border-box !important;
+    }
+
+    /* --- Jmix own styles --- */
+    :host {
+        padding-left: calc((var(--lumo-button-size) - var(--lumo-icon-size-m)) / 2);
+        padding-right: calc((var(--lumo-button-size) - var(--lumo-icon-size-m)) / 2);
+    }
+
+    [part='counter'] {
+        margin-left: var(--lumo-icon-size-m);
+        margin-bottom: var(--lumo-icon-size-s);
+        width: var(--lumo-icon-size-s);
+        height: var(--lumo-icon-size-s);
+        justify-content: center;
+        padding: calc(var(--lumo-space-xs) - 0.03rem);
+        background-color: var(--lumo-error-color);
+        color: var(--lumo-error-contrast-color);
+    }
+
+    [part='counter-label'] {
+        align-self: center;
+        font-size: var(--lumo-font-size-xs);
+    }
+
+    /* Empty attribute */
+    :host([empty]) [part='counter'] {
+        background-color: hsl(0, 0%, 74%);
+    }
+
+    :host([empty][disabled]) [part='counter'] {
+        background-color: hsl(0, 0%, 89%);
+    }
+
+    /* Disabled */
+    :host([disabled]) [part="counter"] {
+        background-color: hsl(0 85% 80% / 1);
+    }
+
+    /* Loading attribute */
+    :host([loading]) [part="counter"] {
+        background-color: var(--lumo-contrast-30pct);
+    }
+
+    /* RTL */
+    :host([dir='rtl']) [part='counter'] {
+        margin-left: 0;
+        margin-right: var(--lumo-icon-size-m);
+    }
+}

@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-/* Free */
+.received-in-app-notifications-dialog .pagination {
+    align-self: center;
+}
 
-@import './audit/index.css';
-@import './fullcalendar/index.css';
-@import './messagetemplates/index.css';
-@import './pivottable/index.css';
-@import './reports/index.css';
-@import './security/index.css';
-
-/* Premium */
-
-@import './groupgrid/index.css';
-@import './kanban/index.css';
-@import './notifications/index.css';
+.received-in-app-notifications-dialog .notification-datagrid-icon-xs {
+    height: calc(var(--lumo-icon-size-s) / 1.5);
+    width: calc(var(--lumo-icon-size-s) / 1.5);
+}

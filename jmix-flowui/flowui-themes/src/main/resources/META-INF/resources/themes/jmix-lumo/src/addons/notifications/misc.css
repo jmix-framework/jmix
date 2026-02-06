@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-/* Free */
+.notification-body-field {
+    padding-top: 0;
+}
 
-@import './audit/index.css';
-@import './fullcalendar/index.css';
-@import './messagetemplates/index.css';
-@import './pivottable/index.css';
-@import './reports/index.css';
-@import './security/index.css';
+vaadin-combo-box.notification-recipients-field::part(toggle-button),
+vaadin-multi-select-combo-box.notification-recipients-field::part(toggle-button) {
+    display: none;
+}
 
-/* Premium */
+.notification-type-renderer {
+    display: flex;
+    gap: var(--lumo-space-s);
+}
 
-@import './groupgrid/index.css';
-@import './kanban/index.css';
-@import './notifications/index.css';
+.notification-type-renderer-icon {
+    height: var(--lumo-icon-size-s);
+    width: var(--lumo-icon-size-s);
+}
+
+.notification-type-renderer-text {
+    font-size: var(--lumo-font-size-m);
+}

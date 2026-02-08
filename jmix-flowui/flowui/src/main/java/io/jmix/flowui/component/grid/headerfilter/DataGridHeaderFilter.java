@@ -270,7 +270,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     protected void setupButtonFlexGrowStyle(JmixButton button) {
         if (isSmallDevice()) {
-            button.getStyle().set("flex-grow", "1");
+            button.addClassName("small-device");
         }
     }
 

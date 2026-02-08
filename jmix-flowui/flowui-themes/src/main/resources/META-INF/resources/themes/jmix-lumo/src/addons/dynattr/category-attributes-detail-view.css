@@ -21,3 +21,7 @@
 .category-attributes-detail-view :is(.target-views-box, .script-box) {
     padding-bottom: var(--lumo-space-m);
 }
+
+.category-attributes-detail-view .suffix-helper-button {
+    padding-top: 1.9em;
+}

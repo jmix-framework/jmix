@@ -26,9 +26,9 @@
     <facets>
         <settings auto="true"/>
     </facets>
-    <layout expand="detailButtonsBox">
+    <layout expand="editorBox" classNames="attribute-enumeration-detail-view">
         <hbox id="editorBox" width="100%">
-            <vbox height="100%" padding="false" css="flex-grow: 1; width: unset;">
+            <vbox id="valuesBox" height="100%" padding="false" classNames="values-box">
                 <hbox width="100%" expand="valueField">
                     <textField id="valueField" datatype="string"/>
                     <button id="addBtn" action="localizedEnumValuesDataGrid.add"/>
@@ -45,7 +45,8 @@
                     </columns>
                 </dataGrid>
             </vbox>
-            <vbox id="localizationBox" height="100%" visible="false" padding="false" css="flex-grow: 4; width: unset;">
+            <vbox id="localizationBox" height="100%" visible="false" padding="false"
+                  classNames="localization-box">
                 <h3 text="msg://localizationBox.title"/>
             </vbox>
         </hbox>

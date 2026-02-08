@@ -55,7 +55,8 @@
             </tab>
             <tab id="attributesTab" label="msg://tabSheet.attributesTab.label">
                 <codeEditor id="codeEditor" width="100%" height="100%"
-                            mode="JSON" css="padding: unset;"
+                            mode="JSON"
+                            classNames="attributes-editor"
                             showPrintMargin="false"
                             dataContainer="messageTemplateBlockDc" property="attributes"/>
             </tab>

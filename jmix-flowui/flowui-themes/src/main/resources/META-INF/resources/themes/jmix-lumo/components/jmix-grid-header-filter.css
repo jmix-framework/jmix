@@ -25,3 +25,7 @@
 .jmix-grid-header-filter-filter-button {
     color: var(--lumo-tertiary-text-color);
 }
+
+.jmix-grid-header-filter .small-device {
+    flex-grow: 1;
+}

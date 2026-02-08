@@ -23,17 +23,22 @@
         </formLayout>
 
         <hbox id="detailActions" width="100%">
-            <button id="saveAndCloseBtn" action="saveAction"/>
-            <button id="closeBtn" action="closeAction"/>
-            <button id="checkSyntaxBtn"
-                    text="msg://checkSyntaxBtn.text"
-                    title="msg://checkSyntaxBtn.title"
-                    icon="BUG"/>
-            <anchor id="docsLink"
-                    text="msg://docsLink.text"
-                    title="msg://docsLink.title"
-                    href="msg://docUrl"
-                    target="BLANK"/>
+            <startSlot>
+                <button id="saveAndCloseBtn" action="saveAction"/>
+                <button id="closeBtn" action="closeAction"/>
+                <button id="checkSyntaxBtn"
+                        text="msg://checkSyntaxBtn.text"
+                        title="msg://checkSyntaxBtn.title"
+                        icon="BUG"/>
+            </startSlot>
+            <endSlot>
+                <anchor id="docsLink"
+                        text="msg://docsLink.text"
+                        title="msg://docsLink.title"
+                        href="msg://docUrl"
+                        alignSelf="CENTER"
+                        target="BLANK"/>
+            </endSlot>
         </hbox>
     </layout>
 </view>

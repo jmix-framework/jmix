@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-@import './attribute-enumeration-detail-view.css';
-@import './category-attributes-detail-view.css';
-@import './category-list-view.css';
+.attribute-enumeration-detail-view .values-box {
+    flex-grow: 1; width: unset;
+}
+
+.attribute-enumeration-detail-view .localization-box {
+    flex-grow: 4; width: unset;
+}

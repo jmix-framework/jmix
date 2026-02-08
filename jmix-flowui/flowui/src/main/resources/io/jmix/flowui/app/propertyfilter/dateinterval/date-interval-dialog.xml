@@ -19,10 +19,11 @@
     <actions>
         <action id="closeAction" type="view_close" text="msg:///actions.Cancel"/>
     </actions>
-    <layout>
+    <layout classNames="date-interval-dialog">
         <hbox padding="false" width="100%" wrap="true">
-            <radioButtonGroup id="typeRadioButtonGroup" themeNames="vertical" css="flex-shrink: 0;"/>
-            <hbox id="contentBox" padding="false" css="flex-grow: 1;">
+            <radioButtonGroup id="typeRadioButtonGroup" themeNames="vertical"
+                              classNames="type-selector"/>
+            <hbox id="contentBox" padding="false" classNames="content-box">
                 <select id="predefinedIntervalsSelect" width="100%" themeNames="align-center"
                         required="true"
                         requiredMessage="msg://dateIntervalDialog.predefinedIntervalsSelect.requiredMessage"/>

@@ -217,16 +217,15 @@ public class ExceptionDialog implements InitializingBean {
     protected HorizontalLayout createButtonsPanel() {
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidthFull();
-        layout.add(createCloseButton());
+        layout.addToStart(createCloseButton());
 
         if (isExceptionDetailsPermitted()) {
             detailsButton = createDetailsButton();
-            layout.add(detailsButton);
+            layout.addToStart(detailsButton);
         }
 
         copyButton = createCopyButton();
-        copyButton.getStyle().set("margin-inline-start", "auto");
-        layout.add(copyButton);
+        layout.addToEnd(copyButton);
         return layout;
     }
 

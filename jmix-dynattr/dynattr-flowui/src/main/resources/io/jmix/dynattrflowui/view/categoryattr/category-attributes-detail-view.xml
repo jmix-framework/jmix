@@ -45,10 +45,12 @@
         <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout expand="contentBox" alignItems="STRETCH" padding="false" spacing="false">
+    <layout expand="contentBox"
+            alignItems="STRETCH" padding="false" spacing="false"
+            classNames="category-attributes-detail-view">
         <vbox id="contentBox" expand="tabSheet" classNames="overflow-auto" padding="false">
             <tabSheet id="tabSheet" width="100%" height="100%"
-                      classNames="category-attributes-detail-main-tab-sheet">
+                      themeNames="no-padding" classNames="main-tab-sheet">
                 <tab id="mainTab" label="msg://mainTab.title">
                     <vbox height="100%" padding="false"
                           css="padding: var(--lumo-space-m) var(--lumo-space-m) 0 var(--lumo-space-m);">
@@ -95,7 +97,7 @@
                                     </actions>
                                 </valuePicker>
                                 <hbox id="enumerationBox" expand="enumerationField" margin="false"
-                                      classNames="items-end">
+                                      alignItems="END">
                                     <textField id="enumerationField"
                                                label="msg://io.jmix.dynattr.model/CategoryAttribute.enumeration"
                                                dataContainer="categoryAttributeDc"
@@ -172,7 +174,7 @@
                             <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
                         </formLayout>
                         <formLayout width="100%" css="padding-bottom: var(--lumo-space-m)">
-                            <div width="100%" classNames="flex items-start">
+                            <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="validationScriptField"
                                             label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.validatorGroovyScript"
                                             dataContainer="categoryAttributeDc"
@@ -184,8 +186,8 @@
                                             showGutter="true"
                                             highlightGutterLine="false"
                                             showPrintMargin="false"/>
-                            </div>
-                            <div width="100%" classNames="flex items-start">
+                            </flexLayout>
+                            <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="recalculationScriptField"
                                             label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.recalculationScript"
                                             dataContainer="categoryAttributeDc"
@@ -197,8 +199,8 @@
                                             highlightActiveLine="false"
                                             showGutter="true"
                                             mode="GROOVY"/>
-                            </div>
-                            <div width="100%" classNames="flex items-start">
+                            </flexLayout>
+                            <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="optionsLoaderScriptField"
                                             label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.optionsLoaderScript"
                                             dataContainer="categoryAttributeDc"
@@ -210,8 +212,8 @@
                                             highlightActiveLine="false"
                                             mode="GROOVY"
                                             showGutter="true"/>
-                            </div>
-                            <div width="100%" classNames="flex items-start">
+                            </flexLayout>
+                            <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="joinClauseField"
                                             label="msg://io.jmix.dynattr.model/CategoryAttribute.joinClause"
                                             dataContainer="categoryAttributeDc" property="joinClause"
@@ -222,8 +224,8 @@
                                             highlightActiveLine="false"
                                             mode="SQL"
                                             showGutter="true"/>
-                            </div>
-                            <div width="100%" classNames="flex items-start">
+                            </flexLayout>
+                            <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="whereClauseField"
                                             label="msg://io.jmix.dynattr.model/CategoryAttribute.whereClause"
                                             dataContainer="categoryAttributeDc" property="whereClause"
@@ -234,7 +236,7 @@
                                             highlightActiveLine="false"
                                             mode="SQL"
                                             showGutter="true"/>
-                            </div>
+                            </flexLayout>
                         </formLayout>
                     </vbox>
                 </tab>

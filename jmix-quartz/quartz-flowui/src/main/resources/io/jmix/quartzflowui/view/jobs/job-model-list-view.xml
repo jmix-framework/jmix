@@ -18,7 +18,7 @@
         <action id="lookupCancelAction"
                 type="lookup_discard"/>
     </actions>
-    <layout expand="jobModelsTable">
+    <layout expand="jobModelsTable" classNames="job-model-list-view">
         <details id="filterDetails"
                  summaryText="msg://filter"
                  opened="true"

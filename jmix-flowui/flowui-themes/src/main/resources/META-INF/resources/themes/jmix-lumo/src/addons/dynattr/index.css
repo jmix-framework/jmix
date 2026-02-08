@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,4 @@
  * limitations under the License.
  */
 
-.jmix-main-view-navigation > .jmix-search-field{
-    display: flex;
-    margin: auto var(--lumo-space-m) var(--lumo-space-s)  var(--lumo-space-m);
-}
-
-.jmix-main-view-header > .jmix-search-field{
-    margin-inline-start: auto;
-    margin-inline-end: var(--lumo-space-m);
-}
+@import './category-list-view.css';

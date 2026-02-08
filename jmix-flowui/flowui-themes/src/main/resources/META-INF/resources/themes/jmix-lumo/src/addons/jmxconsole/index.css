@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,4 @@
  * limitations under the License.
  */
 
-jmix-tabsheet.category-attributes-detail-main-tab-sheet::part(content) {
-    padding: unset;
-}
-
-.category-list-view-wrapper {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
-}
+@import './jmix-mbean-operation.css';

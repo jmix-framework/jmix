@@ -17,6 +17,6 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://searchResultsView.title">
-    <layout/>
+    <layout classNames="search-results-view"/>
 </view>
 

@@ -208,3 +208,21 @@ vaadin-menu-bar[jmix-role='jmix-user-menu']:not([theme~='substituted']) .user-me
         text-align: center;
     }
 }
+
+/* MenuFilterField component */
+
+.jmix-main-view-navigation > .jmix-menu-filter-field {
+    margin: var(--lumo-space-s) var(--lumo-space-m);
+}
+
+/* Search add-on */
+
+.jmix-main-view-navigation > .jmix-search-field {
+    display: flex;
+    margin: auto var(--lumo-space-m) var(--lumo-space-s) var(--lumo-space-m);
+}
+
+.jmix-main-view-header > .jmix-search-field {
+    margin-inline-start: auto;
+    margin-inline-end: var(--lumo-space-m);
+}

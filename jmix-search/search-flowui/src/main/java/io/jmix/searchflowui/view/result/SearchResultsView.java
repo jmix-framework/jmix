@@ -20,9 +20,11 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayoutVariant;
 import com.vaadin.flow.component.virtuallist.VirtualList;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -244,8 +246,7 @@ public class SearchResultsView extends StandardView {
 
     protected JmixButton createInstanceButton(String entityName, SearchResultEntry entry) {
         JmixButton instanceBtn = uiComponents.create(JmixButton.class);
-        instanceBtn.addClassName("link");
-        instanceBtn.addThemeName("tertiary-inline");
+        instanceBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         instanceBtn.setText(messageTools.getEntityCaption(metadata.getClass(entry.getEntityName())) + " - "
                 + entry.getInstanceName());
         instanceBtn.addClickListener(event -> openEntityView(entry, entityName));
@@ -273,8 +274,7 @@ public class SearchResultsView extends StandardView {
         verticalLayout.setWidthFull();
         verticalLayout.setPadding(false);
         verticalLayout.setSpacing(false);
-        verticalLayout.getThemeList().add("spacing-s");
-        verticalLayout.addClassName("mt-l");
+        verticalLayout.setClassName("search-result-renderer");
 
         JmixButton instanceBtn = createInstanceButton(entry.getEntityName(), entry);
         verticalLayout.add(instanceBtn);
@@ -291,7 +291,7 @@ public class SearchResultsView extends StandardView {
         VerticalLayout hitLayout = uiComponents.create(VerticalLayout.class);
         hitLayout.setPadding(false);
         hitLayout.setSpacing(false);
-        hitLayout.getThemeList().add("spacing-xs");
+        hitLayout.setClassName("search-result-renderer-hit-layout");
 
         Collections.sort(list);
         for (String caption : list) {

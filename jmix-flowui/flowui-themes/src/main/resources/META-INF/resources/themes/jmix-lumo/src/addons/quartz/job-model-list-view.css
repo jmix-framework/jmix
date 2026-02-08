@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-vaadin-grid::part(quartz-job-invalid) {
+
+.job-model-list-view vaadin-grid::part(quartz-job-invalid) {
     color: var(--lumo-error-color-50pct);
 }

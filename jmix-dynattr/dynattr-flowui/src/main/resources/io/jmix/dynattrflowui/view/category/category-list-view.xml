@@ -41,7 +41,7 @@
         <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout classNames="category-list-view-wrapper">
+    <layout classNames="category-list-view">
         <vbox id="categoryBox" padding="false" height="100%" expand="categoriesGrid">
             <h2 id="categoryHeader" text="msg://categoryHeader.text"/>
             <hbox id="buttonsPanel" classNames="buttons-panel">

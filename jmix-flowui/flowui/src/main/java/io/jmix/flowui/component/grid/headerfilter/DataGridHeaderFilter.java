@@ -24,7 +24,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -114,11 +113,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
         root.setPadding(false);
         root.setSpacing(false);
-        root.addClassName(LumoUtility.Display.INLINE_FLEX);
-        root.getThemeList().add("spacing-xs");
-        // Padding for filterButton's focus-ring
-        root.getStyle().set("padding-inline-end", "2px");
-        root.getStyle().set("padding-block", "2px");
+        root.setClassName("jmix-grid-header-filter");
 
         return root;
     }
@@ -179,7 +174,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         filterButton = uiComponents.create(JmixButton.class);
         filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE, ButtonVariant.LUMO_ICON);
         filterButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER));
-        filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
+        filterButton.setClassName("jmix-grid-header-filter-filter-button");
         filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_ROLE);
         filterButton.addClickListener(this::onFilterButtonClick);
 

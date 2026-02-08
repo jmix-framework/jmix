@@ -14,31 +14,6 @@
  * limitations under the License.
  */
 
-.jmix-grid-header-grouper {
-    display: inline-flex;
+.jmix-date-range-picker-root {
     gap: var(--lumo-space-xs);
-
-    padding-inline-end: 2px;
-    padding-block: 2px;
-}
-
-vaadin-grid [jmix-role='grouper-button']:hover {
-    color: var(--lumo-contrast);
-}
-
-vaadin-grid [jmix-role='grouper-button'] {
-    color: var(--lumo-tertiary-text-color);
-}
-
-vaadin-grid-sorter[direction] [jmix-role='grouper-button'] {
-    color: var(--vaadin-selection-color-text, var(--lumo-primary-text-color));
-}
-
-.jmix-grouper-popover::part(content) {
-     padding: var(--lumo-space-xs) var(--lumo-space-xs);
-}
-
-.jmix-group-icon {
-    padding: 0.1em;
-    box-sizing: border-box;
 }

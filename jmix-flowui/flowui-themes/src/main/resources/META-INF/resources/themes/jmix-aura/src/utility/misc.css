@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-.buttons-panel {
-  width: 100%;
-  flex-wrap: wrap;
-}
-
 .bordered-panel {
   border: 1px solid;
   border-color: var(--vaadin-border-color-secondary);

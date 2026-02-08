@@ -18,6 +18,7 @@
 @import './jmix-switch.css';
 @import './jmix-code-editor.css';
 @import './jmix-combo-box-picker.css';
+@import './jmix-date-range-picker.css';
 @import './jmix-value-picker.css';
 @import './jmix-value-picker-button.css';
 @import './jmix-multi-select-combo-box-picker.css';
@@ -35,6 +36,7 @@
 @import './jmix-property-filter.css';
 @import './jmix-group-filter.css';
 @import './jmix-grid-column-visibility.css';
+@import './jmix-grid-header-filter.css';
 @import './jmix-horizontal-menu.css';
 @import './jmix-grid-context-menu.css';
 @import './jmix-user-menu.css';

@@ -39,6 +39,7 @@
     font-size: var(--lumo-font-size-s);
     color: var(--lumo-contrast-70pct);
     padding: var(--lumo-space-s);
+    align-self: center;
 }
 
 .jmix-columns-grouper-clear-all {

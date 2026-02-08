@@ -17,20 +17,16 @@
 package io.jmix.flowui.devserver.compatibility;
 
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.ErrorParameter;
 import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.RouteNotFoundError;
 import com.vaadin.flow.router.internal.DefaultErrorHandler;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import com.vaadin.flow.theme.lumo.LumoUtility;
-import com.vaadin.flow.theme.lumo.LumoUtility.FontWeight;
-import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
-import com.vaadin.flow.theme.lumo.LumoUtility.TextColor;
 
 @Tag(Tag.DIV)
 @AnonymousAllowed
@@ -47,7 +43,10 @@ public class JmixRouteNotFoundError extends RouteNotFoundError {
     private void addStudioCompatibilityNotification() {
         String studioCompatibilityMessage = "Route not found. Please update Jmix Studio to version 2.5.1 or above";
         Span studioCompatibilityMessageSpan = new Span(studioCompatibilityMessage);
-        studioCompatibilityMessageSpan.addClassNames(FontWeight.BOLD, TextColor.ERROR, Margin.SMALL);
+        Style style = studioCompatibilityMessageSpan.getStyle();
+        style.setFontWeight(Style.FontWeight.BOLD);
+        style.setColor("oklch(.59 .2 25)"); // same as aura red
+        style.set("margin", "0.5rem");
 
         VerticalLayout container = new VerticalLayout(studioCompatibilityMessageSpan);
         container.setAlignItems(FlexComponent.Alignment.CENTER);

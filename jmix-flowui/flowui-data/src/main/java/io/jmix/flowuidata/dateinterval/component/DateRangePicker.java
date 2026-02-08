@@ -20,7 +20,6 @@ import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -92,8 +91,7 @@ public class DateRangePicker extends CustomField<CustomDateInterval>
         root = uiComponents.create(HorizontalLayout.class);
         root.setPadding(false);
         root.setSpacing(false);
-
-        root.addClassName(LumoUtility.Gap.Column.XSMALL);
+        root.setClassName("jmix-date-range-picker-root");
         root.setWrap(true);
         root.setAlignItems(FlexComponent.Alignment.BASELINE);
 

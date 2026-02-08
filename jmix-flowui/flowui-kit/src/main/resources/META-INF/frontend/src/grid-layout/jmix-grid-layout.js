@@ -72,7 +72,7 @@ export class JmixGridLayout extends ElementMixin(ThemableMixin(PolylitMixin(Lumo
             },
             gridGap: {
                 type: String,
-                value: 'var(--lumo-space-s)',
+                value: '0.5rem',
                 observer: '_gridGapChanged'
             }
         };

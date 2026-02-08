@@ -14,5 +14,10 @@
  * limitations under the License.
  */
 
-@import './category-attributes-detail-view.css';
-@import './category-list-view.css';
+.category-attributes-detail-view :is(.main-tab-wrapper, .advanced-tab-wrapper) {
+    padding-bottom: 0;
+}
+
+.category-attributes-detail-view :is(.target-views-box, .script-box) {
+    padding-bottom: var(--lumo-space-m);
+}

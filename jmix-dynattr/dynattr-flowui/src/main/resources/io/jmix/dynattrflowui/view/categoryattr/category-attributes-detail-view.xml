@@ -52,8 +52,7 @@
             <tabSheet id="tabSheet" width="100%" height="100%"
                       themeNames="no-padding" classNames="main-tab-sheet">
                 <tab id="mainTab" label="msg://mainTab.title">
-                    <vbox height="100%" padding="false"
-                          css="padding: var(--lumo-space-m) var(--lumo-space-m) 0 var(--lumo-space-m);">
+                    <vbox height="100%" classNames="main-tab-wrapper">
                         <hbox id="attributeBox" width="100%">
                             <formLayout id="attributeForm" dataContainer="categoryAttributeDc" width="100%">
                                 <responsiveSteps>
@@ -126,7 +125,8 @@
                                 <checkbox id="isCollectionField" property="isCollection" visible="false"/>
                             </formLayout>
                         </hbox>
-                        <vbox padding="false" height="100%" css="padding-bottom: var(--lumo-space-m)">
+                        <vbox padding="false" height="100%"
+                              classNames="target-views-box">
                             <h3 text="msg://targetViews"/>
                             <html content="msg://visibilityTab.help"/>
                             <hbox classNames="buttons-panel">
@@ -157,7 +157,7 @@
                     </vbox>
                 </tab>
                 <tab id="advancedTab" label="msg://advancedTab.label">
-                    <vbox height="100%" css="padding-bottom: unset">
+                    <vbox height="100%" classNames="advanced-tab-wrapper">
                         <formLayout id="calculatedValuesAndOptionsForm" dataContainer="categoryAttributeDc"
                                     width="100%">
                             <multiSelectComboBoxPicker id="dependsOnAttributesField"
@@ -173,7 +173,7 @@
                             </checkbox>
                             <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
                         </formLayout>
-                        <formLayout width="100%" css="padding-bottom: var(--lumo-space-m)">
+                        <formLayout width="100%" classNames="script-box">
                             <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="validationScriptField"
                                             label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.validatorGroovyScript"

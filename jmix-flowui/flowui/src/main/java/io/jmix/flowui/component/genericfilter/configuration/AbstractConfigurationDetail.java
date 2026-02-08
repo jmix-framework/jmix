@@ -68,7 +68,7 @@ public abstract class AbstractConfigurationDetail extends Composite<FormLayout>
                 new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
                 new FormLayout.ResponsiveStep("40em", 2, FormLayout.ResponsiveStep.LabelsPosition.TOP)
         );
-        formLayout.addClassName("p-s");
+        formLayout.addClassName("jmix-generic-filter-configuration-detail");
 
         return formLayout;
     }

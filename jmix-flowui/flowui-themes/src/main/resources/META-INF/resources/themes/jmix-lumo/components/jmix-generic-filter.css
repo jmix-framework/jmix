@@ -17,3 +17,7 @@
 .jmix-generic-filter-controls-layout {
     flex-wrap: wrap;
 }
+
+.jmix-generic-filter-configuration-detail {
+    padding: var(--lumo-space-s);
+}

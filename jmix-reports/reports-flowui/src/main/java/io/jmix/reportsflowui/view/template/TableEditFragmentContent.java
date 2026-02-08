@@ -20,7 +20,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.Actions;
@@ -149,9 +148,8 @@ public class TableEditFragmentContent extends VerticalLayout {
         FlexLayout layout = uiComponents.create(FlexLayout.class);
         layout.setId("tableEditDataGridsBox");
         layout.setWidth("100%");
-        layout.setClassName(ReportStyleConstants.DATA_GRIDS_BOX_CLASS_NAME);
+        layout.setClassName("data-grids-box");
         layout.setFlexWrap(FlexLayout.FlexWrap.WRAP);
-        layout.addClassName(LumoUtility.Gap.MEDIUM);
         return layout;
     }
 
@@ -160,7 +158,7 @@ public class TableEditFragmentContent extends VerticalLayout {
         bandBox.setId("tableEditBandBox");
         bandBox.setPadding(false);
         bandBox.setSizeUndefined();
-        bandBox.setClassName(ReportStyleConstants.BAND_BOX_CLASS_NAME);
+        bandBox.setClassName("band-box");
 
         bandsButtonsBox = createBandsButtonsBox();
         bandsDataGrid = createBandsDataGrid();

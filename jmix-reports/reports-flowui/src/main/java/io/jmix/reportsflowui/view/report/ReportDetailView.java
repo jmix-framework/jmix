@@ -1463,7 +1463,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void onJsonPathQueryTextAreaFieldHelpIconClick(ClickEvent<?> event) {
         Html content = new Html(messageBundle.getMessage(
                 "bandsTab.dataSetTypeLayout.jsonPathQueryTextAreaField.helpIcon.dialog.content"));
-        content.addClassName(ReportStyleConstants.TRANSPARENT_CODE_CLASS_NAME);
+        content.addClassName("help-dialog-json");
 
         dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage(

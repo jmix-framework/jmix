@@ -14,3 +14,9 @@
  * limitations under the License.
  */
 
+@import './jmix-entity-tree.css';
+@import './misc.css';
+@import './report-detail-view.css';
+@import './report-template-detail-view.css';
+@import './report-wizard-creator-view.css';
+@import './table-edit-fragment.css';

@@ -57,7 +57,7 @@
                 </columns>
             </dataGrid>
         </hbox>
-        <hbox classNames="jmix-edit-window-actions">
+        <hbox id="detailActions">
             <button id="windowCommitAndClose" action="saveAction"/>
             <button id="windowClose" action="closeAction"/>
         </hbox>

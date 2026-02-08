@@ -16,29 +16,29 @@
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout>
+    <layout classNames="report-template-detail-view">
         <hbox id="templateFields" width="100%">
             <vbox id="fieldsBox" padding="false">
                 <formLayout id="templateForm"
                             dataContainer="reportTemplateDc"
-                            classNames="report-table-edit-fragment-template-form">
+                            classNames="template-form">
                     <textField id="codeField" property="code"
                                label="msg://codeField.label" width="100%"
                                required="true" requiredMessage="msg://codeField.requiredMessage"/>
                     <fileUploadField id="templateUploadField" fileNameVisible="true"
                                      label="msg://templateUploadField.label" width="100%"/>
                     <vbox id="templateFileEditorBox" spacing="false" padding="true" width="100%"
-                          classNames="report-bordered report-codeeditor-box">
-                        <div width="100%" classNames="flex, justify-end">
+                          classNames="bordered-panel code-editor-box">
+                        <flexLayout width="100%" justifyContent="END">
                             <button id="templateFileEditorFullScreenBtn"
                                     text="msg:///fullScreenBtn.title"
                                     themeNames="tertiary-inline"/>
-                        </div>
-                        <div width="100%" classNames="flex, items-start">
+                        </flexLayout>
+                        <flexLayout width="100%" alignItems="START">
                             <codeEditor id="templateFileEditor"
                                         width="100%"
                                         height="20em"/>
-                        </div>
+                        </flexLayout>
                     </vbox>
                     <comboBox id="outputTypeField" property="reportOutputType" label="msg://outputTypeField.label"
                               width="100%"
@@ -58,19 +58,19 @@
                             label="msg://customDefinedByField.label"
                             requiredMessage="msg://customDefinedByField.requiredMessage" width="100%"/>
                     <vbox id="customDefinitionBox" spacing="false" padding="true" width="100%" alignItems="END"
-                          classNames="report-bordered report-codeeditor-box">
-                        <div width="100%" classNames="flex, justify-end">
+                          classNames="bordered-panel code-editor-box">
+                        <flexLayout width="100%" justifyContent="END">
                             <button id="customDefinitionFullScreenBtn"
                                     text="msg:///fullScreenBtn.title"
                                     themeNames="tertiary-inline"/>
-                        </div>
+                        </flexLayout>
                         <vbox width="100%" padding="false">
-                            <div width="100%" classNames="flex, items-start">
+                            <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="customDefinitionField" property="customDefinition"
                                             label="msg://customDefinitionField.label"
                                             height="6em"
                                             requiredMessage="msg://customDefinitionField.requiredMessage" width="100%"/>
-                            </div>
+                            </flexLayout>
                         </vbox>
                     </vbox>
                     <responsiveSteps>

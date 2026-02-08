@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.constant;
+.report-template-detail-view .template-form {
+    max-width: 40em;
+}
 
-public class ReportStyleConstants {
+.report-template-detail-view .code-editor-box {
+    margin-top: var(--lumo-space-s);
+    margin-bottom: var(--lumo-space-s);
+}
 
-    public static final String FIELD_ICON_CLASS_NAME = "report-field-icon";
-    public static final String FIELD_ICON_SIZE_CLASS_NAME = "report-field-icon-size";
+.report-template-detail-view .code-editor-box jmix-code-editor[has-label] {
+    padding: 0;
 }

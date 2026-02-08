@@ -100,7 +100,7 @@ public class TableEditFragment extends AbstractDescriptionEditFragment<TableEdit
 
         content = createContent();
         content.setPadding(false);
-        content.setClassName(ReportStyleConstants.TABLE_EDIT_FRAGMENT_ROOT_CLASS_NAME);
+        content.setClassName("table-edit-fragment");
 
         initBands();
         initColumns();

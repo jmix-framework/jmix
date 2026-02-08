@@ -14,5 +14,12 @@
  * limitations under the License.
  */
 
-@import './data-grid-empty-state-by-permissions-fragment.css';
-@import './exception-dialog-window.css';
+.data-grid-empty-state-by-permissions-fragment {
+    column-gap: var(--lumo-space-s);
+}
+
+.data-grid-empty-state-by-permissions-fragment .empty-state-icon {
+    color: var(--lumo-error-contrast);
+    width: 1em;
+    height: 1em;
+}

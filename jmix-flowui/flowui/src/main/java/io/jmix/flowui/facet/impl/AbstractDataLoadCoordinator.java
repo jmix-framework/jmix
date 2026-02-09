@@ -18,24 +18,20 @@ package io.jmix.flowui.facet.impl;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Composite;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.facet.dataloadcoordinator.OnComponentValueChangedLoadTrigger;
 import io.jmix.flowui.facet.dataloadcoordinator.OnContainerItemChangedLoadTrigger;
-import io.jmix.flowui.facet.dataloadcoordinator.OnViewEventLoadTrigger;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
-import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.View.BeforeShowEvent;
-import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -46,12 +42,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
- * Implementation of the {@link DataLoadCoordinator} interface.
- * This class is responsible for managing data loading triggers in a UI view. It provides
+ * An abstract implementation of the {@link DataLoadCoordinator} interface.
+ * This class is responsible for managing data loading triggers in a UI. It provides
  * mechanisms to configure triggers and associate them with data loaders, components, or instance containers.
  * These triggers allow automatic data loading by observing changes in specific sources or events.
  */
-public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCoordinator {
+public abstract class AbstractDataLoadCoordinator extends AbstractFacet implements DataLoadCoordinator {
 
     protected static final Pattern LIKE_PATTERN = Pattern.compile("\\s+like\\s+:([\\w$]+)");
 
@@ -63,8 +59,8 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
     protected ReflectionCacheManager reflectionCacheManager;
     private final QueryParamValuesManager queryParamValuesManager;
 
-    public DataLoadCoordinatorImpl(ReflectionCacheManager reflectionCacheManager,
-                                   QueryParamValuesManager queryParamValuesManager) {
+    public AbstractDataLoadCoordinator(ReflectionCacheManager reflectionCacheManager,
+                                       QueryParamValuesManager queryParamValuesManager) {
         this.reflectionCacheManager = reflectionCacheManager;
         this.queryParamValuesManager = queryParamValuesManager;
     }
@@ -82,11 +78,6 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
     @Override
     public List<Trigger> getTriggers() {
         return Collections.unmodifiableList(triggers);
-    }
-
-    @Override
-    public void addOnViewEventLoadTrigger(DataLoader loader, Class<?> eventClass) {
-        triggers.add(new OnViewEventLoadTrigger(getOwnerNN(), reflectionCacheManager, loader, eventClass));
     }
 
     @Override
@@ -117,15 +108,16 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
 
     @Override
     public void configureAutomatically() {
-        View<?> owner = getOwnerNN();
-        ViewData viewData = ViewControllerUtils.getViewData(owner);
+        HasDataComponents data = getOwnerData();
 
-        getUnconfiguredLoaders(viewData).forEach(loader -> configureAutomatically(loader, owner));
+        getUnconfiguredLoaders(data).forEach(this::configureAutomatically);
     }
 
-    protected Stream<DataLoader> getUnconfiguredLoaders(ViewData viewData) {
-        return viewData.getLoaderIds().stream()
-                .map(viewData::<DataLoader>getLoader)
+    protected abstract HasDataComponents getOwnerData();
+
+    protected Stream<DataLoader> getUnconfiguredLoaders(HasDataComponents data) {
+        return data.getLoaderIds().stream()
+                .map(data::<DataLoader>getLoader)
                 .distinct()
                 .filter(this::loaderIsNotConfiguredYet);
     }
@@ -136,7 +128,7 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
                 .noneMatch(configuredLoader -> configuredLoader == loader);
     }
 
-    protected void configureAutomatically(DataLoader loader, View<?> view) {
+    protected void configureAutomatically(DataLoader loader) {
         List<String> queryParameters = DataLoadersHelper.getQueryParameters(loader).stream()
                 .filter(paramName ->
                         !queryParamValuesManager.supports(paramName))
@@ -148,25 +140,29 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
         // add triggers on container/component events
         for (String parameter : allParameters) {
             if (parameter.startsWith(containerPrefix)) {
-                InstanceContainer<?> container = ViewControllerUtils.getViewData(view)
+                InstanceContainer<?> container = getOwnerData()
                         .getContainer(parameter.substring(containerPrefix.length()));
 
                 addOnContainerItemChangedLoadTrigger(loader, container, parameter);
 
             } else if (parameter.startsWith(componentPrefix)) {
                 String componentId = parameter.substring(componentPrefix.length());
-                Component component = UiComponentUtils.getComponent(view, componentId);
+                Component component = findComponent(componentId);
                 LikeClause likeClause = findLikeClause(loader, parameter);
 
                 addOnComponentValueChangedLoadTrigger(loader, component, parameter, likeClause);
             }
         }
 
-        // if the loader has no parameters in query, add trigger on BeforeShowEvent
+        // if the loader has no parameters in a query, add trigger on the default event
         if (queryParameters.isEmpty()) {
-            addOnViewEventLoadTrigger(loader, BeforeShowEvent.class);
+            addOnDefaultEventLoadTrigger(loader);
         }
     }
+
+    protected abstract Component findComponent(String componentId);
+
+    protected abstract void addOnDefaultEventLoadTrigger(DataLoader loader);
 
     protected boolean containsLikeClause(Condition condition, String parameter) {
         if (condition instanceof JpqlCondition) {
@@ -239,12 +235,12 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
         return false;
     }
 
-    protected View<?> getOwnerNN() {
-        View<?> view = getOwner();
-        if (view == null) {
-            throw new IllegalStateException("Owner view is null");
+    protected Composite<?> getOwnerNN() {
+        Composite<?> owner = getOwner();
+        if (owner == null) {
+            throw new IllegalStateException("Owner is null");
         }
 
-        return view;
+        return owner;
     }
 }

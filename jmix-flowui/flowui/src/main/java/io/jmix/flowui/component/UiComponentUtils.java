@@ -22,6 +22,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
+import com.vaadin.flow.server.Attributes;
 import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
 import io.jmix.core.FileRef;
@@ -81,16 +82,16 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Returns the component with given id.
+     * Returns the component with the given id.
      *
-     * @param view view to find component from
-     * @param id   component id
+     * @param owner view or fragment to find component from
+     * @param id    component id
      * @return the component with given id
-     * @throws IllegalStateException    if view content is not a container
-     * @throws IllegalArgumentException if a component with given id is not found
+     * @throws IllegalStateException    if the owner content is not a container
+     * @throws IllegalArgumentException if a component with the given id is not found
      */
-    public static Component getComponent(View<?> view, String id) {
-        return findComponent(view, id)
+    public static Component getComponent(Composite<?> owner, String id) {
+        return findComponent(owner, id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         String.format("Component with id '%s' not found", id)));
     }
@@ -228,7 +229,7 @@ public final class UiComponentUtils {
             return ((ComponentContainer) container).getOwnComponents();
         } else if (container instanceof HasComponents) {
             return container.getChildren().sequential().collect(Collectors.toList());
-        } else if (container instanceof View<?>) {
+        } else if (container instanceof View<?> || container instanceof Fragment<?>) {
             return container.getChildren().collect(Collectors.toList());
         } else {
             throw new IllegalArgumentException(container.getClass().getSimpleName() +
@@ -538,6 +539,25 @@ public final class UiComponentUtils {
 
         Optional<Component> parent = component.getParent();
         return parent.map(UiComponentUtils::findFragment).orElse(null);
+    }
+
+    /**
+     * Gets the id of the root element of this component.
+     * <p>
+     * Gets the id of the root element of this component, depending on the attachment context:
+     * <ul>
+     *     <li>If the component is attached to a fragment, the value of {@code fragmentId}
+     *     {@link Attributes attribute} will be returned.</li>
+     *     <li>If the component is attached to a view, the component's original id attribute will be returned.</li>
+     * </ul>
+     *
+     * @return the id, or and empty optional if no id has been set
+     * @see Component#setId(String)
+     * @see FragmentUtils#setComponentId(Component, String)
+     */
+    public static Optional<String> getComponentId(Component component) {
+        return FragmentUtils.getComponentId(component)
+                .or(component::getId);
     }
 
     /**

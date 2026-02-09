@@ -183,6 +183,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected DatatoolsUiProperties datatoolsProperties;
     @Autowired(required = false)
     protected InspectorExportHelper exportHelper;
+    @Autowired
+    protected EntityUpdateDispatcher entityUpdateDispatcher;
 
     protected DataGrid<Object> entitiesDataGrid;
     protected GenericFilter entitiesGenericFilter;
@@ -671,6 +673,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected RemoveAction createRemoveAction(DataGrid<Object> dataGrid) {
         RemoveAction removeAction = actions.create(RemoveAction.ID);
         removeAction.setTarget(dataGrid);
+        removeAction.setDelegate(collection ->
+                entityUpdateDispatcher.remove(dataManager, (Collection<?>) collection));
         return removeAction;
     }
 

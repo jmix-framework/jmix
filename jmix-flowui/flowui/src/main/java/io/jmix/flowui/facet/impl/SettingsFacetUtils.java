@@ -35,9 +35,9 @@ public final class SettingsFacetUtils {
      * @param components    the collection of components to which the settings are to be applied
      * @throws UnsupportedOperationException if the provided settings facet is not of a supported type
      */
-    public static void applySettings(SettingsFacet settingsFacet, Collection<Component> components) {
-        if (settingsFacet instanceof SettingsFacetImpl settingsFacetImpl) {
-            settingsFacetImpl.applyViewSettings(settingsFacetImpl.getManagedComponentsFromCollection(components));
+    public static void applySettings(SettingsFacet<?> settingsFacet, Collection<Component> components) {
+        if (settingsFacet instanceof AbstractSettingsFacet<?> abstractSettingsFacet) {
+            abstractSettingsFacet.applyComponentSettings(abstractSettingsFacet.getManagedComponentsFromCollection(components));
         } else {
             throw new UnsupportedOperationException(String.format(
                     "Settings facet with type %s isn't supported yet", settingsFacet.getClass()));

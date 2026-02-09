@@ -16,13 +16,14 @@
 
 package io.jmix.dynattrflowui.xml.facet.loader;
 
+import com.vaadin.flow.component.Component;
 import io.jmix.dynattrflowui.DynAttrEmbeddingStrategies;
 import io.jmix.dynattrflowui.facet.DynAttrFacet;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.impl.FacetsImpl;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.facet.loader.AbstractFacetLoader;
+import io.jmix.flowui.xml.layout.ComponentLoader;
 
 public class DynAttrFacetLoader extends AbstractFacetLoader<DynAttrFacet> {
 
@@ -39,17 +40,16 @@ public class DynAttrFacetLoader extends AbstractFacetLoader<DynAttrFacet> {
         if (facets instanceof FacetsImpl facetsImpl) {
             FacetProvider<DynAttrFacet> provider = facetsImpl.getProvider(DynAttrFacet.class);
 
-            if (provider != null) {
-                provider.loadFromXml(resultFacet, element, context);
+            if (provider != null && context instanceof ComponentLoader.ComponentContext componentContext) {
+                provider.loadFromXml(resultFacet, element, componentContext);
                 return;
             }
         }
 
-        View<?> view = context.getView();
-        context.addInitTask(__ -> {
-            UiComponentUtils.traverseComponents(view, component ->
-                    getEmbeddingStrategies().embedAttributes(component, view));
-        });
+        Component owner = context.getOrigin();
+        context.addInitTask(__ ->
+                UiComponentUtils.traverseComponents(owner, component ->
+                        getEmbeddingStrategies().embedAttributes(component, owner)));
     }
 
     protected DynAttrEmbeddingStrategies getEmbeddingStrategies() {

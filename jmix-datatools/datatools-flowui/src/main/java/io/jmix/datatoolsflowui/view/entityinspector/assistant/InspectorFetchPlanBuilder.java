@@ -84,6 +84,11 @@ public class InspectorFetchPlanBuilder {
         fetchPlanBuilder.addFetchPlan(FetchPlan.BASE);
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             switch (metaProperty.getType()) {
+                case DATATYPE:
+                    if (withCollections && metadataTools.isElementCollection(metaProperty)) {
+                        fetchPlanBuilder.add(metaProperty.getName());
+                    }
+                    break;
                 case EMBEDDED:
                     if (withEmbedded) {
                         MetaClass metaPropertyClass = metaProperty.getRange().asClass();

@@ -16,11 +16,11 @@
 
 package io.jmix.flowui.facet;
 
-import io.jmix.flowui.view.View;
+import com.vaadin.flow.component.Composite;
 import org.springframework.lang.Nullable;
 
 /**
- * Non-visual component of a {@link View}.
+ * Non-visual component of a {@link FacetOwner}.
  */
 public interface Facet {
 
@@ -40,15 +40,17 @@ public interface Facet {
     void setId(@Nullable String id);
 
     /**
-     * @return a view containing this facet
+     * @param <T> the type of the owner
+     * @return an owner containing this facet
      */
     @Nullable
-    View<?> getOwner();
+    <T extends Composite<?> & FacetOwner> T getOwner();
 
     /**
-     * Sets a view containing this facet.
+     * Sets an owner containing this facet.
      *
-     * @param owner a view containing this facet
+     * @param owner an owner containing this facet
+     * @param <T>   the type of the owner
      */
-    void setOwner(@Nullable View<?> owner);
+    <T extends Composite<?> & FacetOwner> void setOwner(@Nullable T owner);
 }

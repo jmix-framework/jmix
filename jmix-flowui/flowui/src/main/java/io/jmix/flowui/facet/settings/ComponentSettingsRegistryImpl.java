@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,17 +32,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * Collects {@link ComponentSettingsBinder} and provides information for which component registered settings class.
  */
 @Internal
-@org.springframework.stereotype.Component("flowui_ViewSettingsComponentRegistryImpl")
-public class ViewSettingsComponentRegistryImpl implements ViewSettingsComponentRegistry, InitializingBean {
+@org.springframework.stereotype.Component("flowui_ComponentSettingsRegistryImpl")
+public class ComponentSettingsRegistryImpl implements ComponentSettingsRegistry, InitializingBean {
 
-    private static final Logger log = LoggerFactory.getLogger(ViewSettingsComponentRegistryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ComponentSettingsRegistryImpl.class);
 
     protected List<ComponentSettingsBinder<?, ?>> binders;
 
     protected Map<Class<? extends Component>, ComponentSettingsBinder<?, ?>> componentBinders =
             new ConcurrentHashMap<>();
 
-    public ViewSettingsComponentRegistryImpl(List<ComponentSettingsBinder<?, ?>> binders) {
+    public ComponentSettingsRegistryImpl(List<ComponentSettingsBinder<?, ?>> binders) {
         this.binders = binders;
     }
 
@@ -62,7 +62,7 @@ public class ViewSettingsComponentRegistryImpl implements ViewSettingsComponentR
             return binder.getSettingsClass();
         }
 
-        throw new IllegalStateException(String.format("Can't find settings class for '%s'", componentClass));
+        throw new IllegalStateException("Can't find settings class for '%s'".formatted(componentClass));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ViewSettingsComponentRegistryImpl implements ViewSettingsComponentR
             return binder;
         }
 
-        throw new IllegalStateException(String.format("Cannot find settings binder for '%s'", componentClass));
+        throw new IllegalStateException("Cannot find settings binder for '%s'".formatted(componentClass));
     }
 
     @Override

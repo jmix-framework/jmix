@@ -327,7 +327,7 @@ IN: 'IN';
 in_item
     : string_literal | numeric_literal | single_valued_input_parameter | enum_function;
 like_expression
-    : string_expression ('NOT')? 'LIKE' (string_expression | pattern_value | input_parameter)('ESCAPE' escape_character)?;
+    : (string_expression | identification_variable) ('NOT')? 'LIKE' (string_expression | pattern_value | input_parameter)('ESCAPE' escape_character)?;
 null_comparison_expression
     : (path_expression | input_parameter | join_association_path_expression) 'IS' ('NOT')? 'NULL';
 empty_collection_comparison_expression

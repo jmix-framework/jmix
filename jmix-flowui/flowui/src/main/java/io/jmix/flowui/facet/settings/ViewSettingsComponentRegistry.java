@@ -16,32 +16,11 @@
 
 package io.jmix.flowui.facet.settings;
 
-import com.vaadin.flow.component.Component;
-import io.jmix.flowui.component.details.JmixDetails;
-import io.jmix.flowui.facet.settings.component.binder.ComponentSettingsBinder;
-
 /**
  * Provides information for which component registered settings class.
+ *
+ * @deprecated use {@link ComponentSettingsRegistry} instead
  */
-public interface ViewSettingsComponentRegistry {
-
-    /**
-     * @param componentClass component class (e.g. {@link JmixDetails})
-     * @return component settings class
-     * @throws IllegalStateException if there is no component settings class registered for the component class
-     */
-    Class<? extends Settings> getSettingsClass(Class<? extends Component> componentClass);
-
-    /**
-     * @param componentClass component class (e.g. {@link JmixDetails})
-     * @return settings binder
-     * @throws IllegalStateException if there is no component settings binder registered for the component class
-     */
-    ComponentSettingsBinder<?, ?> getSettingsBinder(Class<? extends Component> componentClass);
-
-    /**
-     * @param componentClass component class (e.g. {@link JmixDetails})
-     * @return {@code true} if settings is registered for the component class
-     */
-    boolean isSettingsRegisteredFor(Class<? extends Component> componentClass);
+@Deprecated(since = "3.0", forRemoval = true)
+public interface ViewSettingsComponentRegistry extends ComponentSettingsRegistry {
 }

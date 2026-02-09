@@ -25,6 +25,7 @@ import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
+import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.kit.meta.StudioIgnore;
 import io.jmix.flowui.model.ViewData;
@@ -68,7 +69,8 @@ import static io.micrometer.core.instrument.Timer.start;
  * @param <T> type of the root UI component
  */
 public class View<T extends Component> extends Composite<T>
-        implements BeforeEnterObserver, AfterNavigationObserver, BeforeLeaveObserver, HasDynamicTitle, FragmentOwner {
+        implements BeforeEnterObserver, AfterNavigationObserver, BeforeLeaveObserver, HasDynamicTitle,
+        FragmentOwner, FacetOwner {
 
     private ApplicationContext applicationContext;
     private MeterRegistry meterRegistry;

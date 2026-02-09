@@ -65,13 +65,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         this.context = context;
     }
 
-    protected ComponentContext getComponentContext() {
-        checkState(context instanceof ComponentContext,
-                "'context' must implement " + ComponentContext.class.getName());
-
-        return (ComponentContext) context;
-    }
-
     protected abstract T createComponent();
 
     @Override

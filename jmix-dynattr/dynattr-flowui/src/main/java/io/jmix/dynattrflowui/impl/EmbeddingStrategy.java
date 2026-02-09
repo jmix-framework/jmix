@@ -17,11 +17,10 @@
 package io.jmix.dynattrflowui.impl;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.view.View;
 
 public interface EmbeddingStrategy {
 
     boolean supportComponent(Component component);
 
-    void embed(Component component, View<?> owner);
+    void embed(Component component, Component owner);
 }

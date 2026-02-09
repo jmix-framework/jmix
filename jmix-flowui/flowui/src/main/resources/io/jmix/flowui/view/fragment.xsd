@@ -29,10 +29,63 @@
             <xs:all>
                 <xs:element name="data" type="data:fragmentData" minOccurs="0"/>
                 <xs:element name="actions" type="layout:viewActions" minOccurs="0"/>
+                <xs:element name="facets" type="fragmentFacets" minOccurs="0"/>
                 <xs:element name="content" type="fragmentContent"/>
             </xs:all>
         </xs:complexType>
     </xs:element>
+
+    <!-- Fragment Facets -->
+    <xs:complexType name="fragmentFacets">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="fragmentDataLoadCoordinator" type="fragmentDataLoadCoordinatorType" minOccurs="0"/>
+                <xs:element name="urlQueryParameters" type="layout:urlQueryParametersType" minOccurs="0"/>
+                <xs:element name="timer" type="layout:timerType" minOccurs="0"/>
+                <xs:element name="fragmentSettings" type="layout:settingsFacetType" minOccurs="0"/>
+
+                <!-- allow custom facets from any namespace -->
+                <xs:any/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="fragmentDataLoadCoordinatorType">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="refresh" type="dataLoadCoordinatorTriggerType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="auto" type="xs:boolean"/>
+        <xs:attribute name="containerPrefix" type="xs:string"/>
+        <xs:attribute name="componentPrefix" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="dataLoadCoordinatorTriggerType">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="onFragmentEvent" type="onFragmentEventType"/>
+                <xs:element name="onContainerItemChanged" type="layout:onContainerItemChangedType"/>
+                <xs:element name="onComponentValueChanged" type="layout:onComponentValueChangedType"/>
+            </xs:choice>
+        </xs:sequence>
+
+        <xs:attribute name="loader" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="onFragmentEventType">
+        <xs:attribute name="type" type="onFragmentEventEnum" use="required"/>
+    </xs:complexType>
+
+    <xs:simpleType name="onFragmentEventEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Ready"/>
+            <xs:enumeration value="Host.Init"/>
+            <xs:enumeration value="Host.BeforeShow"/>
+            <xs:enumeration value="Host.Ready"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <!-- Fragment Component -->
     <xs:complexType name="fragmentContent">

@@ -37,6 +37,12 @@ public class QueryHintsProcessor {
                 (query, value) -> query.setHint(org.eclipse.persistence.config.QueryHints.HINT, value));
         hintHandlers.put(PersistenceHints.MSSQL_RECOMPILE_HINT,
                 (query, value) -> query.setHint(org.eclipse.persistence.config.QueryHints.HINT, "OPTION(RECOMPILE)"));
+        hintHandlers.put(org.eclipse.persistence.config.QueryHints.CACHE_RETRIEVE_MODE,
+                (query, value) -> query.setHint(org.eclipse.persistence.config.QueryHints.CACHE_RETRIEVE_MODE, value));
+        hintHandlers.put(org.eclipse.persistence.config.QueryHints.CACHE_STORE_MODE,
+                (query, value) -> query.setHint(org.eclipse.persistence.config.QueryHints.CACHE_STORE_MODE, value));
+        hintHandlers.put(org.eclipse.persistence.config.QueryHints.QUERY_TIMEOUT,
+                (query, value) -> query.setHint(org.eclipse.persistence.config.QueryHints.QUERY_TIMEOUT, value));
     }
 
     public void applyQueryHint(JpaQuery query, String hintName, Object value) {

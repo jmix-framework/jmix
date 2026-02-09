@@ -16,7 +16,7 @@
 
 package facet_registration
 
-
+import facet_registration.view.FacetRegistrationFragmentHostTestView
 import facet_registration.view.FacetRegistrationTestView
 import io.jmix.flowui.Facets
 import io.jmix.flowui.facet.Timer
@@ -54,10 +54,27 @@ class FacetRegistrationTest extends FlowuiTestSpecification {
         secondTimerFacet.class == TestSecondTimerFacet
         thirdTimerFacet.class == TestThirdTimerFacet
 
-        when: "Open view with declarative button"
+        when: "Open view with declarative facet"
         def view = navigateToView(FacetRegistrationTestView)
 
         then: "Loaded facet should have default autostart true that is defined in the extended loader"
         view.timer.autostart
+    }
+
+    def "Check facet replacement for the fragment"() {
+        when: """
+             Facet loader and implementation replacement has the following view:
+                FragmentDataLoadCoordinatorFacetLoader <- ExtFragmentDataLoadCoordinatorFacetLoader
+                TimerImpl <- TestThirdTimerFacet
+                The 'TestThirdTimerFacet' has the priority
+             """
+        def view = navigateToView(FacetRegistrationFragmentHostTestView)
+
+        then: "Loaded facet should have hardcoded id via loader and TestThirdTimerFacet type"
+        def facet = view.fragment.extFragmentDataLoadCoordinatorFacet
+
+        facet != null
+        facet.id == 'extFragmentDataLoadCoordinatorFacet'
+        facet.class == ExtFragmentDataLoadCoordinatorFacet
     }
 }

@@ -63,6 +63,22 @@ public interface ComponentLoader<T extends Component> {
         String getMessageGroup();
 
         /**
+         * Adds Pre {@link InitTask} that will be executed according to the
+         * origin component lifecycle.
+         * <p>
+         * Note: Pre InitTasks will be executed before DependencyManager
+         * invocation to have precedence over @Subscribe methods
+         *
+         * @param task a task to add
+         */
+        void addPreInitTask(InitTask task);
+
+        /**
+         * Executes all added {@link InitTask}s
+         */
+        void executePreInitTasks();
+
+        /**
          * Adds {@link InitTask} that will be executed according to the
          * origin component lifecycle.
          *
@@ -95,22 +111,6 @@ public interface ComponentLoader<T extends Component> {
          * @return an origin view
          */
         View<?> getView();
-
-        /**
-         * Adds Pre {@link InitTask} that will be executed according to the
-         * origin component lifecycle.
-         * <p>
-         * Note: Pre InitTasks will be executed before DependencyManager
-         * invocation to have precedence over @Subscribe methods
-         *
-         * @param task a task to add
-         */
-        void addPreInitTask(InitTask task);
-
-        /**
-         * Executes all added {@link InitTask}s
-         */
-        void executePreInitTasks();
 
         /**
          * Add {@link ComponentLoader.AutowireTask} that will be executed according to the origin component lifecycle.

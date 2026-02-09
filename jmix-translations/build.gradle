@@ -141,8 +141,16 @@ task contentJarDa(type: Jar) {
     }
 }
 
+task contentJarZhTw(type: Jar) {
+    archiveBaseName = 'jmix-translations-zh-tw'
+    includeEmptyDirs = false
+    from("content") {
+        include("**/messages_zh_TW.properties")
+    }
+}
+
 assemble.dependsOn(contentJarRu, contentJarFr, contentJarDe, contentJarNl, contentJarZhCn, contentJarRo, contentJarEl, contentJarCkb,
-        contentJarIt, contentJarAr, contentJarTr, contentJarEs, contentJarPtBr, contentJarCs, contentJarDa)
+        contentJarIt, contentJarAr, contentJarTr, contentJarEs, contentJarPtBr, contentJarCs, contentJarDa, contentJarZhTw)
 
 publishing {
     publications {
@@ -205,6 +213,10 @@ publishing {
         Da(MavenPublication) {
             artifactId = 'jmix-translations-da'
             artifact(contentJarDa)
+        }
+        ZhTw(MavenPublication) {
+            artifactId = 'jmix-translations-zh-tw'
+            artifact(contentJarZhTw)
         }
     }
     if (rootProject.hasProperty('jmixUploadUrl')) {

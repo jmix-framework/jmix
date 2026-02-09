@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.DetachEvent;
 import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.facet.settings.UiComponentSettings;
 import io.jmix.flowui.facet.settings.ViewSettings;
 import io.jmix.flowui.facet.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.flowui.view.View;
@@ -32,15 +33,15 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * Provides ability to save component states when {@link View} is closed and restore them
+ * Provides an ability to save component states when {@link FacetOwner} is closed and restore them
  * when it's opened again.
  * <p>
  * For instance, it can be 'opened' state from {@link JmixDetails} or columns order in {@link DataGrid}.
  * <p>
  * Note, facet works with components that contain an id and have {@link ComponentSettingsBinder}.
- * Otherwise, it cannot match saved settings with component.
+ * Otherwise, it cannot match saved settings with a component.
  */
-public interface SettingsFacet extends Facet {
+public interface SettingsFacet<S extends UiComponentSettings<S>> extends Facet {
 
     /**
      * @return the mode in which facet is worked. {@code true} if facet includes all components and {@code false}
@@ -62,13 +63,13 @@ public interface SettingsFacet extends Facet {
     void setAuto(boolean auto);
 
     /**
-     * @return {@link View} settings or {@code null} if facet is not attached to the {@link View}
+     * @return {@link UiComponentSettings} or {@code null} if facet is not attached to the {@link FacetOwner}
      */
     @Nullable
-    ViewSettings getSettings();
+    S getSettings();
 
     /**
-     * Restores settings for components. Facet applies settings on {@link View}'s {@link ReadyEvent}.
+     * Restores settings for components. Facet applies settings on {@link FacetOwner Owner's} {@link ReadyEvent}.
      */
     void applySettings();
 
@@ -76,19 +77,19 @@ public interface SettingsFacet extends Facet {
      * Restores settings that related with data loading. For instance, it applies sort columns and its
      * direction in {@link DataGrid} before data loading.
      * <p>
-     * Facet applies data loading settings on {@link View}'s {@link BeforeShowEvent}.
+     * Facet applies data loading settings on {@link FacetOwner Owner's} {@link BeforeShowEvent}.
      */
     void applyDataLoadingSettings();
 
     /**
-     * Persists settings to store. Facet saves settings on {@link View}'s {@link DetachEvent}.
+     * Persists settings to store. Facet saves settings on {@link FacetOwner Owner's} {@link DetachEvent}.
      */
     void saveSettings();
 
     /**
      * Adds component ids that should be managed when {@link #isAuto()} returns {@code false}.
      * <p>
-     * Note, component must be attached to the {@link View}, otherwise it will be ignored.
+     * Note, component must be attached to the {@link FacetOwner Owner's}, otherwise it will be ignored.
      *
      * @param ids component ids
      */
@@ -114,9 +115,9 @@ public interface SettingsFacet extends Facet {
     Set<String> getExcludedComponentIds();
 
     /**
-     * Collection depends on {@link #isAuto()} property. If {@link #isAuto()} returns {@code true}, collection will be
-     * filled by {@link View}'s components, otherwise collection will be filled by components that explicitly added by
-     * {@link #addComponentIds(String...)}.
+     * Collection depends on {@link #isAuto()} property. If {@link #isAuto()} returns {@code true}, a collection will be
+     * filled by {@link FacetOwner Owner's} components, otherwise a collection will be filled by components
+     * that explicitly added by {@link #addComponentIds(String...)}.
      *
      * @return components collection that is used for applying and saving settings
      */
@@ -126,78 +127,81 @@ public interface SettingsFacet extends Facet {
      * @return apply settings delegate or {@code null} if not set
      */
     @Nullable
-    Consumer<SettingsContext> getApplySettingsDelegate();
+    Consumer<SettingsContext<S>> getApplySettingsDelegate();
 
     /**
-     * Sets handler that should be invoked instead of default facet's logic for applying settings.
+     * Sets handler that should be invoked instead of the default facet's logic for applying settings.
      * <p>
      * For instance:
-     * <pre>
-     * &#64;Install(to = "settingsFacet", subject = "applySettingsDelegate")
-     * private void onApplySettings(SettingsFacet.SettingsContext settingsContext) {
-     *     settingsFacet.applySettings();
+     * <pre> {@code
+     *      @Install(to = "settingsFacet", subject = "applySettingsDelegate")
+     *      private void onApplySettings(SettingsFacet.SettingsContext settingsContext) {
+     *          settingsFacet.applySettings();
+     *      }
      * }
      * </pre>
      *
      * @param delegate handler to set
      */
-    void setApplySettingsDelegate(@Nullable Consumer<SettingsContext> delegate);
+    void setApplySettingsDelegate(@Nullable Consumer<SettingsContext<S>> delegate);
 
     /**
      * @return apply data loading settings delegate or {@code null} if not set
      */
     @Nullable
-    Consumer<SettingsContext> getApplyDataLoadingSettingsDelegate();
+    Consumer<SettingsContext<S>> getApplyDataLoadingSettingsDelegate();
 
     /**
-     * Sets handler that should be invoked instead of default facet's logic for applying data loading settings.
+     * Sets handler that should be invoked instead of the default facet's logic for applying data loading settings.
      * <p>
      * For instance:
-     * <pre>
-     * &#64;Install(to = "settingsFacet", subject = "applyDataLoadingSettingsDelegate")
-     * private void onApplyDataLoadingSettings(SettingsFacet.SettingsContext settingsContext) {
-     *     settingsFacet.applyDataLoadingSettings();
+     * <pre> {@code
+     *      @Install(to = "settingsFacet", subject = "applyDataLoadingSettingsDelegate")
+     *      private void onApplyDataLoadingSettings(SettingsFacet.SettingsContext settingsContext) {
+     *          settingsFacet.applyDataLoadingSettings();
+     *      }
      * }
      * </pre>
      *
      * @param delegate handler to set
      */
-    void setApplyDataLoadingSettingsDelegate(@Nullable Consumer<SettingsContext> delegate);
+    void setApplyDataLoadingSettingsDelegate(@Nullable Consumer<SettingsContext<S>> delegate);
 
     /**
      * @return save settings delegate or {@code null} if not set
      */
     @Nullable
-    Consumer<SettingsContext> getSaveSettingsDelegate();
+    Consumer<SettingsContext<S>> getSaveSettingsDelegate();
 
     /**
-     * Sets handler that should be invoked instead of default facet's logic for saving settings.
+     * Sets handler that should be invoked instead of the default facet's logic for saving settings.
      * <p>
      * For instance:
-     * <pre>
-     * &#64;Install(to = "settingsFacet", subject = "saveSettingsDelegate")
-     * private void onSaveSettings(SettingsFacet.SettingsContext settingsContext) {
-     *     settingsFacet.saveSettings();
+     * <pre>{@code
+     *      @Install(to = "settingsFacet", subject = "saveSettingsDelegate")
+     *      private void onSaveSettings(SettingsFacet.SettingsContext settingsContext) {
+     *          settingsFacet.saveSettings();
+     *      }
      * }
      * </pre>
      *
      * @param delegate handler to set
      */
-    void setSaveSettingsDelegate(@Nullable Consumer<SettingsContext> delegate);
+    void setSaveSettingsDelegate(@Nullable Consumer<SettingsContext<S>> delegate);
 
     /**
-     * Provides information about source component and components that should be managed by facet.
+     * Provides information about a source component and components that facet should manage.
      */
-    class SettingsContext {
+    class SettingsContext<S extends UiComponentSettings<S>> {
 
         protected Component source;
         protected Collection<Component> components;
-        protected ViewSettings viewSettings;
+        protected S settings;
 
-        public SettingsContext(Component source, Collection<Component> components, ViewSettings viewSettings) {
+        public SettingsContext(Component source, Collection<Component> components, S settings) {
             this.source = source;
             this.components = components;
-            this.viewSettings = viewSettings;
+            this.settings = settings;
         }
 
         /**
@@ -216,9 +220,22 @@ public interface SettingsFacet extends Facet {
 
         /**
          * @return {@link View} settings
+         * @deprecated use {@link #getSettings()} instead
          */
+        @Deprecated(since = "3.0", forRemoval = true)
         public ViewSettings getViewSettings() {
-            return viewSettings;
+            if (settings instanceof ViewSettings viewSettings) {
+                return viewSettings;
+            }
+
+            throw new IllegalStateException("Settings are not of %s type".formatted(ViewSettings.class.getSimpleName()));
+        }
+
+        /**
+         * @return component settings
+         */
+        public S getSettings() {
+            return settings;
         }
     }
 }

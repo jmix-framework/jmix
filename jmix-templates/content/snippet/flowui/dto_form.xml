@@ -78,6 +78,16 @@ def initDefaultFieldAttrs(attr) {
 		fieldAttrs['fileNameVisible'] = "true"
 	}
 
+	if (attr.isElementCollection()) {
+		field.tag = 'multiValuePicker'
+		StringBuilder builder = new StringBuilder()
+		builder.append("<actions>")
+		builder.append("<action id=\"value_selectAction\" type=\"multi_value_select\"/>")
+		builder.append("<action id=\"clearAction\" type=\"value_clear\"/>")
+		builder.append("</actions>")
+		field.text = builder.toString()
+	}
+
 	if(lookupActions) {
 		def actions = attr.getLookupActions()
 		if(!actions.isEmpty()) {

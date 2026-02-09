@@ -54,7 +54,8 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
     @Autowired
     protected DataManager dataManager;
-
+    @Autowired
+    protected MetadataTools metadataTools;
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
@@ -206,6 +207,9 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
             MetaPropertyPath mpp = container.getEntityMetaClass().getPropertyPath(propertyCondition.getProperty());
             if (mpp == null) {
                 return false;
+            }
+            if (metadataTools.isElementCollection(mpp.getMetaProperty())) {
+                return true;
             }
             MetaProperty[] metaProperties = mpp.getMetaProperties();
             //length - 1 because no duplicates will be produced if the only x-to-many property is the last one

@@ -167,23 +167,53 @@ public class PropertyFilterSupport {
             }
         } else if (mppRange.isDatatype()) {
             Class<?> type = mppRange.asDatatype().getJavaClass();
+            boolean elementCollection = metadataTools.isElementCollection(mpp.getMetaProperty());
 
             if (String.class.equals(type)) {
-                return EnumSet.of(CONTAINS, NOT_CONTAINS, EQUAL, NOT_EQUAL, IS_SET, STARTS_WITH, ENDS_WITH, IN_LIST,
-                        NOT_IN_LIST);
+                EnumSet<Operation> enumSet = EnumSet.of(CONTAINS, NOT_CONTAINS, EQUAL, NOT_EQUAL, STARTS_WITH, ENDS_WITH, IN_LIST, NOT_IN_LIST);
+                if (elementCollection) {
+                    enumSet.add(IS_COLLECTION_EMPTY);
+                } else {
+                    enumSet.add(IS_SET);
+                }
+                return enumSet;
             } else if (dateTimeClasses.contains(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
-                        NOT_IN_LIST, IN_INTERVAL, DATE_EQUALS);
+                EnumSet<Operation> enumSet = EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IN_LIST, NOT_IN_LIST);
+                if (elementCollection) {
+                    enumSet.add(IS_COLLECTION_EMPTY);
+                } else {
+                    enumSet.add(IS_SET);
+                    enumSet.add(IN_INTERVAL);
+                    enumSet.add(DATE_EQUALS);
+                }
+                return enumSet;
             } else if (timeClasses.contains(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET,
-                        IN_INTERVAL);
+                EnumSet<Operation> enumSet = EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL);
+                if (elementCollection) {
+                    enumSet.add(IS_COLLECTION_EMPTY);
+                } else {
+                    enumSet.add(IS_SET);
+                    enumSet.add(IN_INTERVAL);
+                }
+                return enumSet;
             } else if (Number.class.isAssignableFrom(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
-                        NOT_IN_LIST);
+                EnumSet<Operation> enumSet = EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IN_LIST, NOT_IN_LIST);
+                if (elementCollection) {
+                    enumSet.add(IS_COLLECTION_EMPTY);
+                } else {
+                    enumSet.add(IS_SET);
+                }
+                return enumSet;
             } else if (Boolean.class.equals(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET);
             } else if (UUID.class.equals(type) || URI.class.equals(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
+                EnumSet<Operation> enumSet = EnumSet.of(EQUAL, NOT_EQUAL, IN_LIST, NOT_IN_LIST);
+                if (elementCollection) {
+                    enumSet.add(IS_COLLECTION_EMPTY);
+                } else {
+                    enumSet.add(IS_SET);
+                }
+                return enumSet;
             } else {
                 log.warn("Cannot find predefined PropertyFilter operations for {} datatype. " +
                         "The default set of operations (EQUAL, NOT_EQUAL, IS_SET) will be used", type);

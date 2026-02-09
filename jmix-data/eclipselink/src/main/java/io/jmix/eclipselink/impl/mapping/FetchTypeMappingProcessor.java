@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Updates mapping by setting a correct fetch type - lazy or eager.
- * Relational mappings: 1:1, 1:m, m:1, m:m are set to lazy. Other types like {@link org.eclipse.persistence.mappings.AggregateObjectMapping}
- * are set to eager.
+ * Relational mappings: 1:1, 1:m, m:1, m:m and element collections are set to lazy.
+ * Other types like {@link org.eclipse.persistence.mappings.AggregateObjectMapping} are set to eager.
  */
 @Component("eclipselink_FetchTypeMappingProcessor")
 public class FetchTypeMappingProcessor implements MappingProcessor {
@@ -38,16 +38,17 @@ public class FetchTypeMappingProcessor implements MappingProcessor {
         String entityClassName = mapping.getDescriptor().getJavaClass().getSimpleName();
 
         if (mapping.isOneToOneMapping() || mapping.isOneToManyMapping()
-                || mapping.isManyToOneMapping() || mapping.isManyToManyMapping()) {
+                || mapping.isManyToOneMapping() || mapping.isManyToManyMapping()
+                || mapping.isElementCollectionMapping()) {
             if (!mapping.isLazy()) {
                 mapping.setIsLazy(true);
-                log.warn("EAGER fetch type detected for reference field {} of entity {}; Set to LAZY",
+                log.warn("EAGER fetch type detected for reference or element collection field {}.{}; Set to LAZY",
                         mapping.getAttributeName(), entityClassName);
             }
         } else {
             if (mapping.isLazy()) {
                 mapping.setIsLazy(false);
-                log.warn("LAZY fetch type detected for basic field {} of entity {}; Set to EAGER",
+                log.warn("LAZY fetch type detected for basic field {}.{}; Set to EAGER",
                         mapping.getAttributeName(), entityClassName);
             }
         }

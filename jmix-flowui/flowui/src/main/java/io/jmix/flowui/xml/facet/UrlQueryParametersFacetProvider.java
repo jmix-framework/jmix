@@ -22,6 +22,7 @@ import io.jmix.flowui.facet.impl.UrlQueryParametersFacetImpl;
 import io.jmix.flowui.facet.urlqueryparameters.UrlQueryParametersBinderProvider;
 import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
 import io.jmix.flowui.view.navigation.RouteSupport;
+import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.apache.commons.collections4.CollectionUtils;
@@ -78,7 +79,7 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
         }
     }
 
-    protected void loadBinder(UrlQueryParametersFacet facet, Element element, ComponentContext context) {
+    protected void loadBinder(UrlQueryParametersFacet facet, Element element, ComponentLoader.Context context) {
         for (UrlQueryParametersBinderProvider binderProvider : binderProviders) {
             if (binderProvider.supports(element)) {
                 binderProvider.load(facet, element, context);

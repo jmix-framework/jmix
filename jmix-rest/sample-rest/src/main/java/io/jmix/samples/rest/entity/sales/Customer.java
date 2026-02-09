@@ -17,18 +17,27 @@
 package io.jmix.samples.rest.entity.sales;
 
 
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.datatype.impl.EnumUtils;
-import io.jmix.samples.rest.entity.StandardEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
-@Entity(name = "sales$Customer")
+import java.util.UUID;
+
+@Entity(name = "sales_Customer")
 @JmixEntity
 @Table(name = "SALES_CUSTOMER")
-public class Customer extends StandardEntity {
+public class Customer {
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    private UUID id;
+
+    @Version
+    @Column(name = "VERSION")
+    private Integer version;
 
     @InstanceName
     @Column(name = "NAME")
@@ -36,6 +45,25 @@ public class Customer extends StandardEntity {
 
     @Column(name = "STATUS")
     private String status;
+
+    @Column(name = "COMMENTS")
+    private String comments;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
 
     public String getName() {
         return name;
@@ -51,5 +79,13 @@ public class Customer extends StandardEntity {
 
     public void setStatus(Status status) {
         this.status = status.getId();
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }

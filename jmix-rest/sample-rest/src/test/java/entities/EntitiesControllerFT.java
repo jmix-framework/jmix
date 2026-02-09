@@ -1209,6 +1209,39 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
+    void createEntityWithElementCollection() throws Exception {
+        String json = getFileContent("createEntityWithElementCollection.json", null);
+        String url = baseUrl + "/entities/ref$Driver";
+
+        Map<String, String> params = new HashMap<>();
+        params.put("responseView", "driverWithNameAndPhones");
+
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, params)) {
+            assertEquals(HttpStatus.SC_CREATED, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+
+            assertEquals("John Smith", ctx.read("$.name"));
+
+            String strDriverId = ctx.read("$.id");
+            UUID driverId = UUID.fromString(strDriverId);
+            dirtyData.addDriverId(driverId);
+
+            try (PreparedStatement stmt = conn.prepareStatement("""
+                    select d.NAME, p.PHONE
+                    from REF_DRIVER d left join REF_DRIVER_PHONE p on p.DRIVER_ID = d.ID
+                    where ID = ?
+                    """)) {
+                stmt.setObject(1, driverId);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    assertEquals("John Smith", rs.getString("NAME"));
+                    assertTrue("+111".equals(rs.getString("PHONE")) || "+222".equals(rs.getString("PHONE")));
+                }
+            }
+        }
+    }
+
+    @Test
     void createEntityWithTransientPropertyAndResponseFetchPlan() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$DEBTOR_ID$", debtorUuidString);
@@ -1783,6 +1816,72 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals("Russia", country);
             String city = rs.getString("CITY");
             assertEquals("Moscow", city);
+        }
+    }
+
+    @Test
+    void crudEntityWithElementCollection() throws Exception {
+        UUID driverId;
+
+        // create
+        String url = baseUrl + "/entities/ref$Driver";
+        String json = getFileContent("createEntityWithElementCollection.json", null);
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, Map.of("responseView", "driverWithNameAndPhones"))) {
+            assertEquals(HttpStatus.SC_CREATED, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+
+            assertEquals("John Smith", ctx.read("$.name"));
+
+            String strDriverId = ctx.read("$.id");
+            driverId = UUID.fromString(strDriverId);
+            dirtyData.addDriverId(driverId);
+        }
+
+        // load
+        String urlWithId = baseUrl + "/entities/ref$Driver/" + driverId;
+        try (CloseableHttpResponse response = sendGet(urlWithId, oauthToken, Map.of("fetchPlan", "driverWithNameAndPhones"))) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(driverId.toString(), ctx.read("$.id"));
+            assertEquals("John Smith", ctx.read("$.name"));
+            checkJsonArray(ctx, "$.phones", List.of("+111", "+222"));
+        }
+
+        // update
+        json = getFileContent("driverWithPhones2.json", Map.of("$DRIVER_ID$", driverId.toString()));
+        try (CloseableHttpResponse response = sendPut(urlWithId, oauthToken, json, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+        }
+
+        // load updated
+        try (CloseableHttpResponse response = sendGet(urlWithId, oauthToken, Map.of("fetchPlan", "driverWithNameAndPhones"))) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(driverId.toString(), ctx.read("$.id"));
+            assertEquals("John Smith", ctx.read("$.name"));
+            checkJsonArray(ctx, "$.phones", List.of("+111", "+222", "+333"));
+        }
+
+        // update
+        json = getFileContent("driverWithPhones3.json", Map.of("$DRIVER_ID$", driverId.toString()));
+        try (CloseableHttpResponse response = sendPut(urlWithId, oauthToken, json, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+        }
+
+        // load updated
+        try (CloseableHttpResponse response = sendGet(urlWithId, oauthToken, Map.of("fetchPlan", "driverWithNameAndPhones"))) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(driverId.toString(), ctx.read("$.id"));
+            assertEquals("John Smith", ctx.read("$.name"));
+            checkJsonArray(ctx, "$.phones", List.of());
+        }
+    }
+
+    private void checkJsonArray(ReadContext ctx, String path, List<String> expectedValues) {
+        assertEquals(expectedValues.size(), ctx.<Collection<?>>read(path).size());
+        for (String expectedValue : expectedValues) {
+            assertTrue(ctx.<Collection<String>>read(path).contains(expectedValue));
         }
     }
 

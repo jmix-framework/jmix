@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.facet.urlqueryparameters;
 
+import com.vaadin.flow.component.Component;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
@@ -23,6 +25,7 @@ import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.lang.Nullable;
+
 
 /**
  * Base class for URL query binder providers.
@@ -41,7 +44,7 @@ public abstract class AbstractUrlQueryParametersBinderProvider implements UrlQue
         this.loaderSupport = loaderSupport;
     }
 
-    protected String loadRequiredAttribute(Element element, String name, ComponentLoader.ComponentContext context) {
+    protected String loadRequiredAttribute(Element element, String name, ComponentLoader.Context context) {
         return loaderSupport.loadString(element, name)
                 .orElseThrow(() -> new GuiDevelopmentException(
                         String.format("'%s/%s' has no '%s' attribute",
@@ -51,5 +54,11 @@ public abstract class AbstractUrlQueryParametersBinderProvider implements UrlQue
     @Nullable
     protected String loadAttribute(Element element, String name) {
         return loaderSupport.loadString(element, name).orElse(null);
+    }
+
+    protected static Component getComponent(Component owner, String componentId) {
+        return UiComponentUtils.findComponent(owner, componentId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("Component with id '%s' not found", componentId)));
     }
 }

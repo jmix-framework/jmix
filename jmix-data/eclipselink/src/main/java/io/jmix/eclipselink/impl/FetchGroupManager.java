@@ -558,9 +558,12 @@ public class FetchGroupManager {
 
         if (useFetchGroup) {
             for (MetaProperty metaProperty : entityMetaClass.getProperties()) {
-                if (metaProperty.getRange().isClass() && metadataTools.isJpa(metaProperty)
-                        && metaProperty.getType() != MetaProperty.Type.EMBEDDED
-                        && !fetchPlan.containsProperty(metaProperty.getName())) {
+                if (metadataTools.isJpa(metaProperty)
+                        && (metaProperty.getRange().isClass()
+                            && metaProperty.getType() != MetaProperty.Type.EMBEDDED
+                            || metadataTools.isElementCollection(metaProperty))
+                        && !fetchPlan.containsProperty(metaProperty.getName())
+                ) {
                     fetchGroupFields.add(createFetchGroupField(entityClass, parentField, metaProperty.getName(), FetchMode.AUTO, true));
                 }
             }

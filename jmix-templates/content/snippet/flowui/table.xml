@@ -12,6 +12,7 @@ fetchPlan.orderedRootProperties.each { property ->
     if (!isEmbedded(attr)
         && !attr.hasAnnotation('OneToMany') && !attr.hasAnnotation('ManyToMany')
         && !columns.contains(property.name)
+        && !attr.isElementCollection()
         && !attr.isDeepInheritor('java.net.URI')) {
         columns << property.name
     } else if (property.entity != null) {

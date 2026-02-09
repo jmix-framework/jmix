@@ -18,11 +18,14 @@ package io.jmix.flowui.facet.urlqueryparameters;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
+import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.kit.event.EventBus;
 import org.springframework.lang.Nullable;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -48,6 +51,23 @@ public abstract class AbstractUrlQueryParametersBinder implements UrlQueryParame
     @Override
     public Registration addUrlQueryParametersChangeListener(Consumer<UrlQueryParametersChangeEvent> listener) {
         return getEventBus().addListener(UrlQueryParametersChangeEvent.class, listener);
+    }
+
+    protected String getOwnerId(String defaultComponentId) {
+        String ownerId = UiComponentUtils.getComponentId(Objects.requireNonNull(getComponent()))
+                // use default id instead
+                .orElse(defaultComponentId);
+
+        Fragment<?> fragment = UiComponentUtils.findFragment(getComponent());
+        if (fragment != null) {
+            // add fragment ID as a prefix in case of the fragment owner
+            ownerId = fragment.getId()
+                    .orElseThrow(() -> new IllegalStateException("A %s without an id can't use the %s"
+                            .formatted(Fragment.class.getSimpleName(), UrlQueryParametersFacet.class)))
+                    + "_" + ownerId;
+        }
+
+        return ownerId;
     }
 
     protected void fireQueryParametersChanged(UrlQueryParametersChangeEvent event) {

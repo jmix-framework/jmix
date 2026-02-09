@@ -24,6 +24,8 @@ import test_support.entity.TestBaseEntity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity(name = "test_Customer")
 @JmixEntity
 @Table(name = "TEST_CUSTOMER")
@@ -49,6 +51,10 @@ public class Customer extends TestBaseEntity {
             @AttributeOverride(name = "zip", column = @Column(name = "ADDRESS_ZIP"))
     })
     protected Address address;
+
+    @ElementCollection
+    @CollectionTable(name = "TEST_CUSTOMER_PHONES", joinColumns = @JoinColumn(name = "CUSTOMER_ID"))
+    private List<String> phones;
 
     public String getName() {
         return name;
@@ -80,5 +86,13 @@ public class Customer extends TestBaseEntity {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public List<String> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<String> phones) {
+        this.phones = phones;
     }
 }

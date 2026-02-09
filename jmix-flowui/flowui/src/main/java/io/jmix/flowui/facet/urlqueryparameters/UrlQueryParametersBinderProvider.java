@@ -44,5 +44,5 @@ public interface UrlQueryParametersBinderProvider {
      * @param element element to load
      * @param context loader context
      */
-    void load(UrlQueryParametersFacet facet, Element element, ComponentLoader.ComponentContext context);
+    void load(UrlQueryParametersFacet facet, Element element, ComponentLoader.Context context);
 }

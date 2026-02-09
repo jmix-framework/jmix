@@ -55,6 +55,7 @@ import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.persistence.Convert;
@@ -412,7 +413,7 @@ public class AppSettingsEntityView extends StandardView {
         InstanceContainer container = dataComponents.createInstanceContainer(currentMetaClass.getJavaClass());
         entityToEdit = dataManager.load(currentMetaClass.getJavaClass())
                 .query(String.format(SELECT_APP_SETTINGS_ENTITY_QUERY, currentMetaClass.getName()))
-                .fetchPlan(fetchPlans.builder(currentMetaClass.getJavaClass()).addFetchPlan(FetchPlan.LOCAL).build())
+                .fetchPlan(createFetchPlan())
                 .hint(PersistenceHints.SOFT_DELETION, false)
                 .optional()
                 .orElse(null);
@@ -422,6 +423,16 @@ public class AppSettingsEntityView extends StandardView {
             entityToEdit = dataContext.merge(entityToEdit);
         }
         return container;
+    }
+
+    protected FetchPlan createFetchPlan() {
+        FetchPlanBuilder builder = fetchPlans.builder(currentMetaClass.getJavaClass()).addFetchPlan(FetchPlan.LOCAL);
+        for (MetaProperty property : currentMetaClass.getProperties()) {
+            if (metadataTools.isElementCollection(property)) {
+                builder.add(property.getName());
+            }
+        }
+        return builder.build();
     }
 
     protected boolean isApplicationSettingsEntity(MetaClass metaClass) {

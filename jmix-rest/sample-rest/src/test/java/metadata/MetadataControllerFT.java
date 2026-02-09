@@ -78,6 +78,10 @@ public class MetadataControllerFT extends AbstractRestControllerFT {
 
             assertEquals("io.jmix.samples.rest.entity.driver.DriverStatus", ctx.read("$.properties[?(@.name == 'status')].type", List.class).get(0));
             assertEquals("ENUM", ctx.read("$.properties[?(@.name == 'status')].attributeType", List.class).get(0));
+
+            assertEquals("DATATYPE", ctx.read("$.properties[?(@.name == 'phones')].attributeType", List.class).get(0));
+            assertEquals("string", ctx.read("$.properties[?(@.name == 'phones')].type", List.class).get(0));
+            assertEquals("ONE_TO_MANY", ctx.read("$.properties[?(@.name == 'phones')].cardinality", List.class).get(0));
         }
     }
 

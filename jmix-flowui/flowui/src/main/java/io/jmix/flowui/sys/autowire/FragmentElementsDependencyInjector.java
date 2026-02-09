@@ -21,6 +21,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import io.jmix.core.JmixOrder;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentActions;
 import io.jmix.flowui.fragment.FragmentData;
@@ -93,6 +94,14 @@ public class FragmentElementsDependencyInjector extends AbstractElementsDependen
                     .map(c -> ((HasActions) c))
                     .map(component -> component.getAction(elements[elements.length - 1]))
                     .orElse(null);
+        } else if (Facet.class.isAssignableFrom(type)) {
+            String[] elements = parse(name);
+            if (elements.length != 1) {
+                throw new IllegalStateException("Can't autowire %s. Incorrect path: %s"
+                        .formatted(Facet.class.getSimpleName(), name));
+            }
+
+            return FragmentUtils.getFragmentFacets(fragment).getFacet(name);
         } else if (MessageBundle.class == type) {
             return createMessageBundle(fragment);
         }

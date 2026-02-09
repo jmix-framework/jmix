@@ -16,49 +16,20 @@
 
 package io.jmix.flowui.facet.dataloadcoordinator;
 
-import com.vaadin.flow.component.ComponentEventListener;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.View;
 
-import java.lang.invoke.MethodHandle;
-
 /**
  * Implementation of the {@link DataLoadCoordinator.Trigger} interface.
- * It registers an event listener on a specified view's event and invokes the associated
+ * It registers an event listener on a specified {@link View View's} event and invokes the associated
  * {@link DataLoader} when the event occurs, triggering data loading operations.
  */
-public class OnViewEventLoadTrigger implements DataLoadCoordinator.Trigger {
-
-    protected final DataLoader loader;
+public class OnViewEventLoadTrigger extends AbstractOnEventLoadTrigger {
 
     public OnViewEventLoadTrigger(View<?> view, ReflectionCacheManager reflectionCacheManager,
                                   DataLoader loader, Class<?> eventClass) {
-        MethodHandle addListenerMethod = reflectionCacheManager.getTargetAddListenerMethod(
-                view.getClass(), eventClass, null
-        );
-        if (addListenerMethod == null) {
-            throw new IllegalStateException("Cannot find addListener method for " + eventClass);
-        }
-
-        try {
-            addListenerMethod.invoke(view, (ComponentEventListener<?>) event -> load());
-        } catch (Error e) {
-            throw e;
-        } catch (Throwable e) {
-            throw new RuntimeException("Unable to add listener for " + eventClass, e);
-        }
-
-        this.loader = loader;
-    }
-
-    protected void load() {
-        loader.load();
-    }
-
-    @Override
-    public DataLoader getLoader() {
-        return loader;
+        super(view, reflectionCacheManager, loader, eventClass);
     }
 }

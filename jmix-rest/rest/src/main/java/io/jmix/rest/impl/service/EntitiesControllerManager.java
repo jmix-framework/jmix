@@ -75,6 +75,9 @@ public class EntitiesControllerManager {
     protected DataManager dataManager;
 
     @Autowired
+    protected EntityUpdateDispatcher entityUpdateDispatcher;
+
+    @Autowired
     protected Metadata metadata;
 
     @Autowired
@@ -779,7 +782,7 @@ public class EntitiesControllerManager {
         Object id = getIdFromString(entityId, metaClass);
         Object entity = dataManager.load(new LoadContext<>(metaClass).setId(id));
         checkEntityIsNotNull(entityName, entityId, entity);
-        dataManager.remove(entity);
+        entityUpdateDispatcher.remove(dataManager, List.of(entity));
     }
 
     public void deleteEntities(String entityName,
@@ -807,7 +810,7 @@ public class EntitiesControllerManager {
             Object id = getIdFromString(entityId, metaClass);
             Object entity = dataManager.load(new LoadContext<>(metaClass).setId(id));
             checkEntityIsNotNull(entityName, entityId, entity);
-            dataManager.remove(entity);
+            entityUpdateDispatcher.remove(dataManager, List.of(entity));
         }
     }
 

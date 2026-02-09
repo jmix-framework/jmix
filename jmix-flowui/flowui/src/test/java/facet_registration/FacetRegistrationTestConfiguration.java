@@ -16,6 +16,7 @@
 
 package facet_registration;
 
+import io.jmix.flowui.facet.FragmentDataLoadCoordinator;
 import io.jmix.flowui.facet.Timer;
 import io.jmix.flowui.sys.registration.FacetRegistration;
 import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
@@ -48,6 +49,15 @@ public class FacetRegistrationTestConfiguration {
         return FacetRegistrationBuilder.create(TestThirdTimerFacet.class)
                 .replaceFacet(Timer.class)
                 .withFacetLoader("timer", ExtTimerFacetLoader.class)
+                .build();
+    }
+
+    @Bean
+    @Order(400)
+    public FacetRegistration fragmentTimerFacet() {
+        return FacetRegistrationBuilder.create(ExtFragmentDataLoadCoordinatorFacet.class)
+                .replaceFacet(FragmentDataLoadCoordinator.class)
+                .withFacetLoader("fragmentDataLoadCoordinator", ExtFragmentDataLoadCoordinatorFacetLoader.class)
                 .build();
     }
 }

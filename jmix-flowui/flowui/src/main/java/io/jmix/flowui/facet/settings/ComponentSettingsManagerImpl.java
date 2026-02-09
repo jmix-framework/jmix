@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.flowui.facet.settings.component.binder.DataLoadingSettingsBinder;
 import io.jmix.flowui.settings.UserSettingsCache;
@@ -29,43 +30,44 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 
 /**
- * Implementation of {@link ViewSettingsComponentManager} that applies, saves, and manages settings for components
- * using {@link ViewSettingsComponentRegistry} and {@link UserSettingsCache}.
+ * Implementation of {@link ComponentSettingsManager} that applies, saves, and manages settings for components
+ * using {@link ComponentSettingsRegistry} and {@link UserSettingsCache}.
  */
 @Internal
-@org.springframework.stereotype.Component("flowui_ViewSettingsComponentManagerImpl")
-public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentManager {
+@org.springframework.stereotype.Component("flowui_ComponentSettingsManagerImpl")
+public class ComponentSettingsManagerImpl implements ComponentSettingsManager {
 
-    private static final Logger log = LoggerFactory.getLogger(ViewSettingsComponentManagerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ComponentSettingsManagerImpl.class);
 
-    protected ViewSettingsComponentRegistry settingsRegistry;
+    protected ComponentSettingsRegistry settingsRegistry;
     protected UserSettingsCache userSettingsCache;
 
-    public ViewSettingsComponentManagerImpl(ViewSettingsComponentRegistry settingsRegistry,
-                                            UserSettingsCache userSettingsCache) {
+    public ComponentSettingsManagerImpl(ComponentSettingsRegistry settingsRegistry,
+                                        UserSettingsCache userSettingsCache) {
         this.settingsRegistry = settingsRegistry;
         this.userSettingsCache = userSettingsCache;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void applySettings(Collection<Component> components, ViewSettings viewSettings) {
+    public void applySettings(Collection<Component> components, UiComponentSettings<?> componentSettings) {
         Preconditions.checkNotNullArgument(components);
-        Preconditions.checkNotNullArgument(viewSettings);
+        Preconditions.checkNotNullArgument(componentSettings);
 
         for (Component component : components) {
-            if (Strings.isNullOrEmpty(component.getId().orElse(null))
+            if (Strings.isNullOrEmpty(UiComponentUtils.getComponentId(component).orElse(null))
                     || !settingsRegistry.isSettingsRegisteredFor(component.getClass())) {
                 continue;
             }
 
-            log.trace("Applying settings for {} : {} ", component.getId().get(), component);
+            log.trace("Applying settings for {} : {} ", UiComponentUtils.getComponentId(component).get(), component);
 
             ComponentSettingsBinder<Component, ?> binder = (ComponentSettingsBinder<Component, ?>)
                     settingsRegistry.getSettingsBinder(component.getClass());
 
             Class<? extends Settings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
-            Settings settings = viewSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
+            Settings settings = componentSettings.getSettingsOrCreate(
+                    UiComponentUtils.getComponentId(component).get(), settingsClass);
 
             binder.applySettings(component, settings.as());
         }
@@ -73,17 +75,17 @@ public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentMa
 
     @SuppressWarnings("unchecked")
     @Override
-    public void applyDataLoadingSettings(Collection<Component> components, ViewSettings viewSettings) {
+    public void applyDataLoadingSettings(Collection<Component> components, UiComponentSettings<?> componentSettings) {
         Preconditions.checkNotNullArgument(components);
-        Preconditions.checkNotNullArgument(viewSettings);
+        Preconditions.checkNotNullArgument(componentSettings);
 
         for (Component component : components) {
             if (!settingsRegistry.isSettingsRegisteredFor(component.getClass())
-                    || component.getId().orElse(null) == null) {
+                    || UiComponentUtils.getComponentId(component).isEmpty()) {
                 continue;
             }
 
-            log.trace("Applying settings for {} : {} ", component.getId().get(), component);
+            log.trace("Applying settings for {} : {} ", UiComponentUtils.getComponentId(component).get(), component);
 
             Class<? extends Settings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
 
@@ -91,7 +93,8 @@ public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentMa
                     settingsRegistry.getSettingsBinder(component.getClass());
 
             if (binder instanceof DataLoadingSettingsBinder) {
-                Settings settings = viewSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
+                Settings settings = componentSettings.getSettingsOrCreate(
+                        UiComponentUtils.getComponentId(component).get(), settingsClass);
                 ((DataLoadingSettingsBinder<Component, ?>) binder).applyDataLoadingSettings(component, settings.as());
             }
         }
@@ -99,23 +102,23 @@ public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentMa
 
     @SuppressWarnings("unchecked")
     @Override
-    public void saveSettings(Collection<Component> components, ViewSettings viewSettings) {
+    public void saveSettings(Collection<Component> components, UiComponentSettings<?> componentSettings) {
         Preconditions.checkNotNullArgument(components);
-        Preconditions.checkNotNullArgument(viewSettings);
+        Preconditions.checkNotNullArgument(componentSettings);
 
         boolean isModified = false;
 
         for (Component component : components) {
             if (!settingsRegistry.isSettingsRegisteredFor(component.getClass())
-                    || component.getId().orElse(null) == null) {
+                    || UiComponentUtils.getComponentId(component).isEmpty()) {
                 continue;
             }
 
-            log.trace("Saving settings for {} : {}", component.getId().get(), component);
+            log.trace("Saving settings for {} : {}", UiComponentUtils.getComponentId(component).get(), component);
 
             Class<? extends Settings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
 
-            Settings settings = viewSettings.getSettingsOrCreate(component.getId().get(), settingsClass);
+            Settings settings = componentSettings.getSettingsOrCreate(UiComponentUtils.getComponentId(component).get(), settingsClass);
 
             ComponentSettingsBinder<Component, ?> binder = (ComponentSettingsBinder<Component, ?>)
                     settingsRegistry.getSettingsBinder(component.getClass());
@@ -124,12 +127,12 @@ public class ViewSettingsComponentManagerImpl implements ViewSettingsComponentMa
             if (settingsChanged) {
                 isModified = true;
 
-                viewSettings.put(settings);
+                componentSettings.put(settings);
             }
         }
 
-        if (isModified || viewSettings.isModified()) {
-            userSettingsCache.put(viewSettings.getViewId(), viewSettings.serialize());
+        if (isModified || componentSettings.isModified()) {
+            userSettingsCache.put(componentSettings.getOwnerId(), componentSettings.serialize());
         }
     }
 }

@@ -39,7 +39,7 @@ import org.springframework.stereotype.Component;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.lang.reflect.Method;
-import java.util.Vector;
+import java.util.List;
 
 import static io.jmix.core.entity.EntityValues.getId;
 import static io.jmix.core.entity.EntityValues.getValue;
@@ -102,7 +102,7 @@ public class EclipselinkReferenceIdProvider implements ReferenceIdProvider {
                     Session session = entityManager.unwrap(Session.class);
                     ClassDescriptor descriptor = session.getDescriptor(entity);
                     DatabaseMapping mapping = descriptor.getMappingForAttributeName(property);
-                    Vector<DatabaseField> fields = mapping.getFields();
+                    List<DatabaseField> fields = mapping.getFields();
                     if (fields.size() != 1) {
                         throw new IllegalStateException("Invalid number of columns in mapping: " + fields);
                     }

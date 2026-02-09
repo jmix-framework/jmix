@@ -264,16 +264,26 @@ public class DataContextImpl implements DataContextInternal {
 
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
-            if (!property.getRange().isClass()                                   // local
+            if (!property.getRange().isClass()                                       // datatype or element collection
                     && !(metadataTools.isMethodBased(property) && property.isReadOnly())
-                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))// loaded src
-                    && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) {// loaded dst - have to check to avoid unfetched for local properties
+                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))    // loaded src
+                    && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) { // loaded dst - have to check to avoid unfetched for local properties
 
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
                 // ignore null values in non-root source entities
                 if (!isRoot && !options.isFresh() && value == null) {
                     continue;
+                }
+
+                if (value instanceof Collection<?> srcCollection) {
+                    if (value instanceof List) {
+                        value = createObservableList(new ArrayList<>(srcCollection), dstEntity);
+                    } else if (value instanceof Set) {
+                        value = createObservableSet(new HashSet<>(srcCollection), dstEntity);
+                    } else {
+                        throw new UnsupportedOperationException("Unsupported collection type: " + value.getClass().getName());
+                    }
                 }
 
                 setPropertyValue(dstEntity, property, value);

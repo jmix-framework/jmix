@@ -16,8 +16,9 @@
 
 package io.jmix.flowui.facet.impl;
 
+import com.vaadin.flow.component.Composite;
 import io.jmix.flowui.facet.Facet;
-import io.jmix.flowui.view.View;
+import io.jmix.flowui.facet.FacetOwner;
 import org.springframework.lang.Nullable;
 
 /**
@@ -27,7 +28,7 @@ import org.springframework.lang.Nullable;
 public abstract class AbstractFacet implements Facet {
 
     protected String id;
-    protected View<?> owner;
+    protected Composite<?> owner;
 
     @Nullable
     @Override
@@ -42,12 +43,13 @@ public abstract class AbstractFacet implements Facet {
 
     @Nullable
     @Override
-    public View<?> getOwner() {
-        return owner;
+    public <T extends Composite<?> & FacetOwner> T getOwner() {
+        //noinspection unchecked
+        return (T) owner;
     }
 
     @Override
-    public void setOwner(@Nullable View<?> owner) {
+    public <T extends Composite<?> & FacetOwner> void setOwner(@Nullable T owner) {
         this.owner = owner;
     }
 }

@@ -16,19 +16,14 @@
 
 package io.jmix.flowui.view.impl;
 
-import io.jmix.flowui.facet.Facet;
+import com.vaadin.flow.component.Composite;
+import io.jmix.flowui.facet.FacetOwner;
+import io.jmix.flowui.facet.impl.AbstractFacetHolder;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewFacets;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Implementation of the {@link ViewFacets} interface. This class manages a collection of facets
@@ -36,59 +31,17 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  */
 @Component("flowui_ViewFacets")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ViewFacetsImpl implements ViewFacets {
+public class ViewFacetsImpl extends AbstractFacetHolder implements ViewFacets {
 
     protected final View<?> view;
-
-    protected Set<Facet> facets = null; // lazily initialized linked hash set
 
     public ViewFacetsImpl(View<?> view) {
         this.view = view;
     }
 
     @Override
-    public void addFacet(Facet facet) {
-        checkNotNullArgument(facet);
-
-        if (facets == null) {
-            facets = new HashSet<>();
-        }
-
-        if (!facets.contains(facet)) {
-            facets.add(facet);
-            facet.setOwner(view);
-        }
-    }
-
-    @Nullable
-    @Override
-    public Facet getFacet(String id) {
-        checkNotNullArgument(id);
-
-        if (facets == null) {
-            return null;
-        }
-
-        return facets.stream()
-                .filter(f -> id.equals(f.getId()))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
-    public void removeFacet(Facet facet) {
-        checkNotNullArgument(facet);
-
-        if (facets != null
-                && facets.remove(facet)) {
-            facet.setOwner(null);
-        }
-    }
-
-    @Override
-    public Stream<Facet> getFacets() {
-        return facets == null
-                ? Stream.empty()
-                : facets.stream();
+    protected <T extends Composite<?> & FacetOwner> T getOwner() {
+        //noinspection unchecked
+        return (T) view;
     }
 }

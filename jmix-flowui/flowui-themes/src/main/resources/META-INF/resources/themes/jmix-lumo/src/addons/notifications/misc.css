@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-.notification-body-field {
+.ntf-notification-body-field {
     padding-top: 0;
 }
 
-vaadin-combo-box.notification-recipients-field::part(toggle-button),
-vaadin-multi-select-combo-box.notification-recipients-field::part(toggle-button) {
+vaadin-combo-box.ntf-notification-recipients-field::part(toggle-button),
+vaadin-multi-select-combo-box.ntf-notification-recipients-field::part(toggle-button) {
     display: none;
 }
 
-.notification-type-renderer {
+.ntf-notification-type-renderer {
     display: flex;
     gap: var(--lumo-space-s);
 }
 
-.notification-type-renderer-icon {
+.ntf-notification-type-renderer-icon {
     height: var(--lumo-icon-size-s);
     width: var(--lumo-icon-size-s);
 }
 
-.notification-type-renderer-text {
+.ntf-notification-type-renderer-text {
     font-size: var(--lumo-font-size-m);
 }

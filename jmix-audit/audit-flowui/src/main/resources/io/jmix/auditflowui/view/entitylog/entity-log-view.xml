@@ -109,7 +109,7 @@
                                 <comboBox id="userField" label="msg://user" autoOpen="true"/>
                                 <comboBox id="substitutedUserField" label="msg://substitutedUser" autoOpen="true"/>
                                 <select id="changeTypeField" label="msg://changeType"/>
-                                <div classNames="datetime-picker-container">
+                                <div classNames="audit-datetime-picker-container">
                                     <datePicker id="fromDateField" datatype="localDate"
                                                 label="msg://from"/>
                                     <timePicker id="fromTimeField" datatype="localTime"/>
@@ -122,7 +122,7 @@
                                         <action id="valueClearAction" type="value_clear"/>
                                     </actions>
                                 </valuePicker>
-                                <div classNames="datetime-picker-container">
+                                <div classNames="audit-datetime-picker-container">
                                     <datePicker id="tillDateField" datatype="localDate"
                                                 label="msg://till"/>
                                     <timePicker id="tillTimeField" datatype="localTime"/>

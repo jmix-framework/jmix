@@ -19,20 +19,3 @@
   border-color: var(--vaadin-border-color-secondary);
   border-radius: var(--vaadin-radius-l);
 }
-
-/*todo move to component styles*/
-.datetime-picker-container {
-  display: flex;
-  align-items: baseline;
-  gap: calc(var(--vaadin-gap-xs) / 2);
-}
-
-.datetime-picker-container vaadin-date-picker {
-  min-width: 0;
-  flex: 1 1 auto; /*same as for Vaadin Date Time Picker date-part*/
-}
-
-.datetime-picker-container vaadin-time-picker {
-  min-width: 0;
-  flex: 1 1.65 auto; /*same as for Vaadin Date Time Picker time-part*/
-}

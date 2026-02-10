@@ -36,12 +36,12 @@
             </responsiveSteps>
             <textField id="userName" datatype="string"
                        label="msg://nameField"/>
-            <div classNames="datetime-picker-container">
+            <div classNames="audit-datetime-picker-container">
                 <datePicker id="lastRequestDateFrom" datatype="localDate"
                                 label="msg://lastRequestDateFrom"/>
                 <timePicker id="lastRequestTimeFrom" datatype="localTime"/>
             </div>
-            <div classNames="datetime-picker-container">
+            <div classNames="audit-datetime-picker-container">
                 <datePicker id="lastRequestDateTo" datatype="localDate"
                                 label="msg://lastRequestDateTo"/>
                 <timePicker id="lastRequestTimeTo" datatype="localTime"/>

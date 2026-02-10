@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-.modeler-properties-panel {
+.bpm-modeler-properties-panel {
     --lumo-font-size: 1rem;
     --lumo-font-size-xxxl: 1.375rem;
     --lumo-font-size-xxl: 1.125rem;
@@ -40,21 +40,21 @@
     --lumo-space-xs: 0.125rem;
 }
 
-.bean-method-parameters-box {
+.bpm-bean-method-parameters-box {
     margin-top: var(--lumo-space-m);
     gap: var(--lumo-space-xs);
 }
 
-.bean-method-parameters-box .parameter-field {
+.bpm-bean-method-parameters-box .parameter-field {
     flex: 1 1 0;
 }
 
-.jmix-bpm-refresh-clockwise {
-    animation: jmix-bpm-refresh-clockwise-animation 1s linear infinite;
+.bpm-refresh-clockwise {
+    animation: bpm-refresh-clockwise-animation 1s linear infinite;
     color: var(--lumo-primary-text-color);
 }
 
-@keyframes jmix-bpm-refresh-clockwise-animation {
+@keyframes bpm-refresh-clockwise-animation {
     0% { transform: rotate(0deg) scale(-1, 1); }
     100% { transform: rotate(360deg) scale(-1, 1); }
 }

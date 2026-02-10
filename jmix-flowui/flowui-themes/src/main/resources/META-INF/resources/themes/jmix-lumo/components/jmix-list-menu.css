@@ -19,10 +19,14 @@
   margin: 0;
   overflow: auto;
   padding: 0 var(--lumo-space-s);
+  list-style-type: none;
 }
 
 .jmix-list-menu .jmix-menubar-item .menubar-list {
+  margin: 0;
   margin-inline-start: var(--lumo-space-l);
+  list-style-type: none;
+  padding: 0;
 }
 
 .jmix-list-menu .jmix-menubar-item {
@@ -65,6 +69,7 @@
 }
 
 .jmix-list-menu .jmix-menubar-item .menubar-summary {
+  font-size: var(--lumo-font-size-s);
   white-space: nowrap;
   font-weight: bold;
   text-overflow: ellipsis;
@@ -78,6 +83,7 @@
 }
 
 .jmix-list-menu .jmix-menu-item-link {
+  display: flex;
   gap: var(--lumo-space-s);
   padding: var(--lumo-space-s);
   text-decoration: none;
@@ -87,6 +93,8 @@
 }
 
 .jmix-list-menu .jmix-menu-item-link .link-text {
+  font-size: var(--lumo-font-size-s);
+  font-weight: 500;
   line-height: var(--lumo-line-height-s);
   overflow: hidden;
   text-overflow: ellipsis;

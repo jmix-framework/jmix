@@ -56,7 +56,7 @@ public class JmixFullCalendarSerializer extends AbstractFullCalendarSerializer {
         return (ObjectNode) json;
     }
 
-    public ValueNode serializeValue(Object value) {
+    public JsonNode serializeValue(Object value) {
         log.debug("Starting value: {}", value.getClass());
 
         JsonNode json;
@@ -66,13 +66,9 @@ public class JmixFullCalendarSerializer extends AbstractFullCalendarSerializer {
             throw new IllegalStateException("Cannot serialize object", e);
         }
 
-        if (!json.isValueNode()) {
-            throw new IllegalStateException("Serialized value is not a value node");
-        }
-
         log.debug("Serialized value: {}", json);
 
-        return (ValueNode) json;
+        return json;
     }
 
     public ObjectNode serializeOptions(Collection<CalendarOption> options) {

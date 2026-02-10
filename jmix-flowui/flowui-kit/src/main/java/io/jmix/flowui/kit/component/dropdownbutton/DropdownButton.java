@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.component.dropdownbutton;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.shared.HasThemeVariant;
+import com.vaadin.flow.theme.lumo.LumoIcon;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import jakarta.annotation.Nullable;
@@ -31,7 +32,7 @@ public class DropdownButton extends AbstractDropdownButton implements HasThemeVa
 
     protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-dropdown-button";
 
-    protected Icon dropdownIcon = new Icon("lumo", "dropdown");
+    protected Icon dropdownIcon = LumoIcon.DROPDOWN.create();
 
     protected boolean dropdownIndicatorVisible = true;
 

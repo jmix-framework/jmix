@@ -20,6 +20,11 @@
 :host::before {
     --_lumo-jmix-upload-field-inject: 1;
     --_lumo-jmix-upload-field-inject-modules:
+            lumo_mixins_field-label,
+            lumo_mixins_field-required,
+            lumo_mixins_field-error-message,
+            lumo_mixins_field-helper,
+            lumo_mixins_field-base,
             lumo_components_jmix-upload-field;
 }
 

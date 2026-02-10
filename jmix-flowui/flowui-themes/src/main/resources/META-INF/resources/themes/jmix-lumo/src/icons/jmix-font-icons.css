@@ -775,6 +775,7 @@ html {
 /* Same as for ::slotted(vaadin-icon[icon^='vaadin:']) */
 /* Vaadin icons are based on a 16x16 grid (unlike Lumo icons with 24x24), so they look too big by default */
 vaadin-menu-bar-item > vaadin-icon[icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon-lumo"]),
+vaadin-button > vaadin-icon[icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon-lumo"]),
 vaadin-icon[slot][icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon-lumo"]) {
     padding: var(--lumo-space-xs);
     box-sizing: border-box !important;

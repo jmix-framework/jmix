@@ -15,7 +15,7 @@
  */
 package io.jmix.core.common.util;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

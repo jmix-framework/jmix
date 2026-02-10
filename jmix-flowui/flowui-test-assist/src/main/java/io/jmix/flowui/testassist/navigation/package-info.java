@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-@NonNullApi
+@NullMarked
 @Internal
 package io.jmix.flowui.testassist.navigation;
 
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;
 import io.jmix.core.annotation.Internal;

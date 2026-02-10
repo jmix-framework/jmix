@@ -21,7 +21,7 @@ import io.jmix.chartsflowui.kit.component.model.HasBorder;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An axis that has name.

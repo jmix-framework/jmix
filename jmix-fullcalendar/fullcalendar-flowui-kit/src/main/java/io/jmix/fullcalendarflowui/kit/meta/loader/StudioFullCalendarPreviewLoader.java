@@ -26,7 +26,7 @@ import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayMode;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
 
 import java.time.Duration;

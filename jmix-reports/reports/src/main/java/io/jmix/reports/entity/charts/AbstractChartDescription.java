@@ -27,7 +27,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.reports.converter.MetadataFieldsIgnoringGson;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.Id;
 import java.util.UUID;
 

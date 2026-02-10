@@ -27,7 +27,7 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;

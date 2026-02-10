@@ -20,7 +20,7 @@ import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurationContex
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurer;
 import org.opensearch.client.opensearch.indices.IndexSettings;
 import org.opensearch.client.opensearch.indices.IndexSettingsAnalysis;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import test_support.entity.TestRootEntity;
 

@@ -62,7 +62,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
@@ -370,8 +370,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
                 : defaultHeaderRow.getCell(column).getText();
     }
 
-    @Nullable
-    protected com.vaadin.flow.component.Component getDefaultHeaderComponent(DataGrid.Column<?> column) {
+    protected com.vaadin.flow.component.@Nullable Component getDefaultHeaderComponent(DataGrid.Column<?> column) {
         HeaderRow defaultHeaderRow = null;
 
         if (column.getGrid() instanceof JmixGrid<?> jmixGrid) {

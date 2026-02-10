@@ -24,7 +24,7 @@ import io.jmix.datatoolsflowui.view.entityinfo.model.InfoValue;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

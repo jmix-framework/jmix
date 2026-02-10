@@ -17,7 +17,7 @@
 package io.jmix.core;
 
 import com.google.common.base.Preconditions;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.time.*;

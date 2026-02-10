@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.backgroundtask;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The TaskExecutor interface provides methods for managing the lifecycle of a background task.

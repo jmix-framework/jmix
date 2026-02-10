@@ -16,7 +16,7 @@
 
 package io.jmix.core;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.LockModeType;
 
 /**

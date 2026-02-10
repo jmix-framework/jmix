@@ -39,7 +39,7 @@ import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.*;
 import io.jmix.reports.app.ParameterPrototype;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;

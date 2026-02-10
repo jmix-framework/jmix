@@ -17,7 +17,7 @@
 package io.jmix.pivottableflowui.kit.component.model;
 
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An enum with the orders in which column and row data is provided to the renderer.

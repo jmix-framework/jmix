@@ -27,8 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import static com.vaadin.flow.server.frontend.FrontendUtils.BRIGHT_BLUE;
 import static com.vaadin.flow.server.frontend.FrontendUtils.RED;
@@ -56,7 +56,7 @@ public final class JmixLoggerUtils {
         );
     }
 
-    private static void logInFile(@Nonnull File logFile, String text) {
+    private static void logInFile(@NonNull File logFile, String text) {
         if (logFile.exists() && logFile.canWrite()) {
             try {
                 Files.writeString(logFile.toPath(), text, StandardOpenOption.APPEND);
@@ -136,7 +136,7 @@ public final class JmixLoggerUtils {
         return System.getProperty(STUDIO_VIEW_DESIGNER_DIR_PROPERTY);
     }
 
-    @Nonnull
+    @NonNull
     private static String getActualLogFileName() {
         final String logFileId = getCurrentDateTime("yyyy-MM-dd");
         final String logFileBaseName = "log-";
@@ -144,7 +144,7 @@ public final class JmixLoggerUtils {
         return logFileBaseName + logFileId + logFileExtension;
     }
 
-    @Nonnull
+    @NonNull
     private static String getCurrentDateTime(String dateFormatPattern) {
         DateFormat formatter = new SimpleDateFormat(dateFormatPattern);
         Calendar calendar = Calendar.getInstance();

@@ -26,7 +26,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.util.regex.Pattern;
 

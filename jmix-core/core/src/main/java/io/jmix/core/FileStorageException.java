@@ -16,7 +16,7 @@
 
 package io.jmix.core;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class FileStorageException extends RuntimeException {
     public enum Type {

@@ -19,7 +19,7 @@ package io.jmix.securityresourceserver.authentication;
 import com.google.common.base.Splitter;
 import io.jmix.core.JmixModules;
 import org.springframework.core.env.Environment;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 

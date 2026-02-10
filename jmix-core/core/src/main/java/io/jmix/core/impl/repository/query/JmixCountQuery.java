@@ -21,7 +21,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Metadata;
 import io.jmix.core.QueryStringProcessor;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
@@ -43,7 +43,6 @@ public class JmixCountQuery extends JmixStructuredEntityQuery {
     }
 
     @Override
-    @Nonnull
     public Object execute(Object[] parameters) {
         return dataManager.getCount(prepareQueryContext(parameters));
     }

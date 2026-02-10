@@ -18,7 +18,7 @@ package io.jmix.flowui.component.groupgrid.adapter;
 
 import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 

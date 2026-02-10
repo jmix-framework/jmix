@@ -42,7 +42,7 @@ import org.springframework.transaction.support.ResourceHolderSupport;
 import org.springframework.transaction.support.ResourceHolderSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
@@ -174,8 +174,7 @@ public class EntityChangedEventManager {
     }
 
     @SuppressWarnings("unchecked")
-    @Nullable
-    private AttributeChanges.Builder getEntityAttributeChanges(@Nullable Object entity, @Nullable ObjectChangeSet changeSet) {
+    private AttributeChanges.@Nullable Builder getEntityAttributeChanges(@Nullable Object entity, @Nullable ObjectChangeSet changeSet) {
         if (changeSet == null)
             return null;
 

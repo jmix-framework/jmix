@@ -19,7 +19,7 @@ package io.jmix.flowui.facet.settings;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.settings.component.JmixDetailsSettings;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 

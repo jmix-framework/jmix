@@ -27,7 +27,7 @@ import io.jmix.reportsflowui.download.ReportDownloader;
 import io.jmix.reportsflowui.runner.UiReportRunContext;
 import io.jmix.reportsflowui.view.run.ReportTableView;
 import org.springframework.stereotype.Component;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 

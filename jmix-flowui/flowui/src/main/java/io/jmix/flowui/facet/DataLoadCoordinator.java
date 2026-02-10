@@ -19,7 +19,7 @@ package io.jmix.flowui.facet;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 

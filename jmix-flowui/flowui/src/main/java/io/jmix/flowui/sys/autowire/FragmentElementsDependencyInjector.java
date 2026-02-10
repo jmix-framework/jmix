@@ -35,7 +35,7 @@ import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 

@@ -22,7 +22,7 @@ import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.view.Supply;
 import org.springframework.core.annotation.Order;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 /**

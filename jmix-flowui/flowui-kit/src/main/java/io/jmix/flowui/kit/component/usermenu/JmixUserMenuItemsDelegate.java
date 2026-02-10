@@ -26,7 +26,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.util.*;

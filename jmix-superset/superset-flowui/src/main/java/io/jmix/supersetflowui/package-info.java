@@ -3,7 +3,7 @@
  * Use is subject to license terms.
  */
 
-@NonNullApi
+@NullMarked
 package io.jmix.supersetflowui;
 
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

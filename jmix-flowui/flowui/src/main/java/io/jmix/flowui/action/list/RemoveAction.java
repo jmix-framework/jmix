@@ -38,7 +38,7 @@ import io.jmix.flowui.util.RemoveOperation.ActionCancelledEvent;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import io.jmix.flowui.util.RemoveOperation.BeforeActionPerformedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.function.Consumer;

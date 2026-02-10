@@ -30,7 +30,7 @@ import io.jmix.flowui.view.StandardDetailView.ValidationEvent;
 import io.jmix.flowui.view.View.QueryParametersChangeEvent;
 import io.jmix.flowui.view.View.RestoreComponentsStateEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.List;

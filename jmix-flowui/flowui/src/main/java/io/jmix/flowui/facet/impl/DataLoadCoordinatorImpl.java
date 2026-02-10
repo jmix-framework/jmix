@@ -36,7 +36,7 @@ import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.View.BeforeShowEvent;
 import io.jmix.flowui.view.ViewControllerUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;

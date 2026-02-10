@@ -17,7 +17,7 @@
 package io.jmix.core.querycondition;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.regex.Matcher;

@@ -38,7 +38,7 @@ import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.MessageBundle;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.ViewComponent;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;

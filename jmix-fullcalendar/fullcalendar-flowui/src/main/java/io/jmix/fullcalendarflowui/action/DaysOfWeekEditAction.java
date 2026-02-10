@@ -39,7 +39,7 @@ import io.jmix.fullcalendarflowui.component.model.DaysOfWeek;
 import io.jmix.fullcalendarflowui.datatype.DaysOfWeekDatatypeUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.temporal.WeekFields;
 import java.util.HashSet;

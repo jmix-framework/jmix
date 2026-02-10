@@ -21,7 +21,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
 import io.jmix.flowui.kit.event.EventBus;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 

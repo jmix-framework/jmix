@@ -18,7 +18,7 @@ package io.jmix.flowui.kit.component;
 
 import io.jmix.flowui.kit.action.Action;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;

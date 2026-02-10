@@ -22,7 +22,7 @@ import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract base class for implementing pagination components.

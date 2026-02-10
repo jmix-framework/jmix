@@ -25,7 +25,7 @@ import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.builder.WindowBuilder;
 import io.jmix.flowui.view.builder.WindowBuilderProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicReference;
 

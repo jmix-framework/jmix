@@ -23,7 +23,7 @@ import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.pivottableflowui.component.PivotTable;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

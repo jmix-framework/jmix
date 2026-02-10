@@ -16,7 +16,7 @@
 
 package io.jmix.reports;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Contains possible filtering conditions when loading groups from {@link ReportGroupRepository}.

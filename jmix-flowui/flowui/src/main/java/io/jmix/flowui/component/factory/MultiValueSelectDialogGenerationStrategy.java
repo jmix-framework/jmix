@@ -46,7 +46,7 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.sql.Time;
 import java.time.*;

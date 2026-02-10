@@ -18,7 +18,7 @@ package io.jmix.flowui.facet.settings.component;
 
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.facet.settings.Settings;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents settings for a {@link GenericFilter} component.

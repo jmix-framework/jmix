@@ -23,7 +23,7 @@ import io.jmix.core.EntityValuesProvider;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.impl.EntityInternals;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -42,7 +42,6 @@ public class DynamicAttributesState implements EntityEntryExtraState, EntityValu
         return dynamicModel;
     }
 
-    @Nullable
     public void setDynamicAttributes(DynamicAttributes dynamicModel) {
         this.dynamicModel = dynamicModel;
     }

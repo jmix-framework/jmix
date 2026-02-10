@@ -25,7 +25,7 @@ import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 
 import io.jmix.flowui.kit.meta.StudioIgnore;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 
 /**

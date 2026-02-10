@@ -31,7 +31,7 @@ import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
 import org.opensearch.client.opensearch.core.bulk.OperationType;
 
 
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -66,8 +66,8 @@ public class OpenSearchTestEntityIndexer extends OpenSearchEntityIndexer {
         this.bulkRequestsTracker = bulkRequestsTracker;
     }
 
-    @Nonnull
-    protected BulkResponse executeBulkRequest(@Nonnull BulkRequest request) {
+    @NonNull
+    protected BulkResponse executeBulkRequest(@NonNull BulkRequest request) {
         bulkRequestsTracker.accept(request);
 
         return new BulkResponse.Builder()

@@ -18,7 +18,7 @@ package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.search.index.IndexConfiguration;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The comparator that compares both the application's index configuration and the search index state

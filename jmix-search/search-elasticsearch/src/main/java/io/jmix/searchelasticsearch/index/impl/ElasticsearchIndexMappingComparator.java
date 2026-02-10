@@ -20,7 +20,7 @@ import co.elastic.clients.elasticsearch.indices.IndexState;
 import co.elastic.clients.json.JsonpSerializable;
 import io.jmix.search.index.impl.IndexMappingComparator;
 import io.jmix.search.index.impl.MappingFieldComparator;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 @Component("search_ElasticsearchIndexMappingComparator")

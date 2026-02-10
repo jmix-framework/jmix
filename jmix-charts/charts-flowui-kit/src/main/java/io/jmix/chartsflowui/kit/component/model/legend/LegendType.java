@@ -17,7 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.legend;
 
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Type of legend.

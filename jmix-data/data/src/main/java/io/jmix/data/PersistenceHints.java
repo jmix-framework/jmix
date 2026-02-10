@@ -18,7 +18,7 @@ package io.jmix.data;
 
 import io.jmix.core.FetchPlan;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.EntityManager;
 import java.util.*;
 

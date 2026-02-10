@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component;
 import com.vaadin.flow.component.ClickNotifier;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface for actions and UI components that can be performed using shortcuts.<br/>

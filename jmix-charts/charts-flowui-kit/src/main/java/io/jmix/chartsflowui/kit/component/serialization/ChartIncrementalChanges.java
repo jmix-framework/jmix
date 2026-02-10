@@ -18,7 +18,7 @@ package io.jmix.chartsflowui.kit.component.serialization;
 
 import io.jmix.chartsflowui.kit.component.model.DataSet;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;

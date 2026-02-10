@@ -22,7 +22,7 @@ import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
 import io.jmix.fullcalendarflowui.kit.component.model.JsFunction;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

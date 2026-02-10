@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@NonNullApi
+@NullMarked
 package io.jmix.flowui.component.formlayout;
 
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

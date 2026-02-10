@@ -22,7 +22,7 @@ import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.model.DaysOfWeek;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.Collectors;

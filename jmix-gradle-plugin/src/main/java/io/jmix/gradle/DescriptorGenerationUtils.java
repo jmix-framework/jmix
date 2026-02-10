@@ -17,7 +17,7 @@
 package io.jmix.gradle;
 
 import com.google.common.base.Strings;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
@@ -260,8 +260,7 @@ public class DescriptorGenerationUtils {
         return list;
     }
 
-    @Nullable
-    private static Attr.Type getAttrType(CtField field) {
+    private static Attr.@Nullable Type getAttrType(CtField field) {
         if (hasAnnotationOnField(field, ONE_TO_ONE_ANNOTATION))
             return Attr.Type.ONE_TO_ONE;
         else if (hasAnnotationOnField(field, ONE_TO_MANY_ANNOTATION))

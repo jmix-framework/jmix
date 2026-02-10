@@ -19,7 +19,7 @@ package io.jmix.fullcalendarflowui.component.data;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.fullcalendarflowui.component.model.DaysOfWeek;
 import io.jmix.fullcalendarflowui.component.model.Display;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

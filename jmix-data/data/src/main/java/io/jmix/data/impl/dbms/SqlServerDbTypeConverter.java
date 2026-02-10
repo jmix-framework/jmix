@@ -19,7 +19,7 @@ package io.jmix.data.impl.dbms;
 
 import io.jmix.core.UuidProvider;
 import io.jmix.data.persistence.DbTypeConverter;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;

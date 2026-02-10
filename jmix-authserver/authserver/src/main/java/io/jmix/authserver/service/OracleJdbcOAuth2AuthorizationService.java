@@ -18,7 +18,7 @@ package io.jmix.authserver.service;
 
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.lob.LobCreator;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;

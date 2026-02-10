@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component.valuepicker;
 import com.google.common.base.Strings;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 

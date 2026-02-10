@@ -24,7 +24,7 @@ import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
 @Component("search_DisplayedNameValueExtractor")

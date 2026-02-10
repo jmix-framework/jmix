@@ -17,7 +17,7 @@
 package io.jmix.email.authentication;
 
 import io.jmix.email.entity.RefreshToken;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface defining methods for management of refresh token used for OAuth2 authentication with SMTP server.

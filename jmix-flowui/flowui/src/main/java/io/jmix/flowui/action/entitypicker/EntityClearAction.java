@@ -34,7 +34,7 @@ import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.flowui.component.UiComponentUtils.getEmptyValue;

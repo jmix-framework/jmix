@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import jakarta.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -47,7 +47,7 @@ public class EntityPostConstructInitializer implements EntityInitializer {
             CacheBuilder.newBuilder()
                     .build(new CacheLoader<Class<?>, List<Method>>() {
                         @Override
-                        public List<Method> load(@Nonnull Class<?> concreteClass) {
+                        public List<Method> load(@NonNull Class<?> concreteClass) {
                             return getPostConstructMethodsNotCached(concreteClass);
                         }
                     });

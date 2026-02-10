@@ -20,7 +20,7 @@ import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.security.AuthenticationLocaleResolver;
 import io.jmix.core.security.CurrentAuthentication;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;

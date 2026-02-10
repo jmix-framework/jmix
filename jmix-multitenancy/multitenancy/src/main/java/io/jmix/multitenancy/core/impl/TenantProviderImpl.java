@@ -21,7 +21,7 @@ import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.multitenancy.core.TenantProvider;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 

@@ -27,7 +27,7 @@ import com.vaadin.flow.function.SerializableBiFunction;
 import com.vaadin.flow.function.SerializableRunnable;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Collection;

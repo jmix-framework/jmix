@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a specific type of {@link UserMenuItem} that is associated with an {@link View}.

@@ -17,7 +17,7 @@
 package io.jmix.flowui.facet;
 
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Non-visual component of a {@link View}.

@@ -21,7 +21,7 @@ import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkArea;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkLine;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkPoint;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base class for series with Cartesian and polar coordinates.

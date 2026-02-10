@@ -23,7 +23,7 @@ import io.jmix.flowui.data.EntityItems;
 import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 @Component("flowui_VirtualListDelegate")

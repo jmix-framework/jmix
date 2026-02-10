@@ -17,7 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.series;
 
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A series that has stacked values. If stack the value. On the same category axis, the series with

@@ -19,7 +19,7 @@ package io.jmix.flowui.model.impl;
 import com.google.common.collect.ForwardingList;
 import io.jmix.core.Entity;
 import io.jmix.flowui.model.CollectionChangeType;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;

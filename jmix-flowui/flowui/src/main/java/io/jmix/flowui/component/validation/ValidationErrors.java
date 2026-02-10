@@ -18,7 +18,7 @@ package io.jmix.flowui.component.validation;
 
 import com.vaadin.flow.component.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

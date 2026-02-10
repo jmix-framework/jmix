@@ -29,12 +29,12 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -79,7 +79,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
             CacheBuilder.newBuilder()
                     .build(new CacheLoader<MetaClass, Optional<InstanceNameRec>>() {
                         @Override
-                        public Optional<InstanceNameRec> load(@Nonnull MetaClass metaClass) {
+                        public Optional<InstanceNameRec> load(@NonNull MetaClass metaClass) {
                             return Optional.ofNullable(parseNamePattern(metaClass));
                         }
                     });

@@ -22,7 +22,7 @@ import com.vaadin.flow.component.page.Page.ExtendedClientDetailsReceiver;
 import io.jmix.core.annotation.Internal;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Internal
 @Component("flowui_ExtendedClientDetailsProvider")

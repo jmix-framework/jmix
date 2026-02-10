@@ -48,7 +48,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.servlet.autoconfigure.MultipartProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 

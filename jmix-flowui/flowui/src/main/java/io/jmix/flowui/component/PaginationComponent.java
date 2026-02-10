@@ -24,7 +24,7 @@ import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.kit.component.pagination.AbstractPagination;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.function.Function;
 
 /**

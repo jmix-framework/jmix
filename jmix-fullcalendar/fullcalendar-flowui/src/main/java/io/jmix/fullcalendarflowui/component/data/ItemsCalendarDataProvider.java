@@ -17,7 +17,7 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import com.vaadin.flow.shared.Registration;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.EventObject;

@@ -19,7 +19,7 @@ package io.jmix.reportsflowui.test_support;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Supplement for {@link UiTestUtils#getOpenedDialogs()}

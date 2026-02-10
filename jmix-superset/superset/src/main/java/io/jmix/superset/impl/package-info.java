@@ -4,8 +4,8 @@
  */
 
 @Internal
-@NonNullApi
+@NullMarked
 package io.jmix.superset.impl;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

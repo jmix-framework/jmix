@@ -18,7 +18,7 @@ package io.jmix.restds.util;
 
 import io.jmix.core.JmixOrder;
 import org.springframework.core.type.filter.TypeFilter;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface for customizing the configuration of services available through the REST DataStore.

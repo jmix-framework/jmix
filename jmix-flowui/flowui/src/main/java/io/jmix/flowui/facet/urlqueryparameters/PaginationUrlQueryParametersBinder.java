@@ -24,7 +24,7 @@ import io.jmix.flowui.component.PaginationComponent;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;

@@ -17,7 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.series.mark;
 
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Special label types, are used to label maximum value, minimum value and so on. Used in data for points.

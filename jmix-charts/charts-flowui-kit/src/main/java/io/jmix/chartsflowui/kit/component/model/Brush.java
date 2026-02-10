@@ -18,7 +18,7 @@ package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.VisualEffect;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Brush is an area-selecting component, with which user can select part of series from a chart to display in detail.

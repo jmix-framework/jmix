@@ -6,7 +6,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Date;
 import java.util.UUID;

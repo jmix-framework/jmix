@@ -20,7 +20,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.HasType;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.EventObject;

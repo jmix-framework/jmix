@@ -24,6 +24,8 @@ import org.springframework.data.repository.query.parser.PartTree;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+
 public class JmixDeleteQuery extends JmixListQuery {
 
     public JmixDeleteQuery(DataManager dataManager,
@@ -39,8 +41,17 @@ public class JmixDeleteQuery extends JmixListQuery {
 
     @Override
     public Object execute(Object[] parameters) {
-        List<Object> loaded = (List<Object>) super.execute(parameters);
-        dataManager.save(new SaveContext().removing(loaded).setHints(collectHints(parameters)));
-        return loaded;
+        Object rawResult = super.execute(parameters);
+        if (rawResult == null) {
+            // Failsave: null should not be returned from super.execute in case of delete operation
+            return emptyList();
+        }
+
+        if (rawResult instanceof List<?> loaded) {
+            dataManager.save(new SaveContext().removing(loaded).setHints(collectHints(parameters)));
+            return loaded;
+        } else {
+            throw new IllegalStateException("Delete query should return a list");
+        }
     }
 }

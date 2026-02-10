@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@NonNullApi
+@NullMarked
 package excel_exporter;
 
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

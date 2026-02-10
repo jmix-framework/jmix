@@ -18,7 +18,7 @@ package io.jmix.pessimisticlock;
 
 import io.jmix.pessimisticlock.entity.LockInfo;
 import io.jmix.pessimisticlock.entity.LockNotSupported;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 

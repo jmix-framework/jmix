@@ -21,7 +21,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.internal.JsonSerializer;
 import com.vaadin.flow.shared.Registration;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;

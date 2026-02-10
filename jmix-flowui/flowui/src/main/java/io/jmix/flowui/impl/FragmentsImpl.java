@@ -37,7 +37,7 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -160,8 +160,7 @@ public class FragmentsImpl implements Fragments {
         autowireManager.autowire(fragmentAutowireContext);
     }
 
-    @Nullable
-    protected ComponentLoader.Context findHostLoaderContext(ComponentLoader.Context hostContext) {
+    protected ComponentLoader.@Nullable Context findHostLoaderContext(ComponentLoader.Context hostContext) {
         ComponentLoader.Context targetContext = hostContext;
         while (targetContext.getParentContext() != null) {
             targetContext = targetContext.getParentContext();

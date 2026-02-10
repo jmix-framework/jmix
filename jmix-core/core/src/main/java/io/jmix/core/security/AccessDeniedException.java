@@ -15,7 +15,7 @@
  */
 package io.jmix.core.security;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Exception that is raised on attempt to violate a security constraint.

@@ -45,7 +45,7 @@ import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
 import io.jmix.messagetemplatesflowui.MessageParameterResolver;
 import org.springframework.core.Ordered;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

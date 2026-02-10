@@ -37,7 +37,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -140,8 +140,8 @@ public class HorizontalMenuItemConverter {
         return parentMenuItem;
     }
 
-    @Nullable
-    protected com.vaadin.flow.component.Component getIcon(MenuItem menuItemDescriptor) {
+
+    protected com.vaadin.flow.component.@Nullable Component getIcon(MenuItem menuItemDescriptor) {
         return menuItemDescriptor.getIconComponent();
     }
 
@@ -172,8 +172,7 @@ public class HorizontalMenuItemConverter {
         return GENERATED_SEPARATOR_ID_PREFIX + RandomStringUtils.randomAlphanumeric(8);
     }
 
-    @Nullable
-    protected HorizontalMenu.MenuItem createMenuItem(MenuItem menuItemDescriptor) {
+    protected HorizontalMenu.@Nullable MenuItem createMenuItem(MenuItem menuItemDescriptor) {
         if (!isPermitted(menuItemDescriptor)) {
             log.debug("Menu item '{}' is not permitted by access constraint", menuItemDescriptor.getId());
             return null;

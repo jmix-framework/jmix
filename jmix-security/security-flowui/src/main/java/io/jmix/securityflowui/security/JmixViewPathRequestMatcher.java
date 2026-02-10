@@ -23,7 +23,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.security.configurer.JmixRequestCacheRequestMatcher;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.Collections;

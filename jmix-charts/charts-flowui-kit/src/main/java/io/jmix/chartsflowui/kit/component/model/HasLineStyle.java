@@ -16,7 +16,7 @@
 
 package io.jmix.chartsflowui.kit.component.model;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A component that has line style.

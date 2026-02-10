@@ -24,7 +24,7 @@ import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.facet.settings.Settings;
 import io.jmix.flowui.facet.settings.component.DataGridSettings;
 import org.springframework.core.annotation.Order;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 

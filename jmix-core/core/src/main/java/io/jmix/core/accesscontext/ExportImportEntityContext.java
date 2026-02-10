@@ -18,7 +18,7 @@ package io.jmix.core.accesscontext;
 
 import io.jmix.core.metamodel.model.MetaClass;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 

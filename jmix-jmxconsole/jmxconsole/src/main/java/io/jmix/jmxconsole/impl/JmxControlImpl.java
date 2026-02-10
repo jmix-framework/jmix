@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.management.*;
 import java.io.IOException;
@@ -149,7 +149,6 @@ public class JmxControlImpl implements JmxControl {
     }
 
     @Override
-    @Nullable
     public void loadAttributes(final ManagedBeanInfo mbinfo) {
         checkNotNullArgument(mbinfo);
 
@@ -239,7 +238,6 @@ public class JmxControlImpl implements JmxControl {
     }
 
     @Override
-    @Nullable
     public void loadAttributeValue(final ManagedBeanAttribute attribute) {
         checkNotNullArgument(attribute);
         checkNotNullArgument(attribute.getMbean());
@@ -285,7 +283,6 @@ public class JmxControlImpl implements JmxControl {
 
 
     @Override
-    @Nullable
     public void saveAttributeValue(final ManagedBeanAttribute attribute) {
         checkNotNullArgument(attribute);
         checkNotNullArgument(attribute.getMbean());

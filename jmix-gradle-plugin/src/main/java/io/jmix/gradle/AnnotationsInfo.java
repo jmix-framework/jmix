@@ -18,7 +18,7 @@ package io.jmix.gradle;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.NotFoundException;

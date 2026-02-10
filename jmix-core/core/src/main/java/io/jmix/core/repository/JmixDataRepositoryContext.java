@@ -18,7 +18,7 @@ package io.jmix.core.repository;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.querycondition.Condition;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Collections;

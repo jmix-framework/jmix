@@ -20,7 +20,7 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.HasPosition;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A funnel chart is a graphical representation that resembles the shape of a funnel where each segment

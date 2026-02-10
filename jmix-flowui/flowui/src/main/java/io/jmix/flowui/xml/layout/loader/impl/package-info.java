@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@NonNullApi
+@NullMarked
 package io.jmix.flowui.xml.layout.loader.impl;
 
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

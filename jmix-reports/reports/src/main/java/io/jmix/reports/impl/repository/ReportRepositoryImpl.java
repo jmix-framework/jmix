@@ -38,7 +38,7 @@ import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 

@@ -20,7 +20,7 @@ import io.jmix.core.EntitySerialization;
 import io.jmix.core.EntitySerializationOption;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

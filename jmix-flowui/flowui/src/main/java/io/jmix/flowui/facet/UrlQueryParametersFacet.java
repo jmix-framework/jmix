@@ -19,7 +19,7 @@ package io.jmix.flowui.facet;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.HasSubParts;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.EventObject;
 import java.util.List;

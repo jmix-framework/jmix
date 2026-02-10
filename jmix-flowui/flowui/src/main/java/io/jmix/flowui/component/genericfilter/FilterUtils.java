@@ -24,7 +24,7 @@ import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.WordUtils;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class FilterUtils {
 

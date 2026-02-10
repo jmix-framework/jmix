@@ -20,7 +20,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.binding.ValueBinding;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 

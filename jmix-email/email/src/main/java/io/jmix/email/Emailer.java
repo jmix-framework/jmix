@@ -17,7 +17,7 @@ package io.jmix.email;
 
 import io.jmix.email.entity.SendingMessage;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Date;
 
 

@@ -25,7 +25,7 @@ import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import test_support.entity.sales.Product;
 
 @FragmentDescriptor("test-datagrid-fragment.xml")

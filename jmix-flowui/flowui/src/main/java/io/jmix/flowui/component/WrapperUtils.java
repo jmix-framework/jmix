@@ -21,7 +21,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -72,9 +72,8 @@ public class WrapperUtils {
      * or {@code null} if the input is {@code null}
      * @throws IllegalArgumentException if the provided label position is not recognized
      */
-    @Nullable
-    public static FormLayout.ResponsiveStep.LabelsPosition convertToFormLayoutLabelsPosition(
-            @Nullable SupportsResponsiveSteps.ResponsiveStep.LabelsPosition labelsPosition) {
+    public static FormLayout.ResponsiveStep.@Nullable LabelsPosition convertToFormLayoutLabelsPosition(
+            SupportsResponsiveSteps.ResponsiveStep.@Nullable LabelsPosition labelsPosition) {
         if (labelsPosition == null) {
             return null;
         }

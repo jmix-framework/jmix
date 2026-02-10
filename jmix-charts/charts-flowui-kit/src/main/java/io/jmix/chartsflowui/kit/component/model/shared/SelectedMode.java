@@ -17,7 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Selected mode of legend or series, which controls whether series can be toggled displaying by clicking legends.

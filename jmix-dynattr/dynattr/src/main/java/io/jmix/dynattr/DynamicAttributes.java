@@ -16,7 +16,7 @@
 
 package io.jmix.dynattr;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,8 +69,10 @@ public class DynamicAttributes implements Serializable {
 
     protected static class ValueHolder implements Serializable {
         protected String code;
+        @Nullable
         protected Object value;
         protected State state;
+        @Nullable
         protected Object oldValue;
 
         public ValueHolder(String code, Object value) {
@@ -183,7 +185,7 @@ public class DynamicAttributes implements Serializable {
         return new Changes(created, updated, deleted);
     }
 
-    public void copy(DynamicAttributes dynamicAttributes) {
+    public void copy(@Nullable DynamicAttributes dynamicAttributes) {
         if (dynamicAttributes == null) {
             return;
         }

@@ -18,7 +18,7 @@ package io.jmix.flowui.sys.registration;
 
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.xml.facet.loader.FacetLoader;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface representing the registration of a new facet or override an existing facet.

@@ -33,7 +33,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.EditedEntityTransformer;
 import io.jmix.flowui.view.builder.WindowBuilder;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;

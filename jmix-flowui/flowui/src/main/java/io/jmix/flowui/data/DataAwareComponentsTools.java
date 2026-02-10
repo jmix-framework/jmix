@@ -31,7 +31,7 @@ import io.jmix.flowui.component.HasZoneId;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.time.*;

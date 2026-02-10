@@ -19,7 +19,7 @@ package io.jmix.core;
 import io.jmix.core.impl.JavaClassLoader;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

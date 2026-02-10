@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.app.propertyfilter.dateinterval.model;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Class describes date interval with the following types.

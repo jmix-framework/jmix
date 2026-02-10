@@ -1,7 +1,7 @@
 package io.jmix.appsettings;
 
 import io.jmix.appsettings.entity.AppSettingsEntity;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 

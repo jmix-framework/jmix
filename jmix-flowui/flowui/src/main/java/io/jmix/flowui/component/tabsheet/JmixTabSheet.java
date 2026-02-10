@@ -33,7 +33,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.kit.component.HasSubParts;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;

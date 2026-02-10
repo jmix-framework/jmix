@@ -26,7 +26,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
 
 /**

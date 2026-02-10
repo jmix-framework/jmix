@@ -33,7 +33,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.meta.StudioAPI;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;

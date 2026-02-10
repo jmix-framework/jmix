@@ -26,7 +26,7 @@ import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import org.dom4j.Element;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @org.springframework.stereotype.Component("fcalen_FullCalendarUrlQueryParametersBinderProvider")
 public class FullCalendarUrlQueryParametersBinderProvider extends AbstractUrlQueryParametersBinderProvider {

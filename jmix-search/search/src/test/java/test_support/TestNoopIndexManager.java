@@ -7,7 +7,7 @@ import io.jmix.search.index.impl.BaseIndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 public class TestNoopIndexManager extends BaseIndexManager {
 

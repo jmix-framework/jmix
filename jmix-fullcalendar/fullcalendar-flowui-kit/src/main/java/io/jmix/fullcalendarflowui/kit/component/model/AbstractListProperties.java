@@ -16,7 +16,7 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base class for configuring properties of list display modes.

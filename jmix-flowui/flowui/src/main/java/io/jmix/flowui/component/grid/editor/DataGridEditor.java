@@ -22,7 +22,7 @@ import com.vaadin.flow.component.grid.editor.Editor;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.ValueSource;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

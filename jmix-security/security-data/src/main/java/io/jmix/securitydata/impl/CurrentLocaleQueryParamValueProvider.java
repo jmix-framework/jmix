@@ -20,7 +20,7 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.QueryParamValueProvider;
 import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.core.annotation.Order;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 /**

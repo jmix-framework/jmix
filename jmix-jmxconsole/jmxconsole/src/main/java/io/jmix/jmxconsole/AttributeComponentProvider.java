@@ -31,7 +31,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 

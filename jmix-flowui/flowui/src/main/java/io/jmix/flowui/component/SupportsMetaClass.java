@@ -17,7 +17,7 @@
 package io.jmix.flowui.component;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides a contract for components that support working with a {@link MetaClass}.

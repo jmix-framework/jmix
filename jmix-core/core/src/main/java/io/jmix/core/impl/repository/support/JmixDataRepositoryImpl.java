@@ -26,7 +26,7 @@ import io.jmix.core.repository.JmixDataRepositoryContext;
 import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.*;

@@ -18,7 +18,7 @@ package io.jmix.flowui.component.logicalfilter;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Internal
 public class GroupFilterUtils {

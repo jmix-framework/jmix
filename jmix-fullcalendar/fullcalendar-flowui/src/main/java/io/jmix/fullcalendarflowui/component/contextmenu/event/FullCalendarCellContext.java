@@ -4,7 +4,7 @@ import io.jmix.fullcalendarflowui.component.data.CalendarDataProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The context of cell from which context menu is opened.

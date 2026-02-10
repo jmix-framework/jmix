@@ -21,7 +21,7 @@ import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.HasPosition;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The pie chart is mainly used for showing proportion of different categories. Each arc length represents

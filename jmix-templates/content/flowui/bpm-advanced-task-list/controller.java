@@ -49,7 +49,7 @@ import org.flowable.task.api.TaskQuery;
 import org.flowable.task.service.impl.TaskQueryProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;

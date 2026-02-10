@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import java.util.*;
 
 public class EntityMap implements Map<String, Object> {
@@ -109,7 +109,7 @@ public class EntityMap implements Map<String, Object> {
     }
 
     @Override
-    public void putAll(@Nonnull Map<? extends String, ?> m) {
+    public void putAll(@NonNull Map<? extends String, ?> m) {
         explicitData.putAll(m);
     }
 
@@ -118,21 +118,21 @@ public class EntityMap implements Map<String, Object> {
         explicitData.clear();
     }
 
-    @Nonnull
+    @NonNull
     @Override
     public Set<String> keySet() {
         loadAllProperties();
         return explicitData.keySet();
     }
 
-    @Nonnull
+    @NonNull
     @Override
     public Collection<Object> values() {
         loadAllProperties();
         return explicitData.values();
     }
 
-    @Nonnull
+    @NonNull
     @Override
     public Set<Entry<String, Object>> entrySet() {
         loadAllProperties();

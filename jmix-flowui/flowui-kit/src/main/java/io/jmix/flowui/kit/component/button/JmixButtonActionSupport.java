@@ -24,7 +24,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;

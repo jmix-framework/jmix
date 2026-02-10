@@ -27,7 +27,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 @Component("flowui_RestDsFilterConditionAttributeSerializationExtension")

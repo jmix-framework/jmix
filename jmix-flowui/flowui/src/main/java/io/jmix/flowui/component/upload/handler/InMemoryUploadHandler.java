@@ -22,7 +22,7 @@ import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
 import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;

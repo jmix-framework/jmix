@@ -23,7 +23,7 @@ import io.jmix.fullcalendarflowui.component.data.ItemsCalendarDataProvider;
 import io.jmix.fullcalendarflowui.component.data.CallbackCalendarDataProvider;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
 import org.dom4j.Element;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDate;

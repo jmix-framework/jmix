@@ -21,7 +21,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.DataProperties;
 import io.jmix.data.impl.QueryConstantHandler;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.time.*;

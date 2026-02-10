@@ -34,7 +34,7 @@ import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasClickListener;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasSubMenu;
 import io.jmix.flowui.kit.event.EventBus;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.util.EventObject;

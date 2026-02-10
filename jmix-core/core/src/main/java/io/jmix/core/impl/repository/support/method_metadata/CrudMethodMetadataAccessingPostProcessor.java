@@ -27,8 +27,8 @@ import org.springframework.data.repository.core.support.RepositoryProxyPostProce
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.util.ReflectionUtils;
 
-import jakarta.annotation.Nonnull;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
@@ -71,7 +71,7 @@ public class CrudMethodMetadataAccessingPostProcessor implements RepositoryProxy
 
         @Nullable
         @Override
-        public Object invoke(@Nonnull MethodInvocation invocation) throws Throwable {
+        public Object invoke(@NonNull MethodInvocation invocation) throws Throwable {
             Method method = invocation.getMethod();
             if (!implementations.contains(method)) {
                 return invocation.proceed();

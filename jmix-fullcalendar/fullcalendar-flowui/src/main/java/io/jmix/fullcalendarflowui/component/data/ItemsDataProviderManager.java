@@ -6,7 +6,7 @@ import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.data.ItemsCalendarDataProvider.ItemSetChangeEvent;
 import io.jmix.fullcalendarflowui.component.model.IncrementalData;
 import io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;

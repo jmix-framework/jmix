@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@NonNullApi
+@NullMarked
 package io.jmix.bulkeditor.action;
 
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import java.util.Collection;
 
 @Component("core_SpringBeanLoader")
@@ -36,7 +36,7 @@ public class SpringBeanLoader implements BeanFactoryAware {
     protected DefaultListableBeanFactory beanFactory;
 
     @Override
-    public void setBeanFactory(@Nonnull BeanFactory beanFactory) throws BeansException {
+    public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
         if (beanFactory instanceof DefaultListableBeanFactory) {
             this.beanFactory = (DefaultListableBeanFactory) beanFactory;
         }

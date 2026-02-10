@@ -22,7 +22,7 @@ import io.jmix.flowui.facet.impl.AbstractFacet;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Internal
 public class DynAttrFacetImpl extends AbstractFacet implements DynAttrFacet {

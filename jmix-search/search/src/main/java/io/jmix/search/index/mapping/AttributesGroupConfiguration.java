@@ -19,7 +19,7 @@ package io.jmix.search.index.mapping;
 import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 

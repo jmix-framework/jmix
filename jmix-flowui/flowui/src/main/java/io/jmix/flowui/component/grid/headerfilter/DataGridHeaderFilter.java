@@ -45,7 +45,7 @@ import io.jmix.flowui.model.HasLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A UI component used for displaying the filter in the column header. Modifies the standard header by

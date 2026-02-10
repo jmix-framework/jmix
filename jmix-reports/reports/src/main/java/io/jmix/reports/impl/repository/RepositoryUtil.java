@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

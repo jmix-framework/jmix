@@ -20,7 +20,7 @@ import com.vaadin.flow.function.ValueProvider;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides string representations of property values for entities.

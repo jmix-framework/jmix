@@ -21,7 +21,7 @@ import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,13 +47,12 @@ public abstract class AbstractLoaderContext implements ComponentLoader.Context {
         this.fullOriginId = fullOriginId;
     }
 
-    @Nullable
     @Override
-    public ComponentLoader.Context getParentContext() {
+    public ComponentLoader.@Nullable Context getParentContext() {
         return parentContext;
     }
 
-    public void setParentContext(@Nullable ComponentLoader.Context parentContext) {
+    public void setParentContext(ComponentLoader.@Nullable Context parentContext) {
         this.parentContext = parentContext;
     }
 

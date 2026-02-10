@@ -42,7 +42,7 @@ import io.jmix.flowui.menu.MenuItem.MenuItemParameter;
 import io.jmix.flowui.menu.provider.HasMenuItemProvider;
 import io.jmix.flowui.menu.provider.MenuItemProvider;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;

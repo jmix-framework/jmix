@@ -19,7 +19,7 @@ package io.jmix.flowui.model;
 import io.jmix.core.querycondition.Condition;
 
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.function.Function;

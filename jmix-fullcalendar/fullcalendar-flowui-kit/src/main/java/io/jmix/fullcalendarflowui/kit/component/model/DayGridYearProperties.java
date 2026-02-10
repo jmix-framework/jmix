@@ -17,7 +17,7 @@
 package io.jmix.fullcalendarflowui.kit.component.model;
 
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration properties of day-grid year display mode {@link CalendarDisplayModes#DAY_GRID_YEAR}.

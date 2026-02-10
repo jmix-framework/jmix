@@ -22,7 +22,7 @@ import io.jmix.core.annotation.Internal;
 import org.dom4j.Document;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Internal
 @Component("flowui_ViewXmlDocumentCache")

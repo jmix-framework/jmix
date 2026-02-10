@@ -17,7 +17,7 @@
 package io.jmix.flowui.menu.provider;
 
 import io.jmix.flowui.kit.component.menu.MenuItem;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents menus that have menu item providers

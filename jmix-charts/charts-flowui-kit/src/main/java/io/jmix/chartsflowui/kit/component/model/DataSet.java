@@ -21,7 +21,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.chartsflowui.kit.component.model.series.GaugeSeries;
 import io.jmix.chartsflowui.kit.data.chart.ChartItems;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

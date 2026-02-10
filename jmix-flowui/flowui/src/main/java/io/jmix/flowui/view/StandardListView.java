@@ -25,7 +25,7 @@ import io.jmix.flowui.component.SupportsEnterPress.EnterPressEvent;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import io.jmix.flowui.util.OperationResult;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;

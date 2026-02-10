@@ -39,7 +39,7 @@ import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.sql.Time;
 import java.time.*;

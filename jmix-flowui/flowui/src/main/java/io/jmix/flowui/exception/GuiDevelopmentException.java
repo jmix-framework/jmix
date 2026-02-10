@@ -18,7 +18,7 @@ package io.jmix.flowui.exception;
 
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 

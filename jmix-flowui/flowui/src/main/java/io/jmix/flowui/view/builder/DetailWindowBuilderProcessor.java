@@ -36,7 +36,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;

@@ -1,6 +1,6 @@
 package io.jmix.fullcalendarflowui.kit.meta.loader;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalTime;

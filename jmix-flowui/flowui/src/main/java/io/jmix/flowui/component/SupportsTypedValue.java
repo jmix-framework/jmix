@@ -23,7 +23,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.shared.Registration;
 
 import io.jmix.flowui.kit.meta.StudioIgnore;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface that defines a contract for components supporting a typed value.

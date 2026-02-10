@@ -31,7 +31,7 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.event.EventBus;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.util.*;

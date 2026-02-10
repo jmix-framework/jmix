@@ -18,7 +18,7 @@ package io.jmix.flowui.facet.settings.component;
 
 import com.vaadin.flow.component.details.Details;
 import io.jmix.flowui.facet.settings.Settings;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents component settings for {@link Details} component.

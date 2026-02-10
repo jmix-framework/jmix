@@ -40,7 +40,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
@@ -54,7 +54,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
@@ -616,7 +616,7 @@ public class MetadataTools {
      * @param metaClass entity metaclass
      * @return collection of the name pattern properties
      */
-    @Nonnull
+    @NonNull
     public Collection<MetaProperty> getInstanceNameRelatedProperties(MetaClass metaClass) {
         return getInstanceNameRelatedProperties(metaClass, false);
     }
@@ -630,7 +630,7 @@ public class MetadataTools {
      * @return collection of the name pattern properties
      */
 
-    @Nonnull
+    @NonNull
     public Collection<MetaProperty> getInstanceNameRelatedProperties(MetaClass metaClass, boolean useOriginal) {
         return instanceNameProvider.getInstanceNameRelatedProperties(metaClass, useOriginal);
     }

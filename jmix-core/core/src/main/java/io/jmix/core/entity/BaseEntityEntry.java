@@ -26,9 +26,9 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.model.utils.MethodsCache;
 import io.jmix.core.metamodel.model.utils.RelatedPropertiesCache;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Id;
 import java.io.IOException;

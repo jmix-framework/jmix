@@ -20,7 +20,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.dataimport.configuration.UniqueEntityConfiguration;
 import io.jmix.dataimport.extractor.data.ImportedData;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 

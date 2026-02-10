@@ -17,7 +17,7 @@
 package io.jmix.flowui.xml.layout.loader;
 
 import io.jmix.flowui.xml.layout.ComponentLoader;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An object that stores information about the value to be set for an object property.

@@ -19,7 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.datazoom;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.shared.Orientation;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base component witch used for zooming a specific area in the chart.

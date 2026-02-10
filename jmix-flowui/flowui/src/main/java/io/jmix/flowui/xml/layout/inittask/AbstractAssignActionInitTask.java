@@ -23,7 +23,7 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 

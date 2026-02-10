@@ -24,7 +24,7 @@ import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.dynattr.MsgBundleTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Locale;
 

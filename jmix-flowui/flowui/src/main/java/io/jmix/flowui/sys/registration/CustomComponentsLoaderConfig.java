@@ -22,7 +22,7 @@ import io.jmix.flowui.xml.layout.LoaderConfig;
 import org.dom4j.Element;
 import org.springframework.core.annotation.Order;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

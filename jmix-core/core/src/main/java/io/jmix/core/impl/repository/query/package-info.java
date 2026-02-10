@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 @Internal
-@NonNullApi
+@NullMarked
 package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

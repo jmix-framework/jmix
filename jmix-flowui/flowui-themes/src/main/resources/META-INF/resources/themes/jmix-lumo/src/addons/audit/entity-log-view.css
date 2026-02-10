@@ -23,6 +23,10 @@
     padding: var(--lumo-space-s) var(--lumo-space-m) var(--lumo-space-m) var(--lumo-space-m);
 }
 
+.entity-log-view vaadin-details.filter-layout {
+    margin-bottom: 0;
+}
+
 .entity-log-view .data-grid-wrapper {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(42rem, 1fr));

@@ -20,6 +20,10 @@
     flex-shrink: 0;
 }
 
+.ui-component-resource-policy-model-create-view .selected-component-ids-layout {
+    gap: var(--lumo-space-xs);
+}
+
 .ui-component-resource-policy-model-create-view .component-id-combo-box-renderer-tag {
     color: var(--lumo-secondary-text-color);
 }

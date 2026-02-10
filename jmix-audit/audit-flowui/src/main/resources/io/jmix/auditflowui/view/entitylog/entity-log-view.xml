@@ -96,9 +96,9 @@
     <layout padding="false" classNames="entity-log-view">
         <tabSheet id="tabsheet" width="100%" height="100%" classNames="content-root">
             <tab id="view" label="msg://view">
-                <vbox id="viewWrapper" width="100%" height="100%"
-                      padding="false" themeNames="spacing-s">
-                    <details opened="true" width="100%" summaryText="msg://filterParameters">
+                <vbox id="viewWrapper" width="100%" height="100%" padding="false">
+                    <details opened="true" width="100%" summaryText="msg://filterParameters"
+                             classNames="filter-layout">
                         <vbox padding="false">
                             <formLayout>
                                 <responsiveSteps>

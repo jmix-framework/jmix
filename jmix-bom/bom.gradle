@@ -286,11 +286,6 @@ dependencies {
         api "io.jmix.uiconstraints:jmix-uiconstraints:$premiumVersion"
         api "io.jmix.uiconstraints:jmix-uiconstraints-starter:$premiumVersion"
 
-        api "io.jmix.vcc:vaadin-board:$premiumVersion"
-        api "io.jmix.vcc:vaadin-board-starter:$premiumVersion"
-        api "io.jmix.vcc:vaadin-board-kit:$premiumVersion"
-        api "io.jmix.vcc:vaadin-board-devserver-kit:$premiumVersion"
-
         api "io.jmix.vcc:vaadin-dashboard:$premiumVersion"
         api "io.jmix.vcc:vaadin-dashboard-starter:$premiumVersion"
         api "io.jmix.vcc:vaadin-dashboard-kit:$premiumVersion"
@@ -338,7 +333,6 @@ dependencies {
         api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
         api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
-        api "com.vaadin:vaadin-board-flow:$vaadinFlowVersion"
         api "com.vaadin:vaadin-spreadsheet-flow:$vaadinFlowVersion"
         api "com.vaadin:vaadin-dashboard-flow:$vaadinFlowVersion"
 

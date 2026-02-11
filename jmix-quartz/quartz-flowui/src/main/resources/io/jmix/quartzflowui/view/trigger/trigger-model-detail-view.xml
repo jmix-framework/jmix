@@ -30,7 +30,8 @@
             </formItem>
             <formItem id="repeatModeFormItem" label="msg://triggerRepeatMode">
                 <hbox id="repeatModeBox" alignItems="CENTER">
-                    <radioButtonGroup id="repeatModeSelector" itemsEnum="io.jmix.quartz.model.RepeatMode" width="100%"/>
+                    <radioButtonGroup id="repeatModeSelector" itemsEnum="io.jmix.quartz.model.RepeatMode"
+                                      width="100%" themeNames="horizontal"/>
                     <button id="repeatModeSelectorHelpButton"/>
                 </hbox>
             </formItem>

@@ -52,7 +52,8 @@
                     <formLayout id="form" dataContainer="messageTemplateDc">
                         <textField id="nameField" property="name"/>
                         <textField id="codeField" property="code"/>
-                        <radioButtonGroup id="typeField" property="type"/>
+                        <radioButtonGroup id="typeField" property="type"
+                                          themeNames="horizontal"/>
                         <entityComboBox id="groupField" property="group"
                                         itemsContainer="messageTemplateGroupsDc">
                             <actions>

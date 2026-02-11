@@ -41,7 +41,8 @@
                 <textField id="nameField" property="name"/>
                 <textField id="sourceField" property="source" readOnly="true"/>
                 <textField id="codeField" property="code" readOnly="true"/>
-                <checkboxGroup id="scopesField" property="scopes" required="true"/>
+                <checkboxGroup id="scopesField" property="scopes" required="true"
+                               themeNames="horizontal"/>
                 <textArea id="descriptionField" property="description" height="9.5em"/>
             </formLayout>
 

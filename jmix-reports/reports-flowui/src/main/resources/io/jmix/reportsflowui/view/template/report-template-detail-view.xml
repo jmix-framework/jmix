@@ -50,7 +50,8 @@
                         </validators>
                     </textField>
                     <radioButtonGroup id="isGroovyRadioButtonGroup" property="groovy"
-                                      label="msg://isGroovyRadioButtonGroup.label" width="100%"/>
+                                      label="msg://isGroovyRadioButtonGroup.label" width="100%"
+                                      themeNames="horizontal"/>
                     <checkbox id="customField" property="custom" label="msg://customField.label" width="100%"/>
                     <checkbox id="alterableField" property="alterable" label="msg://alterableField.label" width="100%"/>
                     <checkbox id="defaultField" label="msg://defaultField.label" width="100%"/>

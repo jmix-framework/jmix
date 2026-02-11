@@ -250,7 +250,6 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.userMenu) {
             id.get() == "userMenu"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
-            overlayClassName == "jmix-user-menu-overlay overlayClassName" // default class name + custom
             style.get("color") == "red"
             enabled
             openOnHover

@@ -42,13 +42,28 @@
 }
 
 .jmix-closeable-layout .close-button {
+  color: inherit;
+
   position: absolute;
   right: 0;
   top: 0;
+
+  font-size: inherit;
+  line-height: inherit;
+
+  padding: 0px;
+  margin: 0px;
+
+  min-width: 0px;
+  height: auto;
+
+  --vaadin-button-background: transparent;
 }
 
-.jmix-closeable-layout .close-button {
-  color: inherit;
+.jmix-closeable-layout .close-button::part(label) {
+  line-height: inherit;
+  overflow: visible;
+  padding: 0px;
 }
 
 vaadin-notification-card:not([slot$='stretch']) .jmix-closeable-layout {
@@ -56,13 +71,13 @@ vaadin-notification-card:not([slot$='stretch']) .jmix-closeable-layout {
 }
 
 vaadin-notification-card[slot$='stretch'] .jmix-closeable-layout .close-button {
-  padding-top: var(--lumo-space-s);
-  padding-inline-end: var(--lumo-space-s);
+  margin-top: var(--lumo-space-s);
+  margin-inline-end: var(--lumo-space-s);
 }
 
 vaadin-notification-card:not([slot$='stretch']) .jmix-closeable-layout .close-button {
-  padding-top: var(--lumo-space-xs);
-  padding-inline-end: var(--lumo-space-xs);
+  margin-top: var(--lumo-space-xs);
+  margin-inline-end: var(--lumo-space-xs);
 }
 
 vaadin-notification-card[slot$='stretch'] .jmix-text-layout-closeable {

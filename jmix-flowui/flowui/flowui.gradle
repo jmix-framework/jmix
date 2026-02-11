@@ -24,6 +24,7 @@ archivesBaseName = 'jmix-flowui'
 dependencies {
     api project(':core')
     api project(':flowui-kit')
+    api project(':flowui-themes')
 
     api 'com.vaadin:vaadin-spring-boot-starter'
 

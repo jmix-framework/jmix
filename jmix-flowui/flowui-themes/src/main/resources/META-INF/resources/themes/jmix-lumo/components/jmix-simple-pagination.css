@@ -41,14 +41,14 @@
     cursor: pointer;
 }
 
-.jmix-simple-pagination-navigation-button.first,
-.jmix-simple-pagination-navigation-button.prev,
-.jmix-simple-pagination-navigation-button.next,
-.jmix-simple-pagination-navigation-button.last {
+.jmix-simple-pagination-navigation-button {
     padding: 0;
     margin: 0;
     height: 1.5rem;
     min-width: 1.5rem;
+
+    font-size: var(--lumo-font-size-s);
+    --lumo-button-size: var(--lumo-size-s);
 }
 
 .jmix-simple-pagination-navigation-button vaadin-icon[dir='rtl'] {

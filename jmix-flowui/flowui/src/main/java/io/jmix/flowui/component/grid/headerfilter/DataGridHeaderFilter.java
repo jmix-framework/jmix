@@ -296,7 +296,6 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
     protected JmixButton createClearFilterButton() {
         JmixButton clearButton = uiComponents.create(JmixButton.class);
 
-        clearButton.addThemeVariants(ButtonVariant.LUMO_ICON);
         clearButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER_CLEAR));
         clearButton.addClickListener(this::onClearButtonClick);
 

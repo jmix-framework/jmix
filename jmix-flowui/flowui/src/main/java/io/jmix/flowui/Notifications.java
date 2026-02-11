@@ -32,6 +32,7 @@ import io.jmix.flowui.event.notification.NotificationClosedEvent;
 import io.jmix.flowui.event.notification.NotificationOpenedEvent;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -459,8 +460,7 @@ public class Notifications {
 
         protected Button createCloseButton() {
             Button button = new Button();
-            button.setClassName(CLOSE_BUTTON_CLASS_NAME);
-            button.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+            button.addClassNames(CLOSE_BUTTON_CLASS_NAME);
             button.setIcon(icons().get(JmixFontIcon.CLOSE_SMALL));
             button.addClickListener(this::onCloseButtonClick);
             return button;

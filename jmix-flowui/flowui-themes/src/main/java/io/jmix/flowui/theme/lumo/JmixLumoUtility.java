@@ -21,7 +21,10 @@ import io.jmix.flowui.theme.ThemeUtilityClasses;
 
 /**
  * Contains the definition for all CSS utility classes provided by Jmix Lumo.
+ *
+ * @deprecated Use {@link StyleUtility} instead.
  */
+@Deprecated
 @ThemeUtilityClasses(name = "Jmix Lumo")
 public final class JmixLumoUtility {
 
@@ -39,8 +42,11 @@ public final class JmixLumoUtility {
         @Deprecated
         public static final String BUTTONS_PANEL = "buttons-panel";
 
+        /**
+         * @deprecated Use {@link StyleUtility.Container#BORDERED_PANEL} instead.
+         */
+        @Deprecated
         public static final String BORDERED_PANEL = "bordered-panel";
-        public static final String FOOTER_PANEL = "footer-panel";
 
         private Container() {
         }

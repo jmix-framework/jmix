@@ -24,12 +24,23 @@ public final class StyleUtility {
     private StyleUtility() {
     }
 
+    public static final class Button {
+
+        public static final String NESTED_BUTTON = "nested-button";
+
+        private Button() {
+        }
+    }
+
     /**
      * Containers related classes.
      */
     public static final class Container {
 
         public static final String BUTTONS_PANEL = "buttons-panel";
+
+        public static final String BORDERED_PANEL = "bordered-panel";
+        public static final String FOOTER_PANEL = "footer-panel";
 
         private Container() {
         }

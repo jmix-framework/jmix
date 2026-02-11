@@ -15,13 +15,31 @@
  */
 
 .bordered-panel {
-  border: 1px solid;
-  border-color: var(--lumo-contrast-20pct);
-  border-radius: var(--lumo-border-radius-l);
+    border: 1px solid;
+    border-color: var(--lumo-contrast-20pct);
+    border-radius: var(--lumo-border-radius-l);
 }
 
 .footer-panel {
-  background-color: var(--lumo-contrast-5pct);
-  padding: var(--lumo-space-s) var(--lumo-space-m);
+    background-color: var(--lumo-contrast-5pct);
+    padding: var(--lumo-space-s) var(--lumo-space-m);
 }
 
+vaadin-button.nested-button {
+    font-size: inherit;
+    line-height: inherit;
+
+    padding: 0px;
+    margin: 0px;
+
+    min-width: 0px;
+    height: auto;
+
+    --vaadin-button-background: transparent;
+}
+
+vaadin-button.nested-button::part(label) {
+    line-height: inherit;
+    overflow: visible;
+    padding: 0px;
+}

@@ -172,7 +172,6 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     protected void initFunnelButton() {
         filterButton = uiComponents.create(JmixButton.class);
-        filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE, ButtonVariant.LUMO_ICON);
         filterButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER));
         filterButton.setClassName("jmix-grid-header-filter-filter-button");
         filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_ROLE);

@@ -23,6 +23,7 @@ archivesBaseName = 'jmix-fullcalendar-flowui'
 dependencies {
     api project(':core')
     api project(':flowui')
+    api project(':flowui-themes')
     api project(':fullcalendar-flowui-kit')
 
     testImplementation project(':flowui-test-assist')

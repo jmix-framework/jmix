@@ -14,5 +14,6 @@
  * limitations under the License.
  */
 
-@import './jmix-full-text-filter.css';
-@import './search-results-view.css';
+.jmix-full-text-filter {
+    gap: var(--lumo-space-s);
+}

@@ -25,7 +25,8 @@
     padding: var(--lumo-space-s) var(--lumo-space-m);
 }
 
-vaadin-button.nested-button {
+vaadin-button.nested-button,
+vaadin-button.dialog-close-button {
     font-size: inherit;
     line-height: inherit;
 
@@ -38,8 +39,13 @@ vaadin-button.nested-button {
     --vaadin-button-background: transparent;
 }
 
-vaadin-button.nested-button::part(label) {
+vaadin-button.nested-button::part(label),
+vaadin-button.dialog-close-button::part(label) {
     line-height: inherit;
     overflow: visible;
     padding: 0px;
+}
+
+vaadin-button.dialog-close-button {
+    color: var(--lumo-contrast);
 }

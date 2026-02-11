@@ -67,6 +67,7 @@ public class ResetPasswordView extends StandardView {
     private static final Logger log = LoggerFactory.getLogger(ResetPasswordView.class);
 
     protected static final String RESET_PASSWORD_FIELD_CLASS_NAME = "reset-password-field";
+    protected static final String COPY_BUTTON_CLASS_NAME = "copy-button";
 
     protected static final String PASSWORD_FIELD_ID = "passwordField";
     protected static final String BUTTON_ID = "copyButton";
@@ -263,16 +264,16 @@ public class ResetPasswordView extends StandardView {
 
         JmixPasswordField passwordField = uiComponents.create(JmixPasswordField.class);
         passwordField.setId(PASSWORD_FIELD_ID);
-        passwordField.addClassName(RESET_PASSWORD_FIELD_CLASS_NAME);
+        passwordField.setClassName(RESET_PASSWORD_FIELD_CLASS_NAME);
         passwordField.setReadOnly(true);
 
-        JmixButton button = uiComponents.create(JmixButton.class);
-        button.setId(BUTTON_ID);
-        button.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_CONTRAST);
-        button.setTooltipText(messageBundle.getMessage("resetPasswordView.copyButton.tooltip"));
-        button.setIcon(icons.get(JmixFontIcon.COPY));
+        JmixButton copyButton = uiComponents.create(JmixButton.class);
+        copyButton.setId(BUTTON_ID);
+        copyButton.setClassName(COPY_BUTTON_CLASS_NAME);
+        copyButton.setTooltipText(messageBundle.getMessage("resetPasswordView.copyButton.tooltip"));
+        copyButton.setIcon(icons.get(JmixFontIcon.COPY));
 
-        layout.add(passwordField, button);
+        layout.add(passwordField, copyButton);
 
         return layout;
     }

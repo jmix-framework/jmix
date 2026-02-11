@@ -25,6 +25,7 @@ dependencies {
     api project(':dynattr-flowui-kit')
 
     api project(':flowui')
+    api project(':flowui-themes')
 
     implementation 'com.google.code.gson:gson'
 

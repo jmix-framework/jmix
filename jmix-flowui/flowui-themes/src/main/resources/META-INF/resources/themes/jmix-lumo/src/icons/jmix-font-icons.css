@@ -777,7 +777,7 @@ html {
 vaadin-menu-bar-item > vaadin-icon[icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon-lumo"]),
 vaadin-button > vaadin-icon[icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon-lumo"]),
 vaadin-icon[slot][icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon-lumo"]) {
-    padding: var(--lumo-space-xs);
+    padding: 0.25em;
     box-sizing: border-box !important;
 }
 

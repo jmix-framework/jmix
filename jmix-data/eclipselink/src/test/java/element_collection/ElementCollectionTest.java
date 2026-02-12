@@ -31,12 +31,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionTemplate;
 import test_support.DataTestConfiguration;
 import test_support.TestContextInititalizer;
+import test_support.TestLoadValuesConstraint;
 import test_support.entity.element_collection.EcAlpha;
 import test_support.entity.element_collection.EcBeta;
 import test_support.entity.element_collection.EcGamma;
@@ -66,6 +68,8 @@ public class ElementCollectionTest {
     EntityManager entityManager;
     @Autowired
     TestEcAlphaChangedEventListener changedEventListener;
+    @Autowired
+    ApplicationContext applicationContext;
 
     @AfterEach
     void tearDown() {
@@ -234,6 +238,29 @@ public class ElementCollectionTest {
         assertThat((Object) entity.getValue("tag")).isIn("tag1", "tag2");
 
         List<String> tags = dataManager.loadValue("select t from test_EcAlpha e join e.tags t", String.class).list();
+        assertThat(tags).containsExactlyInAnyOrder("tag1", "tag2");
+    }
+
+    @Test
+    void testKeyValueEntityWithConstraints() {
+        EcAlpha alpha = dataManager.create(EcAlpha.class);
+        alpha.setName("foo 1");
+        alpha.setTags(List.of("tag1", "tag2"));
+        dataManager.saveWithoutReload(alpha);
+
+        TestLoadValuesConstraint loadValuesConstraint = applicationContext.getBean(TestLoadValuesConstraint.class);
+
+        List<KeyValueEntity> list = dataManager.loadValues("select e.name, t from test_EcAlpha e join e.tags t")
+                .properties("name", "tag")
+                .accessConstraints(List.of(loadValuesConstraint))
+                .list();
+        KeyValueEntity entity = list.get(0);
+        assertThat((Object) entity.getValue("name")).isEqualTo("foo 1");
+        assertThat((Object) entity.getValue("tag")).isIn("tag1", "tag2");
+
+        List<String> tags = dataManager.loadValue("select t from test_EcAlpha e join e.tags t", String.class)
+                .accessConstraints(List.of(loadValuesConstraint))
+                .list();
         assertThat(tags).containsExactlyInAnyOrder("tag1", "tag2");
     }
 

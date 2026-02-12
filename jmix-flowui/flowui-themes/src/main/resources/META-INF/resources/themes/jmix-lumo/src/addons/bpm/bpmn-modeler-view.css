@@ -23,3 +23,7 @@
 .bpmn-modeler-view .schema-source-name {
     font-size: var(--lumo-font-size-m);
 }
+
+.bpmn-modeler-view .properties-container {
+    overflow: auto;
+}

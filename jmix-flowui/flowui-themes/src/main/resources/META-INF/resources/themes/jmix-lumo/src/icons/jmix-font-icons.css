@@ -398,7 +398,7 @@ html {
     --jmix-font-icon-lines-list: "lines-list";
     --jmix-font-icon-lines: "lines";
     --jmix-font-icon-link: "link";
-    --jmix-font-icon-list-ol: "list-ol";
+    --jmix-font-icon-list-ol: '\e71f';
     --jmix-font-icon-list-select: "list-select";
     --jmix-font-icon-list-ul: "list-ul";
     --jmix-font-icon-list: "list";

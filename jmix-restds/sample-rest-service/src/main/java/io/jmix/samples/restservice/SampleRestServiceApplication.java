@@ -2,7 +2,7 @@ package io.jmix.samples.restservice;
 
 import com.google.common.base.Strings;
 import io.jmix.authserver.service.mapper.DefaultOAuth2TokenUserMixin;
-import io.jmix.authserver.service.mapper.JdbcOAuth2AuthorizationServiceObjectMapperCustomizer;
+import io.jmix.authserver.service.mapper.JdbcOAuth2AuthorizationServiceJsonMapperCustomizer;
 import io.jmix.samples.restservice.entity.User;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +40,6 @@ public class SampleRestServiceApplication {
     @ConfigurationProperties("main.datasource.hikari")
     DataSource dataSource(final DataSourceProperties dataSourceProperties) {
         return dataSourceProperties.initializeDataSourceBuilder().build();
-    }
-
-    @Bean
-    JdbcOAuth2AuthorizationServiceObjectMapperCustomizer tokenObjectMapperCustomizer() {
-        return JsonMapperBuilder ->
-                JsonMapperBuilder.addMixIn(User.class, DefaultOAuth2TokenUserMixin.class); //todo [SB4]
     }
 
     @EventListener

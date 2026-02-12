@@ -43,8 +43,8 @@ public class JmixDeleteQuery extends JmixListQuery {
     public Object execute(Object[] parameters) {
         Object rawResult = super.execute(parameters);
         if (rawResult == null) {
-            // Failsave: null should not be returned from super.execute in case of delete operation
-            return emptyList();
+            // Null is not expected from super.execute in case of delete operation
+            throw new IllegalStateException("NULL was returned instead of List of entities to delete");
         }
 
         if (rawResult instanceof List<?> loaded) {

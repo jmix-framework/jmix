@@ -34,7 +34,8 @@ import io.jmix.authserver.service.OracleJdbcOAuth2AuthorizationService;
 import io.jmix.authserver.service.cleanup.OAuth2ExpiredTokenCleaner;
 import io.jmix.authserver.service.cleanup.impl.InMemoryOAuth2ExpiredTokenCleaner;
 import io.jmix.authserver.service.cleanup.impl.JdbcOAuth2ExpiredTokenCleaner;
-import io.jmix.authserver.service.mapper.JdbcOAuth2AuthorizationServiceObjectMapperCustomizer;
+import io.jmix.authserver.service.mapper.JdbcOAuth2AuthorizationServiceJsonMapperCustomizer;
+import io.jmix.authserver.service.mapper.JdbcOAuth2AuthorizationServicePolymorphicTypeValidatorCustomizer;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.data.persistence.DbmsType;
 import io.jmix.security.SecurityConfigurers;
@@ -43,7 +44,6 @@ import io.jmix.security.util.ClientDetailsSourceSupport;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -62,6 +62,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.jackson.SecurityJacksonModules;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
@@ -82,6 +83,7 @@ import org.springframework.security.web.util.matcher.RequestMatchers;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 
 import java.util.Collection;
 
@@ -231,10 +233,12 @@ public class AuthServerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public OAuth2AuthorizationService oAuth2AuthorizationService(JdbcOperations jdbcOperations,
-                                                                     RegisteredClientRepository registeredClientRepository,
-                                                                     ObjectProvider<JdbcOAuth2AuthorizationServiceObjectMapperCustomizer> objectMapperCustomizers,
-                                                                     DbmsType dbmsType) {
+        public OAuth2AuthorizationService oAuth2AuthorizationService(
+                JdbcOperations jdbcOperations,
+                RegisteredClientRepository registeredClientRepository,
+                ObjectProvider<JdbcOAuth2AuthorizationServiceJsonMapperCustomizer> jsonMapperCustomizers,
+                ObjectProvider<JdbcOAuth2AuthorizationServicePolymorphicTypeValidatorCustomizer> polymorphicTypeValidatorCustomizers,
+                DbmsType dbmsType) {
             if (authServerProperties.isUseInMemoryAuthorizationService()) {
                 log.debug("Use {}", InMemoryOAuth2AuthorizationService.class);
                 return new InMemoryOAuth2AuthorizationService();
@@ -244,7 +248,7 @@ public class AuthServerAutoConfiguration {
                 );
                 log.debug("Use {}", authorizationService.getClass());
 
-                JsonMapper jsonMapper = createJsonMapper(objectMapperCustomizers);
+                JsonMapper jsonMapper = createJsonMapper(jsonMapperCustomizers, polymorphicTypeValidatorCustomizers);
 
                 JdbcOAuth2AuthorizationService.JsonMapperOAuth2AuthorizationRowMapper rowMapper =
                         new JdbcOAuth2AuthorizationService.JsonMapperOAuth2AuthorizationRowMapper(registeredClientRepository, jsonMapper);
@@ -297,19 +301,32 @@ public class AuthServerAutoConfiguration {
             }
         }
 
-        protected JsonMapper createJsonMapper(ObjectProvider<@NonNull JdbcOAuth2AuthorizationServiceObjectMapperCustomizer> objectMapperCustomizers) {
+        protected JsonMapper createJsonMapper(
+                ObjectProvider<JdbcOAuth2AuthorizationServiceJsonMapperCustomizer> jsonMapperCustomizers,
+                ObjectProvider<JdbcOAuth2AuthorizationServicePolymorphicTypeValidatorCustomizer> polymorphicTypeValidatorCustomizers) {
             ClassLoader classLoader = JdbcOAuth2AuthorizationService.class.getClassLoader();
 
-            JsonMapper.Builder builder = JsonMapper.builder()
-                    .addModules(SecurityJacksonModules.getModules(classLoader))
-                    .addModule(new OAuth2AuthorizationServerJacksonModule());
-
-            // TODO [SB4] Customize on builder level due to immutability of JsonMapper
-            objectMapperCustomizers.orderedStream().forEach(
-                    customizer -> customizer.customize(builder)
+            BasicPolymorphicTypeValidator.Builder polymorphicTypeValidatorBuilder = BasicPolymorphicTypeValidator.builder()
+                    .allowIfSubType(UserDetails.class);
+            polymorphicTypeValidatorCustomizers.orderedStream().forEach(
+                    customizer -> {
+                        log.debug("Apply polymorphic type validator customizer: {}", customizer.getClass().getName());
+                        customizer.customize(polymorphicTypeValidatorBuilder);
+                    }
             );
 
-            return builder.build();
+            JsonMapper.Builder jsonMapperBuilder = JsonMapper.builder()
+                    .addModules(SecurityJacksonModules.getModules(classLoader, polymorphicTypeValidatorBuilder));
+
+            // TODO [SB4] Customize on builder level due to immutability of JsonMapper
+            jsonMapperCustomizers.orderedStream().forEach(
+                    customizer -> {
+                        log.debug("Apply JsonMapper customizer: {}", customizer.getClass().getName());
+                        customizer.customize(jsonMapperBuilder);
+                    }
+            );
+
+            return jsonMapperBuilder.build();
         }
     }
 

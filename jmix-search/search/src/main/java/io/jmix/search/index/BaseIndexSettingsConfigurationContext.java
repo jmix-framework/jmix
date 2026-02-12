@@ -31,6 +31,9 @@ import java.util.function.Supplier;
  *  <li>Analysis settings for specific index can be configured via {@link #getEntityAnalysisBuilder(Class)}</li>
  * </ul>
  * <p>
+ * NOTE: Usage of deprecated api ({@link #getCommonSettingsBuilder()} and {@link #getEntitySettingsBuilder(Class)})
+ * will be ignored if any of the actual API above is used or {@link io.jmix.search.index.annotation.ExtendedSearch} is applied
+ * <p>
  * NOTE: do not call .build() method of acquired builders within your configurer.
  */
 public class BaseIndexSettingsConfigurationContext<T, A> {
@@ -43,6 +46,9 @@ public class BaseIndexSettingsConfigurationContext<T, A> {
     protected final Supplier<T> indexSettingsBuilderGenerator;
     protected final Supplier<A> analysisBuilderGenerator;
 
+    protected final T commonSettingsBuilder;
+    protected final Map<Class<?>, T> specificSettingsBuilders;
+
     public BaseIndexSettingsConfigurationContext(Supplier<T> indexSettingsBuilderGenerator,
                                                  Supplier<A> analysisBuilderGenerator) {
         this.commonIndexSettingsBuilder = indexSettingsBuilderGenerator.get();
@@ -51,6 +57,9 @@ public class BaseIndexSettingsConfigurationContext<T, A> {
         this.specificAnalysisBuilders = new HashMap<>();
         this.indexSettingsBuilderGenerator = indexSettingsBuilderGenerator;
         this.analysisBuilderGenerator = analysisBuilderGenerator;
+
+        this.commonSettingsBuilder = indexSettingsBuilderGenerator.get();
+        this.specificSettingsBuilders = new HashMap<>();
     }
 
     /**
@@ -97,5 +106,38 @@ public class BaseIndexSettingsConfigurationContext<T, A> {
 
     public Map<Class<?>, A> getAllSpecificAnalysisBuilders() {
         return new ConcurrentHashMap<>(specificAnalysisBuilders);
+    }
+
+    /**
+     * Provides builder to set settings for all search indexes.
+     *
+     * @return Index settings builder
+     * @deprecated This settings will not work correctly with {@link io.jmix.search.index.annotation.ExtendedSearch}.
+     * Use {@link #getCommonIndexSettingsBuilder()} to configure index settings
+     * and {@link #getCommonAnalysisBuilder()} to configure analysis settings.
+     */
+    @Deprecated(since = "2.4", forRemoval = true)
+    public T getCommonSettingsBuilder() {
+        return commonSettingsBuilder;
+    }
+
+    /**
+     * Provides builder to set settings for index related to provided entity.
+     * All necessary settings should be configured explicitly - they will not be merged with the common ones.
+     *
+     * @param entityClass entity class
+     * @return Index settings builder
+     * @deprecated This settings will not work correctly with {@link io.jmix.search.index.annotation.ExtendedSearch}.
+     * Use {@link #getCommonIndexSettingsBuilder()} to configure index settings
+     * and {@link #getCommonAnalysisBuilder()} to configure analysis settings.
+     */
+    @Deprecated(since = "2.4", forRemoval = true)
+    public T getEntitySettingsBuilder(Class<?> entityClass) {
+        return specificSettingsBuilders.computeIfAbsent(entityClass, key -> indexSettingsBuilderGenerator.get());
+    }
+
+    @Deprecated(since = "2.4", forRemoval = true)
+    public Map<Class<?>, T> getAllSpecificSettingsBuilders() {
+        return new ConcurrentHashMap<>(specificSettingsBuilders);
     }
 }

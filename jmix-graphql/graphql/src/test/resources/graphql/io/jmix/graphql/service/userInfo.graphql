@@ -1,0 +1,6 @@
+{
+    userInfo {
+        username
+        locale
+    }
+}

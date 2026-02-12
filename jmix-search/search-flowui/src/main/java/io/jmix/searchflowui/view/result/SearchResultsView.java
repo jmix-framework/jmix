@@ -261,7 +261,7 @@ public class SearchResultsView extends StandardView {
                     .editEntity(entity)
                     .open();
         } else {
-            viewNavigators.detailView(this, metaClass.getJavaClass())
+            viewNavigators.detailView(metaClass.getJavaClass())
                     .withBackwardNavigation(true)
                     .editEntity(entity)
                     .navigate();

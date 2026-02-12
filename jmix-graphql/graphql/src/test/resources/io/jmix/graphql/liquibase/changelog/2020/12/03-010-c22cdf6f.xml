@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet author="scr" id="1">
+        <createTable tableName="SCR_ASSOCIATION_M2M_TEST_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_ASSOCIATION_M2M_TEST_ENTITY"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="2">
+        <createTable tableName="SCR_ASSOCIATION_M2O_TEST_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_ASSOCIATION_M2O_TEST_ENTITY"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="3">
+        <createTable tableName="SCR_ASSOCIATION_O2M_TEST_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_ASSOCIATION_O2M_TEST_ENTITY"/>
+            </column>
+            <column name="DATATYPES_TEST_ENTITY_ID" type="UUID"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="4">
+        <createTable tableName="SCR_ASSOCIATION_O2O_TEST_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_ASSOCIATION_O2O_TEST_ENTITY"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="5">
+        <createTable tableName="SCR_BORING_STRING_ID_TEST_ENTITY">
+            <column name="ID" type="VARCHAR(10)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_BORING_STRING_ID_TEST_ENTITY"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(255)"/>
+            <column name="CREATE_TS" type="DATETIME"/>
+            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="DELETE_TS" type="DATETIME"/>
+            <column name="DELETED_BY" type="VARCHAR(50)"/>
+            <column name="UPDATE_TS" type="DATETIME"/>
+            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UUID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="6">
+        <createTable tableName="SCR_CAR">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_CAR"/>
+            </column>
+            <column name="MANUFACTURER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MODEL" type="VARCHAR(255)"/>
+            <column name="REG_NUMBER" type="VARCHAR(5)"/>
+            <column name="PURCHASE_DATE" type="DATE"/>
+            <column name="MANUFACTURE_DATE" type="DATETIME"/>
+            <column name="WHEEL_ON_RIGHT" type="BOOLEAN"/>
+            <column name="CAR_TYPE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ECO_RANK" type="INT"/>
+            <column name="GARAGE_ID" type="UUID"/>
+            <column name="MAX_PASSENGERS" type="INT"/>
+            <column name="PRICE" type="DECIMAL"/>
+            <column name="MILEAGE" type="DOUBLE"/>
+            <column name="TECHNICAL_CERTIFICATE_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="7">
+        <createTable tableName="SCR_CAR_RENT">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_CAR_RENT"/>
+            </column>
+            <column name="CAR_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FROM_DATE" type="DATE"/>
+            <column name="FROM_TIME" type="TIME"/>
+            <column name="FROM_DATE_TIME" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="8">
+        <createTable tableName="SCR_COMPOSITION_O2M_TEST_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_COMPOSITION_O2M_TEST_ENTITY"/>
+            </column>
+            <column name="DATATYPES_TEST_ENTITY_ID" type="UUID"/>
+            <column name="QUANTITY" type="INT"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="9">
+        <createTable tableName="SCR_COMPOSITION_O2O_TEST_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_COMPOSITION_O2O_TEST_ENTITY"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="QUANTITY" type="INT"/>
+            <column name="NESTED_COMPOSITION_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="10">
+        <createTable tableName="SCR_DATATYPES_TEST_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_DATATYPES_TEST_ENTITY"/>
+            </column>
+            <column name="BIG_DECIMAL_ATTR" type="DECIMAL"/>
+            <column name="BOOLEAN_ATTR" type="BOOLEAN"/>
+            <column name="DATE_ATTR" type="DATE"/>
+            <column name="DATE_TIME_ATTR" type="DATETIME"/>
+            <column name="DOUBLE_ATTR" type="DOUBLE"/>
+            <column name="INTEGER_ATTR" type="INT"/>
+            <column name="LONG_ATTR" type="BIGINT"/>
+            <column name="STRING_ATTR" type="VARCHAR(255)"/>
+            <column name="CHAR_ATTR" type="char"/>
+            <column name="TIME_ATTR" type="TIME"/>
+            <column name="UUID_ATTR" type="UUID"/>
+            <column name="LOCAL_DATE_TIME_ATTR" type="DATETIME"/>
+            <column name="OFFSET_DATE_TIME_ATTR" type="timestamp with time zone"/>
+            <column name="LOCAL_DATE_ATTR" type="DATE"/>
+            <column name="LOCAL_TIME_ATTR" type="TIME"/>
+            <column name="OFFSET_TIME_ATTR" type="time with time zone"/>
+            <column name="ENUM_ATTR" type="VARCHAR(255)"/>
+            <column name="ASSOCIATION_O2_OATTR_ID" type="UUID"/>
+            <column name="ASSOCIATION_M2_OATTR_ID" type="UUID"/>
+            <column name="COMPOSITION_O2_OATTR_ID" type="UUID"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="INT_IDENTITY_ID_TEST_ENTITY_ASSOCIATION_O2O_ATTR_ID" type="INT"/>
+            <column name="DATATYPES_TEST_ENTITY3_ID" type="UUID"/>
+            <column name="STRING_ID_TEST_ENTITY_ASSOCIATION_O2O_IDENTIFIER" type="VARCHAR(10)"/>
+            <column name="STRING_ID_TEST_ENTITY_ASSOCIATION_M2O_ID" type="VARCHAR(10)"/>
+            <column name="READ_ONLY_STRING_ATTR" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="11">
+        <createTable tableName="SCR_DATATYPES_TEST_ENTITY2">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_DATATYPES_TEST_ENTITY2"/>
+            </column>
+            <column name="DATATYPES_TEST_ENTITY_ATTR_ID" type="UUID"/>
+            <column name="INT_IDENTITY_ID_TEST_ENTITY_ATTR_ID" type="INT"/>
+            <column name="INTEGER_ID_TEST_ENTITY_ATTR_ID" type="INT"/>
+            <column name="STRING_ID_TEST_ENTITY_ATTR_IDENTIFIER" type="VARCHAR(10)"/>
+            <column name="WEIRD_STRING_ID_TEST_ENTITY_ATTR_IDENTIFIER" type="VARCHAR(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="12">
+        <createTable tableName="SCR_DATATYPES_TEST_ENTITY3">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_DATATYPES_TEST_ENTITY3"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="13">
+        <createTable tableName="SCR_DATATYPES_TEST_ENTITY_ASSOCIATION_M2M_TEST_ENTITY_LINK">
+            <column name="ASSOCIATION_M2_M_TEST_ENTITY_ID" type="UUID">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="PK_SCR_DATATYPES_TEST_ENTITY_ASSOCIATION_M2M_TEST_ENTITY_LINK"/>
+            </column>
+            <column name="DATATYPES_TEST_ENTITY_ID" type="UUID">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="PK_SCR_DATATYPES_TEST_ENTITY_ASSOCIATION_M2M_TEST_ENTITY_LINK"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="14">
+        <createTable tableName="SCR_DATATYPES_TEST_ENTITY_INTEGER_ID_TEST_ENTITY_LINK">
+            <column name="DATATYPES_TEST_ENTITY_ID" type="UUID">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="PK_SCR_DATATYPES_TEST_ENTITY_INTEGER_ID_TEST_ENTITY_LINK"/>
+            </column>
+            <column name="INTEGER_ID_TEST_ENTITY_ID" type="INT">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="PK_SCR_DATATYPES_TEST_ENTITY_INTEGER_ID_TEST_ENTITY_LINK"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="15">
+        <createTable tableName="SCR_DEEPLY_NESTED_TEST_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_DEEPLY_NESTED_TEST_ENTITY"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="ASSOCIATION_O2_OATTR_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="16">
+        <createTable tableName="SCR_FAVORITE_CAR">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_FAVORITE_CAR"/>
+            </column>
+            <column name="CAR_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NOTES" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="17">
+        <createTable tableName="SCR_GARAGE">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_GARAGE"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ADDRESS" type="VARCHAR(255)"/>
+            <column name="CAPACITY" type="INT"/>
+            <column name="VAN_ENTRY" type="BOOLEAN"/>
+            <column name="WORKING_HOURS_FROM" type="TIME"/>
+            <column name="WORKING_HOURS_TO" type="TIME"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="18">
+        <createTable tableName="SCR_GARAGE_USER_LINK">
+            <column name="GARAGE_ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_GARAGE_USER_LINK"/>
+            </column>
+            <column name="USER_ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_GARAGE_USER_LINK"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="19">
+        <createTable tableName="SCR_INTEGER_ID_TEST_ENTITY">
+            <column name="ID" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_INTEGER_ID_TEST_ENTITY"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(255)"/>
+            <column name="CREATE_TS" type="DATETIME"/>
+            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="UPDATE_TS" type="DATETIME"/>
+            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="DELETE_TS" type="DATETIME"/>
+            <column name="DELETED_BY" type="VARCHAR(50)"/>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATATYPES_TEST_ENTITY3_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="20">
+        <createTable tableName="SCR_INT_IDENTITY_ID_TEST_ENTITY">
+            <column name="ID" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_INT_IDENTITY_ID_TEST_ENTITY"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(255)"/>
+            <column name="UPDATE_TS" type="DATETIME"/>
+            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="DELETE_TS" type="DATETIME"/>
+            <column name="DELETED_BY" type="VARCHAR(50)"/>
+            <column name="CREATE_TS" type="DATETIME"/>
+            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATATYPES_TEST_ENTITY3_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="21">
+        <createTable tableName="SCR_SPARE_PART">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_SPARE_PART"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="SPARE_PARTS_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="22">
+        <createTable tableName="SCR_STRING_ID_TEST_ENTITY">
+            <column name="IDENTIFIER" type="VARCHAR(10)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_STRING_ID_TEST_ENTITY"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(255)"/>
+            <column name="PRODUCT_CODE" type="VARCHAR(10)"/>
+            <column name="CREATE_TS" type="DATETIME"/>
+            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="UPDATE_TS" type="DATETIME"/>
+            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="DELETE_TS" type="DATETIME"/>
+            <column name="DELETED_BY" type="VARCHAR(50)"/>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATATYPES_TEST_ENTITY3_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="23">
+        <createTable tableName="SCR_TECHNICAL_CERTIFICATE">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_TECHNICAL_CERTIFICATE"/>
+            </column>
+            <column name="CERT_NUMBER" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="24">
+        <createTable tableName="SCR_USER">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_USER"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USERNAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PASSWORD" type="VARCHAR(255)"/>
+            <column name="FIRST_NAME" type="VARCHAR(255)"/>
+            <column name="LAST_NAME" type="VARCHAR(255)"/>
+            <column name="EMAIL" type="VARCHAR(255)"/>
+            <column name="ENABLED" type="BOOLEAN"/>
+            <column name="PHONE" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="25">
+        <createTable tableName="SCR_WEIRD_STRING_ID_TEST_ENTITY">
+            <column name="IDENTIFIER" type="VARCHAR(10)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SCR_WEIRD_STRING_ID_TEST_ENTITY"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(255)"/>
+            <column name="ID" type="VARCHAR(255)"/>
+            <column name="CREATE_TS" type="DATETIME"/>
+            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="UPDATE_TS" type="DATETIME"/>
+            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="DELETE_TS" type="DATETIME"/>
+            <column name="DELETED_BY" type="VARCHAR(50)"/>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATATYPES_TEST_ENTITY3_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="scr" id="26">
+        <createIndex indexName="IDX_SCR_USER_ON_USERNAME" tableName="SCR_USER" unique="true">
+            <column name="USERNAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="scr" id="27">
+        <addForeignKeyConstraint baseColumnNames="INT_IDENTITY_ID_TEST_ENTITY_ATTR_ID"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY2"
+                                 constraintName="FK_SCRDATATYPESTESTENTITY2_ON_INTIDENTITYIDTESTENTITYATTR"
+                                 referencedColumnNames="ID" referencedTableName="SCR_INT_IDENTITY_ID_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="28">
+        <addForeignKeyConstraint baseColumnNames="STRING_ID_TEST_ENTITY_ATTR_IDENTIFIER"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY2"
+                                 constraintName="FK_SCRDATATYPESTESTENTITY2_ON_STRINGIDTESTENTITYATTRIDENTIFIER"
+                                 referencedColumnNames="IDENTIFIER" referencedTableName="SCR_STRING_ID_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="29">
+        <addForeignKeyConstraint baseColumnNames="WEIRD_STRING_ID_TEST_ENTITY_ATTR_IDENTIFIER"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY2"
+                                 constraintName="FK_SCRDATATYPESTESTENTITY2_ON_WEIRDSTRINGIDTESTENTITYATTRIDENTI"
+                                 referencedColumnNames="IDENTIFIER"
+                                 referencedTableName="SCR_WEIRD_STRING_ID_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="30">
+        <addForeignKeyConstraint baseColumnNames="INT_IDENTITY_ID_TEST_ENTITY_ASSOCIATION_O2O_ATTR_ID"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY"
+                                 constraintName="FK_SCRDATATYPESTESTENTITY_ON_INTIDENTITYIDTESTENTITYASSOCIATION"
+                                 referencedColumnNames="ID" referencedTableName="SCR_INT_IDENTITY_ID_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="31">
+        <addForeignKeyConstraint baseColumnNames="STRING_ID_TEST_ENTITY_ASSOCIATION_M2O_ID"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY"
+                                 constraintName="FK_SCRDATATYPESTESTENTITY_ON_STRINGIDTESTENTITYASSOCIATIONM2O"
+                                 referencedColumnNames="IDENTIFIER" referencedTableName="SCR_STRING_ID_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="32">
+        <addForeignKeyConstraint baseColumnNames="STRING_ID_TEST_ENTITY_ASSOCIATION_O2O_IDENTIFIER"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY"
+                                 constraintName="FK_SCRDATATYPESTESTENTITY_ON_STRINGIDTESTENTITYASSOCIATIONO2OID"
+                                 referencedColumnNames="IDENTIFIER" referencedTableName="SCR_STRING_ID_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="33">
+        <addForeignKeyConstraint baseColumnNames="ASSOCIATION_M2_M_TEST_ENTITY_ID"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY_ASSOCIATION_M2M_TEST_ENTITY_LINK"
+                                 constraintName="FK_SCRDATTESENTASSM2MTESENT_ON_ASSOCIATION_M2_M_TEST_ENTITY"
+                                 referencedColumnNames="ID" referencedTableName="SCR_ASSOCIATION_M2M_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="34">
+        <addForeignKeyConstraint baseColumnNames="DATATYPES_TEST_ENTITY_ID"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY_ASSOCIATION_M2M_TEST_ENTITY_LINK"
+                                 constraintName="FK_SCRDATTESENTASSM2MTESENT_ON_DATATYPES_TEST_ENTITY"
+                                 referencedColumnNames="ID" referencedTableName="SCR_DATATYPES_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="35">
+        <addForeignKeyConstraint baseColumnNames="DATATYPES_TEST_ENTITY_ID"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY_INTEGER_ID_TEST_ENTITY_LINK"
+                                 constraintName="FK_SCRDATTESENTINTIDTESENT_ON_DATATYPES_TEST_ENTITY"
+                                 referencedColumnNames="ID" referencedTableName="SCR_DATATYPES_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="36">
+        <addForeignKeyConstraint baseColumnNames="INTEGER_ID_TEST_ENTITY_ID"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY_INTEGER_ID_TEST_ENTITY_LINK"
+                                 constraintName="FK_SCRDATTESENTINTIDTESENT_ON_INTEGER_ID_TEST_ENTITY"
+                                 referencedColumnNames="ID" referencedTableName="SCR_INTEGER_ID_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="37">
+        <addForeignKeyConstraint baseColumnNames="GARAGE_ID" baseTableName="SCR_GARAGE_USER_LINK"
+                                 constraintName="FK_SCRGARUSE_ON_GARAGE" referencedColumnNames="ID"
+                                 referencedTableName="SCR_GARAGE"/>
+    </changeSet>
+    <changeSet author="scr" id="38">
+        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="SCR_GARAGE_USER_LINK"
+                                 constraintName="FK_SCRGARUSE_ON_USER" referencedColumnNames="ID"
+                                 referencedTableName="SCR_USER"/>
+    </changeSet>
+    <changeSet author="scr" id="39">
+        <addForeignKeyConstraint baseColumnNames="DATATYPES_TEST_ENTITY_ID"
+                                 baseTableName="SCR_ASSOCIATION_O2M_TEST_ENTITY"
+                                 constraintName="FK_SCR_ASSOCIATION_O2M_TEST_ENTITY_ON_DATATYPES_TEST_ENTITY"
+                                 referencedColumnNames="ID" referencedTableName="SCR_DATATYPES_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="40">
+        <addForeignKeyConstraint baseColumnNames="GARAGE_ID" baseTableName="SCR_CAR"
+                                 constraintName="FK_SCR_CAR_ON_GARAGE" referencedColumnNames="ID"
+                                 referencedTableName="SCR_GARAGE"/>
+    </changeSet>
+    <changeSet author="scr" id="41">
+        <addForeignKeyConstraint baseColumnNames="TECHNICAL_CERTIFICATE_ID" baseTableName="SCR_CAR"
+                                 constraintName="FK_SCR_CAR_ON_TECHNICAL_CERTIFICATE" referencedColumnNames="ID"
+                                 referencedTableName="SCR_TECHNICAL_CERTIFICATE"/>
+    </changeSet>
+    <changeSet author="scr" id="42">
+        <addForeignKeyConstraint baseColumnNames="CAR_ID" baseTableName="SCR_CAR_RENT"
+                                 constraintName="FK_SCR_CAR_RENT_ON_CAR" referencedColumnNames="ID"
+                                 referencedTableName="SCR_CAR"/>
+    </changeSet>
+    <changeSet author="scr" id="43">
+        <addForeignKeyConstraint baseColumnNames="DATATYPES_TEST_ENTITY_ID"
+                                 baseTableName="SCR_COMPOSITION_O2M_TEST_ENTITY"
+                                 constraintName="FK_SCR_COMPOSITION_O2M_TEST_ENTITY_ON_DATATYPES_TEST_ENTITY"
+                                 referencedColumnNames="ID" referencedTableName="SCR_DATATYPES_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="44">
+        <addForeignKeyConstraint baseColumnNames="NESTED_COMPOSITION_ID" baseTableName="SCR_COMPOSITION_O2O_TEST_ENTITY"
+                                 constraintName="FK_SCR_COMPOSITION_O2O_TEST_ENTITY_ON_NESTED_COMPOSITION"
+                                 referencedColumnNames="ID" referencedTableName="SCR_DEEPLY_NESTED_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="45">
+        <addForeignKeyConstraint baseColumnNames="DATATYPES_TEST_ENTITY_ATTR_ID"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY2"
+                                 constraintName="FK_SCR_DATATYPES_TEST_ENTITY2_ON_DATATYPES_TEST_ENTITY_ATTR"
+                                 referencedColumnNames="ID" referencedTableName="SCR_DATATYPES_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="46">
+        <addForeignKeyConstraint baseColumnNames="INTEGER_ID_TEST_ENTITY_ATTR_ID"
+                                 baseTableName="SCR_DATATYPES_TEST_ENTITY2"
+                                 constraintName="FK_SCR_DATATYPES_TEST_ENTITY2_ON_INTEGER_ID_TEST_ENTITY_ATTR"
+                                 referencedColumnNames="ID" referencedTableName="SCR_INTEGER_ID_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="47">
+        <addForeignKeyConstraint baseColumnNames="ASSOCIATION_M2_OATTR_ID" baseTableName="SCR_DATATYPES_TEST_ENTITY"
+                                 constraintName="FK_SCR_DATATYPES_TEST_ENTITY_ON_ASSOCIATION_M2_OATTR"
+                                 referencedColumnNames="ID" referencedTableName="SCR_ASSOCIATION_M2O_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="48">
+        <addForeignKeyConstraint baseColumnNames="ASSOCIATION_O2_OATTR_ID" baseTableName="SCR_DATATYPES_TEST_ENTITY"
+                                 constraintName="FK_SCR_DATATYPES_TEST_ENTITY_ON_ASSOCIATION_O2_OATTR"
+                                 referencedColumnNames="ID" referencedTableName="SCR_ASSOCIATION_O2O_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="49">
+        <addForeignKeyConstraint baseColumnNames="COMPOSITION_O2_OATTR_ID" baseTableName="SCR_DATATYPES_TEST_ENTITY"
+                                 constraintName="FK_SCR_DATATYPES_TEST_ENTITY_ON_COMPOSITION_O2_OATTR"
+                                 referencedColumnNames="ID" referencedTableName="SCR_COMPOSITION_O2O_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="50">
+        <addForeignKeyConstraint baseColumnNames="DATATYPES_TEST_ENTITY3_ID" baseTableName="SCR_DATATYPES_TEST_ENTITY"
+                                 constraintName="FK_SCR_DATATYPES_TEST_ENTITY_ON_DATATYPES_TEST_ENTITY3"
+                                 referencedColumnNames="ID" referencedTableName="SCR_DATATYPES_TEST_ENTITY3"/>
+    </changeSet>
+    <changeSet author="scr" id="51">
+        <addForeignKeyConstraint baseColumnNames="ASSOCIATION_O2_OATTR_ID" baseTableName="SCR_DEEPLY_NESTED_TEST_ENTITY"
+                                 constraintName="FK_SCR_DEEPLY_NESTED_TEST_ENTITY_ON_ASSOCIATION_O2_OATTR"
+                                 referencedColumnNames="ID" referencedTableName="SCR_ASSOCIATION_O2O_TEST_ENTITY"/>
+    </changeSet>
+    <changeSet author="scr" id="52">
+        <addForeignKeyConstraint baseColumnNames="CAR_ID" baseTableName="SCR_FAVORITE_CAR"
+                                 constraintName="FK_SCR_FAVORITE_CAR_ON_CAR" referencedColumnNames="ID"
+                                 referencedTableName="SCR_CAR"/>
+    </changeSet>
+    <changeSet author="scr" id="53">
+        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="SCR_FAVORITE_CAR"
+                                 constraintName="FK_SCR_FAVORITE_CAR_ON_USER" referencedColumnNames="ID"
+                                 referencedTableName="SCR_USER"/>
+    </changeSet>
+    <changeSet author="scr" id="54">
+        <addForeignKeyConstraint baseColumnNames="DATATYPES_TEST_ENTITY3_ID" baseTableName="SCR_INTEGER_ID_TEST_ENTITY"
+                                 constraintName="FK_SCR_INTEGER_ID_TEST_ENTITY_ON_DATATYPES_TEST_ENTITY3"
+                                 referencedColumnNames="ID" referencedTableName="SCR_DATATYPES_TEST_ENTITY3"/>
+    </changeSet>
+    <changeSet author="scr" id="55">
+        <addForeignKeyConstraint baseColumnNames="DATATYPES_TEST_ENTITY3_ID"
+                                 baseTableName="SCR_INT_IDENTITY_ID_TEST_ENTITY"
+                                 constraintName="FK_SCR_INT_IDENTITY_ID_TEST_ENTITY_ON_DATATYPES_TEST_ENTITY3"
+                                 referencedColumnNames="ID" referencedTableName="SCR_DATATYPES_TEST_ENTITY3"/>
+    </changeSet>
+    <changeSet author="scr" id="56">
+        <addForeignKeyConstraint baseColumnNames="SPARE_PARTS_ID" baseTableName="SCR_SPARE_PART"
+                                 constraintName="FK_SCR_SPARE_PART_ON_SPARE_PARTS" referencedColumnNames="ID"
+                                 referencedTableName="SCR_SPARE_PART"/>
+    </changeSet>
+    <changeSet author="scr" id="57">
+        <addForeignKeyConstraint baseColumnNames="DATATYPES_TEST_ENTITY3_ID" baseTableName="SCR_STRING_ID_TEST_ENTITY"
+                                 constraintName="FK_SCR_STRING_ID_TEST_ENTITY_ON_DATATYPES_TEST_ENTITY3"
+                                 referencedColumnNames="ID" referencedTableName="SCR_DATATYPES_TEST_ENTITY3"/>
+    </changeSet>
+    <changeSet author="scr" id="58">
+        <addForeignKeyConstraint baseColumnNames="DATATYPES_TEST_ENTITY3_ID"
+                                 baseTableName="SCR_WEIRD_STRING_ID_TEST_ENTITY"
+                                 constraintName="FK_SCR_WEIRD_STRING_ID_TEST_ENTITY_ON_DATATYPES_TEST_ENTITY3"
+                                 referencedColumnNames="ID" referencedTableName="SCR_DATATYPES_TEST_ENTITY3"/>
+    </changeSet>
+    <changeSet id="60" author="scr-jmix">
+
+        <insert tableName="SCR_USER">
+            <column name="ID" value="60885987-1b61-4247-94c7-dff348347f93"/>
+            <column name="VERSION" value="1"/>
+            <column name="USERNAME" value="admin"/>
+            <column name="PASSWORD" value="{noop}admin"/>
+            <column name="ENABLED" valueBoolean="true"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>

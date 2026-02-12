@@ -40,10 +40,12 @@ public class ReportImportDialogView extends StandardView {
     @ViewComponent
     protected HorizontalLayout uploadBox;
 
-    @ViewComponent
-    protected MessageBundle messageBundle;
+    @Autowired
+    protected TemporaryStorage temporaryStorage;
     @Autowired
     protected ReportImportExport reportImportExport;
+    @Autowired
+    protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
     @Autowired

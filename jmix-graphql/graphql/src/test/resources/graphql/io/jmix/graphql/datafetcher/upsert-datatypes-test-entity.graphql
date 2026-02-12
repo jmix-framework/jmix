@@ -1,0 +1,14 @@
+mutation ($entity: inp_scr_DatatypesTestEntity!){
+    upsert_scr_DatatypesTestEntity(datatypesTestEntity: $entity)
+    {
+        id
+        dateAttr
+        dateTimeAttr
+        timeAttr
+        localDateTimeAttr
+        offsetDateTimeAttr
+        localDateAttr
+        localTimeAttr
+        offsetTimeAttr
+    }
+}

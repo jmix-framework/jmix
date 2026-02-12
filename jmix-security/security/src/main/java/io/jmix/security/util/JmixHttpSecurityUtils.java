@@ -17,6 +17,7 @@
 package io.jmix.security.util;
 
 import io.jmix.core.CoreProperties;
+import io.jmix.core.security.AuthorizedUrlsProvider;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.session.SessionProperties;
 import org.springframework.context.ApplicationContext;
@@ -103,6 +104,45 @@ public class JmixHttpSecurityUtils {
             http.rememberMe(rememberMe -> rememberMe.rememberMeServices(rememberMeServices));
         } catch (Exception e) {
             throw new RuntimeException("Error while init security", e);
+        }
+    }
+
+    /**
+     * Configures public and protected access to endpoints using URL patterns returned by instances of the
+     * {@link AuthorizedUrlsProvider} for the given {@link HttpSecurity} instance.
+     */
+    @Deprecated(since = "2.4", forRemoval = true)
+    public static void configureAuthorizedUrls(HttpSecurity http) {
+        ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
+        Collection<AuthorizedUrlsProvider> authorizedUrlsProviders = applicationContext.getBeansOfType(AuthorizedUrlsProvider.class).values();
+
+        Collection<String> anonymousUrlPatterns = authorizedUrlsProviders.stream()
+                .flatMap(p -> p.getAnonymousUrlPatterns().stream())
+                .toList();
+
+        Collection<String> authenticatedUrlPatterns = authorizedUrlsProviders.stream()
+                .flatMap(p -> p.getAuthenticatedUrlPatterns().stream())
+                .toList();
+
+        if (!anonymousUrlPatterns.isEmpty() || !authenticatedUrlPatterns.isEmpty()) {
+            try {
+                http.securityMatcher(createSecurityMatcher(authenticatedUrlPatterns, anonymousUrlPatterns));
+
+                if (!anonymousUrlPatterns.isEmpty()) {
+                    RequestMatcher[] anonymousRequestMatchers = createAntPathRequestMatchers(anonymousUrlPatterns);
+                    http.authorizeHttpRequests(authorize ->
+                            authorize.requestMatchers(anonymousRequestMatchers).permitAll()
+                    );
+                }
+                if (!authenticatedUrlPatterns.isEmpty()) {
+                    RequestMatcher[] authenticatedRequestMatchers = createAntPathRequestMatchers(authenticatedUrlPatterns);
+                    http.authorizeHttpRequests(authorize ->
+                            authorize.requestMatchers(authenticatedRequestMatchers).authenticated()
+                    );
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Error while init security", e);
+            }
         }
     }
 

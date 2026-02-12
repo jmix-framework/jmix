@@ -73,8 +73,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
 
         return extractRowLevelPoliciesFromAuthentication(rowLevelRole ->
                 suitableMetaClassNames.stream()
-                        .flatMap(metaClassName ->
-                                rowLevelRole.getAllRowLevelPoliciesIndex().getRowLevelPoliciesByEntityName(metaClassName).stream())
+                                .flatMap(metaClassName ->
+                                        rowLevelRole.getAllRowLevelPoliciesIndex().getRowLevelPoliciesByEntityName(metaClassName).stream())
         );
     }
 
@@ -94,9 +94,9 @@ public class AuthenticationPolicyStore implements PolicyStore {
     @Override
     public Stream<ResourcePolicy> getEntityResourcePoliciesByWildcard(String wildcard) {
         return extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
-                getPoliciesStreamByTypeAndResources(resourceRole,
-                        ResourcePolicyType.ENTITY,
-                        Set.of(wildcard))
+            getPoliciesStreamByTypeAndResources(resourceRole,
+                    ResourcePolicyType.ENTITY,
+                    Set.of(wildcard))
         );
     }
 
@@ -126,6 +126,14 @@ public class AuthenticationPolicyStore implements PolicyStore {
         return extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
                 getPoliciesStreamByTypeAndResources(resourceRole,
                         ResourcePolicyType.SPECIFIC,
+                        Set.of(resourceName)));
+    }
+
+    @Override
+    public Stream<ResourcePolicy> getGraphQLResourcePolicies(String resourceName) {
+        return extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
+                getPoliciesStreamByTypeAndResources(resourceRole,
+                        ResourcePolicyType.GRAPHQL,
                         Set.of(resourceName)));
     }
 

@@ -19,9 +19,10 @@ package io.jmix.flowui.xml.layout.support;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.model.impl.ViewDataXmlLoader;
+import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
-import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.ViewFacets;
 import io.jmix.flowui.xml.facet.FacetLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader;
@@ -44,7 +45,7 @@ import static com.google.common.base.Preconditions.checkState;
 public class ViewLoaderSupport implements ApplicationContextAware {
 
     protected ApplicationContext applicationContext;
-    protected DataComponentsLoaderSupport dataComponentsLoaderSupport;
+    protected ViewDataXmlLoader viewDataXmlLoader;
 
     protected ActionLoaderSupport actionLoaderSupport;
 
@@ -62,8 +63,8 @@ public class ViewLoaderSupport implements ApplicationContextAware {
     }
 
     @Autowired
-    public void setDataComponentsLoaderSupport(DataComponentsLoaderSupport dataComponentsLoaderSupport) {
-        this.dataComponentsLoaderSupport = dataComponentsLoaderSupport;
+    public void setViewDataXmlLoader(ViewDataXmlLoader viewDataXmlLoader) {
+        this.viewDataXmlLoader = viewDataXmlLoader;
     }
 
     protected ActionLoaderSupport getActionLoaderSupport() {
@@ -77,8 +78,8 @@ public class ViewLoaderSupport implements ApplicationContextAware {
         Element dataElement = element.element("data");
         if (dataElement != null) {
             ViewData viewData = ViewControllerUtils.getViewData(view);
-            dataComponentsLoaderSupport.load(viewData, dataElement);
-            ((ComponentLoaderContext) context).setDataHolder(viewData);
+            viewDataXmlLoader.load(viewData, dataElement);
+            ((ComponentLoaderContext) context).setViewData(viewData);
         }
     }
 

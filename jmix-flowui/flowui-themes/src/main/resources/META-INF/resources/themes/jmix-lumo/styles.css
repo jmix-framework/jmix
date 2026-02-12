@@ -15,7 +15,10 @@
  */
 
 @import url('app/exception-dialog-window.css');
+@import url('app/main-view.css');
 @import url('app/misc.css');
+@import url('app/login-view.css');
+@import url('app/main-view-top-menu.css');
 @import url('app/role-assignment-view.css');
 
 @import url('component/jmix-list-menu.css');

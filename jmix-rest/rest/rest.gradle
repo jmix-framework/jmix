@@ -22,7 +22,6 @@ archivesBaseName = 'jmix-rest'
 
 dependencies {
     api project(':core')
-    api project(':security-resource-server')
     compileOnly project(':security')
     compileOnly project(':oidc')
     compileOnly project(':authserver')

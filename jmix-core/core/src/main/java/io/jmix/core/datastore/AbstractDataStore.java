@@ -107,9 +107,9 @@ public abstract class AbstractDataStore implements DataStore {
     @Override
     public List<Object> loadList(LoadContext<?> context) {
         if (log.isDebugEnabled()) {
-            log.debug("loadList: store={}, metaClass={}, fetchPlan={}, query={}",
+            log.debug("loadList: store={}, metaClass={}, fetchPlan={}, from selected={}, query={}",
                     getName(), context.getEntityMetaClass(), context.getFetchPlan(),
-                    context.getQuery());
+                    context.getPreviousQueries().isEmpty(), context.getQuery());
         }
 
         EventSharedState loadState = new EventSharedState();
@@ -163,8 +163,9 @@ public abstract class AbstractDataStore implements DataStore {
     @Override
     public long getCount(LoadContext<?> context) {
         if (log.isDebugEnabled()) {
-            log.debug("getCount: store={}, metaClass={}, query={}",
-                    getName(), context.getEntityMetaClass(), context.getQuery());
+            log.debug("getCount: store={}, metaClass={}, from selected={}, query={}",
+                    getName(), context.getEntityMetaClass(),
+                    context.getPreviousQueries().isEmpty(), context.getQuery());
         }
 
         EventSharedState eventState = new EventSharedState();

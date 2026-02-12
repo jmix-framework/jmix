@@ -16,6 +16,8 @@
 
 package io.jmix.searchopensearch.searching.strategy.impl;
 
+import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchQueryConfigurer;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
@@ -32,5 +34,14 @@ public abstract class AbstractOpenSearchStrategy
 
     protected AbstractOpenSearchStrategy(OpenSearchQueryConfigurer queryConfigurator) {
         super(queryConfigurator);
+    }
+
+    /**
+     * @deprecated Use {@link OpenSearchSearchStrategy#configureRequest(SearchRequestContext)}
+     */
+    @Override
+    @Deprecated(since = "2.7", forRemoval = true)
+    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
+        throw new UnsupportedOperationException();
     }
 }

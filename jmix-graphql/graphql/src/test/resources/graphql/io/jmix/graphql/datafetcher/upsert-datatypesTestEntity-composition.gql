@@ -1,0 +1,16 @@
+mutation($parent: inp_scr_DatatypesTestEntity){
+    upsert_scr_DatatypesTestEntity(datatypesTestEntity:{
+        id: "f17652de-59f6-f2a5-9fd8-1ec69ffaa761"
+        compositionO2Mattr: [
+            {
+                name: "llll"
+                datatypesTestEntity: $parent
+            }
+        ]
+    }){
+        id
+        compositionO2Mattr{
+            name
+        }
+    }
+}

@@ -36,6 +36,15 @@ public class ListViewClassNavigator<E, V extends View<?>> extends ListViewNaviga
 
     protected Consumer<AfterViewNavigationEvent<V>> afterNavigationHandler;
 
+    @Deprecated(since = "2.3", forRemoval = true)
+    public ListViewClassNavigator(Class<E> entityClass,
+                                  Consumer<? extends ListViewNavigator<E>> handler,
+                                  Class<V> viewClass) {
+        super(entityClass, handler);
+
+        this.viewClass = viewClass;
+    }
+
     public ListViewClassNavigator(View<?> origin,
                                   Class<E> entityClass,
                                   Consumer<? extends ListViewNavigator<E>> handler,

@@ -17,6 +17,7 @@
 package io.jmix.reports;
 
 import io.jmix.reports.converter.GsonConverter;
+import io.jmix.reports.converter.XStreamConverter;
 import io.jmix.reports.entity.Report;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,8 @@ public class ReportsSerialization {
 
     @Autowired
     protected GsonConverter gsonConverter;
+
+    protected XStreamConverter xStreamConverter = new XStreamConverter();
 
     /**
      * Serializes specified report to JSON string.
@@ -47,6 +50,10 @@ public class ReportsSerialization {
      * @return report entity
      */
     public Report convertToReport(String serializedReport) {
-        return gsonConverter.convertToReport(serializedReport);
+        if (!serializedReport.startsWith("<")) {//for old xml reports
+            return gsonConverter.convertToReport(serializedReport);
+        } else {
+            return xStreamConverter.convertToReport(serializedReport);
+        }
     }
 }

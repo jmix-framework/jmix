@@ -35,6 +35,7 @@ import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewChildrenVisitResult;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -818,6 +819,35 @@ public final class UiComponentUtils {
                     }
                 }
                 """;
+    }
+
+    /**
+     * @deprecated Use {@link #traverseComponents(Component, Consumer)} instead.
+     */
+    @Deprecated(since = "2.6", forRemoval = true)
+    public static void walkComponents(View<?> view, Consumer<ViewChildrenVisitResult> viewChildrenVisitResultConsumer) {
+        __walkComponentsInternal(view, UiComponentUtils.getComponents(view), viewChildrenVisitResultConsumer, new HashSet<Component>());
+    }
+
+    @Deprecated(since = "2.6", forRemoval = true)
+    private static void __walkComponentsInternal(View<?> view,
+                                                 Collection<Component> currentChildrenComponents,
+                                                 Consumer<ViewChildrenVisitResult> callback,
+                                                 Set<Component> treeComponents) {
+        for (Component component : currentChildrenComponents) {
+            if (treeComponents.contains(component)) {
+                break;
+            }
+            ViewChildrenVisitResult visitResult = new ViewChildrenVisitResult();
+            visitResult.setComponent(component);
+            visitResult.setView(view);
+            visitResult.setComponentId(component.getId().orElse(null));
+            callback.accept(visitResult);
+
+            treeComponents.add(component);
+
+            __walkComponentsInternal(view, UiComponentUtils.getComponents(view), callback, treeComponents);
+        }
     }
 
     /**

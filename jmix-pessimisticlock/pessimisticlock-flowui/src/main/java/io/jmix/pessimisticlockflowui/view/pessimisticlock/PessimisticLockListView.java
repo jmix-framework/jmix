@@ -54,13 +54,13 @@ public class PessimisticLockListView extends StandardView {
     protected Notifications notifications;
 
     @Autowired
+    protected MessageBundle messageBundle;
+
+    @Autowired
     protected Metadata metadata;
 
     @Autowired
     protected MessageTools messageTools;
-
-    @ViewComponent
-    protected MessageBundle messageBundle;
 
     @Subscribe
     public void onInit(InitEvent event) {

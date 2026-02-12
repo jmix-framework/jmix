@@ -42,6 +42,8 @@ public class EntitySqlGenerationServiceImpl implements EntitySqlGenerationServic
     @Autowired
     protected DataManager dataManager;
     @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
     protected ApplicationContext applicationContext;
 
     @Override
@@ -104,7 +106,7 @@ public class EntitySqlGenerationServiceImpl implements EntitySqlGenerationServic
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             if (isReferenceField(metaProperty)) {
                 builder.add(metaProperty.getName(), FetchPlan.INSTANCE_NAME);
-            } else if (metaProperty.getType() == MetaProperty.Type.EMBEDDED) {
+            } else if (metadataTools.isEmbedded(metaProperty)) {
                 FetchPlanBuilder embeddedBuilder = createFullFetchPlanBuilder(metaProperty.getRange().asClass());
                 builder.add(metaProperty.getName(), embeddedBuilder);
             }

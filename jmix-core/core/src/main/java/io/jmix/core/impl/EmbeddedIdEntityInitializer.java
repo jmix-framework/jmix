@@ -37,7 +37,7 @@ public class EmbeddedIdEntityInitializer implements EntityInitializer, Ordered {
         MetaClass metaClass = metadata.getClass(entity);
         MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
         if (primaryKeyProperty != null
-                && primaryKeyProperty.getType() == MetaProperty.Type.EMBEDDED
+                && metadataTools.isEmbedded(primaryKeyProperty)
                 && EntityValues.getValue(entity, primaryKeyProperty.getName()) == null) {
             // create an instance of embedded ID
             Object key = metadata.create(primaryKeyProperty.getRange().asClass());

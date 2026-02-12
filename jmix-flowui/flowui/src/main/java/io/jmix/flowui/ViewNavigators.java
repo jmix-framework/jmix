@@ -53,6 +53,35 @@ public class ViewNavigators {
      * <p>
      * Example of navigating to a view for editing an entity:
      * <pre>{@code
+     * viewNavigators.detailView(Customer.class)
+     *         .editEntity(customersTable.getSingleSelectedItem())
+     *         .withViewClass(CustomerDetailView.class)
+     *         .navigate();
+     * }</pre>
+     * <p>
+     * Example of navigating to a view for creating a new entity instance:
+     * <pre>{@code
+     * viewNavigators.detailView(Customer.class)
+     *         .newEntity()
+     *         .withViewClass(CustomerDetailView.class)
+     *         .navigate();
+     * }</pre>
+     *
+     * @param entityClass edited entity class
+     * @deprecated use {@link #detailView(View, Class)} instead
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
+    public <E> DetailViewNavigator<E> detailView(Class<E> entityClass) {
+        checkNotNullArgument(entityClass);
+
+        return detailView(UiComponentUtils.getCurrentView(), entityClass);
+    }
+
+    /**
+     * Creates a detail view navigator for an entity class.
+     * <p>
+     * Example of navigating to a view for editing an entity:
+     * <pre>{@code
      * viewNavigators.detailView(this, Customer.class)
      *         .editEntity(customersTable.getSingleSelectedItem())
      *         .withViewClass(CustomerDetailView.class)
@@ -133,6 +162,26 @@ public class ViewNavigators {
      * <p>
      * Example of navigating to a view for editing an entity and returning to the calling view:
      * <pre>{@code
+     * viewNavigators.listView(Customer.class)
+     *         .withViewClass(CustomerListView.class)
+     *         .withBackwardNavigation(true)
+     *         .navigate();
+     * }</pre>
+     *
+     * @param entityClass edited entity class
+     * @deprecated use {@link #listView(View, Class)} instead
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
+    public <E> ListViewNavigator<E> listView(Class<E> entityClass) {
+        checkNotNullArgument(entityClass);
+        return listView(UiComponentUtils.getCurrentView(), entityClass);
+    }
+
+    /**
+     * Creates a list view navigator for an entity class.
+     * <p>
+     * Example of navigating to a view for editing an entity and returning to the calling view:
+     * <pre>{@code
      * viewNavigators.listView(this, Customer.class)
      *         .withViewClass(CustomerListView.class)
      *         .withBackwardNavigation(true)
@@ -152,11 +201,33 @@ public class ViewNavigators {
     /**
      * Creates a view navigator.
      *
+     * @param viewClass class of the view to navigate to
+     * @deprecated use {@link #view(View, Class)} instead
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
+    public <V extends View<?>> ViewClassNavigator<V> view(Class<V> viewClass) {
+        return view(UiComponentUtils.getCurrentView(), viewClass);
+    }
+
+    /**
+     * Creates a view navigator.
+     *
      * @param origin    calling view
      * @param viewClass class of the view to navigate to
      */
     public <V extends View<?>> ViewClassNavigator<V> view(View<?> origin, Class<V> viewClass) {
         return new ViewClassNavigator<>(origin, viewNavigationProcessor::processNavigation, viewClass);
+    }
+
+    /**
+     * Creates a view navigator.
+     *
+     * @param viewId id of the view to navigate to (as set in the {@link ViewController} annotation)
+     * @deprecated use {@link #view(View, String)} instead
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
+    public ViewNavigator view(String viewId) {
+        return view(UiComponentUtils.getCurrentView(), viewId);
     }
 
     /**

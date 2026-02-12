@@ -68,6 +68,8 @@ public class DataImportExecutor {
     @Autowired
     protected Metadata metadata;
     @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
     protected EntityImportPlans entityImportPlans;
     @Autowired
     protected EntityStates entityStates;
@@ -421,7 +423,7 @@ public class DataImportExecutor {
                                 propertyImportPlanBuilder = entityImportPlans.builder(property.getRange().asClass().getJavaClass())
                                         .addProperties(((ReferencePropertyMapping) propertyMapping).getLookupPropertyName());
                             }
-                        } else if (property.getType() == MetaProperty.Type.EMBEDDED) {
+                        } else if (metadataTools.isEmbedded(property)) {
                             propertyImportPlanBuilder = entityImportPlans.builder(property.getRange().asClass().getJavaClass())
                                     .addLocalProperties();
                         } else {
@@ -445,7 +447,7 @@ public class DataImportExecutor {
     }
 
     protected void addReferencePropertyToImportPlan(EntityImportPlanBuilder ownerBuilder, String propertyName, MetaProperty property, EntityImportPlan propertyImportPlan) {
-        if (property.getType() == MetaProperty.Type.EMBEDDED) {
+        if (metadataTools.isEmbedded(property)) {
             ownerBuilder.addEmbeddedProperty(propertyName, propertyImportPlan);
             return;
         }

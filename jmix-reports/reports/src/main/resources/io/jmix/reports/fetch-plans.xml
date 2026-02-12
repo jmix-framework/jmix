@@ -22,6 +22,7 @@
         <property name="localeNames"/>
         <property name="code"/>
         <property name="description"/>
+        <property name="reportType"/>
         <property name="group" fetchPlan="_local"/>
         <property name="updateTs"/>
         <property name="restAccess"/>

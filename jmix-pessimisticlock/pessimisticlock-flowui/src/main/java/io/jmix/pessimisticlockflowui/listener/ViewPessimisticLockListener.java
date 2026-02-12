@@ -22,10 +22,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewSetupLockEvent;
-import io.jmix.flowui.view.LockStatus;
-import io.jmix.flowui.view.ReadOnlyAwareView;
-import io.jmix.flowui.view.SupportEntityLock;
-import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.*;
 import io.jmix.pessimisticlockflowui.view.PessimisticLockSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +44,17 @@ public class ViewPessimisticLockListener {
     }
 
     @EventListener
+    public void setupLockListener(StandardDetailView.SetupLockEvent event) {
+        viewSetupLock(event);
+    }
+
+    @EventListener
     public void viewSetupLockListener(ViewSetupLockEvent<?> event) {
+        if (event instanceof StandardDetailView.SetupLockEvent) {
+            // It will be handled by the 'setupLockListener' method
+            return;
+        }
+
         viewSetupLock(event);
     }
 

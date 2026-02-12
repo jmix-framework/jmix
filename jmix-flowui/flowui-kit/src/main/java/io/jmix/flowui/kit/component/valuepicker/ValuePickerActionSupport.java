@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.component.valuepicker;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.dom.Element;
@@ -42,6 +43,28 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
     protected Div actionsLayout;
 
     protected Map<Action, ValuePickerButton> actionBinding = new HashMap<>();
+
+    /**
+     * @deprecated use one of {@link ValuePickerActionSupport#ValuePickerActionSupport(Component)},
+     * {@link ValuePickerActionSupport#ValuePickerActionSupport(Component, String, String)}
+     */
+    @Deprecated(since = "2.2", forRemoval = true)
+    public ValuePickerActionSupport(HasElement component) {
+        this(component, SLOT_ACTIONS, ATTRIBUTE_HAS_ACTIONS);
+    }
+
+    /**
+     * @deprecated use one of {@link ValuePickerActionSupport#ValuePickerActionSupport(Component)},
+     * {@link ValuePickerActionSupport#ValuePickerActionSupport(Component, String, String)}
+     */
+    @Deprecated(since = "2.2", forRemoval = true)
+    public ValuePickerActionSupport(HasElement component,
+                                    String actionsSlot,
+                                    String hasActionsAttribute) {
+        super((Component) component);
+        this.actionsSlot = actionsSlot;
+        this.hasActionsAttribute = hasActionsAttribute;
+    }
 
     public ValuePickerActionSupport(Component component) {
         this(component, SLOT_ACTIONS, ATTRIBUTE_HAS_ACTIONS);

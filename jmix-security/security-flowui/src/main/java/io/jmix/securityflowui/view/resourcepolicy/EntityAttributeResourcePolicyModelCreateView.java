@@ -52,7 +52,9 @@ public class EntityAttributeResourcePolicyModelCreateView extends MultipleResour
 
     @Autowired
     private Metadata metadata;
-    @ViewComponent
+    @Autowired
+    private MessageTools messageTools;
+    @Autowired
     private MessageBundle messageBundle;
 
     private boolean hasChanges = false;

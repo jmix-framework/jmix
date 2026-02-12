@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -48,6 +49,7 @@ public class FragmentLoader {
     public static final String CONTENT_ELEMENT_NAME = "content";
 
     protected ApplicationContext applicationContext;
+    protected Environment environment;
     protected LoaderResolver loaderResolver;
     protected LoaderSupport loaderSupport;
     protected ActionLoaderSupport actionLoaderSupport;
@@ -65,6 +67,11 @@ public class FragmentLoader {
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+
+    @Autowired
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
     }
 
     @Autowired
@@ -185,6 +192,7 @@ public class FragmentLoader {
         }
 
         loader.setApplicationContext(applicationContext);
+        loader.setEnvironment(environment);
 
         loader.setContext(context);
         loader.setLoaderResolver(loaderResolver);

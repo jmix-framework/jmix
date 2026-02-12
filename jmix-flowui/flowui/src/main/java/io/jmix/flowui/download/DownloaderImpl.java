@@ -128,6 +128,13 @@ public class DownloaderImpl implements Downloader, ApplicationContextAware {
         this.uiComponents = uiComponents;
     }
 
+    @Override
+    public void setFileStorage(FileStorage fileStorage) {
+        this.fileStorage = fileStorage;
+
+        log.warn("The passed value is ignored. Actual file storage is obtained from " + FileRef.class.getSimpleName());
+    }
+
     protected boolean defaultViewFilePredicate(String fileExtension) {
         if (StringUtils.isEmpty(fileExtension)) {
             return false;

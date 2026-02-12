@@ -22,7 +22,7 @@ public class EntityTreeNodeListView extends StandardListView<EntityTreeNode> {
     protected UiComponents uiComponents;
     @Autowired
     protected Notifications notifications;
-    @ViewComponent
+    @Autowired
     protected MessageBundle messageBundle;
 
     protected EntityTreeNode rootEntity;

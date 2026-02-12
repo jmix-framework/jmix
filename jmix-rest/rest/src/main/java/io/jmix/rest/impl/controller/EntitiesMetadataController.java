@@ -47,6 +47,13 @@ public class EntitiesMetadataController {
         return controllerManager.getAllMetaClassesInfo();
     }
 
+    @Deprecated(forRemoval = true)
+    @GetMapping("/entities/{entityName}/views/{viewName}")
+    public String getView(@PathVariable String entityName,
+                          @PathVariable String viewName) {
+        return controllerManager.getFetchPlan(entityName, viewName);
+    }
+
     @GetMapping("/entities/{entityName}/fetchPlans/{fetchPlanName}")
     public String getFetchPlan(@PathVariable String entityName,
                                @PathVariable String fetchPlanName) {

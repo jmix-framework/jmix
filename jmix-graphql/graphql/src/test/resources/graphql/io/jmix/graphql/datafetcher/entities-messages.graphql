@@ -1,0 +1,6 @@
+query($className: String $locale: String){
+    entityMessages(className: $className locale: $locale) {
+        key
+        value
+    }
+}

@@ -347,15 +347,15 @@ public class ExceptionDialog implements InitializingBean {
                     if (template != null) {
                         params.put("XML descriptor", template.value());
                     }
-                } else if (guiDevException.getOriginId() != null) {
-                    String originId = guiDevException.getOriginId();
-                    params.put("Origin ID", originId);
+                } else if (guiDevException.getFrameId() != null) {
+                    String frameId = guiDevException.getFrameId();
+                    params.put("Frame ID", frameId);
                     try {
                         params.put("XML descriptor",
-                                viewRegistry.getViewInfo(originId).
+                                viewRegistry.getViewInfo(frameId).
                                         getTemplatePath().orElse(null));
                     } catch (Exception e) {
-                        params.put("XML descriptor", "not found for " + originId);
+                        params.put("XML descriptor", "not found for " + frameId);
                     }
                 }
             }

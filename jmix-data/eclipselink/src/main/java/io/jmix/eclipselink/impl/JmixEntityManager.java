@@ -539,8 +539,7 @@ public class JmixEntityManager implements EntityManager {
                 continue;
             }
 
-            if (srcProperty.getRange().isClass()
-                    && srcProperty.getType() != MetaProperty.Type.EMBEDDED) {
+            if (srcProperty.getRange().isClass() && !metadataTools.isEmbedded(srcProperty)) {
                 if (!metadataTools.isOwningSide(srcProperty))
                     continue;
 
@@ -583,7 +582,7 @@ public class JmixEntityManager implements EntityManager {
                         deepCopyIgnoringNulls(value, reloadedRef, visited);
                     }
                 }
-            } else if (srcProperty.getType() == MetaProperty.Type.EMBEDDED) {
+            } else if (metadataTools.isEmbedded(srcProperty)) {
                 Object destRef = EntityValues.getValue(dest, name);
                 if (destRef != null) {
                     deepCopyIgnoringNulls(value, destRef, visited);

@@ -17,6 +17,7 @@
 package io.jmix.dataimport.impl;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -33,6 +34,8 @@ import java.util.List;
 
 @Component("datimp_ImportConfigurationValidator")
 public class ImportConfigurationValidator {
+    @Autowired
+    protected MetadataTools metadataTools;
     @Autowired
     protected Metadata metadata;
 
@@ -53,8 +56,7 @@ public class ImportConfigurationValidator {
 
     protected void validateMultiFieldMapping(MetaClass ownerEntity, ReferenceMultiFieldPropertyMapping propertyMapping, boolean uniqueConfigWithUpdatePolicyExists) {
         MetaProperty referenceProperty = ownerEntity.getProperty(propertyMapping.getEntityPropertyName());
-        if (referenceProperty.getType() == MetaProperty.Type.EMBEDDED
-                && propertyMapping.getReferenceImportPolicy() != ReferenceImportPolicy.CREATE) {
+        if (metadataTools.isEmbedded(referenceProperty) && propertyMapping.getReferenceImportPolicy() != ReferenceImportPolicy.CREATE) {
             throw new ImportException(String.format("Incorrect policy [%s] for embedded reference [%s]. Only CREATE policy supported.", propertyMapping.getReferenceImportPolicy(),
                     propertyMapping.getEntityPropertyName()));
         }

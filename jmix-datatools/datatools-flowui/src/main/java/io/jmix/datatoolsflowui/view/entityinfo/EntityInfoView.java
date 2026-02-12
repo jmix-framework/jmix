@@ -42,7 +42,7 @@ public class EntityInfoView extends StandardView {
     protected Metadata metadata;
     @Autowired
     protected MetadataTools metadataTools;
-    @ViewComponent
+    @Autowired
     protected MessageBundle messageBundle;
 
     protected Object entity;

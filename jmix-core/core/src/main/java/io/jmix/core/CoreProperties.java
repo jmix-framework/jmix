@@ -117,6 +117,13 @@ public class CoreProperties {
      * */
     boolean instanceNameFallbackEnabled;
 
+    /**
+     * Whether to enable data observation for loading and saving data using {@link UnconstrainedDataManager}.
+     * <p>
+     * When observation is enabled, custom spans are created using the {@link io.micrometer.observation.Observation}.
+     */
+    boolean dataObservationEnabled;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -138,7 +145,8 @@ public class CoreProperties {
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
             @DefaultValue("true") boolean roundDecimalValueByFormat,
             @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault,
-            @DefaultValue("true") boolean instanceNameFallbackEnabled) {
+            @DefaultValue("true") boolean instanceNameFallbackEnabled,
+            @DefaultValue("false") boolean dataObservationEnabled) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -168,6 +176,7 @@ public class CoreProperties {
         this.roundDecimalValueByFormat = roundDecimalValueByFormat;
         this.skipNullOrEmptyConditionsByDefault = skipNullOrEmptyConditionsByDefault;
         this.instanceNameFallbackEnabled = instanceNameFallbackEnabled;
+        this.dataObservationEnabled = dataObservationEnabled;
     }
 
     public String getWebHostName() {
@@ -281,5 +290,12 @@ public class CoreProperties {
      */
     public boolean isInstanceNameFallbackEnabled() {
         return instanceNameFallbackEnabled;
+    }
+
+    /**
+     * @see #dataObservationEnabled
+     */
+    public boolean isDataObservationEnabled() {
+        return dataObservationEnabled;
     }
 }

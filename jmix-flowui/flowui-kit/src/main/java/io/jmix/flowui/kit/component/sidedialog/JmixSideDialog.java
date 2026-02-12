@@ -299,12 +299,18 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
         getContent().close();
     }
 
-    // TODO: pinyazhin, replace by getModality() after upgrading Vaadin 25
+    /**
+     * @return {@code true} if the dialog is a modal dialog, {@code false} otherwise
+     */
     public boolean isModal() {
         return getContent().isModal();
     }
 
-    // TODO: pinyazhin, replace by setModality() after upgrading Vaadin 25
+    /**
+     * Sets whether a component will open a modal or modeless dialog.
+     *
+     * @param modal modal option
+     */
     public void setModal(boolean modal) {
         getContent().setModal(modal);
     }
@@ -361,12 +367,19 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
         getContent().setHeaderTitle(title);
     }
 
-    // TODO: pinyazhin, replace by setRole after upgrading Vaadin 25
+    /**
+     * @return the ARIA role for the overlay element or {@code null} if not set
+     */
+    @Nullable
     public String getOverlayRole() {
         return getContent().getOverlayRole();
     }
 
-    // TODO: pinyazhin, replace by setRole after upgrading Vaadin 25
+    /**
+     * Sets the ARIA role for the overlay element, used by screen readers.
+     *
+     * @param role the ARIA role to set
+     */
     public void setOverlayRole(String role) {
         getContent().setOverlayRole(role);
     }

@@ -1557,6 +1557,29 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        @Nullable
+        @Override
+        public String getOverlayRole() {
+            return sideDialog.getOverlayRole();
+        }
+
+        @Override
+        public SideDialogBuilder withOverlayRole(String role) {
+            sideDialog.setOverlayRole(role);
+            return this;
+        }
+
+        @Override
+        public boolean isModal() {
+            return sideDialog.isModal();
+        }
+
+        @Override
+        public SideDialogBuilder withModal(boolean modal) {
+            sideDialog.setModal(modal);
+            return this;
+        }
+
         @Override
         public SideDialog open() {
             sideDialog = build();

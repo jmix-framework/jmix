@@ -25,5 +25,6 @@ const jmixSideDialogOverlayStyles = css`
 `;
 
 // todo: pinyazhin, rename to 'lumo-side...' after upgrading to Vaadin 25
+// https://github.com/vaadin/web-components/issues/2176
 registerStyles('jmix-side-dialog-overlay', [jmixSideDialogOverlayStyles],
  { moduleId: 'jmix-lumo-side-dialog-overlay' });

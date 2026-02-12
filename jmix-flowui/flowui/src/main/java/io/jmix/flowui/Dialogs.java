@@ -762,6 +762,33 @@ public interface Dialogs {
         SideDialogBuilder withSideDialogPlacement(SideDialogPlacement placement);
 
         /**
+         * @return overlay role of the dialog or {@code null} if not set
+         */
+        @Nullable
+        String getOverlayRole();
+
+        /**
+         * Sets the overlay role of the dialog.
+         *
+         * @param role role to set
+         * @return builder
+         */
+        SideDialogBuilder withOverlayRole(String role);
+
+        /**
+         * @return {@code true} if the dialog is modal, {@code false} otherwise
+         */
+        boolean isModal();
+
+        /**
+         * Sets whether the dialog should be modal.
+         *
+         * @param modal modal option
+         * @return builder
+         */
+        SideDialogBuilder withModal(boolean modal);
+
+        /**
          * Opens the dialog.
          *
          * @return opened dialog
@@ -774,10 +801,6 @@ public interface Dialogs {
          * @return created dialog
          */
         SideDialog build();
-
-        // TODO: pinyazhin, add setRole after upgrading to Vaadin 25
-
-        // TODO: pinyazhin, add modality after upgrading to Vaadin 25
     }
 
     /**

@@ -70,7 +70,7 @@ public class KeyValuePropertyConditionGenerator extends PropertyConditionGenerat
         }
 
         if (property != null) {
-            return generateWhere(propertyCondition, entityAlias, property);
+            return generateWhere(propertyCondition, entityAlias, property, context.isElementCollection());
         } else {
             return generateKeyValueWhere(propertyCondition, entityAlias);
         }

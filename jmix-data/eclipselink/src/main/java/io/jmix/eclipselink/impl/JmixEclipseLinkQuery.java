@@ -277,42 +277,6 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
     }
 
     @Override
-    public TypedQuery<E> setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
-        checkState();
-        return setHint(QueryHints.CACHE_RETRIEVE_MODE, cacheRetrieveMode);
-    }
-
-    @Override
-    public CacheRetrieveMode getCacheRetrieveMode() {
-        CacheRetrieveMode mode = (CacheRetrieveMode) getHints().get(QueryHints.CACHE_RETRIEVE_MODE);
-        return mode != null ? mode : CacheRetrieveMode.USE;
-    }
-
-    @Override
-    public TypedQuery<E> setCacheStoreMode(CacheStoreMode cacheStoreMode) {
-        checkState();
-        return setHint(QueryHints.CACHE_STORE_MODE, cacheStoreMode);
-    }
-
-    @Override
-    public CacheStoreMode getCacheStoreMode() {
-        CacheStoreMode mode = (CacheStoreMode) getHints().get(QueryHints.CACHE_STORE_MODE);
-        return mode != null ? mode : CacheStoreMode.USE;
-    }
-
-    @Override
-    public TypedQuery<E> setTimeout(@Nullable Integer timeout) {
-        checkState();
-        return setHint(QueryHints.QUERY_TIMEOUT, timeout);
-    }
-
-    @Override
-    @Nullable
-    public Integer getTimeout() {
-        return (Integer)getHints().get(QueryHints.QUERY_TIMEOUT);
-    }
-
-    @Override
     public int executeUpdate() {
         JpaQuery<E> jpaQuery = getQuery();
         DatabaseQuery databaseQuery = jpaQuery.getDatabaseQuery();

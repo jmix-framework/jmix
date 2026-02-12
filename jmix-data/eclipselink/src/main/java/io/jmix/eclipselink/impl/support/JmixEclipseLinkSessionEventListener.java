@@ -24,7 +24,7 @@ import io.jmix.eclipselink.impl.DescriptorEventManagerWrapper;
 import io.jmix.eclipselink.persistence.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.persistence.annotations.CacheCoordinationType;
-import org.eclipse.persistence.annotations.CacheIsolationType;
+import org.eclipse.persistence.config.CacheIsolationType;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.InheritancePolicy;
 import org.eclipse.persistence.mappings.DatabaseMapping;

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.datatoolsflowui.datamodel;
+package io.jmix.datatoolsflowui.view.datamodel;
 
-import io.jmix.flowui.view.View;
+import org.springframework.lang.Nullable;
 
 /**
- * Provides support for opening a view that visualizes a data model diagram.
+ * Provides an interface for managing and displaying diagram data,
+ * intended for use in views where diagram data needs to be handled dynamically.
  */
-public interface DataModelDiagramViewSupport {
+public interface DiagramView {
 
     /**
-     * Open a view that displays data model diagram.
+     * Sets diagram data to be displayed in the view.
      *
-     * @param origin      the view from which the diagram is opened
-     * @param diagramData the diagram data to display
+     * @param diagramData diagram data to be displayed
      */
-    void open(View<?> origin, byte[] diagramData);
+    void setDiagramData(@Nullable byte[] diagramData);
 }

@@ -213,7 +213,7 @@ public class DataModelListView extends StandardView {
         }
 
         byte[] diagramData = generateDiagram(entityModelsDc.getItems());
-        dataModelDiagramViewSupport.open(diagramData);
+        dataModelDiagramViewSupport.open(this, diagramData);
     }
 
     protected byte[] generateDiagram(List<EntityModel> models) {

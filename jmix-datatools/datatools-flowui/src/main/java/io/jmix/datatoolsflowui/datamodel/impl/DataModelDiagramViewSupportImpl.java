@@ -20,8 +20,10 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.UuidProvider;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.datatoolsflowui.datamodel.DataModelDiagramViewSupport;
 import io.jmix.datatoolsflowui.datamodel.DataModelDiagramStorage;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +40,10 @@ public class DataModelDiagramViewSupportImpl implements DataModelDiagramViewSupp
     protected UrlParamSerializer urlParamSerializer;
 
     @Override
-    public void open(byte[] diagramData) {
+    public void open(View<?> origin, byte[] diagramData) {
+        Preconditions.checkNotNullArgument(diagramData);
+        Preconditions.checkNotNullArgument(origin);
+
         Class<? extends Component> navigationTarget = viewRegistry.getViewInfo("datatl_dataModelDiagramView")
                 .getControllerClass();
 
@@ -47,6 +52,7 @@ public class DataModelDiagramViewSupportImpl implements DataModelDiagramViewSupp
 
         String url = viewRegistry.getRouteConfiguration()
                 .getUrl(navigationTarget, new RouteParameters("id", urlParamSerializer.serialize(id)));
-        UI.getCurrent().getPage().open(url);
+        UI ui = origin.getUI().orElse(UI.getCurrent());
+        ui.getPage().open(url);
     }
 }

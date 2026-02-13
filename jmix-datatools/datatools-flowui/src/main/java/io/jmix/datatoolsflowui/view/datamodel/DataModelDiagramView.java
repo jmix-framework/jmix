@@ -34,7 +34,7 @@ import java.util.UUID;
 @Route(value = "datatl/data-model-diagram/:id?", layout = DefaultMainViewParent.class)
 @ViewController(id = "datatl_dataModelDiagramView")
 @ViewDescriptor(path = "data-model-diagram-view.xml")
-public class DataModelDiagramView extends StandardView {
+public class DataModelDiagramView extends StandardView implements DiagramView {
 
     @ViewComponent
     private JmixImage<?> diagramImage;
@@ -56,6 +56,7 @@ public class DataModelDiagramView extends StandardView {
                 );
     }
 
+    @Override
     public void setDiagramData(@Nullable byte[] diagramData) {
         DownloadHandler downloadHandler = DownloadHandler.fromInputStream(e ->
                 new DownloadResponse(

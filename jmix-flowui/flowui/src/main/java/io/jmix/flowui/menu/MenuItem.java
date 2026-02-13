@@ -249,7 +249,12 @@ public class MenuItem {
 
     @Nullable
     public Component getIconComponent() {
-        return icon;
+        // Menu item returns a copy of an icon, because the icon is actually
+        // used by the components linked to this menu item and an icon cannot
+        // have several parents.
+        return icon != null
+                ? ComponentUtils.copyIcon(icon)
+                : null;
     }
 
     public void setIconComponent(@Nullable Component icon) {

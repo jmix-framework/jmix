@@ -21,7 +21,7 @@ export const sidePanelLayoutStyles = css`
         display: block;
         box-sizing: border-box;
 
-        --_transition-duration: var(--jmix-side-panel-layout-transition, 200ms);
+        --_transition-duration: var(--jmix-side-panel-layout-transition-duration, 200ms);
 
         --_horizontal-size: var(--jmix-side-panel-layout-horizontal-size, auto);
         --_horizontal-max-size: var(--jmix-side-panel-layout-horizontal-max-size, 50%);

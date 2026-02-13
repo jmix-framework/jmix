@@ -131,6 +131,14 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
                 .formatted(DownloadContext.class.getSimpleName()));
     }
 
+    @Override
+    public boolean isAllowInert() {
+        // 'Downloader' creates a link appended to the UI to trigger a programmatic download.
+        // Because 'Downloader' can be called from a modal dialog window, we need to allow
+        // inert elements to be invoked.
+        return true;
+    }
+
     /**
      * Represents context information about a file not found error during download.
      *

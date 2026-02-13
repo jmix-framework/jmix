@@ -138,7 +138,7 @@ public class BaseAction extends AbstractAction {
      * @return this object
      * @deprecated use {@link #withIcon(Component)} or {@link #setIconComponent(Component)} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public BaseAction withIcon(@Nullable Icon icon) {
         setIcon(icon);
         return this;

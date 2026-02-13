@@ -102,7 +102,7 @@ public abstract class AbstractAction implements Action {
         }
     }
 
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
     @Override
     public Icon getIcon() {
@@ -114,7 +114,7 @@ public abstract class AbstractAction implements Action {
                 : null;
     }
 
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Override
     public void setIcon(@Nullable Icon icon) {
         setIconComponent(icon);

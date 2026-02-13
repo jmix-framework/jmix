@@ -40,7 +40,7 @@ import org.springframework.lang.Nullable;
 /**
  * @deprecated use {@link FacetRegistrationBuilder} instead
  */
-@Deprecated(since = "3.0", forRemoval = true)
+@Deprecated(since = "2.8", forRemoval = true)
 @org.springframework.stereotype.Component("flowui_DataLoadCoordinatorFacetProvider")
 public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadCoordinator> {
 

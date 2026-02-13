@@ -59,7 +59,7 @@ public class DialogAction extends SecuredBaseAction {
          * @return an icon
          * @deprecated use {@link #getIcon()} instead
          */
-        @Deprecated(since = "3.0", forRemoval = true)
+        @Deprecated(since = "2.8", forRemoval = true)
         public VaadinIcon getVaadinIcon() {
             // For backward compatibility
             return switch (this) {
@@ -111,7 +111,7 @@ public class DialogAction extends SecuredBaseAction {
         return (DialogAction) super.withIcon(icon);
     }
 
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Override
     public DialogAction withIcon(@Nullable Icon icon) {
         setIcon(icon);

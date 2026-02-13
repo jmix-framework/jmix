@@ -18,7 +18,7 @@ package io.jmix.data.listener;
 /**
  * Defines the contract for handling entities after they have been inserted into DB.
  */
-@Deprecated(since = "3.0")
+@Deprecated(since = "2.8", forRemoval = true)
 public interface AfterInsertEntityListener<T> {
 
     /**

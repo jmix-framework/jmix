@@ -457,7 +457,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
      * @return the configuration parameter name if set, otherwise the default configuration parameter name
      * @deprecated use {@link #getConfigurationParamInternal()} ()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public String getConfigurationParam() {
         return Strings.isNullOrEmpty(configurationParam) ? DEFAULT_CONFIGURATION_PARAM : configurationParam;
     }
@@ -482,7 +482,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
      * @return the condition parameter name if set, otherwise the default condition parameter name
      * @deprecated use {@link #getConditionParamInternal()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public String getConditionParam() {
         return Strings.isNullOrEmpty(conditionParam) ? DEFAULT_CONDITION_PARAM : conditionParam;
     }

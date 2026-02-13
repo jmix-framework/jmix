@@ -87,7 +87,7 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
     /**
      * @deprecated use {@link #getCalendarDisplayModeParamInternal()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public String getCalendarDisplayModeParam() {
         return Strings.isNullOrEmpty(calendarDisplayModeParam) ? CALENDAR_DISPLAY_MODE_PARAM : calendarDisplayModeParam;
     }
@@ -103,7 +103,7 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
     /**
      * @deprecated use {@link #getCalendarDateParamInternal()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public String getCalendarDateParam() {
         return Strings.isNullOrEmpty(calendarDateParam) ? CALENDAR_DATE_PARAM : calendarDateParam;
     }

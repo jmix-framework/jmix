@@ -28,7 +28,7 @@ import java.util.Collection;
  *
  * @deprecated use {@link ComponentSettingsManager} instead
  */
-@Deprecated(since = "3.0", forRemoval = true)
+@Deprecated(since = "2.8", forRemoval = true)
 public interface ViewSettingsComponentManager extends ComponentSettingsManager {
 
     /**

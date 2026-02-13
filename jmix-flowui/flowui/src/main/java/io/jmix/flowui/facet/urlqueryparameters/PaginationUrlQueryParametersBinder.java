@@ -141,7 +141,7 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
      * @return the parameter name for the "first result" value, either a custom or default value
      * @deprecated use {@link #getFirstResultParamInternal()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public String getFirstResultParam() {
         return Strings.isNullOrEmpty(firstResultParam) ? FIRST_RESULT_PARAM : firstResultParam;
     }
@@ -167,7 +167,7 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
      * @return the parameter name for the "max results" value, either a custom or default value
      * @deprecated use {@link #getMaxResultsParamInternal()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public String getMaxResultsParam() {
         return Strings.isNullOrEmpty(maxResultsParam) ? MAX_RESULTS_PARAM : maxResultsParam;
     }

@@ -225,7 +225,7 @@ public class MenuItem {
      * @return the icon as a string, or {@code null} if no icon is associated
      * @deprecated use {@link #getIconComponent()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
     public String getIcon() {
         return !Strings.isNullOrEmpty(iconName)
@@ -239,7 +239,7 @@ public class MenuItem {
      * @param iconName the icon to associate with the menu item, or {@code null} if no icon is to be set
      * @deprecated use {@link #setIconComponent(Component)} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public void setIcon(@Nullable String iconName) {
         this.iconName = iconName;
         setIconComponent(Strings.isNullOrEmpty(iconName)

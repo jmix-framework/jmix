@@ -39,7 +39,7 @@ import java.util.function.Predicate;
  * @deprecated use {@link DownloaderExportHandler} with a regular {@link Anchor} instead.
  * Will be removed either in the next major release or when Vaadin remove {@link StreamResource}.
  */
-@Deprecated(since = "3.0", forRemoval = true)
+@Deprecated(since = "2.8", forRemoval = true)
 @Internal
 public class JmixFileDownloader extends Composite<Anchor> {
 

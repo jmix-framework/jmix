@@ -160,6 +160,12 @@
 
     <Match>
         <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
+        <Class name="io.jmix.data.impl.EntityFetcher"/>
+        <Method name="fetch"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
         <Class name="io.jmix.notifications.channel.impl.InAppNotificationChannel"/>
         <Method name="init"/>
     </Match>

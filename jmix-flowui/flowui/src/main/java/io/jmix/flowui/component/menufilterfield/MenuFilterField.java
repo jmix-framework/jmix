@@ -43,7 +43,7 @@ import io.jmix.flowui.kit.component.menu.MenuItem;
 import io.jmix.flowui.kit.component.menu.ParentMenuItem;
 import io.jmix.flowui.menu.provider.MenuItemProvider;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;

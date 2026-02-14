@@ -702,7 +702,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
             ReadContext readContext = parseResponse(response);
 
             String[] serviceNames = {"jmix_OtherRestTestService", "jmix_RestTestService",
-                    "jmix_RestTestServiceWithoutInterfaces"};
+                    "jmix_RestTestServiceWithoutInterfaces", "jmix_RestAnnotatedParamsTestService"};
 
             assertEquals(serviceNames.length, readContext.<Collection>read("$").size());
 

@@ -762,6 +762,8 @@ html {
 
     --jmix-font-icon-columns-grouper-item-add: var(--lumo-icons-plus);
     --jmix-font-icon-columns-grouper-item-remove: var(--lumo-icons-cross);
+
+    --jmix-font-icon-side-panel-layout-closer: var(--lumo-icons-cross);
 }
 
 .jmix-font-icon {
@@ -1083,6 +1085,10 @@ jmix-notifications-indicator > vaadin-icon[icon-class~="jmix-font-icon"][slot="i
 
 .jmix-font-icon-columns-grouper-item-remove:before {
     content: var(--jmix-font-icon-columns-grouper-item-remove);
+}
+
+.jmix-font-icon-side-panel-layout-closer:before {
+    content: var(--jmix-font-icon-side-panel-layout-closer);
 }
 
 /* Vaadin icons */

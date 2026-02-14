@@ -501,7 +501,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                 .addTagsItem(service)
                 .summary(service + "#" + methodInfo.getName())
                 .description("Executes the service method. This request expects query parameters with the names defined " +
-                        "in services configuration on the middleware.")
+                        "in REST service metadata (XML configuration or method annotations).")
                 .responses(new ApiResponses()
                         .addApiResponse("200", new ApiResponse()
                                         .description("Returns the result of the method execution. It can be of simple datatype " +

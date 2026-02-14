@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package io.jmix.rest.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Exposes a service method through the Generic REST API.
- * <p>
- * Parameter names used by REST can be specified explicitly with {@link RestParam}.
+ * Specifies an external parameter name for a {@link RestMethod}.
  */
-@Target({ElementType.METHOD})
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface RestMethod {
-    String value() default "";
-
-    RestHttpMethod[] httpMethods() default {RestHttpMethod.GET, RestHttpMethod.POST};
+public @interface RestParam {
+    String value();
 }

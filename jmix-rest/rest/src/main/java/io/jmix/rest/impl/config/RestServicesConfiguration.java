@@ -24,6 +24,7 @@ import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import io.jmix.rest.RestProperties;
 import io.jmix.rest.annotation.RestHttpMethod;
 import io.jmix.rest.annotation.RestMethod;
+import io.jmix.rest.annotation.RestParam;
 import io.jmix.rest.annotation.RestService;
 import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.impl.scanning.RestServicesDetector;
@@ -36,6 +37,8 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.core.DefaultParameterNameDiscoverer;
+import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
@@ -89,6 +92,8 @@ public class RestServicesConfiguration {
 
     @Autowired
     protected JmixModules jmixModules;
+
+    protected ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
     @Nullable
     public RestMethodInfo getRestMethodInfo(String serviceName, String methodName, String httpMethod, List<String> methodParamNames) {
@@ -227,10 +232,9 @@ public class RestServicesConfiguration {
                             continue;
                         }
                     }
-                    List<RestMethodParamInfo> params = new LinkedList<>();
-                    for (Parameter parameter : method.getParameters()) {
-                        RestMethodParamInfo restMethodParamInfo = new RestMethodParamInfo(parameter.getName(), parameter.getType().getName(), true);
-                        params.add(restMethodParamInfo);
+                    List<RestMethodParamInfo> params = loadMethodParams(serviceName, method);
+                    if (params == null) {
+                        continue;
                     }
                     String methodName = restMethod.value();
                     if (StringUtils.isEmpty(methodName)) {
@@ -259,6 +263,54 @@ public class RestServicesConfiguration {
                 log.error("Cannot instantiate an instance of {}", className, e);
             }
         }
+    }
+
+    @Nullable
+    protected List<RestMethodParamInfo> loadMethodParams(String serviceName, Method method) {
+        String[] discoveredParamNames = parameterNameDiscoverer.getParameterNames(method);
+        List<RestMethodParamInfo> params = new LinkedList<>();
+        Set<String> existingParamNames = new HashSet<>();
+
+        Parameter[] methodParameters = method.getParameters();
+        for (int i = 0; i < methodParameters.length; i++) {
+            Parameter parameter = methodParameters[i];
+            String paramName = resolveMethodParamName(serviceName, method, parameter, i, discoveredParamNames);
+            if (StringUtils.isBlank(paramName)) {
+                return null;
+            }
+            if (!existingParamNames.add(paramName)) {
+                log.error("Duplicate REST parameter name '{}' found. Service: {}, method: {}",
+                        paramName, serviceName, method.getName());
+                return null;
+            }
+
+            params.add(new RestMethodParamInfo(paramName, parameter.getType().getName(), true));
+        }
+        return params;
+    }
+
+    @Nullable
+    protected String resolveMethodParamName(String serviceName,
+                                            Method method,
+                                            Parameter parameter,
+                                            int parameterIndex,
+                                            @Nullable String[] discoveredParamNames) {
+        RestParam restParam = parameter.getAnnotation(RestParam.class);
+        if (restParam != null) {
+            if (StringUtils.isBlank(restParam.value())) {
+                log.error("Blank @RestParam value found. Service: {}, method: {}", serviceName, method.getName());
+                return null;
+            }
+            return restParam.value();
+        }
+
+        if (discoveredParamNames != null
+                && discoveredParamNames.length > parameterIndex
+                && StringUtils.isNotBlank(discoveredParamNames[parameterIndex])) {
+            return discoveredParamNames[parameterIndex];
+        }
+
+        return parameter.getName();
     }
 
     @Nullable
